@@ -1,0 +1,1310 @@
+      1                                                                
+      2                                                                
+      3                                                                
+      4                                                                
+      5                                                                
+      6                                                                
+      7                                                                
+      8                                                                
+      9                                                                
+     10                                                                
+     11                                                                
+     12                                                                
+     13                                                                
+     14                                                                
+     15                                                                
+     16                                                                
+     17                                                                
+     18                                                                
+     19                                                                
+     20                                                                
+     21                                                                
+     22                                                                
+     23                                                                
+     24                                                                
+     25                                                                
+     26                                                                
+     27                                                                
+     28                                                                
+     29                                                                
+     30                                                                
+     31                                                                
+     32                                                                
+     33                                                                
+     34                                                                
+     35                                                                
+     36                                                                
+     37                                                                
+     38                                                                
+     39                                                                
+     40                                                                
+     41                                                                
+     42                                                                
+     43                                                                
+     44                                                                
+     45                                                                
+     46                                                                
+     47                                                                
+     48                                                                
+     49                                                                
+     50                                                                
+     51                                                                
+     52                                                                
+     53                                                                
+     54                                                                
+     60 HEDMARK                        TRYSIL                          
+    100 HEDMARK                        TRYSIL                          
+    180 HEDMARK                        TRYSIL                      PRI3    
+    250 HEDMARK                        TRYSIL                          
+    290 HEDMARK                        TRYSIL                          
+    420 HEDMARK                        ENGERDAL                        
+    600 HEDMARK                        ENGERDAL                        
+    610 HEDMARK                        ENGERDAL                        
+    700 HEDMARK                        ENGERDAL                    PRI3    
+    730 HEDMARK                        ENGERDAL                        
+    770 HEDMARK                        TOLGA                           
+    810 HEDMARK                        OS                              
+   1050 ØSTFOLD                        HVALER                          
+   1080 ØSTFOLD                        HVALER                          
+   1130 ØSTFOLD                        HALDEN                      PRI3    
+   1200 ØSTFOLD                        HALDEN                          
+   1220 ØSTFOLD                        HALDEN                          
+   1230 ØSTFOLD                        HALDEN                          
+   1400 ØSTFOLD                        HALDEN                          
+   1640 ØSTFOLD                        AREMARK                         
+   1650 ØSTFOLD                        AREMARK                         
+   1950 ØSTFOLD                        MARKER                          
+   2000 ØSTFOLD                        RØMSKOG                         
+   2540 AKERSHUS                       AURSKOG HØLAND              PRI3    
+   2610 AKERSHUS                       AURSKOG HØLAND                  
+   2910 HEDMARK                        EIDSKOG                         
+   2950 HEDMARK                        EIDSKOG                         
+   3000 ØSTFOLD                        SARPSBORG                       
+   3015 ØSTFOLD                                                       
+   3120 ØSTFOLD                                                       
+   3030 ØSTFOLD                        FREDRIKSTAD                     
+   3050 ØSTFOLD                        FREDRIKSTAD                     
+   3190 ØSTFOLD                        SARPSBORG                   PRI2    
+   3200 ØSTFOLD                        SARPSBORG                       
+   3280 ØSTFOLD                        RAKKESTAD                       
+   3290 ØSTFOLD                        RAKKESTAD                       
+   3450 ØSTFOLD                        EIDSBERG                        
+   3460 ØSTFOLD                        EIDSBERG                        
+   3500 ØSTFOLD                        EIDSBERG                        
+   3600 ØSTFOLD                        SKIPTVET                        
+   3710 ØSTFOLD                        ASKIM                           
+   3750 ØSTFOLD                        SPYDEBERG                       
+   3780 ØSTFOLD                        HOBØL                           
+   3810 ØSTFOLD                        ASKIM                           
+   3940 ØSTFOLD                        TRØGSTAD                        
+   4030 AKERSHUS                       ENEBAKK                         
+   4040 AKERSHUS                       ENEBAKK                         
+   4100 AKERSHUS                       LØRENSKOG                       
+   4150 AKERSHUS                       SKEDSMO                         
+   4170 AKERSHUS                       LØRENSKOG                       
+   4300 AKERSHUS                       GJERDRUM                        
+   4400 AKERSHUS                       NITTEDAL                        
+   4440 AKERSHUS                       NITTEDAL                    PRI3    
+   4460 AKERSHUS                       NITTEDAL                
+   4721 AKERSHUS                       NANNESTAD                       
+   4740 AKERSHUS                       NANNESTAD                       
+   4780 AKERSHUS                       ULLENSAKER               WEBPRI1
+   4820 AKERSHUS                       FET                             
+   4830 AKERSHUS                       SØRUM                           
+   4945 AKERSHUS                       NES                             
+   5340 HEDMARK                        NORD-ODAL                       
+   5350 HEDMARK                        NORD-ODAL                       
+   5590 HEDMARK                        KONGSVINGER                     
+   5600 HEDMARK                        KONGSVINGER                     
+   5610 HEDMARK                        KONGSVINGER                     
+   5650 HEDMARK                        KONGSVINGER                     
+   5660 HEDMARK                        KONGSVINGER                     
+   5700 HEDMARK                        GRUE                            
+   5800 HEDMARK                        GRUE                            
+   6020 HEDMARK                        ÅSNES                       PRI3    
+   6350 HEDMARK                        VÅLER                           
+   6440 HEDMARK                        ÅSNES                           
+   6490 HEDMARK                        VÅLER                           
+   6550 HEDMARK                        ELVERUM                         
+   6600 HEDMARK                        ELVERUM                         
+   6620 HEDMARK                        ELVERUM                         
+   6860 HEDMARK                        ÅMOT		               
+   7010 HEDMARK                        ÅMOT                     WEBPRI3       
+   7250 HEDMARK                        ÅMOT                            
+   7570 HEDMARK                        ÅMOT                            
+   7660 HEDMARK                        RENDALEN                        
+   7830 HEDMARK                        RENDALEN                        
+   7910 HEDMARK                        RENDALEN                        
+   8140 HEDMARK                        STOR-ELVDAL                 PRI3    
+   8450 HEDMARK                        STOR-ELVDAL                     
+   8720 HEDMARK                        STOR-ELVDAL                     
+   8770 HEDMARK                        FOLLDAL                         
+   8970 HEDMARK                        FOLLDAL                         
+   9100 HEDMARK                        FOLLDAL                         
+   9110 HEDMARK                        FOLLDAL                         
+   9580 HEDMARK                        TYNSET                      PRI3    
+   9870 HEDMARK                        TYNSET                          
+  10050 HEDMARK                        TOLGA                           
+  10080 HEDMARK                        OS                              
+  10100 HEDMARK                        OS                              
+  10300 SØR-TRØNDELAG                  RØROS                           
+  10380 SØR-TRØNDELAG                  RØROS                    WEBPRI1   
+  10600 SØR-TRØNDELAG                  RØROS                           
+  10650 SØR-TRØNDELAG                  RØROS                           
+  10700 SØR-TRØNDELAG                  RØROS                           
+  10740 SØR-TRØNDELAG                  RØROS                           
+  10900 SØR-TRØNDELAG                  RØROS                           
+  11050 AKERSHUS                       NES                             
+  11091 AKERSHUS                       EIDSVOLL                        
+  11120 AKERSHUS                       EIDSVOLL                        
+  11240 AKERSHUS                       HURDAL                          
+  11290 AKERSHUS                       HURDAL                          
+  11500 OPPLAND                        ØSTRE TOTEN                 PRI3    
+  11620 OPPLAND                        GJØVIK                          
+  11650 OPPLAND                        VESTRE TOTEN                    
+  11710 OPPLAND                        VESTRE TOTEN                    
+  11850 OPPLAND                                                        
+  11900 OPPLAND                        GJØVIK                          
+  12200 HEDMARK                        STANGE                          
+  12270 HEDMARK                        LØTEN                           
+  12290 HEDMARK                        HAMAR                           
+  12320 HEDMARK                        RINGSAKER                   PRI3    
+  12340 HEDMARK                        RINGSAKER                       
+  12520 HEDMARK                        RINGSAKER                       
+  12550 HEDMARK                        RINGSAKER                   PRI3    
+  12600 HEDMARK                        RINGSAKER                       
+  12680 OPPLAND                        LILLEHAMMER                 PRI3    
+  12800 HEDMARK                        RINGSAKER                       
+  12960 HEDMARK                        RINGSAKER                       
+  13030 OPPLAND                        GAUSDAL                         
+  13050 OPPLAND                        GAUSDAL                         
+  13100 OPPLAND                        GAUSDAL                         
+  13120 OPPLAND                        ØYER                            
+  13140 OPPLAND                        RINGEBU                         
+  13150 OPPLAND                        RINGEBU                         
+  13160 OPPLAND                        RINGEBU                     PRI3    
+  13310 OPPLAND                        RINGEBU                         
+  13420 OPPLAND                        RINGEBU                     PRI3    
+  13450 OPPLAND                        RINGEBU                         
+  13510 OPPLAND                        SØR-FRON                        
+  13640 OPPLAND                        NORD-FRON                       
+  13670 OPPLAND                        NORD-FRON                   PRI3    
+  13700 OPPLAND                        SØR-FRON                        
+  14050 OPPLAND                        SEL                             
+  14550 OPPLAND                        VÅGÅ                            
+  14580 OPPLAND                        VÅGÅ                            
+  14581 OPPLAND                        VÅGÅ                            
+  14600 OPPLAND                        VÅGÅ                            
+  14610 OPPLAND                        VÅGÅ                            
+  14711 OPPLAND                        VÅGÅ                            
+  15430 OPPLAND                        LOM                             
+  15480 OPPLAND                        SKJÅK                           
+  15630 OPPLAND                        SKJÅK                           
+  15660 OPPLAND                        SKJÅK                           
+  15730 OPPLAND                        SKJÅK                       PRI3    
+  16240 OPPLAND                        SEL                             
+  16270 OPPLAND                        SEL                             
+  16560 OPPLAND                        DOVRE                           
+  16610 OPPLAND                        DOVRE                    WEBPRI3    
+  16740 OPPLAND                        LESJA                       PRI3    
+  16750 OPPLAND                        LESJA                           
+  16790 OPPLAND                        LESJA                           
+  17000 ØSTFOLD                        FREDRIKSTAD                 PRI3    
+  17005 ØSTFOLD                        FREDRIKSTAD                     
+  17030 ØSTFOLD                        FREDRIKSTAD                     
+  17150 ØSTFOLD                        RYGGE                    WEBPRI2      
+  17251 ØSTFOLD                        MOSS                            
+  17280 ØSTFOLD                                                               
+  17500 ØSTFOLD                        VÅLER                           
+  17610 ØSTFOLD                        VÅLER                           
+  17630 ØSTFOLD                        HOBØL                           
+  17650 AKERSHUS                       VESTBY                          
+  17730 AKERSHUS                       FROGN                           
+  17741 AKERSHUS                       FROGN                           
+  17780 AKERSHUS                       NESODDEN                        
+  17810 AKERSHUS                       NESODDEN                        
+  17870 AKERSHUS                       ÅS                              
+  17880 AKERSHUS                       SKI                             
+  17890 AKERSHUS                       OPPEGÅRD                        
+  17980 OSLO                           OSLO                                    
+  18020 OSLO                           OSLO                            
+  18030 OSLO                           OSLO                                
+  18160 OSLO                           OSLO                            
+  18210 OSLO                           OSLO                            
+  18269 OSLO                           OSLO                             
+  18270 OSLO                           OSLO                            
+  18320 OSLO                           OSLO                            
+  18420 OSLO                           OSLO                            
+  18450 OSLO                           OSLO                            
+  18500 OSLO                           OSLO                            
+  18641 OSLO                           OSLO                            
+  18651 OSLO                           OSLO                            
+  18652 OSLO                           OSLO                            
+  18670 OSLO                           OSLO                            
+  18700 OSLO                           OSLO                     WEBPRI1      
+  18701 OSLO                           OSLO                            
+  18815 OSLO                           OSLO                                    
+  18920 OSLO                           OSLO                            
+  18950 OSLO                           OSLO                        PRI3    
+  18980 OSLO                           OSLO                                    
+  19100 OSLO                           OSLO                            
+  19540 AKERSHUS                       BÆRUM                           
+  19610 AKERSHUS                       BÆRUM                           
+  19710 AKERSHUS                       ASKER                       PRI3    
+  19730 AKERSHUS                       ASKER                       
+  19800 BUSKERUD                       RØYKEN                          
+  19840 BUSKERUD                       HURUM                           
+  19850 BUSKERUD                       HURUM                           
+  19930 BUSKERUD                       MODUM                           
+  19940 BUSKERUD                       LIER                            
+  20250 BUSKERUD                       RINGERIKE                       
+  20360 BUSKERUD                       RINGERIKE
+  20260 BUSKERUD                       HOLE                            
+  20290 BUSKERUD                       RINGERIKE                       
+  20301 BUSKERUD                       RINGERIKE                   PRI3    
+  20330 OPPLAND                        JEVNAKER                        
+  20500 OPPLAND                        LUNNER                          
+  20520 OPPLAND                        LUNNER                          
+  20540 OPPLAND                        GRAN                            
+  20560 OPPLAND                        GRAN                            
+  20610 OPPLAND                        GRAN                            
+  21360 OPPLAND                        NORDRE LAND                     
+  21680 OPPLAND                        NORDRE LAND                 PRI3    
+  21860 OPPLAND                        ETNEDAL                         
+  22610 BUSKERUD                       RINGERIKE                       
+  22730 OPPLAND                        SØR-AURDAL                      
+  22790 OPPLAND                        SØR-AURDAL                      
+  22810 OPPLAND                        SØR-AURDAL                      
+  22840 OPPLAND                        SØR-AURDAL                      
+  22951 OPPLAND                        NORD-AURDAL                     
+  23160 OPPLAND                        NORD-AURDAL                 PRI3    
+  23390 BUSKERUD                       HEMSEDAL                        
+  23410 OPPLAND                        NORD-AURDAL                     
+  23420 OPPLAND                        NORD-AURDAL              WEBPRI3    
+  23500 OPPLAND                        ØYSTRE SLIDRE               PRI3    
+  23560 OPPLAND                        ØYSTRE SLIDRE                   
+  23650 OPPLAND                        VESTRE SLIDRE                   
+  23720 OPPLAND                        VANG                            
+  23800 OPPLAND                        VANG                            
+  24100 BUSKERUD                       RINGERIKE                       
+  24210 BUSKERUD                       RINGERIKE                       
+  24600 BUSKERUD                       KRØDSHERAD                      
+  24650 BUSKERUD                       KRØDSHERAD                      
+  24770 BUSKERUD                       FLÅ                             
+  24800 BUSKERUD                       FLÅ                             
+  24890 BUSKERUD                       NES                      WEBPRI1       
+  24960 BUSKERUD                       GOL                             
+  25090 BUSKERUD                       HEMSEDAL                        
+  25100 BUSKERUD                       HEMSEDAL                        
+  25110 BUSKERUD                       HEMSEDAL                    PRI3    
+  25260 BUSKERUD                       ÅL                              
+  25290 BUSKERUD                       ÅL                              
+  25320 BUSKERUD                       ÅL                              
+  25540 BUSKERUD                       HOL                             
+  25590 BUSKERUD                       HOL                             
+  25630 BUSKERUD                       HOL                             
+  25640 BUSKERUD                       HOL                             
+  25830 HORDALAND                      ULVIK                       PRI3    
+  26161 BUSKERUD                       MODUM                           
+  26220 BUSKERUD                       SIGDAL                          
+  26240 BUSKERUD                       SIGDAL                          
+  26380 BUSKERUD                       SIGDAL                          
+  26670 BUSKERUD                       ØVRE EIKER                      
+  26760 VESTFOLD                       HOF                             
+  26820 BUSKERUD                       ØVRE EIKER                      
+  26900 BUSKERUD                       DRAMMEN                     PRI3    
+  26950 VESTFOLD                       SVELVIK                         
+  26990 VESTFOLD                       SANDE                       PRI3    
+  26999 VESTFOLD                       SANDE                           
+  27060 VESTFOLD                       SANDE                           
+  27070 VESTFOLD                       HOLMESTRAND                     
+  27090 VESTFOLD                       HOLMESTRAND                     
+  27110 VESTFOLD                       VÅLE                            
+  27140 VESTFOLD                       HORTEN                          
+  27160 VESTFOLD                       HORTEN                          
+  27260 VESTFOLD                       TØNSBERG                        
+  27270 VESTFOLD                       TØNSBERG                        
+  27290 VESTFOLD                       RAMNES                          
+  27301 VESTFOLD                       RE                              
+  27390 VESTFOLD                       NØTTERØY                        
+  27420 VESTFOLD                       TJØME                           
+  27440 VESTFOLD                       TØNSBERG                        
+  27450 VESTFOLD                       STOKKE                      PRI3    
+  27460 VESTFOLD                       NØTTERØY                        
+  27470 VESTFOLD                       SANDEFJORD                  PRI3    
+  27500 VESTFOLD                       TJØME                    WEBPRI1       
+  27510 VESTFOLD                       TJØME                              
+  27564 VESTFOLD                       SANDEFJORD                      
+  27600 VESTFOLD                       SANDEFJORD                      
+  27720 VESTFOLD                       SANDEFJORD                      
+  27750 VESTFOLD                       ANDEBU                          
+  27770 VESTFOLD                       STOKKE                          
+  27775 VESTFOLD                       LARVIK                          
+  27780 VESTFOLD                       LARVIK                          
+  27790 VESTFOLD                       LARVIK                          
+  27800 VESTFOLD                       LARVIK                          
+  27850 VESTFOLD                       LARVIK                          
+  28380 BUSKERUD                       KONGSBERG                   PRI2    
+  28700 BUSKERUD                       FLESBERG                        
+  28800 BUSKERUD                       FLESBERG                    PRI3    
+  28900 BUSKERUD                       ROLLAG                          
+  28921 BUSKERUD                       NORE                            
+  28922 BUSKERUD                       NORE                            
+  29280 BUSKERUD                       NORE OG UVDAL                   
+  29310 BUSKERUD                       NORE OG UVDAL                   
+  29350 BUSKERUD                       NORE OG UVDAL                   
+  29600 BUSKERUD                       NORE OG UVDAL                   
+  29720 BUSKERUD                       NORE OG UVDAL               PRI3    
+  29790 BUSKERUD                       HOL                             
+  29950 VESTFOLD                                                               
+  30000 VESTFOLD                       LARVIK                          
+  30010 VESTFOLD                       LARVIK                          
+  30100 TELEMARK                       SILJAN                          
+  30220 BUSKERUD                       KONGSBERG                       
+  30241 VESTFOLD                       LARVIK                          
+  30245 VESTFOLD                       LARVIK                          
+  30248 TELEMARK                       PORSGRUNN                       
+  30260 TELEMARK                       PORSGRUNN                       
+  30261 TELEMARK                       PORSGRUNN                       
+  30301 TELEMARK                       SKIEN                           
+  30302 TELEMARK                       SKIEN                           
+  30310 TELEMARK                       SKIEN                           
+  30320 TELEMARK                       SKIEN                           
+  30380 TELEMARK                       SKIEN                           
+  30420 TELEMARK                       SKIEN                       PRI3    
+  30510 TELEMARK                       NOTODDEN                        
+  30530 TELEMARK                       NOTODDEN                        
+  30650 TELEMARK                       NOTODDEN                    PRI3    
+  30860 TELEMARK                       TINN                            
+  31080 TELEMARK                       TINN                            
+  31410 TELEMARK                       TINN                            
+  31411 TELEMARK                       TINN                            
+  31501 TELEMARK                       TINN                            
+  31570 TELEMARK                       VINJE                           
+  31620 TELEMARK                       VINJE                    WEBPRI3       
+  31660 TELEMARK                       VINJE                           
+  31661 TELEMARK                       VINJE                           
+  31850 TELEMARK                       HJARTDAL                        
+  31852 TELEMARK                       HJARTDAL                        
+  31900 TELEMARK                       HJARTDAL                        
+  32060 TELEMARK                       SAUHERAD                    PRI3    
+  32200 TELEMARK                       BØ                              
+  32240 TELEMARK                       BØ                              
+  32301 TELEMARK                       SELJORD                         
+  32320 TELEMARK                                                       
+  32350 TELEMARK                       SELJORD                         
+  32780 TELEMARK                       SKIEN                           
+  32840 TELEMARK                       KVITESEID                       
+  32850 TELEMARK                       KVITESEID                       
+  32890 TELEMARK                       KVITESEID                       
+  32900 TELEMARK                       TOKKE                           
+  33250 TELEMARK                       VINJE                           
+  33440 TELEMARK                       VINJE                           
+  33890 TELEMARK                       VINJE                       PRI3    
+  34090 TELEMARK                       BAMBLE                          
+  34130 TELEMARK                       KRAGERØ                     PRI3    
+  34190 TELEMARK                       KRAGERØ                         
+  34400 TELEMARK                       KRAGERØ                         
+  34600 TELEMARK                       DRANGEDAL                       
+  34800 TELEMARK                       DRANGEDAL                       
+  34900 TELEMARK                       DRANGEDAL                       
+  35090 AUST-AGDER                     GJERSTAD                        
+  35190 AUST-AGDER                     GJERSTAD                        
+  35200 AUST-AGDER                     GJERSTAD                        
+  35340 AUST-AGDER                     RISØR                           
+  35345 AUST-AGDER                     RISØR                           
+  35581 AUST-AGDER                     VEGÅRSHEI                       
+  35860 AUST-AGDER                     TVEDESTRAND                 PRI2    
+  35951 AUST-AGDER                     TVEDESTRAND                     
+  36051 AUST-AGDER                     ARENDAL                         
+  36060 AUST-AGDER                     ARENDAL                         
+  36120 AUST-AGDER                     FROLAND                         
+  36140 AUST-AGDER                     FROLAND                         
+  36200 AUST-AGDER                     ARENDAL                  WEBPRI1    
+  36300 AUST-AGDER                     FROLAND                         
+  36490 AUST-AGDER                     FROLAND                         
+  36560 AUST-AGDER                     ÅMLI                        PRI3    
+  36710 AUST-AGDER                     ÅMLI                            
+  37230 TELEMARK                       NISSEDAL                    PRI3    
+  37300 TELEMARK                       NISSEDAL                        
+  37500 TELEMARK                       FYRESDAL                        
+  37570 TELEMARK                       TOKKE                           
+  37650 TELEMARK                       FYRESDAL                        
+  37750 TELEMARK                       FYRESDAL                        
+  37760 TELEMARK                       FYRESDAL                        
+  37820 TELEMARK                       FYRESDAL                        
+  38130 AUST-AGDER                     GRIMSTAD                        
+  38140 AUST-AGDER                     GRIMSTAD                    PRI3    
+  38170 AUST-AGDER                     LILLESAND                       
+  38320 AUST-AGDER                     BIRKENES                        
+  38380 AUST-AGDER                     BIRKENES                        
+  38421 AUST-AGDER                     BIRKENES                        
+  38450 AUST-AGDER                     BIRKENES                        
+  38600 AUST-AGDER                     FROLAND                         
+  38800 AUST-AGDER                     ÅMLI                            
+  39040 VEST-AGDER                     KRISTIANSAND                PRI1
+  39100 VEST-AGDER                     KRISTIANSAND             WEBPRI3       
+  39150 VEST-AGDER                     KRISTIANSAND                    
+  39190 VEST-AGDER                     KRISTIANSAND                    
+  39200 VEST-AGDER                     KRISTIANSAND                    
+  39201 VEST-AGDER                     KRISTIANSAND                    
+  39220 VEST-AGDER                     KRISTIANSAND                    
+  39260 VEST-AGDER                     VENNESLA                        
+  39351 AUST-AGDER                     IVELAND                         
+  39590 AUST-AGDER                     EVJE OG HORNNES                 
+  39690 AUST-AGDER                     BYGLAND                     PRI3    
+  39840 AUST-AGDER                     BYGLAND                         
+  39900 VEST-AGDER                     SONGDALEN                       
+  39950 VEST-AGDER                     SØGNE                           
+  40200 AUST-AGDER                     VALLE                           
+  40271 AUST-AGDER                     VALLE                           
+  40420 AUST-AGDER                     BYKLE                           
+  40880 AUST-AGDER                     BYKLE                       PRI3    
+  41110 VEST-AGDER                     MANDAL                      PRI3    
+  41175 VEST-AGDER                     MARNARDAL                       
+  41200 VEST-AGDER                     SONGDALEN                       
+  41370 VEST-AGDER                     MARNARDAL                       
+  41480 VEST-AGDER                     ÅSERAL                          
+  41550 VEST-AGDER                     ÅSERAL                          
+  41640 VEST-AGDER                     LINDESNES                       
+  41670 VEST-AGDER                     AUDNEDAL                    PRI3    
+  41740 VEST-AGDER                     LINDESNES                       
+  41770 VEST-AGDER                     LINDESNES                   PRI3    
+  41772 VEST-AGDER                                                     
+  41820 VEST-AGDER                     LYNGDAL                         
+  41825 VEST-AGDER                     LYNGDAL                         
+  41840 VEST-AGDER                     HÆGEBOSTAD                      
+  41860 VEST-AGDER                     KVINESDAL                       
+  42010 VEST-AGDER                     FARSUND                         
+  42140 VEST-AGDER                     FARSUND                         
+  42160 VEST-AGDER                     FARSUND                  WEBPRI3       
+  42250 VEST-AGDER                     KVINESDAL                       
+  42285 VEST-AGDER                     KVINESDAL                       
+  42520 VEST-AGDER                     KVINESDAL                       
+  42550 VEST-AGDER                     KVINESDAL                       
+  42600 VEST-AGDER                     SIRDAL                          
+  42650 VEST-AGDER                     FLEKKEFJORD                     
+  42720 VEST-AGDER                     FLEKKEFJORD                     
+  42780 VEST-AGDER                     SIRDAL                          
+  42790 VEST-AGDER                     SIRDAL                          
+  42810 VEST-AGDER                     SIRDAL                          
+  42890 VEST-AGDER                     SIRDAL                          
+  42920 VEST-AGDER                     SIRDAL                      PRI3    
+  42921 VEST-AGDER                     SIRDAL                          
+  42940 VEST-AGDER                     SIRDAL                          
+  42950 VEST-AGDER                     SIRDAL                          
+  43000 VEST-AGDER                     SIRDAL                          
+  43005 ROGALAND                       LUND                            
+  43010 ROGALAND                       LUND                        PRI3    
+  43090 ROGALAND                       SOKNDAL                         
+  43210 ROGALAND                       SOKNDAL                         
+  43360 ROGALAND                       EIGERSUND                       
+  43370 ROGALAND                       EIGERSUND                       
+  43450 ROGALAND                       EIGERSUND                       
+  43540 ROGALAND                       BJERKREIM                       
+  43750 ROGALAND                       BJERKREIM                       
+  43810 ROGALAND                       GJESDAL                         
+  43971 ROGALAND                       HÅ                              
+  44080 ROGALAND                       HÅ                          PRI3    
+  44081 ROGALAND                       HÅ                              
+  44160 ROGALAND                       TIME                            
+  44170 ROGALAND                       TIME                            
+  44190 ROGALAND                       TIME                            
+  44300 ROGALAND                       KLEPP                           
+  44340 ROGALAND                       KLEPP                           
+  44390 ROGALAND                       GJESDAL                         
+  44480 ROGALAND                       GJESDAL                         
+  44520 ROGALAND                       GJESDAL                         
+  44560 ROGALAND                       SOLA                     WEBPRI1   
+  44561 ROGALAND                       SOLA                            
+  44565 ROGALAND                       RANDABERG                       
+  44568 ROGALAND                       KVITSØY                         
+  44570 ROGALAND                       STAVANGER                       
+  44580 ROGALAND                       STAVANGER                       
+  44600 ROGALAND                       RENNESØY                        
+  44610 ROGALAND                                                   PRI3    
+  44620 ROGALAND                       STAVANGER                       
+  44630 ROGALAND                       STAVANGER                       
+  44640 ROGALAND                       STAVANGER                       
+  44730 ROGALAND                       SANDNES                         
+  44740 ROGALAND                       SANDNES                         
+  44760 ROGALAND                       SANDNES                         
+  44800 ROGALAND                       SANDNES                         
+  44900 ROGALAND                       GJESDAL                         
+  45010 ROGALAND                       FORSAND                         
+  45350 ROGALAND                       FORSAND                         
+  45490 ROGALAND                       STRAND                          
+  45580 ROGALAND                       STRAND                          
+  45600 ROGALAND                       STRAND                          
+  45780 ROGALAND                       HJELMELAND                      
+  45850 ROGALAND                       FINNØY                          
+  45880 ROGALAND                       HJELMELAND                  PRI3    
+  46150 ROGALAND                       SULDAL                          
+  46300 ROGALAND                       SULDAL                          
+  46380 ROGALAND                       SULDAL                          
+  46381 ROGALAND                       SULDAL                          
+  46390 TELEMARK                       VINJE                           
+  46391 TELEMARK                       VINJE                           
+  46400 ROGALAND                       SULDAL                          
+  46450 HORDALAND                      ODDA                            
+  46510 HORDALAND                      ODDA                        PRI3    
+  46530 HORDALAND                      ODDA                            
+  46531 HORDALAND                      ODDA                            
+  46610 ROGALAND                       SAUDA                       PRI3    
+  46700 ROGALAND                       SAUDA                           
+  46845 ROGALAND                       VINDAFJORD                      
+  46850 ROGALAND                       VINDAFJORD                      
+  46910 ROGALAND                       VINDAFJORD                  PRI3    
+  47050 ROGALAND                       TYSVÆR                          
+  47065 ROGALAND                       TYSVÆR                          
+  47070 ROGALAND                       BOKN                            
+  47090 ROGALAND                       VINDAFJORD                      
+  47200 ROGALAND                       KARMØY                          
+  47240 ROGALAND                       KARMØY                          
+  47250 ROGALAND                       KARMØY                          
+  47260 ROGALAND                       KARMØY                      PRI3    
+  47270 ROGALAND                       KARMØY                          
+  47300 ROGALAND                       UTSIRA                   WEBPRI3       
+  47410 ROGALAND                       HAUGESUND                       
+  47430 HORDALAND                      SVEIO                           
+  47450 HORDALAND                      SVEIO                           
+  47491 ROGALAND                       ØLEN                            
+  47500 HORDALAND                      ETNE                            
+  47501 HORDALAND                      ETNE                            
+  47600 HORDALAND                      ETNE                            
+  47610 HORDALAND                      ETNE                            
+  47750 HORDALAND                      ODDA                            
+  47820 HORDALAND                      ETNE                            
+  47890 HORDALAND                      KVINNHERAD                      
+  48060 HORDALAND                      BØMLO                           
+  48090 HORDALAND                      STORD                           
+  48100 HORDALAND                      STORD                           
+  48120 HORDALAND                      STORD                       PRI3    
+  48250 HORDALAND                      FITJAR                          
+  48290 HORDALAND                      BØMLO                           
+  48330 HORDALAND                      FITJAR                      PRI3    
+  48450 HORDALAND                      KVINNHERAD                      
+  48500 HORDALAND                      KVINNHERAD                      
+  48510 HORDALAND                      KVINNHERAD                      
+  48780 HORDALAND                      KVINNHERAD                      
+  49040 HORDALAND                      JONDAL                          
+  49070 HORDALAND                      JONDAL                          
+  49220 HORDALAND                      ODDA                            
+  49351 HORDALAND                      ODDA                            
+  49460 HORDALAND                      ODDA                            
+  49540 HORDALAND                      ULLENSVANG                      
+  49550 HORDALAND                      ULLENSVANG                      
+  49580 HORDALAND                      EIDFJORD                        
+  49631 HORDALAND                                                      
+  49750 HORDALAND                      EIDFJORD                        
+  49800 HORDALAND                      EIDFJORD                    PRI3    
+  49870 HORDALAND                      EIDFJORD                        
+  49901 HORDALAND                      ULVIK                           
+  49935 HORDALAND                      GRANVIN                         
+  50070 HORDALAND                      KVAM                        PRI3    
+  50080 HORDALAND                      KVAM                            
+  50105 HORDALAND                      KVAM                            
+  50120 HORDALAND                      KVAM                            
+  50150 HORDALAND                      KVINNHERAD                      
+  50170 HORDALAND                      TYSNES                          
+  50180 HORDALAND                      AUSTEVOLL                       
+  50230 HORDALAND                      FUSA                            
+  50240 HORDALAND                      SAMNANGER                       
+  50250 HORDALAND                      SAMNANGER                       
+  50300 HORDALAND                      SAMNANGER                   PRI3   
+  50310 HORDALAND                      SAMNANGER                       
+  50351 HORDALAND                      SAMNANGER                       
+  50380 HORDALAND                      OS                              
+  50450 HORDALAND                      BERGEN                          
+  50480 HORDALAND                      BERGEN                          
+  50485 HORDALAND                      BERGEN                          
+  50490 HORDALAND                      BERGEN                          
+  50500 HORDALAND                      BERGEN                   WEBPRI3       
+  50510 HORDALAND                      SUND                            
+  50520 HORDALAND                      FJELL                           
+  50540 HORDALAND                      BERGEN                   WEBPRI1   
+  50960 HORDALAND                      OSTERØY                         
+  51090 HORDALAND                      VAKSDAL                         
+  51130 HORDALAND                      VAKSDAL                         
+  51250 HORDALAND                      VOSS                            
+  51470 HORDALAND                      VOSS                            
+  51530 HORDALAND                      VOSS                        PRI3    
+  51800 HORDALAND                      VOSS                        PRI3    
+  52170 HORDALAND                      VAKSDAL                         
+  52220 HORDALAND                      VAKSDAL                         
+  52290 HORDALAND                      MODALEN                     PRI3    
+  52320 HORDALAND                                                     
+  52400 HORDALAND                      LINDÅS                          
+  52410 HORDALAND                      LINDÅS                          
+  52440 HORDALAND                      MELAND                          
+  52450 HORDALAND                      MELAND                          
+  52460 HORDALAND                      ASKØY                           
+  52477 HORDALAND                      ØYGARDEN                        
+  52478 HORDALAND                      ØYGARDEN                        
+  52500 HORDALAND                      RADØY                           
+  52530 HORDALAND                      FEDJE                           
+  52535 HORDALAND                      FEDJE                       PRI3    
+  52550 HORDALAND                      AUSTRHEIM                       
+  52560 HORDALAND                                                      
+  52580 HORDALAND                      MASFJORDEN                      
+  52600 HORDALAND                      MASFJORDEN                      
+  52601 HORDALAND                      MASFJORDEN                      
+  52640 HORDALAND                      MASFJORDEN                      
+  52750 HORDALAND                      MASFJORDEN                      
+  52820 SOGN OG FJORDANE               GULEN                           
+  52860 SOGN OG FJORDANE               GULEN                       PRI3    
+  52930 SOGN OG FJORDANE               GULEN                           
+  52970 SOGN OG FJORDANE               HØYANGER                        
+  52990 SOGN OG FJORDANE               HØYANGER                        
+  53055 SOGN OG FJORDANE               VIK                             
+  53070 SOGN OG FJORDANE               VIK                             
+  53101 SOGN OG FJORDANE               VIK                         PRI3    
+  53130 SOGN OG FJORDANE               VIK                             
+  53160 HORDALAND                      VOSS                            
+  53180 HORDALAND                      VOSS                            
+  53690 SOGN OG FJORDANE               AURLAND                         
+  53700 SOGN OG FJORDANE               AURLAND                         
+  53730 SOGN OG FJORDANE               AURLAND                         
+  53950 SOGN OG FJORDANE               AURLAND                         
+  54120 SOGN OG FJORDANE               LÆRDAL                   WEBPRI1   
+  54320 SOGN OG FJORDANE               LÆRDAL                          
+  54420 SOGN OG FJORDANE               LÆRDAL                          
+  54500 SOGN OG FJORDANE               LÆRDAL                          
+  54600 SOGN OG FJORDANE               LÆRDAL                          
+  54760 SOGN OG FJORDANE               ÅRDAL                           
+  54780 SOGN OG FJORDANE               ÅRDAL                           
+  54810 SOGN OG FJORDANE               ÅRDAL                           
+  54811 SOGN OG FJORDANE               ÅRDAL                           
+  55290 OPPLAND                        LOM                         PRI3    
+  55430 SOGN OG FJORDANE               LUSTER                          
+  55550 SOGN OG FJORDANE               LUSTER                          
+  55670 SOGN OG FJORDANE               LUSTER                          
+  55700 SOGN OG FJORDANE               SOGNDAL                     PRI3    
+  55701 SOGN OG FJORDANE               SOGNDAL                         
+  55710 SOGN OG FJORDANE               SOGNDAL                         
+  55730 SOGN OG FJORDANE               SOGNDAL                         
+  55820 SOGN OG FJORDANE               SOGNDAL                     PRI3    
+  55840 SOGN OG FJORDANE               SOGNDAL                         
+  55910 SOGN OG FJORDANE               BALESTRAND                      
+  55930 SOGN OG FJORDANE               BALESTRAND                      
+  56010 SOGN OG FJORDANE               HØYANGER                        
+  56011 SOGN OG FJORDANE               HØYANGER                        
+  56020 SOGN OG FJORDANE               HØYANGER                        
+  56270 SOGN OG FJORDANE               HØYANGER                        
+  56280 SOGN OG FJORDANE               HØYANGER                        
+  56310 SOGN OG FJORDANE               HØYANGER                        
+  56320 SOGN OG FJORDANE               HØYANGER                        
+  56390 SOGN OG FJORDANE               SOLUND                          
+  56400 SOGN OG FJORDANE               SOLUND                          
+  56410 SOGN OG FJORDANE               HYLLESTAD                       
+  56420 SOGN OG FJORDANE               FJALER                          
+  56430 SOGN OG FJORDANE               FJALER                          
+  56480 SOGN OG FJORDANE               ASKVOLL                         
+  56520 SOGN OG FJORDANE               FJALER                          
+  56560 SOGN OG FJORDANE               FJALER                          
+  56645 SOGN OG FJORDANE               FJALER                          
+  56650 SOGN OG FJORDANE               FJALER                          
+  56780 SOGN OG FJORDANE               GAULAR                          
+  56805 SOGN OG FJORDANE               GAULAR                          
+  56850 SOGN OG FJORDANE               GAULAR                          
+  56960 SOGN OG FJORDANE               FØRDE                           
+  57000 SOGN OG FJORDANE               GAULAR                          
+  57390 SOGN OG FJORDANE               JØLSTER                         
+  57395 SOGN OG FJORDANE               JØLSTER                         
+  57420 SOGN OG FJORDANE               FØRDE                       PRI3    
+  57480 SOGN OG FJORDANE               FØRDE                           
+  57550 SOGN OG FJORDANE               NAUSTDAL                        
+  57660 SOGN OG FJORDANE               GLOPPEN                         
+  57680 SOGN OG FJORDANE               FLORA                           
+  57710 SOGN OG FJORDANE               FLORA                       PRI3    
+  57725 SOGN OG FJORDANE               FLORA                           
+  57770 SOGN OG FJORDANE               FLORA                       PRI3   
+  57780 SOGN OG FJORDANE               FLORA                           
+  57805 SOGN OG FJORDANE               BREMANGER                       
+  57810 SOGN OG FJORDANE               BREMANGER                       
+  57850 SOGN OG FJORDANE               BREMANGER                       
+  57940 SOGN OG FJORDANE               BREMANGER                       
+  57990 SOGN OG FJORDANE               GLOPPEN                         
+  58070 SOGN OG FJORDANE               GLOPPEN                     PRI3   
+  58100 SOGN OG FJORDANE               GLOPPEN                         
+  58320 SOGN OG FJORDANE               GLOPPEN                         
+  58390 SOGN OG FJORDANE               STRYN                           
+  58400 SOGN OG FJORDANE               STRYN                           
+  58480 SOGN OG FJORDANE               STRYN                           
+  58780 SOGN OG FJORDANE               EID                             
+  58880 SOGN OG FJORDANE               STRYN                           
+  58900 SOGN OG FJORDANE               STRYN                       PRI3    
+  58950 SOGN OG FJORDANE               HORNINDAL                       
+  58960 SOGN OG FJORDANE               HORNINDAL                       
+  59110 SOGN OG FJORDANE               VÅGSØY                      PRI3    
+  59210 SOGN OG FJORDANE               VÅGSØY                          
+  59250 SOGN OG FJORDANE               VÅGSØY                          
+  59400 SOGN OG FJORDANE               SELJE                           
+  59450 SOGN OG FJORDANE               SELJE                           
+  59590 MØRE OG ROMSDAL                ULSTEIN                         
+  59595 MØRE OG ROMSDAL                HERØY                           
+  59610 MØRE OG ROMSDAL                VANYLVEN                    PRI3    
+  59660 MØRE OG ROMSDAL                VOLDA                           
+  59670 MØRE OG ROMSDAL                VOLDA                           
+  59680 MØRE OG ROMSDAL                ØRSTA                       PRI3   
+  59681 MØRE OG ROMSDAL                ØRSTA                           
+  59750 MØRE OG ROMSDAL                SANDE                           
+  59800 MØRE OG ROMSDAL                HERØY                    WEBPRI3       
+  59900 MØRE OG ROMSDAL                ØRSTA                           
+  60010 MØRE OG ROMSDAL                SYKKYLVEN                       
+  60300 MØRE OG ROMSDAL                STRANDA                         
+  60400 MØRE OG ROMSDAL                NORDDAL                         
+  60500 MØRE OG ROMSDAL                NORDDAL                  WEBPRI1   
+  60620 MØRE OG ROMSDAL                NORDDAL                         
+  60700 MØRE OG ROMSDAL                STORDAL                         
+  60800 MØRE OG ROMSDAL                ØRSKOG                          
+  60805 MØRE OG ROMSDAL                ØRSKOG                          
+  60870 MØRE OG ROMSDAL                SULA                            
+  60890 MØRE OG ROMSDAL                ÅLESUND                         
+  60940 MØRE OG ROMSDAL                ÅLESUND                         
+  60951 MØRE OG ROMSDAL                ÅLESUND                         
+  60970 MØRE OG ROMSDAL                ÅLESUND                         
+  60985 MØRE OG ROMSDAL                GISKE                           
+  60990 MØRE OG ROMSDAL                GISKE                       PRI2    
+  61040 MØRE OG ROMSDAL                HARAM                           
+  61045 MØRE OG ROMSDAL                HARAM                           
+  61180 MØRE OG ROMSDAL                RAUMA                       PRI3    
+  61350 MØRE OG ROMSDAL                RAUMA                           
+  61550 MØRE OG ROMSDAL                RAUMA                           
+  61770 OPPLAND                        LESJA                       PRI3    
+  61820 MØRE OG ROMSDAL                NESSET                          
+  61870 MØRE OG ROMSDAL                NESSET                          
+  62160 MØRE OG ROMSDAL                MOLDE                           
+  62270 MØRE OG ROMSDAL                MOLDE                       PRI3    
+  62285 MØRE OG ROMSDAL                MOLDE                           
+  62360 MØRE OG ROMSDAL                MIDSUND                         
+  62470 MØRE OG ROMSDAL                SANDØY                          
+  62480 MØRE OG ROMSDAL                SANDØY                      PRI3    
+  62510 MØRE OG ROMSDAL                AUKRA                           
+  62600 MØRE OG ROMSDAL                FRÆNA                           
+  62700 MØRE OG ROMSDAL                FRÆNA                           
+  62890 MØRE OG ROMSDAL                EIDE                            
+  62900 MØRE OG ROMSDAL                EIDE                            
+  62960 MØRE OG ROMSDAL                GJEMNES                         
+  63100 MØRE OG ROMSDAL                SUNNDAL                         
+  63420 MØRE OG ROMSDAL                SUNNDAL                     PRI2   
+  63530 MØRE OG ROMSDAL                SUNNDAL                         
+  63580 SØR-TRØNDELAG                  OPPDAL                          
+  63583 SØR-TRØNDELAG                  OPPDAL                          
+  63705 SØR-TRØNDELAG                  OPPDAL                      PRI3    
+  63750 SØR-TRØNDELAG                  OPPDAL                          
+  63910 SØR-TRØNDELAG                  OPPDAL                          
+  64150 MØRE OG ROMSDAL                AVERØY                          
+  64245 MØRE OG ROMSDAL                FREI                            
+  64300 MØRE OG ROMSDAL                KRISTIANSUND                    
+  64320 MØRE OG ROMSDAL                KRISTIANSUND                    
+  64330 MØRE OG ROMSDAL                KRISTIANSUND                PRI3    
+  64460 MØRE OG ROMSDAL                TINGVOLL                        
+  64550 MØRE OG ROMSDAL                TINGVOLL                    PRI3    
+  64580 MØRE OG ROMSDAL                SUNNDAL                         
+  64620 MØRE OG ROMSDAL                SUNNDAL                         
+  64760 MØRE OG ROMSDAL                SURNADAL                        
+  64800 MØRE OG ROMSDAL                SURNADAL                        
+  64890 MØRE OG ROMSDAL                RINDAL                          
+  64900 MØRE OG ROMSDAL                RINDAL                          
+  65050 MØRE OG ROMSDAL                HALSA                           
+  65110 SØR-TRØNDELAG                  HEMNE                           
+  65130 MØRE OG ROMSDAL                TUSTNA                          
+  65145 MØRE OG ROMSDAL                AURE                            
+  65150 MØRE OG ROMSDAL                AURE                            
+  65200 SØR-TRØNDELAG                  HEMNE                           
+  65230 SØR-TRØNDELAG                  HEMNE                           
+  65270 SØR-TRØNDELAG                  HEMNE                           
+  65310 MØRE OG ROMSDAL                SMØLA                       PRI3    
+  65370 MØRE OG ROMSDAL                SMØLA                           
+  65450 SØR-TRØNDELAG                  HITRA                           
+  65600 SØR-TRØNDELAG                  HITRA                           
+  65650 SØR-TRØNDELAG                  HITRA                           
+  65900 SØR-TRØNDELAG                  FRØYA                           
+  65940 SØR-TRØNDELAG                  FRØYA                       PRI3    
+  65980 SØR-TRØNDELAG                  SNILLFJORD                      
+  66030 SØR-TRØNDELAG                  AGDENES                         
+  66035 SØR-TRØNDELAG                  AGDENES                         
+  66070 SØR-TRØNDELAG                  ORKDAL                          
+  66100 SØR-TRØNDELAG                  ORKDAL                          
+  66150 SØR-TRØNDELAG                  ORKDAL                          
+  66160 SØR-TRØNDELAG                  ORKDAL                          
+  66180 SØR-TRØNDELAG                  ORKDAL                          
+  66210 SØR-TRØNDELAG                  ORKDAL                          
+  66250 SØR-TRØNDELAG                  MELHUS                          
+  66580 SØR-TRØNDELAG                  OPPDAL                          
+  66620 SØR-TRØNDELAG                  RENNEBU                         
+  66730 SØR-TRØNDELAG                  RENNEBU                     PRI3    
+  66850 HEDMARK                        TYNSET                          
+  67020 SØR-TRØNDELAG                  SKAUN                           
+  67050 SØR-TRØNDELAG                  SKAUN                           
+  67150 SØR-TRØNDELAG                  TRONDHEIM                       
+  67155 SØR-TRØNDELAG                  TRONDHEIM                       
+  67160 SØR-TRØNDELAG                  MELHUS                          
+  67202 SØR-TRØNDELAG                  MELHUS                          
+  67240 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67255 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67450 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67540 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67770 SØR-TRØNDELAG                  HOLTÅLEN                        
+  67780 SØR-TRØNDELAG                  HOLTÅLEN                        
+  68000 SØR-TRØNDELAG                  TRONDHEIM                       
+  68130 SØR-TRØNDELAG                  TRONDHEIM                       
+  68230 SØR-TRØNDELAG                  TRONDHEIM                       
+  68270 SØR-TRØNDELAG                  MELHUS                          
+  68330 SØR-TRØNDELAG                  SELBU                           
+  68340 SØR-TRØNDELAG                  SELBU                       PRI3    
+  68420 SØR-TRØNDELAG                  TYDAL                           
+  68430 SØR-TRØNDELAG                  TYDAL                           
+  68840 SØR-TRØNDELAG                  TYDAL                           
+  68860 SØR-TRØNDELAG                  TRONDHEIM                   PRI2    
+  69050 SØR-TRØNDELAG                  MALVIK                          
+  69100 NORD-TRØNDELAG                 STJØRDAL                 WEBPRI1       
+  69150 NORD-TRØNDELAG                 STJØRDAL                    PRI3   
+  69230 NORD-TRØNDELAG                 STJØRDAL                        
+  69370 NORD-TRØNDELAG                 MERÅKER                         
+  69380 NORD-TRØNDELAG                 MERÅKER                     PRI3    
+  69420 NORD-TRØNDELAG                 MERÅKER                         
+  69470 NORD-TRØNDELAG                 MERÅKER                         
+  69550 NORD-TRØNDELAG                 STJØRDAL                        
+  69655 NORD-TRØNDELAG                 FROSTA                          
+  69865 NORD-TRØNDELAG                 LEVANGER                        
+  69960 NORD-TRØNDELAG                 LEVANGER                        
+  70150 NORD-TRØNDELAG                 VERDAL                      PRI3   
+  70340 NORD-TRØNDELAG                 VERDAL                          
+  70480 NORD-TRØNDELAG                 VERDAL                          
+  70500 NORD-TRØNDELAG                 VERDAL                          
+  70610 NORD-TRØNDELAG                 INDERØY                         
+  70670 NORD-TRØNDELAG                 STEINKJER                       
+  70675 NORD-TRØNDELAG                 STEINKJER                       
+  70740 NORD-TRØNDELAG                 STEINKJER                       
+  70820 NORD-TRØNDELAG                 STEINKJER                       
+  70850 NORD-TRØNDELAG                 SNÅSA                       PRI1
+  70900 NORD-TRØNDELAG                 SNÅSA                           
+  70930 NORD-TRØNDELAG                 SNÅSA                           
+  70990 NORD-TRØNDELAG                                                 
+  71000 NORD-TRØNDELAG                 STEINKJER                   PRI3  
+  71040 NORD-TRØNDELAG                 VERRAN                          
+  71100 NORD-TRØNDELAG                 VERRAN                          
+  71150 NORD-TRØNDELAG                 VERRAN                          
+  71195 NORD-TRØNDELAG                 MOSVIK                          
+  71200 NORD-TRØNDELAG                 MOSVIK                          
+  71250 NORD-TRØNDELAG                 LEKSVIK                         
+  71280 NORD-TRØNDELAG                 LEKSVIK                         
+  71340 SØR-TRØNDELAG                  RISSA                           
+  71380 SØR-TRØNDELAG                  RISSA                           
+  71550 SØR-TRØNDELAG                  ØRLAND                   WEB       
+  71580 SØR-TRØNDELAG                  BJUGN                           
+  71750 SØR-TRØNDELAG                  ÅFJORD                          
+  71780 SØR-TRØNDELAG                  ÅFJORD                          
+  71810 SØR-TRØNDELAG                  ÅFJORD                          
+  71850 SØR-TRØNDELAG                  FRØYA                       PRI3   
+  71870 SØR-TRØNDELAG                  ROAN                            
+  71900 SØR-TRØNDELAG                  ROAN                            
+  71950 SØR-TRØNDELAG                  OSEN                            
+  71990 SØR-TRØNDELAG                  OSEN                        PRI3    
+  72030 NORD-TRØNDELAG                 FLATANGER                       
+  72060 NORD-TRØNDELAG                 NAMDALSEID                  PRI3    
+  72100 NORD-TRØNDELAG                 NAMDALSEID                      
+  72250 NORD-TRØNDELAG                 NAMSOS                          
+  72580 NORD-TRØNDELAG                 NAMSOS                      PRI3    
+  72650 NORD-TRØNDELAG                 OVERHALLA                       
+  72710 NORD-TRØNDELAG                 OVERHALLA                       
+  72800 NORD-TRØNDELAG                 HØYLANDET                   PRI1    
+  73090 NORD-TRØNDELAG                 GRONG                           
+  73250 NORD-TRØNDELAG                 LIERNE                          
+  73500 NORD-TRØNDELAG                 LIERNE                      PRI3    
+  73800 NORD-TRØNDELAG                 LIERNE                          
+  74170 NORD-TRØNDELAG                 RØYRVIK                         
+  74320 NORD-TRØNDELAG                 NAMSSKOGAN                      
+  74350 NORD-TRØNDELAG                 NAMSSKOGAN                      
+  74360 NORD-TRØNDELAG                 NAMSSKOGAN                      
+  74530 NORD-TRØNDELAG                 NAMSSKOGAN                      
+  75020 NORD-TRØNDELAG                 NAMSOS                          
+  75050 NORD-TRØNDELAG                 FOSNES                          
+  75100 NORD-TRØNDELAG                 NÆRØY                           
+  75130 NORD-TRØNDELAG                 NÆRØY                           
+  75220 NORD-TRØNDELAG                 VIKNA                       PRI3    
+  75255 NORD-TRØNDELAG                 VIKNA                           
+  75270 NORD-TRØNDELAG                 VIKNA                           
+  75410 NORD-TRØNDELAG                 VIKNA                    WEBPRI3       
+  75550 NORD-TRØNDELAG                 LEKA                     WEBPRI3       
+  76080 NORDLAND                       BINDAL                          
+  76100 NORDLAND                       BINDAL                          
+  76250 NORDLAND                       SØMNA                           
+  76260 NORDLAND                       SØMNA                           
+  76330 NORDLAND                       BRØNNØY                     PRI3    
+  76380 NORDLAND                       BRØNNØY                         
+  76450 NORDLAND                       VEGA                        PRI3    
+  76470 NORDLAND                       VEVELSTAD                       
+  76530 NORDLAND                       ALSTAHAUG                   PRI3    
+  76700 KONTINENTALSOKKELEN            KONTINENTALSOKKELEN             
+  76750 NORDLAND                       ALSTAHAUG                   PRI3    
+  76840 NORDLAND                       HERØY                           
+  76900 NORSKEHAVET                    NORSKEHAVET                     
+  76920 NORDSJØEN                                                      
+  76921 NORDSJØEN                                                      
+  76923 NORSKEHAVET                                                    
+  76925 NORSKEHAVET                                                    
+  76926 NORDSJØEN                                                      
+  76927                                                                
+  76928 NORSKEHAVET                                                    
+  76930 NORSKEHAVET                                                    
+  76931 NORDSJØEN                                                      
+  76932 NORDSJØEN                                                      
+  76940 KONTINENTALSOKKELEN                                            
+  76941 KONTINENTALSOKKELEN            KONTINENTALSOKKELEN             
+  76942 KONTINENTALSOKKELEN                                            
+  76943 KONTINENTALSOKKELEN                                            
+  76944 KONTINENTALSOKKELEN                                            
+  76945 KONTINENTALSOKKELEN                                            
+  76946 KONTINENTALSOKKELEN            KONTINENTALSOKKELEN             
+  76947 KONTINENTALSOKKELEN                                            
+  76948 KONTINENTALSOKKELEN                                            
+  76949 KONTINENTALSOKKELEN                                            
+  76950 KONTINENTALSOKKELEN            KONTINENTALSOKKELEN             
+  76951 KONTINENTALSOKKELEN                                            
+  76952 KONTINENTALSOKKELEN                                            
+  76970 KYSTVAKTEN                                                     
+  76971 KYSTVAKTEN                                                     
+  76972 KYSTVAKTEN                                                     
+  76973 KYSTVAKTEN                                                     
+  76974 KYSTVAKTEN                                                     
+  76975 KYSTVAKTEN                                                     
+  76976 KYSTVAKTEN                                                     
+  76977 KYSTVAKTEN                                                     
+  76978 KYSTVAKTEN                                                     
+  76979 KYSTVAKTEN                                                     
+  76980 KYSTVAKTEN                                                     
+  76981 KYSTVAKTEN                                                     
+  76982 KYSTVAKTEN                                                     
+  76983 KYSTVAKTEN                                                     
+  76984 KYSTVAKTEN                                                     
+  76985 KYSTVAKTEN                                                     
+  76986 KYSTVAKTEN                                                     
+  76987 KYSTVAKTEN                                                     
+  76988 KYSTVAKTEN                                                     
+  76989 KYSTVAKTEN                                                     
+  76990 KYSTVAKTEN                                                     
+  76991 KYSTVAKTEN                                                     
+  77000                                                                
+  77001                                                                
+  77002 NORSKEHAVET                                                    
+  77003 FORSKNINGSFARTØY                                               
+  77004 FORSKNINGSFARTØY                                               
+  77005 FORSKNINGSFARTØY                                               
+  77006 FORSKNINGSFARTØY                                               
+  77020 FJERNE FARVANN                                                 
+  77021 FJERNE FARVANN                                                 
+  77022 FJERNE FARVANN                                                 
+  77023 FJERNE FARVANN                                                 
+  77024 FJERNE FARVANN                                                 
+  77030                                                                
+  77180 NORDLAND                       VEFSN                           
+  77205 NORDLAND                       VEFSN                           
+  77230 NORDLAND                       VEFSN                       PRI3    
+  77270 NORDLAND                       GRANE                           
+  77403 NORDLAND                                                               
+  77550 NORDLAND                       GRANE                       PRI3    
+  77850 NORDLAND                       HATTFJELLDAL                    
+  78180 NORDLAND                       VEFSN                           
+  78250 NORDLAND                       LEIRFJORD                       
+  78280 NORDLAND                       DØNNA                           
+  78350 NORDLAND                       LEIRFJORD                       
+  78370 NORDLAND                       HEMNES                          
+  78395 NORDLAND                       HEMNES                          
+  78423 NORDLAND                                                               
+  78610 NORDLAND                       HEMNES                          
+  78770 NORDLAND                       HATTFJELLDAL                    
+  78800 NORDLAND                       HATTFJELLDAL                PRI3
+  78850 NORDLAND                       HEMNES                          
+  79110 NORDLAND                       HEMNES                          
+  79253 NORDLAND                                                               
+  79480 NORDLAND                       RANA                            
+  79600 NORDLAND                       RANA                        PRI3    
+  79640 NORDLAND                       RANA                            
+  79710 NORDLAND                       RANA                            
+  79780 NORDLAND                       RANA                            
+  79793 NORDLAND                                                               
+  80040 NORDLAND                       NESNA                           
+  80101 NORDLAND                       LURØY                       PRI3   
+  80130 NORDLAND                       LURØY                           
+  80200 NORDLAND                       LURØY                           
+  80340 NORDLAND                       TRÆNA                           
+  80345 NORDLAND                       TRÆNA                           
+  80590 NORDLAND                       RØDØY                           
+  80610 NORDLAND                       RØDØY                    WEBPRI3       
+  80620 NORDLAND                       MELØY                           
+  80630 NORDLAND                       MELØY                           
+  80700 NORDLAND                       MELØY                       PRI3    
+  80720 NORDLAND                       MELØY                           
+  80740 NORDLAND                       MELØY                           
+  80790 NORDLAND                       GILDESKÅL                       
+  80850 NORDLAND                       GILDESKÅL                       
+  81080 NORDLAND                       BEIARN                          
+  81110 NORDLAND                       BEIARN                          
+  81250 NORDLAND                       BEIARN                          
+  81360 NORDLAND                       SKJERSTAD                       
+  81370 NORDLAND                       SKJERSTAD                       
+  81390 NORDLAND                       SKJERSTAD                       
+  81680 NORDLAND                       SALTDAL                     PRI3    
+  81730 NORDLAND                       SALTDAL                         
+  81770 NORDLAND                       SALTDAL                         
+  81900 NORDLAND                       FAUSKE                          
+  81930 NORDLAND                       SALTDAL                         
+  81940 NORDLAND                       SALTDAL                         
+  81950 NORDLAND                       SALTDAL                         
+  82085 NORDLAND                       FAUSKE                          
+  82090 NORDLAND                       FAUSKE                          
+  82160 NORDLAND                       BODØ                            
+  82230 NORDLAND                       BODØ                            
+  82260 NORDLAND                       BODØ                            
+  82290 NORDLAND                       BODØ                     WEBPRI1       
+  82291 NORDLAND                       BODØ                        
+  82310 NORDLAND                       BODØ                            
+  82410 NORDLAND                       BODØ                        PRI3    
+  82530 NORDLAND                       BODØ                            
+  82560 NORDLAND                       BODØ                            
+  82630 NORDLAND                       FAUSKE                          
+  82650 NORDLAND                       SØRFOLD                         
+  82840 NORDLAND                       SØRFOLD                         
+  83100 NORDLAND                       STEIGEN                         
+  83300 NORDLAND                       STEIGEN                         
+  83500 NORDLAND                       HAMARØY                         
+  83503 NORDLAND                                                               
+  83520 NORDLAND                       HAMARØY                         
+  83550 NORDLAND                       HAMARØY                     PRI3    
+  83580 NORDLAND                       HAMARØY                         
+  83880 NORDLAND                       TYSFJORD                        
+  83953 NORDLAND                                                               
+  84060 NORDLAND                       BALLANGEN                       
+  84070 NORDLAND                       BALLANGEN                       
+  84190 NORDLAND                       NARVIK                          
+  84400 NORDLAND                       NARVIK                          
+  84450 NORDLAND                       NARVIK                          
+  84710 NORDLAND                       NARVIK                          
+  84930 NORDLAND                       EVENES                          
+  84960 NORDLAND                       EVENES                          
+  84970 NORDLAND                       EVENES                          
+  84971 NORDLAND                       EVENES                          
+  84990 NORDLAND                       TJELDSUND                       
+  84995 NORDLAND                       TJELDSUND                       
+  85035 NORDLAND                       LØDINGEN                        
+  85180 NORDLAND                       LØDINGEN                        
+  85380 NORDLAND                       VÅGAN                    WEBPRI3       
+  85410 NORDLAND                       VÅGAN                           
+  85440 NORDLAND                       VÅGAN                           
+  85450 NORDLAND                       VÅGAN                       PRI3    
+  85455 NORDLAND                       VÅGAN                           
+  85470 NORDLAND                       VÅGAN                           
+  85540 NORDLAND                       VESTVÅGØY                       
+  85545 NORDLAND                       VESTVÅGØY                       
+  85560 NORDLAND                       VESTVÅGØY                       
+  85630 NORDLAND                       FLAKSTAD                        
+  85653 NORDLAND                                                               
+  85655 NORDLAND                       MOSKENES                        
+  85660 NORDLAND                       MOSKENES                        
+  85850 NORDLAND                       VÆRØY                           
+  85840 NORDLAND                       VÆRØY                           
+  85855 NORDLAND                       VÆRØY                           
+  85890 NORDLAND                       RØST                            
+  85891 NORDLAND                       RØST                        PRI3    
+  85892 NORDLAND                       RØST                        PRI3    
+  86140 NORDLAND                       VESTVÅGØY                       
+  86500 NORDLAND                       SORTLAND                    PRI3    
+  86600 NORDLAND                       HADSEL                          
+  86610 NORDLAND                       HADSEL                          
+  86630 NORDLAND                       HADSEL                          
+  86740 NORDLAND                       BØ                          PRI3    
+  86800 NORDLAND                       BØ                              
+  86850 NORDLAND                       ØKSNES                          
+  86900 NORDLAND                       ØKSNES                          
+  86950 NORDLAND                       ØKSNES                          
+  86990 NORDLAND                       SORTLAND                        
+  87110 NORDLAND                       ANDØY                    WEBPRI3       
+  87111 NORDLAND                       ANDØY                           
+  87120 NORDLAND                       ANDØY                           
+  87320 TROMS                          KVÆFJORD                        
+  87430 TROMS                          BJARKØY                         
+  87640 TROMS                          HARSTAD                     PRI3    
+  87750 TROMS                          HARSTAD                         
+  87763 TROMS                                                          
+  87820 TROMS                          IBESTAD                         
+  87860 TROMS                          SKÅNLAND                        
+  87920 TROMS                          GRATANGEN                       
+  88020 TROMS                          SALANGEN                        
+  88023 TROMS                                                          
+  88100 TROMS                          BARDU                           
+  88140 TROMS                          DYRØY                           
+  88180 TROMS                          SØRREISA                        
+  88190 TROMS                          LENVIK                          
+  88200 TROMS                          TRANØY                      PRI3    
+  88220 TROMS                          TRANØY                          
+  88340 TROMS                          TRANØY                          
+  88460 TROMS                          TORSKEN                         
+  88500 TROMS                          TORSKEN                         
+  88580 TROMS                          TORSKEN                         
+  88620 TROMS                          BERG                            
+  88660 TROMS                          LENVIK                          
+  88690 TROMS                          LENVIK                      PRI3    
+  88888 TROMS                          LENVIK                          
+  89110 TROMS                          MÅLSELV                         
+  89213 TROMS                                                          
+  89233 TROMS                                                          
+  89350 TROMS                          MÅLSELV                  WEBPRI3       
+  89351 TROMS                          MÅLSELV                         
+  89495 TROMS                          BARDU                           
+  89500 TROMS                          BARDU                           
+  89650 TROMS                          BARDU                           
+  89950 TROMS                          MÅLSELV                         
+  90080 TROMS                          BALSFJORD                       
+  90200 TROMS                          BALSFJORD                       
+  90400 TROMS                          TROMSØ                          
+  90450 TROMS                          TROMSØ                   WEBPRI1       
+  90490 TROMS                          TROMSØ                      PRI3    
+  90491 TROMS                          TROMSØ                          
+  90492 TROMS                                                          
+  90640 TROMS                          KARLSØY                         
+  90650 TROMS                          KARLSØY                         
+  90720 TROMS                          KARLSØY                         
+  90721 TROMS                          KARLSØY                         
+  90760 TROMS                          KARLSØY                         
+  90800 TROMS                          KARLSØY                     PRI3    
+  91080 TROMS                                                          
+  91270 TROMS                          LYNGEN                          
+  91283 TROMS                                                          
+  91370 TROMS                          STORFJORD                       
+  91380 TROMS                          STORFJORD                   PRI3    
+  91400 TROMS                          STORFJORD                       
+  91430 TROMS                          STORFJORD                       
+  91600 TROMS                          KÅFJORD                         
+  91660 TROMS                          KÅFJORD                         
+  91700 TROMS                          SKJERVØY                        
+  91725 TROMS                          SKJERVØY                        
+  91740 TROMS                          NORDREISA                       
+  91760 TROMS                          NORDREISA                   PRI3    
+  91930 TROMS                          NORDREISA                       
+  92120 ANTARKTIS                                                      
+  92130 ANTARKTIS                                                      
+  92190 TROMS                          KVÆNANGEN                       
+  92350 TROMS                          KVÆNANGEN                   PRI3    
+  92400 TROMS                          KVÆNANGEN                       
+  92750 FINNMARK                       HASVIK                          
+  92755 FINNMARK                       HASVIK                          
+  92770 FINNMARK                       HASVIK                          
+  92870 FINNMARK                       LOPPA                           
+  92910 FINNMARK                       ALTA                            
+  93140 FINNMARK                       ALTA                     WEBPRI2       
+  93141 FINNMARK                                                       
+  93300 FINNMARK                       GUOVDAGEAIDNU-KAUTOKEINO        
+  93301 FINNMARK                       GUOVDAGEAIDNU-KAUTOKEINO    PRI3    
+  93500 FINNMARK                       ALTA                            
+  93700 FINNMARK                       GUOVDAGEAIDNU-KAUTOKEINO WEBPRI1       
+  93900 FINNMARK                       GUOVDAGEAIDNU-KAUTOKEINO    PRI3    
+  94130 FINNMARK                       KVALSUND                        
+  94150 FINNMARK                       KVALSUND                        
+  94180 FINNMARK                       KVALSUND                        
+  94240 FINNMARK                       HAMMERFEST                      
+  94255 FINNMARK                       HAMMERFEST                      
+  94280 FINNMARK                       HAMMERFEST                  PRI3    
+  94281 FINNMARK                       HAMMERFEST                      
+  94451 FINNMARK                       MÅSØY                           
+  94500 FINNMARK                       MÅSØY                    WEBPRI2       
+  94650 FINNMARK                       MÅSØY                           
+  94680 FINNMARK                       NORDKAPP                    PRI3    
+  94710 FINNMARK                       NORDKAPP                        
+  94800 FINNMARK                       NORDKAPP                        
+  94900 FINNMARK                       PORSANGER                       
+  95350 FINNMARK                       PORSANGER                   PRI2    
+  95610 FINNMARK                       PORSANGER                       
+  95900 FINNMARK                       LEBESBY                         
+  95950 FINNMARK                       LEBESBY                         
+  96205 FINNMARK                       LEBESBY                         
+  96220 FINNMARK                       LEBESBY                         
+  96270 FINNMARK                       LEBESBY                         
+  96305 FINNMARK                       GAMVIK                          
+  96310 FINNMARK                       GAMVIK                      PRI3   
+  96400 FINNMARK                       GAMVIK                   WEBPRI3   
+  96560 FINNMARK                                                       
+  96600 FINNMARK                       GAMVIK                          
+  96800 FINNMARK                       DEATNU-TANA                 PRI3    
+  96931 FINNMARK                       DEATNU-TANA                     
+  96970 FINNMARK                       DEATNU-TANA                     
+  97110 FINNMARK                       KARASJOHKA-KARASJOK             
+  97150 FINNMARK                       KARASJOHKA-KARASJOK             
+  97250 FINNMARK                       KARASJOHKA-KARASJOK             
+  97251 FINNMARK                       KARASJOHKA-KARASJOK         PRI1    
+  97320 FINNMARK                       KARASJOHKA-KARASJOK             
+  97350 FINNMARK                       KARASJOHKA-KARASJOK         PRI3   
+  97580 FINNMARK                       KARASJOHKA-KARASJOK             
+  98090 FINNMARK                       BERLEVÅG                    PRI3    
+  98105 FINNMARK                       BERLEVÅG                        
+  98340 FINNMARK                       BÅTSFJORD                       
+  98350 FINNMARK                       BÅTSFJORD                       
+  98360 FINNMARK                       BÅTSFJORD                       
+  98400 FINNMARK                       BÅTSFJORD                   PRI3    
+  98550 FINNMARK                       VARDØ                    WEBPRI1   
+  98580 FINNMARK                       VARDØ                           
+  98650 FINNMARK                       VADSØ                           
+  98790 FINNMARK                       VADSØ                       PRI3    
+  98850 FINNMARK                       VADSØ                           
+  99000 FINNMARK                       UNJARGGA-NESSEBY                
+  99120 FINNMARK                       SØR-VARANGER                    
+  99330 FINNMARK                       SØR-VARANGER                    
+  99370 FINNMARK                       SØR-VARANGER             WEBPRI3       
+  99371 FINNMARK                                                       
+  99410 FINNMARK                       SØR-VARANGER                    
+  99460 FINNMARK                       SØR-VARANGER                    
+  99500 FINNMARK                       SØR-VARANGER                    
+  99700 SVALBARD                       BJØRNØYA                        
+  99710 SVALBARD                       BJØRNØYA                 WEBPRI1   
+  99711 SVALBARD                       BJØRNØYA                        
+  99720 SVALBARD                       HOPEN                    WEBPRI1   
+  99735 SVALBARD                       SPITSBERGEN                     
+  99750 SVALBARD                       SPITSBERGEN                     
+  99754 SVALBARD                       SPITSBERGEN                     
+  99760 SVALBARD                       SPITSBERGEN                 PRI3    
+  99780 SVALBARD                                                       
+  99790 SVALBARD                       SPITSBERGEN                     
+  99800 SVALBARD                       SPITSBERGEN                     
+  99820 SVALBARD                                                       
+  99821 SVALBARD                                                       
+  99840 SVALBARD                       SPITSBERGEN              WEBPRI1   
+  99841 SVALBARD                       SPITSBERGEN                     
+  99910 SVALBARD                       SPITSBERGEN              WEBPRI1   
+  99927 SVALBARD                       SPITSBERGEN                     
+  99935 SVALBARD                       SPITSBERGEN                     
+  99940 JAN MAYEN                      JAN MAYEN                       
+  99950 JAN MAYEN                      JAN MAYEN                WEBPRI1   
+  99951 JAN MAYEN                      JAN MAYEN                       
+  99980 JAN MAYEN                                                     
+  99981 JAN MAYEN                                                      
+  99982 JAN MAYEN                                                      
+  99983 JAN MAYEN                                                      
+  99984 JAN MAYEN                                                      
+  99985 JAN MAYEN                                                     
+  99986                                                               
+  99987                                                                
+  99988                                                                
+  99989                                                                
+  99990                                                                
+  99991                                                                
+  99992                                                                
+  99993                                                                
+  99994                                                                
+  99995                                                                
+  99996                                                                
+  99997                                                                
+  99998                                                                
+  99999                                                                
+ 202000 NORDLAND                                                      
+ 203600 NORDLAND                                                      
+ 208000 FINNMARK                                                      
+ 210400 NORDLAND                                                      
+ 211000 NORDLAND                                                      
+ 220600 NORD-TRØNDELAG                                                
+ 222200 NORD-TRØNDELAG                                                
+ 230800 SØR-TRØNDELAG                                                 
+ 241800 ØSTFOLD                                                          
+ 250000 ØSTFOLD                                                       
+ 280700 FINNMARK                                                      

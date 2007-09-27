@@ -1,0 +1,13 @@
+0		Ingen data
+3	RR	regn
+7	RB	regnbyge
+2	SS	snø
+5	SB	snøbyge
+1	SL	sludd
+4	LB	sluddbyge
+8	YR	yr
+10	HG	hagl
+12	DU	dugg
+17	RI	rim
+20	TO	torden
+28	SF	snøfokk
