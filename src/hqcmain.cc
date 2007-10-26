@@ -1054,6 +1054,7 @@ void HqcMainWindow::TimeseriesOK() {
   vector<POptions::PlotOptions> plotoptions;
   vector<int> parameterIndex;
   vector<int> stationIndex;
+  cerr << "TimeseriesOK started" << endl;
   tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
 
   // make timeseries
@@ -1562,7 +1563,7 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   int atypeId = typeId < 0 ? -typeId : typeId;
   if (  lstdlg->allType->isChecked() ) return TRUE;
   if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
-  if ( (environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 501)) || atypeId == 330 && lstdlg->aaType->isChecked() ) return TRUE;
+  if ( (environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 501)) || (atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
   if ( environment == 2 && atypeId == 3 && lstdlg->alType->isChecked() ) return TRUE;
   if ( environment == 12 && atypeId == 3 && lstdlg->avType->isChecked() ) return TRUE;
   if ( atypeId == 410 && lstdlg->aoType->isChecked() ) return TRUE;
@@ -1641,6 +1642,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       bool correctSensor = (dit->sensor() - '0' == sSensor );
       bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime(), allTypes );
 
+      //      cerr << "Knut tester Myken : " << stnr << " " << dit->paramID() << " " << dit->typeID() << " " << dit->sensor() << " " << dit->obstime() << " " << correctTypeId << endl;
+
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
 	aggTyp = dit->typeID();
@@ -1653,12 +1656,13 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       int hour = otime.hour();
       int typeId = dit->typeID();
             
-      if ( otime == protime && stnr == prstnr && dit->paramID() == prParam ) {
+      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam) ) {
 	protime = otime;
 	prstnr = stnr;
 	prtypeId = typeId;
 	prParam = -1;
 	dit++;
+	//	cerr << "Knut tester Myken igjen: " << endl;
 	continue;
       }
       tdl.otime = otime;
@@ -1667,7 +1671,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
       if ( (correctTypeId && correctLevel && correctSensor && typeId != 501 && !isaggreg) ) {
 	tdl.typeId[dit->paramID()] = typeId;
-	if ( typeId == -6 || typeId == -330 || typeId == 306 || typeId == 308 ) {
+	if ( typeId == -6 || typeId == -330 || typeId == -342 || typeId == 306 || typeId == 308 ) {
 	  prParam = dit->paramID();
 	}
 	tdl.showTypeId = typeId;
@@ -1696,7 +1700,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       otime = dit->obstime();
       stnr = dit->stationID();
       typeId = dit->typeID();
-      if ( !correctHqcType ) {
+      if ( !correctHqcType || !correctSensor ) {
 	//      	++dit;
 	continue;
       }
@@ -2260,6 +2264,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
     QString cmn = QString(ccmn);
     cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
     emit(statTimeReceived(cmn));
+    TimeseriesOK();
   }
   else if(letter.command == qmstrings::timechanged){
     miutil::miTime newTime(letter.common);
@@ -2701,7 +2706,7 @@ miutil::miString HqcMainWindow::hqcType(int typeId, int env) {
   // Generates string to send to Diana
   miutil::miString hqct = "none";
   if ( env == 8 ) {
-    if ( typeId == 3 || typeId == 330 )
+    if ( typeId == 3 || typeId == 330 || typeId == 342 )
       hqct = "AA";
     else if ( typeId == 1 || typeId == 6 || typeId == 312 || typeId == 412 )
       hqct = "VS";
