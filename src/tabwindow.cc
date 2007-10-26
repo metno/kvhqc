@@ -366,7 +366,11 @@ void MDITabWindow::updateKvBase(int row, int col) {
    }
     if ( oldCorVal == "-32767.0" ) { 
       cif.set(15,5);                      //Interpol
-      const int misfl = cif.flag(6) - 2;
+      int misfl;
+      if ( cif.flag(6) == 0 ) 
+	misfl = 1;
+      else
+	misfl  = cif.flag(6) - 2;
       cif.set(6,misfl);
      }
     const kvControlInfo & cin = cif;
