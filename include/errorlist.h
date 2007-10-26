@@ -285,6 +285,7 @@ private:
    * \return TRUE if given parameter has model values
    */
   bool paramHasModel(int);
+  int paramIsCode(int); 
   /**
    * \return TRUE if given observation is missing
    */
