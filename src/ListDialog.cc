@@ -411,7 +411,6 @@ void ListDialog::otwiCheck() {
   mmType->setChecked(FALSE);
   msType->setChecked(FALSE);
   fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
   ndType->setChecked(FALSE);
   noType->setChecked(FALSE);
   piType->setChecked(FALSE);
@@ -430,6 +429,7 @@ void ListDialog::otwiCheck() {
     mpType->setChecked(TRUE);
     mmType->setChecked(TRUE);
     msType->setChecked(TRUE);
+    nsType->setChecked(TRUE);
     fmType->setChecked(TRUE);
     ptType->setChecked(TRUE);
     vsType->setChecked(TRUE);
@@ -1035,7 +1035,7 @@ StationTable::StationTable(QStringList selStatNum,
        	    (webStat && web) || (priStat && pri) ))
       continue;
     QString strEnv;
-    if ( (aa == TRUE && ((strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330))) ) strEnv += "AA";
+    if ( (aa == TRUE && ((strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
     if ( (af == TRUE && strStType == "1" && findInTypes(oit, 311)) )  strEnv += "AF";
     if ( (al == TRUE && strStType == "2" && findInTypes(oit, 3)) ) strEnv += "AL"; 
     if ( (av == TRUE && strStType == "12" && findInTypes(oit, 3)) )  strEnv += "AV";
@@ -1114,7 +1114,7 @@ QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oi
     env = "MS"; 
   else if ( strStType == "7" && findInTypes(oit, 11) )
     env = "MV"; 
-  else if ( (strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) )
+  else if ( (strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342) )
     env = "AA"; 
   else if ( strStType == "9" && findInTypes(oit, 402) )
     env = "ND"; 
