@@ -53,6 +53,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 using namespace kvalobs;
 
 int mP[] = {61,81,109,110,177,178,211,262};
+int cP[] = {  1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
+		    13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
+		     24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
+		     35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+		     45, 46, 47, 48, 49,151,301,302,303,304,
+		     305,306,307,308,1021,1022,1025,1026};
 const int headSize = 0;
 
 
@@ -559,7 +565,7 @@ ErrorList::ErrorList(QStringList& selPar,
 	  }
 	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
 	  rStat.rstnr = ostnr;
-	  //	  cerr << "Dist = " << dist << endl;
+	  //       	  cerr << rStat.stnr << " - " << rStat.rstnr << " Dist = " << rStat.dist << endl;
 	  if (rStatList.size() == 0 ) 
 	    rStatList.push_back(rStat);
 	  else {
@@ -590,6 +596,12 @@ ErrorList::ErrorList(QStringList& selPar,
     pstnr = stnr;
     ppanr = panr;
   }
+  for ( vector<refs>::iterator dit = rStatList.begin(); 
+		  dit != rStatList.end(); dit++ ) {
+    cerr << dit->stnr << " - " << dit->rstnr << " Dist = " << dit->dist << endl;
+  }
+
+
   setNumRows( memStore3.size() + headSize );
 
   for ( int i = 0; i < memStore3.size(); i++ ) {
@@ -630,15 +642,15 @@ ErrorList::ErrorList(QStringList& selPar,
     DataCell* tiIt = new DataCell(this, QTableItem::Never,strDat);
     setItem(insRow + headSize,7,tiIt);
     
-    strDat = strDat.setNum(memStore3[i].orig,'f',1);
+    strDat = strDat.setNum(memStore3[i].orig,'f',paramIsCode(memStore3[i].parNo));
     DataCell* ogIt = new DataCell(this, QTableItem::Never,strDat);
     setItem(insRow + headSize,8,ogIt);
     
-    strDat = strDat.setNum(memStore3[i].corr,'f',1);
+    strDat = strDat.setNum(memStore3[i].corr,'f',paramIsCode(memStore3[i].parNo));
     DataCell* coIt = new DataCell(this, QTableItem::Never,strDat);
     setItem(insRow + headSize,9,coIt);
         
-    strDat = strDat.setNum(memStore3[i].morig,'f',1);
+    strDat = strDat.setNum(memStore3[i].morig,'f',paramIsCode(memStore3[i].parNo));
     DataCell* mlIt = new DataCell(this, QTableItem::Never,strDat);
     setItem(insRow + headSize,10,mlIt);
     
@@ -904,6 +916,13 @@ bool ErrorList::paramHasModel(int parNo) {
   return false;
 }
 
+int ErrorList::paramIsCode(int parNo) {
+  for ( int i = 0; i < 58; i++ ) {
+    if ( parNo == cP[i] ) 
+      return 0;
+  }
+  return 1;
+}
 void ErrorList::tableCellClicked(int row,
                                 int col,
                                 int button,
