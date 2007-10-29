@@ -28,19 +28,16 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-//#include <kvservice/qt/kvQtApp.h>
-//#include <kvservice/kvcpp2/corba/CorbaKvApp.h>
-#include <KvApp.h>
+#include <corba/CorbaKvApp.h>
 #include <qapplication.h>
 #include <decodeutility/kvDataFormatter.h>
-//#include "RRDialog.h"
 #include "identifyUser.h"
 #include <qmessagebox.h>
 #include <puTools/miString.h>
 
 #include "MultiStationSelection.h"
 
-//typedef kvservice::KvApp KvApp;
+typedef kvservice::corba::CorbaKvApp KvApp;
 typedef std::list<kvalobs::kvData> kvDataList;
 
 
@@ -61,23 +58,18 @@ int main( int argc, char ** argv )
   else 
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
 
-  miutil::conf::ConfSection *confSec = kvservice::KvApp::readConf(myconf);
+  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
   if(!confSec) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;
   }
-  kvservice::KvApp kvapp(argc, argv, confSec);
+  KvApp kvapp(argc, argv, confSec);
 
   QApplication a( argc, argv, true );
-  //  KvApp app( argc, argv, true );
 
-
-//  kvDataList dl = 
-//    decodeutility::kvdataformatter::getKvData( station );
 
   QString userName;
-  //  reinserter = Authentication::identifyUser( dynamic_cast<kvservice::KvApp *>(qApp),
-  reinserter = Authentication::identifyUser( kvservice::KvApp::kvApp,
+  reinserter = Authentication::identifyUser( KvApp::kvApp,
   					     "ldap.oslo.dnmi.no", userName);
   if ( reinserter == 0 ) {
     int res = QMessageBox::warning( 0, "Autentisering", 

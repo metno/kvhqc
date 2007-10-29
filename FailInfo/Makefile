@@ -11,7 +11,7 @@ UI:=
 include $(KVDIR)/conf/make.$(OSTYPE)
 
 INCLUDE:= $(BOOSTINCLUDE) \
-	 -I$(OMNIINCLUDE) \
+	 $(OMNIINCLUDE) \
 	 -I$(KVDIR)/include \
 	 -I$(KVDIR)/include/kvalobs \
 	 -I$(KVDIR)/include/miutil \
@@ -20,7 +20,7 @@ INCLUDE:= $(BOOSTINCLUDE) \
 	 -I$(KVDIR)/include/kvskel \
 	 -I$(KVDIR)/include/fileutil \
 	 -I$(KVDIR)/include/corbahelper \
-	 -I$(KVDIR)/include/kvservice/qt \
+	 -I$(KVDIR)/include/kvservice/kvcpp \
 	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools \
 	 `pkg-config --cflags qt-mt`
 

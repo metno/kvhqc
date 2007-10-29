@@ -30,7 +30,7 @@ INCLUDE:=-Isrc/ -I../include \
 	 -I$(KVDIR)/include/kvalobs \
 	 -I$(KVDIR)/include/miutil \
 	 -I$(KVDIR)/include/dnmithread \
-	 -I$(KVDIR)/include/db \
+	 -I$(KVDIR)/include/kvdb \
 	 -I$(KVDIR)/include/kvskel \
 	 -I$(KVDIR)/include/fileutil \
 	 -I$(KVDIR)/include/corbahelper \
@@ -40,7 +40,7 @@ INCLUDE:=-Isrc/ -I../include \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
 LIB:=	-L../authentication/ -lauthentication \
-	-L$(KVDIR)/lib -lkvcpp -ldecodeutility -lkvalobs -ldb \
+	-L$(KVDIR)/lib -lkvcpp -ldecodeutility -lkvalobs -lkvdb \
 	-lfileutil -ldl -ldnmithread \
 	-lcorbahelper -lcorba_skel \
 	-lmiutil -lmiconfparser -lmilog \

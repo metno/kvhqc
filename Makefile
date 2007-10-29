@@ -59,7 +59,7 @@ INCLUDE=-I$(INCDIR) \
 	-I$(KVDIR)/include/kvalobs \
 	-I$(KVDIR)/include/miutil \
 	-I$(KVDIR)/include/dnmithread \
-	-I$(KVDIR)/include/db \
+	-I$(KVDIR)/include/kvdb \
 	-I$(KVDIR)/include/kvskel   \
 	-I$(KVDIR)/include/corbahelper \
 	-I$(KVDIR)/include/kvservice/kvcpp \
@@ -78,7 +78,7 @@ INCLUDE=-I$(INCDIR) \
 	-I$(LOCALINC)/qTimeseries/include \
 	-I$(LOCALINC)/pets.2.0/include
 
-LINKS:= -L$(WATCHDIR) -lWatchRR -L$(WEATHERDIR) -lWeather -L$(FAILDIR) -lFailInfo -L$(AUTHDIR) -lauthentication -lldap -L$(KVDIR)/$(LIBDIR) -lkvcpp -ldecodeutility -lkvalobs -ldb -lfileutil -ldnmithread -L$(HOME)/apps/lib -lmiutil -lpuTools -lmilog -L$(BOOST_LIB) -lboost_thread -L$(LOCALDIR)/$(LIBDIR) -lqTimeseries -lqUtilities -lpets2 -ltsData -lpuMet -lglText -lGLP -lmiconfparser -lpuDatatypes -lparameter -lpuCtools -lpets2 -L$(KVDIR)/src/service-libs/qt -lcorbahelper -lcorba_skel -L$(OMNI_LIB) -lomniORB4 -lomnithread -L$(QTDIR)/lib $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-1.0`
+LINKS:= -L$(WATCHDIR) -lWatchRR -L$(WEATHERDIR) -lWeather -L$(FAILDIR) -lFailInfo -L$(AUTHDIR) -lauthentication -lldap -L$(KVDIR)/$(LIBDIR) -lkvcpp -ldecodeutility -lkvalobs -lkvdb -lfileutil -ldnmithread -L$(HOME)/apps/lib -lmiutil -lpuTools -lmilog -L$(BOOST_LIB) -lboost_thread -L$(LOCALDIR)/$(LIBDIR) -lqTimeseries -lqUtilities -lpets2 -ltsData -lpuMet -lglText -lGLP -lmiconfparser -lpuDatatypes -lparameter -lpuCtools -lpets2 -L$(KVDIR)/src/service-libs/qt -lcorbahelper -lcorba_skel -L$(OMNI_LIB) -lomniORB4 -lomnithread -L$(QTDIR)/lib $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-1.0`
 
 
 OPTIONS="CXX=${CXX}" "CCFLAGS=${CXXFLAGS} ${DEFINES}" "CC=${CC}" "CFLAGS=${CFLAGS} ${DEFINES}" "LDFLAGS=${CXXLDFLAGS}" "AR=${AR}" "ARFLAGS=${ARFLAGS}" "INCLUDE=${INCLUDE}" "LIBDIR=${LIBDIR}" "DEPENDSFILE=../${DEPENDSFILE}" "BINDIR=../${BINDIR}" "LOCALDIR=${LOCALDIR}" "INCDIR=${INCDIR}" "LINKS=${LINKS}" "MOC=${MOC}" "MOCFILE=../${MOCFILE}" "AUTHDIR=$(AUTHDIR)" "FAILDIR=$(FAILDIR)" "WATCHDIR=$(WATCHDIR)" "WEATHERDIR=$(WEATHERDIR)"

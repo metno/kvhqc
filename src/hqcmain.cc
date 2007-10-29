@@ -1055,7 +1055,10 @@ void HqcMainWindow::TimeseriesOK() {
   vector<int> parameterIndex;
   vector<int> stationIndex;
   cerr << "TimeseriesOK started" << endl;
+  //  cerr << parameter[0] << " " << stime << " " << etime << " " << stationIndex[0] << " " << plotoptions[0].name << endl;
   tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
+  cerr << "getResults called" << endl;
+  cerr << parameter[0] << " " << stime << " " << etime << " " << stationIndex[0] << " " << plotoptions[0].name << endl;
 
   // make timeseries
   TimeSeriesData::tsList tslist;
@@ -2263,8 +2266,14 @@ void HqcMainWindow::processLetter(miMessage& letter)
     const char* ccmn = letter.common.c_str();
     QString cmn = QString(ccmn);
     cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
+    cerr << letter.common.c_str()  << endl;
+    cerr << letter.description.c_str()  << endl;
+    cerr << letter.command.c_str()  << endl;
+    cerr << letter.commondesc.c_str()  << endl;
+    cerr << "DataSize = " << letter.data.size() << endl;
+    cerr << letter.data[0].c_str()  << endl;
     emit(statTimeReceived(cmn));
-    TimeseriesOK();
+    //    TimeseriesOK();
   }
   else if(letter.command == qmstrings::timechanged){
     miutil::miTime newTime(letter.common);

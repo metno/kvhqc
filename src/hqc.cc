@@ -32,16 +32,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 **
 *****************************************************************************/
 
-#include <KvApp.h>
+#include <corba/CorbaKvApp.h>
 #include <qapplication.h>
 #include "hqcmain.h"
 #include <iostream>
 
-//typedef kvservice::KvApp KvApp;
-
 using namespace std;
 
-//typedef kvservice::corba::CorbaKvApp KvApp;
+using kvservice::corba::CorbaKvApp;
+
 
 int main( int argc, char ** argv ) {
   const char * kvdir = getenv( "KVALOBS" );
@@ -54,12 +53,13 @@ int main( int argc, char ** argv ) {
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
   
   
-  miutil::conf::ConfSection *confSec = kvservice::KvApp::readConf(myconf);
+  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
   if(!confSec) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;
   }
-  kvservice::KvApp kvapp(argc, argv, confSec);
+
+  CorbaKvApp kvapp(argc, argv, confSec);
   
   QApplication a( argc, argv, true );
   

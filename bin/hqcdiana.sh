@@ -1,5 +1,6 @@
 #!/bin/bash
 
+export LD_LIBRARY_PATH=/metno/local/lib/mesa:${HOME}/omniORB4/lib
 export DIANADIR=/metno/local/diana
 if [ -z $HQCDIR ]; then export HQCDIR=/metno/local/kvhqc; fi
 
