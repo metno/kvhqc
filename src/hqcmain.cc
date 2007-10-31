@@ -1054,11 +1054,8 @@ void HqcMainWindow::TimeseriesOK() {
   vector<POptions::PlotOptions> plotoptions;
   vector<int> parameterIndex;
   vector<int> stationIndex;
-  cerr << "TimeseriesOK started" << endl;
-  //  cerr << parameter[0] << " " << stime << " " << etime << " " << stationIndex[0] << " " << plotoptions[0].name << endl;
+
   tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
-  cerr << "getResults called" << endl;
-  cerr << parameter[0] << " " << stime << " " << etime << " " << stationIndex[0] << " " << plotoptions[0].name << endl;
 
   // make timeseries
   TimeSeriesData::tsList tslist;
@@ -1586,8 +1583,7 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   return FALSE;
 }
 
-bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime, bool allTypes) {
-  if ( allTypes ) return true;
+bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime) {
   bool tpf = false;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
@@ -1639,13 +1635,10 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     IDataList dit = it->dataList().begin();
     int stnr = dit->stationID();
     int prParam = -1;
-    bool allTypes = true;
     while( dit != it->dataList().end() ) {
       bool correctLevel = (dit->level() == sLevel );
       bool correctSensor = (dit->sensor() - '0' == sSensor );
-      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime(), allTypes );
-
-      //      cerr << "Knut tester Myken : " << stnr << " " << dit->paramID() << " " << dit->typeID() << " " << dit->sensor() << " " << dit->obstime() << " " << correctTypeId << endl;
+      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime() );
 
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
@@ -1653,6 +1646,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	aggTime = dit->obstime();
 	aggStat = dit->stationID();
       }
+
       int stnr = dit->stationID();
       miutil::miTime otime = (dit->obstime());
       miutil::miTime tbtime = (dit->tbtime());
@@ -1665,7 +1659,6 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	prtypeId = typeId;
 	prParam = -1;
 	dit++;
-	//	cerr << "Knut tester Myken igjen: " << endl;
 	continue;
       }
       tdl.otime = otime;
@@ -1703,7 +1696,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       otime = dit->obstime();
       stnr = dit->stationID();
       typeId = dit->typeID();
-      if ( !correctHqcType || !correctSensor ) {
+      if ( !correctHqcType || !correctSensor || !correctLevel || !correctTypeId) {
 	//      	++dit;
 	continue;
       }
@@ -2266,14 +2259,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
     const char* ccmn = letter.common.c_str();
     QString cmn = QString(ccmn);
     cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
-    cerr << letter.common.c_str()  << endl;
-    cerr << letter.description.c_str()  << endl;
-    cerr << letter.command.c_str()  << endl;
-    cerr << letter.commondesc.c_str()  << endl;
-    cerr << "DataSize = " << letter.data.size() << endl;
-    cerr << letter.data[0].c_str()  << endl;
     emit(statTimeReceived(cmn));
-    //    TimeseriesOK();
   }
   else if(letter.command == qmstrings::timechanged){
     miutil::miTime newTime(letter.common);
