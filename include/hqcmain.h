@@ -184,7 +184,7 @@ public:
    *        to a station type checked in the ListDialog 
    */
   bool hqcTypeFilter(int&, int, int);
-  bool typeIdFilter(int, int, miutil::miTime, bool);
+  bool typeIdFilter(int, int, miutil::miTime);
   /*!
    * \brief 
    */
