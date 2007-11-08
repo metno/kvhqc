@@ -1633,13 +1633,14 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
   miutil::miTime aggTime;
   for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
     IDataList dit = it->dataList().begin();
+    int ditSize = it->dataList().size();
     int stnr = dit->stationID();
     int prParam = -1;
+    int ditNo = 0;
     while( dit != it->dataList().end() ) {
       bool correctLevel = (dit->level() == sLevel );
       bool correctSensor = (dit->sensor() - '0' == sSensor );
       bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime() );
-
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
 	aggTyp = dit->typeID();
@@ -1659,13 +1660,15 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	prtypeId = typeId;
 	prParam = -1;
 	dit++;
+	ditNo++;
 	continue;
       }
       tdl.otime = otime;
       tdl.tbtime = tbtime;
       tdl.stnr = stnr;
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
-      if ( (correctTypeId && correctLevel && correctSensor && typeId != 501 && !isaggreg) ) {
+      //      if ( (correctTypeId && correctLevel && correctSensor && typeId != 501 && !isaggreg) ) {
+      if ( (correctTypeId && correctLevel && correctSensor && !isaggreg) ) {
 	tdl.typeId[dit->paramID()] = typeId;
 	if ( typeId == -6 || typeId == -330 || typeId == -342 || typeId == 306 || typeId == 308 ) {
 	  prParam = dit->paramID();
@@ -1683,6 +1686,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       protime = otime;
       prstnr = stnr;
       prtypeId = typeId;
+      prParam = dit->paramID();
       QString name;
       double lat, lon, hoh;
       int env;
@@ -1693,14 +1697,15 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       int prid = dit->paramID();
       bool correctHqcType = hqcTypeFilter(tdl.showTypeId, env, stnr);
       ++dit;
+      ++ditNo;
       otime = dit->obstime();
       stnr = dit->stationID();
       typeId = dit->typeID();
-      if ( !correctHqcType || !correctSensor || !correctLevel || !correctTypeId) {
-	//      	++dit;
+      bool errFl = false;
+      if ( (!correctHqcType || !correctSensor || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
 	continue;
       }
-      bool errFl = false;
+      else if ( ditNo == ditSize - 1 ) goto pushback;
       for ( int ip = 0; ip < NOPARAM; ip++) {
 	int shFl  = tdl.flag[ip];
 	int shFl1 = shFl/10000;
@@ -1711,10 +1716,9 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	  errFl = true;
       }
       if ( !errFl && (lity == erLi || lity == erSa || lity == erLo) ) {
-	//	++dit;
 	continue;
       }
-
+    pushback:
       if ( timeFilter(hour) && 
 	   ((isShTy && prtypeId != typeId) || (otime != protime || ( otime == protime && stnr != prstnr)))) {
 	datalist.push_back(tdl);
