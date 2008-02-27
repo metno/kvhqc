@@ -403,7 +403,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 	tval->setText(oldCorVal);
       return;
     }
-    if ( !legalTime(obt.hour(), par )) {
+    if ( !legalTime(obt.hour(), par, cor )) {
       QMessageBox::information( this,
 				"Ulovlig tidspunkt",
 				"Denne parameteren kan ikke lagres ved dette tidspunktet",
@@ -434,7 +434,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
     if ( cor == -32766 )
       changeVal = "Vil du forkaste " + oldCorVal + " ?";
     else
-      changeVal = "Vil du  endre " + oldCorVal + " til " + newCorVal + " ?";
+      changeVal = "Vil du endre " + oldCorVal + " til " + newCorVal + " ?";
     
     int corrMb = 
       QMessageBox::information( this,
@@ -504,11 +504,12 @@ void MDITabWindow::tableValueChanged(int row, int col) {
   showChangedValue(row, col, val);
 }
 
-bool MDITabWindow::legalTime(int hour, int par) {
+bool MDITabWindow::legalTime(int hour, int par, double val) {
   bool lT = true;
   if ( (par == 214 || par == 216 || par == 224 || par == 109) && 
        !(hour == 6 || hour == 18) || par == 110 && hour != 6 ) lT = false;
-    return lT;
+  if ( val == -32766.0 ) lT = true; //Always possible to delete  
+  return lT;
 }
 
 bool MDITabWindow::legalValue(double val, int par) {
