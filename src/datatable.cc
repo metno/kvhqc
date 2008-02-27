@@ -354,6 +354,13 @@ DataTable::DataTable(QStringList selPar,
       setItem(dt, noColPar*ii + 3, imorig);
       if ( !paramHasModel(selParNo[ii]) || ncp == 0 || ncp == 1 || ncp == 2 || ncp == 3 )
 	hideColumn(noColPar*ii + 3);
+      QString strClock = strTime.mid(11,2);
+      if ( (selParNo[ii] == 214 || selParNo[ii] == 216) && !(strClock == "06" || strClock == "18") ) {
+	iorig->setEnabled(false); 
+	iflg->setEnabled(false); 
+	ikorr->setEnabled(false); 
+	imorig->setEnabled(false); 
+      }
     }
     TableItem* istat = new TableItem(this, QTableItem::Never, strStnr);
     setItem(dt, noColPar*hmw->nuroprpar, istat);
