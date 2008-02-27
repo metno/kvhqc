@@ -78,7 +78,7 @@ private:
     void showSelectedParam(int, int);
     void showChangedValue(int, int, QString);
     void readLimits();
-    bool legalTime(int, int);
+    bool legalTime(int, int, double);
     bool legalValue(double, int);
     QString dianaName(QString);
     QMap<int, float> lowMap;
