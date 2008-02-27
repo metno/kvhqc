@@ -65,8 +65,8 @@ namespace Weather
     
     // Station:
     station_ = 
-      //      new QLineEdit( QString::number( data.stationID() ), "0000000", this );
-      new QLineEdit( "", "0000000", this );
+      //      new QLineEdit( "", "0000000", this );
+      new QLineEdit( QString::number( data.stationID() ), "0000000", this );
     layout->addWidget( station_, row, 1 );
     layout->addWidget( new QLabel( station_, "&Stasjon", this ), row++, 0 );
 
