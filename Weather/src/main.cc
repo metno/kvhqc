@@ -55,6 +55,8 @@ int main( int argc, char ** argv )
   string myconf;
   if ( shist == "1" )
     myconf = string( kvdir ) + "/etc/kvhist.conf";
+  else if ( shist == "2" )
+    myconf = string( kvdir ) + "/etc/kvtest.conf";
   else 
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
 
