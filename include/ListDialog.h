@@ -340,6 +340,7 @@ public:
 private slots:
   void tableCellClicked(int, int, int, const QPoint&);
   void tableCellClicked(int, int);
+  void tableCellClicked();
   void listSelectedStations();
 signals:
   void stationAppended(QString);
