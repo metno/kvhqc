@@ -1882,7 +1882,7 @@ void HqcMainWindow::readFromTypeIdFile(int stnr) {
     cerr << "Intet environment" << endl;
     exit(1);
   }
-  QString typeIdFile = path + "/stinfo_typeids";
+  QString typeIdFile = path + "/typeids";
   QFile typeIds(typeIdFile);
   typeIds.open(IO_ReadOnly);
   QTextStream typeIdStream(&typeIds);
