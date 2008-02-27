@@ -390,7 +390,7 @@ void ListDialog::visCheck() {
 }
 
 void ListDialog::marCheck() {
-  if (visType->isChecked() ) {
+  if (marType->isChecked() ) {
     prcType->setChecked(FALSE);
     aprType->setChecked(FALSE);
     winType->setChecked(FALSE);
@@ -1044,8 +1044,8 @@ StationTable::StationTable(QStringList selStatNum,
     if ( (mp == TRUE && strStType == "5" && findInTypes(oit, 11)) ) strEnv += "MP";
     if ( (mm == TRUE && strStType == "4" && findInTypes(oit, 11)) ) strEnv += "MM";
     if ( (ms == TRUE && strStType == "6" && findInTypes(oit, 11)) ) strEnv += "MS";
-    if ( (pi == TRUE && findInTypes(oit, 4) || findInTypes(oit, 404)) ) strEnv += "P";
-    if ( (pt == TRUE && findInTypes(oit, 4) || findInTypes(oit, 404)) ) strEnv += "PT";
+    if ( (pi == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "P";
+    if ( (pt == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "PT";
     if ( (ns == TRUE && findInTypes(oit, 302)) )  strEnv += "NS";
     if ( (nd == TRUE && strStType == "9" && findInTypes(oit, 402)) ) strEnv += "ND";
     if ( (no == TRUE && strStType == "10" && findInTypes(oit, 402)) ) strEnv += "NO";
@@ -1263,10 +1263,16 @@ StationSelection::StationSelection(QStringList listStatNum,
 				  noInfo,
 				  otpList, 
 				  this);
+  //  connect( stationTable,SIGNAL(pressed(int, int, int, const QPoint&)),
+  //	   SLOT(tableCellClicked(int, int, int, const QPoint&)));  
   connect( stationTable,SIGNAL(currentChanged(int, int)),
 	   SLOT(tableCellClicked(int, int)));  
+  //  connect( stationTable,SIGNAL(selectionChanged()),
+  //	   SLOT(tableCellClicked()));  
 }
 
+void StationSelection::tableCellClicked() {
+}
 void StationSelection::tableCellClicked(int row, 
 					int col, 
 					int button, 
