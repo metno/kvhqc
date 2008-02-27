@@ -89,6 +89,7 @@ namespace Weather
 
     //    connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateStatusbar(int,int)));
+    //    connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateKvBase(int,int)));
     connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
     int itest = 0, jtest = 0;
     for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin(); 
@@ -192,7 +193,7 @@ namespace Weather
 	  strtyp = strtyp.setNum((*it).styp[iCol]);
 	}
 	if ( pName == "corr" ) {
-	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::Never,strtyp,strdat);
+	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::OnTyping,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
 	}
 	else if ( pName == "orig" ) {
