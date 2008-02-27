@@ -71,7 +71,8 @@ const int NOPARAMPREC      = 40;
 const int NOPARAMVISUAL    = 36;
 //const int NOPARAMSIGHT     = 25;
 //const int NOPARAMWEATHER   = 33;
-const int NOPARAMWAVE      = 18;
+//const int NOPARAMWAVE      = 18;
+const int NOPARAMWAVE      = 45;
 const int NOPARAMSYNOP     = 39;
 const int NOPARAMKLSTAT    = 17;
 const int NOPARAMPRIORITY  = 25;
@@ -110,7 +111,8 @@ struct modDatl {
 };
 struct currentType {
   int stnr;
-  QString status;
+  //  QString status;
+  int par;
   miutil::miDate fDate;
   miutil::miDate tDate;
   int cTypeId;
