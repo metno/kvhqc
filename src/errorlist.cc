@@ -225,7 +225,7 @@ ErrorList::ErrorList(QStringList& selPar,
       if (  dtl[i].stnr > 99999) continue;
       if (  dtl[i].typeId[noSelPar[j]] < 0 ) continue;
       if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
-      bool tp = typeFilter( dtl[i].stnr, dtl[i].typeId[noSelPar[j]], dtl[i].otime);
+      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
       if ( !tp ) continue;
       missObs mobs;
       QString ctr(dtl[i].controlinfo[noSelPar[j]]);
@@ -265,7 +265,7 @@ ErrorList::ErrorList(QStringList& selPar,
     memObs.stnr = dtl[i].stnr;
 
     for ( int j = 0; j < selPar.count(); j++ ) {
-      bool tp = typeFilter( dtl[i].stnr, dtl[i].typeId[noSelPar[j]], dtl[i].otime);
+      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
       if ( !tp ) continue;
       memObs.typeId      = dtl[i].typeId[noSelPar[j]];
       memObs.orig        = dtl[i].orig[noSelPar[j]];
@@ -596,11 +596,12 @@ ErrorList::ErrorList(QStringList& selPar,
     pstnr = stnr;
     ppanr = panr;
   }
+  /*
   for ( vector<refs>::iterator dit = rStatList.begin(); 
 		  dit != rStatList.end(); dit++ ) {
     cerr << dit->stnr << " - " << dit->rstnr << " Dist = " << dit->dist << endl;
   }
-
+  */
 
   setNumRows( memStore3.size() + headSize );
 
@@ -806,6 +807,8 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
   QString control(cFailed);
   int flg = 0;
   int maxflg = -1;
+  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 )
+    return maxflg;
   if ( !priorityParameterFilter(parNo) )
     return maxflg;
   if ( priorityControlFilter(control) == 0 )
@@ -943,10 +946,11 @@ double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
   return 6378.0*dist;
 }
 
-bool ErrorList::typeFilter(int stnr, int typeId, miutil::miTime otime) {
+bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) {
   bool tpf = false;
   for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
-    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
+    //    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
+    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
       tpf = true;
   }
   return tpf;
@@ -1538,7 +1542,7 @@ void ErrorList::saveChanges()
       kd.corrected( text( row, tableOriginalValuePos ).toFloat() );
     }
 
-    cerr << kd.stationID() << " " << kd.obstime() << " " << kd.corrected() << " " << kd.controlinfo() << " " << kd.useinfo() << endl;
+    //    cerr << kd.stationID() << " " << kd.obstime() << " " << kd.corrected() << " " << kd.controlinfo() << " " << kd.useinfo() << endl;
 
     mainWindow->setKvBaseUpdated(TRUE);
 
@@ -1556,7 +1560,7 @@ void ErrorList::saveChanges()
 
   if ( result->res != CKvalObs::CDataSource::OK ) {
     QMessageBox::critical( this, 
-			   "Kan ikke lagre data",
+			    "Kan ikke lagre data",
 			   QString( "Kan ikke lagre data!\n"
 				    "Meldingen fra Kvalobs var:\n" ) +
 			   result->message,
