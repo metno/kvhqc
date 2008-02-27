@@ -1583,12 +1583,35 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   return FALSE;
 }
 
-bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime) {
+bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime, int par) {
   bool tpf = false;
+  if ( typeId < 0 ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
-    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
+    //    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
+    if ( stnr == (*it).stnr && 
+	 abs(typeId) == (*it).cTypeId && 
+	 par == (*it).par && 
+	 otime.date() >= (*it).fDate && 
+	 otime.date() <= (*it).tDate ) {
       tpf = true;
+      break;
+    }
   }
+  /*
+  //MIDLERTIDIG SPESIALTILFELLE
+  if ( stnr == 13420 and par == 112 ) {
+    if ( typeId == 308 )
+      tpf = true;
+    else 
+      tpf = false;
+  } 
+  if ( (stnr == 99910 || stnr == 50540) and (par == 109 || par == 110) ) {
+    if ( abs(typeId) == 308 )
+      tpf = true;
+    else 
+      tpf = false;
+  }
+  */
   return tpf;
 }
 
@@ -1640,7 +1663,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     while( dit != it->dataList().end() ) {
       bool correctLevel = (dit->level() == sLevel );
       bool correctSensor = (dit->sensor() - '0' == sSensor );
-      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime() );
+      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime(), dit->paramID() );
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
 	aggTyp = dit->typeID();
@@ -1825,6 +1848,7 @@ void HqcMainWindow::readFromObsPgm() {
 */
 
 void HqcMainWindow::readFromTypeIdFile(int stnr) {
+  /*  
   QString path = QString(getenv("HQCDIR"));
   if ( !path ) {
     cerr << "Intet environment" << endl;
@@ -1846,6 +1870,34 @@ void HqcMainWindow::readFromTypeIdFile(int stnr) {
       int typeId = statLine.stripWhiteSpace().right(3).toInt();
       crT.stnr = stationId;
       crT.status = status;
+      crT.fDate = fDate;
+      crT.tDate = tDate;
+      crT.cTypeId = typeId;
+      currentTypeList.push_back(crT);
+    }
+  }
+  */
+  QString path = QString(getenv("HQCDIR"));
+  if ( !path ) {
+    cerr << "Intet environment" << endl;
+    exit(1);
+  }
+  QString typeIdFile = path + "/stinfo_typeids";
+  QFile typeIds(typeIdFile);
+  typeIds.open(IO_ReadOnly);
+  QTextStream typeIdStream(&typeIds);
+  while ( typeIdStream.atEnd() == 0 ) {
+    QString statLine = typeIdStream.readLine();
+    int stationId = statLine.left(10).toInt();
+    if ( stationId == stnr ) {
+      int par = statLine.mid(15,4).toInt();
+      miutil::miDate fDate;
+      fDate.setDate(miutil::miString(statLine.mid(48,10).latin1()));
+      miutil::miDate tDate;
+      tDate.setDate(miutil::miString(statLine.mid(61,10).latin1()));
+      int typeId = statLine.mid(42,4).toInt();
+      crT.stnr = stationId;
+      crT.par = par;
       crT.fDate = fDate;
       crT.tDate = tDate;
       crT.cTypeId = typeId;
