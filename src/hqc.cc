@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 **
 *****************************************************************************/
 
+//#include <KvApp.h>
 #include <corba/CorbaKvApp.h>
 #include <qapplication.h>
 #include "hqcmain.h"
@@ -49,16 +50,20 @@ int main( int argc, char ** argv ) {
   string myconf;
   if ( shist == "1" )
     myconf = string( kvdir ) + "/etc/kvhist.conf";
+  else if ( shist == "2" )
+    myconf = string( kvdir ) + "/etc/kvtest.conf";
   else 
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
   
   
+  //  miutil::conf::ConfSection *confSec = kvservice::KvApp::readConf(myconf);
   miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
   if(!confSec) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;
   }
 
+  //  kvservice::KvApp kvapp(argc, argv, confSec);
   CorbaKvApp kvapp(argc, argv, confSec);
   
   QApplication a( argc, argv, true );
