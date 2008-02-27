@@ -153,6 +153,7 @@
   10650 SØR-TRØNDELAG                  RØROS                           
   10700 SØR-TRØNDELAG                  RØROS                           
   10740 SØR-TRØNDELAG                  RØROS                           
+  10800 SØR-TRØNDELAG                  RØROS                         
   10900 SØR-TRØNDELAG                  RØROS                           
   11050 AKERSHUS                       NES                             
   11091 AKERSHUS                       EIDSVOLL                        
@@ -236,7 +237,7 @@
   18320 OSLO                           OSLO                            
   18420 OSLO                           OSLO                            
   18450 OSLO                           OSLO                            
-  18500 OSLO                           OSLO                            
+  18500 OSLO                           OSLO                        PRI1    
   18641 OSLO                           OSLO                            
   18651 OSLO                           OSLO                            
   18652 OSLO                           OSLO                            
@@ -290,6 +291,7 @@
   24210 BUSKERUD                       RINGERIKE                       
   24600 BUSKERUD                       KRØDSHERAD                      
   24650 BUSKERUD                       KRØDSHERAD                      
+  24710 BUSKERUD                       FLÅ                           
   24770 BUSKERUD                       FLÅ                             
   24800 BUSKERUD                       FLÅ                             
   24890 BUSKERUD                       NES                      WEBPRI1       
@@ -538,7 +540,8 @@
   45600 ROGALAND                       STRAND                          
   45780 ROGALAND                       HJELMELAND                      
   45850 ROGALAND                       FINNØY                          
-  45880 ROGALAND                       HJELMELAND                  PRI3    
+  45880 ROGALAND                       HJELMELAND                      
+  45870 ROGALAND                       HJELMELAND                  PRI3    
   46150 ROGALAND                       SULDAL                          
   46300 ROGALAND                       SULDAL                          
   46380 ROGALAND                       SULDAL                          
@@ -805,6 +808,7 @@
   64620 MØRE OG ROMSDAL                SUNNDAL                         
   64760 MØRE OG ROMSDAL                SURNADAL                        
   64800 MØRE OG ROMSDAL                SURNADAL                        
+  64870 MØRE OG ROMSDAL                SURNADAL                      
   64890 MØRE OG ROMSDAL                RINDAL                          
   64900 MØRE OG ROMSDAL                RINDAL                          
   65050 MØRE OG ROMSDAL                HALSA                           
@@ -843,21 +847,25 @@
   67160 SØR-TRØNDELAG                  MELHUS                          
   67202 SØR-TRØNDELAG                  MELHUS                          
   67240 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67280 SØR-TRØNDELAG                  MIDTRE GAULDAL                
   67255 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
   67450 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
   67540 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
+  67560 SØR-TRØNDELAG                  MIDTRE GAULDAL                  
   67770 SØR-TRØNDELAG                  HOLTÅLEN                        
   67780 SØR-TRØNDELAG                  HOLTÅLEN                        
   68000 SØR-TRØNDELAG                  TRONDHEIM                       
   68130 SØR-TRØNDELAG                  TRONDHEIM                       
   68230 SØR-TRØNDELAG                  TRONDHEIM                       
   68270 SØR-TRØNDELAG                  MELHUS                          
+  68290 SØR-TRØNDELAG                  SELBU                          
   68330 SØR-TRØNDELAG                  SELBU                           
   68340 SØR-TRØNDELAG                  SELBU                       PRI3    
   68420 SØR-TRØNDELAG                  TYDAL                           
   68430 SØR-TRØNDELAG                  TYDAL                           
   68840 SØR-TRØNDELAG                  TYDAL                           
   68860 SØR-TRØNDELAG                  TRONDHEIM                   PRI2    
+  68863 SØR-TRØNDELAG                  TRONDHEIM                   PRI2    
   69050 SØR-TRØNDELAG                  MALVIK                          
   69100 NORD-TRØNDELAG                 STJØRDAL                 WEBPRI1       
   69150 NORD-TRØNDELAG                 STJØRDAL                    PRI3   
@@ -914,6 +922,7 @@
   73090 NORD-TRØNDELAG                 GRONG                           
   73250 NORD-TRØNDELAG                 LIERNE                          
   73500 NORD-TRØNDELAG                 LIERNE                      PRI3    
+  73550 NORD-TRØNDELAG                 GRONG                         
   73800 NORD-TRØNDELAG                 LIERNE                          
   74170 NORD-TRØNDELAG                 RØYRVIK                         
   74320 NORD-TRØNDELAG                 NAMSSKOGAN                      
@@ -1005,6 +1014,7 @@
   77230 NORDLAND                       VEFSN                       PRI3    
   77270 NORDLAND                       GRANE                           
   77403 NORDLAND                                                               
+  77425 NORDLAND                       GRANE                         
   77550 NORDLAND                       GRANE                       PRI3    
   77850 NORDLAND                       HATTFJELLDAL                    
   78180 NORDLAND                       VEFSN                           
@@ -1028,6 +1038,7 @@
   79793 NORDLAND                                                               
   80040 NORDLAND                       NESNA                           
   80101 NORDLAND                       LURØY                       PRI3   
+  80102 NORDLAND                       LURØY                       PRI3  
   80130 NORDLAND                       LURØY                           
   80200 NORDLAND                       LURØY                           
   80340 NORDLAND                       TRÆNA                           
@@ -1075,6 +1086,7 @@
   83520 NORDLAND                       HAMARØY                         
   83550 NORDLAND                       HAMARØY                     PRI3    
   83580 NORDLAND                       HAMARØY                         
+  83710 NORDLAND                       TYSFJORD                      
   83880 NORDLAND                       TYSFJORD                        
   83953 NORDLAND                                                               
   84060 NORDLAND                       BALLANGEN                       
@@ -1090,6 +1102,7 @@
   84990 NORDLAND                       TJELDSUND                       
   84995 NORDLAND                       TJELDSUND                       
   85035 NORDLAND                       LØDINGEN                        
+  85040 NORDLAND                       LØDINGEN                        
   85180 NORDLAND                       LØDINGEN                        
   85380 NORDLAND                       VÅGAN                    WEBPRI3       
   85410 NORDLAND                       VÅGAN                           
