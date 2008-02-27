@@ -1,3 +1,7 @@
-export HQCDIR=/metno/local/kvhqc/
+#!/bin/bash
+
+#export HQCDIR=/metno/local/kvhqc/
 export KVALOBS=$HQCDIR
-LD_LIBRARY_PATH=$HQCDIR/lib $HQCDIR/bin/WatchRR 
+export LD_LIBRARY_PATH=/metno/local/lib/mesa::${HOME}/omniORB4/lib
+export HIST=0
+$HQCDIR/bin/WatchRR 
