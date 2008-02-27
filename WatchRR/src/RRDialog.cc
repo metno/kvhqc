@@ -98,6 +98,8 @@ namespace WatchRR
       }
       catch( invalid_argument & e ) {
       }
+      catch( exception & ){
+      }
     }
     return ret;
   }
