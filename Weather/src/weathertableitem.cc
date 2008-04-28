@@ -60,4 +60,15 @@ namespace Weather
       ret = "TypeId = " + type;
     return ret;
   }
+
+  void WeatherTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
+  {
+    QColorGroup g( cg );
+    if ( isModelVal )
+      g.setColor( QColorGroup::Text, red );
+    else
+      g.setColor( QColorGroup::Text, black );
+    
+    QTableItem::paint( p, g, cr, selected );
+  }
 }
