@@ -225,6 +225,8 @@ ErrorList::ErrorList(QStringList& selPar,
       if (  dtl[i].stnr > 99999) continue;
       if (  dtl[i].typeId[noSelPar[j]] < 0 ) continue;
       if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
+      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
+      if ( !stp ) continue;
       bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
       if ( !tp ) continue;
       missObs mobs;
@@ -265,6 +267,8 @@ ErrorList::ErrorList(QStringList& selPar,
     memObs.stnr = dtl[i].stnr;
 
     for ( int j = 0; j < selPar.count(); j++ ) {
+      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
+      if ( !stp ) continue;
       bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
       if ( !tp ) continue;
       memObs.typeId      = dtl[i].typeId[noSelPar[j]];
@@ -596,12 +600,6 @@ ErrorList::ErrorList(QStringList& selPar,
     pstnr = stnr;
     ppanr = panr;
   }
-  /*
-  for ( vector<refs>::iterator dit = rStatList.begin(); 
-		  dit != rStatList.end(); dit++ ) {
-    cerr << dit->stnr << " - " << dit->rstnr << " Dist = " << dit->dist << endl;
-  }
-  */
 
   setNumRows( memStore3.size() + headSize );
 
@@ -946,10 +944,18 @@ double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
   return 6378.0*dist;
 }
 
+bool ErrorList::specialTimeFilter( int par, miutil::miTime otime) {
+  bool spf = true;
+  if ( ((par == 214 || par == 216) && !(otime.hour() == 6 || otime.hour() == 18)) ||
+       (par == 112 && otime.hour() != 6) ){
+    spf = false;
+  }
+  return spf;
+} 
+
 bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) {
   bool tpf = false;
   for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
-    //    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
     if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
       tpf = true;
   }
@@ -1541,8 +1547,6 @@ void ErrorList::saveChanges()
       float newCorrected = text( row, tableOriginalValuePos ).toFloat();
       kd.corrected( text( row, tableOriginalValuePos ).toFloat() );
     }
-
-    //    cerr << kd.stationID() << " " << kd.obstime() << " " << kd.corrected() << " " << kd.controlinfo() << " " << kd.useinfo() << endl;
 
     mainWindow->setKvBaseUpdated(TRUE);
 
