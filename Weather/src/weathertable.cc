@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qstatusbar.h>
+#include <qfile.h>
 #include <boost/assign/std/vector.hpp>
 
 //#define NDEBUG
@@ -49,6 +50,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <iostream>
 
+using namespace kvservice;
 using namespace std;
 using namespace kvalobs;
 using namespace miutil;
@@ -62,56 +64,75 @@ namespace Weather
   {
     setupTable();
 
-    //connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
+    connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateStatusbar(int,int)));
     connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
   }
   */
 
   //  WeatherTable::WeatherTable(QToolTipGroup* ttGroup, QWidget *parent, int type )
-    WeatherTable::WeatherTable( QWidget *parent, int type )
+  WeatherTable::WeatherTable( QWidget *parent, int type )
     : QTable( parent )
   {
-    
     WeatherDialog* wd = dynamic_cast<WeatherDialog*>(parent->parent());
-    WeatherDialog::SynObsList sList = wd->synObsList;
-    vector<miutil::miTime> timeList;
 
-    //    typedef synDat sData;
-    //    typedef synFlg sFlag;
-
-    synDat sd;
     synFlg sf;
     vector<synDat> dataList;
     vector<synFlg> flagList;
     QString pName(parent->name());
     miutil::miTime protime("1900-01-01 00:00:00");
 
-    //    connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
-    connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateStatusbar(int,int)));
-    //    connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateKvBase(int,int)));
-    connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
+    readLimits();
+    connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
+    connect( wd, SIGNAL(currentChanged(QWidget*) ), this, SLOT( showCurrentPage() ) );
+    if ( pName == "corr" )
+      connect( wd, SIGNAL(dontStore()), SLOT(restoreOld()));
+
+    for ( int i = 0; i < NP; i++ ) {
+      parm[params[i]] = horizonHeaders[datCol[i]];
+    }
+    for ( int i = 0; i < NP; i++ ) {
+      columnIndex[datCol[i]] = i;
+    }
+    for(IKvObsDataList it=wd->ldList.begin(); it!=wd->ldList.end(); it++ ) {
+      IDataList dit = it->dataList().begin();
+      while( dit != it->dataList().end() ) {
+	kvData kvDat;
+	kvDat.set(dit->stationID(), 
+		  dit->obstime(), 
+		  dit->original(), 
+		  dit->paramID(), 
+		  dit->tbtime(), 
+		  dit->typeID(), 
+		  dit->sensor(), 
+		  dit->level(), 
+		  dit->corrected(), 
+		  dit->controlinfo(), 
+		  dit->useinfo(), 
+		  dit->cfailed());
+	kvDatList.push_back(kvDat);
+	dit++;
+      }
+    }
+
     int itest = 0, jtest = 0;
     for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin(); 
 	  it != wd->synObsList.end(); it++) {
       if ( type == 0 || (type != 0 && (*it).otime > protime) ) {
-	//      if ( (*it).otime > protime ) {
 	timeList.push_back((*it).otime);
 	for ( int i = 0; i < NP; i++ ) {
 	  if ( pName == "corr" ) {
 	    sd.sdat[i] = (*it).corr[i];
 	    sd.styp[i] = (*it).typeId[i];
+
 	  }
 	  else if ( pName == "orig" ) {
 	    sd.sdat[i] = (*it).orig[i];
 	    sd.styp[i] = (*it).typeId[i];
 	  }
-	  //	  else if ( pName == "flag" ) 
 	  sf.sflg[i] = flagText((*it).controlinfo[i]);
 	}
-	//	if ( pName == "corr" || pName == "orig" )
 	dataList.push_back(sd);
-	//	else if ( pName == "flag" )
 	flagList.push_back(sf);
 	protime = (*it).otime;
 	jtest++;
@@ -184,6 +205,8 @@ namespace Weather
       for ( int iCol = 0; iCol < NP; iCol++ ) {
 	QString strdat;
 	QString strtyp;
+       	QString strflg;
+       	strflg = (*fit).sflg[iCol];
 	if ( (*it).sdat[iCol] < -32000 ) {
 	  strdat = "";
 	  strtyp = "";
@@ -195,6 +218,10 @@ namespace Weather
 	if ( pName == "corr" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::OnTyping,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
+	  if ( strflg == "fnum = 6" )
+	    datItem->isModelVal = true;
+	  else
+	    datItem->isModelVal = false;
 	}
 	else if ( pName == "orig" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::Never,strtyp,strdat);
@@ -205,7 +232,7 @@ namespace Weather
       for ( int iCol = 0; iCol < NC; iCol++ ) {
 	//	QCheckTableItem* ctItem = new QCheckTableItem(this, "");
        	QString strflg;
-	//       	strflg = (*fit).sflg[dbCol[iCol]];
+	//       	strflg = (*fit).sflg[dbCol[iCol]]
        	strflg = strflg.setNum((*it).styp[dbCol[iCol]]);
 	if ( dbCol[iCol] < 3 ) {
 	  TnCheckTableItem* ctItem = new TnCheckTableItem(this, strflg);
@@ -215,33 +242,12 @@ namespace Weather
 	  FdCheckTableItem* ctItem = new FdCheckTableItem(this, strflg);
 	  setItem(iRow,cbCol[iCol],ctItem);
 	}
-	//	if ( pName == "orig" )
-	//	  ctItem->setEnabled(false);
-	//	  hideColumn(cbCol[iCol]);
-      }
+     }
       
       iRow++; 
       fit++;
     }
-    cerr << "Flaglist size 1 = " << flagList.size() << endl;
-    /*    
-    iRow = 0;
-    for ( vector<synFlg>::iterator fit = flagList.begin(); fit != flagList.end(); fit++) {
-      for ( int iCol = 0; iCol < NC; iCol++ ) {
-	//	QCheckTableItem* ctItem = new QCheckTableItem(this, "");
-      	QString strflg;
-       	strflg = (*fit).sflg[dbCol[iCol]];
-       	FdCheckTableItem* ctItem = new FdCheckTableItem(this, strflg);
-	setItem(iRow,cbCol[iCol],ctItem);
-	if ( pName == "orig" )
-	  ctItem->setEnabled(false);
-	//	  hideColumn(cbCol[iCol]);
-      }
-      iRow++; 
-    }
-    */
-    //    for ( int icol = 0; icol < numCols; icol++ )
-    for ( int icol = 0; icol < NL; icol++ )
+   for ( int icol = 0; icol < NL; icol++ )
       adjustColumn(icol);  
   }
 
@@ -257,7 +263,7 @@ namespace Weather
       }
       iRow++; 
     }
-    //    for ( int icol = 0; icol < numCols; icol++ )
+ 
     for ( int icol = 0; icol < NL; icol++ )
       adjustColumn(icol);  
     for ( int icol = 0; icol < NC; icol++ ) 
@@ -266,21 +272,86 @@ namespace Weather
 
   void WeatherTable::getModifiedData( DataConsistencyVerifier::DataSet & mod )
   {
-    const int row_ = currentRow();
-    const int col_ = currentColumn();
-    if ( row_ >= 0 and col_ >= 0 )
-      endEdit( row_, col_, true, false );
+  }
 
-    for ( int r = 0; r < numRows(); ++ r )
-    {
-      for ( int c = 0; c < numCols(); ++ c )
-      {
-	DataConsistencyVerifier * dcv = dynamic_cast<DataConsistencyVerifier *>( item( r, c ) );
-        if ( dcv ) {
-          dcv->getUpdatedList( mod );
-	}
+  void WeatherTable::markModified( int row, int col )
+  {
+    QTableItem *tit = item( row, col );
+    float newCorr = (tit->text()).toFloat();
+    kvData kvDat = getKvData(row, col);
+    float oldCorr = kvDat.corrected();
+    QString oldCorrStr;
+    oldCorrStr = oldCorrStr.setNum(oldCorr,'f',1);
+    oldNewPair op(oldCorr, newCorr); 
+    rowColPair rc(row, col);
+    kvDat.corrected(newCorr);
+    kvControlInfo cif = kvDat.controlinfo();
+    float uplim = highMap[kvDat.paramID()];
+    float downlim = lowMap[kvDat.paramID()];
+    if ( (newCorr > uplim || newCorr < downlim) && newCorr != -32766 ) {
+      QMessageBox::information( this,
+				"Ulovlig verdi",
+				"Verdien er utenfor fysikalske grenser",
+				QMessageBox::Ok,
+				QMessageBox::NoButton );
+      if ( oldCorr == -32767.0 )
+	tit->setText("");
+      else
+	tit->setText(oldCorrStr);
+      return;
+    }
+    if ( newCorr == -32766.0 ) {
+      cif.set(15,10);
+      const int misfl = cif.flag(6);
+      if ( misfl == 0 || misfl == 1 )
+	cif.set(6,misfl + 2);
+    }
+    else {
+      cif.set(15,7);
+    }
+    if ( oldCorr == -32767.0 ) { 
+      cif.set(15,5);                      //Interpol
+      int misfl;
+      if ( cif.flag(6) == 0 ) 
+	misfl = 1;
+      else
+	misfl  = cif.flag(6) - 2;
+      cif.set(6,misfl);
+    }
+    kvDat.controlinfo(cif);
+    kvCorrList.push_back(kvDat);
+    oldNew.push_back(op);
+    rowCol.push_back(rc);
+    corr.oTime = kvDat.obstime();
+    corr.parName = parm[datCol[col]];
+    corr.oldVal = oldCorr;
+    corr.newVal = newCorr;
+  }
+
+  kvData WeatherTable::getKvData( int row, int col ) {
+    miutil::miTime cTime = timeList[row];
+    //Find paramID in col
+    int cParam = params[columnIndex[col]];
+    vector<kvData>::iterator kvit;
+    for ( kvit = kvDatList.begin(); kvit != kvDatList.end(); kvit++) {
+      if ( (*kvit).paramID() == cParam && (*kvit).obstime() == cTime && (*kvit).typeID() == sd.styp[columnIndex[col]]) {
+	break;
       }
     }
+    kvData kvCorrDat;
+    kvCorrDat.set(kvit->stationID(), 
+		  kvit->obstime(), 
+		  kvit->original(), 
+		  kvit->paramID(), 
+		  kvit->tbtime(), 
+		  kvit->typeID(), 
+		  kvit->sensor(), 
+		  kvit->level(), 
+		  kvit->corrected(), 
+		  kvit->controlinfo(), 
+		  kvit->useinfo(), 
+		  kvit->cfailed());
+    return kvCorrDat;
   }
 
   void WeatherTable::updateStatusbar( int row, int col )
@@ -298,6 +369,56 @@ namespace Weather
       msg = "";
     }
     //    dynamic_cast<QStatusBar *>( ttGroup->parent() )->message( msg );
+  }
+
+  void WeatherTable::readLimits() {
+    QString path = QString(getenv("HQCDIR"));
+    if ( !path ) {
+      cerr << "Intet environment" << endl;
+      exit(1);
+    }
+    int par, dum;
+    float low, high;
+    QString limitsFile = path + "/slimits";
+    QFile limits(limitsFile);
+    if ( !limits.open(IO_ReadOnly) ) {
+      cerr << "kan ikke åpne " << limitsFile << endl;
+      exit(1);
+    }
+    QTextStream limitStream(&limits);
+    while ( limitStream.atEnd() == 0 ) {
+      limitStream >> par >> dum >> low >> high;
+      lowMap[par] = low;
+      highMap[par] = high;
+    }
+  }
+
+  //  void WeatherTable::restoreOld(std::vector<oldNewPair> oldNew) {
+  void WeatherTable::restoreOld() {
+    vector<oldNewPair>::iterator mit;
+    vector<rowColPair>::iterator pit = rowCol.begin();
+    for ( mit = oldNew.begin(); mit != oldNew.end(); mit++ ) {
+      QString oldCorVal;
+      QString newCorVal;
+      oldCorVal = oldCorVal.setNum(mit->first,'f',1);
+      newCorVal = newCorVal.setNum(mit->second,'f',1);
+      int row = pit->first;
+      int col = pit->second;
+      QTableItem *tit = item( row, col );
+      if ( oldCorVal == "-32767.0" )
+	tit->setText("");
+      else
+	tit->setText(oldCorVal);
+      setCurrentCell(row, col);
+      pit++;
+    }
+    return;
+  }
+
+  void WeatherTable::showCurrentPage()
+  {
+       ensureCellVisible(currRow, 0);
+       selectRow(currRow);
   }
 
   /*  
