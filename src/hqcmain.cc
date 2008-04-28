@@ -1559,7 +1559,7 @@ bool HqcMainWindow::timeFilter(int hour) {
 
 bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
-  //  if ( typeId == -1 ) return FALSE;
+  if ( typeId == -1 ) return FALSE;
   int atypeId = typeId < 0 ? -typeId : typeId;
   if (  lstdlg->allType->isChecked() ) return TRUE;
   if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
@@ -1576,20 +1576,20 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   if ( atypeId == 302 && lstdlg->nsType->isChecked() ) return TRUE;
   if ( environment == 9 && atypeId == 402 && lstdlg->ndType->isChecked() ) return TRUE;
   if ( environment == 10 && atypeId == 402 && lstdlg->noType->isChecked() ) return TRUE;
-  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) & lstdlg->vsType->isChecked() ) return TRUE;
+  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412 || atypeId == 501) & lstdlg->vsType->isChecked() ) return TRUE;
   if ( environment == 3 && atypeId == 412 && lstdlg->vkType->isChecked() ) return TRUE;
   if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && lstdlg->vmType->isChecked() ) return TRUE;
   if ( atypeId == 2 && lstdlg->fmType->isChecked() ) return TRUE;
   return FALSE;
 }
 
-bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime, int par) {
+bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
   if ( typeId < 0 ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
-    //    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && (*it).status == "D" && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
     if ( stnr == (*it).stnr && 
-	 abs(typeId) == (*it).cTypeId && 
+	 abs(typeId) == (*it).cTypeId &&
+	 sensor == (*it).cSensor && 
 	 par == (*it).par && 
 	 otime.date() >= (*it).fDate && 
 	 otime.date() <= (*it).tDate ) {
@@ -1597,21 +1597,6 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, miutil::miTime otime, int
       break;
     }
   }
-  /*
-  //MIDLERTIDIG SPESIALTILFELLE
-  if ( stnr == 13420 and par == 112 ) {
-    if ( typeId == 308 )
-      tpf = true;
-    else 
-      tpf = false;
-  } 
-  if ( (stnr == 99910 || stnr == 50540) and (par == 109 || par == 110) ) {
-    if ( abs(typeId) == 308 )
-      tpf = true;
-    else 
-      tpf = false;
-  }
-  */
   return tpf;
 }
 
@@ -1625,6 +1610,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 
   //  vector<datl> tempDatalist;
   bool result;
+  bool tdlUpd[NOPARAM];
   dlist.erase(dlist.begin(),dlist.end());
   datalist.clear();
   for ( int ip = 0; ip < NOPARAM; ip++) {
@@ -1636,6 +1622,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     tdl.typeId[ip] = -32767;
     tdl.controlinfo[ip] = "";
     tdl.cfailed[ip] = "";
+    tdlUpd[ip] = false;
   }
   miutil::miTime protime("1900-01-01 00:00:00");
   int prtypeId = -1;
@@ -1649,21 +1636,37 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 
   if(!KvApp::kvApp->getKvData(ldlist, whichData))
     cerr << "Can't connect to data table!" << endl;
-  //  bool aggreg = false;
+  /*
+  //TEST
+  cerr << " STNR    DATO       TID   PAR TYP SN LV      ORIG      CORR" << endl;
+  for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
+    IDataList dit = it->dataList().begin();
+    while( dit != it->dataList().end() ) {
+      cerr << setw(5) << dit->stationID() << setw(20) << dit->obstime() 
+	   << setw(4) <<dit->paramID() << setw(4) << dit->typeID() 
+	   << setw(3) << dit->sensor() - '0' << setw(3) << dit->level() 
+	   << setw(10) << setprecision(1) << dit->original()
+	   << setw(10) << setprecision(1) << dit->corrected() << endl; 
+      dit++;
+    }
+  }
+  //TEST SLUTT
+  */
   int aggPar = 0;
   int aggTyp = 0;
   int aggStat = 0;
-  miutil::miTime aggTime;
+  miutil::miTime aggTime("1900-01-01 00:00:00") ;
   for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
     IDataList dit = it->dataList().begin();
     int ditSize = it->dataList().size();
     int stnr = dit->stationID();
     int prParam = -1;
+    int prSensor = -1;
     int ditNo = 0;
     while( dit != it->dataList().end() ) {
       bool correctLevel = (dit->level() == sLevel );
-      bool correctSensor = (dit->sensor() - '0' == sSensor );
-      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->obstime(), dit->paramID() );
+      //      bool correctSensor = (dit->sensor() - '0' == sSensor );
+      bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
 	aggTyp = dit->typeID();
@@ -1676,11 +1679,13 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       miutil::miTime tbtime = (dit->tbtime());
       int hour = otime.hour();
       int typeId = dit->typeID();
+      int sensor = dit->sensor();
             
-      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam) ) {
+      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor) ) {
 	protime = otime;
 	prstnr = stnr;
 	prtypeId = typeId;
+	prSensor = sensor;
 	prParam = -1;
 	dit++;
 	ditNo++;
@@ -1690,12 +1695,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       tdl.tbtime = tbtime;
       tdl.stnr = stnr;
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
-      //      if ( (correctTypeId && correctLevel && correctSensor && typeId != 501 && !isaggreg) ) {
-      if ( (correctTypeId && correctLevel && correctSensor && !isaggreg) ) {
+      if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
 	tdl.typeId[dit->paramID()] = typeId;
-	if ( typeId == -6 || typeId == -330 || typeId == -342 || typeId == 306 || typeId == 308 ) {
-	  prParam = dit->paramID();
-	}
 	tdl.showTypeId = typeId;
 	tdl.orig[dit->paramID()] = dit->original();
 	tdl.flag[dit->paramID()] = getShowFlag(dit->controlinfo());
@@ -1705,10 +1706,12 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	tdl.controlinfo[dit->paramID()] = dit->controlinfo().flagstring();
       	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
 	tdl.cfailed[dit->paramID()] = dit->cfailed();
+	tdlUpd[dit->paramID()] = true;
       }
       protime = otime;
       prstnr = stnr;
       prtypeId = typeId;
+      prSensor = sensor;
       prParam = dit->paramID();
       QString name;
       double lat, lon, hoh;
@@ -1725,7 +1728,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       stnr = dit->stationID();
       typeId = dit->typeID();
       bool errFl = false;
-      if ( (!correctHqcType || !correctSensor || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
+      //      if ( (!correctHqcType || !correctSensor || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
+      if ( (!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
 	continue;
       }
       else if ( ditNo == ditSize - 1 ) goto pushback;
@@ -1742,8 +1746,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	continue;
       }
     pushback:
-      if ( timeFilter(hour) && 
-	   ((isShTy && prtypeId != typeId) || (otime != protime || ( otime == protime && stnr != prstnr)))) {
+      if ( timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
+	   ((otime != protime || ( otime == protime && stnr != prstnr)))) {
 	datalist.push_back(tdl);
 	for ( int ip = 0; ip < NOPARAM; ip++) {
 	  tdl.orig[ip]   = -32767.0;
@@ -1754,6 +1758,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	  tdl.typeId[ip] = -32767;
 	  tdl.controlinfo[ip] = "";
 	  tdl.cfailed[ip] = "";
+	  tdlUpd[ip] = false;
 	}
       }
       else if ( !timeFilter(hour) ) {
@@ -1766,6 +1771,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 	  tdl.typeId[ip] = -32767;
 	  tdl.controlinfo[ip] = "";
 	  tdl.cfailed[ip] = "";
+	  tdlUpd[ip] = false;
 	}
       }
     }
@@ -1848,35 +1854,6 @@ void HqcMainWindow::readFromObsPgm() {
 */
 
 void HqcMainWindow::readFromTypeIdFile(int stnr) {
-  /*  
-  QString path = QString(getenv("HQCDIR"));
-  if ( !path ) {
-    cerr << "Intet environment" << endl;
-    exit(1);
-  }
-  QString typeIdFile = path + "/typeids";
-  QFile typeIds(typeIdFile);
-  typeIds.open(IO_ReadOnly);
-  QTextStream typeIdStream(&typeIds);
-  while ( typeIdStream.atEnd() == 0 ) {
-    QString statLine = typeIdStream.readLine();
-    int stationId = statLine.left(10).toInt();
-    if ( stationId == stnr ) {
-      QString status = statLine.mid(11,1);
-      miutil::miDate fDate;
-      fDate.setDate(miutil::miString(statLine.mid(13,10).latin1()));
-      miutil::miDate tDate;
-      tDate.setDate(miutil::miString(statLine.mid(24,10).latin1()));
-      int typeId = statLine.stripWhiteSpace().right(3).toInt();
-      crT.stnr = stationId;
-      crT.status = status;
-      crT.fDate = fDate;
-      crT.tDate = tDate;
-      crT.cTypeId = typeId;
-      currentTypeList.push_back(crT);
-    }
-  }
-  */
   QString path = QString(getenv("HQCDIR"));
   if ( !path ) {
     cerr << "Intet environment" << endl;
@@ -1895,11 +1872,15 @@ void HqcMainWindow::readFromTypeIdFile(int stnr) {
       fDate.setDate(miutil::miString(statLine.mid(48,10).latin1()));
       miutil::miDate tDate;
       tDate.setDate(miutil::miString(statLine.mid(61,10).latin1()));
+      int level  = statLine.mid(25,2).toInt();
+      int sensor = statLine.mid(34,2).toInt();
       int typeId = statLine.mid(42,4).toInt();
       crT.stnr = stationId;
       crT.par = par;
       crT.fDate = fDate;
       crT.tDate = tDate;
+      crT.cSensor = sensor - 1;
+      crT.cLevel = level;
       crT.cTypeId = typeId;
       currentTypeList.push_back(crT);
     }
@@ -2832,6 +2813,14 @@ void HqcMainWindow::updateSaveFunction( QWidget *w )
   cerr << "Save " << (enabled? "en":"dis") << "abled\n";
 }
 
+bool HqcMainWindow::isAlreadyStored(miutil::miTime otime, int stnr) {
+  for ( int i = 0; i < datalist.size(); i++) {
+    if ( datalist[i].otime == otime && datalist[i].stnr == stnr)
+      return true;
+  }
+  return false;
+}
+ 
 int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
 {
   int tpId;
