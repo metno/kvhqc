@@ -293,7 +293,7 @@ private:
   double calcdist(double, double, double, double);
   void swapRows(int, int, bool);
   void sortColumn(int, bool, bool);
-  //  bool typeFilter(int, int, miutil::miTime); 
+  bool specialTimeFilter(int, miutil::miTime); 
   bool typeFilter(int, int, int, miutil::miTime); 
 private slots:
   void tableCellClicked(int, int, int, const QPoint&);
