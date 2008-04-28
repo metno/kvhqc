@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef WEATHERTABLEITEM_H_
 #define WEATHERTABLEITEM_H_
 #include <qtable.h>
+#include <qpainter.h>
 #include "weathertable.h"
 #include "selfexplainable.h"
 
@@ -44,9 +45,11 @@ namespace Weather
     //  WeatherTableItem( QTable * table, kvalobs::kvData & data );
     WeatherTableItem( QTable * table, QTableItem::EditType, QString, QString);
     virtual ~WeatherTableItem();
+    void paint(QPainter*, const QColorGroup&, const QRect&, bool);
     bool collected(QString) const;
     virtual QString explain() const;
     QString type;
+    bool isModelVal;
     //  virtual void getUpdatedList( DataSet & data );  
   };
 }
