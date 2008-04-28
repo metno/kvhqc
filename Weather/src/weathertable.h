@@ -58,6 +58,9 @@ namespace kvservice
 
 namespace Weather
 {
+  const int params[] = { 211,214,216,213,215,262,178,61,81,86,83,15,14,55,108,
+			 109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
+			 23,24,22,403,404,131,134,151,154,250,221,9,12};
   const int NP = 44;
   const int NL = 49;
 
@@ -141,12 +144,6 @@ namespace Weather
     */
     //    virtual void polish();
     
-  protected slots:
-    /**
-     * \brief Update status bar with info from cell.
-     */
-    
-    virtual void updateStatusbar( int row, int col );
     /*
     virtual void headerMove( int section, int fromIndex, int toIndex );
     */
@@ -180,6 +177,17 @@ namespace Weather
   //    std::vector<int> toSec;
   
   private:
+    std::vector<kvalobs::kvData> kvDatList;
+    std::vector<kvalobs::kvData> kvCorrList;
+    QMap<int, int> columnIndex;
+    QMap<int, float> lowMap;
+    QMap<int, float> highMap;
+    typedef QPair<float,float> oldNewPair;
+    std::vector<oldNewPair> oldNew;
+    typedef QPair<int, int> rowColPair;
+    std::vector<rowColPair> rowCol;
+    QMap<int,QString> parm;
+    int currRow;
     struct synDat {
       double sdat[NP];
       int styp[NP];
@@ -188,14 +196,26 @@ namespace Weather
     struct synFlg {
       QString sflg[NP];
     };
+
+    struct Corrig {
+      miutil::miTime oTime;
+      QString parName;
+      float oldVal;
+      float newVal;
+    };
+    synDat sd;
+    Corrig corr;
     int station;
     const miutil::miDate refDate;
+    std::vector<miutil::miTime> timeList;
     //    DateRange dateRange;
     QString flagText(const std::string&);
     void displayHorizontalHeader();
     void displayVerticalHeader(std::vector<miutil::miTime>&);
     void displayData(QString, std::vector<synDat>&, std::vector<synFlg>&);
     void displayFlags(std::vector<synFlg>&);
+    void readLimits();
+    kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
     /*
     int type;
@@ -208,6 +228,15 @@ namespace Weather
     
     //static const int daysToDisplay = 14;
     */
+  protected slots:
+    /**
+     * \brief Update status bar with info from cell.
+     */
+    void restoreOld();
+    void showCurrentPage( );
+    
+    virtual void updateStatusbar( int row, int col );
+    void markModified( int, int );    
   public:
     //    WeatherTableToolTip *toolTip;
     //    QToolTipGroup *ttGroup;
