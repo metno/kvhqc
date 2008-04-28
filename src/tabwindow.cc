@@ -514,7 +514,7 @@ bool MDITabWindow::legalTime(int hour, int par, double val) {
 
 bool MDITabWindow::legalValue(double val, int par) {
   bool lT = true;
-  if ( par == 105 && ( val != -5.0 && val != -6.0 && val != -32766.0 ) )
+  if ( par == 105 && ( val != -5.0 && val != -6.0 && val != 0.0 && val != -32766.0 ) )
     lT = false;
   return lT;
 }
