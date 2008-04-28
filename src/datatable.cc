@@ -311,18 +311,20 @@ DataTable::DataTable(QStringList selPar,
     }
     for ( int ii = 0; ii < hmw->nuroprpar; ii++) {
       QString strdat;
+      QString strFldat;
       if ( orig[selParNo[ii]] == -999.9 ||  orig[selParNo[ii]] == -32767.0 )
 	strdat = "";
       else {
 	strdat = strdat.setNum(orig[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
       }
       TableItem* iorig = new TableItem(this, QTableItem::Never, strdat);
-
+      iorig->isModelVal = false;
       if ( morig[selParNo[ii]] == -999.9 ||  morig[selParNo[ii]] == -32767.0 )
 	strdat = "";
       else
 	strdat = strdat.setNum(morig[selParNo[ii]],'f',1);
       TableItem* imorig = new TableItem(this, QTableItem::Never, strdat);
+      imorig->isModelVal = false;
       int iflag = flag[selParNo[ii]];
       strdat = strdat.setNum(iflag);
       if ( iflag < 10 )
@@ -335,12 +337,17 @@ DataTable::DataTable(QStringList selPar,
 	strdat = "0" + strdat;
       if (strdat == "00000" ) strdat ="";
       TableItem* iflg = new TableItem(this, QTableItem::Never, strdat);
-
+      iflg->isModelVal = false;
+      strFldat = strdat;
       if ( corr[selParNo[ii]] == -999.9  ||  corr[selParNo[ii]] <= -32766.0 )
 	strdat = "";
       else
 	strdat = strdat.setNum(corr[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
       TableItem* ikorr = new TableItem(this, QTableItem::OnTyping, strdat);
+      if ( strFldat == "05000" )
+	ikorr->isModelVal = true;
+      else
+	ikorr->isModelVal = false;
 
       
       setItem(dt, noColPar*ii + 0, iorig);
@@ -355,7 +362,8 @@ DataTable::DataTable(QStringList selPar,
       if ( !paramHasModel(selParNo[ii]) || ncp == 0 || ncp == 1 || ncp == 2 || ncp == 3 )
 	hideColumn(noColPar*ii + 3);
       QString strClock = strTime.mid(11,2);
-      if ( (selParNo[ii] == 214 || selParNo[ii] == 216) && !(strClock == "06" || strClock == "18") ) {
+      if ( ((selParNo[ii] == 214 || selParNo[ii] == 216) && !(strClock == "06" || strClock == "18")) ||
+	   (selParNo[ii] == 112  && strClock != "06") ) {
 	iorig->setEnabled(false); 
 	iflg->setEnabled(false); 
 	ikorr->setEnabled(false); 
@@ -525,4 +533,15 @@ QString TableItem::key() const {
       item = text();
     }
   return item;
+}
+
+void TableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
+{
+    QColorGroup g( cg );
+    if ( isModelVal )
+      g.setColor( QColorGroup::Text, red );
+    else
+      g.setColor( QColorGroup::Text, black );
+
+    QTableItem::paint( p, g, cr, selected );
 }
