@@ -187,21 +187,9 @@ namespace Weather
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
     , shownFirstTime( false )
   {  
-    //    mainLayout = new QVBoxLayout( this, 0, -1, "Main Layout" );
-    //    statusBar = new QStatusBar( this, "Status Bar" );
-    //    statusBar->setSizeGripEnabled( true );
-    /*    if ( station == 0 ) {
-      QMessageBox::information( this, "HQC - synop",
-                             "Det valgte stasjonsnummer fins ikke i databasen.",
-                             QMessageBox::Ok,  QMessageBox::NoButton );
-      setApplyButton("Lagre");
-      setCancelButton("Lukk");
-      emit cancelButtonPressed();
-      return;
-    }
-    */
     if ( station != 0 ) {
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
+    //    connect( this, SIGNAL( currentChanged(QWidget*) ), this, SIGNAL( showCurrentPage(int, int) ) );
     //    statusBar = new QStatusBar( this, "Status Bar" );
     //    statusBar->setSizeGripEnabled( true );
     //    ttGroup = new QToolTipGroup( statusBar );
@@ -222,7 +210,7 @@ namespace Weather
     WhichDataHelper whichData;
     whichData.addStation( (*station).stationID(), sTime, eTime);
 
-    KvObsDataList ldList;
+    //  KvObsDataList ldList;
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
       cerr << "Can't connect to data table!" << endl;
 
@@ -235,7 +223,6 @@ namespace Weather
       }
     }
     */
-
 
     for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
       IDataList dit = it->dataList().begin();
@@ -301,12 +288,8 @@ namespace Weather
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
   {
-    /*    observations = getTimeObs( station, clock, clock );
-    list<kvalobs::kvData *> okdl;
-    TimeObs & dobs = (*observations)[0];
-    dobs.getAll( okdl );
-    */
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
+    //    connect( this, SIGNAL( currentChanged(QWidget*) ), this, SIGNAL( showCurrentPage(int, int) ) );
     for ( int i = 0; i < NP; i++ )
       parameterIndex[params[i]] = i;
     synObsList.clear();
@@ -321,7 +304,7 @@ namespace Weather
     eTime.addDay();
     WhichDataHelper whichData;
     whichData.addStation(station, sTime, eTime);
-    KvObsDataList ldList;
+    //    KvObsDataList ldList;
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
       cerr << "Can't connect to data table!" << endl;
     for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
@@ -362,45 +345,6 @@ namespace Weather
 	}
       }
     }
-    /*    
-    miutil::miTime protime;
-    for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
-      IDataList dit = it->dataList().begin();
-      while( dit != it->dataList().end() ) {
-	miutil::miTime otime = (dit->obstime());
-	int prType;
-	int prParam;
-        if ( paramInParamsList(dit->paramID()) && type == dit->typeID() ) {
-	  synObs.stnr = dit->stationID();
-	  synObs.otime = dit->obstime();
-	  synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
-	  synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
-	  synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
-	}
-	protime = otime;
-	prType = dit->typeID();
-	prParam = dit->paramID();
-	dit++;
-	otime = dit->obstime();
-	if ( otime != protime ) {
-	  synObsList.push_back(synObs);
-	  for ( int ip = 0; ip < NP; ip++) {
-	    synObs.orig[ip]   = -32767.0;
-	    synObs.corr[ip]   = -32767.0;
-	    synObs.controlinfo[ip] = "";
-	  }
-	}
-	
-	else {
-	  protime = otime;
-	  prParam = dit->paramID();
-	  prType = dit->typeID();
-       	  dit++;
-	}
-	
-      }
-    }
-    */
     setupStationInfo();
     setupCorrTab(synObsList, type);
     setupOrigTab(synObsList, type);
@@ -427,9 +371,10 @@ namespace Weather
       return false;
     }
     DataConsistencyVerifier::DataSet mod;
-    cTab->getModifiedData( mod );
+    //    cTab->getModifiedData( mod );
 
-    if ( mod.empty() )
+    //    if ( mod.empty() )
+    if ( cTab->kvCorrList.empty() )
     {
       QMessageBox::information( this, "HQC - synop",
                                 "Du har ingen endringer å lagre.",
@@ -437,20 +382,53 @@ namespace Weather
       return true;
     }
 
-    list<kvData> dl( mod.begin(), mod.end() );
+    list<kvData> dl( cTab->kvCorrList.begin(), cTab->kvCorrList.end() );
 
     cerr << "Lagrer:" << endl
     << decodeutility::kvdataformatter::createString( dl ) << endl;
     CKvalObs::CDataSource::Result_var res;
+    QString changedVals;
     {
+      int iii = 0;
+      vector<oldNewPair>::iterator mit;
+      for ( mit = cTab->oldNew.begin(); mit != cTab->oldNew.end(); mit++ ) {
+	QString oldCorVal;
+	QString newCorVal;
+	oldCorVal = oldCorVal.setNum(mit->first,'f',1);
+	newCorVal = newCorVal.setNum(mit->second,'f',1);
+	QString parameterId(cTab->parm[cTab->kvCorrList[iii].paramID()]);
+	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n'; 
+	iii++;
+      }
+      changedVals = "Følgende endringer er gjort: \n" + changedVals + "Fullføre lagring?";
+      int corrMb =
+      QMessageBox::question( this, "HQC - synop",
+				changedVals,
+                                "Ja",
+				"Nei",
+				"" );
       //      BusyIndicator busy;
-      res = ri->insert( dl );
+      if ( corrMb != 1 )
+	res = ri->insert( dl );
+      else {
+	//	emit dontStore(cTab->oldNew);
+	emit dontStore();
+	cTab->kvCorrList.clear();
+	cTab->oldNew.clear();
+	cTab->rowCol.clear();
+	changedVals = "";
+	return false;
+      }
     }
     if ( res->res == CKvalObs::CDataSource::OK )
     {
       QMessageBox::information( this, "HQC - synop",
                                 QString( "Lagret " + QString::number( dl.size() ) + " parametre til kvalobs." ),
                                 QMessageBox::Ok );
+      cTab->kvCorrList.clear();
+      cTab->oldNew.clear();
+      cTab->rowCol.clear();
+      changedVals = "";
     }
     else
     {
@@ -461,7 +439,7 @@ namespace Weather
                             QMessageBox::Ok,  QMessageBox::NoButton );
       return false;
     }
-
+    /*
     for ( list<kvData>::const_iterator it = dl.begin(); it != dl.end(); ++ it )
     {
       miutil::miTime t = it->obstime();
@@ -477,8 +455,10 @@ namespace Weather
 	  //      }
       }
     }
+    */
     return true;
   }
+  
   WeatherDialog::~WeatherDialog( )
   {
   }
