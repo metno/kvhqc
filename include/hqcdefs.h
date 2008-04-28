@@ -115,6 +115,8 @@ struct currentType {
   int par;
   miutil::miDate fDate;
   miutil::miDate tDate;
+  int cSensor;
+  int cLevel;
   int cTypeId;
 };
 #endif
