@@ -62,9 +62,9 @@ int main( int argc, char ** argv ) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;
   }
-
   //  kvservice::KvApp kvapp(argc, argv, confSec);
   CorbaKvApp kvapp(argc, argv, confSec);
+  cerr << "TESTER " << *confSec << endl;
   
   QApplication a( argc, argv, true );
   
