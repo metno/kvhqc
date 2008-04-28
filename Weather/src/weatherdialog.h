@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvStation.h>
 
 using namespace std;
+using namespace kvservice;
 
 class QPushButton;
 class QStatusBar;
@@ -121,6 +122,8 @@ namespace Weather
 
     bool paramInParamsList(int);
     bool typeFilter(int, int);
+    typedef QPair<float,float> oldNewPair;
+    std::vector<oldNewPair> oldNew;
 
   public:
     QPushButton *help;
@@ -132,10 +135,15 @@ namespace Weather
     typedef vector<SynObs> SynObsList;
     SynObsList synObsList;
     QToolTipGroup *ttGroup;
+    KvObsDataList ldList;
 
   public slots:
     //    virtual void polish();
     bool saveData();
+
+signals:
+    //    void dontStore(std::vector<oldNewPair>);
+    void dontStore();
 
   protected:
     //    virtual void closeEvent( QCloseEvent * e );
