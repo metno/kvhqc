@@ -105,6 +105,7 @@ private:
   //DataTooltipHandler *efh;
   //TypeInfoToolTip* tyTT;
   int parNo[NOPARAMALL];
+
   /**
    * \return True if the given parameter has model values.
    */
@@ -139,6 +140,10 @@ public:
 	     EditType et, 
 	     const QString &txt ) : QTableItem( t, et, txt ) {}
   QString key() const;
+
+  void paint(QPainter*, const QColorGroup&, const QRect&, bool);
+
+  bool isModelVal;
 };
 
 #endif
