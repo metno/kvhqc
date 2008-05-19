@@ -1585,7 +1585,7 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
 
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
-  if ( typeId < 0 ) return true;
+  if ( typeId < 0 && !(stnr == 18700 && par == 109)) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && 
 	 abs(typeId) == (*it).cTypeId &&
@@ -1728,7 +1728,6 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
       stnr = dit->stationID();
       typeId = dit->typeID();
       bool errFl = false;
-      //      if ( (!correctHqcType || !correctSensor || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
       if ( (!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
 	continue;
       }
