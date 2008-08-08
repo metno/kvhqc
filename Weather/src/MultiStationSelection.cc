@@ -81,14 +81,15 @@ namespace Weather
     	setText( 0, QString::number( data.stationID() ) );
     	setText( 1, QString( data.obstime().isoDate() ) );
     	setText( 2, QString::number( data.typeID() ) );
-	//    	setText( 3, QString::number( data.sensor() - '0' ) );
+	setText( 3, QString::number( data.sensor() - '0') );
 	//    	setText( 4, QString::number( data.level() ) );
       }
     };
   }
 
-  MultiStationSelection::MultiStationSelection( QWidget * parent, const kvData * data )
+  MultiStationSelection::MultiStationSelection(std::list<kvStation>& slist, QWidget * parent, const kvData * data )
     : QDialog( parent )
+    , slist_(slist)
   {
     QVBoxLayout * mainLayout = new QVBoxLayout( this );
     {
@@ -111,7 +112,7 @@ namespace Weather
       stations->addColumn( "Stasjon" );
       stations->addColumn( "Tid" );    
       stations->addColumn( "Type" );
-      //      stations->addColumn( "Sensor" );    
+      stations->addColumn( "Sensor" );    
       //      stations->addColumn( "Lvl" );
       mainLayout->addWidget( stations );
 
@@ -134,6 +135,22 @@ namespace Weather
 
   void MultiStationSelection::doTransfer()
   {
+    int cstnr = selector->getKvData().stationID();
+    bool legalStation = false;
+    for(std::list<kvalobs::kvStation>::const_iterator sit=slist_.begin();sit!=slist_.end(); sit++){
+      int stnr = sit->stationID();
+      if ( cstnr == stnr ) {
+	legalStation  = true;
+	break;
+      }
+    }
+    if ( !legalStation ) {
+      cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
+      cerr << "legalStation er " << legalStation << endl;
+      QMessageBox::information( this, "WatchRR", 
+				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+      return;
+    } 
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
     QListViewItem * it = dynamic_cast<QListViewItem *>( item );
     assert( it );
@@ -168,6 +185,7 @@ namespace Weather
     assert( ss );
     const kvData * d = & ss->data;
     int type = d->typeID();
+    int sensor = d->sensor();
     
       pair<miTime, miTime> dates = dates_( d->obstime() );
     TimeObsListPtr next;
@@ -209,7 +227,7 @@ namespace Weather
       //      auto_ptr<QListViewItem> item( stations->firstChild() );
       //      stations->takeItem( item.get() );
       delete stations->firstChild();
-      WeatherDialog * wdlg = new WeatherDialog( current, type, reinserter, this );
+      WeatherDialog * wdlg = new WeatherDialog( current, type, sensor, reinserter, this );
       wdlg->resize(1200,700);
       wdlg->exec();
       
