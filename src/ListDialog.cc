@@ -133,7 +133,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   vesReg = new QCheckBox( "Vestlandet", stRegion );
   troReg = new QCheckBox( "Trøndelag ", stRegion );
   norReg = new QCheckBox( "Nord-Norge", stRegion );
-  webReg = new QCheckBox( "Web-stasjoner", stRegion );
+  webReg = new QCheckBox( "Synop-stasjoner", stRegion );
   priReg = new QCheckBox( "Prioriterte stasjoner", stRegion );
 
   connect(ausReg,SIGNAL(clicked()), this,SLOT(ausCheck()));
@@ -800,6 +800,8 @@ void ListDialog::onorCheck() {
 
 void ListDialog::webCheck() {
   if (webReg->isChecked() ) {
+    allType->setChecked(TRUE);
+    /*
     vesReg->setChecked(FALSE);
     troReg->setChecked(FALSE);
     norReg->setChecked(FALSE);
@@ -807,6 +809,7 @@ void ListDialog::webCheck() {
     priReg->setChecked(FALSE);
     aaType->setChecked(TRUE);
     vsType->setChecked(TRUE);
+    */
   }
 }
 
@@ -888,7 +891,7 @@ void ListDialog::allCounCheck() {
     troReg->setChecked(FALSE);
     ausReg->setChecked(FALSE);
     norReg->setChecked(FALSE);
-    webReg->setChecked(FALSE);
+    //    webReg->setChecked(FALSE);
     priReg->setChecked(FALSE);
   }
 }
@@ -995,12 +998,14 @@ StationTable::StationTable(QStringList selStatNum,
     QString strStType    = *selStatType.at(i);
     QString strStFylke   = *selStatFylke.at(i);
     QString strStKommune = *selStatKommune.at(i);
-    bool webStat = *selStatWeb.at(i) == "WEB";
+    //    bool webStat = *selStatWeb.at(i) == "WEB";
+    bool webStat = *selStatWeb.at(i) != "    ";
     bool priStat = (*selStatPri.at(i)).left(3) == "PRI";
     QString prty =  (*selStatPri.at(i)).right(1);
     int stano = strStnr.toInt();
     ObsTypeList::iterator oit = otpList->begin();
     bool foundStat = false;
+    //    bool reg = false;
     for ( ; oit != otpList->end(); oit++) {   
       TypeList::iterator tit = oit->begin();
       if ( stano == (*tit) ) {
@@ -1032,6 +1037,7 @@ StationTable::StationTable(QStringList selStatNum,
 	    (tro == TRUE && strStFylke == "TROMS") ||
 	    (fin == TRUE && strStFylke == "FINNMARK") ||
 	    (sva == TRUE && strStFylke == "SVALBARD") ||
+	    //       	    (priStat && pri) ))
        	    (webStat && web) || (priStat && pri) ))
       continue;
     QString strEnv;
@@ -1328,3 +1334,4 @@ QString StTableItem::key() const {
   }
   return item;
 }
+
