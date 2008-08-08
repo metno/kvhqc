@@ -87,10 +87,12 @@ namespace WatchRR
     };
   }
 
-  MultiStationSelection::MultiStationSelection( QString captionSuffix, QWidget * parent, const kvData * data )
+  MultiStationSelection::MultiStationSelection( QString captionSuffix, std::list<kvStation>& slist, QWidget * parent, const kvData * data )
     : QDialog( parent )
     , captionSuffix_( captionSuffix )
+    , slist_(slist)
   {
+
     QVBoxLayout * mainLayout = new QVBoxLayout( this );
     {
       QHBoxLayout * topLayout = new QHBoxLayout( mainLayout );
@@ -113,7 +115,8 @@ namespace WatchRR
       stations->addColumn( "Stasjon" );
       stations->addColumn( "Tid" );    
       stations->addColumn( "Type" );
-      stations->addColumn( "Sensor" );    
+      stations->addColumn( "Sensor" );          
+
       stations->addColumn( "Lvl" );
       mainLayout->addWidget( stations );
 
@@ -140,6 +143,22 @@ namespace WatchRR
 
   void MultiStationSelection::doTransfer()
   {
+    int cstnr = selector->getKvData().stationID();
+    bool legalStation = false;
+    for(std::list<kvalobs::kvStation>::const_iterator sit=slist_.begin();sit!=slist_.end(); sit++){
+      int stnr = sit->stationID();
+      if ( cstnr == stnr ) {
+	legalStation  = true;
+	break;
+      }
+    }
+    if ( !legalStation ) {
+      cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
+      cerr << "legalStation er " << legalStation << endl;
+      QMessageBox::information( this, "WatchRR", 
+				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+      return;
+    } 
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
     QListViewItem * it = dynamic_cast<QListViewItem *>( item );
     assert( it );
@@ -209,7 +228,26 @@ namespace WatchRR
       //auto_ptr<QListViewItem> item( stations->firstChild() );
       //stations->takeItem( item.get() );
       delete stations->firstChild();
-
+      /*
+      bool legalStation = false;
+      for(std::list<kvalobs::kvStation>::const_iterator it=slist_.begin();it!=slist_.end(); it++){
+	int cstnr = it->stationID();
+	cerr << "TESTING STATIONID : " << cstnr << " " << (*current)[0].getStation() << endl;
+	if ( cstnr == (*current)[0].getStation() ) {
+	  legalStation  = true;
+	  cerr << "TESTING LEGALSTATION : " << cstnr << " " << (*current)[0].getStation() << " " << legalStation << endl;
+	  break;
+	}
+      }
+      if ( !legalStation ) {
+	cerr << "Ugyldig stasjonsnummer er " << (*current)[0].getStation() << endl;
+	cerr << "legalStation er " << legalStation << endl;
+    	QMessageBox::information( this, "WatchRR", 
+				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+    	return;
+    } 
+      */
+  
       RRDialog * dlg = new RRDialog( current, reinserter, captionSuffix_, this );
       dlg->exec();
 
