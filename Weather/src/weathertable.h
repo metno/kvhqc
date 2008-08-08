@@ -191,6 +191,7 @@ namespace Weather
     struct synDat {
       double sdat[NP];
       int styp[NP];
+      int ssen[NP];
     };
 
     struct synFlg {
