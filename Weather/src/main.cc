@@ -89,7 +89,11 @@ int main( int argc, char ** argv )
       return 1;
   }
 
-  Weather::MultiStationSelection d( 0, 0/*& dl.front()*/ );
+  std::list<kvalobs::kvStation> slist;
+  if (!KvApp::kvApp->getKvStations(slist)) {
+    cerr << "Can't connect to station table!" << endl;
+  }
+  Weather::MultiStationSelection d(slist, 0, 0/*& dl.front()*/ );
   d.show();
 
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
