@@ -63,7 +63,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace std;
 
-const miutil::miString DATASET_STATIONS = "TESTPOSISJONER";
+//const miutil::miString DATASET_STATIONS = "TESTPOSISJONER";
 
 int noSelPar;
 int modelParam[] = {61,81,109,110,177,178,211,262};
@@ -105,7 +105,6 @@ HqcMainWindow::HqcMainWindow()
 {
   // --- CHECK USER IDENTITY ----------------------------------------
 
-  //  reinserter = Authentication::identifyUser( dynamic_cast<KvApp *>(qApp),
   reinserter = Authentication::identifyUser(  KvApp::kvApp,
 					     "ldap.oslo.dnmi.no", userName);
   if ( reinserter == NULL ) {
@@ -151,7 +150,7 @@ HqcMainWindow::HqcMainWindow()
 
   fileSaveMenuItem = file->insertItem( "Lagre", this, SIGNAL( saveData() ), CTRL+Key_S );
   file->setItemEnabled( fileSaveMenuItem, false );
-  //KTEST
+
   filePrintMenuItem = file->insertItem( "Skriv ut", this, SIGNAL( printErrorList() ), CTRL+Key_P );
   file->setItemEnabled( filePrintMenuItem, false );
 
@@ -167,7 +166,7 @@ HqcMainWindow::HqcMainWindow()
   moID = choice->insertItem( "Vis modeldata",             this, SLOT(showMod()));
   stID = choice->insertItem( "Vis stasjonsnavn",          this, SLOT(showStat()));
   poID = choice->insertItem( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
-  //  tyID = choice->insertItem( "Vis alle typer",            this, SLOT(showTyp()));
+
   isShFl = TRUE;
   isShOr = TRUE;
   isShMo = TRUE;
@@ -177,7 +176,6 @@ HqcMainWindow::HqcMainWindow()
   choice->setItemChecked(orID, isShOr);
   choice->setItemChecked(moID, isShMo);
   choice->setItemChecked(stID, isShSt);
-
   
   showmenu = new QPopupMenu( this );
   menuBar()->insertItem( "&Listetype", showmenu);
@@ -195,6 +193,7 @@ HqcMainWindow::HqcMainWindow()
   
   weathermenu = new QPopupMenu( this );
   menuBar()->insertItem( "&Værelement", weathermenu);
+  wElement = "";
   taID = weathermenu->insertItem( "&Temperatur og fuktighet", this, SLOT(temperature()) );
   prID = weathermenu->insertItem( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
   apID = weathermenu->insertItem( "&Lufttrykk og vind",       this, SLOT(airPress()) );
@@ -366,36 +365,26 @@ void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
 void HqcMainWindow::showFlags() {
   isShFl = !isShFl;
   choice->setItemChecked(flID, isShFl);
-  //  if ( listExist )
-  //    emit toggleShow();
 }
 
 void HqcMainWindow::showOrigs() {
   isShOr = !isShOr;
   choice->setItemChecked(orID, isShOr);
-  //  if ( listExist )
-  //    emit toggleShow();
 }
 
 void HqcMainWindow::showMod() {
   isShMo = !isShMo;
   choice->setItemChecked(moID, isShMo);
-  //  if ( listExist )
-  //    emit toggleShow();
 }
 
 void HqcMainWindow::showStat() {
   isShSt = !isShSt;
   choice->setItemChecked(stID, isShSt);
-  //  if ( listExist )
-  //    emit toggleShow();
 }
 
 void HqcMainWindow::showPos() {
   isShPo = !isShPo;
   choice->setItemChecked(poID, isShPo);
-  //  if ( listExist )
-  //    emit toggleShow();
 }
 
 void HqcMainWindow::showTyp() {
@@ -449,9 +438,6 @@ void HqcMainWindow::temperature() {
   weathermenu->setItemChecked(plID, FALSE);
   insertParametersInListBox(NOPARAMTEMP, tempOrder);
   pardlg->showAll();
-//  if ( listExist ){
-//    emit toggleWeather();
-//  }
   sendObservations(remstime,false);
 }
 
@@ -469,8 +455,6 @@ void HqcMainWindow::precipitation() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
-//  if ( listExist )
-//    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPREC, precOrder);
   pardlg->showAll();
@@ -490,8 +474,6 @@ void HqcMainWindow::visuals() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMVISUAL, visualOrder);
   pardlg->showAll();
@@ -512,8 +494,6 @@ void HqcMainWindow::sea() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
    weathermenu->setItemChecked(plID, FALSE);
- //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMWAVE, waveOrder);
   pardlg->showAll();
@@ -533,8 +513,6 @@ void HqcMainWindow::synop() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMSYNOP, synopOrder);
   pardlg->showAll();
@@ -554,8 +532,6 @@ void HqcMainWindow::climateStatistics() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMKLSTAT, klstatOrder);
   pardlg->showAll();
@@ -575,8 +551,6 @@ void HqcMainWindow::priority() {
   weathermenu->setItemChecked(piID, TRUE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPRIORITY, priorityOrder);
   pardlg->showAll();
@@ -596,8 +570,6 @@ void HqcMainWindow::wind() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMWIND, windOrder);
   pardlg->showAll();
@@ -617,8 +589,6 @@ void HqcMainWindow::plu() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(alID, FALSE);
   weathermenu->setItemChecked(plID, TRUE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPLU, pluOrder);
   pardlg->showAll();
@@ -638,8 +608,6 @@ void HqcMainWindow::all() {
   weathermenu->setItemChecked(piID, FALSE);
   weathermenu->setItemChecked(plID, FALSE);
   weathermenu->setItemChecked(alID, TRUE);
-  //  if ( listExist )
-  //    emit toggleWeather();
   sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMALL, order);
   pardlg->showAll();
@@ -744,9 +712,6 @@ void HqcMainWindow::dianaShowOK() {
     prMap["RRR"] = true;
   }
 
-
-
-
   dnMap["TxTn"] = "TAN_12";
   if ( dshdlg->tx12Type->isChecked() ) {
     dnMap["TxTn"] = "TAX_12";
@@ -819,7 +784,6 @@ void HqcMainWindow::ListOK() {
     }
   }
   if ( !statSelect || statSelect->stlist.size() == 0 ) {
-    //   QMessageBox::critical(this, 
     QMessageBox::warning(this, 
 			 "Stasjonsvalg", 
 			 "Ingen stasjoner er valgt!\n"
@@ -838,6 +802,16 @@ void HqcMainWindow::ListOK() {
 			 "Tidspunktvalg", 
 			 "Ingen tidspunkter er valgt!\n"
 			 "Minst ett tidspunkt må velges", 
+			  QMessageBox::Ok, 
+			  QMessageBox::NoButton);
+    return; 
+  }
+
+  if ( wElement.isEmpty() ) {
+    QMessageBox::warning(this, 
+			 "Værelement", 
+			 "Ingen værelement er valgt!\n"
+			 "Værelement må velges", 
 			  QMessageBox::Ok, 
 			  QMessageBox::NoButton);
     return; 
@@ -1259,7 +1233,8 @@ void HqcMainWindow::showWatchRR()
     else if ( current->dtt )
       data = current->dtt->getKvData();
   }
-  WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, this );
+
+  WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this );
   if ( rrd ) {
     rrd->setReinserter( reinserter );
     rrd->show();
@@ -1275,7 +1250,7 @@ void HqcMainWindow::showWeather()
       data = current->erl->getKvData();
     }
   }
-  Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, this );
+  Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this );
   if ( wtd ) {
     wtd->setReinserter( reinserter );
     wtd->show();
@@ -1286,6 +1261,13 @@ void HqcMainWindow::listMenu() {
   if ( lstdlg->isVisible() ) {
     lstdlg->hideAll();
   } else {
+    miutil::miTime mx = miutil::miTime::nowTime();
+    if ( !(lstdlg->fromTime->time().day() == 1 && lstdlg->toTime->time().day() > 27 && lstdlg->toTime->time().month() < mx.month()) ) {
+      mx.addMin(-1*mx.min());
+      mx.addHour(1);
+      lstdlg->toTime->setMax(mx);
+      lstdlg->toTime->setTime(mx);
+    }
     lstdlg->showAll();
   }
 }
@@ -1585,7 +1567,12 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
 
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
-  if ( typeId < 0 && !(stnr == 18700 && par == 109)) return true;
+  if ( typeId == -404 ) return false;
+  if ( (stnr == 68860 ) && typeId == -4 ) return false;
+  if ( ( stnr == 24710 || stnr == 18500 ) && (typeId == -342 || typeId == -330) ) return false;
+  if ( stnr == 4460 && typeId == -330 ) return false;
+  if ( stnr == 4460 && typeId == 342 && (otime.hour() == 6 || otime.hour() == 18) ) return false;
+  if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && 
 	 abs(typeId) == (*it).cTypeId &&
@@ -1611,8 +1598,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
   //  vector<datl> tempDatalist;
   bool result;
   bool tdlUpd[NOPARAM];
-  dlist.erase(dlist.begin(),dlist.end());
-  datalist.clear();
+  //  dlist.erase(dlist.begin(),dlist.end());
+  //  datalist.clear();
   for ( int ip = 0; ip < NOPARAM; ip++) {
     tdl.orig[ip]   = -32767.0;
     tdl.flag[ip]   = 0;
@@ -1636,22 +1623,6 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 
   if(!KvApp::kvApp->getKvData(ldlist, whichData))
     cerr << "Can't connect to data table!" << endl;
-  /*
-  //TEST
-  cerr << " STNR    DATO       TID   PAR TYP SN LV      ORIG      CORR" << endl;
-  for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
-    IDataList dit = it->dataList().begin();
-    while( dit != it->dataList().end() ) {
-      cerr << setw(5) << dit->stationID() << setw(20) << dit->obstime() 
-	   << setw(4) <<dit->paramID() << setw(4) << dit->typeID() 
-	   << setw(3) << dit->sensor() - '0' << setw(3) << dit->level() 
-	   << setw(10) << setprecision(1) << dit->original()
-	   << setw(10) << setprecision(1) << dit->corrected() << endl; 
-      dit++;
-    }
-  }
-  //TEST SLUTT
-  */
   int aggPar = 0;
   int aggTyp = 0;
   int aggStat = 0;
@@ -1665,7 +1636,6 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     int ditNo = 0;
     while( dit != it->dataList().end() ) {
       bool correctLevel = (dit->level() == sLevel );
-      //      bool correctSensor = (dit->sensor() - '0' == sSensor );
       bool correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
@@ -1878,7 +1848,7 @@ void HqcMainWindow::readFromTypeIdFile(int stnr) {
       crT.par = par;
       crT.fDate = fDate;
       crT.tDate = tDate;
-      crT.cSensor = sensor - 1;
+      crT.cSensor = (stnr == 16560) ? sensor : sensor - 1;
       crT.cLevel = level;
       crT.cTypeId = typeId;
       currentTypeList.push_back(crT);
@@ -1905,13 +1875,19 @@ void HqcMainWindow::readFromStationFile(int statCheck) {
   int prevStnr = 0;
   while ( stationStream.atEnd() == 0 ) {
     QString statLine = stationStream.readLine();
+    QString qwert = statLine.mid(64,3);
     int stnr = statLine.left(7).toInt();
+    int snr = 0;
+    QString strSnr("    ");
     if ( stnr == prevStnr ) continue;
     std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
     bool foundStation = FALSE;
+
     for(;it!=slist.end(); it++){
       if ( it->stationID() == stnr ) {
 	foundStation = TRUE;
+	if ( it->wmonr() > 0 )
+	  strSnr = strSnr.setNum(it->wmonr());
 	break;
       }
     }
@@ -1926,7 +1902,8 @@ void HqcMainWindow::readFromStationFile(int statCheck) {
       listStatType.append(strEnv);
       listStatFylke.append(statLine.mid(8,30).stripWhiteSpace());
       listStatKommune.append(statLine.mid(39,24).stripWhiteSpace());
-      listStatWeb.append(statLine.mid(64,3).stripWhiteSpace());
+      //      listStatWeb.append(statLine.mid(64,3).stripWhiteSpace());
+      listStatWeb.append(strSnr);
       listStatPri.append(statLine.mid(67,4).stripWhiteSpace());
     }
     prevStnr = stnr;
@@ -2305,6 +2282,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
 
 
 // send text to show in text-window in diana
+/*
 void HqcMainWindow::sendShowText(const miutil::miString site)
 {
   if (!dianaconnected) return;
@@ -2319,7 +2297,7 @@ void HqcMainWindow::sendShowText(const miutil::miString site)
   cerr << "HQC sender melding" << endl;
   pluginB->sendMessage(m);
 }
-
+*/
 
 // send message to show ground analysis in Diana
 bool  HqcMainWindow::sendAnalysisMessage() {
@@ -2457,8 +2435,6 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
       miutil::miString synopStr = str;
       miutil::miString enkelStr = str;
       double aa = datalist[i].corr[1];
-      //      double tan12 = datalist[i].corr[214];
-      //      double tax12 = datalist[i].corr[216];
       for(int j=0; j<parIndex.size();j++){
 	double corr = datalist[i].corr[parIndex[j]];
 	if ( parModel[j] ) {
@@ -2824,7 +2800,6 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
 {
   int tpId;
   tpId = typ;
-  //  for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
   for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
     if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime) {
       tpId = obit->typeID();
