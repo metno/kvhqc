@@ -35,6 +35,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <vector>
 #include <iterator>
 #include <kvData.h>
+#include <kvStation.h>
 #include <decodeutility/DataReinserter.h>
 
 class QListView;
@@ -60,11 +61,13 @@ class MultiStationSelection
     StationSelection * selector;
     QListView * stations;
     QString captionSuffix_;
+    std::list<kvalobs::kvStation> slist_;
 
 public:
     explicit MultiStationSelection( QString captionSuffix,
+                                    std::list<kvalobs::kvStation>& slist,
                                     QWidget * parent = 0,
-                                    const kvalobs::kvData * data = 0 );
+				    const kvalobs::kvData * data = 0 );
     virtual ~MultiStationSelection( );
 
 protected:
