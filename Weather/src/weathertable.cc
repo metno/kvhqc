@@ -118,17 +118,20 @@ namespace Weather
     int itest = 0, jtest = 0;
     for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin(); 
 	  it != wd->synObsList.end(); it++) {
-      if ( type == 0 || (type != 0 && (*it).otime > protime) ) {
+      if ( (*it).otime > protime ) {
+	//      if ( (type == 0 && (*it).otime != "0000-00-00 -1:-1:-1") || (type != 0 && (*it).otime > protime) ) {
 	timeList.push_back((*it).otime);
 	for ( int i = 0; i < NP; i++ ) {
 	  if ( pName == "corr" ) {
 	    sd.sdat[i] = (*it).corr[i];
 	    sd.styp[i] = (*it).typeId[i];
+	    sd.ssen[i] = (*it).sensor[i];
 
 	  }
 	  else if ( pName == "orig" ) {
 	    sd.sdat[i] = (*it).orig[i];
 	    sd.styp[i] = (*it).typeId[i];
+	    sd.ssen[i] = (*it).sensor[i];
 	  }
 	  sf.sflg[i] = flagText((*it).controlinfo[i]);
 	}
@@ -279,6 +282,14 @@ namespace Weather
     QTableItem *tit = item( row, col );
     float newCorr = (tit->text()).toFloat();
     kvData kvDat = getKvData(row, col);
+    if ( kvDat.stationID() == 0 ) {
+      QMessageBox::information( this,
+				"Kan ikke lagre",
+				"Raden fins ikke i databasen",
+				QMessageBox::Ok,
+				QMessageBox::NoButton );
+      return;
+    }
     float oldCorr = kvDat.corrected();
     QString oldCorrStr;
     oldCorrStr = oldCorrStr.setNum(oldCorr,'f',1);
@@ -331,26 +342,44 @@ namespace Weather
   kvData WeatherTable::getKvData( int row, int col ) {
     miutil::miTime cTime = timeList[row];
     //Find paramID in col
+    bool foundRow = false;
     int cParam = params[columnIndex[col]];
     vector<kvData>::iterator kvit;
     for ( kvit = kvDatList.begin(); kvit != kvDatList.end(); kvit++) {
       if ( (*kvit).paramID() == cParam && (*kvit).obstime() == cTime && (*kvit).typeID() == sd.styp[columnIndex[col]]) {
+	foundRow = true;
 	break;
       }
     }
     kvData kvCorrDat;
-    kvCorrDat.set(kvit->stationID(), 
-		  kvit->obstime(), 
-		  kvit->original(), 
-		  kvit->paramID(), 
-		  kvit->tbtime(), 
-		  kvit->typeID(), 
-		  kvit->sensor(), 
-		  kvit->level(), 
-		  kvit->corrected(), 
-		  kvit->controlinfo(), 
-		  kvit->useinfo(), 
-		  kvit->cfailed());
+    if ( foundRow )
+      kvCorrDat.set(kvit->stationID(), 
+		    kvit->obstime(), 
+		    kvit->original(), 
+		    kvit->paramID(), 
+		    kvit->tbtime(), 
+		    kvit->typeID(), 
+		    kvit->sensor(), 
+		    kvit->level(), 
+		    kvit->corrected(), 
+		    kvit->controlinfo(), 
+		    kvit->useinfo(), 
+		    kvit->cfailed());
+    else
+      kvCorrDat.set(0, 
+		    cTime, 
+		    0, 
+		    cParam, 
+		    cTime, 
+		    sd.styp[columnIndex[col]], 
+		    0, 
+		    0, 
+		    0, 
+		    kvDatList.begin()->controlinfo(), 
+		    kvDatList.begin()->useinfo(), 
+		    kvDatList.begin()->cfailed());
+
+
     return kvCorrDat;
   }
 
