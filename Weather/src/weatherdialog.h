@@ -62,6 +62,7 @@ struct SynObs {
   int snr;
   miutil::miTime otime;
   int typeId[NP];
+  int sensor[NP];
   double orig[NP];
   double corr[NP];
   string controlinfo[NP];
@@ -93,14 +94,14 @@ namespace Weather
  */
 //    WeatherDialog * getWD( const QWidget * o );
 //    WeatherDialog * getWD( QWidget * o );
-    static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, QWidget * parent );
+    static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
  
-    WeatherDialog( TimeObsListPtr dol, int type,	
+    WeatherDialog( TimeObsListPtr dol, int type, int sensor,	
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
 
 
-    WeatherDialog( int station, const miutil::miTime clock, int type,
+    WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
     virtual ~WeatherDialog( );
@@ -122,6 +123,7 @@ namespace Weather
 
     bool paramInParamsList(int);
     bool typeFilter(int, int);
+    bool sensorFilter(int, int);
     typedef QPair<float,float> oldNewPair;
     std::vector<oldNewPair> oldNew;
 
