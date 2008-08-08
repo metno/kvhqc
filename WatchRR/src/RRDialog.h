@@ -64,7 +64,7 @@ namespace WatchRR
      *
      * \parameter data represents the default values for station, obstime etc.
      */
-    static RRDialog * getRRDialog( const kvalobs::kvData & data, QWidget * parent );
+    static RRDialog * getRRDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
 
     RRDialog( DayObsListPtr dol,	
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
@@ -110,9 +110,10 @@ namespace WatchRR
     bool saveData();
 
   private:
-  	QString captionSuffix_;
+    QString captionSuffix_;
     const kvalobs::kvStation *station;
     bool shownFirstTime;
+    std::list<kvalobs::kvStation> slist;
   };
 }
 
