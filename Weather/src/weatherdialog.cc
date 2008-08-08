@@ -52,7 +52,7 @@ using namespace std;
 
 namespace Weather
 {
-  WeatherDialog * WeatherDialog::getWeatherDialog( const kvData & data, QWidget * parent )
+  WeatherDialog * WeatherDialog::getWeatherDialog( const kvData & data, list<kvStation>& slist, QWidget * parent )
   {
     cout << "WeatherDialog::getWeatherDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
@@ -82,9 +82,22 @@ namespace Weather
       return 0;
     
     int             st = ss->station();
+    bool legalStation = false;
+    for(list<kvalobs::kvStation>::const_iterator it=slist.begin();it!=slist.end(); it++){
+      int cstnr = it->stationID();
+      if ( cstnr == st ) {
+	legalStation  = true;
+	break;
+      }
+    }
+    if ( !legalStation ) {
+    	QMessageBox::information( ss, "WatchWeather", 
+				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+    	return 0;
+    } 
     miutil::miTime  cl = ss->obstime();
     int             ty = ss->typeID();
-    //    int             se = ss->sensor();
+    int             se = ss->sensor() - '0';
     //    int             lv = ss->level();
 
     cerr << "Base for data:\n"
@@ -95,7 +108,7 @@ namespace Weather
 
     if ( st ) {
       try {
-        ret= new WeatherDialog( st, cl, ty, 0, parent );
+        ret= new WeatherDialog( st, cl, ty, se, 0, parent );
       }
       catch( invalid_argument & e ) {
       }
@@ -107,6 +120,13 @@ namespace Weather
     if ( gType == 0 ) 
       return true;
     else if ( abs(cType) == gType )
+      return true;
+    else
+      return false;
+  }
+
+  bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
+    if ( cSensor == gSensor )
       return true;
     else
       return false;
@@ -178,7 +198,7 @@ namespace Weather
     return WeatherDialog::DateRange( start, end );
   }
 
-  WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type,	
+  WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,	
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
 		      QWidget *parent, const char* name, bool modal, WFlags f )
     : QTabDialog( parent, name, modal )
@@ -229,10 +249,12 @@ namespace Weather
       while( dit != it->dataList().end() ) {
 	miutil::miTime otime = (dit->obstime());
 	int typid = dit->typeID();
-        if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) ) {
+	int snsor = dit->sensor();
+        if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) && sensorFilter(sensor, dit->sensor()) ) {
 	  synObs.stnr = dit->stationID();
 	  synObs.otime = dit->obstime();
 	  synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
+	  synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
 	  synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
 	  synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
 	  synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
@@ -240,6 +262,7 @@ namespace Weather
 	  dit++;
 	  otime = dit->obstime();
 	  typid = dit->typeID();
+	  snsor = dit->sensor();
 	  if ( otime != protime ) {
 	    synObsList.push_back(synObs);
 	    for ( int ip = 0; ip < NP; ip++) {
@@ -254,6 +277,7 @@ namespace Weather
 	  dit++;
 	  otime = dit->obstime();
 	  typid = dit->typeID();
+	  snsor = dit->sensor();
 	  if ( otime != protime ) {
        	    synObsList.push_back(synObs);
 	    for ( int ip = 0; ip < NP; ip++) {
@@ -279,7 +303,7 @@ namespace Weather
   }
 
 
-  WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type,
+  WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 				const DataReinserter<KvApp> * dataReinserter,
 				QWidget* parent, const char* name, bool modal, WFlags f )
   //    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
@@ -311,7 +335,7 @@ namespace Weather
       IDataList dit = it->dataList().begin();
       while( dit != it->dataList().end() ) {
 	miutil::miTime otime = (dit->obstime());
-        if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) ) {
+        if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) && sensorFilter(sensor, dit->sensor()-'0') ) {
 	  synObs.stnr = dit->stationID();
 	  synObs.otime = dit->obstime();
 	  synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
