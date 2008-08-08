@@ -362,7 +362,7 @@ DataTable::DataTable(QStringList selPar,
       if ( !paramHasModel(selParNo[ii]) || ncp == 0 || ncp == 1 || ncp == 2 || ncp == 3 )
 	hideColumn(noColPar*ii + 3);
       QString strClock = strTime.mid(11,2);
-      if ( ((selParNo[ii] == 214 || selParNo[ii] == 216) && !(strClock == "06" || strClock == "18")) ||
+      if ( ((selParNo[ii] == 214 || selParNo[ii] == 216 || selParNo[ii] == 109 || selParNo[ii] == 110) && !(strClock == "06" || strClock == "18")) ||
 	   (selParNo[ii] == 112  && strClock != "06") ) {
 	iorig->setEnabled(false); 
 	iflg->setEnabled(false); 
