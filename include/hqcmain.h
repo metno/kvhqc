@@ -410,7 +410,7 @@ private:
   kvalobs::kvDbGate dbGate;
   dnmi::db::Connection *con;
   dnmi::db::DriverManager dbmngr;
-  DataList dlist;
+  //  DataList dlist;
   ModelDataList mdlist;
   ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;
@@ -450,7 +450,7 @@ protected:
   void initDiana();
   void sendMessage(miMessage&);
   void sendImage(const miString name, const QImage& image);
-  void sendShowText(const miString site);
+  //  void sendShowText(const miString site);
   void readErrorsFromqaBase(int&, int&);
 
 
