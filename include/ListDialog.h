@@ -54,6 +54,7 @@ typedef list<TypeList>                         ObsTypeList;
 
 class ListDialog : public QDialog {
   Q_OBJECT
+    friend class HqcMainWindow;
 public:
   ListDialog(QWidget*);
 
