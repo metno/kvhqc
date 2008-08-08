@@ -89,7 +89,7 @@ namespace Weather
     layout->addWidget( new QLabel( typeID_, "T&ype:", this ), row++, 0 );
     if ( ! data.typeID() )
       typeID_->setText( "" );
-    /*    
+    
     // Sensor:
     int snsr = data.sensor();
     if ( snsr >= '0' )
@@ -98,7 +98,9 @@ namespace Weather
       new QLineEdit( QString::number( snsr ), "0", this );
     layout->addWidget( sensor_, row, 1 );
     layout->addWidget( new QLabel( sensor_, "S&ensor:", this ), row++, 0 );
-    
+    if ( ! data.sensor() )
+      sensor_->setText( "" );
+    /*
     // Level:
     level_ = 
       new QLineEdit( QString::number( data.level() ), "0", this );
@@ -142,13 +144,17 @@ namespace Weather
   int StationSelection::typeID() const {
     return typeID_->text().toInt();
   }
-
   /*
+  int StationSelection::sensor() const {
+    return sensor_->text().toInt();
+  }
+  */
+  
   int StationSelection::sensor() const {
     return sensor_->text().toInt() + '0';
   }
 
-  
+  /*  
   int StationSelection::level() const {
     return level_->text().toInt();
   }
@@ -156,7 +162,7 @@ namespace Weather
   kvData StationSelection::getKvData() const
   {
     kvData ret( station(), miutil::miTime(obstime() ),
-		0, 211, miutil::miTime::nowTime(), typeID(), 0, 0,
+		0, 211, miutil::miTime::nowTime(), typeID(), sensor(), 0,
 		0, kvalobs::kvControlInfo(),kvalobs::kvUseInfo(), "" );
     return ret;
   }
