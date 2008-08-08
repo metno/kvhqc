@@ -51,13 +51,14 @@ using namespace std;
 
 namespace WatchRR
 {
-  RRDialog * RRDialog::getRRDialog( const kvData & data, QWidget * parent )
+  RRDialog * RRDialog::getRRDialog( const kvData & data, list<kvStation>& slist, QWidget * parent )
   {
     cout << "RRDialog::getRRDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
     QDialog * selector = new QDialog( parent, "", WDestructiveClose );
     selector->setCaption( "Velg stasjonsinformasjon" );
+    cerr << slist.size() << endl;
 
     QVBoxLayout * mainLayout = new QVBoxLayout( selector );
 
@@ -81,6 +82,20 @@ namespace WatchRR
       return 0;
     
     int            st = ss->station();
+
+    bool legalStation = false;
+    for(list<kvalobs::kvStation>::const_iterator it=slist.begin();it!=slist.end(); it++){
+      int cstnr = it->stationID();
+      if ( cstnr == st ) {
+	legalStation  = true;
+	break;
+      }
+    }
+    if ( !legalStation ) {
+    	QMessageBox::information( ss, "WatchRR", 
+				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+    	return 0;
+    } 
     miutil::miDate da = ss->obstime();
     int            ty = ss->typeID();
     int            se = ss->sensor();
@@ -106,11 +121,11 @@ namespace WatchRR
 
   void RRDialog::setup( RRTable * rrt )
   {
-//     if ( ! this->station ) {
-//       ostringstream ss;
-//       ss << "Ingen stasjon " << station;
-//       throw invalid_argument( ss.str() );
-//     }
+    if ( ! this->station ) {
+      ostringstream ss;
+      ss << "Ingen stasjon " << station;
+      throw invalid_argument( ss.str() );
+    }
 
     // Display station information:
     stationInfo = new QLineEdit( this, "Station Info" );
@@ -187,7 +202,7 @@ namespace WatchRR
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*dol)[0].getStation()] )
     , shownFirstTime( false )
   {
-    RRTable * rrt = new RRTable( dol, ttGroup, this, "Table" );
+   RRTable * rrt = new RRTable( dol, ttGroup, this, "Table" );
     setup( rrt );
     rrt->ttGroup = ttGroup;
   }
