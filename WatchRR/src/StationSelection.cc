@@ -34,6 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qdatetimeedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//#include <qmessagebox.h>
 #include <kvalobs/kvData.h>
 //#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
@@ -122,7 +123,7 @@ namespace WatchRR
   }
 
   
-  int StationSelection::station() const {
+  int StationSelection::station() const { 
     return station_->text().toInt();
   }
 
