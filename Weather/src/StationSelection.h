@@ -54,7 +54,7 @@ namespace Weather
     int station() const;
     miutil::miTime obstime() const;
     int typeID() const;
-    //    int sensor() const;
+    int sensor() const;
     //    int level() const;
     
   private slots:
@@ -65,7 +65,7 @@ namespace Weather
     QLineEdit * station_;
     QDateTimeEdit * obstime_;
     QLineEdit * typeID_;
-    //    QLineEdit * sensor_;
+    QLineEdit * sensor_;
     //    QLineEdit * level_;
 
     typedef std::map<int,int> TypeFromStation;
