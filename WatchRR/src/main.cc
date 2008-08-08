@@ -82,7 +82,13 @@ int main( int argc, char ** argv )
       return 1;
   }
 
-  WatchRR::MultiStationSelection d( kvapp.kvpathInCorbaNameserver(), 0, 0/*& dl.front()*/ );
+
+  std::list<kvalobs::kvStation> slist;
+  if (!KvApp::kvApp->getKvStations(slist)) {
+    cerr << "Can't connect to station table!" << endl;
+  }
+
+  WatchRR::MultiStationSelection d( kvapp.kvpathInCorbaNameserver(), slist, 0, 0/*& dl.front()*/ );
   d.show();
 
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
