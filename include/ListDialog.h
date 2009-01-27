@@ -34,17 +34,19 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
-#include <qtable.h>
-#include <qlistbox.h>
+#include <q3table.h>
+#include <q3listbox.h>
 #include <qcombobox.h>
 #include <qlayout.h>
 #include <qdatetime.h>
+//Added by qt3to4:
+#include <Q3VBoxLayout>
 #include <miTimeSpinBox.h>
 
 using namespace std;
@@ -171,9 +173,9 @@ private:
   QPushButton* excu;
   //  QPushButton* parameterSelect;
   QPushButton* stationSelect;
-  QListBox* stationNames;
+  Q3ListBox* stationNames;
   //  QGridLayout* grid;
-  QVBoxLayout* topLayout;
+  Q3VBoxLayout* topLayout;
   //  QString sct;
   //  QString spt;
   QString weatherElement;
@@ -212,7 +214,7 @@ private slots:
  //  void parametersSelected(QStringList);
 };
 */
-class StationTable : public QTable {
+class StationTable : public Q3Table {
 Q_OBJECT
 public:
  StationTable(QStringList, 
@@ -351,10 +353,10 @@ public slots:
  void showAllStations();
 };
  
-class StTableItem : public QTableItem{
+class StTableItem : public Q3TableItem{
 public:
-  StTableItem( QTable *t, EditType et, const QString &txt ) : 
-    QTableItem( t, et, txt ) {}
+  StTableItem( Q3Table *t, EditType et, const QString &txt ) : 
+    Q3TableItem( t, et, txt ) {}
   QString key() const;
 };
 #endif

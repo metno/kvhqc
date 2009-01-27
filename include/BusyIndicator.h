@@ -31,12 +31,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __BusyIndicator_h__
 #define __BusyIndicator_h__
 
-#include <qcursor.h>
+#include <QCursor>
+//#include <qcursor.h>
 #include <qapplication.h>
 
 class BusyIndicator
 {
-  static QCursor waitCursor;
+  QCursor waitCursor;
 public:
   BusyIndicator( );
   ~BusyIndicator( );

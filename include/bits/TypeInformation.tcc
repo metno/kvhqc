@@ -39,7 +39,7 @@ static inline QString printableInfo( const kvalobs::kvTypes &typ, bool generated
   if ( generated )
     stream << " generert av kvalobs";
 
-  return QString( stream.str() );
+  return QString::fromStdString( stream.str() );
 }
 
 template<class App>

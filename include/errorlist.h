@@ -28,15 +28,18 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
+
+#include <QWidget>
 
 #include <set>
 
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
-#include <qtable.h>
+#include <q3table.h>
 #include <qstring.h>
 #include <qpainter.h>
 #include <puTools/miTime>
@@ -54,6 +57,8 @@ class ErrorListFirstCol;
 using namespace std;
 using namespace kvalobs;
 
+class QMouseEvent;
+//class QEvent;
 class HqcMainWindow;
 class ExtendedFunctionalityHandler;
 
@@ -83,38 +88,38 @@ const QString controlNoControl[] = {"QC1-2-96:1","QC1-2-97:1","QC1-2-100:1",
 				    "QC1-2-158:1","QC1-2-159:1","QC1-2-160:1",
 				    "QC1-2-161:1","QC1-2-162:1","QC1-2-21:1"};
 
-class FlTableItem : public QTableItem {
+class FlTableItem : public Q3TableItem {
 public:
-  FlTableItem(QTable* t, 
+  FlTableItem(Q3Table* t, 
 	      EditType et, 
-	      const QString &txt ) : QTableItem( t, et, txt ) {}
+	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
 
-class DkTableItem : public QTableItem {
+class DkTableItem : public Q3TableItem {
 public:
-  DkTableItem(QTable* t, 
+  DkTableItem(Q3Table* t, 
 	      EditType et, 
-	      const QString &txt ) : QTableItem( t, et, txt ) {}
+	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
 
-class UsTableItem : public QTableItem {
+class UsTableItem : public Q3TableItem {
 public:
-  UsTableItem(QTable* t, 
+  UsTableItem(Q3Table* t, 
 	      EditType et, 
-	      const QString &txt ) : QTableItem( t, et, txt ) {}
+	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
 
-class CrTableItem : public QTableItem {
+class CrTableItem : public Q3TableItem {
   bool numbers;
 public:
-  CrTableItem(QTable* t, 
+  CrTableItem(Q3Table* t, 
 	      EditType et, 
 	      const QString &txt,
 	      bool acceptNumbers) 
-    : QTableItem( t, et, txt )
+    : Q3TableItem( t, et, txt )
     , numbers(acceptNumbers) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
   
@@ -123,18 +128,18 @@ public:
   static const QRegExp re;
 };
 
-class OkTableItem : public QCheckTableItem {
+class OkTableItem : public Q3CheckTableItem {
 public:
-  OkTableItem(QTable* t, 
-	      const QString &txt ) : QCheckTableItem( t, txt ) {}
+  OkTableItem(Q3Table* t, 
+	      const QString &txt ) : Q3CheckTableItem( t, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
 
-class DataCell : public QTableItem {
+class DataCell : public Q3TableItem {
 public:
-  DataCell(QTable* t, 
+  DataCell(Q3Table* t, 
 	      EditType et, 
-	      const QString &txt ) : QTableItem( t, et, txt ) {
+	      const QString &txt ) : Q3TableItem( t, et, txt ) {
   }
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
   //  void setBkgColor(QColor cr) { m_crBkg = cr; }
@@ -144,7 +149,7 @@ public:
 
 };
   
-class ErrorHead : public QTable {
+class ErrorHead : public Q3Table {
 Q_OBJECT
 public:
  ErrorHead(const miutil::miTime&, 
@@ -159,7 +164,7 @@ public:
  * \brief The error list
  */
 
-class ErrorList : public QTable {
+class ErrorList : public Q3Table {
   Q_OBJECT
 public:
   ErrorList(QStringList&,
@@ -226,11 +231,14 @@ signals:
   void stationSelected( int station, const miutil::miTime & obstime );
 
 protected:
+  //  void mouseMoveEvent(QMouseEvent *event);
 //   virtual void hideEvent( QHideEvent * e );
 //   virtual void closeEvent( QCloseEvent *e );
-//  virtual bool event( QEvent * e );
+  virtual bool event( QEvent * e );
 
 private:
+  int stationidCol;
+  int typeidCol;
 
   struct refs {
     int stnr;
@@ -333,7 +341,7 @@ public:
 
 public slots:
   void saveChanges();
-  void printErrorList();
+  //  void printErrorList();
 };
 
 #endif

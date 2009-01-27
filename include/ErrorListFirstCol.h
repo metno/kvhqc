@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __ErrorListFirstCol_h__
 #define __ErrorListFirstCol_h__
 
-#include <qtable.h>
+#include <q3table.h>
 #include "errorlist.h"
 
 
@@ -46,12 +46,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  * index in memStore3 can be fetched with the memStoreIndex() method.
  */
 class ErrorListFirstCol
-  : public QTableItem
+  : public Q3TableItem
 {
   const int memStorePlace;
 public:
   ErrorListFirstCol( ErrorList *el, int memStorePlace )
-    : QTableItem( el, QTableItem::Never, "" )
+    : Q3TableItem( el, Q3TableItem::Never, "" )
     , memStorePlace( memStorePlace )
   {
     setReplaceable(false);

@@ -31,11 +31,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef MISSINGLIST_H
 #define MISSINGLIST_H
 
-#include <qtable.h>
+#include <q3table.h>
 
 class ErrorList;
 
-class MissingTable : public QTable
+class MissingTable : public Q3Table
 {
  public:
   MissingTable(QWidget*, ErrorList*);

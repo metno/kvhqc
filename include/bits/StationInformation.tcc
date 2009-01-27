@@ -38,7 +38,7 @@ static inline QString printableInfo( const kvalobs::kvStation &st )
   stream << st.stationID() << " " << st.name() << ", "
 	 << st.height() << " moh.";
 
-  return QString( stream.str() );
+  return QString::fromStdString( stream.str() );
 }
 
 template<class App>

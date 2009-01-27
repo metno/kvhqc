@@ -34,11 +34,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 
@@ -62,15 +62,15 @@ public:
   //  QCheckBox* calType;
 
   //  QRadioButton* alType;
-  QButtonGroup* paraTyp;
+  Q3ButtonGroup* paraTyp;
 
-  QButtonGroup* taGroup;
+  Q3ButtonGroup* taGroup;
   QRadioButton* taType;
   QRadioButton* tamoType;
   QRadioButton* tameType;
   QRadioButton* tadiType;
 
-  QButtonGroup* tdGroup;
+  Q3ButtonGroup* tdGroup;
   QRadioButton* tdType;
   QRadioButton* uumoType;
   QRadioButton* uuType;
@@ -78,7 +78,7 @@ public:
   QRadioButton* uumiType;
   QRadioButton* uumaType;
 
-  QButtonGroup* prGroup;
+  Q3ButtonGroup* prGroup;
   QRadioButton* prType;
   QRadioButton* prmoType;
   QRadioButton* poType;
@@ -88,11 +88,11 @@ public:
   QRadioButton* phType;
   QRadioButton* podiType;
 
-  QButtonGroup* ppGroup;
+  Q3ButtonGroup* ppGroup;
   QRadioButton* ppType;
   QRadioButton* ppmoType;
 
-  QButtonGroup* rrGroup;
+  Q3ButtonGroup* rrGroup;
   QRadioButton* rrType;
   QRadioButton* rrmoType;
   QRadioButton* rr1Type;
@@ -101,30 +101,30 @@ public:
   QRadioButton* rr6Type;
   QRadioButton* rrprType;
 
-  QButtonGroup* tnxGroup;
+  Q3ButtonGroup* tnxGroup;
   QRadioButton* tn12Type;
   QRadioButton* tx12Type;
   QRadioButton* tnType;
   QRadioButton* txType;
 
-  QButtonGroup* ddGroup;
+  Q3ButtonGroup* ddGroup;
   QRadioButton* ddType;
   QRadioButton* ddmoType;
 
-  QButtonGroup* ffGroup;
+  Q3ButtonGroup* ffGroup;
   QRadioButton* ffType;
   QRadioButton* ffmoType;
 
-  QButtonGroup* fxGroup;
+  Q3ButtonGroup* fxGroup;
   QRadioButton* fxType;
   QRadioButton* fx01Type;
 
-  QButtonGroup* fgGroup;
+  Q3ButtonGroup* fgGroup;
   QRadioButton* fgType;
   QRadioButton* fg01Type;
   QRadioButton* fg10Type;
 
-  QButtonGroup* saGroup;
+  Q3ButtonGroup* saGroup;
   QRadioButton* saType;
   QRadioButton* sdType;
   QRadioButton* emType;

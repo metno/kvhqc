@@ -39,38 +39,41 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "errorlist.h"
 #include "datatable.h"
 #include <qwidget.h>
+//Added by qt3to4:
+//#include <QPaintEvent>
 #include <fstream>
 #include <iostream>
 #include <KvApp.h>
-#include <qmainwindow.h>
+#include <q3mainwindow.h>
 #include <qobject.h>
-#include <qpopupmenu.h> 
-#include <qprocess.h> 
+#include <q3popupmenu.h> 
+#include <q3process.h> 
 #include <qmenubar.h> 
 #include <qmap.h>
-#include <qmultilineedit.h>
+#include <q3multilineedit.h>
 #include <qpoint.h>
 #include <qlabel.h>
 #include <qstatusbar.h>
 #include <qmessagebox.h>
 #include <qapplication.h>
 #include <qpushbutton.h>
-#include <qaccel.h>
-#include <qtextstream.h>
+#include <q3accel.h>
+#include <q3textstream.h>
 #include <qimage.h>
-#include <qpainter.h>
-#include <qpaintdevicemetrics.h>
+//#include <qpainter.h>
+//#include <q3paintdevicemetrics.h>
 #include <qpixmap.h>
-#include <qobjectlist.h>
-#include <qvbox.h>
-#include <qtable.h>
+#include <qobject.h>
+#include <q3vbox.h>
+#include <q3table.h>
 #include <qworkspace.h>
-#include <qtoolbar.h>
+#include <q3toolbar.h>
 #include <qtoolbutton.h>
-#include <qiconset.h>
+#include <qicon.h>
 #include <qcursor.h>
 
-#include <qtClientButton.h>
+//#include <qtClientButton.h>
+#include <qUtilities/ClientButton.h>
 
 #include <puTools/miString.h>
 #include <miMessage.h>
@@ -97,7 +100,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 /**
  * \brief The application's main window.
  */
-class HqcMainWindow: public QMainWindow 
+class HqcMainWindow: public Q3MainWindow 
 {
   Q_OBJECT
 public:
@@ -207,10 +210,11 @@ public:
   /*!
    * \brief Reads the typeids file to find which typeids to show
    */
-  void readFromTypeIdFile(int);
+  void readFromTypeIdFile();
+  void checkTypeId(int);
   /*!
    * \brief Reads the obs_pgm table in the kvalobs database and 
-   *       inserts the station information in sobsPgmList and statList
+   *       inserts the station information in obsPgmList and statList
    */
   void readFromObsPgm();
   /*!
@@ -297,6 +301,7 @@ public:
   int selParNo[NOPARAMALL];
   currentType crT;
   vector<currentType> currentTypeList;
+  vector<QString> statLineList;
   DataReinserter<kvservice::KvApp> *reinserter;
 
 public slots:
@@ -383,23 +388,26 @@ private:
   int synopType;
   int autoobsType;
   int kvalobsType;
+  int hqcFrom;
+  int hqcTo;
   bool isSynop;
   bool isAuto;
   bool isKvalobs;
   bool tsVisible;
   ClientButton* pluginB;
-  QPopupMenu* file;
+  //  DianaConnection* diaCon;
+  Q3PopupMenu* file;
   int fileSaveMenuItem;
   //KTEST
   int filePrintMenuItem;
-  QPopupMenu* choice;
-  QPopupMenu* showmenu;
-  QPopupMenu* weathermenu;
-  QPopupMenu* clockmenu;
-  QPopupMenu* typeIdmenu;
+  Q3PopupMenu* choice;
+  Q3PopupMenu* showmenu;
+  Q3PopupMenu* weathermenu;
+  Q3PopupMenu* clockmenu;
+  Q3PopupMenu* typeIdmenu;
   QWorkspace* ws;
-  QPainter* logo;
-  void paintEvent(QPaintEvent*);
+  //  QPainter* logo;
+  //  void paintEvent(QPaintEvent*);
   // socket variables
   bool usesocket;
   bool dianaconnected;
@@ -486,7 +494,8 @@ private slots:
 		       bool,
 		       QString&);
   void closeWindow();
-  void help();
+  void helpFlag();
+  void helpParam();
   void about();
   void aboutQt();
   // socket slots

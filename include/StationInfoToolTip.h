@@ -30,27 +30,35 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef __StationInfoToolTip_h__
 #define __StationInfoToolTip_h__
-#include <qtooltip.h>
-#include <qtable.h>
+//#include <qtooltip.h>
+#include <QToolTip>
+#include <Q3Table>
+#include <QWidget>
+//#include <q3table.h>
 //#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 
-
+class QMouseEvent;
+class QPaintEvent;
 
 class StationInfoToolTip
-  : public QToolTip
+//: public QToolTip
 {
 public:
-  StationInfoToolTip( QTable *table, QToolTipGroup *group = 0, 
+  //  StationInfoToolTip( Q3Table *table, QToolTipGroup *group = 0, 
+  //		      int stationidCol = 1, int typeidCol = 7 );
+
+  StationInfoToolTip( Q3Table *table,  
 		      int stationidCol = 1, int typeidCol = 7 );
 
   virtual ~StationInfoToolTip( );
 
 protected:
-  void maybeTip( const QPoint &p );
+  //  void maybeTip( const QPoint &p );
+  void mouseMoveEvent(QMouseEvent *event);
 
 private:
-  QTable *table;
+  Q3Table *table;
 
   // A possible error in this class will be if these values does not
   // point to the correct columns:

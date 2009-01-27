@@ -34,10 +34,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qpushbutton.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
 

@@ -42,7 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class HqcMainWindow;
 
-class MDITabWindow: public QMainWindow
+class MDITabWindow: public Q3MainWindow
 {
   friend class HqcMainWindow;
     Q_OBJECT
@@ -69,8 +69,10 @@ public:
 		  QString& );
     ~MDITabWindow();
 
-  virtual bool close( bool alsoDelete );
-  bool close() { return close( false ); }
+    //  virtual bool close( bool alsoDelete );
+    //  bool close() { return close( false ); }
+  virtual bool close();
+  //  bool close() { return close(); }
 
 private:
     void showDianaAnalysis(int);

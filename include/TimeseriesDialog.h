@@ -37,16 +37,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 //#include <qmainwindow.h>
 #include <qdialog.h>
 //#include <qprogressdialog.h>
-#include <qbuttongroup.h>
+#include <q3buttongroup.h>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qradiobutton.h>
 #include <qcheckbox.h>
-#include <qgroupbox.h>
+#include <q3groupbox.h>
 #include <qlabel.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qdatetime.h>
-#include <qlistview.h>
+#include <q3listview.h>
 #include <qcombobox.h>
 #include <qcolor.h>
 #include <qstringlist.h>
@@ -80,9 +80,9 @@ public slots:
 
   void setFromTimeSlot(const miutil::miTime& t);
   void setToTimeSlot(const miutil::miTime& t);
-  void parameterSelectionChanged(QListBoxItem*);
-  void stationSelected(QListBoxItem*);
-  void resultSelected(QListBoxItem*);
+  void parameterSelectionChanged(Q3ListBoxItem*);
+  void stationSelected(Q3ListBoxItem*);
+  void resultSelected(Q3ListBoxItem*);
   void deleteSlot();
   void deleteAllSlot();
   void linecolourSlot(int);
@@ -120,9 +120,9 @@ private:
 
   QPushButton* newcurveButton;
 
-  QListBox* statlb;
-  QListBox* parameterListbox;
-  QListBox* resultListbox;
+  Q3ListBox* statlb;
+  Q3ListBox* parameterListbox;
+  Q3ListBox* resultListbox;
 
   QComboBox* linecolourBox;  
   QComboBox* lineBox;

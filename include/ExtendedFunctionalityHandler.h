@@ -33,6 +33,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <errorlist.h>
 #include <qobject.h>
+//Added by qt3to4:
+#include <QEvent>
 #include <kvalobs/kvData.h>
 
 /**

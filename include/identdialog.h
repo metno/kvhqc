@@ -38,7 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qlineedit.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
 
 using namespace std;

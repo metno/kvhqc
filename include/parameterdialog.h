@@ -34,12 +34,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
-#include <qlistbox.h>
-#include <qbuttongroup.h>
+#include <q3listbox.h>
+#include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
 #include <qlabel.h>
-#include <qvbox.h>
+#include <q3vbox.h>
 #include <qlayout.h>
 
 #include <qstringlist.h>
@@ -64,10 +64,10 @@ public:
   QPushButton* hdnexcu;
   QPushButton* excu;
 
-  QListBox* plb;
+  Q3ListBox* plb;
 
 public slots:
-  void listClickedItem(QListBoxItem*);
+  void listClickedItem(Q3ListBoxItem*);
   void applyHideClicked();
 
 signals:

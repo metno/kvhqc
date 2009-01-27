@@ -34,7 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <iomanip>
 #include <stdlib.h>
-#include <qtable.h>
+#include <q3table.h>
 #include <qstring.h>
 #include <qpainter.h>
 #include <puTools/miTime>
@@ -57,7 +57,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class DataTooltipHandler;
 
-class DataTable : public QTable {
+class DataTable : public Q3Table {
   Q_OBJECT
 public:
   DataTable(QStringList, 
@@ -134,11 +134,11 @@ private slots:
 };
 
 
-class TableItem : public QTableItem{
+class TableItem : public Q3TableItem{
 public:
-  TableItem( QTable *t, 
+  TableItem( Q3Table *t, 
 	     EditType et, 
-	     const QString &txt ) : QTableItem( t, et, txt ) {}
+	     const QString &txt ) : Q3TableItem( t, et, txt ) {}
   QString key() const;
 
   void paint(QPainter*, const QColorGroup&, const QRect&, bool);

@@ -31,16 +31,18 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HELPTREE_H
 #define HELPTREE_H
 
-#include <qmainwindow.h>
-#include <qtextbrowser.h>
+#include <q3mainwindow.h>
+#include <q3textbrowser.h>
 #include <qstringlist.h>
 #include <qmap.h>
 #include <qdir.h>
+//Added by qt3to4:
+#include <Q3PopupMenu>
 
 class QComboBox;
-class QPopupMenu;
+class Q3PopupMenu;
 
-class HelpTree : public QMainWindow
+class HelpTree : public Q3MainWindow
 {
     Q_OBJECT
 public:
@@ -62,12 +64,12 @@ private slots:
 private:
     void readHistory();
 
-    QTextBrowser* browser;
+    Q3TextBrowser* browser;
     QComboBox *pathCombo;
     int backwardId, forwardId;
     QStringList history;
     QMap<int, QString> mHistory;
-    QPopupMenu *hist;
+    Q3PopupMenu *hist;
 
 };
 #endif
