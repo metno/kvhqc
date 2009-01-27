@@ -30,11 +30,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "BusyIndicator.h"
 
-QCursor BusyIndicator::waitCursor = Qt::WaitCursor;
-
 BusyIndicator::BusyIndicator( )
 {
-  qApp->setOverrideCursor( this->waitCursor );
+  waitCursor.setShape( Qt::BusyCursor );
+  qApp->setOverrideCursor( waitCursor );
 }
 
 BusyIndicator::~BusyIndicator( )

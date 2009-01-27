@@ -30,6 +30,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "ExtendedFunctionalityHandler.h"
 #include <qevent.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 
 
 ExtendedFunctionalityHandler::
@@ -77,8 +79,9 @@ init( int row, Function function, Qt::Key key, QString explText )
 
 void ExtendedFunctionalityHandler::clear()
 {
-  if ( el )
+  if ( el ) {
     el->clearCell( row, col );
+  }
   key = (Qt::Key) 0;
 }
 
@@ -96,7 +99,7 @@ eventFilter( QObject *watched, QEvent *e )
   cerr << "Key: " << ke->key() << " "
        << "(Wanted: " << key << ")\n";
   
-  if ( ! ke or ke->key() != key or ! (ke->state() & Qt::ControlButton) )
+  if ( ! ke or ke->key() != key or ! (ke->state() & Qt::ControlModifier) )
     return QObject::eventFilter( watched, e );
 
   ErrorList *el = dynamic_cast<ErrorList*>( watched );

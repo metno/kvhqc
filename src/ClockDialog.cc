@@ -29,6 +29,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ClockDialog.h"
+//Added by qt3to4:
+#include <Q3VBoxLayout>
+#include <Q3GridLayout>
+#include <Q3HBoxLayout>
 
 ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {  
 
@@ -36,10 +40,10 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group
   
-  QButtonGroup* oTime = new QButtonGroup( 0, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup* oTime = new Q3ButtonGroup( 0, 
+					  Qt::Horizontal, 
 					  "Tidspunkter", this);
-  QGridLayout* clockLayout = new QGridLayout(oTime->layout());
+  Q3GridLayout* clockLayout = new Q3GridLayout(oTime->layout());
   // insert checkbuttons for clocktime selection
   for ( int i = 0; i < 24; i++ ) {
     QString time;
@@ -52,8 +56,8 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
     }
   }
 
-  QButtonGroup* staTime = new QButtonGroup( 1, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup* staTime = new Q3ButtonGroup( 1, 
+					  Qt::Horizontal, 
 					  "Utvalgte tidspunkter", this);
 
   allTimes      = new QCheckBox("Alle tidspunkter", staTime);
@@ -77,7 +81,7 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
 
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
@@ -86,8 +90,7 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ClockApply()));
 
-  QVBoxLayout* topLayout = new QVBoxLayout(this,10);
-  //  topLayout->addWidget(oTime);
+  Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   topLayout->addWidget(staTime);
   topLayout->addWidget(oTime);
   topLayout->addLayout(buttonLayout);

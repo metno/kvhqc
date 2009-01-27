@@ -31,6 +31,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <TimeseriesDialog.h>
 #include <qlayout.h>
 #include <qtQTUtil.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <QLabel>
+#include <Q3VBoxLayout>
 #include <miTimeSpinBox.h>
 
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {  
@@ -77,8 +81,8 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 //   connect( parlv, SIGNAL( selectionChanged( QListViewItem*) ),
 // 	   this, SLOT( parameterSelectionChanged(QListViewItem* ) ) );
 //Test
-  QButtonGroup* dTypes = new QButtonGroup(1, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup* dTypes = new Q3ButtonGroup(1, 
+					  Qt::Horizontal, 
 					  "Datatyper", this);
   obsCheckBox = new QCheckBox("Observasjoner", dTypes);
   modCheckBox = new QCheckBox("Modelldata   ", dTypes);
@@ -89,24 +93,24 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 //Test slutter
   QLabel* parameterLabel = new QLabel("Parameter",this);
   parameterLabel->setFont(QFont("Arial", 12));
-  parameterLabel->setAlignment(AlignLeft);
-  parameterLabel->setPaletteForegroundColor(darkBlue);
+  parameterLabel->setAlignment(Qt::AlignLeft);
+  parameterLabel->setPaletteForegroundColor(Qt::darkBlue);
 
-  parameterListbox = new QListBox(this);
+  parameterListbox = new Q3ListBox(this);
   parameterListbox->setMinimumHeight(85);
-  connect( parameterListbox, SIGNAL( selectionChanged(QListBoxItem *) ),
-	   this, SLOT( parameterSelectionChanged(QListBoxItem * ) ) );
+  connect( parameterListbox, SIGNAL( selectionChanged(Q3ListBoxItem *) ),
+	   this, SLOT( parameterSelectionChanged(Q3ListBoxItem * ) ) );
 
   /////////////////////////////////////////////////////////////////////
   QLabel* statLabel = new QLabel("Stasjon",this);
   statLabel->setFont(QFont("Arial", 12));
-  statLabel->setAlignment(AlignLeft);
-  statLabel->setPaletteForegroundColor(darkBlue);
+  statLabel->setAlignment(Qt::AlignLeft);
+  statLabel->setPaletteForegroundColor(Qt::darkBlue);
 
-  statlb = new QListBox(this);
+  statlb = new Q3ListBox(this);
   statlb->setMinimumHeight(85);
-  connect( statlb, SIGNAL( selectionChanged(QListBoxItem *) ),
-	   this, SLOT( stationSelected(QListBoxItem * ) ) );
+  connect( statlb, SIGNAL( selectionChanged(Q3ListBoxItem *) ),
+	   this, SLOT( stationSelected(Q3ListBoxItem * ) ) );
   //  statlb->setGeometry(10,80,40,100);
 //   std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
 //   QString stnr;
@@ -126,13 +130,13 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   currentResult=-1;
   QLabel* resultLabel = new QLabel("Valgte Tidsserier",this);
   resultLabel->setFont(QFont("Arial", 12));
-  resultLabel->setAlignment(AlignLeft);
-  resultLabel->setPaletteForegroundColor(darkBlue);
-  resultListbox = new QListBox(this);
+  resultLabel->setAlignment(Qt::AlignLeft);
+  resultLabel->setPaletteForegroundColor(Qt::darkBlue);
+  resultListbox = new Q3ListBox(this);
   resultListbox->setMinimumHeight(85);
 
-  connect( resultListbox, SIGNAL( selectionChanged(QListBoxItem *) ),
-	   this, SLOT( resultSelected(QListBoxItem * ) ) );
+  connect( resultListbox, SIGNAL( selectionChanged(Q3ListBoxItem *) ),
+	   this, SLOT( resultSelected(Q3ListBoxItem * ) ) );
   /////////////////////////////////////////////////////////////////////////
 
   QPushButton* delButton = new QPushButton("Slett",this);
@@ -145,7 +149,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect( delallButton, SIGNAL(clicked()),SLOT(deleteAllSlot()));
   //  connect( newcurveButton, SIGNAL(toggled(bool)),SLOT(newcurveSlot(bool)));
 
-  QHBoxLayout* delLayout = new QHBoxLayout();
+  Q3HBoxLayout* delLayout = new Q3HBoxLayout();
   delLayout->addWidget(delButton);
   delLayout->addWidget(delallButton);
   delLayout->addWidget(newcurveButton);
@@ -162,8 +166,8 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   QLabel* lineLabel = new QLabel("Linje",this);
   lineLabel->setFont(QFont("Arial", 12));
-  lineLabel->setAlignment(AlignLeft);
-  lineLabel->setPaletteForegroundColor(darkBlue);
+  lineLabel->setAlignment(Qt::AlignLeft);
+  lineLabel->setPaletteForegroundColor(Qt::darkBlue);
 
   linecolourBox = ComboBox( this, pixcolor, nr_col, true, 0 );
 
@@ -179,15 +183,15 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect(lineBox, SIGNAL(activated(int)),SLOT(lineSlot(int)));
   connect(linewidthBox, SIGNAL(activated(int)),SLOT(linewidthSlot(int)));
 
-  QHBoxLayout* lineLayout = new QHBoxLayout();
+  Q3HBoxLayout* lineLayout = new Q3HBoxLayout();
   lineLayout->addWidget(lineBox,10);
   lineLayout->addWidget(linewidthBox,10);
   lineLayout->addWidget(linecolourBox,10);
 
   QLabel* markerLabel = new QLabel("Markør",this);
   markerLabel->setFont(QFont("Arial", 12));
-  markerLabel->setAlignment(AlignLeft);
-  markerLabel->setPaletteForegroundColor(darkBlue);
+  markerLabel->setAlignment(Qt::AlignLeft);
+  markerLabel->setPaletteForegroundColor(Qt::darkBlue);
 
   markerBox = new QComboBox(this);
   markerBox->insertItem("Circle");
@@ -202,7 +206,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect(markerBox, SIGNAL(activated(int)),SLOT(markerSlot(int)));
   connect(fillcolourBox, SIGNAL(activated(int)),SLOT(fillcolourSlot(int)));
 
-  QHBoxLayout* markerLayout = new QHBoxLayout();
+  Q3HBoxLayout* markerLayout = new Q3HBoxLayout();
   markerLayout->addWidget(markerBox,10);
   markerLayout->addWidget(fillcolourBox,10);
   
@@ -258,7 +262,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   hideapplyButton->setFont(QFont("Arial", 9));
 
 
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
   buttonLayout->addWidget(hideButton,10);
   buttonLayout->addWidget(applyButton,10);
   buttonLayout->addWidget(hideapplyButton,10);
@@ -268,7 +272,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect(hideapplyButton, SIGNAL(clicked()), SIGNAL( TimeseriesApply()));
   connect(applyButton,     SIGNAL(clicked()), SIGNAL( TimeseriesApply()));
 
-  QVBoxLayout* topLayout = new QVBoxLayout(this,10);
+  Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   //  topLayout->addWidget(parlv);
   topLayout->addWidget(dTypes);
   topLayout->addWidget(parameterLabel);
@@ -465,7 +469,7 @@ void TimeseriesDialog::hideAll(){
 //   return popt;
 // }
 
-void TimeseriesDialog::parameterSelectionChanged(QListBoxItem *item) {
+void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   if(freeze) return;
   //  cerr << "Current item is " << item->text(0) << endl;
   //  if(item->parent() == 0) return;
@@ -503,7 +507,7 @@ void TimeseriesDialog::parameterSelectionChanged(QListBoxItem *item) {
 } 
 
 
-void TimeseriesDialog::stationSelected(QListBoxItem * item) {
+void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
    if(freeze) return;
    //   cerr << "Station selected: " << station << endl;
 //   //  plotStat = item;
@@ -542,7 +546,7 @@ void TimeseriesDialog::stationSelected(QListBoxItem * item) {
    freeze=false;
 } 
 
-void TimeseriesDialog::resultSelected(QListBoxItem * item) 
+void TimeseriesDialog::resultSelected(Q3ListBoxItem * item) 
 {
   if(freeze) return;
   //cerr <<"Result   tsinfo.size:"<<tsinfo.size()<<endl;

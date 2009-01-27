@@ -61,8 +61,6 @@ namespace Authentication {
     if ( user.isEmpty() )
       return NULL; // Not authenticated
     
-    //QString user = "vegardb";
-
     // Get list of operators from database, and find our operator:
     opList operators;
 
@@ -75,7 +73,6 @@ namespace Authentication {
       if ( strcmp(it->username().cStr(), user.ascii()) == 0 ) {
 	string uname = it->username();
 	userName = uname.c_str();
-	//return new DataReinserter<KvApp>(app, it->userID());
 	return new HqcDataReinserter( app, it->userID() );
       }
     }

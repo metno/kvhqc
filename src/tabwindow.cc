@@ -60,13 +60,10 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 			    int ncp,
 			    bool isShTy,
 			    QString& userName)
-  : QMainWindow( parent, name, wflags )
+  : Q3MainWindow( parent, name )
     , dtt( NULL ), erl( NULL ), erHead( NULL )
 {
   readLimits();
-  
-  //  cerr << "Parent: " << parent->className() << endl;
-  
   if ( lity == erLi || lity == erSa) {
     if (metty == tabHead ) {
       erHead = new ErrorHead(stime,etime,this,lity,userName);
@@ -95,8 +92,8 @@ MDITabWindow::MDITabWindow( QWidget* parent,
       
       HqcMainWindow * w = getHqcMainWindow( this );
       connect( w, SIGNAL( saveData() ), erl, SLOT( saveChanges() ) );
-      //KTEST
-      connect( w, SIGNAL( printErrorList() ), erl, SLOT( printErrorList() ) );
+      
+      //      connect( w, SIGNAL( printErrorList() ), erl, SLOT( printErrorList() ) );
       
       connect( erl, SIGNAL( stationSelected( int, const miutil::miTime & ) ),
 	       w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ) );
@@ -146,7 +143,7 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
 					listType lity, 
 					listType remLity, 
 					QString wElement) {
-  HqcMainWindow *mainWindow = (HqcMainWindow*)(parent()->parent()->parent());
+  HqcMainWindow *mainWindow = (HqcMainWindow*)getHqcMainWindow(this);
   
   if (mainWindow-> timeFilterChanged || 
       mainWindow->kvBaseUpdated() ||
@@ -158,7 +155,7 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
   }
   mainWindow->setKvBaseUpdated(FALSE);
   numErr = mainWindow->datalist.size();
-  cerr << "Numerr før   = " << numerr << "  " << numErr <<endl;
+  cerr << "NumRows før   = " << numErr <<endl;
   if ( wElement == "Alt" ) 
     noParam = NOPARAMALL;
   else if ( wElement == "Lufttrykk" ) 
@@ -187,25 +184,24 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
     mainWindow->readFromModelData(stime, etime);
     numErr = mainWindow->datalist.size();
   }
-  cerr << "Numerr etter = " << numerr << "  " << numErr << endl;
+  cerr << "NumRows etter = " << numErr << endl;
   remstime = stime;
   remetime = etime;
   remLity = lity;
 }
 
-bool MDITabWindow::close( bool alsoDelete )
+bool MDITabWindow::close()
 {
   if ( erl ) {
     bool close = erl->maybeSave();
     if ( not close )
       return false;
   }
-  return QMainWindow::close( alsoDelete );
+  return Q3MainWindow::close();
 }
 
 MDITabWindow::~MDITabWindow()
 {
-  //    delete mmovie;
 }
 
 //Generate message for showing observations in diana
@@ -214,16 +210,16 @@ void MDITabWindow::showObservations(int row) {
   //time
   QString dateTime = 
     dtt->verticalHeader()->label(row).right(21).left(16) + ":00";
-  miutil::miTime time(dateTime);
+  miutil::miTime time(dateTime.toStdString());
   
   //hvilken stasjon
   QString stationNo = dtt->verticalHeader()->label(row).left(6);
   
   int stnr = stationNo.toInt();
   ((HqcMainWindow*)
-   (parent()->parent()->parent()->parent()))->sendObservations(time,true);
+   getHqcMainWindow( this ))->sendObservations(time,true);
   ((HqcMainWindow*)
-   (parent()->parent()->parent()->parent()))->sendStation(stnr);
+   getHqcMainWindow( this ))->sendStation(stnr);
   
 }
 
@@ -237,7 +233,7 @@ void MDITabWindow::showChangedValue(int row, int col, QString val) {
   dateTime.append(":00");
   miutil::miTime time = miutil::miTime(dateTime.latin1());
   
-  QTableItem* tflag      = dtt->item( row, col - 1);
+  Q3TableItem* tflag      = dtt->item( row, col - 1);
   miutil::miString flag      = tflag->text().latin1();
   
   QString lbl = dtt->horizontalHeader()->label(col);
@@ -285,7 +281,7 @@ void MDITabWindow::tableCellClicked(int row,
 
 void MDITabWindow::readLimits() {
   QString path = QString(getenv("HQCDIR"));
-  if ( !path ) {
+  if ( path.isEmpty() ) {
     cerr << "Intet environment" << endl;
     exit(1);
   }
@@ -293,11 +289,11 @@ void MDITabWindow::readLimits() {
   float low, high;
   QString limitsFile = path + "/slimits";
   QFile limits(limitsFile);
-  if ( !limits.open(IO_ReadOnly) ) {
-    cerr << "kan ikke åpne " << limitsFile << endl;
+  if ( !limits.open(QIODevice::ReadOnly) ) {
+    cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;
     exit(1);
   }
-  QTextStream limitStream(&limits);
+  Q3TextStream limitStream(&limits);
   while ( limitStream.atEnd() == 0 ) {
     limitStream >> par >> dum >> low >> high;
     lowMap[par] = low;
@@ -311,7 +307,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
   
   QDoubleValidator inpVal(this);
   int index = (col-2)/hqcm->nucoprpar;
-  QTableItem* tval = dtt->item( row, col);
+  Q3TableItem* tval = dtt->item( row, col);
   QString corVal   = tval->text();
   QString newFlagVal;//   = fval->text();
   int pos     = hqcm->datalist[row].stnr;
@@ -327,7 +323,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 			      "Utenlandsk stasjon",
 			      "Utenlandske stasjoner kan ikke korrigeres",
 			      QMessageBox::Ok,
-			      QMessageBox::NoButton );
+			      Qt::NoButton );
     tval->setText(oldCorVal);
     return;
   }
@@ -384,7 +380,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 				"Konverteringsfeil",
 				"Verdien er ikke en tallverdi",
 				QMessageBox::Ok,
-				QMessageBox::NoButton );
+				Qt::NoButton );
       if ( oldCorVal == "-32767.0" )
 	tval->setText("");
       else
@@ -396,7 +392,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 				"Ulovlig verdi",
 				"Verdien er utenfor fysikalske grenser",
 				QMessageBox::Ok,
-				QMessageBox::NoButton );
+				Qt::NoButton );
       if ( oldCorVal == "-32767.0" )
 	tval->setText("");
       else
@@ -408,7 +404,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 				"Ulovlig tidspunkt",
 				"Denne parameteren kan ikke lagres ved dette tidspunktet",
 				QMessageBox::Ok,
-				QMessageBox::NoButton );
+				Qt::NoButton );
       if ( oldCorVal == "-32767.0" )
 	tval->setText("");
       else
@@ -420,7 +416,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 				"Ulovlig verdi",
 				"Lovlige verdier er -5 og -6",
 				QMessageBox::Ok,
-				QMessageBox::NoButton );
+				Qt::NoButton );
       if ( oldCorVal == "-32767.0" )
 	tval->setText("");
       else
@@ -451,7 +447,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
       tval->setText("");
     int newFlag = hqcm->getShowFlag(cin);
     newFlagVal = newFlagVal.setNum(newFlag);
-    TableItem* fval = new TableItem( dtt, QTableItem::Never, newFlagVal);
+    TableItem* fval = new TableItem( dtt, Q3TableItem::Never, newFlagVal);
     fval->setText(newFlagVal);
     dtt->setItem(row, col - 1, fval);
     kvalobs::kvData kd(pos,obt,org,par,tbt,typ,sen,lvl,cor,cin,uin,fai);
@@ -467,9 +463,9 @@ void MDITabWindow::updateKvBase(int row, int col) {
 			     "Kan ikke lagre data",	 
 			     QString( "Kan ikke lagre data!\n"	 
 				      "Meldingen fra Kvalobs var:\n" ) +	 
-			     result->message,	 
+			     QString(result->message),	 
 			     QMessageBox::Ok,	 
-			     QMessageBox::NoButton );	 
+			     Qt::NoButton );	 
       tval->setText(oldCorVal);	 
       return;	 
     }    hqcm->setKvBaseUpdated(TRUE);
@@ -481,10 +477,10 @@ void MDITabWindow::updateKvBase(int row, int col) {
 }
 
 void MDITabWindow::tableValueChanged(int row, int col) {
-  QTableItem* tval = dtt->item( row, col);
+  Q3TableItem* tval = dtt->item( row, col);
   QString val      = tval->text();
   if ( col > 0 && col%4 != 2 ) {
-    QTableItem* tflag = dtt->item( row, col - 1);
+    Q3TableItem* tflag = dtt->item( row, col - 1);
     QString flag = tflag->text();
     int oldFlag = flag.toInt();
     int newFlag = oldFlag%10 == 0 ? oldFlag + 1 : oldFlag;
@@ -497,7 +493,7 @@ void MDITabWindow::tableValueChanged(int row, int col) {
       flag = "00" + flag;
     else if ( newFlag < 10000 )
       flag = "0" + flag;
-    TableItem* tnflag = new TableItem(dtt, QTableItem::Never, flag);
+    TableItem* tnflag = new TableItem(dtt, Q3TableItem::Never, flag);
     dtt->setItem( row, col - 1, tnflag);
     double a = val.toDouble();
   }

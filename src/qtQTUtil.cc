@@ -29,7 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <qcombobox.h>
-#include <qlistbox.h>
+#include <q3listbox.h>
 #include <qlayout.h>
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -85,7 +85,7 @@ QPushButton* PixmapButton(const QPixmap& pixmap, QWidget* parent,
 
   QPushButton* b = new QPushButton( parent );
 
-  b->setIconSet(QIconSet(pixmap));
+  b->setIconSet(QIcon(pixmap));
   
   int width  = pixmap.width()  + deltaWidth;
   int height = pixmap.height() + deltaHeight;
@@ -106,11 +106,15 @@ QComboBox* ComboBox( QWidget* parent, vector<miString> vstr,
  
   int nr_box = vstr.size();
 
-  const char** cvstr= new const char*[nr_box];
+  //  const char** cvstr= new const char*[nr_box];
+  //  for( int i=0; i<nr_box; i++ )
+  //    cvstr[i]=  vstr[i].c_str();
+  QStringList cvstr;
   for( int i=0; i<nr_box; i++ )
-    cvstr[i]=  vstr[i].c_str();
+    cvstr[i]=  vstr[i].cStr();
 
-  box->insertStrList( cvstr, nr_box );
+  //  box->insertStrList( cvstr, nr_box );
+  box->insertItems( nr_box, cvstr );
    
   box->setEnabled( Enabled );
 
@@ -118,8 +122,8 @@ QComboBox* ComboBox( QWidget* parent, vector<miString> vstr,
 
   box->setCurrentItem(defItem);
 
-  delete[] cvstr;
-  cvstr=0;
+  //  delete[] cvstr;
+  //  cvstr=0;
 
   return box;
 }
@@ -239,7 +243,7 @@ QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 
 
 /*********************************************/
-void listBox( QListBox* box, vector<miString> vstr, int defItem  ){
+void listBox( Q3ListBox* box, vector<miString> vstr, int defItem  ){
 
   if( box->count() )
     box->clear();

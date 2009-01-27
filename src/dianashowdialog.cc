@@ -29,6 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "dianashowdialog.h"
+//Added by qt3to4:
+#include <Q3GridLayout>
+#include <Q3HBoxLayout>
+#include <Q3VBoxLayout>
+#include <QLabel>
 
 DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {  
 
@@ -36,18 +41,18 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group for parameter selection type
   
-  paraTyp = new QButtonGroup( 0, 
-					  QGroupBox::Horizontal, 
+  paraTyp = new Q3ButtonGroup( 0, 
+					  Qt::Horizontal, 
 					  "HQC-synop", this);
 
-  QGridLayout* paraLayout = new QGridLayout(paraTyp->layout());
+  Q3GridLayout* paraLayout = new Q3GridLayout(paraTyp->layout());
 
   // Insert checkbuttons for showtype selection
   QLabel* alLabel = new QLabel( "Fastsatt\nplass rundt\nstasjonsring", paraTyp );
   QLabel* stLabel = new QLabel( "Standard\nparametere", paraTyp );
   QLabel* atLabel = new QLabel( "Alternative\nparametere", paraTyp );
 
-  QButtonGroup* taGroup = new QButtonGroup();
+  Q3ButtonGroup* taGroup = new Q3ButtonGroup();
   taType = new QRadioButton( "TA", paraTyp );
   taGroup->insert(taType);
   QLabel* taLabel = new QLabel( taType, "TTT   ", paraTyp );
@@ -58,7 +63,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   tadiType = new QRadioButton( "Differanse", paraTyp );
   taGroup->insert(tadiType);
 
-  tdGroup = new QButtonGroup();
+  tdGroup = new Q3ButtonGroup();
   tdType = new QRadioButton( "TD", paraTyp );
   tdGroup->insert(tdType);
   QLabel* tdLabel = new QLabel( tdType, "TdTdTd", paraTyp );
@@ -73,7 +78,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   uumaType = new QRadioButton( "UUX", paraTyp );
   tdGroup->insert(uumaType);
 
-  prGroup = new QButtonGroup();
+  prGroup = new Q3ButtonGroup();
   prType = new QRadioButton( "PR", paraTyp );
   prGroup->insert(prType);
   QLabel* prLabel = new QLabel( prType, "PPPP  ", paraTyp );
@@ -92,14 +97,14 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   podiType = new QRadioButton( "Differanse", paraTyp );
   prGroup->insert(podiType);
 
-  ppGroup = new QButtonGroup();
+  ppGroup = new Q3ButtonGroup();
   ppType = new QRadioButton( "PP", paraTyp );
   ppGroup->insert(ppType);
   QLabel* ppLabel = new QLabel( ppType, "PPP   ", paraTyp );
   ppmoType = new QRadioButton( "PP,modell", paraTyp );
   ppGroup->insert(ppmoType);
 
-  rrGroup = new QButtonGroup();
+  rrGroup = new Q3ButtonGroup();
   rrType = new QRadioButton( "RR_12", paraTyp );
   rrGroup->insert(rrType);
   QLabel* rrLabel = new QLabel( rrType, "RRR  ", paraTyp );
@@ -116,7 +121,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   rrprType = new QRadioButton( "Forhold(%)", paraTyp );
   rrGroup->insert(rrprType);
 
-  tnxGroup = new QButtonGroup();
+  tnxGroup = new Q3ButtonGroup();
   tn12Type = new QRadioButton( "TAN_12", paraTyp );
   tnxGroup->insert(tn12Type);
   QLabel* tnLabel = new QLabel( tn12Type, "TxTn     ", paraTyp );
@@ -127,28 +132,28 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   txType = new QRadioButton( "TAX", paraTyp );
   tnxGroup->insert(txType);
 
-  ddGroup = new QButtonGroup();
+  ddGroup = new Q3ButtonGroup();
   ddType = new QRadioButton( "DD", paraTyp );
   ddGroup->insert(ddType);
   QLabel* ddLabel = new QLabel( ddType, "dd   ", paraTyp );
   ddmoType = new QRadioButton( "DD,modell", paraTyp );
   ddGroup->insert(ddmoType);
 
-  ffGroup = new QButtonGroup();
+  ffGroup = new Q3ButtonGroup();
   ffType = new QRadioButton( "FF", paraTyp );
   ffGroup->insert(ffType);
   QLabel* ffLabel = new QLabel( ddType, "ff   ", paraTyp );
   ffmoType = new QRadioButton( "FF,modell", paraTyp );
   ffGroup->insert(ffmoType);
 
-  fxGroup = new QButtonGroup();
+  fxGroup = new Q3ButtonGroup();
   fxType = new QRadioButton( "FX", paraTyp );
   fxGroup->insert(fxType);
   QLabel* fxLabel = new QLabel( ddType, "fxfx   ", paraTyp );
   fx01Type = new QRadioButton( "FX_1", paraTyp );
   fxGroup->insert(fx01Type);
 
-  fgGroup = new QButtonGroup();
+  fgGroup = new Q3ButtonGroup();
   fgType = new QRadioButton( "FG", paraTyp );
   fgGroup->insert(fgType);
   QLabel* fgLabel = new QLabel( ddType, "FgFg ", paraTyp );
@@ -157,7 +162,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   fg10Type = new QRadioButton( "FG_10", paraTyp );
   fgGroup->insert(fg10Type);
 
-  saGroup = new QButtonGroup();
+  saGroup = new Q3ButtonGroup();
   saType = new QRadioButton( "SA", paraTyp );
   saGroup->insert(saType);
   QLabel* saLabel = new QLabel( ddType, "sss  ", paraTyp );
@@ -248,7 +253,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
 
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
@@ -257,7 +262,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( dianaShowApply()));
 
-  QVBoxLayout* topLayout = new QVBoxLayout(this,10);
+  Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   topLayout->addWidget(paraTyp);
   topLayout->addLayout(buttonLayout);
 
@@ -281,7 +286,6 @@ void DianaShowDialog::applyHideClicked(){
 }
 
 void DianaShowDialog::checkStandard() {
-  //  alType->setChecked( TRUE );
   taType->setChecked( TRUE );
   tdType->setChecked( TRUE );
   prType->setChecked( TRUE );

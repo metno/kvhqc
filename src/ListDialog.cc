@@ -29,6 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ListDialog.h"
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <QLabel>
+#include <Q3GridLayout>
+#include <Q3VBoxLayout>
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {  
 
@@ -36,10 +41,10 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group for control type
   
-  QButtonGroup *ctrlTyp = new QButtonGroup( 1, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup *ctrlTyp = new Q3ButtonGroup( 1, 
+					  Qt::Horizontal, 
 					  "Kontrolltype", this);
-  QGridLayout* controlLayout = new QGridLayout(ctrlTyp->layout());
+  Q3GridLayout* controlLayout = new Q3GridLayout(ctrlTyp->layout());
 
   // insert checkbuttons for control type selection
   twiType = new QCheckBox( "Temperatur,fuktighet", ctrlTyp );
@@ -64,10 +69,10 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group for station type
   
-  QButtonGroup *stTyp = new QButtonGroup(0, QGroupBox::Horizontal , 
+  Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal , 
 					 "Stasjonstype", 
 					 this);
-  QGridLayout* statSelLayout = new QGridLayout(stTyp->layout());
+  Q3GridLayout* statSelLayout = new Q3GridLayout(stTyp->layout());
 
   // insert checkbuttons for station type selection
   aaType = new QCheckBox( "AA", stTyp );
@@ -94,10 +99,10 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
    // Create a button group for station location (county)
   
-  QButtonGroup *stCounty = new QButtonGroup( 0, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup *stCounty = new Q3ButtonGroup( 0, 
+					  Qt::Horizontal, 
 					  "Fylke", this);
-  QGridLayout* statCountyLayout = new QGridLayout(stCounty->layout());
+  Q3GridLayout* statCountyLayout = new Q3GridLayout(stCounty->layout());
 
   // insert checkbuttons for station location selection
   oslCoun = new QCheckBox( "Oslo", stCounty );
@@ -119,13 +124,13 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   norCoun = new QCheckBox( "Nordland", stCounty );
   troCoun = new QCheckBox( "Troms", stCounty );
   finCoun = new QCheckBox( "Finnmark", stCounty );
-  svaCoun = new QCheckBox( "Svalbard", stCounty );
+  svaCoun = new QCheckBox( "Ishavet", stCounty );
   allCoun = new QCheckBox( "Alle", stCounty );
 
    // Create a button group for station location (region)
   
-  QButtonGroup *stRegion = new QButtonGroup( 1, 
-					  QGroupBox::Horizontal, 
+  Q3ButtonGroup *stRegion = new Q3ButtonGroup( 1, 
+					  Qt::Horizontal, 
 					  "Landsdel", this);
 
   // insert checkbuttons for station location selection
@@ -178,9 +183,9 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   stationLabel = new QLabel(this);
   stationLabel->setText("Valgte stasjoner");
   stationLabel->setFont(QFont("Arial", 12));
-  stationLabel->setPaletteForegroundColor(darkBlue);
-  stationLabel->setAlignment(AlignLeft);
-  stationNames = new QListBox(this);
+  stationLabel->setPaletteForegroundColor(Qt::darkBlue);
+  stationLabel->setAlignment(Qt::AlignLeft);
+  stationNames = new Q3ListBox(this);
 
   //Time selection  
   fromTime = new miTimeSpinBox ("fromTime",this, "Fra: ");
@@ -218,7 +223,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
@@ -265,11 +270,11 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   statCountyLayout->addWidget(troCoun,5,2);
   statCountyLayout->addWidget(allCoun,6,2);
 
-  QHBoxLayout* locationLayout = new QHBoxLayout();
+  Q3HBoxLayout* locationLayout = new Q3HBoxLayout();
   locationLayout->addWidget(stRegion, 10);
   locationLayout->addWidget(stCounty, 10);
 
-  QHBoxLayout* typeLayout = new QHBoxLayout();
+  Q3HBoxLayout* typeLayout = new Q3HBoxLayout();
   typeLayout->addWidget(ctrlTyp, 10);
   typeLayout->addWidget(stTyp, 10);
 
@@ -277,7 +282,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ListApply()));
 
-  topLayout = new QVBoxLayout(this,10);
+  topLayout = new Q3VBoxLayout(this,10);
   
   topLayout->addLayout(typeLayout);
   topLayout->addLayout(locationLayout);
@@ -801,15 +806,6 @@ void ListDialog::onorCheck() {
 void ListDialog::webCheck() {
   if (webReg->isChecked() ) {
     allType->setChecked(TRUE);
-    /*
-    vesReg->setChecked(FALSE);
-    troReg->setChecked(FALSE);
-    norReg->setChecked(FALSE);
-    ausReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
-    aaType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    */
   }
 }
 
@@ -891,7 +887,6 @@ void ListDialog::allCounCheck() {
     troReg->setChecked(FALSE);
     ausReg->setChecked(FALSE);
     norReg->setChecked(FALSE);
-    //    webReg->setChecked(FALSE);
     priReg->setChecked(FALSE);
   }
 }
@@ -976,7 +971,7 @@ StationTable::StationTable(QStringList selStatNum,
 			   int noInfo,
 			   ObsTypeList* otpList,
 			   QWidget* parent)
-    : QTable( 3000, noInfo, parent)
+    : Q3Table( 3000, noInfo, parent)
 {
 
   setCaption("Stasjoner");
@@ -992,20 +987,19 @@ StationTable::StationTable(QStringList selStatNum,
   horizontalHeader()->setLabel( 6, tr( "Pri" ) );
   int stInd = 0;
   for ( int i = 0; i < noStat; i++) {
-    QString strStnr      = *selStatNum.at(i);
-    QString strStName    = *selStatName.at(i);
-    QString strStHoh     = *selStatHoh.at(i);
-    QString strStType    = *selStatType.at(i);
-    QString strStFylke   = *selStatFylke.at(i);
-    QString strStKommune = *selStatKommune.at(i);
-    //    bool webStat = *selStatWeb.at(i) == "WEB";
-    bool webStat = *selStatWeb.at(i) != "    ";
-    bool priStat = (*selStatPri.at(i)).left(3) == "PRI";
-    QString prty =  (*selStatPri.at(i)).right(1);
+    QString strStnr      = selStatNum.at(i);
+    QString testName     = selStatName.at(i);
+    QString strStName    = selStatName.at(i);
+    QString strStHoh     = selStatHoh.at(i);
+    QString strStType    = selStatType.at(i);
+    QString strStFylke   = selStatFylke.at(i);
+    QString strStKommune = selStatKommune.at(i);
+    bool webStat = selStatWeb.at(i) != "    ";
+    bool priStat = (selStatPri.at(i)).left(3) == "PRI";
+    QString prty =  (selStatPri.at(i)).right(1);
     int stano = strStnr.toInt();
     ObsTypeList::iterator oit = otpList->begin();
     bool foundStat = false;
-    //    bool reg = false;
     for ( ; oit != otpList->end(); oit++) {   
       TypeList::iterator tit = oit->begin();
       if ( stano == (*tit) ) {
@@ -1036,8 +1030,7 @@ StationTable::StationTable(QStringList selStatNum,
 	    (nor == TRUE && strStFylke == "NORDLAND") ||
 	    (tro == TRUE && strStFylke == "TROMS") ||
 	    (fin == TRUE && strStFylke == "FINNMARK") ||
-	    (sva == TRUE && strStFylke == "SVALBARD") ||
-	    //       	    (priStat && pri) ))
+	    (sva == TRUE && strStFylke == "ISHAVET") ||
        	    (webStat && web) || (priStat && pri) ))
       continue;
     QString strEnv;
@@ -1062,22 +1055,22 @@ StationTable::StationTable(QStringList selStatNum,
     if (all == TRUE )
       strEnv = getEnvironment(strStType, oit);
     if ( !strEnv.isEmpty() ) {
-      StTableItem* stNum = new StTableItem(this, QTableItem::Never, strStnr);
+      StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, strStnr);
       setItem(stInd, 0, stNum);
-      StTableItem* stName = new StTableItem(this, QTableItem::Never, strStName);
+      StTableItem* stName = new StTableItem(this, Q3TableItem::Never, strStName);
       setItem(stInd, 1, stName);
-      StTableItem* stHoh = new StTableItem(this, QTableItem::Never, strStHoh);
+      StTableItem* stHoh = new StTableItem(this, Q3TableItem::Never, strStHoh);
       setItem(stInd, 2, stHoh);
-      StTableItem* stType = new StTableItem(this, QTableItem::Never, strEnv);
+      StTableItem* stType = new StTableItem(this, Q3TableItem::Never, strEnv);
       setItem(stInd, 3, stType);
-      StTableItem* stFylke = new StTableItem(this, QTableItem::Never, strStFylke);
+      StTableItem* stFylke = new StTableItem(this, Q3TableItem::Never, strStFylke);
       setItem(stInd, 4, stFylke);
       StTableItem* stKommune = new StTableItem(this, 
-					       QTableItem::Never, 
+					       Q3TableItem::Never, 
 					       strStKommune);
       setItem(stInd, 5, stKommune);
       StTableItem* stPrior = new StTableItem(this, 
-					       QTableItem::Never, 
+					       Q3TableItem::Never, 
 					       prty);
       setItem(stInd, 6, stPrior);
       stInd++;
@@ -1149,7 +1142,7 @@ QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oi
 
 
 void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
-    QTable::sortColumn( col, ascending, TRUE );
+    Q3Table::sortColumn( col, ascending, TRUE );
 }
 
 StationSelection::StationSelection(QStringList listStatNum, 
@@ -1269,12 +1262,8 @@ StationSelection::StationSelection(QStringList listStatNum,
 				  noInfo,
 				  otpList, 
 				  this);
-  //  connect( stationTable,SIGNAL(pressed(int, int, int, const QPoint&)),
-  //	   SLOT(tableCellClicked(int, int, int, const QPoint&)));  
   connect( stationTable,SIGNAL(currentChanged(int, int)),
 	   SLOT(tableCellClicked(int, int)));  
-  //  connect( stationTable,SIGNAL(selectionChanged()),
-  //	   SLOT(tableCellClicked()));  
 }
 
 void StationSelection::tableCellClicked() {
@@ -1293,8 +1282,8 @@ void StationSelection::tableCellClicked(int row, int col) {
 }
 
 void StationSelection::showSelectedStation(int row, int col) {
-  QTableItem* tStationNumber = stationTable->item( row, 0);
-  QTableItem* tStationName = stationTable->item( row, 1);
+  Q3TableItem* tStationNumber = stationTable->item( row, 0);
+  Q3TableItem* tStationName = stationTable->item( row, 1);
   QString station = tStationNumber->text() + "  " + tStationName->text();
   int rem = stlist.remove(station);
   if ( rem == 0 ) {
@@ -1308,8 +1297,8 @@ void StationSelection::showSelectedStation(int row, int col) {
 
 void StationSelection::showAllStations() {
   for (  int row = 0; row < stationTable->numRows(); row++ ) {
-    QTableItem* tStationNumber = stationTable->item( row, 0);
-    QTableItem* tStationName = stationTable->item( row, 1);
+    Q3TableItem* tStationNumber = stationTable->item( row, 0);
+    Q3TableItem* tStationName = stationTable->item( row, 1);
     QString station = tStationNumber->text() + "  " + tStationName->text();
     int rem = stlist.remove(station);
     if ( rem == 0 ) {

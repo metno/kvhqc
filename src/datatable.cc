@@ -38,11 +38,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define NDEBUG
 #include <cassert>
 #include <qevent.h>
-#include <qtextstream.h>
+#include <q3textstream.h>
 #include <qcursor.h>
 #include <qprinter.h>
-#include <qtextedit.h>
-#include <qsimplerichtext.h>
+#include <q3textedit.h>
+#include <q3simplerichtext.h>
+//Added by qt3to4:
+#include <QPixmap>
 #include "../sorttime.xpm"
 #include "datatable.h"
 #include "hqcmain.h"
@@ -71,15 +73,14 @@ DataTable::DataTable(QStringList selPar,
 		     int dateCol, 
 		     int ncp,
 		     bool isShTy)
-  : QTable( 1000, 100, parent, "table" ) {
+  : Q3Table( 1000, 100, parent, "table" ) {
 
   HqcMainWindow * hmw = getHqcMainWindow( parent );
-  //  BusyIndicator busyIndicator();
-  //  efh = new DataTooltipHandler( this, this );
+  BusyIndicator busyIndicator();
 
   for ( int iPar = 0; iPar < NOPARAMALL; iPar++ )
     parNo[iPar] = selParNo[iPar];
-  setSelectionMode(QTable::SingleRow);
+  setSelectionMode(Q3Table::SingleRow);
   connect( hmw, SIGNAL( statTimeReceived(QString&)), 
   	   SLOT( focusTable(QString&)) );
   mety = metty;
@@ -88,7 +89,7 @@ DataTable::DataTable(QStringList selPar,
   hmw->nucoprpar = noColPar;
   timeSort = FALSE;
   QPixmap icon_sorttime(sorttime);
-  QToolBar* sortTool = new QToolBar("Sort", hmw, this);
+  Q3ToolBar* sortTool = new Q3ToolBar("Sort", hmw, this);
   QToolButton* sortButton;
   sortButton = new QToolButton( icon_sorttime, 
 				tr("Sorter"), 
@@ -96,29 +97,21 @@ DataTable::DataTable(QStringList selPar,
 				this, 
 				SLOT(toggleSort()), 
 				sortTool );
-  //  tyTT = new TypeInfoToolTip(this, 0, hmw->nuroprpar+2, hmw->nuroprpar+3);
+
   connect( verticalHeader(), SIGNAL( clicked( int ) ),
 	   parent, SLOT( headerClicked( int ) ) );
-  setFocusStyle(QTable::FollowStyle);
+  setFocusStyle(Q3Table::FollowStyle);
 
   if ( dateCol == 0 ) {
-    //    setLeftMargin(270);
-    //    sortTool->setFixedSize(203,38);
     sortTool->setFixedSize(192,41);
   }
   else if ( dateCol == 1 ) {
-    //    setLeftMargin(420);//before the table 
-    //    sortTool->setFixedSize(335,38);
     sortTool->setFixedSize(324,41);
   }
   else if ( dateCol == 2 ) {
-    //    setLeftMargin(420);
-    //    sortTool->setFixedSize(401,38);
     sortTool->setFixedSize(390,41);
   }
   else if ( dateCol == 3 ) {
-    //    setLeftMargin(570);
-    //    sortTool->setFixedSize(540,38);
     sortTool->setFixedSize(529,41);
   }
 
@@ -126,7 +119,7 @@ DataTable::DataTable(QStringList selPar,
   setCaption("HQC - Dataliste");
   setNumRows(0);
   setNumCols(0);
-  setNumRows(noSel);
+  setNumRows(noSel + 1);
   setNumCols(noColPar*hmw->nuroprpar + 3);
   //
   // TABLE HEADING
@@ -244,10 +237,8 @@ DataTable::DataTable(QStringList selPar,
     name = name.leftJustify(30);
     QFont vhFont("Courier", 12, QFont::Bold);
     vhFont.setStretch(QFont::ExtraCondensed);
-    //    verticalHeader()->setFont(QFont("system", 12, QFont::DemiBold));
     verticalHeader()->setFont(vhFont);
     if ( dateCol == 0 ) {
-      //      verticalHeader()->setFixedWidth(203);
       verticalHeader()->setLabel(dt,
 				 strStnr + 
 				 "   " + 
@@ -256,7 +247,6 @@ DataTable::DataTable(QStringList selPar,
 				 strSynNo);
     }
     else if ( dateCol == 1 ) {
-      //      verticalHeader()->setFixedWidth(335);
       verticalHeader()->setLabel(dt,
 				 strStnr + 
 				 "  " + 
@@ -271,7 +261,6 @@ DataTable::DataTable(QStringList selPar,
 				 strSynNo);
     }
     else if ( dateCol == 2 ) {
-      //      verticalHeader()->setFixedWidth(401);
       verticalHeader()->setLabel(dt,
 				 strStnr + 
 				 "   " + 
@@ -282,7 +271,6 @@ DataTable::DataTable(QStringList selPar,
 				 strSynNo);
     }
     else if ( dateCol == 3 ) {
-      //      verticalHeader()->setFixedWidth(540);
       verticalHeader()->setLabel(dt,
 				 strStnr + 
 				 "   " + 
@@ -317,13 +305,13 @@ DataTable::DataTable(QStringList selPar,
       else {
 	strdat = strdat.setNum(orig[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
       }
-      TableItem* iorig = new TableItem(this, QTableItem::Never, strdat);
+      TableItem* iorig = new TableItem(this, Q3TableItem::Never, strdat);
       iorig->isModelVal = false;
       if ( morig[selParNo[ii]] == -999.9 ||  morig[selParNo[ii]] == -32767.0 )
 	strdat = "";
       else
 	strdat = strdat.setNum(morig[selParNo[ii]],'f',1);
-      TableItem* imorig = new TableItem(this, QTableItem::Never, strdat);
+      TableItem* imorig = new TableItem(this, Q3TableItem::Never, strdat);
       imorig->isModelVal = false;
       int iflag = flag[selParNo[ii]];
       strdat = strdat.setNum(iflag);
@@ -336,14 +324,14 @@ DataTable::DataTable(QStringList selPar,
       else if ( iflag < 10000 )
 	strdat = "0" + strdat;
       if (strdat == "00000" ) strdat ="";
-      TableItem* iflg = new TableItem(this, QTableItem::Never, strdat);
+      TableItem* iflg = new TableItem(this, Q3TableItem::Never, strdat);
       iflg->isModelVal = false;
       strFldat = strdat;
       if ( corr[selParNo[ii]] == -999.9  ||  corr[selParNo[ii]] <= -32766.0 )
 	strdat = "";
       else
 	strdat = strdat.setNum(corr[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
-      TableItem* ikorr = new TableItem(this, QTableItem::OnTyping, strdat);
+      TableItem* ikorr = new TableItem(this, Q3TableItem::OnTyping, strdat);
       if ( strFldat == "05000" )
 	ikorr->isModelVal = true;
       else
@@ -370,27 +358,25 @@ DataTable::DataTable(QStringList selPar,
 	imorig->setEnabled(false); 
       }
     }
-    TableItem* istat = new TableItem(this, QTableItem::Never, strStnr);
+    TableItem* istat = new TableItem(this, Q3TableItem::Never, strStnr);
     setItem(dt, noColPar*hmw->nuroprpar, istat);
     hideColumn(noColPar*hmw->nuroprpar);
-    TableItem* itime = new TableItem(this, QTableItem::Never, strTime);
+    TableItem* itime = new TableItem(this, Q3TableItem::Never, strTime);
     setItem(dt, noColPar*hmw->nuroprpar+1, itime);
     hideColumn(noColPar*hmw->nuroprpar+1);
-    TableItem* typId = new TableItem(this, QTableItem::Never, strTypeId);
+    TableItem* typId = new TableItem(this, Q3TableItem::Never, strTypeId);
     setItem(dt, noColPar*hmw->nuroprpar+2, typId);
-    TableItem* staId = new TableItem(this, QTableItem::Never, strStnr);
+    TableItem* staId = new TableItem(this, Q3TableItem::Never, strStnr);
     setItem(dt, noColPar*hmw->nuroprpar+3, staId);
-    //  if ( !isShTy )
       hideColumn( noColPar*hmw->nuroprpar+2 );
       hideColumn( noColPar*hmw->nuroprpar+2 );
-    //    TableItem* synNo = new TableItem(this, QTableItem::Never, strSynNo);
-    //    setItem(dt, noColPar*hmw->nuroprpar+2, synNo);
     pistnr = istnr;
     if ( !strTime.endsWith("00") && !RR01inList )
       hideRow(dt);
     if ( noErr && (lity == erLo) )
       hideRow(dt);
   }
+  hideRow(noSel);
 
   originalIndexes.reserve( noSel );
   for ( int i = 0; i < noSel; i++ )
@@ -419,11 +405,11 @@ int DataTable::paramIsCode(int parNo) {
 void DataTable::swapRows( int row1, int row2, bool /*swapHeader*/ ) {
 
   swap( originalIndexes[row1], originalIndexes[row2] );  
-  QTable::swapRows( row1, row2, TRUE );
+  Q3Table::swapRows( row1, row2, TRUE );
 }
 
 void DataTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
-  QTable::sortColumn( col, ascending, TRUE );
+  Q3Table::sortColumn( col, ascending, TRUE );
 }
 
 kvalobs::kvData DataTable::getKvData() const
@@ -498,15 +484,14 @@ void DataTable::toggleSort() {
 }
 
 void DataTable::focusTable(QString& cmn) {
-  cerr << "Innkommende meldinger: focusTable is called.  " << cmn << endl;
   int comma = cmn.find(",",0);
   QString stnr = cmn.left(comma).stripWhiteSpace();
   QString time = cmn.right(cmn.length() - comma - 1).stripWhiteSpace();
   time.truncate(16);
   int row = 0;
   for ( int irow = 0; irow < numRows(); irow++) {
-    QTableItem* tstat = item( irow, 0);
-    QTableItem* ttime = item( irow, 0);
+    Q3TableItem* tstat = item( irow, 0);
+    Q3TableItem* ttime = item( irow, 0);
     QString qstat = verticalHeader()->label(irow).left(6).stripWhiteSpace();
     QString qsyno = "0" + verticalHeader()->label(irow).right(4).stripWhiteSpace();
     QString qtime;
@@ -539,9 +524,9 @@ void TableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool
 {
     QColorGroup g( cg );
     if ( isModelVal )
-      g.setColor( QColorGroup::Text, red );
+      g.setColor( QColorGroup::Text, Qt::red );
     else
-      g.setColor( QColorGroup::Text, black );
+      g.setColor( QColorGroup::Text, Qt::black );
 
-    QTableItem::paint( p, g, cr, selected );
+    Q3TableItem::paint( p, g, cr, selected );
 }

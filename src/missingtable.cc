@@ -33,15 +33,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "errorlist.h"
 
 MissingTable::MissingTable(QWidget* parent, ErrorList* el) 
-  : QTable( 1000, 100, parent, "table" )  
+  : Q3Table( 1000, 100, parent, "table" )  
 {
   setCaption("Mangelliste");
   int antRow = 0;
   QString fTyp = "";
   setNumRows( 0 );
   setNumCols(12);
-  //  setShowGrid(FALSE);
-  //  verticalHeader()->hide();
   horizontalHeader()->setLabel(0, "Stnr");
   horizontalHeader()->setLabel(1, "Navn");
   horizontalHeader()->setLabel(2, "  Md");
@@ -60,55 +58,53 @@ MissingTable::MissingTable(QWidget* parent, ErrorList* el)
 
   for ( int insRow = 0; insRow < numRows; insRow++ ) {
     strDat = strDat.setNum(el->missList[insRow].stnr);
-    QTableItem* snIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* snIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,0,snIt);
     
     strDat = el->missList[insRow].name.left(8);
-    QTableItem* naIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* naIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,1,naIt);
     
-    strDat = QString(el->missList[insRow].obstime.isoTime()).mid(5,2);
-    QTableItem* moIt = new QTableItem(this, QTableItem::Never,strDat);
+    strDat = QString(el->missList[insRow].obstime.isoTime().cStr()).mid(5,2);
+    Q3TableItem* moIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,2,moIt);
     
-    strDat = QString(el->missList[insRow].obstime.isoTime()).mid(8,2);
-    QTableItem* dyIt = new QTableItem(this, QTableItem::Never,strDat);
+    strDat = QString(el->missList[insRow].obstime.isoTime().cStr()).mid(8,2);
+    Q3TableItem* dyIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,3,dyIt);
     
-    strDat = QString(el->missList[insRow].obstime.isoTime()).mid(11,2);
-    QTableItem* clIt = new QTableItem(this, QTableItem::Never,strDat);
+    strDat = QString(el->missList[insRow].obstime.isoTime().cStr()).mid(11,2);
+    Q3TableItem* clIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,4,clIt);
     
     strDat = el->missList[insRow].parName;
-    QTableItem* paIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* paIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,5,paIt);
     
     strDat = strDat.setNum(el->missList[insRow].typeId);
-    QTableItem* tiIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* tiIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,6,tiIt);
     
     strDat = strDat.setNum(el->missList[insRow].orig,'f',1);
-    QTableItem* ogIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* ogIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,7,ogIt);
     
     strDat = strDat.setNum(el->missList[insRow].corr,'f',1);
-    QTableItem* coIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* coIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,8,coIt);
         
     strDat = strDat.setNum(el->missList[insRow].morig,'f',1);
-    QTableItem* mlIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* mlIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,9,mlIt);
     
     strDat = el->missList[insRow].flTyp;
-    QTableItem* fiIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* fiIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,10,fiIt);
 
     strDat = strDat.setNum(el->missList[insRow].flg);
-    QTableItem* fgIt = new QTableItem(this, QTableItem::Never,strDat);
+    Q3TableItem* fgIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,11,fgIt);
   }
   for ( int icol = 0; icol < 12; icol++ )
     adjustColumn(icol);
-  //  for ( int icol = 0; icol < 12; icol++ )
-  //    setColumnWidth(icol, 70);
 }

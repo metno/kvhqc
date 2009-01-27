@@ -2,9 +2,10 @@
 
 COBJ=
 
-CCOBJ= 	hqc.o 
+CCOBJ= 	hqc4.o 
 
-QOBJ= 	hqcmain.o ListDialog.o ClockDialog.o dianashowdialog.o TimeseriesDialog.o qtQTUtil.o parameterdialog.o identifyUser.o errorlist.o StationInfoToolTip.o helptree.o BusyIndicator.o HqcDataReinserter.o ExtendedFunctionalityHandler.o missingtable.o datatable.o tabwindow.o
+
+QOBJ= 	hqcmain.o ListDialog.o ClockDialog.o dianashowdialog.o TimeseriesDialog.o qtQTUtil.o parameterdialog.o identifyUser.o errorlist.o helptree.o BusyIndicator.o HqcDataReinserter.o ExtendedFunctionalityHandler.o missingtable.o datatable.o tabwindow.o GetData.o
 
 #----------------------------------------------------------------------------
 
@@ -17,8 +18,7 @@ MOCOBJ=$(QOBJ:.o=_moc.o)
 
 ALLSRC= $(CSRC) $(CCSRC) $(QSRC)
 ALLOBJ= $(COBJ) $(CCOBJ) $(QOBJ) $(MOCOBJ)
-INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR)/libWatchRR.a $(WEATHERDIR)/libWeather.a
-#INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR)/libWatchRR.a
+INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR)/libWatchRR4.a $(WEATHERDIR)/libWeather4.a
 
 #----------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR
 .c.o:
 	$(CC) -c $(CCFLAGS) $< $(INCLUDE)
 
-all: $(BINDIR)/hqc
+all: $(BINDIR)/hqc4
 
 
 #----------------------------------------------------------------------------
@@ -61,6 +61,6 @@ include $(DEPENDSFILE)
 
 #----------------------------------------------------------------------------
 
-$(BINDIR)/hqc: $(ALLOBJ) $(INTERNALLIBS)
+$(BINDIR)/hqc4: $(ALLOBJ) $(INTERNALLIBS)
 	@echo $(INTERNALLIBS)
 	$(CXX) -o $@ $(CCFLAGS) $(ALLOBJ)  $(LINKS)

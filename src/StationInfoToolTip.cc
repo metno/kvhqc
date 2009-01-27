@@ -28,6 +28,7 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include <QtGui>
 #include "StationInfoToolTip.h"
 #include "StationInformation.h"
 #include "TypeInformation.h"
@@ -39,25 +40,35 @@ typedef TypeInformation<kvservice::KvApp>    TypeInfo;
 using namespace kvservice;
 using namespace std;
 
-StationInfoToolTip::StationInfoToolTip( QTable *table, QToolTipGroup *group, 
+StationInfoToolTip::StationInfoToolTip( Q3Table *table, 
 					int stationidCol, int typeidCol )
-  : QToolTip( table->viewport(), group )
-  , table( table )
+  : table( table )
   , stationidCol( stationidCol )
   , typeidCol( typeidCol )
 {
+  table->setMouseTracking(true);
 }
 
 StationInfoToolTip::~StationInfoToolTip( )
 {
 }
 
+void StationInfoToolTip::mouseMoveEvent(QMouseEvent *event)
+{
+  QPoint cp = table->mapFromGlobal(event->globalPos());
+  int row = table->rowAt( cp.y() );
+  int col = table->columnAt( cp.x() );
+ 
+  QString text = table->text( row, stationidCol );
+  QToolTip::showText(event->globalPos(), text, table);
+}
+
+
 void StationInfoToolTip::maybeTip ( const QPoint &p )
 {
   QPoint cp = table->viewportToContents( p );
   int row = table->rowAt( cp.y() );
   int col = table->columnAt( cp.x() );
-
 
   QString cellText = table->text( row, stationidCol );
   if ( cellText.isNull() )
@@ -81,5 +92,5 @@ void StationInfoToolTip::maybeTip ( const QPoint &p )
 
   QRect cr = table->cellGeometry( row, col );
   cr.moveTopLeft( table->contentsToViewport( cr.topLeft() ) );
-  tip( cr, tipString );
 }
+
