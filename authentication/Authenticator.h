@@ -53,7 +53,7 @@ namespace Authentication {
 
   public:
     Authenticator( const char *server, int port = DEFAULT_LDAP_PORT, 
-		   QWidget* parent = 0, const char* name = 0, bool modal = FALSE, WFlags fl = 0 );
+		   QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0 );
     virtual ~Authenticator();
 
     static const QString authenticate(const char *server, int port = DEFAULT_LDAP_PORT);

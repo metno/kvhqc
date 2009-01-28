@@ -84,7 +84,7 @@ namespace Authentication {
 
 
   Authenticator::Authenticator( const char *server, int port, 
-				QWidget* parent, const char* name, bool modal, WFlags fl )
+				QWidget* parent, const char* name, bool modal, Qt::WFlags fl )
     : AuthenticationDialog( parent, name, modal, fl), server(server), port(port)
   {
     QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
