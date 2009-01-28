@@ -1,64 +1,61 @@
-<!DOCTYPE UI><UI version="3.1" stdsetdef="1">
-<class>cFailedWidget</class>
-<widget class="QWidget">
-    <property name="name">
-        <cstring>cFailedWidget</cstring>
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>cFailedWidget</class>
+  <widget class="QWidget" name="cFailedWidget" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>347</width>
+        <height>150</height>
+      </rect>
     </property>
-    <property name="geometry">
-        <rect>
-            <x>0</x>
-            <y>0</y>
-            <width>347</width>
-            <height>150</height>
-        </rect>
+    <property name="windowTitle" >
+      <string>Form1</string>
     </property>
-    <property name="caption">
-        <string>Form1</string>
+    <property name="whatsThis" stdset="0" >
+      <string>Dette er en liste over de automatiske kontrollene som har forårsaket at observasjonen ble merket som mistenkelig.</string>
     </property>
-    <property name="whatsThis" stdset="0">
-        <string>Dette er en liste over de automatiske kontrollene som har forårsaket at observasjonen ble merket som mistenkelig.</string>
-    </property>
-    <hbox>
-        <property name="name">
-            <cstring>unnamed</cstring>
-        </property>
-        <widget class="QListView">
-            <column>
-                <property name="text">
-                    <string>Kontroll</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <column>
-                <property name="text">
-                    <string>Forklaring</string>
-                </property>
-                <property name="clickable">
-                    <bool>true</bool>
-                </property>
-                <property name="resizable">
-                    <bool>true</bool>
-                </property>
-            </column>
-            <property name="name">
-                <cstring>cfailedList</cstring>
+    <layout class="QHBoxLayout" >
+      <item>
+        <widget class="Q3ListView" name="cfailedList" >
+          <property name="allColumnsShowFocus" >
+            <bool>true</bool>
+          </property>
+          <property name="resizeMode" >
+            <enum>Q3ListView::LastColumn</enum>
+          </property>
+          <property name="treeStepSize" >
+            <number>20</number>
+          </property>
+          <column>
+            <property name="text" >
+              <string>Kontroll</string>
             </property>
-            <property name="allColumnsShowFocus">
-                <bool>true</bool>
+            <property name="clickable" >
+              <bool>true</bool>
             </property>
-            <property name="resizeMode">
-                <enum>LastColumn</enum>
+            <property name="resizable" >
+              <bool>true</bool>
             </property>
-            <property name="treeStepSize">
-                <number>20</number>
+          </column>
+          <column>
+            <property name="text" >
+              <string>Forklaring</string>
             </property>
+            <property name="clickable" >
+              <bool>true</bool>
+            </property>
+            <property name="resizable" >
+              <bool>true</bool>
+            </property>
+          </column>
         </widget>
-    </hbox>
-</widget>
-<layoutdefaults spacing="6" margin="11"/>
-</UI>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+</ui>

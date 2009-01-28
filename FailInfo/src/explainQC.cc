@@ -131,13 +131,12 @@ namespace QC
       if ( explMap.empty() ) {
 	QString path = QString(getenv("HQCDIR"));
 	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
-	//	static const char *filename = "/home/knutj/kvhqc/FailInfo/var/qc1/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );
 	if ( not fs.good() ) {
 	  fs.close();
-	  return string("Finner ikke datafil: ") + filename;
+	  return string("Finner ikke datafil: ") + filename.toStdString();
 	}
 	char buffer[ bufSize ];
 

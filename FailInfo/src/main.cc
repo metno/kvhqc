@@ -48,16 +48,17 @@ using namespace decodeutility;
 
 int main( int argc, char ** argv ) {
 
-  string myconf = "/home/knutj/kvhqc/etc/kvhist.conf";
+  //  string myconf = "/home/knutj/kvhqc/etc/kvhist.conf";
+  //  cerr << "QWERT : " << myconf << endl;
 
-  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
-  if(!confSec) {
+  //  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
+  //  if(!confSec) {
     const char * kvdir = getenv( "KVALOBS" );
     if ( kvdir ) {
       myconf = string( kvdir ) + "/etc/kvalobs.conf";
       confSec = KvApp::readConf(myconf);
     }
-  }
+    //  }
   if(!confSec) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;
@@ -65,9 +66,7 @@ int main( int argc, char ** argv ) {
   KvApp kvapp(argc, argv, confSec);
 
   QApplication a( argc, argv, true );
-  //  KvQtApp a(argc, argv, true);
- 
-  //FailList *f = new FailList();
+
   FailDialog *f = new FailDialog();
   f->show();
 

@@ -35,7 +35,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <miutil/commastring.h>
 #include <map>
 #include <set>
-#include <qlistview.h>
+//#include <q3listview.h>
+#include <Qt3Support/Q3ListView>
 
 #include <iostream>
 
@@ -45,9 +46,10 @@ using namespace miutil;
 
 namespace FailInfo
 {
-  FailList::FailList( QWidget *parent, const char * name, WFlags f )
-    : cFailedWidget(parent, name, f)
+  FailList::FailList( QWidget *parent, const char * name, Qt::WFlags f )
+    : Ui::cFailedWidget()
   {
+    setupUi(this);
   }
   
   FailList::~FailList( )
@@ -58,7 +60,7 @@ namespace FailInfo
   {
     return QSize( 384, 128 );
   }
-
+  
   typedef map< QString, set<QC::cFailedParam> >  SubElem;
   typedef map< QString, SubElem > Fails;
 
@@ -66,49 +68,45 @@ namespace FailInfo
   {
     if ( data == this->data )
       return;
-
     this->data = data;
 
     cfailedList->clear();
-
+    
     QC::cFailList fail = QC::getFailList( data.cfailed() );
     if ( fail.empty() )
       return;
-
+    
     Fails fails;
-
+    
     for ( QC::cFailList::iterator it = fail.begin();
 	  it != fail.end();  it++ ) 
       fails
-	[ it->getPart( QC::cFailedParam::QcClass )   ]
-	[ it->getPart( QC::cFailedParam::Group ) ]
+	[ QString::fromStdString(it->getPart( QC::cFailedParam::QcClass ))   ]
+	[ QString::fromStdString(it->getPart( QC::cFailedParam::Group )) ]
 	.insert( *it );
-
     for ( Fails::const_iterator top = fails.begin();
 	  top != fails.end();  top++ ) {
-      QListViewItem *topItem = 
-	new QListViewItem( cfailedList, top->first, "" );
+      Q3ListViewItem *topItem = 
+	new Q3ListViewItem( cfailedList, top->first, "" );
       topItem->setOpen(true);
-      QC::FailGroupList &failGroupList = QC::failExpl[ top->first ];
-
+      QC::FailGroupList &failGroupList = QC::failExpl[ top->first.toStdString() ];
+      
       for ( SubElem::const_iterator sub = top->second.begin();
 	    sub != top->second.end();  sub++ ) {
 	QC::FailGroup &failGroup = 
 	  failGroupList[sub->first.ascii()];
-	QListViewItem *subItem =
-	  new QListViewItem( topItem, sub->first, 
-			     failGroup.explanation );
+	Q3ListViewItem *subItem =
+	  new Q3ListViewItem( topItem, sub->first, 
+			      QString::fromStdString(failGroup.explanation) );
 	subItem->setOpen(true);
-
+	
 	for ( set<QC::cFailedParam>::const_iterator subsub = sub->second.begin();
 	      subsub != sub->second.end();  subsub++ ) {
-	  new QListViewItem( subItem, 
-			     subsub->getPart( QC::cFailedParam::Detail ), 
-			     failGroup.getDetailExplanation( *subsub, data) );
+	  new Q3ListViewItem( subItem, 
+			      QString::fromStdString(subsub->getPart( QC::cFailedParam::Detail )), 
+			      QString::fromStdString(failGroup.getDetailExplanation( *subsub, data)) );
 	}
       }
     }
-    // increase distance between failnumber and explanation:
-    //    cfailedList->setColumnWidth( 0, cfailedList->columnWidth(0) + 10 );
   }
 }

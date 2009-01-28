@@ -30,23 +30,26 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "FailDialog.h"
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/Q3VBoxLayout>
 
 namespace FailInfo {
 
-  FailDialog::FailDialog( QWidget *parent, const char *name, WFlags f )
+  FailDialog::FailDialog( QWidget *parent, const char *name, Qt::WFlags f )
     : QDialog( parent, name, false, f )
   {
     setCaption( "Feilinformasjon" );
-    failList =   new FailList( this, "TheList" );
+    failList =   new FailList( this );
     hideButton = new QPushButton( "&Skjul", this, "HideButton" );
 
     connect( hideButton, SIGNAL( clicked() ),
 	     this,       SLOT  ( close()   ) );
 
-    QVBoxLayout *mainLayout = new QVBoxLayout( this, 2, 2 );
-    mainLayout->addWidget( failList );
+    Q3VBoxLayout *mainLayout = new Q3VBoxLayout( this, 2, 2 );
+    mainLayout->addWidget( dynamic_cast<QWidget*>(failList) );
     
-    QHBoxLayout *buttonLayout = new QHBoxLayout( mainLayout );
+    Q3HBoxLayout *buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->insertStretch( 0 );
     buttonLayout->addWidget( hideButton );
   }

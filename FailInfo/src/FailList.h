@@ -42,13 +42,14 @@ namespace FailInfo
    * \brief The implementation of the GUI part of the fail list.
    */
   class FailList
-    : public cFailedWidget
+    : public Ui::cFailedWidget
   {
     Q_OBJECT;
   public:
     /**
      */
-    FailList( QWidget * parent = 0, const char * name = 0, WFlags f = 0 );
+    FailList( QWidget * parent = 0, const char * name = 0, Qt::WFlags f = 0 );
+    //    FailList( QWidget * parent = 0 );
     virtual ~FailList( );
     virtual QSize sizeHint () const;
 

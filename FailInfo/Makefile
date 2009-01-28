@@ -8,23 +8,28 @@ TESTSRC:=
 QSRC:=
 UI:=
 
-include $(KVDIR)/conf/make.$(OSTYPE)
+#include $(KVDIR)/conf/make.$(OSTYPE)
+PUTOOLS=$(HQC)/local
+QTINC= /usr/include/qt4
+KVDIR=$(HQC)/kvalobs
 
 INCLUDE:= $(BOOSTINCLUDE) \
 	 $(OMNIINCLUDE) \
+	 -I$(QTINC) \
+	 -I$(QTINC)/Qt \
 	 -I$(KVDIR)/include \
-	 -I$(KVDIR)/include/kvalobs \
-	 -I$(KVDIR)/include/miutil \
-	 -I$(KVDIR)/include/dnmithread \
+	 -I$(KVDIR)/src/lib \
+	 -I$(KVDIR)/src/lib/kvalobs \
+	 -I$(KVDIR)/src/lib/miutil \
+	 -I$(KVDIR)/src/lib/dnmithread \
 	 -I$(KVDIR)/include/db \
-	 -I$(KVDIR)/include/kvskel \
-	 -I$(KVDIR)/include/fileutil \
-	 -I$(KVDIR)/include/corbahelper \
-	 -I$(KVDIR)/include/kvservice/kvcpp \
-	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools \
-	 `pkg-config --cflags qt-mt`
+	 -I$(KVDIR)/src/lib/kvskel \
+	 -I$(KVDIR)/src/lib/fileutil \
+	 -I$(KVDIR)/src/lib/corbahelper \
+	 -I$(KVDIR)/src/service-libs/kvcpp \
+	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools
 
-CXXFLAGS+= -Wall
+CXXFLAGS+= -Wall -g -DQT3_SUPPORT
 DEFINES+=
 CXXLDFLAGS+=
 
@@ -38,7 +43,8 @@ UI_IMPL= $(UI:.ui=.cc)
 UI_HEAD= $(UI:.ui=.h)
 MOC_SRC= $(QSRC:.cc=.moc.cc) $(UI_IMPL:.cc=.moc.cc)
 
-ALL_SRC= $(UI_IMPL) $(QSRC) $(MOC_SRC) $(SRC)
+ALL_SRC= $(QSRC) $(MOC_SRC) $(SRC)
+#ALL_SRC= $(UI_IMPL) $(QSRC) $(MOC_SRC) $(SRC)
 OBJ=  $(ALL_SRC:.cc=.o)
 
 # Test:
@@ -46,7 +52,8 @@ TESTOBJ= $(TESTSRC:.cc=.o)
 TESTLIB= -lcppunit
 
 ifndef PREFIX
-       PREFIX=$(HOME)/apps/
+#       PREFIX=$(HQC)/apps/
+       PREFIX=$(HQC)/local/
 endif
 
 all:  $(TARGET)
@@ -67,17 +74,16 @@ uninstall:
 
 # Qt specific:
 %.moc.cc:	%.h
-	moc -o $@ $<
+	moc-qt4 -o $@ $<
 
 %.h: %.ui
-	uic -o$@ $<
+	uic -o $@ $<
 
-%.ui.h:
-	touch $@
+#%.ui.h:
+#	touch $@
 
-%.cc: %.ui %.h %.ui.h
-	uic -o$@ -impl $(notdir $*.h) $<
-
+#%.cc: %.ui %.h %.ui.h
+#	uic -o $@ -impl $(notdir $*.h) $<
 
 $(PROGRAM_NAME): $(OBJ) $(MAIN:.cc=.o)
 	$(CXX) -o $@ -Wall $(CXXLDFLAGS) $(OBJ) $(MAIN:.cc=.o) $(LIB)
@@ -118,7 +124,7 @@ pretty:
 	find . -name '*.d.*' -type f -exec rm -f  {} \;
 
 clean: pretty
-	rm -f $(OBJ) $(MAIN:.cc=.o) $(TESTOBJ) $(UI_HEAD) $(UI_IMPL) $(MOC_SRC) $(DEPENDS_FILES)
+	rm -f $(OBJ) $(MAIN:.cc=.o) $(TESTOBJ) $(MOC_SRC) $(DEPENDS_FILES)
 
 veryclean: clean
 	rm -f $(TARGET) $(TEST_PROGRAM_NAME)
