@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef RRCHECKTABLEITEM_H_
 #define RRCHECKTABLEITEM_H_
 
-#include <qtable.h>
+#include <q3table.h>
 #include "selfexplainable.h"
 
 namespace kvalobs {
@@ -44,11 +44,11 @@ namespace WatchRR
 class RR_24DataTableItem;
 
 class RRCheckTableItem
-  : public QCheckTableItem
+  : public Q3CheckTableItem
   , public SelfExplainable
 {
 public:
-	RRCheckTableItem( QTable * table, RR_24DataTableItem * titem );
+	RRCheckTableItem( Q3Table * table, RR_24DataTableItem * titem );
 	virtual ~RRCheckTableItem();
   
   virtual QString explain() const;

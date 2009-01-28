@@ -44,7 +44,7 @@ namespace WatchRR
       : public RRTableItem
     {
     public:
-      ControlFlagCell( QTable * t, const kvalobs::kvData & data );
+      ControlFlagCell( Q3Table * t, const kvalobs::kvData & data );
       virtual ~ControlFlagCell( );
       
       virtual QString explain() const;
@@ -63,7 +63,7 @@ namespace WatchRR
        */
       void setText();
 
-      using QTableItem::setText;
+      using Q3TableItem::setText;
 
       virtual int alignment() const { return Qt::AlignLeft | Qt::AlignVCenter; }
       

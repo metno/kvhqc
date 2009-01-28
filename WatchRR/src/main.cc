@@ -40,7 +40,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 typedef kvservice::corba::CorbaKvApp KvApp;
 typedef std::list<kvalobs::kvData> kvDataList;
 
-
 namespace WatchRR {
   kvalobs::DataReinserter<kvservice::KvApp> * reinserter;
 }
@@ -88,9 +87,8 @@ int main( int argc, char ** argv )
     cerr << "Can't connect to station table!" << endl;
   }
 
-  WatchRR::MultiStationSelection d( kvapp.kvpathInCorbaNameserver(), slist, 0, 0/*& dl.front()*/ );
+  WatchRR::MultiStationSelection d(QString::fromStdString( kvapp.kvpathInCorbaNameserver()), slist, 0, 0/*& dl.front()*/ );
   d.show();
-
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
   return a.exec();
 }

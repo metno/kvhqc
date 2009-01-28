@@ -39,25 +39,11 @@ namespace WatchRR
   namespace snow
   {
     QString unknownValueIdentifier = "?";
-/*
-    SDDataTableItem_Simple::SDDataTableItem_Simple( QTable * table, float value )
-      : RRTableItem( table, true )
-      , explanation( internal::explain( value ) )
-    {
-      //QString::number( value ) );
-      setText( getText( value ) );
-    }
-
-    QString SDDataTableItem_Simple::explain( ) const
-    {
-      return explanation;
-    }
-*/
 
     QStringList SDDataTableItem::selections;
     QStringList SDDataTableItem::selectionsWUnknown;
 
-    SDDataTableItem::SDDataTableItem( QTable *table, kvalobs::kvData & sd )
+    SDDataTableItem::SDDataTableItem( Q3Table *table, kvalobs::kvData & sd )
       : RRComboTableItem( table, sd, selections )
     {
       setReplaceable( false );
@@ -91,7 +77,7 @@ namespace WatchRR
       */
     }
     
-    SDDataTableItem::SDDataTableItem( QTable *table, float value )
+    SDDataTableItem::SDDataTableItem( Q3Table *table, float value )
       : RRComboTableItem( table )
     {
       setText( getText( value ) );

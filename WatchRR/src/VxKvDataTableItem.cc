@@ -45,7 +45,6 @@ namespace WatchRR
 
   const string VxKvDataTableItem::VxExplFile =
     string(getenv("HQCDIR")) + "/WatchRR/var/VxExplanations.txt";
-  //vector<QString> VxKvDataTableItem::VxExpl;
 
   const char *VxKvDataTableItem::VxSExpl[ 3 ] =
     {
@@ -55,7 +54,7 @@ namespace WatchRR
   VxKvDataTableItem::VxParams VxKvDataTableItem::vxparams;
 
 
-  VxKvDataTableItem::VxKvDataTableItem( QTable * table, KvDataProvider::Data data_ )
+  VxKvDataTableItem::VxKvDataTableItem( Q3Table * table, KvDataProvider::Data data_ )
       : RRComboTableItem( table, data_, selections )
   {
     if ( selections.isEmpty() )
@@ -130,7 +129,7 @@ namespace WatchRR
       return QString( "Forstår ikke verdien i dette feltet" );
 
     if ( not has_valid_parameter_list() )
-      return QString("Feil! Finner ikke ") + VxExplFile + "!";
+      return QString("Feil! Finner ikke ") + QString::fromStdString(VxExplFile) + "!";
 
     QString ret = "Ingen data";
 

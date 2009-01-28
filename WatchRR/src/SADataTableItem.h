@@ -42,9 +42,9 @@ namespace WatchRR
       : public RRTableItem
     {
     public:
-      SADataTableItem( QTable * table, kvalobs::kvData & data );
+      SADataTableItem( Q3Table * table, kvalobs::kvData & data );
 
-      SADataTableItem( QTable * table, float value );
+      SADataTableItem( Q3Table * table, float value );
 
       virtual ~SADataTableItem( );
 

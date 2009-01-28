@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "RRTableItem.h"
 #include <decodeutility/DataReinserter.h>
 #include <qtooltip.h>
-#include <qtable.h>
+#include <q3table.h>
 #include <puTools/miDate>
 #include <utility>
 #include <vector>
@@ -57,7 +57,7 @@ namespace WatchRR
 
 
   class RRTable 
-    : public QTable
+    : public Q3Table
   {
     Q_OBJECT;
 
@@ -69,13 +69,9 @@ namespace WatchRR
      */
     RRTable( int station, const miutil::miDate &date, 
 	     int type, int sensor, int level,
-	     QToolTipGroup * ttGroup = 0,	     
 	     QWidget *parent = 0, const char *name = 0 );
 
-    // From DayObs.h:
-    // typedef boost::shared_ptr<DayObsList> DayObsListPtr;
     RRTable( DayObsListPtr dayobs,
-	     QToolTipGroup * ttGroup = 0,	     
 	     QWidget *parent = 0, const char *name = 0 );
 
     virtual ~RRTable();
@@ -107,7 +103,7 @@ namespace WatchRR
      */
     virtual bool saveData( const kvalobs::DataReinserter<kvservice::KvApp> *ri );
     
-    virtual void polish();
+    //    virtual void ensurePolished();
 
   protected slots:
     /**
@@ -162,7 +158,7 @@ namespace WatchRR
 
   public:
     RRTableToolTip *toolTip;
-    QToolTipGroup *ttGroup;
+    //    QToolTipGroup *ttGroup;
 
   };
   

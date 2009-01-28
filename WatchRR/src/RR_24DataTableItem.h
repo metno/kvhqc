@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __WatchRR__RR_24DataTableItem_h__
 #define __WatchRR__RR_24DataTableItem_h__
 
-//#include "RR_24DataTableItem_Simple.h"
 #include "RRTableItem.h"
 #include "dataconsistencyverifier.h"
 #include <qstring.h>
@@ -50,9 +49,9 @@ namespace WatchRR
     static const QRegExp re;
 
   public:
-    RR_24DataTableItem( QTable * table, kvalobs::kvData & data );
+    RR_24DataTableItem( Q3Table * table, kvalobs::kvData & data );
 
-    RR_24DataTableItem( QTable * table, float value, QString type = standardType );
+    RR_24DataTableItem( Q3Table * table, float value, QString type = standardType );
         
     virtual QString explain() const;
 

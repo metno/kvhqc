@@ -40,10 +40,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qdialog.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <qlineedit.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <QCloseEvent>
+#include <QShowEvent>
+#include <Q3VBoxLayout>
 #include <KvApp.h>
-//#include <kvservice/qt/kvQtApp.h>
 
 using namespace kvservice;
 using namespace kvalobs;
@@ -56,17 +60,17 @@ namespace WatchRR
     cout << "RRDialog::getRRDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
-    QDialog * selector = new QDialog( parent, "", WDestructiveClose );
+    QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose );
     selector->setCaption( "Velg stasjonsinformasjon" );
     cerr << slist.size() << endl;
 
-    QVBoxLayout * mainLayout = new QVBoxLayout( selector );
+    Q3VBoxLayout * mainLayout = new Q3VBoxLayout( selector );
 
     StationSelection * ss = new StationSelection( selector, & data );
     mainLayout->addWidget( ss );
 
     // Buttons:
-    QHBoxLayout * buttonLayout = new QHBoxLayout( mainLayout );
+    Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->addStretch( 1 );
 
     QPushButton * ok = new QPushButton( "&Ok", selector );
@@ -130,11 +134,11 @@ namespace WatchRR
     // Display station information:
     stationInfo = new QLineEdit( this, "Station Info" );
     stationInfo->setReadOnly( true );
-    stationInfo->setFocusPolicy( NoFocus );
+    stationInfo->setFocusPolicy( Qt::NoFocus );
 
     QString stationDescr = QString::number( station->stationID() );
     if ( this->station )
-      stationDescr += " - " + this->station->name();
+      stationDescr += " - " + QString(this->station->name().cStr());
     QString caption = "Nedbør for stasjon " + stationDescr;
     if ( not captionSuffix_.isEmpty() )
       caption += " [" + captionSuffix_ + "]";
@@ -145,12 +149,8 @@ namespace WatchRR
     
     // Buttons:
     help   = new QPushButton( "&Hjelp", this, "Hjelp" );
-    //assignToFD2 = new QCheckBox( "&Fordel manglende nedbør", this, "Assign to FD=2" );
-    //assignToFD2->setChecked( true );
     save = new QPushButton( "&Lagre", this, "Lagre" );
     connect( save, SIGNAL( clicked() ), this, SLOT( saveData() ) );
-//    if ( ! dataReinserter )
-//      save->setEnabled( false );
     ok     = new QPushButton( "Luk&k", this, "Lukk" );
     ok->setDefault( true );
     connect( ok,   SIGNAL( clicked() ), this, SLOT( accept() ) );
@@ -158,21 +158,15 @@ namespace WatchRR
     // Status Bar:
     statusBar = new QStatusBar( this, "Status Bar" );
     statusBar->setSizeGripEnabled( true );
-    ttGroup = new QToolTipGroup( statusBar );
-    connect( ttGroup, SIGNAL( showTip(const QString&) ),
-	     statusBar, SLOT( message(const QString&) ) );
-    connect( ttGroup, SIGNAL( removeTip() ),
-	     statusBar, SLOT( clear() ) );
 
     // Table
     table = rrt;
     table->setFocus();
-    //connect( assignToFD2, SIGNAL(toggled(bool)), table, SLOT(setDistributeFD2(bool)));
     
     // Layout: 
-    mainLayout = new QVBoxLayout( this, 0, -1, "Main Layout" );
+    mainLayout = new Q3VBoxLayout( this, 0, -1, "Main Layout" );
     {
-      QHBoxLayout *topLayout = new QHBoxLayout( mainLayout, -1, "Top Layout" );
+      Q3HBoxLayout *topLayout = new Q3HBoxLayout( mainLayout, -1, "Top Layout" );
       {
 	topLayout->addWidget( new QLabel("Stasjon:", this ) );
 	topLayout->addWidget( stationInfo );
@@ -180,11 +174,10 @@ namespace WatchRR
 
       mainLayout->addWidget( table );
 
-      QHBoxLayout *buttonLayout = new QHBoxLayout( mainLayout, -1, "Button Layout" );
+      Q3HBoxLayout *buttonLayout = new Q3HBoxLayout( mainLayout, -1, "Button Layout" );
       {
 	buttonLayout->addWidget( help );
 	buttonLayout->addStretch( 1 );
-	//buttonLayout->addWidget( assignToFD2 );
 	buttonLayout->addWidget( save );
 	buttonLayout->addWidget( ok );
       }
@@ -195,23 +188,23 @@ namespace WatchRR
   RRDialog::RRDialog( DayObsListPtr dol,	
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
 		      const QString & captionSuffix,
-		      QWidget *parent, const char* name, bool modal, WFlags f )
+		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
     : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
     , dataReinserter( dataReinserter )
     , captionSuffix_( captionSuffix )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*dol)[0].getStation()] )
     , shownFirstTime( false )
   {
-   RRTable * rrt = new RRTable( dol, ttGroup, this, "Table" );
+    RRTable * rrt = new RRTable( dol, /*ttGroup,*/ this, "Table" );
     setup( rrt );
-    rrt->ttGroup = ttGroup;
+    //    rrt->ttGroup = ttGroup;
   }
 
 
   RRDialog::RRDialog( int station, const miutil::miDate date, 
 		      int type, int sensor, int level,
 		      const DataReinserter<KvApp> * dataReinserter,
-		      QWidget* parent, const char* name, bool modal, WFlags f )
+		      QWidget* parent, const char* name, bool modal, Qt::WFlags f )
     : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
     , dataReinserter( dataReinserter )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
@@ -219,7 +212,7 @@ namespace WatchRR
   {
     RRTable * rrt;    
     try {
-      rrt = new RRTable( station, date, type, sensor, level, 0, this, "Table" );
+      rrt = new RRTable( station, date, type, sensor, level, /*0,*/ this, "Table" );
     }
     catch( std::runtime_error &e ) {
       int res = QMessageBox::critical( this, "HQC", 
@@ -229,14 +222,14 @@ namespace WatchRR
 				       QMessageBox::Abort | QMessageBox::Escape );
       if ( res == QMessageBox::Retry ) {
 	try {
-	  rrt = new RRTable( station, date, type, sensor, level, ttGroup, this, "Table" );
+	  rrt = new RRTable( station, date, type, sensor, level, /*ttGroup,*/ this, "Table" );
 	}
 	catch( std::runtime_error &e ) {
 	  res = QMessageBox::critical( this, "HQC", 
 				       QString("Fremdeles feil i kontakt med kvalobs!\n"
 					       "Meldingen var:\n") + e.what(),
 				       QMessageBox::Abort | QMessageBox::Default,
-				       QMessageBox::NoButton );
+				       Qt::NoButton );
 	}
       }
       if ( res == QMessageBox::Abort ) {
@@ -244,7 +237,7 @@ namespace WatchRR
       }
     }
     setup ( rrt );
-    rrt->ttGroup = ttGroup;
+    //    rrt->ttGroup = ttGroup;
   }
 
   RRDialog::~RRDialog( )

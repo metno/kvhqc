@@ -34,13 +34,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 //#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <qdialog.h>
+//Added by qt3to4:
+#include <QShowEvent>
+#include <QCloseEvent>
 #include <kvalobs/kvStation.h>
 #include "RRTable.h"
 
 class QPushButton;
 class QStatusBar;
 class QLineEdit;
-class QBoxLayout;
+class Q3BoxLayout;
 class QCheckBox;
 
 namespace kvalobs {
@@ -69,13 +72,13 @@ namespace WatchRR
     RRDialog( DayObsListPtr dol,	
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      const QString & captionSuffix,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
 
 
     RRDialog( int station, const miutil::miDate date,
 	      int type, int sensor, int level,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
     virtual ~RRDialog( );
 
     const kvalobs::kvStation *getStation() const { return station; }
@@ -90,9 +93,9 @@ namespace WatchRR
     QPushButton * save;
     QPushButton *ok;
     QStatusBar *statusBar;
-    QBoxLayout *mainLayout;
+    Q3BoxLayout *mainLayout;
 
-    QToolTipGroup *ttGroup;
+    //    QToolTipGroup *ttGroup;
 
   public slots:
     virtual void polish();

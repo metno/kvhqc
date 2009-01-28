@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "OkCheckTableItem.h"
 
-OkCheckTableItem::OkCheckTableItem( QTable * table, KvDataProvider::Data & data )
+OkCheckTableItem::OkCheckTableItem( Q3Table * table, KvDataProvider::Data & data )
   : RRCheckTableItem2( table, data )
 {
 }
@@ -69,21 +69,4 @@ void OkCheckTableItem::getUpdatedList( DataSet & out )
       }
     }
   }
-  /*
-  else {
-    // Replace all fhqc=1 data with fhqc=0 (not controlled)
-    IS THIS A GOOD IDEA?
-    for ( KvDataProvider::Iterator it = data.begin(); it != data.end(); ++ it ) {
-      if ( not kvalobs::missing( ** it ) 
-           and out.find( ** it ) == out.end()
-           and (*it)->controlinfo().flag( kvalobs::flag::fhqc ) == 1 ) {
-        kvalobs::kvData d( ** it );
-        kvalobs::kvControlInfo cinfo = d.controlinfo();
-        cinfo.set( kvalobs::flag::fhqc, 0 );
-        d.controlinfo( cinfo );
-        out.insert( d );        
-      }
-    }
-  }
-  */
 }

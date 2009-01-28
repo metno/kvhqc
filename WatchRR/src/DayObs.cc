@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "DayObs.h"
 #include "enums.h"
 #include <miTime>
-//#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <WhichDataHelper.h>
 #include <kvDataOperations.h>
@@ -227,8 +226,6 @@ namespace WatchRR
   {
     DayObsListPtr ret( new DayObsList );
     for ( miDate date = from; date < to; date.addDay() ) {
-      //  if ( processEvents )
-      //	KvApp::kvApp->processEvents( 1 );      
       ret->push_back( DayObs( station, date, type, sensor, level ) );
     }
     return ret;

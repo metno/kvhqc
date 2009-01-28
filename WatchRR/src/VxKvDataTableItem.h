@@ -37,7 +37,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <utility>
 #include <vector>
 #include <map>
-#include <qtable.h>
+#include <q3table.h>
 #include <qstring.h>
 #include <qstringlist.h>
 #include <kvalobs/kvData.h>
@@ -49,7 +49,7 @@ namespace WatchRR
         : public RRComboTableItem
   {
   public:
-    VxKvDataTableItem( QTable * table, KvDataProvider::Data data_ );
+    VxKvDataTableItem( Q3Table * table, KvDataProvider::Data data_ );
 
     virtual ~VxKvDataTableItem();
 

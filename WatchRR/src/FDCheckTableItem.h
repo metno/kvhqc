@@ -47,7 +47,7 @@ class FDCheckTableItem
   : public RRCheckTableItem2
 {
 public:
-	FDCheckTableItem( QTable * table, kvalobs::kvData & data );
+	FDCheckTableItem( Q3Table * table, kvalobs::kvData & data );
 	virtual ~FDCheckTableItem();
   
   bool collected() const;

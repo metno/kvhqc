@@ -88,7 +88,6 @@ namespace WatchRR
 
     for_each( modified.begin(), modified.end(), insert_replace<DataSet>( data ) );
   }
-
   bool DataConsistencyVerifier::equal( const kvalobs::kvData & d, float v ) const
   {
     if ( v == CellValueProvider::missing )

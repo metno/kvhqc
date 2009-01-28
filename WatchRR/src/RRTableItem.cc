@@ -52,8 +52,8 @@ namespace WatchRR
     return false;
   }
   
-  RRTableItem::RRTableItem( QTable * table, KvDataProvider::Data & data_, const QRegExpValidator * validator )
-    : QTableItem( table, OnTyping )
+  RRTableItem::RRTableItem( Q3Table * table, KvDataProvider::Data & data_, const QRegExpValidator * validator )
+    : Q3TableItem( table, OnTyping )
     , data( data_ )
     , validator( validator )
     , modelValue_( modelvalue_( data_ ) )
@@ -61,8 +61,8 @@ namespace WatchRR
     setReplaceable( false );
   }
 
-  RRTableItem::RRTableItem( QTable * table, kvalobs::kvData & data_, const QRegExpValidator * validator )
-    : QTableItem( table, OnTyping )
+  RRTableItem::RRTableItem( Q3Table * table, kvalobs::kvData & data_, const QRegExpValidator * validator )
+    : Q3TableItem( table, OnTyping )
     , validator( validator )
     , modelValue_( modelvalue_( & data_ ) )
   {
@@ -70,8 +70,8 @@ namespace WatchRR
     setReplaceable( false );
   }
   
-  RRTableItem::RRTableItem( QTable * table, KvDataProvider::Data & data_, QTableItem::EditType et, const QRegExpValidator * validator )
-    : QTableItem( table, et )
+  RRTableItem::RRTableItem( Q3Table * table, KvDataProvider::Data & data_, Q3TableItem::EditType et, const QRegExpValidator * validator )
+    : Q3TableItem( table, et )
     , data( data_ )
     , validator( validator )
     , modelValue_( modelvalue_( data_ ) )
@@ -79,8 +79,8 @@ namespace WatchRR
     setReplaceable( false );
   }
   
-  RRTableItem::RRTableItem( QTable * table, kvalobs::kvData & data_, QTableItem::EditType et, const QRegExpValidator * validator )
-    : QTableItem( table, et )
+  RRTableItem::RRTableItem( Q3Table * table, kvalobs::kvData & data_, Q3TableItem::EditType et, const QRegExpValidator * validator )
+    : Q3TableItem( table, et )
     , validator( validator )
     , modelValue_( modelvalue_( & data_ ) )
   {
@@ -89,8 +89,8 @@ namespace WatchRR
   }
   
     
-  RRTableItem::RRTableItem( QTable * table )
-    : QTableItem( table, Never )
+  RRTableItem::RRTableItem( Q3Table * table )
+    : Q3TableItem( table, Never )
     , validator( 0 )
     , modelValue_( false )
   {
@@ -126,7 +126,7 @@ namespace WatchRR
   {
     if ( data.empty() )
       return 0;
-    QWidget * ret = QTableItem::createEditor();
+    QWidget * ret = Q3TableItem::createEditor();
     QLineEdit *le = dynamic_cast<QLineEdit *>( ret );
     if ( le ) {
       le->clear();
@@ -158,14 +158,14 @@ namespace WatchRR
       
     le->setText( newText );
             
-    QTableItem::setContentFromEditor( w );
+    Q3TableItem::setContentFromEditor( w );
   }
 
   void RRTableItem::paint( QPainter * p, const QColorGroup & cg, 
 			   const QRect & cr, bool selected )
   {
     QColorGroup color = getColorGroup( cg );
-    QTableItem::paint( p, color, cr, selected );
+    Q3TableItem::paint( p, color, cr, selected );
   }
 
   QString RRTableItem::getText() const
@@ -205,7 +205,7 @@ namespace WatchRR
     return dynamic_cast< const RRTable *>( table() ); 
   }
   
-  RRComboTableItem::RRComboTableItem( QTable * table )
+  RRComboTableItem::RRComboTableItem( Q3Table * table )
     : RRTableItem( table )
   {
   }

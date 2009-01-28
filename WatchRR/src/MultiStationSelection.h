@@ -32,13 +32,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__MultiStationSelection_h__
 
 #include <qdialog.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 #include <vector>
 #include <iterator>
 #include <kvData.h>
 #include <kvStation.h>
 #include <decodeutility/DataReinserter.h>
 
-class QListView;
+class Q3ListView;
 
 namespace kvservice
 {
@@ -59,7 +61,7 @@ class MultiStationSelection
     Q_OBJECT;
 
     StationSelection * selector;
-    QListView * stations;
+    Q3ListView * stations;
     QString captionSuffix_;
     std::list<kvalobs::kvStation> slist_;
 

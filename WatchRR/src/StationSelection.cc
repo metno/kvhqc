@@ -31,12 +31,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "BusyIndicator.h"
 #include <qlineedit.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
-//#include <qmessagebox.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 #include <kvalobs/kvData.h>
-//#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <iostream>
 #include <cassert>
@@ -61,7 +61,7 @@ namespace WatchRR
     else
       data.set( 0, miutil::miTime( miDate::today(), miutil::miClock(6,0,0) ),	0, 110, miutil::miTime(), 0, 0, 0, 0,	kvalobs::kvControlInfo(), kvalobs::kvUseInfo(), "" );
 
-    QGridLayout * layout = new QGridLayout( this, 5, 2 );
+    Q3GridLayout * layout = new Q3GridLayout( this, 5, 2 );
     int row = 0;
     
     // Station:
@@ -73,8 +73,8 @@ namespace WatchRR
     // Obstime:
     miutil::miDate d = data.obstime().date();
     obstime_ = 
-      new QDateEdit( QDate( d.year(), d.month(), d.day() ), this );
-    obstime_->setOrder( QDateEdit::DMY ); // Norwegian standard
+      new Q3DateEdit( QDate( d.year(), d.month(), d.day() ), this );
+    obstime_->setOrder( Q3DateEdit::DMY ); // Norwegian standard
     layout->addWidget( obstime_, row, 1 );
     layout->addWidget( new QLabel( obstime_, "&Tid:", this ), row++, 0 );
     
@@ -181,5 +181,4 @@ namespace WatchRR
       }
     }
   }
-  
 }

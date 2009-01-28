@@ -39,10 +39,10 @@ namespace WatchRR
   class RRTable;
 
   class RRTableToolTip 
-    : public QToolTip 
+  //    : public QToolTip 
   {
   public:
-    RRTableToolTip( const RRTable *table, QToolTipGroup *group = 0 );
+    RRTableToolTip( const RRTable *table/*, QToolTipGroup *group = 0*/ );
     virtual ~RRTableToolTip() {} 
   protected:
     virtual void maybeTip( const QPoint &p );

@@ -38,7 +38,7 @@ namespace WatchRR
     static QString getFullText( const kvalobs::kvControlInfo & cInfo );
     static QString getAbbrevText( const kvalobs::kvControlInfo & cInfo );
 
-    ControlFlagCell::ControlFlagCell( QTable * t, const kvalobs::kvData & data )
+    ControlFlagCell::ControlFlagCell( Q3Table * t, const kvalobs::kvData & data )
       : RRTableItem( t )
       , data( data )
     {
@@ -88,7 +88,7 @@ namespace WatchRR
 	if ( flag != 0 )
 	  ss << " " << flags[f] << '=' << flag;
       }
-      return ss.str();
+      return QString::fromStdString(ss.str());
     }
 
     static QString getAbbrevText( const kvalobs::kvControlInfo &  )

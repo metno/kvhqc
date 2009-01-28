@@ -32,7 +32,5 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace WatchRR
 {
-  
 const float CellValueProvider::missing = std::numeric_limits<float>::min();
-
 }

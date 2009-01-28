@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 class OkCheckTableItem : public WatchRR::RRCheckTableItem2
 {
 public:
-	OkCheckTableItem( QTable * table, KvDataProvider::Data & data );
+	OkCheckTableItem( Q3Table * table, KvDataProvider::Data & data );
 	virtual ~OkCheckTableItem();
   virtual QString explain() const;
   virtual void getUpdatedList( DataSet & data );  

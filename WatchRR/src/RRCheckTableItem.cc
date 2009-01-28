@@ -39,41 +39,40 @@ using namespace kvalobs;
 
 namespace WatchRR
 {
-
-RRCheckTableItem::RRCheckTableItem( QTable * table, RR_24DataTableItem * titem )
-  : QCheckTableItem( table, "" )
-  , dataholder_( titem )
-{
-  setReplaceable( false );
-  updateChecked();
-}
-
-RRCheckTableItem::~RRCheckTableItem()
-{
-}
-
-QString RRCheckTableItem::explain() const
-{
-  if ( isChecked() )
-    return "Nedbør er en del av en oppsamling.";
-  else
-    return "Nedbør er ikke en del av en oppsamling.";
-}
-
-void RRCheckTableItem::updateChecked()
-{
-  setChecked( dataholder_->collected() );
-}
-
-void RRCheckTableItem::setContentFromEditor( QWidget * w )
-{
-  QCheckTableItem::setContentFromEditor( w );
-  dataholder_->setCollected( isChecked() );
   
-  RRTable * rrt = dynamic_cast<RRTable *>( table() );
-  if ( rrt ) {
-    rrt->markModified( dataholder_ );
+  RRCheckTableItem::RRCheckTableItem( Q3Table * table, RR_24DataTableItem * titem )
+    : Q3CheckTableItem( table, "" )
+    , dataholder_( titem )
+  {
+    setReplaceable( false );
+    updateChecked();
   }
-}
-
+  
+  RRCheckTableItem::~RRCheckTableItem()
+  {
+  }
+  
+  QString RRCheckTableItem::explain() const
+  {
+    if ( isChecked() )
+      return "Nedbør er en del av en oppsamling.";
+    else
+      return "Nedbør er ikke en del av en oppsamling.";
+  }
+  
+  void RRCheckTableItem::updateChecked()
+  {
+    setChecked( dataholder_->collected() );
+  }
+  
+  void RRCheckTableItem::setContentFromEditor( QWidget * w )
+  {
+    Q3CheckTableItem::setContentFromEditor( w );
+    dataholder_->setCollected( isChecked() );
+    
+    RRTable * rrt = dynamic_cast<RRTable *>( table() );
+    if ( rrt ) {
+      rrt->markModified( dataholder_ );
+    }
+  } 
 }

@@ -33,9 +33,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <qwidget.h>
 #include <puTools/miDate>
+#include <map>
 
 class QLineEdit;
-class QDateEdit;
+class Q3DateEdit;
 namespace kvalobs {
   class kvData;
 }
@@ -63,7 +64,7 @@ namespace WatchRR
     
   private:
     QLineEdit * station_;
-    QDateEdit * obstime_;
+    Q3DateEdit * obstime_;
     QLineEdit * typeID_;
     QLineEdit * sensor_;
     QLineEdit * level_;

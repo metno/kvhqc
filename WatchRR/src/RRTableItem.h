@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __WatchRR__RRTableItem_h__
 #define __WatchRR__RRTableItem_h__
 
-#include <qtable.h>
+#include <q3table.h>
 #include <qcombobox.h>
 #include <selfexplainable.h>
 #include <qvalidator.h>
@@ -42,15 +42,14 @@ namespace WatchRR
   class RRTable;
 
   class RRTableItem
-    : public QTableItem
+    : public Q3TableItem
     , public SelfExplainable
     , public DataConsistencyVerifier
   {
   public:
-    //RRTableItem( QTable * table, int flags = 0, const QRegExpValidator * validator = 0 );
-    RRTableItem( QTable * table, KvDataProvider::Data & data, const QRegExpValidator * validator = 0 );
-    RRTableItem( QTable * table, kvalobs::kvData & data, const QRegExpValidator * validator = 0 );
-    RRTableItem( QTable * table ); // Not editable
+    RRTableItem( Q3Table * table, KvDataProvider::Data & data, const QRegExpValidator * validator = 0 );
+    RRTableItem( Q3Table * table, kvalobs::kvData & data, const QRegExpValidator * validator = 0 );
+    RRTableItem( Q3Table * table ); // Not editable
 
     virtual ~RRTableItem( );
     
@@ -94,8 +93,8 @@ namespace WatchRR
 
     virtual QColorGroup getColorGroup( const QColorGroup & base ) const;            
     
-    RRTableItem( QTable * table, KvDataProvider::Data & data, QTableItem::EditType et, const QRegExpValidator * validator = 0 );
-    RRTableItem( QTable * table, kvalobs::kvData & data, QTableItem::EditType et, const QRegExpValidator * validator = 0 );    
+    RRTableItem( Q3Table * table, KvDataProvider::Data & data, Q3TableItem::EditType et, const QRegExpValidator * validator = 0 );
+    RRTableItem( Q3Table * table, kvalobs::kvData & data, Q3TableItem::EditType et, const QRegExpValidator * validator = 0 );    
   };
 
 
@@ -104,13 +103,13 @@ namespace WatchRR
   {
   public:
     template<typename Data>
-    RRComboTableItem( QTable * table, Data & data, QStringList & values )
+    RRComboTableItem( Q3Table * table, Data & data, QStringList & values )
       : RRTableItem( table, data, WhenCurrent )
       , values_( & values )
     {
     }
     
-    RRComboTableItem( QTable * table );
+    RRComboTableItem( Q3Table * table );
   
     virtual QWidget * createEditor() const;
     
@@ -124,20 +123,20 @@ namespace WatchRR
   
   
   class RRCheckTableItem2
-    : public QCheckTableItem
+    : public Q3CheckTableItem
     , public DataConsistencyVerifier
     , public SelfExplainable
   {
   public:
-    RRCheckTableItem2( QTable * table, KvDataProvider::Data & data_ )
-      : QCheckTableItem( table, "")
+    RRCheckTableItem2( Q3Table * table, KvDataProvider::Data & data_ )
+      : Q3CheckTableItem( table, "")
       , data( data_ )
     {
       setReplaceable( false );
     }
 
-    RRCheckTableItem2( QTable * table, kvalobs::kvData & data_ )
-      : QCheckTableItem( table, "")
+    RRCheckTableItem2( Q3Table * table, kvalobs::kvData & data_ )
+      : Q3CheckTableItem( table, "")
     {
       data.push_back( & data_ );
       setReplaceable( false );

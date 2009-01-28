@@ -1,4 +1,4 @@
-PROGRAM_NAME=WatchRR
+PROGRAM_NAME=WatchRR4
 TARGET= lib$(PROGRAM_NAME).a
 TEST_PROGRAM_NAME= test$(PROGRAM_NAME)
 
@@ -8,40 +8,53 @@ TESTSRC:=
 QSRC:=
 UI:=
 
-include $(KVDIR)/conf/make.$(OSTYPE)
-
-PKG_CONF_LIBS= qt-mt libxml++-1.0
+#include $(KVDIR)/conf/make.$(OSTYPE)
+KVDIR=$(HQC)/kvalobs
+PUTOOLS=$(HQC)/local
+PKG_CONF_LIBS= QtCore QtGui Qt3Support libxml++-2.6
+#PKG_CONF_LIBS= qt-mt libxml++-1.0
 
 INCLUDE:=-Isrc/ -I../include \
 	 -I../authentication \
 	 $(BOOSTINCLUDE) \
 	 $(OMNIINCLUDE) \
+	 -I$(QTINC)/Qt3Support \
+	 -I$(QTINC)/Qt \
+	 -I$(QTINC)/QtCore \
+	 -I$(QTINC)/QtGui \
 	 -I$(KVDIR)/include \
-	 -I$(KVDIR)/include/kvalobs \
-	 -I$(KVDIR)/include/kvservice/kvcpp/ \
-	 -I$(KVDIR)/include/miutil \
-	 -I$(KVDIR)/include/dnmithread \
-	 -I$(KVDIR)/include/kvdb \
-	 -I$(KVDIR)/include/kvskel \
-	 -I$(KVDIR)/include/fileutil \
-	 -I$(KVDIR)/include/corbahelper \
-	 -I$(KVDIR)/include/kvservice/kvcpp \
+	 -I$(KVDIR)/src/lib \
+	 -I$(KVDIR)/src/lib/kvalobs \
+	 -I$(KVDIR)/src/lib/miutil \
+	 -I$(KVDIR)/src/lib/dnmithread \
+	 -I$(KVDIR)/include/db \
+	 -I$(KVDIR)/src/lib/kvskel \
+	 -I$(KVDIR)/src/lib/fileutil \
+	 -I$(KVDIR)/src/lib/corbahelper \
+	 -I$(KVDIR)/src/service-libs/kvcpp \
 	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools/ \
 	 -I../include/ \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
 LIB:=	-L../authentication/ -lauthentication \
-	-L$(KVDIR)/lib -lkvcpp -ldecodeutility -lkvalobs -lkvdb \
-	-lfileutil -ldl -ldnmithread \
-	-lcorbahelper -lcorba_skel \
-	-lmiutil -lmiconfparser -lmilog \
+	-L$(KVDIR)/src/service-libs/kvcpp/.libs -lkvcpp \
+	-L$(KVDIR)/src/lib/decodeutility/.libs -ldecodeutility \
+	-L$(KVDIR)/src/lib/kvalobs/.libs -lkvalobs \
+	-L$(KVDIR)/src/lib/kvdb/.libs -lkvdb \
+	-L$(KVDIR)/src/lib/fileutil/.libs -lfileutil \
+	-ldl \
+	-L$(KVDIR)/src/lib/dnmithread/.libs -ldnmithread \
+	-L$(KVDIR)/src/lib/corbahelper/.libs -lcorbahelper \
+	-L$(KVDIR)/src/lib/miutil/.libs -lmiutil \
+	-L$(KVDIR)/src/lib/miconfparser -lmiconfparser \
+	-L$(KVDIR)/src/lib/milog/.libs -lmilog \
 	$(BOOSTLIB) -lboost_thread -lboost_regex \
 	$(OMNILIB) -lomniORB4 -lomnithread \
 	-L$(PUTOOLS)/lib -lpuTools \
 	-lldap \
 	`pkg-config --libs $(PKG_CONF_LIBS)`
 
-CXXFLAGS+= -Wall
+CXXFLAGS+= -Wall -DQT3_SUPPORT
 DEFINES+=
 CXXLDFLAGS+=
 
@@ -84,7 +97,7 @@ uninstall:
 
 # Qt specific:
 %.moc.cc:	%.h
-	moc -o $@ $<
+	moc-qt4 -o $@ $<
 
 %.h: %.ui
 	uic -o$@ $<
@@ -135,6 +148,7 @@ pretty:
 	find . -name '*.d.*' -type f -exec rm -f  {} \;
 
 clean: pretty
+
 	rm -f $(OBJ) $(MAIN:.cc=.o) $(TESTOBJ) $(UI_HEAD) $(UI_IMPL) $(MOC_SRC) $(DEPENDS_FILES)
 
 veryclean: clean

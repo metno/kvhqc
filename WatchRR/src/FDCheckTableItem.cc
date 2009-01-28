@@ -41,7 +41,7 @@ using namespace std;
 namespace WatchRR
 {
 
-FDCheckTableItem::FDCheckTableItem( QTable * table, kvData & data )
+FDCheckTableItem::FDCheckTableItem( Q3Table * table, kvData & data )
   : RRCheckTableItem2( table, data )
 {
   setReplaceable( false );

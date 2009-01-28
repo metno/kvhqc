@@ -42,17 +42,6 @@ namespace WatchRR
     /**
      * \brief A Table item for displaying a non-editable SD value.
      */
-     /*
-    class SDDataTableItem_Simple
-      : public RRTableItem
-    {
-    public:
-      SDDataTableItem_Simple( QTable * table, float value );
-      virtual QString explain( ) const;
-    private:
-      QString explanation;
-    };
-    */
 
     /**
      * \brief A Table item for displaying an editable SD value.
@@ -61,8 +50,8 @@ namespace WatchRR
       : public RRComboTableItem
     {
     public:
-      SDDataTableItem( QTable *table, kvalobs::kvData & sd );
-      SDDataTableItem( QTable *table, float value );
+      SDDataTableItem( Q3Table *table, kvalobs::kvData & sd );
+      SDDataTableItem( Q3Table *table, float value );
       virtual ~SDDataTableItem( );
 
       virtual QString explain( ) const;

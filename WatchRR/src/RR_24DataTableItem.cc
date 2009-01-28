@@ -51,7 +51,7 @@ namespace WatchRR
 
  
   RR_24DataTableItem::
-  RR_24DataTableItem( QTable *table, kvData & data)
+  RR_24DataTableItem( Q3Table *table, kvData & data)
     : RRTableItem( table, data, & validator )
     , type( standardType )
   { 
@@ -59,7 +59,7 @@ namespace WatchRR
   }
 
   RR_24DataTableItem::
-  RR_24DataTableItem( QTable * table, float value, QString type )
+  RR_24DataTableItem( Q3Table * table, float value, QString type )
     : RRTableItem( table )
     , type( type )
   {

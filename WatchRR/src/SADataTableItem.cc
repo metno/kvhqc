@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "SADataTableItem.h"
 #include <qlineedit.h>
 
-//#define NDEBUG
 #include <cassert>
 
 using namespace kvalobs;
@@ -44,13 +43,13 @@ namespace WatchRR
     const QRegExpValidator SADataTableItem::validator( SADataTableItem::re, NULL );
 
 
-    SADataTableItem::SADataTableItem( QTable * table, kvalobs::kvData & data )
+    SADataTableItem::SADataTableItem( Q3Table * table, kvalobs::kvData & data )
       : RRTableItem( table, data, & validator )
     {
         setText( getText() );
     }
 
-    SADataTableItem::SADataTableItem( QTable * table, float value )
+    SADataTableItem::SADataTableItem( Q3Table * table, float value )
       : RRTableItem( table )
     {
       setText( getText( value ) );

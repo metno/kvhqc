@@ -41,7 +41,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include <algorithm>
 #include <cmath>
-//#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
@@ -51,7 +50,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qstatusbar.h>
 #include <boost/assign/std/vector.hpp>
 
-//#define NDEBUG
 #include <cassert>
 
 #include <iostream>
@@ -91,21 +89,18 @@ namespace WatchRR
   {
     setupTable();
 
-    //connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateStatusbar(int,int)));
     connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
   }
 
   RRTable::RRTable( int station, const miDate &date,
                     int type, int sensor, int level,
-                    QToolTipGroup * ttGroup,
                     QWidget *parent, const char *name )
-      : QTable( parent, name )
+      : Q3Table( parent, name )
       , station( station )
       , refDate( date )
       , dateRange( calculateDateRange( getRefDate() ) )
       , type( type ), sensor( sensor ), level( level )
-      , ttGroup( ttGroup )
   {
     setup();
 
@@ -116,6 +111,7 @@ namespace WatchRR
     BusyIndicator busy;
     observations = getDayObs( getStation(), getType(), getSensor(), getLevel(),
                               getDateRange().first, getDateRange().second );
+    displayData();
   }
 
   RRTable::DateRange getDateRange_( std::vector<DayObs> * dayobs )
@@ -127,9 +123,8 @@ namespace WatchRR
   }
 
   RRTable::RRTable( DayObsListPtr dayobs,
-                    QToolTipGroup * ttGroup,
                     QWidget *parent, const char *name )
-      : QTable( parent, name )
+      : Q3Table( parent, name )
       , observations( dayobs )
       , station( (*dayobs)[0].getStation() )
       , refDate( (*dayobs)[0].getDate() )
@@ -137,18 +132,9 @@ namespace WatchRR
       , type( (*dayobs)[0].getType () )
       , sensor( (*dayobs)[0].getSensor () )
       , level( (*dayobs)[0].getLevel () )
-      , ttGroup( ttGroup )
   {
     setup();
-  }
-
-
-  void RRTable::polish()
-  {
-    cerr << "RRTable::polish()\n";
-    QTable::polish();
     displayData();
-    toolTip = new RRTableToolTip( this, ttGroup );
   }
 
   RRTable::~RRTable( )
@@ -220,10 +206,10 @@ namespace WatchRR
       setItem( i, toCol[V4_18], new VxKvDataTableItem( this, getVx_( V4, clock, dobs ) ) );
       setItem( i, toCol[V5_18], new VxKvDataTableItem( this, getVx_( V5, clock, dobs ) ) );
       setItem( i, toCol[V6_18], new VxKvDataTableItem( this, getVx_( V6, clock, dobs ) ) );
-      clock.addHour( -12 );    // 06:00 - Same day
+      clock.addHour( 12 );    // 06:00 - Same day
       setItem( i, toCol[V4_06], new VxKvDataTableItem( this, getVx_( V4, clock, dobs ) ) );
       setItem( i, toCol[V5_06], new VxKvDataTableItem( this, getVx_( V5, clock, dobs ) ) );
-      setItem( i, toCol[V6_06], new VxKvDataTableItem( (QTable*)this, getVx_( V6, clock, dobs ) ) );
+      setItem( i, toCol[V6_06], new VxKvDataTableItem( (Q3Table*)this, getVx_( V6, clock, dobs ) ) );
 
       RRTableItem * dateitem = new RRTableItem( this );
       dateitem->setText( verticalHeaderText( dobs.getDate() ) );
@@ -246,7 +232,7 @@ namespace WatchRR
     adjustColumn( toCol[ DateField ] );
   }
 
-  inline bool modifiable( QTableItem * ti )
+  inline bool modifiable( Q3TableItem * ti )
   {
     const RRTableItem * rr = dynamic_cast<RRTableItem *>( ti );
     return rr and not rr->readOnly();
@@ -270,7 +256,7 @@ namespace WatchRR
       }
       col = -1;
     }
-    QTable::activateNextCell();
+    Q3Table::activateNextCell();
   }
 
   RRTable::DateRange RRTable::calculateDateRange( const miDate & refDate, int daysToDisplay )
@@ -297,16 +283,16 @@ namespace WatchRR
   QString RRTable::verticalHeaderText( const miDate &date ) const
   {
     ostringstream s;
-    s << Days[ date.dayOfWeek()] << " "
+    s << Days[ date.dayOfWeek()].toStdString() << " "
     << date.day() << "/"
     << date.month();
-    return s.str();
+    return QString::fromStdString(s.str());
   }
 
   QSize RRTable::sizeHint() const
   {
     if ( numRows() == 0 )
-      return QTable::sizeHint();
+      return Q3Table::sizeHint();
 
     int frames = frameWidth() * 2;
 
@@ -315,7 +301,6 @@ namespace WatchRR
     int width = contWidth + headerWidth + frames;
     width += verticalScrollBar()->size().width();
 
-    //int contHeight      = ( contentsHeight() / numRows() ) * 7 ;
     int contHeight      = contentsHeight();
     int headerHeight    = horizontalHeader()->frameSize().height();
     int height = contHeight + headerHeight + frames;
@@ -368,7 +353,7 @@ namespace WatchRR
     {
       QMessageBox::critical( this, "HQC - nedbør",
                              "Du er ikke autorisert til å lagre data i kvalobs.",
-                             QMessageBox::Ok,  QMessageBox::NoButton );
+                             QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
 
@@ -403,8 +388,8 @@ namespace WatchRR
       QMessageBox::warning( this, "HQC - nedbør",
                             QString( "Klarte ikke å lagre data!\n"
                                      "Feilmelding fra kvalobs var:\n") +
-                            res->message,
-                            QMessageBox::Ok,  QMessageBox::NoButton );
+                            QString(res->message),
+                            QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
 
@@ -432,15 +417,15 @@ namespace WatchRR
     const vector<QString> & headers = getHeaderOrder();
 
     setNumCols( NUM_SECTIONS );
-    QHeader *h = horizontalHeader();
+    Q3Header *h = horizontalHeader();
     for ( int i = 0; i < NUM_SECTIONS; i++ )
     {
       h->setLabel( i, headers[i] );
       adjustColumn( i );
     }
 
-    setVScrollBarMode( QScrollView::AlwaysOn  );
-    setHScrollBarMode( QScrollView::Auto );
+    setVScrollBarMode( Q3ScrollView::AlwaysOn  );
+    setHScrollBarMode( Q3ScrollView::Auto );
 
     setColumnMovingEnabled( true );
     connect( horizontalHeader(), SIGNAL( indexChange( int, int , int ) ),
@@ -490,7 +475,7 @@ namespace WatchRR
 
   void RRTable::updateStatusbar( int row, int col )
   {
-    QTableItem *i = item( row, col );
+    Q3TableItem *i = item( row, col );
     SelfExplainable *e = dynamic_cast<SelfExplainable*>( i );
     QString msg;
     if ( e )
@@ -499,6 +484,5 @@ namespace WatchRR
       msg = i->text();
     else
       msg = "";
-    dynamic_cast<QStatusBar *>( ttGroup->parent() )->message( msg );
   }
 }

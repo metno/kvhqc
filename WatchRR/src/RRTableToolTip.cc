@@ -35,10 +35,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace WatchRR
 {
-  RRTableToolTip::RRTableToolTip( const RRTable *table, 
-				  QToolTipGroup * group )
-    : QToolTip( table->viewport(), group )
-    , table( table )
+  RRTableToolTip::RRTableToolTip( const RRTable *table)
+    : table( table )
   {
   }
 
@@ -48,7 +46,7 @@ namespace WatchRR
     int row = table->rowAt( cp.y() );
     int col = table->columnAt( cp.x() );
 
-    QTableItem *ttItem = table->item(row, col);
+    Q3TableItem *ttItem = table->item(row, col);
     if ( ttItem == NULL ) 
       return;
 
@@ -64,6 +62,5 @@ namespace WatchRR
 
     QRect cr = table->cellGeometry( row, col );    
     cr.moveTopLeft( table->contentsToViewport( cr.topLeft() ) );
-    tip( cr, tipString, tipString);
   }
 }
