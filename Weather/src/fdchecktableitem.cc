@@ -42,8 +42,8 @@ namespace Weather
   class WeatherTable;
 
   //FDCheckTableItem::FDCheckTableItem( QTable * table, kvData & data )
-  FdCheckTableItem::FdCheckTableItem( QTable* table, QString flag)
-    : QCheckTableItem( table, "" )
+  FdCheckTableItem::FdCheckTableItem( Q3Table* table, QString flag)
+    : Q3CheckTableItem( table, "" )
   {
     setChecked( collected(flag) );
   }
@@ -54,9 +54,6 @@ namespace Weather
 
   bool FdCheckTableItem::collected(QString flag) const
   {
-    //    kvalobs::kvControlInfo cinfo = data.front()->controlinfo();
-    //    int fd = cinfo.flag( kvalobs::flag::fd );
-    //    return (flag == "fd = 2");
     return (flag.toInt() < 0 );
   }
   

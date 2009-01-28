@@ -30,19 +30,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "centralwidget.h"
 #include <qtabwidget.h>
-#include <qtable.h>
+#include <q3table.h>
 #include <qlayout.h>
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 
 
 
 WeatherCentralWidget::WeatherCentralWidget( QWidget *parent, const char *name )
     : QWidget( parent, name )
 {
-    mainGrid = new QGridLayout( this, 2, 1, 5, 5 );
+    mainGrid = new Q3GridLayout( this, 2, 1, 5, 5 );
 
     setupTabWidget();
-    //    setupListView();
 
     mainGrid->setRowStretch( 0, 0 );
     mainGrid->setRowStretch( 1, 1 );
@@ -51,22 +52,22 @@ WeatherCentralWidget::WeatherCentralWidget( QWidget *parent, const char *name )
 void WeatherCentralWidget::setupTabWidget() {
     wTab = new QTabWidget(this);
     QWidget *corr = new QWidget( wTab );
-    QGridLayout *grid1 = new QGridLayout( corr, 2, 5, 5, 5 );
-    QTable* corrTab = new QTable(17, 17, corr);
+    Q3GridLayout *grid1 = new Q3GridLayout( corr, 2, 5, 5, 5 );
+    Q3Table* corrTab = new Q3Table(17, 17, corr);
     corrTab->resize( corrTab->sizeHint() );
     grid1->addWidget( corrTab, 1, 3 );
     wTab->addTab(corr, "Korrigert");
 
     QWidget *orig = new QWidget( wTab );
-    QGridLayout *grid2 = new QGridLayout( orig, 2, 5, 5, 5 );
-    QTable* origTab = new QTable(17, 17, orig);
+    Q3GridLayout *grid2 = new Q3GridLayout( orig, 2, 5, 5, 5 );
+    Q3Table* origTab = new Q3Table(17, 17, orig);
     origTab->resize( origTab->sizeHint() );
     grid2->addWidget( origTab, 1, 3 );
     wTab->addTab(orig, "Original");
 
     QWidget *flag = new QWidget( wTab );
-    QGridLayout *grid3 = new QGridLayout( flag, 2, 5, 5, 5 );
-    QTable* flagTab = new QTable(17, 17, flag);
+    Q3GridLayout *grid3 = new Q3GridLayout( flag, 2, 5, 5, 5 );
+    Q3Table* flagTab = new Q3Table(17, 17, flag);
     flagTab->resize( flagTab->sizeHint() );
     grid3->addWidget( flagTab, 1, 3 );
     wTab->addTab(flag, "Flagg");

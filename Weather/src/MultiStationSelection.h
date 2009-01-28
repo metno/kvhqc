@@ -32,14 +32,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__MultiStationSelection_h__
 
 #include <qdialog.h>
+//Added by qt3to4:
+#include <QKeyEvent>
 #include <vector>
 #include <iterator>
 #include <kvData.h>
 #include <kvStation.h>
 #include <decodeutility/DataReinserter.h>
 
-class QListView;
-class QTabDialog;
+class Q3ListView;
+class Q3TabDialog;
 
 namespace kvservice {
   class KvApp;
@@ -59,8 +61,8 @@ namespace Weather
     Q_OBJECT;
 
     StationSelection * selector;
-    QListView * stations;
-    QTabDialog* wTabs;
+    Q3ListView * stations;
+    Q3TabDialog* wTabs;
     std::list<kvalobs::kvStation> slist_;
 
   public:

@@ -30,22 +30,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef FDCHECKTABLEITEM_H_
 #define FDCHECKTABLEITEM_H_
-#include <qtable.h>
+#include <q3table.h>
 #include "selfexplainable.h"
 
 namespace Weather
 {
   class FdCheckTableItem 
-    : public QCheckTableItem
+    : public Q3CheckTableItem
     , public SelfExplainable
   {
   public:
-    //  FdCheckTableItem( QTable * table, kvalobs::kvData & data );
-    FdCheckTableItem( QTable * table, QString);
+    FdCheckTableItem( Q3Table * table, QString);
     virtual ~FdCheckTableItem();
     bool collected(QString) const;
     virtual QString explain() const;
-    //  virtual void getUpdatedList( DataSet & data );  
   };
 }
 #endif /*FDCHECKTABLEITEM_H_*/

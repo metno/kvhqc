@@ -40,9 +40,8 @@ namespace Weather
 {
   class WeatherTable;
 
-  //WeatherTableItem::WeatherTableItem( QTable * table, kvData & data )
-  WeatherTableItem::WeatherTableItem( QTable* table, QTableItem::EditType edType, QString type, QString flag)
-    : QTableItem( table, edType, flag )
+  WeatherTableItem::WeatherTableItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
+    : Q3TableItem( table, edType, flag )
     , type(type)
   {
   }
@@ -65,10 +64,10 @@ namespace Weather
   {
     QColorGroup g( cg );
     if ( isModelVal )
-      g.setColor( QColorGroup::Text, red );
+      g.setColor( QColorGroup::Text, Qt::red );
     else
-      g.setColor( QColorGroup::Text, black );
+      g.setColor( QColorGroup::Text, Qt::black );
     
-    QTableItem::paint( p, g, cr, selected );
+    Q3TableItem::paint( p, g, cr, selected );
   }
 }

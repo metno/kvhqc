@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__WeatherDialog_h__
 
 #include <KvApp.h>
-#include <qtabdialog.h>
+#include <q3tabdialog.h>
 #include <kvalobs/kvStation.h>
 #include "weathertable.h"
 #include "timeobs.h"
@@ -47,14 +47,14 @@ using namespace kvservice;
 class QPushButton;
 class QStatusBar;
 class QLineEdit;
-class QBoxLayout;
+class Q3BoxLayout;
 class QCheckBox;
 class QTabWidget;
 
-const int params[] = { 211,214,216,213,215,262,178,61,81,86,83,15,14,55,108,
+const int params[] = { 211,214,216,213,215,262,178,173,177,1,61,81,86,87,83,90,15,14,55,108,
 		       109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
 		       23,24,22,403,404,131,134,151,154,250,221,9,12};
-const int NP = 44;
+const int NP = 49;
 const int NC = 5;
 
 struct SynObs {
@@ -76,7 +76,7 @@ typedef list<kvalobs::kvData>::iterator                   IDataList;
 namespace Weather
 {
   class WeatherDialog
-    : public QTabDialog
+    : public Q3TabDialog
   {
     friend class WeatherTable;
     Q_OBJECT;
@@ -92,18 +92,16 @@ namespace Weather
 /**
  * \brief Get o's owning WeatherDialog, or NULL if there is none.
  */
-//    WeatherDialog * getWD( const QWidget * o );
-//    WeatherDialog * getWD( QWidget * o );
     static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
  
     WeatherDialog( TimeObsListPtr dol, int type, int sensor,	
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
 
 
     WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
     virtual ~WeatherDialog( );
     /**
      * \brief [Start, stop) dates for which to fetch data.
@@ -132,11 +130,11 @@ namespace Weather
     QPushButton * save;
     QPushButton *ok;
     QStatusBar *statusBar;
-    QBoxLayout *mainLayout;
+    Q3BoxLayout *mainLayout;
     SynObs synObs;
     typedef vector<SynObs> SynObsList;
     SynObsList synObsList;
-    QToolTipGroup *ttGroup;
+    //    QToolTipGroup *ttGroup;
     KvObsDataList ldList;
 
   public slots:
@@ -144,22 +142,12 @@ namespace Weather
     bool saveData();
 
 signals:
-    //    void dontStore(std::vector<oldNewPair>);
     void dontStore();
 
   protected:
-    //    virtual void closeEvent( QCloseEvent * e );
-    //    virtual void showEvent( QShowEvent * e );
-
-    //  WeatherCentralWidget *view;
     const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter;
     TimeObsListPtr observations;
     bool saveData(const kvalobs::DataReinserter<kvservice::KvApp> *);
-
-    //  protected slots:
-    //    virtual void reject();
-    //    virtual void accept();
-
 
   private:
     QMap<int, int> parameterIndex;

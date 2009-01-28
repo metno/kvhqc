@@ -68,11 +68,6 @@ int main( int argc, char ** argv )
   KvApp kvapp(argc, argv, confSec);
 
   QApplication a( argc, argv, true );
-  //  KvApp app( argc, argv, true );
-
-
-//  kvDataList dl = 
-//    decodeutility::kvdataformatter::getKvData( station );
 
   QString userName;
   reinserter = Authentication::identifyUser( KvApp::kvApp,
@@ -81,8 +76,8 @@ int main( int argc, char ** argv )
     int res = QMessageBox::warning( 0, "Autentisering", 
 				    "Du er ikke registrert som operatør!\n"
 				   "Du kan se på data, men ikke gjøre endringer i Kvalobsdatabasen!",
-				    "Fortsett",//				    QMessageBox::Ok | QMessageBox::Default,
-				    "Avslutt",//				    QMessageBox::Cancel | QMessageBox::Escape,
+				    "Fortsett",//QMessageBox::Ok | QMessageBox::Default,
+				    "Avslutt",//QMessageBox::Cancel | QMessageBox::Escape,
 				    ""//QMessageBox::NoButton 
 				    );
     if ( res == QMessageBox::Cancel )

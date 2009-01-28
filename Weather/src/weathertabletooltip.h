@@ -32,17 +32,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__WeatherTableToolTip_h__
 
 #include <qtooltip.h>
-//#include "RRTable.h"
 
 namespace Weather
 {
   class WeatherTable;
 
   class WeatherTableToolTip 
-    : public QToolTip 
+  //    : public QToolTip 
   {
   public:
-    //    WeatherTableToolTip( const WeatherTable *table, QToolTipGroup *group = 0 );
     WeatherTableToolTip( const WeatherTable *table );
     virtual ~WeatherTableToolTip() {} 
   protected:

@@ -43,6 +43,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qmessagebox.h>
 #include <qstatusbar.h>
 #include <qfile.h>
+#include <Q3TextStream>
 #include <boost/assign/std/vector.hpp>
 
 //#define NDEBUG
@@ -55,24 +56,11 @@ using namespace std;
 using namespace kvalobs;
 using namespace miutil;
 using namespace boost::assign;
-//using namespace Weather::cell;
 
 namespace Weather
 {
-  /*
-  void WeatherTable::setup()
-  {
-    setupTable();
-
-    connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
-    connect( this, SIGNAL(valueChanged(int,int)), SLOT(updateStatusbar(int,int)));
-    connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
-  }
-  */
-
-  //  WeatherTable::WeatherTable(QToolTipGroup* ttGroup, QWidget *parent, int type )
   WeatherTable::WeatherTable( QWidget *parent, int type )
-    : QTable( parent )
+    : Q3Table( parent )
   {
     WeatherDialog* wd = dynamic_cast<WeatherDialog*>(parent->parent());
 
@@ -119,7 +107,6 @@ namespace Weather
     for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin(); 
 	  it != wd->synObsList.end(); it++) {
       if ( (*it).otime > protime ) {
-	//      if ( (type == 0 && (*it).otime != "0000-00-00 -1:-1:-1") || (type != 0 && (*it).otime > protime) ) {
 	timeList.push_back((*it).otime);
 	for ( int i = 0; i < NP; i++ ) {
 	  if ( pName == "corr" ) {
@@ -153,7 +140,6 @@ namespace Weather
     toolTip = new WeatherTableToolTip( this );
     
     BusyIndicator busy;
-    //    observations = getTimeObs( getStation(), getDateRange().first, getDateRange().second );
   }
 
   QString WeatherTable::flagText(const string& controlInfo)
@@ -162,7 +148,7 @@ namespace Weather
 			 "fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
     QString flTyp;
     QString flText;
-    QString ctrInfo(controlInfo);
+    QString ctrInfo(QString::fromStdString(controlInfo));
     int maxFlg = 0;
     for ( int i = 0; i < 16; i++ ) {
       int flg = ctrInfo.mid(i,1).toInt(0,16);
@@ -183,7 +169,6 @@ namespace Weather
   }
 
   void WeatherTable::displayHorizontalHeader() {
-    //    for ( int icol = 0; icol < numCols; icol++ ) {
     for ( int icol = 0; icol < NL; icol++ ) {
       horizontalHeader()->setLabel(icol, horizonHeaders[icol]);
     }
@@ -219,7 +204,7 @@ namespace Weather
 	  strtyp = strtyp.setNum((*it).styp[iCol]);
 	}
 	if ( pName == "corr" ) {
-	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::OnTyping,strtyp,strdat);
+	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::OnTyping,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
 	  if ( strflg == "fnum = 6" )
 	    datItem->isModelVal = true;
@@ -227,13 +212,12 @@ namespace Weather
 	    datItem->isModelVal = false;
 	}
 	else if ( pName == "orig" ) {
-	  WeatherTableItem* datItem = new WeatherTableItem(this, QTableItem::Never,strtyp,strdat);
+	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::Never,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
 	}
       }
       
       for ( int iCol = 0; iCol < NC; iCol++ ) {
-	//	QCheckTableItem* ctItem = new QCheckTableItem(this, "");
        	QString strflg;
 	//       	strflg = (*fit).sflg[dbCol[iCol]]
        	strflg = strflg.setNum((*it).styp[dbCol[iCol]]);
@@ -261,7 +245,7 @@ namespace Weather
       for ( int iCol = 0; iCol < NP; iCol++ ) {
 	QString strdat;
 	strdat = (*it).sflg[iCol];
-	FlagItem* flgItem = new FlagItem(this, QTableItem::Never,"",strdat);
+	FlagItem* flgItem = new FlagItem(this, Q3TableItem::Never,"",strdat);
 	setItem(iRow,datCol[iCol],flgItem);
       }
       iRow++; 
@@ -279,7 +263,7 @@ namespace Weather
 
   void WeatherTable::markModified( int row, int col )
   {
-    QTableItem *tit = item( row, col );
+    Q3TableItem *tit = item( row, col );
     float newCorr = (tit->text()).toFloat();
     kvData kvDat = getKvData(row, col);
     if ( kvDat.stationID() == 0 ) {
@@ -366,26 +350,25 @@ namespace Weather
 		    kvit->useinfo(), 
 		    kvit->cfailed());
     else
-      kvCorrDat.set(0, 
+      kvCorrDat.set(kvDatList.begin()->stationID(), 
 		    cTime, 
-		    0, 
+		    -32767, 
 		    cParam, 
 		    cTime, 
 		    sd.styp[columnIndex[col]], 
 		    0, 
 		    0, 
-		    0, 
+		    -32767, 
 		    kvDatList.begin()->controlinfo(), 
 		    kvDatList.begin()->useinfo(), 
 		    kvDatList.begin()->cfailed());
-
 
     return kvCorrDat;
   }
 
   void WeatherTable::updateStatusbar( int row, int col )
   {
-    QTableItem *i = item( row, col );
+    Q3TableItem *i = item( row, col );
     SelfExplainable *e = dynamic_cast<SelfExplainable*>( i );
     QString msg;
     if ( e ) {
@@ -397,12 +380,11 @@ namespace Weather
     else {
       msg = "";
     }
-    //    dynamic_cast<QStatusBar *>( ttGroup->parent() )->message( msg );
   }
 
   void WeatherTable::readLimits() {
     QString path = QString(getenv("HQCDIR"));
-    if ( !path ) {
+    if ( path.isEmpty() ) {
       cerr << "Intet environment" << endl;
       exit(1);
     }
@@ -410,11 +392,11 @@ namespace Weather
     float low, high;
     QString limitsFile = path + "/slimits";
     QFile limits(limitsFile);
-    if ( !limits.open(IO_ReadOnly) ) {
-      cerr << "kan ikke åpne " << limitsFile << endl;
+    if ( !limits.open(QIODevice::ReadOnly) ) {
+      cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;
       exit(1);
     }
-    QTextStream limitStream(&limits);
+    Q3TextStream limitStream(&limits);
     while ( limitStream.atEnd() == 0 ) {
       limitStream >> par >> dum >> low >> high;
       lowMap[par] = low;
@@ -422,7 +404,6 @@ namespace Weather
     }
   }
 
-  //  void WeatherTable::restoreOld(std::vector<oldNewPair> oldNew) {
   void WeatherTable::restoreOld() {
     vector<oldNewPair>::iterator mit;
     vector<rowColPair>::iterator pit = rowCol.begin();
@@ -433,7 +414,7 @@ namespace Weather
       newCorVal = newCorVal.setNum(mit->second,'f',1);
       int row = pit->first;
       int col = pit->second;
-      QTableItem *tit = item( row, col );
+      Q3TableItem *tit = item( row, col );
       if ( oldCorVal == "-32767.0" )
 	tit->setText("");
       else
@@ -450,20 +431,6 @@ namespace Weather
        selectRow(currRow);
   }
 
-  /*  
-  void WeatherTable::polish()
-  {
-    QTable::polish();
-    displayHorizontalHeader(numCols);
-    displayVerticalHeader(timeList);
-    if ( pName == "corr" || pName == "orig" ) 
-      displayData(dataList, numCols);
-    else if ( pName == "flag" )
-      displayFlags(flagList, numCols);
-    //    displayData();
-    toolTip = new WeatherTableToolTip( this, ttGroup );
-  }
-  */
   WeatherTable::~WeatherTable( )
   {}
 }

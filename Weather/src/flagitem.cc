@@ -41,8 +41,8 @@ namespace Weather
   class WeatherTable;
 
   //FlagItem::FlagItem( QTable * table, kvData & data )
-  FlagItem::FlagItem( QTable* table, QTableItem::EditType edType, QString type, QString flag)
-    : QTableItem( table, edType, flag )
+  FlagItem::FlagItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
+    : Q3TableItem( table, edType, flag )
     , type(type)
   {
   }
@@ -54,7 +54,6 @@ namespace Weather
   QString FlagItem::explain() const
   {
     QString ret = text();
-    //    ret = "TypeId = " + type;
     return ret;
   }
 }

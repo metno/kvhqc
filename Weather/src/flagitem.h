@@ -30,24 +30,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef FLAGITEM_H_
 #define FLAGITEM_H_
-#include <qtable.h>
+#include <q3table.h>
 #include "weathertable.h"
 #include "selfexplainable.h"
 
 namespace Weather
 {
   class FlagItem 
-    : public QTableItem
+    : public Q3TableItem
     , public SelfExplainable
   {
   public:
-    //  FlagItem( QTable * table, kvalobs::kvData & data );
-    FlagItem( QTable * table, QTableItem::EditType, QString, QString);
+    FlagItem( Q3Table * table, Q3TableItem::EditType, QString, QString);
     virtual ~FlagItem();
     bool collected(QString) const;
     virtual QString explain() const;
     QString type;
-    //  virtual void getUpdatedList( DataSet & data );  
   };
 }
 #endif /*FLAGITEM_H_*/

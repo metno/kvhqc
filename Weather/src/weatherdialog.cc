@@ -39,11 +39,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qapplication.h>
 #include <qmessagebox.h>
 #include <qdialog.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <qlineedit.h>
-#include <qvbox.h>
-#include <qtabdialog.h>
-#include <qtable.h>
+#include <q3vbox.h>
+#include <q3tabdialog.h>
+#include <q3table.h>
+//Added by qt3to4:
+#include <Q3HBoxLayout>
+#include <Q3VBoxLayout>
 #include <KvApp.h>
 
 using namespace kvservice;
@@ -57,16 +60,16 @@ namespace Weather
     cout << "WeatherDialog::getWeatherDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
-    QDialog * selector = new QDialog( parent, "", WDestructiveClose );
+    QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose );
     selector->setCaption( "Velg stasjonsinformasjon" );
 
-    QVBoxLayout * mainLayout = new QVBoxLayout( selector );
+    Q3VBoxLayout * mainLayout = new Q3VBoxLayout( selector );
 
     StationSelection * ss = new StationSelection( selector, & data );
     mainLayout->addWidget( ss );
 
     // Buttons:
-    QHBoxLayout * buttonLayout = new QHBoxLayout( mainLayout );
+    Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->addStretch( 1 );
     
     QPushButton * ok = new QPushButton( "&Ok", selector );
@@ -142,7 +145,7 @@ namespace Weather
   }
 
   void WeatherDialog::setupOrigTab( SynObsList& sList, int type ) {
-    QVBox* orig = new QVBox(this, "orig");    
+    Q3VBox* orig = new Q3VBox(this, "orig");    
     orig->setMargin(5);
     WeatherTable* origTab = new WeatherTable(orig, type);
     origTab->resize( origTab->sizeHint() );
@@ -150,25 +153,17 @@ namespace Weather
   }
 
   void WeatherDialog::setupCorrTab( SynObsList& sList, int type ) {
-    //    mainLayout = new QVBoxLayout( this, 0, -1, "Main Layout" );
-    QVBox* corr = new QVBox(this, "corr");    
+    Q3VBox* corr = new Q3VBox(this, "corr");    
     corr->setMargin(5);
-    //    ttGroup = new QToolTipGroup( this );
-    //    WeatherTable* corrTab = new WeatherTable( numRows, numCols, ttGroup, corr);
     WeatherTable* corrTab = new WeatherTable(corr, type);
     corrTab->resize( corrTab->sizeHint() );
     addTab(corr, "Korrigert");
     cTab = corrTab;
-    //    mainLayout->addWidget( cTab );
-    //    mainLayout->addWidget( statusBar );
   }
 
   void WeatherDialog::setupFlagTab( SynObsList& sList, int type ) {
-    QVBox* flag = new QVBox(this, "flag");    
+    Q3VBox* flag = new Q3VBox(this, "flag");    
     flag->setMargin(5);
-    //    statusBar = new QStatusBar( this, "Status Bar" );
-    //    statusBar->setSizeGripEnabled( true );
-    //    ttGroup = new QToolTipGroup( statusBar );
     WeatherTable* flagTab = new WeatherTable(flag, type);
     flagTab->resize( flagTab->sizeHint() );
     addTab(flag, "Flagg");
@@ -186,7 +181,7 @@ namespace Weather
     }
     QString stationDescr = QString::number( station->stationID() );
     if ( this->station )
-      stationDescr += " - " + this->station->name();
+      stationDescr += " - " + QString::fromStdString(this->station->name());
     setCaption( "Synop for stasjon " + stationDescr );
   }
 
@@ -200,8 +195,8 @@ namespace Weather
 
   WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,	
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
-		      QWidget *parent, const char* name, bool modal, WFlags f )
-    : QTabDialog( parent, name, modal )
+		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
+    : Q3TabDialog( parent, name, modal )
     , dataReinserter( dataReinserter )
     , observations( tobs )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
@@ -209,10 +204,6 @@ namespace Weather
   {  
     if ( station != 0 ) {
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
-    //    connect( this, SIGNAL( currentChanged(QWidget*) ), this, SIGNAL( showCurrentPage(int, int) ) );
-    //    statusBar = new QStatusBar( this, "Status Bar" );
-    //    statusBar->setSizeGripEnabled( true );
-    //    ttGroup = new QToolTipGroup( statusBar );
     for ( int i = 0; i < NP; i++ ) {
       parameterIndex[params[i]] = i;
     }
@@ -224,25 +215,13 @@ namespace Weather
     }
     miutil::miTime sTime = (*tobs)[0].getTime();
     miutil::miTime eTime = (*tobs)[0].getTime();
-    //    int type = (*tobs)[0].getType();
     sTime.addDay(-7);
     eTime.addDay();
     WhichDataHelper whichData;
     whichData.addStation( (*station).stationID(), sTime, eTime);
 
-    //  KvObsDataList ldList;
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
       cerr << "Can't connect to data table!" << endl;
-
-
-    /*
-    for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
-      IDataList dit = it->dataList().begin();
-      while( dit != it->dataList().end() ) {
-	dit++;
-      }
-    }
-    */
 
     for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
       IDataList dit = it->dataList().begin();
@@ -295,7 +274,6 @@ namespace Weather
     setupOrigTab(synObsList, type);
     setupFlagTab(synObsList, type);
     
-    //    setupStationInfo();
     QString OK;
     setOkButton(OK);
     setApplyButton("Lagre");
@@ -305,15 +283,13 @@ namespace Weather
 
   WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 				const DataReinserter<KvApp> * dataReinserter,
-				QWidget* parent, const char* name, bool modal, WFlags f )
-  //    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
-    : QTabDialog( parent, name, modal)
+				QWidget* parent, const char* name, bool modal, Qt::WFlags f )
+    : Q3TabDialog( parent, name, modal)
     , dataReinserter( dataReinserter )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
   {
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
-    //    connect( this, SIGNAL( currentChanged(QWidget*) ), this, SIGNAL( showCurrentPage(int, int) ) );
     for ( int i = 0; i < NP; i++ )
       parameterIndex[params[i]] = i;
     synObsList.clear();
@@ -328,7 +304,6 @@ namespace Weather
     eTime.addDay();
     WhichDataHelper whichData;
     whichData.addStation(station, sTime, eTime);
-    //    KvObsDataList ldList;
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
       cerr << "Can't connect to data table!" << endl;
     for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
@@ -391,7 +366,7 @@ namespace Weather
     {
       QMessageBox::critical( this, "HQC - synop",
                              "Du er ikke autorisert til å lagre data i kvalobs.",
-                             QMessageBox::Ok,  QMessageBox::NoButton );
+                             QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
     DataConsistencyVerifier::DataSet mod;
@@ -421,7 +396,7 @@ namespace Weather
 	oldCorVal = oldCorVal.setNum(mit->first,'f',1);
 	newCorVal = newCorVal.setNum(mit->second,'f',1);
 	QString parameterId(cTab->parm[cTab->kvCorrList[iii].paramID()]);
-	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n'; 
+	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime().cStr()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n'; 
 	iii++;
       }
       changedVals = "Følgende endringer er gjort: \n" + changedVals + "Fullføre lagring?";
@@ -459,27 +434,10 @@ namespace Weather
       QMessageBox::warning( this, "HQC - synop",
                             QString( "Klarte ikke å lagre data!\n"
                                      "Feilmelding fra kvalobs var:\n") +
-                            res->message,
-                            QMessageBox::Ok,  QMessageBox::NoButton );
+                            QString(res->message),
+                            QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
-    /*
-    for ( list<kvData>::const_iterator it = dl.begin(); it != dl.end(); ++ it )
-    {
-      miutil::miTime t = it->obstime();
-      miutil::miDate d = t.date();
-      //      if ( t.hour() > 7 )
-      //        d.addDay();
-      for ( std::vector<TimeObs>::iterator tobs = observations->begin(); tobs != observations->end(); ++ tobs )
-      {
-	//      if ( tobs->getDate() == d )
-	//      {
-          kvData & data = tobs->get( it->paramID(), it->obstime() );
-          data = * it;
-	  //      }
-      }
-    }
-    */
     return true;
   }
   

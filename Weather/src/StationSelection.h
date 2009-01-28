@@ -32,10 +32,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__StationSelection_h__
 
 #include <qwidget.h>
+#include <map>
 #include <puTools/miTime>
 
 class QLineEdit;
-class QDateTimeEdit;
+class Q3DateTimeEdit;
 namespace kvalobs {
   class kvData;
 }
@@ -63,7 +64,7 @@ namespace Weather
     
   private:
     QLineEdit * station_;
-    QDateTimeEdit * obstime_;
+    Q3DateTimeEdit * obstime_;
     QLineEdit * typeID_;
     QLineEdit * sensor_;
     //    QLineEdit * level_;

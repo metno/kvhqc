@@ -32,10 +32,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define WEATHERCENTRALWIDGET_H
 
 #include <qwidget.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 
 class QTabWidget;
-class QGridLayout;
-class QTable;
+class Q3GridLayout;
+class Q3Table;
 
 class WeatherCentralWidget : public QWidget
 {
@@ -46,7 +48,7 @@ public:
     WeatherCentralWidget( QWidget *parent, const char *name = 0 );
 protected:
     void setupTabWidget();
-    QGridLayout *mainGrid;
+    Q3GridLayout *mainGrid;
     QTabWidget* wTab;
 };
 #endif

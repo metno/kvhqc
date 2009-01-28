@@ -31,11 +31,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "BusyIndicator.h"
 #include <qlineedit.h>
-#include <qdatetimeedit.h>
+#include <q3datetimeedit.h>
 #include <qlabel.h>
 #include <qlayout.h>
+//Added by qt3to4:
+#include <Q3GridLayout>
 #include <kvalobs/kvData.h>
-//#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <iostream>
 #include <cassert>
@@ -60,12 +61,11 @@ namespace Weather
     else
       data.set( 0, miutil::miTime( miTime::nowTime() ),	0, 211, miutil::miTime(), 0, 0, 0, 0,	kvalobs::kvControlInfo(), kvalobs::kvUseInfo(), "" );
 
-    QGridLayout * layout = new QGridLayout( this, 5, 2 );
+    Q3GridLayout * layout = new Q3GridLayout( this, 5, 2 );
     int row = 0;
     
     // Station:
     station_ = 
-      //      new QLineEdit( "", "0000000", this );
       new QLineEdit( QString::number( data.stationID() ), "0000000", this );
     layout->addWidget( station_, row, 1 );
     layout->addWidget( new QLabel( station_, "&Stasjon", this ), row++, 0 );
@@ -75,15 +75,14 @@ namespace Weather
     QDate dt = QDate(d.year(), d.month(), d.day());
     QTime ti = QTime(d.hour(), 0);
     obstime_ = 
-      new QDateTimeEdit( QDateTime( dt, ti ), this );
-    QDateEdit* obsdate = obstime_->dateEdit();
-    obsdate->setOrder( QDateEdit::DMY ); // Norwegian standard
+      new Q3DateTimeEdit( QDateTime( dt, ti ), this );
+    Q3DateEdit* obsdate = obstime_->dateEdit();
+    obsdate->setOrder( Q3DateEdit::DMY ); // Norwegian standard
     layout->addWidget( obstime_, row, 1 );
     layout->addWidget( new QLabel( obstime_, "&Tid:", this ), row++, 0 );
     
     // TypeID:
     typeID_ = 
-      //      new QLineEdit( QString::number( data.typeID() ), "#000", this );
       new QLineEdit( "", "#000", this );
     layout->addWidget( typeID_, row, 1 );
     layout->addWidget( new QLabel( typeID_, "T&ype:", this ), row++, 0 );
@@ -100,31 +99,12 @@ namespace Weather
     layout->addWidget( new QLabel( sensor_, "S&ensor:", this ), row++, 0 );
     if ( ! data.sensor() )
       sensor_->setText( "" );
-    /*
+
     // Level:
-    level_ = 
-      new QLineEdit( QString::number( data.level() ), "0", this );
-    layout->addWidget( level_, row, 1 );
-    layout->addWidget( new QLabel( level_, "&Level:", this ), row++, 0 );
-    */
     if ( typeFromStation_.empty() )
       setupTypeFromStation_();
         
     connect( station_, SIGNAL( textChanged(const QString &) ), this, SLOT( updateTypeID_() ) );
-    /*
-    if ( ! data.stationID() ) {
-      // Stations with RR_24 and typeid 302:
-      int value[21] = {
-        100, 250, 420, 700, 1230, 2910, 4740, 5350, 7660, 8720, 11710, 11900,
-        12520, 13050, 13140, 13700, 15480, 16270, 17780, 18030, 18500
-      };
-      miutil::miClock tmp = miutil::miClock::oclock();
-      std::srand( tmp.hour() * tmp.min() * tmp.sec() );
-      int index = std::rand() % 21;
-      typeID_->setText( "" );
-      station_->setText( QString::number( value[ index ] ) );
-    }
-    */
   }
 
   
@@ -144,21 +124,11 @@ namespace Weather
   int StationSelection::typeID() const {
     return typeID_->text().toInt();
   }
-  /*
-  int StationSelection::sensor() const {
-    return sensor_->text().toInt();
-  }
-  */
   
   int StationSelection::sensor() const {
     return sensor_->text().toInt() + '0';
   }
 
-  /*  
-  int StationSelection::level() const {
-    return level_->text().toInt();
-  }
-  */
   kvData StationSelection::getKvData() const
   {
     kvData ret( station(), miutil::miTime(obstime() ),

@@ -40,9 +40,8 @@ namespace Weather
 {
   class WeatherTable;
 
-  //TnCheckTableItem::TnCheckTableItem( QTable * table, kvData & data )
-  TnCheckTableItem::TnCheckTableItem( QTable* table, QString flag)
-    : QCheckTableItem( table, "" )
+  TnCheckTableItem::TnCheckTableItem( Q3Table* table, QString flag)
+    : Q3CheckTableItem( table, "" )
   {
     setChecked( collected(flag) );
   }
@@ -53,9 +52,6 @@ namespace Weather
 
   bool TnCheckTableItem::collected(QString flag) const
   {
-    
-    //    kvalobs::kvControlInfo cinfo = data.front()->controlinfo();
-    //    int fd = cinfo.flag( kvalobs::flag::fd );
     return (flag == "fd = 2");
   }
   

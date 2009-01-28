@@ -35,13 +35,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Weather
 {
-  //  WeatherTableToolTip::WeatherTableToolTip( const WeatherTable *table, 
-  //				  QToolTipGroup * group )
-  //    : QToolTip( table->viewport(), group )
-  //    , table( table )
   WeatherTableToolTip::WeatherTableToolTip( const WeatherTable *table)
-    : QToolTip( table->viewport() )
-    , table( table )
+    : table( table )
   {
   }
 
@@ -51,7 +46,7 @@ namespace Weather
     int row = table->rowAt( cp.y() );
     int col = table->columnAt( cp.x() );
 
-    QTableItem *ttItem = table->item(row, col);
+    Q3TableItem *ttItem = table->item(row, col);
     if ( ttItem == NULL ) 
       return;
 
@@ -67,6 +62,5 @@ namespace Weather
     }
     QRect cr = table->cellGeometry( row, col );    
     cr.moveTopLeft( table->contentsToViewport( cr.topLeft() ) );
-    tip( cr, tipString, tipString);
   }
 }

@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "timeobs.h"
 #include "enums.h"
 #include <miTime>
-//#include <kvservice/qt/kvQtApp.h>
 #include <KvApp.h>
 #include <WhichDataHelper.h>
 #include <kvDataOperations.h>
@@ -52,9 +51,6 @@ namespace Weather
 {
   static int interesting[9] = { V4, V4S, V5, V5S, V6, V6S, RR_24, SD, SA };
   static set<int> ilarge( interesting, &interesting[9] );
-
-  //  static bool sameobs( const kvData &d );
-
 
   TimeObs::TimeObs( int station, miTime otime, int type )
     : station( station )
@@ -89,18 +85,7 @@ namespace Weather
       	  data.insert( d );
       	}
       }
-    }
-    
-    //    std::list<kvalobs::kvModelData> model;
-    //    ok = KvApp::kvApp->getKvModelData( model, wdh );
-    //    if ( ok ) {
-    //      for ( std::list<kvalobs::kvModelData>::const_iterator it = model.begin(); it != model.end(); ++ it ) {
-    //        if ( it->paramID() == RR_24 ) {
-    //          modelRR = it->original();
-    //          cerr << "Model value at " << it->obstime() << ": " << modelRR << endl;
-    //        }
-    //      }
-    //    }
+    }    
   }
 
   
@@ -112,9 +97,6 @@ namespace Weather
 
   kvData & TimeObs::get( int paramID, const miTime &otime )
   {
-    //    miDate d = date;
-    //    if ( clock > miClock(7,0,0) )
-    //      d.addDay( -1 );
     
     kvDataPtr tmp( new kvData(
 			      getMissingKvData( station, otime, paramID, 0, 0, 0 ) ) );
@@ -122,25 +104,6 @@ namespace Weather
     pair<DataCollection::iterator, bool> result = data.insert( tmp );
     DataCollection::iterator & dc = result.first;
 
-    // Tenk over om denne gjør det det skal:
-    // For type 402 hvis det ikke fantes data for klokka 6, 
-    // sjekk om det fins for klokka 7.
-    /*
-    if ( type == 402 and * dc == tmp ) {
-      if ( clock == miClock(6,0,0) ) {
-      	try {
-      	  kvData & d = get( paramID, miClock(7,0,0) );
-      	  data.erase( tmp );
-      	  return d;
-      	}
-      	catch ( NoLateObs e ) {
-      	}
-      }
-      else if ( clock == miClock(7,0,0) ) {
-      	throw NoLateObs();
-      }
-    }
-    */
     return ** dc;
   }
 
@@ -150,12 +113,6 @@ namespace Weather
       out.push_back( it->get() );
     }
   }
-  /*  
-  float TimeObs::getModelRR() const
-  {
-    return modelRR;
-  }
-  */
 
   bool TimeObs::ltKvDataPtr::operator()( kvDataPtr a, kvDataPtr b ) const
   {
@@ -187,17 +144,6 @@ namespace Weather
     return false;
   }
 
-  /*
-  static bool sameobs( const kvData &d, int type, int sensor, int level )
-  {
-    if ( d.paramID() != RR_24 )
-      type = abs( type );
-    
-    return ( d.typeID() == type )
-      and  ( d.sensor() == sensor )
-      and  ( d.level() == level );
-  }
-  */
   TimeObsListPtr getTimeObs( int station, 
 			   const miTime & from, const miTime & to,
 			     int type, bool processEvents )
