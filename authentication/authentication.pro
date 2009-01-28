@@ -10,11 +10,13 @@ QT += qt3support
 
 # Input
 HEADERS += Authenticator.h
-SOURCES += Authenticator.cc 
+HEADERS += authenticationdialog.h
+SOURCES += Authenticator.cc
+SOURCES += authenticationdialog.cc
 #SOURCES += main.cc
 
 #The following line was changed from FORMS to FORMS3 by qt3to4
-FORMS3	= authenticationdialog.ui
+#FORMS3	= authenticationdialog.ui
 TEMPLATE	=lib
 CONFIG +=  staticlib
 INCLUDEPATH	+= .
@@ -24,5 +26,5 @@ LANGUAGE	= C++
 #The following line was inserted by qt3to4
 QT +=  
 #The following line was inserted by qt3to4
-CONFIG += uic3
+#CONFIG += uic3
 

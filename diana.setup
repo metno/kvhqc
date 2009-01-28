@@ -34,31 +34,28 @@
 #----------------------------------------------------------------------------------
 
 #Local variables
-ROOT            = /metno/local
-DIANADIR        = ${DIANADIR}||$(ROOT)/diana
+ROOT            = /usr/local
+DIANADIR        = ${DIANADIR}||$(ROOT)
 OPDATA1         = /opdata
 OPDATA2         = /opdata
 OPDATA3         = /opdata
 STARC           = /starc   
 DATABASE_IDENTS = VA,VV,VNN, DNMI
-DATABASE        = "tempo.oslo.dnmi.no diana 19100"  # host base port
+#DATABASE        = "tempo.oslo.dnmi.no diana 19100"  # host base port
+DATABASE        = "dianadb.oslo.dnmi.no diana 19100"  # host base port
 
 # =============================================
 
-%include $(DIANADIR)/etc/diana.setup-COMMON
+%include $(DIANADIR)/etc/diana/diana.setup-COMMON
 
 # =============================================
 
 <OBSERVATION_FILES>
 
 PROD=hqc:Hqc_synop
-timerange=-30,-30
+timerange=-30,30
 
-PROD=ascii:Hqc_enkel
-timerange=-30,-30
+PROD=ascii:Hqc_list
+timerange=-30,30
 
 </OBSERVATION_FILES>
-
-
-
-
