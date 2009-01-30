@@ -3,12 +3,8 @@
 #--------------------------------
 
 # includefile contains LOCALDIR-definition etc.
-#include ../make.${OSTYPE}
-# Hvis kildekoden ikke ligger i /metno/local/src
-#include /metno/local/libsrc/make.${OSTYPE}
 OSTYPE=linux-gnu
-include ../make.${OSTYPE}
-#include ../conf/${OSTYPE}.mk
+include etc/make.${OSTYPE}
 
 # Definerer et par ekstra variable som ikke står i ../make.${OSTYPE}
 
