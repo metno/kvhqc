@@ -46,7 +46,7 @@ DATABASE        = "dianadb.oslo.dnmi.no diana 19100"  # host base port
 
 # =============================================
 
-%include $(DIANADIR)/etc/diana/diana.setup-COMMON
+%include ${HOME}/.diana/diana.setup
 
 # =============================================
 

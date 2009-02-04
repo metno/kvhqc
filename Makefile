@@ -40,8 +40,8 @@ OBJDIR=obj$(PLT)
 BINDIR=bin$(PLT)
 INCDIR=../include
 #LOCALINC=/disk1/QT4/local/include
-LOCALINC=$(HQC)/local/include
-LOCLIB=$(HQC)/local/lib
+LOCALINC=$(HOME)/local/include
+LOCLIB=$(HQC)/../lib
 #QUTILLIB=/disk1/metlibs/metlibs/lib
 BITSDIR= $(LOCALDIR)/bits
 
@@ -94,7 +94,7 @@ LINKS:= -L$(WATCHDIR) -lWatchRR4 \
 	-L$(KVDIR)/src/lib/fileutil/.libs -lfileutil \
 	-L$(KVDIR)/src/lib/milog/.libs -lmilog \
 	-L$(BOOST_LIB) -lboost_thread \
-	-L$(LOCLIB) -lqUtilities -lqTimeseries -lpets2 -ltsData -lpuMet -lglText -lGLP \
+	-L$(LOCLIB) -lqUtilities -lqTimeseries -lpets2 -ltsData -lpuMet -lglText -lglp \
 	-L$(KVDIR)/src/lib/miconfparser -lmiconfparser -lpuDatatypes -lparameter -lpuCtools -lpets2 \
 	-L$(KVDIR)/src/service-libs/qt \
 	-L$(KVDIR)/src/lib/corbahelper/.libs -lcorbahelper \

@@ -17,7 +17,7 @@ UI:=
 #OMNIINCLUDE= -I$(OMNIORB_HOME)/include -I$(OMNIORB_INCLUDE)/omniORB4 
 #PUTOOLS= $(HQC)/puglocal/src/libs/puTools
 #PUTOOLS= $(HQC)/apps
-PUTOOLS=$(HQC)/local
+PUTOOLS=$(HQC)/..
 #include $(KVDIR)/conf/make.$(OSTYPE)
 KVDIR=$(HQC)/kvalobs
 PKG_CONF_LIBS= QtCore QtGui Qt3Support libxml++-2.6

@@ -9,7 +9,7 @@ QSRC:=
 UI:=
 
 #include $(KVDIR)/conf/make.$(OSTYPE)
-PUTOOLS=$(HQC)/local
+PUTOOLS=$(HQC)/..
 QTINC= /usr/include/qt4
 KVDIR=$(HQC)/kvalobs
 

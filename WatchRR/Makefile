@@ -10,7 +10,7 @@ UI:=
 
 #include $(KVDIR)/conf/make.$(OSTYPE)
 KVDIR=$(HQC)/kvalobs
-PUTOOLS=$(HQC)/local
+PUTOOLS=$(HQC)/..
 PKG_CONF_LIBS= QtCore QtGui Qt3Support libxml++-2.6
 #PKG_CONF_LIBS= qt-mt libxml++-1.0
 
