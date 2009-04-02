@@ -54,12 +54,14 @@ int main( int argc, char ** argv ) {
   else
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
 
-//  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
-//  if(!confSec) {
-//    clog << "Can't open configuration file: " << myconf << endl;
-//    return 1;
-//  }
-//  CorbaKvApp kvapp(argc, argv, confSec);
+	cout << "Reading " << myconf << endl;
+
+  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
+  if(!confSec) {
+    clog << "Can't open configuration file: " << myconf << endl;
+    return 1;
+  }
+  CorbaKvApp kvapp(argc, argv, confSec);
 
   HqcMainWindow * mw;
 
@@ -74,9 +76,9 @@ int main( int argc, char ** argv ) {
 
   cerr << "C\n";
 
-  //QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
-  //QString caption = "HQC " + captionSuffix;
-  //mw->setCaption( caption );
+  QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
+  QString caption = "HQC " + captionSuffix;
+  mw->setCaption( caption );
   mw->showMaximized();
   //  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
