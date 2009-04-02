@@ -34,9 +34,6 @@ BOOST_INCLUDE= $(BOOST_HOME)/include
 BOOST_LIB= $(BOOST_HOME)/lib
 #BOOST_LIB= ../../lib
 
-foo:
-	@echo Dir: $(srcdir)
-
 SRCDIR=src
 LIBDIR=lib$(PLT)
 OBJDIR=obj$(PLT)
