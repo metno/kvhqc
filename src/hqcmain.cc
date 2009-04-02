@@ -103,6 +103,9 @@ HqcMainWindow::HqcMainWindow()
   : Q3MainWindow( 0, "HQC", Qt::WDestructiveClose ), usesocket(true)
   , reinserter( NULL )
 {
+  if ( ! KvApp::kvApp )
+    throw runtime_error("kvalobs has not been initialized");
+
   // --- CHECK USER IDENTITY ----------------------------------------
 
   reinserter = Authentication::identifyUser(  KvApp::kvApp,
