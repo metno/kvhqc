@@ -32,8 +32,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "weatherdialog.h"
 #include "BusyIndicator.h"
-#include <miTime>
-#include <KvApp.h>
+#include <puTools/miTime>
+#include <kvcpp/KvApp.h>
 #include <q3listview.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -55,9 +55,9 @@ using namespace std;
 
 namespace Weather
 {
-  namespace 
+  namespace
   {
-    class MSSListView : public Q3ListView 
+    class MSSListView : public Q3ListView
     {
     public:
       MSSListView( QWidget * parent )
@@ -69,15 +69,15 @@ namespace Weather
       {
     	if ( e->key() == Qt::Key_Delete )
     	  delete currentItem();
-    	else 
+    	else
     	  Q3ListView::keyPressEvent( e );
       }
     };
-    struct MSSListItem 
+    struct MSSListItem
       : public Q3ListViewItem
     {
       const kvalobs::kvData data;
-      
+
       MSSListItem( Q3ListView * parent, const kvalobs::kvData & data )
     	: Q3ListViewItem( parent ), data( data )
       {
@@ -108,14 +108,14 @@ namespace Weather
     		       this, SLOT( doTransfer() ) );
     	  buttons->addWidget( transfer );
     	}
-      }      
-      
+      }
+
       stations = new MSSListView( this );
       stations->setSelectionMode( Q3ListView::Single );
       stations->addColumn( "Stasjon" );
-      stations->addColumn( "Tid" );    
+      stations->addColumn( "Tid" );
       stations->addColumn( "Type" );
-      stations->addColumn( "Sensor" );    
+      stations->addColumn( "Sensor" );
       //      stations->addColumn( "Lvl" );
       mainLayout->addWidget( stations );
 
@@ -131,7 +131,7 @@ namespace Weather
       }
     }
   }
-  
+
   MultiStationSelection::~MultiStationSelection( )
   {
   }
@@ -150,10 +150,10 @@ namespace Weather
     if ( !legalStation ) {
       cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
       cerr << "legalStation er " << legalStation << endl;
-      QMessageBox::information( this, "WatchRR", 
+      QMessageBox::information( this, "WatchRR",
 				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
       return;
-    } 
+    }
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
     Q3ListViewItem * it = dynamic_cast<Q3ListViewItem *>( item );
     assert( it );
@@ -172,43 +172,43 @@ namespace Weather
 
 
   void MultiStationSelection::start()
-  {    
+  {
     Q3ListViewItem * it = stations->firstChild();
-    if ( ! it ) 
+    if ( ! it )
       return;
     MSSListItem * ss = dynamic_cast<MSSListItem *>( it );
     assert( ss );
     const kvData * d = & ss->data;
     int type = d->typeID();
     int sensor = d->sensor();
-    
+
       pair<miTime, miTime> dates = dates_( d->obstime() );
     TimeObsListPtr next;
     try {
       BusyIndicator busy;
-      //      next = getTimeObs( d->stationID(), dates.first, dates.second );      
-      next = getTimeObs( d->stationID(), d->obstime(), d->obstime(), d->typeID() );      
+      //      next = getTimeObs( d->stationID(), dates.first, dates.second );
+      next = getTimeObs( d->stationID(), d->obstime(), d->obstime(), d->typeID() );
     }
     catch( std::runtime_error & ) {
       next = TimeObsListPtr(new TimeObsList());
     }
-  
+
     qApp->processEvents();
-    
+
     while ( next ) {
-      
+
       if ( next->empty() ) {
-	QMessageBox::critical( this, "Weather", 
+	QMessageBox::critical( this, "Weather",
 			       "Får ikke kontakt med kvalobs.\nKan ikke fortsette.",
   			       QMessageBox::Ok, QMessageBox::NoButton );
-	
+
       	return;
       }
-      
-      
+
+
       TimeObsListPtr current = next;
       next.reset();
-      
+
       it = it->itemBelow();
       std::auto_ptr< boost::thread >  thread;
       if ( it ) {
@@ -218,14 +218,14 @@ namespace Weather
     	dates = dates_( d->obstime());
     	thread = thread_getTimeObs( next, d->stationID(), dates.first, dates.second );
       }
-      
+
       delete stations->firstChild();
       WeatherDialog * wdlg = new WeatherDialog( current, type, sensor, reinserter, this );
       wdlg->resize(1200,700);
       wdlg->exec();
-      
+
       qApp->processEvents();
-      
+
       if ( thread.get() )
     	thread->join();
     }
@@ -235,7 +235,7 @@ namespace Weather
   {
     if ( e->key() == Qt::Key_Delete )
       delete stations->currentItem();
-    else 
+    else
       QDialog::keyPressEvent( e );
   }
 }

@@ -37,7 +37,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 //Added by qt3to4:
 #include <Q3GridLayout>
 #include <kvalobs/kvData.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <iostream>
 #include <cassert>
 
@@ -47,9 +47,9 @@ using miutil::miDate;
 
 
 namespace WatchRR
-{  
+{
   StationSelection::TypeFromStation StationSelection::typeFromStation_;
-  
+
   StationSelection::StationSelection( QWidget * parent, const kvData * data_ )
     : QWidget( parent )
   {
@@ -63,49 +63,49 @@ namespace WatchRR
 
     Q3GridLayout * layout = new Q3GridLayout( this, 5, 2 );
     int row = 0;
-    
+
     // Station:
-    station_ = 
+    station_ =
       new QLineEdit( QString::number( data.stationID() ), "0000000", this );
     layout->addWidget( station_, row, 1 );
     layout->addWidget( new QLabel( station_, "&Stasjon", this ), row++, 0 );
 
     // Obstime:
     miutil::miDate d = data.obstime().date();
-    obstime_ = 
+    obstime_ =
       new Q3DateEdit( QDate( d.year(), d.month(), d.day() ), this );
     obstime_->setOrder( Q3DateEdit::DMY ); // Norwegian standard
     layout->addWidget( obstime_, row, 1 );
     layout->addWidget( new QLabel( obstime_, "&Tid:", this ), row++, 0 );
-    
+
     // TypeID:
-    typeID_ = 
+    typeID_ =
       new QLineEdit( QString::number( data.typeID() ), "#000", this );
     layout->addWidget( typeID_, row, 1 );
     layout->addWidget( new QLabel( typeID_, "T&ype:", this ), row++, 0 );
     if ( ! data.typeID() )
       typeID_->setText( "302" );
-    
+
     // Sensor:
     int snsr = data.sensor();
     if ( snsr >= '0' )
       snsr -= '0';
-    sensor_ = 
+    sensor_ =
       new QLineEdit( QString::number( snsr ), "0", this );
     layout->addWidget( sensor_, row, 1 );
     layout->addWidget( new QLabel( sensor_, "S&ensor:", this ), row++, 0 );
-    
+
     // Level:
-    level_ = 
+    level_ =
       new QLineEdit( QString::number( data.level() ), "0", this );
     layout->addWidget( level_, row, 1 );
     layout->addWidget( new QLabel( level_, "&Level:", this ), row++, 0 );
 
     if ( typeFromStation_.empty() )
       setupTypeFromStation_();
-    
+
     connect( station_, SIGNAL( textChanged(const QString &) ), this, SLOT( updateTypeID_() ) );
-    
+
     if ( ! data.stationID() ) {
       // Stations with RR_24 and typeid 302:
       int value[21] = {
@@ -118,32 +118,32 @@ namespace WatchRR
       typeID_->setText( "302" );
       station_->setText( QString::number( value[ index ] ) );
     }
-    
-    
+
+
   }
 
-  
-  int StationSelection::station() const { 
+
+  int StationSelection::station() const {
     return station_->text().toInt();
   }
 
-  
+
   miDate StationSelection::obstime() const {
     QDate d = obstime_->date();
     return miDate( d.year(), d.month(), d.day() );
   }
 
-  
+
   int StationSelection::typeID() const {
     return typeID_->text().toInt();
   }
 
-  
+
   int StationSelection::sensor() const {
     return sensor_->text().toInt() + '0';
   }
 
-  
+
   int StationSelection::level() const {
     return level_->text().toInt();
   }
@@ -155,14 +155,14 @@ namespace WatchRR
 		0, kvalobs::kvControlInfo(),kvalobs::kvUseInfo(), "" );
     return ret;
   }
-  
+
   void StationSelection::updateTypeID_()
   {
     TypeFromStation::const_iterator find = typeFromStation_.find( station() );
     if ( find != typeFromStation_.end() )
       typeID_->setText( QString::number( find->second ) );
   }
- 
+
   void StationSelection::setupTypeFromStation_()
   {
     BusyIndicator busy;
@@ -173,8 +173,8 @@ namespace WatchRR
     if ( not ok )
       return; // Got no contact with kvalobs: return.
     for ( std::list<kvalobs::kvObsPgm>::const_iterator it = opgm.begin(); it != opgm.end(); ++ it ) {
-      if ( it->paramID() == 110 
-        and ( it->typeID() == 302 or it->typeID() == 402 ) 
+      if ( it->paramID() == 110
+        and ( it->typeID() == 302 or it->typeID() == 402 )
         and ( it->kl06() or it->kl07() )
       ) {
         typeFromStation_[ it->stationID() ] = it->typeID();

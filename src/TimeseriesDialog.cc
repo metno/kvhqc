@@ -35,9 +35,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Q3HBoxLayout>
 #include <QLabel>
 #include <Q3VBoxLayout>
-#include <miTimeSpinBox.h>
+#include <qUtilities/miTimeSpinBox.h>
 
-TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {  
+TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   setCaption("Tidsserie HQC");
   //  setGeometry(10,10,500,500);
@@ -81,12 +81,12 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 //   connect( parlv, SIGNAL( selectionChanged( QListViewItem*) ),
 // 	   this, SLOT( parameterSelectionChanged(QListViewItem* ) ) );
 //Test
-  Q3ButtonGroup* dTypes = new Q3ButtonGroup(1, 
-					  Qt::Horizontal, 
+  Q3ButtonGroup* dTypes = new Q3ButtonGroup(1,
+					  Qt::Horizontal,
 					  "Datatyper", this);
   obsCheckBox = new QCheckBox("Observasjoner", dTypes);
   modCheckBox = new QCheckBox("Modelldata   ", dTypes);
-  //  connect( obsCheckBox, SIGNAL(  
+  //  connect( obsCheckBox, SIGNAL(
   //  QGridLayout* checkLayout = new QGridLayout(dTypes->layout());
   //  checkLayout->addWidget(obsCheckBox,0,0);
   //  checkLayout->addWidget(modCheckBox,
@@ -178,7 +178,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   linewidthBox->insertItem("2");
   linewidthBox->insertItem("3");
   linewidthBox->insertItem("4");
-  
+
   connect(linecolourBox, SIGNAL(activated(int)),SLOT(linecolourSlot(int)));
   connect(lineBox, SIGNAL(activated(int)),SLOT(lineSlot(int)));
   connect(linewidthBox, SIGNAL(activated(int)),SLOT(linewidthSlot(int)));
@@ -209,9 +209,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   Q3HBoxLayout* markerLayout = new Q3HBoxLayout();
   markerLayout->addWidget(markerBox,10);
   markerLayout->addWidget(fillcolourBox,10);
-  
+
 // ///////////////////// to from ///////////////////////////////////////////
-    
+
   from = new miTimeSpinBox ("from",this, "Fra:");
   to   = new miTimeSpinBox ("to",this, "Til:");
   miutil::miTime t(to->time());
@@ -225,10 +225,10 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   t.addHour(17-t.hour());
   t.addMin(45-t.min());
   from->setTime(t);
-  
+
   connect( from, SIGNAL(valueChanged(const miutil::miTime&)),
 	   to,   SLOT(  setMin(const miutil::miTime&)     ));
-  
+
   connect( to,  SIGNAL(valueChanged(const miutil::miTime&)),
 	   from,SLOT(  setMax(const miutil::miTime&)     ));
 
@@ -237,7 +237,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 //   fromLabel->setFont(QFont("Arial", 12));
 //   fromLabel->setAlignment(AlignLeft);
 //   fromLabel->setPaletteForegroundColor(darkBlue);
-  
+
 //   QLabel* toLabel = new QLabel(this);
 //   toLabel->setText("Til       ");
 //   toLabel->setFont(QFont("Arial", 12));
@@ -308,7 +308,7 @@ void TimeseriesDialog::deleteSlot( ){
 
   int item =resultListbox->currentItem();
   if(item> -1){
-    resultListbox->removeItem(item); 
+    resultListbox->removeItem(item);
     tsinfo.erase(tsinfo.begin()+item);
   }
   cerr <<"delete  ts:"<<tsinfo.size()<<endl;
@@ -349,12 +349,12 @@ void TimeseriesDialog::deleteAllSlot( )
 //   newCurve = on;
 //   int item =resultListbox->currentItem();
 //   if(item>-1 ){
-//     resultListbox->insertItem(resultListbox->text(item),item); 
+//     resultListbox->insertItem(resultListbox->text(item),item);
 //     tsInfo ts = tsinfo[item];
 //     tsinfo.push_back(ts);
 //   }
 
-//}    
+//}
 
 void TimeseriesDialog::linecolourSlot( int i){
   if(freeze) return;
@@ -422,23 +422,23 @@ void TimeseriesDialog::hideAll(){
 // QString TimeseriesDialog::getStation() {
 //   //    return plotStat->text();
 //     return statlb->currentText();
-// } 
+// }
 
 // vector<QString> TimeseriesDialog::getParam() {
 //   vector<QString> parName;
 //   parName.push_back(parlv->currentItem()->text(0).latin1());
 //   return parName;
-// } 
+// }
 
 
 // int TimeseriesDialog::getnumts() {
-  
+
 //   return tsinfo.size();
 
-// } 
+// }
 
 // QString TimeseriesDialog::getStation(int i) {
-  
+
 //   if(tsinfo.size()>i)
 //     return statlb->text(tsinfo[i].station);
 
@@ -447,7 +447,7 @@ void TimeseriesDialog::hideAll(){
 // }
 
 // QString TimeseriesDialog::getParam(int i) {
-  
+
 //   if(tsinfo.size()>i)
 //     return tsinfo[i].parameter->text(0);
 
@@ -477,8 +477,8 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   if(statlb->currentItem() == -1) return;
   freeze=true;
   miString str = statlb->currentText().latin1();
-  str.trim(); 
-  str+= " "; 
+  str.trim();
+  str+= " ";
   str += item->text().latin1();
 
   tsInfo ts;
@@ -504,7 +504,7 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
     }
   }
   freeze=false;
-} 
+}
 
 
 void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
@@ -515,8 +515,8 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
   //  if(parameterListbox->currentItem()->parent() == 0) return;
    freeze=true;
   miString str = statlb->currentText().latin1();
-  str.trim(); 
-  str+= " "; 
+  str.trim();
+  str+= " ";
   //  str += parameterListbox->currentItem()->text(0).latin1();
   str += parameterListbox->currentText().latin1();
 
@@ -544,9 +544,9 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
   }
 
    freeze=false;
-} 
+}
 
-void TimeseriesDialog::resultSelected(Q3ListBoxItem * item) 
+void TimeseriesDialog::resultSelected(Q3ListBoxItem * item)
 {
   if(freeze) return;
   //cerr <<"Result   tsinfo.size:"<<tsinfo.size()<<endl;
@@ -581,7 +581,7 @@ void TimeseriesDialog::newStationList(std::vector<QString>& stationList)
   }
 }
 
-void TimeseriesDialog::getResults(vector<miString>& parameter, 
+void TimeseriesDialog::getResults(vector<miString>& parameter,
 				  miutil::miTime& fromTime,
 				  miutil::miTime& toTime,
 				  vector<int>& stationID,
@@ -590,7 +590,7 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
   fromTime = from->time();
   toTime   = to->time();
 
-  int nTypes = obsCheckBox->isChecked() + modCheckBox->isChecked();  
+  int nTypes = obsCheckBox->isChecked() + modCheckBox->isChecked();
   int n = resultListbox->count();
   for ( int j = 0; j < nTypes; j++ ) {
     for(int i=0; i<n; i++){
@@ -598,7 +598,7 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
       miString station = statlb->text(tsinfo[i].station).latin1();
       stationID.push_back(atoi(station.cStr()));
       miString idString(stationID[i]);
-      
+
       POptions::PlotOptions po;
       po.name=  "Stasjon:" + idString;
       po.label= parameter[i] + " (" + idString + ")";
@@ -609,7 +609,7 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
       po.fillcolour = colours[tsinfo[i].fillcolour];
       po.axis= axes[i];
       plotoptions.push_back(po);
-      
+
       if (parameter[i] == "DD") {
 	plotoptions[i].plottype= POptions::type_vector;
 	plotoptions[i].linewidth= 1;
@@ -626,7 +626,7 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
       else if (parameter[i].contains("RR")){
 	po.plottype=POptions::type_histogram;
 	plotoptions[i].axisname= "";
-      }  
+      }
     }
   }
 }
@@ -635,34 +635,34 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
  void TimeseriesDialog::fillColours()
  {
   POptions::Colour::define("black",0,0,0);
-  POptions::Colour::define("white",255,255,255); 
-  POptions::Colour::define("red",255,0,0); 
-  POptions::Colour::define("green",0,255,0); 
-  POptions::Colour::define("blue",0,0,255); 
-  POptions::Colour::define("cyan",0,255,255); 
-  POptions::Colour::define("magenta",255,0,255); 
-  POptions::Colour::define("yellow",255,255,0); 
+  POptions::Colour::define("white",255,255,255);
+  POptions::Colour::define("red",255,0,0);
+  POptions::Colour::define("green",0,255,0);
+  POptions::Colour::define("blue",0,0,255);
+  POptions::Colour::define("cyan",0,255,255);
+  POptions::Colour::define("magenta",255,0,255);
+  POptions::Colour::define("yellow",255,255,0);
   POptions::Colour::define("grey25",64,64,64);
-  POptions::Colour::define("grey40",102,102,102); 
-  POptions::Colour::define("grey45",115,115,115); 
-  POptions::Colour::define("grey50",128,128,128); 
-  POptions::Colour::define("grey55",140,140,140); 
-  POptions::Colour::define("grey60",153,153,153); 
-  POptions::Colour::define("grey65",166,166,166); 
-  POptions::Colour::define("grey70",179,179,179); 
-  POptions::Colour::define("grey75",192,192,192); 
+  POptions::Colour::define("grey40",102,102,102);
+  POptions::Colour::define("grey45",115,115,115);
+  POptions::Colour::define("grey50",128,128,128);
+  POptions::Colour::define("grey55",140,140,140);
+  POptions::Colour::define("grey60",153,153,153);
+  POptions::Colour::define("grey65",166,166,166);
+  POptions::Colour::define("grey70",179,179,179);
+  POptions::Colour::define("grey75",192,192,192);
   POptions::Colour::define("grey80",204,204,204);
-  POptions::Colour::define("grey85",217,217,217); 
+  POptions::Colour::define("grey85",217,217,217);
   POptions::Colour::define("grey90",230,230,230);
-  POptions::Colour::define("grey95",243,243,243); 
+  POptions::Colour::define("grey95",243,243,243);
   POptions::Colour::define("mist_red",240,220,220);
   POptions::Colour::define("mist_green",220,240,220);
   POptions::Colour::define("mist_blue",220,240,240);
-  POptions::Colour::define("dark_green",0,128,128); 
+  POptions::Colour::define("dark_green",0,128,128);
   POptions::Colour::define("brown",179,36,0);
   POptions::Colour::define("orange",255,90,0);
   POptions::Colour::define("purple",90,0,90);
-  POptions::Colour::define("light_blue",36,36,255); 
+  POptions::Colour::define("light_blue",36,36,255);
   POptions::Colour::define("dark_yellow",179,179,0);
   POptions::Colour::define("dark_red",128,0,0);
   POptions::Colour::define("dark_blue",0,0,128);
@@ -702,38 +702,38 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
 //   initColours("gray",         160,160,164);
 //   initColours("darkGray",     128,128,128);
 //   initColours("black",        0,0,0);
-  
+
 //   initColours("blue",         0,0,255);
 //   initColours("red",          255,0,0);
 //   initColours("green",        0,255,0);
 //   initColours("cyan",         0,255,255);
 //   initColours("magenta",      255,0,255);
 //   initColours("yellow",       255,255,0);
-  
+
 //   initColours("lightBlue",    51,51,255);
-  
+
 //   initColours("darkRed",      128,0,0);
 //   initColours("darkGreen",    0,128,0);
 //   initColours("darkBlue",     0,0,128);
 //   initColours("darkCyan",     0,128,128);
 //   initColours("darkMagenta",  128,0,128);
 //   initColours("darkYellow",   128,128,0);
-  
+
 //   initColours("brown",        178,51,0);
 //   initColours("orange",       255,89,0);
 //   initColours("purple",       160,32,240);
-  
+
 //   initColours("midnightBlue", 25,25,112);
 //   initColours("dnmiGreen",    43,120,36);
 //   initColours("dnmiBlue",     0,54,125);
-  
+
 //   initColours("green2",       0,238,0);
 //   initColours("green3",       0,205,0);
 //   initColours("green4",       0,139,0);
-  
+
 //   initColours("flesh",      240,158,92);
 //   initColours("seablue",    117,199,242);
-  
+
 //   initColours("landgul",    255,240,196);
 //   initColours("havblå",     225,255,255);
 //   initColours("gulbrun",    255,164,71);

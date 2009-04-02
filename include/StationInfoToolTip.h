@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QWidget>
 //#include <q3table.h>
 //#include <kvservice/qt/kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 class QMouseEvent;
 class QPaintEvent;
@@ -45,10 +45,10 @@ class StationInfoToolTip
 //: public QToolTip
 {
 public:
-  //  StationInfoToolTip( Q3Table *table, QToolTipGroup *group = 0, 
+  //  StationInfoToolTip( Q3Table *table, QToolTipGroup *group = 0,
   //		      int stationidCol = 1, int typeidCol = 7 );
 
-  StationInfoToolTip( Q3Table *table,  
+  StationInfoToolTip( Q3Table *table,
 		      int stationidCol = 1, int typeidCol = 7 );
 
   virtual ~StationInfoToolTip( );

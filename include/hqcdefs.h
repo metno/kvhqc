@@ -32,14 +32,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define HQCDEFS_H
 #include <list>
 //#include <kvQtApp.h>
-#include <KvApp.h>
-#include <kvData.h>
-#include <kvStation.h>
-#include <kvDbGate.h>
+#include <kvcpp/KvApp.h>
+#include <kvalobs/kvData.h>
+#include <kvalobs/kvStation.h>
+#include <kvalobs/kvDbGate.h>
 #include <puTools/miTime>
 #include <string>
-#include <dbdrivermgr.h>
-#include <QLetterCommands.h>
+#include <kvdb/dbdrivermgr.h>
+#include <qUtilities/QLetterCommands.h>
 
 using namespace std;
 using namespace kvalobs;
@@ -53,18 +53,18 @@ typedef list<kvModelData>::iterator         IModelDataList;
 typedef list<kvModelData>::const_iterator  CIModelDataList;
 
 typedef list<kvObsPgm>                          ObsPgmList;
-typedef list<kvObsPgm>::const_iterator        CIObsPgmList;  
+typedef list<kvObsPgm>::const_iterator        CIObsPgmList;
 
 typedef list<int>                                 TypeList;
 typedef list<TypeList>                         ObsTypeList;
 
-const int NOPARAM          = 1043; 
-const int NOPARAMMODEL     = 8; 
-const int NOPARAMALL       = 210; 
+const int NOPARAM          = 1043;
+const int NOPARAMMODEL     = 8;
+const int NOPARAMALL       = 210;
 const int NOPARAMAIRPRESS  = 23; //Ny gr.
 const int NOPARAMTEMP      = 31; //Ny gr
-//const int NOPARAMOTHERTEMP = 12; 
-//const int NOPARAMHUM       = 21; 
+//const int NOPARAMOTHERTEMP = 12;
+//const int NOPARAMHUM       = 21;
 //const int NOPARAMWIND      = 17;
 //const int NOPARAMPREC      = 19;
 const int NOPARAMPREC      = 40;
@@ -83,7 +83,7 @@ const int NOPARAMWIND      = 4;
 const int NOPARAMPLU       = 6;
 const int noInfo = 7;
 const int nnn = 1;
- 
+
 enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
 enum mettType {tabHead, tabList};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};

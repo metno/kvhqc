@@ -29,7 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <corba/CorbaKvApp.h>
+#include <kvcpp/corba/CorbaKvApp.h>
 #include <qapplication.h>
 #include "hqcmain.h"
 #include <iostream>
@@ -42,6 +42,8 @@ using kvservice::corba::CorbaKvApp;
 int main( int argc, char ** argv ) {
   QApplication a( argc, argv, true );
   const char * kvdir = getenv( "KVALOBS" );
+  if ( ! kvdir )
+    kvdir = "/usr/local";
   const char * hist = getenv( "HIST" );
     string shist = hist ? string(hist) : "0";
   string myconf;
@@ -49,18 +51,18 @@ int main( int argc, char ** argv ) {
     myconf = string( kvdir ) + "/etc/kvhist.conf";
   else if ( shist == "2" )
     myconf = string( kvdir ) + "/etc/kvtest.conf";
-  else 
+  else
     myconf = string( kvdir ) + "/etc/kvalobs.conf";
-  
-  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
-  if(!confSec) {
-    clog << "Can't open configuration file: " << myconf << endl;
-    return 1;
-  }
-  CorbaKvApp kvapp(argc, argv, confSec);
+
+//  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
+//  if(!confSec) {
+//    clog << "Can't open configuration file: " << myconf << endl;
+//    return 1;
+//  }
+//  CorbaKvApp kvapp(argc, argv, confSec);
 
   HqcMainWindow * mw;
-  
+
   try {
     mw = new HqcMainWindow();
   }
@@ -69,16 +71,16 @@ int main( int argc, char ** argv ) {
     std::cerr << "Exiting application" << std::endl;
     return 1;
   }
-  
+
   cerr << "C\n";
 
-  QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
-  QString caption = "HQC " + captionSuffix;  
-  mw->setCaption( caption );
+  //QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
+  //QString caption = "HQC " + captionSuffix;
+  //mw->setCaption( caption );
   mw->showMaximized();
   //  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
-  
+
   mw->show();
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
 

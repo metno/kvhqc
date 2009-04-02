@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <decodeutility/DataReinserter.h>
 //#include <kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 class HqcDataReinserter
   : public kvalobs::DataReinserter<kvservice::KvApp>

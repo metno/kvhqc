@@ -17,16 +17,7 @@ INCLUDE:= $(BOOSTINCLUDE) \
 	 $(OMNIINCLUDE) \
 	 -I$(QTINC) \
 	 -I$(QTINC)/Qt \
-	 -I$(KVDIR)/include \
-	 -I$(KVDIR)/src/lib \
-	 -I$(KVDIR)/src/lib/kvalobs \
-	 -I$(KVDIR)/src/lib/miutil \
-	 -I$(KVDIR)/src/lib/dnmithread \
-	 -I$(KVDIR)/include/db \
-	 -I$(KVDIR)/src/lib/kvskel \
-	 -I$(KVDIR)/src/lib/fileutil \
-	 -I$(KVDIR)/src/lib/corbahelper \
-	 -I$(KVDIR)/src/service-libs/kvcpp \
+	`pkg-config --cflags kvcpp` \
 	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools
 
 CXXFLAGS+= -Wall -g -DQT3_SUPPORT

@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "enums.h"
 #include <qlineedit.h>
 #include <qmessagebox.h>
-#include <kvDataOperations.h>
+#include <kvalobs/kvDataOperations.h>
 
 using namespace std;
 using namespace kvalobs;
@@ -46,15 +46,15 @@ namespace WatchRR
 
   const QRegExp RR_24DataTableItem::re( "([0-9]+([.,][0-9])?)|(\\-1?)" );
 
-  const QRegExpValidator 
+  const QRegExpValidator
   RR_24DataTableItem::validator( RR_24DataTableItem::re, NULL );
 
- 
+
   RR_24DataTableItem::
   RR_24DataTableItem( Q3Table *table, kvData & data)
     : RRTableItem( table, data, & validator )
     , type( standardType )
-  { 
+  {
     setText( getText() );
   }
 
@@ -72,10 +72,10 @@ namespace WatchRR
     QString ret;
     QString txt = text();
     float val;
-    
+
     if ( txt == missingDataIdentifier )
       val = CellValueProvider::missing;
-    else 
+    else
       val = txt.toFloat();
     if ( val == CellValueProvider::missing )
       ret = "Manglende " + type;
@@ -92,5 +92,5 @@ namespace WatchRR
   {
     dataList.insert( dataList.end(), data.begin(), data.end() );
   }
-  
+
 }

@@ -31,37 +31,16 @@ INCLUDE:=-Isrc/ -I../include \
 	 -I$(QTINC)/Qt \
 	 -I$(QTINC)/QtCore \
 	 -I$(QTINC)/QtGui \
-	 -I$(KVDIR)/include \
-	 -I$(KVDIR)/src/lib \
-	 -I$(KVDIR)/src/lib/kvalobs \
-	 -I$(KVDIR)/src/lib/miutil \
-	 -I$(KVDIR)/src/lib/dnmithread \
-	 -I$(KVDIR)/include/db \
-	 -I$(KVDIR)/src/lib/kvskel \
-	 -I$(KVDIR)/src/lib/fileutil \
-	 -I$(KVDIR)/src/lib/corbahelper \
-	 -I$(KVDIR)/src/service-libs/kvcpp \
+ 	`pkg-config --cflags kvcpp putools` \
 	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools/ \
 	 -I../include/ \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
-LIB:=	-L../authentication/ -lauthentication \
-	-L$(KVDIR)/src/service-libs/kvcpp/.libs -lkvcpp \
-	-L$(KVDIR)/src/lib/decodeutility/.libs -ldecodeutility \
-	-L$(KVDIR)/src/lib/kvalobs/.libs -lkvalobs \
-	-L$(KVDIR)/src/lib/kvdb/.libs -lkvdb \
-	-L$(KVDIR)/src/lib/fileutil/.libs -lfileutil \
-	-ldl \
-	-L$(KVDIR)/src/lib/dnmithread/.libs -ldnmithread \
-	-L$(KVDIR)/src/lib/corbahelper/.libs -lcorbahelper \
-	-L$(KVDIR)/src/lib/miutil/.libs -lmiutil \
-	-L$(KVDIR)/src/lib/miconfparser -lmiconfparser \
-	-L$(KVDIR)/src/lib/milog/.libs -lmilog \
-	$(BOOSTLIB) -lboost_thread -lboost_regex \
-	$(OMNILIB) -lomniORB4 -lomnithread \
-	-L$(PUTOOLS)/lib -lpuTools \
-	-lldap \
-	`pkg-config --libs $(PKG_CONF_LIBS)`
+LIB:= -L../authentication/ -lauthentication \
+	-L$(BOOST_LIB) -lboost_thread \
+	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
+	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
+	-L$(QTLIB) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
 
 CXXFLAGS+= -Wall -DQT3_SUPPORT
 DEFINES+=

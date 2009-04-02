@@ -31,15 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__WeatherDialog_h__
 #define __Weather__WeatherDialog_h__
 
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <q3tabdialog.h>
 #include <kvalobs/kvStation.h>
 #include "weathertable.h"
 #include "timeobs.h"
 #include "dataconsistencyverifier.h"
 #include <decodeutility/DataReinserter.h>
-#include <kvData.h>
-#include <kvStation.h>
+#include <kvalobs/kvData.h>
+#include <kvalobs/kvStation.h>
 
 using namespace std;
 using namespace kvservice;
@@ -84,7 +84,7 @@ namespace Weather
   public:
 
     /**
-     * \brief Will prompt user for a what data, and return the appropriate 
+     * \brief Will prompt user for a what data, and return the appropriate
      *        WeatherDialog
      *
      * \parameter data represents the default values for station, obstime etc.
@@ -93,8 +93,8 @@ namespace Weather
  * \brief Get o's owning WeatherDialog, or NULL if there is none.
  */
     static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
- 
-    WeatherDialog( TimeObsListPtr dol, int type, int sensor,	
+
+    WeatherDialog( TimeObsListPtr dol, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
 

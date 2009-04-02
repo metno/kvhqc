@@ -31,13 +31,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef _qtqtutil_h
 #define _qtqtutil_h
 
-#include <miString.h>
+#include <puTools/miString.h>
 #include <vector>
 //Added by qt3to4:
 #include <QPixmap>
 #include <QLabel>
 
-using namespace std; 
+using namespace std;
 
 class QPushButton;
 class QComboBox;
@@ -63,26 +63,26 @@ QPushButton* PixmapButton( const QPixmap& pixmap, QWidget* parent,
 
 // ComboBox
 
-QComboBox* ComboBox(QWidget* parent, vector<miString> vstr, 
+QComboBox* ComboBox(QWidget* parent, vector<miString> vstr,
 		    bool Enabled=true, int defItem=0);
 
-QComboBox* ComboBox(QWidget* parent, QColor* pixcolor, int nr_colors, 
+QComboBox* ComboBox(QWidget* parent, QColor* pixcolor, int nr_colors,
 		    bool Enabled=true, int defItem=0);
 
-QComboBox* LinetypeBox(QWidget* parent, 
+QComboBox* LinetypeBox(QWidget* parent,
 		    bool Enabled=true, int defItem=0);
 
-QComboBox* LinewidthBox(QWidget* parent, 
+QComboBox* LinewidthBox(QWidget* parent,
 		    bool Enabled=true, int defItem=0);
 
 // Div
 
 QLCDNumber* LCDNumber(uint numDigits, QWidget* parent=0);
 
-QSlider* Slider( int minValue, int maxValue, int pageStep, int value,  
+QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 		 Qt::Orientation orient, QWidget* parent, int width );
 
-QSlider* Slider( int minValue, int maxValue, int pageStep, int value,  
+QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 		 Qt::Orientation orient, QWidget* parent );
 
 void listBox( Q3ListBox* box, vector<miString> vstr, int defItem=-1 );

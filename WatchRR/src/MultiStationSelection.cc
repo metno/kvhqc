@@ -32,8 +32,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "RRDialog.h"
 #include "BusyIndicator.h"
-#include <miDate>
-#include <KvApp.h>
+#include <puTools/miDate>
+#include <kvcpp/KvApp.h>
 #include <q3listview.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -54,9 +54,9 @@ using namespace std;
 
 namespace WatchRR
 {
-  namespace 
+  namespace
   {
-    class MSSListView : public Q3ListView 
+    class MSSListView : public Q3ListView
     {
     public:
       MSSListView( QWidget * parent )
@@ -68,15 +68,15 @@ namespace WatchRR
       {
     	if ( e->key() == Qt::Key_Delete )
     	  delete currentItem();
-    	else 
+    	else
     	  Q3ListView::keyPressEvent( e );
       }
     };
-    struct MSSListItem 
+    struct MSSListItem
       : public Q3ListViewItem
     {
       const kvalobs::kvData data;
-      
+
       MSSListItem( Q3ListView * parent, const kvalobs::kvData & data )
     	: Q3ListViewItem( parent ), data( data )
       {
@@ -109,15 +109,15 @@ namespace WatchRR
     		       this, SLOT( doTransfer() ) );
     	  buttons->addWidget( transfer );
     	}
-      }      
-      
+      }
+
       //stations = new QListView( this );
       stations = new MSSListView( this );
       stations->setSelectionMode( Q3ListView::Single );
       stations->addColumn( "Stasjon" );
-      stations->addColumn( "Tid" );    
+      stations->addColumn( "Tid" );
       stations->addColumn( "Type" );
-      stations->addColumn( "Sensor" );          
+      stations->addColumn( "Sensor" );
 
       stations->addColumn( "Lvl" );
       mainLayout->addWidget( stations );
@@ -136,9 +136,9 @@ namespace WatchRR
     QString caption = "WatchRR";
     if ( not captionSuffix_.isEmpty() )
       caption += " [" + captionSuffix_ + "]";
-    setCaption( caption );   
+    setCaption( caption );
   }
-  
+
   MultiStationSelection::~MultiStationSelection( )
   {
   }
@@ -157,10 +157,10 @@ namespace WatchRR
     if ( !legalStation ) {
       cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
       cerr << "legalStation er " << legalStation << endl;
-      QMessageBox::information( this, "WatchRR", 
+      QMessageBox::information( this, "WatchRR",
 				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
       return;
-    } 
+    }
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
     Q3ListViewItem * it = dynamic_cast<Q3ListViewItem *>( item );
     assert( it );
@@ -201,13 +201,13 @@ namespace WatchRR
     catch( std::runtime_error & ) {
       next = DayObsListPtr(new DayObsList());
     }
-    
+
     qApp->processEvents();
 
     while ( next ) {
 
       if ( next->empty() ) {
-    	QMessageBox::critical( this, "WatchRR", 
+    	QMessageBox::critical( this, "WatchRR",
             			       "Får ikke kontakt med kvalobs.\nKan ikke fortsette.",
             			       QMessageBox::Ok, QMessageBox::NoButton );
     	return;
@@ -226,9 +226,9 @@ namespace WatchRR
     	dates = dates_( d->obstime().date() );
     	thread = thread_getDayObs( next, d->stationID(), d->typeID(), d->sensor(), d->level(), dates.first, dates.second );
       }
-      
+
       delete stations->firstChild();
-  
+
       RRDialog * dlg = new RRDialog( current, reinserter, captionSuffix_, this );
       dlg->exec();
 
@@ -243,7 +243,7 @@ namespace WatchRR
   {
     if ( e->key() == Qt::Key_Delete )
       delete stations->currentItem();
-    else 
+    else
       QDialog::keyPressEvent( e );
   }
 }

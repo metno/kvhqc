@@ -30,10 +30,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "timeobs.h"
 #include "enums.h"
-#include <miTime>
-#include <KvApp.h>
-#include <WhichDataHelper.h>
-#include <kvDataOperations.h>
+#include <puTools/miTime>
+#include <kvcpp/KvApp.h>
+#include <kvcpp/WhichDataHelper.h>
+#include <kvalobs/kvDataOperations.h>
 #include <cmath>
 #include <limits>
 #include <boost/thread.hpp>
@@ -64,15 +64,15 @@ namespace Weather
     miTime start( otime );
     start.addDay(-4);
     KvObsDataList dataList;
-    
+
     WhichDataHelper wdh;
-    
+
     bool stationok =  wdh.addStation( station, start, stop );
-    
+
     bool ok = KvApp::kvApp->getKvData( dataList, wdh );
     if ( not ok )
       throw runtime_error( "Could not get data from kvalobs" );
-    
+
     for ( KvObsDataList::iterator dl = dataList.begin(); dl != dataList.end(); dl++ ) {
       for ( KvDataList::const_iterator it = dl->dataList().begin(); it != dl->dataList().end();   it++ ) {
       	if ( ilarge.find( it->paramID() ) != ilarge.end() ) {
@@ -85,10 +85,10 @@ namespace Weather
       	  data.insert( d );
       	}
       }
-    }    
+    }
   }
 
-  
+
   TimeObs::~TimeObs( )
   {
   }
@@ -97,10 +97,10 @@ namespace Weather
 
   kvData & TimeObs::get( int paramID, const miTime &otime )
   {
-    
+
     kvDataPtr tmp( new kvData(
 			      getMissingKvData( station, otime, paramID, 0, 0, 0 ) ) );
-      
+
     pair<DataCollection::iterator, bool> result = data.insert( tmp );
     DataCollection::iterator & dc = result.first;
 
@@ -120,38 +120,38 @@ namespace Weather
 
     val = a->stationID() - b->stationID();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     if ( a->obstime() != b->obstime() )
       return a->obstime() < b->obstime();
 
     val = a->paramID() - b->paramID();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = abs(a->typeID()) - abs(b->typeID());
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = a->sensor() - b->sensor();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = a->level() - b->level();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     return false;
   }
 
-  TimeObsListPtr getTimeObs( int station, 
+  TimeObsListPtr getTimeObs( int station,
 			   const miTime & from, const miTime & to,
 			     int type, bool processEvents )
   {
     TimeObsListPtr ret( new TimeObsList );
     for ( miTime date = from; date <= to; date.addDay() ) {
       //      if ( processEvents )
-      //      	KvApp::kvApp->processEvents( 1 );      
+      //      	KvApp::kvApp->processEvents( 1 );
       ret->push_back( TimeObs( station, date, type ) );
     }
     return ret;
@@ -160,15 +160,15 @@ namespace Weather
   namespace {
     struct thread_obj_getTimeObs {
       TimeObsListPtr & holder;
-      int station, type, sensor, level; 
-      const miTime & from; 
+      int station, type, sensor, level;
+      const miTime & from;
       const miTime & to;
 
       thread_obj_getTimeObs( TimeObsListPtr & holder,
-			    int station, 
+			    int station,
 			    const miTime & from, const miTime & to )
 	: holder(holder), station(station), from(from), to(to)
-	
+
       {
       }
 
@@ -186,9 +186,9 @@ namespace Weather
     };
   }
 
-  auto_ptr< boost::thread > 
+  auto_ptr< boost::thread >
   thread_getTimeObs( TimeObsListPtr & holder,
-		    int station, 
+		    int station,
 		    const miutil::miTime & from, const miutil::miTime & to )
   {
     thread_obj_getTimeObs tog( holder, station, from, to );

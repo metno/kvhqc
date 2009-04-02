@@ -34,7 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 //#include <kvQtApp.h>
 #include <decodeutility/DataReinserter.h>
 //#include <kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 class QString;
 

@@ -47,7 +47,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 using namespace kvservice;
 using namespace kvalobs;
@@ -71,7 +71,7 @@ namespace Weather
     // Buttons:
     Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->addStretch( 1 );
-    
+
     QPushButton * ok = new QPushButton( "&Ok", selector );
     buttonLayout->addWidget( ok );
     connect( ok, SIGNAL( clicked() ), selector, SLOT( accept() ) );
@@ -83,7 +83,7 @@ namespace Weather
     const int result = selector->exec();
     if ( result == QDialog::Rejected )
       return 0;
-    
+
     int             st = ss->station();
     bool legalStation = false;
     for(list<kvalobs::kvStation>::const_iterator it=slist.begin();it!=slist.end(); it++){
@@ -94,10 +94,10 @@ namespace Weather
       }
     }
     if ( !legalStation ) {
-    	QMessageBox::information( ss, "WatchWeather", 
+    	QMessageBox::information( ss, "WatchWeather",
 				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
     	return 0;
-    } 
+    }
     miutil::miTime  cl = ss->obstime();
     int             ty = ss->typeID();
     int             se = ss->sensor() - '0';
@@ -120,7 +120,7 @@ namespace Weather
   }
 
   bool WeatherDialog::typeFilter(int gType, int cType) {
-    if ( gType == 0 ) 
+    if ( gType == 0 )
       return true;
     else if ( abs(cType) == gType )
       return true;
@@ -134,7 +134,7 @@ namespace Weather
     else
       return false;
   }
-  
+
   bool WeatherDialog::paramInParamsList(int stnr) {
     bool pipl = false;
     for ( int i = 0; i < NP; i++ ) {
@@ -145,7 +145,7 @@ namespace Weather
   }
 
   void WeatherDialog::setupOrigTab( SynObsList& sList, int type ) {
-    Q3VBox* orig = new Q3VBox(this, "orig");    
+    Q3VBox* orig = new Q3VBox(this, "orig");
     orig->setMargin(5);
     WeatherTable* origTab = new WeatherTable(orig, type);
     origTab->resize( origTab->sizeHint() );
@@ -153,7 +153,7 @@ namespace Weather
   }
 
   void WeatherDialog::setupCorrTab( SynObsList& sList, int type ) {
-    Q3VBox* corr = new Q3VBox(this, "corr");    
+    Q3VBox* corr = new Q3VBox(this, "corr");
     corr->setMargin(5);
     WeatherTable* corrTab = new WeatherTable(corr, type);
     corrTab->resize( corrTab->sizeHint() );
@@ -162,7 +162,7 @@ namespace Weather
   }
 
   void WeatherDialog::setupFlagTab( SynObsList& sList, int type ) {
-    Q3VBox* flag = new Q3VBox(this, "flag");    
+    Q3VBox* flag = new Q3VBox(this, "flag");
     flag->setMargin(5);
     WeatherTable* flagTab = new WeatherTable(flag, type);
     flagTab->resize( flagTab->sizeHint() );
@@ -193,7 +193,7 @@ namespace Weather
     return WeatherDialog::DateRange( start, end );
   }
 
-  WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,	
+  WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
 		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
     : Q3TabDialog( parent, name, modal )
@@ -201,7 +201,7 @@ namespace Weather
     , observations( tobs )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
     , shownFirstTime( false )
-  {  
+  {
     if ( station != 0 ) {
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
     for ( int i = 0; i < NP; i++ ) {
@@ -273,7 +273,7 @@ namespace Weather
     setupCorrTab(synObsList, type);
     setupOrigTab(synObsList, type);
     setupFlagTab(synObsList, type);
-    
+
     QString OK;
     setOkButton(OK);
     setApplyButton("Lagre");
@@ -396,7 +396,7 @@ namespace Weather
 	oldCorVal = oldCorVal.setNum(mit->first,'f',1);
 	newCorVal = newCorVal.setNum(mit->second,'f',1);
 	QString parameterId(cTab->parm[cTab->kvCorrList[iii].paramID()]);
-	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime().cStr()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n'; 
+	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime().cStr()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n';
 	iii++;
       }
       changedVals = "Følgende endringer er gjort: \n" + changedVals + "Fullføre lagring?";
@@ -440,7 +440,7 @@ namespace Weather
     }
     return true;
   }
-  
+
   WeatherDialog::~WeatherDialog( )
   {
   }

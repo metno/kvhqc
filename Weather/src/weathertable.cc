@@ -35,7 +35,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include <algorithm>
 #include <cmath>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
 #include <sstream>
@@ -86,17 +86,17 @@ namespace Weather
       IDataList dit = it->dataList().begin();
       while( dit != it->dataList().end() ) {
 	kvData kvDat;
-	kvDat.set(dit->stationID(), 
-		  dit->obstime(), 
-		  dit->original(), 
-		  dit->paramID(), 
-		  dit->tbtime(), 
-		  dit->typeID(), 
-		  dit->sensor(), 
-		  dit->level(), 
-		  dit->corrected(), 
-		  dit->controlinfo(), 
-		  dit->useinfo(), 
+	kvDat.set(dit->stationID(),
+		  dit->obstime(),
+		  dit->original(),
+		  dit->paramID(),
+		  dit->tbtime(),
+		  dit->typeID(),
+		  dit->sensor(),
+		  dit->level(),
+		  dit->corrected(),
+		  dit->controlinfo(),
+		  dit->useinfo(),
 		  dit->cfailed());
 	kvDatList.push_back(kvDat);
 	dit++;
@@ -104,7 +104,7 @@ namespace Weather
     }
 
     int itest = 0, jtest = 0;
-    for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin(); 
+    for ( WeatherDialog::SynObsList::iterator it = wd->synObsList.begin();
 	  it != wd->synObsList.end(); it++) {
       if ( (*it).otime > protime ) {
 	timeList.push_back((*it).otime);
@@ -133,12 +133,12 @@ namespace Weather
     setNumCols(NL);
     displayHorizontalHeader();
     displayVerticalHeader(timeList);
-    if ( pName == "corr" || pName == "orig" ) 
+    if ( pName == "corr" || pName == "orig" )
       displayData(pName, dataList, flagList);
     else if ( pName == "flag" )
       displayFlags(flagList);
     toolTip = new WeatherTableToolTip( this );
-    
+
     BusyIndicator busy;
   }
 
@@ -185,7 +185,7 @@ namespace Weather
       ++irow;
     }
   }
-  
+
   void WeatherTable::displayData(QString pName, vector<synDat>& dataList, vector<synFlg>& flagList) {
     int iRow = 0;
     vector<synFlg>::iterator fit = flagList.begin();
@@ -216,7 +216,7 @@ namespace Weather
 	  setItem(iRow,datCol[iCol],datItem);
 	}
       }
-      
+
       for ( int iCol = 0; iCol < NC; iCol++ ) {
        	QString strflg;
 	//       	strflg = (*fit).sflg[dbCol[iCol]]
@@ -230,12 +230,12 @@ namespace Weather
 	  setItem(iRow,cbCol[iCol],ctItem);
 	}
      }
-      
-      iRow++; 
+
+      iRow++;
       fit++;
     }
    for ( int icol = 0; icol < NL; icol++ )
-      adjustColumn(icol);  
+      adjustColumn(icol);
   }
 
   void WeatherTable::displayFlags(vector<synFlg>& flagList) {
@@ -248,12 +248,12 @@ namespace Weather
 	FlagItem* flgItem = new FlagItem(this, Q3TableItem::Never,"",strdat);
 	setItem(iRow,datCol[iCol],flgItem);
       }
-      iRow++; 
+      iRow++;
     }
- 
+
     for ( int icol = 0; icol < NL; icol++ )
-      adjustColumn(icol);  
-    for ( int icol = 0; icol < NC; icol++ ) 
+      adjustColumn(icol);
+    for ( int icol = 0; icol < NC; icol++ )
       hideColumn(cbCol[icol]);
   }
 
@@ -277,7 +277,7 @@ namespace Weather
     float oldCorr = kvDat.corrected();
     QString oldCorrStr;
     oldCorrStr = oldCorrStr.setNum(oldCorr,'f',1);
-    oldNewPair op(oldCorr, newCorr); 
+    oldNewPair op(oldCorr, newCorr);
     rowColPair rc(row, col);
     kvDat.corrected(newCorr);
     kvControlInfo cif = kvDat.controlinfo();
@@ -304,10 +304,10 @@ namespace Weather
     else {
       cif.set(15,7);
     }
-    if ( oldCorr == -32767.0 ) { 
+    if ( oldCorr == -32767.0 ) {
       cif.set(15,5);                      //Interpol
       int misfl;
-      if ( cif.flag(6) == 0 ) 
+      if ( cif.flag(6) == 0 )
 	misfl = 1;
       else
 	misfl  = cif.flag(6) - 2;
@@ -337,30 +337,30 @@ namespace Weather
     }
     kvData kvCorrDat;
     if ( foundRow )
-      kvCorrDat.set(kvit->stationID(), 
-		    kvit->obstime(), 
-		    kvit->original(), 
-		    kvit->paramID(), 
-		    kvit->tbtime(), 
-		    kvit->typeID(), 
-		    kvit->sensor(), 
-		    kvit->level(), 
-		    kvit->corrected(), 
-		    kvit->controlinfo(), 
-		    kvit->useinfo(), 
+      kvCorrDat.set(kvit->stationID(),
+		    kvit->obstime(),
+		    kvit->original(),
+		    kvit->paramID(),
+		    kvit->tbtime(),
+		    kvit->typeID(),
+		    kvit->sensor(),
+		    kvit->level(),
+		    kvit->corrected(),
+		    kvit->controlinfo(),
+		    kvit->useinfo(),
 		    kvit->cfailed());
     else
-      kvCorrDat.set(kvDatList.begin()->stationID(), 
-		    cTime, 
-		    -32767, 
-		    cParam, 
-		    cTime, 
-		    sd.styp[columnIndex[col]], 
-		    0, 
-		    0, 
-		    -32767, 
-		    kvDatList.begin()->controlinfo(), 
-		    kvDatList.begin()->useinfo(), 
+      kvCorrDat.set(kvDatList.begin()->stationID(),
+		    cTime,
+		    -32767,
+		    cParam,
+		    cTime,
+		    sd.styp[columnIndex[col]],
+		    0,
+		    0,
+		    -32767,
+		    kvDatList.begin()->controlinfo(),
+		    kvDatList.begin()->useinfo(),
 		    kvDatList.begin()->cfailed());
 
     return kvCorrDat;

@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__ControlFlagCell_h__
 
 #include "RRTableItem.h"
-#include <kvData.h>
+#include <kvalobs/kvData.h>
 
 namespace WatchRR
 {
@@ -46,7 +46,7 @@ namespace WatchRR
     public:
       ControlFlagCell( Q3Table * t, const kvalobs::kvData & data );
       virtual ~ControlFlagCell( );
-      
+
       virtual QString explain() const;
 
       QString fullText() const { return fullText_; }
@@ -66,7 +66,7 @@ namespace WatchRR
       using Q3TableItem::setText;
 
       virtual int alignment() const { return Qt::AlignLeft | Qt::AlignVCenter; }
-      
+
     private:
       const kvalobs::kvData & data;
 

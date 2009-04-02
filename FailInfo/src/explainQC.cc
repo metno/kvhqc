@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <sstream>
 #include <qstring.h>
 //#include <kvservice/qt/kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <kvalobs/kvStationParam.h>
 #include <kvalobs/kvQCFlagTypes.h>
 #include <puTools/miString>
@@ -68,14 +68,14 @@ namespace QC
       const kvStationParam * getStParam( const kvData &data )
       {
     	for ( int i = 0; i < 2; ++i ) {
-    
+
     	  int station = i ? 0 : data.stationID();
-    
+
     	  CIStationParamsByStation st = sParams.find( station );
     	  if ( st == sParams.end() ) {
-    	    
+
     	    cerr << "kvApp->getKvStationParam( " << station << " );\n";
-    
+
     	    // Hvis oppslag er gjort, men ingen resultat: tom liste som innhold
     	    bool ok = kvservice::KvApp::
     	      kvApp->getKvStationParam( sParams[ station ], station );
@@ -85,13 +85,13 @@ namespace QC
     	    assert( st != sParams.end() );
     	  }
     	  const StationParams & sp = st->second;
-    	  
+
     	  int day = data.obstime().dayOfYear();
     	  if ( day < 1 )
     	    day = 1;
     	  else if ( day > 365 )
     	    day = 365;
-    	  
+
           const int & paramID = data.paramID();
     	  for ( CIStationParams it = sp.begin(); it != sp.end(); ++it )
     	    if ( paramID == it->paramID() and day >= it->fromday() and day <= it->today() )
@@ -115,7 +115,7 @@ namespace QC
       if ( ! stParam )
 	   return "Ingen relevante detaljer tilgjengelig";
 
-      miString st = 
+      miString st =
 	    stParam->metadata().substr( stParam->metadata().find( '\n' ) );
       st.trim();
       st.replace( ";", " - " );
@@ -123,7 +123,7 @@ namespace QC
       return string( st );
     }
 
-    static string getExplanation( const cFailedParam &failDetail ) 
+    static string getExplanation( const cFailedParam &failDetail )
     {
       typedef map<cFailedParam, string, cFailedParam::altLess> ExplMap;
       static ExplMap explMap;
@@ -158,7 +158,7 @@ namespace QC
 	  string val;
 	  if ( sepPos != string::npos )
 	    val = line.substr( sepPos );
-	  else 
+	  else
 	    val = "";
 
 	  cout << key.toString() << " - " << val << endl;
@@ -184,22 +184,22 @@ namespace QC
     }
 
     string fcc( const cFailedParam &failDetail, const kvData & )
-    {      
+    {
       return getExplanation( failDetail.toString() );
     }
 
     string fs( const cFailedParam &failDetail, const kvData &data )
-    {      
+    {
       return getLimits( failDetail, data );
     }
 
     string fnum( const cFailedParam &failDetail, const kvData &data )
-    {      
+    {
       return getLimits( failDetail, data );
     }
 
     string fpos( const cFailedParam &, const kvData & )
-    {      
+    {
       return "fpos";
     }
 
@@ -225,36 +225,36 @@ namespace QC
 
     string fcombi(  const cFailedParam &failDetail, const kvData & )
     {
-      return getExplanation( failDetail.toString() );      
+      return getExplanation( failDetail.toString() );
     }
 
     static const int groups_ = 10;
     static FailGroupList::value_type _failGroup[ groups_ ] = {
-      FailGroupList::value_type( "0", 
-				 FailGroup( "Forhandskvalifisering", 
+      FailGroupList::value_type( "0",
+				 FailGroup( "Forhandskvalifisering",
 					    errorFunc ) ),
-      FailGroupList::value_type( "1", 
+      FailGroupList::value_type( "1",
 				 FailGroup( "Grenseverdikontroll (fr)",
 					    fr ) ),
-      FailGroupList::value_type( "2", 
+      FailGroupList::value_type( "2",
 				 FailGroup( "Formell konsistenskontroll (fcc)",
 					    fcc ) ),
-      FailGroupList::value_type( "3a", 
+      FailGroupList::value_type( "3a",
 				 FailGroup( "Sprangkontroll, step (fs)",
 					    fs ) ),
-      FailGroupList::value_type( "3b", 
+      FailGroupList::value_type( "3b",
 				 FailGroup( "Sprangkontroll, freeze (fs)",
 					    fs ) ),
-      FailGroupList::value_type( "4", 
+      FailGroupList::value_type( "4",
 				 FailGroup( "Prognostisk romkontroll (fnum)",
 					    fnum ) ),
-      FailGroupList::value_type( "5", 
+      FailGroupList::value_type( "5",
 				 FailGroup( "Meldingskontroll (fpos)",
 					    fpos ) ),
-      FailGroupList::value_type( "6", 
+      FailGroupList::value_type( "6",
 				 FailGroup( "Klimatologisk konsistenskontroll (fcp)",
 					    fcp ) ),
-      FailGroupList::value_type( "7", 
+      FailGroupList::value_type( "7",
 				 FailGroup( "Identifisering av oppsamlet verdi (fd)",
 					    fd ) ),
       FailGroupList::value_type( "9",

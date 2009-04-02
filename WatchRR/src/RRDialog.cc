@@ -47,7 +47,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QCloseEvent>
 #include <QShowEvent>
 #include <Q3VBoxLayout>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 using namespace kvservice;
 using namespace kvalobs;
@@ -84,7 +84,7 @@ namespace WatchRR
     const int result = selector->exec();
     if ( result == QDialog::Rejected )
       return 0;
-    
+
     int            st = ss->station();
 
     bool legalStation = false;
@@ -96,10 +96,10 @@ namespace WatchRR
       }
     }
     if ( !legalStation ) {
-    	QMessageBox::information( ss, "WatchRR", 
+    	QMessageBox::information( ss, "WatchRR",
 				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
     	return 0;
-    } 
+    }
     miutil::miDate da = ss->obstime();
     int            ty = ss->typeID();
     int            se = ss->sensor();
@@ -146,7 +146,7 @@ namespace WatchRR
     if ( station->environmentid() == 10 )
         stationDescr += "  (Ikke daglig)";
     stationInfo->setText( stationDescr );
-    
+
     // Buttons:
     help   = new QPushButton( "&Hjelp", this, "Hjelp" );
     save = new QPushButton( "&Lagre", this, "Lagre" );
@@ -162,8 +162,8 @@ namespace WatchRR
     // Table
     table = rrt;
     table->setFocus();
-    
-    // Layout: 
+
+    // Layout:
     mainLayout = new Q3VBoxLayout( this, 0, -1, "Main Layout" );
     {
       Q3HBoxLayout *topLayout = new Q3HBoxLayout( mainLayout, -1, "Top Layout" );
@@ -185,7 +185,7 @@ namespace WatchRR
     }
   }
 
-  RRDialog::RRDialog( DayObsListPtr dol,	
+  RRDialog::RRDialog( DayObsListPtr dol,
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
 		      const QString & captionSuffix,
 		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
@@ -201,7 +201,7 @@ namespace WatchRR
   }
 
 
-  RRDialog::RRDialog( int station, const miutil::miDate date, 
+  RRDialog::RRDialog( int station, const miutil::miDate date,
 		      int type, int sensor, int level,
 		      const DataReinserter<KvApp> * dataReinserter,
 		      QWidget* parent, const char* name, bool modal, Qt::WFlags f )
@@ -210,12 +210,12 @@ namespace WatchRR
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
   {
-    RRTable * rrt;    
+    RRTable * rrt;
     try {
       rrt = new RRTable( station, date, type, sensor, level, /*0,*/ this, "Table" );
     }
     catch( std::runtime_error &e ) {
-      int res = QMessageBox::critical( this, "HQC", 
+      int res = QMessageBox::critical( this, "HQC",
 				       QString("Feil i kontakt med kvalobs!\n"
 					       "Meldingen var:\n") + e.what(),
 				       QMessageBox::Retry | QMessageBox::Default,
@@ -225,7 +225,7 @@ namespace WatchRR
 	  rrt = new RRTable( station, date, type, sensor, level, /*ttGroup,*/ this, "Table" );
 	}
 	catch( std::runtime_error &e ) {
-	  res = QMessageBox::critical( this, "HQC", 
+	  res = QMessageBox::critical( this, "HQC",
 				       QString("Fremdeles feil i kontakt med kvalobs!\n"
 					       "Meldingen var:\n") + e.what(),
 				       QMessageBox::Abort | QMessageBox::Default,
@@ -247,7 +247,7 @@ namespace WatchRR
   void RRDialog::polish()
   {
     QDialog::polish();
-    table->ensureCellVisible( table->numRows() -1, 0 );	
+    table->ensureCellVisible( table->numRows() -1, 0 );
   }
 
   bool RRDialog::saveData()
@@ -258,7 +258,7 @@ namespace WatchRR
   enum ConfirmSaveValue { Yes, No, Cancel };
 
   ConfirmSaveValue confirmSave( RRDialog *dialog, int noOfChanges,
-				const DataReinserter<KvApp> * dataReinserter ) 
+				const DataReinserter<KvApp> * dataReinserter )
   {
     ConfirmSaveValue save = (ConfirmSaveValue)
       QMessageBox::information( dialog, "HQC - Nedbør",
@@ -300,12 +300,12 @@ namespace WatchRR
   {
     DataConsistencyVerifier::DataSet mod;
     table->getModifiedData( mod );
-    
+
     if ( mod.empty() ) {
       QDialog::accept();
       return;
     }
-    
+
     ConfirmSaveValue saved = confirmSave( this, mod.size(), dataReinserter );
     if ( saved == Yes )
       QDialog::accept();

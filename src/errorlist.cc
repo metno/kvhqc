@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 /*! \file errolist.cc
  *  \brief Code for the ErrorList class.
- *  
+ *
  *  Displays the error list.
  *
 */
@@ -52,7 +52,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "missingtable.h"
 #include "StationInformation.h"
 #include "TypeInformation.h"
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
 typedef TypeInformation<kvservice::KvApp>    TypeInfo;
@@ -69,10 +69,10 @@ int cP[] = {  1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
 const int headSize = 0;
 
 
-ErrorHead::ErrorHead(const miutil::miTime& stime, 
+ErrorHead::ErrorHead(const miutil::miTime& stime,
 		     const miutil::miTime& etime,
-		     QWidget* parent, 
-		     int lity, 
+		     QWidget* parent,
+		     int lity,
 		     QString userName)
   : Q3Table( 1000, 100, parent, "table" ) {
   setCaption("HQC - Feilliste");
@@ -137,21 +137,21 @@ ErrorHead::ErrorHead(const miutil::miTime& stime,
 ErrorHead::~ErrorHead(){}
 
 ErrorList::ErrorList(QStringList& selPar,
-		     const miutil::miTime& stime, 
+		     const miutil::miTime& stime,
 		     const miutil::miTime& etime,
-		     int noSel, 
-		     int noParam, 
-		     QWidget* parent, 
-		     int lity, 
-		     int metty, 
+		     int noSel,
+		     int noParam,
+		     QWidget* parent,
+		     int lity,
+		     int metty,
 		     int* noSelPar,
-		     vector<datl>& dtl, 
-		     vector<modDatl>& mdtl, 
+		     vector<datl>& dtl,
+		     vector<modDatl>& mdtl,
 		     list<kvStation>& slist,
-		     int dateCol, 
+		     int dateCol,
 		     int ncp,
 		     QString& userName)
-  : Q3Table( 1000, 100, parent, "table") 
+  : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
 {
   setVScrollBarMode( Q3ScrollView::AlwaysOn  );
@@ -287,7 +287,7 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.parNo       = noSelPar[j];
       memObs.parName     = selPar[j];
       memObs.morig = -32767.0;
- 
+
       for ( int k = 0; k < mdtl.size(); k++) {
 	miutil::miTime modeltime = mdtl[k].otime;
 	int modelstnr = mdtl[k].stnr;
@@ -302,8 +302,8 @@ ErrorList::ErrorList(QStringList& selPar,
       //Priority filters for controls and parameters
       QString flTyp = "";
       int flg = errorFilter(noSelPar[j],
-			    memObs.controlinfo, 
-			    memObs.cfailed, 
+			    memObs.controlinfo,
+			    memObs.cfailed,
 			    flTyp);
 
       if ( obsInMissList(memObs) ) {
@@ -389,7 +389,7 @@ ErrorList::ErrorList(QStringList& selPar,
   error.clear();
   noError.clear();
   checkSecondMemoryStore();
- 
+
   es = error.size();
   for ( int i = 0; i < error.size(); i++ ) {
     int stnr = memStore2[error[es-1-i]].stnr;
@@ -440,7 +440,7 @@ ErrorList::ErrorList(QStringList& selPar,
     updateKvBase(memStore);
     delete memStore;
   }
-  
+
 
   //
   //Reference stations
@@ -468,12 +468,12 @@ ErrorList::ErrorList(QStringList& selPar,
       }
     }
     if ( pstnr != stnr || ( pstnr == stnr && panr != ppanr )) {
-      // If new station, or new parameter at same station:  loop through obs_pgm 
+      // If new station, or new parameter at same station:  loop through obs_pgm
       for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
 	int ostnr = obit->stationID();
 	int opanr = obit->paramID();
 	if ( ostnr != stnr && opanr == panr ) { //another station which has the same parameter
-	  
+
 	  std::list<kvStation>::const_iterator it=slist.begin();
 	  for ( ;it!=slist.end(); it++){  //find position of the other staTION
 	    if ( it->stationID() == ostnr ) {
@@ -485,21 +485,21 @@ ErrorList::ErrorList(QStringList& selPar,
 	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
 	  rStat.rstnr = ostnr;
 	  //       	  cerr << rStat.stnr << " - " << rStat.rstnr << " Dist = " << rStat.dist << endl;
-	  if (rStatList.size() == 0 ) 
+	  if (rStatList.size() == 0 )
 	    rStatList.push_back(rStat);
 	  else {
 	    bool ins = false;
-	    for ( vector<refs>::iterator dit = rStatList.begin(); 
+	    for ( vector<refs>::iterator dit = rStatList.begin();
 		  dit != rStatList.end(); dit++ ) {
-	      if ( rStat.stnr == dit->stnr && 
-		   rStat.parNo == dit->parNo && 
+	      if ( rStat.stnr == dit->stnr &&
+		   rStat.parNo == dit->parNo &&
 		   rStat.rstnr == dit->rstnr) {
 		ins = true;
 		break;
 	      }
-	      if ( rStat.stnr <= dit->stnr && 
-		   rStat.dist < dit->dist && 
-		   rStat.parNo < dit->parNo && 
+	      if ( rStat.stnr <= dit->stnr &&
+		   rStat.dist < dit->dist &&
+		   rStat.parNo < dit->parNo &&
 		   rStat.rstnr != dit->rstnr) {
 		rStatList.insert(dit, rStat);
 		ins = true;
@@ -523,10 +523,10 @@ ErrorList::ErrorList(QStringList& selPar,
 
     cerr << i << ": " << decodeutility::kvdataformatter::
       createString( getKvData( memStore3[i] ) ) << endl;
-    
+
     if ( memStore3[i].flg <= 1 &&  memStore3[i].flg > -3)
       continue;
-    
+
     strDat = strDat.setNum(memStore3[i].stnr);
     DataCell* snIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,1,snIt);
@@ -534,39 +534,39 @@ ErrorList::ErrorList(QStringList& selPar,
     strDat = memStore3[i].name.left(8);
     DataCell* naIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,2,naIt);
-    
+
     strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(5,2);
     DataCell* moIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,3,moIt);
-    
+
     strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(8,2);
     DataCell* dyIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,4,dyIt);
-    
+
     strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(11,2);
     DataCell* clIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,5,clIt);
-    
+
     strDat = memStore3[i].parName;
     DataCell* paIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,6,paIt);
-    
+
     strDat = strDat.setNum(memStore3[i].typeId);
     DataCell* tiIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,7,tiIt);
-    
+
     strDat = strDat.setNum(memStore3[i].orig,'f',paramIsCode(memStore3[i].parNo));
     DataCell* ogIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,8,ogIt);
-    
+
     strDat = strDat.setNum(memStore3[i].corr,'f',paramIsCode(memStore3[i].parNo));
     DataCell* coIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,9,coIt);
-        
+
     strDat = strDat.setNum(memStore3[i].morig,'f',paramIsCode(memStore3[i].parNo));
     DataCell* mlIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,10,mlIt);
-    
+
     strDat = memStore3[i].flTyp;
     DataCell* fiIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,11,fiIt);
@@ -578,19 +578,19 @@ ErrorList::ErrorList(QStringList& selPar,
     strDat = strDat.setNum(memStore3[i].flg);
     DataCell* fgIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,13,fgIt);
-    
+
     insRow++;
   }
 
   cerr << "Antall rader = " << insRow << endl;
-  
+
   for (int icol = 14; icol < 16; icol++) {
     for ( int irow = headSize; irow < insRow + headSize; irow++ ) {
       OkTableItem* okIt = new OkTableItem(this, "");
       setItem(irow,icol,okIt);
     }
   }
-  
+
   for (int icol = 16; icol < 19; icol++) {
     for ( int irow = headSize; irow < insRow + headSize; irow++ ) {
       CrTableItem* crIt = new CrTableItem(this, Q3TableItem::WhenCurrent, "" ,// );
@@ -695,7 +695,7 @@ bool ErrorList::priorityParameterFilter(int parNo) {
   if ( parNo >= 1000 )
     return false;
   else
-    return true; 
+    return true;
 }
 
 int ErrorList::priorityControlFilter(QString control) {
@@ -770,7 +770,7 @@ void ErrorList::checkFirstMemoryStore() {
 	    break;
 	  }
 	}
-      } 
+      }
     }
     else if ( memStore1[i].flTyp == "fcc" ) {
       noError.push_back(i);
@@ -808,7 +808,7 @@ void ErrorList::checkSecondMemoryStore() {
 	    break;
 	  }
 	}
-      } 
+      }
     }
     else if ( memStore2[i].flTyp == "fnum" ) {
       if ( memStore2[i].parNo == 61 ){
@@ -825,7 +825,7 @@ void ErrorList::checkSecondMemoryStore() {
 
 bool ErrorList::paramHasModel(int parNo) {
   for ( int i = 0; i < 8; i++ ) {
-    if ( parNo == mP[i] ) 
+    if ( parNo == mP[i] )
       return true;
   }
   return false;
@@ -833,7 +833,7 @@ bool ErrorList::paramHasModel(int parNo) {
 
 int ErrorList::paramIsCode(int parNo) {
   for ( int i = 0; i < 58; i++ ) {
-    if ( parNo == cP[i] ) 
+    if ( parNo == cP[i] )
       return 0;
   }
   return 1;
@@ -841,7 +841,7 @@ int ErrorList::paramIsCode(int parNo) {
 void ErrorList::tableCellClicked(int row,
                                 int col,
                                 int button,
-                                const QPoint& mousePos) { 
+                                const QPoint& mousePos) {
   if ( col == 0 && row >= 0) {
     selectRow(row);
   }
@@ -865,10 +865,10 @@ bool ErrorList::specialTimeFilter( int par, miutil::miTime otime) {
     spf = false;
   }
   return spf;
-} 
+}
 
 bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) {
-  if ( typeId  == 501 ) return false; 
+  if ( typeId  == 501 ) return false;
   bool tpf = false;
   for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
@@ -880,7 +880,7 @@ bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) 
 /*!
  * \brief Update kvalobs, set hqc-flag = 2 for obs not in errorlist
  */
-void ErrorList::updateKvBase(mem* memStore) 
+void ErrorList::updateKvBase(mem* memStore)
 {
   if ( mainWindow->reinserter != NULL ) {
     kvData kd = getKvData( *memStore );
@@ -945,7 +945,7 @@ void ErrorList::markModified( int row, int col )
   ErrorListFirstCol * elfc = dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
   assert( elfc );
 
-  struct mem &msItem = 
+  struct mem &msItem =
     memStore3[ elfc->memStoreIndex() ];
 
   kvData kd = getKvData( row );
@@ -1225,7 +1225,7 @@ void ErrorList::setupMissingList( int row, int col )
 {
   const struct mem *m = getMem( row );
   if ( m and m->controlinfo[4] == '6' ) {
-    efh->reset( row, execMissingList, (Qt::Key) (Qt::Key_M ), 
+    efh->reset( row, execMissingList, (Qt::Key) (Qt::Key_M ),
 	       "Ctrl+M viser mangelliste." );
   }
   else
@@ -1234,7 +1234,7 @@ void ErrorList::setupMissingList( int row, int col )
 
 const struct ErrorList::mem *ErrorList::getMem( int row ) const
 {
-  ErrorListFirstCol *elfc = 
+  ErrorListFirstCol *elfc =
     dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
   if ( elfc == NULL )
     return NULL;
@@ -1244,12 +1244,12 @@ const struct ErrorList::mem *ErrorList::getMem( int row ) const
 kvData
 ErrorList::getKvData( const struct ErrorList::mem &m ) const
 {
-  return kvData( m.stnr, m.obstime, m.orig, m.parNo, m.tbtime, 
-		 m.typeId, m.sen, m.lev, m.corr, m.controlinfo, 
+  return kvData( m.stnr, m.obstime, m.orig, m.parNo, m.tbtime,
+		 m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
 		 m.useinfo, m.cfailed );
 }
 
-kvData 
+kvData
 ErrorList::getKvData( int row ) const
 {
   const struct mem *m = getMem( row );
@@ -1307,7 +1307,7 @@ void ErrorList::saveChanges()
     }
 
     OkTableItem* okIt = static_cast<OkTableItem*>(item( row, 19));
-    if ( okIt->isChecked() ) 
+    if ( okIt->isChecked() )
       ccol = 19;
 
     kvData kd = getKvData( row );
@@ -1327,7 +1327,7 @@ void ErrorList::saveChanges()
 	}
 	else {
 	  if ( fmis == 0 ) {
-	    cif.set(15,7); 
+	    cif.set(15,7);
 	  }
 	  else if ( fmis == 1 ) {
 	    cif.set(15,5);
@@ -1338,7 +1338,7 @@ void ErrorList::saveChanges()
     case 15:
       {
 	if ( fmis == 0 ) {
-	  cif.set(15,1); 
+	  cif.set(15,1);
 	  kd.corrected(kd.original());
 	  if ( cif.flag(12) == 3 )
 	    cif.set(12,1);
@@ -1378,7 +1378,7 @@ void ErrorList::saveChanges()
 	  cif.set(6,0);
 	  cif.set(12,2);
 	}
-	else if ( fmis == 1 || fmis == 3 ) { 
+	else if ( fmis == 1 || fmis == 3 ) {
 	  cif.set(6,1);
 	}
 	cif.set(12,2);
@@ -1400,13 +1400,13 @@ void ErrorList::saveChanges()
     case 19:
       {
 	int fmis = cif.flag(6);
-	if ( fmis == 1 ) 
+	if ( fmis == 1 )
 	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
-	else if ( fmis == 3 ) 
+	else if ( fmis == 3 )
 	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
 	else {
-	  cif.set(15,10); 
-	  if ( fmis == 0 ) 
+	  cif.set(15,10);
+	  if ( fmis == 0 )
 	    cif.set(6,2);
 	}
       }
@@ -1441,7 +1441,7 @@ void ErrorList::saveChanges()
 
     modData.push_back( kd );
   }
-  
+
   cerr << decodeutility::kvdataformatter::createString( modData ) << endl;
 
 
@@ -1452,7 +1452,7 @@ void ErrorList::saveChanges()
   }
 
   if ( result->res != CKvalObs::CDataSource::OK ) {
-    QMessageBox::critical( this, 
+    QMessageBox::critical( this,
 			    "Kan ikke lagre data",
 			   QString( "Kan ikke lagre data!\n"
 				    "Meldingen fra Kvalobs var:\n" ) +
@@ -1460,9 +1460,9 @@ void ErrorList::saveChanges()
 			   QMessageBox::Ok,
 			   Qt::NoButton );
     return;
-  }			   
+  }
 
-  QString message = QString::number( modifiedRows.size() ) 
+  QString message = QString::number( modifiedRows.size() )
     + " rader ble lagret til kvalobs.";
   QMessageBox::information( this,
 			    "Data lagret",
@@ -1495,11 +1495,11 @@ void ErrorList::readLimits() {
   }
 }
 
-bool ErrorList::maybeSave() 
+bool ErrorList::maybeSave()
 {
   bool ret = true;
   if ( not modifiedRows.empty() ) {
-    int result = 
+    int result =
       QMessageBox::warning( this, "HQC",
 			    "Du har ulagrede endringer i feillista.\n"
 			    "Vil du lagre dem?",
@@ -1519,18 +1519,18 @@ bool ErrorList::event(QEvent *event)
     QPoint cp = mapFromGlobal(helpEvent->globalPos());
     int row = rowAt( cp.y() )-1;
     int col = columnAt( cp.x() );
-    
+
     QString cellText = text( row, stationidCol );
     if ( cellText.isNull() )
       return false;
-    
+
     bool ok = true;
-    QString tipString = 
+    QString tipString =
       StationInfo::getInstance(KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
     if ( !ok ) {// Cold not convert cell contents to int.
       return false;
     }
-    
+
     cellText = text( row, typeidCol );
     if ( cellText.isNull() )
       return false;

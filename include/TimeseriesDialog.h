@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <stdlib.h>
 #include <iostream>
-#include <PlotOptions.h>
+#include <qTimeseries/PlotOptions.h>
 //#include <qmainwindow.h>
 #include <qdialog.h>
 //#include <qprogressdialog.h>
@@ -50,9 +50,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qcombobox.h>
 #include <qcolor.h>
 #include <qstringlist.h>
-#include <kvData.h>
-#include <kvStation.h>
-#include <kvDbGate.h>
+#include <kvalobs/kvData.h>
+#include <kvalobs/kvStation.h>
+#include <kvalobs/kvDbGate.h>
 #include <vector>
 
 using namespace std;
@@ -67,7 +67,7 @@ public:
   void hideAll();
   void showAll();
 
-  void getResults(vector<miutil::miString>& parameter, 
+  void getResults(vector<miutil::miString>& parameter,
 		  miutil::miTime& fromTime,
 		  miutil::miTime& toTime,
 		  vector<int>& stationID,
@@ -124,7 +124,7 @@ private:
   Q3ListBox* parameterListbox;
   Q3ListBox* resultListbox;
 
-  QComboBox* linecolourBox;  
+  QComboBox* linecolourBox;
   QComboBox* lineBox;
   QComboBox* linewidthBox;
   QComboBox* markerBox;

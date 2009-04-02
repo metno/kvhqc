@@ -30,10 +30,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "DayObs.h"
 #include "enums.h"
-#include <miTime>
-#include <KvApp.h>
-#include <WhichDataHelper.h>
-#include <kvDataOperations.h>
+#include <puTools/miTime>
+#include <kvcpp/KvApp.h>
+#include <kvcpp/WhichDataHelper.h>
+#include <kvalobs/kvDataOperations.h>
 #include <cmath>
 #include <limits>
 #include <boost/thread.hpp>
@@ -72,7 +72,7 @@ namespace WatchRR
     miTime start( date, miClock( 11, 59, 59 ) );
 
     KvObsDataList dataList;
-    
+
     WhichDataHelper wdh;
     wdh.addStation( station, start, stop );
 
@@ -80,28 +80,28 @@ namespace WatchRR
     if ( not ok )
       throw runtime_error( "Could not get data from kvalobs" );
 
-    for ( KvObsDataList::iterator dl = dataList.begin(); dl != dataList.end(); dl++ ) 
+    for ( KvObsDataList::iterator dl = dataList.begin(); dl != dataList.end(); dl++ )
     {
-      for ( KvDataList::const_iterator it = dl->dataList().begin(); it != dl->dataList().end();   it++ ) 
+      for ( KvDataList::const_iterator it = dl->dataList().begin(); it != dl->dataList().end();   it++ )
       {
-      	if ( ilarge.find( it->paramID() ) != ilarge.end() and sameobs( *it, type, sensor, level) ) 
+      	if ( ilarge.find( it->paramID() ) != ilarge.end() and sameobs( *it, type, sensor, level) )
       	{
 
       	  kvDataPtr d( new kvData( *it ) );
-      	
+
           // Do not overwrite values, unless they are agregated ones.
-      	  if ( it->paramID() == RR_24 ) 
+      	  if ( it->paramID() == RR_24 )
       	  {
       	    DataCollection::const_iterator old = data.find( d );
       	    if ( old != data.end() and (*old)->typeID() > 0 )
       	      continue;
       	  }
-      	  
+
       	  data.insert( d );
       	}
       }
     }
-    
+
     std::list<kvalobs::kvModelData> model;
     ok = KvApp::kvApp->getKvModelData( model, wdh );
     if ( ok ) {
@@ -114,32 +114,32 @@ namespace WatchRR
     }
   }
 
-  
+
   DayObs::~DayObs( )
   {
   }
 
   namespace // Everything here in this NS is related to summer/normal time
   {
-	using namespace boost::gregorian; 
-  
+	using namespace boost::gregorian;
+
 	// I 1996 ble Norge og alle EU-land enige om at sommertiden starter siste søndag i mars og slutter siste søndag i oktober. (no.wikipedia)
-  
+
   	// We are hardcoding transitions between summer time and normal time.
   	// Therefore this is only valid for Norway (or possibly the EU), after 1996.
-  
+
 	date summertime_start( int year )
 	{
 		static last_day_of_the_week_in_month find( Sunday, Mar );
 		return find.get_date( year );
 	}
-	  
+
 	date summertime_end( int year )
 	{
 		static last_day_of_the_week_in_month find( Sunday, Oct );
 		return find.get_date( year );
 	}
-	  
+
 	bool summertime( const miDate & d )
 	{
 		date_period summertime( summertime_start( d.year() ), summertime_end( d.year() ) );
@@ -153,13 +153,13 @@ namespace WatchRR
     miDate d = date;
     if ( clock > miClock(7,0,0) )
       d.addDay( -1 );
-    
+
     if ( type == 402 and clock == miClock( 6,0,0 ) and not summertime( date ) )
     	return get( paramID, miClock( 7,0,0 ) );
-    
+
     kvDataPtr tmp( new kvData(
       getMissingKvData( station, miTime( d, clock ), paramID, type, sensor, level ) ) );
-      
+
     pair<DataCollection::iterator, bool> result = data.insert( tmp );
     DataCollection::iterator & dc = result.first;
 
@@ -172,7 +172,7 @@ namespace WatchRR
       out.push_back( it->get() );
     }
   }
-  
+
   float DayObs::getModelRR() const
   {
     return modelRR;
@@ -185,26 +185,26 @@ namespace WatchRR
 
     val = a->stationID() - b->stationID();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     if ( a->obstime() != b->obstime() )
       return a->obstime() < b->obstime();
 
     val = a->paramID() - b->paramID();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = abs(a->typeID()) - abs(b->typeID());
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = a->sensor() - b->sensor();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     val = a->level() - b->level();
     if ( val )
-      return val < 0; 
+      return val < 0;
 
     return false;
   }
@@ -214,13 +214,13 @@ namespace WatchRR
   {
     if ( d.paramID() != RR_24 )
       type = abs( type );
-    
+
     return ( d.typeID() == type )
       and  ( d.sensor() == sensor )
       and  ( d.level() == level );
   }
 
-  DayObsListPtr getDayObs( int station, int type, int sensor, int level, 
+  DayObsListPtr getDayObs( int station, int type, int sensor, int level,
 			   const miDate & from, const miDate & to,
 			   bool processEvents )
   {
@@ -234,16 +234,16 @@ namespace WatchRR
   namespace {
     struct thread_obj_getDayObs {
       DayObsListPtr & holder;
-      int station, type, sensor, level; 
-      const miDate & from; 
+      int station, type, sensor, level;
+      const miDate & from;
       const miDate & to;
 
       thread_obj_getDayObs( DayObsListPtr & holder,
-			    int station, int type, int sensor, int level, 
+			    int station, int type, int sensor, int level,
 			    const miDate & from, const miDate & to )
 	: holder(holder), station(station), type(type), sensor(sensor)
 	, level(level), from(from), to(to)
-	
+
       {
       }
 
@@ -261,9 +261,9 @@ namespace WatchRR
     };
   }
 
-  auto_ptr< boost::thread > 
+  auto_ptr< boost::thread >
   thread_getDayObs( DayObsListPtr & holder,
-		    int station, int type, int sensor, int level, 
+		    int station, int type, int sensor, int level,
 		    const miutil::miDate & from, const miutil::miDate & to )
   {
     thread_obj_getDayObs tog( holder, station, type, sensor, level, from, to );

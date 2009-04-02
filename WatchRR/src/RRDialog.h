@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__RRDialog_h__
 
 //#include <kvservice/qt/kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <qdialog.h>
 //Added by qt3to4:
 #include <QShowEvent>
@@ -57,19 +57,19 @@ namespace WatchRR
   {
     Q_OBJECT;
 
-    void setup( RRTable * rrt ); 
+    void setup( RRTable * rrt );
 
   public:
 
     /**
-     * \brief Will prompt user for a what data, and return the appropriate 
+     * \brief Will prompt user for a what data, and return the appropriate
      *        RRDialog
      *
      * \parameter data represents the default values for station, obstime etc.
      */
     static RRDialog * getRRDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
 
-    RRDialog( DayObsListPtr dol,	
+    RRDialog( DayObsListPtr dol,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      const QString & captionSuffix,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );

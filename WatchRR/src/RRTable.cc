@@ -41,7 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include <algorithm>
 #include <cmath>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
 #include <sstream>

@@ -36,8 +36,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QKeyEvent>
 #include <vector>
 #include <iterator>
-#include <kvData.h>
-#include <kvStation.h>
+#include <kvalobs/kvData.h>
+#include <kvalobs/kvStation.h>
 #include <decodeutility/DataReinserter.h>
 
 class Q3ListView;
@@ -67,7 +67,7 @@ namespace Weather
 
   public:
     explicit MultiStationSelection( std::list<kvalobs::kvStation>& slist,
-				    QWidget * parent = 0, 
+				    QWidget * parent = 0,
 				    const kvalobs::kvData * data = 0 );
     virtual ~MultiStationSelection( );
 

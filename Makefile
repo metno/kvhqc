@@ -9,7 +9,7 @@ include etc/make.${OSTYPE}
 # Definerer et par ekstra variable som ikke står i ../make.${OSTYPE}
 
 ifndef HQCDIR
-HQCDIR=$(HQC)/kvhqc
+HQCDIR:=$(PWD)
 endif
 ifndef KVDIR
 KVDIR=$(HQC)/kvalobs
@@ -33,6 +33,9 @@ BOOST_HOME=/usr
 BOOST_INCLUDE= $(BOOST_HOME)/include
 BOOST_LIB= $(BOOST_HOME)/lib
 #BOOST_LIB= ../../lib
+
+foo:
+	@echo Dir: $(srcdir)
 
 SRCDIR=src
 LIBDIR=lib$(PLT)
@@ -63,41 +66,14 @@ INCLUDE=-I$(INCDIR) \
 	-I$(QTINC)/QtGui \
 	-I$(QTINC)/QtOpenGL \
 	-I$(QTINC)/QtNetwork \
-	-I$(KVDIR)/include \
-	-I$(KVDIR)/src/lib \
-	-I$(KVDIR)/src/lib/kvalobs \
-	-I$(KVDIR)/src/lib/miutil \
-	-I$(KVDIR)/src/lib/dnmithread \
-	-I$(KVDIR)/src/lib/kvdb \
-	-I$(KVDIR)/src/lib/kvskel \
-	-I$(KVDIR)/src/lib/fileutil \
-	-I$(KVDIR)/src/lib/corbahelper \
-	-I$(KVDIR)/src/service-libs/kvcpp \
-	-I$(KVDIR)/include/fileutil \
-	-I$(LOCALINC) \
-	-I$(LOCALINC)/qUtilities \
-	-I$(LOCALINC)/qTimeseries \
-	-I$(LOCALINC)/glText \
-	-I$(LOCALINC)/puTools
+	`pkg-config --cflags kvcpp qutilities qtimeseries gltext putools`
 
 LINKS:= -L$(WATCHDIR) -lWatchRR4 \
 	-L$(WEATHERDIR) -lWeather4 \
 	-L$(FAILDIR) -lFailInfo \
 	-L$(AUTHDIR) -lauthentication -lldap \
-	-L$(KVDIR)/src/service-libs/kvcpp/.libs -lkvcpp \
-	-L$(KVDIR)/src/lib/kvskel/.libs -lkvskel \
-	-L$(KVDIR)/src/lib/decodeutility/.libs -ldecodeutility \
-	-L$(KVDIR)/src/lib/kvalobs/.libs -lkvalobs \
-	-L$(KVDIR)/src/lib/kvdb/.libs -lkvdb \
-	-L$(KVDIR)/src/lib/dnmithread/.libs -ldnmithread \
-	-L$(KVDIR)/src/lib/miutil/.libs -lmiutil -lpuTools \
-	-L$(KVDIR)/src/lib/fileutil/.libs -lfileutil \
-	-L$(KVDIR)/src/lib/milog/.libs -lmilog \
 	-L$(BOOST_LIB) -lboost_thread \
-	-L$(LOCLIB) -lqUtilities -lqTimeseries -lpets2 -ltsData -lpuMet -lglText -lglp \
-	-L$(KVDIR)/src/lib/miconfparser -lmiconfparser -lpuDatatypes -lparameter -lpuCtools -lpets2 \
-	-L$(KVDIR)/src/service-libs/qt \
-	-L$(KVDIR)/src/lib/corbahelper/.libs -lcorbahelper \
+	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
 	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
 	-L$(QTLIB) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
 
