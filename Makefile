@@ -72,7 +72,7 @@ LINKS:= -L$(WATCHDIR) -lWatchRR4 \
 	-L$(BOOST_LIB) -lboost_thread \
 	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
 	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
-	-L$(QTLIB) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
+	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
 
 OPTIONS="CXX=${CXX}" "CCFLAGS=${CXXFLAGS} ${DEFINES}" "CC=${CC}" "CFLAGS=${CFLAGS} ${DEFINES}" "LDFLAGS=${CXXLDFLAGS}" "AR=${AR}" "ARFLAGS=${ARFLAGS}" "INCLUDE=${INCLUDE}" "LIBDIR=${LIBDIR}" "DEPENDSFILE=../${DEPENDSFILE}" "BINDIR=../${BINDIR}" "LOCALDIR=${LOCALDIR}" "INCDIR=${INCDIR}" "LINKS=${LINKS}" "MOC=${MOC}" "MOCFILE=../${MOCFILE}" "AUTHDIR=$(AUTHDIR)" "FAILDIR=$(FAILDIR)" "WATCHDIR=$(WATCHDIR)" "WEATHERDIR=$(WEATHERDIR)"
 
