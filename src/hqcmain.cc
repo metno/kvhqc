@@ -100,7 +100,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
  * Main Window Constructor.
  */
 HqcMainWindow::HqcMainWindow()
-  : Q3MainWindow( 0, "HQC", Qt::WDestructiveClose ), usesocket(true)
+  : Q3MainWindow( 0, "HQC", Qt::WDestructiveClose ), pluginB(0), usesocket(true)
   , reinserter( NULL )
 {
   if ( ! KvApp::kvApp )
@@ -2241,7 +2241,7 @@ void HqcMainWindow::initDiana()
 
 
   //  if(pluginB->connectClient(type)){
-  if(pluginB->clientTypeExist(type)){
+  if(pluginB && pluginB->clientTypeExist(type)){
     dianaconnected= true;
     cerr << "HQC connected to Diana" << endl;
     //    sendTimes();
@@ -2278,7 +2278,8 @@ void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
   cerr << "HQC:     command:" << m.command << endl;
   cerr << "HQC: description:" << m.description << endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(m);
+  if ( pluginB )
+    pluginB->sendMessage(m);
 }
 
 // called when client-list changes
@@ -2304,8 +2305,8 @@ void HqcMainWindow::sendTimes(){
   cerr << "HQC:      common:" << m.common << endl;
   cerr << "HQC: description:" << m.description << endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(m);
-
+  if ( pluginB )
+    pluginB->sendMessage(m);
 }
 
 // processes incoming miMessages
@@ -2348,7 +2349,8 @@ void HqcMainWindow::sendShowText(const miutil::miString site)
   cerr << "HQC:     command:" << m.command << endl;
   cerr << "HQC: description:" << m.description << endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(m);
+  if ( pluginB )
+    pluginB->sendMessage(m);
 }
 */
 
@@ -2365,7 +2367,8 @@ bool  HqcMainWindow::sendAnalysisMessage() {
   for(int i=0;i<letter.data.size();i++)
     cerr <<"HQC    :data:" << letter.data[i]<<endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(letter);
+  if ( pluginB )
+    pluginB->sendMessage(letter);
   dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
   return true;
 }
@@ -2381,7 +2384,8 @@ void HqcMainWindow::sendStation(int stnr)
   cerr << "HQC: command:" << pLetter.command << endl;
   cerr << "HQC: common:" << pLetter.common << endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(pLetter);
+  if ( pluginB )
+    pluginB->sendMessage(pLetter);
 
 }
 
@@ -2413,7 +2417,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     cerr <<"HQC: commondesc:" << tLetter.commondesc << endl;
     cerr <<"HQC: common:" << tLetter.common << endl;
     cerr << "HQC sender melding" << endl;
-    pluginB->sendMessage(tLetter);
+    if ( pluginB )
+      pluginB->sendMessage(tLetter);
   }
   miMessage pLetter;
   pLetter.command = qmstrings::init_HQC_params;
@@ -2593,7 +2598,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     for(int i=0;i<pLetter.data.size();i++)
       cerr <<"HQC: data:"<<pLetter.data[i]<<endl;
     cerr << "HQC sender melding" << endl;
-    pluginB->sendMessage(pLetter);
+    if ( pluginB )
+      pluginB->sendMessage(pLetter);
   }
 
   if(enkelData.size()){
@@ -2611,7 +2617,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     for(int i=0;i<pLetter.data.size();i++)
       cerr <<"HQC: data:"<<pLetter.data[i]<<endl;
     cerr << "HQC sender melding" << endl;
-    pluginB->sendMessage(pLetter);
+    if ( pluginB )
+      pluginB->sendMessage(pLetter);
   }
 
   miMessage okLetter;
@@ -2621,7 +2628,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   cerr <<"HQC: command:"<<okLetter.command<<endl;
   cerr <<"HQC: commandTEST:"<<okLetter.content() <<endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(okLetter);
+  if ( pluginB )
+    pluginB->sendMessage(okLetter);
 
 }
 
@@ -2642,7 +2650,8 @@ void HqcMainWindow::sendSelectedParam(miutil::miString param)
   cerr << "HQC: commondesc = " << pLetter.commondesc << endl;
   cerr << "HQC: common     = " << pLetter.common << endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(pLetter);
+  if ( pluginB )
+    pluginB->sendMessage(pLetter);
 
 
 }
@@ -2699,7 +2708,8 @@ void HqcMainWindow::updateParams(int station,
   for(int i=0;i<pLetter.data.size();i++)
     cerr <<"HQC: data:"<<pLetter.data[i]<<endl;
   cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(pLetter);
+  if ( pluginB )
+    pluginB->sendMessage(pLetter);
 
   pLetter.common = time.isoTime() + ",synop";
   miutil::miString dianaParam = dianaName(param);
@@ -2708,7 +2718,8 @@ void HqcMainWindow::updateParams(int station,
     cerr << "HQC: common     = " << pLetter.common << endl;
     cerr << "HQC: description= " << pLetter.description << endl;
     cerr << "HQC sender melding" << endl;
-    pluginB->sendMessage(pLetter);
+    if ( pluginB )
+      pluginB->sendMessage(pLetter);
   }
 }
 
