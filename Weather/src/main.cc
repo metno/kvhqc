@@ -54,11 +54,11 @@ int main( int argc, char ** argv )
     string shist = hist ? string(hist) : "0";
   string myconf;
   if ( shist == "1" )
-    myconf = string( kvdir ) + "/etc/kvhist.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvhist.conf";
   else if ( shist == "2" )
-    myconf = string( kvdir ) + "/etc/kvtest.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvtest.conf";
   else
-    myconf = string( kvdir ) + "/etc/kvalobs.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
   miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
   if(!confSec) {
