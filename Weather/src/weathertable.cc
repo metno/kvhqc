@@ -390,7 +390,7 @@ namespace Weather
     }
     int par, dum;
     float low, high;
-    QString limitsFile = path + "/slimits";
+    QString limitsFile = path + "/etc/kvhqc/slimits";
     QFile limits(limitsFile);
     if ( !limits.open(QIODevice::ReadOnly) ) {
       cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;
