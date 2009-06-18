@@ -195,13 +195,14 @@ namespace Weather
 
   WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
-		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
+		      QWidget *parent, const char* name, bool modal, Qt::WindowFlags f )
     : Q3TabDialog( parent, name, modal )
     , dataReinserter( dataReinserter )
     , observations( tobs )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
     , shownFirstTime( false )
   {
+    f = Qt::WindowMaximizeButtonHint;
     if ( station != 0 ) {
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
     for ( int i = 0; i < NP; i++ ) {
@@ -283,12 +284,13 @@ namespace Weather
 
   WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 				const DataReinserter<KvApp> * dataReinserter,
-				QWidget* parent, const char* name, bool modal, Qt::WFlags f )
+				QWidget* parent, const char* name, bool modal, Qt::WindowFlags f )
     : Q3TabDialog( parent, name, modal)
     , dataReinserter( dataReinserter )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
   {
+    f = Qt::WindowMaximizeButtonHint;
     connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
     for ( int i = 0; i < NP; i++ )
       parameterIndex[params[i]] = i;
