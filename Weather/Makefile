@@ -1,4 +1,6 @@
-PROGRAM_NAME=Weather4
+include ../etc/make.$(OSTYPE)
+
+PROGRAM_NAME=Weather
 TARGET= lib$(PROGRAM_NAME).a
 TEST_PROGRAM_NAME= test$(PROGRAM_NAME)
 
@@ -7,32 +9,27 @@ SRC:=
 TESTSRC:=
 QSRC:=
 UI:=
-#BOOSTINCLUDE=-I$(BOOST_HOME)/include
-#ifndef OMNIORB_INCLUDE
-#	OMNIINCLUDE:=$(strip $(shell pkg-config --cflags-only-I omniORB4))/omniORB4
-#	OMNIINCLUDE:=$(shell pkg-config --cflags omniORB4) $(OMNIINCLUDE)
-#else
-#  OMNIINCLUDE= -I$(OMNIORB_INCLUDE) -I$(OMNIORB_INCLUDE)/omniORB4 
-#endif
-#OMNIINCLUDE= -I$(OMNIORB_HOME)/include -I$(OMNIORB_INCLUDE)/omniORB4 
-#PUTOOLS= $(HQC)/puglocal/src/libs/puTools
-#PUTOOLS= $(HQC)/apps
+
+OMNIORB_HOME=/usr
+OMNI_INCLUDE= $(OMNIORB_HOME)/include 
+OMNI_LIB= $(OMNIORB_HOME)/lib 
+
+BOOST_HOME=/usr
+BOOST_INCLUDE= $(BOOST_HOME)/include
+BOOST_LIB= $(BOOST_HOME)/lib
+
 PUTOOLS=$(HQC)/..
-#include $(KVDIR)/conf/make.$(OSTYPE)
-KVDIR=$(HQC)/kvalobs
 PKG_CONF_LIBS= QtCore QtGui Qt3Support libxml++-2.6
-#PKG_CONF_LIBS= qt-mt libxml++-1.0
 
 INCLUDE:=-Isrc/ -I../include \
 	 -I../authentication \
-	 $(BOOSTINCLUDE) \
-	 $(OMNIINCLUDE) \
+	 $(BOOST_INCLUDE) \
+	 $(OMNI_INCLUDE) \
 	 -I$(QTINC)/Qt3Support \
 	 -I$(QTINC)/Qt \
 	 -I$(QTINC)/QtCore \
 	 -I$(QTINC)/QtGui \
- 	`pkg-config --cflags kvcpp putools` \
-	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools/ \
+	`pkg-config --cflags kvcpp putools` \
 	 -I../include/ \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
@@ -40,7 +37,7 @@ LIB:= -L../authentication/ -lauthentication \
 	-L$(BOOST_LIB) -lboost_thread \
 	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
 	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
-	-L$(QTLIB) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
+	-L$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
 
 CXXFLAGS+= -Wall -DQT3_SUPPORT
 DEFINES+=
