@@ -36,8 +36,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <sstream>
 
-#include <qvalidator.h>
-#include <qregexp.h>
+//#include <qvalidator.h>
+#include <QValidator>
+//#include <qregexp.h>
+#include <QRegExp>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 
@@ -87,11 +89,13 @@ namespace Authentication {
 				QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl )
     : AuthenticationDialog( parent, name, modal, fl), server(server), port(port)
   {
-    QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
+    //    QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
+    QRegExpValidator *validUN = new QRegExpValidator(this);
     validUN->setRegExp(QRegExp("[-\\w]+"));
     username->setValidator(validUN);
 
-    QRegExpValidator *validPW = new QRegExpValidator(this, "pwInputValidator");
+    //    QRegExpValidator *validPW = new QRegExpValidator(this, "pwInputValidator");
+    QRegExpValidator *validPW = new QRegExpValidator(this);
     validPW->setRegExp(QRegExp("\\S+"));
     password->setValidator(validPW);
   }
@@ -123,7 +127,7 @@ namespace Authentication {
 			       QMessageBox::Ok);
       
       return;
-    }
+    } 
   }
 
   const QString Authenticator::authenticate(const char *server, int port) {
