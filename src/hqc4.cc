@@ -48,11 +48,11 @@ int main( int argc, char ** argv ) {
     string shist = hist ? string(hist) : "0";
   string myconf;
   if ( shist == "1" )
-    myconf = string( kvdir ) + "/etc/kvhist.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvhist.conf";
   else if ( shist == "2" )
-    myconf = string( kvdir ) + "/etc/kvtest.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvtest.conf";
   else
-    myconf = string( kvdir ) + "/etc/kvalobs.conf";
+    myconf = string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
 	cout << "Reading " << myconf << endl;
 
@@ -79,8 +79,8 @@ int main( int argc, char ** argv ) {
   QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
   QString caption = "HQC " + captionSuffix;
   mw->setCaption( caption );
-  mw->showMaximized();
-  //  mw->setGeometry(10,10,1268,942);
+  //  mw->showMaximized();
+  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
 
   mw->show();
