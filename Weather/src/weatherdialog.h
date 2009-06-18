@@ -96,12 +96,12 @@ namespace Weather
 
     WeatherDialog( TimeObsListPtr dol, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
+		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags f = Qt::Window );
 
 
     WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
+		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags f = Qt::Window);
     virtual ~WeatherDialog( );
     /**
      * \brief [Start, stop) dates for which to fetch data.
