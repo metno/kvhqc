@@ -18,7 +18,7 @@ MOCOBJ=$(QOBJ:.o=_moc.o)
 
 ALLSRC= $(CSRC) $(CCSRC) $(QSRC)
 ALLOBJ= $(COBJ) $(CCOBJ) $(QOBJ) $(MOCOBJ)
-INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR)/libWatchRR4.a $(WEATHERDIR)/libWeather4.a
+INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR)/libWatchRR.a $(WEATHERDIR)/libWeather.a
 
 #----------------------------------------------------------------------------
 
@@ -33,7 +33,7 @@ INTERNALLIBS= $(AUTHDIR)/libauthentication.a $(FAILDIR)/libFailInfo.a $(WATCHDIR
 .c.o:
 	$(CC) -c $(CCFLAGS) $< $(INCLUDE)
 
-all: $(BINDIR)/hqc4
+all: $(BINDIR)/hqc.bin
 
 
 #----------------------------------------------------------------------------
@@ -61,6 +61,6 @@ include $(DEPENDSFILE)
 
 #----------------------------------------------------------------------------
 
-$(BINDIR)/hqc4: $(ALLOBJ) $(INTERNALLIBS)
+$(BINDIR)/hqc.bin: $(ALLOBJ) $(INTERNALLIBS)
 	@echo $(INTERNALLIBS)
 	$(CXX) -o $@ $(CCFLAGS) $(ALLOBJ)  $(LINKS)
