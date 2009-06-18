@@ -45,10 +45,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <kvcpp/KvApp.h>
 #include <q3mainwindow.h>
+//#include <QMainWindow>
 #include <qobject.h>
-#include <q3popupmenu.h>
-#include <q3process.h>
-#include <qmenubar.h>
+#include <q3popupmenu.h> 
+#include <q3process.h> 
+#include <qmenubar.h> 
 #include <qmap.h>
 #include <q3multilineedit.h>
 #include <qpoint.h>
@@ -100,7 +101,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 /**
  * \brief The application's main window.
  */
-class HqcMainWindow: public Q3MainWindow
+class HqcMainWindow: public Q3MainWindow 
+//class HqcMainWindow: public QMainWindow 
 {
   Q_OBJECT
 public:
@@ -110,7 +112,7 @@ public:
   int nuroprpar;
   int nucoprpar;
   /*!
-   * \brief Send observation times to Diana
+   * \brief Send observation times to Diana 
    */
   void sendTimes();
   /*!
@@ -135,21 +137,21 @@ public:
    */
   void insertParametersInListBox(int, int*);
   /*!
-   * \brief When a parameter value is changed, the new value is
+   * \brief When a parameter value is changed, the new value is 
    *        sent to the datalist, to the timeseries and to Diana.
    */
-  void updateParams(int,
+  void updateParams(int, 
 		    miutil::miTime,
-		    miutil::miString,
-		    miutil::miString,
+		    miutil::miString, 
+		    miutil::miString, 
 		    miutil::miString);
   /*!
-   * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the
+   * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the 
    *        start, and to TRUE when an update is sent to the database.
    */
   void setKvBaseUpdated(bool);
   /*!
-   * \brief Returns the value of kvBaseIsUpdated
+   * \brief Returns the value of kvBaseIsUpdated  
    */
   bool kvBaseUpdated() {return kvBaseIsUpdated;};
   /*!
@@ -165,12 +167,12 @@ public:
   /*!
    * \brief Extracts all the data for one station and one time from datalist
    */
-  void listData(int,
-		int&,
-		miutil::miTime&,
-		double*,
-		int*,
-		double*,
+  void listData(int, 
+		int&, 
+		miutil::miTime&, 
+		double*, 
+		int*, 
+		double*, 
 		double*,
 		string*,
 		string*,
@@ -184,13 +186,13 @@ public:
   bool timeFilter(int);
   /*!
    * \brief Returns true if the given typeId and environment corresponds
-   *        to a station type checked in the ListDialog
+   *        to a station type checked in the ListDialog 
    */
   bool hqcTypeFilter(int&, int, int);
   bool typeIdFilter(int, int, int, miutil::miTime, int);
   bool isAlreadyStored(miutil::miTime, int);
   /*!
-   * \brief
+   * \brief 
    */
   bool timeFilterChanged;
   /*!
@@ -199,11 +201,11 @@ public:
    */
   void readFromStation();
   /*!
-   * \brief
+   * \brief 
    */
   void readFromStationFile(int);
   /*!
-   * \brief Reads the parameter order from the file paramorder, then reaads the param
+   * \brief Reads the parameter order from the file paramorder, then reaads the param 
    *        table in the kvalobs database and inserts the station information in parmap
    */
   void readFromParam();
@@ -213,7 +215,7 @@ public:
   void readFromTypeIdFile();
   void checkTypeId(int);
   /*!
-   * \brief Reads the obs_pgm table in the kvalobs database and
+   * \brief Reads the obs_pgm table in the kvalobs database and 
    *       inserts the station information in obsPgmList and statList
    */
   void readFromObsPgm();
@@ -230,7 +232,7 @@ public:
    */
   void tileHorizontal();
   /*!
-   * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime
+   * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime 
    */
   int findTypeId(int, int, int, miutil::miTime);
   //  int findTypeId(int, int, miutil::miTime);
@@ -250,35 +252,35 @@ public:
   miutil::miString hqcType(int, int);
 
 /*!
- * \brief Convert to "Diana-value" of range check flag
+ * \brief Convert to "Diana-value" of range check flag 
 */
   int numCode1(int);
 /*!
- * \brief Convert to "Diana-value" of consistency check flag
+ * \brief Convert to "Diana-value" of consistency check flag 
 */
   int numCode2(int);
 /*!
- * \brief Convert to "Diana-value" of prognostic space control flag
+ * \brief Convert to "Diana-value" of prognostic space control flag 
 */
   int numCode3(int);
 /*!
- * \brief Convert to "Diana-value" of step check flag
+ * \brief Convert to "Diana-value" of step check flag 
 */
   int numCode4(int);
 /*!
- * \brief Convert to "Diana-value" of timeseries adaption flag
+ * \brief Convert to "Diana-value" of timeseries adaption flag 
 */
   int numCode5(int);
 /*!
- * \brief Convert to "Diana-value" of statistics control flag
+ * \brief Convert to "Diana-value" of statistics control flag 
 */
   int numCode6(int);
 /*!
- * \brief Convert to "Diana-value" of climatology control flag
+ * \brief Convert to "Diana-value" of climatology control flag 
 */
   int numCode7(int);
 /*!
- * \brief Convert to "Diana-value" of HQC flag
+ * \brief Convert to "Diana-value" of HQC flag 
 */
   int numCode8(int);
 /*!
@@ -352,6 +354,7 @@ public slots:
   void dsh();
   void startKro();
 private:
+  bool firstObs;
   int sLevel;
   int sSensor;
   QMap<int,QString> parMap;
@@ -437,7 +440,7 @@ private:
   int priorityOrder[NOPARAMPRIORITY];
   int windOrder[NOPARAMWIND];
   int pluOrder[NOPARAMPLU];
-
+  
   TSPlotDialog* tspdialog; // timeseries-plot
   StationTable* stationTable;
   StationSelection* statSelect;
@@ -477,19 +480,19 @@ QStringList listParNum;
 
 private slots:
   // file commands
-  MDITabWindow* eTable(const miutil::miTime&,
+  MDITabWindow* eTable(const miutil::miTime&, 
 		       const miutil::miTime&,
-		       miutil::miTime&,
-		       miutil::miTime&,
-		       listType,
-		       listType,
-		       mettType,
+		       miutil::miTime&, 
+		       miutil::miTime&, 
+		       listType, 
+		       listType, 
+		       mettType, 
 		       QString&,
 		       int*,
-		       vector<datl>&,
-		       vector<modDatl>&,
+		       vector<datl>&, 
+		       vector<modDatl>&, 
 		       list<kvStation>&,
-		       int,
+		       int, 
 		       int,
 		       bool,
 		       QString&);
@@ -501,6 +504,7 @@ private slots:
   // socket slots
   void processLetter(miMessage&);
   void processConnect();
+  void cleanConnection();
   void errListMenu();
   void allListMenu();
   void errLogMenu();
@@ -536,7 +540,7 @@ signals:
   void printErrorList();
 
   /**
-   * \brief Emitted when a new station and/or obstime has been selected in the
+   * \brief Emitted when a new station and/or obstime has been selected in the 
    *        errorlist.
    */
   void errorListStationSelected(int station, const miutil::miTime & obstime);
