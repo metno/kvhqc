@@ -16,17 +16,3 @@ QSRC+=  src/MultiStationSelection.cc \
 	src/weathertable.cc \
 	src/centralwidget.cc \
 	src/StationSelection.cc
-
-#	src/RRCheckTableItem.cc \
-#SRC+= src/cellvalueprovider.cc \
-#	src/FDCheckTableItem.cc \
-#	src/RR_24DataTableItem.cc \
-#	src/RRTableItem.cc\
-#	src/ControlFlagCell.cc \
-#	src/RRTableToolTip.cc \
-#	src/VxKvDataTableItem.cc \
-#	src/dataconsistencyverifier.cc \
-#	src/SADataTableItem.cc \
-#	src/DayObs.cc \
-#	src/OkCheckTableItem.cc \
-#	src/SDDataTableItem.cc \
