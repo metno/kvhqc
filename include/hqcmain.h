@@ -212,7 +212,7 @@ public:
   /*!
    * \brief Reads the typeids file to find which typeids to show
    */
-  void readFromTypeIdFile();
+  //  void readFromTypeIdFile();
   void checkTypeId(int);
   /*!
    * \brief Reads the obs_pgm table in the kvalobs database and 
