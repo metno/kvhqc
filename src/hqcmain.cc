@@ -140,17 +140,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   remLity = dumLi; 
   dianaconnected=  false;  // connection to diana
   tsVisible = false;
-  cerr << "CC\n";
+
   // ---- MAIN MENU ---------------------------------------------
-#ifdef linux
-  //  qApp->setStyle(new QPlatinumStyle);
-  //  qApp->setStyle(new QPlatinumStyle);
-  //  qApp->setStyle(new QWindowsStyle);
-  cerr << "DD\n";
-#else
-  qApp->setStyle(new QSGIStyle);
-  cerr << "EE\n";
-#endif
+  //  qApp->setStyle(new QSGIStyle);
+
   listExist = FALSE;
   menuBar()->setFont(QFont("system", 12));
   
@@ -268,9 +261,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   pluginB = new ClientButton(name.cStr(),
 			     command.cStr(),
 			     statusBar());
-  //    pluginB = new ClientButton("hqc",
-  //			       "/usr/local/bin/coserver4",
-  //			       statusBar());
   pluginB->useLabel(true);
   pluginB->connectToServer();
   
@@ -844,10 +834,6 @@ void HqcMainWindow::ListOK() {
     int ind = QString(*sit).stripWhiteSpace().find(' ');
     stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
   }
-
-  //  if ( lity != erLi && lity != erSa )
-  //    sendAnalysisMessage();
-
   miutil::miTime stime;
   stime.setTime(miutil::miString(lstdlg->getStart().latin1()));
   miutil::miTime etime;
@@ -1107,7 +1093,7 @@ void HqcMainWindow::TimeseriesOK() {
   poptions.name= "HQC Tidsserie";
   poptions.fillcolour= POptions::Colour("white");
   poptions.linecolour= POptions::Colour("black");
-  poptions.linewidth= 1;
+  poptions.linewidth= 1;  
   tsplot.plotoptions(poptions); // set global plotoptions
 
   tsplot.tserieslist(tslist);      // set list of timeseries
@@ -1232,7 +1218,7 @@ void HqcMainWindow::showWatchRR()
       data = current->dtt->getKvData();
   }
 
-  WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this );
+  WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
   if ( rrd ) {
     rrd->setReinserter( reinserter );
     rrd->show();
@@ -1248,7 +1234,7 @@ void HqcMainWindow::showWeather()
       data = current->erl->getKvData();
     }
   }
-  Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this );
+  Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
   if ( wtd ) {
     wtd->setReinserter( reinserter );
     wtd->show();
@@ -1262,12 +1248,16 @@ void HqcMainWindow::listMenu() {
     miutil::miTime mx = miutil::miTime::nowTime();
     int noDays = lstdlg->toTime->time().dayOfYear() - lstdlg->fromTime->time().dayOfYear();
     if ( noDays < 0 ) noDays = 365 + noDays;
+
     if ( noDays < 27 ) {
       mx.addMin(-1*mx.min());
       mx.addHour(1);
       lstdlg->toTime->setMax(mx);
       lstdlg->toTime->setTime(mx);
+      lstdlg->toTime->setMax(mx);
+      lstdlg->toTime->setTime(mx);
     }
+
     lstdlg->showAll();
   }
 }
@@ -1538,13 +1528,12 @@ bool HqcMainWindow::timeFilter(int hour) {
 }
 
 bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
-  if ( typeId == -1 || typeId == 501 ) return FALSE;
+  //  if ( typeId == -1 || typeId == 501 ) return FALSE;
+  if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
-  //  if ( typeId == -1 ) return FALSE;
   int atypeId = typeId < 0 ? -typeId : typeId;
   if (  lstdlg->allType->isChecked() ) return TRUE;
   if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
-  //  if ( (environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 501)) || (atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
   if ( (environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412)) || (atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
   if ( environment == 2 && atypeId == 3 && lstdlg->alType->isChecked() ) return TRUE;
   if ( environment == 12 && atypeId == 3 && lstdlg->avType->isChecked() ) return TRUE;
@@ -1558,7 +1547,6 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
   if ( atypeId == 302 && lstdlg->nsType->isChecked() ) return TRUE;
   if ( environment == 9 && atypeId == 402 && lstdlg->ndType->isChecked() ) return TRUE;
   if ( environment == 10 && atypeId == 402 && lstdlg->noType->isChecked() ) return TRUE;
-  //  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412 || atypeId == 501) & lstdlg->vsType->isChecked() ) return TRUE;
   if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) & lstdlg->vsType->isChecked() ) return TRUE;
   if ( environment == 3 && atypeId == 412 && lstdlg->vkType->isChecked() ) return TRUE;
   if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && lstdlg->vmType->isChecked() ) return TRUE;
@@ -1597,10 +1585,8 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   }
   //Spesialtilfelle slutt
   if ( typeId == -404 ) return false;
+  if ( stnr == 4780 && typeId == 1 ) return true;
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
-  //  if ( ( stnr == 24710 || stnr == 18500 ) && (typeId == -342 || typeId == -330) ) return false;
-  //  if ( stnr == 4460 && typeId == -330 ) return false;
-  //  if ( stnr == 4460 && typeId == 342 && (otime.hour() == 6 || otime.hour() == 18) ) return false;
   if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && 
@@ -1624,11 +1610,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 				 listType lity) {
   BusyIndicator busy();
 
-  //  vector<datl> tempDatalist;
   bool result;
   bool tdlUpd[NOPARAM];
-  //  dlist.erase(dlist.begin(),dlist.end());
-  //  datalist.clear();
   for ( int ip = 0; ip < NOPARAM; ip++) {
     tdl.orig[ip]   = -32767.0;
     tdl.flag[ip]   = 0;
@@ -1640,18 +1623,17 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     tdl.cfailed[ip] = "";
     tdlUpd[ip] = false;
   }
-  miutil::miTime protime("1900-01-01 00:00:00");
+  miutil::miTime protime("1800-01-01 00:00:00");
   int prtypeId = -1;
   int prstnr = 0;
   QTime t;
   t.start();
-  readFromTypeIdFile();
+  //  readFromTypeIdFile();
   cerr << "Tid for readFromTypeIdFile = " << t.elapsed() << endl;
   t.restart();
   WhichDataHelper whichData;
   for ( int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], stime, etime);
-    //    readFromTypeIdFile(stList[i]);
     checkTypeId(stList[i]);
   }
   cerr << "Tid for whichData.addStation og checkTypeId = " << t.elapsed() << endl;
@@ -1678,7 +1660,7 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
  int aggPar = 0;
   int aggTyp = 0;
   int aggStat = 0;
-  miutil::miTime aggTime("1900-01-01 00:00:00") ;
+  miutil::miTime aggTime("1800-01-01 00:00:00") ;
   for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
     IDataList dit = it->dataList().begin();
     int ditSize = it->dataList().size();
@@ -1829,7 +1811,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
   for ( int ip = 0; ip < NOPARAMMODEL; ip++) {
     mtdl.orig[modelParam[ip]] = -32767.0;
   }
-  miutil::miTime protime("1900-01-01 00:00:00");
+  miutil::miTime protime("1800-01-01 00:00:00");
   int prstnr = 0;
   CIModelDataList it=mdlist.begin();
   while ( it != mdlist.end() ) {
@@ -1853,7 +1835,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
 }
 
 /*!
- Read the station table in the Qualobs database
+ Read the station table in the kvalobs database
 */
 void HqcMainWindow::readFromStation() {
   if (!KvApp::kvApp->getKvStations(slist)) {
@@ -1870,7 +1852,7 @@ void HqcMainWindow::readFromStation() {
   }
 }
 /*!
- Read the obs_pgm table in the Qualobs database
+ Read the obs_pgm table in the kvalobs database
 */
 
 void HqcMainWindow::readFromObsPgm() {
@@ -1883,6 +1865,7 @@ void HqcMainWindow::readFromObsPgm() {
 */
 
 void HqcMainWindow::checkTypeId(int stnr) {
+  /*
   for ( vector<QString>::iterator it = statLineList.begin(); it != statLineList.end(); it++) {
     int stationId = (*it).left(10).toInt();
     if ( stationId == stnr ) {
@@ -1904,28 +1887,28 @@ void HqcMainWindow::checkTypeId(int stnr) {
       currentTypeList.push_back(crT);
     }
   }
-}
-
-void HqcMainWindow::readFromTypeIdFile() {
-  QString path = QString(getenv("HQCDIR"));
-  if ( path.isEmpty() ) {
-    cerr << "Intet environment" << endl;
-    exit(1);
+  */
+  for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
+    int stationId = obit->stationID();
+    if ( stationId == stnr ) {
+      int par = obit->paramID();
+      miutil::miDate fDate = obit->fromtime().date();
+      miutil::miDate tDate = obit->totime().date();
+      int level  = obit->level();
+      int sensor = 0;
+      //      int sensor = obit->nr_sensor();
+      int typeId = obit->typeID();
+      crT.stnr = stationId;
+      crT.par = par;
+      crT.fDate = fDate;
+      crT.tDate = tDate;
+      //      crT.cSensor = (stnr == 16560) ? sensor : sensor - 1;
+      crT.cLevel = level;
+      crT.cTypeId = typeId;
+      currentTypeList.push_back(crT);
+    }
   }
-  QString typeIdFile = path + "/etc/kvhqc/typeids";
-  QFile typeIds(typeIdFile);
-  typeIds.open(QIODevice::ReadOnly);
-  Q3TextStream typeIdStream(&typeIds);
-  while ( typeIdStream.atEnd() == 0 ) {
-    QString statLine = typeIdStream.readLine();
-    statLineList.push_back(statLine);
-  }
 }
-
-
-
-
-
 
 /*!
  Read the station file, this must be done after the station table in the database is read
@@ -2309,8 +2292,6 @@ void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
     ost << setw(7) << int(*a[i]);
   miutil::miString txt= ost.str();
   m.data.push_back(txt);
-  //  cerr << "HQC:     command:" << m.command << endl;
-  //  cerr << "HQC: description:" << m.description << endl;
   cerr << "HQC sender melding" << endl;
   cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
   pluginB->sendMessage(m);
@@ -2340,10 +2321,6 @@ void HqcMainWindow::sendTimes(){
   for(int i=0;i<n;i++){
     m.data.push_back(datalist[i].otime.isoTime());
   }
-  //  cerr << "HQC:     command:" << m.command << endl;
-  //  cerr << "HQC:  commondesc:" << m.commondesc << endl;
-  //  cerr << "HQC:      common:" << m.common << endl;
-  //  cerr << "HQC: description:" << m.description << endl;
   cerr << "HQC sender melding" << endl;
   cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
   pluginB->sendMessage(m);
@@ -2400,12 +2377,8 @@ bool  HqcMainWindow::sendAnalysisMessage() {
   //show analysis
   miMessage letter;
   letter.command=qmstrings::apply_quickmenu;
-  //  letter.command="apply_quickmenu";
   letter.data.push_back("Hqc");
   letter.data.push_back("Bakkeanalyse");
-  //  cerr <<"HQC: command:" << letter.command<<endl;
-  //  for(int i=0;i<letter.data.size();i++)
-  //    cerr <<"HQC    :data:" << letter.data[i]<<endl;
   cerr << "HQC sender melding" << endl;
   cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
   pluginB->sendMessage(letter);
@@ -2647,9 +2620,6 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   }
   */
 
-  //  if(!synopData.size()){
-  
-  //  if(pLetter.command == qmstrings::update_HQC_params ||!synopData.size()) {
   if( !synopData.size() ) {
     miMessage okLetter;
     okLetter.command = "menuok";
@@ -2671,12 +2641,8 @@ void HqcMainWindow::sendSelectedParam(miutil::miString param)
 
   miMessage pLetter;
   pLetter.command = qmstrings::select_HQC_param;
-  //  pLetter.command = "select_HQC_param";
   pLetter.commondesc = "param";
   pLetter.common = param;
-  //  cerr << "HQC: command    = " << pLetter.command << endl;
-  //  cerr << "HQC: commondesc = " << pLetter.commondesc << endl;
-  //  cerr << "HQC: common     = " << pLetter.common << endl;
   cerr << "HQC sender melding" << endl;
   cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
   pluginB->sendMessage(pLetter);
@@ -2721,7 +2687,6 @@ void HqcMainWindow::updateParams(int station,
   //update diana
   miMessage pLetter;
   pLetter.command = qmstrings::update_HQC_params;
-  //  pLetter.command = "update_HQC_params";
   pLetter.commondesc = "time,plottype";
   pLetter.common = time.isoTime() + ",enkel";
   pLetter.description = "id," + param;
@@ -2738,7 +2703,7 @@ void HqcMainWindow::updateParams(int station,
   if(dianaParam.exists()){
     pLetter.description = "id," + dianaParam;
     cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+    cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
     pluginB->sendMessage(pLetter);
   }
 }
