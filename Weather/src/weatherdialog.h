@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__WeatherDialog_h__
 
 #include <kvcpp/KvApp.h>
-#include <q3tabdialog.h>
+#include <QDialog>
 #include <kvalobs/kvStation.h>
 #include "weathertable.h"
 #include "timeobs.h"
@@ -76,7 +76,8 @@ typedef list<kvalobs::kvData>::iterator                   IDataList;
 namespace Weather
 {
   class WeatherDialog
-    : public Q3TabDialog
+    : public QDialog
+      //    : public Q3TabDialog
   {
     friend class WeatherTable;
     Q_OBJECT;
@@ -92,16 +93,17 @@ namespace Weather
 /**
  * \brief Get o's owning WeatherDialog, or NULL if there is none.
  */
-    static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
+    static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent, Qt::WindowFlags f );
 
     WeatherDialog( TimeObsListPtr dol, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags f = Qt::Window );
+		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
 
 
     WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags f = Qt::Window);
+		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE);
+
     virtual ~WeatherDialog( );
     /**
      * \brief [Start, stop) dates for which to fetch data.
@@ -112,6 +114,8 @@ namespace Weather
      * \brief Date range for editor
      */
     const DateRange & getDateRange() const { return dateRange; }
+
+    QTabWidget* tabWidget;
 
     const kvalobs::kvStation *getStation() const { return station; }
     int getStationId() const { return stationId; }
@@ -155,9 +159,9 @@ signals:
     int stationId;
     DateRange dateRange;
     bool shownFirstTime;
-    void setupOrigTab( SynObsList&, int );
-    void setupCorrTab( SynObsList&, int );
-    void setupFlagTab( SynObsList&, int );
+    void setupOrigTab( SynObsList&, int, QTabWidget* );
+    void setupCorrTab( SynObsList&, int, QTabWidget* );
+    void setupFlagTab( SynObsList&, int, QTabWidget* );
     void setupStationInfo();
     WeatherTable* cTab;
   };
