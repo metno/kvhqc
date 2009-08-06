@@ -170,7 +170,7 @@ ErrorList::ErrorList(QStringList& selPar,
   fDlg = new FailInfo::FailDialog(this);
 
   connect( this, SIGNAL( clicked( int, int, int, const QPoint& ) ),
-	   SLOT( tableCellClicked( int, int, int, const QPoint& ) ) );
+	   SLOT( tableCellClicked( int, int, int) ) );
 
   connect( this, SIGNAL( valueChanged( int, int ) ),
 	   SLOT( markModified( int, int ) ) );
@@ -355,14 +355,15 @@ ErrorList::ErrorList(QStringList& selPar,
 	iCount++;
 	int cStnr = memO->stnr;
 	miutil::miTime cTime = memO->obstime;
-	if ( stnr > cStnr || (stnr == cStnr && obstime >= cTime)
-	     && iCount == memStore3.size() )
+	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore3.size() )
 	  continue;
 	else {
-	  if ( iCount == memStore3.size() )
+	  if ( iCount == memStore3.size() ) {
 	    memStore3.push_back(memStore1[error[es-1-i]]);
-	  else
+	  }
+	  else {
 	    memStore3.insert(memO,memStore1[error[es-1-i]]);
+	  }
 	  break;
 	}
       }
@@ -401,7 +402,7 @@ ErrorList::ErrorList(QStringList& selPar,
 	iCount++;
 	int cStnr = memO->stnr;
 	miutil::miTime cTime = memO->obstime;
-	if ( stnr > cStnr || (stnr == cStnr && obstime >= cTime) && iCount < memStore3.size() )
+	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore3.size() )
 	  continue;
 	else {
 	  if ( iCount == memStore3.size() )
@@ -839,9 +840,10 @@ int ErrorList::paramIsCode(int parNo) {
   return 1;
 }
 void ErrorList::tableCellClicked(int row,
-                                int col,
-                                int button,
-                                const QPoint& mousePos) {
+				 int col,
+				 int button) {//,
+  //				 const QPoint& mousePos,
+  //				 vector<datl>& dtl) { 
   if ( col == 0 && row >= 0) {
     selectRow(row);
   }
@@ -1196,6 +1198,8 @@ void ErrorList::signalStationSelected( int row )
 
   cerr << "getMem(" << row << ");" << endl;
   const struct mem * m = getMem( row );
+  ((HqcMainWindow*)getHqcMainWindow( this ))->sendObservations(m->obstime,true);
+  ((HqcMainWindow*)getHqcMainWindow( this ))->sendStation(m->stnr);
   cerr << "emit stationSelected( " << m->stnr << ", " << m->obstime << " );" << endl;
   emit stationSelected( m->stnr, m->obstime );
 }
@@ -1337,6 +1341,10 @@ void ErrorList::saveChanges()
       break;
     case 15:
       {
+	if ( cif.flag(4) > 1 ) {
+	  cif.set(15,1);
+	  cif.set(4,1);
+	}
 	if ( fmis == 0 ) {
 	  cif.set(15,1);
 	  kd.corrected(kd.original());
@@ -1543,3 +1551,18 @@ bool ErrorList::event(QEvent *event)
   }
   return QWidget::event(event);
 }
+
+QString DataCell::key() const {
+  QString item;
+  if ( col() == 1 || col() == 3 || col() == 5 || col() == 7 || col() == 11) {
+    item.sprintf("%08d",text().toInt());
+  }
+  else if ( col() == 8 || col() == 9 || col() == 10 ) {
+    item.sprintf("%08.1f",text().toDouble()+33000);
+  }
+  else {
+    item = text();
+  }
+  return item;
+}
+
