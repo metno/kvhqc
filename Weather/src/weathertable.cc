@@ -59,20 +59,19 @@ using namespace boost::assign;
 
 namespace Weather
 {
-  WeatherTable::WeatherTable( QWidget *parent, int type )
+  WeatherTable::WeatherTable( QWidget *parent, QString name, int type )
     : Q3Table( parent )
   {
     WeatherDialog* wd = dynamic_cast<WeatherDialog*>(parent->parent());
-
+    
     synFlg sf;
     vector<synDat> dataList;
     vector<synFlg> flagList;
-    QString pName(parent->name());
+    QString pName(name);
     miutil::miTime protime("1900-01-01 00:00:00");
-
+    
     readLimits();
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
-    connect( wd, SIGNAL(currentChanged(QWidget*) ), this, SLOT( showCurrentPage() ) );
     if ( pName == "corr" )
       connect( wd, SIGNAL(dontStore()), SLOT(restoreOld()));
 
@@ -133,8 +132,9 @@ namespace Weather
     setNumCols(NL);
     displayHorizontalHeader();
     displayVerticalHeader(timeList);
-    if ( pName == "corr" || pName == "orig" )
+    if ( pName == "corr" || pName == "orig" ) {
       displayData(pName, dataList, flagList);
+    }
     else if ( pName == "flag" )
       displayFlags(flagList);
     toolTip = new WeatherTableToolTip( this );
