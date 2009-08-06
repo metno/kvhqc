@@ -305,6 +305,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
   
   HqcMainWindow * hqcm = getHqcMainWindow( this );
   
+  const double epsilon = 0.05;
   QDoubleValidator inpVal(this);
   int index = (col-2)/hqcm->nucoprpar;
   Q3TableItem* tval = dtt->item( row, col);
@@ -341,8 +342,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
     const miutil::miTime &   obt = d.otime;
     float                    org = d.orig[hqcm->selParNo[index]];  
     int                      par = hqcm->selParNo[index];
-    const miutil::miTime &   tbt = d.tbtime;     
-    //    int                      typ = d.typeId;     
+    const miutil::miTime &   tbt = d.tbtime;          
     int                      typ = d.typeId[hqcm->selParNo[index]];     
     int                      sen = d.sensor[hqcm->selParNo[index]];    
     int                      lvl = d.level[hqcm->selParNo[index]];      
@@ -351,7 +351,30 @@ void MDITabWindow::updateKvBase(int row, int col) {
     const kvUseInfo &        uin = d.useinfo[hqcm->selParNo[index]];
     const miutil::miString & fai = d.cfailed[hqcm->selParNo[index]];
     if ( typ == -32767 ) typ = hqcm->findTypeId(typ, pos, par, obt);
-    if ( cor == -32766 ) {
+
+    if ( fabs(cor - org ) < epsilon ) {
+      if ( cif.flag(4) > 1 ) {
+	cif.set(15,1);
+	cif.set(4,1);
+      }
+      if ( cif.flag(6) == 0 ) {
+	cif.set(15,1);
+	if ( cif.flag(12) == 3 )
+	  cif.set(12,1);
+      }
+      else if ( cif.flag(6) == 1 ) {
+	cif.set(15,0);
+	cif.set(6,3);
+      }
+      else if ( cif.flag(6) == 2 ) {
+	cif.set(15,1);
+	cif.set(6,0);
+	if ( cif.flag(12) == 3 )
+	  cif.set(12,1);
+      }
+    }
+
+    else if ( cor == -32766 ) {
       cif.set(15,10);
       const int misfl = cif.flag(6);
       if ( misfl == 0 || misfl == 1 )
@@ -359,7 +382,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
     }
     else {
       cif.set(15,7);
-   }
+    }
     if ( oldCorVal == "-32767.0" ) { 
       cif.set(15,5);                      //Interpol
       int misfl;
