@@ -33,7 +33,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 //#include <kvservice/qt/kvQtApp.h>
 #include <kvcpp/KvApp.h>
-#include <qdialog.h>
+//#include <qdialog.h>
+#include <QDialog>
 //Added by qt3to4:
 #include <QShowEvent>
 #include <QCloseEvent>
@@ -67,18 +68,18 @@ namespace WatchRR
      *
      * \parameter data represents the default values for station, obstime etc.
      */
-    static RRDialog * getRRDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent );
+    static RRDialog * getRRDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent, Qt::WindowFlags f );
 
     RRDialog( DayObsListPtr dol,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      const QString & captionSuffix,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
 
 
     RRDialog( int station, const miutil::miDate date,
 	      int type, int sensor, int level,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags f = 0 );
+	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
     virtual ~RRDialog( );
 
     const kvalobs::kvStation *getStation() const { return station; }
