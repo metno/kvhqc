@@ -44,7 +44,8 @@ namespace WatchRR
   QStringList VxKvDataTableItem::selections;
 
   const string VxKvDataTableItem::VxExplFile =
-    string(getenv("HQCDIR")) + "/WatchRR/var/VxExplanations.txt";
+    string(getenv("HQCDIR")) + "/etc/kvhqc/VxExplanations.txt";
+  //    string(getenv("HQCDIR")) + "/WatchRR/var/VxExplanations.txt";
 
   const char *VxKvDataTableItem::VxSExpl[ 3 ] =
     {
