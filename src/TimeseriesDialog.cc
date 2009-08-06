@@ -40,46 +40,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   setCaption("Tidsserie HQC");
-  //  setGeometry(10,10,500,500);
-
-//   parlv = new QListView(this);
-//   //  parlv->setGeometry(10,10,40,100);
-//   //  parlv->setSorting(1);
-//   parlv->addColumn("Parameter");
-//   parlv->setRootIsDecorated( TRUE );
-//   //  parlv->setSelectionMode(QListView::Extended);
-//   //  parlv->setAllColumnsShowFocus(TRUE);
-
-
-//   QListViewItem* airplvi = new QListViewItem(parlv, "Lufttrykk");
-//   airplvi->setSelectable(false);
-//   QListViewItem* templvi = new QListViewItem(parlv, "Temperatur");
-//   templvi->setSelectable(false);
-//   QListViewItem* windlvi = new QListViewItem(parlv, "Vind");
-//   windlvi->setSelectable(false);
-//   QListViewItem* sub1, *sub2, *sub3, *sub4;
-//   airplvi->setOpen(TRUE);
-//   sub1 = new QListViewItem( airplvi, "PO" );
-//   sub2 = new QListViewItem( airplvi, "PR" );
-//   sub3 = new QListViewItem( airplvi, "AA" );
-//   sub4 = new QListViewItem( airplvi, "PP" );
-//   //  parlvi = new QListViewItem(parlv, "Temperatur");
-//   templvi->setOpen(TRUE);
-//   (void)new QListViewItem( templvi, "TA" );
-//   (void)new QListViewItem( templvi, "TAN_12" );
-//   (void)new QListViewItem( templvi, "TAX_12" );
-//   //  parlvi = new QListViewItem(parlv, "Vind");
-//   windlvi->setOpen(TRUE);
-//   (void)new QListViewItem( windlvi, "FF" );
-//   (void)new QListViewItem( windlvi, "DD" );
-//   (void)new QListViewItem( windlvi, "FF_02" );
-//   (void)new QListViewItem( windlvi, "DD_02" );
-//   (void)new QListViewItem( windlvi, "FG" );
-//   (void)new QListViewItem( windlvi, "DG" );
-// //   connect( parlv, SIGNAL( selectionChanged( ) ),
-// // 	   this, SLOT( parameterSelectionChanged( ) ) );
-//   connect( parlv, SIGNAL( selectionChanged( QListViewItem*) ),
-// 	   this, SLOT( parameterSelectionChanged(QListViewItem* ) ) );
 //Test
   Q3ButtonGroup* dTypes = new Q3ButtonGroup(1,
 					  Qt::Horizontal,
@@ -111,21 +71,6 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   statlb->setMinimumHeight(85);
   connect( statlb, SIGNAL( selectionChanged(Q3ListBoxItem *) ),
 	   this, SLOT( stationSelected(Q3ListBoxItem * ) ) );
-  //  statlb->setGeometry(10,80,40,100);
-//   std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
-//   QString stnr;
-//   const char* cName;
-//   QString name;
-//   QString statId;
-//   for(;it!=slist.end(); it++){
-//     stnr = stnr.setNum(it->stationID());
-//     cName = (it->name()).c_str();
-//     name = QString(cName);
-//     statId = stnr + " " + name;
-//     cerr << statId << endl;
-//     statlb->insertItem(statId);
-//   }
-
   ////////////////////////////////////////////////////////////////////////
   currentResult=-1;
   QLabel* resultLabel = new QLabel("Valgte Tidsserier",this);
@@ -143,11 +88,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   QPushButton* delallButton = new QPushButton("Slett alt",this);
   newcurveButton = new QPushButton("Ny kurve",this);
   newcurveButton->setToggleButton(true);
-  //  newCurve = false;
 
   connect( delButton, SIGNAL(clicked()),SLOT(deleteSlot()));
   connect( delallButton, SIGNAL(clicked()),SLOT(deleteAllSlot()));
-  //  connect( newcurveButton, SIGNAL(toggled(bool)),SLOT(newcurveSlot(bool)));
 
   Q3HBoxLayout* delLayout = new Q3HBoxLayout();
   delLayout->addWidget(delButton);
@@ -232,25 +175,6 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect( to,  SIGNAL(valueChanged(const miutil::miTime&)),
 	   from,SLOT(  setMax(const miutil::miTime&)     ));
 
-//   QLabel* fromLabel = new QLabel(this);
-//   fromLabel->setText("Fra       ");
-//   fromLabel->setFont(QFont("Arial", 12));
-//   fromLabel->setAlignment(AlignLeft);
-//   fromLabel->setPaletteForegroundColor(darkBlue);
-
-//   QLabel* toLabel = new QLabel(this);
-//   toLabel->setText("Til       ");
-//   toLabel->setFont(QFont("Arial", 12));
-//   toLabel->setAlignment(AlignLeft);
-//   toLabel->setPaletteForegroundColor(darkBlue);
-
-//   QGridLayout* tofromLayout   = new QGridLayout(2, 2);
-//   tofromLayout->addWidget(fromLabel,0,0);
-//   tofromLayout->addWidget(fromEdit, 0,1);
-//   tofromLayout->addWidget(toLabel,  1,0);
-//   tofromLayout->addWidget(toEdit,   1,1);
-
-
   //////////////////// apply & hide ///////////////////////////////////////////
   QPushButton* hideButton = new QPushButton("Skjul", this);
   hideButton->setFont(QFont("Arial", 9));
@@ -273,7 +197,6 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   connect(applyButton,     SIGNAL(clicked()), SIGNAL( TimeseriesApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
-  //  topLayout->addWidget(parlv);
   topLayout->addWidget(dTypes);
   topLayout->addWidget(parameterLabel);
   topLayout->addWidget(parameterListbox);
@@ -286,7 +209,6 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   topLayout->addLayout(lineLayout);
   topLayout->addWidget(markerLabel);
   topLayout->addLayout(markerLayout);
-  //   topLayout->addLayout(tofromLayout);
   topLayout->addWidget(from);
   topLayout->addWidget(to);
   topLayout->addLayout(buttonLayout);
@@ -318,14 +240,12 @@ void TimeseriesDialog::setFromTimeSlot(const miutil::miTime& t)
 {
   from->setMin(t);
   from->setTime(t);
-//   cerr <<"From time:"<<t.isoTime()<<endl;
 }
 
 void TimeseriesDialog::setToTimeSlot(const miutil::miTime& t)
 {
   to->setMax(t);
   to->setTime(t);
-//   cerr <<"To time:"<<t.isoTime()<<endl;
 }
 
 void TimeseriesDialog::deleteAllSlot( )
@@ -341,20 +261,7 @@ void TimeseriesDialog::deleteAllSlot( )
   ts.linewidth   = linewidthBox->currentItem();
   ts.marker      = markerBox->currentItem();
   tsinfo.push_back(ts);
-  //  cerr <<"deleteAll  ts:"<<tsinfo.size()<<endl;
 }
-
-// void TimeseriesDialog::newcurveSlot( bool on ){
-
-//   newCurve = on;
-//   int item =resultListbox->currentItem();
-//   if(item>-1 ){
-//     resultListbox->insertItem(resultListbox->text(item),item);
-//     tsInfo ts = tsinfo[item];
-//     tsinfo.push_back(ts);
-//   }
-
-//}
 
 void TimeseriesDialog::linecolourSlot( int i){
   if(freeze) return;
@@ -387,7 +294,6 @@ void TimeseriesDialog::linewidthSlot(int i ){
   }  else {
     tsinfo[0].linewidth=linewidthBox->currentItem();
   }
-
 }
 
 void TimeseriesDialog::markerSlot( int i){
@@ -419,60 +325,9 @@ void TimeseriesDialog::hideAll(){
 }
 
 
-// QString TimeseriesDialog::getStation() {
-//   //    return plotStat->text();
-//     return statlb->currentText();
-// }
-
-// vector<QString> TimeseriesDialog::getParam() {
-//   vector<QString> parName;
-//   parName.push_back(parlv->currentItem()->text(0).latin1());
-//   return parName;
-// }
-
-
-// int TimeseriesDialog::getnumts() {
-
-//   return tsinfo.size();
-
-// }
-
-// QString TimeseriesDialog::getStation(int i) {
-
-//   if(tsinfo.size()>i)
-//     return statlb->text(tsinfo[i].station);
-
-//   QString s;
-//   return s;
-// }
-
-// QString TimeseriesDialog::getParam(int i) {
-
-//   if(tsinfo.size()>i)
-//     return tsinfo[i].parameter->text(0);
-
-//   QString s;
-//   return s;
-// }
-
-// POptions::PlotOptions TimeseriesDialog::getPlotOptions(int i) {
-//   POptions::PlotOptions popt;
-
-//   if(tsinfo.size()>i){
-//     popt.linecolour = linecolours[tsinfo[i].colour];
-//     popt.linetype = linetypes[tsinfo[i].linetype];
-//     popt.linewidth = tsinfo[i].linewidth;
-//     popt.marker = markers[tsinfo[i].marker];
-//     popt.fillcolour = colours[tsinfo[i].fillcolour];
-// }
-
-//   return popt;
-// }
 
 void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   if(freeze) return;
-  //  cerr << "Current item is " << item->text(0) << endl;
-  //  if(item->parent() == 0) return;
   if(parameterListbox->currentItem() == -1 ) return;
   if(statlb->currentItem() == -1) return;
   freeze=true;
@@ -508,18 +363,14 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
 
 
 void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
-   if(freeze) return;
-   //   cerr << "Station selected: " << station << endl;
-//   //  plotStat = item;
+  if(freeze) return;
   if( parameterListbox->currentItem() == -1 ) return;
-  //  if(parameterListbox->currentItem()->parent() == 0) return;
-   freeze=true;
+  freeze=true;
   miString str = statlb->currentText().latin1();
   str.trim();
   str+= " ";
-  //  str += parameterListbox->currentItem()->text(0).latin1();
   str += parameterListbox->currentText().latin1();
-
+  
   tsInfo ts;
   ts.parameter  = parameterListbox->currentItem();
   ts.station    = statlb->currentItem();
@@ -549,10 +400,8 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
 void TimeseriesDialog::resultSelected(Q3ListBoxItem * item)
 {
   if(freeze) return;
-  //cerr <<"Result   tsinfo.size:"<<tsinfo.size()<<endl;
   freeze=true;
   int index = resultListbox->currentItem();
-  //cerr <<"Result   index:"<<index<<endl;
   parameterListbox->setSelected(tsinfo[index].parameter,true);
   statlb->setSelected(tsinfo[index].station,true);
   cerr <<"Result station:"<<tsinfo[index].station<<endl;
@@ -561,8 +410,7 @@ void TimeseriesDialog::resultSelected(Q3ListBoxItem * item)
   linewidthBox->setCurrentItem(tsinfo[index].linewidth);
   markerBox->setCurrentItem(tsinfo[index].marker);
   fillcolourBox->setCurrentItem(tsinfo[index].fillcolour);
-  //  currentResult = index;
-    freeze=false;
+  freeze=false;
 }
 
 void TimeseriesDialog::newParameterList(const QStringList& parameterList)
@@ -613,7 +461,6 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
       if (parameter[i] == "DD") {
 	plotoptions[i].plottype= POptions::type_vector;
 	plotoptions[i].linewidth= 1;
-	//plotoptions.label= miString(parameter[i].latin1());
       }
       else if (parameter[i] == "PO" || parameter[i] == "PR"){
 	plotoptions[i].axis= axes[0];
@@ -696,58 +543,4 @@ void TimeseriesDialog::getResults(vector<miString>& parameter,
   axes.push_back(POptions::axis_right_left);
   axes.push_back(POptions::axis_right_left);
   axes.push_back(POptions::axis_right_left);
-//   initColours("white",        255,255,255);
-//   initColours("grayWhite",    224,224,224);
-//   initColours("lightGray",    192,192,192);
-//   initColours("gray",         160,160,164);
-//   initColours("darkGray",     128,128,128);
-//   initColours("black",        0,0,0);
-
-//   initColours("blue",         0,0,255);
-//   initColours("red",          255,0,0);
-//   initColours("green",        0,255,0);
-//   initColours("cyan",         0,255,255);
-//   initColours("magenta",      255,0,255);
-//   initColours("yellow",       255,255,0);
-
-//   initColours("lightBlue",    51,51,255);
-
-//   initColours("darkRed",      128,0,0);
-//   initColours("darkGreen",    0,128,0);
-//   initColours("darkBlue",     0,0,128);
-//   initColours("darkCyan",     0,128,128);
-//   initColours("darkMagenta",  128,0,128);
-//   initColours("darkYellow",   128,128,0);
-
-//   initColours("brown",        178,51,0);
-//   initColours("orange",       255,89,0);
-//   initColours("purple",       160,32,240);
-
-//   initColours("midnightBlue", 25,25,112);
-//   initColours("dnmiGreen",    43,120,36);
-//   initColours("dnmiBlue",     0,54,125);
-
-//   initColours("green2",       0,238,0);
-//   initColours("green3",       0,205,0);
-//   initColours("green4",       0,139,0);
-
-//   initColours("flesh",      240,158,92);
-//   initColours("seablue",    117,199,242);
-
-//   initColours("landgul",    255,240,196);
-//   initColours("havblå",     225,255,255);
-//   initColours("gulbrun",    255,164,71);
  }
-
-// void TimeseriesDialog::initColours(miString name, int r, int g, int b)
-// {
-
-//   ColourInfo ci;
-//   ci.name=name;
-//   ci.rgb[0] = r;
-//   ci.rgb[1] = g;
-//   ci.rgb[2] = b;
-
-//   colours.push_back(ci);
-
-// }
