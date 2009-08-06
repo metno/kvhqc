@@ -141,6 +141,7 @@ public:
 	      EditType et, 
 	      const QString &txt ) : Q3TableItem( t, et, txt ) {
   }
+  QString key() const;
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
   //  void setBkgColor(QColor cr) { m_crBkg = cr; }
   //  QColor bkgColor() { return m_crBkg; }
@@ -304,7 +305,8 @@ private:
   bool specialTimeFilter(int, miutil::miTime); 
   bool typeFilter(int, int, int, miutil::miTime); 
 private slots:
-  void tableCellClicked(int, int, int, const QPoint&);
+  //  void tableCellClicked(int, int, int, const QPoint&, vector<datl>&);
+  void tableCellClicked(int, int, int);
   void updateFaillist(int, int);
   //void updateKvBase(int, int);
   void updateKvBase(mem*);
