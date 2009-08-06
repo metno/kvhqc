@@ -109,7 +109,7 @@ namespace Weather
     /**
      * \throws std::runtime_error if error happens when contacting kvalobs.
      */
-    WeatherTable( QWidget* parent = 0, int type = 0 );
+    WeatherTable( QWidget* parent = 0, QString name = "", int type = 0 );
     virtual ~WeatherTable();
     void getModifiedData( DataConsistencyVerifier::DataSet & );    
   
