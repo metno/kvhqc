@@ -190,6 +190,8 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   //Time selection  
   fromTime = new miTimeSpinBox ("fromTime",this, "Fra: ");
   toTime   = new miTimeSpinBox ("toTime",this, "Til:  ");
+  //  fromTime = new QDateTimeEdit (QDateTime::currentDateTime(),this);
+  //  toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
   miutil::miTime t(toTime->time());
   if( t.min() != 0 ){
     t.addMin(-1*t.min());
