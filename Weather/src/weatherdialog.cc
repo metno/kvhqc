@@ -41,12 +41,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qdialog.h>
 #include <q3datetimeedit.h>
 #include <qlineedit.h>
-#include <q3vbox.h>
-#include <q3tabdialog.h>
-#include <q3table.h>
+#include <QTabWidget>
+#include <QDialogButtonBox>
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
+#include <QFrame>
 #include <kvcpp/KvApp.h>
 
 using namespace kvservice;
@@ -55,7 +55,7 @@ using namespace std;
 
 namespace Weather
 {
-  WeatherDialog * WeatherDialog::getWeatherDialog( const kvData & data, list<kvStation>& slist, QWidget * parent )
+  WeatherDialog * WeatherDialog::getWeatherDialog( const kvData & data, list<kvStation>& slist, QWidget * parent, Qt::WindowFlags f )
   {
     cout << "WeatherDialog::getWeatherDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
@@ -111,7 +111,7 @@ namespace Weather
 
     if ( st ) {
       try {
-        ret= new WeatherDialog( st, cl, ty, se, 0, parent );
+        ret= new WeatherDialog( st, cl, ty, se, 0, parent, 0, FALSE );
       }
       catch( invalid_argument & e ) {
       }
@@ -144,29 +144,26 @@ namespace Weather
     return pipl;
   }
 
-  void WeatherDialog::setupOrigTab( SynObsList& sList, int type ) {
-    Q3VBox* orig = new Q3VBox(this, "orig");
-    orig->setMargin(5);
-    WeatherTable* origTab = new WeatherTable(orig, type);
-    origTab->resize( origTab->sizeHint() );
-    addTab(orig, "Original");
+  void WeatherDialog::setupOrigTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+    QFrame* orig = new QFrame(this);
+    WeatherTable* origTab = new WeatherTable(orig, "orig", type);
+    connect( tabWidget, SIGNAL(currentChanged(int) ), origTab, SLOT( showCurrentPage() ) );
+    tabWidget->addTab(origTab, "Original");
   }
 
-  void WeatherDialog::setupCorrTab( SynObsList& sList, int type ) {
-    Q3VBox* corr = new Q3VBox(this, "corr");
-    corr->setMargin(5);
-    WeatherTable* corrTab = new WeatherTable(corr, type);
-    corrTab->resize( corrTab->sizeHint() );
-    addTab(corr, "Korrigert");
+  void WeatherDialog::setupCorrTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+    QFrame* corr = new QFrame(this);
+    WeatherTable* corrTab = new WeatherTable(corr, "corr", type);
+    connect( tabWidget, SIGNAL(currentChanged(int) ), corrTab, SLOT( showCurrentPage() ) );
+    tabWidget->addTab(corrTab, "Korrigert");
     cTab = corrTab;
   }
 
-  void WeatherDialog::setupFlagTab( SynObsList& sList, int type ) {
-    Q3VBox* flag = new Q3VBox(this, "flag");
-    flag->setMargin(5);
-    WeatherTable* flagTab = new WeatherTable(flag, type);
-    flagTab->resize( flagTab->sizeHint() );
-    addTab(flag, "Flagg");
+  void WeatherDialog::setupFlagTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+    QFrame* flag = new QFrame(this);
+    WeatherTable* flagTab = new WeatherTable(flag, "flag", type);
+    connect( tabWidget, SIGNAL(currentChanged(int) ), flagTab, SLOT( showCurrentPage() ) );
+    tabWidget->addTab(flagTab, "Flagg");
   }
 
   void WeatherDialog::setupStationInfo() {
@@ -174,9 +171,6 @@ namespace Weather
       QMessageBox::information( this, "HQC - synop",
                              "Det valgte stasjonsnummer fins ikke i databasen.",
                              QMessageBox::Ok,  QMessageBox::NoButton );
-      setApplyButton("Lagre");
-      setCancelButton("Lukk");
-      emit cancelButtonPressed();
       return;
     }
     QString stationDescr = QString::number( station->stationID() );
@@ -195,103 +189,113 @@ namespace Weather
 
   WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
-		      QWidget *parent, const char* name, bool modal, Qt::WindowFlags f )
-    : Q3TabDialog( parent, name, modal )
+		      QWidget *parent, const char* name, bool modal )
+    : QDialog( parent, Qt::Window )
     , dataReinserter( dataReinserter )
     , observations( tobs )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
     , shownFirstTime( false )
   {
-    f = Qt::WindowMaximizeButtonHint;
+    tabWidget = new QTabWidget;
     if ( station != 0 ) {
-    connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
-    for ( int i = 0; i < NP; i++ ) {
-      parameterIndex[params[i]] = i;
-    }
-    synObsList.clear();
-    for ( int ip = 0; ip < NP; ip++) {
-      synObs.orig[ip]   = -32767.0;
-      synObs.corr[ip]   = -32767.0;
-      synObs.controlinfo[ip] = "";
-    }
-    miutil::miTime sTime = (*tobs)[0].getTime();
-    miutil::miTime eTime = (*tobs)[0].getTime();
-    sTime.addDay(-7);
-    eTime.addDay();
-    WhichDataHelper whichData;
-    whichData.addStation( (*station).stationID(), sTime, eTime);
-
-    if ( !KvApp::kvApp->getKvData(ldList, whichData))
-      cerr << "Can't connect to data table!" << endl;
-
-    for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
-      IDataList dit = it->dataList().begin();
-      while( dit != it->dataList().end() ) {
-	miutil::miTime otime = (dit->obstime());
-	int typid = dit->typeID();
-	int snsor = dit->sensor();
-        if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) && sensorFilter(sensor, dit->sensor()) ) {
-	  synObs.stnr = dit->stationID();
-	  synObs.otime = dit->obstime();
-	  synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
-	  synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
-	  synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
-	  synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
-	  synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
-	  miutil::miTime protime = otime;
-	  dit++;
-	  otime = dit->obstime();
-	  typid = dit->typeID();
-	  snsor = dit->sensor();
-	  if ( otime != protime ) {
-	    synObsList.push_back(synObs);
-	    for ( int ip = 0; ip < NP; ip++) {
-	      synObs.orig[ip]   = -32767.0;
-	      synObs.corr[ip]   = -32767.0;
-	      synObs.controlinfo[ip] = "";
+      for ( int i = 0; i < NP; i++ ) {
+	parameterIndex[params[i]] = i;
+      }
+      synObsList.clear();
+      for ( int ip = 0; ip < NP; ip++) {
+	synObs.orig[ip]   = -32767.0;
+	synObs.corr[ip]   = -32767.0;
+	synObs.controlinfo[ip] = "";
+      }
+      miutil::miTime sTime = (*tobs)[0].getTime();
+      miutil::miTime eTime = (*tobs)[0].getTime();
+      sTime.addDay(-7);
+      eTime.addDay();
+      WhichDataHelper whichData;
+      whichData.addStation( (*station).stationID(), sTime, eTime);
+      
+      if ( !KvApp::kvApp->getKvData(ldList, whichData))
+	cerr << "Can't connect to data table!" << endl;
+      
+      for(IKvObsDataList it=ldList.begin(); it!=ldList.end(); it++ ) {
+	IDataList dit = it->dataList().begin();
+	while( dit != it->dataList().end() ) {
+	  miutil::miTime otime = (dit->obstime());
+	  int typid = dit->typeID();
+	  int snsor = dit->sensor();
+	  if ( paramInParamsList(dit->paramID()) && typeFilter(type, dit->typeID()) && sensorFilter(sensor, dit->sensor()) ) {
+	    synObs.stnr = dit->stationID();
+	    synObs.otime = dit->obstime();
+	    synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
+	    synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
+	    synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
+	    synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
+	    synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
+	    miutil::miTime protime = otime;
+	    dit++;
+	    otime = dit->obstime();
+	    typid = dit->typeID();
+	    snsor = dit->sensor();
+	    if ( otime != protime ) {
+	      synObsList.push_back(synObs);
+	      for ( int ip = 0; ip < NP; ip++) {
+		synObs.orig[ip]   = -32767.0;
+		synObs.corr[ip]   = -32767.0;
+		synObs.controlinfo[ip] = "";
+	      }
 	    }
 	  }
-	}
-	else {
-	  miutil::miTime protime = otime;
-	  dit++;
-	  otime = dit->obstime();
-	  typid = dit->typeID();
-	  snsor = dit->sensor();
-	  if ( otime != protime ) {
-       	    synObsList.push_back(synObs);
-	    for ( int ip = 0; ip < NP; ip++) {
-	      synObs.orig[ip]   = -32767.0;
-	      synObs.corr[ip]   = -32767.0;
-	      synObs.controlinfo[ip] = "";
+	  else {
+	    miutil::miTime protime = otime;
+	    dit++;
+	    otime = dit->obstime();
+	    typid = dit->typeID();
+	    snsor = dit->sensor();
+	    if ( otime != protime ) {
+	      synObsList.push_back(synObs);
+	      for ( int ip = 0; ip < NP; ip++) {
+		synObs.orig[ip]   = -32767.0;
+		synObs.corr[ip]   = -32767.0;
+		synObs.controlinfo[ip] = "";
+	      }
 	    }
 	  }
 	}
       }
     }
-    }
     setupStationInfo();
-    setupCorrTab(synObsList, type);
-    setupOrigTab(synObsList, type);
-    setupFlagTab(synObsList, type);
+    setupCorrTab(synObsList, type, tabWidget);
+    setupOrigTab(synObsList, type, tabWidget);
+    setupFlagTab(synObsList, type, tabWidget);
 
-    QString OK;
-    setOkButton(OK);
-    setApplyButton("Lagre");
-    setCancelButton("Lukk");
+    QPushButton* saveButton = new QPushButton(tr("Lagre"));
+    saveButton->setDefault(true);
+    QPushButton* closeButton = new QPushButton(tr("Lukk"));
+
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(saveButton,QDialogButtonBox::ActionRole);
+    buttonBox->addButton(closeButton,QDialogButtonBox::RejectRole);
+    //    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Save
+    //                                     | QDialogButtonBox::Close);
+
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
+    QVBoxLayout * mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(tabWidget);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
   }
 
 
   WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
 				const DataReinserter<KvApp> * dataReinserter,
-				QWidget* parent, const char* name, bool modal, Qt::WindowFlags f )
-    : Q3TabDialog( parent, name, modal)
+				QWidget* parent, const char* name, bool modal )
+    : QDialog( parent, Qt::Window)
     , dataReinserter( dataReinserter )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
   {
-    f = Qt::WindowMaximizeButtonHint;
-    connect( this, SIGNAL( applyButtonPressed() ), this, SLOT( saveData() ) );
+    tabWidget = new QTabWidget;
     for ( int i = 0; i < NP; i++ )
       parameterIndex[params[i]] = i;
     synObsList.clear();
@@ -347,13 +351,23 @@ namespace Weather
       }
     }
     setupStationInfo();
-    setupCorrTab(synObsList, type);
-    setupOrigTab(synObsList, type);
-    setupFlagTab(synObsList, type);
-    QString OK;
-    setOkButton(OK);
-    setApplyButton("Lagre");
-    setCancelButton("Lukk");
+    setupCorrTab(synObsList, type, tabWidget);
+    setupOrigTab(synObsList, type, tabWidget);
+    setupFlagTab(synObsList, type, tabWidget);
+    
+    QPushButton* saveButton = new QPushButton(tr("Lagre"));
+    saveButton->setDefault(true);
+    QPushButton* closeButton = new QPushButton(tr("Lukk"));
+    
+    QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
+    buttonBox->addButton(saveButton,QDialogButtonBox::ActionRole);
+    buttonBox->addButton(closeButton,QDialogButtonBox::RejectRole);
+    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
+    connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
+    QVBoxLayout * mainLayout = new QVBoxLayout;
+    mainLayout->addWidget(tabWidget);
+    mainLayout->addWidget(buttonBox);
+    setLayout(mainLayout);
   }
 
   bool WeatherDialog::saveData()
@@ -376,17 +390,17 @@ namespace Weather
 
     //    if ( mod.empty() )
     if ( cTab->kvCorrList.empty() )
-    {
-      QMessageBox::information( this, "HQC - synop",
-                                "Du har ingen endringer å lagre.",
-                                QMessageBox::Ok );
-      return true;
-    }
-
+      {
+	QMessageBox::information( this, "HQC - synop",
+				  "Du har ingen endringer å lagre.",
+				  QMessageBox::Ok );
+	return true;
+      }
+    
     list<kvData> dl( cTab->kvCorrList.begin(), cTab->kvCorrList.end() );
-
+    
     cerr << "Lagrer:" << endl
-    << decodeutility::kvdataformatter::createString( dl ) << endl;
+	 << decodeutility::kvdataformatter::createString( dl ) << endl;
     CKvalObs::CDataSource::Result_var res;
     QString changedVals;
     {
