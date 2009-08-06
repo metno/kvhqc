@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qdialog.h>
 #include <q3datetimeedit.h>
 #include <qlineedit.h>
+#include <QDialogButtonBox>
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include <QCloseEvent>
@@ -55,7 +56,7 @@ using namespace std;
 
 namespace WatchRR
 {
-  RRDialog * RRDialog::getRRDialog( const kvData & data, list<kvStation>& slist, QWidget * parent )
+  RRDialog * RRDialog::getRRDialog( const kvData & data, list<kvStation>& slist, QWidget * parent, Qt::WindowFlags f )
   {
     cout << "RRDialog::getRRDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
@@ -188,8 +189,9 @@ namespace WatchRR
   RRDialog::RRDialog( DayObsListPtr dol,
 		      const DataReinserter<kvservice::KvApp> * dataReinserter,
 		      const QString & captionSuffix,
-		      QWidget *parent, const char* name, bool modal, Qt::WFlags f )
-    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
+		      QWidget *parent, const char* name, bool modal )
+    //    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
+    : QDialog( parent, Qt::Window )
     , dataReinserter( dataReinserter )
     , captionSuffix_( captionSuffix )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*dol)[0].getStation()] )
@@ -204,8 +206,8 @@ namespace WatchRR
   RRDialog::RRDialog( int station, const miutil::miDate date,
 		      int type, int sensor, int level,
 		      const DataReinserter<KvApp> * dataReinserter,
-		      QWidget* parent, const char* name, bool modal, Qt::WFlags f )
-    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
+		      QWidget* parent, const char* name, bool modal )
+    : QDialog( parent, name, modal, Qt::Window )
     , dataReinserter( dataReinserter )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
     , shownFirstTime( false )
