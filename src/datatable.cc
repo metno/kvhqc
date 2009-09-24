@@ -149,9 +149,8 @@ DataTable::DataTable(QStringList selPar,
   }
 
   for ( int icol = 0; icol < noColPar*noParam; icol++ ) {
-    setColumnWidth(icol,75);  
+    adjustColumn(icol);  
   }
-  //    adjustColumn(icol);  
   //
   // Table contents
   //
@@ -354,7 +353,6 @@ DataTable::DataTable(QStringList selPar,
 	   (selParNo[ii] == 112  && strClock != "06") ) {
 	iorig->setEnabled(false); 
 	iflg->setEnabled(false); 
-	ikorr->setEnabled(false); 
 	imorig->setEnabled(false); 
       }
     }
