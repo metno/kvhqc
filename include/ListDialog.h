@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
+#include <qradiobutton.h>
 #include <q3groupbox.h>
 #include <qlabel.h>
 #include <q3table.h>
@@ -171,49 +172,19 @@ private:
   QPushButton* sthide;
   QPushButton* hdnexcu;
   QPushButton* excu;
-  //  QPushButton* parameterSelect;
   QPushButton* stationSelect;
   Q3ListBox* stationNames;
-  //  QGridLayout* grid;
   Q3VBoxLayout* topLayout;
-  //  QString sct;
-  //  QString spt;
   QString weatherElement;
 
 signals:
   void ListHide();
   void ListApply();
   void selectStation();
-  //  void selectParameter();
   void fromTimeChanged(const miutil::miTime&);
   void toTimeChanged(const miutil::miTime&);
 };
-/*
-class ParameterTable : public QTable {
-Q_OBJECT
-public:
- ParameterTable(QStringList, int, int, QWidget*);
- void sortColumn( int col, bool ascending, bool wholeRows );
-};
 
-class ParameterSelection : public QWidget {
-Q_OBJECT
-private:
- QPushButton* selectionOK;
- ParameterTable* parameterTable;
-public:
- ParameterSelection(QStringList, int);
- void showSelectedParameters(int);
- QStringList parList;
-private slots:
- void tableCellClicked(int);
- void listSelectedParameters();
- //signals:
- //  void parameterAppended(QString);
- //  void parameterRemoved(QString);
- //  void parametersSelected(QStringList);
-};
-*/
 class StationTable : public Q3Table {
 Q_OBJECT
 public:
