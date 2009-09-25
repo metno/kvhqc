@@ -40,7 +40,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Authentication {
 
-  const int DEFAULT_LDAP_PORT = 389;
+  //  const int DEFAULT_LDAP_PORT = 389;
+  const int DEFAULT_LDAP_PORT = 636;
 
   bool authenticate(const char *username, const char *password, 
 		    const char *server, int port = DEFAULT_LDAP_PORT);
