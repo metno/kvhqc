@@ -28,18 +28,16 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#define LDAP_DEPRECATED 1
 #include "Authenticator.h"
 #include <qlineedit.h>
+#define LDAP_DEPRECATED 1 // ouch!
 #include <ldap.h>
 #include <cstring>
 #include <iostream>
 #include <sstream>
 
-//#include <qvalidator.h>
-#include <QValidator>
-//#include <qregexp.h>
-#include <QRegExp>
+#include <qvalidator.h>
+#include <qregexp.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
 
@@ -48,95 +46,97 @@ using namespace std;
 
 //static const char *format  = "uid=%s,ou=People,o=dnmi.no";
 
-namespace Authentication {
+namespace Authentication
+{
 
-  /**
-   * Warning: This authentication is, by itself, not secure: if
-   * username is empty or something authentication will have been
-   * successful.
-   */ 
-  
-  bool authenticate(const char *username, const char *password, 
-		    const char *server, int port) 
-  {
-    LDAP *ld = NULL;
-    LDAP *ldc;
-    int result;
-    ostringstream user;
-    
-    user << "uid=" << username << ",ou=People,o=dnmi.no";
-
-    ld = ldap_init(server, port);
-    string userS = user.str();
-    result = ldap_bind_s( ld, userS.c_str(), password, LDAP_AUTH_SIMPLE);
-    ldap_unbind(ld);
-    //    ld = ldap_initialize(&ldc,"ldap.oslo.dnmi.no");
-    //    result = ldap_simple_bind( ld, userS.c_str(), password);
-    //    ldap_unbind_ext_s(ld, NULL, NULL);
-    
-    cerr << "Authentication of " << userS << ":" << endl;
-    cerr << "\t" << ldap_err2string(result) << endl;
-
-    if ( result == LDAP_SUCCESS )
-      return true;
-    
-    return false;
-  }
+#define VERIFY(operation) { \
+	int result = operation; \
+	if ( result !=  LDAP_SUCCESS ) { \
+		cout << ldap_err2string(result) << endl; \
+		return false; \
+	} }
 
 
+/**
+ * Warning: This authentication is, by itself, not secure: if
+ * username is empty or something authentication will have been
+ * successful.
+ */
+bool authenticate(const char *username, const char *password,
+                  const char *server, int port)
+{
+	LDAP * ldap;
+	std::ostringstream uris;
+	uris << "ldaps://" << server << ':' << port;
+	std::string uri = uris.str();
+	cout << "connecting to " << uri << endl;
+	VERIFY(ldap_initialize(& ldap, uri.c_str()));
 
-  Authenticator::Authenticator( const char *server, int port, 
-				QWidget* parent, const char* name, bool modal, Qt::WindowFlags fl )
+
+	int ldapVersion = LDAP_VERSION3;
+	ldap_set_option(ldap, LDAP_OPT_PROTOCOL_VERSION, & ldapVersion);
+
+	std::ostringstream uns;
+	//uns << "uid=" << username << ", ou=People, o=dnmi.no";
+	uns << "uid=" << username << ",ou=user,ou=internal,dc=met,dc=no";
+	string un = uns.str();
+	cout << un << endl;
+
+	VERIFY(ldap_simple_bind_s(ldap, un.c_str(), password));
+
+	ldap_unbind(ldap);
+	cout << "YESSSSS" << endl;
+	return true;
+}
+
+
+Authenticator::Authenticator( const char *server, int port,
+                              QWidget* parent, const char* name, bool modal,  Qt::WindowFlags fl )
     : AuthenticationDialog( parent, name, modal, fl), server(server), port(port)
-  {
-    //    QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
-    QRegExpValidator *validUN = new QRegExpValidator(this);
-    validUN->setRegExp(QRegExp("[-\\w]+"));
-    username->setValidator(validUN);
+{
+  QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
+  validUN->setRegExp(QRegExp("[-\\w]+"));
+  username->setValidator(validUN);
 
-    //    QRegExpValidator *validPW = new QRegExpValidator(this, "pwInputValidator");
-    QRegExpValidator *validPW = new QRegExpValidator(this);
-    validPW->setRegExp(QRegExp("\\S+"));
-    password->setValidator(validPW);
+  QRegExpValidator *validPW = new QRegExpValidator(this, "pwInputValidator");
+  validPW->setRegExp(QRegExp("\\S+"));
+  password->setValidator(validPW);
+}
+
+Authenticator::~Authenticator()
+{}
+
+void Authenticator::doAuthenticate()
+{
+  QString un = username->text();
+  QString pw = password->text();
+  password->clear();
+
+  if ( un.isEmpty() or pw.isEmpty() )
+    return;
+
+  bool result = Authentication::authenticate(un.ascii(), pw.ascii(), server.ascii(), port);
+
+  if ( result ) {
+    return accept();
+  } else {
+    QMessageBox::information(this,
+                             "Feil brukernavn eller passord",
+                             "Feil brukernavn eller passord. Vennligst prœóõ½v igjen.",
+                             QMessageBox::Ok);
+
+    return;
   }
+}
 
-  Authenticator::~Authenticator()
-  {
-  }
+const QString Authenticator::authenticate(const char *server, int port)
+{
+  Authenticator auth(server, port, 0,0,0);
+  int result = auth.exec();
+  if ( result == QDialog::Accepted )
+    return auth.username->text();
 
-  void Authenticator::doAuthenticate()
-  {
-    QString un = username->text();
-    QString pw = password->text();
-    password->clear();
-
-    if ( un.isEmpty() or pw.isEmpty() )
-      return;
-
-    bool result = Authentication::authenticate(un.ascii(), pw.ascii(), server.ascii(), port);
-
-    cerr << "NUH!" << endl;
-
-    if ( result ) {
-      return accept();
-    }
-    else {
-      QMessageBox::information(this, 
-			       "Feil brukernavn eller passord",
-			       "Feil brukernavn eller passord. Vennligst prøv igjen.",
-			       QMessageBox::Ok);
-      
-      return;
-    } 
-  }
-
-  const QString Authenticator::authenticate(const char *server, int port) {
-    Authenticator auth(server, port, 0,0,0);
-    int result = auth.exec();
-    if ( result == QDialog::Accepted )
-      return auth.username->text();
-
-    return QString();
-  }
+  return QString();
+}
 }
 
