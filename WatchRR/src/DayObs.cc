@@ -153,10 +153,10 @@ namespace WatchRR
     miDate d = date;
     if ( clock > miClock(7,0,0) )
       d.addDay( -1 );
-
+    /*
     if ( type == 402 and clock == miClock( 6,0,0 ) and not summertime( date ) )
     	return get( paramID, miClock( 7,0,0 ) );
-
+    */
     kvDataPtr tmp( new kvData(
       getMissingKvData( station, miTime( d, clock ), paramID, type, sensor, level ) ) );
 
