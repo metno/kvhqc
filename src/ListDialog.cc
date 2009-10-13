@@ -174,6 +174,18 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(troCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
   connect(finCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
 
+  // Typeid options
+  Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1, 
+					  Qt::Horizontal, 
+					  "Meldingstyper", this);
+  /*    
+  Q3GridLayout* typeidLayout = new Q3GridLayout(typeGroup->layout());
+  priTypes = new QRadioButton( "Prioriterte typer", typeGroup );
+  typeGroup->insert(priTypes);
+  priTypes->setChecked(true);
+  allTypes = new QRadioButton( "Alle typer", typeGroup );
+  typeGroup->insert(allTypes);
+  */
   //Station selection
   stationSelect = new QPushButton("Velg stasjon", this);
   stationSelect->setGeometry(10, 110, 400, 30);
@@ -288,6 +300,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   
   topLayout->addLayout(typeLayout);
   topLayout->addLayout(locationLayout);
+  topLayout->addWidget(typeGroup);
   topLayout->addWidget(stationSelect);
   topLayout->addWidget(stationLabel);
   topLayout->addWidget(stationNames);
