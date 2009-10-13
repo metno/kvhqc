@@ -103,6 +103,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   : Q3MainWindow( 0, "HQC")
   , reinserter( NULL )
 {
+  readFromStation();
   //  setAttribute(Qt::WA_DeleteOnClose);
   // --- CHECK USER IDENTITY ----------------------------------------
 
@@ -228,10 +229,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 	   this, SLOT( updateSaveFunction(QWidget*) ) );
 
   
-  // --- TOOL BAR -----------------------------------------
-  QString path = QString(getenv("HQCDIR"));
-  QPixmap icon_listdlg(path + "/etc/kvhqc/table.png");
-  QPixmap icon_ts(path + "/etc/kvhqc/kmplot.png");
+  // --- TOOL BAR --------------------------------------------
+  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
+  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
   Q3ToolBar * hqcTools = new Q3ToolBar( this, "hqc" );
   hqcTools->setLabel( "Hqcfunksjoner" );
   QToolButton* listButton;
@@ -273,7 +273,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   // --- READ STATION INFO ----------------------------------------
 
-  readFromStation();
   cerr.setf(ios::fixed);
   int statCheck = 0;
   readFromStationFile(statCheck);
@@ -307,13 +306,13 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   }
   // --- DEFINE DIALOGS --------------------------------------------
   lstdlg = new ListDialog(this);
-  lstdlg->setIcon( QPixmap("etc/kvhqc/hqc.png") );
+  lstdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   clkdlg = new ClockDialog(this);
-  clkdlg->setIcon( QPixmap("etc/kvhqc/hqc.png") );
+  clkdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   pardlg = new ParameterDialog(this);
-  pardlg->setIcon( QPixmap("etc/kvhqc/hqc.png") );
+  pardlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   dshdlg = new DianaShowDialog(this);
-  dshdlg->setIcon( QPixmap("etc/kvhqc/hqc.png") );
+  dshdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   // --- READ PARAMETER INFO ---------------------------------------
   
   readFromParam();
@@ -1607,24 +1606,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
   BusyIndicator busy();
 
   bool result;
-  bool tdlUpd[NOPARAM];
-  for ( int ip = 0; ip < NOPARAM; ip++) {
-    tdl.orig[ip]   = -32767.0;
-    tdl.flag[ip]   = 0;
-    tdl.corr[ip]   = -32767.0;
-    tdl.sensor[ip] = 0;
-    tdl.level[ip]  = 0;
-    tdl.typeId[ip] = -32767;
-    tdl.controlinfo[ip] = "";
-    tdl.cfailed[ip] = "";
-    tdlUpd[ip] = false;
-  }
-  miutil::miTime protime("1800-01-01 00:00:00");
-  int prtypeId = -1;
-  int prstnr = 0;
   QTime t;
   t.start();
-  //  readFromTypeIdFile();
   cerr << "Tid for readFromTypeIdFile = " << t.elapsed() << endl;
   t.restart();
   WhichDataHelper whichData;
@@ -1637,147 +1620,15 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
   t.restart();
   
   KvObsDataList ldlist;// = GetData::datalist;
-  if(!KvApp::kvApp->getKvData(ldlist, whichData))
-    cerr << "Can't connect to data table!" << endl;
-  cerr << "Tid for old getKvData = " << t.elapsed() << endl;
-  /*
-  t.restart();
-  GetData dataReceiver;
+  GetData dataReceiver(this);
   if(!KvApp::kvApp->getKvData(dataReceiver, whichData)){
     cerr << "Finner ikke  datareceiver!!" << endl;
   }
   else {
     cerr << "Datareceiver OK!" << endl;
   }
-  cerr << "Tid for new getKvData = " << t.elapsed() << endl;
-  */ 
-  t.restart();
- 
- int aggPar = 0;
-  int aggTyp = 0;
-  int aggStat = 0;
-  miutil::miTime aggTime("1800-01-01 00:00:00") ;
-  for(IKvObsDataList it=ldlist.begin(); it!=ldlist.end(); it++ ) {
-    IDataList dit = it->dataList().begin();
-    int ditSize = it->dataList().size();
-    int stnr = dit->stationID();
-    int prParam = -1;
-    int prSensor = -1;
-    int ditNo = 0;
-    while( dit != it->dataList().end() ) {
-      int astnr = dit->stationID();
-      bool correctLevel = (dit->level() == sLevel );
-      bool correctTypeId;
-      correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
-      if ( dit->typeID() < 0 ) {
-	aggPar = dit->paramID();
-	aggTyp = dit->typeID();
-	aggTime = dit->obstime();
-	aggStat = dit->stationID();
-      }
-
-      int stnr = dit->stationID();
-      miutil::miTime otime = (dit->obstime());
-      miutil::miTime tbtime = (dit->tbtime());
-      int hour = otime.hour();
-      int typeId = dit->typeID();
-      int sensor = dit->sensor();
-               
-      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor) ) {
-	protime = otime;
-	prstnr = stnr;
-	prtypeId = typeId;
-	prSensor = sensor;
-	prParam = -1;
-	dit++;
-	ditNo++;
-	continue;
-      }
-      tdl.otime = otime;
-      tdl.tbtime = tbtime;
-      tdl.stnr = stnr;
-      bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
-      if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
-	tdl.typeId[dit->paramID()] = typeId;
-	tdl.showTypeId = typeId;
-	tdl.orig[dit->paramID()] = dit->original();
-	tdl.flag[dit->paramID()] = getShowFlag(dit->controlinfo());
-	tdl.corr[dit->paramID()] = dit->corrected();
-	tdl.sensor[dit->paramID()] = dit->sensor();
-	tdl.level[dit->paramID()] = dit->level();
-	tdl.controlinfo[dit->paramID()] = dit->controlinfo().flagstring();
-      	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
-	tdl.cfailed[dit->paramID()] = dit->cfailed();
-	tdlUpd[dit->paramID()] = true;
-      }
-      protime = otime;
-      prstnr = stnr;
-      prtypeId = typeId;
-      prSensor = sensor;
-      prParam = dit->paramID();
-      QString name;
-      double lat, lon, hoh;
-      int env;
-      int snr;
-      findStationInfo(stnr, name, lat, lon, hoh, snr, env);
-      tdl.name = name;
-      tdl.snr = snr;
-      int prid = dit->paramID();
-      bool correctHqcType = hqcTypeFilter(tdl.showTypeId, env, stnr);
-      ++dit;
-      ++ditNo;
-      otime = dit->obstime();
-      stnr = dit->stationID();
-      typeId = dit->typeID();
-      bool errFl = false;
-      if ( (!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
-	continue;
-      }
-      else if ( ditNo == ditSize - 1 ) goto pushback;
-      for ( int ip = 0; ip < NOPARAM; ip++) {
-	int shFl  = tdl.flag[ip];
-	int shFl1 = shFl/10000;
-	int shFl2 = shFl%10000/1000;
-	int shFl3 = shFl%1000/100;
-	int shFl4 = shFl%100/10;
-	if ( shFl1 > 1 || shFl2 > 1 || shFl3 > 1 || shFl4 > 1 )
-	  errFl = true;
-      }
-      if ( !errFl && (lity == erLi || lity == erSa || lity == erLo) ) {
-	continue;
-      }
-    pushback:
-      if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
-	    ((otime != protime || ( otime == protime && stnr != prstnr))))) {
-	datalist.push_back(tdl);
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
-      }
-      else if ( !timeFilter(hour) ) {
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
-      }
-    }
-  }
-  cerr << "Tid for resten av readFromData = " << t.elapsed() << endl;
+  cerr << "Tid for new getKvData (hele readfromdata) = " << t.elapsed() << endl;
+  
 }
 
 
@@ -1787,10 +1638,10 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 
 void HqcMainWindow::readFromModelData(const miutil::miTime& stime, 
 				      const miutil::miTime& etime) {
-
   bool result;
   
   mdlist.erase(mdlist.begin(),mdlist.end());
+  modeldatalist.reserve(131072);
   modeldatalist.clear();  
   QTime t;
   t.start();
@@ -2156,7 +2007,7 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
     et->setCaption("Feillog");
   else if ( lity == daLi )
     et->setCaption("Dataliste");
-  et->setIcon( QPixmap("hqc.png") );
+  et->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   et->show();
   tileHorizontal();
   vector<QString> stationList;
@@ -2288,7 +2139,7 @@ void HqcMainWindow::sendTimes(){
     m.data.push_back(datalist[i].otime.isoTime());
   }
   cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
+  //  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
   pluginB->sendMessage(m);
   
 }
@@ -2891,4 +2742,151 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     }
   }
   return tpId;
+}
+
+void 
+HqcMainWindow::
+makeObsDataList( KvObsDataList& dataList )
+{
+  bool tdlUpd[NOPARAM];
+  for ( int ip = 0; ip < NOPARAM; ip++) {
+    tdl.orig[ip]   = -32767.0;
+    tdl.flag[ip]   = 0;
+    tdl.corr[ip]   = -32767.0;
+    tdl.sensor[ip] = 0;
+    tdl.level[ip]  = 0;
+    tdl.typeId[ip] = -32767;
+    tdl.controlinfo[ip] = "";
+    tdl.cfailed[ip] = "";
+    tdlUpd[ip] = false;
+  }
+  miutil::miTime protime("1800-01-01 00:00:00");
+  int prtypeId = -1;
+  int prstnr = 0;
+  int aggPar = 0;
+  int aggTyp = 0;
+  int aggStat = 0;
+  miutil::miTime aggTime("1800-01-01 00:00:00") ;
+
+  for(IKvObsDataList it=dataList.begin(); it!=dataList.end(); it++ ) {
+    KvObsData::kvDataList::iterator dit=it->dataList().begin();
+    //    IDataList dit = it->dataList().begin();
+    int ditSize = it->dataList().size();
+    int stnr = dit->stationID();
+    int prParam = -1;
+    int prSensor = -1;
+    int ditNo = 0;
+    while( dit != it->dataList().end() ) {
+      int astnr = dit->stationID();
+      bool correctLevel = (dit->level() == HqcMainWindow::sLevel );
+      bool correctTypeId;
+      correctTypeId = HqcMainWindow::typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
+      if ( dit->typeID() < 0 ) {
+	aggPar = dit->paramID();
+	aggTyp = dit->typeID();
+	aggTime = dit->obstime();
+	aggStat = dit->stationID();
+      }
+
+      int stnr = dit->stationID();
+      miutil::miTime otime = (dit->obstime());
+      miutil::miTime tbtime = (dit->tbtime());
+      int hour = otime.hour();
+      int typeId = dit->typeID();
+      int sensor = dit->sensor();
+               
+      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor) ) {
+	protime = otime;
+	prstnr = stnr;
+	prtypeId = typeId;
+	prSensor = sensor;
+	prParam = -1;
+	dit++;
+	ditNo++;
+	continue;
+      }
+      tdl.otime = otime;
+      tdl.tbtime = tbtime;
+      tdl.stnr = stnr;
+      bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
+      if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
+	tdl.typeId[dit->paramID()] = typeId;
+	tdl.showTypeId = typeId;
+	tdl.orig[dit->paramID()] = dit->original();
+	tdl.flag[dit->paramID()] = getShowFlag(dit->controlinfo());
+	tdl.corr[dit->paramID()] = dit->corrected();
+	tdl.sensor[dit->paramID()] = dit->sensor();
+	tdl.level[dit->paramID()] = dit->level();
+	tdl.controlinfo[dit->paramID()] = dit->controlinfo().flagstring();
+      	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
+	tdl.cfailed[dit->paramID()] = dit->cfailed();
+	tdlUpd[dit->paramID()] = true;
+      }
+      protime = otime;
+      prstnr = stnr;
+      prtypeId = typeId;
+      prSensor = sensor;
+      prParam = dit->paramID();
+      QString name;
+      double lat, lon, hoh;
+      int env;
+      int snr;
+      findStationInfo(stnr, name, lat, lon, hoh, snr, env);
+      tdl.name = name;
+      tdl.snr = snr;
+      int prid = dit->paramID();
+      bool correctHqcType = hqcTypeFilter(tdl.showTypeId, env, stnr);
+      ++dit;
+      ++ditNo;
+      otime = dit->obstime();
+      stnr = dit->stationID();
+      typeId = dit->typeID();
+      bool errFl = false;
+      if ( (!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1 ) {
+	continue;
+      }
+      else if ( ditNo == ditSize - 1 ) goto pushback;
+      for ( int ip = 0; ip < NOPARAM; ip++) {
+	int shFl  = tdl.flag[ip];
+	int shFl1 = shFl/10000;
+	int shFl2 = shFl%10000/1000;
+	int shFl3 = shFl%1000/100;
+	int shFl4 = shFl%100/10;
+	if ( shFl1 > 1 || shFl2 > 1 || shFl3 > 1 || shFl4 > 1 )
+	  errFl = true;
+      }
+      if ( !errFl && (lity == erLi || lity == erSa || lity == erLo) ) {
+	continue;
+      }
+    pushback:
+      if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
+	    ((otime != protime || ( otime == protime && stnr != prstnr))))) {
+	datalist.push_back(tdl);
+	for ( int ip = 0; ip < NOPARAM; ip++) {
+	  tdl.orig[ip]   = -32767.0;
+	  tdl.flag[ip]   = 0;
+	  tdl.corr[ip]   = -32767.0;
+	  tdl.sensor[ip] = -0;
+	  tdl.level[ip]  = -0;
+	  tdl.typeId[ip] = -32767;
+	  tdl.controlinfo[ip] = "";
+	  tdl.cfailed[ip] = "";
+	  tdlUpd[ip] = false;
+	}
+      }
+      else if ( !timeFilter(hour) ) {
+	for ( int ip = 0; ip < NOPARAM; ip++) {
+	  tdl.orig[ip]   = -32767.0;
+	  tdl.flag[ip]   = 0;
+	  tdl.corr[ip]   = -32767.0;
+	  tdl.sensor[ip] = -0;
+	  tdl.level[ip]  = -0;
+	  tdl.typeId[ip] = -32767;
+	  tdl.controlinfo[ip] = "";
+	  tdl.cfailed[ip] = "";
+	  tdlUpd[ip] = false;
+	}
+      }
+    }
+  }
 }
