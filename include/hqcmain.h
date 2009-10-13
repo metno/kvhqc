@@ -40,12 +40,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "datatable.h"
 #include <qwidget.h>
 //Added by qt3to4:
-//#include <QPaintEvent>
 #include <fstream>
 #include <iostream>
 #include <kvcpp/KvApp.h>
 #include <q3mainwindow.h>
-//#include <QMainWindow>
 #include <qobject.h>
 #include <q3popupmenu.h> 
 #include <q3process.h> 
@@ -61,8 +59,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <q3accel.h>
 #include <q3textstream.h>
 #include <qimage.h>
-//#include <qpainter.h>
-//#include <q3paintdevicemetrics.h>
 #include <qpixmap.h>
 #include <qobject.h>
 #include <q3vbox.h>
@@ -73,7 +69,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qicon.h>
 #include <qcursor.h>
 
-//#include <qtClientButton.h>
 #include <qUtilities/ClientButton.h>
 
 #include <puTools/miString.h>
@@ -109,6 +104,7 @@ public:
 
   HqcMainWindow();
   ~HqcMainWindow();
+  void makeObsDataList( kvservice::KvObsDataList& dataList );
   int nuroprpar;
   int nucoprpar;
   /*!
