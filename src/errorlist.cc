@@ -341,7 +341,47 @@ ErrorList::ErrorList(QStringList& selPar,
       }
     }
   }
+  ////////
+  cerr << "Memory store 1 size = " << memStore1.size() << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore1.size(); i++ ) {
+    cerr << setw(7) << i;
+    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime 
+	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString() 
+	 << setw(9) << setprecision(1) << memStore1[i].orig 
+	 << setw(9) << setprecision(1) << memStore1[i].corr 
+         << setw(9) << setprecision(1) << memStore1[i].morig << "  " 
+	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
+	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
+  }
+  cerr << endl;
+  cerr << "Memory store 2 size = " << memStore2.size() << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore2.size(); i++ ) {
+    cerr << setw(7) << i;
+    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
+	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
+	 << setw(9) << setprecision(1) << memStore2[i].orig 
+	 << setw(9) << setprecision(1) << memStore2[i].corr 
+         << setw(9) << setprecision(1) << memStore2[i].morig << "  " 
+	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
+	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
+  }
+  cerr << endl;
+  cerr << "Memory store 3 size = " << memStore3.size() << "  no of params = " <<selPar.count() << endl;
+  
+  for ( int i = 0; i < memStore3.size(); i++ ) {
+    cerr << setw(7) << i;
+    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime << setw(21) << memStore3[i].tbtime 
+	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
+	 << setw(9) << setprecision(3) << memStore3[i].orig 
+	 << setw(9) << setprecision(3) << memStore3[i].corr 
+	 << setw(9) << setprecision(3) << memStore3[i].morig 
+	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
+	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
+  }
+  cerr << endl;
 
+
+  ////////
  checkFirstMemoryStore();
 
   int es = error.size();
@@ -386,7 +426,48 @@ ErrorList::ErrorList(QStringList& selPar,
       ir--;
     }
   }
+  ///////
+  cerr << "Memory store 1 second time size = " << memStore1.size() 
+       << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore1.size(); i++ ) {
+    cerr << setw(14) << i;
+    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime 
+	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString() 
+	 << setw(9) << setprecision(1) << memStore1[i].orig 
+	 << setw(9) << setprecision(1) << memStore1[i].corr 
+	 << setw(9) << setprecision(1) << memStore1[i].morig 
+	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
+	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
+  }
+  cerr << endl;
+  cerr << "Memory store 2 second time size = " << memStore2.size() 
+       << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore2.size(); i++ ) {
+    cerr << setw(14) << i;
+    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
+	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
+	 << setw(9) << setprecision(1) << memStore2[i].orig 
+	 << setw(9) << setprecision(1) << memStore2[i].corr 
+	 << setw(9) << setprecision(1) << memStore2[i].morig 
+	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
+	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
+  }
+  cerr << endl;
+  cerr << "Memory store 3 second time size = " << memStore3.size() 
+       << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore3.size(); i++ ) {
+    cerr << setw(14) << i;
+    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime 
+	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
+	 << setw(9) << setprecision(3) << memStore3[i].orig 
+	 << setw(9) << setprecision(3) << memStore3[i].corr 
+	 << setw(9) << setprecision(3) << memStore3[i].morig 
+	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
+	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
+  }
+  cerr << endl;
 
+  ///////
   error.clear();
   noError.clear();
   checkSecondMemoryStore();
@@ -430,7 +511,35 @@ ErrorList::ErrorList(QStringList& selPar,
       ir--;
     }
   }
+  ///////
+  cerr << "Memory store 2 third time size = " << memStore2.size() 
+       << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore2.size(); i++ ) {
+    cerr << setw(14) << i;
+    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
+	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
+	 << setw(9) << setprecision(1) << memStore2[i].orig 
+	 << setw(9) << setprecision(1) << memStore2[i].corr 
+	 << setw(9) << setprecision(1) << memStore2[i].morig 
+	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
+	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
+  }
+  cerr << endl;
+  cerr << "Memory store 3 third time size = " << memStore3.size() 
+       << "  no of params = " <<selPar.count() << endl;
+  for ( int i = 0; i < memStore3.size(); i++ ) {
+    cerr << setw(14) << i;
+    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime 
+	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
+	 << setw(9) << setprecision(3) << memStore3[i].orig 
+	 << setw(9) << setprecision(3) << memStore3[i].corr 
+	 << setw(9) << setprecision(3) << memStore3[i].morig 
+	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
+	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
+  }
+  cerr << endl;
 
+  ///////
   for ( int i = 0; i < memStore1.size(); i++ ) {
     mem* memStore = new mem(memStore1[i]);
     updateKvBase(memStore);
@@ -958,8 +1067,9 @@ void ErrorList::markModified( int row, int col )
   float cor;
   if ( col > 15 && col < 19 )
     cor = item(row, col)->text().toFloat(&OK);
-  else if ( col == 15 )
+  else if ( col == 15 ) {
     cor = msItem.orig;
+  }
   else if ( col == 19 )
     cor = discardedValue_;
   else
@@ -1434,7 +1544,7 @@ void ErrorList::saveChanges()
     else if ( ccol == 15 ) {
       const int tableOriginalValuePos = 8;
       float newCorrected = text( row, tableOriginalValuePos ).toFloat();
-      kd.corrected( text( row, tableOriginalValuePos ).toFloat() );
+      kd.corrected( kd.original() );
     }
     else if ( ccol == 19 ) {
       kd.corrected( discardedValue_ );
