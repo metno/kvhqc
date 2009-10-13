@@ -12,14 +12,14 @@
   NORWAY
   email: kvalobs-dev@met.no
 
-  This file is part of KVALOBS
+  This file is part of HQC
 
-  KVALOBS is free software; you can redistribute it and/or
+  HQC is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public License as
   published by the Free Software Foundation; either version 2
   of the License, or (at your option) any later version.
 
-  KVALOBS is distributed in the hope that it will be useful,
+  HQC is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   General Public License for more details.
@@ -33,18 +33,19 @@
 #define __GETDATA_H__
 
 #include <kvcpp/KvGetDataReceiver.h>
+#include "hqcmain.h"
 
 class GetData :
    public kvservice::KvGetDataReceiver
 {
    public:
-      GetData( );
-
+      GetData( HqcMainWindow* o);
+      HqcMainWindow* w;
       /**
        * next, this function is called for every data set!
        *
        * \datalist the data.
-       * \return true if we shall continue. False if you want too
+       * \return true if we shall continue. False if you want to
        *         stop retriving data from kvalobs.
        */
       bool next( kvservice::KvObsDataList &datalist );
