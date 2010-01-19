@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "Authenticator.h"
 #include <qlineedit.h>
-#define LDAP_DEPRECATED 1 // ouch!
+#define LDAP_DEPRECATED 1 //  ouch!
 #include <ldap.h>
 #include <cstring>
 #include <iostream>
@@ -115,7 +115,7 @@ void Authenticator::doAuthenticate()
   if ( un.isEmpty() or pw.isEmpty() )
     return;
 
-  bool result = Authentication::authenticate(un.ascii(), pw.ascii(), server.ascii(), port);
+  bool result = Authentication::authenticate(un.toAscii(), pw.toAscii(), server.toAscii(), port);
 
   if ( result ) {
     return accept();
