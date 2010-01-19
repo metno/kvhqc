@@ -125,6 +125,9 @@ public:
   QCheckBox* webReg;
   QCheckBox* priReg;
 
+  QRadioButton* priTypes;
+  QRadioButton* allTypes;
+
 public slots:
   void applyHideClicked();
   void chooseParameters(const QString &);
