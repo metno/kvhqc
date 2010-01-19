@@ -42,6 +42,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qlayout.h>
 
 using namespace std;
+/**
+ * \brief Dialog for selecting times to show.
+ */
 
 class ClockDialog : public QDialog {
   Q_OBJECT
