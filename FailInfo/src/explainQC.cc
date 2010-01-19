@@ -228,7 +228,13 @@ namespace QC
       return getExplanation( failDetail.toString() );
     }
 
-    static const int groups_ = 10;
+    string fmis( const cFailedParam &, const kvData & )
+    {
+      return "fmis";
+    }
+
+    ////    static const int groups_ = 10;
+    static const int groups_ = 11;
     static FailGroupList::value_type _failGroup[ groups_ ] = {
       FailGroupList::value_type( "0",
 				 FailGroup( "Forhandskvalifisering",
@@ -259,7 +265,10 @@ namespace QC
 					    fd ) ),
       FailGroupList::value_type( "9",
 				 FailGroup( "Kombinert vurdering",
-					    fcombi ) )
+					    fcombi ) ),
+      FailGroupList::value_type( "10",
+				 FailGroup( "Manglende observasjon",
+					    fmis ) )
     };
     FailGroupList failGroup( _failGroup, &_failGroup[ groups_ ] );
   }
