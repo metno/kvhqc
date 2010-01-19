@@ -300,19 +300,19 @@ namespace WatchRR
     int headerWidth     = verticalHeader()->frameSize().width();
     int width = contWidth + headerWidth + frames;
     width += verticalScrollBar()->size().width();
-
     int contHeight      = contentsHeight();
     int headerHeight    = horizontalHeader()->frameSize().height();
     int height = contHeight + headerHeight + frames;
 
     return QSize( width, height );
   }
-
+  /*
   QSizePolicy RRTable::sizePolicy() const
   {
-    return QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Expanding );
+    //    return QSizePolicy( QSizePolicy::Fixed, QSizePolicy::Expanding );
+    return QSizePolicy( QSizePolicy::Preferred, QSizePolicy::Preferred );
   }
-
+  */
   void RRTable::headerMove( int, int fromIndex, int toIndex )
   {
     toSec.insert( toSec.begin() + toIndex, toSec[fromIndex] );
