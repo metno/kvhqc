@@ -196,9 +196,15 @@ DataTable::DataTable(QStringList selPar,
     else if ( istnr < 100000 )
       strStnr = " " + strStnr;
     QString strTypeId;
-    strTypeId = strTypeId.setNum(showTypeId);
-    if ( showTypeId < 10 )
-      strTypeId = "  " + strTypeId;
+    if ( isShTy ) {
+      strTypeId = strTypeId.setNum(showTypeId);
+      //      if ( abs(showTypeId) < 10 )
+      //	strTypeId = "  " + strTypeId;
+      strTypeId = strTypeId.rightJustified(5,' ');
+      cerr << "  :" << strTypeId.toStdString() << endl;
+    }
+    else
+      strTypeId = "     ";
     double dlat;
     double dlon;
     double dhoh;
@@ -243,7 +249,9 @@ DataTable::DataTable(QStringList selPar,
 				 "   " + 
 				 strTime + 
 				 " " + 
-				 strSynNo);
+				 strSynNo +
+				 " " +
+				 strTypeId);
     }
     else if ( dateCol == 1 ) {
       verticalHeader()->setLabel(dt,
@@ -257,7 +265,9 @@ DataTable::DataTable(QStringList selPar,
 				 "   " + 
 				 strTime + 
 				 " " + 
-				 strSynNo);
+				 strSynNo +
+				 " " +
+				 strTypeId);
     }
     else if ( dateCol == 2 ) {
       verticalHeader()->setLabel(dt,
@@ -267,7 +277,9 @@ DataTable::DataTable(QStringList selPar,
 				 "   " + 
 				 strTime + 
 				 " " + 
-				 strSynNo);
+				 strSynNo +
+				 " " +
+				 strTypeId);
     }
     else if ( dateCol == 3 ) {
       verticalHeader()->setLabel(dt,
@@ -283,7 +295,9 @@ DataTable::DataTable(QStringList selPar,
 				 "   " + 
 				 strTime + 
 				 " " + 
-				 strSynNo);
+				 strSynNo+ 
+				 " " +
+				 strTypeId);
     }
     
     for ( int ii = 0; ii < hmw->nuroprpar; ii++) {
@@ -491,12 +505,12 @@ void DataTable::focusTable(QString& cmn) {
     Q3TableItem* tstat = item( irow, 0);
     Q3TableItem* ttime = item( irow, 0);
     QString qstat = verticalHeader()->label(irow).left(6).stripWhiteSpace();
-    QString qsyno = "0" + verticalHeader()->label(irow).right(4).stripWhiteSpace();
+    QString qsyno = "0" + verticalHeader()->label(irow).right(10).stripWhiteSpace();
     QString qtime;
     if ( qsyno == "0" )
-      qtime = verticalHeader()->label(irow).stripWhiteSpace().right(16);
+      qtime = verticalHeader()->label(irow).right(22);
     else
-      qtime = verticalHeader()->label(irow).stripWhiteSpace().right(21).left(16);
+      qtime = verticalHeader()->label(irow).right(27).left(16);
     if ( (qstat == stnr || qsyno == stnr ) && qtime == time ) {
       row = irow;
       break;
