@@ -95,7 +95,7 @@ namespace WatchRR
     void getModifiedData( DataConsistencyVerifier::DataSet & mod );
 
     virtual QSize sizeHint() const;
-    virtual QSizePolicy sizePolicy() const;
+    //    virtual QSizePolicy sizePolicy() const;
 
   public slots:
     /**
