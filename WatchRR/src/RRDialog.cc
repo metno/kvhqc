@@ -198,6 +198,8 @@ namespace WatchRR
     , shownFirstTime( false )
   {
     RRTable * rrt = new RRTable( dol, /*ttGroup,*/ this, "Table" );
+    setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+    rrt->setMinimumSize(rrt->sizeHint());
     setup( rrt );
     //    rrt->ttGroup = ttGroup;
   }
@@ -215,6 +217,8 @@ namespace WatchRR
     RRTable * rrt;
     try {
       rrt = new RRTable( station, date, type, sensor, level, /*0,*/ this, "Table" );
+      setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+      rrt->setMinimumSize(rrt->sizeHint());
     }
     catch( std::runtime_error &e ) {
       int res = QMessageBox::critical( this, "HQC",
