@@ -58,7 +58,6 @@ namespace Weather
   {
     cerr << "Getting observations for " << otime << endl;
 
-    // 7 o'clock , because some stations send RR_24 obs with time = 07:00
     miTime stop( otime );
     stop.addDay();
     miTime start( otime );
