@@ -85,6 +85,7 @@ namespace Weather
       IDataList dit = it->dataList().begin();
       while( dit != it->dataList().end() ) {
 	kvData kvDat;
+	cerr << "Knut tester obstime: " << dit->obstime() << endl;
 	kvDat.set(dit->stationID(),
 		  dit->obstime(),
 		  dit->original(),
@@ -263,6 +264,7 @@ namespace Weather
 
   void WeatherTable::markModified( int row, int col )
   {
+    const double epsilon = 0.05;
     Q3TableItem *tit = item( row, col );
     float newCorr = (tit->text()).toFloat();
     kvData kvDat = getKvData(row, col);
@@ -275,6 +277,7 @@ namespace Weather
       return;
     }
     float oldCorr = kvDat.corrected();
+    float org     = kvDat.original();
     QString oldCorrStr;
     oldCorrStr = oldCorrStr.setNum(oldCorr,'f',1);
     oldNewPair op(oldCorr, newCorr);
@@ -295,15 +298,42 @@ namespace Weather
 	tit->setText(oldCorrStr);
       return;
     }
+    if ( fabs(newCorr - org ) < epsilon ) {
+      if ( cif.flag(4) > 1 ) {
+	cif.set(15,1);
+	cif.set(4,1);
+      }
+      if ( cif.flag(6) == 0 ) {
+	cif.set(15,1);
+	if ( cif.flag(12) == 3 )
+	  cif.set(12,1);
+      }
+      else if ( cif.flag(6) == 1 ) {
+	cif.set(15,0);
+	cif.set(6,3);
+      }
+      else if ( cif.flag(6) == 2 ) {
+	cif.set(15,1);
+	cif.set(6,0);
+	if ( cif.flag(12) == 3 )
+	  cif.set(12,1);
+      }
+    }
     if ( newCorr == -32766.0 ) {
       cif.set(15,10);
       const int misfl = cif.flag(6);
       if ( misfl == 0 || misfl == 1 )
 	cif.set(6,misfl + 2);
     }
-    else {
+    else if ( cif.flag(6) == 1 || cif.flag(6) == 3 ) {
+      cif.set(6,1);
+      cif.set(15,5);
+    }
+    else if ( cif.flag(6) == 0 || cif.flag(6) == 2 ) {
+      cif.set(6,0);
       cif.set(15,7);
     }
+
     if ( oldCorr == -32767.0 ) {
       cif.set(15,5);                      //Interpol
       int misfl;
