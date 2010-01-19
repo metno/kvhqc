@@ -43,7 +43,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qprinter.h>
 #include <q3textedit.h>
 #include <q3simplerichtext.h>
-//#include "weatherdialog.h"
 #include "errorlist.h"
 #include "hqcmain.h"
 #include "ErrorListFirstCol.h"
@@ -68,74 +67,9 @@ int cP[] = {  1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
 		     305,306,307,308,1021,1022,1025,1026};
 const int headSize = 0;
 
-
-ErrorHead::ErrorHead(const miutil::miTime& stime,
-		     const miutil::miTime& etime,
-		     QWidget* parent,
-		     int lity,
-		     QString userName)
-  : Q3Table( 1000, 100, parent, "table" ) {
-  setCaption("HQC - Feilliste");
-  setNumCols(0);
-  setNumRows(0);
-  setNumCols(20);
-  setNumRows(13);
-  setShowGrid(FALSE);
-
-  horizontalHeader()->hide();
-  verticalHeader()->hide();
-  FlTableItem* flLst = new FlTableItem(this, Q3TableItem::Never, "Feilliste");
-  setItem(1,1,flLst);
-  flLst->setSpan(2,5);
-
-  DkTableItem* distr = new DkTableItem(this, Q3TableItem::Never, "Distrikt:");
-  setItem(3,1,distr);
-  distr->setSpan(2,4);
-
-  DkTableItem* ctrPr = new DkTableItem(this, Q3TableItem::Never, "Kontrollperiode:");
-  setItem(5,1,ctrPr);
-  ctrPr->setSpan(2,6);
-
-  UsTableItem* sTm = new UsTableItem(this, Q3TableItem::Never, QString::fromStdString((stime.isoTime())).left(11));
-  setItem(5,7,sTm);
-  sTm->setSpan(2,3);
-  UsTableItem* eTm = new UsTableItem(this, Q3TableItem::Never, QString::fromStdString((etime.isoTime())).left(11));
-  setItem(5,11,eTm);
-  eTm->setSpan(2,4);
-
-  DkTableItem* ctrlr = new DkTableItem(this, Q3TableItem::Never, "Kontrollør:");
-  setItem(7,1,ctrlr);
-  ctrlr->setSpan(2,5);
-
-  DkTableItem* ctllr = new DkTableItem(this, Q3TableItem::Never, userName);
-  setItem(7,7,ctllr);
-  ctllr->setSpan(2,5);
-
-  DkTableItem* tilt = new DkTableItem(this, Q3TableItem::Never, "Tiltak i forhold til observert verdi");
-  setItem(7,15,tilt);
-  tilt->setSpan(2,5);
-  setColumnWidth(0, 20);
-  setColumnWidth(1, 28);
-  setColumnWidth(2, 28);
-  setColumnWidth(3, 28);
-  setColumnWidth(4, 42);
-  setColumnWidth(5, 74);
-  setColumnWidth(6, 34);
-  setColumnWidth(7, 39);
-  setColumnWidth(8, 55);
-  setColumnWidth(9, 55);
-  setColumnWidth(10, 55);
-  setColumnWidth(11, 34);
-  setColumnWidth(12, 20);
-  setColumnWidth(13, 27);
-  for ( int icol = 14; icol < 16; icol++ )
-    setColumnWidth(icol, 90);
-  for ( int icol = 16; icol < 20; icol++ )
-    setColumnWidth(icol, 70);
-}
-
-ErrorHead::~ErrorHead(){}
-
+/*!
+ * \brief Constructs the error list
+ */
 ErrorList::ErrorList(QStringList& selPar,
 		     const miutil::miTime& stime,
 		     const miutil::miTime& etime,
@@ -189,6 +123,9 @@ ErrorList::ErrorList(QStringList& selPar,
 
   connect( this, SIGNAL( currentChanged(int, int) ),
 	   this, SLOT  ( signalStationSelected( int ) ) );
+
+  connect( mainWindow, SIGNAL( windowClose() ),
+	   this, SIGNAL( errorListClosed() ) );
 
   if (!KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
     cerr << "Can't connect to obs_pgm table!" << endl;
@@ -730,40 +667,12 @@ ErrorList::~ErrorList() {
   //  delete stTT;
 }
 
-
 bool ErrorList::obsInMissList(mem memO) {
   for ( int i = 0; i < mList.size(); i++ ) {
     if ( mList[i].statno == memO.stnr && mList[i].parno == memO.parNo && mList[i].oTime == memO.obstime )
       return true;
   }
   return false;
-}
-
-void FlTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
-{
-  QFont f( "arial", 20, QFont::Bold );
-  p->setFont( f );
-  p->setPen( Qt::black );
-  QColorGroup g( cg );
-  Q3TableItem::paint( p, g, cr, selected );
-}
-
-void DkTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
-{
-  QFont f( "arial", 16, QFont::Bold );
-  p->setFont( f );
-  p->setPen( Qt::black );
-  QColorGroup g( cg );
-  Q3TableItem::paint( p, g, cr, selected );
-}
-
-void UsTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
-{
-  QFont f( "arial", 16, QFont::Normal );
-  p->setFont( f );
-  p->setPen( Qt::black );
-  QColorGroup g( cg );
-  Q3TableItem::paint( p, g, cr, selected );
 }
 
 void CrTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected ) {
@@ -1480,11 +1389,11 @@ void ErrorList::saveChanges()
       break;
     case 16:
       {
-	if ( fmis == 0 || fmis == 2 ) {
+	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction 
 	  cif.set(6,0);
 	  cif.set(15,7);
 	}
-	else if ( fmis == 1 || fmis == 3 ) {
+	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
 	  cif.set(6,1);
 	  cif.set(15,5);
 	}
@@ -1505,11 +1414,11 @@ void ErrorList::saveChanges()
       break;
     case 18:
       {
-	if ( fmis == 0 || fmis == 2 ) {
+	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction
 	  cif.set(6,0);
 	  cif.set(15,7);
 	}
-	else if ( fmis == 1 || fmis == 3 ) {
+	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
 	  cif.set(6,1);
 	  cif.set(15,5);
 	}
