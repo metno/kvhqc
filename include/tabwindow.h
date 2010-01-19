@@ -101,7 +101,7 @@ signals:
 private:
     DataTable* dtt;
     ErrorList* erl;
-    ErrorHead* erHead;
+    //    ErrorHead* erHead;
     void readErrorsFromqaBase(int&, 
 			      int&, 
 			      const miutil::miTime&, 
