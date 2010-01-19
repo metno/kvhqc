@@ -36,6 +36,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dianashowdialog.h"
 #include "TimeseriesDialog.h"
 #include "parameterdialog.h"
+#include "rejectdialog.h"
+#include "rejecttable.h"
 #include "errorlist.h"
 #include "datatable.h"
 #include <qwidget.h>
@@ -288,6 +290,9 @@ public:
   ClockDialog* clkdlg;
   DianaShowDialog* dshdlg;
   ParameterDialog* pardlg;
+  RejectDialog* rejdlg;
+  Rejects* rejects;
+  vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
   datl tdl;
   vector<datl> datalist;
@@ -459,7 +464,7 @@ protected:
   void sendImage(const miString name, const QImage& image);
   //  void sendShowText(const miString site);
   void readErrorsFromqaBase(int&, int&);
-
+  void showWindow(QWidget* w);
 
 QStringList listStatName;
 QStringList listStatNum;
@@ -506,6 +511,9 @@ private slots:
   void errLogMenu();
   void dataListMenu();
   void errLisaMenu();
+  //  void textDataMenu();
+  void rejectedMenu();
+  void rejectedOK();
 
   /**
    * Bring up a the WatchRR specification dialog
@@ -532,6 +540,7 @@ signals:
   void toggleWeather();
   void toggleType();
   void saveData();
+  void windowClose();
   //KTEST
   void printErrorList();
 
