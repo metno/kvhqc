@@ -61,14 +61,15 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 			    bool isShTy,
 			    QString& userName)
   : Q3MainWindow( parent, name )
-    , dtt( NULL ), erl( NULL ), erHead( NULL )
+    , dtt( NULL ), erl( NULL )
+    //    , dtt( NULL ), erl( NULL ), erHead( NULL )
 {
   readLimits();
   if ( lity == erLi || lity == erSa) {
     if (metty == tabHead ) {
-      erHead = new ErrorHead(stime,etime,this,lity,userName);
-      setFocusProxy( erHead );
-      setCentralWidget( erHead );
+      //      erHead = new ErrorHead(stime,etime,this,lity,userName);
+      //      setFocusProxy( erHead );
+      //      setCentralWidget( erHead );
     }
     else if ( metty == tabList ) {
       if ( erl ) 
@@ -209,7 +210,7 @@ void MDITabWindow::showObservations(int row) {
   
   //time
   QString dateTime = 
-    dtt->verticalHeader()->label(row).right(21).left(16) + ":00";
+    dtt->verticalHeader()->label(row).right(27).left(16) + ":00";
   miutil::miTime time(dateTime.toStdString());
   
   //hvilken stasjon
@@ -229,7 +230,7 @@ void MDITabWindow::showChangedValue(int row, int col, QString val) {
   int stnr = stationNo.toInt();
   
   QString dateTime = 
-    dtt->verticalHeader()->label(row).stripWhiteSpace().right(21).left(16);
+    dtt->verticalHeader()->label(row).stripWhiteSpace().right(27).left(16);
   dateTime.append(":00");
   miutil::miTime time = miutil::miTime(dateTime.latin1());
   
@@ -350,7 +351,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
     kvControlInfo            cif = d.controlinfo[hqcm->selParNo[index]];
     const kvUseInfo &        uin = d.useinfo[hqcm->selParNo[index]];
     const miutil::miString & fai = d.cfailed[hqcm->selParNo[index]];
-    if ( typ == -32767 ) typ = hqcm->findTypeId(typ, pos, par, obt);
+    if ( abs(typ) > 501 ) typ = hqcm->findTypeId(typ, pos, par, obt);
 
     if ( fabs(cor - org ) < epsilon ) {
       if ( cif.flag(4) > 1 ) {
@@ -380,7 +381,12 @@ void MDITabWindow::updateKvBase(int row, int col) {
       if ( misfl == 0 || misfl == 1 )
 	cif.set(6,misfl + 2);
     }
-    else {
+    else if ( cif.flag(6) == 1 || cif.flag(6) == 3 ) {
+      cif.set(6,1);
+      cif.set(15,5);
+    }
+    else if ( cif.flag(6) == 0 || cif.flag(6) == 2 ) {
+      cif.set(6,0);
       cif.set(15,7);
     }
     if ( oldCorVal == "-32767.0" ) { 
