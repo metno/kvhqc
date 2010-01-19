@@ -178,14 +178,14 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1, 
 					  Qt::Horizontal, 
 					  "Meldingstyper", this);
-  /*    
+  
   Q3GridLayout* typeidLayout = new Q3GridLayout(typeGroup->layout());
   priTypes = new QRadioButton( "Prioriterte typer", typeGroup );
   typeGroup->insert(priTypes);
   priTypes->setChecked(true);
   allTypes = new QRadioButton( "Alle typer", typeGroup );
   typeGroup->insert(allTypes);
-  */
+  
   //Station selection
   stationSelect = new QPushButton("Velg stasjon", this);
   stationSelect->setGeometry(10, 110, 400, 30);
