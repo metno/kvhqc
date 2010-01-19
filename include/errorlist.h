@@ -66,6 +66,7 @@ const float rejectedValue_ = -32767.0;
 const float discardedValue_ = -32766.0;
 const int npnc = 105;
 const int npcc = 27;
+//const int npcc = 32;
 const int  parNoControl[] = {  2,  3,  4,  5,  6,  9, 10, 11, 12, 13, 
 			       17, 20, 21, 22, 23, 24, 25, 26, 27, 28,
 			       44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
@@ -87,30 +88,12 @@ const QString controlNoControl[] = {"QC1-2-96:1","QC1-2-97:1","QC1-2-100:1",
 				    "QC1-2-154:1","QC1-2-155:1","QC1-2-156:1",
 				    "QC1-2-158:1","QC1-2-159:1","QC1-2-160:1",
 				    "QC1-2-161:1","QC1-2-162:1","QC1-2-21:1"};
+				    //				    "QC1-4-81:1","QC1-4-109:1","QC1-4-178:1",
+				    //				    "QC1-4-211:1","QC1-4-262:1"};
 
-class FlTableItem : public Q3TableItem {
-public:
-  FlTableItem(Q3Table* t, 
-	      EditType et, 
-	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
-  void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-};
-
-class DkTableItem : public Q3TableItem {
-public:
-  DkTableItem(Q3Table* t, 
-	      EditType et, 
-	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
-  void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-};
-
-class UsTableItem : public Q3TableItem {
-public:
-  UsTableItem(Q3Table* t, 
-	      EditType et, 
-	      const QString &txt ) : Q3TableItem( t, et, txt ) {}
-  void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-};
+/**
+ * \brief Cells in the errorlist where the user can insert values.
+ */
 
 class CrTableItem : public Q3TableItem {
   bool numbers;
@@ -128,12 +111,20 @@ public:
   static const QRegExp re;
 };
 
+/**
+ * \brief Checkable cells in the errorlist where the user can approve or reject an observation.
+ */
+
 class OkTableItem : public Q3CheckTableItem {
 public:
   OkTableItem(Q3Table* t, 
 	      const QString &txt ) : Q3CheckTableItem( t, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
+
+/**
+ * \brief Cells in the errorlist with the observation data.
+ */
 
 class DataCell : public Q3TableItem {
 public:
@@ -143,26 +134,14 @@ public:
   }
   QString key() const;
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-  //  void setBkgColor(QColor cr) { m_crBkg = cr; }
-  //  QColor bkgColor() { return m_crBkg; }
-  //private:
-  //  QColor m_crBkg;
-
-};
-  
-class ErrorHead : public Q3Table {
-Q_OBJECT
-public:
- ErrorHead(const miutil::miTime&, 
-	   const miutil::miTime&, 
-	   QWidget*, 
-	   int,
-	   QString);
- ~ErrorHead();
 };
 
 /**
- * \brief The error list
+ * \brief The error list. i.e. list of observations with error flags.
+ *
+ * \detailed The error list consists of two parts.  One part holds the data for the observations
+ * which are flagged as erronous.  The other part has cells where the user can insert
+ * new values or approve or reject existing values. 
  */
 
 class ErrorList : public Q3Table {
@@ -184,7 +163,15 @@ public:
 	    int,
 	    QString&);
   ~ErrorList();
+
+  /*!
+   * \brief Reads the climatological limits from a file 
+   */
   void readLimits();
+
+  /*!
+   * \brief 
+   */
   struct mem {
     double orig;
     double corr;
@@ -204,6 +191,7 @@ public:
     miutil::miTime tbtime;
     int typeId;
   };
+
   /*!
    * \brief 
    */
@@ -214,7 +202,15 @@ public:
     int statno;
     int missNo;
   };
+
+  /*!
+   * \brief 
+   */
   vector<missObs> mList;
+
+  /*!
+   * \brief 
+   */
   vector<mem> missList;
 
   /**
@@ -225,36 +221,66 @@ public:
 
 
 signals:
+
   /**
    * \brief Reports the selection of a new station and/or obstime in the 
    *        errorlist.
    */
   void stationSelected( int station, const miutil::miTime & obstime );
+  /**
+   * \brief Reports the closing of the 
+   *        errorlist.
+   */
+  void errorListClosed();
 
 protected:
-  //  void mouseMoveEvent(QMouseEvent *event);
-//   virtual void hideEvent( QHideEvent * e );
-//   virtual void closeEvent( QCloseEvent *e );
+  /*!
+   * \brief 
+   */
   virtual bool event( QEvent * e );
 
 private:
+  /*!
+   * \brief 
+   */
   int stationidCol;
+  /*!
+   * \brief 
+   */
   int typeidCol;
 
+  /*!
+   * \brief 
+   */
   struct refs {
     int stnr;
     int rstnr;
     int parNo;
     double dist;
   };
+  /*!
+   * \brief 
+   */
   QString opName;
   StationInfoToolTip* stTT;
   FailInfo::FailDialog* fDlg;
   std::list<kvalobs::kvObsPgm> obsPgmList;
   std::list<long> statList;
+  /*!
+   * \brief Temporary store for observations with these flags:
+   * fr=2, fr=3, fcc=2, fcp = 2, fnum=2, fnum=3
+   */
   vector<mem> memStore1;
+  /*!
+   * \brief Temporary store for observations with these flags:
+   * fr=4, fr=5, fs=2, fnum=4, fnum=5 
+   */
   vector<mem> memStore2;
+  /*!
+   * \brief 
+   */
   vector<mem> memStore3;
+
 private:
   HqcMainWindow * mainWindow;
   /**
@@ -291,17 +317,29 @@ private:
    */
   void checkSecondMemoryStore();
   /**
+   * \brief Checks if a parameter has model values.
+   *
    * \return TRUE if given parameter has model values
    */
   bool paramHasModel(int);
+  /**
+   * \brief Checks if a parameter is code.
+   *
+   * \return 0 if given parameter is code, 1 otherwise.
+   */
   int paramIsCode(int); 
   /**
-   * \return TRUE if given observation is missing
+   * \brief Checks if an observation is in the missing list
+   *
+   * \return TRUE if observation is missing.
    */
   bool obsInMissList(mem);
   double calcdist(double, double, double, double);
   void swapRows(int, int, bool);
   void sortColumn(int, bool, bool);
+  /**
+   * \brief Checks if given parameter can be stored at given time.
+   */
   bool specialTimeFilter(int, miutil::miTime); 
   bool typeFilter(int, int, int, miutil::miTime); 
 private slots:
@@ -332,16 +370,34 @@ private:
   QMap<int, float> lowMap;
   QMap<int, float> highMap;
 
+  /*!
+   * \brief Constructs a memory store object
+   * \return The memory store object corresponding to the given row in the error list
+   */
   const struct mem *getMem( int row ) const;
+  /*!
+   * \brief Constructs a kvData object from a memory store object
+   */
   kvalobs::kvData getKvData( const struct mem &m ) const;
   ExtendedFunctionalityHandler *efh;
   //  OkTableItem checkItem( int, int) const;
 public:
+  /*!
+   * \brief Constructs a kvData object
+   * \return The kvData object corresponding to the given row in the error list
+   */
   kvalobs::kvData getKvData( int row ) const;
+  /*!
+   * \brief Constructs a kvData object 
+   * \return The kvData object corresponding to the current row in the error list
+   */
   kvalobs::kvData getKvData( ) const { return getKvData( currentRow() ); }
   
 
 public slots:
+  /*!
+   * \brief Updates controlinfo and sends the changed data to the kvalobs database
+   */
   void saveChanges();
   //  void printErrorList();
 };
