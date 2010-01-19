@@ -35,6 +35,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class ErrorList;
 
+/**
+ * \brief Table with missing oservations which are not shown in the error list.
+ */
 class MissingTable : public Q3Table
 {
  public:
