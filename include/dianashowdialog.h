@@ -43,7 +43,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qlayout.h>
 
 using namespace std;
-
+/**
+ * \brief A dialog for selecting what to be shown in Diana.
+ */
 class DianaShowDialog : public QDialog {
   Q_OBJECT
 public:
