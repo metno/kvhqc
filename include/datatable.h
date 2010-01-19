@@ -44,7 +44,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvData.h>
 #include <qvalidator.h>
 
-//#include "typeinfotooltip.h"
 #include <FailDialog.h>
 
 /**
@@ -54,8 +53,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  * for selected parameters within the selected time interval.  The user can
  * change the corrected values of the parameters. 
  */
-
-class DataTooltipHandler;
 
 class DataTable : public Q3Table {
   Q_OBJECT
@@ -68,7 +65,6 @@ public:
 	    QWidget*, 
 	    listType, 
 	    mettType, 
-	    //	   QString, 
 	    int, 
 	    int,
 	    bool);
@@ -127,13 +123,11 @@ public slots:
 private slots:
   void focusTable(QString&);
   void toggleSort();
-
-  //signals:
-  //  void statTimeReceived(QString&);
-
 };
 
-
+/**
+ * \brief A cell in the data table
+ */
 class TableItem : public Q3TableItem{
 public:
   TableItem( Q3Table *t, 
