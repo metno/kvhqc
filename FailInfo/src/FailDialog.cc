@@ -45,6 +45,8 @@ namespace FailInfo {
 
     connect( hideButton, SIGNAL( clicked() ),
 	     this,       SLOT  ( close()   ) );
+    connect( parent, SIGNAL( errorListClosed() ),
+	     this,   SLOT  ( close()   ) );
 
     Q3VBoxLayout *mainLayout = new Q3VBoxLayout( this, 2, 2 );
     mainLayout->addWidget( dynamic_cast<QWidget*>(failList) );
