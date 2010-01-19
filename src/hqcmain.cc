@@ -48,6 +48,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qcommonstyle.h>
 #include <qvalidator.h>
 #include <qmetaobject.h>
+#include <qlistview.h>
 //Added by qt3to4:
 #include <QFrame>
 #include <Q3PopupMenu>
@@ -62,6 +63,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdexcept>
 #include <complex>
 #include <QTime>
+#include <QRegExp>
 
 using namespace std;
 
@@ -185,11 +187,13 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->insertItem( "&Dataliste    ", this, SLOT(dataListMenu()),Qt::ALT+Qt::Key_D );
   showmenu->insertItem( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
   showmenu->insertSeparator();
-  showmenu->insertItem( "&Tidsserie    ", this, SLOT(timeseriesMenu()),Qt::ALT+Qt::Key_T );
   showmenu->insertItem( "&Nedbør", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
-  showmenu->insertSeparator();
   showmenu->insertItem( "&Vær", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
   showmenu->insertSeparator();
+  showmenu->insertItem( "&Tidsserie    ", this, SLOT(timeseriesMenu()),Qt::ALT+Qt::Key_T );
+  showmenu->insertSeparator();
+  //  showmenu->insertItem( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
+  showmenu->insertItem( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
   
   weathermenu = new Q3PopupMenu( this );
   menuBar()->insertItem( "&Værelement", weathermenu);
@@ -313,13 +317,15 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   pardlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   dshdlg = new DianaShowDialog(this);
   dshdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  rejdlg = new RejectDialog(this);
+  rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   // --- READ PARAMETER INFO ---------------------------------------
   
   readFromParam();
  
   // --- START -----------------------------------------------------
   pardlg->hide();
- 
+  rejdlg->hide();
   dianaShowOK();
   lstdlg->hide();
   connect( lstdlg, SIGNAL(selectStation()), SLOT(stationOK()));
@@ -338,6 +344,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
   connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
+
+  connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
+  connect( rejdlg, SIGNAL(rejectHide()), SLOT(rejectedMenu()));
 
   tsdlg = new TimeseriesDialog();
   tsdlg->hide();
@@ -360,7 +369,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   // init fonts for timeseries
   glText* gltext= new glTextX();
   gltext->testDefineFonts();
-  cerr << "FF\n";
 }
 
 void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
@@ -925,6 +933,11 @@ void HqcMainWindow::ListOK() {
     noSelPar = kk;
   }
 
+  if ( lstdlg->allTypes->isChecked() )
+    isShTy = true;
+  else
+    isShTy = false;
+
   if ( lity == erLi || lity == erSa || lity == daLi) {
     metty = tabList;
     eTable(stime, 
@@ -1199,6 +1212,65 @@ void HqcMainWindow::errLisaMenu() {
   lity = erSa;
   lstdlg->hideAll();
   listMenu();
+}
+/*
+void HqcMainWindow::textDataMenu() {
+  //  lity = daLi;
+  //  lstdlg->hideAll();
+  //  listMenu();
+}
+*/
+void HqcMainWindow::rejectedMenu() {
+  if ( rejdlg->isVisible() ) {
+    rejdlg->hide();
+  }
+  else {
+    rejdlg->show();
+  }
+}
+
+inline QString dateStr_( const QDateTime & dt )
+{
+  QString ret = dt.toString( Qt::ISODate );
+  ret[ 10 ] = ' ';
+  return ret;
+}
+
+void HqcMainWindow::rejectedOK() {
+  CKvalObs::CService::RejectDecodeInfo rdInfo;
+  rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
+  rdInfo.toTime = dateStr_( rejdlg->dtto );
+  cout << rdInfo.fromTime << " <-> " << rdInfo.toTime << endl;
+  kvservice::RejectDecodeIterator rdIt;
+  bool result = kvservice::KvApp::kvApp->getKvRejectDecode( rdInfo, rdIt );
+  if ( result ) {
+    string decoder = "comobs";
+
+    kvalobs::kvRejectdecode reject;
+    while ( rdIt.next( reject ) ) {
+      
+      if ( reject.decoder().substr( 0, decoder.size() ) != decoder ) {
+        continue;
+      }
+      if ( reject.comment() == "No decoder for SMS code <12>!" ) {
+        continue;
+      }
+
+      cout << reject.tbtime() << " " << reject.message() << " " << reject.comment() << reject.decoder() << endl;
+      rejList.push_back(reject);
+    }
+  } else {
+    cout << "No rejectdecode!" << endl;
+
+  }
+  Rejects* rejects = new Rejects(rejList);
+  rejects->show();
+  if ( rejdlg->isVisible() ) {
+    rejdlg->hide();
+  }
+  else {
+    rejdlg->show();
+  }
 }
 
 void HqcMainWindow::showWatchRR()
@@ -1552,6 +1624,15 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
   //
+  // Midlertidig spesialtilfelle for Venabu!!!!!!!!!!!!!!!
+  //
+  if ( stnr == 13420 && par == 112 ) {
+    if ( typeId == 330 )
+      return false;
+    else if ( typeId == 308 )
+      return true;
+  }
+  //
   // Midlertidig spesialtilfelle for Jan Mayen!!!!!!!!!!!!!!!
   //
   if ( stnr == 99950 ) {
@@ -1579,6 +1660,7 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
       return false;
   }
   //Spesialtilfelle slutt
+  //  if ( typeId == -404 || (typeId == -342 && (par == 109 || par == 110))) return false;
   if ( typeId == -404 ) return false;
   if ( stnr == 4780 && typeId == 1 ) return true;
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
@@ -2033,10 +2115,12 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
 
 void HqcMainWindow::closeWindow()
 {
+  firstObs=true;
   cerr << "HqcMainWindow::closeWindow()\n";
     MDITabWindow* t = (MDITabWindow*)ws->activeWindow();
     if ( t )
 	t->close();
+    emit windowClose();
 }
 
 
@@ -2123,6 +2207,7 @@ void HqcMainWindow::processConnect()
 void HqcMainWindow::cleanConnection()
 {
   dianaconnected = false;
+  firstObs = true;
   cout << "< DISCONNECTING >" << endl;
 }
 
@@ -2149,6 +2234,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
 {
   cerr << "HQC mottar melding : " << letter.command.c_str() << endl;
   if(letter.command == qmstrings::newclient) {
+    firstObs = true;
     cerr << letter.to << " , " << letter.from << " , " << letter.clientType << " , " << letter.co << endl; 
     processConnect(); 
     hqcFrom = letter.to;
@@ -2436,7 +2522,7 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     pluginB->sendMessage(pLetter);
   }
   */
-  
+  //  if ( firstObs ) {
   if( !synopData.size() ) {
     miMessage okLetter;
     okLetter.command = "menuok";
@@ -2780,7 +2866,11 @@ makeObsDataList( KvObsDataList& dataList )
       int astnr = dit->stationID();
       bool correctLevel = (dit->level() == HqcMainWindow::sLevel );
       bool correctTypeId;
-      correctTypeId = HqcMainWindow::typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
+      if ( lstdlg->allTypes->isChecked() && dit->sensor() - '0' == 0)
+	correctTypeId = true;
+      else
+	correctTypeId = HqcMainWindow::typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', dit->obstime(), dit->paramID() );
+      //      if ( dit->typeID() < 0 && dit->typeID() != -342 ) {
       if ( dit->typeID() < 0 ) {
 	aggPar = dit->paramID();
 	aggTyp = dit->typeID();
@@ -2794,8 +2884,8 @@ makeObsDataList( KvObsDataList& dataList )
       int hour = otime.hour();
       int typeId = dit->typeID();
       int sensor = dit->sensor();
-               
-      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor) ) {
+      if ( otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor 
+	   && lstdlg->priTypes->isChecked() ) {
 	protime = otime;
 	prstnr = stnr;
 	prtypeId = typeId;
@@ -2860,7 +2950,7 @@ makeObsDataList( KvObsDataList& dataList )
       }
     pushback:
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
-	    ((otime != protime || ( otime == protime && stnr != prstnr))))) {
+	    ((otime != protime || ( otime == protime && stnr != prstnr)))) || (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
 	datalist.push_back(tdl);
 	for ( int ip = 0; ip < NOPARAM; ip++) {
 	  tdl.orig[ip]   = -32767.0;
