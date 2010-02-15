@@ -40,6 +40,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include "StationInformation.h"
 #include "GetData.h"
+#include "GetTextData.h"
 #include <iomanip>
 #include <qpixmap.h>
 #include <QWindowsXPStyle>
@@ -192,7 +193,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->insertSeparator();
   showmenu->insertItem( "&Tidsserie    ", this, SLOT(timeseriesMenu()),Qt::ALT+Qt::Key_T );
   showmenu->insertSeparator();
-  //  showmenu->insertItem( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
+  showmenu->insertItem( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
   showmenu->insertItem( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
   
   weathermenu = new Q3PopupMenu( this );
@@ -308,6 +309,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 	++sit ) {
     noStat++;
   }
+
+  readFromParam();
+
   // --- DEFINE DIALOGS --------------------------------------------
   lstdlg = new ListDialog(this);
   lstdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
@@ -317,11 +321,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   pardlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   dshdlg = new DianaShowDialog(this);
   dshdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  txtdlg = new TextDataDialog(stnrList, this);
+  txtdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   rejdlg = new RejectDialog(this);
   rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   // --- READ PARAMETER INFO ---------------------------------------
   
-  readFromParam();
  
   // --- START -----------------------------------------------------
   pardlg->hide();
@@ -344,6 +349,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
   connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
+
+  connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
+  connect( txtdlg, SIGNAL(textDataHide()), SLOT(textDataMenu()));
 
   connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
   connect( rejdlg, SIGNAL(rejectHide()), SLOT(rejectedMenu()));
@@ -1213,13 +1221,16 @@ void HqcMainWindow::errLisaMenu() {
   lstdlg->hideAll();
   listMenu();
 }
-/*
+
 void HqcMainWindow::textDataMenu() {
-  //  lity = daLi;
-  //  lstdlg->hideAll();
-  //  listMenu();
+  if ( txtdlg->isVisible() ) {
+    txtdlg->hide();
+  }
+  else {
+    txtdlg->show();
+  }
 }
-*/
+
 void HqcMainWindow::rejectedMenu() {
   if ( rejdlg->isVisible() ) {
     rejdlg->hide();
@@ -1234,6 +1245,31 @@ inline QString dateStr_( const QDateTime & dt )
   QString ret = dt.toString( Qt::ISODate );
   ret[ 10 ] = ' ';
   return ret;
+}
+
+void HqcMainWindow::textDataOK() {
+  int stnr = txtdlg->stnr;
+  QDate todt = (txtdlg->dtto).date();
+  QTime toti = (txtdlg->dtto).time();
+  miutil::miTime dtto(todt.year(), todt.month(), todt.day() ,toti.hour(), 0, 0);
+  QDate fromdt = (txtdlg->dtfrom).date();
+  QTime fromti = (txtdlg->dtfrom).time();
+  miutil::miTime dtfrom(fromdt.year(), fromdt.month(), fromdt.day() ,fromti.hour(), 0, 0);
+  WhichDataHelper whichData;
+  whichData.addStation(stnr, dtfrom, dtto);
+  //  KvObsDataList txlist;
+  GetTextData textDataReceiver(this);
+  if(!KvApp::kvApp->getKvData(textDataReceiver, whichData)){
+    cerr << "Finner ikke  textdatareceiver!!" << endl;
+  }
+  TextData* txtDat = new TextData(txtList, parMap);
+  txtDat->show();
+  if ( txtdlg->isVisible() ) {
+    txtdlg->hide();
+  }
+  else {
+    txtdlg->show();
+  }
 }
 
 void HqcMainWindow::rejectedOK() {
@@ -1710,7 +1746,13 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     cerr << "Datareceiver OK!" << endl;
   }
   cerr << "Tid for new getKvData (hele readfromdata) = " << t.elapsed() << endl;
-  
+  /*
+  KvObsDataList txlist;// = GetData::datalist;
+  GetTextData textDataReceiver(this);
+  if(!KvApp::kvApp->getKvData(textDataReceiver, whichData)){
+    cerr << "Finner ikke  textdatareceiver!!" << endl;
+  }
+  */
 }
 
 
@@ -1780,6 +1822,10 @@ void HqcMainWindow::readFromStation() {
 				      "" );
     if ( noBase == 0 )
       exit(1);
+  }
+  std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
+  for(;it!=slist.end(); it++){
+    stnrList.push_back(it->stationID());
   }
 }
 /*!
@@ -2828,6 +2874,33 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     }
   }
   return tpId;
+}
+
+void 
+HqcMainWindow::
+makeTextDataList( KvObsDataList& textDataList )
+{
+  //  cout << "textDataList.size = " << textDataList.size() << endl;
+  for(IKvObsDataList it=textDataList.begin(); it!=textDataList.end(); it++ ) {
+    KvObsData::kvTextDataList::iterator dit=it->textDataList().begin();
+    while( dit != it->textDataList().end() ) {
+      TxtDat txtd;
+      txtd.stationId = dit->stationID();
+      txtd.obstime   = dit->obstime(); 
+      txtd.original  = dit->original(); 
+      txtd.paramId   = dit->paramID(); 
+      txtd.tbtime    = dit->tbtime(); 
+      txtd.typeId    = dit->typeID();
+      txtList.push_back(txtd);
+      cout << dit->stationID() << " " 
+	   << dit->obstime() << " " 
+	   << dit->original() << " " 
+	   << dit->paramID() << " " 
+	   << dit->tbtime() << " " 
+	   << dit->typeID() << endl;
+      dit++;
+    }
+  }
 }
 
 void 
