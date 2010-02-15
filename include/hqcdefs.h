@@ -122,4 +122,14 @@ struct currentType {
   int cLevel;
   int cTypeId;
 };
+
+struct TxtDat {
+  int stationId;
+  miutil::miTime obstime;
+  string original;
+  int paramId;
+  miutil::miTime tbtime;
+  int typeId;
+};
+
 #endif
