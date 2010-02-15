@@ -36,6 +36,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dianashowdialog.h"
 #include "TimeseriesDialog.h"
 #include "parameterdialog.h"
+#include "textdatadialog.h"
+#include "textdatatable.h"
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "errorlist.h"
@@ -107,6 +109,7 @@ public:
   HqcMainWindow();
   ~HqcMainWindow();
   void makeObsDataList( kvservice::KvObsDataList& dataList );
+  void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
   /*!
@@ -290,6 +293,7 @@ public:
   ClockDialog* clkdlg;
   DianaShowDialog* dshdlg;
   ParameterDialog* pardlg;
+  TextDataDialog* txtdlg;
   RejectDialog* rejdlg;
   Rejects* rejects;
   vector<kvalobs::kvRejectdecode> rejList;
@@ -298,7 +302,9 @@ public:
   vector<datl> datalist;
   vector<modDatl> modeldatalist;
   vector<int> stList;
+  vector<int> stnrList;
   vector<int> remstList;
+  vector<TxtDat> txtList;
   listType lity;
   mettType metty;
   int selParNo[NOPARAMALL];
@@ -513,7 +519,9 @@ private slots:
   void errLisaMenu();
   //  void textDataMenu();
   void rejectedMenu();
+  void textDataMenu();
   void rejectedOK();
+  void textDataOK();
 
   /**
    * Bring up a the WatchRR specification dialog
