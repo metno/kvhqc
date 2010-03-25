@@ -47,11 +47,15 @@ namespace internal_
 	cf = "hqc";
       else
 	cf += ",hqc";
-      d.cfailed( cf );
-      kvUseInfo ui = d.useinfo();
-      ui.addToErrorCount();
-      d.useinfo( ui );
     }
+    else if ( cinfo.flag( flag::fhqc ) == 1 && !cf.empty() )
+	cf += ",hqc";
+  
+    d.cfailed( cf );
+    kvUseInfo ui = d.useinfo();
+    ui.addToErrorCount();
+    d.useinfo( ui );
+    
   }
 
   void updateUseInfo( kvalobs::kvData & d )
