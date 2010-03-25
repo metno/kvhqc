@@ -351,7 +351,19 @@ void MDITabWindow::updateKvBase(int row, int col) {
     kvControlInfo            cif = d.controlinfo[hqcm->selParNo[index]];
     const kvUseInfo &        uin = d.useinfo[hqcm->selParNo[index]];
     const miutil::miString & fai = d.cfailed[hqcm->selParNo[index]];
-    if ( abs(typ) > 501 ) typ = hqcm->findTypeId(typ, pos, par, obt);
+    if ( abs(typ) > 503 )
+      typ = hqcm->findTypeId(typ, pos, par, obt);
+
+    if ( typ == -32767 ) {
+      QMessageBox::information( this,
+				"Ulovlig parameter",
+				"Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
+				QMessageBox::Ok,
+				Qt::NoButton );
+      tval->setText(oldCorVal);
+      return;
+    }
+    
 
     if ( fabs(cor - org ) < epsilon ) {
       if ( cif.flag(4) > 1 ) {
@@ -397,7 +409,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
       else
 	misfl  = cif.flag(6) - 2;
       cif.set(6,misfl);
-     }
+    }
     const kvControlInfo & cin = cif;
     cerr << "Nytt flagg    = " << cif << endl;
     
