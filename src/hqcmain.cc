@@ -2820,12 +2820,12 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
       break;
     }
   }
-  if ( tpId == -32767 ) {
+  if ( abs(tpId) > 503 ) {
     switch (par) {
     case 106:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && obit->paramID() == 105 && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
@@ -2833,7 +2833,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     case 109:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106) && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
@@ -2841,7 +2841,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     case 110:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106 || obit->paramID() == 109) && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
@@ -2849,7 +2849,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     case 214:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && obit->paramID() == 213 && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
@@ -2857,7 +2857,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     case 216:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && obit->paramID() == 215 && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
@@ -2865,12 +2865,13 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
     case 224:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && obit->paramID() == 223 && obit->fromtime() < oTime) {
-	  tpId = obit->typeID();
+	  tpId = -obit->typeID();
 	  break;
 	}
       }
       break;
-    default:;
+    default:
+      tpId = -32767;;
     }
   }
   return tpId;
