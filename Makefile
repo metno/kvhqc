@@ -54,14 +54,14 @@ INCLUDE=-I$(INCDIR) \
 	-I$(QTINC)/QtGui \
 	-I$(QTINC)/QtOpenGL \
 	-I$(QTINC)/QtNetwork \
-	`pkg-config --cflags kvcpp qutilities qtimeseries gltext putools`
+	`pkg-config --cflags kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools pudatatypes`
 
 LINKS:= -L$(WATCHDIR) -lWatchRR \
 	-L$(WEATHERDIR) -lWeather \
 	-L$(FAILDIR) -lFailInfo \
 	-L$(AUTHDIR) -lauthentication -lldap \
 	-L$(BOOST_LIB) -lboost_thread \
-	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2  glp pumet puctools pudatatypes` \
+	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools pudatatypes` \
 	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
 	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
 ###	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools parameter pudatatypes` \
