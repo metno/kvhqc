@@ -63,7 +63,7 @@ namespace Weather
     : Q3Table( parent )
   {
     WeatherDialog* wd = dynamic_cast<WeatherDialog*>(parent->parent());
-    
+
     synFlg sf;
     vector<synDat> dataList;
     vector<synFlg> flagList;
@@ -85,7 +85,6 @@ namespace Weather
       IDataList dit = it->dataList().begin();
       while( dit != it->dataList().end() ) {
 	kvData kvDat;
-	cerr << "Knut tester obstime: " << dit->obstime() << endl;
 	kvDat.set(dit->stationID(),
 		  dit->obstime(),
 		  dit->original(),
@@ -276,6 +275,22 @@ namespace Weather
 				QMessageBox::NoButton );
       return;
     }
+
+    std::list<kvalobs::kvObsPgm> obsPgmList;
+    bool ok = kvservice::KvApp::kvApp->getKvObsPgm( obsPgmList, std::list<long>(), false );
+    
+    int typ = kvDat.typeID(); 
+    if ( abs(kvDat.typeID()) > 503 || kvDat.typeID() == 0 )
+      typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),kvDat.obstime(),obsPgmList);
+    if ( typ == -32767 ) {
+      QMessageBox::information( this,
+				"Ulovlig parameter",
+				"Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
+				QMessageBox::Ok,
+				Qt::NoButton );
+      //      tval->setText(oldCorVal);
+      return;
+    }
     float oldCorr = kvDat.corrected();
     float org     = kvDat.original();
     QString oldCorrStr;
@@ -463,4 +478,74 @@ namespace Weather
 
   WeatherTable::~WeatherTable( )
   {}
+
+  //  int WeatherTable::findTypeId(int typ, int pos, int par, miutil::miTime oTime, ObsPgmList obsPgmList)
+  int WeatherTable::findTypeId(int typ, int pos, int par, miutil::miTime oTime, list<kvObsPgm> obsPgmList)
+  {
+    int tpId;
+    tpId = typ;
+    //    for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+    for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+      if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime) {
+	tpId = obit->typeID();
+	break;
+      }
+    }
+    if ( abs(tpId) > 503 ) {
+      switch (par) {
+      case 106:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && obit->paramID() == 105 && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      case 109:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106) && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      case 110:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106 || obit->paramID() == 109) && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      case 214:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && obit->paramID() == 213 && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      case 216:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && obit->paramID() == 215 && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      case 224:
+	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	  if ( obit->stationID() == pos && obit->paramID() == 223 && obit->fromtime() < oTime) {
+	    tpId = -obit->typeID();
+	    break;
+	  }
+	}
+	break;
+      default:
+	tpId = -32767;;
+      }
+    }
+    return tpId;
+  }
 }
+
