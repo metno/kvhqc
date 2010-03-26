@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvStation.h>
 
 using namespace std;
+using namespace kvalobs;
 using namespace kvservice;
 
 class QPushButton;
