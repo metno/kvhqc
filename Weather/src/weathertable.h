@@ -43,20 +43,30 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <puTools/miDate>
 #include <utility>
 #include <vector>
+#include <list>
 #include <set>
 #include <QMap>
+
+using namespace std;
 
 namespace kvalobs
 {
   class kvStation;
+  class kvObsPgm;
 }
 namespace kvservice
 {
   class KvApp;
 }
 
+using namespace kvalobs;
+using namespace kvservice;
+
 namespace Weather
 {
+  //  typedef list<kvObsPgm>                          ObsPgmList;
+  //  typedef list<kvObsPgm>::const_iterator        CIObsPgmList;
+
   const int params[] = { 211,214,216,213,215,262,178,173,177,1,61,81,86,87,83,90,15,14,55,108,
 			 109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
 			 23,24,22,403,404,131,134,151,154,250,221,9,12};
@@ -154,6 +164,8 @@ namespace Weather
     void readLimits();
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
+    //    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, ObsPgmList obsPgmList);
+    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, std::list<kvObsPgm> obsPgmList);
   protected slots:
     /**
      * \brief Update status bar with info from cell.
