@@ -326,7 +326,10 @@ void MDITabWindow::updateKvBase(int row, int col) {
 			      "Utenlandske stasjoner kan ikke korrigeres",
 			      QMessageBox::Ok,
 			      Qt::NoButton );
-    tval->setText(oldCorVal);
+    if ( oldCorVal == "-32767.0" )
+      tval->setText("");
+    else
+      tval->setText(oldCorVal);
     return;
   }
 
@@ -360,7 +363,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
 				"Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
 				QMessageBox::Ok,
 				Qt::NoButton );
-      tval->setText(oldCorVal);
+      tval->setText("");
       return;
     }
     
