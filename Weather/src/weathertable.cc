@@ -288,7 +288,7 @@ namespace Weather
 				"Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
 				QMessageBox::Ok,
 				Qt::NoButton );
-      //      tval->setText(oldCorVal);
+      tit->setText("");
       return;
     }
     float oldCorr = kvDat.corrected();
