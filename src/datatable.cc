@@ -301,6 +301,7 @@ DataTable::DataTable(QStringList selPar,
     }
     
     for ( int ii = 0; ii < hmw->nuroprpar; ii++) {
+      cerr << "Knut tester flag og controlinfo : " << flag[selParNo[ii]] << " " << controlinfo[selParNo[ii]] << endl;
       int iflag = flag[selParNo[ii]];
       int if1 = iflag/10000;
       int if2 = (iflag%10000)/1000;
@@ -313,7 +314,7 @@ DataTable::DataTable(QStringList selPar,
     for ( int ii = 0; ii < hmw->nuroprpar; ii++) {
       QString strdat;
       QString strFldat;
-      if ( orig[selParNo[ii]] == -999.9 ||  orig[selParNo[ii]] == -32767.0 )
+      if ( orig[selParNo[ii]] == -999.9 ||  orig[selParNo[ii]] == -32767.0 || controlinfo[selParNo[ii]].substr(6,1) == "1" || controlinfo[selParNo[ii]].substr(6,1) == "3" )
 	strdat = "";
       else {
 	strdat = strdat.setNum(orig[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
