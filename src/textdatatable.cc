@@ -5,12 +5,12 @@
 using namespace std;
 
 TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, QWidget* parent)
-  : QTableWidget(3000,6,parent) {
+  : QTableWidget(3000,7,parent) {
 
   setWindowTitle("TextData");
-  setRowCount(txtList.size());
-  setGeometry(10,10,700,1200);
-  setMinimumWidth(620);
+  setRowCount(txtList.size() + 1);
+  setGeometry(10,10,800,1200);
+  setMinimumWidth(720);
   setMinimumHeight(1000);
   QFont font("Courier", 9, QFont::DemiBold);
   setFont(font);  
@@ -21,7 +21,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
   horizontalHeaderLabels.append(  tr( "Paramid " ) );
   horizontalHeaderLabels.append(  tr( "ParamName ") );
   horizontalHeaderLabels.append(  tr( "Tbtime " ) );
-  horizontalHeaderLabels.append(  tr( "Typeid " ) );
+  horizontalHeaderLabels.append(   tr( "Typeid " ) );
   setHorizontalHeaderLabels(horizontalHeaderLabels);
 
   for ( int iRow = 0; iRow < txtList.size(); iRow++ ) {
