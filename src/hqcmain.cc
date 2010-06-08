@@ -217,8 +217,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
   Q3PopupMenu * help = new Q3PopupMenu( this );
   menuBar()->insertItem( "&Hjelp", help );
-  help->insertItem( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F1);
-  help->insertItem( "&Parametere", this, SLOT(helpParam()), Qt::Key_F2);
+  help->insertItem( "&Brukerveiledning", this, SLOT(helpUse()), Qt::Key_F1);
+  help->insertItem( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F2);
+  help->insertItem( "&Parametere", this, SLOT(helpParam()), Qt::Key_F3);
   help->insertSeparator();
   help->insertItem( "&Om Hqc", this, SLOT(about()));
   help->insertSeparator();
@@ -2170,10 +2171,14 @@ void HqcMainWindow::closeWindow()
 }
 
 
+void HqcMainWindow::helpUse() {  
+  QString path = QString(getenv("HQCDIR"));
+  system("firefox https://dokit.met.no/klima/tools/qc/hqc-help &");
+}
+
 void HqcMainWindow::helpFlag() {  
   QString path = QString(getenv("HQCDIR"));
   system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg &");
-
 }
 
 void HqcMainWindow::helpParam() {
@@ -2893,12 +2898,6 @@ makeTextDataList( KvObsDataList& textDataList )
       txtd.tbtime    = dit->tbtime(); 
       txtd.typeId    = dit->typeID();
       txtList.push_back(txtd);
-      cout << dit->stationID() << " " 
-	   << dit->obstime() << " " 
-	   << dit->original() << " " 
-	   << dit->paramID() << " " 
-	   << dit->tbtime() << " " 
-	   << dit->typeID() << endl;
       dit++;
     }
   }
