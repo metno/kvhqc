@@ -504,6 +504,7 @@ private slots:
 		       bool,
 		       QString&);
   void closeWindow();
+  void helpUse();
   void helpFlag();
   void helpParam();
   void about();
