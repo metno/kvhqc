@@ -1362,7 +1362,6 @@ void ErrorList::saveChanges()
       {
 	if ( cif.flag(4) > 1 ) {
 	  cif.set(15,1);
-	  cif.set(4,1);
 	}
 	if ( fmis == 0 ) {
 	  cif.set(15,1);
