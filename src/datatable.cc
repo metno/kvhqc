@@ -301,7 +301,6 @@ DataTable::DataTable(QStringList selPar,
     }
     
     for ( int ii = 0; ii < hmw->nuroprpar; ii++) {
-      cerr << "Knut tester flag og controlinfo : " << flag[selParNo[ii]] << " " << controlinfo[selParNo[ii]] << endl;
       int iflag = flag[selParNo[ii]];
       int if1 = iflag/10000;
       int if2 = (iflag%10000)/1000;
@@ -321,12 +320,14 @@ DataTable::DataTable(QStringList selPar,
       }
       TableItem* iorig = new TableItem(this, Q3TableItem::Never, strdat);
       iorig->isModelVal = false;
+      iorig->isCorrectedByQC2 = false;
       if ( morig[selParNo[ii]] == -999.9 ||  morig[selParNo[ii]] == -32767.0 )
 	strdat = "";
       else
 	strdat = strdat.setNum(morig[selParNo[ii]],'f',1);
       TableItem* imorig = new TableItem(this, Q3TableItem::Never, strdat);
       imorig->isModelVal = false;
+      imorig->isCorrectedByQC2 = false;
       int iflag = flag[selParNo[ii]];
       strdat = strdat.setNum(iflag);
       if ( iflag < 10 )
@@ -340,6 +341,7 @@ DataTable::DataTable(QStringList selPar,
       if (strdat == "00000" ) strdat ="";
       TableItem* iflg = new TableItem(this, Q3TableItem::Never, strdat);
       iflg->isModelVal = false;
+      iflg->isCorrectedByQC2 = false;
       strFldat = strdat;
       if ( corr[selParNo[ii]] == -999.9  ||  corr[selParNo[ii]] <= -32766.0 )
 	strdat = "";
@@ -350,8 +352,20 @@ DataTable::DataTable(QStringList selPar,
 	ikorr->isModelVal = true;
       else
 	ikorr->isModelVal = false;
-
-      
+      if ( !controlinfo[selParNo[ii]].empty() && (controlinfo[selParNo[ii]].substr(7,1) > "0" ||
+						  controlinfo[selParNo[ii]].substr(8,1) > "1" ||
+						  controlinfo[selParNo[ii]].substr(9,1) > "1" ||
+						  controlinfo[selParNo[ii]].substr(11,1) > "1" ||
+						  controlinfo[selParNo[ii]].substr(12,1) > "6") ) {
+	iorig->isCorrectedByQC2 = true;
+	iflg->isCorrectedByQC2 = true;
+	ikorr->isCorrectedByQC2 = true;
+      }
+      else {
+	iorig->isCorrectedByQC2 = false;
+	iflg->isCorrectedByQC2 = false;
+	ikorr->isCorrectedByQC2 = false;
+      }
       setItem(dt, noColPar*ii + 0, iorig);
       if ( ncp == 0 || ncp == 2 || ncp == 4 || ncp == 6 )
 	hideColumn(noColPar*ii); 
@@ -540,6 +554,8 @@ void TableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool
       g.setColor( QColorGroup::Text, Qt::red );
     else
       g.setColor( QColorGroup::Text, Qt::black );
+    if ( isCorrectedByQC2 )
+      g.setColor( QColorGroup::Text, Qt::darkMagenta );
 
     Q3TableItem::paint( p, g, cr, selected );
 }
