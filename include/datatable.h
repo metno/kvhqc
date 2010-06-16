@@ -138,6 +138,7 @@ public:
   void paint(QPainter*, const QColorGroup&, const QRect&, bool);
 
   bool isModelVal;
+  bool isCorrectedByQC2;
 };
 
 #endif
