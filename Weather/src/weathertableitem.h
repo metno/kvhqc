@@ -49,6 +49,7 @@ namespace Weather
     virtual QString explain() const;
     QString type;
     bool isModelVal;
+    bool isCorrectedByQC2;
   };
 }
 #endif /*WEATHERTABLEITEM_H_*/
