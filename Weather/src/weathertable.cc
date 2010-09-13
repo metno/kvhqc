@@ -112,6 +112,7 @@ namespace Weather
 	    sd.sdat[i] = (*it).corr[i];
 	    sd.styp[i] = (*it).typeId[i];
 	    sd.ssen[i] = (*it).sensor[i];
+	    sd.ctrlinfo[i] = (*it).controlinfo[i];
 
 	  }
 	  else if ( pName == "orig" ) {
@@ -194,6 +195,7 @@ namespace Weather
 	QString strdat;
 	QString strtyp;
        	QString strflg;
+       	string ctrlinfo;
        	strflg = (*fit).sflg[iCol];
 	if ( (*it).sdat[iCol] < -32000 ) {
 	  strdat = "";
@@ -203,6 +205,7 @@ namespace Weather
 	  strdat = strdat.setNum((*it).sdat[iCol],'f',d1Par[iCol]);
 	  strtyp = strtyp.setNum((*it).styp[iCol]);
 	}
+	ctrlinfo = (*it).ctrlinfo[iCol];
 	if ( pName == "corr" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::OnTyping,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
@@ -210,9 +213,21 @@ namespace Weather
 	    datItem->isModelVal = true;
 	  else
 	    datItem->isModelVal = false;
-	}
+	  
+	  if ( !ctrlinfo.empty() && (ctrlinfo.substr(7,1) > "0" ||
+		  ctrlinfo.substr(8,1) > "1" ||
+		  ctrlinfo.substr(9,1) > "1" ||
+		  ctrlinfo.substr(11,1) > "1" ||
+		  ctrlinfo.substr(12,1) > "6") )
+	  
+	    datItem->isCorrectedByQC2 = true;
+	  else
+	    datItem->isCorrectedByQC2 = false;
+	}  
 	else if ( pName == "orig" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::Never,strtyp,strdat);
+	  datItem->isModelVal = false;
+	  datItem->isCorrectedByQC2 = false;
 	  setItem(iRow,datCol[iCol],datItem);
 	}
       }
@@ -345,7 +360,11 @@ namespace Weather
       cif.set(15,5);
     }
     else if ( cif.flag(6) == 0 || cif.flag(6) == 2 ) {
-      cif.set(6,0);
+      //      cif.set(6,0);
+      cif.set(6,4);
+      cif.set(15,7);
+    }
+    else if ( cif.flag(6) == 4 ) {
       cif.set(15,7);
     }
 
@@ -486,7 +505,7 @@ namespace Weather
     tpId = typ;
     //    for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
     for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-      if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime) {
+      if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime && obit->totime() >= oTime) {
 	tpId = obit->typeID();
 	break;
       }
