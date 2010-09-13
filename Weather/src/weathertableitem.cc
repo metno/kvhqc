@@ -65,6 +65,8 @@ namespace Weather
     QColorGroup g( cg );
     if ( isModelVal )
       g.setColor( QColorGroup::Text, Qt::red );
+    else if ( isCorrectedByQC2 )
+      g.setColor( QColorGroup::Text, Qt::darkMagenta );
     else
       g.setColor( QColorGroup::Text, Qt::black );
     
