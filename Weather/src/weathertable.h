@@ -139,6 +139,7 @@ namespace Weather
       double sdat[NP];
       int styp[NP];
       int ssen[NP];
+      string ctrlinfo[NP];
     };
 
     struct synFlg {
