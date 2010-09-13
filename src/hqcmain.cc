@@ -1070,8 +1070,9 @@ void HqcMainWindow::TimeseriesOK() {
 	     datalist[i].otime >= stime &&
              datalist[i].otime <= etime &&
 	     datalist[i].otime.min() == 0 ) {
-	  tseries.add(TimeSeriesData::Data(datalist[i].otime,
-					   datalist[i].corr[parameterIndex[ip]]));
+	  if ( datalist[i].corr[parameterIndex[ip]] > -32766.0 )   
+	    tseries.add(TimeSeriesData::Data(datalist[i].otime,
+					     datalist[i].corr[parameterIndex[ip]]));
 	}
       }
       if(tseries.dataOK()) {
@@ -1670,6 +1671,15 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
       return true;
   }
   //
+  // Midlertidig spesialtilfelle for Rygge!!!!!!!!!!!!!!!
+  //
+  if ( stnr == 17150 && (par == 109 || par == 110)) {
+    if ( typeId == -342 )
+      return false;
+    else if ( typeId == 342 )
+      return true;
+  }
+  //
   // Midlertidig spesialtilfelle for Jan Mayen!!!!!!!!!!!!!!!
   //
   if ( stnr == 99950 ) {
@@ -1698,6 +1708,7 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   }
   //Spesialtilfelle slutt
   //  if ( typeId == -404 || (typeId == -342 && (par == 109 || par == 110))) return false;
+  if ( par == 173 && typeId < 0 ) return false;
   if ( typeId == -404 ) return false;
   if ( stnr == 4780 && typeId == 1 ) return true;
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
