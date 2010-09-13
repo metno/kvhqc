@@ -148,7 +148,7 @@ DataTable::DataTable(QStringList selPar,
   }
 
   for ( int icol = 0; icol < noColPar*noParam; icol++ ) {
-    setColumnWidth(icol,50);
+    setColumnWidth(icol,55);
     //    adjustColumn(icol);  
   }
   //
@@ -316,7 +316,11 @@ DataTable::DataTable(QStringList selPar,
       if ( orig[selParNo[ii]] == -999.9 ||  orig[selParNo[ii]] == -32767.0 || controlinfo[selParNo[ii]].substr(6,1) == "1" || controlinfo[selParNo[ii]].substr(6,1) == "3" )
 	strdat = "";
       else {
-	strdat = strdat.setNum(orig[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
+	if ( paramIsCode(selParNo[ii]) == 0 )
+	  strdat = strdat.setNum(orig[selParNo[ii]],'f',0);
+	else {
+	  strdat = strdat.setNum(orig[selParNo[ii]],'f',1);
+	}
       }
       TableItem* iorig = new TableItem(this, Q3TableItem::Never, strdat);
       iorig->isModelVal = false;
@@ -345,8 +349,13 @@ DataTable::DataTable(QStringList selPar,
       strFldat = strdat;
       if ( corr[selParNo[ii]] == -999.9  ||  corr[selParNo[ii]] <= -32766.0 )
 	strdat = "";
-      else
-	strdat = strdat.setNum(corr[selParNo[ii]],'f',paramIsCode(selParNo[ii]));
+      else {
+	if ( paramIsCode(selParNo[ii]) == 0 )
+	  strdat = strdat.setNum(corr[selParNo[ii]],'f',0);
+	else {
+	  strdat = strdat.setNum(corr[selParNo[ii]],'f',1);
+	}
+      }
       TableItem* ikorr = new TableItem(this, Q3TableItem::OnTyping, strdat);
       if ( strFldat == "05000" )
 	ikorr->isModelVal = true;
