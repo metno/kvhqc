@@ -602,11 +602,19 @@ ErrorList::ErrorList(QStringList& selPar,
     DataCell* tiIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,7,tiIt);
 
-    strDat = strDat.setNum(memStore3[i].orig,'f',paramIsCode(memStore3[i].parNo));
+    if ( paramIsCode(memStore3[i].parNo) == 0 )
+      strDat = strDat.setNum(memStore3[i].orig,'f',0);
+    else {
+      strDat = strDat.setNum(memStore3[i].orig,'f',1);
+    }
     DataCell* ogIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,8,ogIt);
 
-    strDat = strDat.setNum(memStore3[i].corr,'f',paramIsCode(memStore3[i].parNo));
+    if ( paramIsCode(memStore3[i].parNo) == 0 )
+      strDat = strDat.setNum(memStore3[i].corr,'f',0);
+    else {
+      strDat = strDat.setNum(memStore3[i].corr,'f',1);
+    }
     DataCell* coIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,9,coIt);
 
@@ -733,7 +741,7 @@ int ErrorList::priorityControlFilter(QString control) {
 }
 
 int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& flTyp) {
-  QString flTypes[] = {"fqclevel","fr","fcc","fs","fnum","fpos","fmis","ftime","fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
+  QString flTypes[] = {"fagg","fr","fcc","fs","fnum","fpos","fmis","ftime","fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
   QString qStrCtrInfo = QString::fromStdString(ctrInfo);
   QString control = QString::fromStdString(cFailed);
   int flg = 0;
@@ -1389,7 +1397,8 @@ void ErrorList::saveChanges()
     case 16:
       {
 	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction 
-	  cif.set(6,0);
+	  //	  cif.set(6,0);
+	  cif.set(6,4);
 	  cif.set(15,7);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
@@ -1401,8 +1410,8 @@ void ErrorList::saveChanges()
     case 17:
       {
 	if ( fmis == 0 || fmis == 2 ) {
-	  cif.set(6,0);
-	  cif.set(12,2);
+	  //	if ( fmis == 0 ) {
+	  cif.set(6,4);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {
 	  cif.set(6,1);
@@ -1413,8 +1422,9 @@ void ErrorList::saveChanges()
       break;
     case 18:
       {
-	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction
-	  cif.set(6,0);
+	if ( fmis == 0 || fmis == 2 || fmis == 4 ) {  //original exists, this is a correction
+	  //	  cif.set(6,0);
+	  cif.set(6,4);
 	  cif.set(15,7);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
