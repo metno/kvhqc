@@ -366,8 +366,6 @@ void MDITabWindow::updateKvBase(int row, int col) {
       tval->setText("");
       return;
     }
-    
-
     if ( fabs(cor - org ) < epsilon ) {
       if ( cif.flag(4) > 1 ) {
 	cif.set(15,1);
@@ -401,7 +399,11 @@ void MDITabWindow::updateKvBase(int row, int col) {
       cif.set(15,5);
     }
     else if ( cif.flag(6) == 0 || cif.flag(6) == 2 ) {
-      cif.set(6,0);
+      //      cif.set(6,0);
+      cif.set(6,4);
+      cif.set(15,7);
+    }
+    else if ( cif.flag(6) == 4 ) {
       cif.set(15,7);
     }
     if ( oldCorVal == "-32767.0" ) { 
