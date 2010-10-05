@@ -66,6 +66,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QTime>
 #include <QRegExp>
 
+#include <glText/glTextQtTexture.h>
+
 using namespace std;
 
 int noSelPar;
@@ -376,7 +378,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   // make the timeseries-plot-dialog
   tspdialog = new TSPlotDialog(this);
   // init fonts for timeseries
-  glText* gltext= new glTextX();
+  glText* gltext= new glTextQtTexture;
   gltext->testDefineFonts();
 }
 

@@ -33,7 +33,7 @@ INCLUDE:=-Isrc/ -I../include \
 	 -I../include/ \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
-LIB:= -L../authentication/ -lauthentication \
+LIB:= -L../authentication/ -lauthentication -lldap\
 	-L$(BOOST_LIB) -lboost_thread \
 	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
 	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
