@@ -1463,7 +1463,7 @@ void HqcMainWindow::listData(int index,
 Convert to "Diana-value" of range check flag 
 */
 int HqcMainWindow::numCode1(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1481,7 +1481,7 @@ int HqcMainWindow::numCode1(int nib) {
 Convert to "Diana-value" of consistency check flag 
 */
 int HqcMainWindow::numCode2(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1499,7 +1499,7 @@ int HqcMainWindow::numCode2(int nib) {
 Convert to "Diana-value" of prognostic space control flag 
 */
 int HqcMainWindow::numCode3(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1517,7 +1517,7 @@ int HqcMainWindow::numCode3(int nib) {
 Convert to "Diana-value" of step check flag 
 */
 int HqcMainWindow::numCode4(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1535,7 +1535,7 @@ int HqcMainWindow::numCode4(int nib) {
 Convert to "Diana-value" of timeseries adaption flag 
 */
 int HqcMainWindow::numCode5(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 || nib == 2 )
@@ -1549,7 +1549,7 @@ int HqcMainWindow::numCode5(int nib) {
 Convert to "Diana-value" of statistics control flag 
 */
 int HqcMainWindow::numCode6(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1563,7 +1563,7 @@ int HqcMainWindow::numCode6(int nib) {
 Convert to "Diana-value" of climatology control flag 
 */
 int HqcMainWindow::numCode7(int nib) {
-  int code;
+  int code = 9;
   if ( nib == 0 )
     code = 0;
   else if ( nib == 1 )
@@ -1579,7 +1579,7 @@ int HqcMainWindow::numCode7(int nib) {
 Convert to "Diana-value" of HQC flag 
 */
 int HqcMainWindow::numCode8(int nib) {
-  int code;
+  int code = 9;
   if ( nib <  10 )
     code = nib;
   else
