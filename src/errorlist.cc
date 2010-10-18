@@ -165,22 +165,22 @@ ErrorList::ErrorList(QStringList& selPar,
   int prevPara = -1;
   for ( int j = 0; j < selPar.count(); j++ ) {
     for ( int i = 0; i < dtl.size(); i++ ) {
-      if (  dtl[i].stnr > 99999) continue;
-      if (  dtl[i].typeId[noSelPar[j]] < 0 ) continue;
-      if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
+      if (  dtl[i].stnr() > 99999) continue;
+      if (  dtl[i].typeId(noSelPar[j]) < 0 ) continue;
+      if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
+      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime());
       if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
+      bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
       if ( !tp ) continue;
       missObs mobs;
-      QString ctr = QString::fromStdString(dtl[i].controlinfo[noSelPar[j]]);
+      QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]));
       int flg = ctr.mid(4,1).toInt(0,16);
-      int tdiff = miTime::hourDiff(dtl[i].otime,stime);
+      int tdiff = miTime::hourDiff(dtl[i].otime(),stime);
       if ( flg == 6 ) {
-	mobs.oTime = dtl[i].otime;
+	mobs.oTime = dtl[i].otime();
 	mobs.time = tdiff;
 	mobs.parno  = noSelPar[j];
-	mobs.statno = dtl[i].stnr;
+	mobs.statno = dtl[i].stnr();
 	mobs.missNo = missCount;
 	if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
 	  missCount = 0;
@@ -199,28 +199,29 @@ ErrorList::ErrorList(QStringList& selPar,
   int  ml = 0;
 
   for ( int i = 0; i < dtl.size(); i++ ) {
-    if (  dtl[i].stnr > 99999) continue;
-    if (  dtl[i].typeId < 0 ) continue;
-    if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
+    if (  dtl[i].stnr() > 99999) continue;
+#warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
+    if (  dtl[i].showTypeId() < 0 ) continue;
+    if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
     mem memObs;
-    memObs.obstime = dtl[i].otime;
-    memObs.tbtime = dtl[i].tbtime;
-    memObs.name = dtl[i].name;
-    memObs.stnr = dtl[i].stnr;
+    memObs.obstime = dtl[i].otime();
+    memObs.tbtime = dtl[i].tbtime();
+    memObs.name = dtl[i].name();
+    memObs.stnr = dtl[i].stnr();
 
     for ( int j = 0; j < selPar.count(); j++ ) {
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
+      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime());
       if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
+      bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
       if ( !tp ) continue;
-      memObs.typeId      = dtl[i].typeId[noSelPar[j]];
-      memObs.orig        = dtl[i].orig[noSelPar[j]];
-      memObs.corr        = dtl[i].corr[noSelPar[j]];
-      memObs.sen         = dtl[i].sensor[noSelPar[j]];
-      memObs.lev         = dtl[i].level[noSelPar[j]];
-      memObs.controlinfo = dtl[i].controlinfo[noSelPar[j]];
-      memObs.useinfo     = dtl[i].useinfo[noSelPar[j]];
-      memObs.cfailed     = dtl[i].cfailed[noSelPar[j]];
+      memObs.typeId      = dtl[i].typeId(noSelPar[j]);
+      memObs.orig        = dtl[i].orig(noSelPar[j]);
+      memObs.corr        = dtl[i].corr(noSelPar[j]);
+      memObs.sen         = dtl[i].sensor(noSelPar[j]);
+      memObs.lev         = dtl[i].level(noSelPar[j]);
+      memObs.controlinfo = dtl[i].controlinfo(noSelPar[j]);
+      memObs.useinfo     = dtl[i].useinfo(noSelPar[j]);
+      memObs.cfailed     = dtl[i].cfailed(noSelPar[j]);
       memObs.parNo       = noSelPar[j];
       memObs.parName     = selPar[j];
       memObs.morig = -32767.0;

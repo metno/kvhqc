@@ -464,18 +464,18 @@ kvalobs::kvData DataTable::getKvData( int row, int col ) const
   HqcMainWindow * hmw = getHqcMainWindow( this );
   int index = (col-2)/hmw->nucoprpar;
 
-  int                      pos = d.stnr;
-  const miutil::miTime &   obt = d.otime;
-  float                    org = d.orig[parNo[index]];
+  int                      pos = d.stnr();
+  const miutil::miTime &   obt = d.otime();
+  float                    org = d.orig(parNo[index]);
   int                      par = parNo[index];
-  const miutil::miTime &   tbt = d.tbtime;     
-  int                      typ = d.typeId[parNo[index]];     
-  int                      sen = d.sensor[parNo[index]];    
-  int                      lvl = d.level[parNo[index]];     
-  float                    cor = d.corr[parNo[index]]; 
-  kvControlInfo            cif = d.controlinfo[parNo[index]];
-  const kvUseInfo &        uin = d.useinfo[parNo[index]];
-  const miutil::miString & fai = d.cfailed[parNo[index]];
+  const miutil::miTime &   tbt = d.tbtime();
+  int                      typ = d.typeId(parNo[index]);
+  int                      sen = d.sensor(parNo[index]);
+  int                      lvl = d.level(parNo[index]);
+  float                    cor = d.corr(parNo[index]);
+  kvControlInfo            cif = d.controlinfo(parNo[index]);
+  const kvUseInfo &        uin = d.useinfo(parNo[index]);
+  const miutil::miString & fai = d.cfailed(parNo[index]);
   const kvControlInfo & cin = cif;
 
   kvalobs::kvData ret(pos,obt,org,par,tbt,typ,sen,lvl,cor,cin,uin,fai);
@@ -494,7 +494,7 @@ void DataTable::selectStation( int station, const miTime & obstime )
   const vector<datl> & data = getHqcMainWindow( this )->datalist;
   for ( int i = 0; i < originalIndexes.size(); ++i ) {
     const datl & d = data[ originalIndex( i ) ];
-    if ( d.stnr == station and d.otime == obstime ) {
+    if ( d.stnr() == station and d.otime() == obstime ) {
       cerr << "Was on row   " << currentRow() << endl
 	   << "Going to row " << i << "(" << originalIndex( i ) << ")" << endl
 	   << "(table has " << numRows() << " rows)" << endl;

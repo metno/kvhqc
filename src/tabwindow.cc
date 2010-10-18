@@ -39,6 +39,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "datatable.h"
 #include "BusyIndicator.h"
 
+#include <QTableView>
+#include "KvalobsDataModel.h"
+
 MDITabWindow::MDITabWindow( QWidget* parent, 
 			    const char* name, 
 			    int wflags, 
@@ -104,33 +107,47 @@ MDITabWindow::MDITabWindow( QWidget* parent,
     }
   }
   else {
-    readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
-    if ( dtt )
-      delete dtt;
-    dtt = new DataTable(selPar, 
-			numErr,
-			noSelPar,
-			selParNo, 
-			noParam, 
-			this, 
-			lity, 
-			metty, 
-			dateCol, 
-			ncp,
-			isShTy);
-    
-    HqcMainWindow * w = getHqcMainWindow( this );
-    
-    connect( dtt, SIGNAL( currentChanged( int, int) ),
-	     SLOT( tableCellClicked( int, int ) ) );
-    connect( dtt, SIGNAL( valueChanged( int, int ) ),
-	     this,SLOT( updateKvBase( int, int ) ) );
-    connect( dtt, SIGNAL( valueChanged( int, int ) ),
-	     SLOT( tableValueChanged( int, int ) ) );
-    connect( w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ),
-	     dtt, SLOT( selectStation(int, const miutil::miTime &) ) );
-    setFocusProxy( dtt );
-    setCentralWidget( dtt );
+
+#warning Do model/view code properly!
+
+      readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
+      static QTableView * tableView = 0;
+      if ( ! tableView )
+        tableView = new QTableView(this);
+      static model::KvalobsDataModel * dataModel = 0;
+      if ( ! dataModel )
+        dataModel = new model::KvalobsDataModel(datalist, this);
+      tableView->setModel(dataModel);
+      setCentralWidget(tableView);
+
+
+//    readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
+//    if ( dtt )
+//      delete dtt;
+//    dtt = new DataTable(selPar,
+//			numErr,
+//			noSelPar,
+//			selParNo,
+//			noParam,
+//			this,
+//			lity,
+//			metty,
+//			dateCol,
+//			ncp,
+//			isShTy);
+//
+//    HqcMainWindow * w = getHqcMainWindow( this );
+//
+//    connect( dtt, SIGNAL( currentChanged( int, int) ),
+//	     SLOT( tableCellClicked( int, int ) ) );
+//    connect( dtt, SIGNAL( valueChanged( int, int ) ),
+//	     this,SLOT( updateKvBase( int, int ) ) );
+//    connect( dtt, SIGNAL( valueChanged( int, int ) ),
+//	     SLOT( tableValueChanged( int, int ) ) );
+//    connect( w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ),
+//	     dtt, SLOT( selectStation(int, const miutil::miTime &) ) );
+//    setFocusProxy( dtt );
+//    setCentralWidget( dtt );
   }
   //Remember stime and etime
 }
@@ -312,11 +329,11 @@ void MDITabWindow::updateKvBase(int row, int col) {
   Q3TableItem* tval = dtt->item( row, col);
   QString corVal   = tval->text();
   QString newFlagVal;//   = fval->text();
-  int pos     = hqcm->datalist[row].stnr;
-  const miutil::miTime & obt = hqcm->datalist[row].otime;
-  int typ = hqcm->datalist[row].typeId[hqcm->selParNo[index]];
-  double orig = hqcm->datalist[row].orig[hqcm->selParNo[index]];
-  double corr = hqcm->datalist[row].corr[hqcm->selParNo[index]];
+  int pos     = hqcm->datalist[row].stnr();
+  const miutil::miTime & obt = hqcm->datalist[row].otime();
+  int typ = hqcm->datalist[row].typeId(hqcm->selParNo[index]);
+  double orig = hqcm->datalist[row].orig(hqcm->selParNo[index]);
+  double corr = hqcm->datalist[row].corr(hqcm->selParNo[index]);
   QString oldCorVal;
   oldCorVal = oldCorVal.setNum(corr,'f',1);
 
@@ -340,20 +357,20 @@ void MDITabWindow::updateKvBase(int row, int col) {
     int dataListIndex = dtt->originalIndex( row );
     cerr << row << " - " << dataListIndex << endl;
     
-    datl &d = hqcm->datalist[ dataListIndex ];
+    const datl &d = hqcm->datalist[ dataListIndex ];
     
-    int                      pos = d.stnr;
-    const miutil::miTime &   obt = d.otime;
-    float                    org = d.orig[hqcm->selParNo[index]];  
+    int                      pos = d.stnr();
+    const miutil::miTime &   obt = d.otime();
+    float                    org = d.orig(hqcm->selParNo[index]);
     int                      par = hqcm->selParNo[index];
-    const miutil::miTime &   tbt = d.tbtime;          
-    int                      typ = d.typeId[hqcm->selParNo[index]];     
-    int                      sen = d.sensor[hqcm->selParNo[index]];    
-    int                      lvl = d.level[hqcm->selParNo[index]];      
+    const miutil::miTime &   tbt = d.tbtime();
+    int                      typ = d.typeId(hqcm->selParNo[index]);
+    int                      sen = d.sensor(hqcm->selParNo[index]);
+    int                      lvl = d.level(hqcm->selParNo[index]);
     float                    cor = corVal.toFloat(); 
-    kvControlInfo            cif = d.controlinfo[hqcm->selParNo[index]];
-    const kvUseInfo &        uin = d.useinfo[hqcm->selParNo[index]];
-    const miutil::miString & fai = d.cfailed[hqcm->selParNo[index]];
+    kvControlInfo            cif = d.controlinfo(hqcm->selParNo[index]);
+    const kvUseInfo &        uin = d.useinfo(hqcm->selParNo[index]);
+    const miutil::miString & fai = d.cfailed(hqcm->selParNo[index]);
     if ( abs(typ) > 503 )
       typ = hqcm->findTypeId(typ, pos, par, obt);
 

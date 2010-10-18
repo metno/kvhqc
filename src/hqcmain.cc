@@ -1068,13 +1068,13 @@ void HqcMainWindow::TimeseriesOK() {
     }
     if ( tsdlg->obsCheckBox->isChecked() && (nTypes == 1 || ip%nTypes == 0) ) {
       for ( int i = 0; i < datalist.size(); i++) { // fill data
-	if ( datalist[i].stnr == stationIndex[ip] &&
-	     datalist[i].otime >= stime &&
-             datalist[i].otime <= etime &&
-	     datalist[i].otime.min() == 0 ) {
-	  if ( datalist[i].corr[parameterIndex[ip]] > -32766.0 )   
-	    tseries.add(TimeSeriesData::Data(datalist[i].otime,
-					     datalist[i].corr[parameterIndex[ip]]));
+	if ( datalist[i].stnr() == stationIndex[ip] &&
+	     datalist[i].otime() >= stime &&
+             datalist[i].otime() <= etime &&
+	     datalist[i].otime().min() == 0 ) {
+	  if ( datalist[i].corr(parameterIndex[ip]) > -32766.0 )
+	    tseries.add(TimeSeriesData::Data(datalist[i].otime(),
+					     datalist[i].corr(parameterIndex[ip])));
 	}
       }
       if(tseries.dataOK()) {
@@ -1087,7 +1087,7 @@ void HqcMainWindow::TimeseriesOK() {
 	     modeldatalist[i].otime >= stime &&
 	     modeldatalist[i].otime <= etime ){
 	  tseries.add(TimeSeriesData::Data(modeldatalist[i].otime,
-					  datalist[i].corr[parameterIndex[ip]] 
+					  datalist[i].corr(parameterIndex[ip])
 					  - modeldatalist[i].orig[parameterIndex[ip]]));
 	}
       }
@@ -1433,19 +1433,20 @@ void HqcMainWindow::listData(int index,
   // List all data, all parameters at one station and one time
   miutil::miTime modeltime;
   int modelstnr;
-  stnr = datalist[index].stnr;
-  obstime = datalist[index].otime;
-  showTypeId = datalist[index].showTypeId;
-  typeIdChanged = datalist[index].typeIdChanged;
+  stnr = datalist[index].stnr();
+  obstime = datalist[index].otime();
+  showTypeId = datalist[index].showTypeId();
+  typeIdChanged = datalist[index].typeIdChanged();
   int hour = obstime.hour();
   for ( int i = 0; i < NOPARAM; i++ ) {
-    typeId[i] = datalist[index].typeId[i];
-    orig[i] = datalist[index].orig[i];
-    flag[i] = datalist[index].flag[i];
-    corr[i] = datalist[index].corr[i];
-    controlinfo[i] = datalist[index].controlinfo[i];
-    useinfo[i] = datalist[index].useinfo[i];
-    cfailed[i] = datalist[index].cfailed[i];
+    typeId[i] = datalist[index].typeId(i);
+    orig[i] = datalist[index].orig(i);
+    flag[i] = datalist[index].flag(i);
+    corr[i] = datalist[index].corr(i);
+    controlinfo[i] = datalist[index].controlinfo(i);
+    std::cout << '<' << controlinfo[i].c_str() <<  '>' << std::endl;
+    useinfo[i] = datalist[index].useinfo(i);
+    cfailed[i] = datalist[index].cfailed(i);
     morig[i] = -32767.0;
   }
 
@@ -1634,7 +1635,7 @@ bool HqcMainWindow::timeFilter(int hour) {
   return FALSE;
 }
 
-bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
+bool HqcMainWindow::hqcTypeFilter(const int& typeId, int environment, int stnr) {
   //  if ( typeId == -1 || typeId == 501 ) return FALSE;
   if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
@@ -2159,8 +2160,8 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
     double lat,lon,hoh;
     int env;
     int snr;
-    if(stnr != datalist[i].stnr){
-      stnr = datalist[i].stnr;
+    if(stnr != datalist[i].stnr()){
+      stnr = datalist[i].stnr();
       findStationInfo(stnr,name,lat,lon,hoh,snr,env);
       QString nrStr;
       nrStr = nrStr.setNum(stnr);
@@ -2285,7 +2286,7 @@ void HqcMainWindow::sendTimes(){
   m.description= "time";
   int n=datalist.size();
   for(int i=0;i<n;i++){
-    m.data.push_back(datalist[i].otime.isoTime());
+    m.data.push_back(datalist[i].otime().isoTime());
   }
   cerr << "HQC sender melding" << endl;
   //  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
@@ -2435,15 +2436,15 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   vector<miutil::miString> enkelData;
 
   for ( int i = 0; i < datalist.size(); i++) { // fill data
-    if ( datalist[i].otime == time ){
+    if ( datalist[i].otime() == time ){
       double lat,lon,h;
-      miutil::miString str(datalist[i].stnr);
+      miutil::miString str(datalist[i].stnr());
       QString name;
       int env;
       int snr;
       //      int typeId = datalist[i].typeId;
-      int typeId = datalist[i].showTypeId;
-      findStationInfo(datalist[i].stnr,name,lat,lon,h,snr,env);
+      int typeId = datalist[i].showTypeId();
+      findStationInfo(datalist[i].stnr(),name,lat,lon,h,snr,env);
       str += ",";
       miutil::miString isAuto = "x";
       miutil::miString strType = hqcType(typeId, env);
@@ -2471,13 +2472,13 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
       //      }
       miutil::miString synopStr = str;
       miutil::miString enkelStr = str;
-      double aa = datalist[i].corr[1];
+      double aa = datalist[i].corr(1);
       for(int j=0; j<parIndex.size();j++){
-	double corr = datalist[i].corr[parIndex[j]];
+	double corr = datalist[i].corr(parIndex[j]);
 	if ( parModel[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
+		 modeldatalist[k].otime == datalist[i].otime() ) {
 	      corr = modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2485,8 +2486,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parDiff[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
+		 modeldatalist[k].otime == datalist[i].otime() ) {
 	      corr = corr - modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2494,8 +2495,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parProp[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
+		 modeldatalist[k].otime == datalist[i].otime() ) {
 	      if ( abs(modeldatalist[k].orig[parIndex[j]]) > 0.00001 )
 		corr = corr/modeldatalist[k].orig[parIndex[j]];
 	      else
@@ -2511,7 +2512,7 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	  }
 	} else {
 	  corr = dianaValue(parIndex[j], parModel[j], corr, aa);
-	  int flag = datalist[i].flag[parIndex[j]];
+	  int flag = datalist[i].flag(parIndex[j]);
 	  int shFl1 = flag/10000;
 	  int shFl2 = flag%10000/1000;
 	  int shFl3 = flag%1000/100;
@@ -2628,7 +2629,7 @@ void HqcMainWindow::updateParams(int station,
   //Update datalist
   int i=0;
   int n= datalist.size();
-  while( i<n && ( datalist[i].stnr!=station || datalist[i].otime != time)) i++;
+  while( i<n && ( datalist[i].stnr() !=station || datalist[i].otime() != time)) i++;
   if(i==n) return; //station and time not found
 	 
   int parameterIndex=-1;
@@ -2643,10 +2644,10 @@ void HqcMainWindow::updateParams(int station,
   if(parameterIndex == -1) return; // parameter not found
 
   double dValue = atof(value.cStr());
-  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),datalist[i].corr[1]);
+  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),datalist[i].corr(1));
   int    iflag  = atoi(flag.cStr());
-  datalist[i].corr[parameterIndex]=dValue;
-  datalist[i].flag[parameterIndex]=iflag;
+  datalist[i].set_corr(parameterIndex, dValue);
+  datalist[i].set_flag(parameterIndex, iflag);
   miutil::miString value_flag = miutil::miString(cdValue) + ":" + flag;
 
   //update timeseries
@@ -2822,7 +2823,7 @@ void HqcMainWindow::updateSaveFunction( QWidget *w )
 
 bool HqcMainWindow::isAlreadyStored(miutil::miTime otime, int stnr) {
   for ( int i = 0; i < datalist.size(); i++) {
-    if ( datalist[i].otime == otime && datalist[i].stnr == stnr )
+    if ( datalist[i].otime() == otime && datalist[i].stnr() == stnr )
       return true;
   }
   return false;
@@ -2920,18 +2921,10 @@ void
 HqcMainWindow::
 makeObsDataList( KvObsDataList& dataList )
 {
+  datl tdl;
   bool tdlUpd[NOPARAM];
-  for ( int ip = 0; ip < NOPARAM; ip++) {
-    tdl.orig[ip]   = -32767.0;
-    tdl.flag[ip]   = 0;
-    tdl.corr[ip]   = -32767.0;
-    tdl.sensor[ip] = 0;
-    tdl.level[ip]  = 0;
-    tdl.typeId[ip] = -32767;
-    tdl.controlinfo[ip] = "";
-    tdl.cfailed[ip] = "";
-    tdlUpd[ip] = false;
-  }
+  memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
+
   miutil::miTime protime("1800-01-01 00:00:00");
   int prtypeId = -1;
   int prstnr = 0;
@@ -2981,21 +2974,21 @@ makeObsDataList( KvObsDataList& dataList )
 	ditNo++;
 	continue;
       }
-      tdl.otime = otime;
-      tdl.tbtime = tbtime;
-      tdl.stnr = stnr;
+      tdl.set_otime(otime);
+      tdl.set_tbtime(tbtime);
+      tdl.set_stnr(stnr);
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
       if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
-	tdl.typeId[dit->paramID()] = typeId;
-	tdl.showTypeId = typeId;
-	tdl.orig[dit->paramID()] = dit->original();
-	tdl.flag[dit->paramID()] = getShowFlag(dit->controlinfo());
-	tdl.corr[dit->paramID()] = dit->corrected();
-	tdl.sensor[dit->paramID()] = dit->sensor();
-	tdl.level[dit->paramID()] = dit->level();
-	tdl.controlinfo[dit->paramID()] = dit->controlinfo().flagstring();
-      	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
-	tdl.cfailed[dit->paramID()] = dit->cfailed();
+	tdl.set_typeId(dit->paramID(), typeId);
+	tdl.set_showTypeId(typeId);
+	tdl.set_orig(dit->paramID(), dit->original());
+	tdl.set_flag(dit->paramID(), getShowFlag(dit->controlinfo()));
+	tdl.set_corr(dit->paramID(), dit->corrected());
+	tdl.set_sensor(dit->paramID(), dit->sensor());
+	tdl.set_level(dit->paramID(), dit->level());
+	tdl.set_controlinfo(dit->paramID(), dit->controlinfo().flagstring());
+      	tdl.set_useinfo(dit->paramID(), dit->useinfo().flagstring());
+	tdl.set_cfailed(dit->paramID(), dit->cfailed());
 	tdlUpd[dit->paramID()] = true;
       }
       protime = otime;
@@ -3008,10 +3001,10 @@ makeObsDataList( KvObsDataList& dataList )
       int env;
       int snr;
       findStationInfo(stnr, name, lat, lon, hoh, snr, env);
-      tdl.name = name;
-      tdl.snr = snr;
+      tdl.set_name(name);
+      tdl.set_snr(snr);
       int prid = dit->paramID();
-      bool correctHqcType = hqcTypeFilter(tdl.showTypeId, env, stnr);
+      bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
       ++dit;
       ++ditNo;
       otime = dit->obstime();
@@ -3023,7 +3016,7 @@ makeObsDataList( KvObsDataList& dataList )
       }
       else if ( ditNo == ditSize - 1 ) goto pushback;
       for ( int ip = 0; ip < NOPARAM; ip++) {
-	int shFl  = tdl.flag[ip];
+	int shFl  = tdl.flag(ip);
 	int shFl1 = shFl/10000;
 	int shFl2 = shFl%10000/1000;
 	int shFl3 = shFl%1000/100;
@@ -3038,30 +3031,12 @@ makeObsDataList( KvObsDataList& dataList )
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
 	    ((otime != protime || ( otime == protime && stnr != prstnr)))) || (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
 	datalist.push_back(tdl);
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
+	tdl = datl();
+        memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
       }
       else if ( !timeFilter(hour) ) {
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
+        tdl = datl();
+        memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
       }
     }
   }
