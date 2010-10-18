@@ -23,8 +23,4 @@ INCLUDEPATH	+= .
 LDAP_DEPRECATED=1
 LIBS	+= -lldap
 LANGUAGE	= C++
-#The following line was inserted by qt3to4
-QT +=  
-#The following line was inserted by qt3to4
-#CONFIG += uic3
 
