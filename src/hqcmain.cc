@@ -2111,7 +2111,7 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
 				    mettType metty,
 				    QString& wElement,
 				    int* selParNo,
-				    vector<datl>& datalist,
+				    vector<model::KvalobsData>& datalist,
 				    vector<modDatl>& modeldatalist,
 				    list<kvStation>& slist,
 				    int dateCol,
@@ -2921,9 +2921,9 @@ void
 HqcMainWindow::
 makeObsDataList( KvObsDataList& dataList )
 {
-  datl tdl;
+  model::KvalobsData tdl;
   bool tdlUpd[NOPARAM];
-  memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
+  std::fill(tdlUpd, tdlUpd + NOPARAM, false);
 
   miutil::miTime protime("1800-01-01 00:00:00");
   int prtypeId = -1;
@@ -3031,12 +3031,12 @@ makeObsDataList( KvObsDataList& dataList )
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
 	    ((otime != protime || ( otime == protime && stnr != prstnr)))) || (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
 	datalist.push_back(tdl);
-	tdl = datl();
-        memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
+	tdl = model::KvalobsData();
+	std::fill(tdlUpd, tdlUpd + NOPARAM, false);
       }
       else if ( !timeFilter(hour) ) {
-        tdl = datl();
-        memset(tdlUpd, 0, sizeof(bool) * NOPARAM);
+        tdl = model::KvalobsData();
+        std::fill(tdlUpd, tdlUpd + NOPARAM, false);
       }
     }
   }

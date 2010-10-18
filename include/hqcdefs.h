@@ -81,26 +81,6 @@ enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
 enum mettType {tabHead, tabList};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 
-//struct datl {
-//  int stnr;
-//  int snr;
-//  QString name;
-//  miutil::miTime otime;
-//  miutil::miTime tbtime;
-//  //  int typeId;
-//  int showTypeId;
-//  int typeIdChanged;
-//  int typeId[NOPARAM];
-//  double orig[NOPARAM];
-//  int flag[NOPARAM];
-//  double corr[NOPARAM];
-//  int level[NOPARAM];
-//  int sensor[NOPARAM];
-//  string controlinfo[NOPARAM];
-//  string useinfo[NOPARAM];
-//  string cfailed[NOPARAM];
-//};
-typedef model::KvalobsData datl;
 
 struct modDatl {
   int stnr;

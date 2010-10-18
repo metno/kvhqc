@@ -459,7 +459,7 @@ kvalobs::kvData DataTable::getKvData( int row, int col ) const
     return kvalobs::kvData();
 
   int dataListIndex = originalIndex( row );
-  datl & d = getHqcMainWindow( this )->datalist[ dataListIndex ];
+  model::KvalobsData & d = getHqcMainWindow( this )->datalist[ dataListIndex ];
 
   HqcMainWindow * hmw = getHqcMainWindow( this );
   int index = (col-2)/hmw->nucoprpar;
@@ -491,9 +491,9 @@ int DataTable::originalIndex( int row ) const
 void DataTable::selectStation( int station, const miTime & obstime )
 {
   cerr << "SelectStation\n";
-  const vector<datl> & data = getHqcMainWindow( this )->datalist;
+  const vector<model::KvalobsData> & data = getHqcMainWindow( this )->datalist;
   for ( int i = 0; i < originalIndexes.size(); ++i ) {
-    const datl & d = data[ originalIndex( i ) ];
+    const model::KvalobsData & d = data[ originalIndex( i ) ];
     if ( d.stnr() == station and d.otime() == obstime ) {
       cerr << "Was on row   " << currentRow() << endl
 	   << "Going to row " << i << "(" << originalIndex( i ) << ")" << endl

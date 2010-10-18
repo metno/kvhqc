@@ -79,7 +79,7 @@ ErrorList::ErrorList(QStringList& selPar,
 		     int lity,
 		     int metty,
 		     int* noSelPar,
-		     vector<datl>& dtl,
+		     vector<model::KvalobsData>& dtl,
 		     vector<modDatl>& mdtl,
 		     list<kvStation>& slist,
 		     int dateCol,
@@ -870,7 +870,7 @@ void ErrorList::tableCellClicked(int row,
 				 int col,
 				 int button) {//,
   //				 const QPoint& mousePos,
-  //				 vector<datl>& dtl) { 
+  //				 vector<model::KvalobsData>& dtl) {
   if ( col == 0 && row >= 0) {
     selectRow(row);
   }

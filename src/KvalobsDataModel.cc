@@ -99,11 +99,19 @@ namespace model
     return QVariant();
   }
 
+  namespace
+  {
+    QString getParameterName(int paramid)
+    {
+      return QString::number(paramid);
+    }
+  }
+
   QVariant KvalobsDataModel::headerData(int section, Qt::Orientation orientation, int role) const
   {
     if ( Qt::Horizontal == orientation) {
       if ( Qt::DisplayRole == role ) {
-          QString parameterName = "RR_24";
+          QString parameterName = getParameterName(section / COLUMNS_PER_PARAMETER);
           switch (section % COLUMNS_PER_PARAMETER)
           {
           case 0:

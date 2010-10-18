@@ -156,7 +156,7 @@ public:
 	    int, 
 	    int, 
 	    int*,
-	    vector<datl>&, 
+	    vector<model::KvalobsData>&,
 	    vector<modDatl>&, 
 	    list<kvStation>&,
 	    int, 
@@ -343,7 +343,7 @@ private:
   bool specialTimeFilter(int, miutil::miTime); 
   bool typeFilter(int, int, int, miutil::miTime); 
 private slots:
-  //  void tableCellClicked(int, int, int, const QPoint&, vector<datl>&);
+  //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);
   void updateFaillist(int, int);
   //void updateKvBase(int, int);

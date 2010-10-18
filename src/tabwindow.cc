@@ -56,7 +56,7 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 			    QStringList& selPar,
 			    int noSelPar,
 			    int* selParNo,
-			    vector<datl>& datalist,
+			    vector<model::KvalobsData>& datalist,
 			    vector<modDatl>& modeldatalist,
 			    list<kvStation>& slist,
 			    int dateCol,
@@ -357,7 +357,7 @@ void MDITabWindow::updateKvBase(int row, int col) {
     int dataListIndex = dtt->originalIndex( row );
     cerr << row << " - " << dataListIndex << endl;
     
-    const datl &d = hqcm->datalist[ dataListIndex ];
+    const model::KvalobsData &d = hqcm->datalist[ dataListIndex ];
     
     int                      pos = d.stnr();
     const miutil::miTime &   obt = d.otime();

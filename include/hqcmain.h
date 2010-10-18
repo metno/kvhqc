@@ -298,7 +298,7 @@ public:
   Rejects* rejects;
   vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
-  vector<datl> datalist;
+  vector<model::KvalobsData> datalist;
   vector<modDatl> modeldatalist;
   vector<int> stList;
   vector<int> stnrList;
@@ -495,7 +495,7 @@ private slots:
 		       mettType, 
 		       QString&,
 		       int*,
-		       vector<datl>&, 
+		       vector<model::KvalobsData>&,
 		       vector<modDatl>&, 
 		       list<kvStation>&,
 		       int, 

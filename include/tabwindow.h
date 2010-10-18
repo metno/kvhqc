@@ -60,7 +60,7 @@ public:
 		  QStringList&,
 		  int,
 		  int*,
-		  vector<datl>&, 
+		  vector<model::KvalobsData>&,
 		  vector<modDatl>&, 
 		  list<kvStation>&,
 		  int, 
