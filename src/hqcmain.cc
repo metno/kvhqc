@@ -1662,6 +1662,13 @@ bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
   //
+  // Midlertidig spesialtilfelle for Oppdal!!!!!!!!!!!!!!!
+  //
+  if ( stnr == 63705 ) {
+    if ( typeId == -330 )
+      return false;
+  }
+  //
   // Midlertidig spesialtilfelle for Venabu!!!!!!!!!!!!!!!
   //
   if ( stnr == 13420 && par == 112 ) {
@@ -2961,6 +2968,12 @@ makeObsDataList( KvObsDataList& dataList )
 	aggTime = dit->obstime();
 	aggStat = dit->stationID();
       }
+      else {
+	aggPar = 0;
+	aggTyp = 0;
+	aggStat = 0;
+	aggTime = "1800-01-01 00:00:00" ;
+      }
 
       int stnr = dit->stationID();
       miutil::miTime otime = (dit->obstime());
@@ -2995,7 +3008,7 @@ makeObsDataList( KvObsDataList& dataList )
       	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
 	tdl.cfailed[dit->paramID()] = dit->cfailed();
 	tdlUpd[dit->paramID()] = true;
-      }
+     }
       protime = otime;
       prstnr = stnr;
       prtypeId = typeId;
@@ -3034,7 +3047,8 @@ makeObsDataList( KvObsDataList& dataList )
       }
     pushback:
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
-	    ((otime != protime || ( otime == protime && stnr != prstnr)))) || (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
+	    ((otime != protime || ( otime == protime && stnr != prstnr)))) ||
+	   (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
 	datalist.push_back(tdl);
 	for ( int ip = 0; ip < NOPARAM; ip++) {
 	  tdl.orig[ip]   = -32767.0;
