@@ -203,6 +203,8 @@ bool MDITabWindow::close()
 
 MDITabWindow::~MDITabWindow()
 {
+  HqcMainWindow *mainWindow = (HqcMainWindow*)getHqcMainWindow(this);
+  delete &mainWindow->datalist;
 }
 
 //Generate message for showing observations in diana
