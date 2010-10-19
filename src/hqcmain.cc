@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "GetData.h"
 #include "GetTextData.h"
 #include <iomanip>
+#include <QAction>
 #include <qpixmap.h>
 #include <QWindowsXPStyle>
 #include <qwindowsstyle.h>
@@ -50,9 +51,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qvalidator.h>
 #include <qmetaobject.h>
 #include <qlistview.h>
-//Added by qt3to4:
 #include <QFrame>
-#include <Q3PopupMenu>
+#include <QTextStream>
 #include <qTimeseries/TSPlot.h>
 #include <glText/glTextX.h>
 #include <kvalobs/kvData.h>
@@ -105,7 +105,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
  * Main Window Constructor.
  */	
   HqcMainWindow::HqcMainWindow()
-  : Q3MainWindow( 0, "HQC")
+  : QMainWindow( 0, "HQC")
   , reinserter( NULL )
 {
   readFromStation();
@@ -143,89 +143,100 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   dianaconnected=  false;  // connection to diana
   tsVisible = false;
 
+  // ---- ACTIONS -----------------------------------------------
+
+  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
+  QAction * dataListAction = new QAction(icon_listdlg, tr("Dataliste"), this);
+  connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
+
+  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
+  QAction * timeSeriesAction = new QAction(icon_ts, tr("Tidsserie"), this);
+  connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
+
   // ---- MAIN MENU ---------------------------------------------
   //  qApp->setStyle(new QSGIStyle);
 
   listExist = FALSE;
-  menuBar()->setFont(QFont("system", 12));
+
+  QMenu * file = menuBar()->addMenu(tr("&Fil"));
+  saveAction = file->addAction( "Lagre", this, SIGNAL( saveData() ), Qt::CTRL+Qt::Key_S );
+  saveAction->setEnabled(false);
+  printAction = file->addAction( "Skriv ut", this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
+  printAction->setEnabled(false);
+
+  file->addAction( "&Lukk",    this, SLOT(closeWindow()), Qt::CTRL+Qt::Key_W );
+  file->addAction( "&Avslutt", qApp, SLOT( closeAllWindows() ), Qt::CTRL+Qt::Key_Q );
+
+
+  choice = menuBar()->addMenu(tr("&Valg"));
+  flID = choice->addAction( "Vis flagg",                 this, SLOT(showFlags()));
+  flID->setCheckable(true);
+  flID->setChecked(true);
+  orID = choice->addAction( "Vis original",              this, SLOT(showOrigs()));
+  orID->setCheckable(true);
+  orID->setChecked(true);
+  moID = choice->addAction( "Vis modeldata",             this, SLOT(showMod()));
+  moID->setCheckable(true);
+  moID->setChecked(true);
+  stID = choice->addAction( "Vis stasjonsnavn",          this, SLOT(showStat()));
+  stID->setCheckable(true);
+  stID->setChecked(true);
+  poID = choice->addAction( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
+  poID->setCheckable(true);
+  poID->setChecked(true);
+
+  //isShTy;
+
+
+//  choice->setItemChecked(flID, isShFl);
+//  choice->setItemChecked(orID, isShOr);
+
   
-  file = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Fil", file );
-  file->insertSeparator();
-
-  fileSaveMenuItem = file->insertItem( "Lagre", this, SIGNAL( saveData() ), Qt::CTRL+Qt::Key_S );
-  file->setItemEnabled( fileSaveMenuItem, false );
-
-  filePrintMenuItem = file->insertItem( "Skriv ut", this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
-  file->setItemEnabled( filePrintMenuItem, false );
-
-  file->insertItem( "&Lukk",    this, SLOT(closeWindow()), Qt::CTRL+Qt::Key_W );
-  file->insertItem( "&Avslutt", qApp, SLOT( closeAllWindows() ), Qt::CTRL+Qt::Key_Q );
-  
-  choice = new Q3PopupMenu( this );
-  choice->setCheckable(TRUE);
-  menuBar()->insertItem( "&Valg", choice );
-  choice->insertSeparator();
-  flID = choice->insertItem( "Vis flagg",                 this, SLOT(showFlags()));
-  orID = choice->insertItem( "Vis original",              this, SLOT(showOrigs()));
-  moID = choice->insertItem( "Vis modeldata",             this, SLOT(showMod()));
-  stID = choice->insertItem( "Vis stasjonsnavn",          this, SLOT(showStat()));
-  poID = choice->insertItem( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
-
-  isShFl = TRUE;
-  isShOr = TRUE;
-  isShMo = TRUE;
-  isShSt = TRUE;
-
-  choice->setItemChecked(flID, isShFl);
-  choice->setItemChecked(orID, isShOr);
-  choice->setItemChecked(moID, isShMo);
-  choice->setItemChecked(stID, isShSt);
-  
-  showmenu = new Q3PopupMenu( this );
+  QMenu * showmenu = new QMenu( this );
   menuBar()->insertItem( "&Listetype", showmenu);
-  showmenu->insertItem( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::ALT+Qt::Key_L );
-  showmenu->insertItem( "&Feilliste    ", this, SLOT(errListMenu()),Qt::ALT+Qt::Key_F );
-  showmenu->insertItem( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::ALT+Qt::Key_E );
-  showmenu->insertItem( "&Dataliste    ", this, SLOT(dataListMenu()),Qt::ALT+Qt::Key_D );
-  showmenu->insertItem( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
+  showmenu->addAction( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::ALT+Qt::Key_L );
+  showmenu->addAction( "&Feilliste    ", this, SLOT(errListMenu()),Qt::ALT+Qt::Key_F );
+  showmenu->addAction( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::ALT+Qt::Key_E );
+  showmenu->addAction(dataListAction);
+  showmenu->addAction( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
   showmenu->insertSeparator();
-  showmenu->insertItem( "&Nedbør", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
-  showmenu->insertItem( "&Vær", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
+  showmenu->addAction( "&Nedbør", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
+  showmenu->addAction( "&Vær", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
   showmenu->insertSeparator();
-  showmenu->insertItem( "&Tidsserie    ", this, SLOT(timeseriesMenu()),Qt::ALT+Qt::Key_T );
+  showmenu->addAction(timeSeriesAction);
   showmenu->insertSeparator();
-  showmenu->insertItem( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
-  showmenu->insertItem( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
+  showmenu->addAction( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
+  showmenu->addAction( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
   
-  weathermenu = new Q3PopupMenu( this );
+  QMenu * weathermenu = new QMenu( this );
   menuBar()->insertItem( "&Værelement", weathermenu);
   wElement = "";
-  klID = weathermenu->insertItem( "&For daglig rutine",       this, SLOT(climateStatistics()) );
-  piID = weathermenu->insertItem( "&Prioriterte parametere",  this, SLOT(priority()) );
-  taID = weathermenu->insertItem( "&Temperatur og fuktighet", this, SLOT(temperature()) );
-  prID = weathermenu->insertItem( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
-  apID = weathermenu->insertItem( "&Lufttrykk og vind",       this, SLOT(airPress()) );
-  clID = weathermenu->insertItem( "&Visuelle parametere",     this, SLOT(visuals()) );
-  seID = weathermenu->insertItem( "&Maritime parametere",     this, SLOT(sea()) );
-  syID = weathermenu->insertItem( "&Synop",                   this, SLOT(synop()) );
-  wiID = weathermenu->insertItem( "&Vind",                    this, SLOT(wind()) );
-  plID = weathermenu->insertItem( "&Pluviometerparametere",   this, SLOT(plu()) );
-  alID = weathermenu->insertItem( "&Alt",                     this, SLOT(all()) );
+  klID = weathermenu->addAction( "&For daglig rutine",       this, SLOT(climateStatistics()) );
+  piID = weathermenu->addAction( "&Prioriterte parametere",  this, SLOT(priority()) );
+  taID = weathermenu->addAction( "&Temperatur og fuktighet", this, SLOT(temperature()) );
+  prID = weathermenu->addAction( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
+  apID = weathermenu->addAction( "&Lufttrykk og vind",       this, SLOT(airPress()) );
+  clID = weathermenu->addAction( "&Visuelle parametere",     this, SLOT(visuals()) );
+  seID = weathermenu->addAction( "&Maritime parametere",     this, SLOT(sea()) );
+  syID = weathermenu->addAction( "&Synop",                   this, SLOT(synop()) );
+  wiID = weathermenu->addAction( "&Vind",                    this, SLOT(wind()) );
+  plID = weathermenu->addAction( "&Pluviometerparametere",   this, SLOT(plu()) );
+  alID = weathermenu->addAction( "&Alt",                     this, SLOT(all()) );
 
-  clockmenu = new Q3PopupMenu( this );
+  QMenu * clockmenu = new QMenu( this );
   menuBar()->insertItem( "&Tidspunkter", this, SLOT(clk()));
   menuBar()->insertItem( "&Dianavisning", this, SLOT(dsh()));
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
-  Q3PopupMenu * help = new Q3PopupMenu( this );
+
+  QMenu * help = new QMenu( this );
   menuBar()->insertItem( "&Hjelp", help );
-  help->insertItem( "&Brukerveiledning", this, SLOT(helpUse()), Qt::Key_F1);
-  help->insertItem( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F2);
-  help->insertItem( "&Parametere", this, SLOT(helpParam()), Qt::Key_F3);
+  help->addAction( "&Brukerveiledning", this, SLOT(helpUse()), Qt::Key_F1);
+  help->addAction( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F2);
+  help->addAction( "&Parametere", this, SLOT(helpParam()), Qt::Key_F3);
   help->insertSeparator();
-  help->insertItem( "&Om Hqc", this, SLOT(about()));
+  help->addAction( "&Om Hqc", this, SLOT(about()));
   help->insertSeparator();
-  help->insertItem( "Om &Qt", this, SLOT(aboutQt()));
+  help->addAction( "Om &Qt", this, SLOT(aboutQt()));
   
   // --- MAIN WINDOW -----------------------------------------
   ws = new QWorkspace(this);
@@ -238,24 +249,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   
   // --- TOOL BAR --------------------------------------------
-  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
-  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
-  Q3ToolBar * hqcTools = new Q3ToolBar( this, "hqc" );
-  hqcTools->setLabel( "Hqcfunksjoner" );
-  QToolButton* listButton;
-  QToolButton* tsButton;
-  listButton = new QToolButton( icon_listdlg, 
-				tr("Dataliste"), 
-				"", 
-				this, 
-				SLOT(dataListMenu()), 
-				hqcTools );
-  tsButton = new QToolButton( icon_ts, 
-			      tr("Tidsserie"), 
-			      "", 
-			      this, 
-			      SLOT(timeseriesMenu()), 
-			      hqcTools );
+  QToolBar * hqcTools = addToolBar("Hqcfunksjoner");
+  hqcTools->addAction(dataListAction);
+  hqcTools->addAction(timeSeriesAction);
+
   
   // --- STATUS BAR -------------------------------------------
   
@@ -387,33 +384,21 @@ void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
 }
 
 void HqcMainWindow::showFlags() {
-  isShFl = !isShFl;
-  choice->setItemChecked(flID, isShFl);
 }
 
 void HqcMainWindow::showOrigs() {
-  isShOr = !isShOr;
-  choice->setItemChecked(orID, isShOr);
 }
 
 void HqcMainWindow::showMod() {
-  isShMo = !isShMo;
-  choice->setItemChecked(moID, isShMo);
 }
 
 void HqcMainWindow::showStat() {
-  isShSt = !isShSt;
-  choice->setItemChecked(stID, isShSt);
 }
 
 void HqcMainWindow::showPos() {
-  isShPo = !isShPo;
-  choice->setItemChecked(poID, isShPo);
 }
 
 void HqcMainWindow::showTyp() {
-  isShTy = !isShTy;
-  choice->setItemChecked(tyID, isShTy);
 }
 
 void HqcMainWindow::insertParametersInListBox(int maxOrder, int* porder) {
@@ -428,17 +413,17 @@ void HqcMainWindow::airPress() {
   wElement = "Lufttrykk";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, TRUE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(TRUE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   insertParametersInListBox(NOPARAMAIRPRESS, airPressOrder);
   pardlg->showAll();
   //  sendObservations(remstime,false);
@@ -448,17 +433,17 @@ void HqcMainWindow::temperature() {
   wElement = "Temperatur";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, TRUE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(TRUE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   insertParametersInListBox(NOPARAMTEMP, tempOrder);
   pardlg->showAll();
   //  sendObservations(remstime,false);
@@ -468,17 +453,17 @@ void HqcMainWindow::precipitation() {
   wElement = "Nedbør";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, TRUE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(TRUE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  alID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPREC, precOrder);
   pardlg->showAll();
@@ -488,17 +473,17 @@ void HqcMainWindow::visuals() {
   wElement = "Visuell";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, TRUE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(TRUE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMVISUAL, visualOrder);
   pardlg->showAll();
@@ -508,17 +493,17 @@ void HqcMainWindow::visuals() {
 void HqcMainWindow::sea() {
   wElement = "Sjøgang";
   lity = daLi;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, TRUE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-   weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(TRUE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+   plID->setChecked(FALSE);
    //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMWAVE, waveOrder);
   pardlg->showAll();
@@ -528,17 +513,17 @@ void HqcMainWindow::synop() {
   wElement = "Synop";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, TRUE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(TRUE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMSYNOP, synopOrder);
   pardlg->showAll();
@@ -548,17 +533,17 @@ void HqcMainWindow::climateStatistics() {
   wElement = "Klimastatistikk";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, TRUE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(TRUE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMKLSTAT, klstatOrder);
   pardlg->showAll();
@@ -568,17 +553,17 @@ void HqcMainWindow::priority() {
   wElement = "Prioriterte parametere";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, TRUE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(TRUE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPRIORITY, priorityOrder);
   pardlg->showAll();
@@ -588,17 +573,17 @@ void HqcMainWindow::wind() {
   wElement = "Vind";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, TRUE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(TRUE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMWIND, windOrder);
   pardlg->showAll();
@@ -608,17 +593,17 @@ void HqcMainWindow::plu() {
   wElement = "Pluviometerkontroll";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, TRUE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(TRUE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMPLU, pluOrder);
   pardlg->showAll();
@@ -628,17 +613,17 @@ void HqcMainWindow::all() {
   wElement = "Alt";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  weathermenu->setItemChecked(alID, TRUE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  alID->setChecked(TRUE);
   //  sendObservations(remstime,false);
   insertParametersInListBox(NOPARAMALL, order);
   pardlg->showAll();
@@ -854,29 +839,29 @@ void HqcMainWindow::ListOK() {
   etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
  
   int dateCol = 0;
-  if ( isShPo && !isShSt )
+  if ( poID->isChecked() && !stID->isChecked() )
     dateCol = 1;
-  else if ( !isShPo && isShSt )
+  else if ( !poID->isChecked() && stID->isChecked() )
     dateCol = 2;
-  else if ( isShPo && isShSt )
+  else if ( poID->isChecked() && stID->isChecked() )
     dateCol = 3;
 
   int ncp;
-  if ( !isShOr && !isShFl && !isShMo )
+  if ( !orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
     ncp = 0;
-  if ( isShOr && !isShFl && !isShMo )
+  if ( orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
     ncp = 1;
-  if ( !isShOr && isShFl && !isShMo )
+  if ( !orID->isChecked() && flID->isChecked() && !moID->isChecked() )
     ncp = 2;
-  if ( isShOr && isShFl && !isShMo )
+  if ( orID->isChecked() && flID->isChecked() && !moID->isChecked() )
     ncp = 3;
-  if ( !isShOr && !isShFl && isShMo )
+  if ( !orID->isChecked() && !flID->isChecked() && moID->isChecked() )
     ncp = 4;
-  if ( isShOr && !isShFl && isShMo )
+  if ( orID->isChecked() && !flID->isChecked() && moID->isChecked() )
     ncp = 5;
-  if ( !isShOr && isShFl && isShMo )
+  if ( !orID->isChecked() && flID->isChecked() && moID->isChecked() )
     ncp = 6;
-  if ( isShOr && isShFl && isShMo )
+  if ( orID->isChecked() && flID->isChecked() && moID->isChecked() )
     ncp = 7;
 
   int maxOrder;
@@ -949,48 +934,38 @@ void HqcMainWindow::ListOK() {
   else
     isShTy = false;
 
-  if ( lity == erLi || lity == erSa || lity == daLi) {
+
+  if ( lity == erLi or lity == erSa or lity == alLi ) {
+//      Q_ASSERT(metty != tabHead); // deprecated functionality
+//      Q_ASSERT(metty == tabList);
+//      metty may be undefined here
+
+      ErrorList * erl = new ErrorList(selPar,
+                          stime,
+                          etime,
+                          0, // unused
+                          0, // unused
+                          this,
+                          lity,
+                          metty,
+                          selParNo,
+                          datalist,
+                          modeldatalist,
+                          slist,
+                          dateCol,
+                          ncp,
+                          userName);
+      connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
+      connect( erl, SIGNAL( stationSelected( int, const miutil::miTime & ) ),
+               this, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ) );
+  }
+  if ( lity == daLi or lity == alLi ) {
     metty = tabList;
     eTable(stime, 
 	   etime, 
 	   remstime, 
 	   remetime, 
 	   lity, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
-  }
-  else if ( lity == alLi) {
-    metty = tabList;
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   daLi, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   erLi, 
 	   remLity, 
 	   metty, 
 	   wElement,
@@ -1443,9 +1418,9 @@ void HqcMainWindow::listData(int index,
     orig[i] = datalist[index].orig(i);
     flag[i] = datalist[index].flag(i);
     corr[i] = datalist[index].corr(i);
-    controlinfo[i] = datalist[index].controlinfo(i);
+    controlinfo[i] = datalist[index].controlinfo(i).flagstring();
     std::cout << '<' << controlinfo[i].c_str() <<  '>' << std::endl;
-    useinfo[i] = datalist[index].useinfo(i);
+    useinfo[i] = datalist[index].useinfo(i).flagstring();
     cfailed[i] = datalist[index].cfailed(i);
     morig[i] = -32767.0;
   }
@@ -1891,7 +1866,7 @@ void HqcMainWindow::readFromStationFile(int statCheck) {
   QString stationFile = path + "/etc/kvhqc/hqc_stations";
   QFile stations(stationFile);
   stations.open(QIODevice::ReadOnly);
-  Q3TextStream stationStream(&stations);
+  QTextStream stationStream(&stations);
   int i = 0;
   int prevStnr = 0;
   while ( stationStream.atEnd() == 0 ) {
@@ -1948,7 +1923,7 @@ void HqcMainWindow::readFromParam() {
   QFile paramOrder(orderFile);
   
   paramOrder.open(QIODevice::ReadOnly);
-  Q3TextStream paramStream(&paramOrder);
+  QTextStream paramStream(&paramOrder);
   int i = 0;
   while ( paramStream.atEnd() == 0 ) {
     QString strLine = paramStream.readLine();
@@ -2046,8 +2021,8 @@ void HqcMainWindow::findStationInfo(int stnr,
   std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
   for(;it!=slist.end(); it++){
     if ( it->stationID() == stnr ) {
-      const char* cName = (it->name()).c_str();
-      name = QString(cName);
+      std::string cName = it->name();
+      name = QString(cName.c_str());
       lat  = (it->lat());
       lon  = (it->lon());
       hoh  = (it->height());
@@ -2141,8 +2116,7 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
 				       isShTy,
 				       userName);
   ws->addWindow(et);
-  connect( et, SIGNAL( message(const QString&, int) ), statusBar(), 
-	   SLOT( message(const QString&, int )) );
+
   if ( lity == erLi || lity == erSa ) {
     et->setCaption("Feilliste");
   }
@@ -2150,9 +2124,13 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
     et->setCaption("Feillog");
   else if ( lity == daLi )
     et->setCaption("Dataliste");
+
   et->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+
   et->show();
+
   tileHorizontal();
+
   vector<QString> stationList;
   int stnr=-1;
   for ( int i = 0; i < datalist.size(); i++) {
@@ -2169,8 +2147,8 @@ MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
       stationList.push_back(statId);
     }
   }
-
   emit newStationList(stationList);
+
   return et;
 }
 
@@ -2817,7 +2795,7 @@ void HqcMainWindow::updateSaveFunction( QWidget *w )
 {
   MDITabWindow *win = dynamic_cast<MDITabWindow*>(w);
   bool enabled = ( win and win->erl );
-  file->setItemEnabled( fileSaveMenuItem, enabled );
+  saveAction->setEnabled(enabled);
   cerr << "Save " << (enabled? "en":"dis") << "abled\n";
 }
 
@@ -2986,8 +2964,8 @@ makeObsDataList( KvObsDataList& dataList )
 	tdl.set_corr(dit->paramID(), dit->corrected());
 	tdl.set_sensor(dit->paramID(), dit->sensor());
 	tdl.set_level(dit->paramID(), dit->level());
-	tdl.set_controlinfo(dit->paramID(), dit->controlinfo().flagstring());
-      	tdl.set_useinfo(dit->paramID(), dit->useinfo().flagstring());
+	tdl.set_controlinfo(dit->paramID(), dit->controlinfo());
+      	tdl.set_useinfo(dit->paramID(), dit->useinfo());
 	tdl.set_cfailed(dit->paramID(), dit->cfailed());
 	tdlUpd[dit->paramID()] = true;
       }

@@ -28,6 +28,7 @@
  */
 
 #include <KvalobsDataModel.h>
+#include <kvalobs/flag/kvControlInfo.h>
 
 
 namespace model
@@ -66,35 +67,9 @@ namespace model
     if ( not index.isValid() or index.row() >= kvalobsData_.size() )
       return QVariant();
 
-    if ( Qt::DisplayRole == role ) {
-        int parameterIdx = index.column() / COLUMNS_PER_PARAMETER;
-
-        const KvalobsData & d = kvalobsData_[index.row()];
-        std::string controlinfo = d.controlinfo(parameterIdx);
-        switch (index.column() % COLUMNS_PER_PARAMETER)
-        {
-        case 0:
-          {
-            if ( controlinfo.substr(6,1) == "1" or controlinfo.substr(6,1) == "3" )
-              return QVariant();
-          return d.orig(parameterIdx);
-          }
-        case 1:
-          {
-            if ( controlinfo.substr(6,1) == "3" )
-              return QVariant();
-            return d.flag(parameterIdx);
-          }
-        case 2:
-          {
-            if ( controlinfo.substr(6,1) == "2" or controlinfo.substr(6,1) == "3" )
-              return QVariant();
-          return d.corr(parameterIdx);
-          }
-        default:
-          return QVariant();
-        }
-
+    switch ( role ) {
+    case Qt::DisplayRole:
+        return displayRoleData(index);
     }
     return QVariant();
   }
@@ -111,14 +86,14 @@ namespace model
   {
     if ( Qt::Horizontal == orientation) {
       if ( Qt::DisplayRole == role ) {
-          QString parameterName = getParameterName(section / COLUMNS_PER_PARAMETER);
-          switch (section % COLUMNS_PER_PARAMETER)
+          QString parameterName = getParameterName(getParameter_(section));
+          switch (getColumnType_(section))
           {
-          case 0:
+          case Original:
             return QString("%1 orig").arg(parameterName);
-          case 1:
+          case Flag:
             return QString("%1 flag").arg(parameterName);
-          case 2:
+          case Corrected:
             return QString("%1 corr").arg(parameterName);
           default:
             return QVariant();
@@ -137,6 +112,106 @@ namespace model
         else return QVariant();
     }
     return QVariant();
+  }
+
+  Qt::ItemFlags KvalobsDataModel::flags(const QModelIndex & index) const
+  {
+    Qt::ItemFlags ret = QAbstractTableModel::flags(index);
+    if ( getColumnType_(index) == Corrected )
+      ret |= Qt::ItemIsEditable;
+    return ret;
+  }
+
+  bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
+  {
+    if ( not index.isValid() or index.row() >= kvalobsData_.size() )
+      return false;
+
+    if ( Qt::EditRole == role ) {
+      if ( getColumnType_(index) == Corrected ) {
+          int parameterIdx = getParameter_(index);
+
+          bool ok;
+          double val = value.toDouble(& ok);
+          if ( not ok )
+            return false;
+
+          KvalobsData & d = kvalobsData_[index.row()];
+          if ( d.controlinfo(parameterIdx).flag(kvQCFlagTypes::f_fmis) == 3 ) {
+              kvalobs::kvControlInfo ci = d.controlinfo(parameterIdx);
+              ci.set(kvQCFlagTypes::f_fmis, 1);
+              d.set_controlinfo(parameterIdx, ci);
+          }
+          d.set_corr(parameterIdx, val);
+
+          emit dataChanged(index, index);
+          return true;
+      }
+    }
+    return false;
+  }
+
+
+  QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
+  {
+    int parameterIdx = getParameter_(index);
+
+    const KvalobsData & d = kvalobsData_[index.row()];
+    const kvalobs::kvControlInfo & controlinfo = d.controlinfo(parameterIdx);
+
+    const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);
+
+    switch ( getColumnType_(index) )
+    {
+    case Original:
+      {
+        if ( fmis == 1 or fmis == 3 )
+          return QVariant();
+      return d.orig(parameterIdx);
+      }
+    case Flag:
+      {
+        if ( fmis == 3 )
+          return QVariant();
+        return d.flag(parameterIdx);
+      }
+    case Corrected:
+      {
+        if ( fmis == 2 or fmis == 3 )
+          return QVariant();
+      return d.corr(parameterIdx);
+      }
+    default:
+      return QVariant();
+    }
+  }
+
+  int KvalobsDataModel::getParameter_(const QModelIndex &index) const
+  {
+    return getParameter_(index.column());
+  }
+
+  int KvalobsDataModel::getParameter_(int column) const
+  {
+    return column / COLUMNS_PER_PARAMETER;
+  }
+
+  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(const QModelIndex & index) const
+  {
+    return getColumnType_(index.column());
+  }
+
+  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(int column) const
+  {
+    switch ( column % ColumnType_SENTRY ) {
+    case 0:
+      return Original;
+    case 1:
+      return Flag;
+    case 2:
+      return Corrected;
+    }
+    Q_ASSERT(false);
   }
 
 }

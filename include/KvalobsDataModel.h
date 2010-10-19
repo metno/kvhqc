@@ -55,7 +55,24 @@ namespace model
 
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 
+    Qt::ItemFlags flags(const QModelIndex & index) const;
+
+    bool setData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
+
   private:
+    QVariant displayRoleData(const QModelIndex & index) const;
+
+    int getParameter_(const QModelIndex & index) const;
+    int getParameter_(int column) const;
+
+    enum ColumnType
+    {
+      Original, Flag, Corrected,
+      ColumnType_SENTRY
+    };
+    ColumnType getColumnType_(const QModelIndex & index) const;
+    ColumnType getColumnType_(int column) const;
+
     KvalobsDataList & kvalobsData_;
 
     static const int COLUMNS_PER_PARAMETER;

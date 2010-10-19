@@ -173,7 +173,7 @@ ErrorList::ErrorList(QStringList& selPar,
       bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
       if ( !tp ) continue;
       missObs mobs;
-      QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]));
+      QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]).flagstring());
       int flg = ctr.mid(4,1).toInt(0,16);
       int tdiff = miTime::hourDiff(dtl[i].otime(),stime);
       if ( flg == 6 ) {
@@ -219,8 +219,8 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.corr        = dtl[i].corr(noSelPar[j]);
       memObs.sen         = dtl[i].sensor(noSelPar[j]);
       memObs.lev         = dtl[i].level(noSelPar[j]);
-      memObs.controlinfo = dtl[i].controlinfo(noSelPar[j]);
-      memObs.useinfo     = dtl[i].useinfo(noSelPar[j]);
+      memObs.controlinfo = dtl[i].controlinfo(noSelPar[j]).flagstring();
+      memObs.useinfo     = dtl[i].useinfo(noSelPar[j]).flagstring();
       memObs.cfailed     = dtl[i].cfailed(noSelPar[j]);
       memObs.parNo       = noSelPar[j];
       memObs.parName     = selPar[j];

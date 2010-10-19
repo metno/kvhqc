@@ -88,7 +88,7 @@ DataTable::DataTable(QStringList selPar,
   hmw->nucoprpar = noColPar;
   timeSort = FALSE;
   QPixmap icon_sorttime(sorttime);
-  Q3ToolBar* sortTool = new Q3ToolBar("Sort", hmw, this);
+  QToolBar* sortTool = new QToolBar("Sort", hmw); // TODO Check if this displays correctly.
   QToolButton* sortButton;
   sortButton = new QToolButton( icon_sorttime, 
 				tr("Sorter"), 

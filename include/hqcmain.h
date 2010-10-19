@@ -43,32 +43,29 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "errorlist.h"
 #include "datatable.h"
 #include <qwidget.h>
-//Added by qt3to4:
 #include <fstream>
 #include <iostream>
 #include <kvcpp/KvApp.h>
-#include <q3mainwindow.h>
+#include <qmainwindow.h>
 #include <qobject.h>
-#include <q3popupmenu.h> 
-#include <q3process.h> 
+//#include <q3process.h>
 #include <qmenubar.h> 
 #include <qmap.h>
-#include <q3multilineedit.h>
+//#include <q3multilineedit.h>
 #include <qpoint.h>
 #include <qlabel.h>
 #include <qstatusbar.h>
 #include <qmessagebox.h>
 #include <qapplication.h>
 #include <qpushbutton.h>
-#include <q3accel.h>
-#include <q3textstream.h>
+//#include <q3accel.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qobject.h>
-#include <q3vbox.h>
-#include <q3table.h>
+//#include <q3vbox.h>
+//#include <q3table.h>
 #include <qworkspace.h>
-#include <q3toolbar.h>
+#include <QToolBar>
 #include <qtoolbutton.h>
 #include <qicon.h>
 #include <qcursor.h>
@@ -82,6 +79,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qTimeseries/TSPlotDialog.h>
 #include "hqcdefs.h"
 #include "tabwindow.h"
+
+class QAction;
 
 using namespace std;
 using namespace kvalobs;
@@ -100,8 +99,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 /**
  * \brief The application's main window.
  */
-class HqcMainWindow: public Q3MainWindow 
-//class HqcMainWindow: public QMainWindow 
+//class HqcMainWindow: public Q3MainWindow
+class HqcMainWindow: public QMainWindow
 {
   Q_OBJECT
 public:
@@ -339,6 +338,7 @@ public slots:
 */
   void stationOK();
 
+private slots:
   void showFlags();
   void showOrigs();
   void showMod();
@@ -369,30 +369,25 @@ private:
   QString wElement;
   QString userName;
   QStringList selPar;
-  int flID;
-  int orID;
-  int moID;
-  int stID;
-  int poID;
-  int tyID;
-  int apID;
-  int taID;
-  //  int otID;
-  //  int huID;
-  int wiID;
-  int prID;
-  int clID;
-  int seID;
-  int syID;
-  int klID;
-  int piID;
-  int plID;
-  int alID;
-  bool isShFl;
-  bool isShOr;
-  bool isShMo;
-  bool isShSt;
-  bool isShPo;
+  QAction * flID;
+  QAction * orID;
+  QAction * moID;
+  QAction * stID;
+  QAction * poID;
+  QAction * tyID;
+  QAction * apID;
+  QAction * taID;
+  //  QAction * otID;
+  //  QAction * huID;
+  QAction * wiID;
+  QAction * prID;
+  QAction * clID;
+  QAction * seID;
+  QAction * syID;
+  QAction * klID;
+  QAction * piID;
+  QAction * plID;
+  QAction * alID;
   bool isShTy;
   int synopType;
   int autoobsType;
@@ -405,15 +400,21 @@ private:
   bool tsVisible;
   ClientButton* pluginB;
   //  DianaConnection* diaCon;
-  Q3PopupMenu* file;
-  int fileSaveMenuItem;
-  //KTEST
+
+
+//  Q3PopupMenu* file;
+  QAction * saveAction;
+  QAction * printAction;
+//  //KTEST
   int filePrintMenuItem;
-  Q3PopupMenu* choice;
-  Q3PopupMenu* showmenu;
-  Q3PopupMenu* weathermenu;
-  Q3PopupMenu* clockmenu;
-  Q3PopupMenu* typeIdmenu;
+  QMenu* choice;
+  QMenu* showmenu;
+  QMenu* weathermenu;
+  QMenu* clockmenu;
+  QMenu* typeIdmenu;
+
+
+
   QWorkspace* ws;
   //  QPainter* logo;
   //  void paintEvent(QPaintEvent*);

@@ -42,7 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class HqcMainWindow;
 
-class MDITabWindow: public Q3MainWindow
+class MDITabWindow: public QWidget
 {
   friend class HqcMainWindow;
     Q_OBJECT
@@ -96,7 +96,7 @@ private slots:
     void updateKvBase(int, int);
     //    void focusTable(QString&);
 signals:
-    void message(const QString&, int );
+//    void message(const QString&, int );
 
 private:
     DataTable* dtt;

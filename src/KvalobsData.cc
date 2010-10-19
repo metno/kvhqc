@@ -28,6 +28,8 @@
  */
 
 #include "../include/KvalobsData.h"
+#include <kvalobs/flag/kvControlInfo.h>
+#include <kvalobs/flag/kvUseInfo.h>
 #include <QSharedData>
 #include <algorithm>
 #include <functional>
@@ -69,8 +71,8 @@ public:
     double corrected;
     int level;
     int sensor;
-    std::string controlinfo;
-    std::string useinfo;
+    kvalobs::kvControlInfo controlinfo;
+    kvalobs::kvUseInfo useinfo;
     std::string cfailed;
   };
 
@@ -256,27 +258,31 @@ void KvalobsData::set_sensor(std::size_t parameter, int value)
 }
 
 
-const std::string KvalobsData::controlinfo(std::size_t parameter) const
+const kvalobs::kvControlInfo & KvalobsData::controlinfo(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
-  if ( ! obs )
-    return "0000003000000000";
+  if ( ! obs ) {
+    static const kvalobs::kvControlInfo defaultControlInfo("0000003000000000");
+    return defaultControlInfo;
+  }
   return obs->controlinfo;
 }
-void KvalobsData::set_controlinfo(std::size_t parameter, const std::string & value)
+void KvalobsData::set_controlinfo(std::size_t parameter, const kvalobs::kvControlInfo & value)
 {
   impl().obsData(parameter)->controlinfo = value;
 }
 
 
-const std::string KvalobsData::useinfo(std::size_t parameter) const
+const kvalobs::kvUseInfo & KvalobsData::useinfo(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
-  if ( ! obs )
-    return "0000000000000000";
+  if ( ! obs ) {
+      static const kvalobs::kvUseInfo defaultUseInfo;
+      return defaultUseInfo;
+  }
   return obs->useinfo;
 }
-void KvalobsData::set_useinfo(std::size_t parameter, const std::string & value)
+void KvalobsData::set_useinfo(std::size_t parameter, const kvalobs::kvUseInfo & value)
 {
   impl().obsData(parameter)->useinfo = value;
 }

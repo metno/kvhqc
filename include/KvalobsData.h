@@ -35,6 +35,12 @@
 #include <puTools/miTime>
 #include <string>
 
+namespace kvalobs
+{
+  class kvControlInfo;
+  class kvUseInfo;
+}
+
 namespace model
 {
 
@@ -83,11 +89,11 @@ public:
   const int sensor(std::size_t parameter) const;
   void set_sensor(std::size_t parameter, int value);
 
-  const std::string controlinfo(std::size_t parameter) const;
-  void set_controlinfo(std::size_t parameter, const std::string & value);
+  const kvalobs::kvControlInfo & controlinfo(std::size_t parameter) const;
+  void set_controlinfo(std::size_t parameter, const kvalobs::kvControlInfo & value);
 
-  const std::string useinfo(std::size_t parameter) const;
-  void set_useinfo(std::size_t parameter, const std::string & value);
+  const kvalobs::kvUseInfo & useinfo(std::size_t parameter) const;
+  void set_useinfo(std::size_t parameter, const kvalobs::kvUseInfo & value);
 
   const std::string cfailed(std::size_t parameter) const;
   void set_cfailed(std::size_t parameter, const std::string & value);
