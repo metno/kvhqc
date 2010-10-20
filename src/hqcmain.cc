@@ -1715,7 +1715,7 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   }
   //Spesialtilfelle slutt
   //  if ( typeId == -404 || (typeId == -342 && (par == 109 || par == 110))) return false;
-  if ( par == 173 && typeId < 0 ) return false;
+  //  if ( par == 173 && typeId < 0 ) return false;
   if ( typeId == -404 ) return false;
   if ( stnr == 4780 && typeId == 1 ) return true;
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
