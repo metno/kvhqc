@@ -36,9 +36,15 @@ namespace model
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = 3;
 
 
-  KvalobsDataModel::KvalobsDataModel(KvalobsDataList & kvalobsData, QObject * parent) :
+  KvalobsDataModel::KvalobsDataModel(QObject * parent) :
     QAbstractTableModel(parent),
-    kvalobsData_(kvalobsData)
+    kvalobsData_(new KvalobsDataList)
+  {
+  }
+
+  KvalobsDataModel::KvalobsDataModel(KvalobsDataListPtr datalist, QObject * parent) :
+    QAbstractTableModel(parent),
+    kvalobsData_(datalist)
   {
   }
 
@@ -55,7 +61,7 @@ namespace model
 //  }
 
   int KvalobsDataModel::rowCount(const QModelIndex & parent) const {
-    return kvalobsData_.size();
+    return kvalobsData_->size();
   }
 
   int KvalobsDataModel::columnCount(const QModelIndex & parent) const {
@@ -64,7 +70,7 @@ namespace model
 
   QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const {
 
-    if ( not index.isValid() or index.row() >= kvalobsData_.size() )
+    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
       return QVariant();
 
     switch ( role ) {
@@ -103,7 +109,7 @@ namespace model
     else {
         Q_ASSERT(Qt::Vertical == orientation);
         if ( Qt::DisplayRole == role ) {
-            const KvalobsData & d = kvalobsData_[section];
+            const KvalobsData & d = (*kvalobsData_)[section];
             // TODO: improve formatting
             QString display = "%1 - %2\t%3";
             const std::string date = d.otime().isoTime();
@@ -124,7 +130,7 @@ namespace model
 
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
   {
-    if ( not index.isValid() or index.row() >= kvalobsData_.size() )
+    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
       return false;
 
     if ( Qt::EditRole == role ) {
@@ -136,7 +142,7 @@ namespace model
           if ( not ok )
             return false;
 
-          KvalobsData & d = kvalobsData_[index.row()];
+          KvalobsData & d = (*kvalobsData_)[index.row()];
           if ( d.controlinfo(parameterIdx).flag(kvQCFlagTypes::f_fmis) == 3 ) {
               kvalobs::kvControlInfo ci = d.controlinfo(parameterIdx);
               ci.set(kvQCFlagTypes::f_fmis, 1);
@@ -156,7 +162,7 @@ namespace model
   {
     int parameterIdx = getParameter_(index);
 
-    const KvalobsData & d = kvalobsData_[index.row()];
+    const KvalobsData & d = (*kvalobsData_)[index.row()];
     const kvalobs::kvControlInfo & controlinfo = d.controlinfo(parameterIdx);
 
     const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);

@@ -33,6 +33,7 @@
 #include <QString>
 #include <QSharedDataPointer>
 #include <puTools/miTime>
+#include <boost/shared_ptr.hpp>
 #include <string>
 
 namespace kvalobs
@@ -110,6 +111,8 @@ private:
 };
 
 typedef std::vector<KvalobsData> KvalobsDataList;
+typedef boost::shared_ptr<KvalobsDataList> KvalobsDataListPtr;
+
 
 }
 

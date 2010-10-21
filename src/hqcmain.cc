@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationInformation.h"
 #include "GetData.h"
 #include "GetTextData.h"
+#include "KvalobsDataModel.h"
 #include <iomanip>
 #include <QAction>
 #include <qpixmap.h>
@@ -65,7 +66,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <complex>
 #include <QTime>
 #include <QRegExp>
-
+#include <QMdiArea>
+#include <QMdiSubWindow>
 #include <glText/glTextQtTexture.h>
 
 using namespace std;
@@ -107,6 +109,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, "HQC")
   , reinserter( NULL )
+  , datalist(new model::KvalobsDataList)
 {
   readFromStation();
   //  setAttribute(Qt::WA_DeleteOnClose);
@@ -146,12 +149,26 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   // ---- ACTIONS -----------------------------------------------
 
   QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
-  QAction * dataListAction = new QAction(icon_listdlg, tr("Dataliste"), this);
+  QAction * dataListAction = new QAction(icon_listdlg, tr("&Dataliste"), this);
+  dataListAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
 
   QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
-  QAction * timeSeriesAction = new QAction(icon_ts, tr("Tidsserie"), this);
+  QAction * timeSeriesAction = new QAction(icon_ts, tr("&Tidsserie"), this);
   connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
+
+  QAction * timesAction = new QAction(tr("&Tidspunkter"), this);
+  timesAction->setShortcut(Qt::CTRL | Qt::Key_T);
+  connect(timesAction, SIGNAL(activated()), this, SLOT(clk()));
+
+  // ---- Workspace ---------------------------------------------
+  ws = new QMdiArea(this);
+  setCentralWidget( ws );
+
+  connect( ws, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+           this, SLOT(updateSaveFunction(QMdiSubWindow*)) );
+
+
 
   // ---- MAIN MENU ---------------------------------------------
   //  qApp->setStyle(new QSGIStyle);
@@ -164,8 +181,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   printAction = file->addAction( "Skriv ut", this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
   printAction->setEnabled(false);
 
-  file->addAction( "&Lukk",    this, SLOT(closeWindow()), Qt::CTRL+Qt::Key_W );
-  file->addAction( "&Avslutt", qApp, SLOT( closeAllWindows() ), Qt::CTRL+Qt::Key_Q );
+  file->addAction( "&Lukk",    ws, SLOT(closeActiveSubWindow()), Qt::CTRL+Qt::Key_W );
+  file->addAction( "&Avslutt", qApp, SLOT( closeAllWindows() ));
 
 
   choice = menuBar()->addMenu(tr("&Valg"));
@@ -194,9 +211,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   QMenu * showmenu = new QMenu( this );
   menuBar()->insertItem( "&Listetype", showmenu);
-  showmenu->addAction( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::ALT+Qt::Key_L );
-  showmenu->addAction( "&Feilliste    ", this, SLOT(errListMenu()),Qt::ALT+Qt::Key_F );
-  showmenu->addAction( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::ALT+Qt::Key_E );
+  showmenu->addAction( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::CTRL+Qt::Key_L );
+  showmenu->addAction( "&Feilliste    ", this, SLOT(errListMenu()),Qt::CTRL+Qt::Key_F );
+  showmenu->addAction( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::CTRL+Qt::Key_E );
   showmenu->addAction(dataListAction);
   showmenu->addAction( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
   showmenu->insertSeparator();
@@ -206,12 +223,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->addAction(timeSeriesAction);
   showmenu->insertSeparator();
   showmenu->addAction( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
-  showmenu->addAction( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
+  showmenu->addAction( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::CTRL+Qt::Key_J );
   
   QMenu * weathermenu = new QMenu( this );
-  menuBar()->insertItem( "&Værelement", weathermenu);
+  menuBar()->insertItem( "Vær&element", weathermenu);
   wElement = "";
-  klID = weathermenu->addAction( "&For daglig rutine",       this, SLOT(climateStatistics()) );
+  klID = weathermenu->addAction( "For &daglig rutine",       this, SLOT(climateStatistics()) );
   piID = weathermenu->addAction( "&Prioriterte parametere",  this, SLOT(priority()) );
   taID = weathermenu->addAction( "&Temperatur og fuktighet", this, SLOT(temperature()) );
   prID = weathermenu->addAction( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
@@ -223,8 +240,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   plID = weathermenu->addAction( "&Pluviometerparametere",   this, SLOT(plu()) );
   alID = weathermenu->addAction( "&Alt",                     this, SLOT(all()) );
 
-  QMenu * clockmenu = new QMenu( this );
-  menuBar()->insertItem( "&Tidspunkter", this, SLOT(clk()));
+
+  QMenu * clockmenu = menuBar()->addMenu("&Tidspunkter");
+  clockmenu->addAction(timesAction);
+
   menuBar()->insertItem( "&Dianavisning", this, SLOT(dsh()));
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
 
@@ -239,13 +258,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   help->addAction( "Om &Qt", this, SLOT(aboutQt()));
   
   // --- MAIN WINDOW -----------------------------------------
-  ws = new QWorkspace(this);
-  ws->setScrollBarsEnabled( TRUE );
-  ws->setBackgroundColor( Qt::white );
-  setCentralWidget( ws );
-
-  connect( ws, SIGNAL( windowActivated(QWidget*) ),
-	   this, SLOT( updateSaveFunction(QWidget*) ) );
 
   
   // --- TOOL BAR --------------------------------------------
@@ -783,8 +795,8 @@ void HqcMainWindow::ListOK() {
 					    "Dianaforbindelse",
 					    "Diana er ikke koplet til!"
 					    "Ønsker du å kople til Diana?",
-					    "Ja", 
-					    "Nei");
+					    "&Ja",
+					    "&Nei");
     if ( dianaWarning == 0 ) {
       return;
     }
@@ -935,6 +947,23 @@ void HqcMainWindow::ListOK() {
     isShTy = false;
 
 
+  readFromData(stime, etime, lity);
+
+  // All windows are shown later, in the tileHorizontal function
+
+  if ( lity == daLi or lity == alLi ) {
+
+      QTableView * tableView = new QTableView(this);
+      tableView->setAttribute(Qt::WA_DeleteOnClose);
+      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(datalist, this);
+      tableView->setModel(dataModel);
+
+      ws->addSubWindow(tableView);
+
+      tableView->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+      tableView->setCaption("Dataliste");
+  }
+
   if ( lity == erLi or lity == erSa or lity == alLi ) {
 //      Q_ASSERT(metty != tabHead); // deprecated functionality
 //      Q_ASSERT(metty == tabList);
@@ -949,7 +978,7 @@ void HqcMainWindow::ListOK() {
                           lity,
                           metty,
                           selParNo,
-                          datalist,
+                          *datalist,
                           modeldatalist,
                           slist,
                           dateCol,
@@ -958,27 +987,30 @@ void HqcMainWindow::ListOK() {
       connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
       connect( erl, SIGNAL( stationSelected( int, const miutil::miTime & ) ),
                this, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ) );
+      ws->addSubWindow(erl);
   }
-  if ( lity == daLi or lity == alLi ) {
-    metty = tabList;
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   lity, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
+
+  tileHorizontal();
+
+  vector<QString> stationList;
+  int stnr=-1;
+  for ( int i = 0; i < datalist->size(); i++) {
+    QString name;
+    double lat,lon,hoh;
+    int env;
+    int snr;
+    if(stnr != (*datalist)[i].stnr()){
+      stnr = (*datalist)[i].stnr();
+      findStationInfo(stnr,name,lat,lon,hoh,snr,env);
+      QString nrStr;
+      nrStr = nrStr.setNum(stnr);
+      QString statId = nrStr + " " + name;
+      stationList.push_back(statId);
+    }
   }
-  
+  emit newStationList(stationList);
+
+
   //  send parameter names to ts dialog
   emit newParameterList(selPar);
   if ( lity != erLi && lity != erSa  ) {
@@ -1042,14 +1074,14 @@ void HqcMainWindow::TimeseriesOK() {
       }
     }
     if ( tsdlg->obsCheckBox->isChecked() && (nTypes == 1 || ip%nTypes == 0) ) {
-      for ( int i = 0; i < datalist.size(); i++) { // fill data
-	if ( datalist[i].stnr() == stationIndex[ip] &&
-	     datalist[i].otime() >= stime &&
-             datalist[i].otime() <= etime &&
-	     datalist[i].otime().min() == 0 ) {
-	  if ( datalist[i].corr(parameterIndex[ip]) > -32766.0 )
-	    tseries.add(TimeSeriesData::Data(datalist[i].otime(),
-					     datalist[i].corr(parameterIndex[ip])));
+      for ( int i = 0; i < datalist->size(); i++) { // fill data
+	if ( (*datalist)[i].stnr() == stationIndex[ip] &&
+	     (*datalist)[i].otime() >= stime &&
+             (*datalist)[i].otime() <= etime &&
+	     (*datalist)[i].otime().min() == 0 ) {
+	  if ( (*datalist)[i].corr(parameterIndex[ip]) > -32766.0 )
+	    tseries.add(TimeSeriesData::Data((*datalist)[i].otime(),
+					     (*datalist)[i].corr(parameterIndex[ip])));
 	}
       }
       if(tseries.dataOK()) {
@@ -1062,7 +1094,7 @@ void HqcMainWindow::TimeseriesOK() {
 	     modeldatalist[i].otime >= stime &&
 	     modeldatalist[i].otime <= etime ){
 	  tseries.add(TimeSeriesData::Data(modeldatalist[i].otime,
-					  datalist[i].corr(parameterIndex[ip])
+					  (*datalist)[i].corr(parameterIndex[ip])
 					  - modeldatalist[i].orig[parameterIndex[ip]]));
 	}
       }
@@ -1290,15 +1322,19 @@ void HqcMainWindow::rejectedOK() {
 
 void HqcMainWindow::showWatchRR()
 {
-  MDITabWindow * current = dynamic_cast<MDITabWindow *>( ws->activeWindow() );
+  QMdiSubWindow * subWindow = ws->activeSubWindow();
+
   kvalobs::kvData data;
 
-  if ( current ) {
-    if ( current->erl )
-      data = current->erl->getKvData();
-    else if ( current->dtt )
-      data = current->dtt->getKvData();
-  }
+  // TODO: Reinstate this
+//  if ( subWindow ) {
+//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
+//    if ( current and current->dtt )
+//      data = current->dtt->getKvData();
+//    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
+//    if ( errorList )
+//      data = errorList->getKvData();
+//  }
 
   WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
   if ( rrd ) {
@@ -1309,13 +1345,20 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-  MDITabWindow * current = dynamic_cast<MDITabWindow *>( ws->activeWindow() );
+  QMdiSubWindow * subWindow = ws->activeSubWindow();
+
   kvalobs::kvData data;
-  if ( current ) {
-    if ( current->erl ) {
-      data = current->erl->getKvData();
-    }
-  }
+
+  // TODO: Reinstate this
+//  if ( subWindow ) {
+//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
+//    if ( current and current->dtt )
+//      data = current->dtt->getKvData();
+//    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
+//    if ( errorList )
+//      data = errorList->getKvData();
+//  }
+
   Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
   if ( wtd ) {
     wtd->setReinserter( reinserter );
@@ -1408,20 +1451,20 @@ void HqcMainWindow::listData(int index,
   // List all data, all parameters at one station and one time
   miutil::miTime modeltime;
   int modelstnr;
-  stnr = datalist[index].stnr();
-  obstime = datalist[index].otime();
-  showTypeId = datalist[index].showTypeId();
-  typeIdChanged = datalist[index].typeIdChanged();
+  stnr = (*datalist)[index].stnr();
+  obstime = (*datalist)[index].otime();
+  showTypeId = (*datalist)[index].showTypeId();
+  typeIdChanged = (*datalist)[index].typeIdChanged();
   int hour = obstime.hour();
   for ( int i = 0; i < NOPARAM; i++ ) {
-    typeId[i] = datalist[index].typeId(i);
-    orig[i] = datalist[index].orig(i);
-    flag[i] = datalist[index].flag(i);
-    corr[i] = datalist[index].corr(i);
-    controlinfo[i] = datalist[index].controlinfo(i).flagstring();
+    typeId[i] = (*datalist)[index].typeId(i);
+    orig[i] = (*datalist)[index].orig(i);
+    flag[i] = (*datalist)[index].flag(i);
+    corr[i] = (*datalist)[index].corr(i);
+    controlinfo[i] = (*datalist)[index].controlinfo(i).flagstring();
     std::cout << '<' << controlinfo[i].c_str() <<  '>' << std::endl;
-    useinfo[i] = datalist[index].useinfo(i).flagstring();
-    cfailed[i] = datalist[index].cfailed(i);
+    useinfo[i] = (*datalist)[index].useinfo(i).flagstring();
+    cfailed[i] = (*datalist)[index].cfailed(i);
     morig[i] = -32767.0;
   }
 
@@ -1639,6 +1682,13 @@ bool HqcMainWindow::hqcTypeFilter(const int& typeId, int environment, int stnr) 
 
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTime otime, int par) {
   bool tpf = false;
+  //
+  // Midlertidig spesialtilfelle for Oppdal!!!!!!!!!!!!!!!
+  //
+  if ( stnr == 63705 ) {
+    if ( typeId == -330 )
+      return false;
+  }
   //
   // Midlertidig spesialtilfelle for Venabu!!!!!!!!!!!!!!!
   //
@@ -2049,117 +2099,52 @@ void HqcMainWindow::findStationPos(int stnr,
 }
 
 void HqcMainWindow::tileHorizontal() {
+
+//  ws->tileSubWindows();
+
   // primitive horizontal tiling
-  QWidgetList windows = ws->windowList();
-  if ( !windows.count() )
+  QList<QMdiSubWindow *> windows = ws->subWindowList();
+  if ( windows.empty() )
     return;
+
   int y = 0;
   if ( windows.count() == 1 ) {
     QWidget *window = windows.at(0);
-    window->parentWidget()->setGeometry( 0, y, ws->width(), ws->height() );
+    window->showMaximized();
+    //window->parentWidget()->setGeometry( 0, y, ws->width(), ws->height() );
     return;
   }
   else {
     int height[] = {0, 28 + ws->height() / 2, (ws->height() / 2) - 28} ;
-    for ( int i = int(windows.count()) - 2; i < int(windows.count()); ++i ) {
+
+    for ( int i = windows.count() -2; i < windows.count(); ++ i ) {
+    //for ( int i = int(windows.count()) - 1; i > int(windows.count()) -2; --i ) {
       QWidget *window = windows.at(i);
+
+      qDebug() << window->caption();
+
       if ( window->windowState() == Qt::WindowMaximized ) {
 	// prevent flicker
 	window->hide();
-	window->showNormal();
       }
+      window->showNormal();
       int preferredHeight = window->minimumHeight()+window->parentWidget()->baseSize().height();
       int actHeight = QMAX(height[i -int(windows.count()) + 3], preferredHeight);
-      
-      window->parentWidget()->setGeometry( 0, y, ws->width(), actHeight );
+
+      window->setGeometry( 0, y, ws->width(), actHeight );
       y += actHeight;
     }
   }
-}
-
-MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
-				    const miutil::miTime& etime,
-				    miutil::miTime& remstime,
-				    miutil::miTime& remetime,
-				    listType lity,
-				    listType remLity,
-				    mettType metty,
-				    QString& wElement,
-				    int* selParNo,
-				    vector<model::KvalobsData>& datalist,
-				    vector<modDatl>& modeldatalist,
-				    list<kvStation>& slist,
-				    int dateCol,
-				    int ncp,
-				    bool isShTy,
-				    QString& userName)
-{
-  MDITabWindow* et = new MDITabWindow( ws, 
-				       0, 
-				       Qt::WDestructiveClose, 
-				       stime, 
-				       etime, 
-				       remstime, 
-				       remetime, 
-				       lity, 
-				       remLity, 
-				       metty, 
-				       wElement,
-				       selPar,
-				       noSelPar, 
-				       selParNo,
-				       datalist, 
-				       modeldatalist,
-				       slist,
-				       dateCol,
-				       ncp,
-				       isShTy,
-				       userName);
-  ws->addWindow(et);
-
-  if ( lity == erLi || lity == erSa ) {
-    et->setCaption("Feilliste");
-  }
-  else if ( lity == erLo )
-    et->setCaption("Feillog");
-  else if ( lity == daLi )
-    et->setCaption("Dataliste");
-
-  et->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
-
-  et->show();
-
-  tileHorizontal();
-
-  vector<QString> stationList;
-  int stnr=-1;
-  for ( int i = 0; i < datalist.size(); i++) {
-    QString name;
-    double lat,lon,hoh;
-    int env;
-    int snr;
-    if(stnr != datalist[i].stnr()){
-      stnr = datalist[i].stnr();
-      findStationInfo(stnr,name,lat,lon,hoh,snr,env);
-      QString nrStr;
-      nrStr = nrStr.setNum(stnr);
-      QString statId = nrStr + " " + name;
-      stationList.push_back(statId);
-    }
-  }
-  emit newStationList(stationList);
-
-  return et;
 }
 
 void HqcMainWindow::closeWindow()
 {
   firstObs=true;
   cerr << "HqcMainWindow::closeWindow()\n";
-    MDITabWindow* t = (MDITabWindow*)ws->activeWindow();
-    if ( t )
-	t->close();
-    emit windowClose();
+
+  ws->closeActiveSubWindow();
+
+  emit windowClose();
 }
 
 
@@ -2262,9 +2247,9 @@ void HqcMainWindow::sendTimes(){
   m.commondesc = "datatype";
   m.common = "obs";
   m.description= "time";
-  int n=datalist.size();
+  int n=datalist->size();
   for(int i=0;i<n;i++){
-    m.data.push_back(datalist[i].otime().isoTime());
+    m.data.push_back((*datalist)[i].otime().isoTime());
   }
   cerr << "HQC sender melding" << endl;
   //  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
@@ -2413,16 +2398,16 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   vector<miutil::miString> synopData;
   vector<miutil::miString> enkelData;
 
-  for ( int i = 0; i < datalist.size(); i++) { // fill data
-    if ( datalist[i].otime() == time ){
+  for ( int i = 0; i < datalist->size(); i++) { // fill data
+    if ( (*datalist)[i].otime() == time ){
       double lat,lon,h;
-      miutil::miString str(datalist[i].stnr());
+      miutil::miString str((*datalist)[i].stnr());
       QString name;
       int env;
       int snr;
-      //      int typeId = datalist[i].typeId;
-      int typeId = datalist[i].showTypeId();
-      findStationInfo(datalist[i].stnr(),name,lat,lon,h,snr,env);
+      //      int typeId = (*datalist)[i].typeId;
+      int typeId = (*datalist)[i].showTypeId();
+      findStationInfo((*datalist)[i].stnr(),name,lat,lon,h,snr,env);
       str += ",";
       miutil::miString isAuto = "x";
       miutil::miString strType = hqcType(typeId, env);
@@ -2450,13 +2435,13 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
       //      }
       miutil::miString synopStr = str;
       miutil::miString enkelStr = str;
-      double aa = datalist[i].corr(1);
+      double aa = (*datalist)[i].corr(1);
       for(int j=0; j<parIndex.size();j++){
-	double corr = datalist[i].corr(parIndex[j]);
+	double corr = (*datalist)[i].corr(parIndex[j]);
 	if ( parModel[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
-		 modeldatalist[k].otime == datalist[i].otime() ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      corr = modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2464,8 +2449,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parDiff[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
-		 modeldatalist[k].otime == datalist[i].otime() ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      corr = corr - modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2473,8 +2458,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parProp[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr() &&
-		 modeldatalist[k].otime == datalist[i].otime() ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      if ( abs(modeldatalist[k].orig[parIndex[j]]) > 0.00001 )
 		corr = corr/modeldatalist[k].orig[parIndex[j]];
 	      else
@@ -2490,7 +2475,7 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	  }
 	} else {
 	  corr = dianaValue(parIndex[j], parModel[j], corr, aa);
-	  int flag = datalist[i].flag(parIndex[j]);
+	  int flag = (*datalist)[i].flag(parIndex[j]);
 	  int shFl1 = flag/10000;
 	  int shFl2 = flag%10000/1000;
 	  int shFl3 = flag%1000/100;
@@ -2606,8 +2591,8 @@ void HqcMainWindow::updateParams(int station,
 {
   //Update datalist
   int i=0;
-  int n= datalist.size();
-  while( i<n && ( datalist[i].stnr() !=station || datalist[i].otime() != time)) i++;
+  int n= datalist->size();
+  while( i<n && ( (*datalist)[i].stnr() !=station || (*datalist)[i].otime() != time)) i++;
   if(i==n) return; //station and time not found
 	 
   int parameterIndex=-1;
@@ -2622,10 +2607,10 @@ void HqcMainWindow::updateParams(int station,
   if(parameterIndex == -1) return; // parameter not found
 
   double dValue = atof(value.cStr());
-  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),datalist[i].corr(1));
+  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),(*datalist)[i].corr(1));
   int    iflag  = atoi(flag.cStr());
-  datalist[i].set_corr(parameterIndex, dValue);
-  datalist[i].set_flag(parameterIndex, iflag);
+  (*datalist)[i].set_corr(parameterIndex, dValue);
+  (*datalist)[i].set_flag(parameterIndex, iflag);
   miutil::miString value_flag = miutil::miString(cdValue) + ":" + flag;
 
   //update timeseries
@@ -2791,17 +2776,20 @@ miutil::miString HqcMainWindow::hqcType(int typeId, int env) {
   return hqct;
 } 
 
-void HqcMainWindow::updateSaveFunction( QWidget *w )
+void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
 {
-  MDITabWindow *win = dynamic_cast<MDITabWindow*>(w);
-  bool enabled = ( win and win->erl );
+  if ( ! w )
+    return;
+
+  ErrorList *win = dynamic_cast<ErrorList*>(w->widget());
+  bool enabled = win;
   saveAction->setEnabled(enabled);
   cerr << "Save " << (enabled? "en":"dis") << "abled\n";
 }
 
 bool HqcMainWindow::isAlreadyStored(miutil::miTime otime, int stnr) {
-  for ( int i = 0; i < datalist.size(); i++) {
-    if ( datalist[i].otime() == otime && datalist[i].stnr() == stnr )
+  for ( int i = 0; i < datalist->size(); i++) {
+    if ( (*datalist)[i].otime() == otime && (*datalist)[i].stnr() == stnr )
       return true;
   }
   return false;
@@ -2934,6 +2922,12 @@ makeObsDataList( KvObsDataList& dataList )
 	aggTime = dit->obstime();
 	aggStat = dit->stationID();
       }
+      else {
+	aggPar = 0;
+	aggTyp = 0;
+	aggStat = 0;
+	aggTime = "1800-01-01 00:00:00" ;
+      }
 
       int stnr = dit->stationID();
       miutil::miTime otime = (dit->obstime());
@@ -2956,6 +2950,7 @@ makeObsDataList( KvObsDataList& dataList )
       tdl.set_tbtime(tbtime);
       tdl.set_stnr(stnr);
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
+
       if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
 	tdl.set_typeId(dit->paramID(), typeId);
 	tdl.set_showTypeId(typeId);
@@ -3007,8 +3002,9 @@ makeObsDataList( KvObsDataList& dataList )
       }
     pushback:
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
-	    ((otime != protime || ( otime == protime && stnr != prstnr)))) || (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
-	datalist.push_back(tdl);
+	    ((otime != protime || ( otime == protime && stnr != prstnr)))) ||
+	   (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
+	datalist->push_back(tdl);
 	tdl = model::KvalobsData();
 	std::fill(tdlUpd, tdlUpd + NOPARAM, false);
       }

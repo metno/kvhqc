@@ -36,7 +36,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "tabwindow.h"
-#include "datatable.h"
 #include "BusyIndicator.h"
 #include <QFile>
 #include <QTextStream>
@@ -65,8 +64,7 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 			    bool isShTy,
 			    QString& userName)
   : QWidget( parent, name )
-    , dtt( NULL ), erl( NULL )
-    //    , dtt( NULL ), erl( NULL ), erHead( NULL )
+    //, dtt( NULL )
 {
   Q_ASSERT(lity != erLi and lity != erSa);
 
@@ -76,12 +74,8 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 #warning Do model/view code properly!
 
   readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
-  static QTableView * tableView = 0;
-  if ( ! tableView )
-    tableView = new QTableView(this);
-  static model::KvalobsDataModel * dataModel = 0;
-  if ( ! dataModel )
-    dataModel = new model::KvalobsDataModel(datalist, this);
+  QTableView * tableView = new QTableView(this);
+  model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(datalist, this);
   tableView->setModel(dataModel);
 
   QHBoxLayout * layout = new QHBoxLayout(this);
@@ -128,24 +122,25 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
 					listType lity, 
 					listType remLity, 
 					QString wElement) {
+  // only called directly by data list,
+  // but needed by error list
 
-
-  // only needed by data list
-
+#warning Make sure this has been called before showing error list
 
   HqcMainWindow *mainWindow = (HqcMainWindow*)getHqcMainWindow(this);
   
   if (mainWindow-> timeFilterChanged || 
       mainWindow->kvBaseUpdated() ||
       remstime != stime || remetime != etime || lity != remLity ||
-      !(mainWindow->stList 
-	== mainWindow->remstList) ) {
+      mainWindow->stList != mainWindow->remstList ) {
     mainWindow->datalist.clear();
     mainWindow->timeFilterChanged = FALSE;
   }
   mainWindow->setKvBaseUpdated(FALSE);
+
   numErr = mainWindow->datalist.size();
   cerr << "NumRows før   = " << numErr <<endl;
+
   if ( wElement == "Alt" ) 
     noParam = NOPARAMALL;
   else if ( wElement == "Lufttrykk" ) 
@@ -168,6 +163,7 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
     noParam = NOPARAMWIND;
   else if ( wElement == "Pluviometerkontroll" ) 
     noParam = NOPARAMPLU;
+
   int numStat = mainWindow->stList.size();
   if ( numerr == 0 ) {
     mainWindow->readFromData(stime, etime, lity);
@@ -180,43 +176,10 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
   remLity = lity;
 }
 
-bool MDITabWindow::close()
-{
-  // error list
-
-  if ( erl ) {
-    bool close = erl->maybeSave();
-    if ( not close )
-      return false;
-  }
-  return QWidget::close();
-}
-
 MDITabWindow::~MDITabWindow()
 {
 }
 
-//Generate message for showing observations in diana
-void MDITabWindow::showObservations(int row) {
-  
-  // only needed by data list
-
-
-  //time
-  QString dateTime = 
-    dtt->verticalHeader()->label(row).right(27).left(16) + ":00";
-  miutil::miTime time(dateTime.toStdString());
-  
-  //hvilken stasjon
-  QString stationNo = dtt->verticalHeader()->label(row).left(6);
-  
-  int stnr = stationNo.toInt();
-  ((HqcMainWindow*)
-   getHqcMainWindow( this ))->sendObservations(time,true);
-  ((HqcMainWindow*)
-   getHqcMainWindow( this ))->sendStation(stnr);
-  
-}
 
 void MDITabWindow::showChangedValue(int row, int col, QString val) {
   
@@ -254,14 +217,6 @@ void MDITabWindow::showSelectedParam(int row, int col) {
   int nlind = lbl.find('\n');
   lbl.truncate(nlind);
   getHqcMainWindow( this )->sendSelectedParam(lbl.latin1());
-}
-
-
-void MDITabWindow::headerClicked(int row ) {
-
-  // unused
-
-  showObservations(row);
 }
 
 

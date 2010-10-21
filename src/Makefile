@@ -5,8 +5,10 @@ COBJ=
 CCOBJ= 	hqc4.o 
 
 
-QOBJ= 	hqcmain.o ListDialog.o ClockDialog.o dianashowdialog.o TimeseriesDialog.o qtQTUtil.o parameterdialog.o identifyUser.o errorlist.o helptree.o BusyIndicator.o HqcDataReinserter.o ExtendedFunctionalityHandler.o missingtable.o datatable.o tabwindow.o GetData.o textdatadialog.o textdatatable.o rejectdialog.o rejecttable.o GetTextData.o \
+QOBJ= 	hqcmain.o ListDialog.o ClockDialog.o dianashowdialog.o TimeseriesDialog.o qtQTUtil.o parameterdialog.o identifyUser.o errorlist.o helptree.o BusyIndicator.o HqcDataReinserter.o ExtendedFunctionalityHandler.o missingtable.o  GetData.o textdatadialog.o textdatatable.o rejectdialog.o rejecttable.o GetTextData.o \
 	KvalobsData.o KvalobsDataModel.o
+
+# Removed:  datatable.o tabwindow.o
 
 #----------------------------------------------------------------------------
 

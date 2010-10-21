@@ -47,12 +47,12 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   Q3GridLayout* controlLayout = new Q3GridLayout(ctrlTyp->layout());
 
   // insert checkbuttons for control type selection
-  twiType = new QCheckBox( "Temperatur,fuktighet", ctrlTyp );
-  prcType = new QCheckBox( "Nedbør,snøforhold", ctrlTyp );
-  aprType = new QCheckBox( "Lufttrykk", ctrlTyp );
-  winType = new QCheckBox( "Vind", ctrlTyp );
-  marType = new QCheckBox( "Maritime parametere", ctrlTyp );
-  visType = new QCheckBox( "Visuelle parametere", ctrlTyp );
+  twiType = new QCheckBox( "&Temperatur,fuktighet", ctrlTyp );
+  prcType = new QCheckBox( "&Nedbør,snøforhold", ctrlTyp );
+  aprType = new QCheckBox( "&Lufttrykk", ctrlTyp );
+  winType = new QCheckBox( "&Vind", ctrlTyp );
+  marType = new QCheckBox( "&Maritime parametere", ctrlTyp );
+  visType = new QCheckBox( "V&isuelle parametere", ctrlTyp );
 
   connect(twiType,SIGNAL(clicked()),this,SLOT(twiCheck()));
   connect(twiType,SIGNAL(clicked()),this,SLOT(otwiCheck()));
@@ -134,12 +134,12 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 					  "Landsdel", this);
 
   // insert checkbuttons for station location selection
-  ausReg = new QCheckBox( "Østlandet ", stRegion );
-  vesReg = new QCheckBox( "Vestlandet", stRegion );
-  troReg = new QCheckBox( "Trøndelag ", stRegion );
-  norReg = new QCheckBox( "Nord-Norge", stRegion );
-  webReg = new QCheckBox( "Synop-stasjoner", stRegion );
-  priReg = new QCheckBox( "Prioriterte stasjoner", stRegion );
+  ausReg = new QCheckBox( "&Østlandet ", stRegion );
+  vesReg = new QCheckBox( "V&estlandet", stRegion );
+  troReg = new QCheckBox( "T&røndelag ", stRegion );
+  norReg = new QCheckBox( "N&ord-Norge", stRegion );
+  webReg = new QCheckBox( "S&ynop-stasjoner", stRegion );
+  priReg = new QCheckBox( "&Prioriterte stasjoner", stRegion );
 
   connect(ausReg,SIGNAL(clicked()), this,SLOT(ausCheck()));
   connect(ausReg,SIGNAL(clicked()), this,SLOT(oausCheck()));
@@ -187,7 +187,8 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   typeGroup->insert(allTypes);
   
   //Station selection
-  stationSelect = new QPushButton("Velg stasjon", this);
+  stationSelect = new QPushButton("Velg &stasjon", this);
+  stationSelect->setAutoDefault(true);
   stationSelect->setGeometry(10, 110, 400, 30);
   stationSelect->setFont(QFont("Arial", 9));
   connect(stationSelect, SIGNAL(clicked()), this, SIGNAL( selectStation()));
@@ -1216,12 +1217,16 @@ StationSelection::StationSelection(QStringList listStatNum,
 				   ObsTypeList* otpList) : QWidget() {
 
   setGeometry(0,0,870,700);
+
   selectionOK = new QPushButton("Lukk", this);
   selectionOK->setGeometry(50,10,130,30);
+  selectionOK->setDefault(true);
   connect(selectionOK, SIGNAL(clicked()),SLOT(listSelectedStations()));
-  selectAllStations = new QPushButton("Velg alle stasjoner", this);
+
+  selectAllStations = new QPushButton("Velg &alle stasjoner", this);
   selectAllStations->setGeometry(200,10,130,30);
   connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
+
   stationTable = new StationTable(listStatNum, 
 				  listStatName, 
 				  listStatHoh, 
@@ -1338,4 +1343,3 @@ QString StTableItem::key() const {
   }
   return item;
 }
-

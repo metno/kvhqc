@@ -60,8 +60,8 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
 					  Qt::Horizontal, 
 					  "Utvalgte tidspunkter", this);
 
-  allTimes      = new QCheckBox("Alle tidspunkter", staTime);
-  standardTimes = new QCheckBox("Standardtidspunkter", staTime);
+  allTimes      = new QCheckBox("&Alle tidspunkter", staTime);
+  standardTimes = new QCheckBox("&Standardtidspunkter", staTime);
 
   connect(allTimes, SIGNAL(clicked()),this,SLOT(standardCheck()));
   connect(standardTimes, SIGNAL(clicked()),this,SLOT(allCheck()));

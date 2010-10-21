@@ -54,6 +54,10 @@ public:
   int showTypeId;
   int typeIdChanged;
 
+  Impl()
+  : stnr(0), snr(0), showTypeId(0), typeIdChanged(0)
+  {}
+
   struct ObservationData
   {
     ObservationData() :

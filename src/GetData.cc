@@ -40,7 +40,7 @@ using namespace std;
 GetData::
 GetData(HqcMainWindow* o) :w(o)
 {
-  w->datalist.reserve(32768);
+  w->datalist->reserve(32768);
 }
 
 bool 

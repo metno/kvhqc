@@ -670,6 +670,9 @@ ErrorList::ErrorList(QStringList& selPar,
   setColumnReadOnly ( 20, true );
   setColumnStretchable( 20, true );
   showSameStation();
+
+  setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  setCaption("Feilliste");
 }
 
 ErrorList::~ErrorList() {
@@ -1235,17 +1238,12 @@ void ErrorList::signalStationSelected( int row )
 void execMissingList( ErrorList* el )
 {
   BusyIndicator busy;
-  QString missText;
-  QString missSize;
-  missSize = missSize.setNum( el->mList.size());
   if ( el->mList.size() > 0 ) {
-    MDITabWindow* mtw = dynamic_cast<MDITabWindow*>( el->parent()->parent() );
-    MissingTable* mt = new MissingTable(mtw, el);
+    MissingTable* mt = new MissingTable(el, el);
     mt->show();
-    missText = "Mangellisten inneholder " + missSize + " elementer,\nvil du se disse?";
   }
   else {
-    missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
+    QString missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
     int mb = QMessageBox::information(el,
 				      "Mangelliste",
 				      missText,
@@ -1580,6 +1578,15 @@ bool ErrorList::event(QEvent *event)
   }
   return QWidget::event(event);
 }
+
+void ErrorList::closeEvent( QCloseEvent * event )
+{
+  if ( maybeSave() )
+    Q3Table::closeEvent(event);
+  else
+    event->ignore();
+}
+
 
 QString DataCell::key() const {
   QString item;

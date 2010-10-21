@@ -31,9 +31,9 @@
 #define KVALOBSDATAMODEL_H_
 
 
+#include "KvalobsData.h"
 #include <QAbstractTableModel>
 #include <vector>
-#include "KvalobsData.h"
 
 namespace model
 {
@@ -41,8 +41,13 @@ namespace model
   {
     Q_OBJECT
   public:
-    KvalobsDataModel(KvalobsDataList & kvalobsData, QObject * parent = 0);
+    KvalobsDataModel(QObject * parent = 0);
+    KvalobsDataModel(KvalobsDataListPtr datalist, QObject * parent = 0);
+
     virtual ~KvalobsDataModel();
+
+    KvalobsDataListPtr & kvalobsData() { return kvalobsData_; }
+    const KvalobsDataListPtr & kvalobsData() const { return kvalobsData_; }
 
 //    virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
 
@@ -73,7 +78,7 @@ namespace model
     ColumnType getColumnType_(const QModelIndex & index) const;
     ColumnType getColumnType_(int column) const;
 
-    KvalobsDataList & kvalobsData_;
+    KvalobsDataListPtr kvalobsData_;
 
     static const int COLUMNS_PER_PARAMETER;
   };

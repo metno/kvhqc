@@ -41,7 +41,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "errorlist.h"
-#include "datatable.h"
 #include <qwidget.h>
 #include <fstream>
 #include <iostream>
@@ -64,7 +63,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qobject.h>
 //#include <q3vbox.h>
 //#include <q3table.h>
-#include <qworkspace.h>
 #include <QToolBar>
 #include <qtoolbutton.h>
 #include <qicon.h>
@@ -78,15 +76,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <qTimeseries/TSPlotDialog.h>
 #include "hqcdefs.h"
-#include "tabwindow.h"
 
 class QAction;
+class QMdiArea;
+class QMdiSubWindow;
 
 using namespace std;
 using namespace kvalobs;
 using namespace kvservice;
 class DataTable;
-class MDITabWindow;
 
 
 /**
@@ -99,7 +97,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 /**
  * \brief The application's main window.
  */
-//class HqcMainWindow: public Q3MainWindow
 class HqcMainWindow: public QMainWindow
 {
   Q_OBJECT
@@ -297,7 +294,7 @@ public:
   Rejects* rejects;
   vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
-  vector<model::KvalobsData> datalist;
+  model::KvalobsDataListPtr datalist;
   vector<modDatl> modeldatalist;
   vector<int> stList;
   vector<int> stnrList;
@@ -415,7 +412,7 @@ private:
 
 
 
-  QWorkspace* ws;
+  QMdiArea * ws;
   //  QPainter* logo;
   //  void paintEvent(QPaintEvent*);
   // socket variables
@@ -486,23 +483,6 @@ QStringList listParName;
 QStringList listParNum;
 
 private slots:
-  // file commands
-  MDITabWindow* eTable(const miutil::miTime&, 
-		       const miutil::miTime&,
-		       miutil::miTime&, 
-		       miutil::miTime&, 
-		       listType, 
-		       listType, 
-		       mettType, 
-		       QString&,
-		       int*,
-		       vector<model::KvalobsData>&,
-		       vector<modDatl>&, 
-		       list<kvStation>&,
-		       int, 
-		       int,
-		       bool,
-		       QString&);
   void closeWindow();
   void helpUse();
   void helpFlag();
@@ -540,7 +520,7 @@ private slots:
   void timeseriesMenu();
   void stationsInList();
 
-  void updateSaveFunction( QWidget *w );
+  void updateSaveFunction( QMdiSubWindow * w );
 
 signals:
   void statTimeReceived(QString&);
