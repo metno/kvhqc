@@ -296,8 +296,13 @@ public:
   TimeseriesDialog* tsdlg;
   model::KvalobsDataListPtr datalist;
   vector<modDatl> modeldatalist;
+
+  /// List of selected stations
   vector<int> stList;
+
   vector<int> stnrList;
+
+  /// This holds the value of the previously used stList
   vector<int> remstList;
   vector<TxtDat> txtList;
   listType lity;
@@ -360,17 +365,35 @@ private:
   bool firstObs;
   int sLevel;
   int sSensor;
+
+  /// Paramid to parameter name
   QMap<int,QString> parMap;
+
+  /// True after first time ListOk() have been invoked with valid input
   bool listExist;
+
   bool kvBaseIsUpdated;
   QString wElement;
   QString userName;
+
+  /// The parameters that the user have selected
   QStringList selPar;
+
+  /// User selection whether to display flags in data list
   QAction * flID;
+
+  /// User selection whether to display original values in data list
   QAction * orID;
+
+  /// User selection whether to display model data in data list
   QAction * moID;
+
+  /// User selection whether to display station's name
   QAction * stID;
+
+  /// User selection whether to display station's location
   QAction * poID;
+
   QAction * tyID;
   QAction * apID;
   QAction * taID;
@@ -385,6 +408,8 @@ private:
   QAction * piID;
   QAction * plID;
   QAction * alID;
+
+  /// True if all types have been selected, as opposed to prioritized parameters
   bool isShTy;
   int synopType;
   int autoobsType;
@@ -433,6 +458,10 @@ private:
   std::list<kvalobs::kvStation> slist;
   std::list<kvalobs::kvParam> plist;
   std::list<long> statList;
+
+
+
+#warning sizes here must not be hardcoded!!
   int order[NOPARAMALL];
   int airPressOrder[NOPARAMAIRPRESS];
   int tempOrder[NOPARAMTEMP];
@@ -447,7 +476,10 @@ private:
   
   TSPlotDialog* tspdialog; // timeseries-plot
   StationTable* stationTable;
+
+  /// Station selection dialog
   StationSelection* statSelect;
+
   miutil::miTime dianaObsTime;
   miutil::miTime dianaTime;
   typedef QMap<miutil::miString,miutil::miString> NameMap;

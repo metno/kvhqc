@@ -72,6 +72,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace std;
 
+// Number of parameters to show, according to last selection
 int noSelPar;
 int modelParam[] = {61,81,109,110,177,178,211,262};
 miutil::miTime remstime;
@@ -845,39 +846,16 @@ void HqcMainWindow::ListOK() {
     int ind = QString(*sit).stripWhiteSpace().find(' ');
     stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
   }
-  miutil::miTime stime;
+
+  miutil::miTime stime; // start time
   stime.setTime(miutil::miString(lstdlg->getStart().latin1()));
-  miutil::miTime etime;
+
+  miutil::miTime etime; // end time
   etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
  
-  int dateCol = 0;
-  if ( poID->isChecked() && !stID->isChecked() )
-    dateCol = 1;
-  else if ( !poID->isChecked() && stID->isChecked() )
-    dateCol = 2;
-  else if ( poID->isChecked() && stID->isChecked() )
-    dateCol = 3;
 
-  int ncp;
-  if ( !orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
-    ncp = 0;
-  if ( orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
-    ncp = 1;
-  if ( !orID->isChecked() && flID->isChecked() && !moID->isChecked() )
-    ncp = 2;
-  if ( orID->isChecked() && flID->isChecked() && !moID->isChecked() )
-    ncp = 3;
-  if ( !orID->isChecked() && !flID->isChecked() && moID->isChecked() )
-    ncp = 4;
-  if ( orID->isChecked() && !flID->isChecked() && moID->isChecked() )
-    ncp = 5;
-  if ( !orID->isChecked() && flID->isChecked() && moID->isChecked() )
-    ncp = 6;
-  if ( orID->isChecked() && flID->isChecked() && moID->isChecked() )
-    ncp = 7;
-
-  int maxOrder;
-  int* porder;
+  int maxOrder; // size of porder
+  int* porder; // will point to what parameters to show
   if ( wElement == "Lufttrykk" ) {
     porder = airPressOrder;
     maxOrder = NOPARAMAIRPRESS;
@@ -923,7 +901,7 @@ void HqcMainWindow::ListOK() {
     maxOrder = NOPARAMALL;
   }
 
-  if ( selPar.count() > 0 ) selPar.clear();
+  selPar.clear();
   int kk = 0;
   for ( int jj = 0; jj < maxOrder; jj++ ) {
     if ( jj >= maxOrder ) break;
@@ -935,17 +913,13 @@ void HqcMainWindow::ListOK() {
 	 (!found && pardlg->noMarkPar->isChecked()) ||
 	 pardlg->allPar->isChecked() ) {
       selParNo[kk] = *(porder + jj);
-      selPar.append(QString(sp));
+      selPar.append(sp);
       kk++;
     }
     noSelPar = kk;
   }
 
-  if ( lstdlg->allTypes->isChecked() )
-    isShTy = true;
-  else
-    isShTy = false;
-
+  isShTy = lstdlg->allTypes->isChecked();
 
   readFromData(stime, etime, lity);
 
@@ -955,7 +929,8 @@ void HqcMainWindow::ListOK() {
 
       QTableView * tableView = new QTableView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
-      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(datalist, this);
+
+      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(porder, maxOrder, parMap, datalist, this);
       tableView->setModel(dataModel);
 
       ws->addSubWindow(tableView);
@@ -968,6 +943,32 @@ void HqcMainWindow::ListOK() {
 //      Q_ASSERT(metty != tabHead); // deprecated functionality
 //      Q_ASSERT(metty == tabList);
 //      metty may be undefined here
+
+      int dateCol = 0;
+      if ( poID->isChecked() && !stID->isChecked() )
+        dateCol = 1;
+      else if ( !poID->isChecked() && stID->isChecked() )
+        dateCol = 2;
+      else if ( poID->isChecked() && stID->isChecked() )
+        dateCol = 3;
+
+      int ncp;
+      if ( !orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
+        ncp = 0;
+      if ( orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
+        ncp = 1;
+      if ( !orID->isChecked() && flID->isChecked() && !moID->isChecked() )
+        ncp = 2;
+      if ( orID->isChecked() && flID->isChecked() && !moID->isChecked() )
+        ncp = 3;
+      if ( !orID->isChecked() && !flID->isChecked() && moID->isChecked() )
+        ncp = 4;
+      if ( orID->isChecked() && !flID->isChecked() && moID->isChecked() )
+        ncp = 5;
+      if ( !orID->isChecked() && flID->isChecked() && moID->isChecked() )
+        ncp = 6;
+      if ( orID->isChecked() && flID->isChecked() && moID->isChecked() )
+        ncp = 7;
 
       ErrorList * erl = new ErrorList(selPar,
                           stime,
@@ -1755,8 +1756,10 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   return tpf;
 }
 
-/*!
- Read the data table in the Kvalobs database
+/**
+ * Read the data table in the Kvalobs database.
+ *
+ * Results will eventually end up in datalist variable
 */
 void HqcMainWindow::readFromData(const miutil::miTime& stime, 
 				 const miutil::miTime& etime, 
@@ -1777,6 +1780,8 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
  
   t.restart();
   
+  // Throw away old data list. It will still exist if any window need it.
+  datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   KvObsDataList ldlist;// = GetData::datalist;
   GetData dataReceiver(this);
   if(!KvApp::kvApp->getKvData(dataReceiver, whichData)){

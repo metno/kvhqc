@@ -29,23 +29,37 @@
 
 #include <KvalobsDataModel.h>
 #include <kvalobs/flag/kvControlInfo.h>
+#include <QDebug>
 
 
 namespace model
 {
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = 3;
 
-
-  KvalobsDataModel::KvalobsDataModel(QObject * parent) :
-    QAbstractTableModel(parent),
-    kvalobsData_(new KvalobsDataList)
-  {
-  }
-
-  KvalobsDataModel::KvalobsDataModel(KvalobsDataListPtr datalist, QObject * parent) :
+  KvalobsDataModel::KvalobsDataModel(
+      const int * parameterShowList,
+      std::size_t parameterShowListSize,
+      QMap<int,QString> & paramIdToParamName,
+      KvalobsDataListPtr datalist,
+      QObject * parent) :
     QAbstractTableModel(parent),
     kvalobsData_(datalist)
   {
+    for ( int i = 0; i < parameterShowListSize; ++ i ) {
+        int param = parameterShowList[i];
+        QString paramName = "unknown";
+        QMap<int,QString>::const_iterator find = paramIdToParamName.find(param);
+        if ( find != paramIdToParamName.end() )
+          paramName = * find;
+        parametersToShow_.push_back(Parameter(param, paramName));
+    }
+
+
+    qDebug() << "Statistics\n"
+        "--------\n"
+        "Number of parameters: " << parametersToShow_.size();
+    for ( std::vector<Parameter>::const_iterator it = parametersToShow_.begin(); it != parametersToShow_.end(); ++ it )
+      qDebug() << it->paramid << ":\t" << qPrintable(it->parameterName);
   }
 
   KvalobsDataModel::~KvalobsDataModel()
@@ -65,7 +79,7 @@ namespace model
   }
 
   int KvalobsDataModel::columnCount(const QModelIndex & parent) const {
-    return 1043 * COLUMNS_PER_PARAMETER;
+    return parametersToShow_.size() * COLUMNS_PER_PARAMETER;
   }
 
   QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const {
@@ -80,27 +94,19 @@ namespace model
     return QVariant();
   }
 
-  namespace
-  {
-    QString getParameterName(int paramid)
-    {
-      return QString::number(paramid);
-    }
-  }
-
   QVariant KvalobsDataModel::headerData(int section, Qt::Orientation orientation, int role) const
   {
     if ( Qt::Horizontal == orientation) {
       if ( Qt::DisplayRole == role ) {
-          QString parameterName = getParameterName(getParameter_(section));
+          const Parameter & parameter = getParameter_(section);
           switch (getColumnType_(section))
           {
           case Original:
-            return QString("%1 orig").arg(parameterName);
+            return QString("%1 orig").arg(parameter.parameterName);
           case Flag:
-            return QString("%1 flag").arg(parameterName);
+            return QString("%1 flag").arg(parameter.parameterName);
           case Corrected:
-            return QString("%1 corr").arg(parameterName);
+            return QString("%1 corr").arg(parameter.parameterName);
           default:
             return QVariant();
           }
@@ -135,7 +141,7 @@ namespace model
 
     if ( Qt::EditRole == role ) {
       if ( getColumnType_(index) == Corrected ) {
-          int parameterIdx = getParameter_(index);
+          const Parameter & p = getParameter_(index);
 
           bool ok;
           double val = value.toDouble(& ok);
@@ -143,12 +149,15 @@ namespace model
             return false;
 
           KvalobsData & d = (*kvalobsData_)[index.row()];
-          if ( d.controlinfo(parameterIdx).flag(kvQCFlagTypes::f_fmis) == 3 ) {
-              kvalobs::kvControlInfo ci = d.controlinfo(parameterIdx);
+          if ( d.controlinfo(p.paramid).flag(kvQCFlagTypes::f_fmis) == 3 ) {
+              kvalobs::kvControlInfo ci = d.controlinfo(p.paramid);
               ci.set(kvQCFlagTypes::f_fmis, 1);
-              d.set_controlinfo(parameterIdx, ci);
+              d.set_controlinfo(p.paramid, ci);
           }
-          d.set_corr(parameterIdx, val);
+
+          qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << d.corr(p.paramid) << " to " << val;
+
+          d.set_corr(p.paramid, val);
 
           emit dataChanged(index, index);
           return true;
@@ -160,10 +169,10 @@ namespace model
 
   QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
   {
-    int parameterIdx = getParameter_(index);
+    const Parameter & p = getParameter_(index);
 
     const KvalobsData & d = (*kvalobsData_)[index.row()];
-    const kvalobs::kvControlInfo & controlinfo = d.controlinfo(parameterIdx);
+    const kvalobs::kvControlInfo & controlinfo = d.controlinfo(p.paramid);
 
     const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);
 
@@ -173,33 +182,33 @@ namespace model
       {
         if ( fmis == 1 or fmis == 3 )
           return QVariant();
-      return d.orig(parameterIdx);
+      return d.orig(p.paramid);
       }
     case Flag:
       {
         if ( fmis == 3 )
           return QVariant();
-        return d.flag(parameterIdx);
+        return d.flag(p.paramid);
       }
     case Corrected:
       {
         if ( fmis == 2 or fmis == 3 )
           return QVariant();
-      return d.corr(parameterIdx);
+      return d.corr(p.paramid);
       }
     default:
       return QVariant();
     }
   }
 
-  int KvalobsDataModel::getParameter_(const QModelIndex &index) const
+  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter_(const QModelIndex &index) const
   {
     return getParameter_(index.column());
   }
 
-  int KvalobsDataModel::getParameter_(int column) const
+  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter_(int column) const
   {
-    return column / COLUMNS_PER_PARAMETER;
+    return parametersToShow_.at(column / COLUMNS_PER_PARAMETER);
   }
 
   KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(const QModelIndex & index) const

@@ -33,6 +33,7 @@
 
 #include "KvalobsData.h"
 #include <QAbstractTableModel>
+#include <QString>
 #include <vector>
 
 namespace model
@@ -41,8 +42,12 @@ namespace model
   {
     Q_OBJECT
   public:
-    KvalobsDataModel(QObject * parent = 0);
-    KvalobsDataModel(KvalobsDataListPtr datalist, QObject * parent = 0);
+    KvalobsDataModel(
+        const int * parameterShowList,
+        std::size_t parameterShowListSize,
+        QMap<int,QString> & paramIdToParamName,
+        KvalobsDataListPtr datalist,
+        QObject * parent = 0);
 
     virtual ~KvalobsDataModel();
 
@@ -67,8 +72,16 @@ namespace model
   private:
     QVariant displayRoleData(const QModelIndex & index) const;
 
-    int getParameter_(const QModelIndex & index) const;
-    int getParameter_(int column) const;
+    struct Parameter
+    {
+      Parameter(int paramid, const QString & parameterName) :
+        paramid(paramid), parameterName(parameterName) {}
+
+      int paramid;
+      QString parameterName;
+    };
+    const Parameter & getParameter_(const QModelIndex & index) const;
+    const Parameter & getParameter_(int column) const;
 
     enum ColumnType
     {
@@ -79,6 +92,8 @@ namespace model
     ColumnType getColumnType_(int column) const;
 
     KvalobsDataListPtr kvalobsData_;
+
+    std::vector<Parameter> parametersToShow_;
 
     static const int COLUMNS_PER_PARAMETER;
   };
