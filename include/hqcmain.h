@@ -129,11 +129,6 @@ public:
    */
   void sendSelectedParam(miutil::miString);
   /*!
-   * \brief Inserts the parameters in a weather element
-   *        into a listbox in the parameter dialog.
-   */
-  void insertParametersInListBox(int, int*);
-  /*!
    * \brief When a parameter value is changed, the new value is 
    *        sent to the datalist, to the timeseries and to Diana.
    */
@@ -462,17 +457,27 @@ private:
 
 
 #warning sizes here must not be hardcoded!!
-  int order[NOPARAMALL];
-  int airPressOrder[NOPARAMAIRPRESS];
-  int tempOrder[NOPARAMTEMP];
-  int precOrder[NOPARAMPREC];
-  int visualOrder[NOPARAMVISUAL];
-  int waveOrder[NOPARAMWAVE];
-  int synopOrder[NOPARAMSYNOP];
-  int klstatOrder[NOPARAMKLSTAT];
-  int priorityOrder[NOPARAMPRIORITY];
-  int windOrder[NOPARAMWIND];
-  int pluOrder[NOPARAMPLU];
+  //int order[NOPARAMALL];
+  std::vector<int> order;
+
+  /**
+   * Parameters from parameter groups. The keys will be the user's
+   * presentation strings, and not the strings in the config file
+   *
+   * @todo make bindings between menu elements and config file dynamic
+   */
+  QMap<QString, std::vector<int> > parameterGroups;
+
+//  int airPressOrder[NOPARAMAIRPRESS];
+//  int tempOrder[NOPARAMTEMP];
+//  int precOrder[NOPARAMPREC];
+//  int visualOrder[NOPARAMVISUAL];
+//  int waveOrder[NOPARAMWAVE];
+//  int synopOrder[NOPARAMSYNOP];
+//  int klstatOrder[NOPARAMKLSTAT];
+//  int priorityOrder[NOPARAMPRIORITY];
+//  int windOrder[NOPARAMWIND];
+//  int pluOrder[NOPARAMPLU];
   
   TSPlotDialog* tspdialog; // timeseries-plot
   StationTable* stationTable;

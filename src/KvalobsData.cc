@@ -30,7 +30,6 @@
 #include "../include/KvalobsData.h"
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/flag/kvUseInfo.h>
-#include <QSharedData>
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -39,11 +38,11 @@ namespace model
 {
 
   namespace {
-    const int NOPARAM = 1043;
+    /// Internal missing representation
     const int missing_ = -32767;
   }
 
-class KvalobsData::Impl : public QSharedData
+class KvalobsData::Impl
 {
 public:
   int stnr;
@@ -58,6 +57,9 @@ public:
   : stnr(0), snr(0), showTypeId(0), typeIdChanged(0)
   {}
 
+  /**
+   * Parameter-specific data
+   */
   struct ObservationData
   {
     ObservationData() :
@@ -83,6 +85,11 @@ public:
   typedef std::map<int, ObservationData> ParameterSortedObservationData;
   ParameterSortedObservationData parameters;
 
+  std::size_t size() const
+  {
+    return parameters.size();
+  }
+
   const ObservationData * obsData(int parameter) const {
     ParameterSortedObservationData::const_iterator find = parameters.find(parameter);
     if ( find == parameters.end() )
@@ -99,25 +106,23 @@ public:
 
 KvalobsData::KvalobsData()
 {
-  impl_ = new Impl;
+  impl_ = boost::shared_ptr<Impl>(new Impl);
 }
-
-//KvalobsData::KvalobsData(const KvalobsData & toCopy)
-//{
-//  impl_ = new Impl(* toCopy.impl_);
-//}
-
 
 KvalobsData::~KvalobsData()
 {
 //  delete impl_;
 }
 
-//const KvalobsData & KvalobsData::operator = (const KvalobsData & toCopy)
-//{
-//  delete impl_;
-//  impl_ = new Impl(* toCopy.impl_);
-//}
+std::size_t KvalobsData::size() const
+{
+  return impl().size();
+}
+
+bool KvalobsData::empty() const
+{
+  return impl().size() == 0;
+}
 
 const int KvalobsData::stnr() const
 {
@@ -306,12 +311,14 @@ void KvalobsData::set_cfailed(std::size_t parameter, const std::string & value)
 
 KvalobsData::Impl & KvalobsData::impl()
 {
-  return * static_cast<KvalobsData::Impl *>(impl_.data());
+  return * impl_;
+//  return * static_cast<KvalobsData::Impl *>(impl_.data());
 }
 
 const KvalobsData::Impl & KvalobsData::impl() const
 {
-  return * static_cast<const KvalobsData::Impl *>(impl_.data());
+  return * impl_;
+//  return * static_cast<const KvalobsData::Impl *>(impl_.data());
 }
 
 

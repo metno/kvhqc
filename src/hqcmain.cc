@@ -69,18 +69,34 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QMdiArea>
 #include <QMdiSubWindow>
 #include <glText/glTextQtTexture.h>
+#include <boost/assign.hpp>
 
 using namespace std;
 
-// Number of parameters to show, according to last selection
-int noSelPar;
-int modelParam[] = {61,81,109,110,177,178,211,262};
-miutil::miTime remstime;
-miutil::miTime remetime;
-miutil::miTime remdlstime;
-miutil::miTime remdletime;
-listType remLity;
+namespace {
+  // Number of parameters to show, according to last selection
+  int noSelPar;
+  int modelParam[] =
+    { 61, 81, 109, 110, 177, 178, 211, 262 };
+  miutil::miTime remstime;
+  miutil::miTime remetime;
+  miutil::miTime remdlstime;
+  miutil::miTime remdletime;
+  listType remLity;
 
+const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
+        ("[airpress]", "Lufttrykk")
+        ("[temperature]", "Temperatur")
+        ("[prec]", "Nedbør")
+        ("[visual]", "Visuell")
+        ("[wave]", "Sjøgang")
+        ("[synop]", "Synop")
+        ("[klstat]", "Klimastatistikk")
+        ("[priority]", "Prioriterte parametere")
+        ("[wind]", "Vind")
+        ("[plu]", "Pluviometerkontroll")
+        ("[all]", "Alt");
+}
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
 {
@@ -414,14 +430,6 @@ void HqcMainWindow::showPos() {
 void HqcMainWindow::showTyp() {
 }
 
-void HqcMainWindow::insertParametersInListBox(int maxOrder, int* porder) {
-  pardlg->plb->clear();
-  for ( int jj = 0; jj < maxOrder; jj++ ) {
-    const char* sp =  parMap[*(porder+jj)].latin1();
-    pardlg->plb->insertItem(QString(sp));
-  }
-}
-
 void HqcMainWindow::airPress() {
   wElement = "Lufttrykk";
   lity = daLi;
@@ -437,7 +445,9 @@ void HqcMainWindow::airPress() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
-  insertParametersInListBox(NOPARAMAIRPRESS, airPressOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
   pardlg->showAll();
   //  sendObservations(remstime,false);
 }
@@ -457,7 +467,10 @@ void HqcMainWindow::temperature() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
-  insertParametersInListBox(NOPARAMTEMP, tempOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
   //  sendObservations(remstime,false);
 }
@@ -478,7 +491,10 @@ void HqcMainWindow::precipitation() {
   plID->setChecked(FALSE);
   alID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPREC, precOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -498,7 +514,10 @@ void HqcMainWindow::visuals() {
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMVISUAL, visualOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -518,7 +537,10 @@ void HqcMainWindow::sea() {
   alID->setChecked(FALSE);
    plID->setChecked(FALSE);
    //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMWAVE, waveOrder);
+   const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -538,7 +560,10 @@ void HqcMainWindow::synop() {
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMSYNOP, synopOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -558,7 +583,10 @@ void HqcMainWindow::climateStatistics() {
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMKLSTAT, klstatOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -578,7 +606,10 @@ void HqcMainWindow::priority() {
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPRIORITY, priorityOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -598,7 +629,10 @@ void HqcMainWindow::wind() {
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMWIND, windOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -618,7 +652,10 @@ void HqcMainWindow::plu() {
   alID->setChecked(FALSE);
   plID->setChecked(TRUE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPLU, pluOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -638,7 +675,10 @@ void HqcMainWindow::all() {
   plID->setChecked(FALSE);
   alID->setChecked(TRUE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMALL, order);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -853,66 +893,75 @@ void HqcMainWindow::ListOK() {
   miutil::miTime etime; // end time
   etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
  
+  QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
+  if ( find ==  parameterGroups.end() ) {
+      QMessageBox::critical(this, "Internal error",
+          "Configuration file does not seem to have an entry for parameter group " + wElement,
+          QMessageBox::Ok, QMessageBox::NoButton);
+      return;
+  }
+  const std::vector<int> & parameterList = * find;
 
-  int maxOrder; // size of porder
-  int* porder; // will point to what parameters to show
-  if ( wElement == "Lufttrykk" ) {
-    porder = airPressOrder;
-    maxOrder = NOPARAMAIRPRESS;
-  }
-  else if ( wElement == "Temperatur" ) {
-    porder = tempOrder;
-    maxOrder = NOPARAMTEMP;
-  }
-  else if ( wElement == "Nedbør" ) {
-    porder = precOrder;
-    maxOrder = NOPARAMPREC;
-  }
-  else if ( wElement == "Visuell" ) {
-    porder = visualOrder;
-    maxOrder = NOPARAMVISUAL;
-  }
-  else if ( wElement == "Sjøgang" ) {
-    porder = waveOrder;
-    maxOrder = NOPARAMWAVE;
-  }
-  else if ( wElement == "Synop" ) {
-    porder = synopOrder;
-    maxOrder = NOPARAMSYNOP;
-  }
-  else if ( wElement == "Klimastatistikk" ) {
-    porder = klstatOrder;
-    maxOrder = NOPARAMKLSTAT;
-  }
-  else if ( wElement == "Prioriterte parametere" ) {
-    porder = priorityOrder;
-    maxOrder = NOPARAMPRIORITY;
-  }
-  else if ( wElement == "Vind" ) {
-    porder = windOrder;
-    maxOrder = NOPARAMWIND;
-  }
-  else if ( wElement == "Pluviometerkontroll" ) {
-    porder = pluOrder;
-    maxOrder = NOPARAMPLU;
-  }
-  else if ( wElement == "Alt" ) {
-    porder = order;
-    maxOrder = NOPARAMALL;
-  }
+//  int maxOrder; // size of porder
+//  int* porder; // will point to what parameters to show
+//
+//  if ( wElement == "Lufttrykk" ) {
+//    porder = airPressOrder;
+//    maxOrder = NOPARAMAIRPRESS;
+//  }
+//  else if ( wElement == "Temperatur" ) {
+//    porder = tempOrder;
+//    maxOrder = NOPARAMTEMP;
+//  }
+//  else if ( wElement == "Nedbør" ) {
+//    porder = precOrder;
+//    maxOrder = NOPARAMPREC;
+//  }
+//  else if ( wElement == "Visuell" ) {
+//    porder = visualOrder;
+//    maxOrder = NOPARAMVISUAL;
+//  }
+//  else if ( wElement == "Sjøgang" ) {
+//    porder = waveOrder;
+//    maxOrder = NOPARAMWAVE;
+//  }
+//  else if ( wElement == "Synop" ) {
+//    porder = synopOrder;
+//    maxOrder = NOPARAMSYNOP;
+//  }
+//  else if ( wElement == "Klimastatistikk" ) {
+//    porder = klstatOrder;
+//    maxOrder = NOPARAMKLSTAT;
+//  }
+//  else if ( wElement == "Prioriterte parametere" ) {
+//    porder = priorityOrder;
+//    maxOrder = NOPARAMPRIORITY;
+//  }
+//  else if ( wElement == "Vind" ) {
+//    porder = windOrder;
+//    maxOrder = NOPARAMWIND;
+//  }
+//  else if ( wElement == "Pluviometerkontroll" ) {
+//    porder = pluOrder;
+//    maxOrder = NOPARAMPLU;
+//  }
+//  else if ( wElement == "Alt" ) {
+//    porder = & order[0];
+//    maxOrder = NOPARAMALL;
+//  }
 
   selPar.clear();
   int kk = 0;
-  for ( int jj = 0; jj < maxOrder; jj++ ) {
-    if ( jj >= maxOrder ) break;
+//  for ( int jj = 0; jj < maxOrder; jj++ ) {
+  for ( std::vector<int>::const_iterator it = parameterList.begin(); it != parameterList.end(); ++ it ) {
     
-    const QString sp =  QString(parMap[*(porder+jj)].latin1());
+    const QString & sp =  parMap[* it];
     
-    bool found = pardlg->plb->item(jj)->isSelected();
+    bool found = pardlg->plb->item(kk)->isSelected();
     if ( (found && pardlg->markPar->isChecked()) ||
 	 (!found && pardlg->noMarkPar->isChecked()) ||
 	 pardlg->allPar->isChecked() ) {
-      selParNo[kk] = *(porder + jj);
+      selParNo[kk] = * it;
       selPar.append(sp);
       kk++;
     }
@@ -930,8 +979,15 @@ void HqcMainWindow::ListOK() {
       QTableView * tableView = new QTableView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
-      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(porder, maxOrder, parMap, datalist, this);
+      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, this);
+
       tableView->setModel(dataModel);
+
+      // To get smaller cells, with consistent size, subclass QTableView, and reimplement
+      // int QTableView::sizeHintForColumn ( int column ) const
+      //
+      // Then call:
+      // tableView->resizeColumnsToContents();
 
       ws->addSubWindow(tableView);
 
@@ -1743,12 +1799,12 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
   if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
-    if ( stnr == (*it).stnr && 
-	 abs(typeId) == (*it).cTypeId &&
-	 sensor == (*it).cSensor && 
-	 par == (*it).par && 
-	 otime.date() >= (*it).fDate && 
-	 otime.date() <= (*it).tDate ) {
+    if ( stnr == it->stnr &&
+	 abs(typeId) == it->cTypeId &&
+	 sensor == it->cSensor &&
+	 par == it->par &&
+	 (it->fDate.undef() || otime.date() >= it->fDate) &&
+	 (it->tDate.undef() || otime.date() <= it->tDate) ) {
       tpf = true;
       break;
     }
@@ -1901,6 +1957,7 @@ void HqcMainWindow::checkTypeId(int stnr) {
       crT.fDate = fDate;
       crT.tDate = tDate;
       crT.cLevel = level;
+      crT.cSensor = sensor;
       crT.cTypeId = typeId;
       currentTypeList.push_back(crT);
     }
@@ -1980,75 +2037,28 @@ void HqcMainWindow::readFromParam() {
   paramOrder.open(QIODevice::ReadOnly);
   QTextStream paramStream(&paramOrder);
   int i = 0;
-  while ( paramStream.atEnd() == 0 ) {
-    QString strLine = paramStream.readLine();
-    if ( strLine == "[all]" ) {
-      for ( int ii = 0; ii < NOPARAMALL; ii++){
-	strLine = paramStream.readLine();
-	order[ii] = strLine.toInt();
+
+  parameterGroups.clear();
+  QString group;
+  while ( not paramStream.atEnd() ) {
+      QString data;
+      paramStream >> data;
+      data.stripWhiteSpace();
+      if ( not data.isEmpty() ) {
+        bool ok;
+        int paramid = data.toInt(& ok);
+        if ( not ok )
+          group = data;
+        else {
+            QString name = "<No group>";
+            std::map<QString, QString>::const_iterator find = configNameToUserName.find(group);
+            if ( find != configNameToUserName.end() )
+              name = find->second;
+            parameterGroups[name].push_back(paramid);
+        }
       }
-    }
-    else if ( strLine == "[airpress]" ) {
-      for ( int ii = 0; ii < NOPARAMAIRPRESS; ii++){
-	strLine = paramStream.readLine();
-	airPressOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[temperature]" ) {
-      for ( int ii = 0; ii < NOPARAMTEMP; ii++){
-	strLine = paramStream.readLine();
-	tempOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[prec]" ) {
-      for ( int ii = 0; ii < NOPARAMPREC; ii++){
-	strLine = paramStream.readLine();
-	precOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[visual]" ) {
-      for ( int ii = 0; ii < NOPARAMVISUAL; ii++){
-	strLine = paramStream.readLine();
-	visualOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[wave]" ) {
-      for ( int ii = 0; ii < NOPARAMWAVE; ii++){
-	strLine = paramStream.readLine();
-	waveOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[synop]" ) {
-      for ( int ii = 0; ii < NOPARAMSYNOP; ii++){
-	strLine = paramStream.readLine();
-	synopOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[klstat]" ) {
-      for ( int ii = 0; ii < NOPARAMKLSTAT; ii++){
-	strLine = paramStream.readLine();
-	klstatOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[priority]" ) {
-      for ( int ii = 0; ii < NOPARAMPRIORITY; ii++){
-	strLine = paramStream.readLine();
-	priorityOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[wind]" ) {
-      for ( int ii = 0; ii < NOPARAMWIND; ii++){
-	strLine = paramStream.readLine();
-	windOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[plu]" ) {
-      for ( int ii = 0; ii < NOPARAMPLU; ii++){
-	strLine = paramStream.readLine();
-	pluOrder[ii] = strLine.toInt();
-      }
-    }
   }
+
   bool result;
   cerr.flags(ios::fixed);
 
@@ -2905,6 +2915,7 @@ makeObsDataList( KvObsDataList& dataList )
   miutil::miTime aggTime("1800-01-01 00:00:00") ;
 
   for(IKvObsDataList it=dataList.begin(); it!=dataList.end(); it++ ) {
+
     KvObsData::kvDataList::iterator dit=it->dataList().begin();
     //    IDataList dit = it->dataList().begin();
     int ditSize = it->dataList().size();

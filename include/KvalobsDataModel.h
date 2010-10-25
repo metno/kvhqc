@@ -43,8 +43,7 @@ namespace model
     Q_OBJECT
   public:
     KvalobsDataModel(
-        const int * parameterShowList,
-        std::size_t parameterShowListSize,
+        const std::vector<int> & parameters,
         QMap<int,QString> & paramIdToParamName,
         KvalobsDataListPtr datalist,
         QObject * parent = 0);
@@ -85,7 +84,7 @@ namespace model
 
     enum ColumnType
     {
-      Original, Flag, Corrected,
+      Original, Flag, Corrected, Model,
       ColumnType_SENTRY
     };
     ColumnType getColumnType_(const QModelIndex & index) const;

@@ -88,6 +88,15 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setFocus();
 }
 
+void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
+  plb->clear();
+  for (std::vector<int>::const_iterator it = porder.begin(); it != porder.end(); ++it) {
+      QString sp = parMap[*it];
+      plb->insertItem(sp);
+  }
+}
+
+
 void ParameterDialog::showAll(){
   allPar->setChecked(true);
   markPar->setDisabled(true);

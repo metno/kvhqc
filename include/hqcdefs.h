@@ -64,16 +64,16 @@ typedef list<TypeList>                         ObsTypeList;
 const int NOPARAM          = 1043;
 const int NOPARAMMODEL     = 8;
 const int NOPARAMALL       = 210;
-const int NOPARAMAIRPRESS  = 23; //Ny gr.
-const int NOPARAMTEMP      = 31; //Ny gr
-const int NOPARAMPREC      = 40;
-const int NOPARAMVISUAL    = 36;
-const int NOPARAMWAVE      = 45;
-const int NOPARAMSYNOP     = 39;
-const int NOPARAMKLSTAT    = 33;
-const int NOPARAMPRIORITY  = 31;
-const int NOPARAMWIND      = 4;
-const int NOPARAMPLU       = 6;
+//const int NOPARAMAIRPRESS  = 23; //Ny gr.
+//const int NOPARAMTEMP      = 31; //Ny gr
+//const int NOPARAMPREC      = 40;
+//const int NOPARAMVISUAL    = 36;
+//const int NOPARAMWAVE      = 45;
+//const int NOPARAMSYNOP     = 39;
+//const int NOPARAMKLSTAT    = 33;
+//const int NOPARAMPRIORITY  = 31;
+//const int NOPARAMWIND      = 4;
+//const int NOPARAMPLU       = 6;
 const int noInfo = 7;
 const int nnn = 1;
 

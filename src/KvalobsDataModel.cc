@@ -34,27 +34,23 @@
 
 namespace model
 {
-  const int KvalobsDataModel::COLUMNS_PER_PARAMETER = 3;
+  const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
 
   KvalobsDataModel::KvalobsDataModel(
-      const int * parameterShowList,
-      std::size_t parameterShowListSize,
+      const std::vector<int> & parameters,
       QMap<int,QString> & paramIdToParamName,
       KvalobsDataListPtr datalist,
       QObject * parent) :
     QAbstractTableModel(parent),
     kvalobsData_(datalist)
   {
-    for ( int i = 0; i < parameterShowListSize; ++ i ) {
-        int param = parameterShowList[i];
+    for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
         QString paramName = "unknown";
-        QMap<int,QString>::const_iterator find = paramIdToParamName.find(param);
+        QMap<int,QString>::const_iterator find = paramIdToParamName.find(* param);
         if ( find != paramIdToParamName.end() )
           paramName = * find;
-        parametersToShow_.push_back(Parameter(param, paramName));
+        parametersToShow_.push_back(Parameter(* param, paramName));
     }
-
-
     qDebug() << "Statistics\n"
         "--------\n"
         "Number of parameters: " << parametersToShow_.size();
@@ -102,11 +98,13 @@ namespace model
           switch (getColumnType_(section))
           {
           case Original:
-            return QString("%1 orig").arg(parameter.parameterName);
+            return QString("%1\norig").arg(parameter.parameterName);
           case Flag:
-            return QString("%1 flag").arg(parameter.parameterName);
+            return QString("%1\nflag").arg(parameter.parameterName);
           case Corrected:
-            return QString("%1 corr").arg(parameter.parameterName);
+            return QString("%1\ncorr").arg(parameter.parameterName);
+          case Model:
+            return QString("%1\nmodel").arg(parameter.parameterName);
           default:
             return QVariant();
           }
@@ -115,7 +113,7 @@ namespace model
     else {
         Q_ASSERT(Qt::Vertical == orientation);
         if ( Qt::DisplayRole == role ) {
-            const KvalobsData & d = (*kvalobsData_)[section];
+            const KvalobsData & d = kvalobsData_->at(section);
             // TODO: improve formatting
             QString display = "%1 - %2\t%3";
             const std::string date = d.otime().isoTime();
@@ -148,7 +146,7 @@ namespace model
           if ( not ok )
             return false;
 
-          KvalobsData & d = (*kvalobsData_)[index.row()];
+          KvalobsData & d = kvalobsData_->at(index.row());
           if ( d.controlinfo(p.paramid).flag(kvQCFlagTypes::f_fmis) == 3 ) {
               kvalobs::kvControlInfo ci = d.controlinfo(p.paramid);
               ci.set(kvQCFlagTypes::f_fmis, 1);
@@ -171,12 +169,13 @@ namespace model
   {
     const Parameter & p = getParameter_(index);
 
-    const KvalobsData & d = (*kvalobsData_)[index.row()];
+    const KvalobsData & d = kvalobsData_->at(index.row());
     const kvalobs::kvControlInfo & controlinfo = d.controlinfo(p.paramid);
 
     const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);
 
-    switch ( getColumnType_(index) )
+    ColumnType columnType = getColumnType_(index);
+    switch ( columnType )
     {
     case Original:
       {
@@ -195,6 +194,10 @@ namespace model
         if ( fmis == 2 or fmis == 3 )
           return QVariant();
       return d.corr(p.paramid);
+      }
+    case Model:
+      {
+        return QVariant();
       }
     default:
       return QVariant();
@@ -218,13 +221,15 @@ namespace model
 
   KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(int column) const
   {
-    switch ( column % ColumnType_SENTRY ) {
+    switch ( column % COLUMNS_PER_PARAMETER ) {
     case 0:
       return Original;
     case 1:
       return Flag;
     case 2:
       return Corrected;
+    case 3:
+      return Model;
     }
     Q_ASSERT(false);
   }

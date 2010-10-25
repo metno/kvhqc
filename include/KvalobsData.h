@@ -31,7 +31,6 @@
 #define KVALOBSDATA_H_
 
 #include <QString>
-#include <QSharedDataPointer>
 #include <puTools/miTime>
 #include <boost/shared_ptr.hpp>
 #include <string>
@@ -45,11 +44,21 @@ namespace kvalobs
 namespace model
 {
 
+/**
+ * Internal storage for kvalobs data
+ *
+ * @note Internally, this class contains a pointer to stored data. This means
+ * that modifying an instance of this class also will modify any copies that
+ * have been made earlier.
+ */
 class KvalobsData
 {
 public:
   KvalobsData();
   ~KvalobsData();
+
+  std::size_t size() const;
+  bool empty() const;
 
   const int stnr() const;
   void set_stnr(int value);
@@ -105,9 +114,7 @@ private:
   Impl & impl();
   const Impl & impl() const;
 
-  // Inheriting QSharedData allows us to not define Impl class here, but it
-  // makes it neccessary to access impl_ through the impl() functions.
-  QSharedDataPointer<QSharedData> impl_;
+  boost::shared_ptr<Impl> impl_;
 };
 
 typedef std::vector<KvalobsData> KvalobsDataList;
