@@ -40,9 +40,11 @@ namespace model
       const std::vector<int> & parameters,
       QMap<int,QString> & paramIdToParamName,
       KvalobsDataListPtr datalist,
+      const std::vector<modDatl> & modeldatalist,
       QObject * parent) :
     QAbstractTableModel(parent),
-    kvalobsData_(datalist)
+    kvalobsData_(datalist),
+    modeldatalist_(modeldatalist)
   {
     for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
         QString paramName = "unknown";
@@ -197,6 +199,14 @@ namespace model
       }
     case Model:
       {
+        for ( std::vector<modDatl>::const_iterator it = modeldatalist_.begin(); it != modeldatalist_.end(); ++ it )
+          if ( it->stnr == d.stnr() and it->otime == d.otime() ) {
+            double ret = it->orig[p.paramid];
+            if ( ret != -32767 )
+              return ret;
+            else
+              return QVariant();
+        }
         return QVariant();
       }
     default:

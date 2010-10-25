@@ -32,6 +32,7 @@
 
 
 #include "KvalobsData.h"
+#include "hqcdefs.h"
 #include <QAbstractTableModel>
 #include <QString>
 #include <vector>
@@ -46,6 +47,7 @@ namespace model
         const std::vector<int> & parameters,
         QMap<int,QString> & paramIdToParamName,
         KvalobsDataListPtr datalist,
+        const std::vector<modDatl> & modeldatalist,
         QObject * parent = 0);
 
     virtual ~KvalobsDataModel();
@@ -91,6 +93,7 @@ namespace model
     ColumnType getColumnType_(int column) const;
 
     KvalobsDataListPtr kvalobsData_;
+    const std::vector<modDatl> & modeldatalist_;
 
     std::vector<Parameter> parametersToShow_;
 

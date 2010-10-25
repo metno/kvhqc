@@ -81,8 +81,12 @@ enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
 enum mettType {tabHead, tabList};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 
-
 struct modDatl {
+  modDatl()
+  {
+    std:fill(orig, orig + NOPARAM, -32767);
+  }
+
   int stnr;
   miutil::miTime otime;
   double orig[NOPARAM];

@@ -971,6 +971,7 @@ void HqcMainWindow::ListOK() {
   isShTy = lstdlg->allTypes->isChecked();
 
   readFromData(stime, etime, lity);
+  readFromModelData(stime, etime);
 
   // All windows are shown later, in the tileHorizontal function
 
@@ -979,7 +980,7 @@ void HqcMainWindow::ListOK() {
       QTableView * tableView = new QTableView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
-      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, this);
+      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, this);
 
       tableView->setModel(dataModel);
 
@@ -1867,7 +1868,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
   
   mdlist.erase(mdlist.begin(),mdlist.end());
   modeldatalist.reserve(131072);
-  modeldatalist.clear();  
+  modeldatalist.clear();
   QTime t;
   t.start();
   WhichDataHelper whichData;
