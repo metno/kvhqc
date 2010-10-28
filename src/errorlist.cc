@@ -90,7 +90,7 @@ ErrorList::ErrorList(QStringList& selPar,
 {
   setVScrollBarMode( Q3ScrollView::AlwaysOn  );
   setMouseTracking(true);
-  BusyIndicator busyIndicator();
+  BusyIndicator busyIndicator;
   stationidCol = 1;
   typeidCol = 7;
 
@@ -165,14 +165,20 @@ ErrorList::ErrorList(QStringList& selPar,
   int prevPara = -1;
   for ( int j = 0; j < selPar.count(); j++ ) {
     for ( int i = 0; i < dtl.size(); i++ ) {
-      if (  dtl[i].stnr() > 99999) continue;
-      if (  dtl[i].typeId(noSelPar[j]) < 0 ) continue;
-      if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime());
-      if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
-      if ( !tp ) continue;
+      if (  dtl[i].stnr() > 99999)
+        continue;
+      if (  dtl[i].typeId(noSelPar[j]) < 0 )
+        continue;
+      if (  dtl[i].otime() < stime || dtl[i].otime() > etime )
+        continue;
+      if ( !specialTimeFilter( noSelPar[j], dtl[i].otime()) )
+        continue;
+      if ( ! typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime()) )
+        continue;
+
       missObs mobs;
+
+
       QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]).flagstring());
       int flg = ctr.mid(4,1).toInt(0,16);
       int tdiff = miTime::hourDiff(dtl[i].otime(),stime);
@@ -259,7 +265,7 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.flg = flg;
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
-      if ( lity == erLi ) {
+      if ( lity == erLi || lity == alLi ) {
 	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
 	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
 	    ((flg == 2 || flg == 3) && flTyp == "fnum") )
