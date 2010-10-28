@@ -55,10 +55,6 @@ namespace model
     KvalobsDataListPtr & kvalobsData() { return kvalobsData_; }
     const KvalobsDataListPtr & kvalobsData() const { return kvalobsData_; }
 
-//    virtual QModelIndex index(int row, int column, const QModelIndex & parent = QModelIndex()) const;
-
-//    virtual QModelIndex parent(const QModelIndex & index) const;
-
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex & parent = QModelIndex()) const;
 
@@ -69,6 +65,9 @@ namespace model
     Qt::ItemFlags flags(const QModelIndex & index) const;
 
     bool setData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
+
+  signals:
+    void dataModification(const kvalobs::kvData & modifiedData);
 
   private:
     QVariant displayRoleData(const QModelIndex & index) const;
@@ -91,6 +90,8 @@ namespace model
     };
     ColumnType getColumnType_(const QModelIndex & index) const;
     ColumnType getColumnType_(int column) const;
+
+    kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
     KvalobsDataListPtr kvalobsData_;
     const std::vector<modDatl> & modeldatalist_;

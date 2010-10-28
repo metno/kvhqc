@@ -30,10 +30,12 @@
 #ifndef KVALOBSDATA_H_
 #define KVALOBSDATA_H_
 
-#include <QString>
-#include <puTools/miTime>
+#include <kvalobs/kvData.h>
 #include <boost/shared_ptr.hpp>
 #include <string>
+
+
+class QString;
 
 namespace kvalobs
 {
@@ -107,6 +109,8 @@ public:
 
   const std::string cfailed(std::size_t parameter) const;
   void set_cfailed(std::size_t parameter, const std::string & value);
+
+  kvalobs::kvData getKvData(std::size_t paramid) const;
 
 private:
   class Impl;

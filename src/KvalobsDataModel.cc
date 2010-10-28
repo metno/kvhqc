@@ -32,6 +32,12 @@
 #include <QDebug>
 
 
+namespace
+{
+  // Only for internal use
+  struct InvalidIndex : public std::exception {};
+}
+
 namespace model
 {
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
@@ -160,6 +166,11 @@ namespace model
           d.set_corr(p.paramid, val);
 
           emit dataChanged(index, index);
+          try {
+            const kvalobs::kvData & d = getKvData_(index);
+            emit dataModification(d);
+          }
+          catch ( InvalidIndex & ) {}
           return true;
       }
     }
@@ -242,6 +253,17 @@ namespace model
       return Model;
     }
     Q_ASSERT(false);
+  }
+
+  kvalobs::kvData KvalobsDataModel::getKvData_(const QModelIndex & index) const
+  {
+    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      throw InvalidIndex();
+
+    const Parameter & parameter = getParameter_(index);
+
+    const KvalobsData & d = kvalobsData_->at(index.row());
+    return d.getKvData(parameter.paramid);
   }
 
 }

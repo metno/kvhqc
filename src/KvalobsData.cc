@@ -28,8 +28,7 @@
  */
 
 #include "../include/KvalobsData.h"
-#include <kvalobs/flag/kvControlInfo.h>
-#include <kvalobs/flag/kvUseInfo.h>
+#include <QString>
 #include <algorithm>
 #include <functional>
 #include <map>
@@ -307,6 +306,24 @@ const std::string KvalobsData::cfailed(std::size_t parameter) const
 void KvalobsData::set_cfailed(std::size_t parameter, const std::string & value)
 {
   impl().obsData(parameter)->cfailed = value;
+}
+
+kvalobs::kvData KvalobsData::getKvData(std::size_t paramid) const
+{
+  return kvalobs::kvData(
+      stnr(),
+      otime(),
+      orig(paramid),
+      paramid,
+      tbtime(),
+      typeId(paramid),
+      sensor(paramid),
+      level(paramid),
+      corr(paramid),
+      controlinfo(paramid),
+      useinfo(paramid),
+      cfailed(paramid)
+      );
 }
 
 KvalobsData::Impl & KvalobsData::impl()

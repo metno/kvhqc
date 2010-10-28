@@ -989,6 +989,11 @@ void HqcMainWindow::ListOK() {
       //
       // Then call:
       // tableView->resizeColumnsToContents();
+      //
+      // OR
+      //
+      // Use a custom delegate, perhaps?
+
 
       ws->addSubWindow(tableView);
 
