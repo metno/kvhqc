@@ -29,7 +29,9 @@
 
 #include <KvalobsDataModel.h>
 #include <kvalobs/flag/kvControlInfo.h>
+#include <kvalobs/kvDataOperations.h>
 #include <QDebug>
+#include <cmath>
 
 
 namespace
@@ -93,7 +95,8 @@ namespace model
 
     switch ( role ) {
     case Qt::DisplayRole:
-        return displayRoleData(index);
+    case Qt::EditRole:
+      return displayRoleData(index);
     }
     return QVariant();
   }
@@ -102,8 +105,8 @@ namespace model
   {
     if ( Qt::Horizontal == orientation) {
       if ( Qt::DisplayRole == role ) {
-          const Parameter & parameter = getParameter_(section);
-          switch (getColumnType_(section))
+          const Parameter & parameter = getParameter(section);
+          switch (getColumnType(section))
           {
           case Original:
             return QString("%1\norig").arg(parameter.parameterName);
@@ -135,7 +138,7 @@ namespace model
   Qt::ItemFlags KvalobsDataModel::flags(const QModelIndex & index) const
   {
     Qt::ItemFlags ret = QAbstractTableModel::flags(index);
-    if ( getColumnType_(index) == Corrected )
+    if ( getColumnType(index) == Corrected )
       ret |= Qt::ItemIsEditable;
     return ret;
   }
@@ -146,32 +149,40 @@ namespace model
       return false;
 
     if ( Qt::EditRole == role ) {
-      if ( getColumnType_(index) == Corrected ) {
-          const Parameter & p = getParameter_(index);
+      if ( getColumnType(index) == Corrected ) {
+          const Parameter & p = getParameter(index);
 
+          // Invalid input (should never happen)
           bool ok;
           double val = value.toDouble(& ok);
           if ( not ok )
             return false;
 
-          KvalobsData & d = kvalobsData_->at(index.row());
-          if ( d.controlinfo(p.paramid).flag(kvQCFlagTypes::f_fmis) == 3 ) {
-              kvalobs::kvControlInfo ci = d.controlinfo(p.paramid);
-              ci.set(kvQCFlagTypes::f_fmis, 1);
-              d.set_controlinfo(p.paramid, ci);
-          }
-
-          qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << d.corr(p.paramid) << " to " << val;
-
-          d.set_corr(p.paramid, val);
-
-          emit dataChanged(index, index);
           try {
-            const kvalobs::kvData & d = getKvData_(index);
-            emit dataModification(d);
+            KvalobsData & d = kvalobsData_->at(index.row());
+
+            // Insignificant change. Ignored.
+            double oldValue = d.corr(p.paramid);
+            if ( std::fabs(oldValue - val) < 0.005 )
+              return false;
+
+            kvalobs::kvData changeData = getKvData_(index);
+            kvalobs::hqc::hqc_auto_correct(changeData, val);
+
+            // Update stored data
+            d.set_corr(p.paramid, val);
+            d.set_controlinfo(p.paramid, changeData.controlinfo());
+            d.set_useinfo(p.paramid, changeData.useinfo());
+
+            QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
+            emit dataChanged(flagIndex, index);
+            emit dataModification(changeData);
+            qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val;
+            return true;
           }
-          catch ( InvalidIndex & ) {}
-          return true;
+          catch ( InvalidIndex & ) {
+              return false;
+          }
       }
     }
     return false;
@@ -180,14 +191,14 @@ namespace model
 
   QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
   {
-    const Parameter & p = getParameter_(index);
+    const Parameter & p = getParameter(index);
 
     const KvalobsData & d = kvalobsData_->at(index.row());
     const kvalobs::kvControlInfo & controlinfo = d.controlinfo(p.paramid);
 
     const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);
 
-    ColumnType columnType = getColumnType_(index);
+    ColumnType columnType = getColumnType(index);
     switch ( columnType )
     {
     case Original:
@@ -225,22 +236,22 @@ namespace model
     }
   }
 
-  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter_(const QModelIndex &index) const
+  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const
   {
-    return getParameter_(index.column());
+    return getParameter(index.column());
   }
 
-  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter_(int column) const
+  const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(int column) const
   {
     return parametersToShow_.at(column / COLUMNS_PER_PARAMETER);
   }
 
-  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(const QModelIndex & index) const
+  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType(const QModelIndex & index) const
   {
-    return getColumnType_(index.column());
+    return getColumnType(index.column());
   }
 
-  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType_(int column) const
+  KvalobsDataModel::ColumnType KvalobsDataModel::getColumnType(int column) const
   {
     switch ( column % COLUMNS_PER_PARAMETER ) {
     case 0:
@@ -260,7 +271,7 @@ namespace model
     if ( not index.isValid() or index.row() >= kvalobsData_->size() )
       throw InvalidIndex();
 
-    const Parameter & parameter = getParameter_(index);
+    const Parameter & parameter = getParameter(index);
 
     const KvalobsData & d = kvalobsData_->at(index.row());
     return d.getKvData(parameter.paramid);

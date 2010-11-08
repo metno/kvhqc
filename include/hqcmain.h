@@ -243,43 +243,6 @@ public:
    */
   miutil::miString hqcType(int, int);
 
-/*!
- * \brief Convert to "Diana-value" of range check flag 
-*/
-  int numCode1(int);
-/*!
- * \brief Convert to "Diana-value" of consistency check flag 
-*/
-  int numCode2(int);
-/*!
- * \brief Convert to "Diana-value" of prognostic space control flag 
-*/
-  int numCode3(int);
-/*!
- * \brief Convert to "Diana-value" of step check flag 
-*/
-  int numCode4(int);
-/*!
- * \brief Convert to "Diana-value" of timeseries adaption flag 
-*/
-  int numCode5(int);
-/*!
- * \brief Convert to "Diana-value" of statistics control flag 
-*/
-  int numCode6(int);
-/*!
- * \brief Convert to "Diana-value" of climatology control flag 
-*/
-  int numCode7(int);
-/*!
- * \brief Convert to "Diana-value" of HQC flag 
-*/
-  int numCode8(int);
-/*!
- * \brief Calculate the 5-digit flag-code to be shown in HQC and Diana
-*/
-  int getShowFlag(kvalobs::kvDataFlag);
-
   ListDialog* lstdlg;
   ClockDialog* clkdlg;
   DianaShowDialog* dshdlg;
@@ -501,7 +464,7 @@ protected:
   // socket methods
   void initDiana();
   void sendMessage(miMessage&);
-  void sendImage(const miString name, const QImage& image);
+  void sendImage(const miutil::miString name, const QImage& image);
   //  void sendShowText(const miString site);
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);

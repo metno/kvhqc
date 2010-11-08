@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "GetData.h"
 #include "GetTextData.h"
 #include "KvalobsDataModel.h"
+#include "KvalobsDataDelegate.h"
 #include <iomanip>
 #include <QAction>
 #include <qpixmap.h>
@@ -980,20 +981,23 @@ void HqcMainWindow::ListOK() {
       QTableView * tableView = new QTableView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
-      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, this);
+      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
+      tableView->setItemDelegate(delegate);
+
+      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, tableView);
 
       tableView->setModel(dataModel);
 
-      // To get smaller cells, with consistent size, subclass QTableView, and reimplement
-      // int QTableView::sizeHintForColumn ( int column ) const
-      //
-      // Then call:
-      // tableView->resizeColumnsToContents();
-      //
-      // OR
-      //
-      // Use a custom delegate, perhaps?
+      int tableSize = dataModel->columnCount();
+      for ( int i = 0; i < tableSize; ++ i ) {
+          // Hide unused model columns
+          if ( dataModel->getColumnType(i) == model::KvalobsDataModel::Model )
+            if ( std::find(modelParam, modelParam + NOPARAMMODEL, dataModel->getParameter(i).paramid) == modelParam + NOPARAMMODEL )
+              tableView->hideColumn(i);
 
+          // Smaller cells. This should probably be done dynamically, somehow
+          tableView->setColumnWidth(i, 56);
+      }
 
       ws->addSubWindow(tableView);
 
@@ -1541,174 +1545,6 @@ void HqcMainWindow::listData(int index,
     }	    
   }
 }
-/*
-Convert to "Diana-value" of range check flag 
-*/
-int HqcMainWindow::numCode1(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib == 4 || nib == 5 )
-    code = 3;
-  else if ( nib == 6 )
-    code = 9;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of consistency check flag 
-*/
-int HqcMainWindow::numCode2(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib >= 2 && nib <= 7 )
-    code = 8;
-  else if ( nib == 10 || nib == 11 )
-    code = 7;
-  else if ( nib == 13 )
-    code = 9;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of prognostic space control flag 
-*/
-int HqcMainWindow::numCode3(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib == 4 || nib == 5 )
-    code = 3;
-  else if ( nib == 6 )
-    code = 5;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of step check flag 
-*/
-int HqcMainWindow::numCode4(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib >= 4 && nib <= 7 )
-    code = 8;
-  else if ( nib == 9 || nib == 10 )
-    code = 7;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of timeseries adaption flag 
-*/
-int HqcMainWindow::numCode5(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 || nib == 2 )
-    code = 5; 
-  else if ( nib == 3 )
-    code = 3;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of statistics control flag 
-*/
-int HqcMainWindow::numCode6(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 )
-    code = 3;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of climatology control flag 
-*/
-int HqcMainWindow::numCode7(int nib) {
-  int code = 9;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 )
-    code = 3;
-  else if ( nib == 3 )
-    code = 7;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of HQC flag 
-*/
-int HqcMainWindow::numCode8(int nib) {
-  int code = 9;
-  if ( nib <  10 )
-    code = nib;
-  else
-    code = 9;
-  return code;
-}
-
-/*
- Calculate the 5-digit flag-code to be shown in Diana
-*/
-int HqcMainWindow::getShowFlag(kvalobs::kvDataFlag controlInfo) {
-
-  // Find flags from the different checks
-
-  int nib1  =controlInfo.flag(1);
-  int nib2  =controlInfo.flag(2);
-  int nib3  =controlInfo.flag(4);
-  int nib4  =controlInfo.flag(3);
-  int nib5  =controlInfo.flag(7);
-  int nib6  =controlInfo.flag(9);
-  int nib7  =controlInfo.flag(11);
-  int nib8  =controlInfo.flag(10);
-  int nib9  =controlInfo.flag(12);
-  int nib10 =controlInfo.flag(15);
-  // Decode flags
-
-  int nc1 = numCode1(nib1); // Range check
-  int nc2 = numCode2(nib2); // Formal Consistency check
-  int nc8 = numCode2(nib8); // Climatologic Consistency check
-  // Use the largest value from these checks
-  nc1 = nc1 > nc2 ? nc1 : nc2;
-  nc1 = nc1 > nc8 ? nc1 : nc8;
-  nc2 = numCode3(nib3); //Prognostic space control
-  int nc3 = numCode4(nib4); //Step check
-  int nc4 = numCode5(nib5); //Timeseries adaption
-  int nc5 = numCode6(nib6); //Statistics control
-  int nc6 = numCode7(nib7); //Climatology control
-  // Use the largest value from the three last checks
-  nc4 = nc4 > nc5 ? nc4 : nc5;
-  nc4 = nc4 > nc6 ? nc4 : nc6;
-  if ( nib9 > 1 )
-    nc4 = nc4 > 6 ? nc4 : 6;
-  nc5 = numCode8(nib10);
-  int nc = 10000*nc1 + 1000*nc2 + 100*nc3 + 10*nc4 + nc5;
-
-  return nc;
-}
 
 bool HqcMainWindow::timeFilter(int hour) {
   if ( clkdlg->clk[hour]->isChecked() )
@@ -2205,7 +2041,7 @@ void HqcMainWindow::initDiana()
 
   cerr<< "Try to establish connection with diana.." << endl;
 
-  miString type = "Diana";
+  miutil::miString type = "Diana";
     
       
   if(pluginB->clientTypeExist(type)){
@@ -2631,7 +2467,7 @@ void HqcMainWindow::updateParams(int station,
   double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),(*datalist)[i].corr(1));
   int    iflag  = atoi(flag.cStr());
   (*datalist)[i].set_corr(parameterIndex, dValue);
-  (*datalist)[i].set_flag(parameterIndex, iflag);
+  //(*datalist)[i].set_flag(parameterIndex, iflag);
   miutil::miString value_flag = miutil::miString(cdValue) + ":" + flag;
 
   //update timeseries
@@ -2977,7 +2813,7 @@ makeObsDataList( KvObsDataList& dataList )
 	tdl.set_typeId(dit->paramID(), typeId);
 	tdl.set_showTypeId(typeId);
 	tdl.set_orig(dit->paramID(), dit->original());
-	tdl.set_flag(dit->paramID(), getShowFlag(dit->controlinfo()));
+	//tdl.set_flag(dit->paramID(), getShowFlag(dit->controlinfo()));
 	tdl.set_corr(dit->paramID(), dit->corrected());
 	tdl.set_sensor(dit->paramID(), dit->sensor());
 	tdl.set_level(dit->paramID(), dit->level());

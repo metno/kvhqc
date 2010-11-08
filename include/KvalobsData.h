@@ -90,7 +90,6 @@ public:
   void set_orig(std::size_t parameter, double value);
 
   const int flag(std::size_t parameter) const;
-  void set_flag(std::size_t parameter, int value);
 
   const double corr(std::size_t parameter) const;
   void set_corr(std::size_t parameter, double value);

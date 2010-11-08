@@ -39,7 +39,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
 #include <kvalobs/kvDbGate.h>
-#include <puTools/miTime>
+#include <puTools/miTime.h>
 #include <string>
 #include <kvdb/dbdrivermgr.h>
 #include <qUtilities/QLetterCommands.h>
@@ -84,7 +84,7 @@ enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 struct modDatl {
   modDatl()
   {
-    std:fill(orig, orig + NOPARAM, -32767);
+    std::fill(orig, orig + NOPARAM, -32767);
   }
 
   int stnr;

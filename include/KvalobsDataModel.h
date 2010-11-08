@@ -66,11 +66,13 @@ namespace model
 
     bool setData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
 
-  signals:
-    void dataModification(const kvalobs::kvData & modifiedData);
-
-  private:
-    QVariant displayRoleData(const QModelIndex & index) const;
+    enum ColumnType
+    {
+      Original, Flag, Corrected, Model,
+      ColumnType_SENTRY
+    };
+    ColumnType getColumnType(const QModelIndex & index) const;
+    ColumnType getColumnType(int column) const;
 
     struct Parameter
     {
@@ -80,16 +82,15 @@ namespace model
       int paramid;
       QString parameterName;
     };
-    const Parameter & getParameter_(const QModelIndex & index) const;
-    const Parameter & getParameter_(int column) const;
+    const Parameter & getParameter(const QModelIndex & index) const;
+    const Parameter & getParameter(int column) const;
 
-    enum ColumnType
-    {
-      Original, Flag, Corrected, Model,
-      ColumnType_SENTRY
-    };
-    ColumnType getColumnType_(const QModelIndex & index) const;
-    ColumnType getColumnType_(int column) const;
+
+  signals:
+    void dataModification(const kvalobs::kvData & modifiedData);
+
+  private:
+    QVariant displayRoleData(const QModelIndex & index) const;
 
     kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
