@@ -37,7 +37,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <decodeutility/DataReinserter.h>
 #include <qtooltip.h>
 #include <q3table.h>
-#include <puTools/miDate>
+#include <puTools/miDate.h>
 #include <utility>
 #include <vector>
 #include <set>

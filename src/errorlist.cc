@@ -175,7 +175,7 @@ ErrorList::ErrorList(QStringList& selPar,
       missObs mobs;
       QString ctr = QString::fromStdString(dtl[i].controlinfo[noSelPar[j]]);
       int flg = ctr.mid(4,1).toInt(0,16);
-      int tdiff = miTime::hourDiff(dtl[i].otime,stime);
+      int tdiff = miutil::miTime::hourDiff(dtl[i].otime,stime);
       if ( flg == 6 ) {
 	mobs.oTime = dtl[i].otime;
 	mobs.time = tdiff;

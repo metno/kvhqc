@@ -63,7 +63,7 @@ QPushButton* PixmapButton( const QPixmap& pixmap, QWidget* parent,
 
 // ComboBox
 
-QComboBox* ComboBox(QWidget* parent, vector<miString> vstr,
+QComboBox* ComboBox(QWidget* parent, vector<miutil::miString> vstr,
 		    bool Enabled=true, int defItem=0);
 
 QComboBox* ComboBox(QWidget* parent, QColor* pixcolor, int nr_colors,
@@ -85,7 +85,7 @@ QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 		 Qt::Orientation orient, QWidget* parent );
 
-void listBox( Q3ListBox* box, vector<miString> vstr, int defItem=-1 );
+void listBox( Q3ListBox* box, vector<miutil::miString> vstr, int defItem=-1 );
 
 QPixmap* linePixmap(const miutil::miString& pattern, int linewidth);
 

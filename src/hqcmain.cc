@@ -54,7 +54,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QFrame>
 #include <Q3PopupMenu>
 #include <qTimeseries/TSPlot.h>
-#include <glText/glTextX.h>
+#include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
 #include "identifyUser.h"
 #include "BusyIndicator.h"
@@ -376,7 +376,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   // make the timeseries-plot-dialog
   tspdialog = new TSPlotDialog(this);
   // init fonts for timeseries
-  glText* gltext= new glTextX();
+  glText* gltext= new glTextQtTexture;
   gltext->testDefineFonts();
 }
 
@@ -2225,7 +2225,7 @@ void HqcMainWindow::initDiana()
 
   cerr<< "Try to establish connection with diana.." << endl;
 
-  miString type = "Diana";
+  miutil::miString type = "Diana";
     
       
   if(pluginB->clientTypeExist(type)){

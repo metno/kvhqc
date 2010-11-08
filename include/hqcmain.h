@@ -467,7 +467,7 @@ protected:
   // socket methods
   void initDiana();
   void sendMessage(miMessage&);
-  void sendImage(const miString name, const QImage& image);
+  void sendImage(const miutil::miString name, const QImage& image);
   //  void sendShowText(const miString site);
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);

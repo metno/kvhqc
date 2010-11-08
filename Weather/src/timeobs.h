@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __Weather__TimeObs_h__
 
 #include <kvalobs/kvData.h>
-#include <puTools/miTime>
+#include <puTools/miTime.h>
 #include <set>
 #include <vector>
 #include <memory>

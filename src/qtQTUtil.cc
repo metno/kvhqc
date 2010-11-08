@@ -42,6 +42,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <iostream>
 
+using namespace miutil;
+
 //#define IN_COLOR  QColor(0,80,0)
 #define OUT_COLOR QColor(192,192,192)
 #define isMotif true

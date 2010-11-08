@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__StationSelection_h__
 
 #include <qwidget.h>
-#include <puTools/miDate>
+#include <puTools/miDate.h>
 #include <map>
 
 class QLineEdit;

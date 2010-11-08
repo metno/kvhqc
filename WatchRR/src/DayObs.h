@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__DayObs_h__
 
 #include <kvalobs/kvData.h>
-#include <puTools/miDate>
+#include <puTools/miDate.h>
 #include <set>
 #include <vector>
 #include <memory>

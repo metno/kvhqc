@@ -42,8 +42,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <q3table.h>
 #include <qstring.h>
 #include <qpainter.h>
-#include <puTools/miTime>
-#include <puTools/miString>
+#include <puTools/miTime.h>
+#include <puTools/miString.h>
 #include <math.h>
 #include "hqcdefs.h"
 #include <kvalobs/kvData.h>

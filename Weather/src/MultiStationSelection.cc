@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "weatherdialog.h"
 #include "BusyIndicator.h"
-#include <puTools/miTime>
+#include <puTools/miTime.h>
 #include <kvcpp/KvApp.h>
 #include <q3listview.h>
 #include <qlayout.h>

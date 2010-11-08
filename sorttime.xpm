@@ -1,5 +1,5 @@
 /* XPM */
-static char *sorttime[]={
+static const char *sorttime[]={
 "70 60 139 2",
 "Qt c None",
 "#C c #000000",

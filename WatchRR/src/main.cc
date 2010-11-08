@@ -37,6 +37,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "MultiStationSelection.h"
 
+using namespace std;
+
 typedef kvservice::corba::CorbaKvApp KvApp;
 typedef std::list<kvalobs::kvData> kvDataList;
 
