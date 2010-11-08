@@ -29,15 +29,14 @@ INCLUDE:=-Isrc/ -I../include \
 	 -I$(QTINC)/Qt \
 	 -I$(QTINC)/QtCore \
 	 -I$(QTINC)/QtGui \
-	`pkg-config --cflags kvcpp putools` \
+	`pkg-config --cflags libkvcpp puTools` \
 	 -I../include/ \
 	 `pkg-config --cflags $(PKG_CONF_LIBS)`
 
 LIB:= -L../authentication/ -lauthentication -lldap \
 	-L$(BOOST_LIB) -lboost_thread \
-	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2` \
-	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
-	-L$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
+	`pkg-config --libs libkvcpp puTools` \
+	-L$(QTLIBDIR) $(QT_LIBS) -lQt3Support -lQtCore -lQtGui -lQtOpenGL -lm `pkg-config --libs libxml++-2.6`
 
 CXXFLAGS+= -Wall -DQT3_SUPPORT
 DEFINES+=

@@ -40,6 +40,8 @@ DEPENDSFILE=$(OBJDIR)/make.depends
 MOCFILE=$(OBJDIR)/make.moc
 DEFINES=-DQT_GENUINE_STR -DWITH_STD_BOOL -D_STANDARD_C_PLUS_PLUS
 
+#METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools tsData pets2 glp puMet puCtools puDatatypes
+METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools glp puMet puCtools puDatatypes ftgl
 INCLUDE=-I$(INCDIR) \
 	-I$(AUTHDIR) \
 	-I$(FAILDIR)/src \
@@ -54,17 +56,16 @@ INCLUDE=-I$(INCDIR) \
 	-I$(QTINC)/QtGui \
 	-I$(QTINC)/QtOpenGL \
 	-I$(QTINC)/QtNetwork \
-	`pkg-config --cflags kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools pudatatypes`
+	`pkg-config --cflags libkvcpp $(METLIBS_PKG_CONFIG)`
 
 LINKS:= -L$(WATCHDIR) -lWatchRR \
 	-L$(WEATHERDIR) -lWeather \
 	-L$(FAILDIR) -lFailInfo \
 	-L$(AUTHDIR) -lauthentication -lldap \
 	-L$(BOOST_LIB) -lboost_thread \
-	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools pudatatypes` \
-	-L$(OMNI_LIB) -lomniORB4 -lomnithread \
-	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL $(QT_LIBS) $(XLIBDIR) -lXmu -lXext -lXt -lXrender -lSM -lICE -lX11 -lXxf86vm -lm `pkg-config --libs libxml++-2.6`
-###	`pkg-config --libs kvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools parameter pudatatypes` \
+	`pkg-config --libs libkvcpp $(METLIBS_PKG_CONFIG)` -lgfortran \
+	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL -lm \
+	`pkg-config --libs libxml++-2.6`
 
 OPTIONS="CXX=${CXX}" "CCFLAGS=${CXXFLAGS} ${DEFINES}" "CC=${CC}" "CFLAGS=${CFLAGS} ${DEFINES}" "LDFLAGS=${CXXLDFLAGS}" "AR=${AR}" "ARFLAGS=${ARFLAGS}" "INCLUDE=${INCLUDE}" "LIBDIR=${LIBDIR}" "DEPENDSFILE=../${DEPENDSFILE}" "BINDIR=../${BINDIR}" "LOCALDIR=${LOCALDIR}" "INCDIR=${INCDIR}" "LINKS=${LINKS}" "MOC=${MOC}" "MOCFILE=../${MOCFILE}" "AUTHDIR=$(AUTHDIR)" "FAILDIR=$(FAILDIR)" "WATCHDIR=$(WATCHDIR)" "WEATHERDIR=$(WEATHERDIR)"
 

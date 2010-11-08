@@ -39,7 +39,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvStationParam.h>
 #include <kvalobs/kvQCFlagTypes.h>
-#include <puTools/miString>
+#include <puTools/miString.h>
 
 using namespace std;
 using namespace kvalobs;

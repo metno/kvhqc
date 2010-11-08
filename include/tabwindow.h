@@ -39,8 +39,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iomanip>
 #include <stdlib.h>
 #include <qstring.h>
-#include <puTools/miTime>
-#include <puTools/miString>
+#include <puTools/miTime.h>
+#include <puTools/miString.h>
 #include "hqcdefs.h"
 #include "hqcmain.h"
 

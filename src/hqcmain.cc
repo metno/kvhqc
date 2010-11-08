@@ -42,7 +42,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "GetData.h"
 #include "GetTextData.h"
 #include "KvalobsDataModel.h"
-#include "KvalobsDataDelegate.h"
 #include <iomanip>
 #include <QAction>
 #include <qpixmap.h>
@@ -56,7 +55,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QFrame>
 #include <QTextStream>
 #include <qTimeseries/TSPlot.h>
-#include <glText/glTextX.h>
+#include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
 #include "identifyUser.h"
 #include "BusyIndicator.h"
@@ -981,8 +980,8 @@ void HqcMainWindow::ListOK() {
       QTableView * tableView = new QTableView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
-      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
-      tableView->setItemDelegate(delegate);
+//      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
+//      tableView->setItemDelegate(delegate);
 
       model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, tableView);
 

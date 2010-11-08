@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "timeobs.h"
 #include "enums.h"
-#include <puTools/miTime>
+#include <puTools/miTime.h>
 #include <kvcpp/KvApp.h>
 #include <kvcpp/WhichDataHelper.h>
 #include <kvalobs/kvDataOperations.h>

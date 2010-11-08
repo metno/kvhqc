@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "FailList.h"
 #include "explainQC.h"
 #include "cFailedParam.h"
-#include <puTools/miString>
+#include <puTools/miString.h>
 #include <miutil/commastring.h>
 #include <map>
 #include <set>

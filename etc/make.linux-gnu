@@ -4,20 +4,20 @@ LOCALDIR=$(HQC)/local/src/libs
 PLT=
 
 # Compilers etc
-CXX=g++
-CC=gcc
+#CXX=g++
+#CC=gcc
 
 AR=ar
 ARFLAGS=-cr
 
 # CXX-flags
-#CXXFLAGS=-LANG:std -O2 -pthread
-CXXFLAGS=-LANG:std -O2 -pthread -DQT3_SUPPORT
-CXXLDFLAGS=-LANG:std -O2
+#CXXFLAGS=-LANG:std -O0 -pthread
+CXXFLAGS=-LANG:std -O0 -pthread -DQT3_SUPPORT
+CXXLDFLAGS=-LANG:std -O0
 #CXXFLAGS=-LANG:std -g
 #CXXLDFLAGS=-LANG:std -g
 # C-flags
-CFLAGS= -O2
+CFLAGS= -O0
 ##CFLAGS= -g
 CLDFLAGS=
 

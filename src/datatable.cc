@@ -488,7 +488,7 @@ int DataTable::originalIndex( int row ) const
   return originalIndexes[ row ];
 }
 
-void DataTable::selectStation( int station, const miTime & obstime )
+void DataTable::selectStation( int station, const miutil::miTime & obstime )
 {
   cerr << "SelectStation\n";
   const vector<model::KvalobsData> & data = getHqcMainWindow( this )->datalist;

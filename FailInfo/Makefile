@@ -17,8 +17,7 @@ INCLUDE:= $(BOOSTINCLUDE) \
 	 $(OMNIINCLUDE) \
 	 -I$(QTINC) \
 	 -I$(QTINC)/Qt \
-	`pkg-config --cflags kvcpp` \
-	 -I$(PUTOOLS)/include -I$(PUTOOLS)/include/puTools
+	`pkg-config --cflags libkvcpp puTools`
 
 CXXFLAGS+= -Wall -g -DQT3_SUPPORT
 DEFINES+=

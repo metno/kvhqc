@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <qwidget.h>
 #include <map>
-#include <puTools/miTime>
+#include <puTools/miTime.h>
 
 class QLineEdit;
 class Q3DateTimeEdit;

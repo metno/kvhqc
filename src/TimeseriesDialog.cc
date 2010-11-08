@@ -37,6 +37,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Q3VBoxLayout>
 #include <qUtilities/miTimeSpinBox.h>
 
+using namespace miutil;
+
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   setCaption("Tidsserie HQC");
