@@ -108,6 +108,9 @@ public:
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
+
+
+public slots:
   /*!
    * \brief Send observation times to Diana 
    */
@@ -172,6 +175,9 @@ public:
 		int*,
 		int&,
 		int&);
+
+public:
+
   /*!
    * \brief Returns true if the hour given as input is checked in the ClockDialog
    */
@@ -276,6 +282,7 @@ public slots:
  * \brief Produces the data table or the error list
 */
   void ListOK();
+
 /*!
  * \brief Called when OK button in ClockDialog is clicked
 */

@@ -986,6 +986,7 @@ void HqcMainWindow::ListOK() {
       model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, tableView);
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
+      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
 
       tableView->setModel(dataModel);
 
@@ -2472,7 +2473,7 @@ void HqcMainWindow::updateParams(int station,
   miutil::miString value_flag = miutil::miString(cdValue) + ":" + flag;
 
   //update timeseries
-  TimeseriesOK();
+//  TimeseriesOK();
 
   //update diana
   miMessage pLetter;
