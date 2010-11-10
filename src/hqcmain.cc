@@ -985,6 +985,8 @@ void HqcMainWindow::ListOK() {
 
       model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, tableView);
 
+      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
+
       tableView->setModel(dataModel);
 
       int tableSize = dataModel->columnCount();
