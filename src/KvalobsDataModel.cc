@@ -97,6 +97,9 @@ namespace model
     case Qt::DisplayRole:
     case Qt::EditRole:
       return displayRoleData(index);
+    case Qt::TextColorRole:
+      return textColorRoleData(index);
+
     }
     return QVariant();
   }
@@ -234,6 +237,24 @@ namespace model
     default:
       return QVariant();
     }
+  }
+
+  QVariant KvalobsDataModel::textColorRoleData(const QModelIndex & index) const
+  {
+    ColumnType columnType = getColumnType(index);
+    if ( Corrected == columnType ) {
+        if ( index.isValid() and index.row() >= kvalobsData_->size() ) {
+            const KvalobsData & d = kvalobsData_->at(index.row());
+            const kvalobs::kvControlInfo & ci = d.controlinfo(getParameter(index).paramid);
+            if ( ci.flag(15) > 0 ) { // hqc touched
+              if ( ci.qc2dDone() )
+                return Qt::darkMagenta;
+              if ( ci.flag(4) >= 6 ) // controlinfo(4) is fnum
+                return Qt::red;
+            }
+        }
+    }
+    return Qt::black;
   }
 
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const

@@ -91,6 +91,7 @@ namespace model
 
   private:
     QVariant displayRoleData(const QModelIndex & index) const;
+    QVariant textColorRoleData(const QModelIndex & index) const;
 
     kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
