@@ -278,6 +278,9 @@ public:
   DataReinserter<kvservice::KvApp> *reinserter;
 
 public slots:
+
+  void saveDataToKvalobs(const kvalobs::kvData & toSave);
+
 /*!
  * \brief Produces the data table or the error list
 */
@@ -411,10 +414,7 @@ private:
   QString dateandTime;
   QString kvParam[NOPARAMALL];
   QString kdbParam[NOPARAMALL];
-  // Database connection
-  kvalobs::kvDbGate dbGate;
-  dnmi::db::Connection *con;
-  dnmi::db::DriverManager dbmngr;
+
   //  DataList dlist;
   ModelDataList mdlist;
   ObsTypeList otpList;

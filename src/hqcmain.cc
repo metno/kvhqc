@@ -830,6 +830,31 @@ void HqcMainWindow::dianaShowOK() {
     ListOK();
 }
 
+void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
+{
+  if ( ! reinserter ) {
+    qDebug("Skipping data save, since user is not authenticated");
+    return;
+  }
+
+  kvalobs::serialize::KvalobsData dataList;
+  dataList.insert(toSave);
+  const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
+  switch (result->res )
+  {
+  case OK:
+     break;
+   // Insert any custom messages here
+  default:
+    QMessageBox::critical(this, "Unable to insert",
+        QString("An error occured when attempting to insert data into kvalobs.\n"
+        "The message from kvalobs was\n\n") + QString(result->message),
+        QMessageBox::Ok, QMessageBox::NoButton);
+    return;
+  }
+}
+
+
 void HqcMainWindow::ListOK() {
   if ( !dianaconnected ) {
     int dianaWarning = QMessageBox::warning(this, 
@@ -987,6 +1012,7 @@ void HqcMainWindow::ListOK() {
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
+      connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
       tableView->setModel(dataModel);
 
