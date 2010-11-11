@@ -49,10 +49,14 @@ namespace model
       QMap<int,QString> & paramIdToParamName,
       KvalobsDataListPtr datalist,
       const std::vector<modDatl> & modeldatalist,
+      bool showStationNameInHeader,
+      bool showPositionInHeader,
       QObject * parent) :
     QAbstractTableModel(parent),
     kvalobsData_(datalist),
-    modeldatalist_(modeldatalist)
+    modeldatalist_(modeldatalist),
+    showStationNameInHeader_(showStationNameInHeader),
+    showPositionInHeader_(showPositionInHeader)
   {
     for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
         QString paramName = "unknown";
@@ -128,10 +132,19 @@ namespace model
         Q_ASSERT(Qt::Vertical == orientation);
         if ( Qt::DisplayRole == role ) {
             const KvalobsData & d = kvalobsData_->at(section);
-            // TODO: improve formatting
-            QString display = "%1 - %2\t%3";
+
+            QString header = QString::number(d.stnr());
+            header += " - ";
+            if ( showStationNameInHeader_ )
+              header += d.name() + "\t";
+            if ( showPositionInHeader_ ) {
+                header += QString::number(d.latitude(), 'f', 2) + ' ';
+                header += QString::number(d.longitude(), 'f', 2) + ' ';
+                header += QString::number(d.altitude(), 'f', 0) + ' ';
+            }
             const std::string date = d.otime().isoTime();
-            return display.arg(QString::number(d.stnr()), d.name(), date.c_str());
+            header += date.c_str();
+            return header;
         }
         else return QVariant();
     }
@@ -191,6 +204,21 @@ namespace model
     return false;
   }
 
+  void KvalobsDataModel::setShowStationName(bool show)
+  {
+    if ( show != showStationNameInHeader_ ) {
+      showStationNameInHeader_ = show;
+      emit headerDataChanged(Qt::Vertical, 0, rowCount());
+    }
+  }
+
+  void KvalobsDataModel::setShowPosition(bool show)
+  {
+    if ( show != showPositionInHeader_ ) {
+        showPositionInHeader_ = show;
+        emit headerDataChanged(Qt::Vertical, 0, rowCount());
+    }
+  }
 
   QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
   {

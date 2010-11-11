@@ -71,6 +71,15 @@ public:
   const QString & name() const;
   void set_name(const QString & value);
 
+  double latitude() const;
+  void set_latitude(double value);
+
+  double longitude() const;
+  void set_longitude(double value);
+
+  double altitude() const;
+  void set_altitude(double value);
+
   const miutil::miTime & otime() const;
   void set_otime(const miutil::miTime & value);
 

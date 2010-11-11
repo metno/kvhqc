@@ -48,6 +48,8 @@ namespace model
         QMap<int,QString> & paramIdToParamName,
         KvalobsDataListPtr datalist,
         const std::vector<modDatl> & modeldatalist,
+        bool showStationNameInHeader,
+        bool showPositionInHeader,
         QObject * parent = 0);
 
     virtual ~KvalobsDataModel();
@@ -86,6 +88,10 @@ namespace model
     const Parameter & getParameter(int column) const;
 
 
+  public slots:
+    void setShowStationName(bool show);
+    void setShowPosition(bool show);
+
   signals:
     void dataModification(const kvalobs::kvData & modifiedData);
 
@@ -99,6 +105,9 @@ namespace model
     const std::vector<modDatl> & modeldatalist_;
 
     std::vector<Parameter> parametersToShow_;
+
+    bool showStationNameInHeader_;
+    bool showPositionInHeader_;
 
     static const int COLUMNS_PER_PARAMETER;
   };

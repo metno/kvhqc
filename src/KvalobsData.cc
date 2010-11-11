@@ -47,13 +47,16 @@ public:
   int stnr;
   int snr;
   QString name;
+  double latitude;
+  double longitude;
+  double altitude;
   miutil::miTime otime;
   miutil::miTime tbtime;
   int showTypeId;
   int typeIdChanged;
 
   Impl()
-  : stnr(0), snr(0), showTypeId(0), typeIdChanged(0)
+  : stnr(0), snr(0), showTypeId(0), typeIdChanged(0), latitude(0), longitude(0), altitude(0)
   {}
 
   /**
@@ -146,6 +149,33 @@ const QString & KvalobsData::name() const
 void KvalobsData::set_name(const QString & value)
 {
   impl().name = value;
+}
+
+double KvalobsData::latitude() const
+{
+  return impl().latitude;
+}
+void KvalobsData::set_latitude(double value)
+{
+  impl().latitude = value;
+}
+
+double KvalobsData::longitude() const
+{
+ return impl().longitude;
+}
+void KvalobsData::set_longitude(double value)
+{
+  impl().longitude = value;
+}
+
+double KvalobsData::altitude() const
+{
+  return impl().altitude;
+}
+void KvalobsData::set_altitude(double value)
+{
+  impl().altitude = value;
 }
 
 const miutil::miTime & KvalobsData::otime() const

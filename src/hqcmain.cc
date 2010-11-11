@@ -218,7 +218,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   stID->setChecked(true);
   poID = choice->addAction( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
   poID->setCheckable(true);
-  poID->setChecked(true);
+  poID->setChecked(false);
 
   //isShTy;
 
@@ -1009,7 +1009,11 @@ void HqcMainWindow::ListOK() {
 //      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
 //      tableView->setItemDelegate(delegate);
 
-      model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(parameterList, parMap, datalist, modeldatalist, tableView);
+      model::KvalobsDataModel * dataModel =
+          new model::KvalobsDataModel(
+              parameterList, parMap, datalist, modeldatalist,
+              stID->isChecked(), poID->isChecked(),
+              tableView);
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
@@ -1019,6 +1023,9 @@ void HqcMainWindow::ListOK() {
       connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
       connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
       connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+
+      connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
+      connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
 
       tableView->setModel(dataModel);
 
@@ -2865,6 +2872,9 @@ makeObsDataList( KvObsDataList& dataList )
       int snr;
       findStationInfo(stnr, name, lat, lon, hoh, snr, env);
       tdl.set_name(name);
+      tdl.set_latitude(lat);
+      tdl.set_longitude(lon);
+      tdl.set_altitude(hoh);
       tdl.set_snr(snr);
       int prid = dit->paramID();
       bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
