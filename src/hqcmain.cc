@@ -204,19 +204,19 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
 
   choice = menuBar()->addMenu(tr("&Valg"));
-  flID = choice->addAction( "Vis flagg",                 this, SLOT(showFlags()));
+  flID = choice->addAction( "Vis &flagg",                 this, SLOT(showFlags()));
   flID->setCheckable(true);
   flID->setChecked(true);
-  orID = choice->addAction( "Vis original",              this, SLOT(showOrigs()));
+  orID = choice->addAction( "Vis &original",              this, SLOT(showOrigs()));
   orID->setCheckable(true);
   orID->setChecked(true);
-  moID = choice->addAction( "Vis modeldata",             this, SLOT(showMod()));
+  moID = choice->addAction( "Vis &modeldata",             this, SLOT(showMod()));
   moID->setCheckable(true);
   moID->setChecked(true);
-  stID = choice->addAction( "Vis stasjonsnavn",          this, SLOT(showStat()));
+  stID = choice->addAction( "Vis &stasjonsnavn",          this, SLOT(showStat()));
   stID->setCheckable(true);
   stID->setChecked(true);
-  poID = choice->addAction( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
+  poID = choice->addAction( "Vis &lengde, bredde, høyde", this, SLOT(showPos()));
   poID->setCheckable(true);
   poID->setChecked(false);
 
