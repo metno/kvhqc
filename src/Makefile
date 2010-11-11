@@ -6,7 +6,7 @@ CCOBJ= 	hqc4.o
 
 
 QOBJ= 	hqcmain.o ListDialog.o ClockDialog.o dianashowdialog.o TimeseriesDialog.o qtQTUtil.o parameterdialog.o identifyUser.o errorlist.o helptree.o BusyIndicator.o HqcDataReinserter.o ExtendedFunctionalityHandler.o missingtable.o  GetData.o textdatadialog.o textdatatable.o rejectdialog.o rejecttable.o GetTextData.o \
-	KvalobsData.o KvalobsDataModel.o
+	KvalobsData.o KvalobsDataModel.o KvalobsDataView.o
 
 # Removed:  datatable.o tabwindow.o
 

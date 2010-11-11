@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "GetData.h"
 #include "GetTextData.h"
 #include "KvalobsDataModel.h"
+#include "KvalobsDataView.h"
 #include <iomanip>
 #include <QAction>
 #include <qpixmap.h>
@@ -76,7 +77,7 @@ using namespace std;
 namespace {
   // Number of parameters to show, according to last selection
   int noSelPar;
-  int modelParam[] =
+  const int modelParam[] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
   miutil::miTime remstime;
   miutil::miTime remetime;
@@ -1002,7 +1003,7 @@ void HqcMainWindow::ListOK() {
 
   if ( lity == daLi or lity == alLi ) {
 
-      QTableView * tableView = new QTableView(this);
+      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, modelParam + NOPARAMMODEL, this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
 //      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
@@ -1014,18 +1015,21 @@ void HqcMainWindow::ListOK() {
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
       connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
+      // Functionality for hiding/showing rows in data list
+      connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
+      connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
+      connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+
       tableView->setModel(dataModel);
 
-      int tableSize = dataModel->columnCount();
-      for ( int i = 0; i < tableSize; ++ i ) {
-          // Hide unused model columns
-          if ( dataModel->getColumnType(i) == model::KvalobsDataModel::Model )
-            if ( std::find(modelParam, modelParam + NOPARAMMODEL, dataModel->getParameter(i).paramid) == modelParam + NOPARAMMODEL )
-              tableView->hideColumn(i);
+      // Smaller cells. This should probably be done dynamically, somehow
+      int columns = dataModel->columnCount();
+      for ( int i = 0; i < columns; ++ i )
+        tableView->setColumnWidth(i, 56);
 
-          // Smaller cells. This should probably be done dynamically, somehow
-          tableView->setColumnWidth(i, 56);
-      }
+      tableView->toggleShowFlags(flID->isChecked());
+      tableView->toggleShowOriginal(orID->isChecked());
+      tableView->toggleShowModelData(moID->isChecked());
 
       ws->addSubWindow(tableView);
 
