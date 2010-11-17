@@ -75,6 +75,49 @@ namespace model
     }
   }
 
+
+  void KvalobsDataView::selectStation(const QString & station)
+  {
+    QStringList elements = station.split(',');
+    if ( elements.size() != 2 ) {
+      qDebug() << "Unable to parse station string: " << station;
+      return;
+    }
+    bool ok;
+    int stationid = elements[0].toInt(& ok);
+    if ( not ok ) {
+        qDebug() << "Unable to parse first element as stationid: " << station;
+        return;
+    }
+    miutil::miTime obstime(elements[1].toStdString());
+    if ( obstime.undef() ) {
+        qDebug() << "Unable to parse second element as obstime: " << station;
+        return;
+    }
+    selectStation(stationid, obstime);
+  }
+
+  void KvalobsDataView::selectStation(int stationid, const miutil::miTime & obstime)
+  {
+    const KvalobsDataModel * model = getModel_();
+    if ( ! model )
+      return;
+
+    QModelIndex current = currentIndex();
+    if ( not current.isValid() ) {
+      current = model->index(0, 0);
+      if ( not current.isValid() )
+        return;
+    }
+
+    int row = model->dataRow(stationid, obstime);
+    int column = current.column();
+    QModelIndex index = model->index(row, column);
+
+    if ( index.isValid() )
+      setCurrentIndex(index);
+  }
+
   const KvalobsDataModel * KvalobsDataView::getModel_() const
   {
     return dynamic_cast<const KvalobsDataModel *>(model());

@@ -87,6 +87,7 @@ namespace model
     const Parameter & getParameter(const QModelIndex & index) const;
     const Parameter & getParameter(int column) const;
 
+    int dataRow(int stationid, const miutil::miTime & obstime) const;
 
   public slots:
     void setShowStationName(bool show);

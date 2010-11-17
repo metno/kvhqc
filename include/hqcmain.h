@@ -530,7 +530,7 @@ private slots:
   void updateSaveFunction( QMdiSubWindow * w );
 
 signals:
-  void statTimeReceived(QString&);
+  void statTimeReceived(const QString&);
   void newStationList(std::vector<QString>&);
   void newParameterList(const QStringList&);
   void toggleWeather();

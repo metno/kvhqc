@@ -33,6 +33,10 @@
 #include <QTableView>
 #include <set>
 
+namespace miutil {
+  class miTime;
+}
+
 namespace model
 {
   class KvalobsDataModel;
@@ -53,6 +57,9 @@ namespace model
     void toggleShowFlags(bool show);
     void toggleShowOriginal(bool show);
     void toggleShowModelData(bool show);
+
+    void selectStation(const QString & station);
+    void selectStation(int stationid, const miutil::miTime & obstime);
 
   private:
     const KvalobsDataModel * getModel_() const;

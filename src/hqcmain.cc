@@ -1019,10 +1019,13 @@ void HqcMainWindow::ListOK() {
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
       connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
+
       // Functionality for hiding/showing rows in data list
       connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
       connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
       connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+
+      connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
 
       connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
       connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));

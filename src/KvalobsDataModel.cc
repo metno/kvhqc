@@ -285,6 +285,20 @@ namespace model
     return Qt::black;
   }
 
+  int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
+  {
+    const KvalobsDataListPtr & data = kvalobsData();
+
+    const int rows = data->size();
+    int index;
+    for ( index = 0; index < rows; ++ index ) {
+      const KvalobsData & d = (*data)[index];
+      if ( d.stnr() == stationid and d.otime() == obstime )
+        break;
+    }
+    return index;
+  }
+
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const
   {
     return getParameter(index.column());
