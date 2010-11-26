@@ -50,12 +50,15 @@ namespace model
         const std::vector<modDatl> & modeldatalist,
         bool showStationNameInHeader,
         bool showPositionInHeader,
+        bool editable,
         QObject * parent = 0);
 
     virtual ~KvalobsDataModel();
 
     KvalobsDataListPtr & kvalobsData() { return kvalobsData_; }
     const KvalobsDataListPtr & kvalobsData() const { return kvalobsData_; }
+
+    const KvalobsData * kvalobsData(const QModelIndex & location) const;
 
     virtual int rowCount(const QModelIndex & parent = QModelIndex()) const;
     virtual int columnCount(const QModelIndex & parent = QModelIndex()) const;
@@ -109,6 +112,8 @@ namespace model
 
     bool showStationNameInHeader_;
     bool showPositionInHeader_;
+
+    bool correctedValuesAreEditable_;
 
     static const int COLUMNS_PER_PARAMETER;
   };

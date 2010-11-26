@@ -51,12 +51,14 @@ namespace model
       const std::vector<modDatl> & modeldatalist,
       bool showStationNameInHeader,
       bool showPositionInHeader,
+      bool editable,
       QObject * parent) :
     QAbstractTableModel(parent),
     kvalobsData_(datalist),
     modeldatalist_(modeldatalist),
     showStationNameInHeader_(showStationNameInHeader),
-    showPositionInHeader_(showPositionInHeader)
+    showPositionInHeader_(showPositionInHeader),
+    correctedValuesAreEditable_(editable)
   {
     for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
         QString paramName = "unknown";
@@ -75,6 +77,17 @@ namespace model
   KvalobsDataModel::~KvalobsDataModel()
   {
   }
+
+  const KvalobsData * KvalobsDataModel::kvalobsData(const QModelIndex & location) const
+  {
+    if ( not location.isValid() )
+      return 0;
+    int index = location.row();
+    if ( index >= 0 and index < kvalobsData_->size() )
+      return & (*kvalobsData_)[index];
+    return 0;
+  }
+
 
 //  QModelIndex KvalobsDataModel::index(int row, int column, const QModelIndex & parent) const {
 //    return QModelIndex();
@@ -154,7 +167,7 @@ namespace model
   Qt::ItemFlags KvalobsDataModel::flags(const QModelIndex & index) const
   {
     Qt::ItemFlags ret = QAbstractTableModel::flags(index);
-    if ( getColumnType(index) == Corrected )
+    if ( correctedValuesAreEditable_ and getColumnType(index) == Corrected )
       ret |= Qt::ItemIsEditable;
     return ret;
   }

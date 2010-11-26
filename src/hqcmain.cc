@@ -88,9 +88,9 @@ namespace {
 const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
         ("[airpress]", "Lufttrykk")
         ("[temperature]", "Temperatur")
-        ("[prec]", "Nedbør")
+        ("[prec]", "Nedbï¿½r")
         ("[visual]", "Visuell")
-        ("[wave]", "Sjøgang")
+        ("[wave]", "Sjï¿½gang")
         ("[synop]", "Synop")
         ("[klstat]", "Klimastatistikk")
         ("[priority]", "Prioriterte parametere")
@@ -138,9 +138,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   if ( reinserter == NULL ) {
     int mb = QMessageBox::information(this, 
 				  "Autentisering", 
-				  "Du er ikke registrert som operatør!\n"
+				  "Du er ikke registrert som operatï¿½r!\n"
 				  "Du kan se dataliste, feillog og feilliste,\n"
-				  "men ikke gjøre endringer i Kvalobsdatabasen!",
+				  "men ikke gjï¿½re endringer i Kvalobsdatabasen!",
 				  "Fortsett",
 				  "Avslutt",
 				  "");
@@ -148,7 +148,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
       throw runtime_error( "Not authenticated" );
   }
   else {
-    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
+    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatï¿½r" << endl;
   }
   //-----------------------------------------------------------------  
 
@@ -216,7 +216,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   stID = choice->addAction( "Vis &stasjonsnavn",          this, SLOT(showStat()));
   stID->setCheckable(true);
   stID->setChecked(true);
-  poID = choice->addAction( "Vis &lengde, bredde, høyde", this, SLOT(showPos()));
+  poID = choice->addAction( "Vis &lengde, bredde, hï¿½yde", this, SLOT(showPos()));
   poID->setCheckable(true);
   poID->setChecked(false);
 
@@ -235,8 +235,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->addAction(dataListAction);
   showmenu->addAction( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
   showmenu->insertSeparator();
-  showmenu->addAction( "&Nedbør", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
-  showmenu->addAction( "&Vær", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
+  showmenu->addAction( "&Nedbï¿½r", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
+  showmenu->addAction( "&Vï¿½r", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
   showmenu->insertSeparator();
   showmenu->addAction(timeSeriesAction);
   showmenu->insertSeparator();
@@ -244,12 +244,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->addAction( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::CTRL+Qt::Key_J );
   
   QMenu * weathermenu = new QMenu( this );
-  menuBar()->insertItem( "Vær&element", weathermenu);
+  menuBar()->insertItem( "Vï¿½r&element", weathermenu);
   wElement = "";
   klID = weathermenu->addAction( "For &daglig rutine",       this, SLOT(climateStatistics()) );
   piID = weathermenu->addAction( "&Prioriterte parametere",  this, SLOT(priority()) );
   taID = weathermenu->addAction( "&Temperatur og fuktighet", this, SLOT(temperature()) );
-  prID = weathermenu->addAction( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
+  prID = weathermenu->addAction( "&Nedbï¿½r og snï¿½forhold",    this, SLOT(precipitation()) );
   apID = weathermenu->addAction( "&Lufttrykk og vind",       this, SLOT(airPress()) );
   clID = weathermenu->addAction( "&Visuelle parametere",     this, SLOT(visuals()) );
   seID = weathermenu->addAction( "&Maritime parametere",     this, SLOT(sea()) );
@@ -477,7 +477,7 @@ void HqcMainWindow::temperature() {
 }
 
 void HqcMainWindow::precipitation() {
-  wElement = "Nedbør";
+  wElement = "Nedbï¿½r";
   lity = daLi;
   firstObs = true;
   apID->setChecked(FALSE);
@@ -524,7 +524,7 @@ void HqcMainWindow::visuals() {
 
 
 void HqcMainWindow::sea() {
-  wElement = "Sjøgang";
+  wElement = "Sjï¿½gang";
   lity = daLi;
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
@@ -861,7 +861,7 @@ void HqcMainWindow::ListOK() {
     int dianaWarning = QMessageBox::warning(this, 
 					    "Dianaforbindelse",
 					    "Diana er ikke koplet til!"
-					    "Ønsker du å kople til Diana?",
+					    "ï¿½nsker du ï¿½ kople til Diana?",
 					    "&Ja",
 					    "&Nei");
     if ( dianaWarning == 0 ) {
@@ -872,7 +872,7 @@ void HqcMainWindow::ListOK() {
     QMessageBox::warning(this, 
 			 "Stasjonsvalg", 
 			 "Ingen stasjoner er valgt!\n"
-			 "Minst en stasjon må velges", 
+			 "Minst en stasjon mï¿½ velges", 
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -886,7 +886,7 @@ void HqcMainWindow::ListOK() {
     QMessageBox::warning(this, 
 			 "Tidspunktvalg", 
 			 "Ingen tidspunkter er valgt!\n"
-			 "Minst ett tidspunkt må velges", 
+			 "Minst ett tidspunkt mï¿½ velges", 
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -894,9 +894,9 @@ void HqcMainWindow::ListOK() {
 
   if ( wElement.isEmpty() ) {
     QMessageBox::warning(this, 
-			 "Værelement", 
-			 "Ingen værelement er valgt!\n"
-			 "Værelement må velges", 
+			 "Vï¿½relement", 
+			 "Ingen vï¿½relement er valgt!\n"
+			 "Vï¿½relement mï¿½ velges", 
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -939,7 +939,7 @@ void HqcMainWindow::ListOK() {
 //    porder = tempOrder;
 //    maxOrder = NOPARAMTEMP;
 //  }
-//  else if ( wElement == "Nedbør" ) {
+//  else if ( wElement == "Nedbï¿½r" ) {
 //    porder = precOrder;
 //    maxOrder = NOPARAMPREC;
 //  }
@@ -947,7 +947,7 @@ void HqcMainWindow::ListOK() {
 //    porder = visualOrder;
 //    maxOrder = NOPARAMVISUAL;
 //  }
-//  else if ( wElement == "Sjøgang" ) {
+//  else if ( wElement == "Sjï¿½gang" ) {
 //    porder = waveOrder;
 //    maxOrder = NOPARAMWAVE;
 //  }
@@ -1013,6 +1013,7 @@ void HqcMainWindow::ListOK() {
           new model::KvalobsDataModel(
               parameterList, parMap, datalist, modeldatalist,
               stID->isChecked(), poID->isChecked(),
+              reinserter != 0,
               tableView);
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
@@ -1026,6 +1027,8 @@ void HqcMainWindow::ListOK() {
       connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
 
       connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
+
+      //connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
 
       connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
       connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
@@ -2066,12 +2069,12 @@ void HqcMainWindow::about()
 {
     QMessageBox::about( this, "Om Hqc",
 			"Hqc er et program for manuell kvalitetskontroll av observasjoner.\n"
-			"Programmet består av editerbare tabeller med observasjoner samt\n"
+			"Programmet bestï¿½r av editerbare tabeller med observasjoner samt\n"
 			"tidsseriediagram, og har forbindelse med Diana\n"
 			"\n"
 			"Programmet utvikles av\n "
 			"Lisbeth Bergholt, FoU,\n "
-			"Vegard Bønes, IT,\n "
+			"Vegard Bï¿½nes, IT,\n "
 			"Audun Christoffersen, FoU,\n "
 			"Knut Johansen, Klima\n ");
 }
