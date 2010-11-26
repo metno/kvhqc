@@ -130,7 +130,7 @@ public slots:
   /*!
    * \brief Send a parameter to Diana
    */
-  void sendSelectedParam(miutil::miString);
+  void sendSelectedParam(const QString & param);
   /*!
    * \brief When a parameter value is changed, the new value is 
    *        sent to the datalist, to the timeseries and to Diana.

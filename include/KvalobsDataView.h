@@ -61,6 +61,13 @@ namespace model
     void selectStation(const QString & station);
     void selectStation(int stationid, const miutil::miTime & obstime);
 
+  signals:
+    void stationSelected(int stationid, const miutil::miTime & obstime);
+    void parameterSelected(const QString & parameterName);
+
+  protected slots:
+    virtual void currentChanged(const QModelIndex & current, const QModelIndex & previous);
+
   private:
     const KvalobsDataModel * getModel_() const;
 

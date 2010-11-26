@@ -30,6 +30,7 @@
 #include "KvalobsDataView.h"
 #include "KvalobsDataModel.h"
 #include <QDebug>
+#include <stdexcept>
 
 namespace model
 {
@@ -116,6 +117,31 @@ namespace model
 
     if ( index.isValid() )
       setCurrentIndex(index);
+  }
+
+  void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
+  {
+    QTableView::currentChanged(current, previous);
+
+    const KvalobsDataModel * model = getModel_();
+    if ( model ) {
+
+      if ( current.column() != previous.column() ) {
+          try {
+            QString parameterName = model->getParameter(current).parameterName;
+            emit parameterSelected(parameterName);
+          }
+          catch (std::out_of_range & ) {
+              // invalid index - do not do anything
+          }
+      }
+
+      if ( current.row() != previous.row() ) {
+          const KvalobsData * d = model->kvalobsData(current);
+          if ( d )
+            emit stationSelected(d->stnr(), d->otime());
+      }
+    }
   }
 
   const KvalobsDataModel * KvalobsDataView::getModel_() const

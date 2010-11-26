@@ -1028,7 +1028,8 @@ void HqcMainWindow::ListOK() {
 
       connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
 
-      //connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
+//      connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
+      connect(tableView, SIGNAL(parameterSelected(const QString &)), this, SLOT(sendSelectedParam(const QString &)));
 
       connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
       connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
@@ -2467,16 +2468,18 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 
 
 
-void HqcMainWindow::sendSelectedParam(miutil::miString param)
+void HqcMainWindow::sendSelectedParam(const QString & param)
 {
-       
-  param = dianaName(param);
-  if(!param.exists()) return;
+  miutil::miString diParam = dianaName(param.latin1());
+  if(!diParam.exists()) {
+      qDebug() << qPrintable(param) << ": No such diana parameter";
+      return;
+  }
 
   miMessage pLetter;
   pLetter.command = qmstrings::select_HQC_param;
-  pLetter.commondesc = "param";
-  pLetter.common = param;
+  pLetter.commondesc = "diParam";
+  pLetter.common = diParam;
   cerr << "HQC sender melding" << endl;
   cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
   pluginB->sendMessage(pLetter);
