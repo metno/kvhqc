@@ -115,6 +115,8 @@ namespace model
     int column = current.column();
     QModelIndex index = model->index(row, column);
 
+    clearSelection();
+
     if ( index.isValid() )
       setCurrentIndex(index);
   }
