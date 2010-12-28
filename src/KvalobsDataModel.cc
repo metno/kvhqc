@@ -181,11 +181,15 @@ namespace model
       if ( getColumnType(index) == Corrected ) {
           const Parameter & p = getParameter(index);
 
-          // Invalid input (should never happen)
+          // Invalid input (should never happen, except when user entered empty string)
           bool ok;
           double val = value.toDouble(& ok);
-          if ( not ok )
-            return false;
+          if ( not ok ) {
+              if ( value.toString().isEmpty() )
+                val = -32766;
+              else
+                return false;
+          }
 
           try {
             KvalobsData & d = kvalobsData_->at(index.row());
@@ -196,7 +200,10 @@ namespace model
               return false;
 
             kvalobs::kvData changeData = getKvData_(index);
-            kvalobs::hqc::hqc_auto_correct(changeData, val);
+            if ( val != -32766 )
+              kvalobs::hqc::hqc_auto_correct(changeData, val);
+            else
+              kvalobs::hqc::hqc_reject(changeData);
 
             // Update stored data
             d.set_corr(p.paramid, val);

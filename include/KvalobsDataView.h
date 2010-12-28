@@ -49,6 +49,7 @@ namespace model
     KvalobsDataView(Iterator modelValuesStart, Iterator modelValuesStop, QWidget * parent = 0) :
       QTableView(parent), modelParameters_(modelValuesStart, modelValuesStop)
     {
+      setup_();
     }
 
     virtual ~KvalobsDataView();
@@ -60,6 +61,7 @@ namespace model
 
     void selectStation(const QString & station);
     void selectStation(int stationid, const miutil::miTime & obstime);
+    void selectTime(const miutil::miTime & obstime);
 
   signals:
     void stationSelected(int stationid, const miutil::miTime & obstime);
@@ -70,8 +72,9 @@ namespace model
 
   private:
     const KvalobsDataModel * getModel_() const;
+    void setup_();
 
-    std::set<int> modelParameters_;
+    const std::set<int> modelParameters_;
   };
 
 }
