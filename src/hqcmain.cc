@@ -2113,8 +2113,8 @@ public:
 };
 int FunctionLogger::indent = 3;
 }
-//#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-#define LOG_FUNCTION()
+#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
+//#define LOG_FUNCTION()
 
 
 void HqcMainWindow::initDiana()
@@ -2221,6 +2221,12 @@ void HqcMainWindow::processLetter(miMessage& letter)
   
   else if(letter.command == qmstrings::timechanged){
     //cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
+
+      const char* ccmn = letter.common.c_str();
+      QString cmn = QString(ccmn);
+      //cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
+      emit statTimeReceived(cmn);
+
     miutil::miTime newTime(letter.common);
     sendObservations(newTime,false);
   }
