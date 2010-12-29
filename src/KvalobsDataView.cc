@@ -140,7 +140,8 @@ namespace model
       return;
 
     const KvalobsData * data = model->kvalobsData(currentIndex());
-    selectStation(data->stnr(), obstime);
+    if ( data )
+      selectStation(data->stnr(), obstime);
   }
 
   void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)

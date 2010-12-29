@@ -2113,8 +2113,8 @@ public:
 };
 int FunctionLogger::indent = 3;
 }
-#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-//#define LOG_FUNCTION()
+//#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
+#define LOG_FUNCTION()
 
 
 void HqcMainWindow::initDiana()
