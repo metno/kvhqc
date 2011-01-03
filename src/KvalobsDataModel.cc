@@ -204,6 +204,11 @@ namespace model
               kvalobs::hqc::hqc_auto_correct(changeData, val);
             else
               kvalobs::hqc::hqc_reject(changeData);
+            std::string cfailed = changeData.cfailed();
+            if ( not cfailed.empty() )
+              cfailed += ",";
+            cfailed += "hqc";
+            changeData.cfailed(cfailed);
 
             // Update stored data
             d.set_corr(p.paramid, val);
