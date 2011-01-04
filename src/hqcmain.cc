@@ -76,7 +76,7 @@ using namespace std;
 
 namespace {
   // Number of parameters to show, according to last selection
-  int noSelPar;
+  //int noSelPar;
   const int modelParam[] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
   miutil::miTime remstime;
@@ -926,7 +926,9 @@ void HqcMainWindow::ListOK() {
           QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
-  const std::vector<int> & parameterList = * find;
+
+
+  std::vector<int> parameterList;
 
 //  int maxOrder; // size of porder
 //  int* porder; // will point to what parameters to show
@@ -978,21 +980,25 @@ void HqcMainWindow::ListOK() {
 
   selPar.clear();
   int kk = 0;
-//  for ( int jj = 0; jj < maxOrder; jj++ ) {
-  for ( std::vector<int>::const_iterator it = parameterList.begin(); it != parameterList.end(); ++ it ) {
+
+
+  for ( int jj = 0; jj < find->size(); jj++ ) {
+    int paramIndex = (*find)[jj];
+    const QString & sp =  parMap[paramIndex];
     
-    const QString & sp =  parMap[* it];
-    
-    bool found = pardlg->plb->item(kk)->isSelected();
+    bool found = pardlg->plb->item(jj)->isSelected();
+    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": " << found << " (" << pardlg->markPar->isChecked() << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
     if ( (found && pardlg->markPar->isChecked()) ||
 	 (!found && pardlg->noMarkPar->isChecked()) ||
 	 pardlg->allPar->isChecked() ) {
-      selParNo[kk] = * it;
+      selParNo[kk] = paramIndex;
       selPar.append(sp);
       kk++;
+      parameterList.push_back(paramIndex);
     }
-    noSelPar = kk;
   }
+  for ( std::vector<int>::const_iterator it = parameterList.begin(); it != parameterList.end(); ++ it )
+    qDebug() << "Selected: "<< * it;
 
   isShTy = lstdlg->allTypes->isChecked();
 
