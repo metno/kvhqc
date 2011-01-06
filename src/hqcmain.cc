@@ -1026,7 +1026,6 @@ void HqcMainWindow::ListOK() {
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
       connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
-
       // Functionality for hiding/showing rows in data list
       connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
       connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
@@ -1034,8 +1033,10 @@ void HqcMainWindow::ListOK() {
 
       connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
 
-      //connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
+      connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
+      connect(tableView, SIGNAL(timeSelected(const miutil::miTime &)), SLOT(sendObservations(const miutil::miTime &)));
       connect(tableView, SIGNAL(parameterSelected(const QString &)), SLOT(sendSelectedParam(const QString &)));
+      //connect(tableView, SIGNAL(newSelection()), SLOT(updateParams(int, const miutil::miTime &, const miutil::miString &,const miutil::miString & value,const miutil::miString & flag))))
 
       connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
       connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
@@ -2119,8 +2120,8 @@ public:
 };
 int FunctionLogger::indent = 3;
 }
-//#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-#define LOG_FUNCTION()
+#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
+//#define LOG_FUNCTION()
 
 
 void HqcMainWindow::initDiana()
@@ -2294,8 +2295,7 @@ void HqcMainWindow::aboutQt()
     QMessageBox::aboutQt( this, "Qt is a C++ toolkit for application development. " );
 }
 
-void HqcMainWindow::sendObservations(miutil::miTime time,
-				     bool sendtime) 
+void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 {
   LOG_FUNCTION();
 
@@ -2549,10 +2549,10 @@ void HqcMainWindow::sendSelectedParam(const QString & param)
 
 
 void HqcMainWindow::updateParams(int station, 
-				 miutil::miTime time,
-				 miutil::miString param, 
-				 miutil::miString value, 
-				 miutil::miString flag)
+    const miutil::miTime & time,
+    const miutil::miString & param,
+    const miutil::miString & value,
+    const miutil::miString & flag)
 {
   LOG_FUNCTION();
 

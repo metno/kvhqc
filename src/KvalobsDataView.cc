@@ -110,8 +110,23 @@ namespace model
       qDebug() << "Unable to parse station string: " << station;
   }
 
+  class DebugPrint
+  {
+    const char * name_;
+  public:
+    DebugPrint(const char * name) : name_(name) {
+      qDebug() << '+' << name_;
+    }
+    ~DebugPrint() {
+      qDebug() << ' ' << name_;
+    }
+  };
+#define LOG_FUNCTION() DebugPrint INTERNAL_function_logger(__func__)
+
   void KvalobsDataView::selectStation(int stationid, const miutil::miTime & obstime)
   {
+    LOG_FUNCTION();
+
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
       return;
@@ -127,10 +142,13 @@ namespace model
     int column = current.column();
     QModelIndex index = model->index(row, column);
 
-    clearSelection();
-
-    if ( index.isValid() )
-      setCurrentIndex(index);
+    blockSignals(true);
+    if ( index.isValid() ) {
+        setCurrentIndex(index);
+    }
+    else
+      clearSelection();
+    blockSignals(false);
   }
 
   void KvalobsDataView::selectTime(const miutil::miTime & obstime)
@@ -146,14 +164,15 @@ namespace model
 
   void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
   {
+    LOG_FUNCTION();
     QTableView::currentChanged(current, previous);
 
     const KvalobsDataModel * model = getModel_();
     if ( model ) {
-
       if ( current.column() != previous.column() ) {
           try {
             QString parameterName = model->getParameter(current).parameterName;
+            qDebug() << "parameterSelected(" << qPrintable(parameterName) << ")";
             emit parameterSelected(parameterName);
           }
           catch (std::out_of_range & ) {
@@ -161,10 +180,22 @@ namespace model
           }
       }
 
-      if ( current.row() != previous.row() ) {
-          const KvalobsData * d = model->kvalobsData(current);
-          if ( d )
-            emit stationSelected(d->stnr(), d->otime());
+      const KvalobsData * oldData = model->kvalobsData(previous);
+      const KvalobsData * newData = model->kvalobsData(current);
+
+      if ( ! oldData )
+        qDebug() << "Invalid oldData";
+      if ( ! newData ) {
+          qDebug() << "Invalid newData";
+        return;
+      }
+      if ( (! oldData) or newData->stnr() != oldData->stnr() ) {
+          qDebug() << "stationSelected(" << newData->stnr() << ")";
+        emit stationSelected(newData->stnr());
+      }
+      if ( (! oldData) or newData->otime() != oldData->otime() ) {
+          qDebug() << "timeSelected(" << newData->otime().isoTime().c_str() << ")";
+        emit timeSelected(newData->otime());
       }
     }
   }

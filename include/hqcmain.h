@@ -126,7 +126,7 @@ public slots:
   /*!
    * \brief Send complete observation at given time to Diana
    */
-  void sendObservations(miutil::miTime,bool =true);
+  void sendObservations(const miutil::miTime & time, bool sendtime = true);
   /*!
    * \brief Send a parameter to Diana
    */
@@ -135,11 +135,11 @@ public slots:
    * \brief When a parameter value is changed, the new value is 
    *        sent to the datalist, to the timeseries and to Diana.
    */
-  void updateParams(int, 
-		    miutil::miTime,
-		    miutil::miString, 
-		    miutil::miString, 
-		    miutil::miString);
+  void updateParams(int station,
+      const miutil::miTime & time,
+      const miutil::miString & param,
+      const miutil::miString & value,
+      const miutil::miString & flag);
   /*!
    * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the 
    *        start, and to TRUE when an update is sent to the database.
