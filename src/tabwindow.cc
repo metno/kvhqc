@@ -36,8 +36,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "tabwindow.h"
-#include "datatable.h"
 #include "BusyIndicator.h"
+#include <QFile>
+#include <QTextStream>
+#include <QTableView>
+#include "KvalobsDataModel.h"
 
 MDITabWindow::MDITabWindow( QWidget* parent, 
 			    const char* name, 
@@ -53,85 +56,60 @@ MDITabWindow::MDITabWindow( QWidget* parent,
 			    QStringList& selPar,
 			    int noSelPar,
 			    int* selParNo,
-			    vector<datl>& datalist,
+			    vector<model::KvalobsData>& datalist,
 			    vector<modDatl>& modeldatalist,
 			    list<kvStation>& slist,
 			    int dateCol,
 			    int ncp,
 			    bool isShTy,
 			    QString& userName)
-  : Q3MainWindow( parent, name )
-    , dtt( NULL ), erl( NULL )
-    //    , dtt( NULL ), erl( NULL ), erHead( NULL )
+  : QWidget( parent, name )
+    //, dtt( NULL )
 {
+  Q_ASSERT(lity != erLi and lity != erSa);
+
   readLimits();
-  if ( lity == erLi || lity == erSa) {
-    if (metty == tabHead ) {
-      //      erHead = new ErrorHead(stime,etime,this,lity,userName);
-      //      setFocusProxy( erHead );
-      //      setCentralWidget( erHead );
-    }
-    else if ( metty == tabList ) {
-      if ( erl ) 
-	delete erl;
-      erl = new ErrorList(selPar,
-			  stime,
-			  etime, 
-			  numErr, 
-			  noParam, 
-			  this, 
-			  lity, 
-			  metty, 
-			  selParNo,
-			  datalist, 
-			  modeldatalist,
-			  slist, 
-			  dateCol, 
-			  ncp,
-			  userName);
-      cerr << "mditab: " << this << endl;
-      
-      HqcMainWindow * w = getHqcMainWindow( this );
-      connect( w, SIGNAL( saveData() ), erl, SLOT( saveChanges() ) );
-      
-      //      connect( w, SIGNAL( printErrorList() ), erl, SLOT( printErrorList() ) );
-      
-      connect( erl, SIGNAL( stationSelected( int, const miutil::miTime & ) ),
-	       w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ) );
-      
-      setFocusProxy( erl );
-      setCentralWidget( erl );
-    }
-  }
-  else {
-    readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
-    if ( dtt )
-      delete dtt;
-    dtt = new DataTable(selPar, 
-			numErr,
-			noSelPar,
-			selParNo, 
-			noParam, 
-			this, 
-			lity, 
-			metty, 
-			dateCol, 
-			ncp,
-			isShTy);
-    
-    HqcMainWindow * w = getHqcMainWindow( this );
-    
-    connect( dtt, SIGNAL( currentChanged( int, int) ),
-	     SLOT( tableCellClicked( int, int ) ) );
-    connect( dtt, SIGNAL( valueChanged( int, int ) ),
-	     this,SLOT( updateKvBase( int, int ) ) );
-    connect( dtt, SIGNAL( valueChanged( int, int ) ),
-	     SLOT( tableValueChanged( int, int ) ) );
-    connect( w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ),
-	     dtt, SLOT( selectStation(int, const miutil::miTime &) ) );
-    setFocusProxy( dtt );
-    setCentralWidget( dtt );
-  }
+
+
+#warning Do model/view code properly!
+
+  readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
+  QTableView * tableView = new QTableView(this);
+  model::KvalobsDataModel * dataModel = new model::KvalobsDataModel(datalist, this);
+  tableView->setModel(dataModel);
+
+  QHBoxLayout * layout = new QHBoxLayout(this);
+  layout->add(tableView);
+
+
+//    readErrorsFromqaBase(numErr, noParam, stime, etime, remstime, remetime, lity, remLity, wElement);
+//    if ( dtt )
+//      delete dtt;
+//    dtt = new DataTable(selPar,
+//			numErr,
+//			noSelPar,
+//			selParNo,
+//			noParam,
+//			this,
+//			lity,
+//			metty,
+//			dateCol,
+//			ncp,
+//			isShTy);
+//
+//    HqcMainWindow * w = getHqcMainWindow( this );
+//
+//    connect( dtt, SIGNAL( currentChanged( int, int) ),
+//	     SLOT( tableCellClicked( int, int ) ) );
+//    connect( dtt, SIGNAL( valueChanged( int, int ) ),
+//	     this,SLOT( updateKvBase( int, int ) ) );
+//    connect( dtt, SIGNAL( valueChanged( int, int ) ),
+//	     SLOT( tableValueChanged( int, int ) ) );
+//    connect( w, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ),
+//	     dtt, SLOT( selectStation(int, const miutil::miTime &) ) );
+//    setFocusProxy( dtt );
+//    setCentralWidget( dtt );
+//  }
   //Remember stime and etime
 }
 
@@ -144,19 +122,25 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
 					listType lity, 
 					listType remLity, 
 					QString wElement) {
+  // only called directly by data list,
+  // but needed by error list
+
+#warning Make sure this has been called before showing error list
+
   HqcMainWindow *mainWindow = (HqcMainWindow*)getHqcMainWindow(this);
   
   if (mainWindow-> timeFilterChanged || 
       mainWindow->kvBaseUpdated() ||
       remstime != stime || remetime != etime || lity != remLity ||
-      !(mainWindow->stList 
-	== mainWindow->remstList) ) {
+      mainWindow->stList != mainWindow->remstList ) {
     mainWindow->datalist.clear();
     mainWindow->timeFilterChanged = FALSE;
   }
   mainWindow->setKvBaseUpdated(FALSE);
+
   numErr = mainWindow->datalist.size();
   cerr << "NumRows før   = " << numErr <<endl;
+
   if ( wElement == "Alt" ) 
     noParam = NOPARAMALL;
   else if ( wElement == "Lufttrykk" ) 
@@ -179,6 +163,7 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
     noParam = NOPARAMWIND;
   else if ( wElement == "Pluviometerkontroll" ) 
     noParam = NOPARAMPLU;
+
   int numStat = mainWindow->stList.size();
   if ( numerr == 0 ) {
     mainWindow->readFromData(stime, etime, lity);
@@ -191,43 +176,16 @@ void MDITabWindow::readErrorsFromqaBase(int& numerr,
   remLity = lity;
 }
 
-bool MDITabWindow::close()
-{
-  if ( erl ) {
-    bool close = erl->maybeSave();
-    if ( not close )
-      return false;
-  }
-  return Q3MainWindow::close();
-}
-
 MDITabWindow::~MDITabWindow()
 {
-  HqcMainWindow *mainWindow = (HqcMainWindow*)getHqcMainWindow(this);
-  delete &mainWindow->datalist;
 }
 
-//Generate message for showing observations in diana
-void MDITabWindow::showObservations(int row) {
-  
-  //time
-  QString dateTime = 
-    dtt->verticalHeader()->label(row).right(27).left(16) + ":00";
-  miutil::miTime time(dateTime.toStdString());
-  
-  //hvilken stasjon
-  QString stationNo = dtt->verticalHeader()->label(row).left(6);
-  
-  int stnr = stationNo.toInt();
-  ((HqcMainWindow*)
-   getHqcMainWindow( this ))->sendObservations(time,true);
-  ((HqcMainWindow*)
-   getHqcMainWindow( this ))->sendStation(stnr);
-  
-}
 
 void MDITabWindow::showChangedValue(int row, int col, QString val) {
   
+  // only needed by data list
+
+
   QString stationNo = dtt->verticalHeader()->label(row).left(6);
   int stnr = stationNo.toInt();
   
@@ -252,6 +210,9 @@ void MDITabWindow::showChangedValue(int row, int col, QString val) {
 
 
 void MDITabWindow::showSelectedParam(int row, int col) {
+
+  // only needed by data list
+
   QString lbl = dtt->horizontalHeader()->label(col);
   int nlind = lbl.find('\n');
   lbl.truncate(nlind);
@@ -259,15 +220,12 @@ void MDITabWindow::showSelectedParam(int row, int col) {
 }
 
 
-void MDITabWindow::headerClicked(int row ) {
-  showObservations(row);
-}
-
-
 void MDITabWindow::tableCellClicked(int row, 
 				    int col, 
 				    int button, 
 				    const QPoint& mousePos) {
+  // only needed by data list
+
   HqcMainWindow * hqcm = getHqcMainWindow( this );
   if ( col%hqcm->nucoprpar == 2 ) {
     showSelectedParam(row, col);
@@ -276,6 +234,9 @@ void MDITabWindow::tableCellClicked(int row,
 
 void MDITabWindow::tableCellClicked(int row, 
 				    int col) {
+
+  // only needed by data list
+
   HqcMainWindow * hqcm = getHqcMainWindow( this );
   if ( col%hqcm->nucoprpar == 2 ) {
     showSelectedParam(row, col);
@@ -283,6 +244,9 @@ void MDITabWindow::tableCellClicked(int row,
 }
 
 void MDITabWindow::readLimits() {
+
+  // only needed by data list
+
   QString path = QString(getenv("HQCDIR"));
   if ( path.isEmpty() ) {
     cerr << "Intet environment" << endl;
@@ -296,7 +260,7 @@ void MDITabWindow::readLimits() {
     cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;
     exit(1);
   }
-  Q3TextStream limitStream(&limits);
+  QTextStream limitStream(&limits);
   while ( limitStream.atEnd() == 0 ) {
     limitStream >> par >> dum >> low >> high;
     lowMap[par] = low;
@@ -306,6 +270,8 @@ void MDITabWindow::readLimits() {
 
 void MDITabWindow::updateKvBase(int row, int col) {
   
+  // Only called when using data list
+
   HqcMainWindow * hqcm = getHqcMainWindow( this );
   
   const double epsilon = 0.05;
@@ -314,11 +280,11 @@ void MDITabWindow::updateKvBase(int row, int col) {
   Q3TableItem* tval = dtt->item( row, col);
   QString corVal   = tval->text();
   QString newFlagVal;//   = fval->text();
-  int pos     = hqcm->datalist[row].stnr;
-  const miutil::miTime & obt = hqcm->datalist[row].otime;
-  int typ = hqcm->datalist[row].typeId[hqcm->selParNo[index]];
-  double orig = hqcm->datalist[row].orig[hqcm->selParNo[index]];
-  double corr = hqcm->datalist[row].corr[hqcm->selParNo[index]];
+  int pos     = hqcm->datalist[row].stnr();
+  const miutil::miTime & obt = hqcm->datalist[row].otime();
+  int typ = hqcm->datalist[row].typeId(hqcm->selParNo[index]);
+  double orig = hqcm->datalist[row].orig(hqcm->selParNo[index]);
+  double corr = hqcm->datalist[row].corr(hqcm->selParNo[index]);
   QString oldCorVal;
   oldCorVal = oldCorVal.setNum(corr,'f',1);
 
@@ -342,20 +308,20 @@ void MDITabWindow::updateKvBase(int row, int col) {
     int dataListIndex = dtt->originalIndex( row );
     cerr << row << " - " << dataListIndex << endl;
     
-    datl &d = hqcm->datalist[ dataListIndex ];
+    const model::KvalobsData &d = hqcm->datalist[ dataListIndex ];
     
-    int                      pos = d.stnr;
-    const miutil::miTime &   obt = d.otime;
-    float                    org = d.orig[hqcm->selParNo[index]];  
+    int                      pos = d.stnr();
+    const miutil::miTime &   obt = d.otime();
+    float                    org = d.orig(hqcm->selParNo[index]);
     int                      par = hqcm->selParNo[index];
-    const miutil::miTime &   tbt = d.tbtime;          
-    int                      typ = d.typeId[hqcm->selParNo[index]];     
-    int                      sen = d.sensor[hqcm->selParNo[index]];    
-    int                      lvl = d.level[hqcm->selParNo[index]];      
+    const miutil::miTime &   tbt = d.tbtime();
+    int                      typ = d.typeId(hqcm->selParNo[index]);
+    int                      sen = d.sensor(hqcm->selParNo[index]);
+    int                      lvl = d.level(hqcm->selParNo[index]);
     float                    cor = corVal.toFloat(); 
-    kvControlInfo            cif = d.controlinfo[hqcm->selParNo[index]];
-    const kvUseInfo &        uin = d.useinfo[hqcm->selParNo[index]];
-    const miutil::miString & fai = d.cfailed[hqcm->selParNo[index]];
+    kvControlInfo            cif = d.controlinfo(hqcm->selParNo[index]);
+    const kvUseInfo &        uin = d.useinfo(hqcm->selParNo[index]);
+    const miutil::miString & fai = d.cfailed(hqcm->selParNo[index]);
     if ( abs(typ) > 503 )
       typ = hqcm->findTypeId(typ, pos, par, obt);
 
@@ -525,6 +491,10 @@ void MDITabWindow::updateKvBase(int row, int col) {
 }
 
 void MDITabWindow::tableValueChanged(int row, int col) {
+
+  // only needed by data list
+
+
   Q3TableItem* tval = dtt->item( row, col);
   QString val      = tval->text();
   if ( col > 0 && col%4 != 2 ) {
@@ -549,6 +519,10 @@ void MDITabWindow::tableValueChanged(int row, int col) {
 }
 
 bool MDITabWindow::legalTime(int hour, int par, double val) {
+
+  // only needed by data list
+
+
   bool lT = true;
   if ( (par == 214 || par == 216 || par == 224 || par == 109) && 
        !(hour == 6 || hour == 18) || par == 110 && hour != 6 ) lT = false;
@@ -557,6 +531,10 @@ bool MDITabWindow::legalTime(int hour, int par, double val) {
 }
 
 bool MDITabWindow::legalValue(double val, int par) {
+
+  // only needed by data list
+
+
   bool lT = true;
   if ( par == 105 && ( val != -5.0 && val != -6.0 && val != -32766.0 && val < 0.0 ) )
     lT = false;

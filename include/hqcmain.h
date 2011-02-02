@@ -41,34 +41,29 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "errorlist.h"
-#include "datatable.h"
 #include <qwidget.h>
-//Added by qt3to4:
 #include <fstream>
 #include <iostream>
 #include <kvcpp/KvApp.h>
-#include <q3mainwindow.h>
+#include <qmainwindow.h>
 #include <qobject.h>
-#include <q3popupmenu.h> 
-#include <q3process.h> 
+//#include <q3process.h>
 #include <qmenubar.h> 
 #include <qmap.h>
-#include <q3multilineedit.h>
+//#include <q3multilineedit.h>
 #include <qpoint.h>
 #include <qlabel.h>
 #include <qstatusbar.h>
 #include <qmessagebox.h>
 #include <qapplication.h>
 #include <qpushbutton.h>
-#include <q3accel.h>
-#include <q3textstream.h>
+//#include <q3accel.h>
 #include <qimage.h>
 #include <qpixmap.h>
 #include <qobject.h>
-#include <q3vbox.h>
-#include <q3table.h>
-#include <qworkspace.h>
-#include <q3toolbar.h>
+//#include <q3vbox.h>
+//#include <q3table.h>
+#include <QToolBar>
 #include <qtoolbutton.h>
 #include <qicon.h>
 #include <qcursor.h>
@@ -81,13 +76,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <qTimeseries/TSPlotDialog.h>
 #include "hqcdefs.h"
-#include "tabwindow.h"
+
+class QAction;
+class QMdiArea;
+class QMdiSubWindow;
 
 using namespace std;
 using namespace kvalobs;
 using namespace kvservice;
 class DataTable;
-class MDITabWindow;
 
 
 /**
@@ -100,8 +97,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 /**
  * \brief The application's main window.
  */
-class HqcMainWindow: public Q3MainWindow 
-//class HqcMainWindow: public QMainWindow 
+class HqcMainWindow: public QMainWindow
 {
   Q_OBJECT
 public:
@@ -112,6 +108,9 @@ public:
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
+
+
+public slots:
   /*!
    * \brief Send observation times to Diana 
    */
@@ -127,25 +126,20 @@ public:
   /*!
    * \brief Send complete observation at given time to Diana
    */
-  void sendObservations(miutil::miTime,bool =true);
+  void sendObservations(const miutil::miTime & time, bool sendtime = true);
   /*!
    * \brief Send a parameter to Diana
    */
-  void sendSelectedParam(miutil::miString);
-  /*!
-   * \brief Inserts the parameters in a weather element
-   *        into a listbox in the parameter dialog.
-   */
-  void insertParametersInListBox(int, int*);
+  void sendSelectedParam(const QString & param);
   /*!
    * \brief When a parameter value is changed, the new value is 
    *        sent to the datalist, to the timeseries and to Diana.
    */
-  void updateParams(int, 
-		    miutil::miTime,
-		    miutil::miString, 
-		    miutil::miString, 
-		    miutil::miString);
+  void updateParams(int station,
+      const miutil::miTime & time,
+      const miutil::miString & param,
+      const miutil::miString & value,
+      const miutil::miString & flag);
   /*!
    * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the 
    *        start, and to TRUE when an update is sent to the database.
@@ -181,6 +175,9 @@ public:
 		int*,
 		int&,
 		int&);
+
+public:
+
   /*!
    * \brief Returns true if the hour given as input is checked in the ClockDialog
    */
@@ -189,7 +186,7 @@ public:
    * \brief Returns true if the given typeId and environment corresponds
    *        to a station type checked in the ListDialog 
    */
-  bool hqcTypeFilter(int&, int, int);
+  bool hqcTypeFilter(const int&, int, int);
   bool typeIdFilter(int, int, int, miutil::miTime, int);
   bool isAlreadyStored(miutil::miTime, int);
   /*!
@@ -252,43 +249,6 @@ public:
    */
   miutil::miString hqcType(int, int);
 
-/*!
- * \brief Convert to "Diana-value" of range check flag 
-*/
-  int numCode1(int);
-/*!
- * \brief Convert to "Diana-value" of consistency check flag 
-*/
-  int numCode2(int);
-/*!
- * \brief Convert to "Diana-value" of prognostic space control flag 
-*/
-  int numCode3(int);
-/*!
- * \brief Convert to "Diana-value" of step check flag 
-*/
-  int numCode4(int);
-/*!
- * \brief Convert to "Diana-value" of timeseries adaption flag 
-*/
-  int numCode5(int);
-/*!
- * \brief Convert to "Diana-value" of statistics control flag 
-*/
-  int numCode6(int);
-/*!
- * \brief Convert to "Diana-value" of climatology control flag 
-*/
-  int numCode7(int);
-/*!
- * \brief Convert to "Diana-value" of HQC flag 
-*/
-  int numCode8(int);
-/*!
- * \brief Calculate the 5-digit flag-code to be shown in HQC and Diana
-*/
-  int getShowFlag(kvalobs::kvDataFlag);
-
   ListDialog* lstdlg;
   ClockDialog* clkdlg;
   DianaShowDialog* dshdlg;
@@ -298,11 +258,15 @@ public:
   Rejects* rejects;
   vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
-  datl tdl;
-  vector<datl> datalist;
+  model::KvalobsDataListPtr datalist;
   vector<modDatl> modeldatalist;
+
+  /// List of selected stations
   vector<int> stList;
+
   vector<int> stnrList;
+
+  /// This holds the value of the previously used stList
   vector<int> remstList;
   vector<TxtDat> txtList;
   listType lity;
@@ -314,10 +278,14 @@ public:
   DataReinserter<kvservice::KvApp> *reinserter;
 
 public slots:
+
+  void saveDataToKvalobs(const kvalobs::kvData & toSave);
+
 /*!
  * \brief Produces the data table or the error list
 */
   void ListOK();
+
 /*!
  * \brief Called when OK button in ClockDialog is clicked
 */
@@ -340,6 +308,7 @@ public slots:
 */
   void stationOK();
 
+private slots:
   void showFlags();
   void showOrigs();
   void showMod();
@@ -364,36 +333,51 @@ private:
   bool firstObs;
   int sLevel;
   int sSensor;
+
+  /// Paramid to parameter name
   QMap<int,QString> parMap;
+
+  /// True after first time ListOk() have been invoked with valid input
   bool listExist;
+
   bool kvBaseIsUpdated;
   QString wElement;
   QString userName;
+
+  /// The parameters that the user have selected
   QStringList selPar;
-  int flID;
-  int orID;
-  int moID;
-  int stID;
-  int poID;
-  int tyID;
-  int apID;
-  int taID;
-  //  int otID;
-  //  int huID;
-  int wiID;
-  int prID;
-  int clID;
-  int seID;
-  int syID;
-  int klID;
-  int piID;
-  int plID;
-  int alID;
-  bool isShFl;
-  bool isShOr;
-  bool isShMo;
-  bool isShSt;
-  bool isShPo;
+
+  /// User selection whether to display flags in data list
+  QAction * flID;
+
+  /// User selection whether to display original values in data list
+  QAction * orID;
+
+  /// User selection whether to display model data in data list
+  QAction * moID;
+
+  /// User selection whether to display station's name
+  QAction * stID;
+
+  /// User selection whether to display station's location
+  QAction * poID;
+
+  QAction * tyID;
+  QAction * apID;
+  QAction * taID;
+  //  QAction * otID;
+  //  QAction * huID;
+  QAction * wiID;
+  QAction * prID;
+  QAction * clID;
+  QAction * seID;
+  QAction * syID;
+  QAction * klID;
+  QAction * piID;
+  QAction * plID;
+  QAction * alID;
+
+  /// True if all types have been selected, as opposed to prioritized parameters
   bool isShTy;
   int synopType;
   int autoobsType;
@@ -406,16 +390,22 @@ private:
   bool tsVisible;
   ClientButton* pluginB;
   //  DianaConnection* diaCon;
-  Q3PopupMenu* file;
-  int fileSaveMenuItem;
-  //KTEST
+
+
+//  Q3PopupMenu* file;
+  QAction * saveAction;
+  QAction * printAction;
+//  //KTEST
   int filePrintMenuItem;
-  Q3PopupMenu* choice;
-  Q3PopupMenu* showmenu;
-  Q3PopupMenu* weathermenu;
-  Q3PopupMenu* clockmenu;
-  Q3PopupMenu* typeIdmenu;
-  QWorkspace* ws;
+  QMenu* choice;
+  QMenu* showmenu;
+  QMenu* weathermenu;
+  QMenu* clockmenu;
+  QMenu* typeIdmenu;
+
+
+
+  QMdiArea * ws;
   //  QPainter* logo;
   //  void paintEvent(QPaintEvent*);
   // socket variables
@@ -424,10 +414,7 @@ private:
   QString dateandTime;
   QString kvParam[NOPARAMALL];
   QString kdbParam[NOPARAMALL];
-  // Database connection
-  kvalobs::kvDbGate dbGate;
-  dnmi::db::Connection *con;
-  dnmi::db::DriverManager dbmngr;
+
   //  DataList dlist;
   ModelDataList mdlist;
   ObsTypeList otpList;
@@ -436,21 +423,38 @@ private:
   std::list<kvalobs::kvStation> slist;
   std::list<kvalobs::kvParam> plist;
   std::list<long> statList;
-  int order[NOPARAMALL];
-  int airPressOrder[NOPARAMAIRPRESS];
-  int tempOrder[NOPARAMTEMP];
-  int precOrder[NOPARAMPREC];
-  int visualOrder[NOPARAMVISUAL];
-  int waveOrder[NOPARAMWAVE];
-  int synopOrder[NOPARAMSYNOP];
-  int klstatOrder[NOPARAMKLSTAT];
-  int priorityOrder[NOPARAMPRIORITY];
-  int windOrder[NOPARAMWIND];
-  int pluOrder[NOPARAMPLU];
+
+
+
+#warning sizes here must not be hardcoded!!
+  //int order[NOPARAMALL];
+  std::vector<int> order;
+
+  /**
+   * Parameters from parameter groups. The keys will be the user's
+   * presentation strings, and not the strings in the config file
+   *
+   * @todo make bindings between menu elements and config file dynamic
+   */
+  QMap<QString, std::vector<int> > parameterGroups;
+
+//  int airPressOrder[NOPARAMAIRPRESS];
+//  int tempOrder[NOPARAMTEMP];
+//  int precOrder[NOPARAMPREC];
+//  int visualOrder[NOPARAMVISUAL];
+//  int waveOrder[NOPARAMWAVE];
+//  int synopOrder[NOPARAMSYNOP];
+//  int klstatOrder[NOPARAMKLSTAT];
+//  int priorityOrder[NOPARAMPRIORITY];
+//  int windOrder[NOPARAMWIND];
+//  int pluOrder[NOPARAMPLU];
   
   TSPlotDialog* tspdialog; // timeseries-plot
   StationTable* stationTable;
+
+  /// Station selection dialog
   StationSelection* statSelect;
+
   miutil::miTime dianaObsTime;
   miutil::miTime dianaTime;
   typedef QMap<miutil::miString,miutil::miString> NameMap;
@@ -486,23 +490,6 @@ QStringList listParName;
 QStringList listParNum;
 
 private slots:
-  // file commands
-  MDITabWindow* eTable(const miutil::miTime&, 
-		       const miutil::miTime&,
-		       miutil::miTime&, 
-		       miutil::miTime&, 
-		       listType, 
-		       listType, 
-		       mettType, 
-		       QString&,
-		       int*,
-		       vector<datl>&, 
-		       vector<modDatl>&, 
-		       list<kvStation>&,
-		       int, 
-		       int,
-		       bool,
-		       QString&);
   void closeWindow();
   void helpUse();
   void helpFlag();
@@ -540,10 +527,10 @@ private slots:
   void timeseriesMenu();
   void stationsInList();
 
-  void updateSaveFunction( QWidget *w );
+  void updateSaveFunction( QMdiSubWindow * w );
 
 signals:
-  void statTimeReceived(QString&);
+  void statTimeReceived(const QString&);
   void newStationList(std::vector<QString>&);
   void newParameterList(const QStringList&);
   void toggleWeather();

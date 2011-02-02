@@ -156,7 +156,7 @@ public:
 	    int, 
 	    int, 
 	    int*,
-	    vector<datl>&, 
+	    vector<model::KvalobsData>&,
 	    vector<modDatl>&, 
 	    list<kvStation>&,
 	    int, 
@@ -219,6 +219,26 @@ public:
    */
   bool maybeSave();
 
+public:
+  /*!
+   * \brief Constructs a kvData object
+   * \return The kvData object corresponding to the given row in the error list
+   */
+  kvalobs::kvData getKvData( int row ) const;
+  /*!
+   * \brief Constructs a kvData object
+   * \return The kvData object corresponding to the current row in the error list
+   */
+  kvalobs::kvData getKvData( ) const { return getKvData( currentRow() ); }
+
+
+public slots:
+  /*!
+   * \brief Updates controlinfo and sends the changed data to the kvalobs database
+   */
+  void saveChanges();
+  //  void printErrorList();
+
 
 signals:
 
@@ -238,6 +258,8 @@ protected:
    * \brief 
    */
   virtual bool event( QEvent * e );
+  void closeEvent ( QCloseEvent * event );
+
 
 private:
   /*!
@@ -343,7 +365,7 @@ private:
   bool specialTimeFilter(int, miutil::miTime); 
   bool typeFilter(int, int, int, miutil::miTime); 
 private slots:
-  //  void tableCellClicked(int, int, int, const QPoint&, vector<datl>&);
+  //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);
   void updateFaillist(int, int);
   //void updateKvBase(int, int);
@@ -381,25 +403,6 @@ private:
   kvalobs::kvData getKvData( const struct mem &m ) const;
   ExtendedFunctionalityHandler *efh;
   //  OkTableItem checkItem( int, int) const;
-public:
-  /*!
-   * \brief Constructs a kvData object
-   * \return The kvData object corresponding to the given row in the error list
-   */
-  kvalobs::kvData getKvData( int row ) const;
-  /*!
-   * \brief Constructs a kvData object 
-   * \return The kvData object corresponding to the current row in the error list
-   */
-  kvalobs::kvData getKvData( ) const { return getKvData( currentRow() ); }
-  
-
-public slots:
-  /*!
-   * \brief Updates controlinfo and sends the changed data to the kvalobs database
-   */
-  void saveChanges();
-  //  void printErrorList();
 };
 
 #endif

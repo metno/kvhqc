@@ -79,7 +79,7 @@ ErrorList::ErrorList(QStringList& selPar,
 		     int lity,
 		     int metty,
 		     int* noSelPar,
-		     vector<datl>& dtl,
+		     vector<model::KvalobsData>& dtl,
 		     vector<modDatl>& mdtl,
 		     list<kvStation>& slist,
 		     int dateCol,
@@ -90,7 +90,7 @@ ErrorList::ErrorList(QStringList& selPar,
 {
   setVScrollBarMode( Q3ScrollView::AlwaysOn  );
   setMouseTracking(true);
-  BusyIndicator busyIndicator();
+  BusyIndicator busyIndicator;
   stationidCol = 1;
   typeidCol = 7;
 
@@ -165,22 +165,28 @@ ErrorList::ErrorList(QStringList& selPar,
   int prevPara = -1;
   for ( int j = 0; j < selPar.count(); j++ ) {
     for ( int i = 0; i < dtl.size(); i++ ) {
-      if (  dtl[i].stnr > 99999) continue;
-      if (  dtl[i].typeId[noSelPar[j]] < 0 ) continue;
-      if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
-      if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
-      if ( !tp ) continue;
+      if (  dtl[i].stnr() > 99999)
+        continue;
+      if (  dtl[i].typeId(noSelPar[j]) < 0 )
+        continue;
+      if (  dtl[i].otime() < stime || dtl[i].otime() > etime )
+        continue;
+      if ( !specialTimeFilter( noSelPar[j], dtl[i].otime()) )
+        continue;
+      if ( ! typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime()) )
+        continue;
+
       missObs mobs;
-      QString ctr = QString::fromStdString(dtl[i].controlinfo[noSelPar[j]]);
+
+
+      QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]).flagstring());
       int flg = ctr.mid(4,1).toInt(0,16);
-      int tdiff = miutil::miTime::hourDiff(dtl[i].otime,stime);
+      int tdiff = miutil::miTime::hourDiff(dtl[i].otime(),stime);
       if ( flg == 6 ) {
-	mobs.oTime = dtl[i].otime;
+	mobs.oTime = dtl[i].otime();
 	mobs.time = tdiff;
 	mobs.parno  = noSelPar[j];
-	mobs.statno = dtl[i].stnr;
+	mobs.statno = dtl[i].stnr();
 	mobs.missNo = missCount;
 	if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
 	  missCount = 0;
@@ -199,28 +205,29 @@ ErrorList::ErrorList(QStringList& selPar,
   int  ml = 0;
 
   for ( int i = 0; i < dtl.size(); i++ ) {
-    if (  dtl[i].stnr > 99999) continue;
-    if (  dtl[i].typeId < 0 ) continue;
-    if (  dtl[i].otime < stime || dtl[i].otime > etime ) continue;
+    if (  dtl[i].stnr() > 99999) continue;
+#warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
+    if (  dtl[i].showTypeId() < 0 ) continue;
+    if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
     mem memObs;
-    memObs.obstime = dtl[i].otime;
-    memObs.tbtime = dtl[i].tbtime;
-    memObs.name = dtl[i].name;
-    memObs.stnr = dtl[i].stnr;
+    memObs.obstime = dtl[i].otime();
+    memObs.tbtime = dtl[i].tbtime();
+    memObs.name = dtl[i].name();
+    memObs.stnr = dtl[i].stnr();
 
     for ( int j = 0; j < selPar.count(); j++ ) {
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime);
+      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime());
       if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr, noSelPar[j], dtl[i].typeId[noSelPar[j]], dtl[i].otime);
+      bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
       if ( !tp ) continue;
-      memObs.typeId      = dtl[i].typeId[noSelPar[j]];
-      memObs.orig        = dtl[i].orig[noSelPar[j]];
-      memObs.corr        = dtl[i].corr[noSelPar[j]];
-      memObs.sen         = dtl[i].sensor[noSelPar[j]];
-      memObs.lev         = dtl[i].level[noSelPar[j]];
-      memObs.controlinfo = dtl[i].controlinfo[noSelPar[j]];
-      memObs.useinfo     = dtl[i].useinfo[noSelPar[j]];
-      memObs.cfailed     = dtl[i].cfailed[noSelPar[j]];
+      memObs.typeId      = dtl[i].typeId(noSelPar[j]);
+      memObs.orig        = dtl[i].orig(noSelPar[j]);
+      memObs.corr        = dtl[i].corr(noSelPar[j]);
+      memObs.sen         = dtl[i].sensor(noSelPar[j]);
+      memObs.lev         = dtl[i].level(noSelPar[j]);
+      memObs.controlinfo = dtl[i].controlinfo(noSelPar[j]).flagstring();
+      memObs.useinfo     = dtl[i].useinfo(noSelPar[j]).flagstring();
+      memObs.cfailed     = dtl[i].cfailed(noSelPar[j]);
       memObs.parNo       = noSelPar[j];
       memObs.parName     = selPar[j];
       memObs.morig = -32767.0;
@@ -258,7 +265,7 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.flg = flg;
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
-      if ( lity == erLi ) {
+      if ( lity == erLi || lity == alLi ) {
 	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
 	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
 	    ((flg == 2 || flg == 3) && flTyp == "fnum") )
@@ -669,6 +676,9 @@ ErrorList::ErrorList(QStringList& selPar,
   setColumnReadOnly ( 20, true );
   setColumnStretchable( 20, true );
   showSameStation();
+
+  setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  setCaption("Feilliste");
 }
 
 ErrorList::~ErrorList() {
@@ -869,7 +879,7 @@ void ErrorList::tableCellClicked(int row,
 				 int col,
 				 int button) {//,
   //				 const QPoint& mousePos,
-  //				 vector<datl>& dtl) { 
+  //				 vector<model::KvalobsData>& dtl) {
   if ( col == 0 && row >= 0) {
     selectRow(row);
   }
@@ -1234,17 +1244,12 @@ void ErrorList::signalStationSelected( int row )
 void execMissingList( ErrorList* el )
 {
   BusyIndicator busy;
-  QString missText;
-  QString missSize;
-  missSize = missSize.setNum( el->mList.size());
   if ( el->mList.size() > 0 ) {
-    MDITabWindow* mtw = dynamic_cast<MDITabWindow*>( el->parent()->parent() );
-    MissingTable* mt = new MissingTable(mtw, el);
+    MissingTable* mt = new MissingTable(el, el);
     mt->show();
-    missText = "Mangellisten inneholder " + missSize + " elementer,\nvil du se disse?";
   }
   else {
-    missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
+    QString missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
     int mb = QMessageBox::information(el,
 				      "Mangelliste",
 				      missText,
@@ -1579,6 +1584,15 @@ bool ErrorList::event(QEvent *event)
   }
   return QWidget::event(event);
 }
+
+void ErrorList::closeEvent( QCloseEvent * event )
+{
+  if ( maybeSave() )
+    Q3Table::closeEvent(event);
+  else
+    event->ignore();
+}
+
 
 QString DataCell::key() const {
   QString item;

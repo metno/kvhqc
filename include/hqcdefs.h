@@ -30,6 +30,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef HQCDEFS_H
 #define HQCDEFS_H
+
+
+#include "KvalobsData.h"
 #include <list>
 //#include <kvQtApp.h>
 #include <kvcpp/KvApp.h>
@@ -61,16 +64,16 @@ typedef list<TypeList>                         ObsTypeList;
 const int NOPARAM          = 1043;
 const int NOPARAMMODEL     = 8;
 const int NOPARAMALL       = 210;
-const int NOPARAMAIRPRESS  = 23; //Ny gr.
-const int NOPARAMTEMP      = 31; //Ny gr
-const int NOPARAMPREC      = 40;
-const int NOPARAMVISUAL    = 36;
-const int NOPARAMWAVE      = 45;
-const int NOPARAMSYNOP     = 39;
-const int NOPARAMKLSTAT    = 36;
-const int NOPARAMPRIORITY  = 31;
-const int NOPARAMWIND      = 4;
-const int NOPARAMPLU       = 6;
+//const int NOPARAMAIRPRESS  = 23; //Ny gr.
+//const int NOPARAMTEMP      = 31; //Ny gr
+//const int NOPARAMPREC      = 40;
+//const int NOPARAMVISUAL    = 36;
+//const int NOPARAMWAVE      = 45;
+//const int NOPARAMSYNOP     = 39;
+//const int NOPARAMKLSTAT    = 33;
+//const int NOPARAMPRIORITY  = 31;
+//const int NOPARAMWIND      = 4;
+//const int NOPARAMPLU       = 6;
 const int noInfo = 7;
 const int nnn = 1;
 
@@ -78,26 +81,12 @@ enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
 enum mettType {tabHead, tabList};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 
-struct datl {
-  int stnr;
-  int snr;
-  QString name;
-  miutil::miTime otime;
-  miutil::miTime tbtime;
-  //  int typeId;
-  int showTypeId;
-  int typeIdChanged;
-  int typeId[NOPARAM];
-  double orig[NOPARAM];
-  int flag[NOPARAM];
-  double corr[NOPARAM];
-  int level[NOPARAM];
-  int sensor[NOPARAM];
-  string controlinfo[NOPARAM];
-  string useinfo[NOPARAM];
-  string cfailed[NOPARAM];
-};
 struct modDatl {
+  modDatl()
+  {
+    std::fill(orig, orig + NOPARAM, -32767);
+  }
+
   int stnr;
   miutil::miTime otime;
   double orig[NOPARAM];

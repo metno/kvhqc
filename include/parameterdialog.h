@@ -66,6 +66,12 @@ public:
 
   Q3ListBox* plb;
 
+  /*!
+   * \brief Inserts the parameters in a weather element
+   *        into a listbox in the parameter dialog.
+   */
+  void insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap);
+
 public slots:
   void listClickedItem(Q3ListBoxItem*);
   void applyHideClicked();

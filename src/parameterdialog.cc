@@ -29,14 +29,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "parameterdialog.h"
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <Q3HBoxLayout>
+#include <QVBoxLayout>
+#include <QHBoxLayout>
 
 ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {  
   setCaption("Parametervalg");
   setGeometry(500,10,300,580);
-  Q3VBoxLayout * vl = new Q3VBoxLayout(this,10);
+
+  QVBoxLayout * vl = new QVBoxLayout(this,10);
 
   Q3ButtonGroup *pVal = new Q3ButtonGroup( 1, 
 					 Qt::Horizontal, 
@@ -67,7 +67,7 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
 
-  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
+  QHBoxLayout* buttonLayout = new QHBoxLayout();
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
@@ -77,7 +77,6 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   connect(excu, SIGNAL(clicked()), this, SIGNAL( paramApply()));
 
   Q3VBox* vb = new Q3VBox(this);
-
   vl->addWidget(vb);
 
   vl->addWidget(plb);
@@ -85,7 +84,18 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   vl->addWidget(pVal);
 
   vl->addLayout(buttonLayout);
+
+  hdnexcu->setFocus();
 }
+
+void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
+  plb->clear();
+  for (std::vector<int>::const_iterator it = porder.begin(); it != porder.end(); ++it) {
+      QString sp = parMap[*it];
+      plb->insertItem(sp);
+  }
+}
+
 
 void ParameterDialog::showAll(){
   allPar->setChecked(true);

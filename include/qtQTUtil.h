@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QLabel>
 
 using namespace std;
+using namespace miutil;
 
 class QPushButton;
 class QComboBox;

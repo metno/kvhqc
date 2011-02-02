@@ -42,7 +42,6 @@ DEFINES=-DQT_GENUINE_STR -DWITH_STD_BOOL -D_STANDARD_C_PLUS_PLUS
 
 #METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools tsData pets2 glp puMet puCtools puDatatypes
 METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools glp puMet puCtools puDatatypes ftgl
-
 INCLUDE=-I$(INCDIR) \
 	-I$(AUTHDIR) \
 	-I$(FAILDIR)/src \
@@ -67,7 +66,6 @@ LINKS:= -L$(WATCHDIR) -lWatchRR \
 	`pkg-config --libs libkvcpp $(METLIBS_PKG_CONFIG)` -lgfortran \
 	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL -lm \
 	`pkg-config --libs libxml++-2.6`
-###	`pkg-config --libs libkvcpp qutilities qtimeseries gltext putools tsdata pets2 glp pumet puctools parameter pudatatypes` \
 
 OPTIONS="CXX=${CXX}" "CCFLAGS=${CXXFLAGS} ${DEFINES}" "CC=${CC}" "CFLAGS=${CFLAGS} ${DEFINES}" "LDFLAGS=${CXXLDFLAGS}" "AR=${AR}" "ARFLAGS=${ARFLAGS}" "INCLUDE=${INCLUDE}" "LIBDIR=${LIBDIR}" "DEPENDSFILE=../${DEPENDSFILE}" "BINDIR=../${BINDIR}" "LOCALDIR=${LOCALDIR}" "INCDIR=${INCDIR}" "LINKS=${LINKS}" "MOC=${MOC}" "MOCFILE=../${MOCFILE}" "AUTHDIR=$(AUTHDIR)" "FAILDIR=$(FAILDIR)" "WATCHDIR=$(WATCHDIR)" "WEATHERDIR=$(WEATHERDIR)"
 

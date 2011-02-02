@@ -28,6 +28,10 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
+
+#error This file should not be used
+
 #ifndef TABWINDOW_H
 #define TABWINDOW_H
 
@@ -42,7 +46,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class HqcMainWindow;
 
-class MDITabWindow: public Q3MainWindow
+class MDITabWindow: public QWidget
 {
   friend class HqcMainWindow;
     Q_OBJECT
@@ -60,7 +64,7 @@ public:
 		  QStringList&,
 		  int,
 		  int*,
-		  vector<datl>&, 
+		  vector<model::KvalobsData>&,
 		  vector<modDatl>&, 
 		  list<kvStation>&,
 		  int, 
@@ -69,14 +73,8 @@ public:
 		  QString& );
     ~MDITabWindow();
 
-    //  virtual bool close( bool alsoDelete );
-    //  bool close() { return close( false ); }
-  virtual bool close();
-  //  bool close() { return close(); }
-
 private:
     void showDianaAnalysis(int);
-    void showObservations(int);
     void showSelectedParam(int, int);
     void showChangedValue(int, int, QString);
     void readLimits();
@@ -91,16 +89,13 @@ private:
 private slots:
     void tableCellClicked(int, int, int, const QPoint&);
     void tableCellClicked(int, int);
-    void headerClicked(int);
     void tableValueChanged(int, int);
     void updateKvBase(int, int);
     //    void focusTable(QString&);
 signals:
-    void message(const QString&, int );
+//    void message(const QString&, int );
 
 private:
-    DataTable* dtt;
-    ErrorList* erl;
     //    ErrorHead* erHead;
     void readErrorsFromqaBase(int&, 
 			      int&, 

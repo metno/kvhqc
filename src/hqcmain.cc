@@ -41,7 +41,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationInformation.h"
 #include "GetData.h"
 #include "GetTextData.h"
+#include "KvalobsDataModel.h"
+#include "KvalobsDataView.h"
 #include <iomanip>
+#include <QAction>
 #include <qpixmap.h>
 #include <QWindowsXPStyle>
 #include <qwindowsstyle.h>
@@ -50,9 +53,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qvalidator.h>
 #include <qmetaobject.h>
 #include <qlistview.h>
-//Added by qt3to4:
 #include <QFrame>
-#include <Q3PopupMenu>
+#include <QTextStream>
 #include <qTimeseries/TSPlot.h>
 #include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
@@ -65,17 +67,37 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <complex>
 #include <QTime>
 #include <QRegExp>
+#include <QMdiArea>
+#include <QMdiSubWindow>
+#include <glText/glTextQtTexture.h>
+#include <boost/assign.hpp>
 
 using namespace std;
 
-int noSelPar;
-int modelParam[] = {61,81,109,110,177,178,211,262};
-miutil::miTime remstime;
-miutil::miTime remetime;
-miutil::miTime remdlstime;
-miutil::miTime remdletime;
-listType remLity;
+namespace {
+  // Number of parameters to show, according to last selection
+  //int noSelPar;
+  const int modelParam[] =
+    { 61, 81, 109, 110, 177, 178, 211, 262 };
+  miutil::miTime remstime;
+  miutil::miTime remetime;
+  miutil::miTime remdlstime;
+  miutil::miTime remdletime;
+  listType remLity;
 
+const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
+        ("[airpress]", "Lufttrykk")
+        ("[temperature]", "Temperatur")
+        ("[prec]", "Nedbï¿½r")
+        ("[visual]", "Visuell")
+        ("[wave]", "Sjï¿½gang")
+        ("[synop]", "Synop")
+        ("[klstat]", "Klimastatistikk")
+        ("[priority]", "Prioriterte parametere")
+        ("[wind]", "Vind")
+        ("[plu]", "Pluviometerkontroll")
+        ("[all]", "Alt");
+}
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
 {
@@ -103,8 +125,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
  * Main Window Constructor.
  */	
   HqcMainWindow::HqcMainWindow()
-  : Q3MainWindow( 0, "HQC")
+  : QMainWindow( 0, "HQC")
   , reinserter( NULL )
+  , datalist(new model::KvalobsDataList)
 {
   readFromStation();
   //  setAttribute(Qt::WA_DeleteOnClose);
@@ -115,9 +138,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   if ( reinserter == NULL ) {
     int mb = QMessageBox::information(this, 
 				  "Autentisering", 
-				  "Du er ikke registrert som operatør!\n"
+				  "Du er ikke registrert som operatï¿½r!\n"
 				  "Du kan se dataliste, feillog og feilliste,\n"
-				  "men ikke gjøre endringer i Kvalobsdatabasen!",
+				  "men ikke gjï¿½re endringer i Kvalobsdatabasen!",
 				  "Fortsett",
 				  "Avslutt",
 				  "");
@@ -125,7 +148,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
       throw runtime_error( "Not authenticated" );
   }
   else {
-    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
+    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatï¿½r" << endl;
   }
   //-----------------------------------------------------------------  
 
@@ -141,125 +164,131 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   dianaconnected=  false;  // connection to diana
   tsVisible = false;
 
+  // ---- ACTIONS -----------------------------------------------
+
+  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
+  QAction * dataListAction = new QAction(icon_listdlg, tr("&Dataliste"), this);
+  dataListAction->setShortcut(Qt::CTRL+Qt::Key_D);
+  connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
+
+  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
+  QAction * timeSeriesAction = new QAction(icon_ts, tr("&Tidsserie"), this);
+  connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
+
+  QAction * timesAction = new QAction(tr("&Tidspunkter"), this);
+  timesAction->setShortcut(Qt::CTRL | Qt::Key_T);
+  connect(timesAction, SIGNAL(activated()), this, SLOT(clk()));
+
+  // ---- Workspace ---------------------------------------------
+  ws = new QMdiArea(this);
+  setCentralWidget( ws );
+
+  connect( ws, SIGNAL(subWindowActivated(QMdiSubWindow*)),
+           this, SLOT(updateSaveFunction(QMdiSubWindow*)) );
+
+
+
   // ---- MAIN MENU ---------------------------------------------
   //  qApp->setStyle(new QSGIStyle);
 
   listExist = FALSE;
-  menuBar()->setFont(QFont("system", 12));
+
+  QMenu * file = menuBar()->addMenu(tr("&Fil"));
+  saveAction = file->addAction( "Lagre", this, SIGNAL( saveData() ), Qt::CTRL+Qt::Key_S );
+  saveAction->setEnabled(false);
+  printAction = file->addAction( "Skriv ut", this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
+  printAction->setEnabled(false);
+
+  file->addAction( "&Lukk",    ws, SLOT(closeActiveSubWindow()), Qt::CTRL+Qt::Key_W );
+  file->addAction( "&Avslutt", qApp, SLOT( closeAllWindows() ));
+
+
+  choice = menuBar()->addMenu(tr("&Valg"));
+  flID = choice->addAction( "Vis &flagg",                 this, SLOT(showFlags()));
+  flID->setCheckable(true);
+  flID->setChecked(true);
+  orID = choice->addAction( "Vis &original",              this, SLOT(showOrigs()));
+  orID->setCheckable(true);
+  orID->setChecked(true);
+  moID = choice->addAction( "Vis &modeldata",             this, SLOT(showMod()));
+  moID->setCheckable(true);
+  moID->setChecked(true);
+  stID = choice->addAction( "Vis &stasjonsnavn",          this, SLOT(showStat()));
+  stID->setCheckable(true);
+  stID->setChecked(true);
+  poID = choice->addAction( "Vis &lengde, bredde, hï¿½yde", this, SLOT(showPos()));
+  poID->setCheckable(true);
+  poID->setChecked(false);
+
+  //isShTy;
+
+
+//  choice->setItemChecked(flID, isShFl);
+//  choice->setItemChecked(orID, isShOr);
+
   
-  file = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Fil", file );
-  file->insertSeparator();
-
-  fileSaveMenuItem = file->insertItem( "Lagre", this, SIGNAL( saveData() ), Qt::CTRL+Qt::Key_S );
-  file->setItemEnabled( fileSaveMenuItem, false );
-
-  filePrintMenuItem = file->insertItem( "Skriv ut", this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
-  file->setItemEnabled( filePrintMenuItem, false );
-
-  file->insertItem( "&Lukk",    this, SLOT(closeWindow()), Qt::CTRL+Qt::Key_W );
-  file->insertItem( "&Avslutt", qApp, SLOT( closeAllWindows() ), Qt::CTRL+Qt::Key_Q );
-  
-  choice = new Q3PopupMenu( this );
-  choice->setCheckable(TRUE);
-  menuBar()->insertItem( "&Valg", choice );
-  choice->insertSeparator();
-  flID = choice->insertItem( "Vis flagg",                 this, SLOT(showFlags()));
-  orID = choice->insertItem( "Vis original",              this, SLOT(showOrigs()));
-  moID = choice->insertItem( "Vis modeldata",             this, SLOT(showMod()));
-  stID = choice->insertItem( "Vis stasjonsnavn",          this, SLOT(showStat()));
-  poID = choice->insertItem( "Vis lengde, bredde, høyde", this, SLOT(showPos()));
-
-  isShFl = TRUE;
-  isShOr = TRUE;
-  isShMo = TRUE;
-  isShSt = TRUE;
-
-  choice->setItemChecked(flID, isShFl);
-  choice->setItemChecked(orID, isShOr);
-  choice->setItemChecked(moID, isShMo);
-  choice->setItemChecked(stID, isShSt);
-  
-  showmenu = new Q3PopupMenu( this );
+  QMenu * showmenu = new QMenu( this );
   menuBar()->insertItem( "&Listetype", showmenu);
-  showmenu->insertItem( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::ALT+Qt::Key_L );
-  showmenu->insertItem( "&Feilliste    ", this, SLOT(errListMenu()),Qt::ALT+Qt::Key_F );
-  showmenu->insertItem( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::ALT+Qt::Key_E );
-  showmenu->insertItem( "&Dataliste    ", this, SLOT(dataListMenu()),Qt::ALT+Qt::Key_D );
-  showmenu->insertItem( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
+  showmenu->addAction( "Data&liste og Feilliste    ", this, SLOT(allListMenu()),Qt::CTRL+Qt::Key_L );
+  showmenu->addAction( "&Feilliste    ", this, SLOT(errListMenu()),Qt::CTRL+Qt::Key_F );
+  showmenu->addAction( "F&eillog    ",   this, SLOT(errLogMenu()),Qt::CTRL+Qt::Key_E );
+  showmenu->addAction(dataListAction);
+  showmenu->addAction( "&Feilliste salen", this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
   showmenu->insertSeparator();
-  showmenu->insertItem( "&Nedbør", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
-  showmenu->insertItem( "&Vær", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
+  showmenu->addAction( "&Nedbï¿½r", this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
+  showmenu->addAction( "&Vï¿½r", this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
   showmenu->insertSeparator();
-  showmenu->insertItem( "&Tidsserie    ", this, SLOT(timeseriesMenu()),Qt::ALT+Qt::Key_T );
+  showmenu->addAction(timeSeriesAction);
   showmenu->insertSeparator();
-  showmenu->insertItem( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
-  showmenu->insertItem( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::ALT+Qt::Key_J );
+  showmenu->addAction( "Te&xtData    ", this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
+  showmenu->addAction( "Re&jected    ", this, SLOT(rejectedMenu()),Qt::CTRL+Qt::Key_J );
   
-  weathermenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Værelement", weathermenu);
+  QMenu * weathermenu = new QMenu( this );
+  menuBar()->insertItem( "Vï¿½r&element", weathermenu);
   wElement = "";
-  klID = weathermenu->insertItem( "&For daglig rutine",       this, SLOT(climateStatistics()) );
-  piID = weathermenu->insertItem( "&Prioriterte parametere",  this, SLOT(priority()) );
-  taID = weathermenu->insertItem( "&Temperatur og fuktighet", this, SLOT(temperature()) );
-  prID = weathermenu->insertItem( "&Nedbør og snøforhold",    this, SLOT(precipitation()) );
-  apID = weathermenu->insertItem( "&Lufttrykk og vind",       this, SLOT(airPress()) );
-  clID = weathermenu->insertItem( "&Visuelle parametere",     this, SLOT(visuals()) );
-  seID = weathermenu->insertItem( "&Maritime parametere",     this, SLOT(sea()) );
-  syID = weathermenu->insertItem( "&Synop",                   this, SLOT(synop()) );
-  wiID = weathermenu->insertItem( "&Vind",                    this, SLOT(wind()) );
-  plID = weathermenu->insertItem( "&Pluviometerparametere",   this, SLOT(plu()) );
-  alID = weathermenu->insertItem( "&Alt",                     this, SLOT(all()) );
+  klID = weathermenu->addAction( "For &daglig rutine",       this, SLOT(climateStatistics()) );
+  piID = weathermenu->addAction( "&Prioriterte parametere",  this, SLOT(priority()) );
+  taID = weathermenu->addAction( "&Temperatur og fuktighet", this, SLOT(temperature()) );
+  prID = weathermenu->addAction( "&Nedbï¿½r og snï¿½forhold",    this, SLOT(precipitation()) );
+  apID = weathermenu->addAction( "&Lufttrykk og vind",       this, SLOT(airPress()) );
+  clID = weathermenu->addAction( "&Visuelle parametere",     this, SLOT(visuals()) );
+  seID = weathermenu->addAction( "&Maritime parametere",     this, SLOT(sea()) );
+  syID = weathermenu->addAction( "&Synop",                   this, SLOT(synop()) );
+  wiID = weathermenu->addAction( "&Vind",                    this, SLOT(wind()) );
+  plID = weathermenu->addAction( "&Pluviometerparametere",   this, SLOT(plu()) );
+  alID = weathermenu->addAction( "&Alt",                     this, SLOT(all()) );
 
-  clockmenu = new Q3PopupMenu( this );
-  menuBar()->insertItem( "&Tidspunkter", this, SLOT(clk()));
+
+  QMenu * clockmenu = menuBar()->addMenu("&Tidspunkter");
+  clockmenu->addAction(timesAction);
+
   menuBar()->insertItem( "&Dianavisning", this, SLOT(dsh()));
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
-  Q3PopupMenu * help = new Q3PopupMenu( this );
+
+  QMenu * help = new QMenu( this );
   menuBar()->insertItem( "&Hjelp", help );
-  help->insertItem( "&Brukerveiledning", this, SLOT(helpUse()), Qt::Key_F1);
-  help->insertItem( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F2);
-  help->insertItem( "&Parametere", this, SLOT(helpParam()), Qt::Key_F3);
+  help->addAction( "&Brukerveiledning", this, SLOT(helpUse()), Qt::Key_F1);
+  help->addAction( "&Flagg", this, SLOT(helpFlag()), Qt::Key_F2);
+  help->addAction( "&Parametere", this, SLOT(helpParam()), Qt::Key_F3);
   help->insertSeparator();
-  help->insertItem( "&Om Hqc", this, SLOT(about()));
+  help->addAction( "&Om Hqc", this, SLOT(about()));
   help->insertSeparator();
-  help->insertItem( "Om &Qt", this, SLOT(aboutQt()));
+  help->addAction( "Om &Qt", this, SLOT(aboutQt()));
   
   // --- MAIN WINDOW -----------------------------------------
-  ws = new QWorkspace(this);
-  ws->setScrollBarsEnabled( TRUE );
-  ws->setBackgroundColor( Qt::white );
-  setCentralWidget( ws );
-
-  connect( ws, SIGNAL( windowActivated(QWidget*) ),
-	   this, SLOT( updateSaveFunction(QWidget*) ) );
 
   
   // --- TOOL BAR --------------------------------------------
-  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
-  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
-  Q3ToolBar * hqcTools = new Q3ToolBar( this, "hqc" );
-  hqcTools->setLabel( "Hqcfunksjoner" );
-  QToolButton* listButton;
-  QToolButton* tsButton;
-  listButton = new QToolButton( icon_listdlg, 
-				tr("Dataliste"), 
-				"", 
-				this, 
-				SLOT(dataListMenu()), 
-				hqcTools );
-  tsButton = new QToolButton( icon_ts, 
-			      tr("Tidsserie"), 
-			      "", 
-			      this, 
-			      SLOT(timeseriesMenu()), 
-			      hqcTools );
+  QToolBar * hqcTools = addToolBar("Hqcfunksjoner");
+  hqcTools->addAction(dataListAction);
+  hqcTools->addAction(timeSeriesAction);
+
   
   // --- STATUS BAR -------------------------------------------
   
   //  if(usesocket){
   miutil::miString name = "hqc";   
-  miutil::miString command = "/usr/local/bin/coserver4";  
+  miutil::miString command = "coserver4";
   pluginB = new ClientButton(name.cStr(),
 			     command.cStr(),
 			     statusBar());
@@ -279,7 +308,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   // --- READ STATION INFO ----------------------------------------
 
-  cerr.setf(ios::fixed);
+  //cerr.setf(ios::fixed);
   int statCheck = 0;
   readFromStationFile(statCheck);
   readFromObsPgm();
@@ -385,59 +414,41 @@ void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
 }
 
 void HqcMainWindow::showFlags() {
-  isShFl = !isShFl;
-  choice->setItemChecked(flID, isShFl);
 }
 
 void HqcMainWindow::showOrigs() {
-  isShOr = !isShOr;
-  choice->setItemChecked(orID, isShOr);
 }
 
 void HqcMainWindow::showMod() {
-  isShMo = !isShMo;
-  choice->setItemChecked(moID, isShMo);
 }
 
 void HqcMainWindow::showStat() {
-  isShSt = !isShSt;
-  choice->setItemChecked(stID, isShSt);
 }
 
 void HqcMainWindow::showPos() {
-  isShPo = !isShPo;
-  choice->setItemChecked(poID, isShPo);
 }
 
 void HqcMainWindow::showTyp() {
-  isShTy = !isShTy;
-  choice->setItemChecked(tyID, isShTy);
-}
-
-void HqcMainWindow::insertParametersInListBox(int maxOrder, int* porder) {
-  pardlg->plb->clear();
-  for ( int jj = 0; jj < maxOrder; jj++ ) {
-    const char* sp =  parMap[*(porder+jj)].latin1();
-    pardlg->plb->insertItem(QString(sp));
-  }
 }
 
 void HqcMainWindow::airPress() {
   wElement = "Lufttrykk";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, TRUE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  insertParametersInListBox(NOPARAMAIRPRESS, airPressOrder);
+  apID->setChecked(TRUE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
   pardlg->showAll();
   //  sendObservations(remstime,false);
 }
@@ -446,39 +457,45 @@ void HqcMainWindow::temperature() {
   wElement = "Temperatur";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, TRUE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  insertParametersInListBox(NOPARAMTEMP, tempOrder);
+  apID->setChecked(FALSE);
+  taID->setChecked(TRUE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
   //  sendObservations(remstime,false);
 }
 
 void HqcMainWindow::precipitation() {
-  wElement = "Nedbør";
+  wElement = "Nedbï¿½r";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, TRUE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(TRUE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  alID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPREC, precOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -486,39 +503,45 @@ void HqcMainWindow::visuals() {
   wElement = "Visuell";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, TRUE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(TRUE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMVISUAL, visualOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
 
 void HqcMainWindow::sea() {
-  wElement = "Sjøgang";
+  wElement = "Sjï¿½gang";
   lity = daLi;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, TRUE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-   weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(TRUE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+   plID->setChecked(FALSE);
    //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMWAVE, waveOrder);
+   const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -526,19 +549,22 @@ void HqcMainWindow::synop() {
   wElement = "Synop";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, TRUE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(TRUE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMSYNOP, synopOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -546,19 +572,22 @@ void HqcMainWindow::climateStatistics() {
   wElement = "Klimastatistikk";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, TRUE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(TRUE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMKLSTAT, klstatOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -566,19 +595,22 @@ void HqcMainWindow::priority() {
   wElement = "Prioriterte parametere";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, TRUE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(TRUE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPRIORITY, priorityOrder);
+    const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -586,19 +618,22 @@ void HqcMainWindow::wind() {
   wElement = "Vind";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, TRUE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(TRUE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(FALSE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMWIND, windOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -606,19 +641,22 @@ void HqcMainWindow::plu() {
   wElement = "Pluviometerkontroll";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(alID, FALSE);
-  weathermenu->setItemChecked(plID, TRUE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  alID->setChecked(FALSE);
+  plID->setChecked(TRUE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMPLU, pluOrder);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -626,19 +664,22 @@ void HqcMainWindow::all() {
   wElement = "Alt";
   lity = daLi;
   firstObs = true;
-  weathermenu->setItemChecked(apID, FALSE);
-  weathermenu->setItemChecked(taID, FALSE);
-  weathermenu->setItemChecked(wiID, FALSE);
-  weathermenu->setItemChecked(prID, FALSE);
-  weathermenu->setItemChecked(clID, FALSE);
-  weathermenu->setItemChecked(seID, FALSE);
-  weathermenu->setItemChecked(syID, FALSE);
-  weathermenu->setItemChecked(klID, FALSE);
-  weathermenu->setItemChecked(piID, FALSE);
-  weathermenu->setItemChecked(plID, FALSE);
-  weathermenu->setItemChecked(alID, TRUE);
+  apID->setChecked(FALSE);
+  taID->setChecked(FALSE);
+  wiID->setChecked(FALSE);
+  prID->setChecked(FALSE);
+  clID->setChecked(FALSE);
+  seID->setChecked(FALSE);
+  syID->setChecked(FALSE);
+  klID->setChecked(FALSE);
+  piID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  alID->setChecked(TRUE);
   //  sendObservations(remstime,false);
-  insertParametersInListBox(NOPARAMALL, order);
+  const std::vector<int> & parameters = parameterGroups[wElement];
+  Q_ASSERT(not parameters.empty());
+  pardlg->insertParametersInListBox(parameters, parMap);
+
   pardlg->showAll();
 }
 
@@ -790,14 +831,39 @@ void HqcMainWindow::dianaShowOK() {
     ListOK();
 }
 
+void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
+{
+  if ( ! reinserter ) {
+    qDebug("Skipping data save, since user is not authenticated");
+    return;
+  }
+
+  kvalobs::serialize::KvalobsData dataList;
+  dataList.insert(toSave);
+  const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
+  switch (result->res )
+  {
+  case OK:
+     break;
+   // Insert any custom messages here
+  default:
+    QMessageBox::critical(this, "Unable to insert",
+        QString("An error occured when attempting to insert data into kvalobs.\n"
+        "The message from kvalobs was\n\n") + QString(result->message),
+        QMessageBox::Ok, QMessageBox::NoButton);
+    return;
+  }
+}
+
+
 void HqcMainWindow::ListOK() {
   if ( !dianaconnected ) {
     int dianaWarning = QMessageBox::warning(this, 
 					    "Dianaforbindelse",
 					    "Diana er ikke koplet til!"
-					    "Ønsker du å kople til Diana?",
-					    "Ja", 
-					    "Nei");
+					    "ï¿½nsker du ï¿½ kople til Diana?",
+					    "&Ja",
+					    "&Nei");
     if ( dianaWarning == 0 ) {
       return;
     }
@@ -806,7 +872,7 @@ void HqcMainWindow::ListOK() {
     QMessageBox::warning(this, 
 			 "Stasjonsvalg", 
 			 "Ingen stasjoner er valgt!\n"
-			 "Minst en stasjon må velges", 
+			 "Minst en stasjon mï¿½ velges",
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -820,7 +886,7 @@ void HqcMainWindow::ListOK() {
     QMessageBox::warning(this, 
 			 "Tidspunktvalg", 
 			 "Ingen tidspunkter er valgt!\n"
-			 "Minst ett tidspunkt må velges", 
+			 "Minst ett tidspunkt mï¿½ velges",
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -828,9 +894,9 @@ void HqcMainWindow::ListOK() {
 
   if ( wElement.isEmpty() ) {
     QMessageBox::warning(this, 
-			 "Værelement", 
-			 "Ingen værelement er valgt!\n"
-			 "Værelement må velges", 
+			 "Vï¿½relement",
+			 "Ingen vï¿½relement er valgt!\n"
+			 "Vï¿½relement mï¿½ velges",
 			  QMessageBox::Ok, 
 			  Qt::NoButton);
     return; 
@@ -846,167 +912,230 @@ void HqcMainWindow::ListOK() {
     int ind = QString(*sit).stripWhiteSpace().find(' ');
     stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
   }
-  miutil::miTime stime;
+
+  miutil::miTime stime; // start time
   stime.setTime(miutil::miString(lstdlg->getStart().latin1()));
-  miutil::miTime etime;
+
+  miutil::miTime etime; // end time
   etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
  
-  int dateCol = 0;
-  if ( isShPo && !isShSt )
-    dateCol = 1;
-  else if ( !isShPo && isShSt )
-    dateCol = 2;
-  else if ( isShPo && isShSt )
-    dateCol = 3;
-
-  int ncp;
-  if ( !isShOr && !isShFl && !isShMo )
-    ncp = 0;
-  if ( isShOr && !isShFl && !isShMo )
-    ncp = 1;
-  if ( !isShOr && isShFl && !isShMo )
-    ncp = 2;
-  if ( isShOr && isShFl && !isShMo )
-    ncp = 3;
-  if ( !isShOr && !isShFl && isShMo )
-    ncp = 4;
-  if ( isShOr && !isShFl && isShMo )
-    ncp = 5;
-  if ( !isShOr && isShFl && isShMo )
-    ncp = 6;
-  if ( isShOr && isShFl && isShMo )
-    ncp = 7;
-
-  int maxOrder;
-  int* porder;
-  if ( wElement == "Lufttrykk" ) {
-    porder = airPressOrder;
-    maxOrder = NOPARAMAIRPRESS;
-  }
-  else if ( wElement == "Temperatur" ) {
-    porder = tempOrder;
-    maxOrder = NOPARAMTEMP;
-  }
-  else if ( wElement == "Nedbør" ) {
-    porder = precOrder;
-    maxOrder = NOPARAMPREC;
-  }
-  else if ( wElement == "Visuell" ) {
-    porder = visualOrder;
-    maxOrder = NOPARAMVISUAL;
-  }
-  else if ( wElement == "Sjøgang" ) {
-    porder = waveOrder;
-    maxOrder = NOPARAMWAVE;
-  }
-  else if ( wElement == "Synop" ) {
-    porder = synopOrder;
-    maxOrder = NOPARAMSYNOP;
-  }
-  else if ( wElement == "Klimastatistikk" ) {
-    porder = klstatOrder;
-    maxOrder = NOPARAMKLSTAT;
-  }
-  else if ( wElement == "Prioriterte parametere" ) {
-    porder = priorityOrder;
-    maxOrder = NOPARAMPRIORITY;
-  }
-  else if ( wElement == "Vind" ) {
-    porder = windOrder;
-    maxOrder = NOPARAMWIND;
-  }
-  else if ( wElement == "Pluviometerkontroll" ) {
-    porder = pluOrder;
-    maxOrder = NOPARAMPLU;
-  }
-  else if ( wElement == "Alt" ) {
-    porder = order;
-    maxOrder = NOPARAMALL;
+  QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
+  if ( find ==  parameterGroups.end() ) {
+      QMessageBox::critical(this, "Internal error",
+          "Configuration file does not seem to have an entry for parameter group " + wElement,
+          QMessageBox::Ok, QMessageBox::NoButton);
+      return;
   }
 
-  if ( selPar.count() > 0 ) selPar.clear();
+
+  std::vector<int> parameterList;
+
+//  int maxOrder; // size of porder
+//  int* porder; // will point to what parameters to show
+//
+//  if ( wElement == "Lufttrykk" ) {
+//    porder = airPressOrder;
+//    maxOrder = NOPARAMAIRPRESS;
+//  }
+//  else if ( wElement == "Temperatur" ) {
+//    porder = tempOrder;
+//    maxOrder = NOPARAMTEMP;
+//  }
+//  else if ( wElement == "Nedbï¿½r" ) {
+//    porder = precOrder;
+//    maxOrder = NOPARAMPREC;
+//  }
+//  else if ( wElement == "Visuell" ) {
+//    porder = visualOrder;
+//    maxOrder = NOPARAMVISUAL;
+//  }
+//  else if ( wElement == "Sjï¿½gang" ) {
+//    porder = waveOrder;
+//    maxOrder = NOPARAMWAVE;
+//  }
+//  else if ( wElement == "Synop" ) {
+//    porder = synopOrder;
+//    maxOrder = NOPARAMSYNOP;
+//  }
+//  else if ( wElement == "Klimastatistikk" ) {
+//    porder = klstatOrder;
+//    maxOrder = NOPARAMKLSTAT;
+//  }
+//  else if ( wElement == "Prioriterte parametere" ) {
+//    porder = priorityOrder;
+//    maxOrder = NOPARAMPRIORITY;
+//  }
+//  else if ( wElement == "Vind" ) {
+//    porder = windOrder;
+//    maxOrder = NOPARAMWIND;
+//  }
+//  else if ( wElement == "Pluviometerkontroll" ) {
+//    porder = pluOrder;
+//    maxOrder = NOPARAMPLU;
+//  }
+//  else if ( wElement == "Alt" ) {
+//    porder = & order[0];
+//    maxOrder = NOPARAMALL;
+//  }
+
+  selPar.clear();
   int kk = 0;
-  for ( int jj = 0; jj < maxOrder; jj++ ) {
-    if ( jj >= maxOrder ) break;
-    
-    const QString sp =  QString(parMap[*(porder+jj)].latin1());
+
+
+  for ( int jj = 0; jj < find->size(); jj++ ) {
+    int paramIndex = (*find)[jj];
+    const QString & sp =  parMap[paramIndex];
     
     bool found = pardlg->plb->item(jj)->isSelected();
+    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": " << found << " (" << pardlg->markPar->isChecked() << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
     if ( (found && pardlg->markPar->isChecked()) ||
 	 (!found && pardlg->noMarkPar->isChecked()) ||
 	 pardlg->allPar->isChecked() ) {
-      selParNo[kk] = *(porder + jj);
-      selPar.append(QString(sp));
+      selParNo[kk] = paramIndex;
+      selPar.append(sp);
       kk++;
+      parameterList.push_back(paramIndex);
     }
-    noSelPar = kk;
+  }
+  for ( std::vector<int>::const_iterator it = parameterList.begin(); it != parameterList.end(); ++ it )
+    qDebug() << "Selected: "<< * it;
+
+  isShTy = lstdlg->allTypes->isChecked();
+
+  readFromData(stime, etime, lity);
+  readFromModelData(stime, etime);
+
+  // All windows are shown later, in the tileHorizontal function
+
+  if ( lity == daLi or lity == alLi ) {
+
+      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, modelParam + NOPARAMMODEL, this);
+      tableView->setAttribute(Qt::WA_DeleteOnClose);
+
+//      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
+//      tableView->setItemDelegate(delegate);
+
+      model::KvalobsDataModel * dataModel =
+          new model::KvalobsDataModel(
+              parameterList, parMap, datalist, modeldatalist,
+              stID->isChecked(), poID->isChecked(),
+              reinserter != 0,
+              tableView);
+
+      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
+      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
+      connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
+
+      // Functionality for hiding/showing rows in data list
+      connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
+      connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
+      connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+
+      connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
+
+      connect(tableView, SIGNAL(stationSelected(int, const miutil::miTime &)), this, SLOT(sendStation(int)));
+      connect(tableView, SIGNAL(timeSelected(const miutil::miTime &)), SLOT(sendObservations(const miutil::miTime &)));
+      connect(tableView, SIGNAL(parameterSelected(const QString &)), SLOT(sendSelectedParam(const QString &)));
+      //connect(tableView, SIGNAL(newSelection()), SLOT(updateParams(int, const miutil::miTime &, const miutil::miString &,const miutil::miString & value,const miutil::miString & flag))))
+
+      connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
+      connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
+
+      tableView->setModel(dataModel);
+
+      // Smaller cells. This should probably be done dynamically, somehow
+      int columns = dataModel->columnCount();
+      for ( int i = 0; i < columns; ++ i )
+        tableView->setColumnWidth(i, 56);
+
+      tableView->toggleShowFlags(flID->isChecked());
+      tableView->toggleShowOriginal(orID->isChecked());
+      tableView->toggleShowModelData(moID->isChecked());
+
+      ws->addSubWindow(tableView);
+
+      tableView->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+      tableView->setCaption("Dataliste");
   }
 
-  if ( lstdlg->allTypes->isChecked() )
-    isShTy = true;
-  else
-    isShTy = false;
+  if ( lity == erLi or lity == erSa or lity == alLi ) {
+//      Q_ASSERT(metty != tabHead); // deprecated functionality
+//      Q_ASSERT(metty == tabList);
+//      metty may be undefined here
 
-  if ( lity == erLi || lity == erSa || lity == daLi) {
-    metty = tabList;
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   lity, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
+      int dateCol = 0;
+      if ( poID->isChecked() && !stID->isChecked() )
+        dateCol = 1;
+      else if ( !poID->isChecked() && stID->isChecked() )
+        dateCol = 2;
+      else if ( poID->isChecked() && stID->isChecked() )
+        dateCol = 3;
+
+      int ncp;
+      if ( !orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
+        ncp = 0;
+      if ( orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
+        ncp = 1;
+      if ( !orID->isChecked() && flID->isChecked() && !moID->isChecked() )
+        ncp = 2;
+      if ( orID->isChecked() && flID->isChecked() && !moID->isChecked() )
+        ncp = 3;
+      if ( !orID->isChecked() && !flID->isChecked() && moID->isChecked() )
+        ncp = 4;
+      if ( orID->isChecked() && !flID->isChecked() && moID->isChecked() )
+        ncp = 5;
+      if ( !orID->isChecked() && flID->isChecked() && moID->isChecked() )
+        ncp = 6;
+      if ( orID->isChecked() && flID->isChecked() && moID->isChecked() )
+        ncp = 7;
+
+      ErrorList * erl = new ErrorList(selPar,
+                          stime,
+                          etime,
+                          0, // unused
+                          0, // unused
+                          this,
+                          lity,
+                          metty,
+                          selParNo,
+                          *datalist,
+                          modeldatalist,
+                          slist,
+                          dateCol,
+                          ncp,
+                          userName);
+      connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
+      connect( erl, SIGNAL( stationSelected( int, const miutil::miTime & ) ),
+               this, SIGNAL( errorListStationSelected(int, const miutil::miTime &) ) );
+      ws->addSubWindow(erl);
   }
-  else if ( lity == alLi) {
-    metty = tabList;
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   daLi, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
-    eTable(stime, 
-	   etime, 
-	   remstime, 
-	   remetime, 
-	   erLi, 
-	   remLity, 
-	   metty, 
-	   wElement,
-	   selParNo, 
-	   datalist, 
-	   modeldatalist, 
-	   slist,
-	   dateCol,
-	   ncp,
-	   isShTy,
-	   userName);
+
+  tileHorizontal();
+
+  vector<QString> stationList;
+  int stnr=-1;
+  for ( int i = 0; i < datalist->size(); i++) {
+    QString name;
+    double lat,lon,hoh;
+    int env;
+    int snr;
+    if(stnr != (*datalist)[i].stnr()){
+      stnr = (*datalist)[i].stnr();
+      findStationInfo(stnr,name,lat,lon,hoh,snr,env);
+      QString nrStr;
+      nrStr = nrStr.setNum(stnr);
+      QString statId = nrStr + " " + name;
+      stationList.push_back(statId);
+    }
   }
-  
+  emit newStationList(stationList);
+
+
   //  send parameter names to ts dialog
   emit newParameterList(selPar);
   if ( lity != erLi && lity != erSa  ) {
     sendAnalysisMessage();
-    cerr << "HQC send times to diana" << endl;
+    //cerr << "HQC send times to diana" << endl;
     sendTimes();
   }
 }
@@ -1065,14 +1194,14 @@ void HqcMainWindow::TimeseriesOK() {
       }
     }
     if ( tsdlg->obsCheckBox->isChecked() && (nTypes == 1 || ip%nTypes == 0) ) {
-      for ( int i = 0; i < datalist.size(); i++) { // fill data
-	if ( datalist[i].stnr == stationIndex[ip] &&
-	     datalist[i].otime >= stime &&
-             datalist[i].otime <= etime &&
-	     datalist[i].otime.min() == 0 ) {
-	  if ( datalist[i].corr[parameterIndex[ip]] > -32766.0 )   
-	    tseries.add(TimeSeriesData::Data(datalist[i].otime,
-					     datalist[i].corr[parameterIndex[ip]]));
+      for ( int i = 0; i < datalist->size(); i++) { // fill data
+	if ( (*datalist)[i].stnr() == stationIndex[ip] &&
+	     (*datalist)[i].otime() >= stime &&
+             (*datalist)[i].otime() <= etime &&
+	     (*datalist)[i].otime().min() == 0 ) {
+	  if ( (*datalist)[i].corr(parameterIndex[ip]) > -32766.0 )
+	    tseries.add(TimeSeriesData::Data((*datalist)[i].otime(),
+					     (*datalist)[i].corr(parameterIndex[ip])));
 	}
       }
       if(tseries.dataOK()) {
@@ -1085,7 +1214,7 @@ void HqcMainWindow::TimeseriesOK() {
 	     modeldatalist[i].otime >= stime &&
 	     modeldatalist[i].otime <= etime ){
 	  tseries.add(TimeSeriesData::Data(modeldatalist[i].otime,
-					  datalist[i].corr[parameterIndex[ip]] 
+					  (*datalist)[i].corr(parameterIndex[ip])
 					  - modeldatalist[i].orig[parameterIndex[ip]]));
 	}
       }
@@ -1262,7 +1391,7 @@ void HqcMainWindow::textDataOK() {
   //  KvObsDataList txlist;
   GetTextData textDataReceiver(this);
   if(!KvApp::kvApp->getKvData(textDataReceiver, whichData)){
-    cerr << "Finner ikke  textdatareceiver!!" << endl;
+    //cerr << "Finner ikke  textdatareceiver!!" << endl;
   }
   TextData* txtDat = new TextData(txtList, parMap);
   txtDat->show();
@@ -1313,15 +1442,19 @@ void HqcMainWindow::rejectedOK() {
 
 void HqcMainWindow::showWatchRR()
 {
-  MDITabWindow * current = dynamic_cast<MDITabWindow *>( ws->activeWindow() );
+  QMdiSubWindow * subWindow = ws->activeSubWindow();
+
   kvalobs::kvData data;
 
-  if ( current ) {
-    if ( current->erl )
-      data = current->erl->getKvData();
-    else if ( current->dtt )
-      data = current->dtt->getKvData();
-  }
+  // TODO: Reinstate this
+//  if ( subWindow ) {
+//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
+//    if ( current and current->dtt )
+//      data = current->dtt->getKvData();
+//    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
+//    if ( errorList )
+//      data = errorList->getKvData();
+//  }
 
   WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
   if ( rrd ) {
@@ -1332,13 +1465,20 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-  MDITabWindow * current = dynamic_cast<MDITabWindow *>( ws->activeWindow() );
+  QMdiSubWindow * subWindow = ws->activeSubWindow();
+
   kvalobs::kvData data;
-  if ( current ) {
-    if ( current->erl ) {
-      data = current->erl->getKvData();
-    }
-  }
+
+  // TODO: Reinstate this
+//  if ( subWindow ) {
+//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
+//    if ( current and current->dtt )
+//      data = current->dtt->getKvData();
+//    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
+//    if ( errorList )
+//      data = errorList->getKvData();
+//  }
+
   Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
   if ( wtd ) {
     wtd->setReinserter( reinserter );
@@ -1431,19 +1571,20 @@ void HqcMainWindow::listData(int index,
   // List all data, all parameters at one station and one time
   miutil::miTime modeltime;
   int modelstnr;
-  stnr = datalist[index].stnr;
-  obstime = datalist[index].otime;
-  showTypeId = datalist[index].showTypeId;
-  typeIdChanged = datalist[index].typeIdChanged;
+  stnr = (*datalist)[index].stnr();
+  obstime = (*datalist)[index].otime();
+  showTypeId = (*datalist)[index].showTypeId();
+  typeIdChanged = (*datalist)[index].typeIdChanged();
   int hour = obstime.hour();
   for ( int i = 0; i < NOPARAM; i++ ) {
-    typeId[i] = datalist[index].typeId[i];
-    orig[i] = datalist[index].orig[i];
-    flag[i] = datalist[index].flag[i];
-    corr[i] = datalist[index].corr[i];
-    controlinfo[i] = datalist[index].controlinfo[i];
-    useinfo[i] = datalist[index].useinfo[i];
-    cfailed[i] = datalist[index].cfailed[i];
+    typeId[i] = (*datalist)[index].typeId(i);
+    orig[i] = (*datalist)[index].orig(i);
+    flag[i] = (*datalist)[index].flag(i);
+    corr[i] = (*datalist)[index].corr(i);
+    controlinfo[i] = (*datalist)[index].controlinfo(i).flagstring();
+    std::cout << '<' << controlinfo[i].c_str() <<  '>' << std::endl;
+    useinfo[i] = (*datalist)[index].useinfo(i).flagstring();
+    cfailed[i] = (*datalist)[index].cfailed(i);
     morig[i] = -32767.0;
   }
 
@@ -1457,174 +1598,6 @@ void HqcMainWindow::listData(int index,
     }	    
   }
 }
-/*
-Convert to "Diana-value" of range check flag 
-*/
-int HqcMainWindow::numCode1(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib == 4 || nib == 5 )
-    code = 3;
-  else if ( nib == 6 )
-    code = 9;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of consistency check flag 
-*/
-int HqcMainWindow::numCode2(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib >= 2 && nib <= 7 )
-    code = 8;
-  else if ( nib == 10 || nib == 11 )
-    code = 7;
-  else if ( nib == 13 )
-    code = 9;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of prognostic space control flag 
-*/
-int HqcMainWindow::numCode3(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib == 4 || nib == 5 )
-    code = 3;
-  else if ( nib == 6 )
-    code = 5;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of step check flag 
-*/
-int HqcMainWindow::numCode4(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 || nib == 3 )
-    code = 2;
-  else if ( nib >= 4 && nib <= 7 )
-    code = 8;
-  else if ( nib == 9 || nib == 10 )
-    code = 7;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of timeseries adaption flag 
-*/
-int HqcMainWindow::numCode5(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 || nib == 2 )
-    code = 5; 
-  else if ( nib == 3 )
-    code = 3;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of statistics control flag 
-*/
-int HqcMainWindow::numCode6(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 )
-    code = 3;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of climatology control flag 
-*/
-int HqcMainWindow::numCode7(int nib) {
-  int code;
-  if ( nib == 0 )
-    code = 0;
-  else if ( nib == 1 )
-    code = 1;
-  else if ( nib == 2 )
-    code = 3;
-  else if ( nib == 3 )
-    code = 7;
-  return code;
-}
-
-/*
-Convert to "Diana-value" of HQC flag 
-*/
-int HqcMainWindow::numCode8(int nib) {
-  int code;
-  if ( nib <  10 )
-    code = nib;
-  else
-    code = 9;
-  return code;
-}
-
-/*
- Calculate the 5-digit flag-code to be shown in Diana
-*/
-int HqcMainWindow::getShowFlag(kvalobs::kvDataFlag controlInfo) {
-
-  // Find flags from the different checks
-
-  int nib1  =controlInfo.flag(1);
-  int nib2  =controlInfo.flag(2);
-  int nib3  =controlInfo.flag(4);
-  int nib4  =controlInfo.flag(3);
-  int nib5  =controlInfo.flag(7);
-  int nib6  =controlInfo.flag(9);
-  int nib7  =controlInfo.flag(11);
-  int nib8  =controlInfo.flag(10);
-  int nib9  =controlInfo.flag(12);
-  int nib10 =controlInfo.flag(15);
-  // Decode flags
-
-  int nc1 = numCode1(nib1); // Range check
-  int nc2 = numCode2(nib2); // Formal Consistency check
-  int nc8 = numCode2(nib8); // Climatologic Consistency check
-  // Use the largest value from these checks
-  nc1 = nc1 > nc2 ? nc1 : nc2;
-  nc1 = nc1 > nc8 ? nc1 : nc8;
-  nc2 = numCode3(nib3); //Prognostic space control
-  int nc3 = numCode4(nib4); //Step check
-  int nc4 = numCode5(nib5); //Timeseries adaption
-  int nc5 = numCode6(nib6); //Statistics control
-  int nc6 = numCode7(nib7); //Climatology control
-  // Use the largest value from the three last checks
-  nc4 = nc4 > nc5 ? nc4 : nc5;
-  nc4 = nc4 > nc6 ? nc4 : nc6;
-  if ( nib9 > 1 )
-    nc4 = nc4 > 6 ? nc4 : 6;
-  nc5 = numCode8(nib10);
-  int nc = 10000*nc1 + 1000*nc2 + 100*nc3 + 10*nc4 + nc5;
-
-  return nc;
-}
 
 bool HqcMainWindow::timeFilter(int hour) {
   if ( clkdlg->clk[hour]->isChecked() )
@@ -1632,7 +1605,7 @@ bool HqcMainWindow::timeFilter(int hour) {
   return FALSE;
 }
 
-bool HqcMainWindow::hqcTypeFilter(int& typeId, int environment, int stnr) {
+bool HqcMainWindow::hqcTypeFilter(const int& typeId, int environment, int stnr) {
   //  if ( typeId == -1 || typeId == 501 ) return FALSE;
   if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
@@ -1721,12 +1694,12 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   if ( (stnr == 68860 ) && typeId == -4 ) return false;
   if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
   for ( vector<currentType>::iterator it = currentTypeList.begin(); it != currentTypeList.end(); it++) {
-    if ( stnr == (*it).stnr && 
-	 abs(typeId) == (*it).cTypeId &&
-	 sensor == (*it).cSensor && 
-	 par == (*it).par && 
-	 otime.date() >= (*it).fDate && 
-	 otime.date() <= (*it).tDate ) {
+    if ( stnr == it->stnr &&
+	 abs(typeId) == it->cTypeId &&
+	 sensor == it->cSensor &&
+	 par == it->par &&
+	 (it->fDate.undef() || otime.date() >= it->fDate) &&
+	 (it->tDate.undef() || otime.date() <= it->tDate) ) {
       tpf = true;
       break;
     }
@@ -1734,8 +1707,10 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
   return tpf;
 }
 
-/*!
- Read the data table in the Kvalobs database
+/**
+ * Read the data table in the Kvalobs database.
+ *
+ * Results will eventually end up in datalist variable
 */
 void HqcMainWindow::readFromData(const miutil::miTime& stime, 
 				 const miutil::miTime& etime, 
@@ -1745,31 +1720,33 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
   bool result;
   QTime t;
   t.start();
-  cerr << "Tid for readFromTypeIdFile = " << t.elapsed() << endl;
+  //cerr << "Tid for readFromTypeIdFile = " << t.elapsed() << endl;
   t.restart();
   WhichDataHelper whichData;
   for ( int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], stime, etime);
     checkTypeId(stList[i]);
   }
-  cerr << "Tid for whichData.addStation og checkTypeId = " << t.elapsed() << endl;
+  //cerr << "Tid for whichData.addStation og checkTypeId = " << t.elapsed() << endl;
  
   t.restart();
   
+  // Throw away old data list. It will still exist if any window need it.
+  datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   KvObsDataList ldlist;// = GetData::datalist;
   GetData dataReceiver(this);
   if(!KvApp::kvApp->getKvData(dataReceiver, whichData)){
-    cerr << "Finner ikke  datareceiver!!" << endl;
+    //cerr << "Finner ikke  datareceiver!!" << endl;
   }
   else {
-    cerr << "Datareceiver OK!" << endl;
+    //cerr << "Datareceiver OK!" << endl;
   }
-  cerr << "Tid for new getKvData (hele readfromdata) = " << t.elapsed() << endl;
+  //cerr << "Tid for new getKvData (hele readfromdata) = " << t.elapsed() << endl;
   /*
   KvObsDataList txlist;// = GetData::datalist;
   GetTextData textDataReceiver(this);
   if(!KvApp::kvApp->getKvData(textDataReceiver, whichData)){
-    cerr << "Finner ikke  textdatareceiver!!" << endl;
+    //cerr << "Finner ikke  textdatareceiver!!" << endl;
   }
   */
 }
@@ -1785,19 +1762,19 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
   
   mdlist.erase(mdlist.begin(),mdlist.end());
   modeldatalist.reserve(131072);
-  modeldatalist.clear();  
+  modeldatalist.clear();
   QTime t;
   t.start();
   WhichDataHelper whichData;
   for ( int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], stime, etime);
   }
-  cerr << "Tid for whichData.addStation og checkTypeId = " << t.elapsed() << endl;
+  //cerr << "Tid for whichData.addStation og checkTypeId = " << t.elapsed() << endl;
   t.restart();
 
   if(!KvApp::kvApp->getKvModelData(mdlist, whichData))
     cerr << "Can't connect to modeldata table!" << endl;
-  cerr << "Tid for getKvModelData = " << t.elapsed() << endl;
+  //cerr << "Tid for getKvModelData = " << t.elapsed() << endl;
   t.restart();
   modDatl mtdl;
   for ( int ip = 0; ip < NOPARAMMODEL; ip++) {
@@ -1823,7 +1800,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
       }
     }
   }
-  cerr << "Tid for resten av readFromModelData = " << t.elapsed() << endl;
+  //cerr << "Tid for resten av readFromModelData = " << t.elapsed() << endl;
 }
 
 /*!
@@ -1831,7 +1808,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
 */
 void HqcMainWindow::readFromStation() {
   if (!KvApp::kvApp->getKvStations(slist)) {
-    cerr << "Can't connect to station table!" << endl;
+    //cerr << "Can't connect to station table!" << endl;
     int noBase = QMessageBox::warning(this, 
 				      "Kvalobs", 
 				      "Kvalobsdatabasen er ikke tilgjengelig,\n"
@@ -1875,6 +1852,7 @@ void HqcMainWindow::checkTypeId(int stnr) {
       crT.fDate = fDate;
       crT.tDate = tDate;
       crT.cLevel = level;
+      crT.cSensor = sensor;
       crT.cTypeId = typeId;
       currentTypeList.push_back(crT);
     }
@@ -1895,7 +1873,7 @@ void HqcMainWindow::readFromStationFile(int statCheck) {
   QString stationFile = path + "/etc/kvhqc/hqc_stations";
   QFile stations(stationFile);
   stations.open(QIODevice::ReadOnly);
-  Q3TextStream stationStream(&stations);
+  QTextStream stationStream(&stations);
   int i = 0;
   int prevStnr = 0;
   while ( stationStream.atEnd() == 0 ) {
@@ -1952,79 +1930,32 @@ void HqcMainWindow::readFromParam() {
   QFile paramOrder(orderFile);
   
   paramOrder.open(QIODevice::ReadOnly);
-  Q3TextStream paramStream(&paramOrder);
+  QTextStream paramStream(&paramOrder);
   int i = 0;
-  while ( paramStream.atEnd() == 0 ) {
-    QString strLine = paramStream.readLine();
-    if ( strLine == "[all]" ) {
-      for ( int ii = 0; ii < NOPARAMALL; ii++){
-	strLine = paramStream.readLine();
-	order[ii] = strLine.toInt();
+
+  parameterGroups.clear();
+  QString group;
+  while ( not paramStream.atEnd() ) {
+      QString data;
+      paramStream >> data;
+      data.stripWhiteSpace();
+      if ( not data.isEmpty() ) {
+        bool ok;
+        int paramid = data.toInt(& ok);
+        if ( not ok )
+          group = data;
+        else {
+            QString name = "<No group>";
+            std::map<QString, QString>::const_iterator find = configNameToUserName.find(group);
+            if ( find != configNameToUserName.end() )
+              name = find->second;
+            parameterGroups[name].push_back(paramid);
+        }
       }
-    }
-    else if ( strLine == "[airpress]" ) {
-      for ( int ii = 0; ii < NOPARAMAIRPRESS; ii++){
-	strLine = paramStream.readLine();
-	airPressOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[temperature]" ) {
-      for ( int ii = 0; ii < NOPARAMTEMP; ii++){
-	strLine = paramStream.readLine();
-	tempOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[prec]" ) {
-      for ( int ii = 0; ii < NOPARAMPREC; ii++){
-	strLine = paramStream.readLine();
-	precOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[visual]" ) {
-      for ( int ii = 0; ii < NOPARAMVISUAL; ii++){
-	strLine = paramStream.readLine();
-	visualOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[wave]" ) {
-      for ( int ii = 0; ii < NOPARAMWAVE; ii++){
-	strLine = paramStream.readLine();
-	waveOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[synop]" ) {
-      for ( int ii = 0; ii < NOPARAMSYNOP; ii++){
-	strLine = paramStream.readLine();
-	synopOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[klstat]" ) {
-      for ( int ii = 0; ii < NOPARAMKLSTAT; ii++){
-	strLine = paramStream.readLine();
-	klstatOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[priority]" ) {
-      for ( int ii = 0; ii < NOPARAMPRIORITY; ii++){
-	strLine = paramStream.readLine();
-	priorityOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[wind]" ) {
-      for ( int ii = 0; ii < NOPARAMWIND; ii++){
-	strLine = paramStream.readLine();
-	windOrder[ii] = strLine.toInt();
-      }
-    }
-    else if ( strLine == "[plu]" ) {
-      for ( int ii = 0; ii < NOPARAMPLU; ii++){
-	strLine = paramStream.readLine();
-	pluOrder[ii] = strLine.toInt();
-      }
-    }
   }
+
   bool result;
-  cerr.flags(ios::fixed);
+  //cerr.flags(ios::fixed);
 
   if(!KvApp::kvApp->getKvParams(plist))
     cerr << "Can't connect to param table!" << endl;
@@ -2050,8 +1981,8 @@ void HqcMainWindow::findStationInfo(int stnr,
   std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
   for(;it!=slist.end(); it++){
     if ( it->stationID() == stnr ) {
-      const char* cName = (it->name()).c_str();
-      name = QString(cName);
+      std::string cName = it->name();
+      name = QString(cName.c_str());
       lat  = (it->lat());
       lon  = (it->lon());
       hoh  = (it->height());
@@ -2078,114 +2009,52 @@ void HqcMainWindow::findStationPos(int stnr,
 }
 
 void HqcMainWindow::tileHorizontal() {
+
+//  ws->tileSubWindows();
+
   // primitive horizontal tiling
-  QWidgetList windows = ws->windowList();
-  if ( !windows.count() )
+  QList<QMdiSubWindow *> windows = ws->subWindowList();
+  if ( windows.empty() )
     return;
+
   int y = 0;
   if ( windows.count() == 1 ) {
     QWidget *window = windows.at(0);
-    window->parentWidget()->setGeometry( 0, y, ws->width(), ws->height() );
+    window->showMaximized();
+    //window->parentWidget()->setGeometry( 0, y, ws->width(), ws->height() );
     return;
   }
   else {
     int height[] = {0, 28 + ws->height() / 2, (ws->height() / 2) - 28} ;
-    for ( int i = int(windows.count()) - 2; i < int(windows.count()); ++i ) {
+
+    for ( int i = windows.count() -2; i < windows.count(); ++ i ) {
+    //for ( int i = int(windows.count()) - 1; i > int(windows.count()) -2; --i ) {
       QWidget *window = windows.at(i);
+
+      qDebug() << window->caption();
+
       if ( window->windowState() == Qt::WindowMaximized ) {
 	// prevent flicker
 	window->hide();
-	window->showNormal();
       }
+      window->showNormal();
       int preferredHeight = window->minimumHeight()+window->parentWidget()->baseSize().height();
       int actHeight = QMAX(height[i -int(windows.count()) + 3], preferredHeight);
-      
-      window->parentWidget()->setGeometry( 0, y, ws->width(), actHeight );
+
+      window->setGeometry( 0, y, ws->width(), actHeight );
       y += actHeight;
     }
   }
-}
-
-MDITabWindow* HqcMainWindow::eTable(const miutil::miTime& stime,
-				    const miutil::miTime& etime,
-				    miutil::miTime& remstime,
-				    miutil::miTime& remetime,
-				    listType lity,
-				    listType remLity,
-				    mettType metty,
-				    QString& wElement,
-				    int* selParNo,
-				    vector<datl>& datalist,
-				    vector<modDatl>& modeldatalist,
-				    list<kvStation>& slist,
-				    int dateCol,
-				    int ncp,
-				    bool isShTy,
-				    QString& userName)
-{
-  MDITabWindow* et = new MDITabWindow( ws, 
-				       0, 
-				       Qt::WDestructiveClose, 
-				       stime, 
-				       etime, 
-				       remstime, 
-				       remetime, 
-				       lity, 
-				       remLity, 
-				       metty, 
-				       wElement,
-				       selPar,
-				       noSelPar, 
-				       selParNo,
-				       datalist, 
-				       modeldatalist,
-				       slist,
-				       dateCol,
-				       ncp,
-				       isShTy,
-				       userName);
-  ws->addWindow(et);
-  connect( et, SIGNAL( message(const QString&, int) ), statusBar(), 
-	   SLOT( message(const QString&, int )) );
-  if ( lity == erLi || lity == erSa ) {
-    et->setCaption("Feilliste");
-  }
-  else if ( lity == erLo )
-    et->setCaption("Feillog");
-  else if ( lity == daLi )
-    et->setCaption("Dataliste");
-  et->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
-  et->show();
-  tileHorizontal();
-  vector<QString> stationList;
-  int stnr=-1;
-  for ( int i = 0; i < datalist.size(); i++) {
-    QString name;
-    double lat,lon,hoh;
-    int env;
-    int snr;
-    if(stnr != datalist[i].stnr){
-      stnr = datalist[i].stnr;
-      findStationInfo(stnr,name,lat,lon,hoh,snr,env);
-      QString nrStr;
-      nrStr = nrStr.setNum(stnr);
-      QString statId = nrStr + " " + name;
-      stationList.push_back(statId);
-    }
-  }
-
-  emit newStationList(stationList);
-  return et;
 }
 
 void HqcMainWindow::closeWindow()
 {
   firstObs=true;
   cerr << "HqcMainWindow::closeWindow()\n";
-    MDITabWindow* t = (MDITabWindow*)ws->activeWindow();
-    if ( t )
-	t->close();
-    emit windowClose();
+
+  ws->closeActiveSubWindow();
+
+  emit windowClose();
 }
 
 
@@ -2208,33 +2077,70 @@ void HqcMainWindow::about()
 {
     QMessageBox::about( this, "Om Hqc",
 			"Hqc er et program for manuell kvalitetskontroll av observasjoner.\n"
-			"Programmet består av editerbare tabeller med observasjoner samt\n"
+			"Programmet bestï¿½r av editerbare tabeller med observasjoner samt\n"
 			"tidsseriediagram, og har forbindelse med Diana\n"
 			"\n"
 			"Programmet utvikles av\n "
 			"Lisbeth Bergholt, FoU,\n "
-			"Vegard Bønes, IT,\n "
+			"Vegard Bï¿½nes, IT,\n "
 			"Audun Christoffersen, FoU,\n "
 			"Knut Johansen, Klima\n ");
 }
 
 
+namespace
+{
+class FunctionLogger
+{
+  const std::string name_;
+
+  static int indent;
+
+  void log_(const std::string & msg) const
+  {
+    std::ostringstream data;
+    for ( int i = 0; i < indent; ++ i )
+      data << "--------";
+    data << "> " << msg.c_str();
+    std::string out = data.str();
+    qDebug() << out.c_str();
+  }
+
+public:
+  FunctionLogger(const char * name) : name_(name)
+  {
+    ++ indent;
+    log_("Entering " + name_);
+  }
+  ~FunctionLogger()
+  {
+    log_("Leaving  " + name_);
+    -- indent;
+  }
+};
+int FunctionLogger::indent = 3;
+}
+#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
+//#define LOG_FUNCTION()
+
+
 void HqcMainWindow::initDiana()
 {
+  LOG_FUNCTION();
   dianaconnected= false;
 
-  cerr<< "Try to establish connection with diana.." << endl;
+  //cerr<< "Try to establish connection with diana.." << endl;
 
   miutil::miString type = "Diana";
     
       
   if(pluginB->clientTypeExist(type)){
     dianaconnected= true;
-    cerr << "HQC connected to Diana" << endl;
+    //cerr << "HQC connected to Diana" << endl;
     sendTimes();
     sendAnalysisMessage();
   } else {
-    cerr << "No Diana clients found by HQC" << endl;
+    //cerr << "No Diana clients found by HQC" << endl;
     return;
   }
   
@@ -2244,6 +2150,7 @@ void HqcMainWindow::initDiana()
 // send one image to diana (with name)
 void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
 {
+  LOG_FUNCTION();
   if (!dianaconnected) return;
   if (image.isNull()) return;
   
@@ -2262,8 +2169,8 @@ void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
     ost << setw(7) << int(*a[i]);
   miutil::miString txt= ost.str();
   m.data.push_back(txt);
-  cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
+  //cerr << "HQC sender melding" << endl;
+  //cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
   pluginB->sendMessage(m);
 }
 
@@ -2281,6 +2188,7 @@ void HqcMainWindow::cleanConnection()
 }
 
 void HqcMainWindow::sendTimes(){
+  LOG_FUNCTION();
 
   //send times
   miMessage m;
@@ -2288,11 +2196,11 @@ void HqcMainWindow::sendTimes(){
   m.commondesc = "datatype";
   m.common = "obs";
   m.description= "time";
-  int n=datalist.size();
+  int n=datalist->size();
   for(int i=0;i<n;i++){
-    m.data.push_back(datalist[i].otime.isoTime());
+    m.data.push_back((*datalist)[i].otime().isoTime());
   }
-  cerr << "HQC sender melding" << endl;
+  //cerr << "HQC sender melding" << endl;
   //  cerr <<"HQC: meldingen inneholder:"<< m.content() <<endl;
   pluginB->sendMessage(m);
   
@@ -2301,10 +2209,12 @@ void HqcMainWindow::sendTimes(){
 // processes incoming miMessages
 void HqcMainWindow::processLetter(miMessage& letter)
 {
-  cerr << "HQC mottar melding : " << letter.command.c_str() << endl;
+  LOG_FUNCTION();
+
+  //cerr << "HQC mottar melding : " << letter.command.c_str() << endl;
   if(letter.command == qmstrings::newclient) {
     firstObs = true;
-    cerr << letter.to << " , " << letter.from << " , " << letter.clientType << " , " << letter.co << endl; 
+    //cerr << letter.to << " , " << letter.from << " , " << letter.clientType << " , " << letter.co << endl;
     processConnect(); 
     hqcFrom = letter.to;
     hqcTo = letter.from;
@@ -2312,12 +2222,18 @@ void HqcMainWindow::processLetter(miMessage& letter)
   else if (letter.command == "station" ) {
     const char* ccmn = letter.common.c_str();
     QString cmn = QString(ccmn);
-    cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
+    //cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
     emit statTimeReceived(cmn);
   }
   
   else if(letter.command == qmstrings::timechanged){
-    cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
+    //cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
+
+      const char* ccmn = letter.common.c_str();
+      QString cmn = QString(ccmn);
+      //cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
+      emit statTimeReceived(cmn);
+
     miutil::miTime newTime(letter.common);
     sendObservations(newTime,false);
   }
@@ -2345,14 +2261,15 @@ void HqcMainWindow::sendShowText(const miutil::miString site)
 
 // send message to show ground analysis in Diana
 bool  HqcMainWindow::sendAnalysisMessage() {
+  LOG_FUNCTION();
   
   //show analysis
   miMessage letter;
   letter.command=qmstrings::apply_quickmenu;
   letter.data.push_back("Hqc");
   letter.data.push_back("Bakkeanalyse");
-  cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
+  //cerr << "HQC sender melding" << endl;
+  //cerr <<"HQC: meldingen inneholder:"<< letter.content() <<endl;
   pluginB->sendMessage(letter);
   
   dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
@@ -2361,13 +2278,14 @@ bool  HqcMainWindow::sendAnalysisMessage() {
 
 void HqcMainWindow::sendStation(int stnr)
 {
+  LOG_FUNCTION();
 
   miMessage pLetter;
   pLetter.command = qmstrings::station;
   miutil::miString stationstr(stnr);
   pLetter.common = stationstr;
-  cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+  //cerr << "HQC sender melding" << endl;
+  //cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
   pluginB->sendMessage(pLetter);
   
 }
@@ -2377,10 +2295,10 @@ void HqcMainWindow::aboutQt()
     QMessageBox::aboutQt( this, "Qt is a C++ toolkit for application development. " );
 }
 
-
-void HqcMainWindow::sendObservations(miutil::miTime time,
-				     bool sendtime) 
+void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 {
+  LOG_FUNCTION();
+
   //no data -> return
   if(selPar.count() == 0) return;
 
@@ -2391,13 +2309,13 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   dianaTime = time;
 
   if(sendtime){
-    cerr << "Sendtime = true" << endl;
+    //cerr << "Sendtime = true" << endl;
     miMessage tLetter;
     tLetter.command = qmstrings::settime;
     tLetter.commondesc = "time";
     tLetter.common = time.isoTime();
-    cerr << "HQC sender melding" << endl;
-    cerr <<"HQC: meldingen inneholder:"<< tLetter.content() <<endl;
+    //cerr << "HQC sender melding" << endl;
+    //cerr <<"HQC: meldingen inneholder:"<< tLetter.content() <<endl;
     pluginB->sendMessage(tLetter);
   }
   miMessage pLetter;
@@ -2439,16 +2357,16 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
   vector<miutil::miString> synopData;
   vector<miutil::miString> enkelData;
 
-  for ( int i = 0; i < datalist.size(); i++) { // fill data
-    if ( datalist[i].otime == time ){
+  for ( int i = 0; i < datalist->size(); i++) { // fill data
+    if ( (*datalist)[i].otime() == time ){
       double lat,lon,h;
-      miutil::miString str(datalist[i].stnr);
+      miutil::miString str((*datalist)[i].stnr());
       QString name;
       int env;
       int snr;
-      //      int typeId = datalist[i].typeId;
-      int typeId = datalist[i].showTypeId;
-      findStationInfo(datalist[i].stnr,name,lat,lon,h,snr,env);
+      //      int typeId = (*datalist)[i].typeId;
+      int typeId = (*datalist)[i].showTypeId();
+      findStationInfo((*datalist)[i].stnr(),name,lat,lon,h,snr,env);
       str += ",";
       miutil::miString isAuto = "x";
       miutil::miString strType = hqcType(typeId, env);
@@ -2476,13 +2394,13 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
       //      }
       miutil::miString synopStr = str;
       miutil::miString enkelStr = str;
-      double aa = datalist[i].corr[1];
+      double aa = (*datalist)[i].corr(1);
       for(int j=0; j<parIndex.size();j++){
-	double corr = datalist[i].corr[parIndex[j]];
+	double corr = (*datalist)[i].corr(parIndex[j]);
 	if ( parModel[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      corr = modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2490,8 +2408,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parDiff[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      corr = corr - modeldatalist[k].orig[parIndex[j]];
 	      break;
 	    }
@@ -2499,8 +2417,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	}
 	if ( parProp[j] ) {
 	  for ( int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == datalist[i].stnr && 
-		 modeldatalist[k].otime == datalist[i].otime ) {
+	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
+		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
 	      if ( abs(modeldatalist[k].orig[parIndex[j]]) > 0.00001 )
 		corr = corr/modeldatalist[k].orig[parIndex[j]];
 	      else
@@ -2516,7 +2434,7 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 	  }
 	} else {
 	  corr = dianaValue(parIndex[j], parModel[j], corr, aa);
-	  int flag = datalist[i].flag[parIndex[j]];
+	  int flag = (*datalist)[i].flag(parIndex[j]);
 	  int shFl1 = flag/10000;
 	  int shFl2 = flag%10000/1000;
 	  int shFl3 = flag%1000/100;
@@ -2567,8 +2485,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     pLetter.description = synopDescription;
     pLetter.common = time.isoTime() + ",synop";
     pLetter.data = synopData;
-    cerr << "HQC sender melding" << endl;
-    cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+    //cerr << "HQC sender melding" << endl;
+    //cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
     pluginB->sendMessage(pLetter);
   }
   /*    
@@ -2597,8 +2515,8 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
     okLetter.command = "menuok";
     okLetter.from = hqcFrom;
     okLetter.to = hqcTo;
-    cerr << "HQC sender melding" << endl;
-    cerr <<"HQC: meldingen inneholder:"<< okLetter.content() <<endl;
+    //cerr << "HQC sender melding" << endl;
+    //cerr <<"HQC: meldingen inneholder:"<< okLetter.content() <<endl;
     pluginB->sendMessage(okLetter);
   }
   
@@ -2606,18 +2524,24 @@ void HqcMainWindow::sendObservations(miutil::miTime time,
 
 
 
-void HqcMainWindow::sendSelectedParam(miutil::miString param)
+void HqcMainWindow::sendSelectedParam(const QString & param)
 {
-       
-  param = dianaName(param);
-  if(!param.exists()) return;
+  LOG_FUNCTION();
+
+  miutil::miString diParam = dianaName(param.latin1());
+  if(!diParam.exists()) {
+      qDebug() << qPrintable(param) << ": No such diana parameter";
+      return;
+  }
 
   miMessage pLetter;
   pLetter.command = qmstrings::select_HQC_param;
-  pLetter.commondesc = "param";
-  pLetter.common = param;
-  cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+  pLetter.commondesc = "diParam";
+  pLetter.common = diParam;
+  //cerr << "HQC sender melding" << endl;
+  //cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+  //cerr.flush();
+
   pluginB->sendMessage(pLetter);
 
 
@@ -2625,15 +2549,17 @@ void HqcMainWindow::sendSelectedParam(miutil::miString param)
 
 
 void HqcMainWindow::updateParams(int station, 
-				 miutil::miTime time,
-				 miutil::miString param, 
-				 miutil::miString value, 
-				 miutil::miString flag)
+    const miutil::miTime & time,
+    const miutil::miString & param,
+    const miutil::miString & value,
+    const miutil::miString & flag)
 {
+  LOG_FUNCTION();
+
   //Update datalist
   int i=0;
-  int n= datalist.size();
-  while( i<n && ( datalist[i].stnr!=station || datalist[i].otime != time)) i++;
+  int n= datalist->size();
+  while( i<n && ( (*datalist)[i].stnr() !=station || (*datalist)[i].otime() != time)) i++;
   if(i==n) return; //station and time not found
 	 
   int parameterIndex=-1;
@@ -2648,14 +2574,14 @@ void HqcMainWindow::updateParams(int station,
   if(parameterIndex == -1) return; // parameter not found
 
   double dValue = atof(value.cStr());
-  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),datalist[i].corr[1]);
+  double cdValue = dianaValue(parameterIndex, false, atof(value.cStr()),(*datalist)[i].corr(1));
   int    iflag  = atoi(flag.cStr());
-  datalist[i].corr[parameterIndex]=dValue;
-  datalist[i].flag[parameterIndex]=iflag;
+  (*datalist)[i].set_corr(parameterIndex, dValue);
+  //(*datalist)[i].set_flag(parameterIndex, iflag);
   miutil::miString value_flag = miutil::miString(cdValue) + ":" + flag;
 
   //update timeseries
-  TimeseriesOK();
+//  TimeseriesOK();
 
   //update diana
   miMessage pLetter;
@@ -2667,16 +2593,16 @@ void HqcMainWindow::updateParams(int station,
   data += ",";
   data += value_flag;
   pLetter.data.push_back(data);
-  cerr << "HQC sender melding" << endl;
-  cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+  //cerr << "HQC sender melding" << endl;
+  //cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
   pluginB->sendMessage(pLetter);
 
   pLetter.common = time.isoTime() + ",synop";
   miutil::miString dianaParam = dianaName(param);
   if(dianaParam.exists()){
     pLetter.description = "id," + dianaParam;
-    cerr << "HQC sender melding" << endl;
-    cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
+    //cerr << "HQC sender melding" << endl;
+    //cerr <<"HQC: meldingen inneholder:"<< pLetter.content() <<endl;
     pluginB->sendMessage(pLetter);
   }
 }
@@ -2817,17 +2743,20 @@ miutil::miString HqcMainWindow::hqcType(int typeId, int env) {
   return hqct;
 } 
 
-void HqcMainWindow::updateSaveFunction( QWidget *w )
+void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
 {
-  MDITabWindow *win = dynamic_cast<MDITabWindow*>(w);
-  bool enabled = ( win and win->erl );
-  file->setItemEnabled( fileSaveMenuItem, enabled );
-  cerr << "Save " << (enabled? "en":"dis") << "abled\n";
+  if ( ! w )
+    return;
+
+  ErrorList *win = dynamic_cast<ErrorList*>(w->widget());
+  bool enabled = win;
+  saveAction->setEnabled(enabled);
+  //cerr << "Save " << (enabled? "en":"dis") << "abled\n";
 }
 
 bool HqcMainWindow::isAlreadyStored(miutil::miTime otime, int stnr) {
-  for ( int i = 0; i < datalist.size(); i++) {
-    if ( datalist[i].otime == otime && datalist[i].stnr == stnr )
+  for ( int i = 0; i < datalist->size(); i++) {
+    if ( (*datalist)[i].otime() == otime && (*datalist)[i].stnr() == stnr )
       return true;
   }
   return false;
@@ -2925,18 +2854,10 @@ void
 HqcMainWindow::
 makeObsDataList( KvObsDataList& dataList )
 {
+  model::KvalobsData tdl;
   bool tdlUpd[NOPARAM];
-  for ( int ip = 0; ip < NOPARAM; ip++) {
-    tdl.orig[ip]   = -32767.0;
-    tdl.flag[ip]   = 0;
-    tdl.corr[ip]   = -32767.0;
-    tdl.sensor[ip] = 0;
-    tdl.level[ip]  = 0;
-    tdl.typeId[ip] = -32767;
-    tdl.controlinfo[ip] = "";
-    tdl.cfailed[ip] = "";
-    tdlUpd[ip] = false;
-  }
+  std::fill(tdlUpd, tdlUpd + NOPARAM, false);
+
   miutil::miTime protime("1800-01-01 00:00:00");
   int prtypeId = -1;
   int prstnr = 0;
@@ -2946,6 +2867,7 @@ makeObsDataList( KvObsDataList& dataList )
   miutil::miTime aggTime("1800-01-01 00:00:00") ;
 
   for(IKvObsDataList it=dataList.begin(); it!=dataList.end(); it++ ) {
+
     KvObsData::kvDataList::iterator dit=it->dataList().begin();
     //    IDataList dit = it->dataList().begin();
     int ditSize = it->dataList().size();
@@ -2992,23 +2914,24 @@ makeObsDataList( KvObsDataList& dataList )
 	ditNo++;
 	continue;
       }
-      tdl.otime = otime;
-      tdl.tbtime = tbtime;
-      tdl.stnr = stnr;
+      tdl.set_otime(otime);
+      tdl.set_tbtime(tbtime);
+      tdl.set_stnr(stnr);
       bool isaggreg = ( stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
+
       if ( correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()] ) {
-	tdl.typeId[dit->paramID()] = typeId;
-	tdl.showTypeId = typeId;
-	tdl.orig[dit->paramID()] = dit->original();
-	tdl.flag[dit->paramID()] = getShowFlag(dit->controlinfo());
-	tdl.corr[dit->paramID()] = dit->corrected();
-	tdl.sensor[dit->paramID()] = dit->sensor();
-	tdl.level[dit->paramID()] = dit->level();
-	tdl.controlinfo[dit->paramID()] = dit->controlinfo().flagstring();
-      	tdl.useinfo[dit->paramID()] = dit->useinfo().flagstring();
-	tdl.cfailed[dit->paramID()] = dit->cfailed();
+	tdl.set_typeId(dit->paramID(), typeId);
+	tdl.set_showTypeId(typeId);
+	tdl.set_orig(dit->paramID(), dit->original());
+	//tdl.set_flag(dit->paramID(), getShowFlag(dit->controlinfo()));
+	tdl.set_corr(dit->paramID(), dit->corrected());
+	tdl.set_sensor(dit->paramID(), dit->sensor());
+	tdl.set_level(dit->paramID(), dit->level());
+	tdl.set_controlinfo(dit->paramID(), dit->controlinfo());
+      	tdl.set_useinfo(dit->paramID(), dit->useinfo());
+	tdl.set_cfailed(dit->paramID(), dit->cfailed());
 	tdlUpd[dit->paramID()] = true;
-     }
+      }
       protime = otime;
       prstnr = stnr;
       prtypeId = typeId;
@@ -3019,10 +2942,13 @@ makeObsDataList( KvObsDataList& dataList )
       int env;
       int snr;
       findStationInfo(stnr, name, lat, lon, hoh, snr, env);
-      tdl.name = name;
-      tdl.snr = snr;
+      tdl.set_name(name);
+      tdl.set_latitude(lat);
+      tdl.set_longitude(lon);
+      tdl.set_altitude(hoh);
+      tdl.set_snr(snr);
       int prid = dit->paramID();
-      bool correctHqcType = hqcTypeFilter(tdl.showTypeId, env, stnr);
+      bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
       ++dit;
       ++ditNo;
       otime = dit->obstime();
@@ -3034,7 +2960,7 @@ makeObsDataList( KvObsDataList& dataList )
       }
       else if ( ditNo == ditSize - 1 ) goto pushback;
       for ( int ip = 0; ip < NOPARAM; ip++) {
-	int shFl  = tdl.flag[ip];
+	int shFl  = tdl.flag(ip);
 	int shFl1 = shFl/10000;
 	int shFl2 = shFl%10000/1000;
 	int shFl3 = shFl%1000/100;
@@ -3049,31 +2975,13 @@ makeObsDataList( KvObsDataList& dataList )
       if ( (timeFilter(hour) && !isAlreadyStored(protime, prstnr) &&
 	    ((otime != protime || ( otime == protime && stnr != prstnr)))) ||
 	   (lstdlg->allTypes->isChecked() && typeId != prtypeId) ) {
-	datalist.push_back(tdl);
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
+	datalist->push_back(tdl);
+	tdl = model::KvalobsData();
+	std::fill(tdlUpd, tdlUpd + NOPARAM, false);
       }
       else if ( !timeFilter(hour) ) {
-	for ( int ip = 0; ip < NOPARAM; ip++) {
-	  tdl.orig[ip]   = -32767.0;
-	  tdl.flag[ip]   = 0;
-	  tdl.corr[ip]   = -32767.0;
-	  tdl.sensor[ip] = -0;
-	  tdl.level[ip]  = -0;
-	  tdl.typeId[ip] = -32767;
-	  tdl.controlinfo[ip] = "";
-	  tdl.cfailed[ip] = "";
-	  tdlUpd[ip] = false;
-	}
+        tdl = model::KvalobsData();
+        std::fill(tdlUpd, tdlUpd + NOPARAM, false);
       }
     }
   }

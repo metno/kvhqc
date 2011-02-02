@@ -53,18 +53,18 @@ int main( int argc, char ** argv )
 {
   const char * kvdir = getenv( "KVALOBS" );
   const char * hist = getenv( "HIST" );
-    string shist = hist ? string(hist) : "0";
-  string myconf;
+    std::string shist = hist ? std::string(hist) : "0";
+  std::string myconf;
   if ( shist == "1" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvhist.conf";
+    myconf = std::string( kvdir ) + "/etc/kvhqc/kvhist.conf";
   else if ( shist == "2" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvtest.conf";
+    myconf = std::string( kvdir ) + "/etc/kvhqc/kvtest.conf";
   else
-    myconf = string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
+    myconf = std::string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
   miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
   if(!confSec) {
-    clog << "Can't open configuration file: " << myconf << endl;
+    std::clog << "Can't open configuration file: " << myconf << std::endl;
     return 1;
   }
   KvApp kvapp(argc, argv, confSec);
@@ -88,7 +88,7 @@ int main( int argc, char ** argv )
 
   std::list<kvalobs::kvStation> slist;
   if (!KvApp::kvApp->getKvStations(slist)) {
-    cerr << "Can't connect to station table!" << endl;
+    std::clog << "Can't connect to station table!" << std::endl;
   }
   Weather::MultiStationSelection d(slist, 0, 0/*& dl.front()*/ );
   d.show();
