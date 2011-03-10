@@ -190,8 +190,8 @@ namespace model
         return;
       }
       if ( (! oldData) or newData->stnr() != oldData->stnr() ) {
-          qDebug() << "stationSelected(" << newData->stnr() << ")";
-        emit stationSelected(newData->stnr());
+	   qDebug() << "stationSelected(" << newData->stnr() << ")";
+	 emit stationSelected(newData->stnr(),newData->otime());
       }
       if ( (! oldData) or newData->otime() != oldData->otime() ) {
           qDebug() << "timeSelected(" << newData->otime().isoTime().c_str() << ")";
