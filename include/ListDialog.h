@@ -162,14 +162,21 @@ public slots:
   void allCounCheck();
   void allCounUnCheck();
 
+  void setMaxDate(const QDate&);
+  void setMinDate(const QDate&);
+  void setMaxTime(const QTime&);
+  void setMinTime(const QTime&);
+
 private:
   QLabel* stationLabel;
   QLabel* fromLabel;
   QLabel* toLabel;
   QLabel* parameterLabel;
   QComboBox* parameterCombo;
-  miTimeSpinBox* fromTime;
-  miTimeSpinBox* toTime;
+  //  miTimeSpinBox* fromTime;
+  //  miTimeSpinBox* toTime;
+  QDateTimeEdit* fromTime;
+  QDateTimeEdit* toTime;
   QLineEdit* fromEdit;
   QLineEdit* toEdit;
   QPushButton* sthide;
@@ -184,8 +191,10 @@ signals:
   void ListHide();
   void ListApply();
   void selectStation();
-  void fromTimeChanged(const miutil::miTime&);
-  void toTimeChanged(const miutil::miTime&);
+  void fromTimeChanged(const QDateTime&);
+  void toTimeChanged(const QDateTime&);
+  //  void fromTimeChanged(const miutil::miTime&);
+  //  void toTimeChanged(const miutil::miTime&);
 };
 
 class StationTable : public Q3Table {
