@@ -370,6 +370,15 @@ namespace WatchRR
 
     list<kvData> dl( mod.begin(), mod.end() );
 
+    for ( list<kvData>::iterator kit = dl.begin(); kit != dl.end(); kit++ ) {
+      kvData mdat = *kit;
+      miString cf(mdat.cfailed());
+
+      if ( not cf.empty() )
+	cf += ",";
+      cf += "watchRR";
+      (*kit).cfailed(cf);
+    }
     cerr << "Lagrer:" << endl
     << decodeutility::kvdataformatter::createString( dl ) << endl;
     CKvalObs::CDataSource::Result_var res;
