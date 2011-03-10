@@ -73,6 +73,10 @@ namespace kvalobs {
   class kvData;
 }
 typedef list<kvalobs::kvData>::iterator                   IDataList;
+typedef list<kvalobs::kvObsPgm>                          ObsPgmList;
+typedef list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
+typedef list<int>                                          OpgmList;
+typedef list<int>::iterator                               IOpgmList;
 
 namespace Weather
 {
@@ -164,7 +168,11 @@ signals:
     void setupCorrTab( SynObsList&, int, QTabWidget* );
     void setupFlagTab( SynObsList&, int, QTabWidget* );
     void setupStationInfo();
+    void opgmList(OpgmList& opgtl, CIObsPgmList obit);
     WeatherTable* cTab;
+    std::list<kvalobs::kvObsPgm> obsPgmList;
+    std::list<long> statList;
+
   };
 }
 
