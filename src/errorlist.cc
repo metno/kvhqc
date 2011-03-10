@@ -122,7 +122,9 @@ ErrorList::ErrorList(QStringList& selPar,
 	   this, SLOT  ( showSameStation()  ) );
 
   connect( this, SIGNAL( currentChanged(int, int) ),
-	   this, SLOT  ( signalStationSelected( int ) ) );
+    this, SLOT  ( signalStationSelected( int ) ) );
+  //  connect( this, SIGNAL( stationSelected( miMessage ) ),
+  //	   mainWindow, SLOT  ( signalStationSelected( miMessage ) ) );
 
   connect( mainWindow, SIGNAL( windowClose() ),
 	   this, SIGNAL( errorListClosed() ) );
@@ -265,23 +267,40 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.flg = flg;
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
-      if ( lity == erLi || lity == alLi ) {
+      if ( lity == erLi || lity == alLi ) {	
+	
 	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
 	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
-	    ((flg == 2 || flg == 3) && flTyp == "fnum") )
+	    ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
+	    ((flg == 2 || flg == 3)&& flTyp == "fw") ||
+	    ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
+	  
 	  memStore1.push_back(memObs);
-	else if (((flg == 4 || flg == 5) && flTyp == "fr" ) ||
-		 (flg == 2 && flTyp == "fs" ) ||
-		 ((flg == 4 || flg == 5) && flTyp == "fnum") )
+	
+	else if (((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
+		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 || 
+		   flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) || 
+		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || 
+		   flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) || 
+		 ((flg == 3 || flg == 6 || flg == 9)&& flTyp == "fs" ) ||
+		 (flg == 6 && flTyp == "fnum") ||
+		 (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
+		 ((flg == 2 || flg == 3) && flTyp == "ftime") ||
+		 ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
+		 (flg == 7 && flTyp == "fd") )
+	  
 	  memStore2.push_back(memObs);
-	else {
-	  memStore3.push_back(memObs);
-	}
       }
+      
+      
+      
+      
+      
+      //      }
       else if ( lity == erSa ) {
 	if ( ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
 	     (flg == 2 && flTyp == "fs" ))
-	  memStore3.push_back(memObs);
+	  memStore2.push_back(memObs);
       }
     }
   }
@@ -310,20 +329,6 @@ ErrorList::ErrorList(QStringList& selPar,
 	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
   }
   cerr << endl;
-  cerr << "Memory store 3 size = " << memStore3.size() << "  no of params = " <<selPar.count() << endl;
-  
-  for ( int i = 0; i < memStore3.size(); i++ ) {
-    cerr << setw(7) << i;
-    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime << setw(21) << memStore3[i].tbtime 
-	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
-	 << setw(9) << setprecision(3) << memStore3[i].orig 
-	 << setw(9) << setprecision(3) << memStore3[i].corr 
-	 << setw(9) << setprecision(3) << memStore3[i].morig 
-	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
-	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
-  }
-  cerr << endl;
-
 
   ////////
  checkFirstMemoryStore();
@@ -332,28 +337,28 @@ ErrorList::ErrorList(QStringList& selPar,
   for ( int i = 0; i < error.size(); i++ ) {
     int stnr = memStore1[error[es-1-i]].stnr;
     miutil::miTime obstime = memStore1[error[es-1-i]].obstime;
-    if ( memStore3.size() > 0 ) {
+    if ( memStore2.size() > 0 ) {
       int iCount = 0;
-      vector<mem>::iterator memO = memStore3.begin();
-      for ( ;memO != memStore3.end(); memO++ ) {
+      vector<mem>::iterator memO = memStore2.begin();
+      for ( ;memO != memStore2.end(); memO++ ) {
 	iCount++;
 	int cStnr = memO->stnr;
 	miutil::miTime cTime = memO->obstime;
-	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore3.size() )
+	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore2.size() )
 	  continue;
 	else {
-	  if ( iCount == memStore3.size() ) {
-	    memStore3.push_back(memStore1[error[es-1-i]]);
+	  if ( iCount == memStore2.size() ) {
+	    memStore2.push_back(memStore1[error[es-1-i]]);
 	  }
 	  else {
-	    memStore3.insert(memO,memStore1[error[es-1-i]]);
+	    memStore2.insert(memO,memStore1[error[es-1-i]]);
 	  }
 	  break;
 	}
       }
     }
     else {
-      memStore3.push_back(memStore1[error[es-1-i]]);
+      memStore2.push_back(memStore1[error[es-1-i]]);
     }
   }
 
@@ -397,100 +402,13 @@ ErrorList::ErrorList(QStringList& selPar,
 	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
   }
   cerr << endl;
-  cerr << "Memory store 3 second time size = " << memStore3.size() 
-       << "  no of params = " <<selPar.count() << endl;
-  for ( int i = 0; i < memStore3.size(); i++ ) {
-    cerr << setw(14) << i;
-    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime 
-	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
-	 << setw(9) << setprecision(3) << memStore3[i].orig 
-	 << setw(9) << setprecision(3) << memStore3[i].corr 
-	 << setw(9) << setprecision(3) << memStore3[i].morig 
-	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
-	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
-  }
-  cerr << endl;
-
   ///////
   error.clear();
   noError.clear();
-  checkSecondMemoryStore();
-
-  es = error.size();
-  for ( int i = 0; i < error.size(); i++ ) {
-    int stnr = memStore2[error[es-1-i]].stnr;
-    miutil::miTime obstime = memStore2[error[es-1-i]].obstime;
-    if ( memStore3.size() > 0 ) {
-      int iCount = 0;
-      vector<mem>::iterator memO = memStore3.begin();
-      for ( ;memO != memStore3.end(); memO++ ) {
-	iCount++;
-	int cStnr = memO->stnr;
-	miutil::miTime cTime = memO->obstime;
-	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore3.size() )
-	  continue;
-	else {
-	  if ( iCount == memStore3.size() )
-	    memStore3.push_back(memStore2[error[es-1-i]]);
-	  else
-	    memStore3.insert(memO,memStore2[error[es-1-i]]);
-	  break;
-	}
-      }
-    }
-    else {
-      memStore3.push_back(memStore2[error[es-1-i]]);
-    }
-  }
-  memI = memStore2.end();
-  memI--;
-  ri = error.size() - 1;
-  ir = memStore2.size() - 1;
-  if ( ri >= 0) {
-    for (  ;memI >= memStore2.begin(); memI-- ) {
-      if ( ir == error[ri] ) {
-	memStore2.erase(memI);
-	ri--;
-      }
-      ir--;
-    }
-  }
-  ///////
-  cerr << "Memory store 2 third time size = " << memStore2.size() 
-       << "  no of params = " <<selPar.count() << endl;
-  for ( int i = 0; i < memStore2.size(); i++ ) {
-    cerr << setw(14) << i;
-    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
-	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
-	 << setw(9) << setprecision(1) << memStore2[i].orig 
-	 << setw(9) << setprecision(1) << memStore2[i].corr 
-	 << setw(9) << setprecision(1) << memStore2[i].morig 
-	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
-	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
-  }
-  cerr << endl;
-  cerr << "Memory store 3 third time size = " << memStore3.size() 
-       << "  no of params = " <<selPar.count() << endl;
-  for ( int i = 0; i < memStore3.size(); i++ ) {
-    cerr << setw(14) << i;
-    cerr << setw(7) << memStore3[i].stnr << setw(21) << memStore3[i].obstime 
-	 << setw(5) << memStore3[i].parNo << setw(5) << memStore3[i].parName.toStdString() 
-	 << setw(9) << setprecision(3) << memStore3[i].orig 
-	 << setw(9) << setprecision(3) << memStore3[i].corr 
-	 << setw(9) << setprecision(3) << memStore3[i].morig 
-	 << setw(5) << memStore3[i].flTyp.toStdString() << "  " <<memStore3[i].flg << "  "
-	 << memStore3[i].controlinfo << "  " <<memStore3[i].cfailed << endl;
-  }
-  cerr << endl;
-
+  //  checkSecondMemoryStore();
   ///////
   for ( int i = 0; i < memStore1.size(); i++ ) {
     mem* memStore = new mem(memStore1[i]);
-    updateKvBase(memStore);
-    delete memStore;
-  }
-  for ( int i = 0; i < memStore2.size(); i++ ) {
-    mem* memStore = new mem(memStore2[i]);
     updateKvBase(memStore);
     delete memStore;
   }
@@ -538,7 +456,6 @@ ErrorList::ErrorList(QStringList& selPar,
 	  }
 	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
 	  rStat.rstnr = ostnr;
-	  //       	  cerr << rStat.stnr << " - " << rStat.rstnr << " Dist = " << rStat.dist << endl;
 	  if (rStatList.size() == 0 )
 	    rStatList.push_back(rStat);
 	  else {
@@ -570,66 +487,69 @@ ErrorList::ErrorList(QStringList& selPar,
     ppanr = panr;
   }
 
-  setNumRows( memStore3.size() + headSize );
-  for ( int i = 0; i < memStore3.size(); i++ ) {
+  setNumRows( memStore2.size() + headSize );
+  for ( int i = 0; i < memStore2.size(); i++ ) {
     setRowReadOnly( insRow + headSize, false);
     setItem( insRow + headSize, 0, new ErrorListFirstCol( this, insRow + headSize ) );
 
     cerr << i << ": " << decodeutility::kvdataformatter::
-      createString( getKvData( memStore3[i] ) ) << endl;
+      createString( getKvData( memStore2[i] ) ) << endl;
 
-    if ( memStore3[i].flg <= 1 &&  memStore3[i].flg > -3)
+    if ( memStore2[i].flg <= 1 &&  memStore2[i].flg > -3)
       continue;
 
-    strDat = strDat.setNum(memStore3[i].stnr);
+    if ( memStore2[i].controlinfo.substr(1,1) == "6" && memStore2[i].controlinfo.substr(7,1) == "1"  )
+      continue;
+
+    strDat = strDat.setNum(memStore2[i].stnr);
     DataCell* snIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,1,snIt);
 
-    strDat = memStore3[i].name.left(8);
+    strDat = memStore2[i].name.left(8);
     DataCell* naIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,2,naIt);
 
-    strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(5,2);
+    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(5,2);
     DataCell* moIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,3,moIt);
 
-    strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(8,2);
+    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(8,2);
     DataCell* dyIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,4,dyIt);
 
-    strDat = QString(memStore3[i].obstime.isoTime().cStr()).mid(11,2);
+    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(11,2);
     DataCell* clIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,5,clIt);
 
-    strDat = memStore3[i].parName;
+    strDat = memStore2[i].parName;
     DataCell* paIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,6,paIt);
 
-    strDat = strDat.setNum(memStore3[i].typeId);
+    strDat = strDat.setNum(memStore2[i].typeId);
     DataCell* tiIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,7,tiIt);
 
-    if ( paramIsCode(memStore3[i].parNo) == 0 )
-      strDat = strDat.setNum(memStore3[i].orig,'f',0);
+    if ( paramIsCode(memStore2[i].parNo) == 0 )
+      strDat = strDat.setNum(memStore2[i].orig,'f',0);
     else {
-      strDat = strDat.setNum(memStore3[i].orig,'f',1);
+      strDat = strDat.setNum(memStore2[i].orig,'f',1);
     }
     DataCell* ogIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,8,ogIt);
 
-    if ( paramIsCode(memStore3[i].parNo) == 0 )
-      strDat = strDat.setNum(memStore3[i].corr,'f',0);
+    if ( paramIsCode(memStore2[i].parNo) == 0 )
+      strDat = strDat.setNum(memStore2[i].corr,'f',0);
     else {
-      strDat = strDat.setNum(memStore3[i].corr,'f',1);
+      strDat = strDat.setNum(memStore2[i].corr,'f',1);
     }
     DataCell* coIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,9,coIt);
 
-    strDat = strDat.setNum(memStore3[i].morig,'f',paramIsCode(memStore3[i].parNo));
+    strDat = strDat.setNum(memStore2[i].morig,'f',paramIsCode(memStore2[i].parNo));
     DataCell* mlIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,10,mlIt);
 
-    strDat = memStore3[i].flTyp;
+    strDat = memStore2[i].flTyp;
     DataCell* fiIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,11,fiIt);
 
@@ -637,7 +557,7 @@ ErrorList::ErrorList(QStringList& selPar,
     DataCell* eqIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,12,eqIt);
 
-    strDat = strDat.setNum(memStore3[i].flg);
+    strDat = strDat.setNum(memStore2[i].flg);
     DataCell* fgIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,13,fgIt);
 
@@ -760,8 +680,9 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
     return maxflg;
   if ( !priorityParameterFilter(parNo) )
     return maxflg;
-  if ( priorityControlFilter(control) == 0 )
+  if ( priorityControlFilter(control) == 0 ) {
     return maxflg;
+  }
   else if ( priorityControlFilter(control) == -1 )
     maxflg = -2;
   int flInd = 0;
@@ -788,20 +709,20 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
 void ErrorList::checkFirstMemoryStore() {
   int j = 0, l = 0;
   for ( int i = 0; i < memStore1.size(); i++ ) {
-    QString control = QString::fromStdString(memStore1[i].controlinfo);
+    kvControlInfo cif(memStore1[i].controlinfo); 
     if ( memStore1[i].flTyp == "fr" ) {
       if ( paramHasModel(memStore1[i].parNo) ) {
-	int iNum = control.mid(4,1).toInt(0,16);
-	if ( iNum == 1) {
+	if ( cif.flag(4) == 1 || (cif.flag(4) > 1 && cif.flag(8) == 1) ) {
 	  noError.push_back(i);
 	}
-	else {
+	else if ( (cif.flag(4) > 1 && cif.flag(8) > 1) || cif.flag(8) == 0 ) {
 	  error.push_back(i);
 	}
       }
       else {
 	for ( int k = 2; k < 16; k++ ) {
-	  int iFlg = control.mid(k,1).toInt(0,16);
+	  //	  int iFlg = control.mid(k,1).toInt(0,16);
+	  int iFlg = cif.flag(k);
 	  if ( iFlg > 1 ) {
 	    error.push_back(i);
 	    break;
@@ -809,53 +730,78 @@ void ErrorList::checkFirstMemoryStore() {
 	}
       }
     }
-    else if ( memStore1[i].flTyp == "fcc" ) {
-      noError.push_back(i);
+    else if ( memStore1[i].flTyp == "fs" ) {
+      if ( cif.flag(3) == 2 && cif.flag(10) > 1 )
+	error.push_back(i);
+      else if ( cif.flag(3) == 2 && cif.flag(10) <= 1 ) {
+	if ( cif.flag(1) == 1 && cif.flag(8) == 1 ) {
+	  noError.push_back(i);
+	}
+	else if ( cif.flag(1) > 1 || cif.flag(8) > 1 ) {
+	  error.push_back(i);
+	} 
+      }
+      else if ( cif.flag(3) == 4 && cif.flag(10) > 1 ) {
+	error.push_back(i);
+      }
+      else if ( cif.flag(3) == 4 && cif.flag(10) <= 1 && cif.flag(1) <= 1 && cif.flag(8) <= 1 ) {
+	noError.push_back(i);
+      }
+      else if ( cif.flag(3) == 5 && ( cif.flag(1) > 1 || cif.flag(8) > 1 ) ) {
+	error.push_back(i);
+      }
+      else if ( cif.flag(3) == 5 && cif.flag(1) <= 1 &&  cif.flag(8) <= 1  ) {
+	noError.push_back(i);
+      }
     }
+    //TODO: Proper treatment of fcc=2 and fcp=2
+    /*
+    else if ( memStore1[i].flTyp == "fcc" ) {
+      if ( cif.flag(2) == 2 )
+      // find the other parameter
+	error.push_back(i);
+    }
+    else if ( memStore1[i].flTyp == "fcp" ) {
+      if ( cif.flag(10) == 2 )
+      // find the other parameter
+	error.push_back(i);
+    }
+    */
     else if ( memStore1[i].flTyp == "fnum" ) {
       if ( memStore1[i].parNo == 177 || memStore1[i].parNo == 178 ) {
 	error.push_back(i);
       }
-      else {
+    }
+    else if ( memStore1[i].flTyp == "fw" ) {
+      if ( (cif.flag(8) == 2 || cif.flag(8) == 3) && 
+	   ( cif.flag(1) > 1 || cif.flag(2) > 1 || cif.flag(3) > 1 || cif.flag(10) > 1) ) {
+	error.push_back(i);
+      }
+      else if ( (cif.flag(8) == 2 || cif.flag(8) == 3) && 
+		( cif.flag(1) <= 1 && cif.flag(2) <= 1 && cif.flag(3) <= 1 && cif.flag(10) <= 1) )  {
 	noError.push_back(i);
       }
     }
+    else
+      noError.push_back(i);
   }
 }
 
 void ErrorList::checkSecondMemoryStore() {
   int j = 0, l = 0;
   for ( int i = 0; i < memStore2.size(); i++ ) {
-    QString control = QString::fromStdString(memStore2[i].controlinfo);
+    kvControlInfo cif(memStore2[i].controlinfo); 
     if ( memStore2[i].flTyp == "fr" ) {
-      if ( paramHasModel(memStore2[i].parNo) ) {
-	int iNum = control.mid(4,1).toInt(0,16);
-	if ( iNum == 1) {
-	  noError.push_back(i);
-	}
-	else {
-	  error.push_back(i);
-	}
-      }
-      else {
-	for ( int k = 2; k < 16; k++ ) {
-	  int iFlg = control.mid(k,1).toInt(0,16);
-	  if ( iFlg > 1 ) {
-	    error.push_back(i);
-	    break;
-	  }
-	}
-      }
-    }
-    else if ( memStore2[i].flTyp == "fnum" ) {
-      if ( memStore2[i].parNo == 61 ){
+      if ( cif.flag(1) == 6 && cif.flag(7) == 1 )
 	noError.push_back(i);
-      }
       else
 	error.push_back(i);
     }
-    else {
-      error.push_back(i);
+    else if ( memStore2[i].flTyp == "fs" ) {
+      if (cif.flag(3) == 6 )
+	noError.push_back(i);
+      else 
+	error.push_back(i);
     }
   }
 }
@@ -922,6 +868,7 @@ void ErrorList::updateKvBase(mem* memStore)
 {
   if ( mainWindow->reinserter != NULL ) {
     kvData kd = getKvData( *memStore );
+    //TODO: Remove next 3 lines when the new QC1-9 is ready
     kvControlInfo cif = kd.controlinfo();
     cif.set(15,2);
     kd.controlinfo(cif);
@@ -984,7 +931,7 @@ void ErrorList::markModified( int row, int col )
   assert( elfc );
 
   struct mem &msItem =
-    memStore3[ elfc->memStoreIndex() ];
+    memStore2[ elfc->memStoreIndex() ];
 
   kvData kd = getKvData( row );
   kvControlInfo cif = kd.controlinfo();
@@ -1237,8 +1184,15 @@ void ErrorList::signalStationSelected( int row )
   const struct mem * m = getMem( row );
   ((HqcMainWindow*)getHqcMainWindow( this ))->sendObservations(m->obstime,true);
   ((HqcMainWindow*)getHqcMainWindow( this ))->sendStation(m->stnr);
-  cerr << "emit stationSelected( " << m->stnr << ", " << m->obstime << " );" << endl;
-  emit stationSelected( m->stnr, m->obstime );
+  miMessage letter;
+  letter.command = qmstrings::station;
+  miutil::miString stationstr(m->stnr);
+  miutil::miString otime(m->obstime.isoTime());
+  letter.common = stationstr ;
+  letter.common.append(",");
+  letter.common.append(otime);
+  emit statSel( letter );
+
 }
 
 void execMissingList( ErrorList* el )
@@ -1274,7 +1228,7 @@ const struct ErrorList::mem *ErrorList::getMem( int row ) const
     dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
   if ( elfc == NULL )
     return NULL;
-  return &memStore3[ elfc->memStoreIndex() ];
+  return &memStore2[ elfc->memStoreIndex() ];
 }
 
 kvData
@@ -1608,3 +1562,18 @@ QString DataCell::key() const {
   return item;
 }
 
+bool ErrorList::isCoastStation(int stnr) {
+  for ( int ic = 0; ic < mainWindow->coastStations.size(); ic++ ) {
+    if ( stnr ==mainWindow->coastStations[ic] )
+      return true;
+  }
+  return false;
+}
+
+double ErrorList::FF() {
+  for ( int i = 0; i < memStore2.size(); i++ ) {
+    if ( memStore2[i].parNo == 81 )
+      return memStore2[i].orig;
+  }
+  return 0.0;
+}
