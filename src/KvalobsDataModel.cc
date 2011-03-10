@@ -51,6 +51,7 @@ namespace model
       const std::vector<modDatl> & modeldatalist,
       bool showStationNameInHeader,
       bool showPositionInHeader,
+      bool showHeightInHeader,
       bool editable,
       QObject * parent) :
     QAbstractTableModel(parent),
@@ -58,6 +59,7 @@ namespace model
     modeldatalist_(modeldatalist),
     showStationNameInHeader_(showStationNameInHeader),
     showPositionInHeader_(showPositionInHeader),
+    showHeightInHeader_(showHeightInHeader),
     correctedValuesAreEditable_(editable)
   {
     for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
@@ -116,6 +118,8 @@ namespace model
       return displayRoleData(index);
     case Qt::TextColorRole:
       return textColorRoleData(index);
+    case Qt::TextAlignmentRole:
+      return textAlignmentRoleData(index);
 
     }
     return QVariant();
@@ -151,12 +155,16 @@ namespace model
             if ( showStationNameInHeader_ )
               header += d.name() + "\t";
             if ( showPositionInHeader_ ) {
-                header += QString::number(d.latitude(), 'f', 2) + ' ';
+                header += ' ' + QString::number(d.latitude(), 'f', 2) + ' ';
                 header += QString::number(d.longitude(), 'f', 2) + ' ';
-                header += QString::number(d.altitude(), 'f', 0) + ' ';
             }
+            if ( showHeightInHeader_ ) {
+	       header += ' ' + QString::number(d.altitude(), 'f', 0) + "m ";
+	    }
             const std::string date = d.otime().isoTime();
             header += date.c_str();
+	    const QString synopNumber = QString::number(d.snr());
+	    header += ' ' + synopNumber;
             return header;
         }
         else return QVariant();
@@ -245,8 +253,17 @@ namespace model
     }
   }
 
+  void KvalobsDataModel::setShowHeight(bool show)
+  {
+    if ( show != showHeightInHeader_ ) {
+        showHeightInHeader_ = show;
+        emit headerDataChanged(Qt::Vertical, 0, rowCount());
+    }
+  }
+
   QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
   {
+    cerr.flags(ios::fixed);
     const Parameter & p = getParameter(index);
 
     const KvalobsData & d = kvalobsData_->at(index.row());
@@ -261,7 +278,7 @@ namespace model
       {
         if ( fmis == 1 or fmis == 3 )
           return QVariant();
-      return d.orig(p.paramid);
+	return d.orig(p.paramid);
       }
     case Flag:
       {
@@ -273,6 +290,7 @@ namespace model
       {
         if ( fmis == 2 or fmis == 3 )
           return QVariant();
+	double ccoor = d.corr(p.paramid);
       return d.corr(p.paramid);
       }
     case Model:
@@ -308,6 +326,11 @@ namespace model
         }
     }
     return Qt::black;
+  }
+
+  QVariant KvalobsDataModel::textAlignmentRoleData(const QModelIndex & index) const
+  {
+    return Qt::AlignRight;
   }
 
   int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
