@@ -34,6 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QLabel>
 #include <Q3GridLayout>
 #include <Q3VBoxLayout>
+#include <QDateTimeEdit>
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {  
 
@@ -201,31 +202,39 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   stationNames = new Q3ListBox(this);
 
   //Time selection  
-  fromTime = new miTimeSpinBox ("fromTime",this, "Fra: ");
-  toTime   = new miTimeSpinBox ("toTime",this, "Til:  ");
-  //  fromTime = new QDateTimeEdit (QDateTime::currentDateTime(),this);
-  //  toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
-  miutil::miTime t(toTime->time());
-  if( t.min() != 0 ){
-    t.addMin(-1*t.min());
-    t.addHour(1);
-    toTime->setTime(t);
+  fromTime = new QDateTimeEdit (QDateTime::currentDateTime(),this);
+  toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
+  fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
+  toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
+
+  QDateTime t(toTime->dateTime());
+  if( t.time().minute() != 0 ){
+    cerr << "Knut tidstest 1 " << t.time().minute() << endl;
+    t = t.addSecs(-60*t.time().minute());
+    cerr << "Knut tidstest 2 " << t.time().minute() << endl;
   }
-  t.addDay(-2);
-  t.addHour(17-t.hour());
-  t.addMin(45-t.min());
-  fromTime->setTime(t);
+  cerr << "Knut tidstest 3 " << t.time().minute() << endl;
+  toTime->setDateTime(t);
 
-  connect( fromTime, SIGNAL(valueChanged(const miutil::miTime&)),
-	   toTime,   SLOT(  setMin(const miutil::miTime&)     ));
-  connect( fromTime, SIGNAL(valueChanged(const miutil::miTime&)),
-	     this, SIGNAL(fromTimeChanged(const miutil::miTime&)));
+  t = t.addSecs(-172800); // Go back two days 
+  t = t.addSecs(3600*(17-t.time().hour()));
+  t = t.addSecs(60*(45-t.time().minute()));
+  fromTime->setDateTime(t);
 
-  connect( toTime,  SIGNAL(valueChanged(const miutil::miTime&)),
-	   fromTime,SLOT(  setMax(const miutil::miTime&)     ));
-  connect( toTime,  SIGNAL(valueChanged(const miutil::miTime&)),
-	     this,SIGNAL(toTimeChanged(const miutil::miTime&)));
+  connect( fromTime, SIGNAL(dateChanged(const QDate&)),
+	   this,   SLOT(  setMinDate(const QDate&)     ));
+  connect( fromTime, SIGNAL(timeChanged(const QTime&)),
+	   this,   SLOT(  setMinTime(const QTime&)     ));
+  connect( fromTime, SIGNAL(dateTimeChanged(const QDateTime&)),
+	   this, SIGNAL(fromTimeChanged(const QDateTime&)));
 
+  connect( toTime,  SIGNAL(dateChanged(const QDate&)),
+	   this,SLOT(  setMaxDate(const QDate&)     ));
+  connect( toTime,  SIGNAL(timeChanged(const QTime&)),
+	   this,   SLOT(  setMaxTime(const QTime&)     ));
+  connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
+	   this,SIGNAL(toTimeChanged(const QDateTime&)));
+  
   sthide = new QPushButton("Skjul", this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
@@ -296,7 +305,16 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(sthide, SIGNAL(clicked()), this, SIGNAL( ListHide()));
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ListApply()));
-
+  
+  QLabel* fromLabel = new QLabel("Fra");
+  Q3HBoxLayout* ftimeLayout = new Q3HBoxLayout();
+  ftimeLayout->addWidget(fromLabel);
+  ftimeLayout->addWidget(fromTime);
+  QLabel* toLabel = new QLabel("Til");
+  Q3HBoxLayout* ttimeLayout = new Q3HBoxLayout();
+  ttimeLayout->addWidget(toLabel);
+  ttimeLayout->addWidget(toTime);
+  
   topLayout = new Q3VBoxLayout(this,10);
   
   topLayout->addLayout(typeLayout);
@@ -305,9 +323,28 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   topLayout->addWidget(stationSelect);
   topLayout->addWidget(stationLabel);
   topLayout->addWidget(stationNames);
-  topLayout->addWidget(fromTime);
-  topLayout->addWidget(toTime);
+  topLayout->addLayout(ftimeLayout);
+  topLayout->addLayout(ttimeLayout);
+  //  topLayout->addWidget(fromTime);
+  //  topLayout->addWidget(toTime);
   topLayout->addLayout(buttonLayout);
+}
+
+void ListDialog::setMaxTime(const QTime& maxTime)
+{
+  fromTime->setMaximumTime(maxTime);
+}
+void ListDialog::setMinTime(const QTime& minTime)
+{
+  toTime->setMinimumTime(minTime);
+}
+void ListDialog::setMaxDate(const QDate& maxDate)
+{
+  fromTime->setMaximumDate(maxDate);
+}
+void ListDialog::setMinDate(const QDate& minDate)
+{
+  toTime->setMinimumDate(minDate);
 }
 
 void ListDialog::showAll(){
@@ -324,7 +361,8 @@ void ListDialog::applyHideClicked(){
 }
 
 QString ListDialog::getStart() {
-    return fromTime->isoTime().cStr();
+  //    return fromTime->isoTime().cStr();
+  return fromTime->text() + QString(":00");
 }
 
 QString ListDialog::getWeatherElement() {
@@ -336,7 +374,8 @@ void ListDialog::chooseParameters(const QString& str) {
  }
 
 QString ListDialog::getEnd() {
-  return toTime->isoTime().cStr();
+  //  return toTime->isoTime().cStr();
+  return toTime->text() + QString(":00");
 } 
 
 
