@@ -64,7 +64,7 @@ namespace model
     void selectTime(const miutil::miTime & obstime);
 
   signals:
-    void stationSelected(int stationid);
+    void stationSelected(int stationid, const miutil::miTime & obtime );
     void timeSelected(const miutil::miTime & obtime);
     void parameterSelected(const QString & parameterName);
 
