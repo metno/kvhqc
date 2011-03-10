@@ -85,17 +85,24 @@ namespace QC
     	    assert( st != sParams.end() );
     	  }
     	  const StationParams & sp = st->second;
-
     	  int day = data.obstime().dayOfYear();
     	  if ( day < 1 )
     	    day = 1;
     	  else if ( day > 365 )
     	    day = 365;
-
+	  std::string comma(",");
           const int & paramID = data.paramID();
-    	  for ( CIStationParams it = sp.begin(); it != sp.end(); ++it )
-    	    if ( paramID == it->paramID() and day >= it->fromday() and day <= it->today() )
+	  int icomma = data.cfailed().find(comma);
+
+	  miString qcx;
+	  if ( icomma > 0 )
+	    qcx = data.cfailed().substr(0, data.cfailed().find(','));
+	  else 
+	    qcx = data.cfailed();
+    	  for ( CIStationParams it = sp.begin(); it != sp.end(); ++it ) {
+	    if ( qcx == it->qcx() and day >= it->fromday() and day <= it->today() )
     	      return &* it;
+	  }
     	}
     	return 0;
       }
@@ -117,6 +124,7 @@ namespace QC
 
       miString st =
 	    stParam->metadata().substr( stParam->metadata().find( '\n' ) );
+      cerr << "st = " << st << endl;
       st.trim();
       st.replace( ";", " - " );
 
@@ -130,7 +138,8 @@ namespace QC
 
       if ( explMap.empty() ) {
 	QString path = QString(getenv("HQCDIR"));
-	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
+	QString filename = path + "/etc/kvhqc/faildetail.txt";
+	//	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );
