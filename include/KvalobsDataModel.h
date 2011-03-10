@@ -50,6 +50,7 @@ namespace model
         const std::vector<modDatl> & modeldatalist,
         bool showStationNameInHeader,
         bool showPositionInHeader,
+        bool showHeightInHeader,
         bool editable,
         QObject * parent = 0);
 
@@ -95,6 +96,7 @@ namespace model
   public slots:
     void setShowStationName(bool show);
     void setShowPosition(bool show);
+    void setShowHeight(bool show);
 
   signals:
     void dataModification(const kvalobs::kvData & modifiedData);
@@ -102,6 +104,7 @@ namespace model
   private:
     QVariant displayRoleData(const QModelIndex & index) const;
     QVariant textColorRoleData(const QModelIndex & index) const;
+    QVariant textAlignmentRoleData(const QModelIndex & index) const;
 
     kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
@@ -112,6 +115,7 @@ namespace model
 
     bool showStationNameInHeader_;
     bool showPositionInHeader_;
+    bool showHeightInHeader_;
 
     bool correctedValuesAreEditable_;
 
