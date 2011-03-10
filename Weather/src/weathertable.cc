@@ -209,7 +209,7 @@ namespace Weather
 	if ( pName == "corr" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::OnTyping,strtyp,strdat);
 	  setItem(iRow,datCol[iCol],datItem);
-	  if ( strflg == "fnum = 6" )
+	  if ( strflg == "fnum = 6" && ctrlinfo.substr(15,1) <= "1" )
 	    datItem->isModelVal = true;
 	  else
 	    datItem->isModelVal = false;
@@ -314,6 +314,7 @@ namespace Weather
     rowColPair rc(row, col);
     kvDat.corrected(newCorr);
     kvControlInfo cif = kvDat.controlinfo();
+    std::string cfailed = kvDat.cfailed();
     float uplim = highMap[kvDat.paramID()];
     float downlim = lowMap[kvDat.paramID()];
     if ( (newCorr > uplim || newCorr < downlim) && newCorr != -32766 ) {
@@ -378,6 +379,12 @@ namespace Weather
       cif.set(6,misfl);
     }
     kvDat.controlinfo(cif);
+
+    if ( not cfailed.empty() )
+      cfailed += ",";
+    cfailed += "watchweather";
+    kvDat.cfailed(cfailed);
+
     kvCorrList.push_back(kvDat);
     oldNew.push_back(op);
     rowCol.push_back(rc);
