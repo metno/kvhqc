@@ -108,6 +108,7 @@ public:
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
+  vector<int> coastStations;
 
 
 public slots:
@@ -314,6 +315,7 @@ private slots:
   void showMod();
   void showStat();
   void showPos();
+  void showHeight();
   void showTyp();
   void airPress();
   void temperature();
@@ -361,6 +363,9 @@ private:
 
   /// User selection whether to display station's location
   QAction * poID;
+
+  /// User selection whether to display station's height
+  QAction * heID;
 
   QAction * tyID;
   QAction * apID;
@@ -488,6 +493,7 @@ QStringList listStatFromTime;
 QStringList listStatToTime;
 QStringList listParName;
 QStringList listParNum;
+QStringList listStatCoast;
 
 private slots:
   void closeWindow();
