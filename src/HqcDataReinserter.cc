@@ -45,10 +45,14 @@ namespace internal_
     if ( cinfo.flag( flag::fhqc ) >= 2 ) {
       if ( cf.empty() )
 	cf = "hqc";
-      else
+      else if ( !cf.contains("watchweather") && 
+		!cf.contains("watchRR") )
 	cf += ",hqc";
     }
-    else if ( cinfo.flag( flag::fhqc ) == 1 && !cf.empty() )
+    else if ( cinfo.flag( flag::fhqc ) == 1 && 
+	      !cf.empty() && 
+	      !cf.contains("watchweather") &&
+	      !cf.contains("watchRR") )
 	cf += ",hqc";
   
     d.cfailed( cf );
