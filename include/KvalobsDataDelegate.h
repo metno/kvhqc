@@ -53,6 +53,8 @@ namespace model
 
     virtual void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const;
 
+    virtual QString displayText(const QVariant& value, const QLocale& locale) const;
+
   private:
     void setup_();
 
