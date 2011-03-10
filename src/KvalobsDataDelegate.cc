@@ -198,6 +198,14 @@ namespace model
     return lT;
   }
 
+  QString KvalobsDataDelegate::displayText(const QVariant& value, const QLocale& locale) const
+  {
+    if ( value.type() == QVariant::Double )
+      return locale.toString(value.toDouble(), 'f', 1);
+    else
+      return locale.toString(value.toInt());
+  }
+
   void KvalobsDataDelegate::setup_()
   {
     QString path = QString(getenv("HQCDIR"));
