@@ -37,7 +37,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define NDEBUG
 #include <QtGui>
 #include <cassert>
-#include <qevent.h>
+//#include <qevent.h>
+#include <QEvent>
 #include <q3textstream.h>
 #include <qcursor.h>
 #include <qprinter.h>
@@ -1512,7 +1513,8 @@ bool ErrorList::event(QEvent *event)
   if (event->type() == QEvent::ToolTip) {
     QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
     QPoint cp = mapFromGlobal(helpEvent->globalPos());
-    int row = rowAt( cp.y() )-1;
+    int cy = contentsY();
+    int row = rowAt( cp.y() + cy )-1;
     int col = columnAt( cp.x() );
 
     QString cellText = text( row, stationidCol );
