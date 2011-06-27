@@ -40,11 +40,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "textdatatable.h"
 #include "rejectdialog.h"
 #include "rejecttable.h"
+#include "rejecttimeseriesdialog.h"
 #include "errorlist.h"
 #include <qwidget.h>
 #include <fstream>
 #include <iostream>
 #include <kvcpp/KvApp.h>
+#include <KvalobsDataModel.h>
 #include <qmainwindow.h>
 #include <qobject.h>
 //#include <q3process.h>
@@ -54,7 +56,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qpoint.h>
 #include <qlabel.h>
 #include <qstatusbar.h>
-#include <qmessagebox.h>
+//#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QScopedPointer>
 #include <qapplication.h>
 #include <qpushbutton.h>
 //#include <q3accel.h>
@@ -109,7 +113,6 @@ public:
   int nuroprpar;
   int nucoprpar;
   vector<int> coastStations;
-
 
 public slots:
   /*!
@@ -259,6 +262,8 @@ public:
   Rejects* rejects;
   vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
+  RejectTimeseriesDialog* rjtsdlg;
+
   model::KvalobsDataListPtr datalist;
   vector<modDatl> modeldatalist;
 
@@ -277,6 +282,8 @@ public:
   vector<currentType> currentTypeList;
   vector<QString> statLineList;
   DataReinserter<kvservice::KvApp> *reinserter;
+  /// True if all types have been selected, as opposed to prioritized parameters
+  bool isShTy;
 
 public slots:
 
@@ -330,8 +337,11 @@ private slots:
   void all();
   void clk();
   void dsh();
+  void rejectTimeseries();
+  void rejectTimeseriesOK();
   void startKro();
 private:
+  model::KvalobsDataModel * dataModel;
   bool firstObs;
   int sLevel;
   int sSensor;
@@ -382,8 +392,6 @@ private:
   QAction * plID;
   QAction * alID;
 
-  /// True if all types have been selected, as opposed to prioritized parameters
-  bool isShTy;
   int synopType;
   int autoobsType;
   int kvalobsType;
@@ -400,7 +408,7 @@ private:
 //  Q3PopupMenu* file;
   QAction * saveAction;
   QAction * printAction;
-//  //KTEST
+
   int filePrintMenuItem;
   QMenu* choice;
   QMenu* showmenu;
@@ -543,7 +551,6 @@ signals:
   void toggleType();
   void saveData();
   void windowClose();
-  //KTEST
   void printErrorList();
 
   /**
