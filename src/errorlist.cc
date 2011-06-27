@@ -170,8 +170,10 @@ ErrorList::ErrorList(QStringList& selPar,
     for ( int i = 0; i < dtl.size(); i++ ) {
       if (  dtl[i].stnr() > 99999)
         continue;
-      if (  dtl[i].typeId(noSelPar[j]) < 0 )
-        continue;
+      //??
+      //      if (  dtl[i].typeId(noSelPar[j]) < 0 )
+      //        continue;
+      //??
       if (  dtl[i].otime() < stime || dtl[i].otime() > etime )
         continue;
       if ( !specialTimeFilter( noSelPar[j], dtl[i].otime()) )
@@ -210,7 +212,7 @@ ErrorList::ErrorList(QStringList& selPar,
   for ( int i = 0; i < dtl.size(); i++ ) {
     if (  dtl[i].stnr() > 99999) continue;
 #warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
-    if (  dtl[i].showTypeId() < 0 ) continue;
+    //    if (  dtl[i].showTypeId() < 0 ) continue;
     if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
     mem memObs;
     memObs.obstime = dtl[i].otime();
@@ -288,6 +290,7 @@ ErrorList::ErrorList(QStringList& selPar,
 		 (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
 		 ((flg == 2 || flg == 3) && flTyp == "ftime") ||
 		 ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
+		 (flg > 0 && flTyp == "fmis" ) ||
 		 (flg == 7 && flTyp == "fd") )
 	  
 	  memStore2.push_back(memObs);
@@ -677,7 +680,7 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
   QString control = QString::fromStdString(cFailed);
   int flg = 0;
   int maxflg = -1;
-  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 )
+  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 ) 
     return maxflg;
   if ( !priorityParameterFilter(parNo) )
     return maxflg;
@@ -853,7 +856,9 @@ bool ErrorList::specialTimeFilter( int par, miutil::miTime otime) {
 }
 
 bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) {
-  if ( typeId  == 501 ) return false;
+  //??
+  //  if ( typeId  == 501 ) return false;
+  //??
   bool tpf = false;
   for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
     if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
@@ -890,7 +895,7 @@ void ErrorList::updateKvBase(mem* memStore)
 }
 
 void ErrorList::updateFaillist( int row, int col) {
-  if ( row > headSize - 1 <  numRows() )
+  if ( row > headSize - 1 && row <  numRows() )
     fDlg->failList->newData( getKvData( row ) );
 }
 
@@ -930,7 +935,6 @@ void ErrorList::markModified( int row, int col )
 {
   ErrorListFirstCol * elfc = dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
   assert( elfc );
-
   struct mem &msItem =
     memStore2[ elfc->memStoreIndex() ];
 
