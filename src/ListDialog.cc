@@ -209,11 +209,8 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
   QDateTime t(toTime->dateTime());
   if( t.time().minute() != 0 ){
-    cerr << "Knut tidstest 1 " << t.time().minute() << endl;
     t = t.addSecs(-60*t.time().minute());
-    cerr << "Knut tidstest 2 " << t.time().minute() << endl;
   }
-  cerr << "Knut tidstest 3 " << t.time().minute() << endl;
   toTime->setDateTime(t);
 
   t = t.addSecs(-172800); // Go back two days 
