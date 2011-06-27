@@ -79,11 +79,12 @@ namespace FailInfo
     Fails fails;
     
     for ( QC::cFailList::iterator it = fail.begin();
-	  it != fail.end();  it++ ) 
+	  it != fail.end();  it++ ) {
       fails
 	[ QString::fromStdString(it->getPart( QC::cFailedParam::QcClass ))   ]
 	[ QString::fromStdString(it->getPart( QC::cFailedParam::Group )) ]
 	.insert( *it );
+    }
     for ( Fails::const_iterator top = fails.begin();
 	  top != fails.end();  top++ ) {
       Q3ListViewItem *topItem = 
