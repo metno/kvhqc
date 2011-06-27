@@ -140,6 +140,7 @@ namespace model
 
     int row = model->dataRow(stationid, obstime);
     int column = current.column();
+    int currow = current.row();
     QModelIndex index = model->index(row, column);
 
     blockSignals(true);
