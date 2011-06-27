@@ -71,6 +71,7 @@ namespace model
     Qt::ItemFlags flags(const QModelIndex & index) const;
 
     bool setData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
+    bool setDiscardedData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
 
     enum ColumnType
     {
@@ -92,6 +93,9 @@ namespace model
     const Parameter & getParameter(int column) const;
 
     int dataRow(int stationid, const miutil::miTime & obstime) const;
+    int dataColumn(QString parameter) const;
+
+    kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
   public slots:
     void setShowStationName(bool show);
@@ -106,7 +110,7 @@ namespace model
     QVariant textColorRoleData(const QModelIndex & index) const;
     QVariant textAlignmentRoleData(const QModelIndex & index) const;
 
-    kvalobs::kvData getKvData_(const QModelIndex & index) const;
+    bool paramIsCode(const int paramid) const;
 
     KvalobsDataListPtr kvalobsData_;
     const std::vector<modDatl> & modeldatalist_;
