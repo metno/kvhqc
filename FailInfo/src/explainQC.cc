@@ -122,12 +122,29 @@ namespace QC
       if ( ! stParam )
 	   return "Ingen relevante detaljer tilgjengelig";
 
-      miString st =
-	    stParam->metadata().substr( stParam->metadata().find( '\n' ) );
+      miString st;
+      if ( data.controlinfo().flag(4) == 6 )
+	st = "Observasjon mangler.  Modellverdi er satt inn";
+      else if ( data.controlinfo().flag(4) > 1 ) {
+	st = "Grenseverdier for avvik fra modell :";
+	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
+	st.trim();
+	st.replace( ";", " - " );
+      }
+      else if ( data.controlinfo().flag(3) == 3 ) {
+	st = "Samme verdi mer enn ";
+	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
+	st += " ganger";
+	cerr << "st = " << st << endl;
+	st.trim();
+      }
+      else {
+	st =  stParam->metadata().substr( stParam->metadata().find( '\n' ) );
+	cerr << "st = " << st << endl;
+	st.trim();
+	st.replace( ";", " - " );
+      }
       cerr << "st = " << st << endl;
-      st.trim();
-      st.replace( ";", " - " );
-
       return string( st );
     }
 
@@ -136,6 +153,177 @@ namespace QC
       typedef map<cFailedParam, string, cFailedParam::altLess> ExplMap;
       static ExplMap explMap;
 
+      if ( explMap.empty() ) {
+	QString path = QString(getenv("HQCDIR"));
+	QString filename = path + "/etc/kvhqc/faildetail.txt";
+	//	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
+	static const int bufSize = 512;
+
+	ifstream fs( filename );
+	if ( not fs.good() ) {
+	  fs.close();
+	  return string("Finner ikke datafil: ") + filename.toStdString();
+	}
+	char buffer[ bufSize ];
+
+	while ( not fs.eof() ) {
+
+	  fs.getline( buffer, bufSize );
+	  string line = buffer;
+
+	  if ( line.empty() )
+	    continue;
+	  string::size_type sepPos = line.find( '\t' );
+
+	  cFailedParam key = line.substr( 0, sepPos );
+
+	  while ( sepPos < line.size() and line[sepPos] == '\t' )
+	    sepPos++;
+
+	  string val;
+	  if ( sepPos != string::npos )
+	    val = line.substr( sepPos );
+	  else
+	    val = "";
+
+	  cout << key.toString() << " - " << val << endl;
+
+	  explMap[key] = val;
+	}
+	fs.close();
+      }
+
+      cout << "Inn: " << failDetail.toString() << endl;
+
+      ExplMap::const_iterator result = explMap.find( failDetail );
+      if ( result == explMap.end() )
+	return "Ingen relevante detaljer tilgjengelig";
+      else
+	return result->second;
+    } //getExplanation
+
+
+    string fr( const cFailedParam &failDetail, const kvData &data )
+    {
+      return getLimits( failDetail, data );
+    }
+
+    string fcc( const cFailedParam &failDetail, const kvData & )
+    {
+      return getExplanation( failDetail.toString() );
+    }
+
+    string fs( const cFailedParam &failDetail, const kvData &data )
+    {
+      return getLimits( failDetail, data );
+    }
+
+    string fnum( const cFailedParam &failDetail, const kvData &data )
+    {
+      return getLimits( failDetail, data );
+    }
+
+    string fpos( const cFailedParam &, const kvData & )
+    {
+      return "fpos";
+    }
+
+    string fcp( const cFailedParam &failDetail, const kvData & )
+    {
+      return getExplanation( failDetail.toString() );
+    }
+
+    string fd( const cFailedParam &, const kvData &data )
+    {
+      kvData &Data = const_cast<kvData &>(data);
+      kvControlInfo ctrl;
+      Data.controlinfo( ctrl );
+
+      int val = ctrl.flag( kvQCFlagTypes::f_fd );
+
+      //if ( val >= 2 )
+      ostringstream ss;
+      ss << "fd=" << val << ": Doit";
+
+      return ss.str();
+    }
+
+    string fcombi(  const cFailedParam &failDetail, const kvData & data )
+    {
+      kvData &Data = const_cast<kvData &>(data);
+      kvControlInfo ctrl;
+      Data.controlinfo( ctrl );
+
+      int val = ctrl.flag( kvQCFlagTypes::f_fcombi );
+
+      //if ( val >= 2 )
+      ostringstream ss;
+      ss << "fcombi = " << val << ": Doit";
+
+      return ss.str();
+      //      return getExplanation( failDetail.toString() );
+    }
+
+    string fmis( const cFailedParam &, const kvData & )
+    {
+      return "fmis";
+    }
+
+    string ftime( const cFailedParam &failDetail, const kvData & )
+    {
+      return getExplanation( failDetail.toString() );
+    }
+
+    ////    static const int groups_ = 10;
+    static const int groups_ = 12;
+    static FailGroupList::value_type _failGroup[ groups_ ] = {
+      FailGroupList::value_type( "0",
+				 FailGroup( "Forhandskvalifisering",
+					    errorFunc ) ),
+      FailGroupList::value_type( "1",
+				 FailGroup( "Grenseverdikontroll (fr)",
+					    fr ) ),
+      FailGroupList::value_type( "2",
+				 FailGroup( "Formell konsistenskontroll (fcc)",
+					    fcc ) ),
+      FailGroupList::value_type( "3a",
+				 FailGroup( "Sprangkontroll, step (fs)",
+					    fs ) ),
+      FailGroupList::value_type( "3b",
+				 FailGroup( "Sprangkontroll, freeze (fs)",
+					    fs ) ),
+      FailGroupList::value_type( "4",
+				 FailGroup( "Prognostisk romkontroll (fnum)",
+					    fnum ) ),
+      FailGroupList::value_type( "5",
+				 FailGroup( "Meldingskontroll (fpos)",
+					    fpos ) ),
+      FailGroupList::value_type( "6",
+				 FailGroup( "Klimatologisk konsistenskontroll (fcp)",
+					    fcp ) ),
+      FailGroupList::value_type( "7",
+				 FailGroup( "Identifisering av oppsamlet verdi (fd)",
+					    fd ) ),
+      FailGroupList::value_type( "9",
+				 FailGroup( "Kombinert vurdering",
+					    fcombi ) ),
+      FailGroupList::value_type( "10",
+				 FailGroup( "Manglende observasjon",
+					    fmis ) ),
+      FailGroupList::value_type( "11",
+				 FailGroup( "Tidsserietilpasning",
+					    ftime ) ),
+    };
+    FailGroupList failGroup( _failGroup, &_failGroup[ groups_ ] );
+  }
+
+  namespace QC2
+  {
+    static string getExplanation( const cFailedParam &failDetail )
+    {
+      typedef map<cFailedParam, string, cFailedParam::altLess> ExplMap;
+      static ExplMap explMap;
+      
       if ( explMap.empty() ) {
 	QString path = QString(getenv("HQCDIR"));
 	QString filename = path + "/etc/kvhqc/faildetail.txt";
@@ -186,101 +374,22 @@ namespace QC
 	return result->second;
     }
 
-
-    string fr( const cFailedParam &failDetail, const kvData &data )
-    {
-      return getLimits( failDetail, data );
-    }
-
-    string fcc( const cFailedParam &failDetail, const kvData & )
+    string ftime( const cFailedParam &failDetail, const kvData & )
     {
       return getExplanation( failDetail.toString() );
     }
 
-    string fs( const cFailedParam &failDetail, const kvData &data )
-    {
-      return getLimits( failDetail, data );
-    }
-
-    string fnum( const cFailedParam &failDetail, const kvData &data )
-    {
-      return getLimits( failDetail, data );
-    }
-
-    string fpos( const cFailedParam &, const kvData & )
-    {
-      return "fpos";
-    }
-
-    string fcp( const cFailedParam &failDetail, const kvData & )
-    {
-      return getExplanation( failDetail.toString() );
-    }
-
-    string fd( const cFailedParam &, const kvData &data )
-    {
-      kvData &Data = const_cast<kvData &>(data);
-      kvControlInfo ctrl;
-      Data.controlinfo( ctrl );
-
-      int val = ctrl.flag( kvQCFlagTypes::f_fd );
-
-      //if ( val >= 2 )
-      ostringstream ss;
-      ss << "fd=" << val << ": Doit";
-
-      return ss.str();
-    }
-
-    string fcombi(  const cFailedParam &failDetail, const kvData & )
-    {
-      return getExplanation( failDetail.toString() );
-    }
-
-    string fmis( const cFailedParam &, const kvData & )
-    {
-      return "fmis";
-    }
-
-    ////    static const int groups_ = 10;
-    static const int groups_ = 11;
+    static const int groups_ = 1;
     static FailGroupList::value_type _failGroup[ groups_ ] = {
       FailGroupList::value_type( "0",
-				 FailGroup( "Forhandskvalifisering",
-					    errorFunc ) ),
-      FailGroupList::value_type( "1",
-				 FailGroup( "Grenseverdikontroll (fr)",
-					    fr ) ),
-      FailGroupList::value_type( "2",
-				 FailGroup( "Formell konsistenskontroll (fcc)",
-					    fcc ) ),
-      FailGroupList::value_type( "3a",
-				 FailGroup( "Sprangkontroll, step (fs)",
-					    fs ) ),
-      FailGroupList::value_type( "3b",
-				 FailGroup( "Sprangkontroll, freeze (fs)",
-					    fs ) ),
-      FailGroupList::value_type( "4",
-				 FailGroup( "Prognostisk romkontroll (fnum)",
-					    fnum ) ),
-      FailGroupList::value_type( "5",
-				 FailGroup( "Meldingskontroll (fpos)",
-					    fpos ) ),
-      FailGroupList::value_type( "6",
-				 FailGroup( "Klimatologisk konsistenskontroll (fcp)",
-					    fcp ) ),
-      FailGroupList::value_type( "7",
-				 FailGroup( "Identifisering av oppsamlet verdi (fd)",
-					    fd ) ),
-      FailGroupList::value_type( "9",
-				 FailGroup( "Kombinert vurdering",
-					    fcombi ) ),
-      FailGroupList::value_type( "10",
-				 FailGroup( "Manglende observasjon",
-					    fmis ) )
+				 FailGroup( "Tidsserietilpasning",
+					    ftime ) )
     };
     FailGroupList failGroup( _failGroup, &_failGroup[ groups_ ] );
   }
+
+
+
 
   FailGroup::FailGroup( )
     : explanation( "Ukjent feilgruppe" )
