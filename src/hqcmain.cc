@@ -43,6 +43,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "GetTextData.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
+//#include "discardbox.h"
+#include "discarddialog.h"
 #include <iomanip>
 #include <QAction>
 #include <qpixmap.h>
@@ -72,6 +74,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <glText/glTextQtTexture.h>
 #include <boost/assign.hpp>
 #include <QDateTimeEdit>
+#include <QSizePolicy>
 
 using namespace std;
 
@@ -265,7 +268,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   QMenu * clockmenu = menuBar()->addMenu("&Tidspunkter");
   clockmenu->addAction(timesAction);
-
+  
+  menuBar()->insertItem( "&Forkast tidsserie", this, SLOT(rejectTimeseries()));
+  
   menuBar()->insertItem( "&Dianavisning", this, SLOT(dsh()));
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
 
@@ -361,7 +366,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   txtdlg = new TextDataDialog(stnrList, this);
   txtdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   rejdlg = new RejectDialog(this);
-  rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") ); 
+  rjtsdlg = new RejectTimeseriesDialog();
+  rjtsdlg->hide();
+ 
   // --- READ PARAMETER INFO ---------------------------------------
   
  
@@ -398,10 +406,19 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   connect( tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
   connect( tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
+
   connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
 	   tsdlg,SLOT(newStationList(std::vector<QString>&)));
   connect( this,SIGNAL(newParameterList(const QStringList&)), 
 	   tsdlg,SLOT(newParameterList(const QStringList&)));
+
+  connect( rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
+  connect( rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
+
+  connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
+	   rjtsdlg,SLOT(newStationList(std::vector<QString>&)));
+  connect( this,SIGNAL(newParameterList(const QStringList&)), 
+	   rjtsdlg,SLOT(newParameterList(const QStringList&)));
 
   connect( lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
 	   tsdlg,  SLOT(setFromTimeSlot(const miutil::miTime&)));
@@ -597,7 +614,6 @@ void HqcMainWindow::climateStatistics() {
     const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
   pardlg->insertParametersInListBox(parameters, parMap);
-
   pardlg->showAll();
 }
 
@@ -847,7 +863,6 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
     qDebug("Skipping data save, since user is not authenticated");
     return;
   }
-
   kvalobs::serialize::KvalobsData dataList;
   dataList.insert(toSave);
   const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
@@ -871,7 +886,7 @@ void HqcMainWindow::ListOK() {
     int dianaWarning = QMessageBox::warning(this, 
 					    "Dianaforbindelse",
 					    "Diana er ikke koplet til!"
-					    "ï¿½nsker du ï¿½ kople til Diana?",
+					    "ønsker du å kople til Diana?",
 					    "&Ja",
 					    "&Nei");
     if ( dianaWarning == 0 ) {
@@ -1025,7 +1040,8 @@ void HqcMainWindow::ListOK() {
 //      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
 //      tableView->setItemDelegate(delegate);
 
-      model::KvalobsDataModel * dataModel =
+//      model::KvalobsDataModel * dataModel =
+      dataModel =
           new model::KvalobsDataModel(
               parameterList, parMap, datalist, modeldatalist,
               stID->isChecked(), poID->isChecked(), heID->isChecked(),
@@ -1147,6 +1163,7 @@ void HqcMainWindow::ListOK() {
     }
   }
   emit newStationList(stationList);
+  cerr << "newStationList emitted " << endl;
 
 
   //  send parameter names to ts dialog
@@ -1486,14 +1503,14 @@ void HqcMainWindow::showWeather()
   kvalobs::kvData data;
 
   // TODO: Reinstate this
-//  if ( subWindow ) {
+    if ( subWindow ) {
 //    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
 //    if ( current and current->dtt )
 //      data = current->dtt->getKvData();
     ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
     if ( errorList )
       data = errorList->getKvData();
-//  }
+    }
 
   Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
   if ( wtd ) {
@@ -1509,12 +1526,13 @@ void HqcMainWindow::listMenu() {
     QDateTime mx = QDateTime::currentDateTime();
     int noDays = lstdlg->toTime->date().dayOfYear() - lstdlg->fromTime->date().dayOfYear();
     if ( noDays < 0 ) noDays = 365 + noDays;
-
+        
     if ( noDays < 27 ) {
-      mx.addSecs(-60*mx.time().minute());
-      mx.addSecs(3600);
+      mx = mx.addSecs(-60*mx.time().minute());
+      mx = mx.addSecs(3600);
       lstdlg->toTime->setDateTime(mx);
     }
+    
     lstdlg->showAll();
   }
 }
@@ -1578,6 +1596,96 @@ void HqcMainWindow::clk() {
 
 void HqcMainWindow::dsh() {
   dshdlg->showAll();
+}
+
+void HqcMainWindow::rejectTimeseries() {
+  if ( rjtsdlg->isVisible() ) {
+    rjtsdlg->hideAll();
+  } else {
+    rjtsdlg->showAll();
+  }
+}
+
+void HqcMainWindow::rejectTimeseriesOK() {
+  QDateTime stime;
+  QDateTime etime;
+  QString parameter;
+  int stationIndex;
+  int parameterIndex;
+  rjtsdlg->getResults(parameter,stime,etime,stationIndex);
+
+  std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
+  for(;it!=plist.end(); it++){
+    if ( it->name().cStr() == parameter ){
+      parameterIndex = it->paramID();
+      break;
+    }
+  }
+  WhichDataHelper whichData;
+  long int stnr = stationIndex;
+  miutil::miTime ft;
+  miutil::miTime tt;
+  ft.setTime(miutil::miString(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  tt.setTime(miutil::miString(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  whichData.addStation(stnr, ft, tt);
+  checkTypeId(stnr);
+  int firstRow = dataModel->dataRow(stnr, ft);
+  int lastRow  = dataModel->dataRow(stnr, tt);
+  int column   = dataModel->dataColumn(parameter);
+
+  QString ch;
+  vector<QString> chList;
+  for ( int irow = firstRow; irow <= lastRow; irow++) {
+    QModelIndex index = dataModel->index(irow, column);
+    const kvData & dt = dataModel->getKvData_(index);
+    if ( dt.corrected() < -32760 )
+      continue;
+    QString cr;
+    cr = cr.setNum(dt.corrected(), 'f', 1);
+    QString stnr;
+    stnr = stnr.setNum(dt.stationID());
+    ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + cr;
+    chList.push_back(ch);
+  }
+
+  //  QScopedPointer<DiscardBox> discardBox(new DiscardBox(this));
+
+  DiscardDialog* discardDialog = new DiscardDialog(chList);
+  //  connect(discardDialog,SIGNAL(tsReject()), this, SLOT(rejectTimeseries()));
+  discardDialog->setWindowTitle(tr("%1 - Forkasting av data").arg(QApplication::applicationName()));
+  int res = discardDialog->exec();
+  if ( res == QDialog::Accepted )
+  for ( int irow = firstRow; irow <= lastRow; irow++) {
+    QModelIndex index = dataModel->index(irow, column);
+    dataModel->setDiscardedData(index, -32766);
+  }
+  //    cerr << "HEI KNUT !!!!!" <<endl;
+  //  if ( discardDialog-> )
+  //    return; 
+  //  for ( int irow = firstRow; irow <= lastRow; irow++) {
+  //    QModelIndex index = dataModel->index(irow, column);
+  //    dataModel->setDiscardedData(index, -32766);
+  /*
+  DiscardBox* discardBox = new DiscardBox(this);
+  discardBox->setWindowModality(Qt::NonModal);
+  discardBox->setIcon(QMessageBox::Information);
+  discardBox->setWindowTitle(tr("%1 - Forkasting av data").arg(QApplication::applicationName()));
+  discardBox->setText("Vil du forkaste følgende data?\n");
+  discardBox->setDetailedText(ch);
+  discardBox->addButton(tr("Forkast tidsserie"),QMessageBox::AcceptRole);
+  QAbstractButton* noButton = discardBox->addButton(tr("Avbryt"),QMessageBox::RejectRole);
+  //  noButton->setDefault(true);
+  //  discardBox->layout()->setSizeConstraint(QLayout::SetMaximumSize);
+
+  discardBox->exec();
+  if ( discardBox->clickedButton() == noButton )
+    return; 
+  for ( int irow = firstRow; irow <= lastRow; irow++) {
+    QModelIndex index = dataModel->index(irow, column);
+    dataModel->setDiscardedData(index, -32766);
+  }
+  */
+  return;
 }
 
 void HqcMainWindow::startKro() {
@@ -2313,8 +2421,9 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     pluginB->sendMessage(tLetter);
   }
   miMessage pLetter;
-  if ( firstObs ) 
+  if ( firstObs ) { 
     pLetter.command = qmstrings::init_HQC_params;
+  }
   else
     pLetter.command = qmstrings::update_HQC_params;
   pLetter.commondesc = "time,plottype";
@@ -2351,8 +2460,10 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
   vector<miutil::miString> synopData;
   vector<miutil::miString> enkelData;
 
+  int prStnr = 0;
+
   for ( int i = 0; i < datalist->size(); i++) { // fill data
-    if ( (*datalist)[i].otime() == time ){
+    if ( (*datalist)[i].otime() == time || (firstObs && (*datalist)[i].stnr() != prStnr )){
       double lat,lon,h;
       miutil::miString str((*datalist)[i].stnr());
       QString name;
@@ -2472,6 +2583,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
       synopData.push_back(synopStr);
       enkelData.push_back(enkelStr);
     }
+    prStnr = (*datalist)[i].stnr();
   }
   //send letters
   if(synopData.size()){
@@ -2479,6 +2591,9 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     pLetter.description = synopDescription;
     pLetter.common = time.isoTime() + ",synop";
     pLetter.data = synopData;
+    //TEST
+    cerr << "HQC sender melding : " << pLetter.content() << endl;
+    //TEST
     pluginB->sendMessage(pLetter);
   }
 
@@ -2726,7 +2841,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
   int tpId;
   tpId = typ;
   for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-    if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime) {
+    if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime && obit->totime() > oTime ) {
       tpId = obit->typeID();
       break;
     }
@@ -2888,7 +3003,8 @@ makeObsDataList( KvObsDataList& dataList )
 	tdl.set_controlinfo(dit->paramID(), dit->controlinfo());
       	tdl.set_useinfo(dit->paramID(), dit->useinfo());
 	tdl.set_cfailed(dit->paramID(), dit->cfailed());
-	tdlUpd[dit->paramID()] = true;
+	if ( typeId != 501 )
+	  tdlUpd[dit->paramID()] = true;
       }
       protime = otime;
       prstnr = stnr;
@@ -2907,6 +3023,7 @@ makeObsDataList( KvObsDataList& dataList )
       tdl.set_snr(snr);
       int prid = dit->paramID();
       bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
+
       ++dit;
       ++ditNo;
       otime = dit->obstime();
