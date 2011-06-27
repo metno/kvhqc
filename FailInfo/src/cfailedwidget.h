@@ -1,10 +1,10 @@
 /********************************************************************************
-** Form generated from reading ui file 'cfailedwidget.ui'
+** Form generated from reading UI file 'cfailedwidget.ui'
 **
-** Created: Thu May 22 07:53:40 2008
-**      by: Qt User Interface Compiler version 4.2.3
+** Created: Fri Feb 4 10:15:34 2011
+**      by: Qt User Interface Compiler version 4.6.2
 **
-** WARNING! All changes made in this file will be lost when recompiling ui file!
+** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
 #ifndef CFAILEDWIDGET_H
@@ -12,60 +12,60 @@
 
 #include <Qt3Support/Q3Header>
 #include <Qt3Support/Q3ListView>
+#include <Qt3Support/Q3MimeSourceFactory>
 #include <QtCore/QVariant>
 #include <QtGui/QAction>
 #include <QtGui/QApplication>
 #include <QtGui/QButtonGroup>
 #include <QtGui/QHBoxLayout>
+#include <QtGui/QHeaderView>
 #include <QtGui/QWidget>
-#include <Qt3Support/Q3MimeSourceFactory>
+
+QT_BEGIN_NAMESPACE
 
 class Ui_cFailedWidget : public QWidget
 {
-  Q_OBJECT
 public:
     QHBoxLayout *hboxLayout;
     Q3ListView *cfailedList;
 
     void setupUi(QWidget *cFailedWidget)
     {
-    cFailedWidget->setObjectName(QString::fromUtf8("cFailedWidget"));
-    hboxLayout = new QHBoxLayout(cFailedWidget);
-    hboxLayout->setSpacing(6);
-    hboxLayout->setMargin(11);
-    hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
-    cfailedList = new Q3ListView(cFailedWidget,"cfailedList");
-    cfailedList->addColumn(QApplication::translate("cFailedWidget", "Kontroll", 0, QApplication::UnicodeUTF8));
-    cfailedList->header()->setClickEnabled(true, cfailedList->header()->count() - 1);
-    cfailedList->header()->setResizeEnabled(true, cfailedList->header()->count() - 1);
-    cfailedList->addColumn(QApplication::translate("cFailedWidget", "Forklaring", 0, QApplication::UnicodeUTF8));
-    cfailedList->header()->setClickEnabled(true, cfailedList->header()->count() - 1);
-    cfailedList->header()->setResizeEnabled(true, cfailedList->header()->count() - 1);
-    cfailedList->setObjectName(QString::fromUtf8("cfailedList"));
-    cfailedList->setAllColumnsShowFocus(true);
-    cfailedList->setResizeMode(Q3ListView::LastColumn);
-    cfailedList->setTreeStepSize(20);
+        if (cFailedWidget->objectName().isEmpty())
+            cFailedWidget->setObjectName(QString::fromUtf8("cFailedWidget"));
+        cFailedWidget->resize(347, 150);
+        hboxLayout = new QHBoxLayout(cFailedWidget);
+        hboxLayout->setSpacing(6);
+        hboxLayout->setContentsMargins(11, 11, 11, 11);
+        hboxLayout->setObjectName(QString::fromUtf8("hboxLayout"));
+        cfailedList = new Q3ListView(cFailedWidget);
+        cfailedList->addColumn(QApplication::translate("cFailedWidget", "Kontroll", 0, QApplication::UnicodeUTF8));
+        cfailedList->header()->setClickEnabled(true, cfailedList->header()->count() - 1);
+        cfailedList->header()->setResizeEnabled(true, cfailedList->header()->count() - 1);
+        cfailedList->addColumn(QApplication::translate("cFailedWidget", "Forklaring", 0, QApplication::UnicodeUTF8));
+        cfailedList->header()->setClickEnabled(true, cfailedList->header()->count() - 1);
+        cfailedList->header()->setResizeEnabled(true, cfailedList->header()->count() - 1);
+        cfailedList->setObjectName(QString::fromUtf8("cfailedList"));
+        cfailedList->setAllColumnsShowFocus(true);
+        cfailedList->setResizeMode(Q3ListView::LastColumn);
+        cfailedList->setTreeStepSize(20);
 
-    hboxLayout->addWidget(cfailedList);
-
-
-    retranslateUi(cFailedWidget);
-
-    QSize size(347, 150);
-    size = size.expandedTo(cFailedWidget->minimumSizeHint());
-    cFailedWidget->resize(size);
+        hboxLayout->addWidget(cfailedList);
 
 
-    QMetaObject::connectSlotsByName(cFailedWidget);
+        retranslateUi(cFailedWidget);
+
+        QMetaObject::connectSlotsByName(cFailedWidget);
     } // setupUi
 
     void retranslateUi(QWidget *cFailedWidget)
     {
-    cFailedWidget->setWindowTitle(QApplication::translate("cFailedWidget", "Form1", 0, QApplication::UnicodeUTF8));
-    cFailedWidget->setProperty("whatsThis", QVariant(QApplication::translate("cFailedWidget", "Dette er en liste over de automatiske kontrollene som har for\303\245rsaket at observasjonen ble merket som mistenkelig.", 0, QApplication::UnicodeUTF8)));
-    cfailedList->header()->setLabel(0, QApplication::translate("cFailedWidget", "Kontroll", 0, QApplication::UnicodeUTF8));
-    cfailedList->header()->setLabel(1, QApplication::translate("cFailedWidget", "Forklaring", 0, QApplication::UnicodeUTF8));
-    Q_UNUSED(cFailedWidget);
+        cFailedWidget->setWindowTitle(QApplication::translate("cFailedWidget", "Form1", 0, QApplication::UnicodeUTF8));
+#ifndef QT_NO_WHATSTHIS
+        cFailedWidget->setProperty("whatsThis", QVariant(QApplication::translate("cFailedWidget", "Dette er en liste over de automatiske kontrollene som har for\303\245rsaket at observasjonen ble merket som mistenkelig.", 0, QApplication::UnicodeUTF8)));
+#endif // QT_NO_WHATSTHIS
+        cfailedList->header()->setLabel(0, QApplication::translate("cFailedWidget", "Kontroll", 0, QApplication::UnicodeUTF8));
+        cfailedList->header()->setLabel(1, QApplication::translate("cFailedWidget", "Forklaring", 0, QApplication::UnicodeUTF8));
     } // retranslateUi
 
 };
@@ -73,5 +73,7 @@ public:
 namespace Ui {
     class cFailedWidget: public Ui_cFailedWidget {};
 } // namespace Ui
+
+QT_END_NAMESPACE
 
 #endif // CFAILEDWIDGET_H
