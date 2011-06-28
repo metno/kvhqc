@@ -295,6 +295,7 @@ namespace Weather
     bool ok = kvservice::KvApp::kvApp->getKvObsPgm( obsPgmList, std::list<long>(), false );
     
     int typ = kvDat.typeID(); 
+    
     if ( abs(kvDat.typeID()) > 503 || kvDat.typeID() == 0 )
       typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),kvDat.obstime(),obsPgmList);
     if ( typ == -32767 ) {
@@ -306,6 +307,7 @@ namespace Weather
       tit->setText("");
       return;
     }
+    
     float oldCorr = kvDat.corrected();
     float org     = kvDat.original();
     QString oldCorrStr;
@@ -360,11 +362,11 @@ namespace Weather
       cif.set(6,1);
       cif.set(15,5);
     }
-    else if ( cif.flag(6) == 0 || cif.flag(6) == 2 ) {
+    else if ( org > -32766.0 && (cif.flag(6) == 0 || cif.flag(6) == 2) ) {
       //      cif.set(6,0);
       cif.set(6,4);
       cif.set(15,7);
-    }
+   }
     else if ( cif.flag(6) == 4 ) {
       cif.set(15,7);
     }
