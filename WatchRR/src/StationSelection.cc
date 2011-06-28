@@ -175,7 +175,7 @@ namespace WatchRR
     for ( std::list<kvalobs::kvObsPgm>::const_iterator it = opgm.begin(); it != opgm.end(); ++ it ) {
       if ( it->paramID() == 110
         and ( it->typeID() == 302 or it->typeID() == 402 )
-        and ( it->kl06() or it->kl07() )
+	   and ( it->kl06() or it->kl07() or it->collector() )
       ) {
         typeFromStation_[ it->stationID() ] = it->typeID();
       }
