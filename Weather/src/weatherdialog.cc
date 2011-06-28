@@ -201,36 +201,6 @@ namespace Weather
       cerr << "Ingen obspgm" << endl;
     else {
       for ( CIObsPgmList obit = obsPgmList.begin(); obit != obsPgmList.end(); obit++ ) {
-	if ( obit->stationID() == (*tobs)[0].getStation() )
-	  cerr << obit->stationID() << " " 
-	       << setw(3) << obit->paramID() << " " 
-	       << setw(3) << obit->typeID() <<  " " 
-	       << obit->kl00() << " " 
-	       << obit->kl01() << " " 
-	       << obit->kl02() << " " 
-	       << obit->kl03() << " " 
-	       << obit->kl04() << " " 
-	       << obit->kl05() << " " 
-	       << obit->kl06() << " " 
-	       << obit->kl07() << " " 
-	       << obit->kl08() << " " 
-	       << obit->kl09() << " " 
-	       << obit->kl10() << " " 
-	       << obit->kl11() << " " 
-	       << obit->kl12() << " " 
-	       << obit->kl13() << " " 
-	       << obit->kl14() << " " 
-	       << obit->kl15() << " " 
-	       << obit->kl16() << " " 
-	       << obit->kl17() << " " 
-	       << obit->kl18() << " " 
-	       << obit->kl19() << " " 
-	       << obit->kl20() << " " 
-	       << obit->kl21() << " " 
-	       << obit->kl22() << " " 
-	       << obit->kl23() << " " 
-	       << obit->fromtime() << " " 
-	       << obit->totime() << endl;
 	opgmList(opgtl, obit);
       }
     }
@@ -280,15 +250,11 @@ namespace Weather
 	int hd = nexthour-nexttime.hour();
 	if ( hd < 0 ) hd += 24;
 	nexttime.addHour(hd);
-	cerr << "K tester protime = " << protime 
-	     << " nexttime = " << nexttime 
-	     << " otime = " << otime << " hourdiff = " << hd << endl;
+
 	while ( otime > nexttime ) {
 	  
 	  int hourDiff = otime.hour() - nexthour;
-	  cerr << "!!!!!!!!BLANK RAD nexthour = " << nexttime 
-	       << " otime = " << otime 
-	       << " hourdiff = " << hourDiff << endl;
+
 	  if ( hourDiff < 0 ) hourDiff += 24;
 	  
 	  synObs.stnr = dit->stationID();
@@ -352,15 +318,8 @@ namespace Weather
 	}
       }
     }
-    //Knut tester
     for (SynObsList::iterator sit = synObsList.begin(); sit != synObsList.end(); sit++ ) {
-      cerr << (*sit).stnr << " " << (*sit).otime;
-      //      for ( int i = 0; i < NP; i++ ) {
-      //	cerr << " " << (*sit).corr[i];
-      //      }
-      cerr << endl; 
     }
-    //Test slutt
     setupStationInfo();
     setupCorrTab(synObsList, type, tabWidget);
     setupOrigTab(synObsList, type, tabWidget);
@@ -429,12 +388,6 @@ namespace Weather
 	       << obit->fromtime() << " " 
 	       << obit->totime() << endl;
 	  opgmList(opgtl, obit);
-	  cerr << "Knut tester oit ";  
-	  for ( IOpgmList oit = opgtl.begin(); oit != opgtl.end(); oit++ ) {
-	  cerr << *oit << " ";
-	}
-	cerr << endl;
-
 	}
       }
     }
@@ -483,15 +436,11 @@ namespace Weather
       int hd = nexthour-nexttime.hour();
       if ( hd < 0 ) hd += 24;
       nexttime.addHour(hd);
-      cerr << "K tester protime = " << protime 
-	   << " nexttime = " << nexttime 
-	   << " otime = " << otime << " hourdiff = " << hd << endl;
+
       while ( otime > nexttime ) {
 	
 	int hourDiff = otime.hour() - nexthour;
-	cerr << "!!!!!!!!BLANK RAD nexthour = " << nexttime 
-	     << " otime = " << otime 
-	     << " hourdiff = " << hourDiff << endl;
+
 	if ( hourDiff < 0 ) hourDiff += 24;
 	
 	synObs.stnr = dit->stationID();
@@ -525,7 +474,7 @@ namespace Weather
 	  nexthour = ohour;
 
 	  protime = otime;
-	  cerr << "Ny protime 1 = " << protime << endl;
+
 	  dit++;
 	  otime = dit->obstime();
 	  typid = dit->typeID();
@@ -541,7 +490,6 @@ namespace Weather
 	}
 	else {
 	  protime = otime;
-	  cerr << "Ny protime 2 = " << protime << endl;
 	  dit++;
 	  otime = dit->obstime();
 	  typid = dit->typeID();
@@ -557,15 +505,6 @@ namespace Weather
 	}	
       }
     }
-    //Knut tester
-    //    for (SynObsList::iterator sit = synObsList.begin(); sit != synObsList.end(); sit++ ) {
-    //    cerr << (*sit).stnr << " " << (*sit).otime;
-      //      for ( int i = 0; i < NP; i++ ) {
-      //	cerr << " " << (*sit).corr[i];
-      //      }
-    //      cerr << endl; 
-    //    }
-    //Test slutt
     setupStationInfo();
     setupCorrTab(synObsList, type, tabWidget);
     setupOrigTab(synObsList, type, tabWidget);
