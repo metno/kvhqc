@@ -73,6 +73,7 @@ namespace WatchRR
       
     RRTable * rrTable();
     const RRTable * rrTable() const;
+    bool isCorrectedByQC2;
 
     using DataConsistencyVerifier::getKvData;
     using DataConsistencyVerifier::getCellValue;
