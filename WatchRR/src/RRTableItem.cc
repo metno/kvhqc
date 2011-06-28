@@ -165,6 +165,10 @@ namespace WatchRR
 			   const QRect & cr, bool selected )
   {
     QColorGroup color = getColorGroup( cg );
+    if ( isCorrectedByQC2 )
+      color.setColor( QColorGroup::Text, Qt::darkMagenta );
+    else
+      color.setColor( QColorGroup::Text, Qt::black );
     Q3TableItem::paint( p, color, cr, selected );
   }
 
