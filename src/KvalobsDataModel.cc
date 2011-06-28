@@ -28,6 +28,7 @@
  */
 
 #include <KvalobsDataModel.h>
+#include <hqcmain.h>
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/kvDataOperations.h>
 #include <QDebug>
@@ -43,6 +44,14 @@ namespace
 namespace model
 {
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
+
+  const int codeParam[] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
+			     13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
+			     24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
+			     35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+			     45, 46, 47, 48, 49, 54, 55, 56, 57,123,
+			     124,128151,273,301,302,303,304,305,306,
+			     307,308,1021,1022,1025,1026};
 
   KvalobsDataModel::KvalobsDataModel(
       const std::vector<int> & parameters,
@@ -165,6 +174,12 @@ namespace model
             header += date.c_str();
 	    const QString synopNumber = QString::number(d.snr());
 	    header += ' ' + synopNumber;
+
+	    HqcMainWindow * hqcm = getHqcMainWindow(this);
+	    if ( hqcm->isShTy ) {
+	      const QString typeId = QString::number(d.showTypeId());
+	      header += ' ' + typeId;
+	    }
             return header;
         }
         else return QVariant();
@@ -180,7 +195,81 @@ namespace model
     return ret;
   }
 
+
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
+  {
+    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      return false;
+    
+    if ( Qt::EditRole == role ) {
+      if ( getColumnType(index) == Corrected ) {
+	const Parameter & p = getParameter(index);
+	
+	// Invalid input (should never happen, except when user entered empty string)
+	bool ok;
+	double val = value.toDouble(& ok);
+	if ( not ok ) {
+	  if ( value.toString().isEmpty() )
+	    val = -32766;
+	  else
+	    return false;
+	}
+	
+	try {
+	  KvalobsData & d = kvalobsData_->at(index.row());
+	  
+	  // Insignificant change. Ignored.
+	  double oldValue = d.corr(p.paramid);
+	  if ( std::fabs(oldValue - val) < 0.005 )
+	    return false;
+	  	  
+	  //TEST
+	  double oldOrig = d.orig(p.paramid);
+	  kvControlInfo ctr = d.controlinfo(p.paramid);
+	  int typ = d.typeId(p.paramid);
+
+	  kvalobs::kvData changeData = getKvData_(index);
+	  if ( val != -32766 )
+	    kvalobs::hqc::hqc_auto_correct(changeData, val);
+	  else
+	    kvalobs::hqc::hqc_reject(changeData);
+	  std::string cfailed = changeData.cfailed();
+	  if ( not cfailed.empty() )
+	    cfailed += ",";
+	  cfailed += "hqc";
+	  changeData.cfailed(cfailed);
+	  
+	  // Update stored data
+	  d.set_corr(p.paramid, val);
+	  d.set_controlinfo(p.paramid, changeData.controlinfo());
+	  d.set_useinfo(p.paramid, changeData.useinfo());
+	  if (abs(typ) > 999) {
+	    HqcMainWindow * hqcm = getHqcMainWindow(this);
+	    typ = hqcm->findTypeId(typ, d.stnr(), p.paramid, d.otime());
+	    changeData.typeID(typ);
+	  }
+	  
+	  QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
+	  emit dataChanged(flagIndex, index);
+	  emit dataModification(changeData);
+	  qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val << "," << d.typeId(p.paramid);
+	  return true;
+	}
+	catch ( InvalidIndex & ) {
+	  return false;
+	}
+      }
+    }
+    return false;
+  }
+
+
+
+
+
+
+
+  bool KvalobsDataModel::setDiscardedData(const QModelIndex & index, const QVariant & value, int role)
   {
     if ( not index.isValid() or index.row() >= kvalobsData_->size() )
       return false;
@@ -204,9 +293,16 @@ namespace model
 
             // Insignificant change. Ignored.
             double oldValue = d.corr(p.paramid);
-            if ( std::fabs(oldValue - val) < 0.005 )
+            if ( std::fabs(oldValue - val) < 0.005 or oldValue == -32767 )
               return false;
 
+	    int typ = d.typeId(p.paramid);
+
+	    if (abs(typ) > 999) {
+	      HqcMainWindow * hqcm = getHqcMainWindow(this);
+	      typ = hqcm->findTypeId(typ, d.stnr(), p.paramid, d.otime());
+	      d.set_typeId(p.paramid, typ);
+	    }
             kvalobs::kvData changeData = getKvData_(index);
             if ( val != -32766 )
               kvalobs::hqc::hqc_auto_correct(changeData, val);
@@ -278,7 +374,10 @@ namespace model
       {
         if ( fmis == 1 or fmis == 3 )
           return QVariant();
-	return d.orig(p.paramid);
+	if ( paramIsCode(p.paramid) )
+	  return int(d.orig(p.paramid));
+	else
+	  return d.orig(p.paramid);
       }
     case Flag:
       {
@@ -290,8 +389,11 @@ namespace model
       {
         if ( fmis == 2 or fmis == 3 )
           return QVariant();
-	double ccoor = d.corr(p.paramid);
-      return d.corr(p.paramid);
+	//	double ccoor = d.corr(p.paramid);
+	if ( paramIsCode(p.paramid) )
+	  return int(d.corr(p.paramid));
+	else
+	  return d.corr(p.paramid);
       }
     case Model:
       {
@@ -333,18 +435,68 @@ namespace model
     return Qt::AlignRight;
   }
 
+  int KvalobsDataModel::dataColumn(QString parameter) const
+  {
+    int index = 2;
+    for ( std::vector<Parameter>::const_iterator it = parametersToShow_.begin(); it != parametersToShow_.end(); ++ it ){
+      if ( parameter == it->parameterName ) {
+	break;
+      }
+      index += COLUMNS_PER_PARAMETER;
+    }
+    return index;
+  }
+  /*
   int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
   {
+    int secs = obstime.sec();
+    miutil::miTime eobstime(obstime);
+    eobstime.addSec(-secs);
+    int mins = obstime.min();
+    if ( mins != 0 ) {
+      eobstime.addMin(-mins);
+      eobstime.addHour();
+    }
     const KvalobsDataListPtr & data = kvalobsData();
 
     const int rows = data->size();
     int index;
     for ( index = 0; index < rows; ++ index ) {
       const KvalobsData & d = (*data)[index];
-      if ( d.stnr() == stationid and d.otime() == obstime )
+      if ( d.stnr() == stationid and d.otime() == eobstime )
         break;
     }
     return index;
+  }
+  */
+  int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
+  {
+    int secs = obstime.sec();
+    miutil::miTime eobstime(obstime);
+    eobstime.addSec(-secs);
+    int mins = obstime.min();
+    if ( mins != 0 ) {
+      eobstime.addMin(-mins);
+      eobstime.addHour();
+    }
+    const KvalobsDataListPtr & data = kvalobsData();
+
+    const int rows = data->size();
+    int index;
+    int lindex;
+    bool foundTime = false;
+    for ( index = 0; index < rows; ++ index ) {
+      const KvalobsData & d = (*data)[index];
+      if ( d.stnr() == stationid ) {
+	lindex = index;
+	if ( d.otime() == eobstime ) {
+	  foundTime = true;
+	  break;
+	}
+      }
+    }
+    if ( foundTime ) return index;
+    else return lindex;
   }
 
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const
@@ -383,9 +535,16 @@ namespace model
       throw InvalidIndex();
 
     const Parameter & parameter = getParameter(index);
-
     const KvalobsData & d = kvalobsData_->at(index.row());
+
     return d.getKvData(parameter.paramid);
   }
 
+  bool KvalobsDataModel::paramIsCode(const int parNo) const {
+    for ( int i = 0; i < 66; i++ ) {
+      if ( parNo == codeParam[i] ) 
+	return true;
+    }
+    return false;
+  }
 }
