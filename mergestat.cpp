@@ -2,6 +2,8 @@
 #include <iomanip>
 #include <fstream>
 #include <string>
+#include <string.h>
+#include <stdlib.h>
 #include <vector>
 using namespace std;
 
@@ -76,8 +78,8 @@ bool pri3Stat(int stnr) {
 
 
 int main() {
-  ifstream inf1("/home/knutj/kvhqc/stinfo_fylke");
-  ifstream inf2("/home/knutj/kvhqc/stinfo_kommune");
+  ifstream inf1("/home/knutj/newkvhqc/stinfo_fylke");
+  ifstream inf2("/home/knutj/newkvhqc/stinfo_kommune");
   County cty;
   Munip mnp;
   while ( !inf1.eof() ) {
