@@ -41,7 +41,8 @@ MOCFILE=$(OBJDIR)/make.moc
 DEFINES=-DQT_GENUINE_STR -DWITH_STD_BOOL -D_STANDARD_C_PLUS_PLUS
 
 #METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools tsData pets2 glp puMet puCtools puDatatypes
-METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools glp puMet puCtools puDatatypes ftgl
+METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools  tsData pets2 glp puMet puCtools puDatatypes ftgl
+
 INCLUDE=-I$(INCDIR) \
 	-I$(AUTHDIR) \
 	-I$(FAILDIR)/src \
