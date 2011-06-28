@@ -1612,8 +1612,8 @@ void HqcMainWindow::rejectTimeseriesOK() {
   QString parameter;
   int stationIndex;
   int parameterIndex;
-  rjtsdlg->getResults(parameter,stime,etime,stationIndex);
-
+  bool result = rjtsdlg->getResults(parameter,stime,etime,stationIndex);
+  if ( !result ) return;
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
     if ( it->name().cStr() == parameter ){
