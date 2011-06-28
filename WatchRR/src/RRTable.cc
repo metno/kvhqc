@@ -181,21 +181,58 @@ namespace WatchRR
       DayObs & dobs = (*observations)[i];
       kvData & d = dobs.get( RR_24 );
       RR_24DataTableItem * rr24_ = new RR_24DataTableItem( this, d );
-      setItem( i, toCol[RR_24_orig], new RR_24DataTableItem( this, interpretOrig_( d ) ) );
+      RR_24DataTableItem * rr24_orig_ = new RR_24DataTableItem( this,  interpretOrig_(d) );
+      setItem( i, toCol[RR_24_orig], rr24_orig_ );
+      rr24_orig_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[RR_24_orig], new RR_24DataTableItem( this, interpretOrig_( d ) ) );
       setItem( i, toCol[RR_24_corr], rr24_ );
-      setItem( i, toCol[RR_24_flag], new ControlFlagCell( this, d ) );
-      setItem( i, toCol[RR_24_model], new RR_24DataTableItem( this, getModelRR_( dobs ), "modellverdi" ) );
+
+      if ( d.controlinfo().flag(7) > 0 || 
+	   d.controlinfo().flag(8) > 1 ||
+	   d.controlinfo().flag(9) > 1 ||
+	   d.controlinfo().flag(11) > 1 ||
+	   d.controlinfo().flag(12) > 6 )
+	rr24_->isCorrectedByQC2 = true;
+      else
+	rr24_->isCorrectedByQC2 = false;
+
+      ControlFlagCell* rr24_flag_ = new ControlFlagCell( this, d );
+      setItem( i, toCol[RR_24_flag], rr24_flag_ );
+      rr24_flag_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[RR_24_flag], new ControlFlagCell( this, d ) );
+      RR_24DataTableItem * rr24_model_ = new RR_24DataTableItem( this, getModelRR_( dobs ));
+      setItem( i, toCol[RR_24_model], rr24_model_  );
+      rr24_model_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[RR_24_model], new RR_24DataTableItem( this, getModelRR_( dobs ), "modellverdi" ) );
       setItem( i, toCol[ Collected ], new FDCheckTableItem( this, d ) );
 
       kvData & sa = dobs.get(SA, miClock(6,0,0));
-      setItem( i, toCol[SA_orig], new snow::SADataTableItem( this, interpretOrig_( sa ) ) );
-      setItem( i, toCol[SA_corr], new snow::SADataTableItem( this, sa ) );
-      setItem( i, toCol[SA_flag], new ControlFlagCell( this, sa ) );
+      snow::SADataTableItem* sa_orig_= new snow::SADataTableItem( this, interpretOrig_( sa ) );
+      setItem( i, toCol[SA_orig], sa_orig_ );
+      sa_orig_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SA_orig], new snow::SADataTableItem( this, interpretOrig_( sa ) ) );
+      snow::SADataTableItem* sa_corr_= new snow::SADataTableItem( this, sa );
+      setItem( i, toCol[SA_corr],  sa_corr_ );
+      sa_corr_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SA_corr], new snow::SADataTableItem( this, sa ) );
+      ControlFlagCell* sa_flag_ = new ControlFlagCell( this, sa );
+      setItem( i, toCol[SA_flag], sa_flag_ );
+      sa_flag_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SA_flag], new ControlFlagCell( this, sa ) );
 
       kvData & sd = dobs.get(SD, miClock(6,0,0));
-      setItem( i, toCol[SD_orig], new snow::SDDataTableItem( this, interpretOrig_( sd ) ) );
-      setItem( i, toCol[SD_corr], new snow::SDDataTableItem( this, sd ) );
-      setItem( i, toCol[SD_flag], new ControlFlagCell( this, sd ) );
+      snow::SDDataTableItem* sd_orig_= new snow::SDDataTableItem( this, interpretOrig_( sd ) );
+      setItem( i, toCol[SD_orig], sd_orig_ );
+      sd_orig_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SD_orig], new snow::SDDataTableItem( this, interpretOrig_( sd ) ) );
+      snow::SDDataTableItem* sd_corr_= new snow::SDDataTableItem( this, sd );
+      setItem( i, toCol[SD_corr],  sd_corr_ );
+      sd_corr_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SD_corr], new snow::SDDataTableItem( this, sd ) );
+      ControlFlagCell* sd_flag_ = new ControlFlagCell( this, sd );
+      setItem( i, toCol[SD_flag], sd_flag_ );
+      sd_flag_->isCorrectedByQC2 = false;
+      //      setItem( i, toCol[SD_flag], new ControlFlagCell( this, sd ) );
 
       miClock clock( 12,0,0 ); // 12:00 - Day before
       KvDataProvider::Data dv4;
@@ -214,7 +251,7 @@ namespace WatchRR
       RRTableItem * dateitem = new RRTableItem( this );
       dateitem->setText( verticalHeaderText( dobs.getDate() ) );
       setItem( i, toCol[ DateField ], dateitem );
-
+      dateitem->isCorrectedByQC2 = false;
       list<kvalobs::kvData *> okdl;
       dobs.getAll( okdl );
       setItem( i, toCol[ ObservationOk ], new OkCheckTableItem( this, okdl ) );
