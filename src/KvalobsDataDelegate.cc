@@ -41,15 +41,15 @@ namespace model
 {
 
   KvalobsDataDelegate::KvalobsDataDelegate(QObject * parent) :
-    QStyledItemDelegate(parent)
+    QStyledItemDelegate(parent), mainWindow( getHqcMainWindow( parent ) )
   {
     setup_();
   }
-
+  
   KvalobsDataDelegate::~KvalobsDataDelegate()
   {
   }
-
+  
   namespace
   {
     class InputValidator : public QDoubleValidator
@@ -64,7 +64,7 @@ namespace model
       }
     };
   }
-
+  
   QWidget * KvalobsDataDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
   {
     Editor * ret = new Editor(parent);
@@ -73,11 +73,11 @@ namespace model
     ret->setValidator(& validator);
     return ret;
   }
-
+  
   void KvalobsDataDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
   {
     Editor * e = static_cast<Editor *>(editor);
-
+  
     QVariant value = index.model()->data(index, Qt::EditRole);
     bool ok;
     double f = value.toDouble(& ok);
@@ -87,8 +87,19 @@ namespace model
       e->clear();
   }
 
-  void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
+void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
   {
+    DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
+    if ( ! reinserter ) {
+      QMessageBox::critical( editor,
+			     "Ikke autentisert",
+			     "Du er ikke autentisert som operatør.\n"
+			     "Kan ikke lagre data.",
+			     QMessageBox::Ok,
+			     Qt::NoButton );
+      return;
+    }
+    
     Editor * e = static_cast<Editor *>(editor);
     QString enteredValue = e->text();
     float newValue = -32766;
@@ -174,6 +185,16 @@ namespace model
         return;
 
     QStyledItemDelegate::setModelData(editor, model, index);
+    kvData kd = kvalobsData->getKvData(paramid);
+    list<kvData> modData;
+    modData.push_back( kd );
+
+    CKvalObs::CDataSource::Result_var result;
+    {
+      //      BusyIndicator busyIndicator;
+      result = reinserter->insert( modData );
+    }
+    modData.clear();
   }
 
   void KvalobsDataDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const
