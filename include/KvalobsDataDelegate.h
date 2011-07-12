@@ -33,6 +33,7 @@
 #include <QStyledItemDelegate>
 #include <QMap>
 
+class HqcMainWindow;
 class QLineEdit;
 
 namespace model
@@ -56,6 +57,7 @@ namespace model
     virtual QString displayText(const QVariant& value, const QLocale& locale) const;
 
   private:
+    HqcMainWindow * mainWindow;
     void setup_();
 
     typedef QLineEdit Editor;
