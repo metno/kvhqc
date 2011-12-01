@@ -206,7 +206,6 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
   fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
   toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
-
   QDateTime t(toTime->dateTime());
   if( t.time().minute() != 0 ){
     t = t.addSecs(-60*t.time().minute());
@@ -1025,7 +1024,6 @@ StationTable::StationTable(QStringList selStatNum,
 			   QWidget* parent)
     : Q3Table( 3000, noInfo, parent)
 {
-
   setCaption("Stasjoner");
   setSorting( TRUE );
   setGeometry(10,100,800,600);
