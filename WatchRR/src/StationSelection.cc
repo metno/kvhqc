@@ -105,6 +105,7 @@ namespace WatchRR
       setupTypeFromStation_();
 
     connect( station_, SIGNAL( textChanged(const QString &) ), this, SLOT( updateTypeID_() ) );
+    connect( obstime_, SIGNAL( valueChanged(const QDate &) ), this, SLOT( updateTypeID_() ) );
 
     if ( ! data.stationID() ) {
       // Stations with RR_24 and typeid 302:
@@ -172,12 +173,17 @@ namespace WatchRR
     bool ok = kvservice::KvApp::kvApp->getKvObsPgm( opgm, std::list<long>(), false );
     if ( not ok )
       return; // Got no contact with kvalobs: return.
+    std::cerr << obstime() << std::endl;
     for ( std::list<kvalobs::kvObsPgm>::const_iterator it = opgm.begin(); it != opgm.end(); ++ it ) {
+      //      std::cerr << it->stationID() << "," << it->paramID() << "," << it->fromtime() << "," << it->totime() << "," << it->typeID() << std::endl;
       if ( it->paramID() == 110
-        and ( it->typeID() == 302 or it->typeID() == 402 )
+	   and ( it->typeID() == 302 or it->typeID() == 402 )
 	   and ( it->kl06() or it->kl07() or it->collector() )
-      ) {
+	   and ( it->fromtime() <  miutil::miTime( miDate::today(), miutil::miClock(0,0,0) )
+		 and miutil::miTime( miDate::today(), miutil::miClock(0,0,0) ) < it->totime() )
+	   ) {
         typeFromStation_[ it->stationID() ] = it->typeID();
+	std::cerr << it->stationID() << "," <<  typeFromStation_[ it->stationID() ] << std::endl;
       }
     }
   }
