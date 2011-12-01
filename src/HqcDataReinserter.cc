@@ -53,20 +53,35 @@ namespace internal_
 	      !cf.empty() && 
 	      !cf.contains("watchweather") &&
 	      !cf.contains("watchRR") )
-	cf += ",hqc";
+      cf += ",hqc";
+    else if ( cinfo.flag( flag::fhqc ) == 0 &&
+	      !cf.empty() && 
+	      !cf.contains("watchweather") &&
+	      !cf.contains("watchRR") &&
+	      d.corrected() == d.original() &&
+	      d.corrected() == -32767 ) {
+      cf += ",hqc";
+    }
   
     d.cfailed( cf );
     kvUseInfo ui = d.useinfo();
     ui.addToErrorCount();
     d.useinfo( ui );
-    
   }
 
   void updateUseInfo( kvalobs::kvData & d )
   {
     const kvalobs::kvControlInfo ci = d.controlinfo();
     kvalobs::kvUseInfo ui = d.useinfo();
-    ui.setUseFlags( ci );
+
+    miutil::miString cf = d.cfailed();
+    if ( cf.contains("hqc") && ci.flag( flag::fhqc ) == 0 ) {
+      kvalobs::kvControlInfo tci = d.controlinfo();
+      tci.set(15,1);
+      ui.setUseFlags( tci );
+    }
+    else
+      ui.setUseFlags( ci );
     d.useinfo( ui );
   }
 }
