@@ -198,6 +198,10 @@ public:
    */
   bool timeFilterChanged;
   /*!
+   * \brief Reads station info from stinfosys
+   */
+  void readFromStInfoSys();
+  /*!
    * \brief Reads the station table in the kvalobs database
    *        and inserts the station information in slist
    */
@@ -437,10 +441,14 @@ private:
   std::list<kvalobs::kvParam> plist;
   std::list<long> statList;
 
+  QList<int> webs;
+  QList<int> pri1s;
+  QList<int> pri2s;
+  QList<int> pri3s;
+  QList<int> coast;
+  QList<int> foreignId;
+  QList<QString> foreignName;
 
-
-#warning sizes here must not be hardcoded!!
-  //int order[NOPARAMALL];
   std::vector<int> order;
 
   /**
@@ -451,17 +459,6 @@ private:
    */
   QMap<QString, std::vector<int> > parameterGroups;
 
-//  int airPressOrder[NOPARAMAIRPRESS];
-//  int tempOrder[NOPARAMTEMP];
-//  int precOrder[NOPARAMPREC];
-//  int visualOrder[NOPARAMVISUAL];
-//  int waveOrder[NOPARAMWAVE];
-//  int synopOrder[NOPARAMSYNOP];
-//  int klstatOrder[NOPARAMKLSTAT];
-//  int priorityOrder[NOPARAMPRIORITY];
-//  int windOrder[NOPARAMWIND];
-//  int pluOrder[NOPARAMPLU];
-  
   TSPlotDialog* tspdialog; // timeseries-plot
   StationTable* stationTable;
 
@@ -485,7 +482,6 @@ protected:
   void initDiana();
   void sendMessage(miMessage&);
   void sendImage(const miutil::miString name, const QImage& image);
-  //  void sendShowText(const miString site);
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 
