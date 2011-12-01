@@ -38,7 +38,7 @@ BITSDIR= $(LOCALDIR)/bits
 
 DEPENDSFILE=$(OBJDIR)/make.depends
 MOCFILE=$(OBJDIR)/make.moc
-DEFINES=-DQT_GENUINE_STR -DWITH_STD_BOOL -D_STANDARD_C_PLUS_PLUS
+DEFINES=-DQT_GENUINE_STR -DWITH_STD_BOOL -D_STANDARD_C_PLUS_PLUS -DQT_SQL_LIB
 
 #METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools tsData pets2 glp puMet puCtools puDatatypes
 METLIBS_PKG_CONFIG = qUtilities qTimeseries glText puTools  tsData pets2 glp puMet puCtools puDatatypes ftgl
@@ -57,6 +57,7 @@ INCLUDE=-I$(INCDIR) \
 	-I$(QTINC)/QtGui \
 	-I$(QTINC)/QtOpenGL \
 	-I$(QTINC)/QtNetwork \
+	-I$(QTINC)/QtSql \
 	`pkg-config --cflags libkvcpp $(METLIBS_PKG_CONFIG)`
 
 LINKS:= -L$(WATCHDIR) -lWatchRR \
@@ -65,7 +66,7 @@ LINKS:= -L$(WATCHDIR) -lWatchRR \
 	-L$(AUTHDIR) -lauthentication -lldap \
 	-L$(BOOST_LIB) -lboost_thread \
 	`pkg-config --libs libkvcpp $(METLIBS_PKG_CONFIG)` -lgfortran \
-	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL -lm \
+	$(QTLIBDIR) -lQt3Support -lQtCore -lQtGui -lQtOpenGL -lQtSql -lm \
 	`pkg-config --libs libxml++-2.6`
 
 OPTIONS="CXX=${CXX}" "CCFLAGS=${CXXFLAGS} ${DEFINES}" "CC=${CC}" "CFLAGS=${CFLAGS} ${DEFINES}" "LDFLAGS=${CXXLDFLAGS}" "AR=${AR}" "ARFLAGS=${ARFLAGS}" "INCLUDE=${INCLUDE}" "LIBDIR=${LIBDIR}" "DEPENDSFILE=../${DEPENDSFILE}" "BINDIR=../${BINDIR}" "LOCALDIR=${LOCALDIR}" "INCDIR=${INCDIR}" "LINKS=${LINKS}" "MOC=${MOC}" "MOCFILE=../${MOCFILE}" "AUTHDIR=$(AUTHDIR)" "FAILDIR=$(FAILDIR)" "WATCHDIR=$(WATCHDIR)" "WEATHERDIR=$(WEATHERDIR)"
