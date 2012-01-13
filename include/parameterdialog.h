@@ -34,7 +34,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
-#include <q3listbox.h>
+//#include <q3listbox.h>
+#include <QListWidget>
 #include <q3buttongroup.h>
 #include <qradiobutton.h>
 #include <qpushbutton.h>
@@ -64,7 +65,8 @@ public:
   QPushButton* hdnexcu;
   QPushButton* excu;
 
-  Q3ListBox* plb;
+  //  Q3ListBox* plb;
+  QListWidget* plb;
 
   /*!
    * \brief Inserts the parameters in a weather element
@@ -73,7 +75,8 @@ public:
   void insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap);
 
 public slots:
-  void listClickedItem(Q3ListBoxItem*);
+  //  void listClickedItem(Q3ListBoxItem*);
+  void listClickedItem(QListWidgetItem*);
   void applyHideClicked();
 
 signals:
