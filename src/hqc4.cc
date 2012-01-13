@@ -33,6 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qapplication.h>
 #include "hqcmain.h"
 #include <iostream>
+#include <list>
 
 using namespace std;
 
@@ -62,7 +63,6 @@ int main( int argc, char ** argv ) {
     return 1;
   }
   CorbaKvApp kvapp(argc, argv, confSec);
-
   HqcMainWindow * mw;
 
   try {
@@ -80,7 +80,7 @@ int main( int argc, char ** argv ) {
   QString caption = "HQC " + captionSuffix;
   mw->setCaption( caption );
   mw->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
-  mw->setGeometry(10,10,1268,942);
+  //  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
 
   //  mw->showMaximized();
