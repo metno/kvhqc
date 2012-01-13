@@ -42,9 +42,12 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
 					 Qt::Horizontal, 
 					 "Parametervalg", this);
 
-  plb = new Q3ListBox(this);
-  plb->setSelectionMode( Q3ListBox::Multi );
-  connect(plb,SIGNAL(pressed(Q3ListBoxItem*)),SLOT(listClickedItem(Q3ListBoxItem*)));
+  //  plb = new Q3ListBox(this);
+  plb = new QListWidget(this);
+  //  plb->setSelectionMode( Q3ListBox::Multi );
+  plb->setSelectionMode( QAbstractItemView::MultiSelection );
+  //  connect(plb,SIGNAL(pressed(Q3ListBoxItem*)),SLOT(listClickedItem(Q3ListBoxItem*)));
+  connect(plb,SIGNAL(itemPressed(QListWidgetItem*)),SLOT(listClickedItem(QListWidgetItem*)));
 
   allPar    = new QRadioButton( "Velg alle parametere", pVal );
   allPar->setChecked(true);
@@ -90,9 +93,12 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
 
 void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
   plb->clear();
+  int jj = 0;
   for (std::vector<int>::const_iterator it = porder.begin(); it != porder.end(); ++it) {
       QString sp = parMap[*it];
-      plb->insertItem(sp);
+      //      plb->insertItem(sp);
+      plb->insertItem(jj,sp);
+      jj++;
   }
 }
 
@@ -113,7 +119,8 @@ void ParameterDialog::applyHideClicked(){
   emit paramApply();
 }
 
-void ParameterDialog::listClickedItem(Q3ListBoxItem* lbItem) {
+//void ParameterDialog::listClickedItem(Q3ListBoxItem* lbItem) {
+void ParameterDialog::listClickedItem(QListWidgetItem* lbItem) {
   markPar->setDisabled(false);
   noMarkPar->setDisabled(false);
 }
