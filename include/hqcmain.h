@@ -104,6 +104,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o );
 class HqcMainWindow: public QMainWindow
 {
   Q_OBJECT
+
 public:
 
   HqcMainWindow();
@@ -200,7 +201,7 @@ public:
   /*!
    * \brief Reads station info from stinfosys
    */
-  void readFromStInfoSys();
+  bool readFromStInfoSys();
   /*!
    * \brief Reads the station table in the kvalobs database
    *        and inserts the station information in slist
@@ -476,6 +477,22 @@ private:
   typedef QMap<miutil::miString,bool> PropMap;
   PropMap prMap;
 
+  /**
+   * Settings
+   */
+  void closeEvent(QCloseEvent* event);
+  void writeSettings();
+  void readSettings();
+  int parFind;
+
+  struct Param 
+  {
+    bool item;
+    QString text;
+    bool mark;
+    bool noMark;
+    bool all;
+  };
 
 protected:
   // socket methods
