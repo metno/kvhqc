@@ -16,7 +16,7 @@ echo $dfs
 if [ $dfs != '0' ] 
   then
     mv $HQCDIR/stinfo_stations $HQCDIR/hqc_stations
-    scp $HQCDIR/hqc_stations knutj@eurus10:/usr/local/stow/kvhqc-2.4.0/etc/kvhqc/hqc_stations
+    scp $HQCDIR/hqc_stations knutj@eurus10:/usr/local/stow/kvhqc-2.6.0/etc/kvhqc/hqc_stations
     rm $HQCDIR/stinfostationdiff
     echo "Stinfo er oppdatert, sendt til eurus10" | mail -s "Stinfo_stations oppdatert"  knut.johansen@met.no
   else
