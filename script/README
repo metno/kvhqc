@@ -1,1 +1,1 @@
-g++ -o mergestat ../mergestat.cpp 
+g++ -o mergestat ../mergestat.cpp
