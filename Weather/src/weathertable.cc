@@ -332,10 +332,11 @@ namespace Weather
       return;
     }
     if ( fabs(newCorr - org ) < epsilon ) {
-      if ( cif.flag(4) > 1 ) {
+      //      if ( cif.flag(4) >= 1 ) {
 	cif.set(15,1);
 	cif.set(4,1);
-      }
+	cif.set(6,0);
+	//      }
       if ( cif.flag(6) == 0 ) {
 	cif.set(15,1);
 	if ( cif.flag(12) == 3 )
@@ -362,11 +363,11 @@ namespace Weather
       cif.set(6,1);
       cif.set(15,5);
     }
-    else if ( org > -32766.0 && (cif.flag(6) == 0 || cif.flag(6) == 2) ) {
+    else if ( org > -32766.0 && (cif.flag(6) == 2) ) {
       //      cif.set(6,0);
       cif.set(6,4);
       cif.set(15,7);
-   }
+    }
     else if ( cif.flag(6) == 4 ) {
       cif.set(15,7);
     }
