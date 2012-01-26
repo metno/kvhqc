@@ -16,10 +16,10 @@ bool connect2stinfosys()
   db.setUserName("pstinfosys");
   db.setPassword("info12");
   if (!db.open()) {
-    QMessageBox::critical(0, "Databaseproblem",
-			  "Får ikke kontakt med stinfosys.\n\n"
-			  "Klikk Cancel for å avslutte.", QMessageBox::Cancel);
-    
+    //    QMessageBox::critical(0, "Databaseproblem",
+    //			  "Får ikke kontakt med stinfosys.\n\n"
+    //			  "Klikk Cancel for å avslutte.", QMessageBox::Cancel);
+    cerr << "Ikke kontakt med stinfosys, leser stasjonsliste fra fil." << endl;    
     return false;
   }
   return true;
