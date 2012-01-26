@@ -52,10 +52,19 @@ namespace WatchRR
 
         if ( represented_value == CellValueProvider::missing )
           kvalobs::hqc::hqc_reject( d );
-        else
-          kvalobs::hqc::hqc_auto_correct( d, represented_value );
-
-        out.push_back( d );
+	//	else
+	//	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
+	
+	else if ( fabs(d.original() - represented_value) > 0.0001 ) 
+	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
+	else {
+	  kvalobs::kvControlInfo ctr = d.controlinfo();
+	  ctr.set(6,0);
+	  d.corrected(represented_value);
+	  d.controlinfo(ctr);
+	  kvalobs::hqc::hqc_accept(d);
+	} 
+	out.push_back( d );
       }
     }
   }
