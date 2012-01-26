@@ -77,6 +77,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QDateTimeEdit>
 #include <QSizePolicy>
 #include <QSqlQuery>
+#include <QtGui>
+#include <QList>
 
 using namespace std;
 
@@ -135,9 +137,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   , reinserter( NULL )
   , datalist(new model::KvalobsDataList)
 {
-  readFromStation();
-  readFromStInfoSys();
-  //  setAttribute(Qt::WA_DeleteOnClose);
   // --- CHECK USER IDENTITY ----------------------------------------
 
   reinserter = Authentication::identifyUser(  KvApp::kvApp,
@@ -158,6 +157,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
     cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatï¿½r" << endl;
   }
   //-----------------------------------------------------------------  
+
+
+
 
   firstObs = true;
   sLevel  = 0;
@@ -255,7 +257,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   QMenu * weathermenu = new QMenu( this );
   menuBar()->insertItem( "Vær&element", weathermenu);
-  wElement = "";
+  //  wElement = "";
   klID = weathermenu->addAction( "For &daglig rutine",       this, SLOT(climateStatistics()) );
   piID = weathermenu->addAction( "&Prioriterte parametere",  this, SLOT(priority()) );
   taID = weathermenu->addAction( "&Temperatur og fuktighet", this, SLOT(temperature()) );
@@ -321,8 +323,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   
   // --- READ STATION INFO ----------------------------------------
 
-  int statCheck = 0;
-  //  readFromStationFile(statCheck);
   readFromObsPgm();
   int prostnr = -1;
   
@@ -374,8 +374,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   rjtsdlg->hide();
  
   // --- READ PARAMETER INFO ---------------------------------------
+
+  /////TEST
+  readSettings();
+  /////TEST SLUTT
+
   
- 
   // --- START -----------------------------------------------------
   pardlg->hide();
   rejdlg->hide();
@@ -465,6 +469,7 @@ void HqcMainWindow::airPress() {
   wElement = "Lufttrykk";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(TRUE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -476,6 +481,7 @@ void HqcMainWindow::airPress() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
   pardlg->insertParametersInListBox(parameters, parMap);
@@ -487,6 +493,7 @@ void HqcMainWindow::temperature() {
   wElement = "Temperatur";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(TRUE);
   wiID->setChecked(FALSE);
@@ -498,10 +505,10 @@ void HqcMainWindow::temperature() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
     const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
   pardlg->insertParametersInListBox(parameters, parMap);
-
   pardlg->showAll();
   //  sendObservations(remstime,false);
 }
@@ -510,6 +517,7 @@ void HqcMainWindow::precipitation() {
   wElement = "Nedbør";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -521,8 +529,9 @@ void HqcMainWindow::precipitation() {
   piID->setChecked(FALSE);
   plID->setChecked(FALSE);
   alID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
-    const std::vector<int> & parameters = parameterGroups[wElement];
+  const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
   pardlg->insertParametersInListBox(parameters, parMap);
 
@@ -533,6 +542,7 @@ void HqcMainWindow::visuals() {
   wElement = "Visuell";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -544,6 +554,7 @@ void HqcMainWindow::visuals() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -556,6 +567,7 @@ void HqcMainWindow::visuals() {
 void HqcMainWindow::sea() {
   wElement = "Sjøgang";
   lity = daLi;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -566,7 +578,8 @@ void HqcMainWindow::sea() {
   klID->setChecked(FALSE);
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
-   plID->setChecked(FALSE);
+  plID->setChecked(FALSE);
+  */
    //  sendObservations(remstime,false);
    const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -579,6 +592,7 @@ void HqcMainWindow::synop() {
   wElement = "Synop";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -590,6 +604,7 @@ void HqcMainWindow::synop() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -602,6 +617,7 @@ void HqcMainWindow::climateStatistics() {
   wElement = "Klimastatistikk";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -609,10 +625,11 @@ void HqcMainWindow::climateStatistics() {
   clID->setChecked(FALSE);
   seID->setChecked(FALSE);
   syID->setChecked(FALSE);
-  klID->setChecked(TRUE);
+  //  klID->setChecked(true);
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
     const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -624,6 +641,7 @@ void HqcMainWindow::priority() {
   wElement = "Prioriterte parametere";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -635,6 +653,7 @@ void HqcMainWindow::priority() {
   piID->setChecked(TRUE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
     const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -647,6 +666,7 @@ void HqcMainWindow::wind() {
   wElement = "Vind";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(TRUE);
@@ -658,6 +678,7 @@ void HqcMainWindow::wind() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(FALSE);
+  */
   //  sendObservations(remstime,false);
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -670,6 +691,7 @@ void HqcMainWindow::plu() {
   wElement = "Pluviometerkontroll";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -681,6 +703,7 @@ void HqcMainWindow::plu() {
   piID->setChecked(FALSE);
   alID->setChecked(FALSE);
   plID->setChecked(TRUE);
+  */
   //  sendObservations(remstime,false);
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -693,6 +716,7 @@ void HqcMainWindow::all() {
   wElement = "Alt";
   lity = daLi;
   firstObs = true;
+  /*
   apID->setChecked(FALSE);
   taID->setChecked(FALSE);
   wiID->setChecked(FALSE);
@@ -704,6 +728,7 @@ void HqcMainWindow::all() {
   piID->setChecked(FALSE);
   plID->setChecked(FALSE);
   alID->setChecked(TRUE);
+  */
   //  sendObservations(remstime,false);
   const std::vector<int> & parameters = parameterGroups[wElement];
   Q_ASSERT(not parameters.empty());
@@ -955,60 +980,12 @@ void HqcMainWindow::ListOK() {
       return;
   }
 
+  parFind = find->size();
 
   std::vector<int> parameterList;
 
-//  int maxOrder; // size of porder
-//  int* porder; // will point to what parameters to show
-//
-//  if ( wElement == "Lufttrykk" ) {
-//    porder = airPressOrder;
-//    maxOrder = NOPARAMAIRPRESS;
-//  }
-//  else if ( wElement == "Temperatur" ) {
-//    porder = tempOrder;
-//    maxOrder = NOPARAMTEMP;
-//  }
-//  else if ( wElement == "Nedbï¿½r" ) {
-//    porder = precOrder;
-//    maxOrder = NOPARAMPREC;
-//  }
-//  else if ( wElement == "Visuell" ) {
-//    porder = visualOrder;
-//    maxOrder = NOPARAMVISUAL;
-//  }
-//  else if ( wElement == "Sjï¿½gang" ) {
-//    porder = waveOrder;
-//    maxOrder = NOPARAMWAVE;
-//  }
-//  else if ( wElement == "Synop" ) {
-//    porder = synopOrder;
-//    maxOrder = NOPARAMSYNOP;
-//  }
-//  else if ( wElement == "Klimastatistikk" ) {
-//    porder = klstatOrder;
-//    maxOrder = NOPARAMKLSTAT;
-//  }
-//  else if ( wElement == "Prioriterte parametere" ) {
-//    porder = priorityOrder;
-//    maxOrder = NOPARAMPRIORITY;
-//  }
-//  else if ( wElement == "Vind" ) {
-//    porder = windOrder;
-//    maxOrder = NOPARAMWIND;
-//  }
-//  else if ( wElement == "Pluviometerkontroll" ) {
-//    porder = pluOrder;
-//    maxOrder = NOPARAMPLU;
-//  }
-//  else if ( wElement == "Alt" ) {
-//    porder = & order[0];
-//    maxOrder = NOPARAMALL;
-//  }
-
   selPar.clear();
   int kk = 0;
-
 
   for ( int jj = 0; jj < find->size(); jj++ ) {
     int paramIndex = (*find)[jj];
@@ -1288,6 +1265,11 @@ void HqcMainWindow::TimeseriesOK() {
 }
 
 void HqcMainWindow::stationOK() {
+  readFromStation();
+  if ( !readFromStInfoSys() ) {
+    int statCheck = 0;
+    readFromStationFile(statCheck);
+  }
   int noStat = 0;
   for ( QStringList::Iterator sit = listStatName.begin(); 
 	sit != listStatName.end(); 
@@ -1662,7 +1644,6 @@ void HqcMainWindow::rejectTimeseriesOK() {
     QModelIndex index = dataModel->index(irow, column);
     dataModel->setDiscardedData(index, -32766);
   }
-  //    cerr << "HEI KNUT !!!!!" <<endl;
   //  if ( discardDialog-> )
   //    return; 
   //  for ( int irow = firstRow; irow <= lastRow; irow++) {
@@ -1693,6 +1674,12 @@ void HqcMainWindow::rejectTimeseriesOK() {
 
 void HqcMainWindow::startKro() {
   system("firefox kro/cgi-bin/start.pl &");
+}
+
+void HqcMainWindow::closeEvent(QCloseEvent* event)
+{
+  writeSettings();
+  QWidget::closeEvent(event);
 }
 
 HqcMainWindow::~HqcMainWindow()
@@ -1937,7 +1924,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
 /*!
  Read station info from the stinfosys database
 */
-void HqcMainWindow::readFromStInfoSys() {
+bool HqcMainWindow::readFromStInfoSys() {
 
   webs << 4780 << 7010 << 10380 << 16610 << 17150 << 18700 << 23420 << 24890 << 27500
        << 31620 << 36200 << 39100 << 42160 << 44560 << 47300 << 50500 << 50540 << 54120
@@ -2006,7 +1993,7 @@ void HqcMainWindow::readFromStInfoSys() {
 	      << "ØSTFOLD" << "FINNMARK";
 
   if (!connect2stinfosys())
-    exit(1);
+    return false;
   QSqlQuery query1;
   query1.exec("select distinct x.stationid, y.name from station x, municip y where (x.stationid<=99999 and (x.municipid/100=y.municipid or (x.municipid<100 and x.municipid=y.municipid) or (x.municipid = 2800 and y.municipid = 2800))) order by x.stationid");
   list<countyInfo> cList;
@@ -2035,7 +2022,7 @@ void HqcMainWindow::readFromStInfoSys() {
       }
       else {
 	cout << "Feil i stinfo" << endl;
-	exit(1);
+	return false;
       }
     }
     
@@ -2055,41 +2042,6 @@ void HqcMainWindow::readFromStInfoSys() {
 
       int snr = 0;
       QString strSnr("    ");
-
-      std::list<kvalobs::kvStation>::const_iterator sit=slist.begin();
-      bool foundStation = FALSE;
-      /*
-      for(;sit!=slist.end(); sit++){
-	if ( sit->stationID() == it->stnr ) {
-	  foundStation = TRUE;
-	  if ( sit->wmonr() > 0 )
-	    strSnr = strSnr.setNum(sit->wmonr());
-	  break;
-	}
-      }
-      if ( foundStation ) {
-	QString strStnr;
-	QString strHoh;
-	QString strEnv;
-	strEnv = strEnv.setNum(sit->environmentid());
-	listStatName.append(sit->name().cStr());
-	listStatNum.append(strStnr.setNum(sit->stationID()));
-	listStatHoh.append(strHoh.setNum(sit->height()));
-	listStatType.append(strEnv);
-	listStatFylke.append(it->county);
-	listStatKommune.append(it->municip);
-	listStatWeb.append(it->web);
-	listStatPri.append(it->pri);
-	listStatCoast.append(it->ki);
-      }
-      cout << setw(5) << it->stnr << ", " 
-	   << setw(30) << (it->county).toStdString() << ", " 
-	   << setw(40) << (it->municip).toStdString() << ", " 
-	   << setw(3) << (it->web).toStdString() << ", " 
-	   << setw(4) << (it->pri).toStdString() << ", " 
-	   << setw(1) << (it->ki).toStdString()
-	   << ";" << endl;
-      */
     }
     //Some additional stations
     for ( int i = 0; i < foreignId.size(); i++ ) {
@@ -2099,6 +2051,18 @@ void HqcMainWindow::readFromStInfoSys() {
       cInfo.ki = "I";
       cList.push_back(cInfo);
     }
+    QString path = QString(getenv("HOME"));
+    QString statFile = path + "/.config/hqc_stations";
+    ofstream outf(statFile);
+    if ( !outf.is_open() ) {
+      cerr << "FILFEIL" << endl;
+      exit(1);
+    }
+    QFile stations(statFile);
+    if ( !stations.open(QIODevice::WriteOnly) ) {
+      cerr << "FEIL I FIL" << endl;
+      //      exit(1);
+    } 
     for (list<countyInfo>::iterator it = cList.begin(); it != cList.end(); it++ ) {
       int snr = 0;
       QString strSnr("    ");
@@ -2129,19 +2093,24 @@ void HqcMainWindow::readFromStInfoSys() {
 	listStatPri.append(it->pri);
 	listStatCoast.append(it->ki);
       }
-      cout << setw(5) << it->stnr << ", " 
-	   << setw(30) << (it->county).toStdString() << ", " 
-	   << setw(40) << (it->municip).toStdString() << ", " 
-	   << setw(3) << (it->web).toStdString() << ", " 
-	   << setw(4) << (it->pri).toStdString() << ", " 
+      
+      outf << setw(7) << right << it->stnr << " " 
+	   << setw(31) << left << (it->county).toStdString() 
+	   << setw(25) << (it->municip).toStdString() 
+	   << setw(3) << (it->web).toStdString() 
+	   << setw(4) << (it->pri).toStdString() 
 	   << setw(1) << (it->ki).toStdString()
-	   << ";" << endl;
+	   <<  endl;
+      
     }
+    outf.close();
+    cout << "Stationliste hentet fra stinfosys" << endl;
   }
   else {
     cout << "Forskjellig lengde" << endl;
-    exit(1);
+    return false;
   } 
+  return true;
 }
 
 /*!
@@ -2204,12 +2173,12 @@ void HqcMainWindow::checkTypeId(int stnr) {
 */
 
 void HqcMainWindow::readFromStationFile(int statCheck) {
-  QString path = QString(getenv("HQCDIR"));
+  QString path = QString(getenv("HOME"));
   if ( path.isEmpty() ) {
     cerr << "Intet environment" << endl;
     exit(1);
   }
-  QString stationFile = path + "/etc/kvhqc/hqc_stations";
+  QString stationFile = path + "/.config/hqc_stations";
   QFile stations(stationFile);
   stations.open(QIODevice::ReadOnly);
   QTextStream stationStream(&stations);
@@ -3273,3 +3242,75 @@ makeObsDataList( KvObsDataList& dataList )
     }
   }
 }
+
+void HqcMainWindow::writeSettings()
+{
+  QList<Param> params;
+
+  QSettings settings("Meteorologisk Institutt", "Hqc");
+  settings.setValue("geometry", saveGeometry());
+
+  settings.beginWriteArray("t");
+  for ( int hour = 0; hour < 24; hour++ ) {
+    settings.setArrayIndex(hour);
+    settings.setValue("t", clkdlg->clk[hour]->isChecked());
+    cout << clkdlg->clk[hour]->isChecked() << endl;
+  }
+  settings.endArray();
+
+  settings.setValue("weather", wElement);
+  settings.beginWriteArray("p");
+  for ( int jj = 0; jj < parFind; jj++ ) {
+    settings.setArrayIndex(jj);
+    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) 
+	     << pardlg->plb->item(jj)->isSelected() << ": (" 
+	     << pardlg->markPar->isChecked() << "" 
+	     << pardlg->noMarkPar->isChecked() << "" 
+	     << pardlg->allPar->isChecked() << ")";
+    settings.setValue("item", pardlg->plb->item(jj)->isSelected());
+    settings.setValue("text", pardlg->plb->item(jj)->text());
+    settings.setValue("mark", pardlg->markPar->isChecked());
+    settings.setValue("noMark", pardlg->noMarkPar->isChecked());
+    settings.setValue("all", pardlg->allPar->isChecked());
+  }
+  settings.endArray();
+}
+
+void HqcMainWindow::readSettings()
+{
+  QList<Param> params;
+
+  QSettings settings("Meteorologisk Institutt", "Hqc");
+  if ( !restoreGeometry(settings.value("geometry").toByteArray()) )
+    cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
+  
+  bool times[24];
+  settings.beginReadArray("t");
+  for ( int hour = 0; hour < 24; hour++ ) {
+    settings.setArrayIndex(hour);
+    times[hour] = settings.value("t", true).toBool();
+    clkdlg->clk[hour]->setChecked(times[hour]);
+  }
+  settings.endArray();
+  
+  wElement = settings.value("weather","").toString();
+  int size = settings.beginReadArray("p");
+  for ( int jj = 0; jj < size; jj++ ) {
+    settings.setArrayIndex(jj);
+    Param param;
+    param.item   = settings.value("item",true).toBool();
+    QListWidgetItem* it = new QListWidgetItem(pardlg->plb,jj);
+    it->setSelected(param.item);
+    param.text   = settings.value("text","").toString();
+    it->setText(param.text);
+    param.mark   = settings.value("mark",true).toBool();
+    pardlg->markPar->setChecked(param.mark);
+    param.noMark = settings.value("noMark",true).toBool();
+    pardlg->noMarkPar->setChecked(param.noMark);
+    param.all    = settings.value("all",true).toBool();
+    pardlg->allPar->setChecked(param.all);
+    params.append(param);
+  }
+  settings.endArray();
+}
+
