@@ -124,7 +124,6 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     double orig = kvalobsData->orig(paramid);
     double corr = kvalobsData->corr(paramid);
     QString oldCorVal = QString::number(corr, 'f', 1);
-
     if ( std::abs(newValue - corr) < 0.00005 )
       return;
 
