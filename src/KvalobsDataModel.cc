@@ -223,14 +223,24 @@ namespace model
 	  if ( std::fabs(oldValue - val) < 0.005 )
 	    return false;
 	  	  
-	  //TEST
 	  double oldOrig = d.orig(p.paramid);
 	  kvControlInfo ctr = d.controlinfo(p.paramid);
 	  int typ = d.typeId(p.paramid);
 
 	  kvalobs::kvData changeData = getKvData_(index);
-	  if ( val != -32766 )
+
+	  //	  if ( val != -32766 )
+	  //	    kvalobs::hqc::hqc_auto_correct(changeData, val);
+	  //	  else
+	  //	    kvalobs::hqc::hqc_reject(changeData);
+	  if ( val != -32766 && fabs(oldOrig - val) > 0.0001 ) {
 	    kvalobs::hqc::hqc_auto_correct(changeData, val);
+	  }
+	  else if ( val != -32766 ) {
+	    ctr.set(6,0);
+	    changeData.controlinfo(ctr);
+	    kvalobs::hqc::hqc_accept(changeData);
+	  }
 	  else
 	    kvalobs::hqc::hqc_reject(changeData);
 	  std::string cfailed = changeData.cfailed();
