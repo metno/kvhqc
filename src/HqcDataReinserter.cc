@@ -73,9 +73,9 @@ namespace internal_
   {
     const kvalobs::kvControlInfo ci = d.controlinfo();
     kvalobs::kvUseInfo ui = d.useinfo();
-
     miutil::miString cf = d.cfailed();
-    if ( cf.contains("hqc") && ci.flag( flag::fhqc ) == 0 ) {
+
+    if (( cf.contains("hqc") || cf.contains("watchweather") || cf.contains("watchRR")) && ci.flag( flag::fhqc ) == 0 ) {
       kvalobs::kvControlInfo tci = d.controlinfo();
       tci.set(15,1);
       ui.setUseFlags( tci );
