@@ -78,8 +78,10 @@ public:
 
 public slots:
 
-  void setFromTimeSlot(const miutil::miTime& t);
-  void setToTimeSlot(const miutil::miTime& t);
+  //  void setFromTimeSlot(const miutil::miTime& t);
+  //  void setToTimeSlot(const miutil::miTime& t);
+  void setFromTimeSlot(const QDateTime& t);
+  void setToTimeSlot(const QDateTime& t);
   void parameterSelectionChanged(Q3ListBoxItem*);
   void stationSelected(Q3ListBoxItem*);
   void resultSelected(Q3ListBoxItem*);
