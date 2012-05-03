@@ -38,15 +38,10 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
 
   QVBoxLayout * vl = new QVBoxLayout(this,10);
 
-  Q3ButtonGroup *pVal = new Q3ButtonGroup( 1, 
-					 Qt::Horizontal, 
-					 "Parametervalg", this);
+  QGroupBox *pVal = new QGroupBox("Parametervalg", this);
 
-  //  plb = new Q3ListBox(this);
   plb = new QListWidget(this);
-  //  plb->setSelectionMode( Q3ListBox::Multi );
   plb->setSelectionMode( QAbstractItemView::MultiSelection );
-  //  connect(plb,SIGNAL(pressed(Q3ListBoxItem*)),SLOT(listClickedItem(Q3ListBoxItem*)));
   connect(plb,SIGNAL(itemPressed(QListWidgetItem*)),SLOT(listClickedItem(QListWidgetItem*)));
 
   allPar    = new QRadioButton( "Velg alle parametere", pVal );
@@ -56,6 +51,10 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   noMarkPar = new QRadioButton( "Velg bort merkede parametere", pVal );
   noMarkPar->setDisabled(true);
 
+  QVBoxLayout * rbvl = new QVBoxLayout(this,10);
+  rbvl->addWidget(allPar);
+  rbvl->addWidget(markPar);
+  rbvl->addWidget(noMarkPar);
 
   sthide = new QPushButton("Skjul", this);
   sthide->setGeometry(20, 620, 90, 30);
@@ -79,12 +78,11 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( paramApply()));
 
-  Q3VBox* vb = new Q3VBox(this);
-  vl->addWidget(vb);
-
   vl->addWidget(plb);
 
   vl->addWidget(pVal);
+
+  vl->addLayout(rbvl);
 
   vl->addLayout(buttonLayout);
 
