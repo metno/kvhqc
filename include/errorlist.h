@@ -302,6 +302,7 @@ protected:
 
 
 private:
+  bool hqcOk;
   /*!
    * \brief 
    */
@@ -426,7 +427,9 @@ private slots:
   void showSameStation();
   void markModified( int row, int col );
   void clearOtherMods( int row, int col );
-  void setupMissingList( int row, int col );
+  //  void setupMissingList( int row, int col );
+  void setupMissingList();
+  void execMissingList();
   //  void setupWeather( int row, int col );
   //  void showWeather( ErrorList* );
 
@@ -436,6 +439,7 @@ private slots:
    */
   void signalStationSelected( int row );
 private:
+  int selectedRow;
   //typedef std::set<int> ModList;
   typedef std::set<ErrorListFirstCol *> ModList;
   typedef ModList::const_iterator CIModList;
