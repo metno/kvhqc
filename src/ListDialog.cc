@@ -55,6 +55,13 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   marType = new QCheckBox( "&Maritime parametere", ctrlTyp );
   visType = new QCheckBox( "V&isuelle parametere", ctrlTyp );
 
+  controlLayout->addWidget(twiType, 0, 0);
+  controlLayout->addWidget(prcType, 1, 0);
+  controlLayout->addWidget(aprType, 2, 0);
+  controlLayout->addWidget(winType, 3, 0);
+  controlLayout->addWidget(marType, 4, 0);
+  controlLayout->addWidget(visType, 5, 0);
+
   connect(twiType,SIGNAL(clicked()),this,SLOT(twiCheck()));
   connect(twiType,SIGNAL(clicked()),this,SLOT(otwiCheck()));
   connect(prcType,SIGNAL(clicked()),this,SLOT(prcCheck()));
@@ -247,6 +254,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
+  
   statSelLayout->addWidget(aaType,0,0);
   statSelLayout->addWidget(afType,1,0);
   statSelLayout->addWidget(alType,2,0);
@@ -267,7 +275,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   statSelLayout->addWidget(vkType,1,3);
   statSelLayout->addWidget(vmType,2,3);
   statSelLayout->addWidget(allType,5,3);
-
+  
   statCountyLayout->addWidget(oslCoun,0,0);
   statCountyLayout->addWidget(hedCoun,1,0);
   statCountyLayout->addWidget(vefCoun,2,0);
