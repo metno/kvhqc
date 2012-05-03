@@ -29,10 +29,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ClockDialog.h"
-//Added by qt3to4:
-#include <Q3VBoxLayout>
-#include <Q3GridLayout>
-#include <Q3HBoxLayout>
+#include <QBoxLayout>
+#include <QGridLayout>
 
 ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {  
 
@@ -40,28 +38,32 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group
   
-  Q3ButtonGroup* oTime = new Q3ButtonGroup( 0, 
-					  Qt::Horizontal, 
-					  "Tidspunkter", this);
-  Q3GridLayout* clockLayout = new Q3GridLayout(oTime->layout());
+  QGroupBox* oTime = new QGroupBox("Utvalgte tidspunkter"); 
+ 
+  QGridLayout* clockLayout = new QGridLayout;
   // insert checkbuttons for clocktime selection
   for ( int i = 0; i < 24; i++ ) {
     QString time;
     time.sprintf("%02d", i);
-    clk[i] = new QCheckBox(time, oTime);
+    clk[i] = new QCheckBox(time);
   }
   for ( int i = 0; i < 8; i++ ) {
     for( int j = 0; j < 3; j++ ) {
       clockLayout->addWidget(clk[3*i+j],i,j);
     }
   }
+  oTime->setLayout(clockLayout);
 
-  Q3ButtonGroup* staTime = new Q3ButtonGroup( 1, 
-					  Qt::Horizontal, 
-					  "Utvalgte tidspunkter", this);
 
-  allTimes      = new QCheckBox("&Alle tidspunkter", staTime);
-  standardTimes = new QCheckBox("&Standardtidspunkter", staTime);
+  QGroupBox* staTime = new QGroupBox("Tidspunkter"); 
+  QVBoxLayout* stdAllLayout = new QVBoxLayout;
+
+  allTimes      = new QCheckBox("&Alle tidspunkter");
+  standardTimes = new QCheckBox("&Standardtidspunkter");
+
+  stdAllLayout->addWidget(allTimes);
+  stdAllLayout->addWidget(standardTimes);
+  staTime->setLayout(stdAllLayout);
 
   connect(allTimes, SIGNAL(clicked()),this,SLOT(standardCheck()));
   connect(standardTimes, SIGNAL(clicked()),this,SLOT(allCheck()));
@@ -81,16 +83,16 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
 
-  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
-  buttonLayout->addWidget(sthide, 10);
-  buttonLayout->addWidget(excu, 10);
-  buttonLayout->addWidget(hdnexcu, 10);
+  QHBoxLayout* buttonLayout = new QHBoxLayout();
+  buttonLayout->addWidget(sthide);
+  buttonLayout->addWidget(excu);
+  buttonLayout->addWidget(hdnexcu);
 
   connect(sthide, SIGNAL(clicked()), this, SIGNAL( ClockHide()));
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ClockApply()));
 
-  Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
+  QVBoxLayout* topLayout = new QVBoxLayout(this,10);
   topLayout->addWidget(staTime);
   topLayout->addWidget(oTime);
   topLayout->addLayout(buttonLayout);
