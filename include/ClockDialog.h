@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef CLOCKDIALOG_H
 #define CLOCKDIALOG_H
-
+/*
 #include <stdlib.h>
 #include <iostream>
 #include <qdialog.h>
@@ -40,6 +40,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <q3groupbox.h>
 #include <qlabel.h>
 #include <qlayout.h>
+*/
+#include <stdlib.h>
+#include <iostream>
+#include <QDialog>
+#include <QButtonGroup>
+#include <qpushbutton.h>
+#include <QCheckBox>
+#include <QGroupBox>
+#include <QLabel>
+#include <QLayout>
 
 using namespace std;
 /**
