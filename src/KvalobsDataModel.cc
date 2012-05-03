@@ -273,10 +273,75 @@ namespace model
     return false;
   }
 
+  bool KvalobsDataModel::setAcceptedData(const QModelIndex & index, const QVariant & value, int role)
+  {
+    cerr << "KNUT tester accepteddata " << value.toDouble() << endl;
+    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      return false;
 
+    if ( Qt::EditRole == role ) {
+      if ( getColumnType(index) == Corrected ) {
+          const Parameter & p = getParameter(index);
 
+          // Invalid input (should never happen, except when user entered empty string)
+          bool ok;
+          double val = value.toDouble(& ok);
+	  cerr << "KNUT tester accepteddata 2 " << val << " " << ok << endl;
+          if ( not ok ) {
+              if ( value.toString().isEmpty() )
+                val = -32766;
+              else
+                return false;
+          }
 
+          try {
+            KvalobsData & d = kvalobsData_->at(index.row());
+	    kvControlInfo ctr = d.controlinfo(p.paramid);
 
+            // Insignificant change. Ignored.
+            double oldValue = d.corr(p.paramid);
+	    cerr << "KNUT tester accepteddata 3 " << val << " " << oldValue << endl;
+            if ( std::fabs(oldValue - val) < 0.005 or oldValue == -32767 )
+              return false;
+
+	    int typ = d.typeId(p.paramid);
+
+	    if (abs(typ) > 999) {
+	      HqcMainWindow * hqcm = getHqcMainWindow(this);
+	      typ = hqcm->findTypeId(typ, d.stnr(), p.paramid, d.otime());
+	      d.set_typeId(p.paramid, typ);
+	    }
+            kvalobs::kvData changeData = getKvData_(index);
+	    ctr.set(6,0);
+	    //	    ctr.set(13,0); //TEST
+	    changeData.controlinfo(ctr);
+	    kvalobs::hqc::hqc_accept(changeData);
+            std::string cfailed = changeData.cfailed();
+            if ( not cfailed.empty() )
+              cfailed += ",";
+            cfailed += "hqc";
+            changeData.cfailed(cfailed);
+	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
+	    changeData.corrected(val);
+	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
+            // Update stored data
+            d.set_corr(p.paramid, val);
+            d.set_controlinfo(p.paramid, changeData.controlinfo());
+            d.set_useinfo(p.paramid, changeData.useinfo());
+
+            QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
+            emit dataChanged(flagIndex, index);
+            emit dataModification(changeData);
+            qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val;
+            return true;
+          }
+          catch ( InvalidIndex & ) {
+              return false;
+          }
+      }
+    }
+    return false;
+  }
 
 
   bool KvalobsDataModel::setDiscardedData(const QModelIndex & index, const QVariant & value, int role)
@@ -323,6 +388,7 @@ namespace model
               cfailed += ",";
             cfailed += "hqc";
             changeData.cfailed(cfailed);
+	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
 
             // Update stored data
             d.set_corr(p.paramid, val);
