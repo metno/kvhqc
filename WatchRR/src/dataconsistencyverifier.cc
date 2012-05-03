@@ -32,6 +32,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "enums.h"
 #include <cmath>
 
+using namespace std;
+
 namespace WatchRR
 {
   void DataConsistencyVerifier::get_inconsistent( DataList & out ) const
@@ -55,9 +57,12 @@ namespace WatchRR
 	//	else
 	//	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
 	
-	else if ( fabs(d.original() - represented_value) > 0.0001 ) 
+	else if ( fabs(d.original() - represented_value) > 0.0001 ) { 
+	  cerr << "KNUT TESTER get_inconsistent 1 " << represented_value << endl;
 	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
+	}
 	else {
+	  cerr << "KNUT TESTER get_inconsistent 2 " << represented_value << endl;
 	  kvalobs::kvControlInfo ctr = d.controlinfo();
 	  ctr.set(6,0);
 	  d.corrected(represented_value);
