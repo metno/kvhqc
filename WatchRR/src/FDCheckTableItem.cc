@@ -89,9 +89,15 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
     }
     
     ci.set( kvalobs::flag::fd, fd );
+    ci.set( kvalobs::flag::fhqc, 0 );
     d.controlinfo( ci );
 
-  	kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
+    miutil::miString cf = d.cfailed();
+    if ( not cf.empty() )
+      cf += ",";
+    cf += "Manuelt skjønn";
+    d.cfailed(cf);
+    //    kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
   	
     data.insert( d );
   }
