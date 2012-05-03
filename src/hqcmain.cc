@@ -45,6 +45,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsDataView.h"
 //#include "discardbox.h"
 #include "discarddialog.h"
+#include "approvedialog.h"
 #include "connect2stinfosys.h"
 #include <iomanip>
 #include <QAction>
@@ -137,6 +138,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   , reinserter( NULL )
   , datalist(new model::KvalobsDataList)
 {
+  /////TEST
+  //  readSettings();
+  /////TEST SLUTT
   // --- CHECK USER IDENTITY ----------------------------------------
 
   reinserter = Authentication::identifyUser(  KvApp::kvApp,
@@ -154,7 +158,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
       throw runtime_error( "Not authenticated" );
   }
   else {
-    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatï¿½r" << endl;
+    cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
   }
   //-----------------------------------------------------------------  
 
@@ -188,6 +192,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   timesAction->setShortcut(Qt::CTRL | Qt::Key_T);
   connect(timesAction, SIGNAL(activated()), this, SLOT(clk()));
 
+  //  lackListAction = new QAction(tr("&Mangelliste"), this);
+  //  lackListAction->setShortcut(Qt::CTRL+Qt::Key_M);
   // ---- Workspace ---------------------------------------------
   ws = new QMdiArea(this);
   setCentralWidget( ws );
@@ -275,6 +281,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   clockmenu->addAction(timesAction);
   
   menuBar()->insertItem( "&Forkast tidsserie", this, SLOT(rejectTimeseries()));
+  menuBar()->insertItem( "&Godkjenn tidsserie", this, SLOT(acceptTimeseries()));
   
   menuBar()->insertItem( "&Dianavisning", this, SLOT(dsh()));
   menuBar()->insertItem( "&Kro", this, SLOT(startKro()));
@@ -370,6 +377,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   txtdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
   rejdlg = new RejectDialog(this);
   rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") ); 
+  actsdlg = new AcceptTimeseriesDialog();
+  actsdlg->hide();
   rjtsdlg = new RejectTimeseriesDialog();
   rjtsdlg->hide();
  
@@ -422,16 +431,26 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   connect( rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
   connect( rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
 
+  connect( actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
+  connect( actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
+
   connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
 	   rjtsdlg,SLOT(newStationList(std::vector<QString>&)));
   connect( this,SIGNAL(newParameterList(const QStringList&)), 
 	   rjtsdlg,SLOT(newParameterList(const QStringList&)));
 
+  connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
+	   actsdlg,SLOT(newStationList(std::vector<QString>&)));
+  connect( this,SIGNAL(newParameterList(const QStringList&)), 
+	   actsdlg,SLOT(newParameterList(const QStringList&)));
+
   connect( lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
-	   tsdlg,  SLOT(setFromTimeSlot(const miutil::miTime&)));
+	   tsdlg,  SLOT(setFromTimeSlot(const QDateTime&)));
+  //	   tsdlg,  SLOT(setFromTimeSlot(const miutil::miTime&)));
 
   connect( lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
-	   tsdlg,  SLOT(setToTimeSlot(const miutil::miTime&)));
+	   tsdlg,  SLOT(setToTimeSlot(const QDateTime&)));
+  //	   tsdlg,  SLOT(setToTimeSlot(const miutil::miTime&)));
 
   // make the timeseries-plot-dialog
   tspdialog = new TSPlotDialog(this);
@@ -737,7 +756,9 @@ void HqcMainWindow::all() {
   pardlg->showAll();
 }
 
-void HqcMainWindow::paramOK() {
+void HqcMainWindow::paramOK
+
+() {
   if ( listExist )
     ListOK();
 }
@@ -908,8 +929,42 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
   }
 }
 
+namespace
+{
+class FunctionLogger
+{
+  const std::string name_;
+
+  static int indent;
+
+  void log_(const std::string & msg) const
+  {
+    std::ostringstream data;
+    for ( int i = 0; i < indent; ++ i )
+      data << "--------";
+    data << "> " << msg.c_str();
+    std::string out = data.str();
+    qDebug() << out.c_str();
+  }
+
+public:
+  FunctionLogger(const char * name) : name_(name)
+  {
+    ++ indent;
+    log_("Entering " + name_);
+  }
+  ~FunctionLogger()
+  {
+    log_("Leaving  " + name_);
+    -- indent;
+  }
+};
+int FunctionLogger::indent = 3;
+}
+#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
 
 void HqcMainWindow::ListOK() {
+  LOG_FUNCTION();
   if ( !dianaconnected ) {
     int dianaWarning = QMessageBox::warning(this, 
 					    "Dianaforbindelse",
@@ -981,7 +1036,6 @@ void HqcMainWindow::ListOK() {
   }
 
   parFind = find->size();
-
   std::vector<int> parameterList;
 
   selPar.clear();
@@ -1591,6 +1645,68 @@ void HqcMainWindow::rejectTimeseries() {
   }
 }
 
+void HqcMainWindow::acceptTimeseries() {
+  if ( actsdlg->isVisible() ) {
+    actsdlg->hideAll();
+  } else {
+    actsdlg->showAll();
+  }
+}
+
+void HqcMainWindow::acceptTimeseriesOK() {
+  QDateTime stime;
+  QDateTime etime;
+  QString parameter;
+  int stationIndex;
+  int parameterIndex;
+  bool result = actsdlg->getResults(parameter,stime,etime,stationIndex);
+  if ( !result ) return;
+  std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
+  for(;it!=plist.end(); it++){
+    if ( it->name().cStr() == parameter ){
+      parameterIndex = it->paramID();
+      break;
+    }
+  }
+  WhichDataHelper whichData;
+  long int stnr = stationIndex;
+  miutil::miTime ft;
+  miutil::miTime tt;
+  ft.setTime(miutil::miString(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  tt.setTime(miutil::miString(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  whichData.addStation(stnr, ft, tt);
+  checkTypeId(stnr);
+  int firstRow = dataModel->dataRow(stnr, ft);
+  int lastRow  = dataModel->dataRow(stnr, tt);
+  int column   = dataModel->dataColumn(parameter);
+
+  QString ch;
+  vector<QString> chList;
+  vector<double> newCorr;
+  for ( int irow = firstRow; irow <= lastRow; irow++) {
+    QModelIndex index = dataModel->index(irow, column);
+    const kvData & dt = dataModel->getKvData_(index);
+    //    if ( dt.corrected() < -32760 )
+    //      continue;
+    QString ori;
+    ori = ori.setNum(dt.original(), 'f', 1); 
+    QString stnr;
+    stnr = stnr.setNum(dt.stationID());
+    ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + ori;
+    chList.push_back(ch);
+    newCorr.push_back(dt.original());
+  }
+  ApproveDialog* approveDialog = new ApproveDialog(chList);
+  approveDialog->setWindowTitle(tr("%1 - Godkjenning av data").arg(QApplication::applicationName()));
+  int res = approveDialog->exec();
+  if ( res == QDialog::Accepted )
+  for ( int irow = firstRow; irow <= lastRow; irow++) {
+    QModelIndex index = dataModel->index(irow, column);
+    dataModel->setAcceptedData(index, newCorr[irow-firstRow]);
+  }
+  return;
+}
+
 void HqcMainWindow::rejectTimeseriesOK() {
   QDateTime stime;
   QDateTime etime;
@@ -1632,11 +1748,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
     ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + cr;
     chList.push_back(ch);
   }
-
-  //  QScopedPointer<DiscardBox> discardBox(new DiscardBox(this));
-
   DiscardDialog* discardDialog = new DiscardDialog(chList);
-  //  connect(discardDialog,SIGNAL(tsReject()), this, SLOT(rejectTimeseries()));
   discardDialog->setWindowTitle(tr("%1 - Forkasting av data").arg(QApplication::applicationName()));
   int res = discardDialog->exec();
   if ( res == QDialog::Accepted )
@@ -1644,31 +1756,6 @@ void HqcMainWindow::rejectTimeseriesOK() {
     QModelIndex index = dataModel->index(irow, column);
     dataModel->setDiscardedData(index, -32766);
   }
-  //  if ( discardDialog-> )
-  //    return; 
-  //  for ( int irow = firstRow; irow <= lastRow; irow++) {
-  //    QModelIndex index = dataModel->index(irow, column);
-  //    dataModel->setDiscardedData(index, -32766);
-  /*
-  DiscardBox* discardBox = new DiscardBox(this);
-  discardBox->setWindowModality(Qt::NonModal);
-  discardBox->setIcon(QMessageBox::Information);
-  discardBox->setWindowTitle(tr("%1 - Forkasting av data").arg(QApplication::applicationName()));
-  discardBox->setText("Vil du forkaste følgende data?\n");
-  discardBox->setDetailedText(ch);
-  discardBox->addButton(tr("Forkast tidsserie"),QMessageBox::AcceptRole);
-  QAbstractButton* noButton = discardBox->addButton(tr("Avbryt"),QMessageBox::RejectRole);
-  //  noButton->setDefault(true);
-  //  discardBox->layout()->setSizeConstraint(QLayout::SetMaximumSize);
-
-  discardBox->exec();
-  if ( discardBox->clickedButton() == noButton )
-    return; 
-  for ( int irow = firstRow; irow <= lastRow; irow++) {
-    QModelIndex index = dataModel->index(irow, column);
-    dataModel->setDiscardedData(index, -32766);
-  }
-  */
   return;
 }
 
@@ -1992,10 +2079,15 @@ bool HqcMainWindow::readFromStInfoSys() {
 	      << "NORD-TRØNDELAG" << "NORD-TRØNDELAG" << "SØR-TRØNDELAG" << "ØSTFOLD"
 	      << "ØSTFOLD" << "FINNMARK";
 
-  if (!connect2stinfosys())
+  if (!connect2stinfosys()) {
+    cerr << "Cannot connect to stinfosys" << endl;
     return false;
+  }
   QSqlQuery query1;
-  query1.exec("select distinct x.stationid, y.name from station x, municip y where (x.stationid<=99999 and (x.municipid/100=y.municipid or (x.municipid<100 and x.municipid=y.municipid) or (x.municipid = 2800 and y.municipid = 2800))) order by x.stationid");
+  if ( !query1.exec("select distinct x.stationid, y.name from station x, municip y where (x.stationid<=99999 and (x.municipid/100=y.municipid or (x.municipid<100 and x.municipid=y.municipid) or (x.municipid = 2800 and y.municipid = 2800))) order by x.stationid") ) {
+    cerr << "Query1 failed" << endl;
+    return false;
+  }
   list<countyInfo> cList;
   while ( query1.next() ) {
     int stationid1 = query1.value(0).toInt();
@@ -2008,7 +2100,10 @@ bool HqcMainWindow::readFromStInfoSys() {
     cList.push_back(cInfo);
   }
   QSqlQuery query2;
-  query2.exec("select distinct x.stationid, y.name from station x, municip y where (x.stationid<=99999 and (x.municipid=y.municipid or (x.municipid=2300 and x.municipid/100=y.municipid))) order by x.stationid");
+  if ( !query2.exec("select distinct x.stationid, y.name from station x, municip y where (x.stationid<=99999 and (x.municipid=y.municipid or (x.municipid=2300 and x.municipid/100=y.municipid))) order by x.stationid") ) {
+      cerr << "Query2 failed" << endl;
+      return false;
+  }
   
   list<countyInfo>::iterator it = cList.begin();
   if ( query1.size() == query2.size() ) {
@@ -2395,7 +2490,7 @@ void HqcMainWindow::about()
 			"Knut Johansen, IT\n ");
 }
 
-
+/*
 namespace
 {
 class FunctionLogger
@@ -2429,8 +2524,7 @@ public:
 int FunctionLogger::indent = 3;
 }
 #define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-//#define LOG_FUNCTION()
-
+*/
 
 void HqcMainWindow::initDiana()
 {
@@ -2443,9 +2537,9 @@ void HqcMainWindow::initDiana()
   if(pluginB->clientTypeExist(type1)){
     dianaconnected= true;
   }
-    sendTimes();
-    sendAnalysisMessage();
-    return;
+  sendTimes();
+  sendAnalysisMessage();
+  return;
 }
 
 // send one image to diana (with name)
@@ -2470,6 +2564,7 @@ void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
     ost << setw(7) << int(*a[i]);
   miutil::miString txt= ost.str();
   m.data.push_back(txt);
+    cerr << "HQC sender melding : " << m.content() << endl;
   pluginB->sendMessage(m);
 }
 
@@ -2500,6 +2595,7 @@ void HqcMainWindow::sendTimes(){
   for(int i=0;i<n;i++){
     m.data.push_back((*datalist)[i].otime().isoTime());
   }
+    cerr << "HQC sender melding : " << m.content() << endl;
   pluginB->sendMessage(m);
   
 }
@@ -2508,7 +2604,6 @@ void HqcMainWindow::sendTimes(){
 void HqcMainWindow::processLetter(miMessage& letter)
 {
   LOG_FUNCTION();
-
   if(letter.command == qmstrings::newclient) {
     firstObs = true;
     processConnect(); 
@@ -2558,6 +2653,7 @@ bool  HqcMainWindow::sendAnalysisMessage() {
   letter.command=qmstrings::apply_quickmenu;
   letter.data.push_back("Hqc");
   letter.data.push_back("Bakkeanalyse");
+    cerr << "HQC sender melding : " << letter.content() << endl;
   pluginB->sendMessage(letter);
   
   dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
@@ -2572,6 +2668,7 @@ void HqcMainWindow::sendStation(int stnr)
   pLetter.command = qmstrings::station;
   miutil::miString stationstr(stnr);
   pLetter.common = stationstr;
+    cerr << "HQC sender melding : " << pLetter.content() << endl;
   pluginB->sendMessage(pLetter);
   
 }
@@ -2599,6 +2696,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     tLetter.command = qmstrings::settime;
     tLetter.commondesc = "time";
     tLetter.common = time.isoTime();
+    cerr << "HQC sender melding : " << tLetter.content() << endl;
     pluginB->sendMessage(tLetter);
   }
   miMessage pLetter;
@@ -2777,7 +2875,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     //TEST
     pluginB->sendMessage(pLetter);
   }
-
+  /*
   if( !synopData.size() ) {
     miMessage okLetter;
     okLetter.command = "menuok";
@@ -2785,7 +2883,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     okLetter.to = hqcTo;
     pluginB->sendMessage(okLetter);
   }
-  
+  */
 }
 
 
@@ -2804,6 +2902,7 @@ void HqcMainWindow::sendSelectedParam(const QString & param)
   pLetter.command = qmstrings::select_HQC_param;
   pLetter.commondesc = "diParam";
   pLetter.common = diParam;
+    cerr << "HQC sender melding : " << pLetter.content() << endl;
   pluginB->sendMessage(pLetter);
 }
 
@@ -2853,12 +2952,14 @@ void HqcMainWindow::updateParams(int station,
   data += ",";
   data += value_flag;
   pLetter.data.push_back(data);
+    cerr << "HQC sender melding : " << pLetter.content() << endl;
   pluginB->sendMessage(pLetter);
 
   pLetter.common = time.isoTime() + ",synop";
   miutil::miString dianaParam = dianaName(param);
   if(dianaParam.exists()){
     pLetter.description = "id," + dianaParam;
+    cerr << "HQC sender melding : " << pLetter.content() << endl;
     pluginB->sendMessage(pLetter);
   }
 }
@@ -3254,8 +3355,97 @@ void HqcMainWindow::writeSettings()
   for ( int hour = 0; hour < 24; hour++ ) {
     settings.setArrayIndex(hour);
     settings.setValue("t", clkdlg->clk[hour]->isChecked());
-    cout << clkdlg->clk[hour]->isChecked() << endl;
   }
+  settings.endArray();
+
+  int st = 0;
+  settings.beginWriteArray("s");
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->aaType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->afType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->alType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->avType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->aoType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->aeType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->mvType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->mpType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->mmType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->msType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->fmType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->nsType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->ndType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->noType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->piType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->ptType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->vsType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->vkType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->vmType->isChecked());
+  settings.setArrayIndex(st++);
+  settings.setValue("s",lstdlg->allType->isChecked());
+  settings.endArray();
+
+  int fy = 0;
+  settings.beginWriteArray("c");
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->oslCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->akeCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->ostCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->hedCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->oppCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->busCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->vefCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->telCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->ausCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->veaCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->rogCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->horCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->sogCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->morCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->sorCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->ntrCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->norCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->troCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->finCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->svaCoun->isChecked());
+  settings.setArrayIndex(fy++);
+  settings.setValue("c",lstdlg->allCoun->isChecked());
   settings.endArray();
 
   settings.setValue("weather", wElement);
@@ -3294,8 +3484,8 @@ void HqcMainWindow::readSettings()
   settings.endArray();
   
   wElement = settings.value("weather","").toString();
-  int size = settings.beginReadArray("p");
-  for ( int jj = 0; jj < size; jj++ ) {
+  parFind = settings.beginReadArray("p");
+  for ( int jj = 0; jj < parFind; jj++ ) {
     settings.setArrayIndex(jj);
     Param param;
     param.item   = settings.value("item",true).toBool();
@@ -3311,6 +3501,139 @@ void HqcMainWindow::readSettings()
     pardlg->allPar->setChecked(param.all);
     params.append(param);
   }
+  settings.endArray();
+
+  bool types[20];
+  int tp = 0;
+  settings.beginReadArray("s");
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->aaType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->afType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->alType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->avType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->aoType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->aeType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->mvType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->mpType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->mmType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->msType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->fmType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->nsType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->ndType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->noType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->piType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->ptType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->vsType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->vkType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->vmType->setChecked(types[tp]);
+  settings.setArrayIndex(tp++);
+  types[tp] = settings.value("s",true).toBool();
+  lstdlg->allType->setChecked(types[tp]);
+  settings.endArray();
+
+  bool county[21];
+  int fy = 0;
+  settings.beginReadArray("c");
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->oslCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->akeCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->ostCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->hedCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->oppCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->busCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->vefCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->telCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->ausCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->veaCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->rogCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->horCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->sogCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->morCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->sorCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->ntrCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->norCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->troCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->finCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->svaCoun->setChecked(county[fy]);
+  settings.setArrayIndex(fy++);
+  county[fy] = settings.value("c",true).toBool();
+  lstdlg->allCoun->setChecked(county[fy]);
   settings.endArray();
 }
 
