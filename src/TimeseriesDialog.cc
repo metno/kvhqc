@@ -238,14 +238,34 @@ void TimeseriesDialog::deleteSlot( ){
   cerr <<"delete  ts:"<<tsinfo.size()<<endl;
 }
 
-void TimeseriesDialog::setFromTimeSlot(const miutil::miTime& t)
+//void TimeseriesDialog::setFromTimeSlot(const miutil::miTime& t)
+void TimeseriesDialog::setFromTimeSlot(const QDateTime& dt)
 {
+  //TEST
+  QString strdt = dt.toString("yyyyMMddhhmm");
+  int yr = atoi(strdt.left(4).toStdString().c_str());
+  int mo = atoi(strdt.mid(4,2).toStdString().c_str());
+  int dy = atoi(strdt.mid(6,2).toStdString().c_str());
+  int ho = atoi(strdt.mid(8,2).toStdString().c_str());
+  int mi = atoi(strdt.mid(10,2).toStdString().c_str());
+  miutil::miTime t(yr,mo,dy,ho);
+  //
   from->setMin(t);
   from->setTime(t);
 }
 
-void TimeseriesDialog::setToTimeSlot(const miutil::miTime& t)
+//void TimeseriesDialog::setToTimeSlot(const miutil::miTime& t)
+void TimeseriesDialog::setToTimeSlot(const QDateTime& dt)
 {
+  //TEST
+  QString strdt = dt.toString("yyyyMMddhhmm");
+  int yr = atoi(strdt.left(4).toStdString().c_str());
+  int mo = atoi(strdt.mid(4,2).toStdString().c_str());
+  int dy = atoi(strdt.mid(6,2).toStdString().c_str());
+  int ho = atoi(strdt.mid(8,2).toStdString().c_str());
+  int mi = atoi(strdt.mid(10,2).toStdString().c_str());
+  miutil::miTime t(yr,mo,dy,ho);
+  //
   to->setMax(t);
   to->setTime(t);
 }
