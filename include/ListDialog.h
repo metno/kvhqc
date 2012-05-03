@@ -35,11 +35,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <qdialog.h>
 #include <q3buttongroup.h>
+//#include <QButtonGroup>
 #include <qpushbutton.h>
 #include <qlineedit.h>
 #include <qcheckbox.h>
 #include <qradiobutton.h>
-#include <q3groupbox.h>
+//#include <q3groupbox.h>
+#include <QGroupBox>
 #include <qlabel.h>
 #include <q3table.h>
 #include <q3listbox.h>
