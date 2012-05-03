@@ -52,6 +52,10 @@ int main( int argc, char ** argv ) {
     myconf = string( kvdir ) + "/etc/kvhqc/kvhist.conf";
   else if ( shist == "2" )
     myconf = string( kvdir ) + "/etc/kvhqc/kvtest.conf";
+  else if ( shist == "3" )
+    myconf = string( kvdir ) + "/etc/kvhqc/kvplutest.conf";
+  else if ( shist == "4" )
+    myconf = string( kvdir ) + "/etc/kvhqc/kvnew.conf";
   else
     myconf = string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
