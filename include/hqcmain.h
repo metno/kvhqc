@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "rejecttimeseriesdialog.h"
+#include "accepttimeseriesdialog.h"
 #include "errorlist.h"
 #include <qwidget.h>
 #include <fstream>
@@ -114,6 +115,8 @@ public:
   int nuroprpar;
   int nucoprpar;
   vector<int> coastStations;
+
+  //  QAction * lackListAction;
 
 public slots:
   /*!
@@ -268,6 +271,7 @@ public:
   vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
   RejectTimeseriesDialog* rjtsdlg;
+  AcceptTimeseriesDialog* actsdlg;
 
   model::KvalobsDataListPtr datalist;
   vector<modDatl> modeldatalist;
@@ -344,6 +348,8 @@ private slots:
   void dsh();
   void rejectTimeseries();
   void rejectTimeseriesOK();
+  void acceptTimeseries();
+  void acceptTimeseriesOK();
   void startKro();
 private:
   model::KvalobsDataModel * dataModel;
