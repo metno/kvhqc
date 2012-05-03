@@ -39,6 +39,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <cassert>
 //#include <qevent.h>
 #include <QEvent>
+#include <QAction>
 #include <q3textstream.h>
 #include <qcursor.h>
 #include <qprinter.h>
@@ -101,6 +102,9 @@ ErrorList::ErrorList(QStringList& selPar,
   readLimits();
   setSelectionMode( Q3Table::SingleRow );
 
+  QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
+  lackListAction->setShortcut(Qt::CTRL+Qt::Key_M);
+
   opName = userName;
   fDlg = new FailInfo::FailDialog(this);
 
@@ -123,7 +127,11 @@ ErrorList::ErrorList(QStringList& selPar,
 	   this, SLOT  ( showSameStation()  ) );
 
   connect( this, SIGNAL( currentChanged(int, int) ),
-    this, SLOT  ( signalStationSelected( int ) ) );
+	   this, SLOT  ( signalStationSelected( int ) ) );
+
+  connect( lackListAction, SIGNAL( activated() ),
+       	   this, SLOT  ( setupMissingList() ) );
+  //  	   this, SLOT  ( setupMissingList( int, int ) ) );
   //  connect( this, SIGNAL( stationSelected( miMessage ) ),
   //	   mainWindow, SLOT  ( signalStationSelected( miMessage ) ) );
 
@@ -250,19 +258,23 @@ ErrorList::ErrorList(QStringList& selPar,
 
       //Priority filters for controls and parameters
       QString flTyp = "";
+	cerr << "KNUT TESTER 1 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       int flg = errorFilter(noSelPar[j],
 			    memObs.controlinfo,
 			    memObs.cfailed,
 			    flTyp);
 
+	cerr << "KNUT TESTER 2 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( obsInMissList(memObs) ) {
 	missList.push_back(memObs);
 	//	if ( ml == 0 )
 	ml++;
 	continue;
       }
+	cerr << "KNUT TESTER 3 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( flg <= 1 && flg > -3)
 	continue;
+	cerr << "KNUT TESTER 4 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( flg == -3) {
 	QString qStrCtrInfo = QString::fromStdString(memObs.controlinfo);
 	flg = qStrCtrInfo.mid(6,1).toInt(0,16);
@@ -270,8 +282,10 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.flg = flg;
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
-      if ( lity == erLi || lity == alLi ) {	
-	
+      if ( lity == erLi || lity == alLi ) {
+	cerr << "KNUT TESTER 5 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
+	if ( flg == 6 && flTyp == "fnum" )
+	  cerr << "KNUT TESTER fnum : " << flg << endl;
 	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
 	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
 	    ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
@@ -291,9 +305,10 @@ ErrorList::ErrorList(QStringList& selPar,
 		 ((flg == 2 || flg == 3) && flTyp == "ftime") ||
 		 ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
 		 (flg > 0 && flTyp == "fmis" ) ||
-		 (flg == 7 && flTyp == "fd") )
-	  
+		 (flg == 7 && flTyp == "fd") ) {
+	  cerr << "Lagrer i memstore2" << endl;
 	  memStore2.push_back(memObs);
+	}
       }
       
       
@@ -833,6 +848,8 @@ void ErrorList::tableCellClicked(int row,
   if ( col == 0 && row >= 0) {
     selectRow(row);
   }
+    selectedRow = row;
+    cerr << "KNUT TESTER tablecellclicked " << selectedRow << endl;
 }
 
 double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
@@ -968,6 +985,7 @@ void ErrorList::markModified( int row, int col )
     return;
   }
   int fmis = cif.flag(6);
+  int fnum = cif.flag(4);
   int fd = cif.flag(12);
   switch (col) {
   case 14:
@@ -1028,9 +1046,27 @@ void ErrorList::markModified( int row, int col )
     break;
   case 15:
     {
+      /*      
+      if ( fnum == 6 ) {
+	int dsc = QMessageBox::information( this,
+					    "Original mangler",
+					    "Velg hqcflag lik 0(QC1 kan da kontrollere observasjonen på ny)\neller 1(QC1 vil da ikke kontrollere observasjonen igjen).\n",
+					    "0",
+					    "1" );
+	if ( dsc == 1 ) {
+	  hqcOk = true;
+	  cerr << "fhqc settes til 1" << endl;
+	}
+	else if ( dsc == 0 ) {
+	  hqcOk = false;
+	  cerr << "fhqc settes til 0" << endl;
+	}
+      }
+      else if ( fmis == 1 ) {
+      */
       if ( fmis == 1 ) {
 	int dsc = QMessageBox::information( this,
-					    "Feil kolonne",
+					    "Original mangler",
 					    "Ønsker du å sette inn -32767 som korrigert verdi?\n",
 					    "Ja",
 					    "Nei" );
@@ -1199,7 +1235,7 @@ void ErrorList::signalStationSelected( int row )
   emit statSel( letter );
 
 }
-
+/*
 void execMissingList( ErrorList* el )
 {
   BusyIndicator busy;
@@ -1215,16 +1251,36 @@ void execMissingList( ErrorList* el )
 				      "OK");
   }
 }
-
-void ErrorList::setupMissingList( int row, int col )
+*/
+void ErrorList::execMissingList()
 {
-  const struct mem *m = getMem( row );
-  if ( m and m->controlinfo[4] == '6' ) {
-    efh->reset( row, execMissingList, (Qt::Key) (Qt::Key_M ),
-	       "Ctrl+M viser mangelliste." );
+  BusyIndicator busy;
+  if ( mList.size() > 0 ) {
+    MissingTable* mt = new MissingTable( 0, this);
+    mt->show();
   }
-  else
-    efh->clear();
+  else {
+    QString missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
+    int mb = QMessageBox::information(this,
+				      "Mangelliste",
+				      missText,
+				      "OK");
+  }
+}
+
+//void ErrorList::setupMissingList( int row, int col )
+void ErrorList::setupMissingList()
+{
+  cerr << "KNUT TESTER SETUPMISSINGLIST " << selectedRow << endl;
+  const struct mem *m = getMem( selectedRow );
+  if ( m and m->controlinfo[4] == '6' ) {
+    execMissingList();
+    //    int col = 0;
+    //    efh->reset( selectedRow, execMissingList, (Qt::Key)(Qt::CTRL+Qt::Key_M ),
+    //		"CTRL+M viser mangelliste");
+  }
+  //  else
+  //    efh->clear();
 }
 
 const struct ErrorList::mem *ErrorList::getMem( int row ) const
@@ -1312,6 +1368,7 @@ void ErrorList::saveChanges()
 
     int fmis = cif.flag(6);
     int fd = cif.flag(12);
+    cerr << "KNUT tester ccol = " << ccol << endl;
     switch ( ccol ) {
     case 14:
       {
@@ -1332,6 +1389,7 @@ void ErrorList::saveChanges()
       break;
     case 15:
       {
+	cerr << "KNUT tester cif.flag(4) = " << cif.flag(4) << endl;
 	if ( cif.flag(4) > 1 ) {
 	  cif.set(15,1);
 	}
@@ -1342,7 +1400,10 @@ void ErrorList::saveChanges()
 	    cif.set(12,1);
 	}
 	else if ( fmis == 1 ) {
-	  cif.set(15,0);
+	  if ( hqcOk )
+	    cif.set(15,1);
+	  else
+	    cif.set(15,0);
 	  cif.set(6,3);
 	  kd.corrected(kd.original());
 	}
@@ -1415,6 +1476,7 @@ void ErrorList::saveChanges()
       break;
     default:
       // Undo changes:
+      cerr << "KNUT tester er vi her ???? " << endl;
       cif.set(15,0); break;
     }
     kd.controlinfo( cif );
