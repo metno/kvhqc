@@ -58,6 +58,8 @@ int main( int argc, char ** argv )
     myconf = std::string( kvdir ) + "/etc/kvhqc/kvhist.conf";
   else if ( shist == "2" )
     myconf = std::string( kvdir ) + "/etc/kvhqc/kvtest.conf";
+  else if ( shist == "4" )
+    myconf = string( kvdir ) + "/etc/kvhqc/kvnew.conf";
   else
     myconf = std::string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
