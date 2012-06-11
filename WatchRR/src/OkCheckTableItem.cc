@@ -65,6 +65,9 @@ void OkCheckTableItem::getUpdatedList( DataSet & out )
            and shouldChange_( ** it ) ) {
         kvalobs::kvData d( ** it );
         kvalobs::hqc::hqc_accept( d );
+	kvalobs::kvControlInfo ctr = d.controlinfo();
+	ctr.set(6,0);
+	d.controlinfo(ctr);
         out.insert( d );
       }
     }
