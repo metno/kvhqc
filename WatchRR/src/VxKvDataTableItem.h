@@ -97,7 +97,8 @@ namespace WatchRR
 
     enum { Low=0xB0, Mid=0xB9, High=0xB2 } degree; // alt: Low=0xBA
 
-    static const std::string VxExplFile;
+    static const QString VxExplFile;
+    //    static const std::string VxExplFile;
 
     static const char *VxSExpl[ 3 ];
 
