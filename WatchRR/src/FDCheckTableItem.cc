@@ -95,7 +95,8 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
     miutil::miString cf = d.cfailed();
     if ( not cf.empty() )
       cf += ",";
-    cf += "Manuelt skjønn";
+    //    cf += "Manuelt skjønn";
+    cf += "Manual judgment";
     d.cfailed(cf);
     //    kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
   	
