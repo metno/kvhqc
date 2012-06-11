@@ -319,7 +319,9 @@ namespace Weather
     std::string cfailed = kvDat.cfailed();
     float uplim = highMap[kvDat.paramID()];
     float downlim = lowMap[kvDat.paramID()];
-    if ( (newCorr > uplim || newCorr < downlim) && newCorr != -32766 ) {
+    if ( (newCorr > uplim || newCorr < downlim)
+	 && newCorr != -32766
+	 && newCorr != -32767 ) {
       QMessageBox::information( this,
 				"Ulovlig verdi",
 				"Verdien er utenfor fysikalske grenser",
@@ -331,20 +333,22 @@ namespace Weather
 	tit->setText(oldCorrStr);
       return;
     }
+    cif.set(15,1);
     if ( fabs(newCorr - org ) < epsilon ) {
-      //      if ( cif.flag(4) >= 1 ) {
+      if ( cif.flag(4) >= 1 ) {
 	cif.set(15,1);
-	cif.set(4,1);
-	cif.set(6,0);
-	//      }
+	//	cif.set(4,1);
+	//	cif.set(6,0);
+      }
       if ( cif.flag(6) == 0 ) {
 	cif.set(15,1);
 	if ( cif.flag(12) == 3 )
 	  cif.set(12,1);
       }
       else if ( cif.flag(6) == 1 ) {
-	cif.set(15,0);
+	cif.set(15,4);
 	cif.set(6,3);
+	//	cif.set(4,1);
       }
       else if ( cif.flag(6) == 2 ) {
 	cif.set(15,1);
@@ -359,7 +363,7 @@ namespace Weather
       if ( misfl == 0 || misfl == 1 )
 	cif.set(6,misfl + 2);
     }
-    else if ( cif.flag(6) == 1 || cif.flag(6) == 3 ) {
+    else if ( cif.flag(6) == 1 || cif.flag(6) == 3 && newCorr > -32766 ) {
       cif.set(6,1);
       cif.set(15,5);
     }
