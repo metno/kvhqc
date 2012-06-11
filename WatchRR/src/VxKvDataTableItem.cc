@@ -43,8 +43,8 @@ namespace WatchRR
 {
   QStringList VxKvDataTableItem::selections;
 
-  const string VxKvDataTableItem::VxExplFile =
-    string(getenv("HQCDIR")) + "/etc/kvhqc/VxExplanations.txt";
+  const QString VxKvDataTableItem::VxExplFile =
+    QString(getenv("HQCDIR")) + "/etc/kvhqc/VxExplanations.txt";
   //    string(getenv("HQCDIR")) + "/WatchRR/var/VxExplanations.txt";
 
   const char *VxKvDataTableItem::VxSExpl[ 3 ] =
@@ -62,7 +62,8 @@ namespace WatchRR
     {
       selections.append("");
 
-      ifstream fs( VxExplFile.c_str() );
+      //      ifstream fs( VxExplFile.c_str() );
+      ifstream fs( VxExplFile.toStdString().c_str() );
 
       VxParam param;
       while ( fs >> param )
@@ -130,7 +131,8 @@ namespace WatchRR
       return QString( "Forstår ikke verdien i dette feltet" );
 
     if ( not has_valid_parameter_list() )
-      return QString("Feil! Finner ikke ") + QString::fromStdString(VxExplFile) + "!";
+      //      return QString("Feil! Finner ikke ") + QString::fromStdString(VxExplFile) + "!";
+      return QString("Feil! Finner ikke ") + VxExplFile + "!";
 
     QString ret = "Ingen data";
 
