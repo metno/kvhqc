@@ -333,7 +333,7 @@ namespace Weather
 	tit->setText(oldCorrStr);
       return;
     }
-    cif.set(15,1);
+    //    cif.set(15,1);
     if ( fabs(newCorr - org ) < epsilon ) {
       if ( cif.flag(4) >= 1 ) {
 	cif.set(15,1);
@@ -357,6 +357,9 @@ namespace Weather
 	  cif.set(12,1);
       }
     }
+    else
+      cif.set(15,7);
+
     if ( newCorr == -32766.0 ) {
       cif.set(15,10);
       const int misfl = cif.flag(6);
