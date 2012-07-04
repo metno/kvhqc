@@ -1659,7 +1659,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
   QString parameter;
   int stationIndex;
   int parameterIndex;
-  bool result = actsdlg->getResults(parameter,stime,etime,stationIndex);
+  bool maybeQC2;
+  bool result = actsdlg->getResults(parameter,stime,etime,stationIndex, maybeQC2);
   if ( !result ) return;
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
@@ -1702,7 +1703,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
   if ( res == QDialog::Accepted )
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
-    dataModel->setAcceptedData(index, newCorr[irow-firstRow]);
+    dataModel->setAcceptedData(index, newCorr[irow-firstRow], maybeQC2);
   }
   return;
 }
@@ -2190,6 +2191,13 @@ bool HqcMainWindow::readFromStInfoSys() {
       }
       
       outf << setw(7) << right << it->stnr << " " 
+	   << setw(31) << left << (it->county).toStdString() 
+	   << setw(25) << (it->municip).toStdString() 
+	   << setw(3) << (it->web).toStdString() 
+	   << setw(4) << (it->pri).toStdString() 
+	   << setw(1) << (it->ki).toStdString()
+	   <<  endl;
+      cout << setw(7) << right << it->stnr << " " 
 	   << setw(31) << left << (it->county).toStdString() 
 	   << setw(25) << (it->municip).toStdString() 
 	   << setw(3) << (it->web).toStdString() 
@@ -3130,6 +3138,14 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
   }
   if ( abs(tpId) > 503 ) {
     switch (par) {
+    case 105:
+      for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
+	if ( obit->stationID() == pos && obit->paramID() == 105 && obit->fromtime() < oTime) {
+	  tpId = -obit->typeID();
+	  break;
+	}
+      }
+      break;
     case 106:
       for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
 	if ( obit->stationID() == pos && obit->paramID() == 105 && obit->fromtime() < oTime) {
