@@ -32,7 +32,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvDataOperations.h>
 #include <algorithm>
 
-
 using namespace kvservice;
 using namespace kvalobs;
 
@@ -80,8 +79,9 @@ namespace internal_
       tci.set(15,1);
       ui.setUseFlags( tci );
     }
-    else
+    else {
       ui.setUseFlags( ci );
+    }
     d.useinfo( ui );
   }
 }
