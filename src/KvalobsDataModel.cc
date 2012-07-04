@@ -195,7 +195,7 @@ namespace model
     return ret;
   }
 
-
+  
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
   {
     if ( not index.isValid() or index.row() >= kvalobsData_->size() )
@@ -262,7 +262,10 @@ namespace model
 	  QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
 	  emit dataChanged(flagIndex, index);
 	  emit dataModification(changeData);
-	  qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val << "," << d.typeId(p.paramid);
+	  qDebug() << "SetData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
+		   << qPrintable(p.parameterName) << " from " << oldValue 
+		   << " to " << val << "," << d.typeId(p.paramid);
+	  cerr << changeData.useinfo() << endl;
 	  return true;
 	}
 	catch ( InvalidIndex & ) {
@@ -272,10 +275,9 @@ namespace model
     }
     return false;
   }
-
-  bool KvalobsDataModel::setAcceptedData(const QModelIndex & index, const QVariant & value, int role)
+  
+  bool KvalobsDataModel::setAcceptedData(const QModelIndex & index, const QVariant & value, bool maybeQC2, int role)
   {
-    cerr << "KNUT tester accepteddata " << value.toDouble() << endl;
     if ( not index.isValid() or index.row() >= kvalobsData_->size() )
       return false;
 
@@ -286,7 +288,6 @@ namespace model
           // Invalid input (should never happen, except when user entered empty string)
           bool ok;
           double val = value.toDouble(& ok);
-	  cerr << "KNUT tester accepteddata 2 " << val << " " << ok << endl;
           if ( not ok ) {
               if ( value.toString().isEmpty() )
                 val = -32766;
@@ -300,7 +301,6 @@ namespace model
 
             // Insignificant change. Ignored.
             double oldValue = d.corr(p.paramid);
-	    cerr << "KNUT tester accepteddata 3 " << val << " " << oldValue << endl;
             if ( std::fabs(oldValue - val) < 0.005 or oldValue == -32767 )
               return false;
 
@@ -313,26 +313,37 @@ namespace model
 	    }
             kvalobs::kvData changeData = getKvData_(index);
 	    ctr.set(6,0);
-	    //	    ctr.set(13,0); //TEST
-	    changeData.controlinfo(ctr);
-	    kvalobs::hqc::hqc_accept(changeData);
+	    if ( val == -32767 ) {
+	      if ( maybeQC2 )
+		ctr.set(15,4);
+	      else
+		ctr.set(15,3);
+	      ctr.set(6,3);
+       	      changeData.controlinfo(ctr);
+	    }
+	    else {
+	      changeData.controlinfo(ctr);
+	      kvalobs::hqc::hqc_accept(changeData);
+	    }
             std::string cfailed = changeData.cfailed();
             if ( not cfailed.empty() )
               cfailed += ",";
             cfailed += "hqc";
             changeData.cfailed(cfailed);
-	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
 	    changeData.corrected(val);
-	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
             // Update stored data
             d.set_corr(p.paramid, val);
             d.set_controlinfo(p.paramid, changeData.controlinfo());
+	    cerr << "KNUT TESTER KvalobsDataModel::d.set_useinfo " << changeData.useinfo() << endl;
             d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             emit dataChanged(flagIndex, index);
             emit dataModification(changeData);
-            qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val;
+            qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter " 
+		     << qPrintable(p.parameterName) << " from " 
+		     << oldValue << " to " << val;
+	    cerr << changeData.useinfo() << endl;
             return true;
           }
           catch ( InvalidIndex & ) {
@@ -388,7 +399,6 @@ namespace model
               cfailed += ",";
             cfailed += "hqc";
             changeData.cfailed(cfailed);
-	    cerr << "Knut tester changedata " << changeData.corrected() << " " << val << endl;
 
             // Update stored data
             d.set_corr(p.paramid, val);
