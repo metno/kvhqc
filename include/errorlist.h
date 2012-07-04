@@ -302,7 +302,6 @@ protected:
 
 
 private:
-  bool hqcOk;
   /*!
    * \brief 
    */
