@@ -1195,7 +1195,8 @@ QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oi
     env = "AV";
   else if ( findInTypes(oit, 412) )
     env = "VK"; 
-  else if ( findInTypes(oit, 503) )
+  //  else if ( findInTypes(oit, 503) )
+  else if ( findInTypes(oit, 502) || findInTypes(oit, 503) || findInTypes(oit, 504) || findInTypes(oit, 505) || findInTypes(oit, 506) || findInTypes(oit, 514) )
     env = "X"; 
   return env;
 }
