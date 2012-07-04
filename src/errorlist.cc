@@ -258,23 +258,18 @@ ErrorList::ErrorList(QStringList& selPar,
 
       //Priority filters for controls and parameters
       QString flTyp = "";
-	cerr << "KNUT TESTER 1 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       int flg = errorFilter(noSelPar[j],
 			    memObs.controlinfo,
 			    memObs.cfailed,
 			    flTyp);
-
-	cerr << "KNUT TESTER 2 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( obsInMissList(memObs) ) {
 	missList.push_back(memObs);
 	//	if ( ml == 0 )
 	ml++;
 	continue;
       }
-	cerr << "KNUT TESTER 3 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( flg <= 1 && flg > -3)
 	continue;
-	cerr << "KNUT TESTER 4 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
       if ( flg == -3) {
 	QString qStrCtrInfo = QString::fromStdString(memObs.controlinfo);
 	flg = qStrCtrInfo.mid(6,1).toInt(0,16);
@@ -283,9 +278,6 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
       if ( lity == erLi || lity == alLi ) {
-	cerr << "KNUT TESTER 5 : " << memObs.obstime << " " << memObs.parNo << " " << memObs.orig << " " << memObs.corr << " " << memObs.controlinfo << endl;	
-	if ( flg == 6 && flTyp == "fnum" )
-	  cerr << "KNUT TESTER fnum : " << flg << endl;
 	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
 	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
 	    ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
@@ -849,7 +841,6 @@ void ErrorList::tableCellClicked(int row,
     selectRow(row);
   }
     selectedRow = row;
-    cerr << "KNUT TESTER tablecellclicked " << selectedRow << endl;
 }
 
 double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
@@ -1046,31 +1037,13 @@ void ErrorList::markModified( int row, int col )
     break;
   case 15:
     {
-      /*      
-      if ( fnum == 6 ) {
-	int dsc = QMessageBox::information( this,
-					    "Original mangler",
-					    "Velg hqcflag lik 0(QC1 kan da kontrollere observasjonen på ny)\neller 1(QC1 vil da ikke kontrollere observasjonen igjen).\n",
-					    "0",
-					    "1" );
-	if ( dsc == 1 ) {
-	  hqcOk = true;
-	  cerr << "fhqc settes til 1" << endl;
-	}
-	else if ( dsc == 0 ) {
-	  hqcOk = false;
-	  cerr << "fhqc settes til 0" << endl;
-	}
-      }
-      else if ( fmis == 1 ) {
-      */
       if ( fmis == 1 ) {
 	int dsc = QMessageBox::information( this,
 					    "Original mangler",
 					    "Ønsker du å sette inn -32767 som korrigert verdi?\n",
 					    "Ja",
 					    "Nei" );
-	if ( dsc == 1 ) {
+	if ( dsc == 1 ) { // Nei
 	  QMessageBox::information( this,
 				    "Feil kolonne",
 				    "Benytt feltet Interpolert hvis du ønsker ny interpolert verdi,\neller Korrigert OK hvis du ønsker å godkjenne eksisterende verdi",
@@ -1271,7 +1244,6 @@ void ErrorList::execMissingList()
 //void ErrorList::setupMissingList( int row, int col )
 void ErrorList::setupMissingList()
 {
-  cerr << "KNUT TESTER SETUPMISSINGLIST " << selectedRow << endl;
   const struct mem *m = getMem( selectedRow );
   if ( m and m->controlinfo[4] == '6' ) {
     execMissingList();
@@ -1368,7 +1340,6 @@ void ErrorList::saveChanges()
 
     int fmis = cif.flag(6);
     int fd = cif.flag(12);
-    cerr << "KNUT tester ccol = " << ccol << endl;
     switch ( ccol ) {
     case 14:
       {
@@ -1389,9 +1360,8 @@ void ErrorList::saveChanges()
       break;
     case 15:
       {
-	cerr << "KNUT tester cif.flag(4) = " << cif.flag(4) << endl;
 	if ( cif.flag(4) > 1 ) {
-	  cif.set(15,1);
+	  cif.set(15,4);
 	}
 	if ( fmis == 0 ) {
 	  cif.set(15,1);
@@ -1400,10 +1370,7 @@ void ErrorList::saveChanges()
 	    cif.set(12,1);
 	}
 	else if ( fmis == 1 ) {
-	  if ( hqcOk )
-	    cif.set(15,1);
-	  else
-	    cif.set(15,0);
+	  cif.set(15,4);
 	  cif.set(6,3);
 	  kd.corrected(kd.original());
 	}
