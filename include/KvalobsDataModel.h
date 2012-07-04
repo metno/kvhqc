@@ -72,7 +72,7 @@ namespace model
 
     bool setData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
     bool setDiscardedData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
-    bool setAcceptedData(const QModelIndex &index, const QVariant & value, int role = Qt::EditRole);
+    bool setAcceptedData(const QModelIndex &index, const QVariant & value, bool maybeQC2, int role = Qt::EditRole);
 
     enum ColumnType
     {
