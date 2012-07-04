@@ -77,7 +77,7 @@ void StationInfoToolTip::maybeTip ( const QPoint &p )
   bool ok = true;
   QString tipString = 
     StationInfo::getInstance(KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
-  if ( !ok ) {// Cold not convert cell contents to int.
+  if ( !ok ) {// Could not convert cell contents to int.
     return;
   }
 
@@ -86,7 +86,7 @@ void StationInfoToolTip::maybeTip ( const QPoint &p )
     return;
   ok = true;
   tipString += " - " + TypeInfo::getInstance(KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
-  if ( !ok ) { // Cold not convert cell contents to int.
+  if ( !ok ) { // Could not convert cell contents to int.
     return;
   }
 
