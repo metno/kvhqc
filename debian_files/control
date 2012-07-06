@@ -11,13 +11,14 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
 Depends: coserver4, ${shlibs:Depends}, ${misc:Depends}
+Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs
 
-# Package: kvhqc-@METNO_VERSION@-dbg
-# Architecture: any
-# Section: debug
-# Priority: extra
-# Depends: kvhqc-@METNO_VERSION@ (= ${binary:Version}), ${misc:Depends}
-# Description: debugging symbols for kvhqc-@METNO-VERSION@
-#  This package contains the debugging symbols for kvhqc-@METNO-VERSION@.
+Package: kvhqc-@METNO_VERSION@-dbg
+Architecture: any
+Section: debug
+Priority: extra
+Depends: kvhqc-@METNO_VERSION@ (= ${binary:Version}), ${misc:Depends}
+Description: debugging symbols for kvhqc-@METNO_VERSION@
+ This package contains the debugging symbols for kvhqc-@METNO_VERSION@.
