@@ -1,0 +1,35 @@
+// -*- c++ -*-
+/* config.h.in. */
+
+#ifndef KVHQC_CONFIG_H
+#define KVHQC_CONFIG_H 1
+
+/* full name of this package. */
+#define PACKAGE "@PROJECT_NAME@"
+
+/* package prefix */
+#define PREFIX "@CMAKE_INSTALL_PREFIX@"
+#define SYSCONFDIR "@SYSCONFDIR@"
+
+/* program version "major.minor-suffix" (suffix only if specified) */
+#define PVERSION "@PVERSION@"
+
+/* program major version */
+#define PVERSION_MAJOR @PVERSION_MAJOR@
+
+/* program minor version */
+#define PVERSION_MINOR @PVERSION_MINOR@
+
+/* program patch level */
+#define PVERSION_PATCH @PVERSION_PATCH@
+
+/* program version "major.minor" */
+#define PVERSION_MAJOR_DOT_MINOR "@PVERSION_MAJOR_DOT_MINOR@"
+
+/* program version number 1000*major+minor */
+#define PVERSION_NUMBER_MAJOR_MINOR @PVERSION_NUMBER_MAJOR_MINOR@
+
+/* program version number 1000000*major+1000*minor+patch */
+#define PVERSION_NUMBER_MAJOR_MINOR_PATCH @PVERSION_NUMBER_MAJOR_MINOR_PATCH@
+
+#endif /* KVHQC_CONFIG_H */

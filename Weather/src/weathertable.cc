@@ -46,6 +46,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Q3TextStream>
 #include <boost/assign/std/vector.hpp>
 
+#include "hqc_paths.hh"
+
 //#define NDEBUG
 #include <cassert>
 
@@ -464,14 +466,9 @@ namespace Weather
   }
 
   void WeatherTable::readLimits() {
-    QString path = QString(getenv("HQCDIR"));
-    if ( path.isEmpty() ) {
-      cerr << "Intet environment" << endl;
-      exit(1);
-    }
     int par, dum;
     float low, high;
-    QString limitsFile = path + "/etc/kvhqc/slimits";
+    QString limitsFile = ::hqc::getPath(::hqc::CONFDIR ) + "/slimits";
     QFile limits(limitsFile);
     if ( !limits.open(QIODevice::ReadOnly) ) {
       cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;

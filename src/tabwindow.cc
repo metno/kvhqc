@@ -247,14 +247,9 @@ void MDITabWindow::readLimits() {
 
   // only needed by data list
 
-  QString path = QString(getenv("HQCDIR"));
-  if ( path.isEmpty() ) {
-    cerr << "Intet environment" << endl;
-    exit(1);
-  }
   int par, dum;
   float low, high;
-  QString limitsFile = path + "/etc/kvhqc/slimits";
+  QString limitsFile = hqc::getPath(::hqc::CONFDIR) + "/slimits";
   QFile limits(limitsFile);
   if ( !limits.open(QIODevice::ReadOnly) ) {
     cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;

@@ -1,0 +1,5 @@
+kvhqc (2.8.9~rc1-1) unstable; urgency=low
+
+  * initial debian package
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 04 Jul 2012 13:38:22 +0200

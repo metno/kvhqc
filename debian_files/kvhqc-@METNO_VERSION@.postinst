@@ -1,0 +1,11 @@
+#!/bin/sh
+
+set -e
+
+MASTER=hqc
+for s in hqcdiana histhqcdiana testhqcdiana WatchRR histWatchRR WatchWeather histWatchWeather; do
+    SLAVES="$SLAVES --slave /usr/bin/$s $s /usr/bin/$s-@METNO_VERSION@"
+done
+
+exec update-alternatives --install "/usr/bin/$MASTER" "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@" @PVERSION_NUMBER_MAJOR_MINOR@ \
+    $SLAVES

@@ -34,7 +34,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 #include <qmessagebox.h>
 #include <puTools/miString.h>
+#include <QDebug>
 
+#include "hqc_paths.hh"
 #include "MultiStationSelection.h"
 
 using namespace std;
@@ -48,30 +50,37 @@ namespace WatchRR {
 
 using WatchRR::reinserter;
 
-int main( int argc, char ** argv )
+int main( int argc, char* argv[] )
 {
-  const char * kvdir = getenv( "KVALOBS" );
-  const char * hist = getenv( "HIST" );
-    std::string shist = hist ? std::string(hist) : "0";
-  std::string myconf;
-  if ( shist == "1" )
-    myconf = std::string( kvdir ) + "/etc/kvhqc/kvhist.conf";
-  else if ( shist == "2" )
-    myconf = std::string( kvdir ) + "/etc/kvhqc/kvtest.conf";
-  else if ( shist == "4" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvnew.conf";
-  else
-    myconf = std::string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
+  QApplication a( argc, argv, true );
+  QStringList args = a.arguments();
+  bool haveUnknownOptions = false;
+  QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
+  for (int i = 1; i < args.size(); ++i) {
+      if( args.at(i) == "--config" ) {
+          if( i+1 >= args.size() ) {
+              qDebug() << "invalid --config without filename";
+              exit(1);
+          }
+          i += 1;
+          myconf = args.at(i);
+          qDebug() << "--config '" << myconf << "'";
+      } else {
+          haveUnknownOptions = true;
+          qDebug() << "Unknown option: " << args.at(i);
+      }
+  }
+  if( haveUnknownOptions ) {
+      qDebug() << "have unknown options, stop";
+      exit(1);
+  }
 
-  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
+  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf.toStdString());
   if(!confSec) {
-    std::clog << "Can't open configuration file: " << myconf << std::endl;
+    std::clog << "Can't open configuration file: " << myconf.toStdString() << std::endl;
     return 1;
   }
   KvApp kvapp(argc, argv, confSec);
-
-  QApplication a( argc, argv, true );
-
 
   QString userName;
   reinserter = Authentication::identifyUser( KvApp::kvApp,

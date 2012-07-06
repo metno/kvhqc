@@ -34,36 +34,43 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include <iostream>
 #include <list>
+#include "hqc_paths.hh"
 
 using namespace std;
 
 using kvservice::corba::CorbaKvApp;
 
 
-int main( int argc, char ** argv ) {
+int main( int argc, char* argv[] )
+{
   QApplication a( argc, argv, true );
-  const char * kvdir = getenv( "KVALOBS" );
-  if ( ! kvdir )
-    kvdir = "/usr/local";
-  const char * hist = getenv( "HIST" );
-    string shist = hist ? string(hist) : "0";
-  string myconf;
-  if ( shist == "1" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvhist.conf";
-  else if ( shist == "2" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvtest.conf";
-  else if ( shist == "3" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvplutest.conf";
-  else if ( shist == "4" )
-    myconf = string( kvdir ) + "/etc/kvhqc/kvnew.conf";
-  else
-    myconf = string( kvdir ) + "/etc/kvhqc/kvalobs.conf";
 
-	cout << "Reading " << myconf << endl;
+  QStringList args = a.arguments();
 
-  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
+  bool haveUnknownOptions = false;
+  QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
+  for (int i = 1; i < args.size(); ++i) {
+      if( args.at(i) == "--config" ) {
+          if( i+1 >= args.size() ) {
+              qDebug() << "invalid --config without filename";
+              exit(1);
+          }
+          i += 1;
+          myconf = args.at(i);
+          qDebug() << "--config '" << myconf << "'";
+      } else {
+          haveUnknownOptions = true;
+          qDebug() << "Unknown option: " << args.at(i);
+      }
+  }
+  if( haveUnknownOptions ) {
+      qDebug() << "have unknown options, stop";
+      exit(1);
+  }
+
+  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
   if(!confSec) {
-    clog << "Can't open configuration file: " << myconf << endl;
+    clog << "Can't open configuration file: " << myconf.toStdString() << endl;
     return 1;
   }
   CorbaKvApp kvapp(argc, argv, confSec);
@@ -83,7 +90,7 @@ int main( int argc, char ** argv ) {
   QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
   QString caption = "HQC " + captionSuffix;
   mw->setCaption( caption );
-  mw->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  mw->setIcon( QPixmap( hqc::getPath(hqc::IMAGEDIR) + "/hqc.png") );
   //  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
 

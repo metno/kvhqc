@@ -54,6 +54,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationInformation.h"
 #include "TypeInformation.h"
 #include <kvcpp/KvApp.h>
+#include "hqc_paths.hh"
+
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
 typedef TypeInformation<kvservice::KvApp>    TypeInfo;
@@ -608,7 +610,7 @@ ErrorList::ErrorList(QStringList& selPar,
   setColumnStretchable( 20, true );
   showSameStation();
 
-  setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  setIcon( QPixmap( hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
   setCaption("Feilliste");
 }
 
@@ -1503,14 +1505,9 @@ void ErrorList::saveChanges()
 }
 
 void ErrorList::readLimits() {
-  QString path = QString(getenv("HQCDIR"));
-  if ( path.isEmpty() ) {
-    cerr << "Intet environment" << endl;
-    exit(1);
-  }
   int par, dum;
   float low, high;
-  QString limitsFile = path + "/etc/kvhqc/slimits";
+  QString limitsFile = hqc::getPath(::hqc::CONFDIR) + "/slimits";
   QFile limits(limitsFile);
   if ( !limits.open(QIODevice::ReadOnly) ) {
     cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;

@@ -1,9 +1,0 @@
-#!/bin/bash
-
-export HQCDIR=/usr/local
-export KVALOBS=$HQCDIR
-export KVDIR=/usr/lib
-
-export HIST=1
-
-$HQCDIR/bin/WatchRR.bin

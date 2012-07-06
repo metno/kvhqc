@@ -81,6 +81,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui>
 #include <QList>
 
+#include "hqc_paths.hh"
+
 using namespace std;
 
 namespace {
@@ -179,12 +181,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   // ---- ACTIONS -----------------------------------------------
 
-  QPixmap icon_listdlg("/usr/local/etc/kvhqc/table.png");
+  QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
   QAction * dataListAction = new QAction(icon_listdlg, tr("&Dataliste"), this);
   dataListAction->setShortcut(Qt::CTRL+Qt::Key_D);
   connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
 
-  QPixmap icon_ts("/usr/local/etc/kvhqc/kmplot.png");
+  QPixmap icon_ts( ::hqc::getPath(::hqc::IMAGEDIR) + "/kmplot.png");
   QAction * timeSeriesAction = new QAction(icon_ts, tr("&Tidsserie"), this);
   connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
 
@@ -365,18 +367,19 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   readFromParam();
 
   // --- DEFINE DIALOGS --------------------------------------------
+  const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
   lstdlg = new ListDialog(this);
-  lstdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  lstdlg->setIcon( QPixmap(hqc_icon_path) );
   clkdlg = new ClockDialog(this);
-  clkdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  clkdlg->setIcon( QPixmap(hqc_icon_path) );
   pardlg = new ParameterDialog(this);
-  pardlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  pardlg->setIcon( QPixmap(hqc_icon_path) );
   dshdlg = new DianaShowDialog(this);
-  dshdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  dshdlg->setIcon( QPixmap(hqc_icon_path) );
   txtdlg = new TextDataDialog(stnrList, this);
-  txtdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+  txtdlg->setIcon( QPixmap(hqc_icon_path) );
   rejdlg = new RejectDialog(this);
-  rejdlg->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") ); 
+  rejdlg->setIcon( QPixmap(hqc_icon_path) ); 
   actsdlg = new AcceptTimeseriesDialog();
   actsdlg->hide();
   rjtsdlg = new RejectTimeseriesDialog();
@@ -1119,7 +1122,8 @@ void HqcMainWindow::ListOK() {
 
       ws->addSubWindow(tableView);
 
-      tableView->setIcon( QPixmap("/usr/local/etc/kvhqc/hqc.png") );
+      const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
+      tableView->setIcon( QPixmap(hqc_icon_path) );
       tableView->setCaption("Dataliste");
   }
 
@@ -2332,13 +2336,7 @@ void HqcMainWindow::readFromParam() {
 
   // First, read parameter order from file
 
-  QString path = QString(getenv("HQCDIR"));
-  if ( path.isEmpty() ) {
-    cerr << "Intet environment" << endl;
-    exit(1);
-  }
-  
-  QString orderFile = path + "/etc/kvhqc/paramorder";
+  QString orderFile = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
   QFile paramOrder(orderFile);
   
   paramOrder.open(QIODevice::ReadOnly);
@@ -2470,17 +2468,14 @@ void HqcMainWindow::closeWindow()
 
 
 void HqcMainWindow::helpUse() {  
-  QString path = QString(getenv("HQCDIR"));
   system("firefox https://dokit.met.no/klima/tools/qc/hqc-help &");
 }
 
 void HqcMainWindow::helpFlag() {  
-  QString path = QString(getenv("HQCDIR"));
   system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg &");
 }
 
 void HqcMainWindow::helpParam() {
-  QString path = QString(getenv("HQCDIR"));
   system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-parametre_sortert_alfabetisk_etter_kode &");
 }
 

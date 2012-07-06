@@ -30,6 +30,7 @@
 #include <KvalobsDataDelegate.h>
 #include <KvalobsDataModel.h>
 #include <hqcmain.h>
+#include "hqc_paths.hh"
 #include <QDoubleValidator>
 #include <QLineEdit>
 #include <QMessageBox>
@@ -228,12 +229,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
 
   void KvalobsDataDelegate::setup_()
   {
-    QString path = QString(getenv("HQCDIR"));
-    if ( path.isEmpty() ) {
-      cerr << "Intet environment" << endl;
-      return;
-    }
-    QString limitsFile = path + "/etc/kvhqc/slimits";
+    QString limitsFile = hqc::getPath(::hqc::CONFDIR) + "/slimits";
     QFile limits(limitsFile);
     if ( !limits.open(QIODevice::ReadOnly) ) {
       qDebug() << "kan ikke åpne " << qPrintable(limitsFile);

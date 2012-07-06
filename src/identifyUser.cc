@@ -64,8 +64,7 @@ namespace Authentication {
     // Get list of operators from database, and find our operator:
     opList operators;
 
-    cerr << (unsigned int) app << endl;
-
+    cerr << "KvApp is " << (app ? "not null" : "null") << endl;
 
     app->getKvOperator(operators);  // FEIL SKJER HER!
     for (opIter it = operators.begin(); it != operators.end(); it++) {

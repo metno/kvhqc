@@ -1,0 +1,23 @@
+Source: kvhqc
+Section: science
+Priority: extra
+Maintainer: Knut Johansen <knut.johansen@met.no>
+Build-Depends: debhelper (>= 7.0.50), g++, metno-devscripts, libqt4-dev,
+ libgfortran3, libkvcpp2-dev, metlibs-dev (>= 4.5.0)
+Standards-Version: 3.8.4
+Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
+Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
+
+Package: kvhqc-@METNO_VERSION@
+Architecture: any
+Depends: coserver4, ${shlibs:Depends}, ${misc:Depends}
+Description: manual quality control for kvalobs
+ kvhqc is a the manual quality assurance interface for kvalobs
+
+# Package: kvhqc-@METNO_VERSION@-dbg
+# Architecture: any
+# Section: debug
+# Priority: extra
+# Depends: kvhqc-@METNO_VERSION@ (= ${binary:Version}), ${misc:Depends}
+# Description: debugging symbols for kvhqc-@METNO-VERSION@
+#  This package contains the debugging symbols for kvhqc-@METNO-VERSION@.

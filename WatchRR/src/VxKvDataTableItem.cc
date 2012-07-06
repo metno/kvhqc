@@ -29,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "VxKvDataTableItem.h"
+#include "hqc_paths.hh"
 #include <fstream>
 #include <sstream>
 
@@ -44,8 +45,7 @@ namespace WatchRR
   QStringList VxKvDataTableItem::selections;
 
   const QString VxKvDataTableItem::VxExplFile =
-    QString(getenv("HQCDIR")) + "/etc/kvhqc/VxExplanations.txt";
-  //    string(getenv("HQCDIR")) + "/WatchRR/var/VxExplanations.txt";
+      ::hqc::getPath(::hqc::CONFDIR) + "/VxExplanations.txt";
 
   const char *VxKvDataTableItem::VxSExpl[ 3 ] =
     {

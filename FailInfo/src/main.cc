@@ -34,10 +34,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 
 //#include <kvservice/qt/kvQtApp.h>
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 #include <kvalobs/kvData.h>
-#include <kvDataFlag.h>
+#include <kvalobs/kvDataFlag.h>
 #include <decodeutility/kvDataFormatter.h>
+
+#include "hqc_paths.hh"
  
 using namespace std;
 using namespace FailInfo;
@@ -48,17 +50,28 @@ using namespace decodeutility;
 
 int main( int argc, char ** argv ) {
 
-  //  string myconf = "/home/knutj/kvhqc/etc/kvhist.conf";
-  //  cerr << "QWERT : " << myconf << endl;
+  bool haveUnknownOptions = false;
+  QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
+  for (int i = 1; i < args.size(); ++i) {
+      if( args.at(i) == "--config" ) {
+          if( i+1 >= args.size() ) {
+              qDebug() << "invalid --config without filename";
+              exit(1);
+          }
+          i += 1;
+          myconf = args.at(i);
+          qDebug() << "--config '" << myconf << "'";
+      } else {
+          haveUnknownOptions = true;
+          qDebug() << "Unknown option: " << args.at(i);
+      }
+  }
+  if( haveUnknownOptions ) {
+      qDebug() << "have unknown options, stop";
+      exit(1);
+  }
 
-  //  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf);
-  //  if(!confSec) {
-    const char * kvdir = getenv( "KVALOBS" );
-    if ( kvdir ) {
-      myconf = string( kvdir ) + "/etc/kvalobs.conf";
-      confSec = KvApp::readConf(myconf);
-    }
-    //  }
+  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf.toStdString());
   if(!confSec) {
     clog << "Can't open configuration file: " << myconf << endl;
     return 1;

@@ -41,6 +41,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvQCFlagTypes.h>
 #include <puTools/miString.h>
 
+#include "hqc_paths.hh"
+
 using namespace std;
 using namespace kvalobs;
 using namespace miutil;
@@ -154,9 +156,7 @@ namespace QC
       static ExplMap explMap;
 
       if ( explMap.empty() ) {
-	QString path = QString(getenv("HQCDIR"));
-	QString filename = path + "/etc/kvhqc/faildetail.txt";
-	//	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
+	QString filename = hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );
@@ -325,9 +325,7 @@ namespace QC
       static ExplMap explMap;
       
       if ( explMap.empty() ) {
-	QString path = QString(getenv("HQCDIR"));
-	QString filename = path + "/etc/kvhqc/faildetail.txt";
-	//	QString filename = path + "/FailInfo/var/qc1/faildetail.txt";
+	QString filename = hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );

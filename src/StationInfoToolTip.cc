@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationInfoToolTip.h"
 #include "StationInformation.h"
 #include "TypeInformation.h"
-#include <KvApp.h>
+#include <kvcpp/KvApp.h>
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
 typedef TypeInformation<kvservice::KvApp>    TypeInfo;

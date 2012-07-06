@@ -1,0 +1,5 @@
+#!/bin/bash
+
+test -z "$HQC_CONFDIR" && export HQC_CONFDIR=/etc/kvhqc/@PVERSION@
+
+exec WatchWeather-@PVERSION@ --config "${HQC_CONFDIR}/kvhist.conf"

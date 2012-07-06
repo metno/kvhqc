@@ -54,7 +54,7 @@ public:
   virtual ~StationInfoToolTip( );
 
 protected:
-  //  void maybeTip( const QPoint &p );
+  void maybeTip( const QPoint &p );
   void mouseMoveEvent(QMouseEvent *event);
 
 private:
