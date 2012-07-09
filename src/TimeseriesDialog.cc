@@ -247,7 +247,7 @@ void TimeseriesDialog::setFromTimeSlot(const QDateTime& dt)
   int mo = atoi(strdt.mid(4,2).toStdString().c_str());
   int dy = atoi(strdt.mid(6,2).toStdString().c_str());
   int ho = atoi(strdt.mid(8,2).toStdString().c_str());
-  int mi = atoi(strdt.mid(10,2).toStdString().c_str());
+  // UNUSED int mi = atoi(strdt.mid(10,2).toStdString().c_str());
   miutil::miTime t(yr,mo,dy,ho);
   //
   from->setMin(t);
@@ -263,7 +263,7 @@ void TimeseriesDialog::setToTimeSlot(const QDateTime& dt)
   int mo = atoi(strdt.mid(4,2).toStdString().c_str());
   int dy = atoi(strdt.mid(6,2).toStdString().c_str());
   int ho = atoi(strdt.mid(8,2).toStdString().c_str());
-  int mi = atoi(strdt.mid(10,2).toStdString().c_str());
+  // UNUSED int mi = atoi(strdt.mid(10,2).toStdString().c_str());
   miutil::miTime t(yr,mo,dy,ho);
   //
   to->setMax(t);
@@ -285,7 +285,7 @@ void TimeseriesDialog::deleteAllSlot( )
   tsinfo.push_back(ts);
 }
 
-void TimeseriesDialog::linecolourSlot( int i){
+void TimeseriesDialog::linecolourSlot(int){
   if(freeze) return;
   int item =resultListbox->currentItem();
   if(item>-1 ){
@@ -295,7 +295,7 @@ void TimeseriesDialog::linecolourSlot( int i){
   }
 }
 
-void TimeseriesDialog::lineSlot(int i ){
+void TimeseriesDialog::lineSlot(int){
   if(freeze) return;
 
   int item =resultListbox->currentItem();
@@ -307,7 +307,7 @@ void TimeseriesDialog::lineSlot(int i ){
 
 }
 
-void TimeseriesDialog::linewidthSlot(int i ){
+void TimeseriesDialog::linewidthSlot(int){
   if(freeze) return;
 
   int item =resultListbox->currentItem();
@@ -318,7 +318,7 @@ void TimeseriesDialog::linewidthSlot(int i ){
   }
 }
 
-void TimeseriesDialog::markerSlot( int i){
+void TimeseriesDialog::markerSlot(int){
   if(freeze) return;
   int item =resultListbox->currentItem();
   if(item>-1 ){
@@ -327,7 +327,7 @@ void TimeseriesDialog::markerSlot( int i){
     tsinfo[0].marker=markers[markerBox->currentItem()];
   }
 }
-void TimeseriesDialog::fillcolourSlot( int i){
+void TimeseriesDialog::fillcolourSlot(int){
   if(freeze) return;
   int item =resultListbox->currentItem();
   if(item>-1 ){
@@ -384,7 +384,7 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
 }
 
 
-void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
+void TimeseriesDialog::stationSelected(Q3ListBoxItem*) {
   if(freeze) return;
   if( parameterListbox->currentItem() == -1 ) return;
   freeze=true;
@@ -419,7 +419,7 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem * item) {
    freeze=false;
 }
 
-void TimeseriesDialog::resultSelected(Q3ListBoxItem * item)
+void TimeseriesDialog::resultSelected(Q3ListBoxItem*)
 {
   if(freeze) return;
   freeze=true;

@@ -29,17 +29,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "tnchecktableitem.h"
-#include "weathertable.h"
-#include <kvalobs/kvDataOperations.h>
-#include <cmath>
-#include <cassert>
-using namespace kvalobs;
-using namespace std;
 
 namespace Weather
 {
-  class WeatherTable;
-
   TnCheckTableItem::TnCheckTableItem( Q3Table* table, QString flag)
     : Q3CheckTableItem( table, "" )
   {
@@ -58,8 +50,8 @@ namespace Weather
   QString TnCheckTableItem::explain() const
   {
     if ( isChecked() )
-      return "Temperatur er en del av en aggregering.";
+      return QObject::tr("Temperatur er en del av en aggregering.");
     else
-      return "Temperatur er ikke en del av en aggregering.";
+      return QObject::tr("Temperatur er ikke en del av en aggregering.");
   }
 }

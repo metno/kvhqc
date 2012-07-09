@@ -94,7 +94,7 @@ namespace model
     if ( not location.isValid() )
       return 0;
     int index = location.row();
-    if ( index >= 0 and index < kvalobsData_->size() )
+    if ( index >= 0 and index < (int)kvalobsData_->size() )
       return & (*kvalobsData_)[index];
     return 0;
   }
@@ -108,17 +108,17 @@ namespace model
 //    return QModelIndex();
 //  }
 
-  int KvalobsDataModel::rowCount(const QModelIndex & parent) const {
+  int KvalobsDataModel::rowCount(const QModelIndex & /*parent*/) const {
     return kvalobsData_->size();
   }
 
-  int KvalobsDataModel::columnCount(const QModelIndex & parent) const {
+  int KvalobsDataModel::columnCount(const QModelIndex & /*parent*/) const {
     return parametersToShow_.size() * COLUMNS_PER_PARAMETER;
   }
 
   QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const {
 
-    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return QVariant();
 
     switch ( role ) {
@@ -198,7 +198,7 @@ namespace model
   
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
   {
-    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return false;
     
     if ( Qt::EditRole == role ) {
@@ -278,7 +278,7 @@ namespace model
   
   bool KvalobsDataModel::setAcceptedData(const QModelIndex & index, const QVariant & value, bool maybeQC2, int role)
   {
-    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return false;
 
     if ( Qt::EditRole == role ) {
@@ -357,7 +357,7 @@ namespace model
 
   bool KvalobsDataModel::setDiscardedData(const QModelIndex & index, const QVariant & value, int role)
   {
-    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return false;
 
     if ( Qt::EditRole == role ) {
@@ -502,7 +502,7 @@ namespace model
   {
     ColumnType columnType = getColumnType(index);
     if ( Corrected == columnType ) {
-        if ( index.isValid() and index.row() < kvalobsData_->size() ) {
+        if ( index.isValid() and index.row() < (int)kvalobsData_->size() ) {
             const KvalobsData & d = kvalobsData_->at(index.row());
             const kvalobs::kvControlInfo & ci = d.controlinfo(getParameter(index).paramid);
             if ( ci.flag(15) == 0 ) { // not hqc touched
@@ -516,7 +516,7 @@ namespace model
     return Qt::black;
   }
 
-  QVariant KvalobsDataModel::textAlignmentRoleData(const QModelIndex & index) const
+  QVariant KvalobsDataModel::textAlignmentRoleData(const QModelIndex & /*index*/) const
   {
     return Qt::AlignRight;
   }
@@ -613,11 +613,12 @@ namespace model
       return Model;
     }
     Q_ASSERT(false);
+    return Original; // not reached
   }
 
   kvalobs::kvData KvalobsDataModel::getKvData_(const QModelIndex & index) const
   {
-    if ( not index.isValid() or index.row() >= kvalobsData_->size() )
+      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       throw InvalidIndex();
 
     const Parameter & parameter = getParameter(index);

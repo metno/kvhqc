@@ -11,6 +11,7 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
 Depends: coserver4, ${shlibs:Depends}, ${misc:Depends}
+Recommends: diana, dianaconfig
 Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs

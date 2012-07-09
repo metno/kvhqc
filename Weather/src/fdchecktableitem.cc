@@ -29,13 +29,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "fdchecktableitem.h"
-#include "weathertable.h"
-#include <kvalobs/kvDataOperations.h>
-#include <cmath>
-#include <cassert>
-#include <iostream>
-using namespace kvalobs;
-using namespace std;
 
 namespace Weather
 {
@@ -60,8 +53,8 @@ namespace Weather
   QString FdCheckTableItem::explain() const
   {
     if ( isChecked() )
-      return "Nedbør er en del av en oppsamling.";
+      return QObject::tr("Nedbør er en del av en oppsamling.");
     else
-      return "Nedbør er ikke en del av en oppsamling.";
+      return QObject::tr("Nedbør er ikke en del av en oppsamling.");
   }
 }

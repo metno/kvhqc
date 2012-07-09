@@ -93,7 +93,7 @@ namespace QC
     	  else if ( day > 365 )
     	    day = 365;
 	  std::string comma(",");
-          const int & paramID = data.paramID();
+          // UNUSED const int & paramID = data.paramID();
 	  int icomma = data.cfailed().find(comma);
 
 	  miString qcx;

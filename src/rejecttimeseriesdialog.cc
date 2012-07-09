@@ -40,27 +40,27 @@ using namespace std;
 RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog() 
 {  
 
-  setCaption("Forkast tidsserie");
+  setCaption(tr("Forkast tidsserie"));
 
-  QLabel* statLabel = new QLabel( "Stasjon", this );
+  QLabel* statLabel = new QLabel( tr("Stasjon"), this );
   stationWidget   = new QListWidget(this);
   connect(stationWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(stationSelected(QListWidgetItem*)));
 
-  QLabel* paraLabel = new QLabel( "Parameter", this );
+  QLabel* paraLabel = new QLabel( tr("Parameter"), this );
   parameterWidget = new QListWidget(this);
   connect(parameterWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(parameterSelectionChanged(QListWidgetItem*)));
 
-  QLabel* resultLabel = new QLabel( "Valgt tidsserie", this );
+  QLabel* resultLabel = new QLabel( tr("Valgt tidsserie"), this );
   resultWidget = new QListWidget(this);
   resultWidget->setFixedHeight(30);
 
-  QLabel* fromLabel = new QLabel( "Fra", this );
+  QLabel* fromLabel = new QLabel( tr("Fra"), this );
   fromTimeEdit  = new QDateTimeEdit(QDateTime::currentDateTime(),this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
-  QLabel* toLabel   = new QLabel( "Til", this );
+  QLabel* toLabel   = new QLabel( tr("Til"), this );
   toTimeEdit    = new QDateTimeEdit(QDateTime::currentDateTime(),this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
@@ -76,15 +76,15 @@ RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog()
   t = t.addSecs(60*(45-t.time().minute()));
   fromTimeEdit->setDateTime(t);
 
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
 
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);

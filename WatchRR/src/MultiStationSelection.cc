@@ -34,6 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include <puTools/miDate.h>
 #include <kvcpp/KvApp.h>
+#include <QApplication>
 #include <q3listview.h>
 #include <qlayout.h>
 #include <qpushbutton.h>

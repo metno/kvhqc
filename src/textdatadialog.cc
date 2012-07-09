@@ -10,21 +10,21 @@
 
 TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(parent),stnrList(slist) {  
   
-  setCaption("TextData");
+  setCaption(tr("TextData"));
 
   stnr = 0;
 
   textLabel0 = new QLabel(this);
-  textLabel0->setText("Stasjon");
+  textLabel0->setText(tr("Stasjon"));
 
   textLabel1 = new QLabel(this);
-  textLabel1->setText("Tidsrom");
+  textLabel1->setText(tr("Tidsrom"));
   
   textLabel2 = new QLabel(this);
-  textLabel2->setText("Fra");
+  textLabel2->setText(tr("Fra"));
   
   textLabel3 = new QLabel(this);
-  textLabel3->setText("Til");
+  textLabel3->setText(tr("Til"));
   
   stationEdit = new QLineEdit(this);  
   
@@ -49,11 +49,11 @@ TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(pare
   connect(toEdit, SIGNAL(dateTimeChanged(const QDateTime&)),
 	  this, SLOT(setToTime(const QDateTime&)));
 
-  okButton = new QPushButton("OK", this);
+  okButton = new QPushButton(tr("OK"), this);
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
   
-  cancelButton = new QPushButton("Avbryt", this);
+  cancelButton = new QPushButton(tr("Avbryt"), this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
   
@@ -106,7 +106,7 @@ TimeSpan TextDataDialog::getTimeSpan()
 
 void TextDataDialog::checkStationId() {
   bool legalStation = false;
-  for ( int i = 0; i < stnrList.size(); i++) {
+  for ( unsigned int i = 0; i < stnrList.size(); i++) {
     if ( stnr == stnrList[i] ) {
       legalStation = true;
       break;
@@ -115,8 +115,8 @@ void TextDataDialog::checkStationId() {
   if ( legalStation )
     emit textDataApply();
   else {
-      QMessageBox::information( this, "TextData",
-				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+      QMessageBox::information( this, tr("TextData"),
+				tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
       return;
   }
 }

@@ -36,29 +36,29 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QLabel>
 
 IdentDialog::IdentDialog(QWidget* parent,const char* name, bool modal): QDialog(parent, name, modal) {  
-  setCaption("Innlogging");
+  setCaption(tr("Innlogging"));
 
   Q3VBoxLayout* vl = new Q3VBoxLayout(this,10);
 
   nameEdit = new QLineEdit(this);
-  nmlb = new QLabel(nameEdit,"Navn:   ",this);
+  nmlb = new QLabel(nameEdit,tr("Navn:   "),this);
   Q3HBoxLayout* nameLayout = new Q3HBoxLayout();
   nameLayout->addWidget(nmlb, 10);
   nameLayout->addWidget(nameEdit, 10);
 
   passEdit = new QLineEdit(this);
   passEdit->setEchoMode(QLineEdit::Password);
-  pslb = new QLabel(passEdit,"Passord:",this);
+  pslb = new QLabel(passEdit,tr("Passord:"),this);
   Q3HBoxLayout* passLayout = new Q3HBoxLayout();
   passLayout->addWidget(pslb, 10);
   passLayout->addWidget(passEdit, 10);
 
-  okbt = new QPushButton("OK", this);
+  okbt = new QPushButton(tr("OK"), this);
   okbt->setGeometry(20, 620, 90, 30);
   okbt->setFont(QFont("Arial", 9));
   okbt->setDefault(true);
   
-  cnsl = new QPushButton("Avbryt", this);
+  cnsl = new QPushButton(tr("Avbryt"), this);
   cnsl->setGeometry(120, 620, 90, 30);
   cnsl->setFont(QFont("Arial", 9));
 
@@ -71,7 +71,7 @@ IdentDialog::IdentDialog(QWidget* parent,const char* name, bool modal): QDialog(
 
   Q3VBox* vb = new Q3VBox(this);
 
-  QLabel* lb1 = new QLabel("Skriv brukernavn og passord\nForeløpig nok å trykke OK", vb);
+  QLabel* lb1 = new QLabel(tr("Skriv brukernavn og passord\nForeløpig nok å trykke OK"), vb);
   lb1->setMaximumHeight( lb1->sizeHint().height() * 2 );
   lb1->setFrameStyle( Q3Frame::Panel | Q3Frame::Sunken );
   lb1->setFont( QFont("system",12,QFont::Bold) );

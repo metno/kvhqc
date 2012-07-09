@@ -34,6 +34,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include <puTools/miTime.h>
 #include <kvcpp/KvApp.h>
+#include <QApplication>
 #include <q3listview.h>
 #include <qlayout.h>
 #include <qpushbutton.h>
@@ -112,22 +113,22 @@ namespace Weather
 
       stations = new MSSListView( this );
       stations->setSelectionMode( Q3ListView::Single );
-      stations->addColumn( "Stasjon" );
-      stations->addColumn( "Tid" );
-      stations->addColumn( "Type" );
-      stations->addColumn( "Sensor" );
-      //      stations->addColumn( "Lvl" );
+      stations->addColumn( tr("Stasjon") );
+      stations->addColumn( tr("Tid") );
+      stations->addColumn( tr("Type") );
+      stations->addColumn( tr("Sensor") );
+      //      stations->addColumn( tr("Lvl") );
       mainLayout->addWidget( stations );
 
       Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
       {
-    	buttonLayout->addStretch( 1 );
-    	QPushButton * ok = new QPushButton( "&Ok", this );
-    	buttonLayout->addWidget( ok );
-    	connect( ok, SIGNAL( clicked() ), this, SLOT( start() ) );
-    	QPushButton * can = new QPushButton( "&Lukk", this );
-    	buttonLayout->addWidget( can );
-    	connect( can, SIGNAL( clicked() ), this, SLOT( reject() ) );
+        buttonLayout->addStretch( 1 );
+        QPushButton * ok = new QPushButton( tr("&Ok"), this );
+        buttonLayout->addWidget( ok );
+        connect( ok, SIGNAL( clicked() ), this, SLOT( start() ) );
+        QPushButton * can = new QPushButton( tr("&Lukk"), this );
+        buttonLayout->addWidget( can );
+        connect( can, SIGNAL( clicked() ), this, SLOT( reject() ) );
       }
     }
   }
@@ -150,8 +151,8 @@ namespace Weather
     if ( !legalStation ) {
       cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
       cerr << "legalStation er " << legalStation << endl;
-      QMessageBox::information( this, "WatchRR",
-				"Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+      QMessageBox::information( this, "Weather",
+				tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
       return;
     }
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
@@ -199,7 +200,7 @@ namespace Weather
 
       if ( next->empty() ) {
 	QMessageBox::critical( this, "Weather",
-			       "Får ikke kontakt med kvalobs.\nKan ikke fortsette.",
+			       tr("Får ikke kontakt med kvalobs.\nKan ikke fortsette."),
   			       QMessageBox::Ok, QMessageBox::NoButton );
 
       	return;

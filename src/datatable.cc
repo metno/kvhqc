@@ -45,7 +45,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <q3simplerichtext.h>
 //Added by qt3to4:
 #include <QPixmap>
-#include "../sorttime.xpm"
 #include "datatable.h"
 #include "hqcmain.h"
 #include "ErrorListFirstCol.h"
@@ -55,12 +54,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 
 int modPar[] = {61,81,109,110,177,178,211,262};
-int codeParam[] = {  1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
-		    13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
-		     24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
-		     35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-		     45, 46, 47, 48, 49,151,273,301,302,303,
-		     304,305,306,307,308,1021,1022,1025,1026};
+
+static const int codeParamCount = 58;
+static const int codeParam[codeParamCount]= {
+    1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
+    13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
+    24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
+    35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+    45, 46, 47, 48, 49,151,273,301,302,303,
+    304,305,306,307,308,1021,1022,1025,1026
+};
 
 DataTable::DataTable(QStringList selPar, 
 		     int noSel, 
@@ -87,7 +90,7 @@ DataTable::DataTable(QStringList selPar,
   hmw->nuroprpar = noSelPar == 0 ? noParam : noSelPar;
   hmw->nucoprpar = noColPar;
   timeSort = FALSE;
-  QPixmap icon_sorttime(sorttime);
+  QPixmap icon_sorttime( ::hqc::getPath(::hqc::IMAGEDIR) + "/sorttime.png" );
   QToolBar* sortTool = new QToolBar("Sort", hmw); // TODO Check if this displays correctly.
   QToolButton* sortButton;
   sortButton = new QToolButton( icon_sorttime, 
@@ -431,11 +434,11 @@ bool DataTable::paramHasModel(int parNo) {
 }
 
 int DataTable::paramIsCode(int parNo) {
-  for ( int i = 0; i < 58; i++ ) {
-    if ( parNo == codeParam[i] ) 
-      return 0;
-  }
-  return 1;
+    if( std::binary_search(codeParam, codeParam+codeParamCount, parNo) ) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
 
 void DataTable::swapRows( int row1, int row2, bool /*swapHeader*/ ) {

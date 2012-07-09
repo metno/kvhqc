@@ -165,9 +165,9 @@ void HelpTree::setForwardAvailable( bool b)
 void HelpTree::sourceChanged( const QString& url )
 {
     if ( browser->documentTitle().isNull() )
-	setCaption( "Hqc hjelp - " + url );
+	setCaption( tr("Hqc hjelp - %1").arg(url) );
     else
-	setCaption( "Hqc hjelp - " + browser->documentTitle() ) ;
+	setCaption( tr("Hqc hjelp - %1").arg(browser->documentTitle()) ) ;
 
     if ( !url.isEmpty() && pathCombo ) {
 	bool exists = FALSE;

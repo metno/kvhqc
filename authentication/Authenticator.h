@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 // Compile with -lldap option.
 
-#include "authenticationdialog.h"
+#include "ui_authenticationdialog.h"
 #include <qstring.h>
 #include <qdialog.h>
 
@@ -48,7 +48,7 @@ namespace Authentication {
 
 
 
-  class Authenticator : public AuthenticationDialog 
+  class Authenticator : public QDialog, private Ui_AuthenticationDialog
   {
     Q_OBJECT;
 

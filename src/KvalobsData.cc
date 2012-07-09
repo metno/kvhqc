@@ -56,7 +56,7 @@ public:
   int typeIdChanged;
 
   Impl()
-  : stnr(0), snr(0), showTypeId(0), typeIdChanged(0), latitude(0), longitude(0), altitude(0)
+  : stnr(0), snr(0), latitude(0), longitude(0), altitude(0), showTypeId(0), typeIdChanged(0)
   {}
 
   /**
@@ -124,7 +124,7 @@ bool KvalobsData::empty() const
   return impl().size() == 0;
 }
 
-const int KvalobsData::stnr() const
+int KvalobsData::stnr() const
 {
   return impl().stnr;
 }
@@ -133,7 +133,7 @@ void KvalobsData::set_stnr(int value)
   impl().stnr = value;
 }
 
-const int KvalobsData::snr() const
+int KvalobsData::snr() const
 {
   return impl().snr;
 }
@@ -198,7 +198,7 @@ void KvalobsData::set_tbtime(const miutil::miTime & value)
 }
 
 
-const int KvalobsData::showTypeId() const
+int KvalobsData::showTypeId() const
 {
   return impl().showTypeId;
 }
@@ -208,7 +208,7 @@ void KvalobsData::set_showTypeId(int value)
 }
 
 
-const int KvalobsData::typeIdChanged() const
+int KvalobsData::typeIdChanged() const
 {
   return impl().typeIdChanged;
 }
@@ -218,7 +218,7 @@ void KvalobsData::set_typeIdChanged(int value)
 }
 
 
-const int KvalobsData::typeId(std::size_t parameter) const
+int KvalobsData::typeId(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
   if ( ! obs )
@@ -230,7 +230,7 @@ void KvalobsData::set_typeId(std::size_t parameter, int value)
   impl().obsData(parameter)->typeId = value;
 }
 
-const double KvalobsData::orig(std::size_t parameter) const
+double KvalobsData::orig(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
   if ( ! obs )
@@ -374,7 +374,7 @@ namespace
 
 }
 
-const int KvalobsData::flag(std::size_t parameter) const
+int KvalobsData::flag(std::size_t parameter) const
 {
   const kvalobs::kvControlInfo & controlInfo = controlinfo(parameter);
 
@@ -415,7 +415,7 @@ const int KvalobsData::flag(std::size_t parameter) const
 }
 
 
-const double KvalobsData::corr(std::size_t parameter) const
+double KvalobsData::corr(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
   if ( ! obs )
@@ -427,7 +427,7 @@ void KvalobsData::set_corr(std::size_t parameter, double value)
   impl().obsData(parameter)->corrected = value;
 }
 
-const int KvalobsData::level(std::size_t parameter) const
+int KvalobsData::level(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
   if ( ! obs )
@@ -440,7 +440,7 @@ void KvalobsData::set_level(std::size_t parameter, int value)
 }
 
 
-const int KvalobsData::sensor(std::size_t parameter) const
+int KvalobsData::sensor(std::size_t parameter) const
 {
   const Impl::ObservationData * obs = impl().obsData(parameter);
   if ( ! obs )

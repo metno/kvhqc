@@ -68,7 +68,7 @@ namespace Weather
     station_ =
       new QLineEdit( QString::number( data.stationID() ), "0000000", this );
     layout->addWidget( station_, row, 1 );
-    layout->addWidget( new QLabel( station_, "&Stasjon", this ), row++, 0 );
+    layout->addWidget( new QLabel( station_, tr("&Stasjon"), this ), row++, 0 );
 
     // Obstime:
     miutil::miTime d = data.obstime();
@@ -79,13 +79,13 @@ namespace Weather
     Q3DateEdit* obsdate = obstime_->dateEdit();
     obsdate->setOrder( Q3DateEdit::DMY ); // Norwegian standard
     layout->addWidget( obstime_, row, 1 );
-    layout->addWidget( new QLabel( obstime_, "&Tid:", this ), row++, 0 );
+    layout->addWidget( new QLabel( obstime_, tr("&Tid:"), this ), row++, 0 );
 
     // TypeID:
     typeID_ =
       new QLineEdit( "", "#000", this );
     layout->addWidget( typeID_, row, 1 );
-    layout->addWidget( new QLabel( typeID_, "T&ype:", this ), row++, 0 );
+    layout->addWidget( new QLabel( typeID_, tr("T&ype:"), this ), row++, 0 );
     if ( ! data.typeID() )
       typeID_->setText( "" );
 
@@ -96,7 +96,7 @@ namespace Weather
     sensor_ =
       new QLineEdit( QString::number( snsr ), "0", this );
     layout->addWidget( sensor_, row, 1 );
-    layout->addWidget( new QLabel( sensor_, "S&ensor:", this ), row++, 0 );
+    layout->addWidget( new QLabel( sensor_, tr("S&ensor:"), this ), row++, 0 );
     if ( ! data.sensor() )
       sensor_->setText( "" );
 

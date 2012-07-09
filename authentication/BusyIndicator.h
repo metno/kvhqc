@@ -28,3 +28,17 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#ifndef __BusyIndicator_h__
+#define __BusyIndicator_h__
+
+#include <QCursor>
+
+class BusyIndicator
+{
+    QCursor waitCursor;
+public:
+    BusyIndicator( );
+    ~BusyIndicator( );
+};
+
+#endif // __BusyIndicator_h__

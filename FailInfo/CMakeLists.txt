@@ -9,13 +9,20 @@ SET(fail_SOURCES
   src/explainQC.cc
   src/FailDialog.cc)
 
-# src/main.cc
+SET(fail_UIS
+    src/cfailedwidget.ui
+)
+QT4_WRAP_UI(fail_UIS_H ${fail_UIS})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/authentication
 )
 
 QT4_WRAP_CPP(fail_HEADERS_MOC ${fail_HEADERS})
 
+message(${fail_UIS_H})
 ADD_LIBRARY(failinfo STATIC
   ${fail_SOURCES} 
-  ${fail_HEADERS_MOC})
+  ${fail_HEADERS_MOC}
+  ${fail_UIS_H})

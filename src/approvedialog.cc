@@ -38,8 +38,8 @@ using namespace std;
 
 ApproveDialog::ApproveDialog(std::vector<QString>& chList) : QDialog() 
 {  
-  //  setCaption("Forkast tidsserie");
-  QLabel* discLabel = new QLabel( "Vil du godkjenne følgende data?", this );
+  //  setCaption(tr("Forkast tidsserie"));
+  QLabel* discLabel = new QLabel( tr("Vil du godkjenne følgende data?"), this );
   resultWidget = new QListWidget(this);
   int n = chList.size();
   for(int i=0; i<n; i++ ){
@@ -47,11 +47,11 @@ ApproveDialog::ApproveDialog(std::vector<QString>& chList) : QDialog()
   }
   //  resultWidget->addItem(ch);
 
-  okButton = new QPushButton("Godkjenn tidsserie", this);
+  okButton = new QPushButton(tr("Godkjenn tidsserie"), this);
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
 
-  cancelButton = new QPushButton("Avbryt", this);
+  cancelButton = new QPushButton(tr("Avbryt"), this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
 

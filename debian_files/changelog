@@ -1,3 +1,10 @@
+kvhqc (2.8.9~rc2-1) unstable; urgency=low
+
+  * sorttime.xpm => images/sorttime.png
+  * adapted diana.setup to new versioned diana-*.* packages
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 06 Jul 2012 15:35:00 +0200
+
 kvhqc (2.8.9~rc1-2) unstable; urgency=low
 
   * added debug package

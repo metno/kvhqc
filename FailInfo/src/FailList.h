@@ -1,9 +1,7 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2012 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -31,8 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __FailInfo__FailList_h__
 #define __FailInfo__FailList_h__
 
-#include "cfailedwidget.h"
-//#include <cfailedwidget.h>
+#include "ui_cfailedwidget.h"
 #include <kvalobs/kvData.h>
 #include <qstring.h>
 
@@ -42,7 +39,7 @@ namespace FailInfo
    * \brief The implementation of the GUI part of the fail list.
    */
   class FailList
-    : public Ui::cFailedWidget
+    : public QWidget, public Ui_cFailedWidget
   {
     Q_OBJECT;
   public:

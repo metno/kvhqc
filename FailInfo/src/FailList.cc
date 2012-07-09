@@ -47,7 +47,7 @@ using namespace miutil;
 namespace FailInfo
 {
   FailList::FailList( QWidget *parent, const char * name, Qt::WFlags f )
-    : Ui::cFailedWidget()
+      : QWidget(parent, name, f), Ui_cFailedWidget()
   {
     setupUi(this);
   }

@@ -92,8 +92,9 @@ bool authenticate(const char *username, const char *password,
 
 Authenticator::Authenticator( const char *server, int port,
                               QWidget* parent, const char* name, bool modal,  Qt::WindowFlags fl )
-    : AuthenticationDialog( parent, name, modal, fl), server(server), port(port)
+    : QDialog( parent, name, modal, fl), server(server), port(port)
 {
+    setupUi(this);
   QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
   validUN->setRegExp(QRegExp("[-\\w]+"));
   username->setValidator(validUN);

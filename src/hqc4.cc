@@ -33,7 +33,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qapplication.h>
 #include "hqcmain.h"
 #include <iostream>
-#include <list>
 #include "hqc_paths.hh"
 
 using namespace std;

@@ -39,9 +39,9 @@ namespace FailInfo {
   FailDialog::FailDialog( QWidget *parent, const char *name, Qt::WFlags f )
     : QDialog( parent, name, false, f )
   {
-    setCaption( "Feilinformasjon" );
+    setCaption( tr("Feilinformasjon") );
     failList =   new FailList( this );
-    hideButton = new QPushButton( "&Skjul", this, "HideButton" );
+    hideButton = new QPushButton( tr("&Skjul"), this, "HideButton" );
 
     connect( hideButton, SIGNAL( clicked() ),
 	     this,       SLOT  ( close()   ) );

@@ -20,14 +20,12 @@ SET(weather_SOURCES
   src/flagitem.cc
   src/timeobs.cc
   src/weathertableitem.cc
-  ../src/BusyIndicator.cc
-  ../src/identifyUser.cc
-  ../src/HqcDataReinserter.cc
 )
 
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/authentication
+  ${CMAKE_BINARY_DIR}/authentication
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 

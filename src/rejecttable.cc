@@ -7,7 +7,7 @@ using namespace std;
 RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* parent)
   : QTableWidget(3000,3,parent) {
 
-  setWindowTitle("Rejected");
+  setWindowTitle(tr("Rejected"));
   setRowCount(rejList.size());
   setGeometry(10,10,1200,1200);
   setMinimumWidth(1000);
@@ -20,7 +20,7 @@ RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* paren
   horizontalHeaderLabels.append(  tr( "Message" ) );
   setHorizontalHeaderLabels(horizontalHeaderLabels);
 
-  for ( int iRow = 0; iRow < rejList.size(); iRow++ ) {
+  for ( unsigned int iRow = 0; iRow < rejList.size(); iRow++ ) {
     cout << rejList[iRow].tbtime() << " " << rejList[iRow].message() << endl;
     QTableWidgetItem* tbtimeItem = new QTableWidgetItem(rejList[iRow].tbtime().format("%e/%m %Y %H:%M:%S").cStr());
     setItem(iRow, 0, tbtimeItem);

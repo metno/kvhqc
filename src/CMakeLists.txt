@@ -27,7 +27,6 @@ SET(hqc_HEADERS
 SET(hqc_SOURCES
   accepttimeseriesdialog.cc
   approvedialog.cc
-  BusyIndicator.cc
   ClockDialog.cc
   connect2stinfosys.cc
 #  datatable.cc
@@ -40,10 +39,8 @@ SET(hqc_SOURCES
   helptree.cc
   hqc4.cc
 #  hqc.cc
-  HqcDataReinserter.cc
   hqcmain.cc
   identdialog.cc
-  identifyUser.cc
   KvalobsData.cc
   KvalobsDataDelegate.cc
   KvalobsDataModel.cc
@@ -65,7 +62,9 @@ SET(hqc_SOURCES
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/authentication
+  ${CMAKE_BINARY_DIR}/authentication
   ${CMAKE_SOURCE_DIR}/FailInfo/src
+  ${CMAKE_BINARY_DIR}/FailInfo
   ${CMAKE_SOURCE_DIR}/WatchRR/src
   ${CMAKE_SOURCE_DIR}/Weather/src
   ${CMAKE_CURRENT_SOURCE_DIR}/src

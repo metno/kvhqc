@@ -7,7 +7,7 @@ using namespace std;
 TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, QWidget* parent)
   : QTableWidget(3000,7,parent) {
 
-  setWindowTitle("TextData");
+  setWindowTitle(tr("TextData"));
   setRowCount(txtList.size() + 1);
   setGeometry(10,10,800,1200);
   setMinimumWidth(720);
@@ -24,7 +24,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
   horizontalHeaderLabels.append(   tr( "Typeid " ) );
   setHorizontalHeaderLabels(horizontalHeaderLabels);
 
-  for ( int iRow = 0; iRow < txtList.size(); iRow++ ) {
+  for ( unsigned int iRow = 0; iRow < txtList.size(); iRow++ ) {
     QTableWidgetItem* stationItem = new QTableWidgetItem(QString::number(txtList[iRow].stationId));
     setItem(iRow, 0, stationItem);
     resizeColumnToContents(0);

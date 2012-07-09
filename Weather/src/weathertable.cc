@@ -274,7 +274,7 @@ namespace Weather
       hideColumn(cbCol[icol]);
   }
 
-  void WeatherTable::getModifiedData( DataConsistencyVerifier::DataSet & mod )
+  void WeatherTable::getModifiedData( DataConsistencyVerifier::DataSet& /*mod*/ )
   {
   }
 
@@ -286,8 +286,8 @@ namespace Weather
     kvData kvDat = getKvData(row, col);
     if ( kvDat.stationID() == 0 ) {
       QMessageBox::information( this,
-				"Kan ikke lagre",
-				"Raden fins ikke i databasen",
+				tr("Kan ikke lagre"),
+				tr("Raden fins ikke i databasen"),
 				QMessageBox::Ok,
 				QMessageBox::NoButton );
       return;
@@ -302,8 +302,8 @@ namespace Weather
       typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),kvDat.obstime(),obsPgmList);
     if ( typ == -32767 ) {
       QMessageBox::information( this,
-				"Ulovlig parameter",
-				"Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
+				tr("Ulovlig parameter"),
+				tr("Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen"),
 				QMessageBox::Ok,
 				Qt::NoButton );
       tit->setText("");
@@ -325,8 +325,8 @@ namespace Weather
 	 && newCorr != -32766
 	 && newCorr != -32767 ) {
       QMessageBox::information( this,
-				"Ulovlig verdi",
-				"Verdien er utenfor fysikalske grenser",
+				tr("Ulovlig verdi"),
+				tr("Verdien er utenfor fysikalske grenser"),
 				QMessageBox::Ok,
 				QMessageBox::NoButton );
       if ( oldCorr == -32767.0 )

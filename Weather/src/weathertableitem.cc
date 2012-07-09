@@ -29,12 +29,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "weathertableitem.h"
-#include "weathertable.h"
-#include <kvalobs/kvDataOperations.h>
-#include <cmath>
-#include <cassert>
-using namespace kvalobs;
-using namespace std;
 
 namespace Weather
 {
@@ -54,9 +48,9 @@ namespace Weather
   {
     QString ret = text();
     if ( ret.isEmpty() )
-      ret = "Ingen data (original fra stasjon: manglende)";
+      ret = QObject::tr("Ingen data (original fra stasjon: manglende)");
     else
-      ret = "TypeId = " + type;
+      ret = QObject::tr("TypeId = %1").arg(type);
     return ret;
   }
 

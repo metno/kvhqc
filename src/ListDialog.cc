@@ -38,22 +38,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {  
 
-  setCaption("Datautvalg HQC");
+  setCaption(tr("Datautvalg HQC"));
 
   // Create a button group for control type
   
   Q3ButtonGroup *ctrlTyp = new Q3ButtonGroup( 1, 
 					  Qt::Horizontal, 
-					  "Kontrolltype", this);
+					  tr("Kontrolltype"), this);
   Q3GridLayout* controlLayout = new Q3GridLayout(ctrlTyp->layout());
 
   // insert checkbuttons for control type selection
-  twiType = new QCheckBox( "&Temperatur,fuktighet", ctrlTyp );
-  prcType = new QCheckBox( "&Nedbør,snøforhold", ctrlTyp );
-  aprType = new QCheckBox( "&Lufttrykk", ctrlTyp );
-  winType = new QCheckBox( "&Vind", ctrlTyp );
-  marType = new QCheckBox( "&Maritime parametere", ctrlTyp );
-  visType = new QCheckBox( "V&isuelle parametere", ctrlTyp );
+  twiType = new QCheckBox( tr("&Temperatur,fuktighet"), ctrlTyp );
+  prcType = new QCheckBox( tr("&Nedbør,snøforhold"), ctrlTyp );
+  aprType = new QCheckBox( tr("&Lufttrykk"), ctrlTyp );
+  winType = new QCheckBox( tr("&Vind"), ctrlTyp );
+  marType = new QCheckBox( tr("&Maritime parametere"), ctrlTyp );
+  visType = new QCheckBox( tr("V&isuelle parametere"), ctrlTyp );
 
   controlLayout->addWidget(twiType, 0, 0);
   controlLayout->addWidget(prcType, 1, 0);
@@ -77,8 +77,8 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
   // Create a button group for station type
   
-  Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal , 
-					 "Stasjonstype", 
+  Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal,
+					 tr("Stasjonstype"),
 					 this);
   Q3GridLayout* statSelLayout = new Q3GridLayout(stTyp->layout());
 
@@ -102,7 +102,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   vsType = new QCheckBox( "VS", stTyp );
   vkType = new QCheckBox( "VK", stTyp );
   vmType = new QCheckBox( "VM", stTyp );
-  allType = new QCheckBox( "Alle", stTyp );
+  allType = new QCheckBox( tr("Alle"), stTyp );
 
 
    // Create a button group for station location (county)
@@ -147,7 +147,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   troReg = new QCheckBox( "T&røndelag ", stRegion );
   norReg = new QCheckBox( "N&ord-Norge", stRegion );
   webReg = new QCheckBox( "S&ynop-stasjoner", stRegion );
-  priReg = new QCheckBox( "&Prioriterte stasjoner", stRegion );
+  priReg = new QCheckBox( tr("&Prioriterte stasjoner"), stRegion );
 
   connect(ausReg,SIGNAL(clicked()), this,SLOT(ausCheck()));
   connect(ausReg,SIGNAL(clicked()), this,SLOT(oausCheck()));
@@ -185,24 +185,24 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   // Typeid options
   Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1, 
 					  Qt::Horizontal, 
-					  "Meldingstyper", this);
+					  tr("Meldingstyper"), this);
   
   Q3GridLayout* typeidLayout = new Q3GridLayout(typeGroup->layout());
-  priTypes = new QRadioButton( "Prioriterte typer", typeGroup );
+  priTypes = new QRadioButton( tr("Prioriterte typer"), typeGroup );
   typeGroup->insert(priTypes);
   priTypes->setChecked(true);
-  allTypes = new QRadioButton( "Alle typer", typeGroup );
+  allTypes = new QRadioButton( tr("Alle typer"), typeGroup );
   typeGroup->insert(allTypes);
   
   //Station selection
-  stationSelect = new QPushButton("Velg &stasjon", this);
+  stationSelect = new QPushButton(tr("Velg &stasjon"), this);
   stationSelect->setAutoDefault(true);
   stationSelect->setGeometry(10, 110, 400, 30);
   stationSelect->setFont(QFont("Arial", 9));
   connect(stationSelect, SIGNAL(clicked()), this, SIGNAL( selectStation()));
 
   stationLabel = new QLabel(this);
-  stationLabel->setText("Valgte stasjoner");
+  stationLabel->setText(tr("Valgte stasjoner"));
   stationLabel->setFont(QFont("Arial", 12));
   stationLabel->setPaletteForegroundColor(Qt::darkBlue);
   stationLabel->setAlignment(Qt::AlignLeft);
@@ -238,15 +238,15 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
 	   this,SIGNAL(toTimeChanged(const QDateTime&)));
   
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
 
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
@@ -310,11 +310,11 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ListApply()));
   
-  QLabel* fromLabel = new QLabel("Fra");
+  QLabel* fromLabel = new QLabel(tr("Fra"));
   Q3HBoxLayout* ftimeLayout = new Q3HBoxLayout();
   ftimeLayout->addWidget(fromLabel);
   ftimeLayout->addWidget(fromTime);
-  QLabel* toLabel = new QLabel("Til");
+  QLabel* toLabel = new QLabel(tr("Til"));
   Q3HBoxLayout* ttimeLayout = new Q3HBoxLayout();
   ttimeLayout->addWidget(toLabel);
   ttimeLayout->addWidget(toTime);
@@ -1032,7 +1032,7 @@ StationTable::StationTable(QStringList selStatNum,
 			   QWidget* parent)
     : Q3Table( 3000, noInfo, parent)
 {
-  setCaption("Stasjoner");
+  setCaption(tr("Stasjoner"));
   setSorting( TRUE );
   setGeometry(10,100,800,600);
 

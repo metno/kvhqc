@@ -62,10 +62,10 @@ public:
   std::size_t size() const;
   bool empty() const;
 
-  const int stnr() const;
+  int stnr() const;
   void set_stnr(int value);
 
-  const int snr() const;
+  int snr() const;
   void set_snr(int value);
 
   const QString & name() const;
@@ -86,27 +86,27 @@ public:
   const miutil::miTime & tbtime() const;
   void set_tbtime(const miutil::miTime & value);
 
-  const int showTypeId() const;
+  int showTypeId() const;
   void set_showTypeId(int value);
 
-  const int typeIdChanged() const;
+  int typeIdChanged() const;
   void set_typeIdChanged(int value);
 
-  const int typeId(std::size_t parameter) const;
+  int typeId(std::size_t parameter) const;
   void set_typeId(std::size_t parameter, int value);
 
-  const double orig(std::size_t parameter) const;
+  double orig(std::size_t parameter) const;
   void set_orig(std::size_t parameter, double value);
 
-  const int flag(std::size_t parameter) const;
+  int flag(std::size_t parameter) const;
 
-  const double corr(std::size_t parameter) const;
+  double corr(std::size_t parameter) const;
   void set_corr(std::size_t parameter, double value);
 
-  const int level(std::size_t parameter) const;
+  int level(std::size_t parameter) const;
   void set_level(std::size_t parameter, int value);
 
-  const int sensor(std::size_t parameter) const;
+  int sensor(std::size_t parameter) const;
   void set_sensor(std::size_t parameter, int value);
 
   const kvalobs::kvControlInfo & controlinfo(std::size_t parameter) const;

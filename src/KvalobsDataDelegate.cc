@@ -66,7 +66,7 @@ namespace model
     };
   }
   
-  QWidget * KvalobsDataDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const
+  QWidget * KvalobsDataDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
   {
     Editor * ret = new Editor(parent);
     //static QDoubleValidator validator(0);
@@ -122,7 +122,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     int stationid = kvalobsData->stnr();
     const miutil::miTime & obt = kvalobsData->otime();
     int typ = kvalobsData->typeId(paramid);
-    double orig = kvalobsData->orig(paramid);
+    // UNUSED double orig = kvalobsData->orig(paramid);
     double corr = kvalobsData->corr(paramid);
     QString oldCorVal = QString::number(corr, 'f', 1);
     if ( std::abs(newValue - corr) < 0.00005 )
@@ -197,7 +197,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     modData.clear();
   }
 
-  void KvalobsDataDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const
+  void KvalobsDataDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & /*index*/) const
   {
       editor->setGeometry(option.rect);
   }

@@ -35,23 +35,23 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 MissingTable::MissingTable(QWidget* parent, ErrorList* el) 
   : Q3Table( 1000, 100, parent, "table" )  
 {
-  setCaption("Mangelliste");
-  int antRow = 0;
+  setCaption(tr("Mangelliste"));
+  // UNUSED int antRow = 0;
   QString fTyp = "";
   setNumRows( 0 );
   setNumCols(12);
-  horizontalHeader()->setLabel(0, "Stnr");
-  horizontalHeader()->setLabel(1, "Navn");
-  horizontalHeader()->setLabel(2, "  Md");
-  horizontalHeader()->setLabel(3, "  Dg");
-  horizontalHeader()->setLabel(4, "  Kl");
-  horizontalHeader()->setLabel(5, "Para");
-  horizontalHeader()->setLabel(6, "Type");
-  horizontalHeader()->setLabel(7, "Orig.d");
-  horizontalHeader()->setLabel(8, "Korr.d");
-  horizontalHeader()->setLabel(9, "mod.v");
-  horizontalHeader()->setLabel(10, "Flagg");
-  horizontalHeader()->setLabel(11, "Fl.v");
+  horizontalHeader()->setLabel(0, tr("Stnr"));
+  horizontalHeader()->setLabel(1, tr("Navn"));
+  horizontalHeader()->setLabel(2, tr("  Md"));
+  horizontalHeader()->setLabel(3, tr("  Dg"));
+  horizontalHeader()->setLabel(4, tr("  Kl"));
+  horizontalHeader()->setLabel(5, tr("Para"));
+  horizontalHeader()->setLabel(6, tr("Type"));
+  horizontalHeader()->setLabel(7, tr("Orig.d"));
+  horizontalHeader()->setLabel(8, tr("Korr.d"));
+  horizontalHeader()->setLabel(9, tr("mod.v"));
+  horizontalHeader()->setLabel(10, tr("Flagg"));
+  horizontalHeader()->setLabel(11, tr("Fl.v"));
   int numRows = el->mList.size();
   setNumRows( numRows );
   QString strDat;

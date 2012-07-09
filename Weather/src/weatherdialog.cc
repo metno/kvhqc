@@ -60,8 +60,8 @@ namespace Weather
     cout << "WeatherDialog::getWeatherDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
-    QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose );
-    selector->setCaption( "Velg stasjonsinformasjon" );
+    QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose|f );
+    selector->setCaption( tr("Velg stasjonsinformasjon") );
 
     Q3VBoxLayout * mainLayout = new Q3VBoxLayout( selector );
 
@@ -72,11 +72,11 @@ namespace Weather
     Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->addStretch( 1 );
 
-    QPushButton * ok = new QPushButton( "&Ok", selector );
+    QPushButton * ok = new QPushButton( tr("&Ok"), selector );
     buttonLayout->addWidget( ok );
     connect( ok, SIGNAL( clicked() ), selector, SLOT( accept() ) );
 
-    QPushButton * can = new QPushButton( "&Avbryt", selector );
+    QPushButton * can = new QPushButton( tr("&Avbryt"), selector );
     buttonLayout->addWidget( can );
     connect( can, SIGNAL( clicked() ), selector, SLOT( reject() ) );
 
@@ -95,7 +95,7 @@ namespace Weather
     }
     if ( !legalStation ) {
     	QMessageBox::information( ss, "WatchWeather",
-				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+				  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     	return 0;
     }
     miutil::miTime  cl = ss->obstime();
@@ -148,14 +148,14 @@ namespace Weather
     QFrame* orig = new QFrame(this);
     WeatherTable* origTab = new WeatherTable(orig, "orig", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), origTab, SLOT( showCurrentPage() ) );
-    tabWidget->addTab(origTab, "Original");
+    tabWidget->addTab(origTab, tr("Original"));
   }
 
   void WeatherDialog::setupCorrTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
     QFrame* corr = new QFrame(this);
     WeatherTable* corrTab = new WeatherTable(corr, "corr", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), corrTab, SLOT( showCurrentPage() ) );
-    tabWidget->addTab(corrTab, "Korrigert");
+    tabWidget->addTab(corrTab, tr("Korrigert"));
     cTab = corrTab;
   }
 
@@ -163,20 +163,20 @@ namespace Weather
     QFrame* flag = new QFrame(this);
     WeatherTable* flagTab = new WeatherTable(flag, "flag", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), flagTab, SLOT( showCurrentPage() ) );
-    tabWidget->addTab(flagTab, "Flagg");
+    tabWidget->addTab(flagTab, tr("Flagg"));
   }
 
   void WeatherDialog::setupStationInfo() {
     if ( station == 0 ) {
-      QMessageBox::information( this, "HQC - synop",
-                             "Det valgte stasjonsnummer fins ikke i databasen.",
+      QMessageBox::information( this, tr("HQC - synop"),
+                             tr("Det valgte stasjonsnummer fins ikke i databasen."),
                              QMessageBox::Ok,  QMessageBox::NoButton );
       return;
     }
     QString stationDescr = QString::number( station->stationID() );
     if ( this->station )
       stationDescr += " - " + QString::fromStdString(this->station->name());
-    setCaption( "Synop for stasjon " + stationDescr );
+    setCaption( tr("Synop for stasjon %1").arg(stationDescr) );
   }
 
   WeatherDialog::DateRange getDateRange_( std::vector<TimeObs> * timeobs )
@@ -243,7 +243,7 @@ namespace Weather
 	  }
 	  nuOtimes++;
 	}
-	if ( nuOtimes == opgtl.size() )
+	if ( nuOtimes == (int)opgtl.size() )
 	  cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
 
 	nexttime = protime;
@@ -273,8 +273,8 @@ namespace Weather
 	while( dit != it->dataList().end() ) {
 	  otime = (dit->obstime());
 
-	  int typid = dit->typeID();
-	  int snsor = dit->sensor();
+	  // UNUSED int typid = dit->typeID();
+	  // UNUSED int snsor = dit->sensor();
 	  if ( paramInParamsList(dit->paramID()) 
 	       && typeFilter(type, dit->typeID()) 
 	       && sensorFilter(sensor, dit->sensor()) ) {
@@ -289,8 +289,8 @@ namespace Weather
 	    protime = otime;
 	    dit++;
 	    otime = dit->obstime();
-	    typid = dit->typeID();
-	    snsor = dit->sensor();
+	    // UNUSED typid = dit->typeID();
+	    // UNUSED snsor = dit->sensor();
 	    if ( otime != protime ) {
 	      synObsList.push_back(synObs);
 	      for ( int ip = 0; ip < NP; ip++) {
@@ -304,8 +304,8 @@ namespace Weather
 	    protime = otime;
 	    dit++;
 	    otime = dit->obstime();
-	    typid = dit->typeID();
-	    snsor = dit->sensor();
+	    // UNUSED typid = dit->typeID();
+	    // UNUSED snsor = dit->sensor();
 	    if ( otime != protime ) {
 	      synObsList.push_back(synObs);
 	      for ( int ip = 0; ip < NP; ip++) {
@@ -430,7 +430,7 @@ namespace Weather
 	}
 	nuOtimes++;
       }
-      if ( nuOtimes == opgtl.size() )
+      if ( nuOtimes == (int)opgtl.size() )
 	cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
       nexttime = protime;
       int hd = nexthour-nexttime.hour();
@@ -457,8 +457,8 @@ namespace Weather
       }
       
       while( dit != it->dataList().end() ) {
-	int typid = dit->typeID();
-	int snsor = dit->sensor();
+	// UNUSED int typid = dit->typeID();
+	// UNUSED int snsor = dit->sensor();
 	otime = (dit->obstime());
 	if ( paramInParamsList(dit->paramID()) 
 	     && typeFilter(type, dit->typeID()) 
@@ -477,8 +477,8 @@ namespace Weather
 
 	  dit++;
 	  otime = dit->obstime();
-	  typid = dit->typeID();
-	  snsor = dit->sensor();
+	  // UNUSED typid = dit->typeID();
+	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
 	    synObsList.push_back(synObs);
 	    for ( int ip = 0; ip < NP; ip++) {
@@ -492,8 +492,8 @@ namespace Weather
 	  protime = otime;
 	  dit++;
 	  otime = dit->obstime();
-	  typid = dit->typeID();
-	  snsor = dit->sensor();
+	  // UNUSED typid = dit->typeID();
+	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
 	    synObsList.push_back(synObs);
 	    for ( int ip = 0; ip < NP; ip++) {
@@ -535,8 +535,8 @@ namespace Weather
   {
     if ( ! ri )
     {
-      QMessageBox::critical( this, "HQC - synop",
-                             "Du er ikke autorisert til å lagre data i kvalobs.",
+      QMessageBox::critical( this, tr("HQC - synop"),
+                             tr("Du er ikke autorisert til å lagre data i kvalobs."),
                              QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
@@ -546,8 +546,8 @@ namespace Weather
     //    if ( mod.empty() )
     if ( cTab->kvCorrList.empty() )
       {
-	QMessageBox::information( this, "HQC - synop",
-				  "Du har ingen endringer å lagre.",
+	QMessageBox::information( this, tr("HQC - synop"),
+				  tr("Du har ingen endringer å lagre."),
 				  QMessageBox::Ok );
 	return true;
       }
@@ -570,12 +570,12 @@ namespace Weather
 	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime().cStr()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n';
 	iii++;
       }
-      changedVals = "Følgende endringer er gjort: \n" + changedVals + "Fullføre lagring?";
+      changedVals = tr("Følgende endringer er gjort: \n") + changedVals + tr("Fullføre lagring?");
       int corrMb =
-      QMessageBox::question( this, "HQC - synop",
+      QMessageBox::question( this, tr("HQC - synop"),
 				changedVals,
-                                "Ja",
-				"Nei",
+                                tr("Ja"),
+				tr("Nei"),
 				"" );
       //      BusyIndicator busy;
       if ( corrMb != 1 )
@@ -592,8 +592,8 @@ namespace Weather
     }
     if ( res->res == CKvalObs::CDataSource::OK )
     {
-      QMessageBox::information( this, "HQC - synop",
-                                QString( "Lagret " + QString::number( dl.size() ) + " parametre til kvalobs." ),
+      QMessageBox::information( this, tr("HQC - synop"),
+                                tr( "Lagret %1 parametre til kvalobs.").arg(dl.size()),
                                 QMessageBox::Ok );
       cTab->kvCorrList.clear();
       cTab->oldNew.clear();
@@ -602,10 +602,9 @@ namespace Weather
     }
     else
     {
-      QMessageBox::warning( this, "HQC - synop",
-                            QString( "Klarte ikke å lagre data!\n"
-                                     "Feilmelding fra kvalobs var:\n") +
-                            QString(res->message),
+      QMessageBox::warning( this, tr("HQC - synop"),
+                            tr("Klarte ikke å lagre data!\n"
+                               "Feilmelding fra kvalobs var:\n%1").arg(QString(res->message)),
                             QMessageBox::Ok,  Qt::NoButton );
       return false;
     }

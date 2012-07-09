@@ -33,22 +33,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QHBoxLayout>
 
 ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {  
-  setCaption("Parametervalg");
+  setCaption(tr("Parametervalg"));
   setGeometry(500,10,300,580);
 
   QVBoxLayout * vl = new QVBoxLayout(this,10);
 
-  QGroupBox *pVal = new QGroupBox("Parametervalg", this);
+  QGroupBox *pVal = new QGroupBox(tr("Parametervalg"), this);
 
   plb = new QListWidget(this);
   plb->setSelectionMode( QAbstractItemView::MultiSelection );
   connect(plb,SIGNAL(itemPressed(QListWidgetItem*)),SLOT(listClickedItem(QListWidgetItem*)));
 
-  allPar    = new QRadioButton( "Velg alle parametere", pVal );
+  allPar    = new QRadioButton( tr("Velg alle parametere"), pVal );
   allPar->setChecked(true);
-  markPar   = new QRadioButton( "Velg merkede parametere", pVal );
+  markPar   = new QRadioButton( tr("Velg merkede parametere"), pVal );
   markPar->setDisabled(true);
-  noMarkPar = new QRadioButton( "Velg bort merkede parametere", pVal );
+  noMarkPar = new QRadioButton( tr("Velg bort merkede parametere"), pVal );
   noMarkPar->setDisabled(true);
 
   QVBoxLayout * rbvl = new QVBoxLayout(this,10);
@@ -56,15 +56,15 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   rbvl->addWidget(markPar);
   rbvl->addWidget(noMarkPar);
 
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
   
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);

@@ -34,11 +34,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {  
 
-  setCaption("Tidspunkter");
+  setCaption(tr("Tidspunkter"));
 
   // Create a button group
   
-  QGroupBox* oTime = new QGroupBox("Utvalgte tidspunkter"); 
+  QGroupBox* oTime = new QGroupBox(tr("Utvalgte tidspunkter"));
  
   QGridLayout* clockLayout = new QGridLayout;
   // insert checkbuttons for clocktime selection
@@ -55,11 +55,11 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   oTime->setLayout(clockLayout);
 
 
-  QGroupBox* staTime = new QGroupBox("Tidspunkter"); 
+  QGroupBox* staTime = new QGroupBox(tr("Tidspunkter"));
   QVBoxLayout* stdAllLayout = new QVBoxLayout;
 
-  allTimes      = new QCheckBox("&Alle tidspunkter");
-  standardTimes = new QCheckBox("&Standardtidspunkter");
+  allTimes      = new QCheckBox(tr("&Alle tidspunkter"));
+  standardTimes = new QCheckBox(tr("&Standardtidspunkter"));
 
   stdAllLayout->addWidget(allTimes);
   stdAllLayout->addWidget(standardTimes);
@@ -70,15 +70,15 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   connect(allTimes, SIGNAL(clicked()),this,SLOT(oAllCheck()));
   connect(standardTimes, SIGNAL(clicked()),this,SLOT(oStandardCheck()));
 
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
 
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);

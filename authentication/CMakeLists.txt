@@ -1,15 +1,22 @@
 
 SET(auth_HEADERS
-  Authenticator.h
-  authenticationdialog.h)
+  Authenticator.h)
 
 SET(auth_SOURCES
   hqc_paths.cc
-  Authenticator.cc
-  authenticationdialog.cc)
+  BusyIndicator.cc
+  identifyUser.cc
+  HqcDataReinserter.cc
+  Authenticator.cc)
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})
+SET(auth_UIS
+    authenticationdialog.ui
+)
+QT4_WRAP_UI(auth_UIS_H ${auth_UIS})
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_LIBRARY(authentication STATIC
   ${auth_SOURCES} 
-  ${auth_HEADERS_MOC})
+  ${auth_HEADERS_MOC}
+  ${auth_UIS_H})

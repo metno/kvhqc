@@ -37,20 +37,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {  
 
-  setCaption("Visning i Diana");
+  setCaption(tr("Visning i Diana"));
 
   // Create a button group for parameter selection type
   
   paraTyp = new Q3ButtonGroup( 0, 
 					  Qt::Horizontal, 
-					  "HQC-synop", this);
+					  tr("HQC-synop"), this);
 
   Q3GridLayout* paraLayout = new Q3GridLayout(paraTyp->layout());
 
   // Insert checkbuttons for showtype selection
-  QLabel* alLabel = new QLabel( "Fastsatt\nplass rundt\nstasjonsring", paraTyp );
-  QLabel* stLabel = new QLabel( "Standard\nparametere", paraTyp );
-  QLabel* atLabel = new QLabel( "Alternative\nparametere", paraTyp );
+  QLabel* alLabel = new QLabel( tr("Fastsatt\nplass rundt\nstasjonsring"), paraTyp );
+  QLabel* stLabel = new QLabel( tr("Standard\nparametere"), paraTyp );
+  QLabel* atLabel = new QLabel( tr("Alternative\nparametere"), paraTyp );
 
   Q3ButtonGroup* taGroup = new Q3ButtonGroup();
   taType = new QRadioButton( "TA", paraTyp );
@@ -60,7 +60,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   taGroup->insert(tamoType);
   tameType = new QRadioButton( "TAM", paraTyp );
   taGroup->insert(tameType);
-  tadiType = new QRadioButton( "Differanse", paraTyp );
+  tadiType = new QRadioButton( tr("Differanse"), paraTyp );
   taGroup->insert(tadiType);
 
   tdGroup = new Q3ButtonGroup();
@@ -94,7 +94,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   prGroup->insert(pomaType);
   phType = new QRadioButton( "PH", paraTyp );
   prGroup->insert(phType);
-  podiType = new QRadioButton( "Differanse", paraTyp );
+  podiType = new QRadioButton( tr("Differanse"), paraTyp );
   prGroup->insert(podiType);
 
   ppGroup = new Q3ButtonGroup();
@@ -118,7 +118,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   rrGroup->insert(rr24moType);
   rr6Type = new QRadioButton( "RR_6", paraTyp );
   rrGroup->insert(rr6Type);
-  rrprType = new QRadioButton( "Forhold(%)", paraTyp );
+  rrprType = new QRadioButton( tr("Forhold(%)"), paraTyp );
   rrGroup->insert(rrprType);
 
   tnxGroup = new Q3ButtonGroup();
@@ -240,15 +240,15 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   paraLayout->addWidget(sdType    ,28,4);
   paraLayout->addWidget(emType    ,28,5);
 
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
 
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);
