@@ -187,11 +187,11 @@ namespace WatchRR
       //      setItem( i, toCol[RR_24_orig], new RR_24DataTableItem( this, interpretOrig_( d ) ) );
       setItem( i, toCol[RR_24_corr], rr24_ );
 
-      if ( d.controlinfo().flag(7) > 0 || 
-	   d.controlinfo().flag(8) > 1 ||
-	   d.controlinfo().flag(9) > 1 ||
-	   d.controlinfo().flag(11) > 1 ||
-	   d.controlinfo().flag(12) > 6 )
+      if ( d.controlinfo().flag(kvalobs::flag::ftime) > 0 ||
+	   d.controlinfo().flag(kvalobs::flag::fw) > 1 ||
+	   d.controlinfo().flag(kvalobs::flag::fstat) > 1 ||
+	   d.controlinfo().flag(kvalobs::flag::fclim) > 1 ||
+	   d.controlinfo().flag(kvalobs::flag::fd) > 6 )
 	rr24_->isCorrectedByQC2 = true;
       else
 	rr24_->isCorrectedByQC2 = false;

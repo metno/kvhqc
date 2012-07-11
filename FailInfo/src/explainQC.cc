@@ -37,6 +37,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qstring.h>
 //#include <kvservice/qt/kvQtApp.h>
 #include <kvcpp/KvApp.h>
+#include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStationParam.h>
 #include <kvalobs/kvQCFlagTypes.h>
 #include <puTools/miString.h>
@@ -99,7 +100,7 @@ namespace QC
 	  miString qcx;
 	  if ( icomma > 0 )
 	    qcx = data.cfailed().substr(0, data.cfailed().find(','));
-	  else 
+	  else
 	    qcx = data.cfailed();
     	  for ( CIStationParams it = sp.begin(); it != sp.end(); ++it ) {
 	    if ( qcx == it->qcx() and day >= it->fromday() and day <= it->today() )
@@ -125,15 +126,15 @@ namespace QC
 	   return "Ingen relevante detaljer tilgjengelig";
 
       miString st;
-      if ( data.controlinfo().flag(4) == 6 )
+      if ( data.controlinfo().flag(kvalobs::flag::fnum) == 6 )
 	st = "Observasjon mangler.  Modellverdi er satt inn";
-      else if ( data.controlinfo().flag(4) > 1 ) {
+      else if ( data.controlinfo().flag(kvalobs::flag::fnum) > 1 ) {
 	st = "Grenseverdier for avvik fra modell :";
 	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
 	st.trim();
 	st.replace( ";", " - " );
       }
-      else if ( data.controlinfo().flag(3) == 3 ) {
+      else if ( data.controlinfo().flag(kvalobs::flag::fs) == 3 ) {
 	st = "Samme verdi mer enn ";
 	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
 	st += " ganger";
@@ -156,7 +157,7 @@ namespace QC
       static ExplMap explMap;
 
       if ( explMap.empty() ) {
-	QString filename = hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
+	QString filename = ::hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );
@@ -239,7 +240,7 @@ namespace QC
       kvControlInfo ctrl;
       Data.controlinfo( ctrl );
 
-      int val = ctrl.flag( kvQCFlagTypes::f_fd );
+      int val = ctrl.flag( kvalobs::flag::fd );
 
       //if ( val >= 2 )
       ostringstream ss;
@@ -254,7 +255,7 @@ namespace QC
       kvControlInfo ctrl;
       Data.controlinfo( ctrl );
 
-      int val = ctrl.flag( kvQCFlagTypes::f_fcombi );
+      int val = ctrl.flag( kvalobs::flag::fcombi );
 
       //if ( val >= 2 )
       ostringstream ss;
@@ -323,9 +324,9 @@ namespace QC
     {
       typedef map<cFailedParam, string, cFailedParam::altLess> ExplMap;
       static ExplMap explMap;
-      
+
       if ( explMap.empty() ) {
-	QString filename = hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
+	QString filename = ::hqc::getPath(::hqc::DATADIR) + "/faildetail.txt";
 	static const int bufSize = 512;
 
 	ifstream fs( filename );

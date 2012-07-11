@@ -56,19 +56,19 @@ namespace WatchRR
           kvalobs::hqc::hqc_reject( d );
 	//	else
 	//	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
-	
-	else if ( fabs(d.original() - represented_value) > 0.0001 ) { 
+
+	else if ( fabs(d.original() - represented_value) > 0.0001 ) {
 	  cerr << "KNUT TESTER get_inconsistent 1 " << represented_value << endl;
 	  kvalobs::hqc::hqc_auto_correct( d, represented_value );
 	}
 	else {
 	  cerr << "KNUT TESTER get_inconsistent 2 " << represented_value << endl;
 	  kvalobs::kvControlInfo ctr = d.controlinfo();
-	  ctr.set(6,0);
+	  ctr.set(kvalobs::flag::fmis,0);
 	  d.corrected(represented_value);
 	  d.controlinfo(ctr);
 	  kvalobs::hqc::hqc_accept(d);
-	} 
+	}
 	out.push_back( d );
       }
     }

@@ -60,13 +60,13 @@ void OkCheckTableItem::getUpdatedList( DataSet & out )
   if ( isChecked() ) {
     // Mark all otherwise unmodified data as OK (fhqc = 1)
     for ( KvDataProvider::Iterator it = data.begin(); it != data.end(); ++ it ) {
-      if ( not kvalobs::missing( ** it ) 
+      if ( not kvalobs::missing( ** it )
            and out.find( ** it ) == out.end()
            and shouldChange_( ** it ) ) {
         kvalobs::kvData d( ** it );
         kvalobs::hqc::hqc_accept( d );
 	kvalobs::kvControlInfo ctr = d.controlinfo();
-	ctr.set(6,0);
+	ctr.set(kvalobs::flag::fmis,0);
 	d.controlinfo(ctr);
         out.insert( d );
       }

@@ -55,6 +55,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "TypeInformation.h"
 #include <kvcpp/KvApp.h>
 #include "hqc_paths.hh"
+#include <kvalobs/kvDataOperations.h>
 
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
@@ -285,14 +286,14 @@ ErrorList::ErrorList(QStringList& selPar,
 	    ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
 	    ((flg == 2 || flg == 3)&& flTyp == "fw") ||
 	    ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
-	  
+
 	  memStore1.push_back(memObs);
-	
+
 	else if (((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
-		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 || 
-		   flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) || 
-		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || 
-		   flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) || 
+		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 ||
+		   flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) ||
+		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 ||
+		   flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) ||
 		 ((flg == 3 || flg == 6 || flg == 9)&& flTyp == "fs" ) ||
 		 (flg == 6 && flTyp == "fnum") ||
 		 (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
@@ -304,11 +305,11 @@ ErrorList::ErrorList(QStringList& selPar,
 	  memStore2.push_back(memObs);
 	}
       }
-      
-      
-      
-      
-      
+
+
+
+
+
       //      }
       else if ( lity == erSa ) {
 	if ( ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
@@ -321,11 +322,11 @@ ErrorList::ErrorList(QStringList& selPar,
   cerr << "Memory store 1 size = " << memStore1.size() << "  no of params = " <<selPar.count() << endl;
   for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
     cerr << setw(7) << i;
-    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime 
-	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString() 
-	 << setw(9) << setprecision(1) << memStore1[i].orig 
-	 << setw(9) << setprecision(1) << memStore1[i].corr 
-         << setw(9) << setprecision(1) << memStore1[i].morig << "  " 
+    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime
+	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString()
+	 << setw(9) << setprecision(1) << memStore1[i].orig
+	 << setw(9) << setprecision(1) << memStore1[i].corr
+         << setw(9) << setprecision(1) << memStore1[i].morig << "  "
 	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
 	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
   }
@@ -333,11 +334,11 @@ ErrorList::ErrorList(QStringList& selPar,
   cerr << "Memory store 2 size = " << memStore2.size() << "  no of params = " <<selPar.count() << endl;
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
     cerr << setw(7) << i;
-    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
-	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
-	 << setw(9) << setprecision(1) << memStore2[i].orig 
-	 << setw(9) << setprecision(1) << memStore2[i].corr 
-         << setw(9) << setprecision(1) << memStore2[i].morig << "  " 
+    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime
+	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString()
+	 << setw(9) << setprecision(1) << memStore2[i].orig
+	 << setw(9) << setprecision(1) << memStore2[i].corr
+         << setw(9) << setprecision(1) << memStore2[i].morig << "  "
 	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
 	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
   }
@@ -389,28 +390,28 @@ ErrorList::ErrorList(QStringList& selPar,
     }
   }
   ///////
-  cerr << "Memory store 1 second time size = " << memStore1.size() 
+  cerr << "Memory store 1 second time size = " << memStore1.size()
        << "  no of params = " <<selPar.count() << endl;
   for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
     cerr << setw(14) << i;
-    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime 
-	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString() 
-	 << setw(9) << setprecision(1) << memStore1[i].orig 
-	 << setw(9) << setprecision(1) << memStore1[i].corr 
-	 << setw(9) << setprecision(1) << memStore1[i].morig 
+    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime
+	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString()
+	 << setw(9) << setprecision(1) << memStore1[i].orig
+	 << setw(9) << setprecision(1) << memStore1[i].corr
+	 << setw(9) << setprecision(1) << memStore1[i].morig
 	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
 	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
   }
   cerr << endl;
-  cerr << "Memory store 2 second time size = " << memStore2.size() 
+  cerr << "Memory store 2 second time size = " << memStore2.size()
        << "  no of params = " <<selPar.count() << endl;
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
     cerr << setw(14) << i;
-    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime 
-	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString() 
-	 << setw(9) << setprecision(1) << memStore2[i].orig 
-	 << setw(9) << setprecision(1) << memStore2[i].corr 
-	 << setw(9) << setprecision(1) << memStore2[i].morig 
+    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime
+	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString()
+	 << setw(9) << setprecision(1) << memStore2[i].orig
+	 << setw(9) << setprecision(1) << memStore2[i].corr
+	 << setw(9) << setprecision(1) << memStore2[i].morig
 	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
 	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
   }
@@ -610,7 +611,7 @@ ErrorList::ErrorList(QStringList& selPar,
   setColumnStretchable( 20, true );
   showSameStation();
 
-  setIcon( QPixmap( hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
+  setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
   setCaption(tr("Feilliste"));
 }
 
@@ -689,7 +690,7 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
   QString control = QString::fromStdString(cFailed);
   int flg = 0;
   int maxflg = -1;
-  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 ) 
+  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 )
     return maxflg;
   if ( !priorityParameterFilter(parNo) )
     return maxflg;
@@ -722,13 +723,13 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
 void ErrorList::checkFirstMemoryStore() {
     // UNUSED int j = 0, l = 0;
   for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-    kvControlInfo cif(memStore1[i].controlinfo); 
+    kvControlInfo cif(memStore1[i].controlinfo);
     if ( memStore1[i].flTyp == "fr" ) {
       if ( paramHasModel(memStore1[i].parNo) ) {
-	if ( cif.flag(4) == 1 || (cif.flag(4) > 1 && cif.flag(8) == 1) ) {
+	if ( cif.flag(kvalobs::flag::fnum) == 1 || (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) == 1) ) {
 	  noError.push_back(i);
 	}
-	else if ( (cif.flag(4) > 1 && cif.flag(8) > 1) || cif.flag(8) == 0 ) {
+	else if ( (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) > 1) || cif.flag(kvalobs::flag::fw) == 0 ) {
 	  error.push_back(i);
 	}
       }
@@ -744,38 +745,38 @@ void ErrorList::checkFirstMemoryStore() {
       }
     }
     else if ( memStore1[i].flTyp == "fs" ) {
-      if ( cif.flag(3) == 2 && cif.flag(10) > 1 )
+      if ( cif.flag(kvalobs::flag::fs) == 2 && cif.flag(kvalobs::flag::fcp) > 1 )
 	error.push_back(i);
-      else if ( cif.flag(3) == 2 && cif.flag(10) <= 1 ) {
-	if ( cif.flag(1) == 1 && cif.flag(8) == 1 ) {
+      else if ( cif.flag(kvalobs::flag::fs) == 2 && cif.flag(kvalobs::flag::fcp) <= 1 ) {
+	if ( cif.flag(kvalobs::flag::fr) == 1 && cif.flag(kvalobs::flag::fw) == 1 ) {
 	  noError.push_back(i);
 	}
-	else if ( cif.flag(1) > 1 || cif.flag(8) > 1 ) {
+	else if ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) {
 	  error.push_back(i);
-	} 
+	}
       }
-      else if ( cif.flag(3) == 4 && cif.flag(10) > 1 ) {
+      else if ( cif.flag(kvalobs::flag::fs) == 4 && cif.flag(kvalobs::flag::fcp) > 1 ) {
 	error.push_back(i);
       }
-      else if ( cif.flag(3) == 4 && cif.flag(10) <= 1 && cif.flag(1) <= 1 && cif.flag(8) <= 1 ) {
+      else if ( cif.flag(kvalobs::flag::fs) == 4 && cif.flag(kvalobs::flag::fcp) <= 1 && cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fw) <= 1 ) {
 	noError.push_back(i);
       }
-      else if ( cif.flag(3) == 5 && ( cif.flag(1) > 1 || cif.flag(8) > 1 ) ) {
+      else if ( cif.flag(kvalobs::flag::fs) == 5 && ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) ) {
 	error.push_back(i);
       }
-      else if ( cif.flag(3) == 5 && cif.flag(1) <= 1 &&  cif.flag(8) <= 1  ) {
+      else if ( cif.flag(kvalobs::flag::fs) == 5 && cif.flag(kvalobs::flag::fr) <= 1 &&  cif.flag(kvalobs::flag::fw) <= 1  ) {
 	noError.push_back(i);
       }
     }
     //TODO: Proper treatment of fcc=2 and fcp=2
     /*
     else if ( memStore1[i].flTyp == "fcc" ) {
-      if ( cif.flag(2) == 2 )
+      if ( cif.flag(kvalobs::flag::fcc) == 2 )
       // find the other parameter
 	error.push_back(i);
     }
     else if ( memStore1[i].flTyp == "fcp" ) {
-      if ( cif.flag(10) == 2 )
+      if ( cif.flag(kvalobs::flag::fcp) == 2 )
       // find the other parameter
 	error.push_back(i);
     }
@@ -786,12 +787,12 @@ void ErrorList::checkFirstMemoryStore() {
       }
     }
     else if ( memStore1[i].flTyp == "fw" ) {
-      if ( (cif.flag(8) == 2 || cif.flag(8) == 3) && 
-	   ( cif.flag(1) > 1 || cif.flag(2) > 1 || cif.flag(3) > 1 || cif.flag(10) > 1) ) {
+      if ( (cif.flag(kvalobs::flag::fw) == 2 || cif.flag(kvalobs::flag::fw) == 3) &&
+	   ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fcc) > 1 || cif.flag(kvalobs::flag::fs) > 1 || cif.flag(kvalobs::flag::fcp) > 1) ) {
 	error.push_back(i);
       }
-      else if ( (cif.flag(8) == 2 || cif.flag(8) == 3) && 
-		( cif.flag(1) <= 1 && cif.flag(2) <= 1 && cif.flag(3) <= 1 && cif.flag(10) <= 1) )  {
+      else if ( (cif.flag(kvalobs::flag::fw) == 2 || cif.flag(kvalobs::flag::fw) == 3) &&
+		( cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fcc) <= 1 && cif.flag(kvalobs::flag::fs) <= 1 && cif.flag(kvalobs::flag::fcp) <= 1) )  {
 	noError.push_back(i);
       }
     }
@@ -803,17 +804,17 @@ void ErrorList::checkFirstMemoryStore() {
 void ErrorList::checkSecondMemoryStore() {
     // UNUSED int j = 0, l = 0;
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    kvControlInfo cif(memStore2[i].controlinfo); 
+    kvControlInfo cif(memStore2[i].controlinfo);
     if ( memStore2[i].flTyp == "fr" ) {
-      if ( cif.flag(1) == 6 && cif.flag(7) == 1 )
+      if ( cif.flag(kvalobs::flag::fr) == 6 && cif.flag(kvalobs::flag::ftime) == 1 )
 	noError.push_back(i);
       else
 	error.push_back(i);
     }
     else if ( memStore2[i].flTyp == "fs" ) {
-      if (cif.flag(3) == 6 )
+      if (cif.flag(kvalobs::flag::fs) == 6 )
 	noError.push_back(i);
-      else 
+      else
 	error.push_back(i);
     }
   }
@@ -886,7 +887,7 @@ void ErrorList::updateKvBase(mem* memStore)
     kvData kd = getKvData( *memStore );
     //TODO: Remove next 3 lines when the new QC1-9 is ready
     kvControlInfo cif = kd.controlinfo();
-    cif.set(15,2);
+    cif.set(kvalobs::flag::fhqc,2);
     kd.controlinfo(cif);
     CKvalObs::CDataSource::Result_var result;
     {
@@ -977,9 +978,9 @@ void ErrorList::markModified( int row, int col )
     item( row, col )->setText("");;
     return;
   }
-  int fmis = cif.flag(6);
-  // UNUSED int fnum = cif.flag(4);
-  int fd = cif.flag(12);
+  int fmis = cif.flag(kvalobs::flag::fmis);
+  // UNUSED int fnum = cif.flag(kvalobs::flag::fnum);
+  int fd = cif.flag(kvalobs::flag::fd);
   switch (col) {
   case 14:
     {
@@ -1339,48 +1340,48 @@ void ErrorList::saveChanges()
     kvUseInfo uif = kd.useinfo();
     cerr << "Gamle flagg = " << cif << " " << uif << endl;
 
-    int fmis = cif.flag(6);
-    int fd = cif.flag(12);
+    int fmis = cif.flag(kvalobs::flag::fmis);
+    int fd = cif.flag(kvalobs::flag::fd);
     switch ( ccol ) {
     case 14:
       {
 	if ( kd.original() == kd.corrected() && ( fd == 0 || fd == 1 || fd == 3 ) && fmis < 2 ) {
-	  cif.set(15,1);
+	  cif.set(kvalobs::flag::fhqc,1);
 	  if ( fd == 3 )
-	    cif.set(12,1);
+	    cif.set(kvalobs::flag::fd,1);
 	}
 	else {
 	  if ( fmis == 0 ) {
-	    cif.set(15,7);
+	    cif.set(kvalobs::flag::fhqc,7);
 	  }
 	  else if ( fmis == 1 ) {
-	    cif.set(15,5);
+	    cif.set(kvalobs::flag::fhqc,5);
 	  }
 	}
       }
       break;
     case 15:
       {
-	if ( cif.flag(4) > 1 ) {
-	  cif.set(15,4);
+	if ( cif.flag(kvalobs::flag::fnum) > 1 ) {
+	  cif.set(kvalobs::flag::fhqc,4);
 	}
 	if ( fmis == 0 ) {
-	  cif.set(15,1);
+	  cif.set(kvalobs::flag::fhqc,1);
 	  kd.corrected(kd.original());
-	  if ( cif.flag(12) == 3 )
-	    cif.set(12,1);
+	  if ( cif.flag(kvalobs::flag::fd) == 3 )
+	    cif.set(kvalobs::flag::fd,1);
 	}
 	else if ( fmis == 1 ) {
-	  cif.set(15,4);
-	  cif.set(6,3);
+	  cif.set(kvalobs::flag::fhqc,4);
+	  cif.set(kvalobs::flag::fmis,3);
 	  kd.corrected(kd.original());
 	}
 	else if ( fmis == 2 ) {
-	  cif.set(15,1);
-	  cif.set(6,0);
+	  cif.set(kvalobs::flag::fhqc,1);
+	  cif.set(kvalobs::flag::fmis,0);
 	  kd.corrected(kd.original());
-	  if ( cif.flag(12) == 3 )
-	    cif.set(12,1);
+	  if ( cif.flag(kvalobs::flag::fd) == 3 )
+	    cif.set(kvalobs::flag::fd,1);
 	}
 	else if ( fmis == 3 ) {
 	  cerr << "Vi skulle ikke vært her" << endl;
@@ -1389,14 +1390,14 @@ void ErrorList::saveChanges()
       break;
     case 16:
       {
-	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction 
-	  //	  cif.set(6,0);
-	  cif.set(6,4);
-	  cif.set(15,7);
+	if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction
+	  //	  cif.set(kvalobs::flag::fmis,0);
+	  cif.set(kvalobs::flag::fmis,4);
+	  cif.set(kvalobs::flag::fhqc,7);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
-	  cif.set(6,1);
-	  cif.set(15,5);
+	  cif.set(kvalobs::flag::fmis,1);
+	  cif.set(kvalobs::flag::fhqc,5);
 	}
       }
       break;
@@ -1404,39 +1405,39 @@ void ErrorList::saveChanges()
       {
 	if ( fmis == 0 || fmis == 2 ) {
 	  //	if ( fmis == 0 ) {
-	  cif.set(6,4);
+	  cif.set(kvalobs::flag::fmis,4);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {
-	  cif.set(6,1);
+	  cif.set(kvalobs::flag::fmis,1);
 	}
-	cif.set(12,2);
-	cif.set(15,6);
+	cif.set(kvalobs::flag::fd,2);
+	cif.set(kvalobs::flag::fhqc,6);
       }
       break;
     case 18:
       {
 	if ( fmis == 0 || fmis == 2 || fmis == 4 ) {  //original exists, this is a correction
-	  //	  cif.set(6,0);
-	  cif.set(6,4);
-	  cif.set(15,7);
+	  //	  cif.set(kvalobs::flag::fmis,0);
+	  cif.set(kvalobs::flag::fmis,4);
+	  cif.set(kvalobs::flag::fhqc,7);
 	}
 	else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
-	  cif.set(6,1);
-	  cif.set(15,5);
+	  cif.set(kvalobs::flag::fmis,1);
+	  cif.set(kvalobs::flag::fhqc,5);
 	}
       }
       break;
     case 19:
       {
-	int fmis = cif.flag(6);
+	int fmis = cif.flag(kvalobs::flag::fmis);
 	if ( fmis == 1 )
 	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
 	else if ( fmis == 3 )
 	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
 	else {
-	  cif.set(15,10);
+	  cif.set(kvalobs::flag::fhqc,10);
 	  if ( fmis == 0 )
-	    cif.set(6,2);
+	    cif.set(kvalobs::flag::fmis,2);
 	}
       }
       break;
@@ -1445,7 +1446,7 @@ void ErrorList::saveChanges()
     default:
       // Undo changes:
       cerr << "KNUT tester er vi her ???? " << endl;
-      cif.set(15,0); break;
+      cif.set(kvalobs::flag::fhqc,0); break;
     }
     kd.controlinfo( cif );
     cerr << "Nye flagg    = " << cif << " " << uif << endl;
@@ -1503,7 +1504,7 @@ void ErrorList::saveChanges()
 void ErrorList::readLimits() {
   int par, dum;
   float low, high;
-  QString limitsFile = hqc::getPath(::hqc::CONFDIR) + "/slimits";
+  QString limitsFile = ::hqc::getPath(::hqc::CONFDIR) + "/slimits";
   QFile limits(limitsFile);
   if ( !limits.open(QIODevice::ReadOnly) ) {
     cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;

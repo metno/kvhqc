@@ -37,31 +37,31 @@ using namespace kvalobs;
 
 namespace internal_
 {
-  void addCFailed( kvalobs::kvData &d ) 
+  void addCFailed( kvalobs::kvData &d )
   {
     miutil::miString cf = d.cfailed();
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     if ( cinfo.flag( flag::fhqc ) >= 2 ) {
       if ( cf.empty() )
 	cf = "hqc";
-      else if ( !cf.contains("watchweather") && 
+      else if ( !cf.contains("watchweather") &&
 		!cf.contains("watchRR") )
 	cf += ",hqc";
     }
-    else if ( cinfo.flag( flag::fhqc ) == 1 && 
-	      !cf.empty() && 
+    else if ( cinfo.flag( flag::fhqc ) == 1 &&
+	      !cf.empty() &&
 	      !cf.contains("watchweather") &&
 	      !cf.contains("watchRR") )
       cf += ",hqc";
     else if ( cinfo.flag( flag::fhqc ) == 0 &&
-	      !cf.empty() && 
+	      !cf.empty() &&
 	      !cf.contains("watchweather") &&
 	      !cf.contains("watchRR") &&
 	      d.corrected() == d.original() &&
 	      d.corrected() == -32767 ) {
       cf += ",hqc";
     }
-  
+
     d.cfailed( cf );
     kvUseInfo ui = d.useinfo();
     ui.addToErrorCount();
@@ -76,7 +76,7 @@ namespace internal_
 
     if (( cf.contains("hqc") || cf.contains("watchweather") || cf.contains("watchRR")) && ci.flag( flag::fhqc ) == 0 ) {
       kvalobs::kvControlInfo tci = d.controlinfo();
-      tci.set(15,1);
+      tci.set(kvalobs::flag::fhqc,1);
       ui.setUseFlags( tci );
     }
     else {

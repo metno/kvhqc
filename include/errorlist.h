@@ -50,7 +50,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvData.h>
 #include <qvalidator.h>
 
-#include "StationInfoToolTip.h"
 #include <FailDialog.h>
 
 class ErrorListFirstCol;
@@ -69,7 +68,7 @@ const int npnc = 106;
 const int npcc = 83;
 //const int npcc = 27;
 //const int npcc = 32;
-const int  parNoControl[] = {  2,  3,  4,  5,  6,  9, 10, 11, 12, 13, 
+const int  parNoControl[] = {  2,  3,  4,  5,  6,  9, 10, 11, 12, 13,
 			       17, 20, 21, 22, 23, 24, 25, 26, 27, 28,
 			       44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
 			       54, 55, 56, 57,101,102,103,115,116,124,
@@ -136,14 +135,15 @@ const QString controlNoControl[] = {"QC1-2-100","QC1-2-123A","QC1-2-123B","QC1-2
 class CrTableItem : public Q3TableItem {
   bool numbers;
 public:
-  CrTableItem(Q3Table* t, 
-	      EditType et, 
+  CrTableItem(Q3Table* t,
+	      EditType et,
 	      const QString &txt,
-	      bool acceptNumbers) 
+	      bool acceptNumbers)
     : Q3TableItem( t, et, txt )
     , numbers(acceptNumbers) {}
+  virtual ~CrTableItem() { }
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-  
+
   virtual QWidget *createEditor() const;
   static const QRegExpValidator validator;
   static const QRegExp re;
@@ -155,7 +155,7 @@ public:
 
 class OkTableItem : public Q3CheckTableItem {
 public:
-  OkTableItem(Q3Table* t, 
+  OkTableItem(Q3Table* t,
 	      const QString &txt ) : Q3CheckTableItem( t, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
 };
@@ -166,8 +166,8 @@ public:
 
 class DataCell : public Q3TableItem {
 public:
-  DataCell(Q3Table* t, 
-	      EditType et, 
+  DataCell(Q3Table* t,
+	      EditType et,
 	      const QString &txt ) : Q3TableItem( t, et, txt ) {
   }
   QString key() const;
@@ -179,36 +179,36 @@ public:
  *
  * \detailed The error list consists of two parts.  One part holds the data for the observations
  * which are flagged as erronous.  The other part has cells where the user can insert
- * new values or approve or reject existing values. 
+ * new values or approve or reject existing values.
  */
 
 class ErrorList : public Q3Table {
   Q_OBJECT
 public:
   ErrorList(QStringList&,
-	    const miutil::miTime&, 
 	    const miutil::miTime&,
-	    int, 
-	    int, 
-	    QWidget*, 
-	    int, 
-	    int, 
+	    const miutil::miTime&,
+	    int,
+	    int,
+	    QWidget*,
+	    int,
+	    int,
 	    int*,
 	    vector<model::KvalobsData>&,
-	    vector<modDatl>&, 
+	    vector<modDatl>&,
 	    list<kvStation>&,
-	    int, 
+	    int,
 	    int,
 	    QString&);
-  ~ErrorList();
+  virtual ~ErrorList();
 
   /*!
-   * \brief Reads the climatological limits from a file 
+   * \brief Reads the climatological limits from a file
    */
   void readLimits();
 
   /*!
-   * \brief 
+   * \brief
    */
   struct mem {
     double orig;
@@ -231,7 +231,7 @@ public:
   };
 
   /*!
-   * \brief 
+   * \brief
    */
   struct missObs {
     miutil::miTime oTime;
@@ -242,12 +242,12 @@ public:
   };
 
   /*!
-   * \brief 
+   * \brief
    */
   vector<missObs> mList;
 
   /*!
-   * \brief 
+   * \brief
    */
   vector<mem> missList;
 
@@ -281,21 +281,21 @@ public slots:
 signals:
 
   /**
-   * \brief Reports the selection of a new station and/or obstime in the 
+   * \brief Reports the selection of a new station and/or obstime in the
    *        errorlist.
    */
   //  void stationSelected( int station, const miutil::miTime & obstime );
   void statSel( miMessage& letter );
 
   /**
-   * \brief Reports the closing of the 
+   * \brief Reports the closing of the
    *        errorlist.
    */
   void errorListClosed();
 
 protected:
   /*!
-   * \brief 
+   * \brief
    */
   virtual bool event( QEvent * e );
   void closeEvent ( QCloseEvent * event );
@@ -303,16 +303,16 @@ protected:
 
 private:
   /*!
-   * \brief 
+   * \brief
    */
   int stationidCol;
   /*!
-   * \brief 
+   * \brief
    */
   int typeidCol;
 
   /*!
-   * \brief 
+   * \brief
    */
   struct refs {
     int stnr;
@@ -321,10 +321,9 @@ private:
     double dist;
   };
   /*!
-   * \brief 
+   * \brief
    */
   QString opName;
-  StationInfoToolTip* stTT;
   FailInfo::FailDialog* fDlg;
   std::list<kvalobs::kvObsPgm> obsPgmList;
   std::list<long> statList;
@@ -335,39 +334,39 @@ private:
   vector<mem> memStore1;
   /*!
    * \brief Temporary store for observations with these flags:
-   * fr=4, fr=5, fs=2, fnum=4, fnum=5 
+   * fr=4, fr=5, fs=2, fnum=4, fnum=5
    */
   vector<mem> memStore2;
   /*!
-   * \brief 
+   * \brief
    */
   //  vector<mem> memStore3;
 
 private:
   HqcMainWindow * mainWindow;
   /**
-   * \brief Indexes of elements wchich are not transferred to the error list 
+   * \brief Indexes of elements wchich are not transferred to the error list
    */
   vector<int> noError;
   /**
-   * \brief Indexes of elements wchich are transferred to the error list 
+   * \brief Indexes of elements wchich are transferred to the error list
    */
   vector<int> error;
   /**
    * \brief Decide if an observation is going to the error list or not
-   * \return The largest flag value from the automatic control, negative 
+   * \return The largest flag value from the automatic control, negative
    *         if no HQC control is indicated
    */
   int errorFilter(int, string, string, QString&);
   /**
    * \brief Decide if given parameter is to be controlled in HQC
-   * \return TRUE if the parameter is to be controlled. 
+   * \return TRUE if the parameter is to be controlled.
    */
   bool priorityParameterFilter(int);
   /**
    * \brief Decide if the given control is to be checked in HQC
    * \return 0 if only one control flag is set, and this is not
-   *         to be checked in HQC  
+   *         to be checked in HQC
    */
   int priorityControlFilter(QString);
   /**
@@ -389,7 +388,7 @@ private:
    *
    * \return 0 if given parameter is code, 1 otherwise.
    */
-  int paramIsCode(int); 
+  int paramIsCode(int);
   /**
    * \brief Checks if an observation is in the missing list
    *
@@ -413,8 +412,8 @@ private:
   /**
    * \brief Checks if given parameter can be stored at given time.
    */
-  bool specialTimeFilter(int, miutil::miTime); 
-  bool typeFilter(int, int, int, miutil::miTime); 
+  bool specialTimeFilter(int, miutil::miTime);
+  bool typeFilter(int, int, int, miutil::miTime);
 private slots:
   //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);
@@ -433,7 +432,7 @@ private slots:
   //  void showWeather( ErrorList* );
 
   /**
-   * \brief Identifies station obstime at row, col, and emits the 
+   * \brief Identifies station obstime at row, col, and emits the
    *        stationSelected signal.
    */
   void signalStationSelected( int row );

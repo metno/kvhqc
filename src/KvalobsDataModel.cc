@@ -1,5 +1,5 @@
 /*
- Kvalobs - Free Quality Control Software for Meteorological Observations 
+ Kvalobs - Free Quality Control Software for Meteorological Observations
 
  Copyright (C) 2010 met.no
 
@@ -13,17 +13,17 @@
  This file is part of KVALOBS
 
  KVALOBS is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License as 
- published by the Free Software Foundation; either version 2 
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
- 
+
  KVALOBS is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  General Public License for more details.
- 
- You should have received a copy of the GNU General Public License along 
- with KVALOBS; if not, write to the Free Software Foundation Inc., 
+
+ You should have received a copy of the GNU General Public License along
+ with KVALOBS; if not, write to the Free Software Foundation Inc.,
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -195,16 +195,16 @@ namespace model
     return ret;
   }
 
-  
+
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
   {
       if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return false;
-    
+
     if ( Qt::EditRole == role ) {
       if ( getColumnType(index) == Corrected ) {
 	const Parameter & p = getParameter(index);
-	
+
 	// Invalid input (should never happen, except when user entered empty string)
 	bool ok;
 	double val = value.toDouble(& ok);
@@ -214,15 +214,15 @@ namespace model
 	  else
 	    return false;
 	}
-	
+
 	try {
 	  KvalobsData & d = kvalobsData_->at(index.row());
-	  
+
 	  // Insignificant change. Ignored.
 	  double oldValue = d.corr(p.paramid);
 	  if ( std::fabs(oldValue - val) < 0.005 )
 	    return false;
-	  	  
+
 	  double oldOrig = d.orig(p.paramid);
 	  kvControlInfo ctr = d.controlinfo(p.paramid);
 	  int typ = d.typeId(p.paramid);
@@ -237,7 +237,7 @@ namespace model
 	    kvalobs::hqc::hqc_auto_correct(changeData, val);
 	  }
 	  else if ( val != -32766 ) {
-	    ctr.set(6,0);
+	    ctr.set(kvalobs::flag::fmis,0);
 	    changeData.controlinfo(ctr);
 	    kvalobs::hqc::hqc_accept(changeData);
 	  }
@@ -248,7 +248,7 @@ namespace model
 	    cfailed += ",";
 	  cfailed += "hqc";
 	  changeData.cfailed(cfailed);
-	  
+
 	  // Update stored data
 	  d.set_corr(p.paramid, val);
 	  d.set_controlinfo(p.paramid, changeData.controlinfo());
@@ -258,12 +258,12 @@ namespace model
 	    typ = hqcm->findTypeId(typ, d.stnr(), p.paramid, d.otime());
 	    changeData.typeID(typ);
 	  }
-	  
+
 	  QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
 	  emit dataChanged(flagIndex, index);
 	  emit dataModification(changeData);
 	  qDebug() << "SetData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
-		   << qPrintable(p.parameterName) << " from " << oldValue 
+		   << qPrintable(p.parameterName) << " from " << oldValue
 		   << " to " << val << "," << d.typeId(p.paramid);
 	  cerr << changeData.useinfo() << endl;
 	  return true;
@@ -275,7 +275,7 @@ namespace model
     }
     return false;
   }
-  
+
   bool KvalobsDataModel::setAcceptedData(const QModelIndex & index, const QVariant & value, bool maybeQC2, int role)
   {
       if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
@@ -312,13 +312,13 @@ namespace model
 	      d.set_typeId(p.paramid, typ);
 	    }
             kvalobs::kvData changeData = getKvData_(index);
-	    ctr.set(6,0);
+	    ctr.set(kvalobs::flag::fmis,0);
 	    if ( val == -32767 ) {
 	      if ( maybeQC2 )
-		ctr.set(15,4);
+		ctr.set(kvalobs::flag::fhqc,4);
 	      else
-		ctr.set(15,3);
-	      ctr.set(6,3);
+		ctr.set(kvalobs::flag::fhqc,3);
+	      ctr.set(kvalobs::flag::fmis,3);
        	      changeData.controlinfo(ctr);
 	    }
 	    else {
@@ -340,8 +340,8 @@ namespace model
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             emit dataChanged(flagIndex, index);
             emit dataModification(changeData);
-            qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter " 
-		     << qPrintable(p.parameterName) << " from " 
+            qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
+		     << qPrintable(p.parameterName) << " from "
 		     << oldValue << " to " << val;
 	    cerr << changeData.useinfo() << endl;
             return true;
@@ -451,7 +451,7 @@ namespace model
     const KvalobsData & d = kvalobsData_->at(index.row());
     const kvalobs::kvControlInfo & controlinfo = d.controlinfo(p.paramid);
 
-    const int fmis = controlinfo.flag(kvQCFlagTypes::f_fmis);
+    const int fmis = controlinfo.flag(kvalobs::flag::fmis);
 
     ColumnType columnType = getColumnType(index);
     switch ( columnType )
@@ -505,10 +505,10 @@ namespace model
         if ( index.isValid() and index.row() < (int)kvalobsData_->size() ) {
             const KvalobsData & d = kvalobsData_->at(index.row());
             const kvalobs::kvControlInfo & ci = d.controlinfo(getParameter(index).paramid);
-            if ( ci.flag(15) == 0 ) { // not hqc touched
+            if ( ci.flag(kvalobs::flag::fhqc) == 0 ) { // not hqc touched
               if ( ci.qc2dDone() )
                 return Qt::darkMagenta;
-              if ( ci.flag(4) >= 6 ) // controlinfo(4) is fnum
+              if ( ci.flag(kvalobs::flag::fnum) >= 6 )
                 return Qt::red;
             }
         }
@@ -629,7 +629,7 @@ namespace model
 
   bool KvalobsDataModel::paramIsCode(const int parNo) const {
     for ( int i = 0; i < 66; i++ ) {
-      if ( parNo == codeParam[i] ) 
+      if ( parNo == codeParam[i] )
 	return true;
     }
     return false;

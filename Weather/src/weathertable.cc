@@ -71,7 +71,7 @@ namespace Weather
     vector<synFlg> flagList;
     QString pName(name);
     miutil::miTime protime("1900-01-01 00:00:00");
-    
+
     readLimits();
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
     if ( pName == "corr" )
@@ -215,17 +215,17 @@ namespace Weather
 	    datItem->isModelVal = true;
 	  else
 	    datItem->isModelVal = false;
-	  
+
 	  if ( !ctrlinfo.empty() && (ctrlinfo.substr(7,1) > "0" ||
 		  ctrlinfo.substr(8,1) > "1" ||
 		  ctrlinfo.substr(9,1) > "1" ||
 		  ctrlinfo.substr(11,1) > "1" ||
 		  ctrlinfo.substr(12,1) > "6") )
-	  
+
 	    datItem->isCorrectedByQC2 = true;
 	  else
 	    datItem->isCorrectedByQC2 = false;
-	}  
+	}
 	else if ( pName == "orig" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::Never,strtyp,strdat);
 	  datItem->isModelVal = false;
@@ -295,9 +295,9 @@ namespace Weather
 
     std::list<kvalobs::kvObsPgm> obsPgmList;
     bool ok = kvservice::KvApp::kvApp->getKvObsPgm( obsPgmList, std::list<long>(), false );
-    
-    int typ = kvDat.typeID(); 
-    
+
+    int typ = kvDat.typeID();
+
     if ( abs(kvDat.typeID()) > 503 || kvDat.typeID() == 0 )
       typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),kvDat.obstime(),obsPgmList);
     if ( typ == -32767 ) {
@@ -309,7 +309,7 @@ namespace Weather
       tit->setText("");
       return;
     }
-    
+
     float oldCorr = kvDat.corrected();
     float org     = kvDat.original();
     QString oldCorrStr;
@@ -335,60 +335,60 @@ namespace Weather
 	tit->setText(oldCorrStr);
       return;
     }
-    //    cif.set(15,1);
+    //    cif.set(kvalobs::flag::fhqc,1);
     if ( fabs(newCorr - org ) < epsilon ) {
-      if ( cif.flag(4) >= 1 ) {
-	cif.set(15,1);
-	//	cif.set(4,1);
-	//	cif.set(6,0);
+      if ( cif.flag(kvalobs::flag::fnum) >= 1 ) {
+	cif.set(kvalobs::flag::fhqc,1);
+	//	cif.set(kvalobs::flag::fnum,1);
+	//	cif.set(kvalobs::flag::fmis,0);
       }
-      if ( cif.flag(6) == 0 ) {
-	cif.set(15,1);
-	if ( cif.flag(12) == 3 )
-	  cif.set(12,1);
+      if ( cif.flag(kvalobs::flag::fmis) == 0 ) {
+	cif.set(kvalobs::flag::fhqc,1);
+	if ( cif.flag(kvalobs::flag::fd) == 3 )
+	  cif.set(kvalobs::flag::fd,1);
       }
-      else if ( cif.flag(6) == 1 ) {
-	cif.set(15,4);
-	cif.set(6,3);
-	//	cif.set(4,1);
+      else if ( cif.flag(kvalobs::flag::fmis) == 1 ) {
+	cif.set(kvalobs::flag::fhqc,4);
+	cif.set(kvalobs::flag::fmis,3);
+	//	cif.set(kvalobs::flag::fnum,1);
       }
-      else if ( cif.flag(6) == 2 ) {
-	cif.set(15,1);
-	cif.set(6,0);
-	if ( cif.flag(12) == 3 )
-	  cif.set(12,1);
+      else if ( cif.flag(kvalobs::flag::fmis) == 2 ) {
+	cif.set(kvalobs::flag::fhqc,1);
+	cif.set(kvalobs::flag::fmis,0);
+	if ( cif.flag(kvalobs::flag::fd) == 3 )
+	  cif.set(kvalobs::flag::fd,1);
       }
     }
     else
-      cif.set(15,7);
+      cif.set(kvalobs::flag::fhqc,7);
 
     if ( newCorr == -32766.0 ) {
-      cif.set(15,10);
-      const int misfl = cif.flag(6);
+      cif.set(kvalobs::flag::fhqc,10);
+      const int misfl = cif.flag(kvalobs::flag::fmis);
       if ( misfl == 0 || misfl == 1 )
-	cif.set(6,misfl + 2);
+	cif.set(kvalobs::flag::fmis,misfl + 2);
     }
-    else if ( cif.flag(6) == 1 || cif.flag(6) == 3 && newCorr > -32766 ) {
-      cif.set(6,1);
-      cif.set(15,5);
+    else if ( cif.flag(kvalobs::flag::fmis) == 1 || cif.flag(kvalobs::flag::fmis) == 3 && newCorr > -32766 ) {
+      cif.set(kvalobs::flag::fmis,1);
+      cif.set(kvalobs::flag::fhqc,5);
     }
-    else if ( org > -32766.0 && (cif.flag(6) == 2) ) {
-      //      cif.set(6,0);
-      cif.set(6,4);
-      cif.set(15,7);
+    else if ( org > -32766.0 && (cif.flag(kvalobs::flag::fmis) == 2) ) {
+      //      cif.set(kvalobs::flag::fmis,0);
+      cif.set(kvalobs::flag::fmis,4);
+      cif.set(kvalobs::flag::fhqc,7);
     }
-    else if ( cif.flag(6) == 4 ) {
-      cif.set(15,7);
+    else if ( cif.flag(kvalobs::flag::fmis) == 4 ) {
+      cif.set(kvalobs::flag::fhqc,7);
     }
 
     if ( oldCorr == -32767.0 ) {
-      cif.set(15,5);                      //Interpol
+      cif.set(kvalobs::flag::fhqc,5);                      //Interpol
       int misfl;
-      if ( cif.flag(6) == 0 )
+      if ( cif.flag(kvalobs::flag::fmis) == 0 )
 	misfl = 1;
       else
-	misfl  = cif.flag(6) - 2;
-      cif.set(6,misfl);
+	misfl  = cif.flag(kvalobs::flag::fmis) - 2;
+      cif.set(kvalobs::flag::fmis,misfl);
     }
     kvDat.controlinfo(cif);
 
@@ -575,7 +575,8 @@ namespace Weather
 	}
 	break;
       default:
-	tpId = -32767;;
+	tpId = -32767;
+	break;
       }
     }
     return tpId;
