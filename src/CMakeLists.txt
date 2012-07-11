@@ -17,10 +17,8 @@ SET(hqc_HEADERS
   ../include/hqcmain.h
   ../include/helptree.h
   ../include/textdatatable.h
-#  ../include/tabwindow.h
   ../include/rejecttable.h
   ../include/rejectdialog.h
-#  ../include/datatable.h
   ../include/ClockDialog.h
   ../include/errorlist.h)
 
@@ -29,7 +27,6 @@ SET(hqc_SOURCES
   approvedialog.cc
   ClockDialog.cc
   connect2stinfosys.cc
-#  datatable.cc
   dianashowdialog.cc
   discarddialog.cc
   errorlist.cc
@@ -38,7 +35,6 @@ SET(hqc_SOURCES
   GetTextData.cc
   helptree.cc
   hqc4.cc
-#  hqc.cc
   hqcmain.cc
   identdialog.cc
   KvalobsData.cc
@@ -52,8 +48,6 @@ SET(hqc_SOURCES
   rejectdialog.cc
   rejecttable.cc
   rejecttimeseriesdialog.cc
-#  StationInfoToolTip.cc
-#  tabwindow.cc
   textdatadialog.cc
   textdatatable.cc
   TimeseriesDialog.cc
