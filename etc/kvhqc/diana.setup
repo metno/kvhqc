@@ -34,7 +34,7 @@
 #----------------------------------------------------------------------------------
 
 #Local variables
-ROOT            = /usr/local
+ROOT            = /usr  
 DIANADIR        = ${DIANADIR}||$(ROOT)
 OPDATA1         = /opdata
 OPDATA2         = /opdata

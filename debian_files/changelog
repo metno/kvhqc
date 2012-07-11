@@ -1,3 +1,9 @@
+kvhqc (2.8.9~rc3-1) unstable; urgency=low
+
+  * expect diana files in /usr, not /usr/local by default
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 11 Jul 2012 14:05:23 +0200
+
 kvhqc (2.8.9~rc2-1) unstable; urgency=low
 
   * sorttime.xpm => images/sorttime.png
