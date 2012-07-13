@@ -116,9 +116,6 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
     ci.set( kvalobs::flag::fhqc, newFhqc );
     d.controlinfo( ci );
 
-    updateCfailed(d, "Manual judgment");
-    // kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
-
     data.insert( d );
 }
 
