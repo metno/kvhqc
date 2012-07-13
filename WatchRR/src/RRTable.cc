@@ -388,8 +388,8 @@ namespace WatchRR
   {
     if ( ! ri )
     {
-      QMessageBox::critical( this, "HQC - nedbør",
-                             "Du er ikke autorisert til å lagre data i kvalobs.",
+      QMessageBox::critical( this, tr("HQC - nedbør"),
+                             tr("Du er ikke autorisert til å lagre data i kvalobs."),
                              QMessageBox::Ok,  Qt::NoButton );
       return false;
     }
@@ -399,8 +399,8 @@ namespace WatchRR
 
     if ( mod.empty() )
     {
-      QMessageBox::information( this, "HQC - nedbør",
-                                "Du har ingen endringer å lagre.",
+      QMessageBox::information( this, tr("HQC - nedbør"),
+                                tr("Du har ingen endringer å lagre."),
                                 QMessageBox::Ok );
       return true;
     }
@@ -425,16 +425,15 @@ namespace WatchRR
     }
     if ( res->res == CKvalObs::CDataSource::OK )
     {
-      QMessageBox::information( this, "HQC - nedbør",
-                                QString( "Lagret " + QString::number( dl.size() ) + " parametre til kvalobs." ),
+      QMessageBox::information( this, tr("HQC - nedbør"),
+                                tr( "Lagret %1 parametre til kvalobs." ).arg(dl.size()),
                                 QMessageBox::Ok );
     }
     else
     {
-      QMessageBox::warning( this, "HQC - nedbør",
-                            QString( "Klarte ikke å lagre data!\n"
-                                     "Feilmelding fra kvalobs var:\n") +
-                            QString(res->message),
+      QMessageBox::warning( this, tr("HQC - nedbør"),
+                            tr( "Klarte ikke å lagre data!\n"
+                                     "Feilmelding fra kvalobs var:\n%1").arg(QString(res->message)),
                             QMessageBox::Ok,  Qt::NoButton );
       return false;
     }

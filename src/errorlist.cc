@@ -35,16 +35,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  *
 */
 #define NDEBUG
-#include <QtGui>
+#include <QtGui/QtGui>
 #include <cassert>
-//#include <qevent.h>
-#include <QEvent>
-#include <QAction>
-#include <q3textstream.h>
-#include <qcursor.h>
-#include <qprinter.h>
-#include <q3textedit.h>
-#include <q3simplerichtext.h>
+#include <QtCore/QEvent>
+#include <QtGui/QAction>
+#include <Qt3Support/q3textstream.h>
+#include <QtGui/QCursor>
+#include <QtGui/QPrinter>
+#include <Qt3Support/Q3TextEdit>
+#include <Qt3Support/Q3SimpleRichText>
 #include "errorlist.h"
 #include "hqcmain.h"
 #include "ErrorListFirstCol.h"
@@ -178,73 +177,74 @@ ErrorList::ErrorList(QStringList& selPar,
   int prevStat = -1;
   int prevPara = -1;
   for ( int j = 0; j < selPar.count(); j++ ) {
+      const int parameterID = noSelPar[j];
       for ( unsigned int i = 0; i < dtl.size(); i++ ) {
-      if (  dtl[i].stnr() > 99999)
-        continue;
-      //??
-      //      if (  dtl[i].typeId(noSelPar[j]) < 0 )
-      //        continue;
-      //??
-      if (  dtl[i].otime() < stime || dtl[i].otime() > etime )
-        continue;
-      if ( !specialTimeFilter( noSelPar[j], dtl[i].otime()) )
-        continue;
-      if ( ! typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime()) )
-        continue;
+          const model::KvalobsData& data = dtl[i];
+          if ( data.stnr() > 99999)
+              continue;
+          //??
+          //      if (  data.typeId(parameterID) < 0 )
+          //        continue;
+          //??
+          if (  data.otime() < stime || data.otime() > etime )
+              continue;
+          if ( !specialTimeFilter( parameterID, data.otime()) )
+              continue;
+          if ( ! typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+              continue;
 
-      missObs mobs;
-
-
-      QString ctr = QString::fromStdString(dtl[i].controlinfo(noSelPar[j]).flagstring());
-      int flg = ctr.mid(4,1).toInt(0,16);
-      int tdiff = miutil::miTime::hourDiff(dtl[i].otime(),stime);
-      if ( flg == 6 ) {
-	mobs.oTime = dtl[i].otime();
-	mobs.time = tdiff;
-	mobs.parno  = noSelPar[j];
-	mobs.statno = dtl[i].stnr();
-	mobs.missNo = missCount;
-	if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
-	  missCount = 0;
-	}
-	if ( mobs.time - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4 ) {
-	  mList.push_back(mobs);
-	}
-	missCount++;
-	prevTime = mobs.time;
-	prevStat = mobs.statno;
-	prevPara = mobs.parno;
+          const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
+          if ( fnum == 6 ) {
+              const int tdiff = miutil::miTime::hourDiff(data.otime(),stime);
+              missObs mobs;
+              mobs.oTime = data.otime();
+              mobs.time = tdiff;
+              mobs.parno  = parameterID;
+              mobs.statno = dtl[i].stnr();
+              mobs.missNo = missCount;
+              if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
+                  missCount = 0;
+              }
+              if ( mobs.time - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4 ) {
+                  mList.push_back(mobs);
+              }
+              missCount++;
+              prevTime = mobs.time;
+              prevStat = mobs.statno;
+              prevPara = mobs.parno;
+          }
       }
-    }
   }
 
   int  ml = 0;
 
   for ( unsigned int i = 0; i < dtl.size(); i++ ) {
-    if (  dtl[i].stnr() > 99999) continue;
+      const model::KvalobsData& data = dtl[i];
+    if ( data.stnr() > 99999) continue;
 #warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
-    //    if (  dtl[i].showTypeId() < 0 ) continue;
-    if (  dtl[i].otime() < stime || dtl[i].otime() > etime ) continue;
+    //    if (  data.showTypeId() < 0 ) continue;
+    if (  data.otime() < stime || data.otime() > etime ) continue;
     mem memObs;
-    memObs.obstime = dtl[i].otime();
-    memObs.tbtime = dtl[i].tbtime();
-    memObs.name = dtl[i].name();
-    memObs.stnr = dtl[i].stnr();
+    memObs.obstime = data.otime();
+    memObs.tbtime = data.tbtime();
+    memObs.name = data.name();
+    memObs.stnr = data.stnr();
 
     for ( int j = 0; j < selPar.count(); j++ ) {
-      bool stp = specialTimeFilter( noSelPar[j], dtl[i].otime());
+        const int parameterID = noSelPar[j];
+      bool stp = specialTimeFilter( parameterID, data.otime());
       if ( !stp ) continue;
-      bool tp = typeFilter( dtl[i].stnr(), noSelPar[j], dtl[i].typeId(noSelPar[j]), dtl[i].otime());
+      bool tp = typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime());
       if ( !tp ) continue;
-      memObs.typeId      = dtl[i].typeId(noSelPar[j]);
-      memObs.orig        = dtl[i].orig(noSelPar[j]);
-      memObs.corr        = dtl[i].corr(noSelPar[j]);
-      memObs.sen         = dtl[i].sensor(noSelPar[j]);
-      memObs.lev         = dtl[i].level(noSelPar[j]);
-      memObs.controlinfo = dtl[i].controlinfo(noSelPar[j]).flagstring();
-      memObs.useinfo     = dtl[i].useinfo(noSelPar[j]).flagstring();
-      memObs.cfailed     = dtl[i].cfailed(noSelPar[j]);
-      memObs.parNo       = noSelPar[j];
+      memObs.typeId      = data.typeId(parameterID);
+      memObs.orig        = data.orig(parameterID);
+      memObs.corr        = data.corr(parameterID);
+      memObs.sen         = data.sensor(parameterID);
+      memObs.lev         = data.level(parameterID);
+      memObs.controlinfo = data.controlinfo(parameterID).flagstring();
+      memObs.useinfo     = data.useinfo(parameterID).flagstring();
+      memObs.cfailed     = data.cfailed(parameterID);
+      memObs.parNo       = parameterID;
       memObs.parName     = selPar[j];
       memObs.morig = -32767.0;
 
@@ -261,7 +261,7 @@ ErrorList::ErrorList(QStringList& selPar,
 
       //Priority filters for controls and parameters
       QString flTyp = "";
-      int flg = errorFilter(noSelPar[j],
+      int flg = errorFilter(parameterID,
 			    memObs.controlinfo,
 			    memObs.cfailed,
 			    flTyp);

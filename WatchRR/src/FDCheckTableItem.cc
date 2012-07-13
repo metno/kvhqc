@@ -69,39 +69,40 @@ QString FDCheckTableItem::explain() const
 
 void FDCheckTableItem::getUpdatedList( DataSet & data )
 {
-  if ( isChecked() != collected() ) {
+    const bool dbCollected = collected();
+    const bool hqcCollected = isChecked();
+    if ( hqcCollected == dbCollected )
+        return;
+
     kvData d = * getKvData().front();
     cerr << "Modified: Obstime: " << d.obstime() << ", flag: " << d.controlinfo().flag( kvalobs::flag::fd ) << endl;
     DataSet::iterator f = data.find( d );
     if ( f != data.end() ) {
-      d = * f;
-      data.erase( f );
+        d = * f;
+        data.erase( f );
+    }
+
+    int fd = 1;
+    if ( hqcCollected ) {
+        if ( not kvalobs::missing( d ) and std::abs( d.original() - d.corrected() ) > 0.0625 )
+            fd = 6;
+        else
+            fd = 2;
     }
 
     kvalobs::kvControlInfo ci = d.controlinfo();
-    int fd = 1;
-    if ( isChecked() ) {
-      if ( not kvalobs::missing( d ) and std::abs( d.original() - d.corrected() ) > 0.0625 )
-        fd = 6;
-      else
-        fd = 2;
-      ci.set( kvalobs::flag::fd, fd );      
-    }
-    
     ci.set( kvalobs::flag::fd, fd );
     ci.set( kvalobs::flag::fhqc, 0 );
     d.controlinfo( ci );
 
     miutil::miString cf = d.cfailed();
     if ( not cf.empty() )
-      cf += ",";
-    //    cf += "Manuelt skjønn";
+        cf += ",";
     cf += "Manual judgment";
     d.cfailed(cf);
-    //    kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
-  	
+    // kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
+
     data.insert( d );
-  }
 }
 
 }

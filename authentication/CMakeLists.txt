@@ -3,11 +3,13 @@ SET(auth_HEADERS
   Authenticator.h)
 
 SET(auth_SOURCES
-  hqc_paths.cc
+  Authenticator.cc
   BusyIndicator.cc
-  identifyUser.cc
+  FunctionLogger.cc
   HqcDataReinserter.cc
-  Authenticator.cc)
+  hqc_paths.cc
+  identifyUser.cc
+)
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})
 SET(auth_UIS

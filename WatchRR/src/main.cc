@@ -28,16 +28,17 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <kvcpp/corba/CorbaKvApp.h>
-#include <qapplication.h>
-#include <decodeutility/kvDataFormatter.h>
 #include "identifyUser.h"
-#include <qmessagebox.h>
-#include <puTools/miString.h>
-#include <QDebug>
-
 #include "hqc_paths.hh"
 #include "MultiStationSelection.h"
+
+#include <kvcpp/corba/CorbaKvApp.h>
+#include <decodeutility/kvDataFormatter.h>
+#include <puTools/miString.h>
+
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtCore/QDebug>
 
 using namespace std;
 

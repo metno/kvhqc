@@ -30,12 +30,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 /*! \file hqcmain.cc
  *  \brief Code for the HqcMainWindow class.
- *  
+ *
  *  Displays the main window, the essence of the app.
  *
 */
 
 #include <algorithm>
+#include "FunctionLogger.hh"
 #include "helptree.h"
 #include "hqcmain.h"
 #include "StationInformation.h"
@@ -134,7 +135,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
 /**
  * Main Window Constructor.
- */	
+ */
   HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, "HQC")
   , datalist(new model::KvalobsDataList)
@@ -148,8 +149,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   reinserter = Authentication::identifyUser(  KvApp::kvApp,
 					     "ldap-oslo.met.no", userName);
   if ( reinserter == NULL ) {
-    int mb = QMessageBox::information(this, 
-                                      tr("Autentisering"), 
+    int mb = QMessageBox::information(this,
+                                      tr("Autentisering"),
                                       tr("Du er ikke registrert som operatør!\n"
                                          "Du kan se dataliste, feillog og feilliste,\n"
                                          "men ikke gjøre endringer i Kvalobsdatabasen!"),
@@ -162,7 +163,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   else {
     cout << "Hei  " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
   }
-  //-----------------------------------------------------------------  
+  //-----------------------------------------------------------------
 
 
 
@@ -175,7 +176,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   remetime.setTime(miutil::miString("2000-01-01 00:00:00"));
   remdlstime.setTime(miutil::miString("2000-01-01 00:00:00"));
   remdletime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  remLity = dumLi; 
+  remLity = dumLi;
   dianaconnected=  false;  // connection to diana
   tsVisible = false;
 
@@ -246,7 +247,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 //  choice->setItemChecked(flID, isShFl);
 //  choice->setItemChecked(orID, isShOr);
 
-  
+
   QMenu * showmenu = new QMenu( this );
   menuBar()->insertItem( tr("&Listetype"), showmenu);
   showmenu->addAction( tr("Data&liste og Feilliste"), this, SLOT(allListMenu()),Qt::CTRL+Qt::Key_L );
@@ -262,7 +263,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   showmenu->insertSeparator();
   showmenu->addAction( tr("Te&xtData"), this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
   showmenu->addAction( tr("Re&jected"), this, SLOT(rejectedMenu()),Qt::CTRL+Qt::Key_J );
-  
+
   QMenu * weathermenu = new QMenu( this );
   menuBar()->insertItem( tr("Vær&element"), weathermenu);
   //  wElement = "";
@@ -281,10 +282,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   QMenu * clockmenu = menuBar()->addMenu(tr("&Tidspunkter"));
   clockmenu->addAction(timesAction);
-  
+
   menuBar()->insertItem( tr("&Forkast tidsserie"), this, SLOT(rejectTimeseries()));
   menuBar()->insertItem( tr("&Godkjenn tidsserie"), this, SLOT(acceptTimeseries()));
-  
+
   menuBar()->insertItem( tr("&Dianavisning"), this, SLOT(dsh()));
   menuBar()->insertItem( tr("&Kro"), this, SLOT(startKro()));
 
@@ -297,20 +298,20 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   help->addAction( tr("&Om Hqc"), this, SLOT(about()));
   help->insertSeparator();
   help->addAction( tr("Om &Qt"), this, SLOT(aboutQt()));
-  
+
   // --- MAIN WINDOW -----------------------------------------
 
-  
+
   // --- TOOL BAR --------------------------------------------
   QToolBar * hqcTools = addToolBar(tr("Hqcfunksjoner"));
   hqcTools->addAction(dataListAction);
   hqcTools->addAction(timeSeriesAction);
 
-  
+
   // --- STATUS BAR -------------------------------------------
-  
+
   //  if(usesocket){
-  miutil::miString name = "hqc";   
+  miutil::miString name = "hqc";
   //  miutil::miString command = "coserver4";
   miutil::miString command = "/usr/bin/coserver4";
   pluginB = new ClientButton(name.cStr(),
@@ -318,7 +319,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 			     statusBar());
   pluginB->useLabel(true);
   pluginB->connectToServer();
-  
+
   connect(pluginB, SIGNAL(receivedMessage(miMessage&)),
 	  SLOT(processLetter(miMessage&)));
   connect(pluginB, SIGNAL(addressListChanged()),
@@ -326,15 +327,15 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   connect(pluginB, SIGNAL(connectionClosed()),
 	  SLOT(cleanConnection()));
   statusBar()->addWidget(pluginB,0,true);
-  
+
   //    }
   statusBar()->message( tr("Ready"), 2000 );
-  
+
   // --- READ STATION INFO ----------------------------------------
 
   readFromObsPgm();
   int prostnr = -1;
-  
+
   TypeList tpList;
   for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
     int ostnr = obit->stationID();
@@ -351,12 +352,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
       // UNUSED TypeList::iterator it = tpList.begin();
     }
     prostnr = ostnr;
-  } 
+  }
   otpList.push_back(tpList);
-  
+
   int noStat = 0;
-  for ( QStringList::Iterator sit = listStatName.begin(); 
-	sit != listStatName.end(); 
+  for ( QStringList::Iterator sit = listStatName.begin();
+	sit != listStatName.end();
 	++sit ) {
     if ( listStatCoast[noStat] == "K" ) {
       coastStations.push_back(listStatNum[noStat].toInt());
@@ -379,38 +380,38 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   txtdlg = new TextDataDialog(stnrList, this);
   txtdlg->setIcon( QPixmap(hqc_icon_path) );
   rejdlg = new RejectDialog(this);
-  rejdlg->setIcon( QPixmap(hqc_icon_path) ); 
+  rejdlg->setIcon( QPixmap(hqc_icon_path) );
   actsdlg = new AcceptTimeseriesDialog();
   actsdlg->hide();
   rjtsdlg = new RejectTimeseriesDialog();
   rjtsdlg->hide();
- 
+
   // --- READ PARAMETER INFO ---------------------------------------
 
   /////TEST
   readSettings();
   /////TEST SLUTT
 
-  
+
   // --- START -----------------------------------------------------
   pardlg->hide();
   rejdlg->hide();
   dianaShowOK();
   lstdlg->hide();
   connect( lstdlg, SIGNAL(selectStation()), SLOT(stationOK()));
-  
+
   connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
   connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
-  
+
   clkdlg->hide();
   timeFilterChanged = FALSE;
   connect( clkdlg, SIGNAL(ClockApply()), SLOT(ClkOK()));
   connect( clkdlg, SIGNAL(ClockHide()), SLOT(clockMenu()));
-  
+
   dshdlg->hide();
   connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
   connect( dshdlg, SIGNAL(dianaShowHide()), SLOT(dianaShowMenu()));
-  
+
   connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
   connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
 
@@ -426,9 +427,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   connect( tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
   connect( tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
+  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
 	   tsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)), 
+  connect( this,SIGNAL(newParameterList(const QStringList&)),
 	   tsdlg,SLOT(newParameterList(const QStringList&)));
 
   connect( rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
@@ -437,14 +438,14 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   connect( actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
   connect( actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
+  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
 	   rjtsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)), 
+  connect( this,SIGNAL(newParameterList(const QStringList&)),
 	   rjtsdlg,SLOT(newParameterList(const QStringList&)));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)), 
+  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
 	   actsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)), 
+  connect( this,SIGNAL(newParameterList(const QStringList&)),
 	   actsdlg,SLOT(newParameterList(const QStringList&)));
 
   connect( lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
@@ -799,7 +800,7 @@ void HqcMainWindow::dianaShowOK() {
     dnMap["TdTdTd"] = "UN";
   if ( dshdlg->uumaType->isChecked() )
     dnMap["TdTdTd"] = "UX";
-  
+
   dnMap["PPPP"] = "PR";
   mdMap["PPPP"] = false;
   diMap["PPPP"] = false;
@@ -821,7 +822,7 @@ void HqcMainWindow::dianaShowOK() {
     dnMap["PPPP"] = "POX";
   if ( dshdlg->phType->isChecked() )
     dnMap["PPPP"] = "PH";
-  
+
   dnMap["ppp"] = "PP";
   mdMap["ppp"] = false;
   if ( dshdlg->ppmoType->isChecked() ) {
@@ -863,28 +864,28 @@ void HqcMainWindow::dianaShowOK() {
   mdMap["dd"] = false;
   if ( dshdlg->ddmoType->isChecked() )
     mdMap["dd"] = true;
-  
+
   dnMap["ff"] = "FF";
   mdMap["ff"] = false;
   if ( dshdlg->ffmoType->isChecked() )
     mdMap["ff"] = true;
- 
+
   dnMap["fxfx"] = "FX";
   if ( dshdlg->fx01Type->isChecked() )
     dnMap["fxfx"] = "FX_1";
-  
+
   dnMap["ff_911"] = "FG";
   if ( dshdlg->fg01Type->isChecked() )
     dnMap["ff_911"] = "FG_1";
   if ( dshdlg->fg10Type->isChecked() )
     dnMap["ff_911"] = "FG_10";
-  
+
   dnMap["sss"] = "SA";
   if ( dshdlg->sdType->isChecked() )
     dnMap["sss"] = "SD";
   if ( dshdlg->emType->isChecked() )
     dnMap["sss"] = "EM";
-  
+
   dnMap["h"] = "HL";
   dnMap["N"] = "NN";
   dnMap["a"] = "AA";
@@ -932,44 +933,10 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
   }
 }
 
-namespace
-{
-class FunctionLogger
-{
-  const std::string name_;
-
-  static int indent;
-
-  void log_(const std::string & msg) const
-  {
-    std::ostringstream data;
-    for ( int i = 0; i < indent; ++ i )
-      data << "--------";
-    data << "> " << msg.c_str();
-    std::string out = data.str();
-    qDebug() << out.c_str();
-  }
-
-public:
-  FunctionLogger(const char * name) : name_(name)
-  {
-    ++ indent;
-    log_("Entering " + name_);
-  }
-  ~FunctionLogger()
-  {
-    log_("Leaving  " + name_);
-    -- indent;
-  }
-};
-int FunctionLogger::indent = 3;
-}
-#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-
 void HqcMainWindow::ListOK() {
   LOG_FUNCTION();
   if ( !dianaconnected ) {
-    int dianaWarning = QMessageBox::warning(this, 
+    int dianaWarning = QMessageBox::warning(this,
 					    tr("Dianaforbindelse"),
 					    tr("Diana er ikke koplet til!"
                                                "ønsker du å kople til Diana?"),
@@ -980,45 +947,45 @@ void HqcMainWindow::ListOK() {
     }
   }
   if ( !statSelect || statSelect->stlist.size() == 0 ) {
-    QMessageBox::warning(this, 
+    QMessageBox::warning(this,
 			 tr("Stasjonsvalg"),
 			 tr("Ingen stasjoner er valgt!\n"
                             "Minst en stasjon må velges"),
-			  QMessageBox::Ok, 
+			  QMessageBox::Ok,
 			  Qt::NoButton);
-    return; 
+    return;
   }
   bool noTimes = TRUE;
-  for ( int hour = 0; hour < 24; hour++ ) { 
+  for ( int hour = 0; hour < 24; hour++ ) {
     if ( (clkdlg->clk[hour]->isChecked()) )
       noTimes = FALSE;
   }
   if ( noTimes ) {
-    QMessageBox::warning(this, 
-			 tr("Tidspunktvalg"), 
+    QMessageBox::warning(this,
+			 tr("Tidspunktvalg"),
 			 tr("Ingen tidspunkter er valgt!\n"
                             "Minst ett tidspunkt må velges"),
-			  QMessageBox::Ok, 
+			  QMessageBox::Ok,
 			  Qt::NoButton);
-    return; 
+    return;
   }
 
   if ( wElement.isEmpty() ) {
-    QMessageBox::warning(this, 
+    QMessageBox::warning(this,
 			 tr("Værelement"),
 			 tr("Ingen værelement er valgt!\n"
                             "Værelement må velges"),
-			  QMessageBox::Ok, 
+			  QMessageBox::Ok,
 			  Qt::NoButton);
-    return; 
+    return;
   }
 
   BusyIndicator busyIndicator;
   listExist = TRUE;
   remstList = stList;
   stList.clear();
-  for ( QStringList::Iterator sit = statSelect->stlist.begin(); 
-        sit != statSelect->stlist.end(); 
+  for ( QStringList::Iterator sit = statSelect->stlist.begin();
+        sit != statSelect->stlist.end();
         ++sit ) {
     int ind = QString(*sit).stripWhiteSpace().find(' ');
     stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
@@ -1029,7 +996,7 @@ void HqcMainWindow::ListOK() {
 
   miutil::miTime etime; // end time
   etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
- 
+
   QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
   if ( find ==  parameterGroups.end() ) {
       QMessageBox::critical(this, tr("Internal error"),
@@ -1047,7 +1014,7 @@ void HqcMainWindow::ListOK() {
   for ( unsigned int jj = 0; jj < find->size(); jj++ ) {
     int paramIndex = (*find)[jj];
     const QString & sp =  parMap[paramIndex];
-    
+
     bool found = pardlg->plb->item(jj)->isSelected();
     qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": " << found << " (" << pardlg->markPar->isChecked() << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
     if ( (found && pardlg->markPar->isChecked()) ||
@@ -1220,7 +1187,7 @@ void HqcMainWindow::stationsInList() {
       sillist.push_back(*it);
     }
     stnr = it->stationID();
-  } 
+  }
 }
 
 void HqcMainWindow::TimeseriesOK() {
@@ -1236,8 +1203,8 @@ void HqcMainWindow::TimeseriesOK() {
   // make timeseries
   TimeSeriesData::tsList tslist;
 
-  int nTypes = tsdlg->obsCheckBox->isChecked() + tsdlg->modCheckBox->isChecked();  
-    
+  int nTypes = tsdlg->obsCheckBox->isChecked() + tsdlg->modCheckBox->isChecked();
+
   for ( unsigned int ip = 0; ip < parameter.size(); ip++ ) {
     std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
     for(;it!=plist.end(); it++){
@@ -1312,11 +1279,11 @@ void HqcMainWindow::TimeseriesOK() {
   poptions.name= "HQC Tidsserie";
   poptions.fillcolour= POptions::Colour("white");
   poptions.linecolour= POptions::Colour("black");
-  poptions.linewidth= 1;  
+  poptions.linewidth= 1;
   tsplot.plotoptions(poptions); // set global plotoptions
 
   tsplot.tserieslist(tslist);      // set list of timeseries
-  
+
   tspdialog->prepare(tsplot);
   tspdialog->show();
   tsVisible = TRUE;
@@ -1329,13 +1296,13 @@ void HqcMainWindow::stationOK() {
     readFromStationFile(statCheck);
   }
   int noStat = 0;
-  for ( QStringList::Iterator sit = listStatName.begin(); 
-	sit != listStatName.end(); 
+  for ( QStringList::Iterator sit = listStatName.begin();
+	sit != listStatName.end();
 	++sit ) {
     noStat++;
   }
   lstdlg->removeAllStatFromListbox();
-  statSelect = new StationSelection(listStatNum, 
+  statSelect = new StationSelection(listStatNum,
 				    listStatName,
 				    listStatHoh,
 				    listStatType,
@@ -1391,12 +1358,12 @@ void HqcMainWindow::stationOK() {
 				    &otpList);
 
   connect(statSelect,
-	  SIGNAL(stationAppended(QString)), 
-	  lstdlg, 
+	  SIGNAL(stationAppended(QString)),
+	  lstdlg,
 	  SLOT(appendStatInListbox(QString)));
   connect(statSelect,
-	  SIGNAL(stationRemoved(QString)), 
-	  lstdlg, 
+	  SIGNAL(stationRemoved(QString)),
+	  lstdlg,
 	  SLOT(removeStatFromListbox(QString)));
   statSelect->show();
 }
@@ -1491,7 +1458,7 @@ void HqcMainWindow::rejectedOK() {
 
     kvalobs::kvRejectdecode reject;
     while ( rdIt.next( reject ) ) {
-      
+
       if ( reject.decoder().substr( 0, decoder.size() ) != decoder ) {
         continue;
       }
@@ -1569,13 +1536,13 @@ void HqcMainWindow::listMenu() {
     QDateTime mx = QDateTime::currentDateTime();
     int noDays = lstdlg->toTime->date().dayOfYear() - lstdlg->fromTime->date().dayOfYear();
     if ( noDays < 0 ) noDays = 365 + noDays;
-        
+
     if ( noDays < 27 ) {
       mx = mx.addSecs(-60*mx.time().minute());
       mx = mx.addSecs(3600);
       lstdlg->toTime->setDateTime(mx);
     }
-    
+
     lstdlg->showAll();
   }
 }
@@ -1694,7 +1661,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
     //    if ( dt.corrected() < -32760 )
     //      continue;
     QString ori;
-    ori = ori.setNum(dt.original(), 'f', 1); 
+    ori = ori.setNum(dt.original(), 'f', 1);
     QString stnr;
     stnr = stnr.setNum(dt.stationID());
     ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + ori;
@@ -1778,11 +1745,11 @@ HqcMainWindow::~HqcMainWindow()
 {
 }
 
-void HqcMainWindow::listData(int index, 
-			     int& stnr, 
+void HqcMainWindow::listData(int index,
+			     int& stnr,
 			     miutil::miTime& obstime,
-			     double* orig, 
-			     int* flag, 
+			     double* orig,
+			     int* flag,
 			     double* corr,
 			     double* morig,
 			     string* controlinfo,
@@ -1818,7 +1785,7 @@ void HqcMainWindow::listData(int index,
       for ( int i = 0; i < NOPARAMMODEL; i++ ) {
 	morig[modelParam[i]] = modeldatalist[j].orig[modelParam[i]];
       }
-    }	    
+    }
   }
 }
 
@@ -1935,8 +1902,8 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, miutil::miTim
  *
  * Results will eventually end up in datalist variable
 */
-void HqcMainWindow::readFromData(const miutil::miTime& stime, 
-				 const miutil::miTime& etime, 
+void HqcMainWindow::readFromData(const miutil::miTime& stime,
+				 const miutil::miTime& etime,
 				 listType /* UNUSED lity*/) {
   BusyIndicator busy();
 
@@ -1949,9 +1916,9 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
     whichData.addStation(stList[i], stime, etime);
     checkTypeId(stList[i]);
   }
- 
+
   t.restart();
-  
+
   // Throw away old data list. It will still exist if any window need it.
   datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   KvObsDataList ldlist;// = GetData::datalist;
@@ -1969,10 +1936,10 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
  Read the modeldata table in the kvalobs database
 */
 
-void HqcMainWindow::readFromModelData(const miutil::miTime& stime, 
+void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
 				      const miutil::miTime& etime) {
   // UNUSED bool result;
-  
+
   mdlist.erase(mdlist.begin(),mdlist.end());
   modeldatalist.reserve(131072);
   modeldatalist.clear();
@@ -2021,63 +1988,63 @@ bool HqcMainWindow::readFromStInfoSys() {
   webs << 4780 << 7010 << 10380 << 16610 << 17150 << 18700 << 23420 << 24890 << 27500
        << 31620 << 36200 << 39100 << 42160 << 44560 << 47300 << 50500 << 50540 << 54120
        << 59800 << 60500 << 69100 << 71550 << 75410 << 75550 << 80610 << 82290 << 85380
-       << 87110 << 89350 << 90450 << 93140 << 93700 << 94500 << 96400 << 98550 << 99370 
+       << 87110 << 89350 << 90450 << 93140 << 93700 << 94500 << 96400 << 98550 << 99370
        << 99710 << 99720 << 99840 << 99910 << 99950;
 
-  pri1s << 4780 << 10380 << 18500 << 18700 << 24890 << 27500 << 36200 << 39040 << 44560 
-	<< 50540 << 54120 << 60500 << 69100 << 70850 << 72800 << 82290 << 90450 << 93700 
+  pri1s << 4780 << 10380 << 18500 << 18700 << 24890 << 27500 << 36200 << 39040 << 44560
+	<< 50540 << 54120 << 60500 << 69100 << 70850 << 72800 << 82290 << 90450 << 93700
 	<< 97251 << 98550 << 99710 << 99720 << 99840 << 99910 << 99950;
 
   pri2s << 3190 << 17150 << 28380 << 35860 << 60990 << 63420 << 68860 << 68863 << 93140 << 94500 << 95350;
 
-  pri3s << 180 << 700 << 1130 << 2540 << 4440 << 4460 << 6020 << 7010 << 8140 << 9580 << 11500 << 12320 	
-	<< 12550 << 12680 << 13160 << 13420 << 13670 << 15730 << 16610 << 16740 << 17000 << 18950 
-	<< 19710 << 20301 << 21680 << 23160 << 23420 << 23500 << 23550 << 25110 << 25830 << 26900 
-	<< 26990 << 27450 << 27470 << 28800 << 29720 << 30420 << 30650 << 31620 << 32060 << 33890 
-	<< 34130 << 36560 << 37230 << 38140 << 39100 << 39690 << 40880 << 41110 << 41670 << 41770 
-	<< 42160 << 42920 << 43010 << 44080 << 44610 << 45870 << 46510 << 46610 << 46910 << 47260 
-	<< 47300 << 48120 << 48330 << 49800 << 50070 << 50300 << 50500 << 51530 << 51800 << 52290 
-	<< 52535 << 52860 << 53101 << 55290 << 55700 << 55820 << 57420 << 57710 << 57770 << 58070 
-	<< 58900 << 59110 << 59610 << 59680 << 59800 << 61180 << 61770 << 62270 << 62480 << 63705 
-	<< 64330 << 64550 << 65310 << 65940 << 66730 << 68340 << 69150 << 69380 << 70150 << 71000 
-	<< 71850 << 71990 << 72060 << 72580 << 73500 << 75220 << 75410 << 75550 << 76330 << 76450 
-	<< 76530 << 76750 << 77230 << 77550 << 78800 << 79600 << 80101 << 80102 << 80610 << 80700 
-	<< 81680 << 82410 << 83550 << 85380 << 85450 << 85891 << 85892 << 86500 << 86740 << 87110 
-	<< 87640 << 88200 << 88690 << 89350 << 90490 << 90800 << 91380 << 91760 << 92350 << 93301 
-	<< 93900 << 94280 << 94680 << 96310 << 96400 << 96800 << 97350 << 98090 << 98400 << 98790 
+  pri3s << 180 << 700 << 1130 << 2540 << 4440 << 4460 << 6020 << 7010 << 8140 << 9580 << 11500 << 12320
+	<< 12550 << 12680 << 13160 << 13420 << 13670 << 15730 << 16610 << 16740 << 17000 << 18950
+	<< 19710 << 20301 << 21680 << 23160 << 23420 << 23500 << 23550 << 25110 << 25830 << 26900
+	<< 26990 << 27450 << 27470 << 28800 << 29720 << 30420 << 30650 << 31620 << 32060 << 33890
+	<< 34130 << 36560 << 37230 << 38140 << 39100 << 39690 << 40880 << 41110 << 41670 << 41770
+	<< 42160 << 42920 << 43010 << 44080 << 44610 << 45870 << 46510 << 46610 << 46910 << 47260
+	<< 47300 << 48120 << 48330 << 49800 << 50070 << 50300 << 50500 << 51530 << 51800 << 52290
+	<< 52535 << 52860 << 53101 << 55290 << 55700 << 55820 << 57420 << 57710 << 57770 << 58070
+	<< 58900 << 59110 << 59610 << 59680 << 59800 << 61180 << 61770 << 62270 << 62480 << 63705
+	<< 64330 << 64550 << 65310 << 65940 << 66730 << 68340 << 69150 << 69380 << 70150 << 71000
+	<< 71850 << 71990 << 72060 << 72580 << 73500 << 75220 << 75410 << 75550 << 76330 << 76450
+	<< 76530 << 76750 << 77230 << 77550 << 78800 << 79600 << 80101 << 80102 << 80610 << 80700
+	<< 81680 << 82410 << 83550 << 85380 << 85450 << 85891 << 85892 << 86500 << 86740 << 87110
+	<< 87640 << 88200 << 88690 << 89350 << 90490 << 90800 << 91380 << 91760 << 92350 << 93301
+	<< 93900 << 94280 << 94680 << 96310 << 96400 << 96800 << 97350 << 98090 << 98400 << 98790
 	<< 99370 << 99760 << 99765;
 
-  coast << 17000 << 17280 << 17290 << 27080 << 27150 << 27230 << 27240 << 27270 << 27410 << 27490 
-	<< 27500 << 29950 << 30000 << 34080 << 34120 << 34130 << 35850 << 35860 << 36150 << 36200 
+  coast << 17000 << 17280 << 17290 << 27080 << 27150 << 27230 << 27240 << 27270 << 27410 << 27490
+	<< 27500 << 29950 << 30000 << 34080 << 34120 << 34130 << 35850 << 35860 << 36150 << 36200
 	<< 38110 << 39040 << 39100 << 39170 << 39350 << 41090 << 41100 << 41110 << 41750 << 41760
-	<< 41770 << 41772 << 42160 << 43270 << 43340 << 43350 << 43900 << 44080 << 44320 << 44560 
-	<< 44600 << 44610 << 44630 << 44640 << 45870 << 45880 << 45900 << 47190 << 47200 << 47210 
-	<< 47260 << 47300 << 48120 << 48300 << 48330 << 50460 << 50500 << 50540 << 50541 << 50542 
-	<< 50543 << 50544 << 50560 << 50700 << 52530 << 52535 << 52800 << 52860 << 56420 << 56440 
-	<< 57710 << 57720 << 57740 << 57750 << 57760 << 57770 << 59100 << 59110 << 59580 << 59610 
-	<< 59800 << 59810 << 60830 << 60945 << 60950 << 60990 << 61040 << 61060 << 61150 << 61170 
-	<< 61180 << 62270 << 62300 << 62310 << 62480 << 62490 << 62500 << 62640 << 62650 << 62660 
-	<< 64250 << 64260 << 64330 << 65300 << 65310 << 65340 << 65370 << 65450 << 65720 << 65940 
-	<< 65950 << 71540 << 71550 << 71560 << 71650 << 71780 << 71850 << 71980 << 71990 << 75220 
-	<< 75300 << 75350 << 75410 << 75550 << 75600 << 75700 << 76300 << 76310 << 76320 << 76330 
-	<< 76450 << 76500 << 76530 << 76600 << 76750 << 76810 << 76820 << 76850 << 76900 << 76920 
-	<< 76923 << 76925 << 76926 << 76928 << 76930 << 76931 << 76932 << 76933 << 76940 << 76941 
-	<< 76942 << 76943 << 76944 << 76945 << 76946 << 76947 << 76948 << 76949 << 76950 << 76951 
-	<< 76970 << 76971 << 76974 << 76978 << 76980 << 76985 << 77002 << 77005 << 77006 << 77020 
-	<< 77021 << 77022 << 77023 << 77024 << 80100 << 80101 << 80102 << 80300 << 80610 << 80740 
-	<< 80900 << 80950 << 82240 << 82250 << 82260 << 82270 << 82280 << 82290 << 82400 << 82410 
-	<< 83120 << 83550 << 83700 << 83710 << 85030 << 85040 << 85230 << 85240 << 85380 << 85450 
-	<< 85460 << 85560 << 85700 << 85780 << 85840 << 85890 << 85891 << 85900 << 85910 << 85950 
-	<< 86150 << 86200 << 86230 << 86260 << 86500 << 86520 << 86600 << 86740 << 86750 << 86760 
-	<< 86780 << 87100 << 87110 << 87111 << 87120 << 87350 << 87400 << 87410 << 87420 << 87640 
-	<< 88580 << 88680 << 88690 << 90280 << 90400 << 90440 << 90450 << 90490 << 90500 << 90700 
-	<< 90720 << 90721 << 90760 << 90800 << 90900 << 91190 << 92700 << 92750 << 93000 << 94250 
-	<< 94260 << 94280 << 94350 << 94450 << 94500 << 94600 << 94680 << 94700 << 95800 << 96300 
-	<< 96310 << 96400 << 96550 << 98090 << 98360 << 98400 << 98550 << 98580 << 98700 << 98790 
-	<< 98800 << 99710 << 99720 << 99735 << 99737 << 99754 << 99765 << 99790 << 99821 << 99950 
+	<< 41770 << 41772 << 42160 << 43270 << 43340 << 43350 << 43900 << 44080 << 44320 << 44560
+	<< 44600 << 44610 << 44630 << 44640 << 45870 << 45880 << 45900 << 47190 << 47200 << 47210
+	<< 47260 << 47300 << 48120 << 48300 << 48330 << 50460 << 50500 << 50540 << 50541 << 50542
+	<< 50543 << 50544 << 50560 << 50700 << 52530 << 52535 << 52800 << 52860 << 56420 << 56440
+	<< 57710 << 57720 << 57740 << 57750 << 57760 << 57770 << 59100 << 59110 << 59580 << 59610
+	<< 59800 << 59810 << 60830 << 60945 << 60950 << 60990 << 61040 << 61060 << 61150 << 61170
+	<< 61180 << 62270 << 62300 << 62310 << 62480 << 62490 << 62500 << 62640 << 62650 << 62660
+	<< 64250 << 64260 << 64330 << 65300 << 65310 << 65340 << 65370 << 65450 << 65720 << 65940
+	<< 65950 << 71540 << 71550 << 71560 << 71650 << 71780 << 71850 << 71980 << 71990 << 75220
+	<< 75300 << 75350 << 75410 << 75550 << 75600 << 75700 << 76300 << 76310 << 76320 << 76330
+	<< 76450 << 76500 << 76530 << 76600 << 76750 << 76810 << 76820 << 76850 << 76900 << 76920
+	<< 76923 << 76925 << 76926 << 76928 << 76930 << 76931 << 76932 << 76933 << 76940 << 76941
+	<< 76942 << 76943 << 76944 << 76945 << 76946 << 76947 << 76948 << 76949 << 76950 << 76951
+	<< 76970 << 76971 << 76974 << 76978 << 76980 << 76985 << 77002 << 77005 << 77006 << 77020
+	<< 77021 << 77022 << 77023 << 77024 << 80100 << 80101 << 80102 << 80300 << 80610 << 80740
+	<< 80900 << 80950 << 82240 << 82250 << 82260 << 82270 << 82280 << 82290 << 82400 << 82410
+	<< 83120 << 83550 << 83700 << 83710 << 85030 << 85040 << 85230 << 85240 << 85380 << 85450
+	<< 85460 << 85560 << 85700 << 85780 << 85840 << 85890 << 85891 << 85900 << 85910 << 85950
+	<< 86150 << 86200 << 86230 << 86260 << 86500 << 86520 << 86600 << 86740 << 86750 << 86760
+	<< 86780 << 87100 << 87110 << 87111 << 87120 << 87350 << 87400 << 87410 << 87420 << 87640
+	<< 88580 << 88680 << 88690 << 90280 << 90400 << 90440 << 90450 << 90490 << 90500 << 90700
+	<< 90720 << 90721 << 90760 << 90800 << 90900 << 91190 << 92700 << 92750 << 93000 << 94250
+	<< 94260 << 94280 << 94350 << 94450 << 94500 << 94600 << 94680 << 94700 << 95800 << 96300
+	<< 96310 << 96400 << 96550 << 98090 << 98360 << 98400 << 98550 << 98580 << 98700 << 98790
+	<< 98800 << 99710 << 99720 << 99735 << 99737 << 99754 << 99765 << 99790 << 99821 << 99950
 	<< 99970;
 
-  foreignId << 99986 << 99990 << 202000 << 203600 << 208000 << 210400 << 211000 
+  foreignId << 99986 << 99990 << 202000 << 203600 << 208000 << 210400 << 211000
 	    << 220600 << 222200 << 230800 << 241800 << 250000 << 280700;
 
   foreignName << " " << " " << "NORDLAND" << "NORDLAND" << "FINNMARK" << "NORDLAND" << "NORDLAND"
@@ -2109,23 +2076,23 @@ bool HqcMainWindow::readFromStInfoSys() {
       cerr << "Query2 failed" << endl;
       return false;
   }
-  
+
   list<countyInfo>::iterator it = cList.begin();
   if ( query1.size() == query2.size() ) {
-    
+
     while ( query2.next() ) {
       int stationid2 = query2.value(0).toInt();
       if ( stationid2 == it->stnr ) {
 	QString name2 = query2.value(1).toString();
 	it->municip = name2;
-	it++; 
+	it++;
       }
       else {
 	cout << "Feil i stinfo" << endl;
 	return false;
       }
     }
-    
+
     for (list<countyInfo>::iterator it = cList.begin(); it != cList.end(); it++ ) {
       if ( webs.indexOf(it->stnr) >= 0 )
 	it->web = "WEB";
@@ -2162,7 +2129,7 @@ bool HqcMainWindow::readFromStInfoSys() {
     if ( !stations.open(QIODevice::WriteOnly) ) {
       cerr << "FEIL I FIL" << endl;
       //      exit(1);
-    } 
+    }
     for (list<countyInfo>::iterator it = cList.begin(); it != cList.end(); it++ ) {
       // UNUSED int snr = 0;
       QString strSnr("    ");
@@ -2193,22 +2160,22 @@ bool HqcMainWindow::readFromStInfoSys() {
 	listStatPri.append(it->pri);
 	listStatCoast.append(it->ki);
       }
-      
-      outf << setw(7) << right << it->stnr << " " 
-	   << setw(31) << left << (it->county).toStdString() 
-	   << setw(25) << (it->municip).toStdString() 
-	   << setw(3) << (it->web).toStdString() 
-	   << setw(4) << (it->pri).toStdString() 
+
+      outf << setw(7) << right << it->stnr << " "
+	   << setw(31) << left << (it->county).toStdString()
+	   << setw(25) << (it->municip).toStdString()
+	   << setw(3) << (it->web).toStdString()
+	   << setw(4) << (it->pri).toStdString()
 	   << setw(1) << (it->ki).toStdString()
 	   <<  endl;
-      cout << setw(7) << right << it->stnr << " " 
-	   << setw(31) << left << (it->county).toStdString() 
-	   << setw(25) << (it->municip).toStdString() 
-	   << setw(3) << (it->web).toStdString() 
-	   << setw(4) << (it->pri).toStdString() 
+      cout << setw(7) << right << it->stnr << " "
+	   << setw(31) << left << (it->county).toStdString()
+	   << setw(25) << (it->municip).toStdString()
+	   << setw(3) << (it->web).toStdString()
+	   << setw(4) << (it->pri).toStdString()
 	   << setw(1) << (it->ki).toStdString()
 	   <<  endl;
-      
+
     }
     outf.close();
     cout << "Stationliste hentet fra stinfosys" << endl;
@@ -2216,7 +2183,7 @@ bool HqcMainWindow::readFromStInfoSys() {
   else {
     cout << "Forskjellig lengde" << endl;
     return false;
-  } 
+  }
   return true;
 }
 
@@ -2225,7 +2192,7 @@ bool HqcMainWindow::readFromStInfoSys() {
 */
 void HqcMainWindow::readFromStation() {
   if (!KvApp::kvApp->getKvStations(slist)) {
-    int noBase = QMessageBox::warning(this, 
+    int noBase = QMessageBox::warning(this,
 				      tr("Kvalobs"),
 				      tr("Kvalobsdatabasen er ikke tilgjengelig,\n"
                                          "vil du avslutte?"),
@@ -2372,13 +2339,13 @@ void HqcMainWindow::readFromParam() {
 }
 
 /*!
- Find the name and position of a station from 
+ Find the name and position of a station from
  a list extracted from the station table
 */
-void HqcMainWindow::findStationInfo(int stnr, 
+void HqcMainWindow::findStationInfo(int stnr,
 				    QString& name,
-				    double& lat, 
-				    double& lon, 
+				    double& lat,
+				    double& lon,
 				    double& hoh,
 				    int& snr,
 				    int& env) {
@@ -2397,9 +2364,9 @@ void HqcMainWindow::findStationInfo(int stnr,
   }
 }
 
-void HqcMainWindow::findStationPos(int stnr, 
-				   double& lat, 
-				   double& lon, 
+void HqcMainWindow::findStationPos(int stnr,
+				   double& lat,
+				   double& lon,
 				   double& hoh) {
   std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
   for(;it!=slist.end(); it++){
@@ -2462,11 +2429,11 @@ void HqcMainWindow::closeWindow()
 }
 
 
-void HqcMainWindow::helpUse() {  
+void HqcMainWindow::helpUse() {
   system("firefox https://dokit.met.no/klima/tools/qc/hqc-help &");
 }
 
-void HqcMainWindow::helpFlag() {  
+void HqcMainWindow::helpFlag() {
   system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg &");
 }
 
@@ -2487,42 +2454,6 @@ void HqcMainWindow::about()
                            "Audun Christoffersen, FoU,\n "
                            "Knut Johansen, IT\n"));
 }
-
-/*
-namespace
-{
-class FunctionLogger
-{
-  const std::string name_;
-
-  static int indent;
-
-  void log_(const std::string & msg) const
-  {
-    std::ostringstream data;
-    for ( int i = 0; i < indent; ++ i )
-      data << "--------";
-    data << "> " << msg.c_str();
-    std::string out = data.str();
-    qDebug() << out.c_str();
-  }
-
-public:
-  FunctionLogger(const char * name) : name_(name)
-  {
-    ++ indent;
-    log_("Entering " + name_);
-  }
-  ~FunctionLogger()
-  {
-    log_("Leaving  " + name_);
-    -- indent;
-  }
-};
-int FunctionLogger::indent = 3;
-}
-#define LOG_FUNCTION() FunctionLogger INTERNAL_function_logger(__func__)
-*/
 
 void HqcMainWindow::initDiana()
 {
@@ -2546,11 +2477,11 @@ void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
   LOG_FUNCTION();
   if (!dianaconnected) return;
   if (image.isNull()) return;
-  
+
   QByteArray* a; // TODO uninitialized -- this will give problems
   QDataStream s(a, QIODevice::WriteOnly);
   s << image;
-  
+
   miMessage m;
   m.command= qmstrings::addimage;
   m.description= "name:image";
@@ -2595,7 +2526,7 @@ void HqcMainWindow::sendTimes(){
   }
     cerr << "HQC sender melding : " << m.content() << endl;
   pluginB->sendMessage(m);
-  
+
 }
 
 // processes incoming miMessages
@@ -2604,7 +2535,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
   LOG_FUNCTION();
   if(letter.command == qmstrings::newclient) {
     firstObs = true;
-    processConnect(); 
+    processConnect();
     hqcFrom = letter.to;
     hqcTo = letter.from;
   }
@@ -2645,7 +2576,7 @@ void HqcMainWindow::sendShowText(const miutil::miString site)
 // send message to show ground analysis in Diana
 bool  HqcMainWindow::sendAnalysisMessage() {
   LOG_FUNCTION();
-  
+
   //show analysis
   miMessage letter;
   letter.command=qmstrings::apply_quickmenu;
@@ -2653,7 +2584,7 @@ bool  HqcMainWindow::sendAnalysisMessage() {
   letter.data.push_back("Bakkeanalyse");
     cerr << "HQC sender melding : " << letter.content() << endl;
   pluginB->sendMessage(letter);
-  
+
   dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
   return true;
 }
@@ -2668,7 +2599,7 @@ void HqcMainWindow::sendStation(int stnr)
   pLetter.common = stationstr;
     cerr << "HQC sender melding : " << pLetter.content() << endl;
   pluginB->sendMessage(pLetter);
-  
+
 }
 
 void HqcMainWindow::aboutQt()
@@ -2683,7 +2614,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
   //no data -> return
   if(selPar.count() == 0) return;
 
-  //just sent 
+  //just sent
   if(dianaTime == time)
     return;
 
@@ -2698,13 +2629,13 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     pluginB->sendMessage(tLetter);
   }
   miMessage pLetter;
-  if ( firstObs ) { 
+  if ( firstObs ) {
     pLetter.command = qmstrings::init_HQC_params;
   }
   else
     pLetter.command = qmstrings::update_HQC_params;
   pLetter.commondesc = "time,plottype";
-  
+
   //finding parameter names and indexes
   vector<int> parIndex;
   QStringList parName;
@@ -2756,7 +2687,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 	isAuto = "a";
       else if ( strType.cStr()[0] == 'N' || strType.cStr()[0] == 'P' )
 	isAuto = "n";
-      if ( (isAuto == "a" && strType.cStr()[1] == 'A') || 
+      if ( (isAuto == "a" && strType.cStr()[1] == 'A') ||
 	   (strType.cStr()[0] == 'V' && strType.cStr()[1] != 'M') ||
 	   (strType == "none")  )
     	str += "none";
@@ -2767,7 +2698,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
       str += ",";
       str += isAuto;
       str += ",";
-     
+
       miutil::miString latstr(lat,4);
       miutil::miString lonstr(lon,4);
       str += lonstr;
@@ -2836,7 +2767,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 	    colorstr = ";255:175:0";
 	  else if ( maxFlag >= 6 )
 	    colorstr = ";255:0:0";
-	 
+
 	  //	  miutil::miString flagstr(flag,5);
 	  miutil::miString valstr = (miutil::miString)corr;
 	  miutil::miString synvalstr = (miutil::miString)corr;
@@ -2852,7 +2783,7 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 	    //	    cerr << enkelStr << endl;
 	    synopStr += ",";
 	    synopStr += synvalstr;
-	    //	    if ( firstObs) 
+	    //	    if ( firstObs)
 	      synopStr += colorstr;
 	  }
 	}
@@ -2905,7 +2836,7 @@ void HqcMainWindow::sendSelectedParam(const QString & param)
 }
 
 
-void HqcMainWindow::updateParams(int station, 
+void HqcMainWindow::updateParams(int station,
     const miutil::miTime & time,
     const miutil::miString & param,
     const miutil::miString & value,
@@ -2918,10 +2849,10 @@ void HqcMainWindow::updateParams(int station,
   int n= datalist->size();
   while( i<n && ( (*datalist)[i].stnr() !=station || (*datalist)[i].otime() != time)) i++;
   if(i==n) return; //station and time not found
-	 
+
   int parameterIndex=-1;
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
-	 
+
   for(;it!=plist.end(); it++){
     if ( it->name() == param ){
 	parameterIndex = it->paramID();
@@ -2962,7 +2893,7 @@ void HqcMainWindow::updateParams(int station,
   }
 }
 
-// Help function to translate from kvalobs parameter value to diana parameter value 
+// Help function to translate from kvalobs parameter value to diana parameter value
 double HqcMainWindow::dianaValue(int parNo, bool isModel, double qVal, double aa) {
   double dVal;
   if ( parNo == 273 ) {
@@ -3017,7 +2948,7 @@ double HqcMainWindow::dianaValue(int parNo, bool isModel, double qVal, double aa
 }
 
 
-// Help function to translate from kvalobs parameter names to diana parameter names 
+// Help function to translate from kvalobs parameter names to diana parameter names
 miutil::miString HqcMainWindow::dianaName(miutil::miString lbl) {
   NameMap::iterator dnit;
   for ( dnit = dnMap.begin(); dnit != dnMap.end(); dnit++ ) {
@@ -3096,7 +3027,7 @@ miutil::miString HqcMainWindow::hqcType(int typeId, int env) {
       hqct = "VT";
   }
   return hqct;
-} 
+}
 
 void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
 {
@@ -3115,7 +3046,7 @@ bool HqcMainWindow::isAlreadyStored(miutil::miTime otime, int stnr) {
   }
   return false;
 }
- 
+
 int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
 {
   int tpId;
@@ -3191,7 +3122,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, miutil::miTime oTime)
   return tpId;
 }
 
-void 
+void
 HqcMainWindow::
 makeTextDataList( KvObsDataList& textDataList )
 {
@@ -3201,10 +3132,10 @@ makeTextDataList( KvObsDataList& textDataList )
     while( dit != it->textDataList().end() ) {
       TxtDat txtd;
       txtd.stationId = dit->stationID();
-      txtd.obstime   = dit->obstime(); 
-      txtd.original  = dit->original(); 
-      txtd.paramId   = dit->paramID(); 
-      txtd.tbtime    = dit->tbtime(); 
+      txtd.obstime   = dit->obstime();
+      txtd.original  = dit->original();
+      txtd.paramId   = dit->paramID();
+      txtd.tbtime    = dit->tbtime();
       txtd.typeId    = dit->typeID();
       txtList.push_back(txtd);
       dit++;
@@ -3212,7 +3143,7 @@ makeTextDataList( KvObsDataList& textDataList )
   }
 }
 
-void 
+void
 HqcMainWindow::
 makeObsDataList( KvObsDataList& dataList )
 {
@@ -3265,7 +3196,7 @@ makeObsDataList( KvObsDataList& dataList )
       int hour = otime.hour();
       int typeId = dit->typeID();
       int sensor = dit->sensor();
-      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor 
+      if ( (otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor
 	    && lstdlg->priTypes->isChecked()) || (!correctTypeId && !lstdlg->priTypes->isChecked()) ) {
 	protime = otime;
 	prstnr = stnr;
@@ -3458,10 +3389,10 @@ void HqcMainWindow::writeSettings()
   settings.beginWriteArray("p");
   for ( int jj = 0; jj < parFind; jj++ ) {
     settings.setArrayIndex(jj);
-    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) 
-	     << pardlg->plb->item(jj)->isSelected() << ": (" 
-	     << pardlg->markPar->isChecked() << "" 
-	     << pardlg->noMarkPar->isChecked() << "" 
+    qDebug() << qPrintable(pardlg->plb->item(jj)->text())
+	     << pardlg->plb->item(jj)->isSelected() << ": ("
+	     << pardlg->markPar->isChecked() << ""
+	     << pardlg->noMarkPar->isChecked() << ""
 	     << pardlg->allPar->isChecked() << ")";
     settings.setValue("item", pardlg->plb->item(jj)->isSelected());
     settings.setValue("text", pardlg->plb->item(jj)->text());
@@ -3479,7 +3410,7 @@ void HqcMainWindow::readSettings()
   QSettings settings("Meteorologisk Institutt", "Hqc");
   if ( !restoreGeometry(settings.value("geometry").toByteArray()) )
     cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
-  
+
   bool times[24];
   settings.beginReadArray("t");
   for ( int hour = 0; hour < 24; hour++ ) {
@@ -3488,7 +3419,7 @@ void HqcMainWindow::readSettings()
     clkdlg->clk[hour]->setChecked(times[hour]);
   }
   settings.endArray();
-  
+
   wElement = settings.value("weather","").toString();
   parFind = settings.beginReadArray("p");
   for ( int jj = 0; jj < parFind; jj++ ) {
