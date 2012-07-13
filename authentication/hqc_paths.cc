@@ -2,6 +2,8 @@
 #include "hqc_paths.hh"
 #include "config.h"
 
+#include <cstdlib>
+
 namespace {
 
 const char* hqc_pathnames[hqc::PATHID__END] = {
