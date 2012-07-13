@@ -74,7 +74,7 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME hqc-${PVERSION})
 
 TARGET_LINK_LIBRARIES(hqc
-  authentication watchrr weather failinfo
+  watchrr authentication weather failinfo
   ${PKGCONFIG_LIBRARIES}
   -lkvalobs2_kvalobs -lboost_thread -lkvalobs2_decodeutility -lGL -lQtNetwork -lldap
 )

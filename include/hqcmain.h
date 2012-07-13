@@ -51,7 +51,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qmainwindow.h>
 #include <qobject.h>
 //#include <q3process.h>
-#include <qmenubar.h> 
+#include <qmenubar.h>
 #include <qmap.h>
 //#include <q3multilineedit.h>
 #include <qpoint.h>
@@ -120,7 +120,7 @@ public:
 
 public slots:
   /*!
-   * \brief Send observation times to Diana 
+   * \brief Send observation times to Diana
    */
   void sendTimes();
   /*!
@@ -140,7 +140,7 @@ public slots:
    */
   void sendSelectedParam(const QString & param);
   /*!
-   * \brief When a parameter value is changed, the new value is 
+   * \brief When a parameter value is changed, the new value is
    *        sent to the datalist, to the timeseries and to Diana.
    */
   void updateParams(int station,
@@ -149,12 +149,12 @@ public slots:
       const miutil::miString & value,
       const miutil::miString & flag);
   /*!
-   * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the 
+   * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the
    *        start, and to TRUE when an update is sent to the database.
    */
   void setKvBaseUpdated(bool);
   /*!
-   * \brief Returns the value of kvBaseIsUpdated  
+   * \brief Returns the value of kvBaseIsUpdated
    */
   bool kvBaseUpdated() {return kvBaseIsUpdated;};
   /*!
@@ -170,12 +170,12 @@ public slots:
   /*!
    * \brief Extracts all the data for one station and one time from datalist
    */
-  void listData(int, 
-		int&, 
-		miutil::miTime&, 
-		double*, 
-		int*, 
-		double*, 
+  void listData(int,
+		int&,
+		miutil::miTime&,
+		double*,
+		int*,
+		double*,
 		double*,
 		string*,
 		string*,
@@ -192,13 +192,13 @@ public:
   bool timeFilter(int);
   /*!
    * \brief Returns true if the given typeId and environment corresponds
-   *        to a station type checked in the ListDialog 
+   *        to a station type checked in the ListDialog
    */
   bool hqcTypeFilter(const int&, int, int);
   bool typeIdFilter(int, int, int, miutil::miTime, int);
   bool isAlreadyStored(miutil::miTime, int);
   /*!
-   * \brief 
+   * \brief
    */
   bool timeFilterChanged;
   /*!
@@ -211,11 +211,11 @@ public:
    */
   void readFromStation();
   /*!
-   * \brief 
+   * \brief
    */
   void readFromStationFile(int);
   /*!
-   * \brief Reads the parameter order from the file paramorder, then reaads the param 
+   * \brief Reads the parameter order from the file paramorder, then reaads the param
    *        table in the kvalobs database and inserts the station information in parmap
    */
   void readFromParam();
@@ -225,7 +225,7 @@ public:
   //  void readFromTypeIdFile();
   void checkTypeId(int);
   /*!
-   * \brief Reads the obs_pgm table in the kvalobs database and 
+   * \brief Reads the obs_pgm table in the kvalobs database and
    *       inserts the station information in obsPgmList and statList
    */
   void readFromObsPgm();
@@ -242,7 +242,7 @@ public:
    */
   void tileHorizontal();
   /*!
-   * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime 
+   * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime
    */
   int findTypeId(int, int, int, miutil::miTime);
   //  int findTypeId(int, int, miutil::miTime);
@@ -287,7 +287,6 @@ public:
   listType lity;
   mettType metty;
   int selParNo[NOPARAMALL];
-  currentType crT;
   vector<currentType> currentTypeList;
   vector<QString> statLineList;
   DataReinserter<kvservice::KvApp> *reinserter;
@@ -491,7 +490,7 @@ private:
   void readSettings();
   int parFind;
 
-  struct Param 
+  struct Param
   {
     bool item;
     QString text;
@@ -573,7 +572,7 @@ signals:
   void printErrorList();
 
   /**
-   * \brief Emitted when a new station and/or obstime has been selected in the 
+   * \brief Emitted when a new station and/or obstime has been selected in the
    *        errorlist.
    */
   void errorListStationSelected(int station, const miutil::miTime & obstime);

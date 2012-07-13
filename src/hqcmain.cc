@@ -1943,17 +1943,13 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
   mdlist.erase(mdlist.begin(),mdlist.end());
   modeldatalist.reserve(131072);
   modeldatalist.clear();
-  QTime t;
-  t.start();
   WhichDataHelper whichData;
   for ( unsigned int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], stime, etime);
   }
-  t.restart();
 
   if(!KvApp::kvApp->getKvModelData(mdlist, whichData))
     cerr << "Can't connect to modeldata table!" << endl;
-  t.restart();
   modDatl mtdl;
   for ( int ip = 0; ip < NOPARAMMODEL; ip++) {
     mtdl.orig[modelParam[ip]] = -32767.0;
@@ -2230,6 +2226,7 @@ void HqcMainWindow::checkTypeId(int stnr) {
       int level  = obit->level();
       int sensor = 0;
       int typeId = obit->typeID();
+      currentType crT;
       crT.stnr = stationId;
       crT.par = par;
       crT.fDate = fDate;

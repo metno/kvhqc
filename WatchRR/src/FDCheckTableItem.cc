@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "FDCheckTableItem.h"
 #include "RR_24DataTableItem.h"
 #include "RRTable.h"
+#include "hqc_utilities.hh"
 #include <kvalobs/kvDataOperations.h>
 #include <cmath>
 #include <cassert>
@@ -75,31 +76,47 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
         return;
 
     kvData d = * getKvData().front();
-    cerr << "Modified: Obstime: " << d.obstime() << ", flag: " << d.controlinfo().flag( kvalobs::flag::fd ) << endl;
+    const int dbFlagFd = d.controlinfo().flag( kvalobs::flag::fd );
     DataSet::iterator f = data.find( d );
     if ( f != data.end() ) {
         d = * f;
         data.erase( f );
     }
+    cerr << "Modified: Obstime: " << d.obstime() << ", flag: " << dbFlagFd << endl;
 
-    int fd = 1;
+    // 'isEndpoint' should be true iff the observation contains the collected
+    // value and thus is the last point of an accumulation
+    const bool isEndpoint = (not kvalobs::original_missing(d));
+
+    // 'hasNewCorrected' should be true iff the operator has manually set a new
+    // corrected value in addition to changing the "collected" checkmark
+    const bool hasNewCorrected = (std::abs(d.original() - d.corrected()) > 0.0625);
+
+    int newFd, newFhqc;
     if ( hqcCollected ) {
-        if ( not kvalobs::missing( d ) and std::abs( d.original() - d.corrected() ) > 0.0625 )
-            fd = 6;
-        else
-            fd = 2;
+#ifdef FLAGG_9_11
+        if( hasNewCorrected ) {
+            newFd = isEndpoint ? 0xA : 9;
+            newFhqc = 6;
+        } else {
+            newFd = isEndpoint ? 4 : 2;
+            newFhqc = 4;
+        }
+#else
+        newFd = isEndpoint ? 4 : 2;
+        newFhqc = 6;
+#endif
+    } else {
+        newFd = 1;
+        newFhqc = ( hasNewCorrected ) ? 7 : 1;
     }
 
     kvalobs::kvControlInfo ci = d.controlinfo();
-    ci.set( kvalobs::flag::fd, fd );
-    ci.set( kvalobs::flag::fhqc, 0 );
+    ci.set( kvalobs::flag::fd, newFd );
+    ci.set( kvalobs::flag::fhqc, newFhqc );
     d.controlinfo( ci );
 
-    miutil::miString cf = d.cfailed();
-    if ( not cf.empty() )
-        cf += ",";
-    cf += "Manual judgment";
-    d.cfailed(cf);
+    updateCfailed(d, "Manual judgment");
     // kvalobs::hqc::hqc_auto_correct( d, d.corrected() ); // set correct fhqc flag
 
     data.insert( d );

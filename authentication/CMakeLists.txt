@@ -9,6 +9,7 @@ SET(auth_SOURCES
   HqcDataReinserter.cc
   hqc_paths.cc
   identifyUser.cc
+  hqc_utilities.cc
 )
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})
