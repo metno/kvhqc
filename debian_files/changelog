@@ -1,3 +1,12 @@
+kvhqc (2.9.0~a1-1) unstable; urgency=low
+
+  * tried to set fd flags correctly in FDCheckTableItem
+    -- this is incomplete
+  * added .desktop file
+  * only package images, not .svn directory
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 16 Jul 2012 12:27:17 +0200
+
 kvhqc (2.8.9~rc3-1) unstable; urgency=low
 
   * expect diana files in /usr, not /usr/local by default

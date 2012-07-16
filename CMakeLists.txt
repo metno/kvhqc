@@ -2,7 +2,7 @@ PROJECT(kvhqc)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 INCLUDE(MetnoVersions)
-METNO_PVERSION(2.8.9~rc3)
+METNO_PVERSION(2.9.0~a1)
 
 IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr")
   SET(SYSCONFDIR "/etc")
@@ -28,8 +28,6 @@ ADD_DEFINITIONS(-W -Wall ${PKGCONFIG_CFLAGS_OTHER})
 CONFIGURE_FILE(include/config.h.in config.h)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-CONFIGURE_FILE(include/config.h.in config.h)
-
 ADD_SUBDIRECTORY(authentication)
 ADD_SUBDIRECTORY(FailInfo)
 ADD_SUBDIRECTORY(WatchRR)
@@ -51,5 +49,9 @@ INSTALL(FILES
   share/failgroup.txt
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 
-INSTALL(DIRECTORY share/images DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
+INSTALL(DIRECTORY share/images
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}"
+  PATTERN "*.png")
 
+CONFIGURE_FILE(share/kvhqc.desktop.in share/kvhqc-${PVERSION}.desktop) 
+INSTALL(FILES ${CMAKE_BINARY_DIR}/share/kvhqc-${PVERSION}.desktop DESTINATION "share/applications")

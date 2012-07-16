@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=kvhqc-@PVERSION@
+GenericName=kvhqc-@PVERSION@
+Comment=KvHQC @PVERSION@
+Exec=hqc-@PVERSION@
+Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/hqc.png
+MimeType=
+ServiceTypes=
+Terminal=false
+Type=Application
+Categories=Meteorologisk;
