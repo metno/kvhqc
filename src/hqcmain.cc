@@ -2300,8 +2300,18 @@ void HqcMainWindow::readFromParam() {
 
   // First, read parameter order from file
 
-  QFile paramOrder(::hqc::getPath(::hqc::CONFDIR) + "/paramorder");
-  paramOrder.open(QIODevice::ReadOnly);
+  QString fileParamOrder = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
+  QFile paramOrder(fileParamOrder);
+  if( !paramOrder.open(QIODevice::ReadOnly) ) {
+      QMessageBox msgBox;
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.setText(tr("Cannot read paramorder file"));
+      msgBox.setInformativeText(tr("The file expected in '%1' could not be opened. Please set HQC_CONFDIR correctly.").arg(fileParamOrder));
+      msgBox.setStandardButtons(QMessageBox::Abort);
+      msgBox.setDefaultButton(QMessageBox::Abort);
+      msgBox.exec();
+      ::exit(1);
+  }
   QTextStream paramStream(&paramOrder);
 
   parameterGroups.clear();
