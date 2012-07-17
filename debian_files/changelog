@@ -1,3 +1,11 @@
+kvhqc (2.9.0~a2-1) unstable; urgency=low
+
+  * use name instead of IP for nameserver in config files
+  * propose username from USER env variable on X11
+  * enabled fd flags for flagspec 9.11
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 17 Jul 2012 09:02:55 +0200
+
 kvhqc (2.9.0~a1-1) unstable; urgency=low
 
   * tried to set fd flags correctly in FDCheckTableItem
