@@ -48,19 +48,19 @@ namespace Authentication {
     typedef opList::const_iterator opIter;
   };
 
-  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName) 
-  { 
+  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName)
+  {
     return identifyUser(app, ldap_server, userName, DEFAULT_LDAP_PORT);
   }
 
-  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName, int ldap_port) 
+  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName, int ldap_port)
   {
     // Authenticate user:
-    
+
     QString user = Authenticator::authenticate(ldap_server, ldap_port);
     if ( user.isEmpty() )
       return NULL; // Not authenticated
-    
+
     // Get list of operators from database, and find our operator:
     opList operators;
 
@@ -68,7 +68,7 @@ namespace Authentication {
 
     app->getKvOperator(operators);  // FEIL SKJER HER!
     for (opIter it = operators.begin(); it != operators.end(); it++) {
-      cerr << it->username().cStr() << "  " << it->userID() << endl;
+      //cerr << it->username().cStr() << "  " << it->userID() << endl;
       if ( strcmp(it->username().cStr(), user.ascii()) == 0 ) {
 	string uname = it->username();
 	userName = uname.c_str();

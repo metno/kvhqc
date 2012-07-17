@@ -29,9 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "Authenticator.h"
+
 #include <qlineedit.h>
 #define LDAP_DEPRECATED 1 //  ouch!
 #include <ldap.h>
+#include <cstdlib>
 #include <cstring>
 #include <iostream>
 #include <sstream>
@@ -80,7 +82,7 @@ bool authenticate(const char *username, const char *password,
 	//uns << "uid=" << username << ", ou=People, o=dnmi.no";
 	uns << "uid=" << username << ",ou=user,ou=internal,dc=met,dc=no";
 	string un = uns.str();
-	cout << un << endl;
+	//cout << un << endl;
 
 	VERIFY(ldap_simple_bind_s(ldap, un.c_str(), password));
 
@@ -95,6 +97,13 @@ Authenticator::Authenticator( const char *server, int port,
     : QDialog( parent, name, modal, fl), server(server), port(port)
 {
     setupUi(this);
+#ifdef Q_WS_X11
+    const char* env_user = getenv("USER");
+    if( env_user )
+        username->setText(env_user);
+    password->setFocus();
+#endif
+
   QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
   validUN->setRegExp(QRegExp("[-\\w]+"));
   username->setValidator(validUN);
