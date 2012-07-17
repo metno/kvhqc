@@ -55,9 +55,9 @@ FDCheckTableItem::~FDCheckTableItem()
 
 bool FDCheckTableItem::collected() const
 {
-  kvalobs::kvControlInfo cinfo = data.front()->controlinfo();
-  int fd = cinfo.flag( kvalobs::flag::fd );
-  return fd == 2 or fd > 5;
+  const kvalobs::kvControlInfo cinfo = data.front()->controlinfo();
+  const int fd = cinfo.flag( kvalobs::flag::fd );
+  return fd == 2 or fd == 4 or fd >= 6;
 }
 
 QString FDCheckTableItem::explain() const
@@ -94,7 +94,6 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
 
     int newFd, newFhqc;
     if ( hqcCollected ) {
-#ifdef FLAGG_9_11
         if( hasNewCorrected ) {
             newFd = isEndpoint ? 0xA : 9;
             newFhqc = 6;
@@ -102,10 +101,6 @@ void FDCheckTableItem::getUpdatedList( DataSet & data )
             newFd = isEndpoint ? 4 : 2;
             newFhqc = 4;
         }
-#else
-        newFd = isEndpoint ? 4 : 2;
-        newFhqc = 6;
-#endif
     } else {
         newFd = 1;
         newFhqc = ( hasNewCorrected ) ? 7 : 1;
