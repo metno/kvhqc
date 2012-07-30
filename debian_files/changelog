@@ -1,3 +1,10 @@
+kvhqc (2.9.0~a4-1) unstable; urgency=low
+
+  * improved communication with diana
+  * depend on libqt4-sql-psql
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 30 Jul 2012 13:17:22 +0200
+
 kvhqc (2.9.0~a3-1) unstable; urgency=low
 
   * added HqcMainWindow::selectParameterGroup
