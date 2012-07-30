@@ -54,7 +54,7 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   markPar   = new QRadioButton( tr("Velg merkede parametere"), pVal );
   noMarkPar = new QRadioButton( tr("Velg bort merkede parametere"), pVal );
 
-  QVBoxLayout * rbvl = new QVBoxLayout(this,10);
+  QVBoxLayout * rbvl = new QVBoxLayout();
   rbvl->addWidget(allPar);
   rbvl->addWidget(markPar);
   rbvl->addWidget(noMarkPar);
