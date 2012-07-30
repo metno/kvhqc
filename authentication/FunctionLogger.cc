@@ -37,12 +37,15 @@ namespace debug {
 
 void FunctionLogger::log(bool entering) const
 {
-    indent += (entering ? 1 : -1);
+    if( entering )
+        indent += 1;
     std::ostringstream data;
     for ( int i = 0; i < indent; ++ i )
       data << "--+--";
     data << '>' << ( entering ? " Entering " : " Leaving ") << name_;
     qDebug() << data.str().c_str();
+    if( !entering )
+        indent -= 1;
 }
 
 int FunctionLogger::indent = 3;

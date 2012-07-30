@@ -106,7 +106,6 @@ public:
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
-  std::vector<int> coastStations;
 
   //  QAction * lackListAction;
 
@@ -118,7 +117,7 @@ public slots:
   /*!
    * \brief Send message to show ground analysis in Diana
    */
-  bool sendAnalysisMessage();
+  void sendAnalysisMessage();
   /*!
    * \brief Send station information to Diana
    */
@@ -274,7 +273,6 @@ public:
   std::vector<int> stnrList;
 
   /// This holds the value of the previously used stList
-  std::vector<int> remstList;
   std::vector<TxtDat> txtList;
   listType lity;
   mettType metty;
@@ -434,7 +432,6 @@ private:
   QString kdbParam[NOPARAMALL];
 
   //  DataList dlist;
-  ModelDataList mdlist;
   ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;
   std::list<kvalobs::kvStation> sillist;
@@ -498,7 +495,7 @@ protected:
   // socket methods
   void initDiana();
   void sendMessage(miMessage&);
-  void sendImage(const miutil::miString name, const QImage& image);
+  // void sendImage(const miutil::miString name, const QImage& image);
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 

@@ -30,20 +30,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "ListDialog.h"
 //Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <QLabel>
-#include <Q3GridLayout>
-#include <Q3VBoxLayout>
-#include <QDateTimeEdit>
+#include <Qt3Support/Q3HBoxLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3VBoxLayout>
+#include <QtGui/QDateTimeEdit>
 
-ListDialog::ListDialog(QWidget* parent): QDialog(parent) {  
+ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
   setCaption(tr("Datautvalg HQC"));
 
   // Create a button group for control type
-  
-  Q3ButtonGroup *ctrlTyp = new Q3ButtonGroup( 1, 
-					  Qt::Horizontal, 
+
+  Q3ButtonGroup *ctrlTyp = new Q3ButtonGroup( 1,
+					  Qt::Horizontal,
 					  tr("Kontrolltype"), this);
   Q3GridLayout* controlLayout = new Q3GridLayout(ctrlTyp->layout());
 
@@ -76,7 +76,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(marType,SIGNAL(clicked()),this,SLOT(omarCheck()));
 
   // Create a button group for station type
-  
+
   Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal,
 					 tr("Stasjonstype"),
 					 this);
@@ -106,9 +106,9 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
 
    // Create a button group for station location (county)
-  
-  Q3ButtonGroup *stCounty = new Q3ButtonGroup( 0, 
-					  Qt::Horizontal, 
+
+  Q3ButtonGroup *stCounty = new Q3ButtonGroup( 0,
+					  Qt::Horizontal,
 					  "Fylke", this);
   Q3GridLayout* statCountyLayout = new Q3GridLayout(stCounty->layout());
 
@@ -136,9 +136,9 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   allCoun = new QCheckBox( "Alle", stCounty );
 
    // Create a button group for station location (region)
-  
-  Q3ButtonGroup *stRegion = new Q3ButtonGroup( 1, 
-					  Qt::Horizontal, 
+
+  Q3ButtonGroup *stRegion = new Q3ButtonGroup( 1,
+					  Qt::Horizontal,
 					  "Landsdel", this);
 
   // insert checkbuttons for station location selection
@@ -183,17 +183,17 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(finCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
 
   // Typeid options
-  Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1, 
-					  Qt::Horizontal, 
+  Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1,
+					  Qt::Horizontal,
 					  tr("Meldingstyper"), this);
-  
+
   Q3GridLayout* typeidLayout = new Q3GridLayout(typeGroup->layout());
   priTypes = new QRadioButton( tr("Prioriterte typer"), typeGroup );
   typeGroup->insert(priTypes);
   priTypes->setChecked(true);
   allTypes = new QRadioButton( tr("Alle typer"), typeGroup );
   typeGroup->insert(allTypes);
-  
+
   //Station selection
   stationSelect = new QPushButton(tr("Velg &stasjon"), this);
   stationSelect->setAutoDefault(true);
@@ -208,7 +208,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   stationLabel->setAlignment(Qt::AlignLeft);
   stationNames = new Q3ListBox(this);
 
-  //Time selection  
+  //Time selection
   fromTime = new QDateTimeEdit (QDateTime::currentDateTime(),this);
   toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
   fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
@@ -219,7 +219,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   }
   toTime->setDateTime(t);
 
-  t = t.addSecs(-172800); // Go back two days 
+  t = t.addSecs(-172800); // Go back two days
   t = t.addSecs(3600*(17-t.time().hour()));
   t = t.addSecs(60*(45-t.time().minute()));
   fromTime->setDateTime(t);
@@ -237,7 +237,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 	   this,   SLOT(  setMaxTime(const QTime&)     ));
   connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
 	   this,SIGNAL(toTimeChanged(const QDateTime&)));
-  
+
   sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
@@ -245,7 +245,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
-  
+
   hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
@@ -254,7 +254,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   buttonLayout->addWidget(sthide, 10);
   buttonLayout->addWidget(excu, 10);
   buttonLayout->addWidget(hdnexcu, 10);
-  
+
   statSelLayout->addWidget(aaType,0,0);
   statSelLayout->addWidget(afType,1,0);
   statSelLayout->addWidget(alType,2,0);
@@ -275,7 +275,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   statSelLayout->addWidget(vkType,1,3);
   statSelLayout->addWidget(vmType,2,3);
   statSelLayout->addWidget(allType,5,3);
-  
+
   statCountyLayout->addWidget(oslCoun,0,0);
   statCountyLayout->addWidget(hedCoun,1,0);
   statCountyLayout->addWidget(vefCoun,2,0);
@@ -309,7 +309,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   connect(sthide, SIGNAL(clicked()), this, SIGNAL( ListHide()));
   connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
   connect(excu, SIGNAL(clicked()), this, SIGNAL( ListApply()));
-  
+
   QLabel* fromLabel = new QLabel(tr("Fra"));
   Q3HBoxLayout* ftimeLayout = new Q3HBoxLayout();
   ftimeLayout->addWidget(fromLabel);
@@ -318,9 +318,9 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   Q3HBoxLayout* ttimeLayout = new Q3HBoxLayout();
   ttimeLayout->addWidget(toLabel);
   ttimeLayout->addWidget(toTime);
-  
+
   topLayout = new Q3VBoxLayout(this,10);
-  
+
   topLayout->addLayout(typeLayout);
   topLayout->addLayout(locationLayout);
   topLayout->addWidget(typeGroup);
@@ -380,7 +380,7 @@ void ListDialog::chooseParameters(const QString& str) {
 QString ListDialog::getEnd() {
   //  return toTime->isoTime().cStr();
   return toTime->text() + QString(":00");
-} 
+}
 
 
 void ListDialog::appendStatInListbox(QString station) {
@@ -986,47 +986,47 @@ StationTable::StationTable(QStringList selStatNum,
 			   int noStat,
 			   bool aa,
 			   bool af,
-			   bool al, 
+			   bool al,
 			   bool av,
 			   bool ao,
-			   bool ae, 
-			   bool mv, 
-			   bool mp, 
-			   bool mm, 
-			   bool ms, 
-			   bool fm, 
+			   bool ae,
+			   bool mv,
+			   bool mp,
+			   bool mm,
+			   bool ms,
+			   bool fm,
 			   bool ns,
 			   bool nd,
-			   bool no, 
-			   bool pi, 
-			   bool pt, 
-			   bool vs, 
-			   bool vk, 
-			   bool vm, 
-			   bool all, 
+			   bool no,
+			   bool pi,
+			   bool pt,
+			   bool vs,
+			   bool vk,
+			   bool vm,
+			   bool all,
 			   bool osl,
 			   bool ake,
-			   bool ost, 
+			   bool ost,
 			   bool hed,
 			   bool opp,
-			   bool bus, 
-			   bool vef, 
-			   bool tel, 
-			   bool aus, 
-			   bool vea, 
-			   bool rog, 
+			   bool bus,
+			   bool vef,
+			   bool tel,
+			   bool aus,
+			   bool vea,
+			   bool rog,
 			   bool hor,
 			   bool sog,
-			   bool mor, 
-			   bool sor, 
-			   bool ntr, 
-			   bool nor, 
-			   bool tro, 
+			   bool mor,
+			   bool sor,
+			   bool ntr,
+			   bool nor,
+			   bool tro,
 			   bool fin,
 			   bool sva,
 			   bool allc,
-			   bool web, 
-			   bool pri, 
+			   bool web,
+			   bool pri,
 			   int noInfo,
 			   ObsTypeList* otpList,
 			   QWidget* parent)
@@ -1058,7 +1058,7 @@ StationTable::StationTable(QStringList selStatNum,
     int stano = strStnr.toInt();
     ObsTypeList::iterator oit = otpList->begin();
     bool foundStat = false;
-    for ( ; oit != otpList->end(); oit++) {   
+    for ( ; oit != otpList->end(); oit++) {
       TypeList::iterator tit = oit->begin();
       if ( stano == (*tit) ) {
 	foundStat = true;
@@ -1094,7 +1094,7 @@ StationTable::StationTable(QStringList selStatNum,
     QString strEnv;
     if ( (aa == TRUE && ((strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
     if ( (af == TRUE && strStType == "1" && findInTypes(oit, 311)) )  strEnv += "AF";
-    if ( (al == TRUE && strStType == "2" && findInTypes(oit, 3)) ) strEnv += "AL"; 
+    if ( (al == TRUE && strStType == "2" && findInTypes(oit, 3)) ) strEnv += "AL";
     if ( (av == TRUE && strStType == "12" && findInTypes(oit, 3)) )  strEnv += "AV";
     if ( (ao == TRUE && findInTypes(oit, 410)) )  strEnv += "AO";
     if ( (mv == TRUE && strStType == "7" && findInTypes(oit, 11)) ) strEnv += "MV";
@@ -1123,19 +1123,19 @@ StationTable::StationTable(QStringList selStatNum,
       setItem(stInd, 3, stType);
       StTableItem* stFylke = new StTableItem(this, Q3TableItem::Never, strStFylke);
       setItem(stInd, 4, stFylke);
-      StTableItem* stKommune = new StTableItem(this, 
-					       Q3TableItem::Never, 
+      StTableItem* stKommune = new StTableItem(this,
+					       Q3TableItem::Never,
 					       strStKommune);
       setItem(stInd, 5, stKommune);
-      StTableItem* stPrior = new StTableItem(this, 
-					       Q3TableItem::Never, 
+      StTableItem* stPrior = new StTableItem(this,
+					       Q3TableItem::Never,
 					       prty);
       setItem(stInd, 6, stPrior);
       stInd++;
     }
   }
   setNumRows(stInd);
- 
+
   adjustColumn( 0 );
   adjustColumn( 1 );
   adjustColumn( 2 );
@@ -1143,7 +1143,7 @@ StationTable::StationTable(QStringList selStatNum,
   adjustColumn( 4 );
   adjustColumn( 5 );
   adjustColumn( 6 );
-  if ( pri) 
+  if ( pri)
     sortColumn(6, TRUE, TRUE);
   else
     hideColumn(6);
@@ -1162,42 +1162,42 @@ QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oi
   if ( strStType == "1" && findInTypes(oit, 311) )
     env = "AF";
   else if ( strStType == "2" && findInTypes(oit, 3) )
-    env = "AL"; 
+    env = "AL";
   else if ( strStType == "4" && findInTypes(oit, 11) )
-    env = "MM"; 
+    env = "MM";
   else if ( strStType == "5" && findInTypes(oit, 11) )
-    env = "MP"; 
+    env = "MP";
   else if ( strStType == "6" && findInTypes(oit, 11) )
-    env = "MS"; 
+    env = "MS";
   else if ( strStType == "7" && findInTypes(oit, 11) )
-    env = "MV"; 
+    env = "MV";
   else if ( (strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342) )
-    env = "AA"; 
+    env = "AA";
   else if ( strStType == "9" && findInTypes(oit, 402) )
-    env = "ND"; 
+    env = "ND";
   else if ( strStType == "10" && findInTypes(oit, 402) )
-    env = "NO"; 
+    env = "NO";
   else if ( findInTypes(oit, 302) )
-    env = "NS"; 
+    env = "NS";
   else if ( findInTypes(oit, 410) )
-    env = "AO"; 
+    env = "AO";
   else if ( findInTypes(oit, 4) || findInTypes(oit, 404) )
-    env = "P,PT"; 
+    env = "P,PT";
   else if ( findInTypes(oit, 2) )
-    env = "FM"; 
+    env = "FM";
   else if ( findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312) )
-    env = "VS"; 
+    env = "VS";
   else if ( findInTypes(oit, 306) || findInTypes(oit, 308) )
-    env = "VM"; 
+    env = "VM";
   else if ( strStType == "11" )
     env = "TURISTFORENING";
   else if ( strStType == "12" && findInTypes(oit, 3) )
     env = "AV";
   else if ( findInTypes(oit, 412) )
-    env = "VK"; 
+    env = "VK";
   //  else if ( findInTypes(oit, 503) )
   else if ( findInTypes(oit, 502) || findInTypes(oit, 503) || findInTypes(oit, 504) || findInTypes(oit, 505) || findInTypes(oit, 506) || findInTypes(oit, 514) )
-    env = "X"; 
+    env = "X";
   return env;
 }
 
@@ -1206,58 +1206,58 @@ void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
     Q3Table::sortColumn( col, ascending, TRUE );
 }
 
-StationSelection::StationSelection(QStringList listStatNum, 
-				   QStringList listStatName, 
-				   QStringList listStatHoh, 
-				   QStringList listStatType, 
-				   QStringList listStatFylke, 
-				   QStringList listStatKommune, 
-				   QStringList listStatWeb, 
-				   QStringList listStatPri, 
+StationSelection::StationSelection(QStringList listStatNum,
+				   QStringList listStatName,
+				   QStringList listStatHoh,
+				   QStringList listStatType,
+				   QStringList listStatFylke,
+				   QStringList listStatKommune,
+				   QStringList listStatWeb,
+				   QStringList listStatPri,
 				   int noStat,
 				   bool aa,
 				   bool af,
-				   bool al, 
+				   bool al,
 				   bool av,
 				   bool ao,
-				   bool ae, 
-				   bool mv, 
-				   bool mp, 
-				   bool mm, 
-				   bool ms, 
-				   bool fm, 
+				   bool ae,
+				   bool mv,
+				   bool mp,
+				   bool mm,
+				   bool ms,
+				   bool fm,
 				   bool ns,
 				   bool nd,
-				   bool no, 
-				   bool pi, 
-				   bool pt, 
-				   bool vs, 
-				   bool vk, 
+				   bool no,
+				   bool pi,
+				   bool pt,
+				   bool vs,
+				   bool vk,
 				   bool vm,
-				   bool all, 
+				   bool all,
 				   bool osl,
 				   bool ake,
-				   bool ost, 
+				   bool ost,
 				   bool hed,
 				   bool opp,
-				   bool bus, 
-				   bool vef, 
-				   bool tel, 
-				   bool aus, 
-				   bool vea, 
-				   bool rog, 
+				   bool bus,
+				   bool vef,
+				   bool tel,
+				   bool aus,
+				   bool vea,
+				   bool rog,
 				   bool hor,
 				   bool sog,
-				   bool mor, 
-				   bool sor, 
-				   bool ntr, 
-				   bool nor, 
-				   bool tro, 
+				   bool mor,
+				   bool sor,
+				   bool ntr,
+				   bool nor,
+				   bool tro,
 				   bool fin,
 				   bool sva,
 				   bool allc,
-				   bool web, 
-				   bool pri, 
+				   bool web,
+				   bool pri,
 				   int noInfo,
 				   ObsTypeList* otpList) : QWidget() {
 
@@ -1272,70 +1272,70 @@ StationSelection::StationSelection(QStringList listStatNum,
   selectAllStations->setGeometry(200,10,130,30);
   connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
 
-  stationTable = new StationTable(listStatNum, 
-				  listStatName, 
-				  listStatHoh, 
-				  listStatType, 
-				  listStatFylke, 
-				  listStatKommune, 
-				  listStatWeb, 
-				  listStatPri, 
-				  noStat, 
+  stationTable = new StationTable(listStatNum,
+				  listStatName,
+				  listStatHoh,
+				  listStatType,
+				  listStatFylke,
+				  listStatKommune,
+				  listStatWeb,
+				  listStatPri,
+				  noStat,
 				  aa,
 				  af,
-				  al, 
+				  al,
 				  av,
 				  ao,
-				  ae, 
-				  mv, 
-				  mp, 
-				  mm, 
-				  ms, 
-				  fm, 
+				  ae,
+				  mv,
+				  mp,
+				  mm,
+				  ms,
+				  fm,
 				  ns,
 				  nd,
-				  no, 
-				  pi, 
-				  pt, 
-				  vs, 
-				  vk, 
-				  vm, 
-				  all, 
+				  no,
+				  pi,
+				  pt,
+				  vs,
+				  vk,
+				  vm,
+				  all,
 				  osl,
 				  ake,
-				  ost, 
+				  ost,
 				  hed,
 				  opp,
-				  bus, 
-				  vef, 
-				  tel, 
-				  aus, 
-				  vea, 
-				  rog, 
+				  bus,
+				  vef,
+				  tel,
+				  aus,
+				  vea,
+				  rog,
 				  hor,
 				  sog,
-				  mor, 
-				  sor, 
-				  ntr, 
-				  nor, 
-				  tro, 
+				  mor,
+				  sor,
+				  ntr,
+				  nor,
+				  tro,
 				  fin,
 				  sva,
 				  allc,
 				  web,
 				  pri,
 				  noInfo,
-				  otpList, 
+				  otpList,
 				  this);
   connect( stationTable,SIGNAL(currentChanged(int, int)),
-	   SLOT(tableCellClicked(int, int)));  
+	   SLOT(tableCellClicked(int, int)));
 }
 
 void StationSelection::tableCellClicked() {
 }
-void StationSelection::tableCellClicked(int row, 
-					int col, 
-					int button, 
+void StationSelection::tableCellClicked(int row,
+					int col,
+					int button,
 					const QPoint& mousePos) {
   stationTable->selectRow(row);
   showSelectedStation(row, 0);

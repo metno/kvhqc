@@ -1592,14 +1592,6 @@ QString DataCell::key() const {
   return item;
 }
 
-bool ErrorList::isCoastStation(int stnr) {
-  for ( unsigned int ic = 0; ic < mainWindow->coastStations.size(); ic++ ) {
-    if ( stnr ==mainWindow->coastStations[ic] )
-      return true;
-  }
-  return false;
-}
-
 double ErrorList::FF() {
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
     if ( memStore2[i].parNo == 81 )

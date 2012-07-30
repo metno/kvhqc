@@ -93,11 +93,6 @@ namespace {
   //int noSelPar;
   const int modelParam[] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
-  miutil::miTime remstime;
-  miutil::miTime remetime;
-  miutil::miTime remdlstime;
-  miutil::miTime remdletime;
-  listType remLity;
 
 const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
         ("[airpress]", "Lufttrykk")
@@ -138,8 +133,8 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 /**
  * Main Window Constructor.
  */
-  HqcMainWindow::HqcMainWindow()
-  : QMainWindow( 0, "HQC")
+HqcMainWindow::HqcMainWindow()
+  : QMainWindow( 0, tr("HQC"))
   , datalist(new model::KvalobsDataList)
   , reinserter( NULL )
 {
@@ -174,11 +169,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   sLevel  = 0;
   sSensor = 0;
   QStringList dName, dNum;
-  remstime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  remetime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  remdlstime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  remdletime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  remLity = dumLi;
   dianaconnected=  false;  // connection to diana
   tsVisible = false;
 
@@ -313,12 +303,10 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   // --- STATUS BAR -------------------------------------------
 
   //  if(usesocket){
-  miutil::miString name = "hqc";
+  QString name = "hqc";
   //  miutil::miString command = "coserver4";
-  miutil::miString command = "/usr/bin/coserver4";
-  pluginB = new ClientButton(name.cStr(),
-			     command.cStr(),
-			     statusBar());
+  QString command = "/usr/bin/coserver4";
+  pluginB = new ClientButton(name, command, statusBar());
   pluginB->useLabel(true);
   pluginB->connectToServer();
 
@@ -356,16 +344,6 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
     prostnr = ostnr;
   }
   otpList.push_back(tpList);
-
-  int noStat = 0;
-  for ( QStringList::Iterator sit = listStatName.begin();
-	sit != listStatName.end();
-	++sit ) {
-    if ( listStatCoast[noStat] == "K" ) {
-      coastStations.push_back(listStatNum[noStat].toInt());
-    }
-    noStat++;
-  }
 
   readFromParam();
 
@@ -765,7 +743,6 @@ void HqcMainWindow::ListOK() {
 
   BusyIndicator busyIndicator;
   listExist = TRUE;
-  remstList = stList;
   stList.clear();
   for ( QStringList::Iterator sit = statSelect->stlist.begin();
         sit != statSelect->stlist.end();
@@ -1690,21 +1667,14 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
 				 listType /* UNUSED lity*/) {
   BusyIndicator busy();
 
-  // UNUSED bool result;
-  QTime t;
-  t.start();
-  t.restart();
   WhichDataHelper whichData;
   for ( unsigned int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], stime, etime);
     checkTypeId(stList[i]);
   }
 
-  t.restart();
-
   // Throw away old data list. It will still exist if any window need it.
   datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
-  KvObsDataList ldlist;// = GetData::datalist;
   GetData dataReceiver(this);
   if(!KvApp::kvApp->getKvData(dataReceiver, whichData)){
     //cerr << "Finner ikke  datareceiver!!" << endl;
@@ -1723,7 +1693,7 @@ void HqcMainWindow::readFromModelData(const miutil::miTime& stime,
 				      const miutil::miTime& etime) {
   // UNUSED bool result;
 
-  mdlist.erase(mdlist.begin(),mdlist.end());
+  ModelDataList mdlist;
   modeldatalist.reserve(131072);
   modeldatalist.clear();
   WhichDataHelper whichData;
@@ -1991,6 +1961,7 @@ void HqcMainWindow::readFromStation() {
 */
 
 void HqcMainWindow::readFromObsPgm() {
+    LOG_FUNCTION();
   if (!KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
     cerr << "Can't connect to obs_pgm table!" << endl;
 }
@@ -2080,6 +2051,7 @@ void HqcMainWindow::readFromStationFile(int /* UNUSED statCheck*/) {
 */
 
 void HqcMainWindow::readFromParam() {
+    LOG_FUNCTION();
 
   // First, read parameter order from file
 
@@ -2247,45 +2219,41 @@ void HqcMainWindow::about()
 
 void HqcMainWindow::initDiana()
 {
-  LOG_FUNCTION();
-  dianaconnected= false;
+    LOG_FUNCTION();
+    dianaconnected= false;
 
-  std::string type1 = "Diana";
-  std::string type2 = "hqc";
+    if(pluginB->clientTypeExist("Diana"))
+        dianaconnected= true;
 
-  if(pluginB->clientTypeExist(type1)){
-    dianaconnected= true;
-  }
-  sendTimes();
-  sendAnalysisMessage();
-  return;
+    sendTimes();
+    sendAnalysisMessage();
 }
 
-// send one image to diana (with name)
-void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
-{
-  LOG_FUNCTION();
-  if (!dianaconnected) return;
-  if (image.isNull()) return;
-
-  QByteArray* a; // TODO uninitialized -- this will give problems
-  QDataStream s(a, QIODevice::WriteOnly);
-  s << image;
-
-  miMessage m;
-  m.command= qmstrings::addimage;
-  m.description= "name:image";
-
-  ostringstream ost;
-  ost << name << ":";
-  int n= a->count();
-  for (int i=0; i<n; i++)
-    ost << setw(7) << int(*a[i]);
-  miutil::miString txt= ost.str();
-  m.data.push_back(txt);
-    cerr << "HQC sender melding : " << m.content() << endl;
-  pluginB->sendMessage(m);
-}
+//// send one image to diana (with name)
+//void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
+//{
+//  LOG_FUNCTION();
+//  if (!dianaconnected) return;
+//  if (image.isNull()) return;
+//
+//  QByteArray* a; // TODO uninitialized -- this will give problems
+//  QDataStream s(a, QIODevice::WriteOnly);
+//  s << image;
+//
+//  miMessage m;
+//  m.command= qmstrings::addimage;
+//  m.description= "name:image";
+//
+//  ostringstream ost;
+//  ost << name << ":";
+//  int n= a->count();
+//  for (int i=0; i<n; i++)
+//    ost << setw(7) << int(*a[i]);
+//  miutil::miString txt= ost.str();
+//  m.data.push_back(txt);
+//    cerr << "HQC sender melding : " << m.content() << endl;
+//  pluginB->sendMessage(m);
+//}
 
 // called when client-list changes
 void HqcMainWindow::processConnect()
@@ -2364,7 +2332,7 @@ void HqcMainWindow::sendShowText(const miutil::miString site)
 */
 
 // send message to show ground analysis in Diana
-bool  HqcMainWindow::sendAnalysisMessage() {
+void HqcMainWindow::sendAnalysisMessage() {
   LOG_FUNCTION();
 
   //show analysis
@@ -2376,7 +2344,6 @@ bool  HqcMainWindow::sendAnalysisMessage() {
   pluginB->sendMessage(letter);
 
   dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
-  return true;
 }
 
 void HqcMainWindow::sendStation(int stnr)
@@ -3195,6 +3162,7 @@ void HqcMainWindow::writeSettings()
 
 void HqcMainWindow::readSettings()
 {
+    LOG_FUNCTION();
   QList<Param> params;
 
   QSettings settings("Meteorologisk Institutt", "Hqc");

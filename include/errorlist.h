@@ -389,12 +389,6 @@ private:
    */
   bool obsInMissList(mem);
   /**
-   * \brief Checks if a station is a coast/maritime or inland station
-   *
-   * \return TRUE if coast/maritime station
-   */
-  bool isCoastStation(int stnr);
-  /**
    * \brief Find FF in memory store 2
    */
   double FF();
