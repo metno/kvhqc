@@ -419,7 +419,7 @@ ErrorList::ErrorList(QStringList& selPar,
   cerr << endl;
   ///////
   error.clear();
-  noError.clear();
+//  noError.clear();
   //  checkSecondMemoryStore();
   ///////
   for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
@@ -429,78 +429,78 @@ ErrorList::ErrorList(QStringList& selPar,
   }
 
 
-  //
-  //Reference stations
-  //
-  refs rStat;
-  vector<refs> rStatList;
-  int pstnr = 0;
-  int ppanr = 0;
-  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-
-    int stnr =  memStore1[i].stnr;
-    int panr =  memStore1[i].parNo;
-    rStat.stnr = stnr;
-    rStat.parNo = panr;
-    double lat, lon, olat, olon;
-
-    if ( stnr != pstnr ) {  // If new station: find position
-      std::list<kvStation>::const_iterator it=slist.begin();
-      for ( ;it!=slist.end(); it++){
-	if (  it->stationID() == stnr ) {
-	  lat = it->lat();
-	  lon = it->lon();
-	  break;
-	}
-      }
-    }
-    if ( pstnr != stnr || ( pstnr == stnr && panr != ppanr )) {
-      // If new station, or new parameter at same station:  loop through obs_pgm
-      for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
-	int ostnr = obit->stationID();
-	int opanr = obit->paramID();
-	if ( ostnr != stnr && opanr == panr ) { //another station which has the same parameter
-
-	  std::list<kvStation>::const_iterator it=slist.begin();
-	  for ( ;it!=slist.end(); it++){  //find position of the other staTION
-	    if ( it->stationID() == ostnr ) {
-	      olat = it->lat();
-	      olon = it->lon();
-	      break;
-	    }
-	  }
-	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
-	  rStat.rstnr = ostnr;
-	  if (rStatList.size() == 0 )
-	    rStatList.push_back(rStat);
-	  else {
-	    bool ins = false;
-	    for ( vector<refs>::iterator dit = rStatList.begin();
-		  dit != rStatList.end(); dit++ ) {
-	      if ( rStat.stnr == dit->stnr &&
-		   rStat.parNo == dit->parNo &&
-		   rStat.rstnr == dit->rstnr) {
-		ins = true;
-		break;
-	      }
-	      if ( rStat.stnr <= dit->stnr &&
-		   rStat.dist < dit->dist &&
-		   rStat.parNo < dit->parNo &&
-		   rStat.rstnr != dit->rstnr) {
-		rStatList.insert(dit, rStat);
-		ins = true;
-		break;
-	      }
-	    }
-      	    if ( !ins )
-	      rStatList.push_back(rStat);
-	  }
-	}
-      }
-    }
-    pstnr = stnr;
-    ppanr = panr;
-  }
+//  //
+//  //Reference stations
+//  //
+//  refs rStat;
+//  vector<refs> rStatList;
+//  int pstnr = 0;
+//  int ppanr = 0;
+//  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
+//
+//    int stnr =  memStore1[i].stnr;
+//    int panr =  memStore1[i].parNo;
+//    rStat.stnr = stnr;
+//    rStat.parNo = panr;
+//    double lat, lon, olat, olon;
+//
+//    if ( stnr != pstnr ) {  // If new station: find position
+//      std::list<kvStation>::const_iterator it=slist.begin();
+//      for ( ;it!=slist.end(); it++){
+//	if (  it->stationID() == stnr ) {
+//	  lat = it->lat();
+//	  lon = it->lon();
+//	  break;
+//	}
+//      }
+//    }
+//    if ( pstnr != stnr || ( pstnr == stnr && panr != ppanr )) {
+//      // If new station, or new parameter at same station:  loop through obs_pgm
+//      for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
+//	int ostnr = obit->stationID();
+//	int opanr = obit->paramID();
+//	if ( ostnr != stnr && opanr == panr ) { //another station which has the same parameter
+//
+//	  std::list<kvStation>::const_iterator it=slist.begin();
+//	  for ( ;it!=slist.end(); it++){  //find position of the other staTION
+//	    if ( it->stationID() == ostnr ) {
+//	      olat = it->lat();
+//	      olon = it->lon();
+//	      break;
+//	    }
+//	  }
+//	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
+//	  rStat.rstnr = ostnr;
+//	  if (rStatList.size() == 0 )
+//	    rStatList.push_back(rStat);
+//	  else {
+//	    bool ins = false;
+//	    for ( vector<refs>::iterator dit = rStatList.begin();
+//		  dit != rStatList.end(); dit++ ) {
+//	      if ( rStat.stnr == dit->stnr &&
+//		   rStat.parNo == dit->parNo &&
+//		   rStat.rstnr == dit->rstnr) {
+//		ins = true;
+//		break;
+//	      }
+//	      if ( rStat.stnr <= dit->stnr &&
+//		   rStat.dist < dit->dist &&
+//		   rStat.parNo < dit->parNo &&
+//		   rStat.rstnr != dit->rstnr) {
+//		rStatList.insert(dit, rStat);
+//		ins = true;
+//		break;
+//	      }
+//	    }
+//      	    if ( !ins )
+//	      rStatList.push_back(rStat);
+//	  }
+//	}
+//      }
+//    }
+//    pstnr = stnr;
+//    ppanr = panr;
+//  }
 
   setNumRows( memStore2.size() + headSize );
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
@@ -728,7 +728,7 @@ void ErrorList::checkFirstMemoryStore() {
     if ( memStore1[i].flTyp == "fr" ) {
       if ( paramHasModel(memStore1[i].parNo) ) {
 	if ( cif.flag(kvalobs::flag::fnum) == 1 || (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) == 1) ) {
-	  noError.push_back(i);
+	  //noError.push_back(i);
 	}
 	else if ( (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) > 1) || cif.flag(kvalobs::flag::fw) == 0 ) {
 	  error.push_back(i);
@@ -750,7 +750,7 @@ void ErrorList::checkFirstMemoryStore() {
 	error.push_back(i);
       else if ( cif.flag(kvalobs::flag::fs) == 2 && cif.flag(kvalobs::flag::fcp) <= 1 ) {
 	if ( cif.flag(kvalobs::flag::fr) == 1 && cif.flag(kvalobs::flag::fw) == 1 ) {
-	  noError.push_back(i);
+	  //noError.push_back(i);
 	}
 	else if ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) {
 	  error.push_back(i);
@@ -760,13 +760,13 @@ void ErrorList::checkFirstMemoryStore() {
 	error.push_back(i);
       }
       else if ( cif.flag(kvalobs::flag::fs) == 4 && cif.flag(kvalobs::flag::fcp) <= 1 && cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fw) <= 1 ) {
-	noError.push_back(i);
+	//noError.push_back(i);
       }
       else if ( cif.flag(kvalobs::flag::fs) == 5 && ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) ) {
 	error.push_back(i);
       }
       else if ( cif.flag(kvalobs::flag::fs) == 5 && cif.flag(kvalobs::flag::fr) <= 1 &&  cif.flag(kvalobs::flag::fw) <= 1  ) {
-	noError.push_back(i);
+	//noError.push_back(i);
       }
     }
     //TODO: Proper treatment of fcc=2 and fcp=2
@@ -794,11 +794,12 @@ void ErrorList::checkFirstMemoryStore() {
       }
       else if ( (cif.flag(kvalobs::flag::fw) == 2 || cif.flag(kvalobs::flag::fw) == 3) &&
 		( cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fcc) <= 1 && cif.flag(kvalobs::flag::fs) <= 1 && cif.flag(kvalobs::flag::fcp) <= 1) )  {
-	noError.push_back(i);
+	;//noError.push_back(i);
       }
     }
-    else
-      noError.push_back(i);
+    else {
+      //noError.push_back(i);
+    }
   }
 }
 
@@ -808,13 +809,13 @@ void ErrorList::checkSecondMemoryStore() {
     kvControlInfo cif(memStore2[i].controlinfo);
     if ( memStore2[i].flTyp == "fr" ) {
       if ( cif.flag(kvalobs::flag::fr) == 6 && cif.flag(kvalobs::flag::ftime) == 1 )
-	noError.push_back(i);
+	;//noError.push_back(i);
       else
 	error.push_back(i);
     }
     else if ( memStore2[i].flTyp == "fs" ) {
       if (cif.flag(kvalobs::flag::fs) == 6 )
-	noError.push_back(i);
+	;//noError.push_back(i);
       else
 	error.push_back(i);
     }

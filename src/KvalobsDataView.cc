@@ -134,9 +134,10 @@ namespace model
     blockSignals(true);
     if ( index.isValid() ) {
         setCurrentIndex(index);
+        selectRow(row);
+    } else {
+        clearSelection();
     }
-    else
-      clearSelection();
     blockSignals(false);
   }
 
@@ -196,6 +197,8 @@ namespace model
 
   void KvalobsDataView::setup_()
   {
-    setItemDelegate(new KvalobsDataDelegate(this));
+      setSelectionBehavior(QAbstractItemView::SelectRows);
+      setSelectionMode(QAbstractItemView::SingleSelection);
+      setItemDelegate(new KvalobsDataDelegate(this));
   }
 }

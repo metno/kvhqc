@@ -27,8 +27,10 @@
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include <KvalobsDataModel.h>
-#include <hqcmain.h>
+#include "KvalobsDataModel.h"
+#include "hqcmain.h"
+#include "FunctionLogger.hh"
+
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/kvDataOperations.h>
 #include <QDebug>
@@ -557,14 +559,17 @@ namespace model
   */
   int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
   {
+      LOG_FUNCTION();
+      miutil::miTime eobstime(obstime);
+#if 0
     int secs = obstime.sec();
-    miutil::miTime eobstime(obstime);
     eobstime.addSec(-secs);
     int mins = obstime.min();
     if ( mins != 0 ) {
       eobstime.addMin(-mins);
       eobstime.addHour();
     }
+#endif
     const KvalobsDataListPtr & data = kvalobsData();
 
     const int rows = data->size();
@@ -581,8 +586,12 @@ namespace model
 	}
       }
     }
-    if ( foundTime ) return index;
-    else return lindex;
+    qDebug() << "eobstime=" << QString::fromStdString(obstime.isoTime())
+             << "foundTime=" << foundTime;
+    if ( foundTime )
+        return index;
+    else
+        return lindex;
   }
 
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const

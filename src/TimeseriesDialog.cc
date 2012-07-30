@@ -28,15 +28,15 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <TimeseriesDialog.h>
+#include "TimeseriesDialog.h"
 #include "hqc_utilities.hh"
-#include <QtGui/qlayout.h>
-#include <qtQTUtil.h>
-#include <Qt3Support/Q3HBoxLayout>
+#include "qtQTUtil.h"
+
 #include <QtGui/QDateTimeEdit>
 #include <QtGui/QLabel>
+#include <QtGui/qlayout.h>
 #include <Qt3Support/Q3VBoxLayout>
-#include <qUtilities/miTimeSpinBox.h>
+#include <Qt3Support/Q3HBoxLayout>
 
 using namespace miutil;
 

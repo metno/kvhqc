@@ -37,3 +37,9 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add)
     new_cfailed += add;
     data.cfailed(new_cfailed);
 }
+
+miutil::miTime miTimeFromQDateTime(const QDateTime& qdt) {
+    const QDate qd = qdt.date();
+    const QTime qt = qdt.time();
+    return miutil::miTime(qd.year(), qd.month(), qd.day(), qt.hour(), qt.minute(), qt.second());
+}

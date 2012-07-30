@@ -31,8 +31,11 @@
 #define UTILITIES_HH_
 
 #include <kvalobs/kvData.h>
+#include <puTools/miTime.h>
+#include <QtCore/QDateTime>
 #include <string>
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
+miutil::miTime miTimeFromQDateTime(const QDateTime& qdt);
 
 #endif /* UTILITIES_HH_ */

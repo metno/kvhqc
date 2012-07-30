@@ -131,15 +131,6 @@ public slots:
    */
   void sendSelectedParam(const QString & param);
   /*!
-   * \brief When a parameter value is changed, the new value is
-   *        sent to the datalist, to the timeseries and to Diana.
-   */
-  void updateParams(int station,
-      const miutil::miTime & time,
-      const miutil::miString & param,
-      const miutil::miString & value,
-      const miutil::miString & flag);
-  /*!
    * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the
    *        start, and to TRUE when an update is sent to the database.
    */
@@ -149,15 +140,10 @@ public slots:
    */
   bool kvBaseUpdated() {return kvBaseIsUpdated;};
   /*!
-   * \brief Reads the data table in the kvalobs database
-   *        and inserts the observations in datalist.
+   * \brief Reads the data and model_data tables in the kvalobs database
+   *        and inserts the observations/model values in datalist/modeldatalist.
    */
-  void readFromData(const miutil::miTime&, const miutil::miTime&, listType);
-  /*!
-   * \brief Reads the modeldata table in the kvalobs database
-   *        and inserts the observations in modeldatalist.
-   */
-  void readFromModelData(const miutil::miTime&, const miutil::miTime&);
+  void readFromData(const miutil::miTime&, const miutil::miTime&, const std::vector<int>& stList);
   /*!
    * \brief Extracts all the data for one station and one time from datalist
    */
@@ -187,7 +173,7 @@ public:
    */
   bool hqcTypeFilter(const int&, int, int);
   bool typeIdFilter(int, int, int, miutil::miTime, int);
-  bool isAlreadyStored(miutil::miTime, int);
+  bool isAlreadyStored(const miutil::miTime&, int);
   /*!
    * \brief
    */
@@ -267,9 +253,6 @@ public:
   model::KvalobsDataListPtr datalist;
   std::vector<modDatl> modeldatalist;
 
-  /// List of selected stations
-  std::vector<int> stList;
-
   std::vector<int> stnrList;
 
   /// This holds the value of the previously used stList
@@ -347,7 +330,6 @@ private:
   model::KvalobsDataModel * dataModel;
   bool firstObs;
   int sLevel;
-  int sSensor;
 
   /// Paramid to parameter name
   QMap<int,QString> parMap;
@@ -549,7 +531,6 @@ private slots:
   void dianaShowMenu();
   void paramMenu();
   void timeseriesMenu();
-  void stationsInList();
 
   void updateSaveFunction( QMdiSubWindow * w );
 

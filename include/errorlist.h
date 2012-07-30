@@ -337,10 +337,10 @@ private:
 
 private:
   HqcMainWindow * mainWindow;
-  /**
-   * \brief Indexes of elements wchich are not transferred to the error list
-   */
-  std::vector<int> noError;
+//  /**
+//   * \brief Indexes of elements wchich are not transferred to the error list
+//   */
+//  std::vector<int> noError;
   /**
    * \brief Indexes of elements wchich are transferred to the error list
    */
