@@ -10,7 +10,7 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
-Depends: coserver4, ${shlibs:Depends}, ${misc:Depends}
+Depends: coserver4, libqt4-sql-psql, ${shlibs:Depends}, ${misc:Depends}
 Recommends: diana, dianaconfig
 Provides: kvhqc
 Description: manual quality control for kvalobs
