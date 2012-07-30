@@ -53,7 +53,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <vector>
 
-class miTimeSpinBox;
+class QDateTimeEdit;
 
 class TimeseriesDialog : public QDialog {
   Q_OBJECT
@@ -113,8 +113,8 @@ private:
   bool freeze;
 
   QLabel* parLabel;
-  miTimeSpinBox* from;
-  miTimeSpinBox* to;
+  QDateTimeEdit* dte_to;
+  QDateTimeEdit* dte_from;
 
   QPushButton* newcurveButton;
 
@@ -127,6 +127,10 @@ private:
   QComboBox* linewidthBox;
   QComboBox* markerBox;
   QComboBox* fillcolourBox;
+
+private slots:
+  void setMinToTime(const QDateTime&);
+  void setMaxFromTime(const QDateTime&);
 
 signals:
   void TimeseriesHide();

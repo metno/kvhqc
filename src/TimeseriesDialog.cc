@@ -29,9 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <TimeseriesDialog.h>
+#include "hqc_utilities.hh"
 #include <QtGui/qlayout.h>
 #include <qtQTUtil.h>
 #include <Qt3Support/Q3HBoxLayout>
+#include <QtGui/QDateTimeEdit>
 #include <QtGui/QLabel>
 #include <Qt3Support/Q3VBoxLayout>
 #include <qUtilities/miTimeSpinBox.h>
@@ -40,19 +42,19 @@ using namespace miutil;
 
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
-  setCaption("Tidsserie HQC");
+  setCaption(tr("Tidsserie HQC"));
 //Test
   Q3ButtonGroup* dTypes = new Q3ButtonGroup(1,
 					  Qt::Horizontal,
-					  "Datatyper", this);
-  obsCheckBox = new QCheckBox("Observasjoner", dTypes);
-  modCheckBox = new QCheckBox("Modelldata   ", dTypes);
+					  tr("Datatyper"), this);
+  obsCheckBox = new QCheckBox(tr("Observasjoner"), dTypes);
+  modCheckBox = new QCheckBox(tr("Modelldata   "), dTypes);
   //  connect( obsCheckBox, SIGNAL(
   //  QGridLayout* checkLayout = new QGridLayout(dTypes->layout());
   //  checkLayout->addWidget(obsCheckBox,0,0);
   //  checkLayout->addWidget(modCheckBox,
 //Test slutter
-  QLabel* parameterLabel = new QLabel("Parameter",this);
+  QLabel* parameterLabel = new QLabel(tr("Parameter"),this);
   parameterLabel->setFont(QFont("Arial", 12));
   parameterLabel->setAlignment(Qt::AlignLeft);
   parameterLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -63,7 +65,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( parameterSelectionChanged(Q3ListBoxItem * ) ) );
 
   /////////////////////////////////////////////////////////////////////
-  QLabel* statLabel = new QLabel("Stasjon",this);
+  QLabel* statLabel = new QLabel(tr("Stasjon"),this);
   statLabel->setFont(QFont("Arial", 12));
   statLabel->setAlignment(Qt::AlignLeft);
   statLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -74,7 +76,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( stationSelected(Q3ListBoxItem * ) ) );
   ////////////////////////////////////////////////////////////////////////
   currentResult=-1;
-  QLabel* resultLabel = new QLabel("Valgte Tidsserier",this);
+  QLabel* resultLabel = new QLabel(tr("Valgte Tidsserier"),this);
   resultLabel->setFont(QFont("Arial", 12));
   resultLabel->setAlignment(Qt::AlignLeft);
   resultLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -85,9 +87,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( resultSelected(Q3ListBoxItem * ) ) );
   /////////////////////////////////////////////////////////////////////////
 
-  QPushButton* delButton = new QPushButton("Slett",this);
-  QPushButton* delallButton = new QPushButton("Slett alt",this);
-  newcurveButton = new QPushButton("Ny kurve",this);
+  QPushButton* delButton = new QPushButton(tr("Slett"),this);
+  QPushButton* delallButton = new QPushButton(tr("Slett alt"),this);
+  newcurveButton = new QPushButton(tr("Ny kurve"),this);
   newcurveButton->setToggleButton(true);
 
   connect( delButton, SIGNAL(clicked()),SLOT(deleteSlot()));
@@ -108,7 +110,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
     pixcolor[i]=QColor(colours[i].R(),colours[i].G(),colours[i].B());
   }
 
-  QLabel* lineLabel = new QLabel("Linje",this);
+  QLabel* lineLabel = new QLabel(tr("Linje"),this);
   lineLabel->setFont(QFont("Arial", 12));
   lineLabel->setAlignment(Qt::AlignLeft);
   lineLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -132,18 +134,18 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   lineLayout->addWidget(linewidthBox,10);
   lineLayout->addWidget(linecolourBox,10);
 
-  QLabel* markerLabel = new QLabel("Markør",this);
+  QLabel* markerLabel = new QLabel(tr("Markør"),this);
   markerLabel->setFont(QFont("Arial", 12));
   markerLabel->setAlignment(Qt::AlignLeft);
   markerLabel->setPaletteForegroundColor(Qt::darkBlue);
 
   markerBox = new QComboBox(this);
-  markerBox->insertItem("Circle");
-  markerBox->insertItem("Rectangle");
-  markerBox->insertItem("Triangle");
-  markerBox->insertItem("Diamond");
-  markerBox->insertItem("Star");
-  markerBox->insertItem("");
+  markerBox->insertItem(tr("Circle"));
+  markerBox->insertItem(tr("Rectangle"));
+  markerBox->insertItem(tr("Triangle"));
+  markerBox->insertItem(tr("Diamond"));
+  markerBox->insertItem(tr("Star"));
+  markerBox->insertItem(tr(""));
 
   fillcolourBox = ComboBox( this, pixcolor, nr_col, true, 0 );
 
@@ -156,34 +158,33 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
 // ///////////////////// to from ///////////////////////////////////////////
 
-  from = new miTimeSpinBox ("from",this, "Fra:");
-  to   = new miTimeSpinBox ("to",this, "Til:");
-  miutil::miTime t(to->time());
-  //set minutes to 0
-  if( t.min() != 0 ){
-    t.addMin(-1*t.min());
-    t.addHour(1);
-    to->setTime(t);
-  }
-  t.addDay(-2);
-  t.addHour(17-t.hour());
-  t.addMin(45-t.min());
-  from->setTime(t);
+  QDateTime dt_to = QDateTime::currentDateTimeUtc();
+  dt_to = dt_to.addSecs(60-dt_to.time().second());
+  dt_to = dt_to.addSecs(60*(60-dt_to.time().minute()));
+  dte_to = new QDateTimeEdit(dt_to, this);
+  dte_to->setDisplayFormat("yyyy-MM-dd HH:mm");
 
-  connect( from, SIGNAL(valueChanged(const miutil::miTime&)),
-	   to,   SLOT(  setMin(const miutil::miTime&)     ));
+  QDateTime dt_from = dt_to;
+  dt_from = dt_from.addDays(-2);
+  dt_from = dt_from.addSecs(3600*(17-dt_from.time().hour()));
+  dt_from = dt_from.addSecs(60*(45-dt_from.time().minute()));
+  dte_from = new QDateTimeEdit(dt_from, this);
+  dte_from->setDisplayFormat("yyyy-MM-dd HH:mm");
 
-  connect( to,  SIGNAL(valueChanged(const miutil::miTime&)),
-	   from,SLOT(  setMax(const miutil::miTime&)     ));
+  connect( dte_from, SIGNAL(dateTimeChanged(const QDateTime&)),
+           this, SLOT(setMinToTime(const QDateTime&)));
+
+  connect( dte_to, SIGNAL(dateTimeChanged(const QDateTime&)),
+           this, SLOT(setMaxFromTime(const QDateTime&)));
 
   //////////////////// apply & hide ///////////////////////////////////////////
-  QPushButton* hideButton = new QPushButton("Skjul", this);
+  QPushButton* hideButton = new QPushButton(tr("Skjul"), this);
   hideButton->setFont(QFont("Arial", 9));
 
-  QPushButton* applyButton = new QPushButton("Utfør", this);
+  QPushButton* applyButton = new QPushButton(tr("Utfør"), this);
   applyButton->setFont(QFont("Arial", 9));
 
-  QPushButton* hideapplyButton = new QPushButton("Utfør+Skjul", this);
+  QPushButton* hideapplyButton = new QPushButton(tr("Utfør+Skjul"), this);
   hideapplyButton->setFont(QFont("Arial", 9));
 
 
@@ -210,8 +211,10 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   topLayout->addLayout(lineLayout);
   topLayout->addWidget(markerLabel);
   topLayout->addLayout(markerLayout);
-  topLayout->addWidget(from);
-  topLayout->addWidget(to);
+  topLayout->addWidget(new QLabel(tr("Fra:")));
+  topLayout->addWidget(dte_from);
+  topLayout->addWidget(new QLabel(tr("Til:")));
+  topLayout->addWidget(dte_to);
   topLayout->addLayout(buttonLayout);
 
   //Init
@@ -227,6 +230,16 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   freeze=false;
 }
 
+void TimeseriesDialog::setMinToTime(const QDateTime& dt)
+{
+    dte_to->setMinimumDateTime(dt);
+}
+
+void TimeseriesDialog::setMaxFromTime(const QDateTime& dt)
+{
+    dte_from->setMaximumDateTime(dt);
+}
+
 void TimeseriesDialog::deleteSlot( ){
 
   int item =resultListbox->currentItem();
@@ -237,36 +250,16 @@ void TimeseriesDialog::deleteSlot( ){
   std::cerr <<"delete  ts:"<<tsinfo.size()<<std::endl;
 }
 
-//void TimeseriesDialog::setFromTimeSlot(const miutil::miTime& t)
 void TimeseriesDialog::setFromTimeSlot(const QDateTime& dt)
 {
-  //TEST
-  QString strdt = dt.toString("yyyyMMddhhmm");
-  int yr = atoi(strdt.left(4).toStdString().c_str());
-  int mo = atoi(strdt.mid(4,2).toStdString().c_str());
-  int dy = atoi(strdt.mid(6,2).toStdString().c_str());
-  int ho = atoi(strdt.mid(8,2).toStdString().c_str());
-  // UNUSED int mi = atoi(strdt.mid(10,2).toStdString().c_str());
-  miutil::miTime t(yr,mo,dy,ho);
-  //
-  from->setMin(t);
-  from->setTime(t);
+  dte_from->setMinimumDateTime(dt);
+  dte_from->setDateTime(dt);
 }
 
-//void TimeseriesDialog::setToTimeSlot(const miutil::miTime& t)
 void TimeseriesDialog::setToTimeSlot(const QDateTime& dt)
 {
-  //TEST
-  QString strdt = dt.toString("yyyyMMddhhmm");
-  int yr = atoi(strdt.left(4).toStdString().c_str());
-  int mo = atoi(strdt.mid(4,2).toStdString().c_str());
-  int dy = atoi(strdt.mid(6,2).toStdString().c_str());
-  int ho = atoi(strdt.mid(8,2).toStdString().c_str());
-  // UNUSED int mi = atoi(strdt.mid(10,2).toStdString().c_str());
-  miutil::miTime t(yr,mo,dy,ho);
-  //
-  to->setMax(t);
-  to->setTime(t);
+  dte_to->setMaximumDateTime(dt);
+  dte_to->setDateTime(dt);
 }
 
 void TimeseriesDialog::deleteAllSlot( )
@@ -345,8 +338,6 @@ void TimeseriesDialog::hideAll(){
   this->hide();
 }
 
-
-
 void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   if(freeze) return;
   if(parameterListbox->currentItem() == -1 ) return;
@@ -381,7 +372,6 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   }
   freeze=false;
 }
-
 
 void TimeseriesDialog::stationSelected(Q3ListBoxItem*) {
   if(freeze) return;
@@ -456,8 +446,8 @@ void TimeseriesDialog::getResults(std::vector<miString>& parameter,
 				  std::vector<int>& stationID,
 				  std::vector<POptions::PlotOptions>& plotoptions)
 {
-  fromTime = from->time();
-  toTime   = to->time();
+  fromTime = miTimeFromQDateTime(dte_from->dateTime());
+  toTime   = miTimeFromQDateTime(dte_to  ->dateTime());
 
   int nTypes = obsCheckBox->isChecked() + modCheckBox->isChecked();
   int n = resultListbox->count();
@@ -499,9 +489,8 @@ void TimeseriesDialog::getResults(std::vector<miString>& parameter,
   }
 }
 
-
- void TimeseriesDialog::fillColours()
- {
+void TimeseriesDialog::fillColours()
+{
   POptions::Colour::define("black",0,0,0);
   POptions::Colour::define("white",255,255,255);
   POptions::Colour::define("red",255,0,0);
@@ -564,4 +553,4 @@ void TimeseriesDialog::getResults(std::vector<miString>& parameter,
   axes.push_back(POptions::axis_right_left);
   axes.push_back(POptions::axis_right_left);
   axes.push_back(POptions::axis_right_left);
- }
+}

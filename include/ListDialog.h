@@ -44,8 +44,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/qcombobox.h>
 #include <QtGui/qlayout.h>
 #include <QtCore/qdatetime.h>
-#include <Qt3Support//Q3VBoxLayout>
-#include <qUtilities/miTimeSpinBox.h>
+#include <Qt3Support/Q3VBoxLayout>
 
 typedef std::list<int>                                 TypeList;
 typedef std::list<TypeList>                         ObsTypeList;
@@ -168,8 +167,6 @@ private:
   QLabel* toLabel;
   QLabel* parameterLabel;
   QComboBox* parameterCombo;
-  //  miTimeSpinBox* fromTime;
-  //  miTimeSpinBox* toTime;
   QDateTimeEdit* fromTime;
   QDateTimeEdit* toTime;
   QLineEdit* fromEdit;
