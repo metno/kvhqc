@@ -29,10 +29,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "parameterdialog.h"
-#include <QVBoxLayout>
-#include <QHBoxLayout>
 
-ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {  
+#include <QtCore/QStringList>
+#include <QtGui/QGroupBox>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QVBoxLayout>
+
+#include <QtCore/QDebug>
+
+ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   setCaption(tr("Parametervalg"));
   setGeometry(500,10,300,580);
 
@@ -42,31 +48,27 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
 
   plb = new QListWidget(this);
   plb->setSelectionMode( QAbstractItemView::MultiSelection );
-  connect(plb,SIGNAL(itemPressed(QListWidgetItem*)),SLOT(listClickedItem(QListWidgetItem*)));
+  connect(plb,SIGNAL(itemSelectionChanged()),SLOT(selectionChanged()));
 
   allPar    = new QRadioButton( tr("Velg alle parametere"), pVal );
-  allPar->setChecked(true);
   markPar   = new QRadioButton( tr("Velg merkede parametere"), pVal );
-  markPar->setDisabled(true);
   noMarkPar = new QRadioButton( tr("Velg bort merkede parametere"), pVal );
-  noMarkPar->setDisabled(true);
 
   QVBoxLayout * rbvl = new QVBoxLayout(this,10);
   rbvl->addWidget(allPar);
   rbvl->addWidget(markPar);
   rbvl->addWidget(noMarkPar);
 
+  QFont smallFont("Arial", 9);
+
   sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setGeometry(20, 620, 90, 30);
-  sthide->setFont(QFont("Arial", 9));
-  
+  sthide->setFont(smallFont);
+
   excu = new QPushButton(tr("Utfør"), this);
-  excu->setGeometry(120, 620, 90, 30);
-  excu->setFont(QFont("Arial", 9));
-  
+  excu->setFont(smallFont);
+
   hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setGeometry(220, 620, 90, 30);
-  hdnexcu->setFont(QFont("Arial", 9));
+  hdnexcu->setFont(smallFont);
   hdnexcu->setDefault(true);
 
   QHBoxLayout* buttonLayout = new QHBoxLayout();
@@ -87,6 +89,7 @@ ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
   vl->addLayout(buttonLayout);
 
   hdnexcu->setFocus();
+  selectionChanged();
 }
 
 void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
@@ -117,8 +120,19 @@ void ParameterDialog::applyHideClicked(){
   emit paramApply();
 }
 
-//void ParameterDialog::listClickedItem(Q3ListBoxItem* lbItem) {
-void ParameterDialog::listClickedItem(QListWidgetItem* lbItem) {
-  markPar->setDisabled(false);
-  noMarkPar->setDisabled(false);
+void ParameterDialog::selectionChanged()
+{
+    const bool haveSelected = (plb->selectedItems().size() > 0);
+    if( haveSelected && allPar->isChecked() )
+        markPar->setChecked(true);
+    else if( !haveSelected && !allPar->isChecked() )
+        allPar->setChecked(true);
+    allPar->setDisabled(haveSelected);
+    markPar->setDisabled(!haveSelected);
+    noMarkPar->setDisabled(!haveSelected);
+}
+
+bool ParameterDialog::isSelectedParameter(int paramIndex) const
+{
+    return plb->item(paramIndex)->isSelected();
 }

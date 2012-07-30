@@ -31,31 +31,27 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef TIMESERIESDIALOG_H
 #define TIMESERIESDIALOG_H
 
-#include <stdlib.h>
-#include <iostream>
 #include <qTimeseries/PlotOptions.h>
-//#include <qmainwindow.h>
-#include <qdialog.h>
-//#include <qprogressdialog.h>
-#include <q3buttongroup.h>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qradiobutton.h>
-#include <qcheckbox.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <q3listbox.h>
-#include <qdatetime.h>
-#include <q3listview.h>
-#include <qcombobox.h>
-#include <qcolor.h>
-#include <qstringlist.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
 #include <kvalobs/kvDbGate.h>
-#include <vector>
 
-using namespace std;
+#include <QtCore/qdatetime.h>
+#include <QtCore/qstringlist.h>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/q3groupbox.h>
+#include <Qt3Support/q3listbox.h>
+#include <Qt3Support/q3listview.h>
+#include <QtGui/qcheckbox.h>
+#include <QtGui/qcombobox.h>
+#include <QtGui/qdialog.h>
+#include <QtGui/qlabel.h>
+#include <QtGui/qlineedit.h>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qradiobutton.h>
+#include <QtGui/qcolor.h>
+
+#include <vector>
 
 class miTimeSpinBox;
 
@@ -67,11 +63,11 @@ public:
   void hideAll();
   void showAll();
 
-  void getResults(vector<miutil::miString>& parameter,
+  void getResults(std::vector<miutil::miString>& parameter,
 		  miutil::miTime& fromTime,
 		  miutil::miTime& toTime,
-		  vector<int>& stationID,
-		  vector<POptions::PlotOptions>& plotoptions);
+		  std::vector<int>& stationID,
+		  std::vector<POptions::PlotOptions>& plotoptions);
 
   QCheckBox* obsCheckBox;
   QCheckBox* modCheckBox;
@@ -112,7 +108,7 @@ private:
     int marker;
     int fillcolour;
   };
-  vector<tsInfo> tsinfo;
+  std::vector<tsInfo> tsinfo;
   int currentResult;
   bool freeze;
 

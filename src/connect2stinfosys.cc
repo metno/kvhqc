@@ -1,11 +1,12 @@
-#include <QMessageBox>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <iostream>
-#include <QString>
-#include <QList>
 #include "connect2stinfosys.h"
+
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
+#include <QtCore/QDebug>
+#include <QtCore/QString>
+#include <QtCore/QList>
+
+#include <iostream>
 
 bool connect2stinfosys()
 {
@@ -19,7 +20,7 @@ bool connect2stinfosys()
     //    QMessageBox::critical(0, "Databaseproblem",
     //			  "Får ikke kontakt med stinfosys.\n\n"
     //			  "Klikk Cancel for å avslutte.", QMessageBox::Cancel);
-    cerr << "Ikke kontakt med stinfosys, leser stasjonsliste fra fil." << endl;    
+    std::cerr << "Ikke kontakt med stinfosys, leser stasjonsliste fra fil." << std::endl;
     return false;
   }
   return true;

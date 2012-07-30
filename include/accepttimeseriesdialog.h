@@ -31,16 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef ACCEPTTIMESERIESDIALOG_H
 #define ACCEPTTIMESERIESDIALOG_H
 
-#include <QDialog>
-#include <QPushButton>
-#include <QRadioButton>
-#include <QGroupBox>
-#include <QListWidget>
-#include <QDateTimeEdit>
+#include <QtGui/QDialog>
+#include <QtGui/QPushButton>
+#include <QtGui/QRadioButton>
+#include <QtGui/QGroupBox>
+#include <QtGui/QListWidget>
+#include <QtGui/QDateTimeEdit>
 #include <puTools/miTime.h>
 #include <puTools/miString.h>
 
-using namespace std;
 /**
  * \brief A dialog for selecting timeseries to be accepted .
  */

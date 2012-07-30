@@ -31,14 +31,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef REJECTTIMESERIESDIALOG_H
 #define REJECTTIMESERIESDIALOG_H
 
-#include <QDialog>
-#include <QPushButton>
-#include <QListWidget>
-#include <QDateTimeEdit>
+#include <QtGui/QDialog>
+#include <QtGui/QPushButton>
+#include <QtGui/QListWidget>
+#include <QtGui/QDateTimeEdit>
 #include <puTools/miTime.h>
 #include <puTools/miString.h>
 
-using namespace std;
 /**
  * \brief A dialog for selecting timeseries to be discarded .
  */

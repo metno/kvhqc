@@ -31,22 +31,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef PARAMETERDIALOG_H
 #define PARAMETERDIALOG_H
 
-#include <stdlib.h>
-#include <iostream>
-#include <qdialog.h>
-//#include <q3listbox.h>
-#include <QListWidget>
-#include <q3buttongroup.h>
-#include <qradiobutton.h>
-#include <qpushbutton.h>
-#include <qlabel.h>
-#include <q3vbox.h>
-#include <qlayout.h>
-
-#include <qstringlist.h>
-
-using namespace std;
-#include <qpushbutton.h>
+#include <QtGui/QDialog>
+#include <QtGui/QListWidget>
+#include <QtGui/QRadioButton>
+#include <QtGui/QPushButton>
 
 class ParameterDialog : public QDialog {
   Q_OBJECT
@@ -57,31 +45,34 @@ public:
   void hideAll();
   void showAll();
 
-  QRadioButton* allPar;
-  QRadioButton* markPar;
-  QRadioButton* noMarkPar;
-
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
-
-  //  Q3ListBox* plb;
-  QListWidget* plb;
-
   /*!
    * \brief Inserts the parameters in a weather element
    *        into a listbox in the parameter dialog.
    */
   void insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap);
 
-public slots:
-  //  void listClickedItem(Q3ListBoxItem*);
-  void listClickedItem(QListWidgetItem*);
+  bool isSelectedParameter(int paramIndex) const;
+
+private slots:
+  void selectionChanged();
   void applyHideClicked();
 
 signals:
   void paramHide();
   void paramApply();
+
+private:
+  QPushButton* sthide;
+  QPushButton* hdnexcu;
+  QPushButton* excu;
+
+public:
+  // TODO these things should not be public
+  QRadioButton* allPar;
+  QRadioButton* markPar;
+  QRadioButton* noMarkPar;
+
+  QListWidget* plb;
 };
 
 #endif

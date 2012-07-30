@@ -224,7 +224,7 @@ namespace model
 	    return false;
 
 	  double oldOrig = d.orig(p.paramid);
-	  kvControlInfo ctr = d.controlinfo(p.paramid);
+	  kvalobs::kvControlInfo ctr = d.controlinfo(p.paramid);
 	  int typ = d.typeId(p.paramid);
 
 	  kvalobs::kvData changeData = getKvData_(index);
@@ -297,7 +297,7 @@ namespace model
 
           try {
             KvalobsData & d = kvalobsData_->at(index.row());
-	    kvControlInfo ctr = d.controlinfo(p.paramid);
+	    kvalobs::kvControlInfo ctr = d.controlinfo(p.paramid);
 
             // Insignificant change. Ignored.
             double oldValue = d.corr(p.paramid);

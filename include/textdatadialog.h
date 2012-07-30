@@ -1,14 +1,12 @@
 #ifndef TEXTDATADIALOG_H
 #define TEXTDATADIALOG_H
 
-#include <qvariant.h>
-#include <qdialog.h>
-#include <utility>
-#include <qdatetime.h>
-#include <qlineedit.h>
-#include <iostream>
+#include <QtCore/qvariant.h>
+#include <QtGui/qdialog.h>
+#include <QtCore/qdatetime.h>
+#include <QtGui/qlineedit.h>
 
-using namespace std;
+#include <vector>
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;
@@ -26,7 +24,7 @@ class TextDataDialog : public QDialog
     Q_OBJECT
 
 public:
-  TextDataDialog(vector<int> slist, QWidget* parent = 0);
+  TextDataDialog(std::vector<int> slist, QWidget* parent = 0);
     //    ~TextDataDialog();
 
     QLabel* textLabel0;
@@ -43,12 +41,12 @@ public:
     QPushButton* cancelButton;
 
     TimeSpan getTimeSpan();
- 
+
     int stnr;
     QDateTime dtto;
     QDateTime dtfrom;
 private:
-    vector<int> stnrList;
+    std::vector<int> stnrList;
 
 public slots:
     void setStation(const QString& st);

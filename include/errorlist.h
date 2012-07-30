@@ -32,35 +32,28 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
 
-#include <QWidget>
+#include "FailDialog.h"
+#include "KvalobsData.h"
+#include "KvalobsDataModel.h"
 
-#include <set>
-
-#include <iostream>
-#include <iomanip>
-#include <stdlib.h>
-#include <q3table.h>
-#include <qstring.h>
-#include <qpainter.h>
 #include <puTools/miTime.h>
 #include <puTools/miString.h>
 #include <qUtilities/miMessage.h>
-#include <math.h>
-#include "hqcdefs.h"
 #include <kvalobs/kvData.h>
-#include <qvalidator.h>
+#include <kvalobs/kvObsPgm.h>
 
-#include <FailDialog.h>
+#include <Qt3Support/q3table.h>
+#include <QtCore/QString>
+#include <QtGui/QPainter>
+#include <QtGui/QValidator>
+#include <QtGui/QWidget>
+
+#include <vector>
 
 class ErrorListFirstCol;
 
-using namespace std;
-using namespace kvalobs;
-
 class QMouseEvent;
-//class QEvent;
 class HqcMainWindow;
-class ExtendedFunctionalityHandler;
 
 const float rejectedValue_ = -32767.0;
 const float discardedValue_ = -32766.0;
@@ -194,9 +187,9 @@ public:
 	    int,
 	    int,
 	    int*,
-	    vector<model::KvalobsData>&,
-	    vector<modDatl>&,
-	    list<kvStation>&,
+	    std::vector<model::KvalobsData>&,
+	    std::vector<modDatl>&,
+	    std::list<kvalobs::kvStation>&,
 	    int,
 	    int,
 	    QString&);
@@ -214,9 +207,9 @@ public:
     double orig;
     double corr;
     double morig;
-    string controlinfo;
-    string useinfo;
-    string cfailed;
+    std::string controlinfo;
+    std::string useinfo;
+    std::string cfailed;
     int flg;
     int sen;
     int lev;
@@ -244,12 +237,12 @@ public:
   /*!
    * \brief
    */
-  vector<missObs> mList;
+  std::vector<missObs> mList;
 
   /*!
    * \brief
    */
-  vector<mem> missList;
+  std::vector<mem> missList;
 
   /**
    * \brief Prompt user to save data.
@@ -331,12 +324,12 @@ private:
    * \brief Temporary store for observations with these flags:
    * fr=2, fr=3, fcc=2, fcp = 2, fnum=2, fnum=3
    */
-  vector<mem> memStore1;
+  std::vector<mem> memStore1;
   /*!
    * \brief Temporary store for observations with these flags:
    * fr=4, fr=5, fs=2, fnum=4, fnum=5
    */
-  vector<mem> memStore2;
+  std::vector<mem> memStore2;
   /*!
    * \brief
    */
@@ -347,17 +340,17 @@ private:
   /**
    * \brief Indexes of elements wchich are not transferred to the error list
    */
-  vector<int> noError;
+  std::vector<int> noError;
   /**
    * \brief Indexes of elements wchich are transferred to the error list
    */
-  vector<int> error;
+  std::vector<int> error;
   /**
    * \brief Decide if an observation is going to the error list or not
    * \return The largest flag value from the automatic control, negative
    *         if no HQC control is indicated
    */
-  int errorFilter(int, string, string, QString&);
+  int errorFilter(int, std::string, std::string, QString&);
   /**
    * \brief Decide if given parameter is to be controlled in HQC
    * \return TRUE if the parameter is to be controlled.
@@ -454,7 +447,6 @@ private:
    * \brief Constructs a kvData object from a memory store object
    */
   kvalobs::kvData getKvData( const struct mem &m ) const;
-  ExtendedFunctionalityHandler *efh;
   //  OkTableItem checkItem( int, int) const;
 };
 

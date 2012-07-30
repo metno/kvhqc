@@ -1,5 +1,5 @@
 /*
- Kvalobs - Free Quality Control Software for Meteorological Observations 
+ Kvalobs - Free Quality Control Software for Meteorological Observations
 
  Copyright (C) 2010 met.no
 
@@ -13,17 +13,17 @@
  This file is part of KVALOBS
 
  KVALOBS is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License as 
- published by the Free Software Foundation; either version 2 
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
- 
+
  KVALOBS is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  General Public License for more details.
- 
- You should have received a copy of the GNU General Public License along 
- with KVALOBS; if not, write to the Free Software Foundation Inc., 
+
+ You should have received a copy of the GNU General Public License along
+ with KVALOBS; if not, write to the Free Software Foundation Inc.,
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -46,11 +46,11 @@ namespace model
   {
     setup_();
   }
-  
+
   KvalobsDataDelegate::~KvalobsDataDelegate()
   {
   }
-  
+
   namespace
   {
     class InputValidator : public QDoubleValidator
@@ -65,7 +65,7 @@ namespace model
       }
     };
   }
-  
+
   QWidget * KvalobsDataDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
   {
     Editor * ret = new Editor(parent);
@@ -74,11 +74,11 @@ namespace model
     ret->setValidator(& validator);
     return ret;
   }
-  
+
   void KvalobsDataDelegate::setEditorData(QWidget * editor, const QModelIndex & index) const
   {
     Editor * e = static_cast<Editor *>(editor);
-  
+
     QVariant value = index.model()->data(index, Qt::EditRole);
     bool ok;
     double f = value.toDouble(& ok);
@@ -90,7 +90,7 @@ namespace model
 
 void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
   {
-    DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
+    kvalobs::DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
     if ( ! reinserter ) {
       QMessageBox::critical( editor,
 			     "Ikke autentisert",
@@ -100,7 +100,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
 			     Qt::NoButton );
       return;
     }
-    
+
     Editor * e = static_cast<Editor *>(editor);
     QString enteredValue = e->text();
     float newValue = -32766;
@@ -185,8 +185,8 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
         return;
 
     QStyledItemDelegate::setModelData(editor, model, index);
-    kvData kd = kvalobsData->getKvData(paramid);
-    list<kvData> modData;
+    kvalobs::kvData kd = kvalobsData->getKvData(paramid);
+    std::list<kvalobs::kvData> modData;
     modData.push_back( kd );
 
     CKvalObs::CDataSource::Result_var result;

@@ -29,12 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <TimeseriesDialog.h>
-#include <qlayout.h>
+#include <QtGui/qlayout.h>
 #include <qtQTUtil.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <QLabel>
-#include <Q3VBoxLayout>
+#include <Qt3Support/Q3HBoxLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3VBoxLayout>
 #include <qUtilities/miTimeSpinBox.h>
 
 using namespace miutil;
@@ -235,7 +234,7 @@ void TimeseriesDialog::deleteSlot( ){
     resultListbox->removeItem(item);
     tsinfo.erase(tsinfo.begin()+item);
   }
-  cerr <<"delete  ts:"<<tsinfo.size()<<endl;
+  std::cerr <<"delete  ts:"<<tsinfo.size()<<std::endl;
 }
 
 //void TimeseriesDialog::setFromTimeSlot(const miutil::miTime& t)
@@ -392,7 +391,7 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem*) {
   str.trim();
   str+= " ";
   str += parameterListbox->currentText().latin1();
-  
+
   tsInfo ts;
   ts.parameter  = parameterListbox->currentItem();
   ts.station    = statlb->currentItem();
@@ -426,7 +425,7 @@ void TimeseriesDialog::resultSelected(Q3ListBoxItem*)
   int index = resultListbox->currentItem();
   parameterListbox->setSelected(tsinfo[index].parameter,true);
   statlb->setSelected(tsinfo[index].station,true);
-  cerr <<"Result station:"<<tsinfo[index].station<<endl;
+  std::cerr <<"Result station:"<<tsinfo[index].station<<std::endl;
   linecolourBox->setCurrentItem(tsinfo[index].linecolour);
   lineBox->setCurrentItem(tsinfo[index].linetype);
   linewidthBox->setCurrentItem(tsinfo[index].linewidth);
@@ -451,11 +450,11 @@ void TimeseriesDialog::newStationList(std::vector<QString>& stationList)
   }
 }
 
-void TimeseriesDialog::getResults(vector<miString>& parameter,
+void TimeseriesDialog::getResults(std::vector<miString>& parameter,
 				  miutil::miTime& fromTime,
 				  miutil::miTime& toTime,
-				  vector<int>& stationID,
-				  vector<POptions::PlotOptions>& plotoptions)
+				  std::vector<int>& stationID,
+				  std::vector<POptions::PlotOptions>& plotoptions)
 {
   fromTime = from->time();
   toTime   = to->time();

@@ -33,21 +33,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <puTools/miString.h>
 #include <vector>
-//Added by qt3to4:
-#include <QPixmap>
-#include <QLabel>
-
-using namespace std;
-using namespace miutil;
+#include <QtGui/QPixmap>
+#include <QtGui/QLabel>
 
 class QPushButton;
 class QComboBox;
 class Q3ListBox;
-class QLabel;
 class QLCDNumber;
 class QCheckBox;
 class QSlider;
-class QPixmap;
 
 // Lables
 
@@ -64,7 +58,7 @@ QPushButton* PixmapButton( const QPixmap& pixmap, QWidget* parent,
 
 // ComboBox
 
-QComboBox* ComboBox(QWidget* parent, vector<miutil::miString> vstr,
+QComboBox* ComboBox(QWidget* parent, std::vector<miutil::miString> vstr,
 		    bool Enabled=true, int defItem=0);
 
 QComboBox* ComboBox(QWidget* parent, QColor* pixcolor, int nr_colors,
@@ -86,7 +80,7 @@ QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
 		 Qt::Orientation orient, QWidget* parent );
 
-void listBox( Q3ListBox* box, vector<miutil::miString> vstr, int defItem=-1 );
+void listBox( Q3ListBox* box, std::vector<miutil::miString> vstr, int defItem=-1 );
 
 QPixmap* linePixmap(const miutil::miString& pattern, int linewidth);
 

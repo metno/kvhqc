@@ -35,56 +35,58 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  *
 */
 
-#include <algorithm>
 #include "FunctionLogger.hh"
-#include "helptree.h"
 #include "hqcmain.h"
 #include "StationInformation.h"
 #include "GetData.h"
 #include "GetTextData.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
-//#include "discardbox.h"
 #include "discarddialog.h"
 #include "approvedialog.h"
 #include "connect2stinfosys.h"
-#include <iomanip>
-#include <QAction>
-#include <qpixmap.h>
-#include <QWindowsXPStyle>
-#include <qwindowsstyle.h>
-#include <qcdestyle.h>
-#include <qcommonstyle.h>
-#include <qvalidator.h>
-#include <qmetaobject.h>
-#include <qlistview.h>
-#include <QFrame>
-#include <QTextStream>
-#include <qTimeseries/TSPlot.h>
-#include <glText/glTextQtTexture.h>
-#include <kvalobs/kvData.h>
+#include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "BusyIndicator.h"
 #include "RRDialog.h"
 #include "weatherdialog.h"
+
+#include <qTimeseries/TSPlot.h>
+#include <glText/glTextQtTexture.h>
+#include <kvalobs/kvData.h>
+
+#include <QtCore/QList>
+#include <QtCore/qmetaobject.h>
+#include <QtCore/QTextStream>
+#include <QtCore/QTime>
+#include <QtCore/QRegExp>
+#include <QtGui/QAction>
+#include <QtGui/qpixmap.h>
+#include <QtGui/qwindowsstyle.h>
+#include <QtGui/qvalidator.h>
+#include <QtGui/qlistview.h>
+#include <QtGui/QFrame>
+#include <QtGui/QMdiArea>
+#include <QtGui/QMdiSubWindow>
+#include <QtGui/QDateTimeEdit>
+#include <QtGui/QSizePolicy>
+#include <QtGui/QDesktopServices>
+#include <QtCore/qfile.h>
+#include <QtCore/qsettings.h>
+#include <QtCore/qurl.h>
+#include <QtSql/QSqlQuery>
+
+#include <boost/assign.hpp>
+
 #include <deque>
 #include <stdexcept>
 #include <complex>
-#include <QTime>
-#include <QRegExp>
-#include <QMdiArea>
-#include <QMdiSubWindow>
-#include <glText/glTextQtTexture.h>
-#include <boost/assign.hpp>
-#include <QDateTimeEdit>
-#include <QSizePolicy>
-#include <QSqlQuery>
-#include <QtGui>
-#include <QList>
-
-#include "hqc_paths.hh"
+#include <algorithm>
+#include <iomanip>
 
 using namespace std;
+using namespace kvalobs;
+using namespace kvservice;
 
 namespace {
   // Number of parameters to show, according to last selection
@@ -184,7 +186,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
   QAction * dataListAction = new QAction(icon_listdlg, tr("&Dataliste"), this);
-  dataListAction->setShortcut(Qt::CTRL+Qt::Key_D);
+  dataListAction->setShortcut(tr("Ctrl+D"));
   connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
 
   QPixmap icon_ts( ::hqc::getPath(::hqc::IMAGEDIR) + "/kmplot.png");
@@ -192,11 +194,11 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
 
   QAction * timesAction = new QAction(tr("&Tidspunkter"), this);
-  timesAction->setShortcut(Qt::CTRL | Qt::Key_T);
+  timesAction->setShortcut( tr("Ctrl+T") );
   connect(timesAction, SIGNAL(activated()), this, SLOT(clk()));
 
   //  lackListAction = new QAction(tr("&Mangelliste"), this);
-  //  lackListAction->setShortcut(Qt::CTRL+Qt::Key_M);
+  //  lackListAction->setShortcut(tr("Ctrl+M"));
   // ---- Workspace ---------------------------------------------
   ws = new QMdiArea(this);
   setCentralWidget( ws );
@@ -212,12 +214,12 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
   listExist = FALSE;
 
   QMenu * file = menuBar()->addMenu(tr("&Fil"));
-  saveAction = file->addAction( tr("Lagre"), this, SIGNAL( saveData() ), Qt::CTRL+Qt::Key_S );
+  saveAction = file->addAction( tr("Lagre"), this, SIGNAL( saveData() ), QKeySequence::Save );
   saveAction->setEnabled(false);
-  printAction = file->addAction( tr("Skriv ut"), this, SIGNAL( printErrorList() ), Qt::CTRL+Qt::Key_P );
+  printAction = file->addAction( tr("Skriv ut"), this, SIGNAL( printErrorList() ), QKeySequence::Print );
   printAction->setEnabled(false);
 
-  file->addAction( tr("&Lukk"),    ws, SLOT(closeActiveSubWindow()), Qt::CTRL+Qt::Key_W );
+  file->addAction( tr("&Lukk"),    ws, SLOT(closeActiveSubWindow()), QKeySequence::Close );
   file->addAction( tr("&Avslutt"), qApp, SLOT( closeAllWindows() ));
 
 
@@ -250,19 +252,19 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   QMenu * showmenu = new QMenu( this );
   menuBar()->insertItem( tr("&Listetype"), showmenu);
-  showmenu->addAction( tr("Data&liste og Feilliste"), this, SLOT(allListMenu()),Qt::CTRL+Qt::Key_L );
-  showmenu->addAction( tr("&Feilliste"), this, SLOT(errListMenu()),Qt::CTRL+Qt::Key_F );
-  showmenu->addAction( tr("F&eillog"),   this, SLOT(errLogMenu()),Qt::CTRL+Qt::Key_E );
+  showmenu->addAction( tr("Data&liste og Feilliste"), this, SLOT(allListMenu()), tr("Ctrl+L") );
+  showmenu->addAction( tr("&Feilliste"), this, SLOT(errListMenu()), tr("Ctrl+F") );
+  showmenu->addAction( tr("F&eillog"),   this, SLOT(errLogMenu()), tr("Ctrl+E") );
   showmenu->addAction(dataListAction);
-  showmenu->addAction( tr("&Feilliste salen"), this, SLOT(errLisaMenu()),Qt::ALT+Qt::Key_S );
+  showmenu->addAction( tr("&Feilliste salen"), this, SLOT(errLisaMenu()), tr("Alt+S") );
   showmenu->insertSeparator();
-  showmenu->addAction( tr("&Nedbør"), this, SLOT( showWatchRR() ), Qt::CTRL+Qt::Key_R );
-  showmenu->addAction( tr("&Vær"), this, SLOT( showWeather() ), Qt::CTRL+Qt::Key_V );
+  showmenu->addAction( tr("&Nedbør"), this, SLOT( showWatchRR() ), tr("Ctrl+R") );
+  showmenu->addAction( tr("&Vær"), this, SLOT( showWeather() ), tr("Ctrl+V") );
   showmenu->insertSeparator();
   showmenu->addAction(timeSeriesAction);
   showmenu->insertSeparator();
-  showmenu->addAction( tr("Te&xtData"), this, SLOT(textDataMenu()),Qt::ALT+Qt::Key_X );
-  showmenu->addAction( tr("Re&jected"), this, SLOT(rejectedMenu()),Qt::CTRL+Qt::Key_J );
+  showmenu->addAction( tr("Te&xtData"), this, SLOT(textDataMenu()), tr("Alt+X") );
+  showmenu->addAction( tr("Re&jected"), this, SLOT(rejectedMenu()), tr("Ctrl+J") );
 
   QMenu * weathermenu = new QMenu( this );
   menuBar()->insertItem( tr("Vær&element"), weathermenu);
@@ -291,9 +293,9 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 
   QMenu * help = new QMenu( this );
   menuBar()->insertItem( tr("&Hjelp"), help );
-  help->addAction( tr("&Brukerveiledning"), this, SLOT(helpUse()), Qt::Key_F1);
-  help->addAction( tr("&Flagg"), this, SLOT(helpFlag()), Qt::Key_F2);
-  help->addAction( tr("&Parametere"), this, SLOT(helpParam()), Qt::Key_F3);
+  help->addAction( tr("&Brukerveiledning"), this, SLOT(helpUse()), tr("F1"));
+  help->addAction( tr("&Flagg"), this, SLOT(helpFlag()), tr("F2"));
+  help->addAction( tr("&Parametere"), this, SLOT(helpParam()), tr("F3"));
   help->insertSeparator();
   help->addAction( tr("&Om Hqc"), this, SLOT(about()));
   help->insertSeparator();
@@ -488,281 +490,62 @@ void HqcMainWindow::showHeight() {
 void HqcMainWindow::showTyp() {
 }
 
+void HqcMainWindow::selectParameterGroup(const QString& group) {
+    wElement = group;
+    lity = daLi;
+    firstObs = true;
+    const std::vector<int> & parameters = parameterGroups[wElement];
+    Q_ASSERT(not parameters.empty());
+    pardlg->insertParametersInListBox(parameters, parMap);
+    pardlg->showAll();
+}
+
 void HqcMainWindow::airPress() {
-  wElement = "Lufttrykk";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(TRUE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-  pardlg->showAll();
-  //  sendObservations(remstime,false);
+    selectParameterGroup("Lufttrykk");
 }
 
 void HqcMainWindow::temperature() {
-  wElement = "Temperatur";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(TRUE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-    const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-  pardlg->showAll();
-  //  sendObservations(remstime,false);
+    selectParameterGroup("Temperatur");
 }
 
 void HqcMainWindow::precipitation() {
-  wElement = "Nedbør";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(TRUE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Nedbør");
 }
 
 void HqcMainWindow::visuals() {
-  wElement = "Visuell";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(TRUE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Visuell");
 }
 
-
 void HqcMainWindow::sea() {
-  wElement = "Sjøgang";
-  lity = daLi;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(TRUE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-   //  sendObservations(remstime,false);
-   const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Sjøgang");
 }
 
 void HqcMainWindow::synop() {
-  wElement = "Synop";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(TRUE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Synop");
 }
 
 void HqcMainWindow::climateStatistics() {
-  wElement = "Klimastatistikk";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  //  klID->setChecked(true);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-    const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-  pardlg->showAll();
+    selectParameterGroup("Klimastatistikk");
 }
 
 void HqcMainWindow::priority() {
-  wElement = "Prioriterte parametere";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(TRUE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-    const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Prioriterte parametere");
 }
 
 void HqcMainWindow::wind() {
-  wElement = "Vind";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(TRUE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Vind");
 }
 
 void HqcMainWindow::plu() {
-  wElement = "Pluviometerkontroll";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  alID->setChecked(FALSE);
-  plID->setChecked(TRUE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Pluviometerkontroll");
 }
 
 void HqcMainWindow::all() {
-  wElement = "Alt";
-  lity = daLi;
-  firstObs = true;
-  /*
-  apID->setChecked(FALSE);
-  taID->setChecked(FALSE);
-  wiID->setChecked(FALSE);
-  prID->setChecked(FALSE);
-  clID->setChecked(FALSE);
-  seID->setChecked(FALSE);
-  syID->setChecked(FALSE);
-  klID->setChecked(FALSE);
-  piID->setChecked(FALSE);
-  plID->setChecked(FALSE);
-  alID->setChecked(TRUE);
-  */
-  //  sendObservations(remstime,false);
-  const std::vector<int> & parameters = parameterGroups[wElement];
-  Q_ASSERT(not parameters.empty());
-  pardlg->insertParametersInListBox(parameters, parMap);
-
-  pardlg->showAll();
+    selectParameterGroup("Alt");
 }
 
-void HqcMainWindow::paramOK
-
-() {
+void HqcMainWindow::paramOK()
+{
   if ( listExist )
     ListOK();
 }
@@ -939,7 +722,7 @@ void HqcMainWindow::ListOK() {
     int dianaWarning = QMessageBox::warning(this,
 					    tr("Dianaforbindelse"),
 					    tr("Diana er ikke koplet til!"
-                                               "ønsker du å kople til Diana?"),
+                                               "Ønsker du å kople til Diana?"),
 					    tr("&Ja"),
 					    tr("&Nei"));
     if ( dianaWarning == 0 ) {
@@ -1000,7 +783,7 @@ void HqcMainWindow::ListOK() {
   QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
   if ( find ==  parameterGroups.end() ) {
       QMessageBox::critical(this, tr("Internal error"),
-          "Configuration file does not seem to have an entry for parameter group " + wElement,
+          tr("Configuration file does not seem to have an entry for parameter group %1").arg(wElement),
           QMessageBox::Ok, QMessageBox::NoButton);
       return;
   }
@@ -1640,7 +1423,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
       break;
     }
   }
-  WhichDataHelper whichData;
+  kvservice::WhichDataHelper whichData;
   long int stnr = stationIndex;
   miutil::miTime ft;
   miutil::miTime tt;
@@ -1732,7 +1515,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
 }
 
 void HqcMainWindow::startKro() {
-  system("firefox kro/cgi-bin/start.pl &");
+    QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
@@ -2437,15 +2220,15 @@ void HqcMainWindow::closeWindow()
 
 
 void HqcMainWindow::helpUse() {
-  system("firefox https://dokit.met.no/klima/tools/qc/hqc-help &");
+    QDesktopServices::openUrl(QUrl("https://dokit.met.no/klima/tools/qc/hqc-help"));
 }
 
 void HqcMainWindow::helpFlag() {
-  system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg &");
+    QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg"));
 }
 
 void HqcMainWindow::helpParam() {
-  system("firefox https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-parametre_sortert_alfabetisk_etter_kode &");
+    QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-parametre_sortert_alfabetisk_etter_kode"));
 }
 
 void HqcMainWindow::about()

@@ -1,15 +1,14 @@
 #include "textdatadialog.h"
-#include <Q3HBoxLayout>
-#include <QLabel>
-//#include <Q3GridLayout>
-#include <Q3VBoxLayout>
-#include <QDateTimeEdit>
-#include <QCheckBox>
-#include <QPushButton>
-#include <qmessagebox.h>
+#include <Qt3Support/Q3HBoxLayout>
+#include <QtGui/QLabel>
+#include <Qt3Support/Q3VBoxLayout>
+#include <QtGui/QDateTimeEdit>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
+#include <QtGui/qmessagebox.h>
 
-TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(parent),stnrList(slist) {  
-  
+TextDataDialog::TextDataDialog(std::vector<int> slist, QWidget* parent): QDialog(parent),stnrList(slist) {
+
   setCaption(tr("TextData"));
 
   stnr = 0;
@@ -19,15 +18,15 @@ TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(pare
 
   textLabel1 = new QLabel(this);
   textLabel1->setText(tr("Tidsrom"));
-  
+
   textLabel2 = new QLabel(this);
   textLabel2->setText(tr("Fra"));
-  
+
   textLabel3 = new QLabel(this);
   textLabel3->setText(tr("Til"));
-  
-  stationEdit = new QLineEdit(this);  
-  
+
+  stationEdit = new QLineEdit(this);
+
   QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
@@ -52,11 +51,11 @@ TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(pare
   okButton = new QPushButton(tr("OK"), this);
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
-  
+
   cancelButton = new QPushButton(tr("Avbryt"), this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
-  
+
   QVBoxLayout* topLayout = new QVBoxLayout(this);
   QHBoxLayout* stationLayout = new QHBoxLayout();
   QHBoxLayout* fromLayout = new QHBoxLayout();
@@ -86,15 +85,15 @@ TextDataDialog::TextDataDialog(vector<int> slist, QWidget* parent): QDialog(pare
 void TextDataDialog::setStation(const QString& st) {
   bool ok;
   stnr = st.toInt(&ok);
-} 
+}
 
 void TextDataDialog::setFromTime(const QDateTime& dt) {
   dtfrom = dt;
-} 
+}
 
 void TextDataDialog::setToTime(const QDateTime& dt) {
   dtto = dt;
-} 
+}
 
 TimeSpan TextDataDialog::getTimeSpan()
 {

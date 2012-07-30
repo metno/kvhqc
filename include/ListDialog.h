@@ -31,31 +31,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef LISTDIALOG_H
 #define LISTDIALOG_H
 
-#include <stdlib.h>
-#include <iostream>
-#include <qdialog.h>
-#include <q3buttongroup.h>
-//#include <QButtonGroup>
-#include <qpushbutton.h>
-#include <qlineedit.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-//#include <q3groupbox.h>
-#include <QGroupBox>
-#include <qlabel.h>
-#include <q3table.h>
-#include <q3listbox.h>
-#include <qcombobox.h>
-#include <qlayout.h>
-#include <qdatetime.h>
-//Added by qt3to4:
-#include <Q3VBoxLayout>
+#include <QtGui/qdialog.h>
+#include <Qt3Support/q3buttongroup.h>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qlineedit.h>
+#include <QtGui/qcheckbox.h>
+#include <QtGui/qradiobutton.h>
+#include <QtGui/QGroupBox>
+#include <QtGui/qlabel.h>
+#include <Qt3Support/q3table.h>
+#include <Qt3Support/q3listbox.h>
+#include <QtGui/qcombobox.h>
+#include <QtGui/qlayout.h>
+#include <QtCore/qdatetime.h>
+#include <Qt3Support//Q3VBoxLayout>
 #include <qUtilities/miTimeSpinBox.h>
 
-using namespace std;
-
-typedef list<int>                                 TypeList;
-typedef list<TypeList>                         ObsTypeList;
+typedef std::list<int>                                 TypeList;
+typedef std::list<TypeList>                         ObsTypeList;
 
 class ListDialog : public QDialog {
   Q_OBJECT

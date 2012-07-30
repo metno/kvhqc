@@ -44,22 +44,18 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvdb/dbdrivermgr.h>
 #include <qUtilities/QLetterCommands.h>
 
-using namespace std;
-using namespace kvalobs;
-using namespace kvservice;
+typedef std::list<kvalobs::kvData>                              DataList;
+typedef std::list<kvalobs::kvData>::iterator                   IDataList;
+typedef std::list<kvalobs::kvData>::const_iterator            CIDataList;
+typedef std::list<kvalobs::kvModelData>                    ModelDataList;
+typedef std::list<kvalobs::kvModelData>::iterator         IModelDataList;
+typedef std::list<kvalobs::kvModelData>::const_iterator  CIModelDataList;
 
-typedef list<kvData>                              DataList;
-typedef list<kvData>::iterator                   IDataList;
-typedef list<kvData>::const_iterator            CIDataList;
-typedef list<kvModelData>                    ModelDataList;
-typedef list<kvModelData>::iterator         IModelDataList;
-typedef list<kvModelData>::const_iterator  CIModelDataList;
+typedef std::list<kvalobs::kvObsPgm>                          ObsPgmList;
+typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
 
-typedef list<kvObsPgm>                          ObsPgmList;
-typedef list<kvObsPgm>::const_iterator        CIObsPgmList;
-
-typedef list<int>                                 TypeList;
-typedef list<TypeList>                         ObsTypeList;
+typedef std::list<int>                                 TypeList;
+typedef std::list<TypeList>                         ObsTypeList;
 
 const int NOPARAM          = 1043;
 const int NOPARAMMODEL     = 8;
@@ -105,7 +101,7 @@ struct currentType {
 struct TxtDat {
   int stationId;
   miutil::miTime obstime;
-  string original;
+  std::string original;
   int paramId;
   miutil::miTime tbtime;
   int typeId;

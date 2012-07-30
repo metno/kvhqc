@@ -31,18 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef DIANASHOWDIALOG_H
 #define DIANASHOWDIALOG_H
 
-#include <stdlib.h>
-#include <iostream>
-#include <qdialog.h>
-#include <q3buttongroup.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <qradiobutton.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
+#include <Qt3Support/q3buttongroup.h>
+#include <Qt3Support/q3groupbox.h>
+#include <QtGui/qdialog.h>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qcheckbox.h>
+#include <QtGui/qradiobutton.h>
+#include <QtGui/qlabel.h>
+#include <QtGui/qlayout.h>
 
-using namespace std;
 /**
  * \brief A dialog for selecting what to be shown in Diana.
  */

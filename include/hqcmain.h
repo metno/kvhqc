@@ -43,35 +43,31 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejecttimeseriesdialog.h"
 #include "accepttimeseriesdialog.h"
 #include "errorlist.h"
-#include <qwidget.h>
+#include <QtGui/qwidget.h>
 #include <fstream>
-#include <iostream>
 #include <kvcpp/KvApp.h>
 #include <KvalobsDataModel.h>
-#include <qmainwindow.h>
-#include <qobject.h>
+#include <QtGui/qmainwindow.h>
+#include <QtCore/qobject.h>
 //#include <q3process.h>
-#include <qmenubar.h>
-#include <qmap.h>
-//#include <q3multilineedit.h>
-#include <qpoint.h>
-#include <qlabel.h>
-#include <qstatusbar.h>
-//#include <qmessagebox.h>
-#include <QMessageBox>
-#include <QScopedPointer>
-#include <qapplication.h>
-#include <qpushbutton.h>
+#include <QtGui/qmenubar.h>
+#include <QtCore/qmap.h>
+#include <QtCore/qpoint.h>
+#include <QtGui/qlabel.h>
+#include <QtGui/qstatusbar.h>
+#include <QtGui/QMessageBox>
+#include <QtCore/QScopedPointer>
+#include <QtGui/qapplication.h>
+#include <QtGui/qpushbutton.h>
 //#include <q3accel.h>
-#include <qimage.h>
-#include <qpixmap.h>
-#include <qobject.h>
+#include <QtGui/qimage.h>
+#include <QtGui/qpixmap.h>
 //#include <q3vbox.h>
 //#include <q3table.h>
-#include <QToolBar>
-#include <qtoolbutton.h>
-#include <qicon.h>
-#include <qcursor.h>
+#include <QtGui/QToolBar>
+#include <QtGui/qtoolbutton.h>
+#include <QtGui/qicon.h>
+#include <QtGui/qcursor.h>
 
 #include <qUtilities/ClientButton.h>
 
@@ -86,11 +82,7 @@ class QAction;
 class QMdiArea;
 class QMdiSubWindow;
 
-using namespace std;
-using namespace kvalobs;
-using namespace kvservice;
 class DataTable;
-
 
 /**
  * \brief Get o's owning HqcMainWindow, or NULL if there is none.
@@ -114,7 +106,7 @@ public:
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
-  vector<int> coastStations;
+  std::vector<int> coastStations;
 
   //  QAction * lackListAction;
 
@@ -268,28 +260,28 @@ public:
   TextDataDialog* txtdlg;
   RejectDialog* rejdlg;
   Rejects* rejects;
-  vector<kvalobs::kvRejectdecode> rejList;
+  std::vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
   RejectTimeseriesDialog* rjtsdlg;
   AcceptTimeseriesDialog* actsdlg;
 
   model::KvalobsDataListPtr datalist;
-  vector<modDatl> modeldatalist;
+  std::vector<modDatl> modeldatalist;
 
   /// List of selected stations
-  vector<int> stList;
+  std::vector<int> stList;
 
-  vector<int> stnrList;
+  std::vector<int> stnrList;
 
   /// This holds the value of the previously used stList
-  vector<int> remstList;
-  vector<TxtDat> txtList;
+  std::vector<int> remstList;
+  std::vector<TxtDat> txtList;
   listType lity;
   mettType metty;
   int selParNo[NOPARAMALL];
-  vector<currentType> currentTypeList;
-  vector<QString> statLineList;
-  DataReinserter<kvservice::KvApp> *reinserter;
+  std::vector<currentType> currentTypeList;
+  std::vector<QString> statLineList;
+  kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
   /// True if all types have been selected, as opposed to prioritized parameters
   bool isShTy;
 
@@ -350,6 +342,9 @@ private slots:
   void acceptTimeseries();
   void acceptTimeseriesOK();
   void startKro();
+private:
+  void selectParameterGroup(const QString& group);
+
 private:
   model::KvalobsDataModel * dataModel;
   bool firstObs;

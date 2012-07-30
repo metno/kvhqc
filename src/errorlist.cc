@@ -35,8 +35,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  *
 */
 #define NDEBUG
+
+#include "hqc_paths.hh"
+#include "errorlist.h"
+#include "hqcmain.h"
+#include "ErrorListFirstCol.h"
+#include "BusyIndicator.h"
+#include "missingtable.h"
+#include "StationInformation.h"
+#include "TypeInformation.h"
+
+#include <kvalobs/kvDataOperations.h>
+#include <kvcpp/KvApp.h>
+
 #include <QtGui/QtGui>
-#include <cassert>
 #include <QtCore/QEvent>
 #include <QtGui/QAction>
 #include <Qt3Support/q3textstream.h>
@@ -44,18 +56,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPrinter>
 #include <Qt3Support/Q3TextEdit>
 #include <Qt3Support/Q3SimpleRichText>
-#include "errorlist.h"
-#include "hqcmain.h"
-#include "ErrorListFirstCol.h"
-#include "BusyIndicator.h"
-#include "ExtendedFunctionalityHandler.h"
-#include "missingtable.h"
-#include "StationInformation.h"
-#include "TypeInformation.h"
-#include <kvcpp/KvApp.h>
-#include "hqc_paths.hh"
-#include <kvalobs/kvDataOperations.h>
 
+#include <cassert>
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
 typedef TypeInformation<kvservice::KvApp>    TypeInfo;
@@ -83,9 +85,9 @@ ErrorList::ErrorList(QStringList& selPar,
 		     int lity,
 		     int metty,
 		     int* noSelPar,
-		     vector<model::KvalobsData>& dtl,
-		     vector<modDatl>& mdtl,
-		     list<kvStation>& slist,
+		     std::vector<model::KvalobsData>& dtl,
+		     std::vector<modDatl>& mdtl,
+		     std::list<kvStation>& slist,
 		     int dateCol,
 		     int ncp,
 		     QString& userName)
@@ -98,14 +100,13 @@ ErrorList::ErrorList(QStringList& selPar,
   stationidCol = 1;
   typeidCol = 7;
 
-  efh = new ExtendedFunctionalityHandler( this, this );
   setCaption(tr("HQC - Feilliste"));
   setSorting(TRUE);
   readLimits();
   setSelectionMode( Q3Table::SingleRow );
 
   QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
-  lackListAction->setShortcut(Qt::CTRL+Qt::Key_M);
+  lackListAction->setShortcut(tr("Ctrl+M"));
 
   opName = userName;
   fDlg = new FailInfo::FailDialog(this);
@@ -140,7 +141,7 @@ ErrorList::ErrorList(QStringList& selPar,
   connect( mainWindow, SIGNAL( windowClose() ),
 	   this, SIGNAL( errorListClosed() ) );
 
-  if (!KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
+  if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
     cerr << "Can't connect to obs_pgm table!" << endl;
   cerr.setf(ios::fixed);
   // UNUSED int antRow = 0;
@@ -1550,7 +1551,7 @@ bool ErrorList::event(QEvent *event)
 
     bool ok = true;
     QString tipString =
-      StationInfo::getInstance(KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
+      StationInfo::getInstance(kvservice::KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
     if ( !ok ) {// Cold not convert cell contents to int.
       return false;
     }
@@ -1559,7 +1560,7 @@ bool ErrorList::event(QEvent *event)
     if ( cellText.isNull() )
       return false;
     ok = true;
-    tipString += " - " + TypeInfo::getInstance(KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
+    tipString += " - " + TypeInfo::getInstance(kvservice::KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
     if ( !ok ) { // Cold not convert cell contents to int.
       return false;
     }

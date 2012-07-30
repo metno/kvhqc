@@ -31,19 +31,19 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__WeatherDialog_h__
 #define __Weather__WeatherDialog_h__
 
-#include <kvcpp/KvApp.h>
-#include <QDialog>
-#include <kvalobs/kvStation.h>
 #include "weathertable.h"
 #include "timeobs.h"
 #include "dataconsistencyverifier.h"
+
 #include <decodeutility/DataReinserter.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
+#include <kvalobs/kvStation.h>
+#include <kvcpp/KvApp.h>
 
-using namespace std;
-using namespace kvalobs;
-using namespace kvservice;
+#include <QtGui/QDialog>
+
+#include <string>
 
 class QPushButton;
 class QStatusBar;
@@ -66,17 +66,14 @@ struct SynObs {
   int sensor[NP];
   double orig[NP];
   double corr[NP];
-  string controlinfo[NP];
+  std::string controlinfo[NP];
 };
 
-namespace kvalobs {
-  class kvData;
-}
-typedef list<kvalobs::kvData>::iterator                   IDataList;
-typedef list<kvalobs::kvObsPgm>                          ObsPgmList;
-typedef list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
-typedef list<int>                                          OpgmList;
-typedef list<int>::iterator                               IOpgmList;
+typedef std::list<kvalobs::kvData>::iterator                   IDataList;
+typedef std::list<kvalobs::kvObsPgm>                          ObsPgmList;
+typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
+typedef std::list<int>                                          OpgmList;
+typedef std::list<int>::iterator                               IOpgmList;
 
 namespace Weather
 {
@@ -141,10 +138,10 @@ namespace Weather
     QStatusBar *statusBar;
     Q3BoxLayout *mainLayout;
     SynObs synObs;
-    typedef vector<SynObs> SynObsList;
+    typedef std::vector<SynObs> SynObsList;
     SynObsList synObsList;
     //    QToolTipGroup *ttGroup;
-    KvObsDataList ldList;
+    kvservice::KvObsDataList ldList;
 
   public slots:
     //    virtual void polish();

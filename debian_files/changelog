@@ -1,3 +1,12 @@
+kvhqc (2.9.0~a3-1) unstable; urgency=low
+
+  * added HqcMainWindow::selectParameterGroup
+  * changed parameterdialog radiobuttons
+  * removed unused ExtendedFunctionalityHandler, IdentDialog, and
+    HelpTree
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 17 Jul 2012 16:21:20 +0200
+
 kvhqc (2.9.0~a2-1) unstable; urgency=low
 
   * use name instead of IP for nameserver in config files

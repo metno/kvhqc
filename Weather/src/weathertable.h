@@ -39,15 +39,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "flagitem.h"
 #include "selfexplainable.h"
 #include <decodeutility/DataReinserter.h>
-#include <qtooltip.h>
 #include <puTools/miDate.h>
+
+#include <QtGui/qtooltip.h>
+#include <QtCore/QMap>
+
 #include <utility>
 #include <vector>
 #include <list>
 #include <set>
-#include <QMap>
-
-using namespace std;
 
 namespace kvalobs
 {
@@ -58,9 +58,6 @@ namespace kvservice
 {
   class KvApp;
 }
-
-using namespace kvalobs;
-using namespace kvservice;
 
 namespace Weather
 {
@@ -88,7 +85,7 @@ namespace Weather
   /**
    * \brief Columns with data
    */
-  const int datCol[] = {0,1,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19, 
+  const int datCol[] = {0,1,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
 			20,21,23,25,27,28,29,30,31,32,33,34,35,36,
 			37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
 
@@ -109,7 +106,7 @@ namespace Weather
   class WeatherTableToolTip;
 
 
-  class WeatherTable 
+  class WeatherTable
     : public Q3Table
   {
     friend class WeatherDialog;
@@ -121,8 +118,8 @@ namespace Weather
      */
     WeatherTable( QWidget* parent = 0, QString name = "", int type = 0 );
     virtual ~WeatherTable();
-    void getModifiedData( DataConsistencyVerifier::DataSet & );    
-  
+    void getModifiedData( DataConsistencyVerifier::DataSet & );
+
   private:
     std::vector<kvalobs::kvData> kvDatList;
     std::vector<kvalobs::kvData> kvCorrList;
@@ -139,7 +136,7 @@ namespace Weather
       double sdat[NP];
       int styp[NP];
       int ssen[NP];
-      string ctrlinfo[NP];
+      std::string ctrlinfo[NP];
     };
 
     struct synFlg {
@@ -166,18 +163,18 @@ namespace Weather
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
     //    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, ObsPgmList obsPgmList);
-    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, std::list<kvObsPgm> obsPgmList);
+    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, std::list<kvalobs::kvObsPgm> obsPgmList);
   protected slots:
     /**
      * \brief Update status bar with info from cell.
      */
     void restoreOld();
     void showCurrentPage( );
-    
+
     virtual void updateStatusbar( int row, int col );
-    void markModified( int, int );    
+    void markModified( int, int );
   };
-  
+
 }
 
 #endif // __Weather__WeatherTable_h__

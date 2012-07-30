@@ -1,8 +1,7 @@
 #ifndef CONNECT2STINFOSYS_H
 #define CONNECT2STINFOSYS_H
 
-
-using namespace std;
+#include <QtCore/QString>
 
 struct countyInfo {
   int stnr;

@@ -30,28 +30,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef CLOCKDIALOG_H
 #define CLOCKDIALOG_H
-/*
-#include <stdlib.h>
-#include <iostream>
-#include <qdialog.h>
-#include <q3buttongroup.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <q3groupbox.h>
-#include <qlabel.h>
-#include <qlayout.h>
-*/
-#include <stdlib.h>
-#include <iostream>
-#include <QDialog>
-#include <QButtonGroup>
-#include <qpushbutton.h>
-#include <QCheckBox>
-#include <QGroupBox>
-#include <QLabel>
-#include <QLayout>
 
-using namespace std;
+#include <QtGui/QDialog>
+#include <QtGui/QButtonGroup>
+#include <QtGui/QPushButton>
+#include <QtGui/QCheckBox>
+#include <QtGui/QGroupBox>
+#include <QtGui/QLabel>
+#include <QtGui/QLayout>
+
 /**
  * \brief Dialog for selecting times to show.
  */

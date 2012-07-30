@@ -1,6 +1,5 @@
 
 SET(hqc_HEADERS
-  ../include/ExtendedFunctionalityHandler.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
   ../include/KvalobsDataView.h
@@ -13,9 +12,7 @@ SET(hqc_HEADERS
   ../include/TimeseriesDialog.h
   ../include/discarddialog.h
   ../include/KvalobsDataDelegate.h
-  ../include/identdialog.h
   ../include/hqcmain.h
-  ../include/helptree.h
   ../include/textdatatable.h
   ../include/rejecttable.h
   ../include/rejectdialog.h
@@ -30,13 +27,10 @@ SET(hqc_SOURCES
   dianashowdialog.cc
   discarddialog.cc
   errorlist.cc
-  ExtendedFunctionalityHandler.cc
   GetData.cc
   GetTextData.cc
-  helptree.cc
   hqc4.cc
   hqcmain.cc
-  identdialog.cc
   KvalobsData.cc
   KvalobsDataDelegate.cc
   KvalobsDataModel.cc
