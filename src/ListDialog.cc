@@ -133,7 +133,7 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   troCoun = new QCheckBox( "Troms", stCounty );
   finCoun = new QCheckBox( "Finnmark", stCounty );
   svaCoun = new QCheckBox( "Ishavet", stCounty );
-  allCoun = new QCheckBox( "Alle", stCounty );
+  allCoun = new QCheckBox( tr("Alle"), stCounty );
 
    // Create a button group for station location (region)
 
@@ -1350,12 +1350,11 @@ void StationSelection::showSelectedStation(int row, int col) {
   Q3TableItem* tStationNumber = stationTable->item( row, 0);
   Q3TableItem* tStationName = stationTable->item( row, 1);
   QString station = tStationNumber->text() + "  " + tStationName->text();
-  int rem = stlist.remove(station);
+  int rem = stlist.remove(station); // FIXME kind of weird procedure
+  stlist.append(station);
   if ( rem == 0 ) {
-    stlist.append(station);
     emit stationAppended(station);
-  }
-  else {
+  } else {
     emit stationRemoved(station);
   }
 }
@@ -1365,9 +1364,9 @@ void StationSelection::showAllStations() {
     Q3TableItem* tStationNumber = stationTable->item( row, 0);
     Q3TableItem* tStationName = stationTable->item( row, 1);
     QString station = tStationNumber->text() + "  " + tStationName->text();
-    int rem = stlist.remove(station);
+    int rem = stlist.remove(station); // FIXME kind of weird procedure
+    stlist.append(station);
     if ( rem == 0 ) {
-      stlist.append(station);
       emit stationAppended(station);
     }
   }

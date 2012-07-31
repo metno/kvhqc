@@ -84,6 +84,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <complex>
 #include <algorithm>
 #include <iomanip>
+#include <functional>
 
 using namespace std;
 using namespace kvalobs;
@@ -322,7 +323,7 @@ HqcMainWindow::HqcMainWindow()
 	  SLOT(processConnect()));
   connect(pluginB, SIGNAL(connectionClosed()),
 	  SLOT(cleanConnection()));
-  statusBar()->addWidget(pluginB,0,true);
+  statusBar()->addPermanentWidget(pluginB,0);
 
   //    }
   statusBar()->message( tr("Ready"), 2000 );
@@ -1260,9 +1261,7 @@ void HqcMainWindow::listMenu() {
     lstdlg->hideAll();
   } else {
     QDateTime mx = QDateTime::currentDateTime();
-    int noDays = lstdlg->toTime->date().dayOfYear() - lstdlg->fromTime->date().dayOfYear();
-    if ( noDays < 0 ) noDays = 365 + noDays;
-
+    int noDays = lstdlg->fromTime->dateTime().daysTo(lstdlg->toTime->dateTime());
     if ( noDays < 27 ) {
       mx = mx.addSecs(-60*mx.time().minute());
       mx = mx.addSecs(3600);
@@ -1686,7 +1685,6 @@ void HqcMainWindow::readFromData(const miutil::miTime& stime,
  Read station info from the stinfosys database
 */
 bool HqcMainWindow::readFromStInfoSys() {
-
   webs << 4780 << 7010 << 10380 << 16610 << 17150 << 18700 << 23420 << 24890 << 27500
        << 31620 << 36200 << 39100 << 42160 << 44560 << 47300 << 50500 << 50540 << 54120
        << 59800 << 60500 << 69100 << 71550 << 75410 << 75550 << 80610 << 82290 << 85380
@@ -1830,6 +1828,16 @@ bool HqcMainWindow::readFromStInfoSys() {
       cerr << "FEIL I FIL" << endl;
       //      exit(1);
     }
+    listStatName.clear();
+    listStatNum.clear();
+    listStatHoh.clear();
+    listStatType.clear();
+    listStatFylke.clear();
+    listStatKommune.clear();
+    listStatWeb.clear();
+    listStatPri.clear();
+    listStatCoast.clear();
+
     mi_foreach(const countyInfo& ci, cList) {
       std::list<kvalobs::kvStation>::const_iterator sit = std::find_if(slist.begin(), slist.end(), kvStationById(ci.stnr));
       if(sit != slist.end()) {
@@ -1885,10 +1893,9 @@ void HqcMainWindow::readFromStation() {
     if ( noBase == 0 )
       exit(1);
   }
-  std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
-  for(;it!=slist.end(); it++){
-    stnrList.push_back(it->stationID());
-  }
+  stnrList.clear();
+  stnrList.reserve(slist.size());
+  std::transform(slist.begin(), slist.end(), std::back_inserter(stnrList), std::mem_fun_ref(&kvalobs::kvStation::stationID));
 }
 
 /*!
