@@ -1351,8 +1351,8 @@ void StationSelection::showSelectedStation(int row, int col) {
   Q3TableItem* tStationName = stationTable->item( row, 1);
   QString station = tStationNumber->text() + "  " + tStationName->text();
   int rem = stlist.remove(station); // FIXME kind of weird procedure
-  stlist.append(station);
   if ( rem == 0 ) {
+      stlist.append(station);
     emit stationAppended(station);
   } else {
     emit stationRemoved(station);
@@ -1365,8 +1365,8 @@ void StationSelection::showAllStations() {
     Q3TableItem* tStationName = stationTable->item( row, 1);
     QString station = tStationNumber->text() + "  " + tStationName->text();
     int rem = stlist.remove(station); // FIXME kind of weird procedure
-    stlist.append(station);
     if ( rem == 0 ) {
+        stlist.append(station);
       emit stationAppended(station);
     }
   }
