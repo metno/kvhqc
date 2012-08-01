@@ -1,3 +1,9 @@
+kvhqc (2.9.0~a6-1) unstable; urgency=low
+
+  * station selection/deselection works again after last change
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 01 Aug 2012 14:17:31 +0200
+
 kvhqc (2.9.0~a5-1) unstable; urgency=low
 
   * station selection works also the second time the StationSelection dialog is
