@@ -1,6 +1,8 @@
 
 SET(auth_HEADERS
-  Authenticator.h)
+  Authenticator.h
+  MiDateTimeEdit.hh
+)
 
 SET(auth_SOURCES
   Authenticator.cc
@@ -8,8 +10,9 @@ SET(auth_SOURCES
   FunctionLogger.cc
   HqcDataReinserter.cc
   hqc_paths.cc
-  identifyUser.cc
   hqc_utilities.cc
+  identifyUser.cc
+  MiDateTimeEdit.cc
 )
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})

@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "BusyIndicator.h"
 #include <qlineedit.h>
-#include <q3datetimeedit.h>
+#include "MiDateTimeEdit.hh"
 #include <qlabel.h>
 #include <qlayout.h>
 //Added by qt3to4:
@@ -74,10 +74,8 @@ namespace Weather
     miutil::miTime d = data.obstime();
     QDate dt = QDate(d.year(), d.month(), d.day());
     QTime ti = QTime(d.hour(), 0);
-    obstime_ =
-      new Q3DateTimeEdit( QDateTime( dt, ti ), this );
-    Q3DateEdit* obsdate = obstime_->dateEdit();
-    obsdate->setOrder( Q3DateEdit::DMY ); // Norwegian standard
+    obstime_ = new MiDateTimeEdit( QDateTime( dt, ti ), this );
+    obstime_->setDisplayFormat("yyyy-MM-dd hh:mm");
     layout->addWidget( obstime_, row, 1 );
     layout->addWidget( new QLabel( obstime_, tr("&Tid:"), this ), row++, 0 );
 

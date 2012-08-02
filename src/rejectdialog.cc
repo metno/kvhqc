@@ -1,9 +1,9 @@
 #include "rejectdialog.h"
+#include "MiDateTimeEdit.hh"
 #include <Q3HBoxLayout>
 #include <QLabel>
 //#include <Q3GridLayout>
 #include <Q3VBoxLayout>
-#include <QDateTimeEdit>
 #include <QCheckBox>
 #include <QPushButton>
 
@@ -24,8 +24,8 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
   QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
-  fromEdit = new QDateTimeEdit(dtfrom,this);
-  toEdit   = new QDateTimeEdit(dtto,this);
+  fromEdit = new MiDateTimeEdit(dtfrom,this);
+  toEdit   = new MiDateTimeEdit(dtto,this);
   fromEdit->setMaximumDate(dtto.date());
   fromEdit->setMaximumTime(dtto.time());
   fromEdit->setDisplayFormat("yyyy.MM.dd HH:mm");

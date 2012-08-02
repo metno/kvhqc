@@ -29,12 +29,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ListDialog.h"
+#include "MiDateTimeEdit.hh"
 //Added by qt3to4:
 #include <Qt3Support/Q3HBoxLayout>
 #include <QtGui/QLabel>
 #include <Qt3Support/Q3GridLayout>
 #include <Qt3Support/Q3VBoxLayout>
-#include <QtGui/QDateTimeEdit>
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
@@ -209,8 +209,8 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   stationNames = new Q3ListBox(this);
 
   //Time selection
-  fromTime = new QDateTimeEdit (QDateTime::currentDateTime(),this);
-  toTime   = new QDateTimeEdit (QDateTime::currentDateTime(),this);
+  fromTime = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  toTime   = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
   fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
   toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
   QDateTime t(toTime->dateTime());

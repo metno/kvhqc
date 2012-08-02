@@ -51,6 +51,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "RRDialog.h"
 #include "weatherdialog.h"
 #include "mi_foreach.hh"
+#include "MiDateTimeEdit.hh"
 
 #include <qTimeseries/TSPlot.h>
 #include <glText/glTextQtTexture.h>
@@ -69,7 +70,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QFrame>
 #include <QtGui/QMdiArea>
 #include <QtGui/QMdiSubWindow>
-#include <QtGui/QDateTimeEdit>
 #include <QtGui/QSizePolicy>
 #include <QtGui/QDesktopServices>
 #include <QtCore/qfile.h>

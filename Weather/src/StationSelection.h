@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <puTools/miTime.h>
 
 class QLineEdit;
-class Q3DateTimeEdit;
+class MiDateTimeEdit;
 namespace kvalobs {
   class kvData;
 }
@@ -64,7 +64,7 @@ namespace Weather
     
   private:
     QLineEdit * station_;
-    Q3DateTimeEdit * obstime_;
+    MiDateTimeEdit * obstime_;
     QLineEdit * typeID_;
     QLineEdit * sensor_;
     //    QLineEdit * level_;

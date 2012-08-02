@@ -36,7 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QRadioButton>
 #include <QtGui/QGroupBox>
 #include <QtGui/QListWidget>
-#include <QtGui/QDateTimeEdit>
+#include "MiDateTimeEdit.hh"
 #include <puTools/miTime.h>
 #include <puTools/miString.h>
 

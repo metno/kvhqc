@@ -1,3 +1,9 @@
+kvhqc (2.9.0~a7-1) unstable; urgency=low
+
+  * added MiDateTimeEdit and use it instead of QDateTimeEdit
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 02 Aug 2012 17:01:41 +0200
+
 kvhqc (2.9.0~a6-1) unstable; urgency=low
 
   * station selection/deselection works again after last change

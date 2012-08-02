@@ -57,11 +57,11 @@ RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog()
   resultWidget->setFixedHeight(30);
 
   QLabel* fromLabel = new QLabel( tr("Fra"), this );
-  fromTimeEdit  = new QDateTimeEdit(QDateTime::currentDateTime(),this);
+  fromTimeEdit  = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QLabel* toLabel   = new QLabel( tr("Til"), this );
-  toTimeEdit    = new QDateTimeEdit(QDateTime::currentDateTime(),this);
+  toTimeEdit    = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QDateTime t(toTimeEdit->dateTime());

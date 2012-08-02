@@ -30,9 +30,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "TimeseriesDialog.h"
 #include "hqc_utilities.hh"
+#include "MiDateTimeEdit.hh"
 #include "qtQTUtil.h"
 
-#include <QtGui/QDateTimeEdit>
 #include <QtGui/QLabel>
 #include <QtGui/qlayout.h>
 #include <Qt3Support/Q3VBoxLayout>
@@ -161,14 +161,14 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   QDateTime dt_to = QDateTime::currentDateTimeUtc();
   dt_to = dt_to.addSecs(60-dt_to.time().second());
   dt_to = dt_to.addSecs(60*(60-dt_to.time().minute()));
-  dte_to = new QDateTimeEdit(dt_to, this);
+  dte_to = new MiDateTimeEdit(dt_to, this);
   dte_to->setDisplayFormat("yyyy-MM-dd HH:mm");
 
   QDateTime dt_from = dt_to;
   dt_from = dt_from.addDays(-2);
   dt_from = dt_from.addSecs(3600*(17-dt_from.time().hour()));
   dt_from = dt_from.addSecs(60*(45-dt_from.time().minute()));
-  dte_from = new QDateTimeEdit(dt_from, this);
+  dte_from = new MiDateTimeEdit(dt_from, this);
   dte_from->setDisplayFormat("yyyy-MM-dd HH:mm");
 
   connect( dte_from, SIGNAL(dateTimeChanged(const QDateTime&)),

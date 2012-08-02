@@ -1,8 +1,8 @@
 #include "textdatadialog.h"
+#include "MiDateTimeEdit.hh"
 #include <Qt3Support/Q3HBoxLayout>
 #include <QtGui/QLabel>
 #include <Qt3Support/Q3VBoxLayout>
-#include <QtGui/QDateTimeEdit>
 #include <QtGui/QCheckBox>
 #include <QtGui/QPushButton>
 #include <QtGui/qmessagebox.h>
@@ -30,8 +30,8 @@ TextDataDialog::TextDataDialog(std::vector<int> slist, QWidget* parent): QDialog
   QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
-  fromEdit = new QDateTimeEdit(dtfrom,this);
-  toEdit   = new QDateTimeEdit(dtto,this);
+  fromEdit = new MiDateTimeEdit(dtfrom,this);
+  toEdit   = new MiDateTimeEdit(dtto,this);
   fromEdit->setMaximumDate(dtto.date());
   fromEdit->setMaximumTime(dtto.time());
   fromEdit->setDisplayFormat("yyyy.MM.dd HH:mm");

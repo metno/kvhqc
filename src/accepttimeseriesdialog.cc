@@ -62,11 +62,11 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   qc2No   = new QRadioButton( "Retting av QC2 IKKE mulig", qc2Val );
 
   QLabel* fromLabel = new QLabel( "Fra", this );
-  fromTimeEdit  = new QDateTimeEdit(QDateTime::currentDateTime(),this);
+  fromTimeEdit  = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QLabel* toLabel   = new QLabel( "Til", this );
-  toTimeEdit    = new QDateTimeEdit(QDateTime::currentDateTime(),this);
+  toTimeEdit    = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QDateTime t(toTimeEdit->dateTime());
