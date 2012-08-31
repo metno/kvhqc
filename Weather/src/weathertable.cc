@@ -190,6 +190,8 @@ namespace Weather
   }
 
   void WeatherTable::displayData(QString pName, vector<synDat>& dataList, vector<synFlg>& flagList) {
+    QStringList datRow;
+    vector<QStringList> datRowList;
     int iRow = 0;
     vector<synFlg>::iterator fit = flagList.begin();
     for ( vector<synDat>::iterator it = dataList.begin(); it != dataList.end(); it++) {
@@ -207,6 +209,7 @@ namespace Weather
 	  strdat = strdat.setNum((*it).sdat[iCol],'f',d1Par[iCol]);
 	  strtyp = strtyp.setNum((*it).styp[iCol]);
 	}
+	datRow.push_back(strdat);
 	ctrlinfo = (*it).ctrlinfo[iCol];
 	if ( pName == "corr" ) {
 	  WeatherTableItem* datItem = new WeatherTableItem(this, Q3TableItem::OnTyping,strtyp,strdat);
@@ -248,30 +251,64 @@ namespace Weather
 	}
      }
 
+      datRowList.push_back(datRow);
+      datRow.clear();
       iRow++;
       fit++;
     }
    for ( int icol = 0; icol < NL; icol++ )
       adjustColumn(icol);
+
+    bool bdat[NL];
+    for ( int icol = 0; icol < NP; icol++ ) {
+      bdat[icol] = false;
+      for ( int irow = 0; irow < iRow; irow++ ) {
+	if ( !datRowList[irow][icol].isEmpty() ) {
+	  bdat[icol] = true;
+	  break;
+	}
+      }
+      if ( !bdat[icol] )
+	hideColumn(datCol[icol]);
+    }
+
   }
 
   void WeatherTable::displayFlags(vector<synFlg>& flagList) {
     cerr << "Flaglist size 2 = " << flagList.size() << endl;
+    QStringList flagRow;
+    vector<QStringList> flagRowList;
     int iRow = 0;
     for ( vector<synFlg>::iterator it = flagList.begin(); it != flagList.end(); it++) {
       for ( int iCol = 0; iCol < NP; iCol++ ) {
 	QString strdat;
 	strdat = (*it).sflg[iCol];
+	flagRow.push_back(strdat);
 	FlagItem* flgItem = new FlagItem(this, Q3TableItem::Never,"",strdat);
 	setItem(iRow,datCol[iCol],flgItem);
       }
+      flagRowList.push_back(flagRow);
+      flagRow.clear();
       iRow++;
     }
 
-    for ( int icol = 0; icol < NL; icol++ )
+    for ( int icol = 0; icol < NP; icol++ )
       adjustColumn(icol);
     for ( int icol = 0; icol < NC; icol++ )
       hideColumn(cbCol[icol]);
+    
+    bool bfl[NL];
+    for ( int icol = 0; icol < NP; icol++ ) {
+      bfl[icol] = false;
+      for ( int irow = 0; irow < iRow; irow++ ) {
+	if ( !flagRowList[irow][icol].isEmpty() ) {
+	  bfl[icol] = true;
+	  break;
+	}
+      }
+      if ( !bfl[icol] )
+	hideColumn(datCol[icol]);
+    }
   }
 
   void WeatherTable::getModifiedData( DataConsistencyVerifier::DataSet& /*mod*/ )
