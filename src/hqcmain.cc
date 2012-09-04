@@ -2235,10 +2235,16 @@ void HqcMainWindow::processLetter(miMessage& letter)
   LOG_FUNCTION();
   qDebug() << "command=" << letter.command.c_str();
   if(letter.command == qmstrings::newclient) {
-    firstObs = true;
-    processConnect();
-    hqcFrom = letter.to;
-    hqcTo = letter.from;
+      const vector<miutil::miString> desc = letter.commondesc.split(":"), valu = letter.common.split(":");
+      for(vector<miutil::miString>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
+          if( *itD == "type" && *itC == "Diana" ) {
+              firstObs = true;
+              processConnect();
+              hqcFrom = letter.to;
+              hqcTo = letter.from;
+              return;
+          }
+      }
   }
   else if (letter.command == "station" ) {
     const char* ccmn = letter.common.c_str();
