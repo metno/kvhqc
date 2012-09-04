@@ -681,15 +681,12 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 void HqcMainWindow::ListOK() {
   LOG_FUNCTION();
   if ( !dianaconnected ) {
-    int dianaWarning = QMessageBox::warning(this,
-					    tr("Dianaforbindelse"),
-					    tr("Diana er ikke koplet til!"
-                                               "Ønsker du å kople til Diana?"),
-					    tr("&Ja"),
-					    tr("&Nei"));
-    if ( dianaWarning == 0 ) {
-      return;
-    }
+    QMessageBox::warning(this,
+            tr("Dianaforbindelse"),
+            tr("Har ikke kontakt med diana! "
+               "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
+               "og kople diana til tjeneren via knappen i diana sin vindu."),
+            QMessageBox::Ok, QMessageBox::Ok);
   }
   if ( !statSelect || statSelect->stlist.size() == 0 ) {
     QMessageBox::warning(this,
