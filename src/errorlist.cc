@@ -64,13 +64,8 @@ typedef TypeInformation<kvservice::KvApp>    TypeInfo;
 
 using namespace kvalobs;
 
-int mP[] = {61,81,109,110,177,178,211,262};
-int cP[] = {  1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
-		    13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
-		     24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
-		     35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-		     45, 46, 47, 48, 49,151,301,302,303,304,
-		     305,306,307,308,1021,1022,1025,1026};
+int mP[] = {61,81,108,109,110,177,178,211,262};
+vector<int> cP;
 const int headSize = 0;
 
 /*!
@@ -94,6 +89,19 @@ ErrorList::ErrorList(QStringList& selPar,
   : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
 {
+  list<kvParam> paramList;
+  kvservice::KvApp::kvApp->getKvParams(paramList);
+
+  for (list<kvParam>::iterator it = paramList.begin(); it != paramList.end(); it++ ) {
+    if ( (it->unit()).contains("kode") ) {
+      cP.push_back(it->paramID());
+      cerr << it->unit() << endl;
+    }
+  }
+  for ( int i = 0; i < cP.size(); i++ )
+    cerr << cP[i] << endl;
+
+
   setVScrollBarMode( Q3ScrollView::AlwaysOn  );
   setMouseTracking(true);
   BusyIndicator busyIndicator;
@@ -823,7 +831,7 @@ void ErrorList::checkSecondMemoryStore() {
 }
 
 bool ErrorList::paramHasModel(int parNo) {
-  for ( int i = 0; i < 8; i++ ) {
+  for ( int i = 0; i < NOPARAMMODEL; i++ ) {
     if ( parNo == mP[i] )
       return true;
   }
@@ -831,7 +839,7 @@ bool ErrorList::paramHasModel(int parNo) {
 }
 
 int ErrorList::paramIsCode(int parNo) {
-  for ( int i = 0; i < 58; i++ ) {
+  for ( int i = 0; i < cP.size(); i++ ) {
     if ( parNo == cP[i] )
       return 0;
   }
