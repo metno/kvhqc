@@ -282,11 +282,12 @@ HqcMainWindow::HqcMainWindow()
   QMenu * clockmenu = menuBar()->addMenu(tr("&Tidspunkter"));
   clockmenu->addAction(timesAction);
 
-  menuBar()->insertItem( tr("&Forkast tidsserie"), this, SLOT(rejectTimeseries()));
-  menuBar()->insertItem( tr("&Godkjenn tidsserie"), this, SLOT(acceptTimeseries()));
-
-  menuBar()->insertItem( tr("&Dianavisning"), this, SLOT(dsh()));
-  menuBar()->insertItem( tr("&Kro"), this, SLOT(startKro()));
+  QMenu* other = new QMenu(this);
+  other->addAction( tr("&Forkast tidsserie"), this, SLOT(rejectTimeseries()));
+  other->addAction( tr("&Godkjenn tidsserie"), this, SLOT(acceptTimeseries()));
+  other->addAction( tr("&Dianavisning"), this, SLOT(dsh()));
+  other->addAction( tr("&Kro"), this, SLOT(startKro()));
+  menuBar()->insertItem( tr("&Annet"), other);
 
   QMenu * help = new QMenu( this );
   menuBar()->insertItem( tr("&Hjelp"), help );
