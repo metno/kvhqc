@@ -1,3 +1,9 @@
+kvhqc (2.9.0~rc1-1) unstable; urgency=low
+
+  * release candidate, no code changes
+
+ -- Knut Johansen <knut.johansen@met.no>  Fri, 05 Oct 2012 10:28:41 +0200
+
 kvhqc (2.9.0~a7-1) unstable; urgency=low
 
   * added MiDateTimeEdit and use it instead of QDateTimeEdit
