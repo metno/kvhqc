@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=WatchRR
+Comment=Nedbørkort
+Comment[no]=Nedbørkort
+Exec=WatchRR-@PVERSION@
+Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/watchrr.png
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Meteorologisk;Meteorologisk-Kvalobs

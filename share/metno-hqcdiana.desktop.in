@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=Hqc @PVERSION@
+Comment=Manual quality control
+Comment[no]=Manuell kvalitetskontroll
+Exec=hqcdiana-@PVERSION@
+Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/hqc.png
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Meteorologisk;Meteorologisk-Kvalobs
