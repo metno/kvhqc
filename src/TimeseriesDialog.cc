@@ -158,7 +158,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
 // ///////////////////// to from ///////////////////////////////////////////
 
-  QDateTime dt_to = QDateTime::currentDateTimeUtc();
+  QDateTime dt_to = QDateTime::currentDateTime();
   dt_to = dt_to.addSecs(60-dt_to.time().second());
   dt_to = dt_to.addSecs(60*(60-dt_to.time().minute()));
   dte_to = new MiDateTimeEdit(dt_to, this);

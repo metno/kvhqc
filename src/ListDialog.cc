@@ -35,6 +35,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QLabel>
 #include <Qt3Support/Q3GridLayout>
 #include <Qt3Support/Q3VBoxLayout>
+#include <algorithm>
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 
