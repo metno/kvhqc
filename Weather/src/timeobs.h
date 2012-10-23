@@ -31,12 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__TimeObs_h__
 #define __Weather__TimeObs_h__
 
+#include "timeutil.hh"
+
 #include <kvalobs/kvData.h>
-#include <puTools/miTime.h>
+
+#include <boost/shared_ptr.hpp>
+
 #include <set>
 #include <vector>
 #include <memory>
-#include <boost/shared_ptr.hpp>
 
 namespace boost {
   class thread;
@@ -50,16 +53,16 @@ namespace Weather
     /**
      * \throws std::runtime_error if unable to contact kvalobs.
      */
-    TimeObs( int station, miutil::miTime otime, int type);
-    ~TimeObs( );
+    TimeObs(int station, const timeutil::ptime& otime, int type);
+    ~TimeObs();
 
-    kvalobs::kvData & get( int paramID, 
-			   const miutil::miTime & otime);
-         
+    kvalobs::kvData & get( int paramID,
+			   const timeutil::ptime& otime);
+
     void getAll( std::list<kvalobs::kvData *> & out ) const;
-    
+
     int getStation() const { return station; }
-    const miutil::miTime & getTime() const { return otime; }
+    const timeutil::ptime & getTime() const { return otime; }
     int getType() const { return type; }
 
   private:
@@ -71,11 +74,11 @@ namespace Weather
     };
 
     typedef std::set<kvDataPtr, ltKvDataPtr> DataCollection;
-    
+
     DataCollection data;
 
     int station;
-    miutil::miTime otime;
+    timeutil::ptime otime;
     int type;
   };
 
@@ -86,10 +89,10 @@ namespace Weather
    * \warning Caller must delete the returned object when done.
    * \throws std::runtime_error if unable to contact kvalobs.
    */
-  TimeObsListPtr getTimeObs( int station, 
-			     const miutil::miTime & from, 
-			     const miutil::miTime & to,
-			     int type, 
+  TimeObsListPtr getTimeObs( int station,
+			     const timeutil::ptime& from,
+			     const timeutil::ptime& to,
+			     int type,
 			     bool processEvents = true );
 
   /**
@@ -98,11 +101,11 @@ namespace Weather
    *
    * \warning Caller must delete the holder object when done.
    */
-  std::auto_ptr< boost::thread > 
-  thread_getTimeObs( TimeObsListPtr & holder, 
-		     int station, 
-		     const miutil::miTime & from, 
-		     const miutil::miTime & to );
+  std::auto_ptr< boost::thread >
+  thread_getTimeObs( TimeObsListPtr & holder,
+		     int station,
+		     const timeutil::ptime& from,
+		     const timeutil::ptime& to );
 }
 
 

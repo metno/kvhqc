@@ -30,18 +30,17 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "DayObs.h"
 #include "enums.h"
-#include <puTools/miTime.h>
 #include <kvcpp/KvApp.h>
 #include <kvcpp/WhichDataHelper.h>
 #include <kvalobs/kvDataOperations.h>
-#include <cmath>
-#include <limits>
-#include <boost/thread.hpp>
+#include <decodeutility/kvDataFormatter.h>
 
+#include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
+#include <cmath>
+#include <limits>
 #include <iostream>
-#include <decodeutility/kvDataFormatter.h>
 
 using namespace std;
 using namespace kvalobs;
@@ -56,7 +55,7 @@ namespace WatchRR
   static bool sameobs( const kvData &d, int type, int sensor, int level );
 
 
-  DayObs::DayObs( int station, miDate date, int type, int sensor, int level )
+  DayObs::DayObs( int station, const timeutil::pdate& date, int type, int sensor, int level )
     : station( station )
     , date( date )
     , type( abs(type) )
@@ -64,17 +63,17 @@ namespace WatchRR
     , level( level )
     , modelRR( std::numeric_limits<float>().min() )
   {
-    cerr << "Getting observations for " << date << endl;
+    cerr << "Getting observations for " << timeutil::to_iso_extended_string(date) << endl;
 
     // 7 o'clock , because some stations send RR_24 obs with time = 07:00
-    miTime stop( date, miClock( 07, 00, 01 ) );
-    date.addDay( -1 );
-    miTime start( date, miClock( 11, 59, 59 ) );
+    timeutil::ptime stop(date, boost::posix_time::time_duration(07, 00, 01));
+    const timeutil::pdate date_s = date + boost::gregorian::days(-1);
+    timeutil::ptime start(date_s, boost::posix_time::time_duration(11, 59, 59));
 
     KvObsDataList dataList;
 
     WhichDataHelper wdh;
-    wdh.addStation( station, start, stop );
+    wdh.addStation( station, timeutil::to_miTime(start), timeutil::to_miTime(stop) );
 
     bool ok = KvApp::kvApp->getKvData( dataList, wdh );
     if ( not ok )
@@ -140,7 +139,7 @@ namespace WatchRR
 		return find.get_date( year );
 	}
 
-	bool summertime( const miDate & d )
+	bool summertime( const timeutil::pdate & d )
 	{
 		date_period summertime( summertime_start( d.year() ), summertime_end( d.year() ) );
 	  	date queryDate( d.year(), d.month(), d.day() );
@@ -148,17 +147,13 @@ namespace WatchRR
   	}
   }
 
-  kvData & DayObs::get( int paramID, const miClock &clock )
+  kvData & DayObs::get( int paramID, const boost::posix_time::time_duration& clock )
   {
-    miDate d = date;
-    if ( clock > miClock(7,0,0) )
-      d.addDay( -1 );
-    /*
-    if ( type == 402 and clock == miClock( 6,0,0 ) and not summertime( date ) )
-    	return get( paramID, miClock( 7,0,0 ) );
-    */
+    timeutil::pdate d = date;
+    if ( clock > boost::posix_time::time_duration(7,0,0) )
+      d += boost::gregorian::days(-1);
     kvDataPtr tmp( new kvData(
-      getMissingKvData( station, miTime( d, clock ), paramID, type, sensor, level ) ) );
+      getMissingKvData( station, timeutil::to_miTime(timeutil::ptime(d, clock)), paramID, type, sensor, level ) ) );
 
     pair<DataCollection::iterator, bool> result = data.insert( tmp );
     DataCollection::iterator & dc = result.first;
@@ -221,11 +216,11 @@ namespace WatchRR
   }
 
   DayObsListPtr getDayObs( int station, int type, int sensor, int level,
-			   const miDate & from, const miDate & to,
+			   const timeutil::pdate& from, const timeutil::pdate& to,
 			   bool processEvents )
   {
     DayObsListPtr ret( new DayObsList );
-    for ( miDate date = from; date < to; date.addDay() ) {
+    for ( timeutil::pdate date = from; date < to; date += boost::gregorian::days(1) ) {
       ret->push_back( DayObs( station, date, type, sensor, level ) );
     }
     return ret;
@@ -235,12 +230,12 @@ namespace WatchRR
     struct thread_obj_getDayObs {
       DayObsListPtr & holder;
       int station, type, sensor, level;
-      const miDate & from;
-      const miDate & to;
+      const timeutil::pdate& from;
+      const timeutil::pdate& to;
 
       thread_obj_getDayObs( DayObsListPtr & holder,
 			    int station, int type, int sensor, int level,
-			    const miDate & from, const miDate & to )
+			    const timeutil::pdate& from, const timeutil::pdate& to )
 	: holder(holder), station(station), type(type), sensor(sensor)
 	, level(level), from(from), to(to)
 
@@ -264,7 +259,7 @@ namespace WatchRR
   auto_ptr< boost::thread >
   thread_getDayObs( DayObsListPtr & holder,
 		    int station, int type, int sensor, int level,
-		    const miutil::miDate & from, const miutil::miDate & to )
+		    const timeutil::pdate& from, const timeutil::pdate& to )
   {
     thread_obj_getDayObs tog( holder, station, type, sensor, level, from, to );
     auto_ptr< boost::thread > ret( new boost::thread( tog ) );

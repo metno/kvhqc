@@ -38,8 +38,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "weathertableitem.h"
 #include "flagitem.h"
 #include "selfexplainable.h"
+
 #include <decodeutility/DataReinserter.h>
-#include <puTools/miDate.h>
 
 #include <QtGui/qtooltip.h>
 #include <QtCore/QMap>
@@ -144,7 +144,7 @@ namespace Weather
     };
 
     struct Corrig {
-      miutil::miTime oTime;
+      timeutil::ptime oTime;
       QString parName;
       float oldVal;
       float newVal;
@@ -152,18 +152,18 @@ namespace Weather
     synDat sd;
     Corrig corr;
     int station;
-    const miutil::miDate refDate;
-    std::vector<miutil::miTime> timeList;
+    const timeutil::pdate refDate;
+    std::vector<timeutil::ptime> timeList;
     QString flagText(const std::string&);
     void displayHorizontalHeader();
-    void displayVerticalHeader(std::vector<miutil::miTime>&);
+    void displayVerticalHeader(std::vector<timeutil::ptime>&);
     void displayData(QString, std::vector<synDat>&, std::vector<synFlg>&);
     void displayFlags(std::vector<synFlg>&);
     void readLimits();
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
-    //    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, ObsPgmList obsPgmList);
-    int findTypeId(int typ, int pos, int par, miutil::miTime oTime, std::list<kvalobs::kvObsPgm> obsPgmList);
+    //    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, ObsPgmList obsPgmList);
+    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, std::list<kvalobs::kvObsPgm> obsPgmList);
   protected slots:
     /**
      * \brief Update status bar with info from cell.

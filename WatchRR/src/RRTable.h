@@ -35,9 +35,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dataconsistencyverifier.h"
 #include "RRTableItem.h"
 #include <decodeutility/DataReinserter.h>
-#include <qtooltip.h>
-#include <q3table.h>
-#include <puTools/miDate.h>
+
+#include <QtGui/qtooltip.h>
+#include <Qt3Support/q3table.h>
+
 #include <utility>
 #include <vector>
 #include <set>
@@ -56,7 +57,7 @@ namespace WatchRR
   class RRTableToolTip;
 
 
-  class RRTable 
+  class RRTable
     : public Q3Table
   {
     Q_OBJECT;
@@ -67,7 +68,7 @@ namespace WatchRR
     /**
      * \throws std::runtime_error if error happens when contacting kvalobs.
      */
-    RRTable( int station, const miutil::miDate &date, 
+    RRTable( int station, const timeutil::pdate &date,
 	     int type, int sensor, int level,
 	     QWidget *parent = 0, const char *name = 0 );
 
@@ -79,19 +80,19 @@ namespace WatchRR
     /**
      * \brief [Start, stop) dates for which to fetch data.
      */
-    typedef std::pair<miutil::miDate, miutil::miDate> DateRange;
+    typedef std::pair<timeutil::pdate, timeutil::pdate> DateRange;
 
     /**
      * \brief Date range for editor
      */
-    const DateRange & getDateRange() const { return dateRange; }
+    const DateRange& getDateRange() const { return dateRange; }
 
     int getStation() const { return station; }
-    const miutil::miDate &getRefDate() const { return refDate; }
+    const timeutil::pdate& getRefDate() const { return refDate; }
     int getType() const { return type; }
     int getSensor() const { return sensor; }
     int getLevel() const { return level; }
-    
+
     void getModifiedData( DataConsistencyVerifier::DataSet & mod );
 
     virtual QSize sizeHint() const;
@@ -102,7 +103,7 @@ namespace WatchRR
      * \brief Save modified data
      */
     virtual bool saveData( const kvalobs::DataReinserter<kvservice::KvApp> *ri );
-    
+
     //    virtual void ensurePolished();
 
   protected slots:
@@ -120,7 +121,7 @@ namespace WatchRR
     /**
      * \brief Get start and stop dates for which to fetch data.
      */
-    static RRTable::DateRange calculateDateRange( const miutil::miDate & refDate,
+    static RRTable::DateRange calculateDateRange( const timeutil::pdate& refDate,
 						  int daysToDisplay = 15 );
 
     virtual void displayData();
@@ -128,7 +129,7 @@ namespace WatchRR
     /**
      * \brief Calculate the text for a single element of the vertical header.
      */
-    virtual QString verticalHeaderText( const miutil::miDate &date ) const;
+    virtual QString verticalHeaderText( const timeutil::pdate& date ) const;
 
     DayObsListPtr observations;
 
@@ -144,7 +145,7 @@ namespace WatchRR
 
   private:
     int station;
-    const miutil::miDate refDate;
+    const timeutil::pdate refDate;
     DateRange dateRange;
     int type;
     int sensor;
@@ -153,7 +154,7 @@ namespace WatchRR
     void setupTable();
     void setColumnOrder();
     const std::vector<QString> & getHeaderOrder() const;
-    
+
     //static const int daysToDisplay = 14;
 
   public:
@@ -161,7 +162,7 @@ namespace WatchRR
     //    QToolTipGroup *ttGroup;
 
   };
-  
+
 }
 
 #endif // __WatchRR__RRTable_h__

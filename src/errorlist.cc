@@ -74,8 +74,8 @@ const int headSize = 0;
  * \brief Constructs the error list
  */
 ErrorList::ErrorList(QStringList& selPar,
-		     const miutil::miTime& stime,
-		     const miutil::miTime& etime,
+		     const timeutil::ptime& stime,
+		     const timeutil::ptime& etime,
 		     int noSel,
 		     int noParam,
 		     QWidget* parent,
@@ -181,7 +181,6 @@ ErrorList::ErrorList(QStringList& selPar,
   horizontalHeader()->setLabel(18, tr("Korrigert"));
   horizontalHeader()->setLabel(19, tr("Forkastet"));
   horizontalHeader()->setLabel(20, "");
-  QString strDat;
   int insRow = 0;
   int missCount = 0;
   int prevTime = -1;
@@ -206,7 +205,7 @@ ErrorList::ErrorList(QStringList& selPar,
 
           const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
           if ( fnum == 6 ) {
-              const int tdiff = miutil::miTime::hourDiff(data.otime(),stime);
+              const int tdiff = timeutil::hourDiff(data.otime(),stime);
               missObs mobs;
               mobs.oTime = data.otime();
               mobs.time = tdiff;
@@ -260,7 +259,7 @@ ErrorList::ErrorList(QStringList& selPar,
       memObs.morig = -32767.0;
 
       for ( unsigned int k = 0; k < mdtl.size(); k++) {
-	miutil::miTime modeltime = mdtl[k].otime;
+	const timeutil::ptime& modeltime = mdtl[k].otime;
 	int modelstnr = mdtl[k].stnr;
 	if ( modelstnr == memObs.stnr && modeltime == memObs.obstime ) {
 	  for ( int l = 0; l < NOPARAMMODEL; l++ ) {
@@ -361,14 +360,14 @@ ErrorList::ErrorList(QStringList& selPar,
   int es = error.size();
   for ( unsigned int i = 0; i < error.size(); i++ ) {
     int stnr = memStore1[error[es-1-i]].stnr;
-    miutil::miTime obstime = memStore1[error[es-1-i]].obstime;
+    timeutil::ptime obstime = memStore1[error[es-1-i]].obstime;
     if ( memStore2.size() > 0 ) {
       unsigned int iCount = 0;
       vector<mem>::iterator memO = memStore2.begin();
       for ( ;memO != memStore2.end(); memO++ ) {
 	iCount++;
 	int cStnr = memO->stnr;
-	miutil::miTime cTime = memO->obstime;
+	timeutil::ptime cTime = memO->obstime;
 	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore2.size() )
 	  continue;
 	else {
@@ -438,80 +437,6 @@ ErrorList::ErrorList(QStringList& selPar,
     delete memStore;
   }
 
-
-//  //
-//  //Reference stations
-//  //
-//  refs rStat;
-//  vector<refs> rStatList;
-//  int pstnr = 0;
-//  int ppanr = 0;
-//  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-//
-//    int stnr =  memStore1[i].stnr;
-//    int panr =  memStore1[i].parNo;
-//    rStat.stnr = stnr;
-//    rStat.parNo = panr;
-//    double lat, lon, olat, olon;
-//
-//    if ( stnr != pstnr ) {  // If new station: find position
-//      std::list<kvStation>::const_iterator it=slist.begin();
-//      for ( ;it!=slist.end(); it++){
-//	if (  it->stationID() == stnr ) {
-//	  lat = it->lat();
-//	  lon = it->lon();
-//	  break;
-//	}
-//      }
-//    }
-//    if ( pstnr != stnr || ( pstnr == stnr && panr != ppanr )) {
-//      // If new station, or new parameter at same station:  loop through obs_pgm
-//      for(CIObsPgmList obit=obsPgmList.begin();obit!=obsPgmList.end(); obit++){
-//	int ostnr = obit->stationID();
-//	int opanr = obit->paramID();
-//	if ( ostnr != stnr && opanr == panr ) { //another station which has the same parameter
-//
-//	  std::list<kvStation>::const_iterator it=slist.begin();
-//	  for ( ;it!=slist.end(); it++){  //find position of the other staTION
-//	    if ( it->stationID() == ostnr ) {
-//	      olat = it->lat();
-//	      olon = it->lon();
-//	      break;
-//	    }
-//	  }
-//	  rStat.dist = calcdist( olon, olat, lon, lat);// Find distance between stations
-//	  rStat.rstnr = ostnr;
-//	  if (rStatList.size() == 0 )
-//	    rStatList.push_back(rStat);
-//	  else {
-//	    bool ins = false;
-//	    for ( vector<refs>::iterator dit = rStatList.begin();
-//		  dit != rStatList.end(); dit++ ) {
-//	      if ( rStat.stnr == dit->stnr &&
-//		   rStat.parNo == dit->parNo &&
-//		   rStat.rstnr == dit->rstnr) {
-//		ins = true;
-//		break;
-//	      }
-//	      if ( rStat.stnr <= dit->stnr &&
-//		   rStat.dist < dit->dist &&
-//		   rStat.parNo < dit->parNo &&
-//		   rStat.rstnr != dit->rstnr) {
-//		rStatList.insert(dit, rStat);
-//		ins = true;
-//		break;
-//	      }
-//	    }
-//      	    if ( !ins )
-//	      rStatList.push_back(rStat);
-//	  }
-//	}
-//      }
-//    }
-//    pstnr = stnr;
-//    ppanr = panr;
-//  }
-
   setNumRows( memStore2.size() + headSize );
   for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
     setRowReadOnly( insRow + headSize, false);
@@ -526,7 +451,7 @@ ErrorList::ErrorList(QStringList& selPar,
     if ( memStore2[i].controlinfo.substr(1,1) == "6" && memStore2[i].controlinfo.substr(7,1) == "1"  )
       continue;
 
-    strDat = strDat.setNum(memStore2[i].stnr);
+    QString strDat = strDat.setNum(memStore2[i].stnr);
     DataCell* snIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,1,snIt);
 
@@ -534,15 +459,16 @@ ErrorList::ErrorList(QStringList& selPar,
     DataCell* naIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,2,naIt);
 
-    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(5,2);
+    const QString isoDate = QString::fromStdString(timeutil::to_iso_extended_string(memStore2[i].obstime));
+    strDat = isoDate.mid(5,2);
     DataCell* moIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,3,moIt);
 
-    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(8,2);
+    strDat = isoDate.mid(8,2);
     DataCell* dyIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,4,dyIt);
 
-    strDat = QString(memStore2[i].obstime.isoTime().cStr()).mid(11,2);
+    strDat = isoDate.mid(11,2);
     DataCell* clIt = new DataCell(this, Q3TableItem::Never,strDat);
     setItem(insRow + headSize,5,clIt);
 
@@ -869,22 +795,24 @@ double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
   return 6378.0*dist;
 }
 
-bool ErrorList::specialTimeFilter( int par, miutil::miTime otime) {
+bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime) {
   bool spf = true;
-  if ( ((par == 214 || par == 216) && !(otime.hour() == 6 || otime.hour() == 18)) ||
-       (par == 112 && otime.hour() != 6) ){
+  const int otime_hour = otime.time_of_day().hours();
+  if ( ((par == 214 || par == 216) && !(otime_hour == 6 || otime_hour == 18)) ||
+       (par == 112 && otime_hour != 6) ){
     spf = false;
   }
   return spf;
 }
 
-bool ErrorList::typeFilter(int stnr, int par, int typeId, miutil::miTime otime) {
+bool ErrorList::typeFilter(int stnr, int par, int typeId, const timeutil::ptime& otime) {
   //??
   //  if ( typeId  == 501 ) return false;
   //??
   bool tpf = false;
   for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
-    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime.date() >= (*it).fDate && otime.date() <= (*it).tDate )
+      const timeutil::pdate otime_date = otime.date();
+    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime_date >= (*it).fDate && otime_date <= (*it).tDate )
       tpf = true;
   }
   return tpf;
@@ -1217,7 +1145,7 @@ void ErrorList::signalStationSelected( int row )
   letter.command = qmstrings::station;
   letter.common = boost::lexical_cast<std::string>(m->stnr);
   letter.common.append(",");
-  letter.common.append(m->obstime.isoTime());
+  letter.common.append(timeutil::to_iso_extended_string(m->obstime));
   emit statSel( letter );
 
 }
@@ -1279,7 +1207,7 @@ const struct ErrorList::mem *ErrorList::getMem( int row ) const
 kvData
 ErrorList::getKvData( const struct ErrorList::mem &m ) const
 {
-  return kvData( m.stnr, m.obstime, m.orig, m.parNo, m.tbtime,
+  return kvData( m.stnr, timeutil::to_miTime(m.obstime), m.orig, m.parNo, timeutil::to_miTime(m.tbtime),
 		 m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
 		 m.useinfo, m.cfailed );
 }

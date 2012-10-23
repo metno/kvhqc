@@ -1,5 +1,5 @@
 /*
- Kvalobs - Free Quality Control Software for Meteorological Observations 
+ Kvalobs - Free Quality Control Software for Meteorological Observations
 
  Copyright (C) 2010 met.no
 
@@ -13,17 +13,17 @@
  This file is part of KVALOBS
 
  KVALOBS is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License as 
- published by the Free Software Foundation; either version 2 
+ modify it under the terms of the GNU General Public License as
+ published by the Free Software Foundation; either version 2
  of the License, or (at your option) any later version.
- 
+
  KVALOBS is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of
  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  General Public License for more details.
- 
- You should have received a copy of the GNU General Public License along 
- with KVALOBS; if not, write to the Free Software Foundation Inc., 
+
+ You should have received a copy of the GNU General Public License along
+ with KVALOBS; if not, write to the Free Software Foundation Inc.,
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
@@ -50,8 +50,8 @@ public:
   double latitude;
   double longitude;
   double altitude;
-  miutil::miTime otime;
-  miutil::miTime tbtime;
+  timeutil::ptime otime;
+  timeutil::ptime tbtime;
   int showTypeId;
   int typeIdChanged;
 
@@ -178,21 +178,21 @@ void KvalobsData::set_altitude(double value)
   impl().altitude = value;
 }
 
-const miutil::miTime & KvalobsData::otime() const
+const timeutil::ptime& KvalobsData::otime() const
 {
   return impl().otime;
 }
-void KvalobsData::set_otime(const miutil::miTime & value)
+void KvalobsData::set_otime(const timeutil::ptime & value)
 {
   impl().otime = value;
 }
 
 
-const miutil::miTime & KvalobsData::tbtime() const
+const timeutil::ptime& KvalobsData::tbtime() const
 {
   return impl().tbtime;
 }
-void KvalobsData::set_tbtime(const miutil::miTime & value)
+void KvalobsData::set_tbtime(const timeutil::ptime& value)
 {
   impl().tbtime = value;
 }
@@ -499,10 +499,10 @@ kvalobs::kvData KvalobsData::getKvData(std::size_t paramid) const
 {
   return kvalobs::kvData(
       stnr(),
-      otime(),
+      timeutil::to_miTime(otime()),
       orig(paramid),
       paramid,
-      tbtime(),
+      timeutil::to_miTime(tbtime()),
       typeId(paramid),
       sensor(paramid),
       level(paramid),

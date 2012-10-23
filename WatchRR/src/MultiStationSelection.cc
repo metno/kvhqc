@@ -32,25 +32,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "RRDialog.h"
 #include "BusyIndicator.h"
-#include <puTools/miDate.h>
+
 #include <kvcpp/KvApp.h>
+
 #include <QtGui/QApplication>
-#include <q3listview.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <QKeyEvent>
-#include <Q3VBoxLayout>
+#include <QtGui/QKeyEvent>
+#include <QtGui/qlayout.h>
+#include <QtGui/qmessagebox.h>
+#include <QtGui/qpushbutton.h>
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/Q3VBoxLayout>
+
 #include <boost/thread.hpp>
 
 #include <cassert>
-
 #include <iostream>
 
 using namespace kvalobs;
-using namespace miutil;
 using namespace std;
 
 namespace WatchRR
@@ -168,17 +167,17 @@ namespace WatchRR
     stations->insertItem( it );
   }
 
-  pair<miDate, miDate> dates_( const miDate & d )
+  std::pair<timeutil::pdate, timeutil::pdate> dates_( const timeutil::pdate& d )
   {
     int year = d.year();
     int month = d.month();
-    miDate start( year, month, 1 );
+    timeutil::pdate start( year, month, 1 );
     if ( ++month == 13 ) {
       ++year;
       month = 1;
     }
-    miDate stop( year, month, 1 );
-    pair<miDate, miDate> dates( start, stop );
+    timeutil::pdate stop( year, month, 1 );
+    std::pair<timeutil::pdate, timeutil::pdate> dates( start, stop );
     return dates;
   }
 
@@ -192,7 +191,7 @@ namespace WatchRR
     assert( ss );
     const kvData * d = & ss->data;
 
-    pair<miDate, miDate> dates = dates_( d->obstime().date() );
+    std::pair<timeutil::pdate, timeutil::pdate> dates = dates_( timeutil::from_miTime(d->obstime()).date() );
 
     DayObsListPtr next;
     try {
@@ -224,7 +223,7 @@ namespace WatchRR
     	ss = dynamic_cast<MSSListItem *>( it );
     	assert( ss );
     	d = & ss->data;
-    	dates = dates_( d->obstime().date() );
+    	dates = dates_( timeutil::from_miTime(d->obstime()).date() );
     	thread = thread_getDayObs( next, d->stationID(), d->typeID(), d->sensor(), d->level(), dates.first, dates.second );
       }
 

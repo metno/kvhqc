@@ -31,14 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__MultiStationSelection_h__
 #define __Weather__MultiStationSelection_h__
 
-#include <qdialog.h>
-//Added by qt3to4:
-#include <QKeyEvent>
-#include <vector>
-#include <iterator>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
 #include <decodeutility/DataReinserter.h>
+
+#include <QtGui/qdialog.h>
+#include <QtGui/QKeyEvent>
+
+#include <vector>
+#include <iterator>
 
 class Q3ListView;
 class Q3TabDialog;

@@ -31,12 +31,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __WatchRR__DayObs_h__
 #define __WatchRR__DayObs_h__
 
+#include "timeutil.hh"
 #include <kvalobs/kvData.h>
-#include <puTools/miDate.h>
+#include <boost/shared_ptr.hpp>
 #include <set>
 #include <vector>
 #include <memory>
-#include <boost/shared_ptr.hpp>
 
 namespace boost {
   class thread;
@@ -50,16 +50,15 @@ namespace WatchRR
     /**
      * \throws std::runtime_error if unable to contact kvalobs.
      */
-    DayObs( int station, miutil::miDate date, 
+    DayObs( int station, const timeutil::pdate& date,
 	    int type, int sensor, int level );
     ~DayObs( );
 
-    kvalobs::kvData & get( int paramID, 
-			   const miutil::miClock & time =
-			   miutil::miClock(6,0,0) );
-         
+    kvalobs::kvData & get( int paramID,
+			   const boost::posix_time::time_duration& time = boost::posix_time::time_duration(6,0,0) );
+
     void getAll( std::list<kvalobs::kvData *> & out ) const;
-    
+
     /**
      * \return The model value for RR_24, or std::numeric_limits<float>().min()
      * if no model value is available.
@@ -67,7 +66,7 @@ namespace WatchRR
     float getModelRR() const;
 
     int getStation() const { return station; }
-    const miutil::miDate & getDate() const { return date; }
+    const timeutil::pdate& getDate() const { return date; }
     int getType() const { return type; }
     int getSensor() const { return sensor; }
     int getLevel() const { return level; }
@@ -82,15 +81,15 @@ namespace WatchRR
     };
 
     typedef std::set<kvDataPtr, ltKvDataPtr> DataCollection;
-    
+
     DataCollection data;
 
     int station;
-    miutil::miDate date;
+    timeutil::pdate date;
     int type;
     int sensor;
     int level;
-    float modelRR;    
+    float modelRR;
   };
 
   typedef std::vector<DayObs> DayObsList;
@@ -100,9 +99,9 @@ namespace WatchRR
    * \warning Caller must delete the returned object when done.
    * \throws std::runtime_error if unable to contact kvalobs.
    */
-  DayObsListPtr getDayObs( int station, int type, int sensor, int level, 
-			   const miutil::miDate & from, 
-			   const miutil::miDate & to, 
+  DayObsListPtr getDayObs( int station, int type, int sensor, int level,
+			   const timeutil::pdate & from,
+			   const timeutil::pdate & to,
 			   bool processEvents = true );
 
   /**
@@ -111,10 +110,10 @@ namespace WatchRR
    *
    * \warning Caller must delete the holder object when done.
    */
-  std::auto_ptr< boost::thread > 
-  thread_getDayObs( DayObsListPtr & holder, 
-		    int station, int type, int sensor, int level, 
-		    const miutil::miDate & from, const miutil::miDate & to );
+  std::auto_ptr< boost::thread >
+  thread_getDayObs( DayObsListPtr & holder,
+		    int station, int type, int sensor, int level,
+		    const timeutil::pdate & from, const timeutil::pdate & to );
 }
 
 

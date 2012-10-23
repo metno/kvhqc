@@ -39,24 +39,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "OkCheckTableItem.h"
 #include "ControlFlagCell.h"
 #include "BusyIndicator.h"
-#include <algorithm>
-#include <cmath>
+
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
-#include <sstream>
 #include <QtGui/qapplication.h>
 #include <QtGui/qmessagebox.h>
 #include <QtGui/qstatusbar.h>
+
 #include <boost/assign/std/vector.hpp>
 
+#include <algorithm>
 #include <cassert>
-
+#include <cmath>
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 using namespace boost::assign;
 using namespace WatchRR::cell;
 
@@ -93,7 +93,7 @@ namespace WatchRR
     connect( this, SIGNAL(currentChanged(int,int)), SLOT(updateStatusbar(int,int)));
   }
 
-  RRTable::RRTable( int station, const miDate &date,
+  RRTable::RRTable( int station, const timeutil::pdate& date,
                     int type, int sensor, int level,
                     QWidget *parent, const char *name )
       : Q3Table( parent, name )
@@ -105,8 +105,8 @@ namespace WatchRR
     setup();
 
     cerr << "Dates (from - to):" << endl
-    << getDateRange().first  << " - "
-    << getDateRange().second << endl;
+         << timeutil::to_iso_extended_string(getDateRange().first) << " - "
+         << timeutil::to_iso_extended_string(getDateRange().second) << endl;
 
     BusyIndicator busy;
     observations = getDayObs( getStation(), getType(), getSensor(), getLevel(),
@@ -117,8 +117,8 @@ namespace WatchRR
   RRTable::DateRange getDateRange_( std::vector<DayObs> * dayobs )
   {
     assert( dayobs->begin() != dayobs->end() );
-    miDate start = dayobs->begin()->getDate();
-    miDate end = dayobs->rbegin()->getDate();
+    const timeutil::pdate& start = dayobs->begin()->getDate();
+    const timeutil::pdate& end = dayobs->rbegin()->getDate();
     return RRTable::DateRange( start, end );
   }
 
@@ -150,7 +150,7 @@ namespace WatchRR
 
   namespace
   {
-    inline KvDataProvider::Data getVx_( int param, const miClock & clock, DayObs & dobs )
+    inline KvDataProvider::Data getVx_( int param, const boost::posix_time::time_duration& clock, DayObs & dobs )
     {
       KvDataProvider::Data ret;
       ret.push_back( & dobs.get( param, clock ) );
@@ -206,7 +206,7 @@ namespace WatchRR
       //      setItem( i, toCol[RR_24_model], new RR_24DataTableItem( this, getModelRR_( dobs ), "modellverdi" ) );
       setItem( i, toCol[ Collected ], new FDCheckTableItem( this, d ) );
 
-      kvData & sa = dobs.get(SA, miClock(6,0,0));
+      kvData & sa = dobs.get(SA, boost::posix_time::time_duration(6,0,0));
       snow::SADataTableItem* sa_orig_= new snow::SADataTableItem( this, interpretOrig_( sa ) );
       setItem( i, toCol[SA_orig], sa_orig_ );
       sa_orig_->isCorrectedByQC2 = false;
@@ -220,7 +220,7 @@ namespace WatchRR
       sa_flag_->isCorrectedByQC2 = false;
       //      setItem( i, toCol[SA_flag], new ControlFlagCell( this, sa ) );
 
-      kvData & sd = dobs.get(SD, miClock(6,0,0));
+      kvData & sd = dobs.get(SD, boost::posix_time::time_duration(6,0,0));
       snow::SDDataTableItem* sd_orig_= new snow::SDDataTableItem( this, interpretOrig_( sd ) );
       setItem( i, toCol[SD_orig], sd_orig_ );
       sd_orig_->isCorrectedByQC2 = false;
@@ -234,16 +234,16 @@ namespace WatchRR
       sd_flag_->isCorrectedByQC2 = false;
       //      setItem( i, toCol[SD_flag], new ControlFlagCell( this, sd ) );
 
-      miClock clock( 12,0,0 ); // 12:00 - Day before
+      boost::posix_time::time_duration clock( 12,0,0 ); // 12:00 - Day before
       KvDataProvider::Data dv4;
       setItem( i, toCol[V4_12], new VxKvDataTableItem( this, getVx_( V4, clock, dobs ) ) );
       setItem( i, toCol[V5_12], new VxKvDataTableItem( this, getVx_( V5, clock, dobs ) ) );
       setItem( i, toCol[V6_12], new VxKvDataTableItem( this, getVx_( V6, clock, dobs ) ) );
-      clock.addHour( 6 );      // 18:00 - Day before
+      clock += boost::posix_time::hours(6);      // 18:00 - Day before
       setItem( i, toCol[V4_18], new VxKvDataTableItem( this, getVx_( V4, clock, dobs ) ) );
       setItem( i, toCol[V5_18], new VxKvDataTableItem( this, getVx_( V5, clock, dobs ) ) );
       setItem( i, toCol[V6_18], new VxKvDataTableItem( this, getVx_( V6, clock, dobs ) ) );
-      clock.addHour( 12 );    // 06:00 - Same day
+      clock += boost::posix_time::hours(12);    // 06:00 - Same day
       setItem( i, toCol[V4_06], new VxKvDataTableItem( this, getVx_( V4, clock, dobs ) ) );
       setItem( i, toCol[V5_06], new VxKvDataTableItem( this, getVx_( V5, clock, dobs ) ) );
       setItem( i, toCol[V6_06], new VxKvDataTableItem( (Q3Table*)this, getVx_( V6, clock, dobs ) ) );
@@ -256,13 +256,13 @@ namespace WatchRR
       dobs.getAll( okdl );
       setItem( i, toCol[ ObservationOk ], new OkCheckTableItem( this, okdl ) );
 
-      miTime time = d.obstime();
-      miDate date = time.date();
+      const timeutil::ptime time = timeutil::from_miTime(d.obstime());
+      timeutil::pdate date = time.date();
       if ( date == getRefDate() )
         setCurrentCell( i, toCol[ RR_24_corr ] );
-      if ( date.day() == miDate::Thursday )
+      if ( date.day() == boost::gregorian::Thursday )
         ensureCellVisible( i, 0 );
-      date.addDay( -1 );
+      date += boost::gregorian::days(-1);
       verticalHeader()->setLabel( i, verticalHeaderText( date ) );
 
     }
@@ -296,31 +296,30 @@ namespace WatchRR
     Q3Table::activateNextCell();
   }
 
-  RRTable::DateRange RRTable::calculateDateRange( const miDate & refDate, int daysToDisplay )
+  RRTable::DateRange RRTable::calculateDateRange( const timeutil::pdate& refDate, int daysToDisplay )
   {
-    miDate stop = refDate;
-    miDate::days day = (miDate::days) stop.dayOfWeek();
-    int addDays = miDate::Friday - day;
+    timeutil::pdate stop = refDate;
+    const int day = stop.day_of_week();
+    int addDays = boost::gregorian::Friday - day;
     if ( addDays <= 0 )
       addDays += 7;
     else if ( addDays < 4 )
       addDays = 4;
-    stop.addDay( addDays );
-    miDate latestDisplayable = miDate::today();
-    latestDisplayable.addDay( 2 );
+    stop += boost::gregorian::days(addDays);
+    const timeutil::pdate latestDisplayable = timeutil::now().date() + boost::gregorian::days(2);
     if ( stop > latestDisplayable )
       stop = latestDisplayable;
-    miDate start = stop;
-    start.addDay( - daysToDisplay );
+    timeutil::pdate start = stop;
+    start += boost::gregorian::days(-daysToDisplay);
 
     return DateRange( start, stop );
   }
 
 
-  QString RRTable::verticalHeaderText( const miDate &date ) const
+  QString RRTable::verticalHeaderText( const timeutil::pdate& date ) const
   {
     ostringstream s;
-    s << Days[ date.dayOfWeek()].toStdString() << " "
+    s << Days[ date.day_of_week()].toStdString() << " "
     << date.day() << "/"
     << date.month();
     return QString::fromStdString(s.str());
@@ -440,15 +439,15 @@ namespace WatchRR
 
     for ( list<kvData>::const_iterator it = dl.begin(); it != dl.end(); ++ it )
     {
-      miutil::miTime t = it->obstime();
-      miutil::miDate d = t.date();
-      if ( t.hour() > 7 )
-        d.addDay();
+      const timeutil::ptime t = timeutil::from_miTime(it->obstime());
+      timeutil::pdate d = t.date();
+      if ( t.time_of_day().hours() > 7 )
+          d += boost::gregorian::days(1);
       for ( std::vector<DayObs>::iterator dobs = observations->begin(); dobs != observations->end(); ++ dobs )
       {
         if ( dobs->getDate() == d )
         {
-          kvData & data = dobs->get( it->paramID(), it->obstime().clock() );
+          kvData & data = dobs->get( it->paramID(), timeutil::from_miTime(it->obstime()).time_of_day() );
           data = * it;
         }
       }

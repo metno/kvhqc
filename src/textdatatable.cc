@@ -13,7 +13,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
   setMinimumWidth(720);
   setMinimumHeight(1000);
   QFont font("Courier", 9, QFont::DemiBold);
-  setFont(font);  
+  setFont(font);
   QStringList horizontalHeaderLabels;
   horizontalHeaderLabels.append(  tr( "Stationid" ) );
   horizontalHeaderLabels.append(  tr( "Obstime" ) );
@@ -29,7 +29,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
     setItem(iRow, 0, stationItem);
     resizeColumnToContents(0);
     //    QTableWidgetItem* obstimeItem = new QTableWidgetItem(txtList[iRow].obstime.format("%e/%m %Y %H:%M:%S").cStr());
-    QTableWidgetItem* obstimeItem = new QTableWidgetItem(txtList[iRow].obstime.format("%Y-%m-%e %H:%M:%S").cStr());
+    QTableWidgetItem* obstimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(txtList[iRow].obstime)));
     setItem(iRow, 1, obstimeItem);
     resizeColumnToContents(1);
     QTableWidgetItem* originalItem = new QTableWidgetItem(QString(txtList[iRow].original.c_str()));
@@ -41,7 +41,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
     QTableWidgetItem* paramNameItem = new QTableWidgetItem(QString(parMap[txtList[iRow].paramId]));
     setItem(iRow, 4, paramNameItem);
     resizeColumnToContents(4);
-    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(txtList[iRow].tbtime.format("%Y-%m-%e %H:%M:%S").cStr());
+    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(txtList[iRow].tbtime)));
     setItem(iRow, 5, tbtimeItem);
     resizeColumnToContents(5);
     QTableWidgetItem* typeItem = new QTableWidgetItem(QString::number(txtList[iRow].typeId));

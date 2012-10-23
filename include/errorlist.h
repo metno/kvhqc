@@ -36,7 +36,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsData.h"
 #include "KvalobsDataModel.h"
 
-#include <puTools/miTime.h>
 #include <qUtilities/miMessage.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvObsPgm.h>
@@ -178,8 +177,8 @@ class ErrorList : public Q3Table {
   Q_OBJECT
 public:
   ErrorList(QStringList&,
-	    const miutil::miTime&,
-	    const miutil::miTime&,
+	    const timeutil::ptime&,
+	    const timeutil::ptime&,
 	    int,
 	    int,
 	    QWidget*,
@@ -217,8 +216,8 @@ public:
     QString parName;
     int stnr;
     QString name;
-    miutil::miTime obstime;
-    miutil::miTime tbtime;
+    timeutil::ptime obstime;
+    timeutil::ptime tbtime;
     int typeId;
   };
 
@@ -226,7 +225,7 @@ public:
    * \brief
    */
   struct missObs {
-    miutil::miTime oTime;
+    timeutil::ptime oTime;
     int time;
     int parno;
     int statno;
@@ -276,7 +275,7 @@ signals:
    * \brief Reports the selection of a new station and/or obstime in the
    *        errorlist.
    */
-  //  void stationSelected( int station, const miutil::miTime & obstime );
+  //  void stationSelected( int station, const timeutil::ptime & obstime );
   void statSel( miMessage& letter );
 
   /**
@@ -398,8 +397,8 @@ private:
   /**
    * \brief Checks if given parameter can be stored at given time.
    */
-  bool specialTimeFilter(int, miutil::miTime);
-  bool typeFilter(int, int, int, miutil::miTime);
+  bool specialTimeFilter(int, const timeutil::ptime&);
+  bool typeFilter(int, int, int, const timeutil::ptime&);
 private slots:
   //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);

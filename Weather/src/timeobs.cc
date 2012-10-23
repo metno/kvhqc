@@ -30,21 +30,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "timeobs.h"
 #include "enums.h"
-#include <puTools/miTime.h>
+
 #include <kvcpp/KvApp.h>
 #include <kvcpp/WhichDataHelper.h>
 #include <kvalobs/kvDataOperations.h>
+#include <decodeutility/kvDataFormatter.h>
+
+#include <QtGui/qmessagebox.h>
+
+#include <boost/thread.hpp>
+
 #include <cmath>
 #include <limits>
-#include <boost/thread.hpp>
-#include <qmessagebox.h>
-
 #include <iostream>
-#include <decodeutility/kvDataFormatter.h>
 
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 using namespace kvservice;
 
 namespace Weather
@@ -52,21 +53,21 @@ namespace Weather
   static int interesting[9] = { V4, V4S, V5, V5S, V6, V6S, RR_24, SD, SA };
   static set<int> ilarge( interesting, &interesting[9] );
 
-  TimeObs::TimeObs( int station, miTime otime, int type )
+  TimeObs::TimeObs( int station, const timeutil::ptime& otime, int type )
     : station( station )
     , otime( otime )
   {
-    cerr << "Getting observations for " << otime << endl;
+    cerr << "Getting observations for " << timeutil::to_iso_extended_string(otime) << endl;
 
-    miTime stop( otime );
-    stop.addDay();
-    miTime start( otime );
-    start.addDay(-4);
+    timeutil::ptime stop( otime );
+    stop += boost::gregorian::days(1);
+    timeutil::ptime start( otime );
+    start += boost::gregorian::days(-4);
     KvObsDataList dataList;
 
     WhichDataHelper wdh;
 
-    bool stationok =  wdh.addStation( station, start, stop );
+    bool stationok =  wdh.addStation( station, timeutil::to_miTime(start), timeutil::to_miTime(stop) );
 
     bool ok = KvApp::kvApp->getKvData( dataList, wdh );
     if ( not ok )
@@ -88,17 +89,16 @@ namespace Weather
   }
 
 
-  TimeObs::~TimeObs( )
+  TimeObs::~TimeObs()
   {
   }
 
   class NoLateObs /* : public std::exception */ {};
 
-  kvData & TimeObs::get( int paramID, const miTime &otime )
+  kvData & TimeObs::get( int paramID, const timeutil::ptime& otime )
   {
 
-    kvDataPtr tmp( new kvData(
-			      getMissingKvData( station, otime, paramID, 0, 0, 0 ) ) );
+    kvDataPtr tmp( new kvData(getMissingKvData( station, timeutil::to_miTime(otime), paramID, 0, 0, 0 ) ) );
 
     pair<DataCollection::iterator, bool> result = data.insert( tmp );
     DataCollection::iterator & dc = result.first;
@@ -144,11 +144,11 @@ namespace Weather
   }
 
   TimeObsListPtr getTimeObs( int station,
-			   const miTime & from, const miTime & to,
+			     const timeutil::ptime& from, const timeutil::ptime& to,
 			     int type, bool processEvents )
   {
     TimeObsListPtr ret( new TimeObsList );
-    for ( miTime date = from; date <= to; date.addDay() ) {
+    for ( timeutil::ptime date = from; date <= to; date += boost::gregorian::days(1) ) {
       //      if ( processEvents )
       //      	KvApp::kvApp->processEvents( 1 );
       ret->push_back( TimeObs( station, date, type ) );
@@ -160,12 +160,12 @@ namespace Weather
     struct thread_obj_getTimeObs {
       TimeObsListPtr & holder;
       int station, type, sensor, level;
-      const miTime & from;
-      const miTime & to;
+      const timeutil::ptime& from;
+      const timeutil::ptime& to;
 
       thread_obj_getTimeObs( TimeObsListPtr & holder,
 			    int station,
-			    const miTime & from, const miTime & to )
+			    const timeutil::ptime& from, const timeutil::ptime& to )
 	: holder(holder), station(station), from(from), to(to)
 
       {
@@ -188,7 +188,7 @@ namespace Weather
   auto_ptr< boost::thread >
   thread_getTimeObs( TimeObsListPtr & holder,
 		    int station,
-		    const miutil::miTime & from, const miutil::miTime & to )
+		    const timeutil::ptime& from, const timeutil::ptime& to )
   {
     thread_obj_getTimeObs tog( holder, station, from, to );
     auto_ptr< boost::thread > ret( new boost::thread( tog ) );

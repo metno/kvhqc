@@ -31,6 +31,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef TIMESERIESDIALOG_H
 #define TIMESERIESDIALOG_H
 
+#include "timeutil.hh"
+
 #include <qTimeseries/PlotOptions.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
@@ -64,8 +66,8 @@ public:
   void showAll();
 
   void getResults(std::vector<std::string>& parameter,
-		  miutil::miTime& fromTime,
-		  miutil::miTime& toTime,
+		  timeutil::ptime& fromTime,
+		  timeutil::ptime& toTime,
 		  std::vector<int>& stationID,
 		  std::vector<POptions::PlotOptions>& plotoptions);
 
@@ -74,8 +76,8 @@ public:
 
 public slots:
 
-  //  void setFromTimeSlot(const miutil::miTime& t);
-  //  void setToTimeSlot(const miutil::miTime& t);
+  //  void setFromTimeSlot(const timeutil::ptime& t);
+  //  void setToTimeSlot(const timeutil::ptime& t);
   void setFromTimeSlot(const QDateTime& t);
   void setToTimeSlot(const QDateTime& t);
   void parameterSelectionChanged(Q3ListBoxItem*);

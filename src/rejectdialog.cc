@@ -1,26 +1,23 @@
 #include "rejectdialog.h"
 #include "MiDateTimeEdit.hh"
-#include <Q3HBoxLayout>
-#include <QLabel>
-//#include <Q3GridLayout>
-#include <Q3VBoxLayout>
-#include <QCheckBox>
-#include <QPushButton>
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/Q3VBoxLayout>
+#include <QtGui/QLabel>
+#include <QtGui/QCheckBox>
+#include <QtGui/QPushButton>
 
-RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {  
-  
+RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
+
   setCaption(tr("Forkastet"));
   textLabel1 = new QLabel(this);
   textLabel1->setText(tr("Velg tidsrom for forkastetliste"));
-  
+
   textLabel2 = new QLabel(this);
   textLabel2->setText(tr("Fra"));
-  
+
   textLabel3 = new QLabel(this);
   textLabel3->setText(tr("Til"));
-  
-  
-  //  miutil::miTime d = 
+
   QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
@@ -42,11 +39,11 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
   okButton = new QPushButton(tr("OK"), this);
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
-  
+
   cancelButton = new QPushButton(tr("Avbryt"), this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
-  
+
   QVBoxLayout* topLayout = new QVBoxLayout(this);
   QHBoxLayout* fromLayout = new QHBoxLayout();
   QHBoxLayout* toLayout = new QHBoxLayout();
@@ -70,11 +67,11 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
 
 void RejectDialog::setFromTime(const QDateTime& dt) {
   dtfrom = dt;
-} 
+}
 
 void RejectDialog::setToTime(const QDateTime& dt) {
   dtto = dt;
-} 
+}
 
 TimeSpan RejectDialog::getTimeSpan()
 {

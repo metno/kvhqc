@@ -120,7 +120,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     int paramid = kvalobsModel->getParameter(index).paramid;
 
     int stationid = kvalobsData->stnr();
-    const miutil::miTime & obt = kvalobsData->otime();
+    const timeutil::ptime& obt = kvalobsData->otime();
     int typ = kvalobsData->typeId(paramid);
     // UNUSED double orig = kvalobsData->orig(paramid);
     double corr = kvalobsData->corr(paramid);
@@ -158,7 +158,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
           return;
         }
     }
-    if (!legalTime(obt.hour(), paramid, newValue))
+    if (!legalTime(obt.time_of_day().hours(), paramid, newValue))
       {
         QMessageBox::information(editor, "Ulovlig tidspunkt",
             "Denne parameteren kan ikke lagres ved dette tidspunktet",

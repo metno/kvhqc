@@ -31,9 +31,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__StationSelection_h__
 #define __Weather__StationSelection_h__
 
-#include <qwidget.h>
+#include "timeutil.hh"
+#include <QtGui/qwidget.h>
 #include <map>
-#include <puTools/miTime.h>
 
 class QLineEdit;
 class MiDateTimeEdit;
@@ -53,15 +53,15 @@ namespace Weather
     kvalobs::kvData getKvData() const;
 
     int station() const;
-    miutil::miTime obstime() const;
+    timeutil::ptime obstime() const;
     int typeID() const;
     int sensor() const;
     //    int level() const;
-    
+
   private slots:
     void updateTypeID_();
     void setupTypeFromStation_();
-    
+
   private:
     QLineEdit * station_;
     MiDateTimeEdit * obstime_;
@@ -70,7 +70,7 @@ namespace Weather
     //    QLineEdit * level_;
 
     typedef std::map<int,int> TypeFromStation;
-    static TypeFromStation typeFromStation_;    
+    static TypeFromStation typeFromStation_;
   };
 }
 

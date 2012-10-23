@@ -33,30 +33,31 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "enums.h"
 #include "weathertabletooltip.h"
 #include "BusyIndicator.h"
-#include <algorithm>
-#include <cmath>
+#include "hqc_paths.hh"
+
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
-#include <sstream>
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include <qfile.h>
-#include <Q3TextStream>
+
+#include <QtGui/qapplication.h>
+#include <QtGui/qmessagebox.h>
+#include <QtGui/qstatusbar.h>
+#include <QtCore/qfile.h>
+#include <Qt3Support/Q3TextStream>
+
 #include <boost/assign/std/vector.hpp>
 
-#include "hqc_paths.hh"
+#include <algorithm>
+#include <cmath>
+#include <iostream>
+#include <sstream>
 
 //#define NDEBUG
 #include <cassert>
 
-#include <iostream>
-
 using namespace kvservice;
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 using namespace boost::assign;
 
 namespace Weather
@@ -70,7 +71,7 @@ namespace Weather
     vector<synDat> dataList;
     vector<synFlg> flagList;
     QString pName(name);
-    miutil::miTime protime("1900-01-01 00:00:00");
+    timeutil::ptime protime = timeutil::from_iso_extended_string("1900-01-01 00:00:00");
 
     readLimits();
     connect( this, SIGNAL(valueChanged(int,int)), SLOT(markModified(int,int)));
@@ -177,10 +178,10 @@ namespace Weather
     }
   }
 
-  void WeatherTable::displayVerticalHeader( vector<miutil::miTime>& timeList) {
+  void WeatherTable::displayVerticalHeader( vector<timeutil::ptime>& timeList) {
     int irow = 0;
-    for ( vector<miutil::miTime>::iterator it = timeList.begin(); it != timeList.end(); it++) {
-      const QString dateTime = QString::fromStdString(it->isoTime());
+    for ( vector<timeutil::ptime>::iterator it = timeList.begin(); it != timeList.end(); it++) {
+      const QString dateTime = QString::fromStdString(timeutil::to_iso_extended_string(*it));
       verticalHeader()->setLabel(irow,dateTime);
       ++irow;
     }
@@ -333,7 +334,7 @@ namespace Weather
     int typ = kvDat.typeID();
 
     if ( abs(kvDat.typeID()) > 503 || kvDat.typeID() == 0 )
-      typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),kvDat.obstime(),obsPgmList);
+      typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),timeutil::from_miTime(kvDat.obstime()),obsPgmList);
     if ( typ == -32767 ) {
       QMessageBox::information( this,
 				tr("Ulovlig parameter"),
@@ -434,20 +435,20 @@ namespace Weather
     kvCorrList.push_back(kvDat);
     oldNew.push_back(op);
     rowCol.push_back(rc);
-    corr.oTime = kvDat.obstime();
+    corr.oTime = timeutil::from_miTime(kvDat.obstime());
     corr.parName = parm[datCol[col]];
     corr.oldVal = oldCorr;
     corr.newVal = newCorr;
   }
 
   kvData WeatherTable::getKvData( int row, int col ) {
-    miutil::miTime cTime = timeList[row];
+    timeutil::ptime cTime = timeList[row];
     //Find paramID in col
     bool foundRow = false;
     int cParam = params[columnIndex[col]];
     vector<kvData>::iterator kvit;
     for ( kvit = kvDatList.begin(); kvit != kvDatList.end(); kvit++) {
-      if ( (*kvit).paramID() == cParam && (*kvit).obstime() == cTime && (*kvit).typeID() == sd.styp[columnIndex[col]]) {
+      if ( (*kvit).paramID() == cParam && timeutil::from_miTime(kvit->obstime()) == cTime && (*kvit).typeID() == sd.styp[columnIndex[col]]) {
 	foundRow = true;
 	break;
       }
@@ -468,10 +469,10 @@ namespace Weather
 		    kvit->cfailed());
     else
       kvCorrDat.set(kvDatList.begin()->stationID(),
-		    cTime,
+              timeutil::to_miTime(cTime),
 		    -32767,
 		    cParam,
-		    cTime,
+		    timeutil::to_miTime(cTime),
 		    sd.styp[columnIndex[col]],
 		    0,
 		    0,
@@ -546,14 +547,14 @@ namespace Weather
   WeatherTable::~WeatherTable( )
   {}
 
-  //  int WeatherTable::findTypeId(int typ, int pos, int par, miutil::miTime oTime, ObsPgmList obsPgmList)
-  int WeatherTable::findTypeId(int typ, int pos, int par, miutil::miTime oTime, list<kvObsPgm> obsPgmList)
+  //  int WeatherTable::findTypeId(int typ, int pos, int par, timeutil::ptime oTime, ObsPgmList obsPgmList)
+  int WeatherTable::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, list<kvObsPgm> obsPgmList)
   {
     int tpId;
     tpId = typ;
     //    for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
     for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-      if ( obit->stationID() == pos && obit->paramID() == par && obit->fromtime() < oTime && obit->totime() >= oTime) {
+      if ( obit->stationID() == pos && obit->paramID() == par && timeutil::from_miTime(obit->fromtime()) < oTime && timeutil::from_miTime(obit->totime()) >= oTime) {
 	tpId = obit->typeID();
 	break;
       }
@@ -562,7 +563,7 @@ namespace Weather
       switch (par) {
       case 106:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 105 && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && obit->paramID() == 105 && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }
@@ -570,7 +571,7 @@ namespace Weather
 	break;
       case 109:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106) && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106) && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }
@@ -578,7 +579,7 @@ namespace Weather
 	break;
       case 110:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106 || obit->paramID() == 109) && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106 || obit->paramID() == 109) && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }
@@ -586,7 +587,7 @@ namespace Weather
 	break;
       case 214:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 213 && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && obit->paramID() == 213 && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }
@@ -594,7 +595,7 @@ namespace Weather
 	break;
       case 216:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 215 && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && obit->paramID() == 215 && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }
@@ -602,7 +603,7 @@ namespace Weather
 	break;
       case 224:
 	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 223 && obit->fromtime() < oTime) {
+	  if ( obit->stationID() == pos && obit->paramID() == 223 && timeutil::from_miTime(obit->fromtime()) < oTime) {
 	    tpId = -obit->typeID();
 	    break;
 	  }

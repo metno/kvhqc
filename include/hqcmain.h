@@ -124,7 +124,7 @@ public slots:
   /*!
    * \brief Send complete observation at given time to Diana
    */
-  void sendObservations(const miutil::miTime & time, bool sendtime = true);
+  void sendObservations(const timeutil::ptime& time, bool sendtime = true);
   /*!
    * \brief Send a parameter to Diana
    */
@@ -142,13 +142,13 @@ public slots:
    * \brief Reads the data and model_data tables in the kvalobs database
    *        and inserts the observations/model values in datalist/modeldatalist.
    */
-  void readFromData(const miutil::miTime&, const miutil::miTime&, const std::vector<int>& stList);
+  void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
   /*!
    * \brief Extracts all the data for one station and one time from datalist
    */
   void listData(int,
 		int&,
-		miutil::miTime&,
+		timeutil::ptime&,
 		double*,
 		int*,
 		double*,
@@ -171,8 +171,8 @@ public:
    *        to a station type checked in the ListDialog
    */
   bool hqcTypeFilter(const int&, int, int);
-  bool typeIdFilter(int, int, int, miutil::miTime, int);
-  bool isAlreadyStored(const miutil::miTime&, int);
+  bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
+  bool isAlreadyStored(const timeutil::ptime&, int);
   /*!
    * \brief
    */
@@ -220,8 +220,8 @@ public:
   /*!
    * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime
    */
-  int findTypeId(int, int, int, miutil::miTime);
-  //  int findTypeId(int, int, miutil::miTime);
+  int findTypeId(int, int, int, const timeutil::ptime&);
+  //  int findTypeId(int, int, const timeutil::ptime&);
   /*!
    * \brief Some parameters are displayed in Diana with other units than those in the kvalobs database.
    *        This method converts from "Kvalobs" to "Diana" units
@@ -267,7 +267,7 @@ public:
 
 public slots:
 
-  void saveDataToKvalobs(const kvalobs::kvData & toSave);
+  void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
 /*!
  * \brief Produces the data table or the error list
@@ -444,8 +444,8 @@ private:
   /// Station selection dialog
   StationSelection* statSelect;
 
-  miutil::miTime dianaObsTime;
-  miutil::miTime dianaTime;
+  timeutil::ptime dianaObsTime;
+  timeutil::ptime dianaTime;
   typedef QMap<std::string,std::string> NameMap;
   NameMap dnMap;
   typedef QMap<std::string,bool> ModelMap;
@@ -546,7 +546,7 @@ signals:
    * \brief Emitted when a new station and/or obstime has been selected in the
    *        errorlist.
    */
-  void errorListStationSelected(int station, const miutil::miTime & obstime);
+  void errorListStationSelected(int station, const timeutil::ptime& obstime);
 };
 
 #endif

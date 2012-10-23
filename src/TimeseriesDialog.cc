@@ -444,13 +444,13 @@ void TimeseriesDialog::newStationList(std::vector<QString>& stationList)
 }
 
 void TimeseriesDialog::getResults(std::vector<std::string>& parameter,
-				  miutil::miTime& fromTime,
-				  miutil::miTime& toTime,
+				  timeutil::ptime& fromTime,
+				  timeutil::ptime& toTime,
 				  std::vector<int>& stationID,
 				  std::vector<POptions::PlotOptions>& plotoptions)
 {
-  fromTime = miTimeFromQDateTime(dte_from->dateTime());
-  toTime   = miTimeFromQDateTime(dte_to  ->dateTime());
+  fromTime = timeutil::from_QDateTime(dte_from->dateTime());
+  toTime   = timeutil::from_QDateTime(dte_to  ->dateTime());
 
   int nTypes = obsCheckBox->isChecked() + modCheckBox->isChecked();
   int n = resultListbox->count();

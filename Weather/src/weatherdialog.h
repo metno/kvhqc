@@ -33,6 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "weathertable.h"
 #include "timeobs.h"
+#include "timeutil.hh"
 #include "dataconsistencyverifier.h"
 
 #include <decodeutility/DataReinserter.h>
@@ -61,7 +62,7 @@ const int NC = 5;
 struct SynObs {
   int stnr;
   int snr;
-  miutil::miTime otime;
+  timeutil::ptime otime;
   int typeId[NP];
   int sensor[NP];
   double orig[NP];
@@ -102,7 +103,7 @@ namespace Weather
 		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
 
 
-    WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
+    WeatherDialog( int station, const timeutil::ptime& clock, int type, int sensor,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE);
 
@@ -110,7 +111,7 @@ namespace Weather
     /**
      * \brief [Start, stop) dates for which to fetch data.
      */
-    typedef std::pair<miutil::miTime, miutil::miTime> DateRange;
+    typedef std::pair<timeutil::ptime, timeutil::ptime> DateRange;
 
     /**
      * \brief Date range for editor

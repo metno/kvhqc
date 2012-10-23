@@ -35,7 +35,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPushButton>
 #include <QtGui/QListWidget>
 #include "MiDateTimeEdit.hh"
-#include <puTools/miTime.h>
 
 /**
  * \brief A dialog for selecting timeseries to be discarded .

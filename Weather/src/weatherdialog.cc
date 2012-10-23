@@ -31,23 +31,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "weatherdialog.h"
 #include "StationSelection.h"
 #include "StationInformation.h"
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qcheckbox.h>
-#include <qstatusbar.h>
-#include <qlayout.h>
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qdialog.h>
-#include <q3datetimeedit.h>
-#include <qlineedit.h>
-#include <QTabWidget>
-#include <QDialogButtonBox>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <Q3VBoxLayout>
-#include <QFrame>
+
 #include <kvcpp/KvApp.h>
+
+#include <QtGui/qlabel.h>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qcheckbox.h>
+#include <QtGui/qstatusbar.h>
+#include <QtGui/qlayout.h>
+#include <QtGui/qapplication.h>
+#include <QtGui/qmessagebox.h>
+#include <QtGui/qdialog.h>
+#include <QtGui/qlineedit.h>
+#include <QtGui/QTabWidget>
+#include <QtGui/QDialogButtonBox>
+#include <QtGui/QFrame>
+#include <Qt3Support/q3datetimeedit.h>
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/Q3VBoxLayout>
 
 using namespace kvservice;
 using namespace kvalobs;
@@ -98,7 +99,7 @@ namespace Weather
 				  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     	return 0;
     }
-    miutil::miTime  cl = ss->obstime();
+    timeutil::ptime cl = ss->obstime();
     int             ty = ss->typeID();
     int             se = ss->sensor() - '0';
     //    int             lv = ss->level();
@@ -182,8 +183,8 @@ namespace Weather
   WeatherDialog::DateRange getDateRange_( std::vector<TimeObs> * timeobs )
   {
     assert( timeobs->begin() != timeobs->end() );
-    miutil::miTime start = timeobs->begin()->getTime();
-    miutil::miTime end = timeobs->rbegin()->getTime();
+    timeutil::ptime start = timeobs->begin()->getTime();
+    timeutil::ptime end = timeobs->rbegin()->getTime();
     return WeatherDialog::DateRange( start, end );
   }
 
@@ -215,27 +216,26 @@ namespace Weather
 	synObs.corr[ip]   = -32767.0;
 	synObs.controlinfo[ip] = "";
       }
-      miutil::miTime sTime = (*tobs)[0].getTime();
-      miutil::miTime eTime = (*tobs)[0].getTime();
-      sTime.addDay(-7);
-      eTime.addDay();
+      timeutil::ptime sTime = (*tobs)[0].getTime();
+      timeutil::ptime eTime = (*tobs)[0].getTime();
+      sTime += boost::gregorian::days(-7);
+      eTime += boost::gregorian::days(1);
       WhichDataHelper whichData;
-      whichData.addStation( (*station).stationID(), sTime, eTime);
-      
+      whichData.addStation( (*station).stationID(), timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
+
       if ( !KvApp::kvApp->getKvData(ldList, whichData))
 	cerr << "Can't connect to data table!" << endl;
-      int ohour;      
-      int nexthour = sTime.hour();      
+      int ohour;
+      int nexthour = sTime.time_of_day().hours();
       IKvObsDataList it=ldList.begin();
       IDataList dit = it->dataList().begin();
-      miutil::miTime protime = (dit->obstime());
+      timeutil::ptime protime = timeutil::from_miTime(dit->obstime());
       for(; it!=ldList.end(); it++ ) {
 	dit = it->dataList().begin();
-	miutil::miTime otime = (dit->obstime());
-	miutil::miTime nexttime = (dit->obstime());
+	timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
 	int nuOtimes = 0;
 	for ( IOpgmList oit = opgtl.begin(); oit != opgtl.end(); oit++ ) {
-	  if ( *oit == otime.hour() ) {
+	  if ( *oit == otime.time_of_day().hours() ) {
 	    oit++;
 	    if ( oit == opgtl.end() ) oit = opgtl.begin();
 	    ohour = *oit;
@@ -247,16 +247,16 @@ namespace Weather
 	  cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
 
 	nexttime = protime;
-	int hd = nexthour-nexttime.hour();
+	int hd = nexthour-nexttime.time_of_day().hours();
 	if ( hd < 0 ) hd += 24;
-	nexttime.addHour(hd);
+	nexttime += boost::posix_time::hours(hd);
 
 	while ( otime > nexttime ) {
-	  
-	  int hourDiff = otime.hour() - nexthour;
+
+	  int hourDiff = otime.time_of_day().hours() - nexthour;
 
 	  if ( hourDiff < 0 ) hourDiff += 24;
-	  
+
 	  synObs.stnr = dit->stationID();
 	  synObs.otime = nexttime;
 	  //	synObs.otime.addHour(-hourDiff);
@@ -267,19 +267,19 @@ namespace Weather
 	  }
 	  synObsList.push_back(synObs);
 	  ++nexthour;
-	  nexttime.addHour(1);
+          nexttime += boost::posix_time::hours(1);
 	}
-	
+
 	while( dit != it->dataList().end() ) {
-	  otime = (dit->obstime());
+	  otime = timeutil::from_miTime(dit->obstime());
 
 	  // UNUSED int typid = dit->typeID();
 	  // UNUSED int snsor = dit->sensor();
-	  if ( paramInParamsList(dit->paramID()) 
-	       && typeFilter(type, dit->typeID()) 
+	  if ( paramInParamsList(dit->paramID())
+	       && typeFilter(type, dit->typeID())
 	       && sensorFilter(sensor, dit->sensor()) ) {
 	    synObs.stnr = dit->stationID();
-	    synObs.otime = dit->obstime();
+	    synObs.otime = timeutil::from_miTime(dit->obstime());
 	    synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
 	    synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
 	    synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
@@ -288,7 +288,7 @@ namespace Weather
 	    nexthour = ohour;
 	    protime = otime;
 	    dit++;
-	    otime = dit->obstime();
+	    otime = timeutil::from_miTime(dit->obstime());
 	    // UNUSED typid = dit->typeID();
 	    // UNUSED snsor = dit->sensor();
 	    if ( otime != protime ) {
@@ -303,7 +303,7 @@ namespace Weather
 	  else {
 	    protime = otime;
 	    dit++;
-	    otime = dit->obstime();
+	    otime = timeutil::from_miTime(dit->obstime());
 	    // UNUSED typid = dit->typeID();
 	    // UNUSED snsor = dit->sensor();
 	    if ( otime != protime ) {
@@ -344,7 +344,7 @@ namespace Weather
   }
 
 
-  WeatherDialog::WeatherDialog( int station, const miutil::miTime clock, int type, int sensor,
+  WeatherDialog::WeatherDialog( int station, const timeutil::ptime& clock, int type, int sensor,
 				const DataReinserter<KvApp> * dataReinserter,
 				QWidget* parent, const char* name, bool modal )
     : QDialog( parent, Qt::Window)
@@ -358,34 +358,34 @@ namespace Weather
     else {
       for ( CIObsPgmList obit = obsPgmList.begin(); obit != obsPgmList.end(); obit++ ) {
 	if ( obit->stationID() == station ) {
-	  cerr << obit->stationID() << " " 
-	       << setw(3) << obit->paramID() << " " 
-	       << setw(3) << obit->typeID() <<  " " 
-	       << obit->kl00() << " " 
-	       << obit->kl01() << " " 
-	       << obit->kl02() << " " 
-	       << obit->kl03() << " " 
-	       << obit->kl04() << " " 
-	       << obit->kl05() << " " 
-	       << obit->kl06() << " " 
-	       << obit->kl07() << " " 
-	       << obit->kl08() << " " 
-	       << obit->kl09() << " " 
-	       << obit->kl10() << " " 
-	       << obit->kl11() << " " 
-	       << obit->kl12() << " " 
-	       << obit->kl13() << " " 
-	       << obit->kl14() << " " 
-	       << obit->kl15() << " " 
-	       << obit->kl16() << " " 
-	       << obit->kl17() << " " 
-	       << obit->kl18() << " " 
-	       << obit->kl19() << " " 
-	       << obit->kl20() << " " 
-	       << obit->kl21() << " " 
-	       << obit->kl22() << " " 
-	       << obit->kl23() << " " 
-	       << obit->fromtime() << " " 
+	  cerr << obit->stationID() << " "
+	       << setw(3) << obit->paramID() << " "
+	       << setw(3) << obit->typeID() <<  " "
+	       << obit->kl00() << " "
+	       << obit->kl01() << " "
+	       << obit->kl02() << " "
+	       << obit->kl03() << " "
+	       << obit->kl04() << " "
+	       << obit->kl05() << " "
+	       << obit->kl06() << " "
+	       << obit->kl07() << " "
+	       << obit->kl08() << " "
+	       << obit->kl09() << " "
+	       << obit->kl10() << " "
+	       << obit->kl11() << " "
+	       << obit->kl12() << " "
+	       << obit->kl13() << " "
+	       << obit->kl14() << " "
+	       << obit->kl15() << " "
+	       << obit->kl16() << " "
+	       << obit->kl17() << " "
+	       << obit->kl18() << " "
+	       << obit->kl19() << " "
+	       << obit->kl20() << " "
+	       << obit->kl21() << " "
+	       << obit->kl22() << " "
+	       << obit->kl23() << " "
+	       << obit->fromtime() << " "
 	       << obit->totime() << endl;
 	  opgmList(opgtl, obit);
 	}
@@ -401,28 +401,27 @@ namespace Weather
       synObs.corr[ip]   = -32767.0;
       synObs.controlinfo[ip] = "";
     }
-    miutil::miTime sTime = clock;
-    miutil::miTime eTime = clock;
-    sTime.addDay(-7);
-    eTime.addDay();
+    timeutil::ptime sTime = clock;
+    timeutil::ptime eTime = clock;
+    sTime += boost::gregorian::days(-7);
+    eTime += boost::gregorian::days(1);
     WhichDataHelper whichData;
-    whichData.addStation(station, sTime, eTime);
+    whichData.addStation(station, timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
       cerr << "Can't connect to data table!" << endl;
-    int ohour = sTime.hour();      
-    int nexthour = sTime.hour();      
+    int ohour = sTime.time_of_day().hours();
+    int nexthour = sTime.time_of_day().hours();
     IKvObsDataList it=ldList.begin();
     IDataList dit = it->dataList().begin();
-    miutil::miTime protime = (dit->obstime());
-    protime.addHour(-1);
+    timeutil::ptime protime = timeutil::from_miTime(dit->obstime());
+    protime += boost::posix_time::hours(-1);
     for(; it!=ldList.end(); it++ ) {
       dit = it->dataList().begin();
-      miutil::miTime otime = (dit->obstime());
-      miutil::miTime nexttime = (dit->obstime());
-            
+      timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
+
       int nuOtimes = 0;
       for ( IOpgmList oit = opgtl.begin(); oit != opgtl.end(); oit++ ) {
-	if ( *oit == otime.hour() ) {
+	if ( *oit == otime.time_of_day().hours() ) {
 	  oit++;
 	  if ( oit == opgtl.end() ) oit = opgtl.begin();
 	  ohour = *oit; //next obstime
@@ -433,16 +432,16 @@ namespace Weather
       if ( nuOtimes == (int)opgtl.size() )
 	cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
       nexttime = protime;
-      int hd = nexthour-nexttime.hour();
+      int hd = nexthour-nexttime.time_of_day().hours();
       if ( hd < 0 ) hd += 24;
-      nexttime.addHour(hd);
+      nexttime += boost::posix_time::hours(hd);
 
       while ( otime > nexttime ) {
-	
-	int hourDiff = otime.hour() - nexthour;
+
+	int hourDiff = otime.time_of_day().hours() - nexthour;
 
 	if ( hourDiff < 0 ) hourDiff += 24;
-	
+
 	synObs.stnr = dit->stationID();
 	synObs.otime = nexttime;
 	//	synObs.otime.addHour(-hourDiff);
@@ -453,22 +452,22 @@ namespace Weather
 	}
 	synObsList.push_back(synObs);
 	++nexthour;
-	nexttime.addHour(1);
+	nexttime += boost::posix_time::hours(1);
       }
-      
+
       while( dit != it->dataList().end() ) {
 	// UNUSED int typid = dit->typeID();
 	// UNUSED int snsor = dit->sensor();
-	otime = (dit->obstime());
-	if ( paramInParamsList(dit->paramID()) 
-	     && typeFilter(type, dit->typeID()) 
+	otime = timeutil::from_miTime(dit->obstime());
+	if ( paramInParamsList(dit->paramID())
+	     && typeFilter(type, dit->typeID())
 	     && sensorFilter(sensor, dit->sensor()-'0') ) {
 	  synObs.stnr = dit->stationID();
-	  synObs.otime = dit->obstime();
+	  synObs.otime = timeutil::from_miTime(dit->obstime());
 	  synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
 	  synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
 	  synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
-	  synObs.controlinfo[parameterIndex[dit->paramID()]] 
+	  synObs.controlinfo[parameterIndex[dit->paramID()]]
 	    = dit->controlinfo().flagstring();
 
 	  nexthour = ohour;
@@ -476,7 +475,7 @@ namespace Weather
 	  protime = otime;
 
 	  dit++;
-	  otime = dit->obstime();
+	  otime = timeutil::from_miTime(dit->obstime());
 	  // UNUSED typid = dit->typeID();
 	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
@@ -491,7 +490,7 @@ namespace Weather
 	else {
 	  protime = otime;
 	  dit++;
-	  otime = dit->obstime();
+	  otime = timeutil::from_miTime(dit->obstime());
 	  // UNUSED typid = dit->typeID();
 	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
@@ -502,18 +501,18 @@ namespace Weather
 	      synObs.controlinfo[ip] = "";
 	    }
 	  }
-	}	
+	}
       }
     }
     setupStationInfo();
     setupCorrTab(synObsList, type, tabWidget);
     setupOrigTab(synObsList, type, tabWidget);
     setupFlagTab(synObsList, type, tabWidget);
-    
+
     QPushButton* saveButton = new QPushButton(tr("Lagre"));
     saveButton->setDefault(true);
     QPushButton* closeButton = new QPushButton(tr("Lukk"));
-    
+
     QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(saveButton,QDialogButtonBox::ActionRole);
     buttonBox->addButton(closeButton,QDialogButtonBox::RejectRole);
@@ -551,9 +550,9 @@ namespace Weather
 				  QMessageBox::Ok );
 	return true;
       }
-    
+
     list<kvData> dl( cTab->kvCorrList.begin(), cTab->kvCorrList.end() );
-    
+
     cerr << "Lagrer:" << endl
 	 << decodeutility::kvdataformatter::createString( dl ) << endl;
     CKvalObs::CDataSource::Result_var res;
@@ -641,7 +640,7 @@ namespace Weather
     opgtl.unique();
     //  return opgtl;
   }
-  
+
   WeatherDialog::~WeatherDialog( )
   {
   }

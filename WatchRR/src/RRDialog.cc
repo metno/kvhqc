@@ -101,7 +101,7 @@ namespace WatchRR
 				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
     	return 0;
     }
-    miutil::miDate da = ss->obstime();
+    timeutil::pdate da(ss->obstime().year(), ss->obstime().month(), ss->obstime().day());
     int            ty = ss->typeID();
     int            se = ss->sensor();
     int            lv = ss->level();
@@ -205,7 +205,7 @@ namespace WatchRR
   }
 
 
-  RRDialog::RRDialog( int station, const miutil::miDate date,
+  RRDialog::RRDialog( int station, const timeutil::pdate& date,
 		      int type, int sensor, int level,
 		      const DataReinserter<KvApp> * dataReinserter,
 		      QWidget* parent, const char* name, bool modal )

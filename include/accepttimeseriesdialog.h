@@ -37,7 +37,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QGroupBox>
 #include <QtGui/QListWidget>
 #include "MiDateTimeEdit.hh"
-#include <puTools/miTime.h>
 
 /**
  * \brief A dialog for selecting timeseries to be accepted .

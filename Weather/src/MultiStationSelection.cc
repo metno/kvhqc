@@ -32,22 +32,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "weatherdialog.h"
 #include "BusyIndicator.h"
-#include <puTools/miTime.h>
+
 #include <kvcpp/KvApp.h>
-#include <QApplication>
-#include <q3listview.h>
-#include <qlayout.h>
-#include <qpushbutton.h>
-#include <qmessagebox.h>
-//Added by qt3to4:
-#include <Q3HBoxLayout>
-#include <QKeyEvent>
-#include <Q3VBoxLayout>
+
+#include <QtGui/QApplication>
+#include <QtGui/qlayout.h>
+#include <QtGui/QKeyEvent>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qmessagebox.h>
+#include <Qt3Support/q3listview.h>
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/Q3VBoxLayout>
+#include <Qt3Support/q3tabdialog.h>
+
 #include <boost/thread.hpp>
-#include <q3tabdialog.h>
 
 #include <cassert>
-
 #include <iostream>
 
 using namespace kvalobs;
@@ -161,14 +161,13 @@ namespace Weather
     stations->insertItem( it );
   }
 
-  pair<miTime, miTime> dates_( const miTime & d )
+  std::pair<timeutil::ptime, timeutil::ptime> dates_( const timeutil::ptime& d )
   {
-    miTime start( d );
-    start.addDay(-4);
-    miTime stop( d );
-    stop.addDay();
-    pair<miTime, miTime> dates( start, stop );
-    return dates;
+      timeutil::ptime start( d );
+      start += boost::gregorian::days(-4);
+      timeutil::ptime stop( d );
+      stop += boost::gregorian::days(1);
+      return std::make_pair(start, stop);
   }
 
 
@@ -183,12 +182,13 @@ namespace Weather
     int type = d->typeID();
     int sensor = d->sensor();
 
-      pair<miTime, miTime> dates = dates_( d->obstime() );
+    std::pair<timeutil::ptime, timeutil::ptime> dates = dates_( timeutil::from_miTime(d->obstime()) );
     TimeObsListPtr next;
     try {
       BusyIndicator busy;
       //      next = getTimeObs( d->stationID(), dates.first, dates.second );
-      next = getTimeObs( d->stationID(), d->obstime(), d->obstime(), d->typeID() );
+      const timeutil::ptime obstime = timeutil::from_miTime(d->obstime());
+      next = getTimeObs( d->stationID(), obstime, obstime, d->typeID() );
     }
     catch( std::runtime_error & ) {
       next = TimeObsListPtr(new TimeObsList());
@@ -216,7 +216,7 @@ namespace Weather
     	ss = dynamic_cast<MSSListItem *>( it );
     	assert( ss );
     	d = & ss->data;
-    	dates = dates_( d->obstime());
+    	dates = dates_(timeutil::from_miTime(d->obstime()));
     	thread = thread_getTimeObs( next, d->stationID(), dates.first, dates.second );
       }
 

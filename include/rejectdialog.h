@@ -1,10 +1,11 @@
 #ifndef REJECTDIALOG_H
 #define REJECTDIALOG_H
 
-#include <qvariant.h>
-#include <qdialog.h>
+#include <QtCore/qvariant.h>
+#include <QtGui/qdialog.h>
+#include <QtCore/qdatetime.h>
+
 #include <utility>
-#include <qdatetime.h>
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;
@@ -35,7 +36,7 @@ public:
     QPushButton* cancelButton;
 
     TimeSpan getTimeSpan();
- 
+
     QDateTime dtto;
     QDateTime dtfrom;
 
@@ -50,7 +51,7 @@ protected:
     QGridLayout* layout2;
     QHBoxLayout* Layout1;
     QSpacerItem* Horizontal_Spacing2;
-    
+
 protected slots:
     virtual void languageChange();
 

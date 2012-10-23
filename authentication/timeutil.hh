@@ -27,12 +27,39 @@
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef UTILITIES_HH_
-#define UTILITIES_HH_
+#ifndef TIMEUTIL_HH_
+#define TIMEUTIL_HH_
 
-#include <kvalobs/kvData.h>
+#include <QtCore/QDateTime>
+#include <puTools/miTime.h>
+#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <iosfwd>
 #include <string>
 
-void updateCfailed(kvalobs::kvData& data, const std::string& add);
+namespace timeutil {
 
-#endif /* UTILITIES_HH_ */
+typedef boost::posix_time::ptime ptime;
+typedef boost::gregorian::date pdate;
+
+std::string to_iso_extended_string(const ptime& pt);
+std::string to_iso_extended_string(const pdate& pd);
+
+boost::posix_time::ptime from_iso_extended_string(const std::string& st);
+
+miutil::miTime to_miTime(const ptime& pt);
+
+ptime from_miTime(const miutil::miTime& mt);
+
+ptime from_QDateTime(const QDateTime& qdt);
+
+ptime from_YMDhms(int year, int month, int day, int hour, int minute, int second);
+
+ptime now();
+
+int hourDiff(const ptime& t0, const ptime& t1);
+
+} // namespace timeutil
+
+std::ostream& operator<<(std::ostream& o, timeutil::ptime const& pt);
+
+#endif /* TIMEUTIL_HH_ */

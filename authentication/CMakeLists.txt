@@ -13,6 +13,7 @@ SET(auth_SOURCES
   hqc_utilities.cc
   identifyUser.cc
   MiDateTimeEdit.cc
+  timeutil.cc
 )
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})

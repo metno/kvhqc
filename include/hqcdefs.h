@@ -39,7 +39,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
 #include <kvalobs/kvDbGate.h>
-#include <puTools/miTime.h>
 #include <string>
 #include <kvdb/dbdrivermgr.h>
 #include <qUtilities/QLetterCommands.h>
@@ -84,15 +83,15 @@ struct modDatl {
   }
 
   int stnr;
-  miutil::miTime otime;
+  timeutil::ptime otime;
   double orig[NOPARAM];
 };
 struct currentType {
   int stnr;
   //  QString status;
   int par;
-  miutil::miDate fDate;
-  miutil::miDate tDate;
+  timeutil::pdate fDate;
+  timeutil::pdate tDate;
   int cSensor;
   int cLevel;
   int cTypeId;
@@ -100,10 +99,10 @@ struct currentType {
 
 struct TxtDat {
   int stationId;
-  miutil::miTime obstime;
+  timeutil::ptime obstime;
   std::string original;
   int paramId;
-  miutil::miTime tbtime;
+  timeutil::ptime tbtime;
   int typeId;
 };
 

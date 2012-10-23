@@ -31,8 +31,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __WatchRR__StationSelection_h__
 #define __WatchRR__StationSelection_h__
 
-#include <qwidget.h>
-#include <puTools/miDate.h>
+#include "timeutil.hh"
+#include <QtGui/qwidget.h>
 #include <map>
 
 class QLineEdit;
@@ -53,15 +53,15 @@ namespace WatchRR
     kvalobs::kvData getKvData() const;
 
     int station() const;
-    miutil::miDate obstime() const;
+    timeutil::pdate obstime() const;
     int typeID() const;
     int sensor() const;
     int level() const;
-    
+
   private slots:
     void updateTypeID_();
     void setupTypeFromStation_();
-    
+
   private:
     QLineEdit * station_;
     Q3DateEdit * obstime_;
@@ -70,7 +70,7 @@ namespace WatchRR
     QLineEdit * level_;
 
     typedef std::map<int,int> TypeFromStation;
-    static TypeFromStation typeFromStation_;    
+    static TypeFromStation typeFromStation_;
   };
 }
 

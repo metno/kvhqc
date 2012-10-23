@@ -31,15 +31,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __WatchRR__RRDialog_h__
 #define __WatchRR__RRDialog_h__
 
-//#include <kvservice/qt/kvQtApp.h>
-#include <kvcpp/KvApp.h>
-//#include <qdialog.h>
-#include <QDialog>
-//Added by qt3to4:
-#include <QShowEvent>
-#include <QCloseEvent>
-#include <kvalobs/kvStation.h>
 #include "RRTable.h"
+#include <kvalobs/kvStation.h>
+#include <kvcpp/KvApp.h>
+#include <QtGui/QDialog>
+#include <QtGui/QShowEvent>
+#include <QtGui/QCloseEvent>
 
 class QPushButton;
 class QStatusBar;
@@ -76,7 +73,7 @@ namespace WatchRR
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
 
 
-    RRDialog( int station, const miutil::miDate date,
+    RRDialog( int station, const timeutil::pdate& date,
 	      int type, int sensor, int level,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE );

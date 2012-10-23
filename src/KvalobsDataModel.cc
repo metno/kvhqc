@@ -30,10 +30,11 @@
 #include "KvalobsDataModel.h"
 #include "hqcmain.h"
 #include "FunctionLogger.hh"
+#include "timeutil.hh"
 
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/kvDataOperations.h>
-#include <QDebug>
+#include <QtCore/QDebug>
 #include <cmath>
 
 
@@ -172,7 +173,7 @@ namespace model
             if ( showHeightInHeader_ ) {
 	       header += ' ' + QString::number(d.altitude(), 'f', 0) + "m ";
 	    }
-            const std::string date = d.otime().isoTime();
+            const std::string date = timeutil::to_iso_extended_string(d.otime());
             header += date.c_str();
 	    const QString synopNumber = QString::number(d.snr());
 	    header += ' ' + synopNumber;
@@ -534,64 +535,31 @@ namespace model
     }
     return index;
   }
-  /*
-  int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
-  {
-    int secs = obstime.sec();
-    miutil::miTime eobstime(obstime);
-    eobstime.addSec(-secs);
-    int mins = obstime.min();
-    if ( mins != 0 ) {
-      eobstime.addMin(-mins);
-      eobstime.addHour();
-    }
-    const KvalobsDataListPtr & data = kvalobsData();
-
-    const int rows = data->size();
-    int index;
-    for ( index = 0; index < rows; ++ index ) {
-      const KvalobsData & d = (*data)[index];
-      if ( d.stnr() == stationid and d.otime() == eobstime )
-        break;
-    }
-    return index;
-  }
-  */
-  int KvalobsDataModel::dataRow(int stationid, const miutil::miTime & obstime) const
+  int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime) const
   {
       LOG_FUNCTION();
-      miutil::miTime eobstime(obstime);
-#if 0
-    int secs = obstime.sec();
-    eobstime.addSec(-secs);
-    int mins = obstime.min();
-    if ( mins != 0 ) {
-      eobstime.addMin(-mins);
-      eobstime.addHour();
-    }
-#endif
-    const KvalobsDataListPtr & data = kvalobsData();
+      const KvalobsDataListPtr & data = kvalobsData();
 
-    const int rows = data->size();
-    int index;
-    int lindex;
-    bool foundTime = false;
-    for ( index = 0; index < rows; ++ index ) {
-      const KvalobsData & d = (*data)[index];
-      if ( d.stnr() == stationid ) {
-	lindex = index;
-	if ( d.otime() == eobstime ) {
-	  foundTime = true;
-	  break;
-	}
+      const int rows = data->size();
+      int index;
+      int lindex;
+      bool foundTime = false;
+      for ( index = 0; index < rows; ++ index ) {
+          const KvalobsData & d = (*data)[index];
+          if ( d.stnr() == stationid ) {
+              lindex = index;
+              if ( d.otime() == obstime ) {
+                  foundTime = true;
+                  break;
+              }
+          }
       }
-    }
-    qDebug() << "eobstime=" << QString::fromStdString(obstime.isoTime())
-             << "foundTime=" << foundTime;
-    if ( foundTime )
-        return index;
-    else
-        return lindex;
+      qDebug() << "obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(obstime))
+                 << "foundTime=" << foundTime;
+      if ( foundTime )
+          return index;
+      else
+          return lindex;
   }
 
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const

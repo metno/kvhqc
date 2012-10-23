@@ -30,13 +30,11 @@
 #ifndef KVALOBSDATAVIEW_H_
 #define KVALOBSDATAVIEW_H_
 
+#include "timeutil.hh"
+
 #include <QtGui/QTableView>
 
 #include <set>
-
-namespace miutil {
-  class miTime;
-}
 
 namespace model
 {
@@ -61,12 +59,12 @@ namespace model
     void toggleShowModelData(bool show);
 
     void selectStation(const QString & station);
-    void selectStation(int stationid, const miutil::miTime & obstime);
-    void selectTime(const miutil::miTime & obstime);
+    void selectStation(int stationid, const timeutil::ptime& obstime);
+    void selectTime(const timeutil::ptime& obstime);
 
   signals:
-    void stationSelected(int stationid, const miutil::miTime & obtime );
-    void timeSelected(const miutil::miTime & obtime);
+    void stationSelected(int stationid, const timeutil::ptime& obstime);
+    void timeSelected(const timeutil::ptime& obstime);
     void parameterSelected(const QString & parameterName);
 
   protected slots:

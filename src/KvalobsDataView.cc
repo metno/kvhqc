@@ -31,9 +31,11 @@
 #include "KvalobsDataView.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataDelegate.h"
-#include <QMessageBox>
-#include <QLineEdit>
-#include <QDebug>
+
+#include <QtGui/QMessageBox>
+#include <QtGui/QLineEdit>
+#include <QtCore/QDebug>
+
 #include <stdexcept>
 
 namespace model
@@ -86,11 +88,11 @@ namespace model
     QStringList elements = station.split(',');
     int elementCount = elements.size();
     if ( elementCount == 1 ) {
-        miutil::miTime obstime(elements[0].toStdString());
-        if ( obstime.undef() ) {
-            qDebug() << "Unable to parse second element as obstime: " << station;
-            return;
-        }
+        timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[0].toStdString());
+//        if ( obstime.undef() ) { // FIXME
+//            qDebug() << "Unable to parse second element as obstime: " << station;
+//            return;
+//        }
         selectTime(obstime);
     }
     else if ( elementCount == 2 ) {
@@ -100,18 +102,18 @@ namespace model
           qDebug() << "Unable to parse first element as stationid: " << station;
           return;
       }
-      miutil::miTime obstime(elements[1].toStdString());
-      if ( obstime.undef() ) {
-          qDebug() << "Unable to parse second element as obstime: " << station;
-          return;
-      }
+      const timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[1].toStdString());
+//      if ( obstime.undef() ) { FIXME
+//          qDebug() << "Unable to parse second element as obstime: " << station;
+//          return;
+//      }
       selectStation(stationid, obstime);
     }
     else
       qDebug() << "Unable to parse station string: " << station;
   }
 
-  void KvalobsDataView::selectStation(int stationid, const miutil::miTime & obstime)
+  void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime)
   {
     LOG_FUNCTION();
 
@@ -141,7 +143,7 @@ namespace model
     blockSignals(false);
   }
 
-  void KvalobsDataView::selectTime(const miutil::miTime & obstime)
+  void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
   {
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
@@ -181,10 +183,10 @@ namespace model
       }
       if ( (! oldData) or newData->stnr() != oldData->stnr() ) {
 	   qDebug() << "stationSelected(" << newData->stnr() << ")";
-	 emit stationSelected(newData->stnr(),newData->otime());
+	 emit stationSelected(newData->stnr(), newData->otime());
       }
       if ( (! oldData) or newData->otime() != oldData->otime() ) {
-          qDebug() << "timeSelected(" << newData->otime().isoTime().c_str() << ")";
+          qDebug() << "timeSelected(" << QString::fromStdString(timeutil::to_iso_extended_string(newData->otime())) << ")";
         emit timeSelected(newData->otime());
       }
     }

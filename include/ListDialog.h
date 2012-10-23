@@ -185,8 +185,6 @@ signals:
   void selectStation();
   void fromTimeChanged(const QDateTime&);
   void toTimeChanged(const QDateTime&);
-  //  void fromTimeChanged(const miutil::miTime&);
-  //  void toTimeChanged(const miutil::miTime&);
 };
 
 class StationTable : public Q3Table {

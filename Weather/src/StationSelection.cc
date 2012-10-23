@@ -30,21 +30,20 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "StationSelection.h"
 #include "BusyIndicator.h"
-#include <qlineedit.h>
 #include "MiDateTimeEdit.hh"
-#include <qlabel.h>
-#include <qlayout.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+
 #include <kvalobs/kvData.h>
 #include <kvcpp/KvApp.h>
+
+#include <QtGui/qlineedit.h>
+#include <QtGui/qlabel.h>
+#include <QtGui/qlayout.h>
+#include <Qt3Support/Q3GridLayout>
+
 #include <iostream>
 #include <cassert>
 
-
 using kvalobs::kvData;
-using miutil::miTime;
-
 
 namespace Weather
 {
@@ -53,13 +52,14 @@ namespace Weather
   StationSelection::StationSelection( QWidget * parent, const kvData * data_ )
     : QWidget( parent )
   {
-    std::cerr << "Dagens dato: " << miutil::miTime::nowTime() << std::endl;
+    std::cerr << "Dagens dato: " << timeutil::to_iso_extended_string(timeutil::now().date()) << std::endl;
 
     kvData data;
     if ( data_ != 0 )
       data = * data_;
     else
-      data.set( 0, miutil::miTime( miTime::nowTime() ),	0, 211, miutil::miTime(), 0, 0, 0, 0,	kvalobs::kvControlInfo(), kvalobs::kvUseInfo(), "" );
+        data.set( 0, timeutil::to_miTime(timeutil::ptime(timeutil::now().date(), boost::posix_time::time_duration(6,0,0) )),
+                0, 211, timeutil::to_miTime(timeutil::ptime()), 0, 0, 0, 0,       kvalobs::kvControlInfo(), kvalobs::kvUseInfo(), "" );
 
     Q3GridLayout * layout = new Q3GridLayout( this, 5, 2 );
     int row = 0;
@@ -71,17 +71,16 @@ namespace Weather
     layout->addWidget( new QLabel( station_, tr("&Stasjon"), this ), row++, 0 );
 
     // Obstime:
-    miutil::miTime d = data.obstime();
-    QDate dt = QDate(d.year(), d.month(), d.day());
-    QTime ti = QTime(d.hour(), 0);
+    timeutil::ptime d = timeutil::from_miTime(data.obstime());
+    QDate dt = QDate(d.date().year(), d.date().month(), d.date().day());
+    QTime ti = QTime(d.time_of_day().hours(), 0);
     obstime_ = new MiDateTimeEdit( QDateTime( dt, ti ), this );
     obstime_->setDisplayFormat("yyyy-MM-dd hh:mm");
     layout->addWidget( obstime_, row, 1 );
     layout->addWidget( new QLabel( obstime_, tr("&Tid:"), this ), row++, 0 );
 
     // TypeID:
-    typeID_ =
-      new QLineEdit( "", "#000", this );
+    typeID_ = new QLineEdit( "", "#000", this );
     layout->addWidget( typeID_, row, 1 );
     layout->addWidget( new QLabel( typeID_, tr("T&ype:"), this ), row++, 0 );
     if ( ! data.typeID() )
@@ -111,13 +110,12 @@ namespace Weather
   }
 
 
-  miTime StationSelection::obstime() const {
+  timeutil::ptime StationSelection::obstime() const {
     QDateTime d = obstime_->dateTime();
     QDate dt = d.date();
     QTime ti = d.time();
-    return miTime( dt.year(), dt.month(), dt.day() ,ti.hour(), 0, 0);
+    return timeutil::from_YMDhms(dt.year(), dt.month(), dt.day(), ti.hour(), 0, 0);
   }
-
 
   int StationSelection::typeID() const {
     return typeID_->text().toInt();
@@ -129,8 +127,8 @@ namespace Weather
 
   kvData StationSelection::getKvData() const
   {
-    kvData ret( station(), miutil::miTime(obstime() ),
-		0, 211, miutil::miTime::nowTime(), typeID(), sensor(), 0,
+    kvData ret( station(), timeutil::to_miTime(obstime()),
+		0, 211, timeutil::to_miTime(timeutil::now()), typeID(), sensor(), 0,
 		0, kvalobs::kvControlInfo(),kvalobs::kvUseInfo(), "" );
     return ret;
   }
