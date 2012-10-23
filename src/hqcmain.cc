@@ -1518,9 +1518,10 @@ bool HqcMainWindow::hqcTypeFilter(const int& typeId, int environment, int /* UNU
   //  if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
   int atypeId = typeId < 0 ? -typeId : typeId;
+  // FIXME this needs to match ListDialog.cc: StationTable::StationTable
   if (  lstdlg->allType->isChecked() ) return TRUE;
   if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
-  if ( (environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412)) || (atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
+  if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
   if ( environment == 2 && atypeId == 3 && lstdlg->alType->isChecked() ) return TRUE;
   if ( environment == 12 && atypeId == 3 && lstdlg->avType->isChecked() ) return TRUE;
   if ( atypeId == 410 && lstdlg->aoType->isChecked() ) return TRUE;
