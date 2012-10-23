@@ -180,10 +180,7 @@ namespace Weather
   void WeatherTable::displayVerticalHeader( vector<miutil::miTime>& timeList) {
     int irow = 0;
     for ( vector<miutil::miTime>::iterator it = timeList.begin(); it != timeList.end(); it++) {
-      miutil::miString mTime = (*it).isoTime();
-      const char* cTime = mTime.c_str();
-      QString dateTime;
-      dateTime = QString(cTime);
+      const QString dateTime = QString::fromStdString(it->isoTime());
       verticalHeader()->setLabel(irow,dateTime);
       ++irow;
     }
@@ -296,7 +293,7 @@ namespace Weather
       adjustColumn(icol);
     for ( int icol = 0; icol < NC; icol++ )
       hideColumn(cbCol[icol]);
-    
+
     bool bfl[NL];
     for ( int icol = 0; icol < NP; icol++ ) {
       bfl[icol] = false;

@@ -37,7 +37,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsDataModel.h"
 
 #include <puTools/miTime.h>
-#include <puTools/miString.h>
 #include <qUtilities/miMessage.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvObsPgm.h>

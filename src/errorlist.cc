@@ -57,6 +57,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/Q3TextEdit>
 #include <Qt3Support/Q3SimpleRichText>
 
+#include <boost/lexical_cast.hpp>
+
 #include <cassert>
 
 typedef StationInformation<kvservice::KvApp> StationInfo;
@@ -1213,11 +1215,9 @@ void ErrorList::signalStationSelected( int row )
   ((HqcMainWindow*)getHqcMainWindow( this ))->sendStation(m->stnr);
   miMessage letter;
   letter.command = qmstrings::station;
-  miutil::miString stationstr(m->stnr);
-  miutil::miString otime(m->obstime.isoTime());
-  letter.common = stationstr ;
+  letter.common = boost::lexical_cast<std::string>(m->stnr);
   letter.common.append(",");
-  letter.common.append(otime);
+  letter.common.append(m->obstime.isoTime());
   emit statSel( letter );
 
 }

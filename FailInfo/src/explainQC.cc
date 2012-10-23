@@ -34,15 +34,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <list>
 #include <fstream>
 #include <sstream>
-#include <qstring.h>
-//#include <kvservice/qt/kvQtApp.h>
+#include <QtCore/qstring.h>
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStationParam.h>
 #include <kvalobs/kvQCFlagTypes.h>
-#include <puTools/miString.h>
 
 #include "hqc_paths.hh"
+
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace kvalobs;
@@ -97,7 +97,7 @@ namespace QC
           // UNUSED const int & paramID = data.paramID();
 	  int icomma = data.cfailed().find(comma);
 
-	  miString qcx;
+	  std::string qcx;
 	  if ( icomma > 0 )
 	    qcx = data.cfailed().substr(0, data.cfailed().find(','));
 	  else
@@ -125,30 +125,28 @@ namespace QC
       if ( ! stParam )
 	   return "Ingen relevante detaljer tilgjengelig";
 
-      miString st;
+      std::string st;
       if ( data.controlinfo().flag(kvalobs::flag::fnum) == 6 )
 	st = "Observasjon mangler.  Modellverdi er satt inn";
       else if ( data.controlinfo().flag(kvalobs::flag::fnum) > 1 ) {
 	st = "Grenseverdier for avvik fra modell :";
 	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
-	st.trim();
-	st.replace( ";", " - " );
+        boost::algorithm::trim(st);
+        boost::algorithm::replace_all(st, ";", " - ");
       }
       else if ( data.controlinfo().flag(kvalobs::flag::fs) == 3 ) {
 	st = "Samme verdi mer enn ";
 	st +=  stParam->metadata().substr( stParam->metadata().find( '\n' ) + 1 );
 	st += " ganger";
-	cerr << "st = " << st << endl;
-	st.trim();
+	boost::algorithm::trim(st);
       }
       else {
 	st =  stParam->metadata().substr( stParam->metadata().find( '\n' ) );
-	cerr << "st = " << st << endl;
-	st.trim();
-	st.replace( ";", " - " );
+	boost::algorithm::trim(st);
+	boost::algorithm::replace_all(st, ";", " - ");
       }
-      cerr << "st = " << st << endl;
-      return string( st );
+      cerr << "st = '" << st << '\'' << endl;
+      return st;
     }
 
     static string getExplanation( const cFailedParam &failDetail )

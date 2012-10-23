@@ -38,6 +38,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/Q3VBoxLayout>
 #include <Qt3Support/Q3HBoxLayout>
 
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
 using namespace miutil;
 
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
@@ -343,8 +346,8 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   if(parameterListbox->currentItem() == -1 ) return;
   if(statlb->currentItem() == -1) return;
   freeze=true;
-  miString str = statlb->currentText().latin1();
-  str.trim();
+  std::string str = statlb->currentText().latin1();
+  boost::algorithm::trim(str);
   str+= " ";
   str += item->text().latin1();
 
@@ -358,15 +361,15 @@ void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {
   ts.marker     = markerBox->currentItem();
 
   if(resultListbox->currentItem()==-1){
-    resultListbox->insertItem(str.cStr());
+    resultListbox->insertItem(str.c_str());
     resultListbox->setSelected(0,true);
     tsinfo[0] = ts;
   }else{
     if( newcurveButton->isOn() ){
-      resultListbox->insertItem(str.cStr());
+      resultListbox->insertItem(str.c_str());
       tsinfo.push_back(ts);
     } else {
-      resultListbox->changeItem(str.cStr(),resultListbox->currentItem());
+      resultListbox->changeItem(str.c_str(),resultListbox->currentItem());
       tsinfo[resultListbox->currentItem()] = ts;
     }
   }
@@ -377,8 +380,8 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem*) {
   if(freeze) return;
   if( parameterListbox->currentItem() == -1 ) return;
   freeze=true;
-  miString str = statlb->currentText().latin1();
-  str.trim();
+  std::string str = statlb->currentText().latin1();
+  boost::algorithm::trim(str);
   str+= " ";
   str += parameterListbox->currentText().latin1();
 
@@ -392,15 +395,15 @@ void TimeseriesDialog::stationSelected(Q3ListBoxItem*) {
   ts.marker     = markerBox->currentItem();
 
   if(resultListbox->currentItem()==-1){
-    resultListbox->insertItem(str.cStr());
+    resultListbox->insertItem(str.c_str());
     resultListbox->setSelected(0,true);
     tsinfo[0] = ts;
   }else{
     if( newcurveButton->isOn() ){
-      resultListbox->insertItem(str.cStr());
+      resultListbox->insertItem(str.c_str());
       tsinfo.push_back(ts);
     } else {
-      resultListbox->changeItem(str.cStr(),resultListbox->currentItem());
+      resultListbox->changeItem(str.c_str(),resultListbox->currentItem());
       tsinfo[resultListbox->currentItem()] = ts;
     }
   }
@@ -440,7 +443,7 @@ void TimeseriesDialog::newStationList(std::vector<QString>& stationList)
   }
 }
 
-void TimeseriesDialog::getResults(std::vector<miString>& parameter,
+void TimeseriesDialog::getResults(std::vector<std::string>& parameter,
 				  miutil::miTime& fromTime,
 				  miutil::miTime& toTime,
 				  std::vector<int>& stationID,
@@ -454,9 +457,9 @@ void TimeseriesDialog::getResults(std::vector<miString>& parameter,
   for ( int j = 0; j < nTypes; j++ ) {
     for(int i=0; i<n; i++){
       parameter.push_back(parameterListbox->text(tsinfo[i].parameter).latin1());
-      miString station = statlb->text(tsinfo[i].station).latin1();
-      stationID.push_back(atoi(station.cStr()));
-      miString idString(stationID[i]);
+      std::string station = statlb->text(tsinfo[i].station).latin1();
+      stationID.push_back(atoi(station.c_str()));
+      std::string idString = boost::lexical_cast<std::string>(stationID[i]);
 
       POptions::PlotOptions po;
       po.name=  "Stasjon:" + idString;
@@ -477,11 +480,11 @@ void TimeseriesDialog::getResults(std::vector<miString>& parameter,
 	plotoptions[i].axis= axes[0];
 	plotoptions[i].axisname= "Trykk";
       }
-      else if (parameter[i].contains("T")){
+      else if (parameter[i].find("T") != std::string::npos){
 	plotoptions[i].axis= axes[1];
 	plotoptions[i].axisname= "Temp.";
       }
-      else if (parameter[i].contains("RR")){
+      else if (parameter[i].find("RR") != std::string::npos){
 	po.plottype=POptions::type_histogram;
 	plotoptions[i].axisname= "";
       }

@@ -39,26 +39,21 @@ namespace internal_
 {
   void addCFailed( kvalobs::kvData &d )
   {
-    miutil::miString cf = d.cfailed();
+    std::string cf = d.cfailed();
+    const bool notWatchRRWeather = (std::string::npos == cf.find("watchweather") &&
+                std::string::npos == cf.find("watchRR"));
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     if ( cinfo.flag( flag::fhqc ) >= 2 ) {
       if ( cf.empty() )
 	cf = "hqc";
-      else if ( !cf.contains("watchweather") &&
-		!cf.contains("watchRR") )
+      else if ( notWatchRRWeather )
 	cf += ",hqc";
     }
-    else if ( cinfo.flag( flag::fhqc ) == 1 &&
-	      !cf.empty() &&
-	      !cf.contains("watchweather") &&
-	      !cf.contains("watchRR") )
+    else if ( cinfo.flag( flag::fhqc ) == 1 && !cf.empty() && notWatchRRWeather )
       cf += ",hqc";
-    else if ( cinfo.flag( flag::fhqc ) == 0 &&
-	      !cf.empty() &&
-	      !cf.contains("watchweather") &&
-	      !cf.contains("watchRR") &&
-	      d.corrected() == d.original() &&
-	      d.corrected() == -32767 ) {
+    else if ( cinfo.flag( flag::fhqc ) == 0 && !cf.empty() && notWatchRRWeather
+              && d.corrected() == d.original() && d.corrected() == -32767 )
+    {
       cf += ",hqc";
     }
 
@@ -72,9 +67,9 @@ namespace internal_
   {
     const kvalobs::kvControlInfo ci = d.controlinfo();
     kvalobs::kvUseInfo ui = d.useinfo();
-    miutil::miString cf = d.cfailed();
+    std::string cf = d.cfailed();
 
-    if (( cf.contains("hqc") || cf.contains("watchweather") || cf.contains("watchRR")) && ci.flag( flag::fhqc ) == 0 ) {
+    if (( std::string::npos != cf.find("hqc") || std::string::npos != cf.find("watchweather") || std::string::npos != cf.find("watchRR")) && ci.flag( flag::fhqc ) == 0 ) {
       kvalobs::kvControlInfo tci = d.controlinfo();
       tci.set(kvalobs::flag::fhqc,1);
       ui.setUseFlags( tci );

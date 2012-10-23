@@ -28,28 +28,62 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <qcombobox.h>
-#include <q3listbox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlcdnumber.h>
-#include <qcheckbox.h>
-#include <qslider.h>
-#include <qpixmap.h>
+#include <QtGui/qcombobox.h>
+#include <Qt3Support/q3listbox.h>
+#include <QtGui/qlayout.h>
+#include <QtGui/qlabel.h>
+#include <QtGui/qpushbutton.h>
+#include <QtGui/qlcdnumber.h>
+#include <QtGui/qcheckbox.h>
+#include <QtGui/qslider.h>
+#include <QtGui/qpixmap.h>
 
 #include <qtQTUtil.h>
 
 #include <iostream>
 
-using namespace miutil;
-
 //#define IN_COLOR  QColor(0,80,0)
 #define OUT_COLOR QColor(192,192,192)
 #define isMotif true
 
+namespace /*anonymous*/ {
+
+/*********************************************/
+QPixmap* linePixmap(const std::string& pattern, int linewidth)
+{
+
+  // make a 32x20 pixmap of a linepattern of length 16 (where ' ' is empty)
+
+  char xpmEmpty[] = "################################";
+  char xpmLine[] =  "................................";
+  int lw = linewidth;
+  if (lw<1)
+      lw=1;
+  else if (lw>20)
+      lw=20;
+
+  if (pattern.length()>=16) {
+    for (int i=0; i<16; i++)
+      if (pattern[i]==' ') xpmLine[16+i]= xpmLine[i] = '#';
+  }
+
+  int l1= 10 - lw/2;
+  int l2= l1 + lw;
+
+  const char* xpmData[3+20];
+  xpmData[0] = "32 20 2 1";
+  xpmData[1] = ". c #000000";
+  xpmData[2] = "# c None";
+
+  for (int i=0;  i<l1; i++) xpmData[3+i]= xpmEmpty;
+  for (int i=l1; i<l2; i++) xpmData[3+i]= xpmLine;
+  for (int i=l2; i<20; i++) xpmData[3+i]= xpmEmpty;
+
+  return new QPixmap(xpmData);
+}
 
 
+} // anonymous namespace
 
 /*********************************************/
 QLabel* TitleLabel( const char* name, QWidget* parent){
@@ -97,40 +131,6 @@ QPushButton* PixmapButton(const QPixmap& pixmap, QWidget* parent,
 
   return b;
 }
-
-
-
-/*********************************************/
-QComboBox* ComboBox( QWidget* parent, std::vector<miString> vstr,
-		     bool Enabled, int defItem  ){
-
-  QComboBox* box = new QComboBox( false, parent );
-
-  int nr_box = vstr.size();
-
-  //  const char** cvstr= new const char*[nr_box];
-  //  for( int i=0; i<nr_box; i++ )
-  //    cvstr[i]=  vstr[i].c_str();
-  QStringList cvstr;
-  for( int i=0; i<nr_box; i++ )
-    cvstr[i]=  vstr[i].cStr();
-
-  //  box->insertStrList( cvstr, nr_box );
-  box->insertItems( nr_box, cvstr );
-
-  box->setEnabled( Enabled );
-
-  //if( isMotif ) box->setPalette( QPalette( OUT_COLOR, OUT_COLOR ) );
-
-  box->setCurrentItem(defItem);
-
-  //  delete[] cvstr;
-  //  cvstr=0;
-
-  return box;
-}
-
-
 
 /*********************************************/
 QComboBox* ComboBox( QWidget* parent, QColor* pixcolor, int nr_colors,
@@ -189,31 +189,6 @@ QComboBox* LinetypeBox( QWidget* parent, bool Enabled, int defItem  )
 }
 
 /*********************************************/
-QComboBox* LinewidthBox( QWidget* parent, bool Enabled, int defItem  )
-{
-
-  QComboBox* box = new QComboBox( false, parent );
-
-  int nr_linewidths= 12;
-
-  QPixmap**  pmapLinewidths = new QPixmap*[nr_linewidths];
-  std::vector<miString> linewidths;
-
-  for (int i=0; i<nr_linewidths; i++) {
-    std::ostringstream ostr;
-    ostr << i+1;
-    linewidths.push_back(ostr.str());
-    pmapLinewidths[i]= linePixmap("x",i+1);
-  }
-
-  for( int i=0; i < nr_linewidths; i++)
-    box->insertItem ( *pmapLinewidths[i] );
-  box->setEnabled(true);
-
-  return box;
-}
-
-/*********************************************/
 QLCDNumber* LCDNumber( uint numDigits, QWidget * parent ){
   QLCDNumber* lcdnum = new QLCDNumber( numDigits, parent );
   lcdnum->setSegmentStyle ( QLCDNumber::Flat );
@@ -242,64 +217,3 @@ QSlider* Slider( int minValue, int maxValue, int pageStep, int value,
   slider->setMaximumSize( slider->sizeHint() );
   return slider;
 }
-
-
-/*********************************************/
-void listBox( Q3ListBox* box, std::vector<miString> vstr, int defItem  ){
-
-  if( box->count() )
-    box->clear();
-
-  int nr_box = vstr.size();
-
-  const char** cvstr= new const char*[nr_box];
-  for( int i=0; i<nr_box; i++ )
-    cvstr[i]=  vstr[i].c_str();
-
-  box->insertStrList( cvstr, nr_box );
-
-  if( defItem> -1 )
-    box->setCurrentItem( defItem );
-
-  delete[] cvstr;
-  cvstr=0;
-}
-
-/*********************************************/
-QPixmap* linePixmap(const miutil::miString& pattern,
-				      int linewidth)
-{
-
-  // make a 32x20 pixmap of a linepattern of length 16 (where ' ' is empty)
-
-  miutil::miString xpmEmpty= "################################";
-  miutil::miString xpmLine=  "................................";
-  int i;
-  int lw= linewidth;
-  if (lw<1)  lw=1;
-  if (lw>20) lw=20;
-
-  if (pattern.length()>=16) {
-    for (i=0; i<16; i++)
-      if (pattern[i]==' ') xpmLine[16+i]= xpmLine[i]= '#';
-  }
-
-  int l1= 10 - lw/2;
-  int l2= l1 + lw;
-
-  const char** xpmData= new const char*[3+20];
-  xpmData[0]= "32 20 2 1";
-  xpmData[1]= ". c #000000";
-  xpmData[2]= "# c None";
-
-  for (i=0;  i<l1; i++) xpmData[3+i]= xpmEmpty.c_str();
-  for (i=l1; i<l2; i++) xpmData[3+i]= xpmLine.c_str();
-  for (i=l2; i<20; i++) xpmData[3+i]= xpmEmpty.c_str();
-
-  QPixmap* pmap= new QPixmap(xpmData);
-
-  delete[] xpmData;
-
-  return pmap;
-}
-

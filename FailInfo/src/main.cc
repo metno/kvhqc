@@ -40,7 +40,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <decodeutility/kvDataFormatter.h>
 
 #include "hqc_paths.hh"
- 
+
+#include <boost/algorithm/string.hpp>
+
 using namespace std;
 using namespace FailInfo;
 using namespace kvservice;
@@ -87,8 +89,8 @@ int main( int argc, char ** argv ) {
   char buffer[bufSiz];
   while ( not cin.eof() ) {
     cin.getline( buffer, bufSiz -1 );
-    miString data = buffer;
-    data.trim();
+    std::string data = buffer;
+    boost::algorithm::trim(data);
     if ( data.empty() )
       continue;
     list<kvData> dataList;
@@ -103,8 +105,8 @@ int main( int argc, char ** argv ) {
 
     f->newData( &*dataList.begin() );
   }
- 
+
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
- 
+
   return a.exec();
 }

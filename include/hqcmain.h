@@ -71,7 +71,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <qUtilities/ClientButton.h>
 
-#include <puTools/miString.h>
 #include <qUtilities/miMessage.h>
 #include <decodeutility/DataReinserter.h>
 
@@ -232,11 +231,11 @@ public:
    * \brief Some parameters are displayed in Diana with other names than those in the kvalobs database.
    *        This method converts from "Kvalobs" to "Diana" names.
    */
-  miutil::miString dianaName(miutil::miString);
+  std::string dianaName(const std::string&);
   /*!
    * \brief From given typeId and environment is generated a text string to be sent to Diana
    */
-  miutil::miString hqcType(int, int);
+  std::string hqcType(int, int);
 
   ListDialog* lstdlg;
   ClockDialog* clkdlg;
@@ -447,13 +446,13 @@ private:
 
   miutil::miTime dianaObsTime;
   miutil::miTime dianaTime;
-  typedef QMap<miutil::miString,miutil::miString> NameMap;
+  typedef QMap<std::string,std::string> NameMap;
   NameMap dnMap;
-  typedef QMap<miutil::miString,bool> ModelMap;
+  typedef QMap<std::string,bool> ModelMap;
   ModelMap mdMap;
-  typedef QMap<miutil::miString,bool> DiffMap;
+  typedef QMap<std::string,bool> DiffMap;
   DiffMap diMap;
-  typedef QMap<miutil::miString,bool> PropMap;
+  typedef QMap<std::string,bool> PropMap;
   PropMap prMap;
 
   /**
@@ -477,7 +476,6 @@ protected:
   // socket methods
   void initDiana();
   void sendMessage(miMessage&);
-  // void sendImage(const miutil::miString name, const QImage& image);
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 

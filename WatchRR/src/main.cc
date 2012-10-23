@@ -34,7 +34,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <kvcpp/corba/CorbaKvApp.h>
 #include <decodeutility/kvDataFormatter.h>
-#include <puTools/miString.h>
 
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>

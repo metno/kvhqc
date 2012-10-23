@@ -29,12 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include <kvcpp/corba/CorbaKvApp.h>
-#include <qapplication.h>
+#include <QtGui/qapplication.h>
 #include <decodeutility/kvDataFormatter.h>
 #include "identifyUser.h"
-#include <qmessagebox.h>
-#include <puTools/miString.h>
-#include <QDebug>
+#include <QtGui/qmessagebox.h>
+#include <QtCore/QDebug>
 
 #include "MultiStationSelection.h"
 

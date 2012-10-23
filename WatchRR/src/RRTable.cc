@@ -45,9 +45,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
 #include <sstream>
-#include <qapplication.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QtGui/qapplication.h>
+#include <QtGui/qmessagebox.h>
+#include <QtGui/qstatusbar.h>
 #include <boost/assign/std/vector.hpp>
 
 #include <cassert>
@@ -409,7 +409,7 @@ namespace WatchRR
 
     for ( list<kvData>::iterator kit = dl.begin(); kit != dl.end(); kit++ ) {
       kvData mdat = *kit;
-      miString cf(mdat.cfailed());
+      std::string cf(mdat.cfailed());
 
       if ( not cf.empty() )
 	cf += ",";

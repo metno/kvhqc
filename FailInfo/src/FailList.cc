@@ -31,18 +31,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "FailList.h"
 #include "explainQC.h"
 #include "cFailedParam.h"
-#include <puTools/miString.h>
-#include <miutil/commastring.h>
 #include <map>
 #include <set>
-//#include <q3listview.h>
 #include <Qt3Support/Q3ListView>
 
 #include <iostream>
 
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 
 namespace FailInfo
 {
@@ -51,7 +47,7 @@ namespace FailInfo
   {
     setupUi(this);
   }
-  
+
   FailList::~FailList( )
   {
   }
@@ -60,24 +56,24 @@ namespace FailInfo
   {
     return QSize( 384, 128 );
   }
-  
+
   typedef map< QString, set<QC::cFailedParam> >  SubElem;
   typedef map< QString, SubElem > Fails;
 
-  void FailList::newData( const kvalobs::kvData & data ) 
+  void FailList::newData( const kvalobs::kvData & data )
   {
     if ( data == this->data )
       return;
     this->data = data;
 
     cfailedList->clear();
-    
+
     QC::cFailList fail = QC::getFailList( data.cfailed() );
     if ( fail.empty() )
       return;
-    
+
     Fails fails;
-    
+
     for ( QC::cFailList::iterator it = fail.begin();
 	  it != fail.end();  it++ ) {
       fails
@@ -87,24 +83,24 @@ namespace FailInfo
     }
     for ( Fails::const_iterator top = fails.begin();
 	  top != fails.end();  top++ ) {
-      Q3ListViewItem *topItem = 
+      Q3ListViewItem *topItem =
 	new Q3ListViewItem( cfailedList, top->first, "" );
       topItem->setOpen(true);
       QC::FailGroupList &failGroupList = QC::failExpl[ top->first.toStdString() ];
-      
+
       for ( SubElem::const_iterator sub = top->second.begin();
 	    sub != top->second.end();  sub++ ) {
-	QC::FailGroup &failGroup = 
+	QC::FailGroup &failGroup =
 	  failGroupList[sub->first.ascii()];
 	Q3ListViewItem *subItem =
-	  new Q3ListViewItem( topItem, sub->first, 
+	  new Q3ListViewItem( topItem, sub->first,
 			      QString::fromStdString(failGroup.explanation) );
 	subItem->setOpen(true);
-	
+
 	for ( set<QC::cFailedParam>::const_iterator subsub = sub->second.begin();
 	      subsub != sub->second.end();  subsub++ ) {
-	  new Q3ListViewItem( subItem, 
-			      QString::fromStdString(subsub->getPart( QC::cFailedParam::Detail )), 
+	  new Q3ListViewItem( subItem,
+			      QString::fromStdString(subsub->getPart( QC::cFailedParam::Detail )),
 			      QString::fromStdString(failGroup.getDetailExplanation( *subsub, data)) );
 	}
       }

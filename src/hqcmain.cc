@@ -77,7 +77,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/qurl.h>
 #include <QtSql/QSqlQuery>
 
+#include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
+#include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <deque>
 #include <stdexcept>
@@ -312,7 +315,6 @@ HqcMainWindow::HqcMainWindow()
 
   //  if(usesocket){
   QString name = "hqc";
-  //  miutil::miString command = "coserver4";
   QString command = "/usr/bin/coserver4";
   pluginB = new ClientButton(name, command, statusBar());
   pluginB->useLabel(true);
@@ -734,10 +736,10 @@ void HqcMainWindow::ListOK() {
   }
 
   miutil::miTime stime; // start time
-  stime.setTime(miutil::miString(lstdlg->getStart().latin1()));
+  stime.setTime(lstdlg->getStart().latin1());
 
   miutil::miTime etime; // end time
-  etime.setTime(miutil::miString(lstdlg->getEnd().latin1()));
+  etime.setTime(lstdlg->getEnd().latin1());
 
   QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
   if ( find ==  parameterGroups.end() ) {
@@ -923,7 +925,7 @@ void HqcMainWindow::ListOK() {
 void HqcMainWindow::TimeseriesOK() {
   miutil::miTime stime;
   miutil::miTime etime;
-  vector<miutil::miString> parameter;
+  vector<std::string> parameter;
   vector<POptions::PlotOptions> plotoptions;
   vector<int> parameterIndex;
   vector<int> stationIndex;
@@ -1358,7 +1360,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
   if ( !result ) return;
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
-    if ( it->name().cStr() == parameter ){
+    if ( it->name().c_str() == parameter ){
       // UNUSED parameterIndex = it->paramID();
       break;
     }
@@ -1367,8 +1369,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
   long int stnr = stationIndex;
   miutil::miTime ft;
   miutil::miTime tt;
-  ft.setTime(miutil::miString(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
-  tt.setTime(miutil::miString(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  ft.setTime(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
+  tt.setTime(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   whichData.addStation(stnr, ft, tt);
   checkTypeId(stnr);
   int firstRow = dataModel->dataRow(stnr, ft);
@@ -1387,7 +1389,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
     ori = ori.setNum(dt.original(), 'f', 1);
     QString stnr;
     stnr = stnr.setNum(dt.stationID());
-    ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + ori;
+    ch = stnr + " " + QString::fromStdString(dt.obstime().isoTime()) + ": " + parMap[dt.paramID()] + ": " + ori;
     chList.push_back(ch);
     newCorr.push_back(dt.original());
   }
@@ -1412,7 +1414,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
   if ( !result ) return;
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
-    if ( it->name().cStr() == parameter ){
+    if ( it->name().c_str() == parameter ){
         // UNUSED parameterIndex = it->paramID();
       break;
     }
@@ -1421,8 +1423,8 @@ void HqcMainWindow::rejectTimeseriesOK() {
   long int stnr = stationIndex;
   miutil::miTime ft;
   miutil::miTime tt;
-  ft.setTime(miutil::miString(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
-  tt.setTime(miutil::miString(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString()));
+  ft.setTime(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
+  tt.setTime(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   whichData.addStation(stnr, ft, tt);
   checkTypeId(stnr);
   int firstRow = dataModel->dataRow(stnr, ft);
@@ -1440,7 +1442,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
     cr = cr.setNum(dt.corrected(), 'f', 1);
     QString stnr;
     stnr = stnr.setNum(dt.stationID());
-    ch = stnr + " " + QString(dt.obstime().isoTime().cStr()) + ": " + parMap[dt.paramID()] + ": " + cr;
+    ch = stnr + " " + QString::fromStdString(dt.obstime().isoTime()) + ": " + parMap[dt.paramID()] + ": " + cr;
     chList.push_back(ch);
   }
   DiscardDialog* discardDialog = new DiscardDialog(chList);
@@ -1844,7 +1846,7 @@ bool HqcMainWindow::readFromStInfoSys() {
           QString strHoh;
           QString strEnv;
           strEnv = strEnv.setNum(st.environmentid());
-          listStatName.append(st.name().cStr());
+          listStatName.append(st.name().c_str());
           listStatNum.append(strStnr.setNum(st.stationID()));
           listStatHoh.append(strHoh.setNum(st.height()));
           listStatType.append(strEnv);
@@ -1975,7 +1977,7 @@ void HqcMainWindow::readFromStationFile(int /* UNUSED statCheck*/) {
       QString strSnr("    ");
       if(it->wmonr() > 0)
         strSnr = strSnr.setNum(it->wmonr());
-      listStatName.append(it->name().cStr());
+      listStatName.append(it->name().c_str());
       listStatNum.append(strStnr.setNum(it->stationID()));
       listStatHoh.append(strHoh.setNum(it->height()));
       listStatType.append(strEnv);
@@ -2037,8 +2039,8 @@ void HqcMainWindow::readFromParam() {
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
 
   for(;it!=plist.end(); it++){
-    parMap[it->paramID()] = it->name().cStr();
-    listParName.append(it->name().cStr());
+    parMap[it->paramID()] = it->name().c_str();
+    listParName.append(it->name().c_str());
   }
 }
 
@@ -2167,32 +2169,6 @@ void HqcMainWindow::initDiana()
     sendAnalysisMessage();
 }
 
-//// send one image to diana (with name)
-//void HqcMainWindow::sendImage(const miutil::miString name, const QImage& image)
-//{
-//  LOG_FUNCTION();
-//  if (!dianaconnected) return;
-//  if (image.isNull()) return;
-//
-//  QByteArray* a; // TODO uninitialized -- this will give problems
-//  QDataStream s(a, QIODevice::WriteOnly);
-//  s << image;
-//
-//  miMessage m;
-//  m.command= qmstrings::addimage;
-//  m.description= "name:image";
-//
-//  ostringstream ost;
-//  ost << name << ":";
-//  int n= a->count();
-//  for (int i=0; i<n; i++)
-//    ost << setw(7) << int(*a[i]);
-//  miutil::miString txt= ost.str();
-//  m.data.push_back(txt);
-//    cerr << "HQC sender melding : " << m.content() << endl;
-//  pluginB->sendMessage(m);
-//}
-
 // called when client-list changes
 void HqcMainWindow::processConnect()
 {
@@ -2233,8 +2209,10 @@ void HqcMainWindow::processLetter(miMessage& letter)
   LOG_FUNCTION();
   qDebug() << "command=" << letter.command.c_str();
   if(letter.command == qmstrings::newclient) {
-      const vector<miutil::miString> desc = letter.commondesc.split(":"), valu = letter.common.split(":");
-      for(vector<miutil::miString>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
+      vector<std::string> desc, valu;
+      boost::split(desc, letter.commondesc, boost::is_any_of(":"));
+      boost::split(valu, letter.common, boost::is_any_of(":"));
+      for(vector<std::string>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
           if( *itD == "type" && *itC == "Diana" ) {
               firstObs = true;
               processConnect();
@@ -2261,24 +2239,6 @@ void HqcMainWindow::processLetter(miMessage& letter)
   }
 }
 
-// send text to show in text-window in diana
-/*
-void HqcMainWindow::sendShowText(const miutil::miString site)
-{
-  if (!dianaconnected) return;
-
-  miMessage m;
-  m.command= qmstrings::showtext;
-  m.description= DATASET_STATIONS+";POS:TEXT";
-  miutil::miString data= site+":Dette er en tekst for posisjon " + site;
-  m.data.push_back(data);
-  cerr << "HQC:     command:" << m.command << endl;
-  cerr << "HQC: description:" << m.description << endl;
-  cerr << "HQC sender melding" << endl;
-  pluginB->sendMessage(m);
-}
-*/
-
 // send message to show ground analysis in Diana
 void HqcMainWindow::sendAnalysisMessage() {
   LOG_FUNCTION();
@@ -2291,7 +2251,7 @@ void HqcMainWindow::sendAnalysisMessage() {
     cerr << "HQC sender melding : " << letter.content() << endl;
   pluginB->sendMessage(letter);
 
-  dianaTime.setTime(miutil::miString("2000-01-01 00:00:00"));
+  dianaTime.setTime("2000-01-01 00:00:00");
 }
 
 void HqcMainWindow::sendStation(int stnr)
@@ -2300,7 +2260,7 @@ void HqcMainWindow::sendStation(int stnr)
 
   miMessage pLetter;
   pLetter.command = qmstrings::station;
-  miutil::miString stationstr(stnr);
+  const std::string stationstr = boost::lexical_cast<std::string>(stnr);
   pLetter.common = stationstr;
     cerr << "HQC sender melding : " << pLetter.content() << endl;
   pluginB->sendMessage(pLetter);
@@ -2351,9 +2311,9 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
   parSynop.insert(parSynop.begin(),selPar.count(),false);
   for ( int i=0; i<selPar.count(); ++i ) {
     parIndex.push_back(selParNo[i]);
-    miutil::miString diPar = dianaName(selPar[i].latin1());
-    if(diPar.exists()) {
-      parName.append(diPar.cStr());
+    const std::string diPar = dianaName(selPar[i].latin1());
+    if( not diPar.empty() ) {
+      parName.append(diPar.c_str());
       parSynop[i] = true;
       parModel[i] = mdMap[diPar];
       parDiff[i]  = diMap[diPar];
@@ -2361,20 +2321,20 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     }
   }
 
-  miutil::miString synopDescription = "id,St.type,auto,lon,lat,";
-  if ( !parName.isEmpty() )
+  std::string synopDescription = "id,St.type,auto,lon,lat,";
+  if ( not parName.empty() )
     synopDescription += parName.join(",").latin1();
-  miutil::miString enkelDescription = synopDescription;
+  const std::string enkelDescription = synopDescription;
 
-  vector<miutil::miString> synopData;
-  vector<miutil::miString> enkelData;
+  std::vector<std::string> synopData;
+  std::vector<std::string> enkelData;
 
   int prStnr = 0;
 
   for ( unsigned int i = 0; i < datalist->size(); i++) { // fill data
     if ( (*datalist)[i].otime() == time || (firstObs && (*datalist)[i].stnr() != prStnr )){
       double lat,lon,h;
-      miutil::miString str((*datalist)[i].stnr());
+      std::string str = boost::lexical_cast<std::string>((*datalist)[i].stnr());
       QString name;
       int env;
       int snr;
@@ -2382,32 +2342,26 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
       int typeId = (*datalist)[i].showTypeId();
       findStationInfo((*datalist)[i].stnr(),name,lat,lon,h,snr,env);
       str += ",";
-      miutil::miString isAuto = "x";
-      miutil::miString strType = hqcType(typeId, env);
-      if ( strType.cStr()[0] == 'A' )
+      std::string isAuto = "x";
+      std::string strType = hqcType(typeId, env);
+      if ( strType.c_str()[0] == 'A' )
 	isAuto = "a";
-      else if ( strType.cStr()[0] == 'N' || strType.cStr()[0] == 'P' )
+      else if ( strType.c_str()[0] == 'N' || strType.c_str()[0] == 'P' )
 	isAuto = "n";
-      if ( (isAuto == "a" && strType.cStr()[1] == 'A') ||
-	   (strType.cStr()[0] == 'V' && strType.cStr()[1] != 'M') ||
+      if ( (isAuto == "a" && strType.c_str()[1] == 'A') ||
+	   (strType.c_str()[0] == 'V' && strType.c_str()[1] != 'M') ||
 	   (strType == "none")  )
     	str += "none";
-      else if ( strType.cStr()[0] == 'P' )
-	str += strType.cStr()[0];
+      else if ( strType.c_str()[0] == 'P' )
+	str += strType.c_str()[0];
       else
-	str += strType.cStr()[1];
+	str += strType.c_str()[1];
       str += ",";
       str += isAuto;
       str += ",";
 
-      miutil::miString latstr(lat,4);
-      miutil::miString lonstr(lon,4);
-      str += lonstr;
-      str += ",";
-      str += latstr;
-      //      }
-      miutil::miString synopStr = str;
-      miutil::miString enkelStr = str;
+      str += (boost::format("%1$.4f,%2$.4f") % lat % lon).str();
+      std::string synopStr = str, enkelStr = str;
       double aa = (*datalist)[i].corr(1);
       for(unsigned int j=0; j<parIndex.size();j++){
 	double corr = (*datalist)[i].corr(parIndex[j]);
@@ -2457,8 +2411,8 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 	  int maxFlag = shFl1 >shFl2 ? shFl1 : shFl2;
 	  maxFlag = shFl3 > maxFlag ? shFl3 : maxFlag;
 	  maxFlag = shFl4 > maxFlag ? shFl4 : maxFlag;
-       	  miutil::miString flagstr(flag,5);
-       	  miutil::miString colorstr;
+       	  std::string flagstr = (boost::format("%1$05d") % flag).str();
+       	  std::string colorstr;
 	  if ( maxFlag == 0 )
        	    colorstr = ";0:0:0";
 	  //	  else if ( maxFlag == 1 )
@@ -2469,14 +2423,8 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
 	  else if ( maxFlag >= 6 )
 	    colorstr = ";255:0:0";
 
-	  //	  miutil::miString flagstr(flag,5);
-	  miutil::miString valstr = (miutil::miString)corr;
-	  miutil::miString synvalstr = (miutil::miString)corr;
-	  //       	  s += ":";
-	  //	  if ( firstObs )
-	    synvalstr += ";";
-	    //	  else
-	    //	    synvalstr += ":";
+	  std::string valstr = boost::lexical_cast<std::string>(corr), synvalstr = valstr;
+	  synvalstr += ";";
 	  synvalstr +=flagstr;
 	  if(parSynop[j]){
 	    enkelStr += ",";
@@ -2499,31 +2447,21 @@ void HqcMainWindow::sendObservations(const miutil::miTime & time, bool sendtime)
     firstObs = false;
     pLetter.description = synopDescription;
     pLetter.common = time.isoTime() + ",synop";
-    pLetter.data = synopData;
+    pLetter.data = std::vector<miutil::miString>(synopData.begin(), synopData.end());
     //TEST
     cerr << "HQC sender melding : " << pLetter.content() << endl;
     //TEST
     pluginB->sendMessage(pLetter);
   }
-  /*
-  if( !synopData.size() ) {
-    miMessage okLetter;
-    okLetter.command = "menuok";
-    okLetter.from = hqcFrom;
-    okLetter.to = hqcTo;
-    pluginB->sendMessage(okLetter);
-  }
-  */
 }
-
 
 
 void HqcMainWindow::sendSelectedParam(const QString & param)
 {
   LOG_FUNCTION();
 
-  miutil::miString diParam = dianaName(param.latin1());
-  if(!diParam.exists()) {
+  std::string diParam = dianaName(param.latin1());
+  if( diParam.empty() ) {
       qDebug() << qPrintable(param) << ": No such diana parameter";
       return;
   }
@@ -2593,7 +2531,7 @@ double HqcMainWindow::dianaValue(int parNo, bool isModel, double qVal, double aa
 
 
 // Help function to translate from kvalobs parameter names to diana parameter names
-miutil::miString HqcMainWindow::dianaName(miutil::miString lbl) {
+std::string HqcMainWindow::dianaName(const std::string& lbl) {
   NameMap::iterator dnit;
   for ( dnit = dnMap.begin(); dnit != dnMap.end(); dnit++ ) {
     if ( lbl == dnit.data() ) {
@@ -2603,9 +2541,9 @@ miutil::miString HqcMainWindow::dianaName(miutil::miString lbl) {
   return "";
 }
 
-miutil::miString HqcMainWindow::hqcType(int typeId, int env) {
+std::string HqcMainWindow::hqcType(int typeId, int env) {
   // Generates string to send to Diana
-  miutil::miString hqct = "none";
+  std::string hqct = "none";
   if ( env == 8 ) {
     if ( typeId == 3 || typeId == 330 || typeId == 342 )
       hqct = "AA";

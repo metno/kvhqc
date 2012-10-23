@@ -63,7 +63,7 @@ public:
   void hideAll();
   void showAll();
 
-  void getResults(std::vector<miutil::miString>& parameter,
+  void getResults(std::vector<std::string>& parameter,
 		  miutil::miTime& fromTime,
 		  miutil::miTime& toTime,
 		  std::vector<int>& stationID,
