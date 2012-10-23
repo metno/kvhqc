@@ -170,7 +170,7 @@ public:
    * \brief Returns true if the given typeId and environment corresponds
    *        to a station type checked in the ListDialog
    */
-  bool hqcTypeFilter(const int&, int, int);
+  bool hqcTypeFilter(int typeId, int environment, int stationId);
   bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
   bool isAlreadyStored(const timeutil::ptime&, int);
   /*!

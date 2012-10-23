@@ -89,10 +89,10 @@ namespace model
     int elementCount = elements.size();
     if ( elementCount == 1 ) {
         timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[0].toStdString());
-//        if ( obstime.undef() ) { // FIXME
-//            qDebug() << "Unable to parse second element as obstime: " << station;
-//            return;
-//        }
+        if ( obstime.is_not_a_date_time() ) {
+            qDebug() << "Unable to parse second element as obstime: " << station;
+            return;
+        }
         selectTime(obstime);
     }
     else if ( elementCount == 2 ) {
@@ -103,10 +103,10 @@ namespace model
           return;
       }
       const timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[1].toStdString());
-//      if ( obstime.undef() ) { FIXME
-//          qDebug() << "Unable to parse second element as obstime: " << station;
-//          return;
-//      }
+      if ( obstime.is_not_a_date_time() ) {
+          qDebug() << "Unable to parse second element as obstime: " << station;
+          return;
+      }
       selectStation(stationid, obstime);
     }
     else

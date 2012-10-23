@@ -1513,7 +1513,7 @@ bool HqcMainWindow::timeFilter(int hour) {
   return FALSE;
 }
 
-bool HqcMainWindow::hqcTypeFilter(const int& typeId, int environment, int /* UNUSED stnr*/) {
+bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/) {
   if ( typeId == -1 || typeId == 501 ) return FALSE;
   //  if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
@@ -1607,8 +1607,8 @@ bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, const timeuti
 	 abs(typeId) == ct.cTypeId &&
 	 sensor == ct.cSensor &&
 	 par == ct.par &&
-	 (/* FIXME ct.fDate.undef() ||*/ otime.date() >= ct.fDate) &&
-	 (/* FIXME ct.tDate.undef() ||*/ otime.date() <= ct.tDate) ) {
+	 (ct.fDate.is_not_a_date() || otime.date() >= ct.fDate) &&
+	 (ct.tDate.is_not_a_date() || otime.date() <= ct.tDate) ) {
       tpf = true;
       break;
     }
@@ -2060,19 +2060,11 @@ void HqcMainWindow::findStationInfo(int stnr,
     }
 }
 
-void HqcMainWindow::findStationPos(int stnr,
-				   double& lat,
-				   double& lon,
-				   double& hoh) {
-  std::list<kvalobs::kvStation>::const_iterator it=slist.begin();
-  for(;it!=slist.end(); it++){
-    if ( it->stationID() == stnr ) {
-      lat  = (it->lat());
-      lon  = (it->lon());
-      hoh  = (it->height());
-      break;
-    }
-  }
+void HqcMainWindow::findStationPos(int stnr, double& lat, double& lon, double& hoh)
+{
+    QString dummyName;
+    int dummyWMOnr, dummyEnvironmentId;
+    findStationInfo(stnr, dummyName, lat, lon, hoh, dummyWMOnr, dummyEnvironmentId);
 }
 
 void HqcMainWindow::tileHorizontal() {
@@ -2789,21 +2781,20 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             bool errFl = false;
             if ((!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1) {
                 continue;
-            } else if (ditNo == ditSize - 1)
-                goto pushback;
-            for (int ip = 0; ip < NOPARAM; ip++) {
-                int shFl = tdl.flag(ip);
-                int shFl1 = shFl / 10000;
-                int shFl2 = shFl % 10000 / 1000;
-                int shFl3 = shFl % 1000 / 100;
-                int shFl4 = shFl % 100 / 10;
-                if (shFl1 > 1 || shFl2 > 1 || shFl3 > 1 || shFl4 > 1)
-                    errFl = true;
+            } else if (ditNo != ditSize - 1) {
+                for (int ip = 0; ip < NOPARAM; ip++) {
+                    int shFl = tdl.flag(ip);
+                    int shFl1 = shFl / 10000;
+                    int shFl2 = shFl % 10000 / 1000;
+                    int shFl3 = shFl % 1000 / 100;
+                    int shFl4 = shFl % 100 / 10;
+                    if (shFl1 > 1 || shFl2 > 1 || shFl3 > 1 || shFl4 > 1)
+                        errFl = true;
+                }
+                if (!errFl && (lity == erLi || lity == erSa || lity == erLo)) {
+                    continue;
+                }
             }
-            if (!errFl && (lity == erLi || lity == erSa || lity == erLo)) {
-                continue;
-            }
-        pushback:
             const bool timeFiltered = timeFilter(hour);
             if ((timeFiltered && !isAlreadyStored(protime, prstnr) && ((otime != protime || (otime == protime && stnr != prstnr))))
                     || (lstdlg->allTypes->isChecked() && typeId != prtypeId)) {
