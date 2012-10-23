@@ -97,7 +97,7 @@ using namespace kvservice;
 namespace {
 // Number of parameters to show, according to last selection
 //int noSelPar;
-const int modelParam[] =
+const int modelParam[NOPARAMMODEL] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
 
 const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
@@ -1649,9 +1649,6 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   if(!KvApp::kvApp->getKvModelData(mdlist, whichData))
       cerr << "Can't connect to modeldata table!" << endl;
   modDatl mtdl;
-  for(int ip = 0; ip < NOPARAMMODEL; ip++) {
-    mtdl.orig[modelParam[ip]] = -32767.0;
-  }
   CIModelDataList it=mdlist.begin();
   if (it != mdlist.end()) {
       timeutil::ptime protime = timeutil::from_miTime(it->obstime());
@@ -1665,9 +1662,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
 
           if (otime != protime || (otime == protime && stnr != prstnr)) {
               modeldatalist.push_back(mtdl);
-              for(int ip = 0; ip < NOPARAMMODEL; ip++) {
-                  mtdl.orig[modelParam[ip]] = -32767.0;
-              }
+              mtdl = modDatl();
           }
 
           mtdl.otime = otime;
@@ -2682,7 +2677,7 @@ makeTextDataList( KvObsDataList& textDataList )
   }
 }
 
-void HqcMainWindow::makeObsDataList(KvObsDataList& dataList)
+void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
 {
     model::KvalobsData tdl;
     bool tdlUpd[NOPARAM];
@@ -3115,4 +3110,3 @@ void HqcMainWindow::readSettings()
   lstdlg->allCoun->setChecked(county[fy]);
   settings.endArray();
 }
-
