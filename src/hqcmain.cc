@@ -425,10 +425,6 @@ HqcMainWindow::HqcMainWindow()
   readFromStation();
 }
 
-void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
-  kvBaseIsUpdated = isUpdated;
-}
-
 void HqcMainWindow::showFlags() {
 }
 
@@ -1456,50 +1452,6 @@ void HqcMainWindow::closeEvent(QCloseEvent* event)
 
 HqcMainWindow::~HqcMainWindow()
 {
-}
-
-void HqcMainWindow::listData(int index,
-			     int& stnr,
-			     timeutil::ptime& obstime,
-			     double* orig,
-			     int* flag,
-			     double* corr,
-			     double* morig,
-			     string* controlinfo,
-			     string* useinfo,
-			     string* cfailed,
-			     int* typeId,
-			     int& showTypeId,
-			     int& typeIdChanged) {
-  // List all data, all parameters at one station and one time
-  timeutil::ptime modeltime;
-  int modelstnr;
-  stnr = (*datalist)[index].stnr();
-  obstime = (*datalist)[index].otime();
-  showTypeId = (*datalist)[index].showTypeId();
-  typeIdChanged = (*datalist)[index].typeIdChanged();
-  // UNUSED int hour = obstime.hour();
-  for ( int i = 0; i < NOPARAM; i++ ) {
-    typeId[i] = (*datalist)[index].typeId(i);
-    orig[i] = (*datalist)[index].orig(i);
-    flag[i] = (*datalist)[index].flag(i);
-    corr[i] = (*datalist)[index].corr(i);
-    controlinfo[i] = (*datalist)[index].controlinfo(i).flagstring();
-    std::cout << '<' << controlinfo[i].c_str() <<  '>' << std::endl;
-    useinfo[i] = (*datalist)[index].useinfo(i).flagstring();
-    cfailed[i] = (*datalist)[index].cfailed(i);
-    morig[i] = -32767.0;
-  }
-
-  for ( unsigned int j = 0; j < modeldatalist.size(); j++ ) {
-    modeltime = modeldatalist[j].otime;
-    modelstnr = modeldatalist[j].stnr;
-    if ( modelstnr == stnr && modeltime == obstime ) {
-      for ( int i = 0; i < NOPARAMMODEL; i++ ) {
-	morig[modelParam[i]] = modeldatalist[j].orig[modelParam[i]];
-      }
-    }
-  }
 }
 
 bool HqcMainWindow::timeFilter(int hour) {

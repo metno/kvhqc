@@ -841,7 +841,6 @@ void ErrorList::updateKvBase(mem* memStore)
       // Handle Error!
       return;
     }
-    mainWindow->setKvBaseUpdated(TRUE);
   }
 }
 
@@ -1405,8 +1404,6 @@ void ErrorList::saveChanges()
       // UNUSED float newCorrected = text( row, tableOriginalValuePos ).toFloat();
       kd.corrected( text( row, tableOriginalValuePos ).toFloat() );
     }
-
-    mainWindow->setKvBaseUpdated(TRUE);
 
     modData.push_back( kd );
   }

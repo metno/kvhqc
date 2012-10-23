@@ -130,35 +130,10 @@ public slots:
    */
   void sendSelectedParam(const QString & param);
   /*!
-   * \brief The boolean variable kvBaseIsUpdated is set to FALSE at the
-   *        start, and to TRUE when an update is sent to the database.
-   */
-  void setKvBaseUpdated(bool);
-  /*!
-   * \brief Returns the value of kvBaseIsUpdated
-   */
-  bool kvBaseUpdated() {return kvBaseIsUpdated;};
-  /*!
    * \brief Reads the data and model_data tables in the kvalobs database
    *        and inserts the observations/model values in datalist/modeldatalist.
    */
   void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
-  /*!
-   * \brief Extracts all the data for one station and one time from datalist
-   */
-  void listData(int,
-		int&,
-		timeutil::ptime&,
-		double*,
-		int*,
-		double*,
-		double*,
-		string*,
-		string*,
-		string*,
-		int*,
-		int&,
-		int&);
 
 public:
 
@@ -334,7 +309,6 @@ private:
   /// True after first time ListOk() have been invoked with valid input
   bool listExist;
 
-  bool kvBaseIsUpdated;
   QString wElement;
   QString userName;
 
