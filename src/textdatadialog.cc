@@ -1,14 +1,19 @@
 #include "textdatadialog.h"
+#include "hqc_utilities.hh"
 #include "MiDateTimeEdit.hh"
-#include <Qt3Support/Q3HBoxLayout>
-#include <QtGui/QLabel>
-#include <Qt3Support/Q3VBoxLayout>
+
 #include <QtGui/QCheckBox>
-#include <QtGui/QPushButton>
+#include <QtGui/QLabel>
 #include <QtGui/qmessagebox.h>
+#include <QtGui/QPushButton>
+#include <Qt3Support/Q3HBoxLayout>
+#include <Qt3Support/Q3VBoxLayout>
+#include <QtCore/QDebug>
 
-TextDataDialog::TextDataDialog(std::vector<int> slist, QWidget* parent): QDialog(parent),stnrList(slist) {
-
+TextDataDialog::TextDataDialog(const std::list<kvalobs::kvStation>& slist, QWidget* parent)
+    : QDialog(parent)
+    , stationList(slist)
+{
   setCaption(tr("TextData"));
 
   stnr = 0;
@@ -103,19 +108,15 @@ TimeSpan TextDataDialog::getTimeSpan()
     return ret;
 }
 
-void TextDataDialog::checkStationId() {
-  bool legalStation = false;
-  for ( unsigned int i = 0; i < stnrList.size(); i++) {
-    if ( stnr == stnrList[i] ) {
-      legalStation = true;
-      break;
+void TextDataDialog::checkStationId()
+{
+    qDebug() << "n.stations=" << stationList.size();
+    std::list<kvalobs::kvStation>::const_iterator it = std::find_if(stationList.begin(), stationList.end(), kvStationById(stnr));
+    const bool legalStation = ( it != stationList.end() );
+    if ( legalStation ) {
+        emit textDataApply();
+    } else {
+        QMessageBox::information( this, tr("TextData"),
+                tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     }
-  }
-  if ( legalStation )
-    emit textDataApply();
-  else {
-      QMessageBox::information( this, tr("TextData"),
-				tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
-      return;
-  }
 }

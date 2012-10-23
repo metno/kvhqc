@@ -46,6 +46,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "approvedialog.h"
 #include "connect2stinfosys.h"
 #include "hqc_paths.hh"
+#include "hqc_utilities.hh"
 #include "identifyUser.h"
 #include "BusyIndicator.h"
 #include "RRDialog.h"
@@ -113,12 +114,6 @@ const std::map<QString, QString> configNameToUserName = boost::assign::map_list_
         ("[plu]", "Pluviometerkontroll")
         ("[all]", "Alt");
 
-struct kvStationById {
-    int stationid;
-    kvStationById(int s) : stationid(s) { }
-    bool operator()(const kvalobs::kvStation& st) const
-        { return st.stationID() == stationid; }
-};
 } // anonymous namespace
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
@@ -348,7 +343,7 @@ HqcMainWindow::HqcMainWindow()
   pardlg->setIcon( QPixmap(hqc_icon_path) );
   dshdlg = new DianaShowDialog(this);
   dshdlg->setIcon( QPixmap(hqc_icon_path) );
-  txtdlg = new TextDataDialog(stnrList, this);
+  txtdlg = new TextDataDialog(slist, this);
   txtdlg->setIcon( QPixmap(hqc_icon_path) );
   rejdlg = new RejectDialog(this);
   rejdlg->setIcon( QPixmap(hqc_icon_path) );
@@ -427,6 +422,7 @@ HqcMainWindow::HqcMainWindow()
 
   // make the timeseries-plot-dialog
   tspdialog = new TSPlotDialog(this);
+  readFromStation();
 }
 
 void HqcMainWindow::setKvBaseUpdated(bool isUpdated) {
@@ -1019,7 +1015,6 @@ void HqcMainWindow::TimeseriesOK() {
 }
 
 void HqcMainWindow::stationOK() {
-  readFromStation();
   if ( !readFromStInfoSys() ) {
     int statCheck = 0;
     readFromStationFile(statCheck);
@@ -1875,21 +1870,15 @@ bool HqcMainWindow::readFromStInfoSys() {
 /*!
  Read the station table in the kvalobs database
 */
-void HqcMainWindow::readFromStation() {
-  if (!KvApp::kvApp->getKvStations(slist)) {
-    int noBase = QMessageBox::warning(this,
-				      tr("Kvalobs"),
-				      tr("Kvalobsdatabasen er ikke tilgjengelig,\n"
-                                         "vil du avslutte?"),
-				      tr("Ja"),
-				      tr("Nei"),
-				      "" );
-    if ( noBase == 0 )
-      exit(1);
-  }
-  stnrList.clear();
-  stnrList.reserve(slist.size());
-  std::transform(slist.begin(), slist.end(), std::back_inserter(stnrList), std::mem_fun_ref(&kvalobs::kvStation::stationID));
+void HqcMainWindow::readFromStation()
+{
+    if (!KvApp::kvApp->getKvStations(slist)) {
+        int noBase = QMessageBox::warning(this, tr("Kvalobs"), tr("Kvalobsdatabasen er ikke tilgjengelig,\n"
+                "vil du avslutte?"), tr("Ja"), tr("Nei"), "");
+        if (noBase == 0)
+            exit(1);
+    }
+    qDebug() << "slist.size()=" << slist.size();
 }
 
 /*!

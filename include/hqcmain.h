@@ -252,8 +252,6 @@ public:
   model::KvalobsDataListPtr datalist;
   std::vector<modDatl> modeldatalist;
 
-  std::vector<int> stnrList;
-
   /// This holds the value of the previously used stList
   std::vector<TxtDat> txtList;
   listType lity;

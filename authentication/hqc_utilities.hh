@@ -31,8 +31,16 @@
 #define UTILITIES_HH_
 
 #include <kvalobs/kvData.h>
+#include <kvalobs/kvStation.h>
 #include <string>
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
+
+struct kvStationById {
+    int stationid;
+    kvStationById(int s) : stationid(s) { }
+    bool operator()(const kvalobs::kvStation& st) const
+        { return st.stationID() == stationid; }
+};
 
 #endif /* UTILITIES_HH_ */
