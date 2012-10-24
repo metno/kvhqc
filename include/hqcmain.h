@@ -36,7 +36,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
-#include <KvalobsDataModel.h>
 #include <qTimeseries/TSPlotDialog.h>
 #include <qUtilities/ClientButton.h>
 
@@ -78,6 +77,9 @@ class StationSelection;
 class StationTable;
 class TextDataDialog;
 class TimeseriesDialog;
+namespace model {
+class KvalobsDataModel;
+}
 
 /**
  * \brief The application's main window.

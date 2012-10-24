@@ -40,6 +40,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "ErrorListFirstCol.h"
 #include "FailDialog.h"
+#include "FunctionLogger.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "missingtable.h"
@@ -142,7 +143,24 @@ const QString controlNoControl[] = {"QC1-2-100","QC1-2-123A","QC1-2-123B","QC1-2
 
 const float discardedValue_ = -32766.0;
 
-const int headSize = 0;
+void dumpMemstore(const std::vector<ErrorList::mem>& memstore, const char* label)
+{
+    std::cerr << "memory store " << label << " size = " << memstore.size() << std::endl;
+    int i = -1;
+    mi_foreach(const ErrorList::mem& mo, memstore) {
+        std::cerr << std::setw(7) << (++i)
+                  << std::setw(7) << mo.stnr
+                  << std::setw(21) << mo.obstime
+                  << std::setw(5) << mo.parNo
+                  << std::setw(5) << mo.parName.toStdString()
+                  << std::setw(9) << std::setprecision(1) << mo.orig
+                  << std::setw(9) << std::setprecision(1) << mo.corr
+                  << std::setw(9) << std::setprecision(1) << mo.morig << "  "
+                  << std::setw(5) << mo.flTyp.toStdString() << "  " << mo.flg << "  "
+                  << mo.controlinfo << "  " << mo.cfailed << std::endl;
+    }
+    std::cerr << std::endl;
+}
 
 } /* anonymous namespace */
 
@@ -155,164 +173,208 @@ ErrorList::ErrorList(QStringList& selPar,
 		     QWidget* parent,
 		     int lity,
 		     int* noSelPar,
-		     std::vector<model::KvalobsData>& dtl,
-		     std::vector<modDatl>& mdtl,
+		     model::KvalobsDataListPtr dtl,
+		     const std::vector<modDatl>& mdtl,
 		     QString& userName)
   : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
 {
-  std::list<kvParam> paramList;
-  kvservice::KvApp::kvApp->getKvParams(paramList);
+    LOG_FUNCTION();
+    std::list<kvParam> paramList;
+    kvservice::KvApp::kvApp->getKvParams(paramList);
 
-  mi_foreach(const kvalobs::kvParam& p, paramList) {
-    if ( p.unit().contains("kode") ) {
-      cP.push_back(p.paramID());
-      cerr << p.unit() << endl;
+    mi_foreach(const kvalobs::kvParam& p, paramList) {
+        if ( p.unit().contains("kode") ) {
+            cP.push_back(p.paramID());
+        }
     }
-  }
-  mi_foreach(int i, cP)
-      cerr << cP[i] << endl;
+    //std::cerr << "end of kode params" << std::endl;
+    //std::cerr << "dumping cP" << std::endl;
+    //mi_foreach(int cp, cP)
+    //    cerr << cp << endl;
+    //std::cerr << "end of dumping cP" << std::endl;
+    
+    setVScrollBarMode( Q3ScrollView::AlwaysOn  );
+    setMouseTracking(true);
+    BusyIndicator busyIndicator;
+    stationidCol = 1;
+    typeidCol = 7;
+    
+    setCaption(tr("HQC - Feilliste"));
+    setSorting(TRUE);
+    readLimits();
+    setSelectionMode( Q3Table::SingleRow );
+    
+    QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
+    lackListAction->setShortcut(tr("Ctrl+M"));
+    
+    opName = userName;
+    fDlg = new FailInfo::FailDialog(this);
+    
+    connect( this, SIGNAL( clicked( int, int, int, const QPoint& ) ),
+             SLOT( tableCellClicked( int, int, int) ) );
+    
+    connect( this, SIGNAL( valueChanged( int, int ) ),
+             SLOT( markModified( int, int ) ) );
+    
+    connect( this, SIGNAL( valueChanged( int, int ) ),
+             SLOT( clearOtherMods( int, int ) ) );
+    
+    connect( this, SIGNAL( doubleClicked( int, int, int, const QPoint&) ),
+             this, SLOT( showFail(int, int, int, const QPoint&) ) );
+    
+    connect( this, SIGNAL( currentChanged(int, int) ),
+             this, SLOT  ( updateFaillist(int, int) ) );
+    
+    connect( this, SIGNAL( currentChanged(int, int) ),
+             this, SLOT  ( showSameStation()  ) );
+    
+    connect( this, SIGNAL( currentChanged(int, int) ),
+             this, SLOT  ( signalStationSelected( int ) ) );
+    
+    connect( lackListAction, SIGNAL( activated() ),
+             this, SLOT  ( setupMissingList() ) );
+    //  	   this, SLOT  ( setupMissingList( int, int ) ) );
+    //  connect( this, SIGNAL( stationSelected( miMessage ) ),
+    //	   mainWindow, SLOT  ( signalStationSelected( miMessage ) ) );
+    
+    connect( mainWindow, SIGNAL( windowClose() ),
+             this, SIGNAL( errorListClosed() ) );
+    
+    if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
+        cerr << "Can't connect to obs_pgm table!" << endl;
+    cerr.setf(ios::fixed);
 
+    setNumRows( 0 );
+    setNumCols( 0 );
+    setNumCols(21);
+    setShowGrid(FALSE);
+    verticalHeader()->hide();
+    horizontalHeader()->setLabel(1, tr("Stnr"));
+    horizontalHeader()->setLabel(2, tr("Navn"));
+    horizontalHeader()->setLabel(3, tr("  Md"));
+    horizontalHeader()->setLabel(4, tr("  Dg"));
+    horizontalHeader()->setLabel(5, tr("  Kl"));
+    horizontalHeader()->setLabel(6, tr("Para"));
+    horizontalHeader()->setLabel(7, tr("Type"));
+    horizontalHeader()->setLabel(8, tr("Orig.d"));
+    horizontalHeader()->setLabel(9, tr("Korr.d"));
+    horizontalHeader()->setLabel(10, tr("mod.v"));
+    horizontalHeader()->setLabel(11, tr("Flagg"));
+    horizontalHeader()->setLabel(12, tr("="));
+    horizontalHeader()->setLabel(13, tr("Fl.v"));
+    horizontalHeader()->setLabel(14, tr("Korrigert OK"));
+    horizontalHeader()->setLabel(15, tr("Original OK"));
+    horizontalHeader()->setLabel(16, tr("Interpolert"));
+    horizontalHeader()->setLabel(17, tr("Tilfordelt"));
+    horizontalHeader()->setLabel(18, tr("Korrigert"));
+    horizontalHeader()->setLabel(19, tr("Forkastet"));
+    horizontalHeader()->setLabel(20, "");
+    
+    makeMissingList(selPar, stime, etime, noSelPar, dtl);
+    fillMemoryStores(selPar, stime, etime, lity, noSelPar, dtl, mdtl);
+    
+    setTableCells();
 
-  setVScrollBarMode( Q3ScrollView::AlwaysOn  );
-  setMouseTracking(true);
-  BusyIndicator busyIndicator;
-  stationidCol = 1;
-  typeidCol = 7;
+    showSameStation();
+    
+    setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
+    setCaption(tr("Feilliste"));
+}
 
-  setCaption(tr("HQC - Feilliste"));
-  setSorting(TRUE);
-  readLimits();
-  setSelectionMode( Q3Table::SingleRow );
+ErrorList::~ErrorList()
+{
+}
 
-  QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
-  lackListAction->setShortcut(tr("Ctrl+M"));
+void ErrorList::makeMissingList(QStringList& selPar,
+                                const timeutil::ptime& stime,
+                                const timeutil::ptime& etime,
+                                int* noSelPar,
+                                model::KvalobsDataListPtr dtl)
+{
+    int missCount = 0;
+    int prevTime = -12345678;
+    int prevStat = -1;
+    int prevPara = -1;
+    for( int j = 0; j < selPar.count(); j++ ) {
+        const int parameterID = noSelPar[j];
+        mi_foreach(const model::KvalobsData& data, *dtl) {
+            if( data.stnr() > 99999 )
+                continue;
+            //??
+            //      if (  data.typeId(parameterID) < 0 )
+            //        continue;
+            //??
+            if( data.otime() < stime || data.otime() > etime )
+                continue;
+            if( not specialTimeFilter(parameterID, data.otime()) )
+                continue;
+            if( not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+                continue;
+            
+            const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
+            if( fnum == 6 ) {
+                const int tdiff = timeutil::hourDiff(data.otime(),stime);
+                missObs mobs;
+                mobs.oTime = data.otime();
+                mobs.time = tdiff;
+                mobs.parno  = parameterID;
+                mobs.statno = data.stnr();
+                mobs.missNo = missCount;
+                if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
+                    missCount = 0;
+                }
+                if ( mobs.time - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4 ) {
+                    mList.push_back(mobs);
+                }
+                missCount++;
+                prevTime = mobs.time;
+                prevStat = mobs.statno;
+                prevPara = mobs.parno;
+            }
+        }
+    }
+}
 
-  opName = userName;
-  fDlg = new FailInfo::FailDialog(this);
+bool ErrorList::obsInMissList(const mem& memO)
+{
+    mi_foreach(const missObs& miss, mList) {
+        if( miss.statno == memO.stnr && miss.parno == memO.parNo && miss.oTime == memO.obstime )
+            return true;
+    }
+    return false;
+}
 
-  connect( this, SIGNAL( clicked( int, int, int, const QPoint& ) ),
-	   SLOT( tableCellClicked( int, int, int) ) );
-
-  connect( this, SIGNAL( valueChanged( int, int ) ),
-	   SLOT( markModified( int, int ) ) );
-
-  connect( this, SIGNAL( valueChanged( int, int ) ),
-	   SLOT( clearOtherMods( int, int ) ) );
-
-  connect( this, SIGNAL( doubleClicked( int, int, int, const QPoint&) ),
-	   this, SLOT( showFail(int, int, int, const QPoint&) ) );
-
-  connect( this, SIGNAL( currentChanged(int, int) ),
-	   this, SLOT  ( updateFaillist(int, int) ) );
-
-  connect( this, SIGNAL( currentChanged(int, int) ),
-	   this, SLOT  ( showSameStation()  ) );
-
-  connect( this, SIGNAL( currentChanged(int, int) ),
-	   this, SLOT  ( signalStationSelected( int ) ) );
-
-  connect( lackListAction, SIGNAL( activated() ),
-       	   this, SLOT  ( setupMissingList() ) );
-  //  	   this, SLOT  ( setupMissingList( int, int ) ) );
-  //  connect( this, SIGNAL( stationSelected( miMessage ) ),
-  //	   mainWindow, SLOT  ( signalStationSelected( miMessage ) ) );
-
-  connect( mainWindow, SIGNAL( windowClose() ),
-	   this, SIGNAL( errorListClosed() ) );
-
-  if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
-    cerr << "Can't connect to obs_pgm table!" << endl;
-  cerr.setf(ios::fixed);
-  // UNUSED int antRow = 0;
-  QString fTyp = "";
-  setNumRows( 0 );
-  setNumCols( 0 );
-  setNumCols(21);
-  setShowGrid(FALSE);
-  verticalHeader()->hide();
-  horizontalHeader()->setLabel(1, tr("Stnr"));
-  horizontalHeader()->setLabel(2, tr("Navn"));
-  horizontalHeader()->setLabel(3, tr("  Md"));
-  horizontalHeader()->setLabel(4, tr("  Dg"));
-  horizontalHeader()->setLabel(5, tr("  Kl"));
-  horizontalHeader()->setLabel(6, tr("Para"));
-  horizontalHeader()->setLabel(7, tr("Type"));
-  horizontalHeader()->setLabel(8, tr("Orig.d"));
-  horizontalHeader()->setLabel(9, tr("Korr.d"));
-  horizontalHeader()->setLabel(10, tr("mod.v"));
-  horizontalHeader()->setLabel(11, tr("Flagg"));
-  horizontalHeader()->setLabel(12, tr("="));
-  horizontalHeader()->setLabel(13, tr("Fl.v"));
-  horizontalHeader()->setLabel(14, tr("Korrigert OK"));
-  horizontalHeader()->setLabel(15, tr("Original OK"));
-  horizontalHeader()->setLabel(16, tr("Interpolert"));
-  horizontalHeader()->setLabel(17, tr("Tilfordelt"));
-  horizontalHeader()->setLabel(18, tr("Korrigert"));
-  horizontalHeader()->setLabel(19, tr("Forkastet"));
-  horizontalHeader()->setLabel(20, "");
-  int insRow = 0;
-  int missCount = 0;
-  int prevTime = -1;
-  int prevStat = -1;
-  int prevPara = -1;
-  for ( int j = 0; j < selPar.count(); j++ ) {
-      const int parameterID = noSelPar[j];
-      mi_foreach(const model::KvalobsData& data, dtl) {
-          if ( data.stnr() > 99999)
-              continue;
-          //??
-          //      if (  data.typeId(parameterID) < 0 )
-          //        continue;
-          //??
-          if (  data.otime() < stime || data.otime() > etime )
-              continue;
-          if ( !specialTimeFilter( parameterID, data.otime()) )
-              continue;
-          if ( ! typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
-              continue;
-
-          const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
-          if ( fnum == 6 ) {
-              const int tdiff = timeutil::hourDiff(data.otime(),stime);
-              missObs mobs;
-              mobs.oTime = data.otime();
-              mobs.time = tdiff;
-              mobs.parno  = parameterID;
-              mobs.statno = data.stnr();
-              mobs.missNo = missCount;
-              if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
-                  missCount = 0;
-              }
-              if ( mobs.time - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4 ) {
-                  mList.push_back(mobs);
-              }
-              missCount++;
-              prevTime = mobs.time;
-              prevStat = mobs.statno;
-              prevPara = mobs.parno;
-          }
-      }
-  }
-
-  int  ml = 0;
-
-  mi_foreach(const model::KvalobsData& data, dtl) {
-    if ( data.stnr() > 99999) continue;
+void ErrorList::fillMemoryStores(QStringList& selPar,
+                                 const timeutil::ptime& stime,
+                                 const timeutil::ptime& etime,
+                                 int lity,
+                                 int* noSelPar,
+                                 model::KvalobsDataListPtr dtl,
+                                 const std::vector<modDatl>& mdtl)
+{
+#if 1
+  mi_foreach(const model::KvalobsData& data, *dtl) {
+    if( data.stnr() > 99999 )
+        continue;
+#if 0
 #warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
-    //    if (  data.showTypeId() < 0 ) continue;
-    if (  data.otime() < stime || data.otime() > etime ) continue;
+    if( data.showTypeId() < 0 )
+        continue;
+#endif
+    if( data.otime() < stime || data.otime() > etime )
+        continue;
     mem memObs;
     memObs.obstime = data.otime();
     memObs.tbtime = data.tbtime();
     memObs.name = data.name();
     memObs.stnr = data.stnr();
 
-    for ( int j = 0; j < selPar.count(); j++ ) {
+    for( int j = 0; j < selPar.count(); j++ ) {
         const int parameterID = noSelPar[j];
-        if( not specialTimeFilter( parameterID, data.otime()) )
+        if( not specialTimeFilter(parameterID, data.otime()) )
             continue;
-        if( not typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+        if( not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
             continue;
         memObs.typeId      = data.typeId(parameterID);
         memObs.orig        = data.orig(parameterID);
@@ -326,305 +388,169 @@ ErrorList::ErrorList(QStringList& selPar,
         memObs.parName     = selPar[j];
         memObs.morig = -32767.0;
 
-        mi_foreach(const modDatl& md, mdtl) {
-            if ( md.stnr == memObs.stnr && md.otime == memObs.obstime ) {
-                const int* mP = std::find(modelParam, modelParam+NOPARAMMODEL, memObs.parNo);
-                if( mP != modelParam+NOPARAMMODEL )
+        const int* mP = std::find(modelParam, boost::end(modelParam), memObs.parNo);
+        if( mP != boost::end(modelParam) ) {
+            mi_foreach(const modDatl& md, mdtl) {
+                if( md.stnr == memObs.stnr && md.otime == memObs.obstime ) {
                     memObs.morig = md.orig[*mP];
+                }
             }
         }
 
-      //Priority filters for controls and parameters
+        if( obsInMissList(memObs) ) {
+            missList.push_back(memObs);
+            continue;
+        }
+
+      // priority filters for controls and parameters
       QString flTyp = "";
       int flg = errorFilter(parameterID,
 			    memObs.controlinfo,
 			    memObs.cfailed,
 			    flTyp);
-      if( obsInMissList(memObs) ) {
-	missList.push_back(memObs);
-	//	if ( ml == 0 )
-	ml++;
-	continue;
-      }
       if( flg > -3 and flg <= 1 )
           continue;
       if( flg == -3 )
           flg = QString::fromStdString(memObs.controlinfo).mid(kvalobs::flag::fmis,1).toInt(0,16);
       memObs.flg = flg;
       memObs.flTyp = flTyp;
-      //Insert data into appropriate memory stores
+
+      // insert data into appropriate memory stores
       if ( lity == erLi || lity == alLi ) {
-	if (((flg == 2 || flg == 3) && flTyp == "fr" ) ||
-	    (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
-	    ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
-	    ((flg == 2 || flg == 3)&& flTyp == "fw") ||
-	    ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
-
-	  memStore1.push_back(memObs);
-
-	else if (((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
-		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 ||
-		   flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) ||
-		 ((flg == 3 || flg == 4 || flg == 6 || flg == 7 ||
-		   flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) ||
-		 ((flg == 3 || flg == 6 || flg == 9)&& flTyp == "fs" ) ||
-		 (flg == 6 && flTyp == "fnum") ||
-		 (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
-		 ((flg == 2 || flg == 3) && flTyp == "ftime") ||
-		 ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
-		 (flg > 0 && flTyp == "fmis" ) ||
-		 (flg == 7 && flTyp == "fd") ) {
-	  cerr << "Lagrer i memstore2" << endl;
-	  memStore2.push_back(memObs);
-	}
-      }
-
-
-
-
-
-      //      }
-      else if ( lity == erSa ) {
-	if ( ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
-	     (flg == 2 && flTyp == "fs" ))
-	  memStore2.push_back(memObs);
-      }
-    }
-  }
-  ////////
-  cerr << "Memory store 1 size = " << memStore1.size() << "  no of params = " <<selPar.count() << endl;
-  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-    cerr << setw(7) << i;
-    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime
-	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString()
-	 << setw(9) << setprecision(1) << memStore1[i].orig
-	 << setw(9) << setprecision(1) << memStore1[i].corr
-         << setw(9) << setprecision(1) << memStore1[i].morig << "  "
-	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
-	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
-  }
-  cerr << endl;
-  cerr << "Memory store 2 size = " << memStore2.size() << "  no of params = " <<selPar.count() << endl;
-  for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    cerr << setw(7) << i;
-    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime
-	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString()
-	 << setw(9) << setprecision(1) << memStore2[i].orig
-	 << setw(9) << setprecision(1) << memStore2[i].corr
-         << setw(9) << setprecision(1) << memStore2[i].morig << "  "
-	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
-	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
-  }
-  cerr << endl;
-
-  ////////
- checkFirstMemoryStore();
-
-  int es = error.size();
-  for ( unsigned int i = 0; i < error.size(); i++ ) {
-    int stnr = memStore1[error[es-1-i]].stnr;
-    timeutil::ptime obstime = memStore1[error[es-1-i]].obstime;
-    if ( memStore2.size() > 0 ) {
-      unsigned int iCount = 0;
-      vector<mem>::iterator memO = memStore2.begin();
-      for ( ;memO != memStore2.end(); memO++ ) {
-	iCount++;
-	int cStnr = memO->stnr;
-	timeutil::ptime cTime = memO->obstime;
-	if ( (stnr > cStnr || (stnr == cStnr && obstime >= cTime)) && iCount < memStore2.size() )
-	  continue;
-	else {
-	  if ( iCount == memStore2.size() ) {
-	    memStore2.push_back(memStore1[error[es-1-i]]);
-	  }
-	  else {
-	    memStore2.insert(memO,memStore1[error[es-1-i]]);
-	  }
-	  break;
-	}
+          if( ((flg == 2 || flg == 3) && flTyp == "fr" ) ||
+              (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
+              ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
+              ((flg == 2 || flg == 3)&& flTyp == "fw") ||
+              ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
+          {
+              if( isErrorInMemstore1(memObs) ) {
+                  updateKvBase(memObs);
+                  memStore2.push_back(memObs);
+              } else {
+                  memStore1.push_back(memObs);
+              }
+          } else if (((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" ) ||
+                     ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 ||
+                       flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) ||
+                     ((flg == 3 || flg == 4 || flg == 6 || flg == 7 ||
+                       flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) ||
+                     ((flg == 3 || flg == 6 || flg == 9)&& flTyp == "fs" ) ||
+                     (flg == 6 && flTyp == "fnum") ||
+                     (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
+                     ((flg == 2 || flg == 3) && flTyp == "ftime") ||
+                     ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
+                     (flg > 0 && flTyp == "fmis" ) ||
+                     (flg == 7 && flTyp == "fd") )
+          {
+              memStore2.push_back(memObs);
+          }
+      } else if ( lity == erSa ) {
+          if( ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" )
+              || (flg == 2 && flTyp == "fs") )
+          {
+              memStore2.push_back(memObs);
+          }
       }
     }
-    else {
-      memStore2.push_back(memStore1[error[es-1-i]]);
-    }
   }
+#endif
 
-  vector<mem>::iterator memI = memStore1.end();
-  memI--;
-  int ri = error.size() - 1;
-  int ir = memStore1.size() - 1;
-  if ( ri >= 0 ) {
-    for ( ;memI >= memStore1.begin(); memI-- ) {
-      if ( ir == error[ri] ) {
-	memStore1.erase(memI);
-	ri--;
-      }
-      ir--;
-    }
-  }
-  ///////
-  cerr << "Memory store 1 second time size = " << memStore1.size()
-       << "  no of params = " <<selPar.count() << endl;
-  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-    cerr << setw(14) << i;
-    cerr << setw(7) << memStore1[i].stnr << setw(21) << memStore1[i].obstime
-	 << setw(5) << memStore1[i].parNo << setw(5) << memStore1[i].parName.toStdString()
-	 << setw(9) << setprecision(1) << memStore1[i].orig
-	 << setw(9) << setprecision(1) << memStore1[i].corr
-	 << setw(9) << setprecision(1) << memStore1[i].morig
-	 << setw(5) << memStore1[i].flTyp.toStdString() << "  " <<memStore1[i].flg << "  "
-	 << memStore1[i].controlinfo << "  " <<memStore1[i].cfailed << endl;
-  }
-  cerr << endl;
-  cerr << "Memory store 2 second time size = " << memStore2.size()
-       << "  no of params = " <<selPar.count() << endl;
-  for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    cerr << setw(14) << i;
-    cerr << setw(7) << memStore2[i].stnr << setw(21) << memStore2[i].obstime
-	 << setw(5) << memStore2[i].parNo << setw(5) << memStore2[i].parName.toStdString()
-	 << setw(9) << setprecision(1) << memStore2[i].orig
-	 << setw(9) << setprecision(1) << memStore2[i].corr
-	 << setw(9) << setprecision(1) << memStore2[i].morig
-	 << setw(5) << memStore2[i].flTyp.toStdString() << "  " <<memStore2[i].flg << "  "
-	 << memStore2[i].controlinfo << "  " <<memStore2[i].cfailed << endl;
-  }
-  cerr << endl;
-  ///////
-  error.clear();
-//  noError.clear();
-  //  checkSecondMemoryStore();
-  ///////
-  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-    mem* memStore = new mem(memStore1[i]);
-    updateKvBase(memStore);
-    delete memStore;
-  }
-
-  setNumRows( memStore2.size() + headSize );
-  for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    setRowReadOnly( insRow + headSize, false);
-    setItem( insRow + headSize, 0, new ErrorListFirstCol( this, insRow + headSize ) );
-
-    cerr << i << ": " << decodeutility::kvdataformatter::
-      createString( getKvData( memStore2[i] ) ) << endl;
-
-    if ( memStore2[i].flg <= 1 &&  memStore2[i].flg > -3)
-      continue;
-
-    if ( memStore2[i].controlinfo.substr(1,1) == "6" && memStore2[i].controlinfo.substr(7,1) == "1"  )
-      continue;
-
-    QString strDat = strDat.setNum(memStore2[i].stnr);
-    DataCell* snIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,1,snIt);
-
-    strDat = memStore2[i].name.left(8);
-    DataCell* naIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,2,naIt);
-
-    const QString isoDate = QString::fromStdString(timeutil::to_iso_extended_string(memStore2[i].obstime));
-    strDat = isoDate.mid(5,2);
-    DataCell* moIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,3,moIt);
-
-    strDat = isoDate.mid(8,2);
-    DataCell* dyIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,4,dyIt);
-
-    strDat = isoDate.mid(11,2);
-    DataCell* clIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,5,clIt);
-
-    strDat = memStore2[i].parName;
-    DataCell* paIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,6,paIt);
-
-    strDat = strDat.setNum(memStore2[i].typeId);
-    DataCell* tiIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,7,tiIt);
-
-    if ( paramIsCode(memStore2[i].parNo) == 0 )
-      strDat = strDat.setNum(memStore2[i].orig,'f',0);
-    else {
-      strDat = strDat.setNum(memStore2[i].orig,'f',1);
-    }
-    DataCell* ogIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,8,ogIt);
-
-    if ( paramIsCode(memStore2[i].parNo) == 0 )
-      strDat = strDat.setNum(memStore2[i].corr,'f',0);
-    else {
-      strDat = strDat.setNum(memStore2[i].corr,'f',1);
-    }
-    DataCell* coIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,9,coIt);
-
-    strDat = strDat.setNum(memStore2[i].morig,'f',paramIsCode(memStore2[i].parNo));
-    DataCell* mlIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,10,mlIt);
-
-    strDat = memStore2[i].flTyp;
-    DataCell* fiIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,11,fiIt);
-
-    strDat = "=";
-    DataCell* eqIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,12,eqIt);
-
-    strDat = strDat.setNum(memStore2[i].flg);
-    DataCell* fgIt = new DataCell(this, Q3TableItem::Never,strDat);
-    setItem(insRow + headSize,13,fgIt);
-
-    insRow++;
-  }
-
-  cerr << "Antall rader = " << insRow << endl;
-
-  for (int icol = 14; icol < 16; icol++) {
-    for ( int irow = headSize; irow < insRow + headSize; irow++ ) {
-      OkTableItem* okIt = new OkTableItem(this, "");
-      setItem(irow,icol,okIt);
-    }
-  }
-
-  for (int icol = 16; icol < 19; icol++) {
-    for ( int irow = headSize; irow < insRow + headSize; irow++ ) {
-      CrTableItem* crIt = new CrTableItem(this, Q3TableItem::WhenCurrent, "" ,// );
-					  icol != 14 and icol != 15 and icol != 19 );
-      setItem(irow,icol,crIt);
-    }
-  }
-
-  for ( int irow = headSize; irow < insRow + headSize; irow++ ) {
-    OkTableItem* okIt = new OkTableItem(this, "");
-    setItem(irow, 19, okIt);
-  }
-
-  for ( int icol = 0; icol < 14; icol++ )
-    adjustColumn(icol);
-  for ( int icol = 14; icol < 16; icol++ )
-    setColumnWidth(icol, 90);
-  for ( int icol = 16; icol < 20; icol++ )
-    setColumnWidth(icol, 70);
-
-  setColumnReadOnly ( 20, true );
-  setColumnStretchable( 20, true );
-  showSameStation();
-
-  setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
-  setCaption(tr("Feilliste"));
+  dumpMemstore(memStore1, "1");
+  dumpMemstore(memStore2, "2");
 }
 
-ErrorList::~ErrorList() {
-  //  delete stTT;
-}
+void ErrorList::setTableCells()
+{
+    int insRow = 0;
+    setNumRows( memStore2.size() );
+    mi_foreach(const mem& mo, memStore2) {
+        setRowReadOnly( insRow, false);
+        setItem( insRow, 0, new ErrorListFirstCol( this, insRow ) );
+        
+        //std::cerr << decodeutility::kvdataformatter::createString( getKvData( mo ) ) << endl;
+        
+        if( mo.flg <= 1 && mo.flg > -3 )
+            continue;
+        
+        if( mo.controlinfo.substr(kvalobs::flag::fr,1) == "6" && mo.controlinfo.substr(kvalobs::flag::ftime,1) == "1"  )
+            continue;
+        
+        DataCell* snIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.stnr));
+        setItem(insRow,1,snIt);
+        
+        DataCell* naIt = new DataCell(this, Q3TableItem::Never,mo.name.left(8));
+        setItem(insRow,2,naIt);
+        
+        const QString isoDate = QString::fromStdString(timeutil::to_iso_extended_string(mo.obstime));
+        DataCell* moIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(5,2));
+        setItem(insRow,3,moIt);
+        
+        DataCell* dyIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(8,2));
+        setItem(insRow,4,dyIt);
+        
+        DataCell* clIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(11,2));
+        setItem(insRow,5,clIt);
+        
+        DataCell* paIt = new DataCell(this, Q3TableItem::Never,mo.parName);
+        setItem(insRow,6,paIt);
+        
+        DataCell* tiIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.typeId));
+        setItem(insRow,7,tiIt);
 
-bool ErrorList::obsInMissList(mem memO) {
-  for ( unsigned int i = 0; i < mList.size(); i++ ) {
-    if ( mList[i].statno == memO.stnr && mList[i].parno == memO.parNo && mList[i].oTime == memO.obstime )
-      return true;
-  }
-  return false;
+        const bool isCodeParam = (paramIsCode(mo.parNo) == 0);
+        const int nDigits = isCodeParam ? 0 : 1;
+        DataCell* ogIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.orig,'f',nDigits));
+        setItem(insRow,8,ogIt);
+        
+        DataCell* coIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.corr,'f',nDigits));
+        setItem(insRow,9,coIt);
+        
+        DataCell* mlIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.morig,'f',nDigits));
+        setItem(insRow,10,mlIt);
+        
+        DataCell* fiIt = new DataCell(this, Q3TableItem::Never,mo.flTyp);
+        setItem(insRow,11,fiIt);
+        
+        DataCell* eqIt = new DataCell(this, Q3TableItem::Never,"=");
+        setItem(insRow,12,eqIt);
+        
+        DataCell* fgIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.flg));
+        setItem(insRow,13,fgIt);
+        
+        insRow++;
+    }
+    
+    cerr << "Antall rader = " << insRow << endl;
+    
+    for( int icol = 14; icol < 16; icol++ ) {
+        for( int irow = 0; irow < insRow; irow++ ) {
+            OkTableItem* okIt = new OkTableItem(this, "");
+            setItem(irow,icol,okIt);
+        }
+    }
+    
+    for(int icol = 16; icol < 19; icol++ ) {
+        for( int irow = 0; irow < insRow; irow++ ) {
+            CrTableItem* crIt = new CrTableItem(this, Q3TableItem::WhenCurrent, "" ,// );
+                                                icol != 14 and icol != 15 and icol != 19 );
+            setItem(irow,icol,crIt);
+        }
+    }
+    
+    for( int irow = 0; irow < insRow; irow++ ) {
+        OkTableItem* okIt = new OkTableItem(this, "");
+        setItem(irow, 19, okIt);
+    }
+
+    for ( int icol = 0; icol < 14; icol++ )
+        adjustColumn(icol);
+    for ( int icol = 14; icol < 16; icol++ )
+        setColumnWidth(icol, 90);
+    for ( int icol = 16; icol < 20; icol++ )
+        setColumnWidth(icol, 70);
+    
+    setColumnReadOnly ( 20, true );
+    setColumnStretchable( 20, true );
 }
 
 void CrTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected ) {
@@ -717,110 +643,72 @@ int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& fl
     return maxflg;
 }
 
-void ErrorList::checkFirstMemoryStore() {
-    // UNUSED int j = 0, l = 0;
-  for ( unsigned int i = 0; i < memStore1.size(); i++ ) {
-    kvControlInfo cif(memStore1[i].controlinfo);
-    if ( memStore1[i].flTyp == "fr" ) {
-      if ( paramHasModel(memStore1[i].parNo) ) {
-	if ( cif.flag(kvalobs::flag::fnum) == 1 || (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) == 1) ) {
-	  //noError.push_back(i);
-	}
-	else if ( (cif.flag(kvalobs::flag::fnum) > 1 && cif.flag(kvalobs::flag::fw) > 1) || cif.flag(kvalobs::flag::fw) == 0 ) {
-	  error.push_back(i);
-	}
-      }
-      else {
-	for ( int k = 2; k < 16; k++ ) {
-	  //	  int iFlg = control.mid(k,1).toInt(0,16);
-	  int iFlg = cif.flag(k);
-	  if ( iFlg > 1 ) {
-	    error.push_back(i);
-	    break;
-	  }
-	}
-      }
-    }
-    else if ( memStore1[i].flTyp == "fs" ) {
-      if ( cif.flag(kvalobs::flag::fs) == 2 && cif.flag(kvalobs::flag::fcp) > 1 )
-	error.push_back(i);
-      else if ( cif.flag(kvalobs::flag::fs) == 2 && cif.flag(kvalobs::flag::fcp) <= 1 ) {
-	if ( cif.flag(kvalobs::flag::fr) == 1 && cif.flag(kvalobs::flag::fw) == 1 ) {
-	  //noError.push_back(i);
-	}
-	else if ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) {
-	  error.push_back(i);
-	}
-      }
-      else if ( cif.flag(kvalobs::flag::fs) == 4 && cif.flag(kvalobs::flag::fcp) > 1 ) {
-	error.push_back(i);
-      }
-      else if ( cif.flag(kvalobs::flag::fs) == 4 && cif.flag(kvalobs::flag::fcp) <= 1 && cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fw) <= 1 ) {
-	//noError.push_back(i);
-      }
-      else if ( cif.flag(kvalobs::flag::fs) == 5 && ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fw) > 1 ) ) {
-	error.push_back(i);
-      }
-      else if ( cif.flag(kvalobs::flag::fs) == 5 && cif.flag(kvalobs::flag::fr) <= 1 &&  cif.flag(kvalobs::flag::fw) <= 1  ) {
-	//noError.push_back(i);
-      }
+bool ErrorList::isErrorInMemstore1(const mem& mo)
+{
+    kvControlInfo cif(mo.controlinfo);
+    const int fnum = cif.flag(kvalobs::flag::fnum), fw  = cif.flag(kvalobs::flag::fw);
+    const int fs   = cif.flag(kvalobs::flag::fs),   fcp = cif.flag(kvalobs::flag::fcp);
+    const int fr   = cif.flag(kvalobs::flag::fr),   fcc = cif.flag(kvalobs::flag::fcc);
+    if( mo.flTyp == "fr" ) {
+        if ( paramHasModel(mo.parNo) ) {
+            if ( fnum == 1 || (fnum > 1 && fw == 1) ) {
+            } else if ( (fnum > 1 && fw > 1) || fw == 0 ) {
+                return true;
+            }
+        } else {
+            for( int k = 2; k < 16; k++ ) {
+                //	  int iFlg = control.mid(k,1).toInt(0,16);
+                int iFlg = cif.flag(k);
+                if ( iFlg > 1 )
+                    return true;
+            }
+        }
+    } else if ( mo.flTyp == "fs" ) {
+        if ( fs == 2 && fcp > 1 )
+            return true;
+        else if ( fs == 2 && fcp <= 1 ) {
+            if ( fr == 1 && fw == 1 ) {
+            } else if ( fr > 1 || fw > 1 ) {
+                return true;
+            }
+        } else if ( fs == 4 && fcp > 1 ) {
+                return true;
+        } else if ( fs == 4 && fcp <= 1 && fr <= 1 && fw <= 1 ) {
+        } else if ( fs == 5 && ( fr > 1 || fw > 1 ) ) {
+            return true;
+        } else if ( fs == 5 && fr <= 1 &&  fw <= 1  ) {
+        }
     }
     //TODO: Proper treatment of fcc=2 and fcp=2
     /*
-    else if ( memStore1[i].flTyp == "fcc" ) {
-      if ( cif.flag(kvalobs::flag::fcc) == 2 )
-      // find the other parameter
-	error.push_back(i);
-    }
-    else if ( memStore1[i].flTyp == "fcp" ) {
-      if ( cif.flag(kvalobs::flag::fcp) == 2 )
-      // find the other parameter
-	error.push_back(i);
-    }
+        else if ( mo.flTyp == "fcc" ) {
+          if ( fcc == 2 )
+          // find the other parameter
+    	error.push_back(i);
+        }
+        else if ( mo.flTyp == "fcp" ) {
+          if ( fcp == 2 )
+          // find the other parameter
+    	error.push_back(i);
+        }
     */
-    else if ( memStore1[i].flTyp == "fnum" ) {
-      if ( memStore1[i].parNo == 177 || memStore1[i].parNo == 178 ) {
-	error.push_back(i);
-      }
+    else if ( mo.flTyp == "fnum" ) {
+        if ( mo.parNo == 177 || mo.parNo == 178 ) {
+            return true;
+        }
+    } else if ( mo.flTyp == "fw" ) {
+        if ( (fw == 2 || fw == 3) && ( fr > 1 || fcc > 1 || fs > 1 || fcp > 1) ) {
+            return true;
+        } else if ( (fw == 2 || fw == 3) && ( fr <= 1 && fcc <= 1 && fs <= 1 && fcp <= 1) ) {
+        }
+    } else {
     }
-    else if ( memStore1[i].flTyp == "fw" ) {
-      if ( (cif.flag(kvalobs::flag::fw) == 2 || cif.flag(kvalobs::flag::fw) == 3) &&
-	   ( cif.flag(kvalobs::flag::fr) > 1 || cif.flag(kvalobs::flag::fcc) > 1 || cif.flag(kvalobs::flag::fs) > 1 || cif.flag(kvalobs::flag::fcp) > 1) ) {
-	error.push_back(i);
-      }
-      else if ( (cif.flag(kvalobs::flag::fw) == 2 || cif.flag(kvalobs::flag::fw) == 3) &&
-		( cif.flag(kvalobs::flag::fr) <= 1 && cif.flag(kvalobs::flag::fcc) <= 1 && cif.flag(kvalobs::flag::fs) <= 1 && cif.flag(kvalobs::flag::fcp) <= 1) )  {
-	;//noError.push_back(i);
-      }
-    }
-    else {
-      //noError.push_back(i);
-    }
-  }
-}
-
-void ErrorList::checkSecondMemoryStore() {
-    // UNUSED int j = 0, l = 0;
-  for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    kvControlInfo cif(memStore2[i].controlinfo);
-    if ( memStore2[i].flTyp == "fr" ) {
-      if ( cif.flag(kvalobs::flag::fr) == 6 && cif.flag(kvalobs::flag::ftime) == 1 )
-	;//noError.push_back(i);
-      else
-	error.push_back(i);
-    }
-    else if ( memStore2[i].flTyp == "fs" ) {
-      if (cif.flag(kvalobs::flag::fs) == 6 )
-	;//noError.push_back(i);
-      else
-	error.push_back(i);
-    }
-  }
+    return false;
 }
 
 bool ErrorList::paramHasModel(int parNo)
 {
-    return std::find(modelParam, modelParam+NOPARAMMODEL, parNo) != modelParam+NOPARAMMODEL;
+    return std::find(modelParam, boost::end(modelParam), parNo) != boost::end(modelParam);
 }
 
 int ErrorList::paramIsCode(int parNo)
@@ -870,10 +758,10 @@ bool ErrorList::typeFilter(int stnr, int par, int typeId, const timeutil::ptime&
 /*!
  * \brief Update kvalobs, set hqc-flag = 2 for obs not in errorlist
  */
-void ErrorList::updateKvBase(mem* memStore)
+void ErrorList::updateKvBase(const mem& memStore)
 {
   if ( mainWindow->reinserter != NULL ) {
-    kvData kd = getKvData( *memStore );
+    kvData kd = getKvData( memStore );
     //TODO: Remove next 3 lines when the new QC1-9 is ready
     kvControlInfo cif = kd.controlinfo();
     cif.set(kvalobs::flag::fhqc,2);
@@ -887,19 +775,19 @@ void ErrorList::updateKvBase(mem* memStore)
       cerr << "Could not send data!" << endl
 	   << "Message was:" << endl
 	   << result->message << endl;
-      // Handle Error!
+      // TODO Handle Error!
       return;
     }
   }
 }
 
 void ErrorList::updateFaillist( int row, int /*col*/) {
-  if ( row > headSize - 1 && row <  numRows() )
+  if ( row >= 0 && row <  numRows() )
     fDlg->failList->newData( getKvData( row ) );
 }
 
 void ErrorList::showFail( int row, int col, int /*button*/, const QPoint& /*p*/) {
-  if ( (col > 10 && col < 14) && (row > headSize - 1 && row <  numRows()) ) {
+  if ( (col > 10 && col < 14) && (row >= 0 && row <  numRows()) ) {
     fDlg->show();
   }
 }
@@ -967,7 +855,6 @@ void ErrorList::markModified( int row, int col )
     return;
   }
   int fmis = cif.flag(kvalobs::flag::fmis);
-  // UNUSED int fnum = cif.flag(kvalobs::flag::fnum);
   int fd = cif.flag(kvalobs::flag::fd);
   switch (col) {
   case 14:
@@ -1197,77 +1084,52 @@ void ErrorList::signalStationSelected( int row )
   emit statSel( letter );
 
 }
-/*
-void execMissingList( ErrorList* el )
-{
-  BusyIndicator busy;
-  if ( el->mList.size() > 0 ) {
-    MissingTable* mt = new MissingTable(el, el);
-    mt->show();
-  }
-  else {
-    QString missText = "Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten";
-    int mb = QMessageBox::information(el,
-				      "Mangelliste",
-				      missText,
-				      "OK");
-  }
-}
-*/
+
 void ErrorList::execMissingList()
 {
-  BusyIndicator busy;
-  if ( mList.size() > 0 ) {
-    MissingTable* mt = new MissingTable( 0, this);
-    mt->show();
-  }
-  else {
-    QMessageBox::information(this,
-                             tr("Mangelliste"),
-                             tr("Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten"),
-                             tr("OK"));
-  }
+    BusyIndicator busy;
+    if( not mList.empty() ) {
+        MissingTable* mt = new MissingTable( 0, this);
+        mt->show();
+    } else {
+        QMessageBox::information(this,
+                                 tr("Mangelliste"),
+                                 tr("Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten"),
+                                 tr("OK"));
+    }
 }
 
-//void ErrorList::setupMissingList( int row, int col )
 void ErrorList::setupMissingList()
 {
-  const struct mem *m = getMem( selectedRow );
-  if ( m and m->controlinfo[4] == '6' ) {
-    execMissingList();
-    //    int col = 0;
-    //    efh->reset( selectedRow, execMissingList, (Qt::Key)(Qt::CTRL+Qt::Key_M ),
-    //		"CTRL+M viser mangelliste");
-  }
-  //  else
-  //    efh->clear();
+    const struct mem *m = getMem( selectedRow );
+    if ( m and m->controlinfo[4] == '6' ) {
+        execMissingList();
+    }
 }
 
-const struct ErrorList::mem *ErrorList::getMem( int row ) const
+const struct ErrorList::mem *ErrorList::getMem(int row) const
 {
-  ErrorListFirstCol *elfc =
-    dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
-  if ( elfc == NULL )
-    return NULL;
-  return &memStore2[ elfc->memStoreIndex() ];
+    ErrorListFirstCol *elfc = dynamic_cast<ErrorListFirstCol*>(item(row, 0));
+    if( !elfc )
+        return 0;
+    return &memStore2[ elfc->memStoreIndex() ];
 }
 
-kvData
-ErrorList::getKvData( const struct ErrorList::mem &m ) const
+kvData ErrorList::getKvData(const ErrorList::mem &m) const
 {
-  return kvData( m.stnr, timeutil::to_miTime(m.obstime), m.orig, m.parNo, timeutil::to_miTime(m.tbtime),
-		 m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
-		 m.useinfo, m.cfailed );
+    return kvData( m.stnr, timeutil::to_miTime(m.obstime), m.orig,
+                   m.parNo, timeutil::to_miTime(m.tbtime),
+                   m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
+                   m.useinfo, m.cfailed );
 }
 
-kvData
-ErrorList::getKvData( int row ) const
+kvData ErrorList::getKvData(int row) const
 {
-  const struct mem *m = getMem( row );
-  if ( !m )
-    return kvData();
-  return getKvData( *m );
- }
+    const struct mem *m = getMem( row );
+    if( !m )
+        return kvData();
+    return getKvData( *m );
+}
 
 typedef list<kvData> kvDataList;
 
@@ -1575,10 +1437,11 @@ QString DataCell::key() const {
   return item;
 }
 
-double ErrorList::FF() {
-  for ( unsigned int i = 0; i < memStore2.size(); i++ ) {
-    if ( memStore2[i].parNo == 81 )
-      return memStore2[i].orig;
-  }
-  return 0.0;
+double ErrorList::FF()
+{
+    mi_foreach(const mem& mo, memStore2) {
+        if ( mo.parNo == 81 )
+            return mo.orig;
+    }
+    return 0.0;
 }

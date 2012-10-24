@@ -118,8 +118,8 @@ public:
 	    QWidget*,
 	    int,
 	    int*,
-	    std::vector<model::KvalobsData>&,
-	    std::vector<modDatl>&,
+	    model::KvalobsDataListPtr,
+	    const std::vector<modDatl>&,
 	    QString&);
   virtual ~ErrorList();
 
@@ -275,6 +275,21 @@ private:
    * \brief Indexes of elements wchich are transferred to the error list
    */
   std::vector<int> error;
+
+    void makeMissingList(QStringList& selPar,
+                         const timeutil::ptime& stime,
+                         const timeutil::ptime& etime,
+                         int* noSelPar,
+                         model::KvalobsDataListPtr dtl);
+    void fillMemoryStores(QStringList& selPar,
+                          const timeutil::ptime& stime,
+                          const timeutil::ptime& etime,
+                          int lity,
+                          int* noSelPar,
+                          model::KvalobsDataListPtr dtl,
+                          const std::vector<modDatl>& mdtl);
+    void setTableCells();
+
   /**
    * \brief Decide if an observation is going to the error list or not
    * \return The largest flag value from the automatic control, negative
@@ -295,11 +310,7 @@ private:
   /**
    * \brief Find which observations shall be moved from memory store 1 to error list
    */
-  void checkFirstMemoryStore();
-  /**
-   * \brief Find which observations shall be moved from memory store 2 to error list
-   */
-  void checkSecondMemoryStore();
+    bool isErrorInMemstore1(const mem& m);
   /**
    * \brief Checks if a parameter has model values.
    *
@@ -317,7 +328,7 @@ private:
    *
    * \return TRUE if observation is missing.
    */
-  bool obsInMissList(mem);
+  bool obsInMissList(const mem&);
   /**
    * \brief Find FF in memory store 2
    */
@@ -335,8 +346,7 @@ private slots:
   //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);
   void updateFaillist(int, int);
-  //void updateKvBase(int, int);
-  void updateKvBase(mem*);
+  void updateKvBase(const mem&);
   void showFail(int, int, int, const QPoint&);
 
   void showSameStation();
@@ -370,7 +380,7 @@ private:
   /*!
    * \brief Constructs a kvData object from a memory store object
    */
-  kvalobs::kvData getKvData( const struct mem &m ) const;
+  kvalobs::kvData getKvData(const mem &m) const;
   //  OkTableItem checkItem( int, int) const;
 };
 

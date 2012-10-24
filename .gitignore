@@ -17,3 +17,4 @@ moc_*.cpp
 /.settings
 /build
 /obj-x86_64-linux-gnu
+/hqc.log.20*

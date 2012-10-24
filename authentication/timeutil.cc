@@ -98,7 +98,9 @@ b_pt::ptime now()
     return b_pt::second_clock::universal_time();
 }
 
-int hourDiff(const ptime& t0, const ptime& t1) {
+int hourDiff(const ptime& t1, const ptime& t0) {
+    // TODO this is subtly different from miTime::hourDiff: difference
+    // between (18:00, 17:45) is 0 hours here and 1 hour for miTime
     return (t1 - t0).hours();
 }
 

@@ -158,6 +158,7 @@ HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, tr("HQC"))
   , datalist(new model::KvalobsDataList)
   , reinserter( NULL )
+  , dataModel(0)
 {
   /////TEST
   //  readSettings();
@@ -785,10 +786,6 @@ void HqcMainWindow::ListOK() {
       model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
-//      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
-//      tableView->setItemDelegate(delegate);
-
-//      model::KvalobsDataModel * dataModel =
       dataModel =
           new model::KvalobsDataModel(
               parameterList, parMap, datalist, modeldatalist,
@@ -844,12 +841,9 @@ void HqcMainWindow::ListOK() {
                           this,
                           lity,
                           selParNo,
-                          *datalist,
+                          datalist,
                           modeldatalist,
                           userName);
-      // FIXME this tableView is never used anywhere, not even shown
-      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
-      tableView->setAttribute(Qt::WA_DeleteOnClose);
       connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
       //      connect( erl, SIGNAL( stationSelected( int, const timeutil::ptime & ) ), tableView, SLOT(selectStation(const QString &)));
       connect( erl, SIGNAL( statSel( miMessage& ) ),
@@ -1236,28 +1230,7 @@ void HqcMainWindow::listMenu() {
     lstdlg->showAll();
   }
 }
-/*
-void HqcMainWindow::listMenu() {
-  if ( lstdlg->isVisible() ) {
-    lstdlg->hideAll();
-  } else {
-    timeutil::ptime mx = timeutil::ptime::nowTime();
-    int noDays = lstdlg->toTime->time().dayOfYear() - lstdlg->fromTime->time().dayOfYear();
-    if ( noDays < 0 ) noDays = 365 + noDays;
 
-    if ( noDays < 27 ) {
-      mx.addMin(-1*mx.min());
-      mx.addHour(1);
-      lstdlg->toTime->setMax(mx);
-      lstdlg->toTime->setTime(mx);
-      lstdlg->toTime->setMax(mx);
-      lstdlg->toTime->setTime(mx);
-    }
-
-    lstdlg->showAll();
-  }
-}
-*/
 void HqcMainWindow::clockMenu() {
   if ( clkdlg->isVisible() ) {
     clkdlg->hideAll();
