@@ -61,8 +61,9 @@ miutil::miTime to_miTime(const b_pt::ptime& pt)
 {
     if( pt.is_not_a_date_time() )
         return miutil::miTime();
-    const tm tmt = b_pt::to_tm(pt);
-    return miutil::miTime(tmt.tm_year+1900, tmt.tm_mon, tmt.tm_mday, tmt.tm_hour, tmt.tm_min, tmt.tm_sec);
+    const boost::gregorian::date pd = pt.date();
+    const boost::posix_time::time_duration pc = pt.time_of_day();
+    return miutil::miTime(pd.year(), pd.month(), pd.day(), pc.hours(), pc.minutes(), pc.seconds());
 }
 
 b_pt::ptime from_miTime(const miutil::miTime& mt)

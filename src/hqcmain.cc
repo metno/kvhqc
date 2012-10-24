@@ -2718,7 +2718,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
                 datalist->push_back(tdl);
                 tdl = model::KvalobsData();
                 std::fill(tdlUpd, tdlUpd + NOPARAM, false);
-            } else if (timeFiltered) {
+            } else if (not timeFiltered) {
                 tdl = model::KvalobsData();
                 std::fill(tdlUpd, tdlUpd + NOPARAM, false);
             }
