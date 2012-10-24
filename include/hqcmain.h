@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,64 +31,53 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
 
-#include "ListDialog.h"
-#include "ClockDialog.h"
-#include "dianashowdialog.h"
-#include "TimeseriesDialog.h"
-#include "parameterdialog.h"
-#include "textdatadialog.h"
+#include "hqcdefs.h"
 #include "textdatatable.h"
-#include "rejectdialog.h"
-#include "rejecttable.h"
-#include "rejecttimeseriesdialog.h"
-#include "accepttimeseriesdialog.h"
-#include "errorlist.h"
-#include <QtGui/qwidget.h>
-#include <fstream>
+
+#include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
 #include <KvalobsDataModel.h>
-#include <QtGui/qmainwindow.h>
-#include <QtCore/qobject.h>
-//#include <q3process.h>
-#include <QtGui/qmenubar.h>
+#include <qTimeseries/TSPlotDialog.h>
+#include <qUtilities/ClientButton.h>
+
 #include <QtCore/qmap.h>
+#include <QtCore/qobject.h>
 #include <QtCore/qpoint.h>
+#include <QtCore/QScopedPointer>
+#include <QtGui/qwidget.h>
+#include <QtGui/qmainwindow.h>
+#include <QtGui/qmenubar.h>
 #include <QtGui/qlabel.h>
 #include <QtGui/qstatusbar.h>
 #include <QtGui/QMessageBox>
-#include <QtCore/QScopedPointer>
 #include <QtGui/qapplication.h>
 #include <QtGui/qpushbutton.h>
-//#include <q3accel.h>
 #include <QtGui/qimage.h>
 #include <QtGui/qpixmap.h>
-//#include <q3vbox.h>
-//#include <q3table.h>
 #include <QtGui/QToolBar>
 #include <QtGui/qtoolbutton.h>
 #include <QtGui/qicon.h>
 #include <QtGui/qcursor.h>
 
-#include <qUtilities/ClientButton.h>
+#include <fstream>
 
-#include <qUtilities/miMessage.h>
-#include <decodeutility/DataReinserter.h>
-
-#include <qTimeseries/TSPlotDialog.h>
-#include "hqcdefs.h"
-
+class miMessage;
 class QAction;
 class QMdiArea;
 class QMdiSubWindow;
 
+class AcceptTimeseriesDialog;
+class ClockDialog;
 class DataTable;
-
-/**
- * \brief Get o's owning HqcMainWindow, or NULL if there is none.
- */
-HqcMainWindow * getHqcMainWindow( const QObject * o );
-HqcMainWindow * getHqcMainWindow( QObject * o );
-
+class DianaShowDialog;
+class ListDialog;
+class ParameterDialog;
+class RejectDialog;
+class RejectTimeseriesDialog;
+class StationSelection;
+class StationTable;
+class TextDataDialog;
+class TimeseriesDialog;
 
 /**
  * \brief The application's main window.
@@ -218,7 +207,6 @@ public:
   ParameterDialog* pardlg;
   TextDataDialog* txtdlg;
   RejectDialog* rejdlg;
-  Rejects* rejects;
   std::vector<kvalobs::kvRejectdecode> rejList;
   TimeseriesDialog* tsdlg;
   RejectTimeseriesDialog* rjtsdlg;
@@ -520,5 +508,11 @@ signals:
    */
   void errorListStationSelected(int station, const timeutil::ptime& obstime);
 };
+
+/**
+ * \brief Get o's owning HqcMainWindow, or NULL if there is none.
+ */
+HqcMainWindow * getHqcMainWindow( const QObject * o );
+HqcMainWindow * getHqcMainWindow( QObject * o );
 
 #endif

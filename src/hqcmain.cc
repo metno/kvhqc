@@ -35,27 +35,40 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  *
 */
 
-#include "FunctionLogger.hh"
 #include "hqcmain.h"
-#include "StationInformation.h"
+
+#include "accepttimeseriesdialog.h"
+#include "approvedialog.h"
+#include "BusyIndicator.h"
+#include "ClockDialog.h"
+#include "connect2stinfosys.h"
+#include "dianashowdialog.h"
+#include "discarddialog.h"
+#include "errorlist.h"
+#include "FunctionLogger.hh"
 #include "GetData.h"
 #include "GetTextData.h"
-#include "KvalobsDataModel.h"
-#include "KvalobsDataView.h"
-#include "discarddialog.h"
-#include "approvedialog.h"
-#include "connect2stinfosys.h"
+#include "identifyUser.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
-#include "identifyUser.h"
-#include "BusyIndicator.h"
-#include "RRDialog.h"
-#include "weatherdialog.h"
-#include "mi_foreach.hh"
+#include "KvalobsDataModel.h"
+#include "KvalobsDataView.h"
+#include "ListDialog.h"
 #include "MiDateTimeEdit.hh"
+#include "mi_foreach.hh"
+#include "parameterdialog.h"
+#include "rejectdialog.h"
+#include "rejecttable.h"
+#include "rejecttimeseriesdialog.h"
+#include "RRDialog.h"
+#include "StationInformation.h"
+#include "textdatadialog.h"
+#include "TimeseriesDialog.h"
 #include "timeutil.hh"
+#include "weatherdialog.h"
 
 #include <qTimeseries/TSPlot.h>
+#include <qUtilities/miMessage.h>
 #include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
 
@@ -769,7 +782,7 @@ void HqcMainWindow::ListOK() {
 
   if ( lity == daLi or lity == alLi ) {
 
-      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, modelParam + NOPARAMMODEL, this);
+      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
 //      model::KvalobsDataDelegate * delegate = new model::KvalobsDataDelegate(tableView);
@@ -835,7 +848,7 @@ void HqcMainWindow::ListOK() {
                           modeldatalist,
                           userName);
       // FIXME this tableView is never used anywhere, not even shown
-      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, modelParam + NOPARAMMODEL, this);
+      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
       connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
       //      connect( erl, SIGNAL( stationSelected( int, const timeutil::ptime & ) ), tableView, SLOT(selectStation(const QString &)));
@@ -1794,7 +1807,6 @@ void HqcMainWindow::readFromStation()
         if (noBase == 0)
             exit(1);
     }
-    qDebug() << "slist.size()=" << slist.size();
 }
 
 /*!

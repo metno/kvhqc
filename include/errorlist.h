@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -32,93 +32,29 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
 
-#include "FailDialog.h"
 #include "KvalobsData.h"
 #include "KvalobsDataModel.h"
 
-#include <qUtilities/miMessage.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvObsPgm.h>
 
-#include <Qt3Support/q3table.h>
 #include <QtCore/QString>
-#include <QtGui/QPainter>
 #include <QtGui/QValidator>
-#include <QtGui/QWidget>
+#include <Qt3Support/q3table.h>
 
 #include <vector>
 
 class ErrorListFirstCol;
-
-class QMouseEvent;
 class HqcMainWindow;
+class miMessage;
+class QMouseEvent;
+class QPainter;
+class QWidget;
 
-const float rejectedValue_ = -32767.0;
-const float discardedValue_ = -32766.0;
-const int npnc = 106;
-const int npcc = 83;
-//const int npcc = 27;
-//const int npcc = 32;
-const int  parNoControl[] = {  2,  3,  4,  5,  6,  9, 10, 11, 12, 13,
-			       17, 20, 21, 22, 23, 24, 25, 26, 27, 28,
-			       44, 45, 46, 47, 48, 49, 50, 51, 52, 53,
-			       54, 55, 56, 57,101,102,103,115,116,124,
-			       138,191,192,193,194,195,196,197,198,199,
-			       202,226,227,229,230,231,232,233,234,235,
-			       236,237,238,239,240,241,247,261,271,272,
-			       274,275,276,277,278,279,280,281,282,283,
-			       284,285,286,287,288,289,290,291,292,293,
-			       294,295,296,297,298,299,300,301,302,303,
-			       304,305,306,307,308};
-/*
-const QString controlNoControl[] = {"QC1-2-96:1","QC1-2-97:1","QC1-2-100:1",
-				    "QC1-2-101:1","QC1-2-105:1","QC1-2-123A:1",
-				    "QC1-2-142:1","QC1-2-143:1","QC1-2-144:1",
-				    "QC1-2-145:1","QC1-2-146:1","QC1-2-147:1",
-				    "QC1-2-148:1","QC1-2-149:1","QC1-2-150:1",
-				    "QC1-2-151:1","QC1-2-152:1","QC1-2-153:1",
-				    "QC1-2-154:1","QC1-2-155:1","QC1-2-156:1",
-				    "QC1-2-158:1","QC1-2-159:1","QC1-2-160:1",
-				    "QC1-2-161:1","QC1-2-162:1","QC1-2-21:1"};
-				    //				    "QC1-4-81:1","QC1-4-109:1","QC1-4-178:1",
-				    //				    "QC1-4-211:1","QC1-4-262:1"};
-				    */
-/*
-const QString controlNoControl[] = {"QC1-2-100:1","QC1-2-123A:1","QC1-2-123B:1","QC1-2-123C:1","QC1-2-124A:1",
-				    "QC1-2-125A:1","QC1-2-126B:1","QC1-2-129A:1","QC1-2-129B:1","QC1-2-130A:1",
-				    "QC1-2-131:1","QC1-2-132:1","QC1-2-133:1","QC1-2-134B:1","QC1-2-139A:1",
-				    "QC1-2-139B:1","QC1-2-142:1","QC1-2-143:1","QC1-2-144:1","QC1-2-145:1",
-				    "QC1-2-146A:1","QC1-2-146B:1","QC1-2-146C:1","QC1-2-146D:1","QC1-2-147_148A:1",
-				    "QC1-2-147_148B:1","QC1-2-147_148C:1","QC1-2-147_148D:1","QC1-2-149A:1",
-				    "QC1-2-149B:1","QC1-2-149C:1","QC1-2-149D:1","QC1-2-150A:1","QC1-2-150B:1",
-				    "QC1-2-150C:1","QC1-2-150D:1","QC1-2-151A:1","QC1-2-151B:1","QC1-2-151C:1",
-				    "QC1-2-151D:1","QC1-2-152:1","QC1-2-153:1","QC1-2-154:1","QC1-2-155:1",
-				    "QC1-2-156A:1","QC1-2-156B:1","QC1-2-156C:1","QC1-2-156D:1","QC1-2-158A:1",
-				    "QC1-2-158B:1","QC1-2-158C:1","QC1-2-158D:1","QC1-2-159A:1","QC1-2-159B:1",
-				    "QC1-2-159C:1","QC1-2-159D:1","QC1-2-160A:1","QC1-2-160B:1", "QC1-2-160C:1",
-				    "QC1-2-160D:1","QC1-2-161A:1","QC1-2-161B:1","QC1-2-161C:1","QC1-2-161D:1",
-				    "QC1-2-162A:1","QC1-2-162B:1","QC1-2-162C:1","QC1-2-162D:1","QC1-2-163A:1",
-				    "QC1-2-163B:1","QC1-2-163C:1","QC1-2-163D:1","QC1-2-164:1","QC1-2-165:1",
-				    "QC1-2-166:1","QC1-2-167:1","QC1-2-168:1","QC1-2-169:1","QC1-2-170:1",
-				    "QC1-2-171:1","QC1-2-172:1","QC1-2-173:1","QC1-2-175:1"};
-*/
-const QString controlNoControl[] = {"QC1-2-100","QC1-2-123A","QC1-2-123B","QC1-2-123C","QC1-2-124A",
-				    "QC1-2-125A","QC1-2-126B","QC1-2-129A","QC1-2-129B","QC1-2-130A",
-				    "QC1-2-131","QC1-2-132","QC1-2-133","QC1-2-134B","QC1-2-139A",
-				    "QC1-2-139B","QC1-2-142","QC1-2-143","QC1-2-144","QC1-2-145",
-				    "QC1-2-146A","QC1-2-146B","QC1-2-146C","QC1-2-146D","QC1-2-147_148A",
-				    "QC1-2-147_148B","QC1-2-147_148C","QC1-2-147_148D","QC1-2-149A",
-				    "QC1-2-149B","QC1-2-149C","QC1-2-149D","QC1-2-150A","QC1-2-150B",
-				    "QC1-2-150C","QC1-2-150D","QC1-2-151A","QC1-2-151B","QC1-2-151C",
-				    "QC1-2-151D","QC1-2-152","QC1-2-153","QC1-2-154","QC1-2-155",
-				    "QC1-2-156A","QC1-2-156B","QC1-2-156C","QC1-2-156D","QC1-2-158A",
-				    "QC1-2-158B","QC1-2-158C","QC1-2-158D","QC1-2-159A","QC1-2-159B",
-				    "QC1-2-159C","QC1-2-159D","QC1-2-160A","QC1-2-160B", "QC1-2-160C",
-				    "QC1-2-160D","QC1-2-161A","QC1-2-161B","QC1-2-161C","QC1-2-161D",
-				    "QC1-2-162A","QC1-2-162B","QC1-2-162C","QC1-2-162D","QC1-2-163A",
-				    "QC1-2-163B","QC1-2-163C","QC1-2-163D","QC1-2-164","QC1-2-165",
-				    "QC1-2-166","QC1-2-167","QC1-2-168","QC1-2-169","QC1-2-170",
-				    "QC1-2-171","QC1-2-172","QC1-2-173","QC1-2-175"};
+namespace FailInfo {
+class FailDialog;
+}
+
 /**
  * \brief Cells in the errorlist where the user can insert values.
  */

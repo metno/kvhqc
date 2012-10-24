@@ -36,28 +36,35 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #define NDEBUG
 
-#include "hqc_paths.hh"
 #include "errorlist.h"
-#include "hqcmain.h"
-#include "ErrorListFirstCol.h"
 #include "BusyIndicator.h"
+#include "ErrorListFirstCol.h"
+#include "FailDialog.h"
+#include "hqcmain.h"
+#include "hqc_paths.hh"
 #include "missingtable.h"
 #include "mi_foreach.hh"
 #include "StationInformation.h"
 #include "TypeInformation.h"
 
+#include <qUtilities/miMessage.h>
+
 #include <kvalobs/kvDataOperations.h>
 #include <kvcpp/KvApp.h>
 
-#include <QtGui/QtGui>
-#include <QtCore/QEvent>
+#include <QtCore/QFile>
 #include <QtGui/QAction>
-#include <Qt3Support/q3textstream.h>
 #include <QtGui/QCursor>
+#include <QtGui/QHelpEvent>
+#include <QtGui/QLineEdit>
+#include <QtGui/QToolTip>
+#include <QtGui/QPainter>
 #include <QtGui/QPrinter>
 #include <Qt3Support/Q3TextEdit>
+#include <Qt3Support/q3textstream.h>
 #include <Qt3Support/Q3SimpleRichText>
 
+#include <boost/range.hpp>
 #include <boost/lexical_cast.hpp>
 
 #include <cassert>
@@ -67,7 +74,77 @@ typedef TypeInformation<kvservice::KvApp>    TypeInfo;
 
 using namespace kvalobs;
 
-static const int headSize = 0;
+namespace /* anonymous */ {
+
+const int  parNoControl[] = {
+    2,    3,  4,  5,  6,  9, 10, 11, 12, 13,
+    17,  20, 21, 22, 23, 24, 25, 26, 27, 28,
+    44,  45, 46, 47, 48, 49, 50, 51, 52, 53,
+    54,  55, 56, 57,101,102,103,115,116,124,
+    138,191,192,193,194,195,196,197,198,199,
+    202,226,227,229,230,231,232,233,234,235,
+    236,237,238,239,240,241,247,261,271,272,
+    274,275,276,277,278,279,280,281,282,283,
+    284,285,286,287,288,289,290,291,292,293,
+    294,295,296,297,298,299,300,301,302,303,
+    304,305,306,307,308
+};
+
+/*
+const QString controlNoControl[] = {"QC1-2-96:1","QC1-2-97:1","QC1-2-100:1",
+				    "QC1-2-101:1","QC1-2-105:1","QC1-2-123A:1",
+				    "QC1-2-142:1","QC1-2-143:1","QC1-2-144:1",
+				    "QC1-2-145:1","QC1-2-146:1","QC1-2-147:1",
+				    "QC1-2-148:1","QC1-2-149:1","QC1-2-150:1",
+				    "QC1-2-151:1","QC1-2-152:1","QC1-2-153:1",
+				    "QC1-2-154:1","QC1-2-155:1","QC1-2-156:1",
+				    "QC1-2-158:1","QC1-2-159:1","QC1-2-160:1",
+				    "QC1-2-161:1","QC1-2-162:1","QC1-2-21:1"};
+				    //				    "QC1-4-81:1","QC1-4-109:1","QC1-4-178:1",
+				    //				    "QC1-4-211:1","QC1-4-262:1"};
+				    */
+/*
+const QString controlNoControl[] = {"QC1-2-100:1","QC1-2-123A:1","QC1-2-123B:1","QC1-2-123C:1","QC1-2-124A:1",
+				    "QC1-2-125A:1","QC1-2-126B:1","QC1-2-129A:1","QC1-2-129B:1","QC1-2-130A:1",
+				    "QC1-2-131:1","QC1-2-132:1","QC1-2-133:1","QC1-2-134B:1","QC1-2-139A:1",
+				    "QC1-2-139B:1","QC1-2-142:1","QC1-2-143:1","QC1-2-144:1","QC1-2-145:1",
+				    "QC1-2-146A:1","QC1-2-146B:1","QC1-2-146C:1","QC1-2-146D:1","QC1-2-147_148A:1",
+				    "QC1-2-147_148B:1","QC1-2-147_148C:1","QC1-2-147_148D:1","QC1-2-149A:1",
+				    "QC1-2-149B:1","QC1-2-149C:1","QC1-2-149D:1","QC1-2-150A:1","QC1-2-150B:1",
+				    "QC1-2-150C:1","QC1-2-150D:1","QC1-2-151A:1","QC1-2-151B:1","QC1-2-151C:1",
+				    "QC1-2-151D:1","QC1-2-152:1","QC1-2-153:1","QC1-2-154:1","QC1-2-155:1",
+				    "QC1-2-156A:1","QC1-2-156B:1","QC1-2-156C:1","QC1-2-156D:1","QC1-2-158A:1",
+				    "QC1-2-158B:1","QC1-2-158C:1","QC1-2-158D:1","QC1-2-159A:1","QC1-2-159B:1",
+				    "QC1-2-159C:1","QC1-2-159D:1","QC1-2-160A:1","QC1-2-160B:1", "QC1-2-160C:1",
+				    "QC1-2-160D:1","QC1-2-161A:1","QC1-2-161B:1","QC1-2-161C:1","QC1-2-161D:1",
+				    "QC1-2-162A:1","QC1-2-162B:1","QC1-2-162C:1","QC1-2-162D:1","QC1-2-163A:1",
+				    "QC1-2-163B:1","QC1-2-163C:1","QC1-2-163D:1","QC1-2-164:1","QC1-2-165:1",
+				    "QC1-2-166:1","QC1-2-167:1","QC1-2-168:1","QC1-2-169:1","QC1-2-170:1",
+				    "QC1-2-171:1","QC1-2-172:1","QC1-2-173:1","QC1-2-175:1"};
+*/
+const QString controlNoControl[] = {"QC1-2-100","QC1-2-123A","QC1-2-123B","QC1-2-123C","QC1-2-124A",
+				    "QC1-2-125A","QC1-2-126B","QC1-2-129A","QC1-2-129B","QC1-2-130A",
+				    "QC1-2-131","QC1-2-132","QC1-2-133","QC1-2-134B","QC1-2-139A",
+				    "QC1-2-139B","QC1-2-142","QC1-2-143","QC1-2-144","QC1-2-145",
+				    "QC1-2-146A","QC1-2-146B","QC1-2-146C","QC1-2-146D","QC1-2-147_148A",
+				    "QC1-2-147_148B","QC1-2-147_148C","QC1-2-147_148D","QC1-2-149A",
+				    "QC1-2-149B","QC1-2-149C","QC1-2-149D","QC1-2-150A","QC1-2-150B",
+				    "QC1-2-150C","QC1-2-150D","QC1-2-151A","QC1-2-151B","QC1-2-151C",
+				    "QC1-2-151D","QC1-2-152","QC1-2-153","QC1-2-154","QC1-2-155",
+				    "QC1-2-156A","QC1-2-156B","QC1-2-156C","QC1-2-156D","QC1-2-158A",
+				    "QC1-2-158B","QC1-2-158C","QC1-2-158D","QC1-2-159A","QC1-2-159B",
+				    "QC1-2-159C","QC1-2-159D","QC1-2-160A","QC1-2-160B", "QC1-2-160C",
+				    "QC1-2-160D","QC1-2-161A","QC1-2-161B","QC1-2-161C","QC1-2-161D",
+				    "QC1-2-162A","QC1-2-162B","QC1-2-162C","QC1-2-162D","QC1-2-163A",
+				    "QC1-2-163B","QC1-2-163C","QC1-2-163D","QC1-2-164","QC1-2-165",
+				    "QC1-2-166","QC1-2-167","QC1-2-168","QC1-2-169","QC1-2-170",
+				    "QC1-2-171","QC1-2-172","QC1-2-173","QC1-2-175"};
+
+const float discardedValue_ = -32766.0;
+
+const int headSize = 0;
+
+} /* anonymous namespace */
 
 /*!
  * \brief Constructs the error list
@@ -181,8 +258,7 @@ ErrorList::ErrorList(QStringList& selPar,
   int prevPara = -1;
   for ( int j = 0; j < selPar.count(); j++ ) {
       const int parameterID = noSelPar[j];
-      for ( unsigned int i = 0; i < dtl.size(); i++ ) {
-          const model::KvalobsData& data = dtl[i];
+      mi_foreach(const model::KvalobsData& data, dtl) {
           if ( data.stnr() > 99999)
               continue;
           //??
@@ -203,7 +279,7 @@ ErrorList::ErrorList(QStringList& selPar,
               mobs.oTime = data.otime();
               mobs.time = tdiff;
               mobs.parno  = parameterID;
-              mobs.statno = dtl[i].stnr();
+              mobs.statno = data.stnr();
               mobs.missNo = missCount;
               if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
                   missCount = 0;
@@ -221,8 +297,7 @@ ErrorList::ErrorList(QStringList& selPar,
 
   int  ml = 0;
 
-  for ( unsigned int i = 0; i < dtl.size(); i++ ) {
-      const model::KvalobsData& data = dtl[i];
+  mi_foreach(const model::KvalobsData& data, dtl) {
     if ( data.stnr() > 99999) continue;
 #warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
     //    if (  data.showTypeId() < 0 ) continue;
@@ -235,32 +310,29 @@ ErrorList::ErrorList(QStringList& selPar,
 
     for ( int j = 0; j < selPar.count(); j++ ) {
         const int parameterID = noSelPar[j];
-      bool stp = specialTimeFilter( parameterID, data.otime());
-      if ( !stp ) continue;
-      bool tp = typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime());
-      if ( !tp ) continue;
-      memObs.typeId      = data.typeId(parameterID);
-      memObs.orig        = data.orig(parameterID);
-      memObs.corr        = data.corr(parameterID);
-      memObs.sen         = data.sensor(parameterID);
-      memObs.lev         = data.level(parameterID);
-      memObs.controlinfo = data.controlinfo(parameterID).flagstring();
-      memObs.useinfo     = data.useinfo(parameterID).flagstring();
-      memObs.cfailed     = data.cfailed(parameterID);
-      memObs.parNo       = parameterID;
-      memObs.parName     = selPar[j];
-      memObs.morig = -32767.0;
+        if( not specialTimeFilter( parameterID, data.otime()) )
+            continue;
+        if( not typeFilter( data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+            continue;
+        memObs.typeId      = data.typeId(parameterID);
+        memObs.orig        = data.orig(parameterID);
+        memObs.corr        = data.corr(parameterID);
+        memObs.sen         = data.sensor(parameterID);
+        memObs.lev         = data.level(parameterID);
+        memObs.controlinfo = data.controlinfo(parameterID).flagstring();
+        memObs.useinfo     = data.useinfo(parameterID).flagstring();
+        memObs.cfailed     = data.cfailed(parameterID);
+        memObs.parNo       = parameterID;
+        memObs.parName     = selPar[j];
+        memObs.morig = -32767.0;
 
-      for ( unsigned int k = 0; k < mdtl.size(); k++) {
-	const timeutil::ptime& modeltime = mdtl[k].otime;
-	int modelstnr = mdtl[k].stnr;
-	if ( modelstnr == memObs.stnr && modeltime == memObs.obstime ) {
-	  for ( int l = 0; l < NOPARAMMODEL; l++ ) {
-	    if ( memObs.parNo == modelParam[l] )
-	      memObs.morig = mdtl[k].orig[modelParam[l]];
-	  }
-	}
-      }
+        mi_foreach(const modDatl& md, mdtl) {
+            if ( md.stnr == memObs.stnr && md.otime == memObs.obstime ) {
+                const int* mP = std::find(modelParam, modelParam+NOPARAMMODEL, memObs.parNo);
+                if( mP != modelParam+NOPARAMMODEL )
+                    memObs.morig = md.orig[*mP];
+            }
+        }
 
       //Priority filters for controls and parameters
       QString flTyp = "";
@@ -268,18 +340,16 @@ ErrorList::ErrorList(QStringList& selPar,
 			    memObs.controlinfo,
 			    memObs.cfailed,
 			    flTyp);
-      if ( obsInMissList(memObs) ) {
+      if( obsInMissList(memObs) ) {
 	missList.push_back(memObs);
 	//	if ( ml == 0 )
 	ml++;
 	continue;
       }
-      if ( flg <= 1 && flg > -3)
-	continue;
-      if ( flg == -3) {
-	QString qStrCtrInfo = QString::fromStdString(memObs.controlinfo);
-	flg = qStrCtrInfo.mid(6,1).toInt(0,16);
-      }
+      if( flg > -3 and flg <= 1 )
+          continue;
+      if( flg == -3 )
+          flg = QString::fromStdString(memObs.controlinfo).mid(kvalobs::flag::fmis,1).toInt(0,16);
       memObs.flg = flg;
       memObs.flTyp = flTyp;
       //Insert data into appropriate memory stores
@@ -588,66 +658,63 @@ void DataCell::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool 
 }
 
 bool ErrorList::priorityParameterFilter(int parNo) {
-  for ( int i = 0; i < npnc; i++ ) {
-    if ( parNo == parNoControl[i] ) {
-      return false;
-    }
-  }
-  if ( parNo >= 1000 )
-    return false;
-  else
-    return true;
+    if( std::find(parNoControl, boost::end(parNoControl), parNo) != boost::end(parNoControl) )
+        return false;
+    if( parNo >= 1000 )
+        return false;
+    else
+        return true;
 }
 
-int ErrorList::priorityControlFilter(QString control) {
-  QStringList allFails = QStringList::split(",",control,false);
-  if ( allFails.count() > 0 ) {
-    for ( int i = 0; i < npcc; i++ ) {
-      if ( allFails[0] == controlNoControl[i] && allFails.count() == 1) {
-	return 0;
-      }
-      else if ( allFails[0] == controlNoControl[i] ) {
-	return -1;
-      }
+int ErrorList::priorityControlFilter(QString cfailed)
+{
+    QStringList allFails = QStringList::split(",", cfailed, false);
+    if( not allFails.isEmpty() ) {
+        const QString* f = std::find(controlNoControl, boost::end(controlNoControl), allFails[0]);
+        if( f != boost::end(controlNoControl) ) {
+            if( allFails.count() == 1)
+                return 0;
+            else
+                return -1;
+        }
     }
-  }
-  return 1;
+    return 1;
 }
 
-int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& flTyp) {
-  QString flTypes[] = {"fagg","fr","fcc","fs","fnum","fpos","fmis","ftime","fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
-  QString qStrCtrInfo = QString::fromStdString(ctrInfo);
-  QString control = QString::fromStdString(cFailed);
-  int flg = 0;
-  int maxflg = -1;
-  if ( qStrCtrInfo.mid(13,1).toInt(0,10) > 0 )
-    return maxflg;
-  if ( !priorityParameterFilter(parNo) )
-    return maxflg;
-  if ( priorityControlFilter(control) == 0 ) {
-    return maxflg;
-  }
-  else if ( priorityControlFilter(control) == -1 )
-    maxflg = -2;
-  // UNUSED int flInd = 0;
-  for ( int i = 0; i < 16; i++ ) {
-    flg = qStrCtrInfo.mid(i,1).toInt(0,16);
-    if ( flg > 1  && maxflg > -2) {
-      maxflg = flg;
-      flTyp = flTypes[i];
-      break;
+int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& flTyp)
+{
+    QString flTypes[] = {"fagg","fr","fcc","fs","fnum","fpos","fmis","ftime","fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
+    QString qStrCtrInfo = QString::fromStdString(ctrInfo);
+    QString cfailed = QString::fromStdString(cFailed);
+    int flg = 0;
+    int maxflg = -1;
+    if( qStrCtrInfo.mid(kvalobs::flag::fpre,1).toInt(0,16) > 0 )
+        return maxflg;
+    if( !priorityParameterFilter(parNo) )
+        return maxflg;
+    const int pcf = priorityControlFilter(cfailed);
+    if( pcf == 0 ) {
+        return maxflg;
+    } else if( pcf == -1 )
+        maxflg = -2;
+    // UNUSED int flInd = 0;
+    for( int i = 0; i < 16; i++ ) {
+        flg = qStrCtrInfo.mid(i,1).toInt(0,16);
+        if( flg > 1 && maxflg > -2 ) {
+            maxflg = flg;
+            flTyp = flTypes[i];
+            break;
+        } else if( flg > 1 )
+            maxflg = -1;
     }
-    else if (flg > 1 )
-      maxflg = -1;
-  }
-
-  if ( flTyp == "fmis" ) {
-    maxflg = -3;
-  }
-  flg =  qStrCtrInfo.mid(15,1).toInt(0,16);
-  if ( flg > 0 )//Hqc-flag allerede satt. Ikke ny kontroll
-    maxflg = -1;
-  return maxflg;
+    
+    if( flTyp == "fmis" ) {
+        maxflg = -3;
+    }
+    flg = qStrCtrInfo.mid(kvalobs::flag::fhqc,1).toInt(0,16);
+    if( flg > 0 )//Hqc-flag allerede satt. Ikke ny kontroll
+        maxflg = -1;
+    return maxflg;
 }
 
 void ErrorList::checkFirstMemoryStore() {
