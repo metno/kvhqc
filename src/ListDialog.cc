@@ -188,7 +188,6 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
 					  Qt::Horizontal,
 					  tr("Meldingstyper"), this);
 
-  Q3GridLayout* typeidLayout = new Q3GridLayout(typeGroup->layout());
   priTypes = new QRadioButton( tr("Prioriterte typer"), typeGroup );
   typeGroup->insert(priTypes);
   priTypes->setChecked(true);
@@ -990,7 +989,7 @@ StationTable::StationTable(QStringList selStatNum,
 			   bool al,
 			   bool av,
 			   bool ao,
-			   bool ae,
+			   bool ae, /* unused */
 			   bool mv,
 			   bool mp,
 			   bool mm,
@@ -1154,7 +1153,7 @@ bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
 {
     if( tList->empty() )
         return false;
-    // '++' in next is necessary as the first entry i tList is not a
+    // '++' in next is necessary as the first entry in tList is not a
     // typeId but a station id number
     return std::find(++tList->begin(), tList->end(), type) != tList->end();
 }
@@ -1336,19 +1335,19 @@ StationSelection::StationSelection(QStringList listStatNum,
 void StationSelection::tableCellClicked() {
 }
 void StationSelection::tableCellClicked(int row,
-					int col,
-					int button,
-					const QPoint& mousePos) {
+					int /*col*/,
+					int /*button*/,
+					const QPoint& /*mousePos*/) {
   stationTable->selectRow(row);
   showSelectedStation(row, 0);
 }
 
-void StationSelection::tableCellClicked(int row, int col) {
+void StationSelection::tableCellClicked(int row, int /*col*/) {
   stationTable->selectRow(row);
   showSelectedStation(row, 0);
 }
 
-void StationSelection::showSelectedStation(int row, int col) {
+void StationSelection::showSelectedStation(int row, int /*col*/) {
   Q3TableItem* tStationNumber = stationTable->item( row, 0);
   Q3TableItem* tStationName = stationTable->item( row, 1);
   QString station = tStationNumber->text() + "  " + tStationName->text();
