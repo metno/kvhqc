@@ -58,6 +58,7 @@ typedef std::list<TypeList>                         ObsTypeList;
 
 const int NOPARAM          = 1043;
 const int NOPARAMMODEL     = 8;
+extern const int modelParam[NOPARAMMODEL]; // defined in hqcmain.cc
 const int NOPARAMALL       = 210;
 //const int NOPARAMAIRPRESS  = 23; //Ny gr.
 //const int NOPARAMTEMP      = 31; //Ny gr

@@ -1150,12 +1150,13 @@ StationTable::StationTable(QStringList selStatNum,
     hideColumn(6);
 }
 
-bool StationTable::findInTypes(ObsTypeList::iterator tList, int type) {
-  TypeList::iterator tpind = std::find(tList->begin(), tList->end(), type);
-  if ( tpind == tList->end() )
-    return false;
-  else
-    return true;
+bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
+{
+    if( tList->empty() )
+        return false;
+    // '++' in next is necessary as the first entry i tList is not a
+    // typeId but a station id number
+    return std::find(++tList->begin(), tList->end(), type) != tList->end();
 }
 
 QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oit) {

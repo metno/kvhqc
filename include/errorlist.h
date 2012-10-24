@@ -179,17 +179,11 @@ public:
   ErrorList(QStringList&,
 	    const timeutil::ptime&,
 	    const timeutil::ptime&,
-	    int,
-	    int,
 	    QWidget*,
-	    int,
 	    int,
 	    int*,
 	    std::vector<model::KvalobsData>&,
 	    std::vector<modDatl>&,
-	    std::list<kvalobs::kvStation>&,
-	    int,
-	    int,
 	    QString&);
   virtual ~ErrorList();
 
@@ -332,6 +326,8 @@ private:
    * \brief
    */
   //  vector<mem> memStore3;
+
+  std::vector<int> cP;
 
 private:
   HqcMainWindow * mainWindow;

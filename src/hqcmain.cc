@@ -95,11 +95,11 @@ using namespace std;
 using namespace kvalobs;
 using namespace kvservice;
 
-namespace {
-// Number of parameters to show, according to last selection
-//int noSelPar;
+// declared in hqcdefs.h
 const int modelParam[NOPARAMMODEL] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
+
+namespace {
 
 const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
         ("[airpress]", "Lufttrykk")
@@ -825,50 +825,14 @@ void HqcMainWindow::ListOK() {
   }
 
   if ( lity == erLi or lity == erSa or lity == alLi ) {
-//      Q_ASSERT(metty != tabHead); // deprecated functionality
-//      Q_ASSERT(metty == tabList);
-//      metty may be undefined here
-
-      int dateCol = 0;
-      if ( poID->isChecked() && !stID->isChecked() )
-        dateCol = 1;
-      else if ( !poID->isChecked() && stID->isChecked() )
-        dateCol = 2;
-      else if ( poID->isChecked() && stID->isChecked() )
-        dateCol = 3;
-
-      int ncp;
-      if ( !orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
-        ncp = 0;
-      if ( orID->isChecked() && !flID->isChecked() && !moID->isChecked() )
-        ncp = 1;
-      if ( !orID->isChecked() && flID->isChecked() && !moID->isChecked() )
-        ncp = 2;
-      if ( orID->isChecked() && flID->isChecked() && !moID->isChecked() )
-        ncp = 3;
-      if ( !orID->isChecked() && !flID->isChecked() && moID->isChecked() )
-        ncp = 4;
-      if ( orID->isChecked() && !flID->isChecked() && moID->isChecked() )
-        ncp = 5;
-      if ( !orID->isChecked() && flID->isChecked() && moID->isChecked() )
-        ncp = 6;
-      if ( orID->isChecked() && flID->isChecked() && moID->isChecked() )
-        ncp = 7;
-
       ErrorList * erl = new ErrorList(selPar,
                           stime,
                           etime,
-                          0, // unused
-                          0, // unused
                           this,
                           lity,
-                          metty,
                           selParNo,
                           *datalist,
                           modeldatalist,
-                          slist,
-                          dateCol,
-                          ncp,
                           userName);
       // FIXME this tableView is never used anywhere, not even shown
       model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, modelParam + NOPARAMMODEL, this);
@@ -1466,7 +1430,7 @@ bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stn
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
   int atypeId = typeId < 0 ? -typeId : typeId;
   // FIXME this needs to match ListDialog.cc: StationTable::StationTable
-  if (  lstdlg->allType->isChecked() ) return TRUE;
+  if ( lstdlg->allType->isChecked() ) return TRUE;
   if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
   if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
   if ( environment == 2 && atypeId == 3 && lstdlg->alType->isChecked() ) return TRUE;

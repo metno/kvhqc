@@ -42,6 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ErrorListFirstCol.h"
 #include "BusyIndicator.h"
 #include "missingtable.h"
+#include "mi_foreach.hh"
 #include "StationInformation.h"
 #include "TypeInformation.h"
 
@@ -66,9 +67,7 @@ typedef TypeInformation<kvservice::KvApp>    TypeInfo;
 
 using namespace kvalobs;
 
-int mP[] = {61,81,108,109,110,177,178,211,262};
-vector<int> cP;
-const int headSize = 0;
+static const int headSize = 0;
 
 /*!
  * \brief Constructs the error list
@@ -76,32 +75,26 @@ const int headSize = 0;
 ErrorList::ErrorList(QStringList& selPar,
 		     const timeutil::ptime& stime,
 		     const timeutil::ptime& etime,
-		     int noSel,
-		     int noParam,
 		     QWidget* parent,
 		     int lity,
-		     int metty,
 		     int* noSelPar,
 		     std::vector<model::KvalobsData>& dtl,
 		     std::vector<modDatl>& mdtl,
-		     std::list<kvStation>& slist,
-		     int dateCol,
-		     int ncp,
 		     QString& userName)
   : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
 {
-  list<kvParam> paramList;
+  std::list<kvParam> paramList;
   kvservice::KvApp::kvApp->getKvParams(paramList);
 
-  for (list<kvParam>::iterator it = paramList.begin(); it != paramList.end(); it++ ) {
-    if ( (it->unit()).contains("kode") ) {
-      cP.push_back(it->paramID());
-      cerr << it->unit() << endl;
+  mi_foreach(const kvalobs::kvParam& p, paramList) {
+    if ( p.unit().contains("kode") ) {
+      cP.push_back(p.paramID());
+      cerr << p.unit() << endl;
     }
   }
-  for ( int i = 0; i < cP.size(); i++ )
-    cerr << cP[i] << endl;
+  mi_foreach(int i, cP)
+      cerr << cP[i] << endl;
 
 
   setVScrollBarMode( Q3ScrollView::AlwaysOn  );
@@ -263,8 +256,8 @@ ErrorList::ErrorList(QStringList& selPar,
 	int modelstnr = mdtl[k].stnr;
 	if ( modelstnr == memObs.stnr && modeltime == memObs.obstime ) {
 	  for ( int l = 0; l < NOPARAMMODEL; l++ ) {
-	    if ( memObs.parNo == mP[l] )
-	      memObs.morig = mdtl[k].orig[mP[l]];
+	    if ( memObs.parNo == modelParam[l] )
+	      memObs.morig = mdtl[k].orig[modelParam[l]];
 	  }
 	}
       }
@@ -758,29 +751,20 @@ void ErrorList::checkSecondMemoryStore() {
   }
 }
 
-bool ErrorList::paramHasModel(int parNo) {
-  for ( int i = 0; i < NOPARAMMODEL; i++ ) {
-    if ( parNo == mP[i] )
-      return true;
-  }
-  return false;
+bool ErrorList::paramHasModel(int parNo)
+{
+    return std::find(modelParam, modelParam+NOPARAMMODEL, parNo) != modelParam+NOPARAMMODEL;
 }
 
-int ErrorList::paramIsCode(int parNo) {
-  for ( int i = 0; i < cP.size(); i++ ) {
-    if ( parNo == cP[i] )
-      return 0;
-  }
-  return 1;
+int ErrorList::paramIsCode(int parNo)
+{
+    return std::find(cP.begin(), cP.end(), parNo) != cP.end();
 }
-void ErrorList::tableCellClicked(int row,
-				 int col,
-				 int button) {//,
-  //				 const QPoint& mousePos,
-  //				 vector<model::KvalobsData>& dtl) {
-  if ( col == 0 && row >= 0) {
-    selectRow(row);
-  }
+
+void ErrorList::tableCellClicked(int row, int col, int /*button*/)
+{
+    if (col == 0 && row >= 0)
+        selectRow(row);
     selectedRow = row;
 }
 
@@ -795,27 +779,25 @@ double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
   return 6378.0*dist;
 }
 
-bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime) {
-  bool spf = true;
+bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime)
+{
   const int otime_hour = otime.time_of_day().hours();
-  if ( ((par == 214 || par == 216) && !(otime_hour == 6 || otime_hour == 18)) ||
-       (par == 112 && otime_hour != 6) ){
-    spf = false;
+  if ( ((par == 214 || par == 216) && !(otime_hour == 6 || otime_hour == 18))
+          || (par == 112 && otime_hour != 6) )
+  {
+      return false;
   }
-  return spf;
+  return true;
 }
 
-bool ErrorList::typeFilter(int stnr, int par, int typeId, const timeutil::ptime& otime) {
-  //??
-  //  if ( typeId  == 501 ) return false;
-  //??
-  bool tpf = false;
-  for ( vector<currentType>::iterator it = mainWindow->currentTypeList.begin(); it != mainWindow->currentTypeList.end(); it++) {
-      const timeutil::pdate otime_date = otime.date();
-    if ( stnr == (*it).stnr && abs(typeId) == (*it).cTypeId && par == (*it).par && otime_date >= (*it).fDate && otime_date <= (*it).tDate )
-      tpf = true;
-  }
-  return tpf;
+bool ErrorList::typeFilter(int stnr, int par, int typeId, const timeutil::ptime& otime)
+{
+    const timeutil::pdate otime_date = otime.date();
+    mi_foreach(const currentType& ct, mainWindow->currentTypeList) {
+        if (stnr == ct.stnr && abs(typeId) == ct.cTypeId && par == ct.par && otime_date >= ct.fDate && otime_date <= ct.tDate )
+            return true;
+    }
+    return false;
 }
 
 /*!
@@ -849,7 +831,7 @@ void ErrorList::updateFaillist( int row, int /*col*/) {
     fDlg->failList->newData( getKvData( row ) );
 }
 
-void ErrorList::showFail( int row, int col, int button, const QPoint& /*p*/) {
+void ErrorList::showFail( int row, int col, int /*button*/, const QPoint& /*p*/) {
   if ( (col > 10 && col < 14) && (row > headSize - 1 && row <  numRows()) ) {
     fDlg->show();
   }
