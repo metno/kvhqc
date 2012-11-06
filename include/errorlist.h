@@ -322,7 +322,7 @@ private:
    *
    * \return 0 if given parameter is code, 1 otherwise.
    */
-  int paramIsCode(int);
+  bool paramIsCode(int);
   /**
    * \brief Checks if an observation is in the missing list
    *

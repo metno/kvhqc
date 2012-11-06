@@ -1,3 +1,10 @@
+kvhqc (2.9.1-1) unstable; urgency=low
+
+  * small modifications to compile on lucid
+  * removed most of of miutil::miString and miutil::miTime
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 06 Nov 2012 15:08:43 +0100
+
 kvhqc (2.9.0~rc2-1) unstable; urgency=low
 
   * added some desktop files and icons

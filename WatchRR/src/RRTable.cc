@@ -39,6 +39,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "OkCheckTableItem.h"
 #include "ControlFlagCell.h"
 #include "BusyIndicator.h"
+#include "hqc_utilities.hh"
+#include "mi_foreach.hh"
 
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
@@ -404,17 +406,10 @@ namespace WatchRR
       return true;
     }
 
-    list<kvData> dl( mod.begin(), mod.end() );
+    std::list<kvalobs::kvData> dl( mod.begin(), mod.end() );
+    mi_foreach(kvData& data, dl)
+        updateCfailed(data, "watchRR");
 
-    for ( list<kvData>::iterator kit = dl.begin(); kit != dl.end(); kit++ ) {
-      kvData mdat = *kit;
-      std::string cf(mdat.cfailed());
-
-      if ( not cf.empty() )
-	cf += ",";
-      cf += "watchRR";
-      (*kit).cfailed(cf);
-    }
     cerr << "Lagrer:" << endl
     << decodeutility::kvdataformatter::createString( dl ) << endl;
     CKvalObs::CDataSource::Result_var res;

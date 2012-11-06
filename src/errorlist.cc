@@ -497,7 +497,7 @@ void ErrorList::setTableCells()
         DataCell* tiIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.typeId));
         setItem(insRow,7,tiIt);
 
-        const bool isCodeParam = (paramIsCode(mo.parNo) == 0);
+        const bool isCodeParam = paramIsCode(mo.parNo);
         const int nDigits = isCodeParam ? 0 : 1;
         DataCell* ogIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.orig,'f',nDigits));
         setItem(insRow,8,ogIt);
@@ -711,7 +711,7 @@ bool ErrorList::paramHasModel(int parNo)
     return std::find(modelParam, boost::end(modelParam), parNo) != boost::end(modelParam);
 }
 
-int ErrorList::paramIsCode(int parNo)
+bool ErrorList::paramIsCode(int parNo)
 {
     return std::find(cP.begin(), cP.end(), parNo) != cP.end();
 }
