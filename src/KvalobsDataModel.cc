@@ -337,7 +337,6 @@ namespace model
             // Update stored data
             d.set_corr(p.paramid, val);
             d.set_controlinfo(p.paramid, changeData.controlinfo());
-	    cerr << "KNUT TESTER KvalobsDataModel::d.set_useinfo " << changeData.useinfo() << endl;
             d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
@@ -548,7 +547,7 @@ namespace model
           const KvalobsData & d = (*data)[index];
           if ( d.stnr() == stationid ) {
               lindex = index;
-              if ( d.otime() == obstime ) {
+              if ( timeutil::hourDiff(d.otime(), obstime) == 0 ) {
                   foundTime = true;
                   break;
               }
