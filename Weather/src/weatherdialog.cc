@@ -475,7 +475,11 @@ namespace Weather
 	  protime = otime;
 
 	  dit++;
-	  otime = timeutil::from_miTime(dit->obstime());
+          // FIXME this is a hack
+          if( dit == it->dataList().end() )
+              protime += boost::posix_time::hours(-1);
+          else
+              otime = timeutil::from_miTime(dit->obstime());
 	  // UNUSED typid = dit->typeID();
 	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
@@ -490,7 +494,11 @@ namespace Weather
 	else {
 	  protime = otime;
 	  dit++;
-	  otime = timeutil::from_miTime(dit->obstime());
+          // FIXME this is a hack
+          if( dit == it->dataList().end() )
+              protime += boost::posix_time::hours(-1);
+          else
+              otime = timeutil::from_miTime(dit->obstime());
 	  // UNUSED typid = dit->typeID();
 	  // UNUSED snsor = dit->sensor();
 	  if ( otime != protime ) {
