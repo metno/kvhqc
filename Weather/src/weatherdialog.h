@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -53,21 +53,15 @@ class Q3BoxLayout;
 class QCheckBox;
 class QTabWidget;
 
-const int params[] = { 211,214,216,213,215,262,178,173,177,1,61,81,86,87,83,90,15,14,55,108,
-		       109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
-		       23,24,22,403,404,131,134,151,154,250,221,9,12};
-const int NP = 49;
-const int NC = 5;
-
 struct SynObs {
   int stnr;
   int snr;
   timeutil::ptime otime;
-  int typeId[NP];
-  int sensor[NP];
-  double orig[NP];
-  double corr[NP];
-  std::string controlinfo[NP];
+  int typeId[Weather::NP];
+  int sensor[Weather::NP];
+  double orig[Weather::NP];
+  double corr[Weather::NP];
+  std::string controlinfo[Weather::NP];
 };
 
 typedef std::list<kvalobs::kvData>::iterator                   IDataList;
@@ -80,7 +74,6 @@ namespace Weather
 {
   class WeatherDialog
     : public QDialog
-      //    : public Q3TabDialog
   {
     friend class WeatherTable;
     Q_OBJECT;

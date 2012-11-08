@@ -45,7 +45,7 @@ namespace WatchRR
   QStringList VxKvDataTableItem::selections;
 
   const QString VxKvDataTableItem::VxExplFile =
-      ::hqc::getPath(::hqc::CONFDIR) + "/VxExplanations.txt";
+      ::hqc::getPath(::hqc::DATADIR) + "/VxExplanations.txt";
 
   const char *VxKvDataTableItem::VxSExpl[ 3 ] =
     {
@@ -64,6 +64,9 @@ namespace WatchRR
 
       //      ifstream fs( VxExplFile.c_str() );
       ifstream fs( VxExplFile.toStdString().c_str() );
+      if( not fs ) {
+          std::cerr << "cannot read VxExplanations file '" << VxExplFile.toStdString() << "'" << std::endl;
+      }
 
       VxParam param;
       while ( fs >> param )

@@ -29,14 +29,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "centralwidget.h"
-#include <qtabwidget.h>
-#include <q3table.h>
-#include <qlayout.h>
-#include <qwidget.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
 
-
+#include <QtGui/QLayout>
+#include <QtGui/QTabWidget>
+#include <Qt3Support/Q3GridLayout>
+#include <Qt3Support/Q3Table>
 
 WeatherCentralWidget::WeatherCentralWidget( QWidget *parent, const char *name )
     : QWidget( parent, name )

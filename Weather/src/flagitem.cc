@@ -29,31 +29,23 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "flagitem.h"
-#include "weathertable.h"
-#include <kvalobs/kvDataOperations.h>
-#include <cmath>
-#include <cassert>
-using namespace kvalobs;
-using namespace std;
 
 namespace Weather
 {
-  class WeatherTable;
 
-  //FlagItem::FlagItem( QTable * table, kvData & data )
-  FlagItem::FlagItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
+FlagItem::FlagItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
     : Q3TableItem( table, edType, flag )
     , type(type)
-  {
-  }
+{
+}
   
-  FlagItem::~FlagItem()
-  {
-  }
+FlagItem::~FlagItem()
+{
+}
   
-  QString FlagItem::explain() const
-  {
-    QString ret = text();
-    return ret;
-  }
+QString FlagItem::explain() const
+{
+    return text();
+}
+
 }

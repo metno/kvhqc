@@ -161,18 +161,16 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
 // ///////////////////// to from ///////////////////////////////////////////
 
-  QDateTime dt_to = QDateTime::currentDateTime();
-  dt_to = dt_to.addSecs(60-dt_to.time().second());
-  dt_to = dt_to.addSecs(60*(60-dt_to.time().minute()));
+  QDateTime dt_to = timeutil::nowWithMinutes0Seconds0();
+  dt_to = dt_to.addSecs(3600 + 60);
   dte_to = new MiDateTimeEdit(dt_to, this);
-  dte_to->setDisplayFormat("yyyy-MM-dd HH:mm");
+  dte_to->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QDateTime dt_from = dt_to;
   dt_from = dt_from.addDays(-2);
-  dt_from = dt_from.addSecs(3600*(17-dt_from.time().hour()));
-  dt_from = dt_from.addSecs(60*(45-dt_from.time().minute()));
+  dt_from = dt_from.addSecs(3600*(17-dt_from.time().hour()) + 60*45);
   dte_from = new MiDateTimeEdit(dt_from, this);
-  dte_from->setDisplayFormat("yyyy-MM-dd HH:mm");
+  dte_from->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   connect( dte_from, SIGNAL(dateTimeChanged(const QDateTime&)),
            this, SLOT(setMinToTime(const QDateTime&)));

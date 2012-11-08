@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -30,8 +30,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef __Weather__CellValueProvider_h__
 #define __Weather__CellValueProvider_h__
-
-#include <limits>
 
 #include <list>
 

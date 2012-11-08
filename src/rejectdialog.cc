@@ -1,5 +1,9 @@
+
 #include "rejectdialog.h"
+
 #include "MiDateTimeEdit.hh"
+#include "timeutil.hh"
+
 #include <Qt3Support/Q3HBoxLayout>
 #include <Qt3Support/Q3VBoxLayout>
 #include <QtGui/QLabel>
@@ -18,17 +22,17 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
   textLabel3 = new QLabel(this);
   textLabel3->setText(tr("Til"));
 
-  QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
+  QDateTime ldtto = timeutil::nowWithMinutes0Seconds0();
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
   fromEdit = new MiDateTimeEdit(dtfrom,this);
   toEdit   = new MiDateTimeEdit(dtto,this);
   fromEdit->setMaximumDate(dtto.date());
   fromEdit->setMaximumTime(dtto.time());
-  fromEdit->setDisplayFormat("yyyy.MM.dd HH:mm");
+  fromEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
   toEdit->setMinimumDate(dtfrom.date());
   toEdit->setMinimumTime(dtfrom.time());
-  toEdit->setDisplayFormat("yyyy.MM.dd HH:mm");
+  toEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   connect(fromEdit, SIGNAL(dateTimeChanged(const QDateTime&)),
 	  this, SLOT(setFromTime(const QDateTime&)));
@@ -77,6 +81,6 @@ TimeSpan RejectDialog::getTimeSpan()
 {
     TimeSpan ret;
     ret.first = fromEdit->dateTime();
-    ret.second = QDateTime::currentDateTime();
+    ret.second = timeutil::nowWithMinutes0Seconds0();
     return ret;
 }

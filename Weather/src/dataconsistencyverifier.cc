@@ -31,7 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dataconsistencyverifier.h"
 #include "enums.h"
 #include <cmath>
-#include <iostream>
+
 namespace Weather
 {
   void DataConsistencyVerifier::get_inconsistent( DataList & out ) const

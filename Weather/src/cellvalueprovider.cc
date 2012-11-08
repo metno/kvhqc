@@ -30,9 +30,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "cellvalueprovider.h"
 
+#include <limits>
+
 namespace Weather
 {
-  
+
+// FIXME missing ~1e-38, nowhere near -32767 or so
 const float CellValueProvider::missing = std::numeric_limits<float>::min();
 
 }

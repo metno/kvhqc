@@ -29,25 +29,28 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "accepttimeseriesdialog.h"
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
+
+#include "timeutil.hh"
+
+#include <QtGui/QGridLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QLabel>
+
 #include <iostream>
 
 using namespace std;
 
 AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog() 
 {  
+  setCaption(tr("Godkjenn tidsserie"));
 
-  setCaption("Godkjenn tidsserie");
-
-  QLabel* statLabel = new QLabel( "Stasjon", this );
+  QLabel* statLabel = new QLabel(tr("Stasjon"), this );
   stationWidget   = new QListWidget(this);
   connect(stationWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(stationSelected(QListWidgetItem*)));
 
-  QLabel* paraLabel = new QLabel( "Parameter", this );
+  QLabel* paraLabel = new QLabel(tr("Parameter"), this );
   parameterWidget = new QListWidget(this);
   connect(parameterWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(parameterSelectionChanged(QListWidgetItem*)));
@@ -57,39 +60,30 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   resultWidget->setFixedHeight(30);
 
   qc2Val = new QGroupBox(this);
-  qc2Yes    = new QRadioButton( "Retting av QC2 mulig", qc2Val );
+  qc2Yes    = new QRadioButton(tr("Retting av QC2 mulig"), qc2Val );
   qc2Yes->setChecked(true);
-  qc2No   = new QRadioButton( "Retting av QC2 IKKE mulig", qc2Val );
+  qc2No   = new QRadioButton(tr("Retting av QC2 IKKE mulig"), qc2Val );
 
-  QLabel* fromLabel = new QLabel( "Fra", this );
-  fromTimeEdit  = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  QDateTime t = timeutil::nowWithMinutes0Seconds0();
+  QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+
+  QLabel* fromLabel = new QLabel(tr("Fra"), this );
+  fromTimeEdit  = new MiDateTimeEdit(f,this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
-  QLabel* toLabel   = new QLabel( "Til", this );
-  toTimeEdit    = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  QLabel* toLabel   = new QLabel(tr("Til"), this );
+  toTimeEdit    = new MiDateTimeEdit(t,this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
-  QDateTime t(toTimeEdit->dateTime());
-
-  if( t.time().minute() != 0 ){
-    t = t.addSecs(-60*t.time().minute());
-  }
-  toTimeEdit->setDateTime(t);
-
-  t = t.addSecs(-172800); // Go back two days 
-  t = t.addSecs(3600*(17-t.time().hour()));
-  t = t.addSecs(60*(45-t.time().minute()));
-  fromTimeEdit->setDateTime(t);
-
-  sthide = new QPushButton("Skjul", this);
+  sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);
   sthide->setFont(QFont("Arial", 9));
 
-  excu = new QPushButton("Utfør", this);
+  excu = new QPushButton(tr("Utfør"), this);
   excu->setGeometry(120, 620, 90, 30);
   excu->setFont(QFont("Arial", 9));
   
-  hdnexcu = new QPushButton("Utfør+Skjul", this);
+  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
   hdnexcu->setGeometry(220, 620, 90, 30);
   hdnexcu->setFont(QFont("Arial", 9));
   hdnexcu->setDefault(true);

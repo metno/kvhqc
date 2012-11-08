@@ -32,29 +32,28 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Weather
 {
-  class WeatherTable;
 
-  //FDCheckTableItem::FDCheckTableItem( QTable * table, kvData & data )
-  FdCheckTableItem::FdCheckTableItem( Q3Table* table, QString flag)
+FdCheckTableItem::FdCheckTableItem( Q3Table* table, QString flag)
     : Q3CheckTableItem( table, "" )
-  {
+{
     setChecked( collected(flag) );
-  }
+}
   
-  FdCheckTableItem::~FdCheckTableItem()
-  {
-  }
+FdCheckTableItem::~FdCheckTableItem()
+{
+}
 
-  bool FdCheckTableItem::collected(QString flag) const
-  {
-    return (flag.toInt() < 0 );
-  }
+bool FdCheckTableItem::collected(QString flag) const
+{
+    return (flag.toInt() < 0);
+}
   
-  QString FdCheckTableItem::explain() const
-  {
+QString FdCheckTableItem::explain() const
+{
     if ( isChecked() )
-      return QObject::tr("Nedbør er en del av en oppsamling.");
+        return QObject::tr("Nedbør er en del av en oppsamling.");
     else
-      return QObject::tr("Nedbør er ikke en del av en oppsamling.");
-  }
+        return QObject::tr("Nedbør er ikke en del av en oppsamling.");
+}
+
 }

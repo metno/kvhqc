@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,11 +31,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__MultiStationSelection_h__
 #define __Weather__MultiStationSelection_h__
 
-#include <kvalobs/kvData.h>
-#include <kvalobs/kvStation.h>
 #include <decodeutility/DataReinserter.h>
+#include <kvalobs/kvStation.h>
 
-#include <QtGui/qdialog.h>
+#include <QtGui/QDialog>
 #include <QtGui/QKeyEvent>
 
 #include <vector>
@@ -46,6 +45,9 @@ class Q3TabDialog;
 
 namespace kvservice {
   class KvApp;
+}
+namespace kvalobs {
+class kvData;
 }
 
 namespace Weather

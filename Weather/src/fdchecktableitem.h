@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -30,8 +30,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #ifndef FDCHECKTABLEITEM_H_
 #define FDCHECKTABLEITEM_H_
-#include <q3table.h>
+
 #include "selfexplainable.h"
+#include <Qt3Support/Q3CheckTableItem>
+
+class Q3Table;
 
 namespace Weather
 {

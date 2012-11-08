@@ -30,28 +30,32 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "tnchecktableitem.h"
 
+#include <QtCore/QString>
+
 namespace Weather
 {
-  TnCheckTableItem::TnCheckTableItem( Q3Table* table, QString flag)
-    : Q3CheckTableItem( table, "" )
-  {
-    setChecked( collected(flag) );
-  }
-  
-  TnCheckTableItem::~TnCheckTableItem()
-  {
-  }
 
-  bool TnCheckTableItem::collected(QString flag) const
-  {
+TnCheckTableItem::TnCheckTableItem( Q3Table* table, QString flag)
+    : Q3CheckTableItem( table, "" )
+{
+    setChecked( collected(flag) );
+}
+
+TnCheckTableItem::~TnCheckTableItem()
+{
+}
+
+bool TnCheckTableItem::collected(QString flag) const
+{
     return (flag == "fd = 2");
-  }
+}
   
-  QString TnCheckTableItem::explain() const
-  {
+QString TnCheckTableItem::explain() const
+{
     if ( isChecked() )
-      return QObject::tr("Temperatur er en del av en aggregering.");
+        return QObject::tr("Temperatur er en del av en aggregering.");
     else
-      return QObject::tr("Temperatur er ikke en del av en aggregering.");
-  }
+        return QObject::tr("Temperatur er ikke en del av en aggregering.");
+}
+
 }

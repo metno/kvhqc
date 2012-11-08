@@ -2,7 +2,7 @@ PROJECT(kvhqc)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 INCLUDE(MetnoVersions)
-METNO_PVERSION(2.9.1)
+METNO_PVERSION(2.12.0~rc1)
 
 IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr")
   SET(SYSCONFDIR "/etc")
@@ -50,11 +50,17 @@ INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
 INSTALL(FILES
   share/faildetail.txt
   share/failgroup.txt
+  share/VxExplanations.txt
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 
-INSTALL(DIRECTORY share/images
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}"
-  PATTERN "*.png")
+INSTALL(FILES
+  share/images/hqc.png
+  share/images/kmplot.png
+  share/images/sorttime.png
+  share/images/table.png
+  share/images/watchrr.png
+  share/images/watchweather.png
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 
 FOREACH(df hqcdiana WatchRR WatchWeather histhqcdiana histWatchRR histWatchWeather)
   SET(dfi share/metno-${df}.desktop.in)

@@ -1,0 +1,13 @@
+Index: kvhqc/etc/kvhqc/diana.setup
+===================================================================
+--- kvhqc.orig/etc/kvhqc/diana.setup	2012-11-08 14:47:24.886797601 +0100
++++ kvhqc/etc/kvhqc/diana.setup	2012-11-08 14:47:47.994796571 +0100
+@@ -48,7 +48,7 @@
+ 
+ #%include ${DIANADIR}/etc/diana/diana.setup-COMMON
+ #%include ${DIANASETUPDIR}/diana.setup-COMMON
+-%include /etc/diana/setup/diana.setup-VA
++%include /etc/diana/diana.setup-VA
+ 
+ # =============================================
+ 

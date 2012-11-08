@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,19 +31,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __enums_h__
 #define  __enums_h__
 
-
 namespace Weather
 {
   enum Param {
     V4 = 34, V4S, V5, V5S, V6, V6S,
     RR_24 = 110,
-    SD = 18, // Snødekke
-    SA = 112 // Snødybde
-  };
-
-  enum ControlInfoFlags {
-    fqclevel, fr, fcc, fs, fnum, fpos, fmis, ftime,
-    fw, fstat, fcp, fclim, fd, fpre, fcombi, fhqc 
+    SD = 18, // snow cover
+    SA = 112 // snow depth
   };
 }
 

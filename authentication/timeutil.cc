@@ -104,6 +104,19 @@ int hourDiff(const ptime& t1, const ptime& t0) {
     return (t1 - t0).hours();
 }
 
+void clearMinutesAndSeconds(QDateTime& dt)
+{
+    const QTime& t = dt.time();
+    dt = dt.addSecs(-60*t.minute() - t.second());
+}
+
+QDateTime nowWithMinutes0Seconds0()
+{
+    QDateTime dt(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
+    clearMinutesAndSeconds(dt);
+    return dt;
+}
+
 } // namespace timeutil
 
 std::ostream& operator<<(std::ostream& o, b_pt::ptime const& pt)

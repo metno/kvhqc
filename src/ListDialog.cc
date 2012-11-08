@@ -29,12 +29,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ListDialog.h"
+
 #include "MiDateTimeEdit.hh"
-//Added by qt3to4:
+#include "timeutil.hh"
+
 #include <Qt3Support/Q3HBoxLayout>
 #include <QtGui/QLabel>
 #include <Qt3Support/Q3GridLayout>
 #include <Qt3Support/Q3VBoxLayout>
+
 #include <algorithm>
 
 ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
@@ -209,20 +212,12 @@ ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
   stationNames = new Q3ListBox(this);
 
   //Time selection
-  fromTime = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
-  toTime   = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  QDateTime t = timeutil::nowWithMinutes0Seconds0();
+  QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+  fromTime = new MiDateTimeEdit(f,this);
+  toTime   = new MiDateTimeEdit(t,this);
   fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
   toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
-  QDateTime t(toTime->dateTime());
-  if( t.time().minute() != 0 ){
-    t = t.addSecs(-60*t.time().minute());
-  }
-  toTime->setDateTime(t);
-
-  t = t.addSecs(-172800); // Go back two days
-  t = t.addSecs(3600*(17-t.time().hour()));
-  t = t.addSecs(60*(45-t.time().minute()));
-  fromTime->setDateTime(t);
 
   connect( fromTime, SIGNAL(dateChanged(const QDate&)),
 	   this,   SLOT(  setMinDate(const QDate&)     ));

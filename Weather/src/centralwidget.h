@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,21 +31,18 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef WEATHERCENTRALWIDGET_H
 #define WEATHERCENTRALWIDGET_H
 
-#include <qwidget.h>
-//Added by qt3to4:
-#include <Q3GridLayout>
+#include <QtGui/QWidget>
 
 class QTabWidget;
 class Q3GridLayout;
-class Q3Table;
 
 class WeatherCentralWidget : public QWidget
 {
     Q_OBJECT
 
-private:
 public:
     WeatherCentralWidget( QWidget *parent, const char *name = 0 );
+
 protected:
     void setupTabWidget();
     Q3GridLayout *mainGrid;

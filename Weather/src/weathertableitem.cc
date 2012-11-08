@@ -32,38 +32,37 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Weather
 {
-  class WeatherTable;
 
-  WeatherTableItem::WeatherTableItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
+WeatherTableItem::WeatherTableItem( Q3Table* table, Q3TableItem::EditType edType, QString type, QString flag)
     : Q3TableItem( table, edType, flag )
     , type(type)
-  {
-  }
-  
-  WeatherTableItem::~WeatherTableItem()
-  {
-  }
-  
-  QString WeatherTableItem::explain() const
-  {
-    QString ret = text();
-    if ( ret.isEmpty() )
-      ret = QObject::tr("Ingen data (original fra stasjon: manglende)");
-    else
-      ret = QObject::tr("TypeId = %1").arg(type);
-    return ret;
-  }
+{
+}
 
-  void WeatherTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
-  {
-    QColorGroup g( cg );
-    if ( isModelVal )
-      g.setColor( QColorGroup::Text, Qt::red );
-    else if ( isCorrectedByQC2 )
-      g.setColor( QColorGroup::Text, Qt::darkMagenta );
+WeatherTableItem::~WeatherTableItem()
+{
+}
+
+QString WeatherTableItem::explain() const
+{
+    QString ret = text();
+    if ( text().isEmpty() )
+        return QObject::tr("Ingen data (original fra stasjon: manglende)");
     else
-      g.setColor( QColorGroup::Text, Qt::black );
+        return QObject::tr("TypeId = %1").arg(type);
+}
+
+void WeatherTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
+{
+    QColorGroup g( cg );
+    if( isModelVal )
+        g.setColor( QColorGroup::Text, Qt::red );
+    else if ( isCorrectedByQC2 )
+        g.setColor( QColorGroup::Text, Qt::darkMagenta );
+    else
+        g.setColor( QColorGroup::Text, Qt::black );
     
     Q3TableItem::paint( p, g, cr, selected );
-  }
+}
+
 }

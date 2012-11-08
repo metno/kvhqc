@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,23 +31,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__WeatherTable_h__
 #define __Weather__WeatherTable_h__
 
-#include "timeobs.h"
 #include "dataconsistencyverifier.h"
-#include "fdchecktableitem.h"
-#include "tnchecktableitem.h"
-#include "weathertableitem.h"
-#include "flagitem.h"
-#include "selfexplainable.h"
+#include "timeutil.hh"
 
-#include <decodeutility/DataReinserter.h>
-
-#include <QtGui/qtooltip.h>
 #include <QtCore/QMap>
+#include <Qt3Support/Q3Table>
 
-#include <utility>
 #include <vector>
 #include <list>
-#include <set>
 
 namespace kvalobs
 {
@@ -61,48 +52,10 @@ namespace kvservice
 
 namespace Weather
 {
-  //  typedef list<kvObsPgm>                          ObsPgmList;
-  //  typedef list<kvObsPgm>::const_iterator        CIObsPgmList;
 
-  const int params[] = { 211,214,216,213,215,262,178,173,177,1,61,81,86,87,83,90,15,14,55,108,
-			 109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
-			 23,24,22,403,404,131,134,151,154,250,221,9,12};
-  //  const int NP = 44;
-  const int NP = 49;
-  //  const int NL = 49;
-  const int NL = 54;
+const int NP = 49;
+extern const int params[NP];
 
-  const QString horizonHeaders[] =
-    {
-      "TA", "TAN_12", "C", "TAX_12","C", "TAN", "TAX",
-      //      "UU", "PR", "DD","FF", "FX", "FG","NN", "NH", "HL",
-      "UU", "PR", "PO", "PP", "AA", "DD","FF", "FX","FX_1", "FG","FG_1","NN", "NH", "HL",
-      "RR_6", "C", "RR_12","C", "RR_24", "C", "SA", "SD",
-      "EM", "VV", "WW", "V1", "V2", "V3", "W1", "W2",
-      "V4", "V5", "V6", "V7", "CL", "CM", "CH", "MDIR",
-      "MSPE", "HW", "HWA", "PW", "PWA", "TW", "TG", "IR", "ITR"
-    };
-  /**
-   * \brief Columns with data
-   */
-  const int datCol[] = {0,1,3,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,
-			20,21,23,25,27,28,29,30,31,32,33,34,35,36,
-			37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53};
-
-  /**
-   * \brief Columns with checkboxes
-   */
-  const int cbCol[]  = {2,4,22,24,26};
-  /**
-   * \brief Columns with possible distributed values
-   */
-  const int dbCol[]  = {1,2,19,20,21};
-
-  /**
-   * \brief Number of decimals in respective column
-   */
-  const int d1Par[]  = {1,1,1,1,1,0,1,1,1,0,0,1,1,1,1,1,0,0,0,1,1,1,1,0,0,0,0,
-			0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
   class WeatherTableToolTip;
 
 
@@ -163,7 +116,7 @@ namespace Weather
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
     //    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, ObsPgmList obsPgmList);
-    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, std::list<kvalobs::kvObsPgm> obsPgmList);
+    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, const std::list<kvalobs::kvObsPgm>& obsPgmList);
   protected slots:
     /**
      * \brief Update status bar with info from cell.

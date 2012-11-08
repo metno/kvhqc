@@ -29,10 +29,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "rejecttimeseriesdialog.h"
-#include <QGridLayout>
-#include <QHBoxLayout>
-#include <QVBoxLayout>
-#include <QLabel>
+
+#include "timeutil.hh"
+
+#include <QtGui/QGridLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QVBoxLayout>
+#include <QtGui/QLabel>
+
 #include <iostream>
 
 using namespace std;
@@ -56,25 +60,16 @@ RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog()
   resultWidget = new QListWidget(this);
   resultWidget->setFixedHeight(30);
 
+  QDateTime t = timeutil::nowWithMinutes0Seconds0();
+  QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+
   QLabel* fromLabel = new QLabel( tr("Fra"), this );
-  fromTimeEdit  = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  fromTimeEdit  = new MiDateTimeEdit(f,this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   QLabel* toLabel   = new QLabel( tr("Til"), this );
-  toTimeEdit    = new MiDateTimeEdit(QDateTime::currentDateTime(),this);
+  toTimeEdit    = new MiDateTimeEdit(t,this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
-
-  QDateTime t(toTimeEdit->dateTime());
-
-  if( t.time().minute() != 0 ){
-    t = t.addSecs(-60*t.time().minute());
-  }
-  toTimeEdit->setDateTime(t);
-
-  t = t.addSecs(-172800); // Go back two days 
-  t = t.addSecs(3600*(17-t.time().hour()));
-  t = t.addSecs(60*(45-t.time().minute()));
-  fromTimeEdit->setDateTime(t);
 
   sthide = new QPushButton(tr("Skjul"), this);
   sthide->setGeometry(20, 620, 90, 30);

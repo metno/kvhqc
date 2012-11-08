@@ -1,4 +1,4 @@
-/*
+/* -*- c++ -*-
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
@@ -31,14 +31,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __Weather__WeatherTableToolTip_h__
 #define __Weather__WeatherTableToolTip_h__
 
-#include <qtooltip.h>
+#include <QtCore/QPoint>
 
 namespace Weather
 {
   class WeatherTable;
 
   class WeatherTableToolTip 
-  //    : public QToolTip 
   {
   public:
     WeatherTableToolTip( const WeatherTable *table );

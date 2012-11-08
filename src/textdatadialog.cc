@@ -1,6 +1,8 @@
 #include "textdatadialog.h"
+
 #include "hqc_utilities.hh"
 #include "MiDateTimeEdit.hh"
+#include "timeutil.hh"
 
 #include <QtGui/QCheckBox>
 #include <QtGui/QLabel>
@@ -32,17 +34,17 @@ TextDataDialog::TextDataDialog(const std::list<kvalobs::kvStation>& slist, QWidg
 
   stationEdit = new QLineEdit(this);
 
-  QDateTime ldtto(QDate::currentDate(), QTime::currentTime(), Qt::UTC);
+  QDateTime ldtto = timeutil::nowWithMinutes0Seconds0();
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
   fromEdit = new MiDateTimeEdit(dtfrom,this);
   toEdit   = new MiDateTimeEdit(dtto,this);
   fromEdit->setMaximumDate(dtto.date());
   fromEdit->setMaximumTime(dtto.time());
-  fromEdit->setDisplayFormat("yyyy.MM.dd HH:mm");
+  fromEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
   toEdit->setMinimumDate(dtfrom.date());
   toEdit->setMinimumTime(dtfrom.time());
-  toEdit->setDisplayFormat("yyyy.MM.dd HH:mm");
+  toEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   connect(stationEdit, SIGNAL(textChanged(const QString&)),
 	  this, SLOT(setStation(const QString&)));
@@ -104,7 +106,7 @@ TimeSpan TextDataDialog::getTimeSpan()
 {
     TimeSpan ret;
     ret.first = fromEdit->dateTime();
-    ret.second = QDateTime::currentDateTime();
+    ret.second = timeutil::nowWithMinutes0Seconds0();
     return ret;
 }
 

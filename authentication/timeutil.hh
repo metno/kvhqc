@@ -58,6 +58,10 @@ ptime now();
 
 int hourDiff(const ptime& t0, const ptime& t1);
 
+void clearMinutesAndSeconds(QDateTime& dt);
+
+QDateTime nowWithMinutes0Seconds0();
+
 } // namespace timeutil
 
 std::ostream& operator<<(std::ostream& o, timeutil::ptime const& pt);

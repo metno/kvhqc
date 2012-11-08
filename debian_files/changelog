@@ -1,3 +1,13 @@
+kvhqc (2.12.0~rc1-1) unstable; urgency=low
+
+  * fixed array-bounds error discovered by lucid g++
+  * hot-fixed some iterator-past-end in WatchWeather
+  * set min/sec/msec to 0 for QDateTime's
+  * install VxExplanations.txt
+  * add debian_lucid/patches/ to adapt diana.setup for lucid
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 08 Nov 2012 16:14:19 +0100
+
 kvhqc (2.9.1-1) unstable; urgency=low
 
   * small modifications to compile on lucid
