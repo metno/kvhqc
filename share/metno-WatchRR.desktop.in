@@ -1,5 +1,5 @@
 [Desktop Entry]
-Name=WatchRR
+Name=WatchRR @PVERSION@
 Comment=Nedbørkort
 Comment[no]=Nedbørkort
 Exec=WatchRR-@PVERSION@

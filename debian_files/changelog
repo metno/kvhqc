@@ -1,3 +1,9 @@
+kvhqc (2.12.1-1) unstable; urgency=low
+
+  * added version number in WatchRR .desktop file
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 09 Nov 2012 10:35:13 +0100
+
 kvhqc (2.12.0~rc1-1) unstable; urgency=low
 
   * fixed array-bounds error discovered by lucid g++
