@@ -1,3 +1,9 @@
+kvhqc (2.12.1-2) unstable; urgency=low
+
+  * added shlibs.local to avoid nvidia problems
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 12 Nov 2012 10:55:00 +0100
+
 kvhqc (2.12.1-1) unstable; urgency=low
 
   * added version number in WatchRR .desktop file
