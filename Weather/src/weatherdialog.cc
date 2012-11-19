@@ -28,7 +28,10 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "weatherdialog.h"
+
+#include "mi_foreach.hh"
 #include "StationSelection.h"
 #include "StationInformation.h"
 
@@ -112,7 +115,7 @@ namespace Weather
 
     if ( st ) {
       try {
-        ret= new WeatherDialog( st, cl, ty, se, 0, parent, 0, FALSE );
+        ret = new WeatherDialog(st, cl, ty, se, 0, parent);
       }
       catch( invalid_argument & e ) {
       }
@@ -129,12 +132,11 @@ namespace Weather
       return false;
   }
 
-  bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
-    if ( cSensor == gSensor )
-      return true;
-    else
-      return false;
-  }
+bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
+    if( cSensor >= '0' and cSensor <= '9' )
+        cSensor -= '0';
+    return (cSensor == gSensor);
+}
 
   bool WeatherDialog::paramInParamsList(int stnr) {
     bool pipl = false;
@@ -188,355 +190,219 @@ namespace Weather
     return WeatherDialog::DateRange( start, end );
   }
 
-  WeatherDialog::WeatherDialog( TimeObsListPtr tobs, int type, int sensor,
-		      const DataReinserter<kvservice::KvApp> * dataReinserter,
-		      QWidget *parent, const char* name, bool modal )
+WeatherDialog::WeatherDialog(TimeObsListPtr tobs, int type, int sensor,
+                             const DataReinserter<kvservice::KvApp> * dataReinserter,
+                             QWidget *parent)
     : QDialog( parent, Qt::Window )
     , dataReinserter( dataReinserter )
-    , observations( tobs )
     , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
     , shownFirstTime( false )
-  {
+{
+    initData((*tobs)[0].getTime(), type, sensor);
+    setupGUI(type);
+}
+
+WeatherDialog::WeatherDialog(int station, const timeutil::ptime& clock, int type, int sensor,
+                             const DataReinserter<KvApp> * dataReinserter,
+                             QWidget* parent)
+    : QDialog( parent, Qt::Window)
+    , dataReinserter( dataReinserter )
+    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
+    , shownFirstTime( false )
+{
+    initData(clock, type, sensor);
+    setupGUI(type);
+}
+
+void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
+{
+    if( station == 0 )
+        return;
+    const int stationID = station->stationID();
+
     OpgmList opgtl;
-    if ( !KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false) )
-      cerr << "Ingen obspgm" << endl;
-    else {
-      for ( CIObsPgmList obit = obsPgmList.begin(); obit != obsPgmList.end(); obit++ ) {
-	opgmList(opgtl, obit);
-      }
+    if( !KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false) ) {
+        cerr << "Ingen obspgm" << endl;
+    } else {
+        mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
+            if( op.stationID() == stationID ) {
+                cerr << op.stationID() << " "
+                     << setw(3) << op.paramID() << " "
+                     << setw(3) << op.typeID() <<  " "
+                     << op.kl00() << " "
+                     << op.kl01() << " "
+                     << op.kl02() << " "
+                     << op.kl03() << " "
+                     << op.kl04() << " "
+                     << op.kl05() << " "
+                     << op.kl06() << " "
+                     << op.kl07() << " "
+                     << op.kl08() << " "
+                     << op.kl09() << " "
+                     << op.kl10() << " "
+                     << op.kl11() << " "
+                     << op.kl12() << " "
+                     << op.kl13() << " "
+                     << op.kl14() << " "
+                     << op.kl15() << " "
+                     << op.kl16() << " "
+                     << op.kl17() << " "
+                     << op.kl18() << " "
+                     << op.kl19() << " "
+                     << op.kl20() << " "
+                     << op.kl21() << " "
+                     << op.kl22() << " "
+                     << op.kl23() << " "
+                     << op.fromtime() << " "
+                     << op.totime() << endl;
+                opgmList(opgtl, op);
+            }
+        }
     }
+
+    synObsList.clear();
+    for( int i = 0; i < NP; i++ ) {
+        parameterIndex[params[i]] = i;
+        synObs.orig[i] = -32767.0;
+        synObs.corr[i] = -32767.0;
+        synObs.controlinfo[i] = "";
+    }
+    timeutil::ptime sTime = clock, eTime = clock;
+    sTime += boost::gregorian::days(-7);
+    eTime += boost::gregorian::days(1);
+    WhichDataHelper whichData;
+    whichData.addStation( stationID, timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
+    
+    if ( !KvApp::kvApp->getKvData(ldList, whichData))
+        cerr << "Can't connect to data table!" << endl;
+    if( ldList.empty() or ldList.front().dataList().empty() ) {
+        std::cerr << "Empty data list." << std::endl;
+        return;
+    }
+    int ohour = sTime.time_of_day().hours(), nexthour = ohour;
+    timeutil::ptime protime = timeutil::from_miTime(ldList.front().dataList().front().obstime());
+    for(IKvObsDataList it = ldList.begin(); it!=ldList.end(); it++ ) {
+        if( it->dataList().empty() )
+            continue;
+        IDataList dit = it->dataList().begin();
+        timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
+        int nuOtimes = 0;
+        mi_foreach(const int opg_hour, opgtl) {
+            if( opg_hour == otime.time_of_day().hours() ) {
+                ohour = opg_hour;
+                break;
+            }
+            nuOtimes++;
+        }
+        if ( nuOtimes == (int)opgtl.size() )
+            cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
+        
+        nexttime = protime;
+        int hd = nexthour-nexttime.time_of_day().hours();
+        if ( hd < 0 )
+            hd += 24;
+        nexttime += boost::posix_time::hours(hd);
+        
+        while ( otime > nexttime ) {
+            
+            int hourDiff = otime.time_of_day().hours() - nexthour;
+            
+            if ( hourDiff < 0 )
+                hourDiff += 24;
+            
+            synObs.stnr = dit->stationID();
+            synObs.otime = nexttime;
+            //	synObs.otime.addHour(-hourDiff);
+            for ( int ip = 0; ip < NP; ip++) {
+                synObs.orig[ip]   = -32767.0;
+                synObs.corr[ip]   = -32767.0;
+                synObs.controlinfo[ip] = "";
+            }
+            synObsList.push_back(synObs);
+            ++nexthour;
+            nexttime += boost::posix_time::hours(1);
+        }
+        
+        while( dit != it->dataList().end() ) {
+            otime = timeutil::from_miTime(dit->obstime());
+            
+            if ( paramInParamsList(dit->paramID())
+                 && typeFilter(type, dit->typeID())
+                 && sensorFilter(sensor, dit->sensor()) ) {
+                synObs.stnr = dit->stationID();
+                synObs.otime = timeutil::from_miTime(dit->obstime());
+                synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
+                synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
+                synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
+                synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
+                synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
+                nexthour = ohour;
+                protime = otime;
+                dit++;
+                // FIXME this is a hack
+                if( dit == it->dataList().end() )
+                    protime += boost::posix_time::hours(-1);
+                else
+                    otime = timeutil::from_miTime(dit->obstime());
+                // UNUSED typid = dit->typeID();
+                // UNUSED snsor = dit->sensor();
+                if ( otime != protime ) {
+                    synObsList.push_back(synObs);
+                    for ( int ip = 0; ip < NP; ip++) {
+                        synObs.orig[ip]   = -32767.0;
+                        synObs.corr[ip]   = -32767.0;
+                        synObs.controlinfo[ip] = "";
+                    }
+                }
+            }
+            else {
+                protime = otime;
+                dit++;
+                // FIXME this is a hack
+                if( dit == it->dataList().end() )
+                    protime += boost::posix_time::hours(-1);
+                else
+                    otime = timeutil::from_miTime(dit->obstime());
+                // UNUSED typid = dit->typeID();
+                // UNUSED snsor = dit->sensor();
+                if ( otime != protime ) {
+                    synObsList.push_back(synObs);
+                    for ( int ip = 0; ip < NP; ip++) {
+                        synObs.orig[ip]   = -32767.0;
+                        synObs.corr[ip]   = -32767.0;
+                        synObs.controlinfo[ip] = "";
+                    }
+                }
+            }
+        }
+    }
+}
+
+void WeatherDialog::setupGUI(int type)
+{
     tabWidget = new QTabWidget;
-    if ( station != 0 ) {
-      for ( int i = 0; i < NP; i++ ) {
-	parameterIndex[params[i]] = i;
-      }
-      synObsList.clear();
-      for ( int ip = 0; ip < NP; ip++) {
-	synObs.orig[ip]   = -32767.0;
-	synObs.corr[ip]   = -32767.0;
-	synObs.controlinfo[ip] = "";
-      }
-      timeutil::ptime sTime = (*tobs)[0].getTime();
-      timeutil::ptime eTime = (*tobs)[0].getTime();
-      sTime += boost::gregorian::days(-7);
-      eTime += boost::gregorian::days(1);
-      WhichDataHelper whichData;
-      whichData.addStation( (*station).stationID(), timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
-
-      if ( !KvApp::kvApp->getKvData(ldList, whichData))
-	cerr << "Can't connect to data table!" << endl;
-      int ohour;
-      int nexthour = sTime.time_of_day().hours();
-      IKvObsDataList it=ldList.begin();
-      IDataList dit = it->dataList().begin();
-      timeutil::ptime protime = timeutil::from_miTime(dit->obstime());
-      for(; it!=ldList.end(); it++ ) {
-	dit = it->dataList().begin();
-	timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
-	int nuOtimes = 0;
-	for ( IOpgmList oit = opgtl.begin(); oit != opgtl.end(); oit++ ) {
-	  if ( *oit == otime.time_of_day().hours() ) {
-	    oit++;
-	    if ( oit == opgtl.end() ) oit = opgtl.begin();
-	    ohour = *oit;
-	    break;
-	  }
-	  nuOtimes++;
-	}
-	if ( nuOtimes == (int)opgtl.size() )
-	  cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
-
-	nexttime = protime;
-	int hd = nexthour-nexttime.time_of_day().hours();
-	if ( hd < 0 ) hd += 24;
-	nexttime += boost::posix_time::hours(hd);
-
-	while ( otime > nexttime ) {
-
-	  int hourDiff = otime.time_of_day().hours() - nexthour;
-
-	  if ( hourDiff < 0 ) hourDiff += 24;
-
-	  synObs.stnr = dit->stationID();
-	  synObs.otime = nexttime;
-	  //	synObs.otime.addHour(-hourDiff);
-	  for ( int ip = 0; ip < NP; ip++) {
-	    synObs.orig[ip]   = -32767.0;
-	    synObs.corr[ip]   = -32767.0;
-	    synObs.controlinfo[ip] = "";
-	  }
-	  synObsList.push_back(synObs);
-	  ++nexthour;
-          nexttime += boost::posix_time::hours(1);
-	}
-
-	while( dit != it->dataList().end() ) {
-	  otime = timeutil::from_miTime(dit->obstime());
-
-	  // UNUSED int typid = dit->typeID();
-	  // UNUSED int snsor = dit->sensor();
-	  if ( paramInParamsList(dit->paramID())
-	       && typeFilter(type, dit->typeID())
-	       && sensorFilter(sensor, dit->sensor()) ) {
-	    synObs.stnr = dit->stationID();
-	    synObs.otime = timeutil::from_miTime(dit->obstime());
-	    synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
-	    synObs.sensor[parameterIndex[dit->paramID()]] = dit->sensor();
-	    synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
-	    synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
-	    synObs.controlinfo[parameterIndex[dit->paramID()]] = dit->controlinfo().flagstring();
-	    nexthour = ohour;
-	    protime = otime;
-	    dit++;
-            // FIXME this is a hack
-            if( dit == it->dataList().end() )
-                protime += boost::posix_time::hours(-1);
-            else
-                otime = timeutil::from_miTime(dit->obstime());
-	    // UNUSED typid = dit->typeID();
-	    // UNUSED snsor = dit->sensor();
-	    if ( otime != protime ) {
-	      synObsList.push_back(synObs);
-	      for ( int ip = 0; ip < NP; ip++) {
-		synObs.orig[ip]   = -32767.0;
-		synObs.corr[ip]   = -32767.0;
-		synObs.controlinfo[ip] = "";
-	      }
-	    }
-	  }
-	  else {
-	    protime = otime;
-	    dit++;
-            // FIXME this is a hack
-            if( dit == it->dataList().end() )
-                protime += boost::posix_time::hours(-1);
-            else
-                otime = timeutil::from_miTime(dit->obstime());
-	    // UNUSED typid = dit->typeID();
-	    // UNUSED snsor = dit->sensor();
-	    if ( otime != protime ) {
-	      synObsList.push_back(synObs);
-	      for ( int ip = 0; ip < NP; ip++) {
-		synObs.orig[ip]   = -32767.0;
-		synObs.corr[ip]   = -32767.0;
-		synObs.controlinfo[ip] = "";
-	      }
-	    }
-	  }
-	}
-      }
-    }
     setupStationInfo();
     setupCorrTab(synObsList, type, tabWidget);
     setupOrigTab(synObsList, type, tabWidget);
     setupFlagTab(synObsList, type, tabWidget);
-
+    
     QPushButton* saveButton = new QPushButton(tr("Lagre"));
     saveButton->setDefault(true);
     QPushButton* closeButton = new QPushButton(tr("Lukk"));
-
+    
     QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
     buttonBox->addButton(saveButton,QDialogButtonBox::ActionRole);
     buttonBox->addButton(closeButton,QDialogButtonBox::RejectRole);
     //    QDialogButtonBox* buttonBox = new QDialogButtonBox(QDialogButtonBox::Save
     //                                     | QDialogButtonBox::Close);
-
+    
     connect(saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
     connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
     QVBoxLayout * mainLayout = new QVBoxLayout;
     mainLayout->addWidget(tabWidget);
     mainLayout->addWidget(buttonBox);
     setLayout(mainLayout);
-  }
-
-
-  WeatherDialog::WeatherDialog( int station, const timeutil::ptime& clock, int type, int sensor,
-				const DataReinserter<KvApp> * dataReinserter,
-				QWidget* parent, const char* name, bool modal )
-    : QDialog( parent, Qt::Window)
-    , dataReinserter( dataReinserter )
-    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
-    , shownFirstTime( false )
-  {
-    OpgmList opgtl;
-    if ( !KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false) )
-      cerr << "Ingen obspgm" << endl;
-    else {
-      for ( CIObsPgmList obit = obsPgmList.begin(); obit != obsPgmList.end(); obit++ ) {
-	if ( obit->stationID() == station ) {
-	  cerr << obit->stationID() << " "
-	       << setw(3) << obit->paramID() << " "
-	       << setw(3) << obit->typeID() <<  " "
-	       << obit->kl00() << " "
-	       << obit->kl01() << " "
-	       << obit->kl02() << " "
-	       << obit->kl03() << " "
-	       << obit->kl04() << " "
-	       << obit->kl05() << " "
-	       << obit->kl06() << " "
-	       << obit->kl07() << " "
-	       << obit->kl08() << " "
-	       << obit->kl09() << " "
-	       << obit->kl10() << " "
-	       << obit->kl11() << " "
-	       << obit->kl12() << " "
-	       << obit->kl13() << " "
-	       << obit->kl14() << " "
-	       << obit->kl15() << " "
-	       << obit->kl16() << " "
-	       << obit->kl17() << " "
-	       << obit->kl18() << " "
-	       << obit->kl19() << " "
-	       << obit->kl20() << " "
-	       << obit->kl21() << " "
-	       << obit->kl22() << " "
-	       << obit->kl23() << " "
-	       << obit->fromtime() << " "
-	       << obit->totime() << endl;
-	  opgmList(opgtl, obit);
-	}
-      }
-    }
-    tabWidget = new QTabWidget;
-    for ( int i = 0; i < NP; i++ ) {
-      parameterIndex[params[i]] = i;
-    }
-    synObsList.clear();
-    for ( int ip = 0; ip < NP; ip++) {
-      synObs.orig[ip]   = -32767.0;
-      synObs.corr[ip]   = -32767.0;
-      synObs.controlinfo[ip] = "";
-    }
-    timeutil::ptime sTime = clock;
-    timeutil::ptime eTime = clock;
-    sTime += boost::gregorian::days(-7);
-    eTime += boost::gregorian::days(1);
-    WhichDataHelper whichData;
-    whichData.addStation(station, timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
-    if ( !KvApp::kvApp->getKvData(ldList, whichData))
-      cerr << "Can't connect to data table!" << endl;
-    int ohour = sTime.time_of_day().hours();
-    int nexthour = sTime.time_of_day().hours();
-    IKvObsDataList it=ldList.begin();
-    IDataList dit = it->dataList().begin();
-    timeutil::ptime protime = timeutil::from_miTime(dit->obstime());
-    protime += boost::posix_time::hours(-1);
-    for(; it!=ldList.end(); it++ ) {
-      dit = it->dataList().begin();
-      timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
-
-      int nuOtimes = 0;
-      for ( IOpgmList oit = opgtl.begin(); oit != opgtl.end(); oit++ ) {
-	if ( *oit == otime.time_of_day().hours() ) {
-	  oit++;
-	  if ( oit == opgtl.end() ) oit = opgtl.begin();
-	  ohour = *oit; //next obstime
-	  break;
-	}
-	nuOtimes++;
-      }
-      if ( nuOtimes == (int)opgtl.size() )
-	cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
-      nexttime = protime;
-      int hd = nexthour-nexttime.time_of_day().hours();
-      if ( hd < 0 ) hd += 24;
-      nexttime += boost::posix_time::hours(hd);
-
-      while ( otime > nexttime ) {
-
-	int hourDiff = otime.time_of_day().hours() - nexthour;
-
-	if ( hourDiff < 0 ) hourDiff += 24;
-
-	synObs.stnr = dit->stationID();
-	synObs.otime = nexttime;
-	//	synObs.otime.addHour(-hourDiff);
-	for ( int ip = 0; ip < NP; ip++) {
-	  synObs.orig[ip]   = -32767.0;
-	  synObs.corr[ip]   = -32767.0;
-	  synObs.controlinfo[ip] = "";
-	}
-	synObsList.push_back(synObs);
-	++nexthour;
-	nexttime += boost::posix_time::hours(1);
-      }
-
-      while( dit != it->dataList().end() ) {
-	// UNUSED int typid = dit->typeID();
-	// UNUSED int snsor = dit->sensor();
-	otime = timeutil::from_miTime(dit->obstime());
-	if ( paramInParamsList(dit->paramID())
-	     && typeFilter(type, dit->typeID())
-	     && sensorFilter(sensor, dit->sensor()-'0') ) {
-	  synObs.stnr = dit->stationID();
-	  synObs.otime = timeutil::from_miTime(dit->obstime());
-	  synObs.typeId[parameterIndex[dit->paramID()]] = dit->typeID();
-	  synObs.corr[parameterIndex[dit->paramID()]] = dit->corrected();
-	  synObs.orig[parameterIndex[dit->paramID()]] = dit->original();
-	  synObs.controlinfo[parameterIndex[dit->paramID()]]
-	    = dit->controlinfo().flagstring();
-
-	  nexthour = ohour;
-
-	  protime = otime;
-
-	  dit++;
-          // FIXME this is a hack
-          if( dit == it->dataList().end() )
-              protime += boost::posix_time::hours(-1);
-          else
-              otime = timeutil::from_miTime(dit->obstime());
-	  // UNUSED typid = dit->typeID();
-	  // UNUSED snsor = dit->sensor();
-	  if ( otime != protime ) {
-	    synObsList.push_back(synObs);
-	    for ( int ip = 0; ip < NP; ip++) {
-	      synObs.orig[ip]   = -32767.0;
-	      synObs.corr[ip]   = -32767.0;
-	      synObs.controlinfo[ip] = "";
-	    }
-	  }
-	}
-	else {
-	  protime = otime;
-	  dit++;
-          // FIXME this is a hack
-          if( dit == it->dataList().end() )
-              protime += boost::posix_time::hours(-1);
-          else
-              otime = timeutil::from_miTime(dit->obstime());
-	  // UNUSED typid = dit->typeID();
-	  // UNUSED snsor = dit->sensor();
-	  if ( otime != protime ) {
-	    synObsList.push_back(synObs);
-	    for ( int ip = 0; ip < NP; ip++) {
-	      synObs.orig[ip]   = -32767.0;
-	      synObs.corr[ip]   = -32767.0;
-	      synObs.controlinfo[ip] = "";
-	    }
-	  }
-	}
-      }
-    }
-    setupStationInfo();
-    setupCorrTab(synObsList, type, tabWidget);
-    setupOrigTab(synObsList, type, tabWidget);
-    setupFlagTab(synObsList, type, tabWidget);
-
-    QPushButton* saveButton = new QPushButton(tr("Lagre"));
-    saveButton->setDefault(true);
-    QPushButton* closeButton = new QPushButton(tr("Lukk"));
-
-    QDialogButtonBox* buttonBox = new QDialogButtonBox(Qt::Horizontal);
-    buttonBox->addButton(saveButton,QDialogButtonBox::ActionRole);
-    buttonBox->addButton(closeButton,QDialogButtonBox::RejectRole);
-    connect(saveButton, SIGNAL(clicked()), this, SLOT(saveData()));
-    connect(closeButton, SIGNAL(clicked()), this, SLOT(reject()));
-    QVBoxLayout * mainLayout = new QVBoxLayout;
-    mainLayout->addWidget(tabWidget);
-    mainLayout->addWidget(buttonBox);
-    setLayout(mainLayout);
-  }
+}
 
   bool WeatherDialog::saveData()
   {
@@ -623,37 +489,36 @@ namespace Weather
     }
     return true;
   }
-
-  void WeatherDialog::opgmList( OpgmList& opgtl, CIObsPgmList obit)
-  {
-    if ( obit->kl00() ) opgtl.push_back( 0);
-    if ( obit->kl01() ) opgtl.push_back( 1);
-    if ( obit->kl02() ) opgtl.push_back( 2);
-    if ( obit->kl03() ) opgtl.push_back( 3);
-    if ( obit->kl04() ) opgtl.push_back( 4);
-    if ( obit->kl05() ) opgtl.push_back( 5);
-    if ( obit->kl06() ) opgtl.push_back( 6);
-    if ( obit->kl07() ) opgtl.push_back( 7);
-    if ( obit->kl08() ) opgtl.push_back( 8);
-    if ( obit->kl09() ) opgtl.push_back( 9);
-    if ( obit->kl10() ) opgtl.push_back(10);
-    if ( obit->kl11() ) opgtl.push_back(11);
-    if ( obit->kl12() ) opgtl.push_back(12);
-    if ( obit->kl13() ) opgtl.push_back(13);
-    if ( obit->kl14() ) opgtl.push_back(14);
-    if ( obit->kl15() ) opgtl.push_back(15);
-    if ( obit->kl16() ) opgtl.push_back(16);
-    if ( obit->kl17() ) opgtl.push_back(17);
-    if ( obit->kl18() ) opgtl.push_back(18);
-    if ( obit->kl19() ) opgtl.push_back(19);
-    if ( obit->kl20() ) opgtl.push_back(20);
-    if ( obit->kl21() ) opgtl.push_back(21);
-    if ( obit->kl22() ) opgtl.push_back(22);
-    if ( obit->kl23() ) opgtl.push_back(23);
+  
+void WeatherDialog::opgmList( OpgmList& opgtl, const kvalobs::kvObsPgm& op)
+{
+    if ( op.kl00() ) opgtl.push_back( 0);
+    if ( op.kl01() ) opgtl.push_back( 1);
+    if ( op.kl02() ) opgtl.push_back( 2);
+    if ( op.kl03() ) opgtl.push_back( 3);
+    if ( op.kl04() ) opgtl.push_back( 4);
+    if ( op.kl05() ) opgtl.push_back( 5);
+    if ( op.kl06() ) opgtl.push_back( 6);
+    if ( op.kl07() ) opgtl.push_back( 7);
+    if ( op.kl08() ) opgtl.push_back( 8);
+    if ( op.kl09() ) opgtl.push_back( 9);
+    if ( op.kl10() ) opgtl.push_back(10);
+    if ( op.kl11() ) opgtl.push_back(11);
+    if ( op.kl12() ) opgtl.push_back(12);
+    if ( op.kl13() ) opgtl.push_back(13);
+    if ( op.kl14() ) opgtl.push_back(14);
+    if ( op.kl15() ) opgtl.push_back(15);
+    if ( op.kl16() ) opgtl.push_back(16);
+    if ( op.kl17() ) opgtl.push_back(17);
+    if ( op.kl18() ) opgtl.push_back(18);
+    if ( op.kl19() ) opgtl.push_back(19);
+    if ( op.kl20() ) opgtl.push_back(20);
+    if ( op.kl21() ) opgtl.push_back(21);
+    if ( op.kl22() ) opgtl.push_back(22);
+    if ( op.kl23() ) opgtl.push_back(23);
     opgtl.sort();
     opgtl.unique();
-    //  return opgtl;
-  }
+}
 
   WeatherDialog::~WeatherDialog( )
   {

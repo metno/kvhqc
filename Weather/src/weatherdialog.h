@@ -72,13 +72,13 @@ typedef std::list<int>::iterator                               IOpgmList;
 
 namespace Weather
 {
-  class WeatherDialog
-    : public QDialog
-  {
+
+class WeatherDialog : public QDialog
+{
     friend class WeatherTable;
     Q_OBJECT;
-
-  public:
+    
+public:
 
     /**
      * \brief Will prompt user for a what data, and return the appropriate
@@ -91,16 +91,19 @@ namespace Weather
  */
     static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent, Qt::WindowFlags f );
 
-    WeatherDialog( TimeObsListPtr dol, int type, int sensor,
-	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
-
-
-    WeatherDialog( int station, const timeutil::ptime& clock, int type, int sensor,
-	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
-		   QWidget *parent = 0, const char* name = 0, bool modal = FALSE);
-
+    WeatherDialog(TimeObsListPtr dol, int type, int sensor,
+                  const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
+                  QWidget *parent = 0);
+    
+    WeatherDialog(int station, const timeutil::ptime& clock, int type, int sensor,
+                  const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
+                  QWidget *parent = 0);
+    
     virtual ~WeatherDialog( );
+
+    void initData(const timeutil::ptime& clock, int type, int sensor);
+    void setupGUI(int type);
+
     /**
      * \brief [Start, stop) dates for which to fetch data.
      */
@@ -146,7 +149,6 @@ signals:
 
   protected:
     const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter;
-    TimeObsListPtr observations;
     bool saveData(const kvalobs::DataReinserter<kvservice::KvApp> *);
 
   private:
@@ -159,7 +161,7 @@ signals:
     void setupCorrTab( SynObsList&, int, QTabWidget* );
     void setupFlagTab( SynObsList&, int, QTabWidget* );
     void setupStationInfo();
-    void opgmList(OpgmList& opgtl, CIObsPgmList obit);
+    void opgmList( OpgmList& opgtl, const kvalobs::kvObsPgm& op);
     WeatherTable* cTab;
     std::list<kvalobs::kvObsPgm> obsPgmList;
     std::list<long> statList;
