@@ -382,14 +382,6 @@ private:
   std::list<kvalobs::kvParam> plist;
   std::list<long> statList;
 
-  QList<int> webs;
-  QList<int> pri1s;
-  QList<int> pri2s;
-  QList<int> pri3s;
-  QList<int> coast;
-  QList<int> foreignId;
-  QList<QString> foreignName;
-
   std::vector<int> order;
 
   /**
