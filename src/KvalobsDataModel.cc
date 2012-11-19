@@ -534,31 +534,41 @@ namespace model
     }
     return index;
   }
-  int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime) const
+  int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm) const
   {
       LOG_FUNCTION();
-      const KvalobsDataListPtr & data = kvalobsData();
+      // FIXME this routine will probably cause segfault if rows == 0
 
+      const KvalobsDataListPtr & data = kvalobsData();
       const int rows = data->size();
-      int index;
-      int lindex;
-      bool foundTime = false;
-      for ( index = 0; index < rows; ++ index ) {
+      int best_index = -1;
+      timeutil::ptime best_time;
+      int second_best_index = 0;
+      for (int index=0; index<rows; ++index) {
           const KvalobsData & d = (*data)[index];
-          if ( d.stnr() == stationid ) {
-              lindex = index;
-              if ( timeutil::hourDiff(d.otime(), obstime) == 0 ) {
-                  foundTime = true;
-                  break;
+          if( d.stnr() == stationid ) {
+              second_best_index = index;
+              if (d.otime() == obstime) {
+                  qDebug() << "exact obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(obstime))
+                           << "found";
+                  return index;
+              } else if( (otm == OBSTIME_BEFORE    and d.otime() <= obstime and (best_index < 0 or d.otime() > best_time))
+                         or (otm == OBSTIME_AFTER  and d.otime() >= obstime and (best_index < 0 or d.otime() < best_time)) )
+              {
+                  best_time = d.otime();
+                  best_index = index;
               }
           }
       }
-      qDebug() << "obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(obstime))
-                 << "foundTime=" << foundTime;
-      if ( foundTime )
-          return index;
-      else
-          return lindex;
+      if( best_index>=0 ) {
+          qDebug() << "relative obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(best_time))
+                   << "found";
+          return best_index;
+      } else {
+          qDebug() << "no good obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(best_time))
+                   << "found";
+          return second_best_index;
+      }
   }
 
   const KvalobsDataModel::Parameter & KvalobsDataModel::getParameter(const QModelIndex &index) const

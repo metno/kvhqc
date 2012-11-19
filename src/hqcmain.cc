@@ -1310,8 +1310,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
   boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   whichData.addStation(stnr, timeutil::to_miTime(ft), timeutil::to_miTime(tt));
   checkTypeId(stnr);
-  int firstRow = dataModel->dataRow(stnr, ft);
-  int lastRow  = dataModel->dataRow(stnr, tt);
+  int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
+  int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
   int column   = dataModel->dataColumn(parameter);
 
   QString ch;
@@ -1362,8 +1362,8 @@ void HqcMainWindow::rejectTimeseriesOK() {
   boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   whichData.addStation(stnr, timeutil::to_miTime(ft), timeutil::to_miTime(tt));
   checkTypeId(stnr);
-  int firstRow = dataModel->dataRow(stnr, ft);
-  int lastRow  = dataModel->dataRow(stnr, tt);
+  int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
+  int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
   int column   = dataModel->dataColumn(parameter);
 
   QString ch;

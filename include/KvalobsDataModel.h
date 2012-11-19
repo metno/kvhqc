@@ -96,7 +96,11 @@ namespace model
     const Parameter & getParameter(const QModelIndex & index) const;
     const Parameter & getParameter(int column) const;
 
-    int dataRow(int stationid, const timeutil::ptime& obstime) const;
+      enum ObstimeMatch { OBSTIME_EXACT, OBSTIME_AFTER, OBSTIME_BEFORE };
+      int dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm) const;
+
+    int dataRow(int stationid, const timeutil::ptime& obstime) const
+          { return dataRow(stationid, obstime, OBSTIME_EXACT); }
     int dataColumn(QString parameter) const;
 
     kvalobs::kvData getKvData_(const QModelIndex & index) const;
