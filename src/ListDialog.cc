@@ -40,8 +40,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <algorithm>
 
-ListDialog::ListDialog(QWidget* parent): QDialog(parent) {
-
+ListDialog::ListDialog(QWidget* parent)
+  : QDialog(parent)
+{
   setCaption(tr("Datautvalg HQC"));
 
   // Create a button group for control type
@@ -1255,9 +1256,12 @@ StationSelection::StationSelection(QStringList listStatNum,
 				   bool web,
 				   bool pri,
 				   int noInfo,
-				   ObsTypeList* otpList) : QWidget() {
-
-  setGeometry(0,0,870,700);
+				   ObsTypeList* otpList,
+                                   QWidget* parent)
+    : QDialog(parent)
+{
+    // setGeometry(0,0,870,700);
+    resize(870,700);
 
   selectionOK = new QPushButton("Lukk", this);
   selectionOK->setGeometry(50,10,130,30);

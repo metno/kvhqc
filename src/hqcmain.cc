@@ -1042,7 +1042,8 @@ void HqcMainWindow::stationOK() {
 				    lstdlg->webReg->isChecked(),
 				    lstdlg->priReg->isChecked(),
 				    noInfo,
-				    &otpList);
+				    &otpList,
+                                    lstdlg);
 
   connect(statSelect,
 	  SIGNAL(stationAppended(QString)),

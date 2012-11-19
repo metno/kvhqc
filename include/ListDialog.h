@@ -250,7 +250,7 @@ public:
  void sortColumn( int col, bool ascending, bool wholeRows );
 };
 
-class StationSelection : public QWidget {
+class StationSelection : public QDialog {
 Q_OBJECT
 private:
  QPushButton* selectionOK;
@@ -310,7 +310,8 @@ public:
 		  bool,
 		  bool,
 		  int,
-		  ObsTypeList*);
+		  ObsTypeList*,
+                  QWidget* parent);
  void showSelectedStation(int, int);
  QStringList stlist;
 private slots:
