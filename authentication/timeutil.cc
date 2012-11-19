@@ -108,6 +108,7 @@ void clearMinutesAndSeconds(QDateTime& dt)
 {
     const QTime& t = dt.time();
     dt = dt.addSecs(-60*t.minute() - t.second());
+    dt = dt.addMSecs(-t.msec());
 }
 
 QDateTime nowWithMinutes0Seconds0()
