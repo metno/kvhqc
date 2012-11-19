@@ -1,3 +1,9 @@
+kvhqc (2.12.2-2) unstable; urgency=low
+
+  * improved lucid Build-Depends
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 19 Nov 2012 14:24:00 +0100
+
 kvhqc (2.12.2-1) unstable; urgency=low
 
   * no WeatherDialog crash if no data

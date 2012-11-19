@@ -3,7 +3,12 @@ Section: science
 Priority: extra
 Maintainer: Knut Johansen <knut.johansen@met.no>
 Build-Depends: debhelper (>= 7.0.50), quilt, g++, metno-devscripts,
- libqt4-dev, libgfortran3, libkvcpp2-dev, metlibs-dev (>= 4.5.0)
+ libqt4-dev, libgfortran3, libkvcpp2-dev,
+@metno_config_if ^lucid$
+ metlibs-dev, metlibs-qtimeseries-dev, metlibs-qutilities-dev
+@metno_config_else
+ metlibs-dev (>= 4.5.0)
+@metno_config_endif
 Standards-Version: 3.8.4
 Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
 Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
