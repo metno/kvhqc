@@ -124,7 +124,6 @@ public:
   QRadioButton* allTypes;
 
 public slots:
-  void applyHideClicked();
   void chooseParameters(const QString &);
   void appendStatInListbox(QString);
   void removeStatFromListbox(QString);
@@ -172,9 +171,6 @@ private:
   QDateTimeEdit* toTime;
   QLineEdit* fromEdit;
   QLineEdit* toEdit;
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
   QPushButton* stationSelect;
   Q3ListBox* stationNames;
   Q3VBoxLayout* topLayout;

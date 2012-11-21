@@ -14,6 +14,6 @@ HideApplyBox::HideApplyBox(QWidget* parent)
 
 void HideApplyBox::hideApply()
 {
-    emit apply();
     emit hide();
+    emit apply();
 }

@@ -21,6 +21,11 @@
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
       <widget class="QPushButton" name="hideButton">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Skjul</string>
        </property>
@@ -28,6 +33,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="applyButton">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Utfør</string>
        </property>
@@ -35,6 +45,11 @@
      </item>
      <item>
       <widget class="QPushButton" name="applyHideButton">
+       <property name="font">
+        <font>
+         <pointsize>9</pointsize>
+        </font>
+       </property>
        <property name="text">
         <string>Utfør+Skjul</string>
        </property>

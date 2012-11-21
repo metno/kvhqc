@@ -30,6 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "ListDialog.h"
 
+#include "HideApplyBox.hh"
 #include "MiDateTimeEdit.hh"
 #include "timeutil.hh"
 
@@ -234,22 +235,9 @@ ListDialog::ListDialog(QWidget* parent)
   connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
 	   this,SIGNAL(toTimeChanged(const QDateTime&)));
 
-  sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setGeometry(20, 620, 90, 30);
-  sthide->setFont(QFont("Arial", 9));
-
-  excu = new QPushButton(tr("Utfør"), this);
-  excu->setGeometry(120, 620, 90, 30);
-  excu->setFont(QFont("Arial", 9));
-
-  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setGeometry(220, 620, 90, 30);
-  hdnexcu->setFont(QFont("Arial", 9));
-  hdnexcu->setDefault(true);
-  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
-  buttonLayout->addWidget(sthide, 10);
-  buttonLayout->addWidget(excu, 10);
-  buttonLayout->addWidget(hdnexcu, 10);
+  HideApplyBox* hab = new HideApplyBox(this);
+  connect(hab, SIGNAL(hide()), this, SIGNAL(ListHide()));
+  connect(hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
 
   statSelLayout->addWidget(aaType,0,0);
   statSelLayout->addWidget(afType,1,0);
@@ -302,10 +290,6 @@ ListDialog::ListDialog(QWidget* parent)
   typeLayout->addWidget(ctrlTyp, 10);
   typeLayout->addWidget(stTyp, 10);
 
-  connect(sthide, SIGNAL(clicked()), this, SIGNAL( ListHide()));
-  connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
-  connect(excu, SIGNAL(clicked()), this, SIGNAL( ListApply()));
-
   QLabel* fromLabel = new QLabel(tr("Fra"));
   Q3HBoxLayout* ftimeLayout = new Q3HBoxLayout();
   ftimeLayout->addWidget(fromLabel);
@@ -325,9 +309,7 @@ ListDialog::ListDialog(QWidget* parent)
   topLayout->addWidget(stationNames);
   topLayout->addLayout(ftimeLayout);
   topLayout->addLayout(ttimeLayout);
-  //  topLayout->addWidget(fromTime);
-  //  topLayout->addWidget(toTime);
-  topLayout->addLayout(buttonLayout);
+  topLayout->addWidget(hab);
 }
 
 void ListDialog::setMaxTime(const QTime& maxTime)
@@ -353,11 +335,6 @@ void ListDialog::showAll(){
 
 void ListDialog::hideAll(){
   this->hide();
-}
-
-void ListDialog::applyHideClicked(){
-  emit ListHide();
-  emit ListApply();
 }
 
 QString ListDialog::getStart() {
