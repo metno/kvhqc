@@ -42,6 +42,54 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <algorithm>
 
+namespace /* anonymous */ {
+struct stationtype_t {
+    const char* name;
+    int gridX, gridY;
+};
+const int NSTATIONTYPES = 19;
+const stationtype_t stationTypes[NSTATIONTYPES] = {
+  { "AA", 0, 0 },
+  { "AF", 1, 0 },
+  { "AL", 2, 0 },
+  { "AV", 3, 0 },
+  { "AO", 4, 0 },
+  { "AE", 5, 0 },
+  { "MV", 0, 1 },
+  { "MP", 1, 1 },
+  { "MM", 2, 1 },
+  { "MS", 3, 1 },
+  { "FM", 4, 3 },
+  { "NS", 0, 2 },
+  { "ND", 1, 2 },
+  { "NO", 2, 2 },
+  { "P",  4, 2 },
+  { "PT", 5, 2 },
+  { "VS", 0, 3 },
+  { "VK", 1, 3 },
+  { "VM", 2, 3 }
+};
+
+#if 0
+const int NCOUNTIES = 20;
+const char* counties[NCOUNTIES] =  {
+  "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark",
+  "Aust-Agder", "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane", "Møre og Romsdal",
+  "Sør-Trøndelag", "Nord-Trøndelag", "Nordland", "Troms", "Finnmark", "Ishavet"
+};
+const char* countiesU[NCOUNTIES] =  {
+    "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK",
+    "AUST-AGDER", "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE", "MØRE OG ROMSDAL",
+    "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET"
+};
+#endif
+} // anonymous namespace
+
+void ItemCheckBox::clicked()
+{
+    emit clicked(mItem);
+}
+
 ListDialog::ListDialog(QWidget* parent)
   : QDialog(parent)
 {
@@ -84,33 +132,19 @@ ListDialog::ListDialog(QWidget* parent)
 
   // Create a button group for station type
 
+  // insert checkbuttons for station type selection
   Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal,
 					 tr("Stasjonstype"),
 					 this);
   Q3GridLayout* statSelLayout = new Q3GridLayout(stTyp->layout());
-
-  // insert checkbuttons for station type selection
-  aaType = new QCheckBox( "AA", stTyp );
-  afType = new QCheckBox( "AF", stTyp );
-  alType = new QCheckBox( "AL", stTyp );
-  avType = new QCheckBox( "AV", stTyp );
-  aoType = new QCheckBox( "AO", stTyp );
-  aeType = new QCheckBox( "AE", stTyp );
-  mvType = new QCheckBox( "MV", stTyp );
-  mpType = new QCheckBox( "MP", stTyp );
-  mmType = new QCheckBox( "MM", stTyp );
-  msType = new QCheckBox( "MS", stTyp );
-  fmType = new QCheckBox( "FM", stTyp );
-  nsType = new QCheckBox( "NS", stTyp );
-  ndType = new QCheckBox( "ND", stTyp );
-  noType = new QCheckBox( "NO", stTyp );
-  piType = new QCheckBox( "P ", stTyp );
-  ptType = new QCheckBox( "PT", stTyp );
-  vsType = new QCheckBox( "VS", stTyp );
-  vkType = new QCheckBox( "VK", stTyp );
-  vmType = new QCheckBox( "VM", stTyp );
-  allType = new QCheckBox( tr("Alle"), stTyp );
-
+  for(int i=0; i<NSTATIONTYPES; ++i) {
+      const stationtype_t& s = stationTypes[i];
+      ItemCheckBox* cb = new ItemCheckBox(s.name, s.name, stTyp);
+      statSelLayout->addWidget(cb, s.gridX, s.gridY);
+      mStationTypes.push_back(cb);
+  }
+  allType = new QCheckBox( tr("Alle"), stTyp);
+  statSelLayout->addWidget(allType, 5, 3);
 
    // Create a button group for station location (county)
 
@@ -240,27 +274,6 @@ ListDialog::ListDialog(QWidget* parent)
   connect(hab, SIGNAL(hide()), this, SIGNAL(ListHide()));
   connect(hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
 
-  statSelLayout->addWidget(aaType,0,0);
-  statSelLayout->addWidget(afType,1,0);
-  statSelLayout->addWidget(alType,2,0);
-  statSelLayout->addWidget(avType,3,0);
-  statSelLayout->addWidget(aoType,4,0);
-  statSelLayout->addWidget(aeType,5,0);
-  statSelLayout->addWidget(mvType,0,1);
-  statSelLayout->addWidget(mpType,1,1);
-  statSelLayout->addWidget(mmType,2,1);
-  statSelLayout->addWidget(msType,3,1);
-  statSelLayout->addWidget(fmType,4,3);
-  statSelLayout->addWidget(nsType,0,2);
-  statSelLayout->addWidget(ndType,1,2);
-  statSelLayout->addWidget(noType,2,2);
-  statSelLayout->addWidget(piType,4,2);
-  statSelLayout->addWidget(ptType,5,2);
-  statSelLayout->addWidget(vsType,0,3);
-  statSelLayout->addWidget(vkType,1,3);
-  statSelLayout->addWidget(vmType,2,3);
-  statSelLayout->addWidget(allType,5,3);
-
   statCountyLayout->addWidget(oslCoun,0,0);
   statCountyLayout->addWidget(hedCoun,1,0);
   statCountyLayout->addWidget(vefCoun,2,0);
@@ -381,546 +394,385 @@ void ListDialog::removeAllStatFromListbox() {
 
 void ListDialog::twiCheck() {
   if (twiType->isChecked() ) {
-    prcType->setChecked(FALSE);
-    aprType->setChecked(FALSE);
-    winType->setChecked(FALSE);
-    visType->setChecked(FALSE);
-    marType->setChecked(FALSE);
+    prcType->setChecked(false);
+    aprType->setChecked(false);
+    winType->setChecked(false);
+    visType->setChecked(false);
+    marType->setChecked(false);
   }
 }
 
 void ListDialog::prcCheck() {
   if (prcType->isChecked() ) {
-    twiType->setChecked(FALSE);
-    aprType->setChecked(FALSE);
-    winType->setChecked(FALSE);
-    visType->setChecked(FALSE);
-    marType->setChecked(FALSE);
+    twiType->setChecked(false);
+    aprType->setChecked(false);
+    winType->setChecked(false);
+    visType->setChecked(false);
+    marType->setChecked(false);
   }
 }
 
 void ListDialog::aprCheck() {
   if (aprType->isChecked() ) {
-    prcType->setChecked(FALSE);
-    twiType->setChecked(FALSE);
-    visType->setChecked(FALSE);
-    marType->setChecked(FALSE);
+    prcType->setChecked(false);
+    twiType->setChecked(false);
+    visType->setChecked(false);
+    marType->setChecked(false);
   }
 }
 
 void ListDialog::winCheck() {
   if (winType->isChecked() ) {
-    prcType->setChecked(FALSE);
-    twiType->setChecked(FALSE);
-    visType->setChecked(FALSE);
-    marType->setChecked(FALSE);
+    prcType->setChecked(false);
+    twiType->setChecked(false);
+    visType->setChecked(false);
+    marType->setChecked(false);
   }
 }
 
 void ListDialog::visCheck() {
   if (visType->isChecked() ) {
-    prcType->setChecked(FALSE);
-    aprType->setChecked(FALSE);
-    winType->setChecked(FALSE);
-    twiType->setChecked(FALSE);
-    marType->setChecked(FALSE);
+    prcType->setChecked(false);
+    aprType->setChecked(false);
+    winType->setChecked(false);
+    twiType->setChecked(false);
+    marType->setChecked(false);
   }
 }
 
 void ListDialog::marCheck() {
   if (marType->isChecked() ) {
-    prcType->setChecked(FALSE);
-    aprType->setChecked(FALSE);
-    winType->setChecked(FALSE);
-    twiType->setChecked(FALSE);
-    visType->setChecked(FALSE);
+    prcType->setChecked(false);
+    aprType->setChecked(false);
+    winType->setChecked(false);
+    twiType->setChecked(false);
+    visType->setChecked(false);
   }
 }
 
-void ListDialog::otwiCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( twiType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    afType->setChecked(TRUE);
-    alType->setChecked(TRUE);
-    avType->setChecked(TRUE);
-    aoType->setChecked(TRUE);
-    aeType->setChecked(TRUE);
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    nsType->setChecked(TRUE);
-    fmType->setChecked(TRUE);
-    ptType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    vkType->setChecked(TRUE);
-    vmType->setChecked(TRUE);
-  }
+void ListDialog::uncheckTypes()
+{
+    mi_foreach(ItemCheckBox* cb, mStationTypes)
+        cb->setChecked(false);
+    allType->setChecked(false);
 }
 
-void ListDialog::oprcCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  vmType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( prcType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    alType->setChecked(TRUE);
-    aoType->setChecked(TRUE);
-    nsType->setChecked(TRUE);
-    ndType->setChecked(TRUE);
-    noType->setChecked(TRUE);
-    piType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    vkType->setChecked(TRUE);
-    vmType->setChecked(TRUE);
-  }
+void ListDialog::checkTypes(const char* these[])
+{
+    mi_foreach(ItemCheckBox* cb, mStationTypes) {
+        const QString item = cb->getItem();
+        for(int i=0; these[i]; ++i) {
+            if( item == these[i] ) {
+                cb->setChecked(true);
+                break;
+            }
+        }
+    }
 }
 
-void ListDialog::oaprCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  vmType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( aprType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    afType->setChecked(TRUE);
-    aeType->setChecked(TRUE);
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-  }
-  if ( winType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    afType->setChecked(TRUE);
-    alType->setChecked(TRUE);
-    avType->setChecked(TRUE);
-    aoType->setChecked(TRUE);
-    aeType->setChecked(TRUE);
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    fmType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    vkType->setChecked(TRUE);
-  }
+void ListDialog::otwiCheck()
+{
+    uncheckTypes();
+    if( twiType->isChecked() ) {
+        const char* doCheck[] = { "AA", "AF", "AL", "AV", "AO", "AE", "MV", "MP",
+                                  "MM", "MS", "NS", "FM", "PT", "VS", "VK", "VM", 0 };
+        checkTypes(doCheck);
+    }
 }
 
-void ListDialog::owinCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  vmType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( aprType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    afType->setChecked(TRUE);
-    aeType->setChecked(TRUE);
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-  }
-  if ( winType->isChecked() ) {
-    aaType->setChecked(TRUE);
-    afType->setChecked(TRUE);
-    alType->setChecked(TRUE);
-    avType->setChecked(TRUE);
-    aoType->setChecked(TRUE);
-    aeType->setChecked(TRUE);
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    fmType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    vkType->setChecked(TRUE);
-  }
+void ListDialog::oprcCheck()
+{
+    uncheckTypes();
+    if( prcType->isChecked() ) {
+        const char* doCheck[] = { "AA", "AL", "AO", "NS", "ND", "NO", "P", "VS", "VK", "VM", 0 };
+        checkTypes(doCheck);
+    }
 }
 
-void ListDialog::ovisCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  vmType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( visType->isChecked() ) {
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-    fmType->setChecked(TRUE);
-    nsType->setChecked(TRUE);
-    ndType->setChecked(TRUE);
-    noType->setChecked(TRUE);
-    vsType->setChecked(TRUE);
-    vkType->setChecked(TRUE);
-    vmType->setChecked(TRUE);
-  }
+void ListDialog::oaprCheck()
+{
+    uncheckTypes();
+    if( aprType->isChecked() ) {
+        const char* doCheck[] = { "AA", "AF", "AE", "MV", "MP", "MM", "MS", "VS", 0 };
+        checkTypes(doCheck);
+    }
+    if( winType->isChecked() ) {
+        const char* doCheck[] = { "AA", "AF", "AL", "AV", "AO", "AE", "MV", "MP", "MM", "MS", "FM", "VS", "VK", 0 };
+        checkTypes(doCheck);
+    }
+}
+
+void ListDialog::owinCheck()
+{
+    oaprCheck(); // TODO this does not seem right
+}
+
+void ListDialog::ovisCheck()
+{
+    uncheckTypes();
+    if( visType->isChecked() ) {
+        const char* doCheck[] = { "MV", "MP", "MM", "MS", "FM", "NS", "ND", "NO", "VS", "VK", "VM", 0 };
+        checkTypes(doCheck);
+    }
 }
 
 void ListDialog::omarCheck() {
-  aaType->setChecked(FALSE);
-  afType->setChecked(FALSE);
-  alType->setChecked(FALSE);
-  avType->setChecked(FALSE);
-  aoType->setChecked(FALSE);
-  aeType->setChecked(FALSE);
-  mvType->setChecked(FALSE);
-  mpType->setChecked(FALSE);
-  mmType->setChecked(FALSE);
-  msType->setChecked(FALSE);
-  fmType->setChecked(FALSE);
-  nsType->setChecked(FALSE);
-  ndType->setChecked(FALSE);
-  noType->setChecked(FALSE);
-  piType->setChecked(FALSE);
-  ptType->setChecked(FALSE);
-  vsType->setChecked(FALSE);
-  vkType->setChecked(FALSE);
-  vmType->setChecked(FALSE);
-  allType->setChecked(FALSE);
-  if ( marType->isChecked() ) {
-    mvType->setChecked(TRUE);
-    mpType->setChecked(TRUE);
-    mmType->setChecked(TRUE);
-    msType->setChecked(TRUE);
-  }
+    uncheckTypes();
+    if ( marType->isChecked() ) {
+        const char* doCheck[] = { "MV", "MP", "MM", "MS", 0 };
+        checkTypes(doCheck);
+    }
 }
 
 void ListDialog::ausCheck() {
   if (ausReg->isChecked() ) {
-    vesReg->setChecked(FALSE);
-    troReg->setChecked(FALSE);
-    norReg->setChecked(FALSE);
-    webReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
+    vesReg->setChecked(false);
+    troReg->setChecked(false);
+    norReg->setChecked(false);
+    webReg->setChecked(false);
+    priReg->setChecked(false);
   }
 }
 
 void ListDialog::oausCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
   if ( ausReg->isChecked() ) {
-    oslCoun->setChecked(TRUE);
-    akeCoun->setChecked(TRUE);
-    ostCoun->setChecked(TRUE);
-    hedCoun->setChecked(TRUE);
-    oppCoun->setChecked(TRUE);
-    busCoun->setChecked(TRUE);
-    vefCoun->setChecked(TRUE);
-    telCoun->setChecked(TRUE);
-    ausCoun->setChecked(TRUE);
+    oslCoun->setChecked(true);
+    akeCoun->setChecked(true);
+    ostCoun->setChecked(true);
+    hedCoun->setChecked(true);
+    oppCoun->setChecked(true);
+    busCoun->setChecked(true);
+    vefCoun->setChecked(true);
+    telCoun->setChecked(true);
+    ausCoun->setChecked(true);
   }
 }
 
 void ListDialog::vesCheck() {
   if (vesReg->isChecked() ) {
-    ausReg->setChecked(FALSE);
-    troReg->setChecked(FALSE);
-    norReg->setChecked(FALSE);
-    webReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
+    ausReg->setChecked(false);
+    troReg->setChecked(false);
+    norReg->setChecked(false);
+    webReg->setChecked(false);
+    priReg->setChecked(false);
   }
 }
 
 void ListDialog::ovesCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
   if ( vesReg->isChecked() ) {
-    veaCoun->setChecked(TRUE);
-    rogCoun->setChecked(TRUE);
-    horCoun->setChecked(TRUE);
-    sogCoun->setChecked(TRUE);
-    morCoun->setChecked(TRUE);
+    veaCoun->setChecked(true);
+    rogCoun->setChecked(true);
+    horCoun->setChecked(true);
+    sogCoun->setChecked(true);
+    morCoun->setChecked(true);
   }
 }
 
 void ListDialog::troCheck() {
   if (troReg->isChecked() ) {
-    ausReg->setChecked(FALSE);
-    vesReg->setChecked(FALSE);
-    norReg->setChecked(FALSE);
-    webReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
+    ausReg->setChecked(false);
+    vesReg->setChecked(false);
+    norReg->setChecked(false);
+    webReg->setChecked(false);
+    priReg->setChecked(false);
   }
 }
 
 void ListDialog::otroCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
   if ( troReg->isChecked() ) {
-    sorCoun->setChecked(TRUE);
-    ntrCoun->setChecked(TRUE);
+    sorCoun->setChecked(true);
+    ntrCoun->setChecked(true);
   }
 }
 
 void ListDialog::norCheck() {
   if (norReg->isChecked() ) {
-    vesReg->setChecked(FALSE);
-    troReg->setChecked(FALSE);
-    ausReg->setChecked(FALSE);
-    webReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
+    vesReg->setChecked(false);
+    troReg->setChecked(false);
+    ausReg->setChecked(false);
+    webReg->setChecked(false);
+    priReg->setChecked(false);
   }
 }
 
 void ListDialog::onorCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
   if ( norReg->isChecked() ) {
-    norCoun->setChecked(TRUE);
-    troCoun->setChecked(TRUE);
-    finCoun->setChecked(TRUE);
-    svaCoun->setChecked(TRUE);
+    norCoun->setChecked(true);
+    troCoun->setChecked(true);
+    finCoun->setChecked(true);
+    svaCoun->setChecked(true);
   }
 }
 
 void ListDialog::webCheck() {
   if (webReg->isChecked() ) {
-    allType->setChecked(TRUE);
+    allType->setChecked(true);
   }
 }
 
 void ListDialog::owebCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
 }
 void ListDialog::priCheck() {
   if (priReg->isChecked() ) {
-    allType->setChecked(TRUE);
+    allType->setChecked(true);
   }
 }
 
 void ListDialog::opriCheck() {
-  oslCoun->setChecked(FALSE);
-  akeCoun->setChecked(FALSE);
-  ostCoun->setChecked(FALSE);
-  hedCoun->setChecked(FALSE);
-  oppCoun->setChecked(FALSE);
-  busCoun->setChecked(FALSE);
-  vefCoun->setChecked(FALSE);
-  telCoun->setChecked(FALSE);
-  ausCoun->setChecked(FALSE);
-  veaCoun->setChecked(FALSE);
-  rogCoun->setChecked(FALSE);
-  horCoun->setChecked(FALSE);
-  sogCoun->setChecked(FALSE);
-  morCoun->setChecked(FALSE);
-  sorCoun->setChecked(FALSE);
-  ntrCoun->setChecked(FALSE);
-  norCoun->setChecked(FALSE);
-  troCoun->setChecked(FALSE);
-  finCoun->setChecked(FALSE);
-  svaCoun->setChecked(FALSE);
-  allCoun->setChecked(FALSE);
+  oslCoun->setChecked(false);
+  akeCoun->setChecked(false);
+  ostCoun->setChecked(false);
+  hedCoun->setChecked(false);
+  oppCoun->setChecked(false);
+  busCoun->setChecked(false);
+  vefCoun->setChecked(false);
+  telCoun->setChecked(false);
+  ausCoun->setChecked(false);
+  veaCoun->setChecked(false);
+  rogCoun->setChecked(false);
+  horCoun->setChecked(false);
+  sogCoun->setChecked(false);
+  morCoun->setChecked(false);
+  sorCoun->setChecked(false);
+  ntrCoun->setChecked(false);
+  norCoun->setChecked(false);
+  troCoun->setChecked(false);
+  finCoun->setChecked(false);
+  svaCoun->setChecked(false);
+  allCoun->setChecked(false);
 }
 void ListDialog::allCounCheck() {
   if ( allCoun->isChecked() ) {
-    oslCoun->setChecked(FALSE);
-    akeCoun->setChecked(FALSE);
-    ostCoun->setChecked(FALSE);
-    hedCoun->setChecked(FALSE);
-    oppCoun->setChecked(FALSE);
-    busCoun->setChecked(FALSE);
-    vefCoun->setChecked(FALSE);
-    telCoun->setChecked(FALSE);
-    ausCoun->setChecked(FALSE);
-    veaCoun->setChecked(FALSE);
-    rogCoun->setChecked(FALSE);
-    horCoun->setChecked(FALSE);
-    sogCoun->setChecked(FALSE);
-    morCoun->setChecked(FALSE);
-    sorCoun->setChecked(FALSE);
-    ntrCoun->setChecked(FALSE);
-    norCoun->setChecked(FALSE);
-    troCoun->setChecked(FALSE);
-    finCoun->setChecked(FALSE);
-    svaCoun->setChecked(FALSE);
-    vesReg->setChecked(FALSE);
-    troReg->setChecked(FALSE);
-    ausReg->setChecked(FALSE);
-    norReg->setChecked(FALSE);
-    priReg->setChecked(FALSE);
+    oslCoun->setChecked(false);
+    akeCoun->setChecked(false);
+    ostCoun->setChecked(false);
+    hedCoun->setChecked(false);
+    oppCoun->setChecked(false);
+    busCoun->setChecked(false);
+    vefCoun->setChecked(false);
+    telCoun->setChecked(false);
+    ausCoun->setChecked(false);
+    veaCoun->setChecked(false);
+    rogCoun->setChecked(false);
+    horCoun->setChecked(false);
+    sogCoun->setChecked(false);
+    morCoun->setChecked(false);
+    sorCoun->setChecked(false);
+    ntrCoun->setChecked(false);
+    norCoun->setChecked(false);
+    troCoun->setChecked(false);
+    finCoun->setChecked(false);
+    svaCoun->setChecked(false);
+    vesReg->setChecked(false);
+    troReg->setChecked(false);
+    ausReg->setChecked(false);
+    norReg->setChecked(false);
+    priReg->setChecked(false);
   }
 }
 
@@ -945,61 +797,68 @@ void ListDialog::allCounUnCheck() {
   norCoun->isChecked() ||
   svaCoun->isChecked() ||
   finCoun->isChecked() ) {
-    allCoun->setChecked(FALSE);
+      allCoun->setChecked(false);
   }
 }
 
+QStringList ListDialog::getSelectedStationTypes()
+{
+    QStringList t;
+    if( allType->isChecked() )
+        t << "ALL";
+    mi_foreach(ItemCheckBox* cb, mStationTypes) {
+        if( cb->isChecked() )
+            t << cb->getItem();
+    }
+    return t;
+}
+
+QStringList ListDialog::getSelectedCounties()
+{
+    QStringList t;
+    if( allCoun->isChecked() )
+        t << "ALL";
+    if( oslCoun->isChecked() ) t <<  "OSLO";
+    if( akeCoun->isChecked() ) t <<  "AKERSHUS";
+    if( ostCoun->isChecked() ) t <<  "ØSTFOLD";
+    if( hedCoun->isChecked() ) t <<  "HEDMARK";
+    if( oppCoun->isChecked() ) t <<  "OPPLAND";
+    if( busCoun->isChecked() ) t <<  "BUSKERUD";
+    if( vefCoun->isChecked() ) t <<  "VESTFOLD";
+    if( telCoun->isChecked() ) t <<  "TELEMARK";
+    if( ausCoun->isChecked() ) t <<  "AUST-AGDER";
+    if( veaCoun->isChecked() ) t <<  "VEST-AGDER";
+    if( rogCoun->isChecked() ) t <<  "ROGALAND";
+    if( horCoun->isChecked() ) t <<  "HORDALAND";
+    if( sogCoun->isChecked() ) t <<  "SOGN OG FJORDANE";
+    if( morCoun->isChecked() ) t <<  "MØRE OG ROMSDAL";
+    if( sorCoun->isChecked() ) t <<  "SØR-TRØNDELAG";
+    if( ntrCoun->isChecked() ) t <<  "NORD-TRØNDELAG";
+    if( norCoun->isChecked() ) t <<  "NORDLAND";
+    if( troCoun->isChecked() ) t <<  "TROMS";
+    if( finCoun->isChecked() ) t <<  "FINNMARK";
+    if( svaCoun->isChecked() ) t <<  "ISHAVET";
+    return t;
+}
+
+void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
+{
+    allType->setChecked(stationTypes.contains("ALL"));
+    mi_foreach(ItemCheckBox* cb, mStationTypes)
+        cb->setChecked(stationTypes.contains(cb->getItem()));
+}
+
 StationTable::StationTable(const listStat_l& listStat,
-			   bool aa,
-			   bool af,
-			   bool al,
-			   bool av,
-			   bool ao,
-			   bool ae, /* unused */
-			   bool mv,
-			   bool mp,
-			   bool mm,
-			   bool ms,
-			   bool fm,
-			   bool ns,
-			   bool nd,
-			   bool no,
-			   bool pi,
-			   bool pt,
-			   bool vs,
-			   bool vk,
-			   bool vm,
-			   bool all,
-			   bool osl,
-			   bool ake,
-			   bool ost,
-			   bool hed,
-			   bool opp,
-			   bool bus,
-			   bool vef,
-			   bool tel,
-			   bool aus,
-			   bool vea,
-			   bool rog,
-			   bool hor,
-			   bool sog,
-			   bool mor,
-			   bool sor,
-			   bool ntr,
-			   bool nor,
-			   bool tro,
-			   bool fin,
-			   bool sva,
-			   bool allc,
+                           const QStringList& stationTypes,
+                           const QStringList& counties,
 			   bool web,
 			   bool pri,
-			   int noInfo,
 			   ObsTypeList* otpList,
 			   QWidget* parent)
-    : Q3Table( 3000, noInfo, parent)
+    : Q3Table(listStat.size(), 7, parent)
 {
   setCaption(tr("Stasjoner"));
-  setSorting( TRUE );
+  setSorting( true );
   setGeometry(10,100,800,600);
 
   horizontalHeader()->setLabel( 0, tr( "Stnr" ) );
@@ -1029,50 +888,33 @@ StationTable::StationTable(const listStat_l& listStat,
     if ( !foundStat ) {
       continue;
     }
-    if ( ! (allc == TRUE ||
-	    (osl == TRUE && s.fylke == "OSLO") ||
-	    (ake == TRUE && s.fylke == "AKERSHUS") ||
-	    (ost == TRUE && s.fylke == "ØSTFOLD") ||
-	    (hed == TRUE && s.fylke == "HEDMARK") ||
-	    (opp == TRUE && s.fylke == "OPPLAND") ||
-	    (bus == TRUE && s.fylke == "BUSKERUD") ||
-	    (vef == TRUE && s.fylke == "VESTFOLD") ||
-	    (tel == TRUE && s.fylke == "TELEMARK") ||
-	    (aus == TRUE && s.fylke == "AUST-AGDER") ||
-	    (vea == TRUE && s.fylke == "VEST-AGDER") ||
-	    (rog == TRUE && s.fylke == "ROGALAND") ||
-	    (hor == TRUE && s.fylke == "HORDALAND") ||
-	    (sog == TRUE && s.fylke == "SOGN OG FJORDANE") ||
-	    (mor == TRUE && s.fylke == "MØRE OG ROMSDAL") ||
-	    (sor == TRUE && s.fylke == "SØR-TRØNDELAG") ||
-	    (ntr == TRUE && s.fylke == "NORD-TRØNDELAG") ||
-	    (nor == TRUE && s.fylke == "NORDLAND") ||
-	    (tro == TRUE && s.fylke == "TROMS") ||
-	    (fin == TRUE && s.fylke == "FINNMARK") ||
-	    (sva == TRUE && s.fylke == "ISHAVET") ||
+    if ( ! (counties.contains("ALL") ||
+	    counties.contains(QString::fromStdString(s.fylke)) ||
        	    (webStat && web) || (priStat && pri) ))
       continue;
     QString strEnv;
-    if ( (aa == TRUE && ((s.environment == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
-    if ( (af == TRUE && s.environment == 1 && findInTypes(oit, 311)) )  strEnv += "AF";
-    if ( (al == TRUE && s.environment == 2 && findInTypes(oit, 3)) ) strEnv += "AL";
-    if ( (av == TRUE && s.environment == 12 && findInTypes(oit, 3)) )  strEnv += "AV";
-    if ( (ao == TRUE && findInTypes(oit, 410)) )  strEnv += "AO";
-    if ( (mv == TRUE && s.environment == 7 && findInTypes(oit, 11)) ) strEnv += "MV";
-    if ( (mp == TRUE && s.environment == 5 && findInTypes(oit, 11)) ) strEnv += "MP";
-    if ( (mm == TRUE && s.environment == 4 && findInTypes(oit, 11)) ) strEnv += "MM";
-    if ( (ms == TRUE && s.environment == 6 && findInTypes(oit, 11)) ) strEnv += "MS";
-    if ( (pi == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "P";
-    if ( (pt == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "PT";
-    if ( (ns == TRUE && findInTypes(oit, 302)) )  strEnv += "NS";
-    if ( (nd == TRUE && s.environment == 9 && findInTypes(oit, 402)) ) strEnv += "ND";
-    if ( (no == TRUE && s.environment == 10 && findInTypes(oit, 402)) ) strEnv += "NO";
-    if ( (vs == TRUE && (findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312))) ) strEnv += "VS";
-    if ( (vk == TRUE && s.environment == 3 && findInTypes(oit, 412)) ) strEnv += "VK";
-    if ( (vm == TRUE && (findInTypes(oit, 306) || findInTypes(oit, 308))) ) strEnv += "VM";
-    if ( (fm == TRUE && (findInTypes(oit, 2))) ) strEnv += "FM";
-    if (all == TRUE )
-      strEnv = getEnvironment(s.environment, oit);
+    if( stationTypes.contains("ALL") ) {
+        strEnv = getEnvironment(s.environment, oit);
+    } else {
+        if ( (stationTypes.contains("AA") && ((s.environment == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
+        if ( (stationTypes.contains("AF") && s.environment == 1 && findInTypes(oit, 311)) )  strEnv += "AF";
+        if ( (stationTypes.contains("AL") && s.environment == 2 && findInTypes(oit, 3)) ) strEnv += "AL";
+        if ( (stationTypes.contains("AV") && s.environment == 12 && findInTypes(oit, 3)) )  strEnv += "AV";
+        if ( (stationTypes.contains("AO") && findInTypes(oit, 410)) )  strEnv += "AO";
+        if ( (stationTypes.contains("MV") && s.environment == 7 && findInTypes(oit, 11)) ) strEnv += "MV";
+        if ( (stationTypes.contains("MP") && s.environment == 5 && findInTypes(oit, 11)) ) strEnv += "MP";
+        if ( (stationTypes.contains("MM") && s.environment == 4 && findInTypes(oit, 11)) ) strEnv += "MM";
+        if ( (stationTypes.contains("MS") && s.environment == 6 && findInTypes(oit, 11)) ) strEnv += "MS";
+        if ( (stationTypes.contains("P")  && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "P";
+        if ( (stationTypes.contains("PT") && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "PT";
+        if ( (stationTypes.contains("NS") && findInTypes(oit, 302)) )  strEnv += "NS";
+        if ( (stationTypes.contains("ND") && s.environment == 9 && findInTypes(oit, 402)) ) strEnv += "ND";
+        if ( (stationTypes.contains("NO") && s.environment == 10 && findInTypes(oit, 402)) ) strEnv += "NO";
+        if ( (stationTypes.contains("VS") && (findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312))) ) strEnv += "VS";
+        if ( (stationTypes.contains("VK") && s.environment == 3 && findInTypes(oit, 412)) ) strEnv += "VK";
+        if ( (stationTypes.contains("VM") && (findInTypes(oit, 306) || findInTypes(oit, 308))) ) strEnv += "VM";
+        if ( (stationTypes.contains("FM") && (findInTypes(oit, 2))) ) strEnv += "FM";
+    }
     if ( not strEnv.isEmpty() ) {
         StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, QString::number(s.stationid));
         setItem(stInd, 0, stNum);
@@ -1101,7 +943,7 @@ StationTable::StationTable(const listStat_l& listStat,
   adjustColumn( 5 );
   adjustColumn( 6 );
   if ( pri)
-    sortColumn(6, TRUE, TRUE);
+    sortColumn(6, true, true);
   else
     hideColumn(6);
 }
@@ -1161,54 +1003,14 @@ QString StationTable::getEnvironment(const int envID, ObsTypeList::iterator oit)
 
 
 void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
-    Q3Table::sortColumn( col, ascending, TRUE );
+    Q3Table::sortColumn( col, ascending, true );
 }
 
 StationSelection::StationSelection(const listStat_l& listStat,
-				   bool aa,
-				   bool af,
-				   bool al,
-				   bool av,
-				   bool ao,
-				   bool ae,
-				   bool mv,
-				   bool mp,
-				   bool mm,
-				   bool ms,
-				   bool fm,
-				   bool ns,
-				   bool nd,
-				   bool no,
-				   bool pi,
-				   bool pt,
-				   bool vs,
-				   bool vk,
-				   bool vm,
-				   bool all,
-				   bool osl,
-				   bool ake,
-				   bool ost,
-				   bool hed,
-				   bool opp,
-				   bool bus,
-				   bool vef,
-				   bool tel,
-				   bool aus,
-				   bool vea,
-				   bool rog,
-				   bool hor,
-				   bool sog,
-				   bool mor,
-				   bool sor,
-				   bool ntr,
-				   bool nor,
-				   bool tro,
-				   bool fin,
-				   bool sva,
-				   bool allc,
+                                   const QStringList& stationTypes,
+                                   const QStringList& counties,
 				   bool web,
 				   bool pri,
-				   int noInfo,
 				   ObsTypeList* otpList,
                                    QWidget* parent)
     : QDialog(parent)
@@ -1226,50 +1028,10 @@ StationSelection::StationSelection(const listStat_l& listStat,
   connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
 
   stationTable = new StationTable(listStat,
-				  aa,
-				  af,
-				  al,
-				  av,
-				  ao,
-				  ae,
-				  mv,
-				  mp,
-				  mm,
-				  ms,
-				  fm,
-				  ns,
-				  nd,
-				  no,
-				  pi,
-				  pt,
-				  vs,
-				  vk,
-				  vm,
-				  all,
-				  osl,
-				  ake,
-				  ost,
-				  hed,
-				  opp,
-				  bus,
-				  vef,
-				  tel,
-				  aus,
-				  vea,
-				  rog,
-				  hor,
-				  sog,
-				  mor,
-				  sor,
-				  ntr,
-				  nor,
-				  tro,
-				  fin,
-				  sva,
-				  allc,
+                                  stationTypes,
+                                  counties,
 				  web,
 				  pri,
-				  noInfo,
 				  otpList,
 				  this);
   connect( stationTable,SIGNAL(currentChanged(int, int)),

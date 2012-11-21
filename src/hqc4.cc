@@ -92,7 +92,6 @@ int main( int argc, char* argv[] )
   mw->setIcon( QPixmap( hqc::getPath(hqc::IMAGEDIR) + "/hqc.png") );
   a.setMainWidget(mw);
 
-  mw->show();
   mw->startup();
 
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );

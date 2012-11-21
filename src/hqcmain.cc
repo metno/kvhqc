@@ -430,6 +430,7 @@ void HqcMainWindow::startup()
         readFromStation();
     }
 
+    show();
     statusBar()->message( tr("Ready"), 2000 );
 }
 
@@ -982,50 +983,10 @@ void HqcMainWindow::stationOK() {
   }
   lstdlg->removeAllStatFromListbox();
   statSelect = new StationSelection(listStat,
-				    lstdlg->aaType->isChecked(),
-				    lstdlg->afType->isChecked(),
-				    lstdlg->alType->isChecked(),
-				    lstdlg->avType->isChecked(),
-				    lstdlg->aoType->isChecked(),
-				    lstdlg->aeType->isChecked(),
-				    lstdlg->mvType->isChecked(),
-				    lstdlg->mpType->isChecked(),
-				    lstdlg->mmType->isChecked(),
-				    lstdlg->msType->isChecked(),
-				    lstdlg->fmType->isChecked(),
-				    lstdlg->nsType->isChecked(),
-				    lstdlg->ndType->isChecked(),
-				    lstdlg->noType->isChecked(),
-				    lstdlg->piType->isChecked(),
-				    lstdlg->ptType->isChecked(),
-				    lstdlg->vsType->isChecked(),
-				    lstdlg->vkType->isChecked(),
-				    lstdlg->vmType->isChecked(),
-				    lstdlg->allType->isChecked(),
-				    lstdlg->oslCoun->isChecked(),
-				    lstdlg->akeCoun->isChecked(),
-				    lstdlg->ostCoun->isChecked(),
-				    lstdlg->hedCoun->isChecked(),
-				    lstdlg->oppCoun->isChecked(),
-				    lstdlg->busCoun->isChecked(),
-				    lstdlg->vefCoun->isChecked(),
-				    lstdlg->telCoun->isChecked(),
-				    lstdlg->ausCoun->isChecked(),
-				    lstdlg->veaCoun->isChecked(),
-				    lstdlg->rogCoun->isChecked(),
-				    lstdlg->horCoun->isChecked(),
-				    lstdlg->sogCoun->isChecked(),
-				    lstdlg->morCoun->isChecked(),
-				    lstdlg->sorCoun->isChecked(),
-				    lstdlg->ntrCoun->isChecked(),
-				    lstdlg->norCoun->isChecked(),
-				    lstdlg->troCoun->isChecked(),
-				    lstdlg->finCoun->isChecked(),
-				    lstdlg->svaCoun->isChecked(),
-				    lstdlg->allCoun->isChecked(),
+				    lstdlg->getSelectedStationTypes(),
+				    lstdlg->getSelectedCounties(),
 				    lstdlg->webReg->isChecked(),
 				    lstdlg->priReg->isChecked(),
-				    noInfo,
 				    &otpList,
                                     lstdlg);
 
@@ -1396,31 +1357,33 @@ bool HqcMainWindow::timeFilter(int hour) {
   return FALSE;
 }
 
-bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/) {
+bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/)
+{
+    const QStringList stationTypes = lstdlg->getSelectedStationTypes();
   if ( typeId == -1 || typeId == 501 ) return FALSE;
   //  if ( typeId == -1 ) return FALSE;
   if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
   int atypeId = typeId < 0 ? -typeId : typeId;
   // FIXME this needs to match ListDialog.cc: StationTable::StationTable
-  if ( lstdlg->allType->isChecked() ) return TRUE;
-  if ( environment == 1 && atypeId == 311 && lstdlg->afType->isChecked() ) return TRUE;
-  if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && lstdlg->aaType->isChecked() ) return TRUE;
-  if ( environment == 2 && atypeId == 3 && lstdlg->alType->isChecked() ) return TRUE;
-  if ( environment == 12 && atypeId == 3 && lstdlg->avType->isChecked() ) return TRUE;
-  if ( atypeId == 410 && lstdlg->aoType->isChecked() ) return TRUE;
-  if ( environment == 7 && lstdlg->mvType->isChecked() ) return TRUE;
-  if ( environment == 5 && lstdlg->mpType->isChecked() ) return TRUE;
-  if ( environment == 4 && lstdlg->mmType->isChecked() ) return TRUE;
-  if ( environment == 6 && lstdlg->msType->isChecked() ) return TRUE;
-  if ( (atypeId == 4 || atypeId == 404) && lstdlg->piType->isChecked() ) return TRUE;
-  if ( (atypeId == 4 || atypeId == 404)&& lstdlg->ptType->isChecked() ) return TRUE;
-  if ( atypeId == 302 && lstdlg->nsType->isChecked() ) return TRUE;
-  if ( environment == 9 && atypeId == 402 && lstdlg->ndType->isChecked() ) return TRUE;
-  if ( environment == 10 && atypeId == 402 && lstdlg->noType->isChecked() ) return TRUE;
-  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) & lstdlg->vsType->isChecked() ) return TRUE;
-  if ( environment == 3 && atypeId == 412 && lstdlg->vkType->isChecked() ) return TRUE;
-  if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && lstdlg->vmType->isChecked() ) return TRUE;
-  if ( atypeId == 2 && lstdlg->fmType->isChecked() ) return TRUE;
+  if ( stationTypes.contains("ALL") ) return TRUE;
+  if ( environment == 1 && atypeId == 311 && stationTypes.contains("AF") ) return TRUE;
+  if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && stationTypes.contains("AA") ) return TRUE;
+  if ( environment == 2 && atypeId == 3 && stationTypes.contains("AL") ) return TRUE;
+  if ( environment == 12 && atypeId == 3 && stationTypes.contains("AV") ) return TRUE;
+  if ( atypeId == 410 && stationTypes.contains("AO") ) return TRUE;
+  if ( environment == 7 && stationTypes.contains("MV") ) return TRUE;
+  if ( environment == 5 && stationTypes.contains("MP") ) return TRUE;
+  if ( environment == 4 && stationTypes.contains("MM") ) return TRUE;
+  if ( environment == 6 && stationTypes.contains("MS") ) return TRUE;
+  if ( (atypeId == 4 || atypeId == 404) && stationTypes.contains("P") ) return TRUE;
+  if ( (atypeId == 4 || atypeId == 404)&& stationTypes.contains("PT") ) return TRUE;
+  if ( atypeId == 302 && stationTypes.contains("NS") ) return TRUE;
+  if ( environment == 9 && atypeId == 402 && stationTypes.contains("ND") ) return TRUE;
+  if ( environment == 10 && atypeId == 402 && stationTypes.contains("NO") ) return TRUE;
+  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) && stationTypes.contains("VS") ) return TRUE;
+  if ( environment == 3 && atypeId == 412 && stationTypes.contains("VK") ) return TRUE;
+  if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && stationTypes.contains("VM") ) return TRUE;
+  if ( atypeId == 2 && stationTypes.contains("FM") ) return TRUE;
   return FALSE;
 }
 
@@ -2700,46 +2663,47 @@ void HqcMainWindow::writeSettings()
   }
   settings.endArray();
 
+  const QStringList stationTypes = lstdlg->getSelectedStationTypes();
   int st = 0;
   settings.beginWriteArray("s");
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->aaType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AA")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->afType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AF")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->alType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AL")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->avType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AV")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->aoType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AO")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->aeType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("AE")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->mvType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("MV")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->mpType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("MP")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->mmType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("MM")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->msType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("MS")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->fmType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("FM")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->nsType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("NS")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->ndType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("ND")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->noType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("NO")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->piType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("P")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->ptType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("PT")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->vsType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("VS")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->vkType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("VK")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->vmType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("VM")));
   settings.setArrayIndex(st++);
   settings.setValue("s",lstdlg->allType->isChecked());
   settings.endArray();
@@ -2846,49 +2810,51 @@ void HqcMainWindow::readSettings()
   }
   settings.endArray();
 
+  QStringList t;
   int tp = 0;
   settings.beginReadArray("s");
   settings.setArrayIndex(tp++);
-  lstdlg->aaType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AA";
   settings.setArrayIndex(tp++);
-  lstdlg->afType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AF";
   settings.setArrayIndex(tp++);
-  lstdlg->alType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AL";
   settings.setArrayIndex(tp++);
-  lstdlg->avType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AV";
   settings.setArrayIndex(tp++);
-  lstdlg->aoType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AO";
   settings.setArrayIndex(tp++);
-  lstdlg->aeType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "AE";
   settings.setArrayIndex(tp++);
-  lstdlg->mvType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "MV";
   settings.setArrayIndex(tp++);
-  lstdlg->mpType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "MP";
   settings.setArrayIndex(tp++);
-  lstdlg->mmType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "MM";
   settings.setArrayIndex(tp++);
-  lstdlg->msType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "MS";
   settings.setArrayIndex(tp++);
-  lstdlg->fmType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "FM";
   settings.setArrayIndex(tp++);
-  lstdlg->nsType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "NS";
   settings.setArrayIndex(tp++);
-  lstdlg->ndType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "ND";
   settings.setArrayIndex(tp++);
-  lstdlg->noType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "NO";
   settings.setArrayIndex(tp++);
-  lstdlg->piType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "P";
   settings.setArrayIndex(tp++);
-  lstdlg->ptType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "PT";
   settings.setArrayIndex(tp++);
-  lstdlg->vsType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "VS";
   settings.setArrayIndex(tp++);
-  lstdlg->vkType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "VK";
   settings.setArrayIndex(tp++);
-  lstdlg->vmType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "VM";
   settings.setArrayIndex(tp++);
-  lstdlg->allType->setChecked(settings.value("s",true).toBool());
+  if( settings.value("s",true).toBool() ) t << "ALL";
   settings.endArray();
+  lstdlg->setSelectedStationTypes(t);
 
   int fy = 0;
   settings.beginReadArray("c");

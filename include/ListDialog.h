@@ -67,6 +67,20 @@ struct listStat_t {
 };
 typedef std::list<listStat_t> listStat_l;
 
+class ItemCheckBox : public QCheckBox
+{ Q_OBJECT
+public:
+    ItemCheckBox(QString label, QString item, QWidget* parent=0)
+        : QCheckBox(label, parent), mItem(item) { }
+    QString getItem() const { return mItem; }
+private slots:
+    void clicked();
+signals:
+    void clicked(QString item);
+private:
+    QString mItem;
+};
+
 class ListDialog : public QDialog {
   Q_OBJECT
     friend class HqcMainWindow;
@@ -87,26 +101,8 @@ public:
   QCheckBox* marType;
   QCheckBox* visType;
 
-  QCheckBox* aaType;
-  QCheckBox* afType;
-  QCheckBox* alType;
-  QCheckBox* avType;
-  QCheckBox* aoType;
-  QCheckBox* aeType;
-  QCheckBox* mvType;
-  QCheckBox* mpType;
-  QCheckBox* mmType;
-  QCheckBox* msType;
-  QCheckBox* fmType;
-  QCheckBox* nsType;
-  QCheckBox* ndType;
-  QCheckBox* noType;
-  QCheckBox* piType;
-  QCheckBox* ptType;
-  QCheckBox* vsType;
-  QCheckBox* vkType;
-  QCheckBox* vmType;
-  QCheckBox* allType;
+    std::list<ItemCheckBox*> mStationTypes;
+    QCheckBox* allType;
 
   QCheckBox* oslCoun;
   QCheckBox* akeCoun;
@@ -178,6 +174,15 @@ public slots:
   void setMaxTime(const QTime&);
   void setMinTime(const QTime&);
 
+    QStringList getSelectedStationTypes();
+    QStringList getSelectedCounties();
+
+    void setSelectedStationTypes(const QStringList& stationTypes);
+
+private:
+    void uncheckTypes();
+    void checkTypes(const char* these[]);
+
 private:
   QLabel* stationLabel;
   QLabel* fromLabel;
@@ -205,50 +210,10 @@ class StationTable : public Q3Table {
 Q_OBJECT
 public:
  StationTable(const listStat_l& listStat,
+              const QStringList& stationTypes,
+              const QStringList& counties,
 	      bool,
 	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      bool,
-	      int,
 	      ObsTypeList*,
 	      QWidget*);
  bool findInTypes(ObsTypeList::iterator, int);
@@ -264,50 +229,10 @@ private:
  StationTable* stationTable;
 public:
  StationSelection(const listStat_l& listStat,
+                  const QStringList& stationTypes,
+                  const QStringList& counties,
 		  bool,
 		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  bool,
-		  int,
 		  ObsTypeList*,
                   QWidget* parent);
  void showSelectedStation(int, int);
