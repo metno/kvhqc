@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #ifndef REJECTTABLE_H
 #define REJECTTABLE_H
 

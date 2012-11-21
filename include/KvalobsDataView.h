@@ -1,4 +1,5 @@
-/*
+/* -*- c++ -*-
+
  Kvalobs - Free Quality Control Software for Meteorological Observations
 
  Copyright (C) 2010 met.no

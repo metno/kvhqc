@@ -1,4 +1,5 @@
-/*
+/* -*- c++ -*-
+
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id: dianashowdialog.h 1055 2011-04-12 10:53:17Z knutj $

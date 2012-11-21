@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #ifndef REJECTDIALOG_H
 #define REJECTDIALOG_H
 

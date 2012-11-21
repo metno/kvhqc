@@ -30,6 +30,7 @@
 #include "KvalobsDataModel.h"
 #include "hqcmain.h"
 #include "FunctionLogger.hh"
+#include "mi_foreach.hh"
 #include "timeutil.hh"
 
 #include <kvalobs/flag/kvControlInfo.h>
@@ -526,11 +527,11 @@ namespace model
   int KvalobsDataModel::dataColumn(QString parameter) const
   {
     int index = 2;
-    for ( std::vector<Parameter>::const_iterator it = parametersToShow_.begin(); it != parametersToShow_.end(); ++ it ){
-      if ( parameter == it->parameterName ) {
-	break;
-      }
-      index += COLUMNS_PER_PARAMETER;
+    mi_foreach(const Parameter& p, parametersToShow_) {
+        if( parameter == p.parameterName ) {
+            break;
+        }
+        index += COLUMNS_PER_PARAMETER;
     }
     return index;
   }

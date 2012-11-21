@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #ifndef TEXTDATATABLE_H
 #define TEXTDATATABLE_H
 

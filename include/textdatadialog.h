@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #ifndef TEXTDATADIALOG_H
 #define TEXTDATADIALOG_H
 

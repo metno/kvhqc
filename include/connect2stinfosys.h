@@ -1,3 +1,5 @@
+// -*- c++ -*-
+
 #ifndef CONNECT2STINFOSYS_H
 #define CONNECT2STINFOSYS_H
 
