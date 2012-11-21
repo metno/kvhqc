@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ListDialog</class>
+ <widget class="QDialog" name="ListDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>674</width>
+    <height>776</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Datautvalg HQC</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <layout class="QHBoxLayout" name="typeLayout">
+     <item>
+      <widget class="QGroupBox" name="controlGroup">
+       <property name="title">
+        <string>Kontrolltype</string>
+       </property>
+       <layout class="QVBoxLayout" name="controlLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <item>
+         <layout class="QVBoxLayout" name="typeBoxesLayout">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="twiType">
+            <property name="text">
+             <string>&amp;Temperatur,fuktighet</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="prcType">
+            <property name="text">
+             <string>&amp;Nedbør,snøforhold</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="aprType">
+            <property name="text">
+             <string>&amp;Lufttrykk</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="winType">
+            <property name="text">
+             <string>&amp;Vind</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="marType">
+            <property name="text">
+             <string>&amp;Maritime parametere</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="visType">
+            <property name="text">
+             <string>V&amp;isuelle parametere</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="stTyp">
+       <property name="title">
+        <string>Stasjonstype</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="statSelLayout">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="regionLayout">
+     <item>
+      <widget class="QGroupBox" name="stRegion">
+       <property name="title">
+        <string>Landsdel</string>
+       </property>
+       <layout class="QVBoxLayout" name="regionBoxesLayout">
+        <property name="spacing">
+         <number>3</number>
+        </property>
+        <item>
+         <widget class="QCheckBox" name="ausReg">
+          <property name="text">
+           <string>&amp;Østlandet</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="vesReg">
+          <property name="text">
+           <string>V&amp;estlandet</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="troReg">
+          <property name="text">
+           <string>T&amp;røndelag</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="norReg">
+          <property name="text">
+           <string>N&amp;ord-Norge</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="webReg">
+          <property name="text">
+           <string>S&amp;ynop-stasjoner</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="priReg">
+          <property name="text">
+           <string>&amp;Prioriterte stasjoner</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="stCounty">
+       <property name="title">
+        <string>Fylke</string>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="0" column="0">
+         <layout class="QGridLayout" name="statCountyLayout">
+          <property name="spacing">
+           <number>3</number>
+          </property>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="stationGroup">
+     <property name="title">
+      <string>Stasjoner</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QPushButton" name="stationSelect">
+          <property name="text">
+           <string>Velg &amp;stasjon</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>520</width>
+            <height>24</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="Q3ListBox" name="stationNames"/>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="timeMessageLayout">
+     <item>
+      <widget class="QGroupBox" name="typeGroup">
+       <property name="title">
+        <string>Meldingstyper</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout_2">
+        <property name="fieldGrowthPolicy">
+         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+        </property>
+        <item row="0" column="0">
+         <widget class="QRadioButton" name="priTypes">
+          <property name="text">
+           <string>Prioriterte typer</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QRadioButton" name="allTypes">
+          <property name="text">
+           <string>Alle typer</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="timeGroup">
+       <property name="title">
+        <string>Tidsrom</string>
+       </property>
+       <layout class="QFormLayout" name="formLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="labelFrom">
+          <property name="text">
+           <string>Fra</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="MiDateTimeEdit" name="fromTime">
+          <property name="displayFormat">
+           <string>yyyy-MM-dd hh:mm</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="labelTo">
+          <property name="text">
+           <string>Til</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="MiDateTimeEdit" name="toTime">
+          <property name="displayFormat">
+           <string>yyyy-MM-dd hh:mm</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="HideApplyBox" name="hab" native="true">
+     <property name="minimumSize">
+      <size>
+       <width>10</width>
+       <height>10</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Q3Frame</class>
+   <extends>QFrame</extends>
+   <header>Qt3Support/Q3Frame</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Q3ListBox</class>
+   <extends>Q3Frame</extends>
+   <header>q3listbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>HideApplyBox</class>
+   <extends>QWidget</extends>
+   <header>HideApplyBox.hh</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>MiDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>twiType</tabstop>
+  <tabstop>prcType</tabstop>
+  <tabstop>aprType</tabstop>
+  <tabstop>winType</tabstop>
+  <tabstop>marType</tabstop>
+  <tabstop>visType</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>

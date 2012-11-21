@@ -70,7 +70,6 @@ const stationtype_t stationTypes[NSTATIONTYPES] = {
   { "VM", 2, 3 }
 };
 
-#if 0
 const int NCOUNTIES = 20;
 const char* counties[NCOUNTIES] =  {
   "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark",
@@ -82,7 +81,6 @@ const char* countiesU[NCOUNTIES] =  {
     "AUST-AGDER", "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE", "MØRE OG ROMSDAL",
     "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET"
 };
-#endif
 } // anonymous namespace
 
 void ItemCheckBox::clicked()
@@ -93,29 +91,7 @@ void ItemCheckBox::clicked()
 ListDialog::ListDialog(QWidget* parent)
   : QDialog(parent)
 {
-  setCaption(tr("Datautvalg HQC"));
-
-  // Create a button group for control type
-
-  Q3ButtonGroup *ctrlTyp = new Q3ButtonGroup( 1,
-					  Qt::Horizontal,
-					  tr("Kontrolltype"), this);
-  Q3GridLayout* controlLayout = new Q3GridLayout(ctrlTyp->layout());
-
-  // insert checkbuttons for control type selection
-  twiType = new QCheckBox( tr("&Temperatur,fuktighet"), ctrlTyp );
-  prcType = new QCheckBox( tr("&Nedbør,snøforhold"), ctrlTyp );
-  aprType = new QCheckBox( tr("&Lufttrykk"), ctrlTyp );
-  winType = new QCheckBox( tr("&Vind"), ctrlTyp );
-  marType = new QCheckBox( tr("&Maritime parametere"), ctrlTyp );
-  visType = new QCheckBox( tr("V&isuelle parametere"), ctrlTyp );
-
-  controlLayout->addWidget(twiType, 0, 0);
-  controlLayout->addWidget(prcType, 1, 0);
-  controlLayout->addWidget(aprType, 2, 0);
-  controlLayout->addWidget(winType, 3, 0);
-  controlLayout->addWidget(marType, 4, 0);
-  controlLayout->addWidget(visType, 5, 0);
+    setupUi(this);
 
   connect(twiType,SIGNAL(clicked()),this,SLOT(twiCheck()));
   connect(twiType,SIGNAL(clicked()),this,SLOT(otwiCheck()));
@@ -132,11 +108,6 @@ ListDialog::ListDialog(QWidget* parent)
 
   // Create a button group for station type
 
-  // insert checkbuttons for station type selection
-  Q3ButtonGroup *stTyp = new Q3ButtonGroup(0, Qt::Horizontal,
-					 tr("Stasjonstype"),
-					 this);
-  Q3GridLayout* statSelLayout = new Q3GridLayout(stTyp->layout());
   for(int i=0; i<NSTATIONTYPES; ++i) {
       const stationtype_t& s = stationTypes[i];
       ItemCheckBox* cb = new ItemCheckBox(s.name, s.name, stTyp);
@@ -146,49 +117,20 @@ ListDialog::ListDialog(QWidget* parent)
   allType = new QCheckBox( tr("Alle"), stTyp);
   statSelLayout->addWidget(allType, 5, 3);
 
-   // Create a button group for station location (county)
-
-  Q3ButtonGroup *stCounty = new Q3ButtonGroup( 0,
-					  Qt::Horizontal,
-					  "Fylke", this);
-  Q3GridLayout* statCountyLayout = new Q3GridLayout(stCounty->layout());
-
   // insert checkbuttons for station location selection
-  oslCoun = new QCheckBox( "Oslo", stCounty );
-  akeCoun = new QCheckBox( "Akershus", stCounty );
-  ostCoun = new QCheckBox( "Østfold", stCounty );
-  hedCoun = new QCheckBox( "Hedmark", stCounty );
-  oppCoun = new QCheckBox( "Oppland", stCounty );
-  busCoun = new QCheckBox( "Buskerud", stCounty );
-  vefCoun = new QCheckBox( "Vestfold", stCounty );
-  telCoun = new QCheckBox( "Telemark", stCounty );
-  ausCoun = new QCheckBox( "Aust-Agder", stCounty );
-  veaCoun = new QCheckBox( "Vest-Agder", stCounty );
-  rogCoun = new QCheckBox( "Rogaland", stCounty );
-  horCoun = new QCheckBox( "Hordaland", stCounty );
-  sogCoun = new QCheckBox( "Sogn og Fjordane", stCounty );
-  morCoun = new QCheckBox( "Møre og Romsdal", stCounty );
-  sorCoun = new QCheckBox( "Sør-Trøndelag", stCounty );
-  ntrCoun = new QCheckBox( "Nord-Trøndelag", stCounty );
-  norCoun = new QCheckBox( "Nordland", stCounty );
-  troCoun = new QCheckBox( "Troms", stCounty );
-  finCoun = new QCheckBox( "Finnmark", stCounty );
-  svaCoun = new QCheckBox( "Ishavet", stCounty );
-  allCoun = new QCheckBox( tr("Alle"), stCounty );
-
-   // Create a button group for station location (region)
-
-  Q3ButtonGroup *stRegion = new Q3ButtonGroup( 1,
-					  Qt::Horizontal,
-					  "Landsdel", this);
-
-  // insert checkbuttons for station location selection
-  ausReg = new QCheckBox( "&Østlandet ", stRegion );
-  vesReg = new QCheckBox( "V&estlandet", stRegion );
-  troReg = new QCheckBox( "T&røndelag ", stRegion );
-  norReg = new QCheckBox( "N&ord-Norge", stRegion );
-  webReg = new QCheckBox( "S&ynop-stasjoner", stRegion );
-  priReg = new QCheckBox( tr("&Prioriterte stasjoner"), stRegion );
+  int x=0, y=0;
+  ItemCheckBox** countiesCB[NCOUNTIES] = {
+      &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
+      &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
+      &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
+  };
+  for(int i=0; i<NCOUNTIES; ++i) {
+      *countiesCB[i] = new ItemCheckBox(counties[i], countiesU[i], stCounty);
+      statCountyLayout->addWidget(*countiesCB[i], x, y);
+      y += 1; if( y >= 3 ) { y = 0; x += 1; }
+  }
+  allCoun = new ItemCheckBox(tr("Alle"), "ALL", stCounty);
+  statCountyLayout->addWidget(allCoun, x, y);
 
   connect(ausReg,SIGNAL(clicked()), this,SLOT(ausCheck()));
   connect(ausReg,SIGNAL(clicked()), this,SLOT(oausCheck()));
@@ -223,38 +165,13 @@ ListDialog::ListDialog(QWidget* parent)
   connect(troCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
   connect(finCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
 
-  // Typeid options
-  Q3ButtonGroup *typeGroup = new Q3ButtonGroup( 1,
-					  Qt::Horizontal,
-					  tr("Meldingstyper"), this);
-
-  priTypes = new QRadioButton( tr("Prioriterte typer"), typeGroup );
-  typeGroup->insert(priTypes);
-  priTypes->setChecked(true);
-  allTypes = new QRadioButton( tr("Alle typer"), typeGroup );
-  typeGroup->insert(allTypes);
-
-  //Station selection
-  stationSelect = new QPushButton(tr("Velg &stasjon"), this);
-  stationSelect->setAutoDefault(true);
-  stationSelect->setGeometry(10, 110, 400, 30);
-  stationSelect->setFont(QFont("Arial", 9));
   connect(stationSelect, SIGNAL(clicked()), this, SIGNAL( selectStation()));
-
-  stationLabel = new QLabel(this);
-  stationLabel->setText(tr("Valgte stasjoner"));
-  stationLabel->setFont(QFont("Arial", 12));
-  stationLabel->setPaletteForegroundColor(Qt::darkBlue);
-  stationLabel->setAlignment(Qt::AlignLeft);
-  stationNames = new Q3ListBox(this);
 
   //Time selection
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
-  fromTime = new MiDateTimeEdit(f,this);
-  toTime   = new MiDateTimeEdit(t,this);
-  fromTime->setDisplayFormat("yyyy-MM-dd hh:mm");
-  toTime->setDisplayFormat("yyyy-MM-dd hh:mm");
+  fromTime->setDateTime(f);
+  toTime->setDateTime(t);
 
   connect( fromTime, SIGNAL(dateChanged(const QDate&)),
 	   this,   SLOT(  setMinDate(const QDate&)     ));
@@ -270,60 +187,8 @@ ListDialog::ListDialog(QWidget* parent)
   connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
 	   this,SIGNAL(toTimeChanged(const QDateTime&)));
 
-  HideApplyBox* hab = new HideApplyBox(this);
   connect(hab, SIGNAL(hide()), this, SIGNAL(ListHide()));
   connect(hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
-
-  statCountyLayout->addWidget(oslCoun,0,0);
-  statCountyLayout->addWidget(hedCoun,1,0);
-  statCountyLayout->addWidget(vefCoun,2,0);
-  statCountyLayout->addWidget(veaCoun,3,0);
-  statCountyLayout->addWidget(sogCoun,4,0);
-  statCountyLayout->addWidget(ntrCoun,5,0);
-  statCountyLayout->addWidget(finCoun,6,0);
-  statCountyLayout->addWidget(akeCoun,0,1);
-  statCountyLayout->addWidget(oppCoun,1,1);
-  statCountyLayout->addWidget(telCoun,2,1);
-  statCountyLayout->addWidget(rogCoun,3,1);
-  statCountyLayout->addWidget(morCoun,4,1);
-  statCountyLayout->addWidget(norCoun,5,1);
-  statCountyLayout->addWidget(svaCoun,6,1);
-  statCountyLayout->addWidget(ostCoun,0,2);
-  statCountyLayout->addWidget(busCoun,1,2);
-  statCountyLayout->addWidget(ausCoun,2,2);
-  statCountyLayout->addWidget(horCoun,3,2);
-  statCountyLayout->addWidget(sorCoun,4,2);
-  statCountyLayout->addWidget(troCoun,5,2);
-  statCountyLayout->addWidget(allCoun,6,2);
-
-  Q3HBoxLayout* locationLayout = new Q3HBoxLayout();
-  locationLayout->addWidget(stRegion, 10);
-  locationLayout->addWidget(stCounty, 10);
-
-  Q3HBoxLayout* typeLayout = new Q3HBoxLayout();
-  typeLayout->addWidget(ctrlTyp, 10);
-  typeLayout->addWidget(stTyp, 10);
-
-  QLabel* fromLabel = new QLabel(tr("Fra"));
-  Q3HBoxLayout* ftimeLayout = new Q3HBoxLayout();
-  ftimeLayout->addWidget(fromLabel);
-  ftimeLayout->addWidget(fromTime);
-  QLabel* toLabel = new QLabel(tr("Til"));
-  Q3HBoxLayout* ttimeLayout = new Q3HBoxLayout();
-  ttimeLayout->addWidget(toLabel);
-  ttimeLayout->addWidget(toTime);
-
-  topLayout = new Q3VBoxLayout(this,10);
-
-  topLayout->addLayout(typeLayout);
-  topLayout->addLayout(locationLayout);
-  topLayout->addWidget(typeGroup);
-  topLayout->addWidget(stationSelect);
-  topLayout->addWidget(stationLabel);
-  topLayout->addWidget(stationNames);
-  topLayout->addLayout(ftimeLayout);
-  topLayout->addLayout(ttimeLayout);
-  topLayout->addWidget(hab);
 }
 
 void ListDialog::setMaxTime(const QTime& maxTime)
@@ -351,24 +216,20 @@ void ListDialog::hideAll(){
   this->hide();
 }
 
-QString ListDialog::getStart() {
-  //    return fromTime->isoTime().cStr();
-  return fromTime->text() + QString(":00");
+QDateTime ListDialog::getStart()
+{
+    return fromTime->dateTime();
 }
 
-QString ListDialog::getWeatherElement() {
-  return weatherElement;
+QDateTime ListDialog::getEnd()
+{
+    return toTime->dateTime();
 }
 
-void ListDialog::chooseParameters(const QString& str) {
-  weatherElement = str;
- }
-
-QString ListDialog::getEnd() {
-  //  return toTime->isoTime().cStr();
-  return toTime->text() + QString(":00");
+void ListDialog::setEnd(const QDateTime& e)
+{
+    toTime->setDateTime(e);
 }
-
 
 void ListDialog::appendStatInListbox(QString station) {
   stationNames->insertItem(station);
@@ -813,39 +674,45 @@ QStringList ListDialog::getSelectedStationTypes()
     return t;
 }
 
-QStringList ListDialog::getSelectedCounties()
-{
-    QStringList t;
-    if( allCoun->isChecked() )
-        t << "ALL";
-    if( oslCoun->isChecked() ) t <<  "OSLO";
-    if( akeCoun->isChecked() ) t <<  "AKERSHUS";
-    if( ostCoun->isChecked() ) t <<  "ØSTFOLD";
-    if( hedCoun->isChecked() ) t <<  "HEDMARK";
-    if( oppCoun->isChecked() ) t <<  "OPPLAND";
-    if( busCoun->isChecked() ) t <<  "BUSKERUD";
-    if( vefCoun->isChecked() ) t <<  "VESTFOLD";
-    if( telCoun->isChecked() ) t <<  "TELEMARK";
-    if( ausCoun->isChecked() ) t <<  "AUST-AGDER";
-    if( veaCoun->isChecked() ) t <<  "VEST-AGDER";
-    if( rogCoun->isChecked() ) t <<  "ROGALAND";
-    if( horCoun->isChecked() ) t <<  "HORDALAND";
-    if( sogCoun->isChecked() ) t <<  "SOGN OG FJORDANE";
-    if( morCoun->isChecked() ) t <<  "MØRE OG ROMSDAL";
-    if( sorCoun->isChecked() ) t <<  "SØR-TRØNDELAG";
-    if( ntrCoun->isChecked() ) t <<  "NORD-TRØNDELAG";
-    if( norCoun->isChecked() ) t <<  "NORDLAND";
-    if( troCoun->isChecked() ) t <<  "TROMS";
-    if( finCoun->isChecked() ) t <<  "FINNMARK";
-    if( svaCoun->isChecked() ) t <<  "ISHAVET";
-    return t;
-}
-
 void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
 {
     allType->setChecked(stationTypes.contains("ALL"));
     mi_foreach(ItemCheckBox* cb, mStationTypes)
         cb->setChecked(stationTypes.contains(cb->getItem()));
+}
+
+QStringList ListDialog::getSelectedCounties()
+{
+    QStringList t;
+    if( allCoun->isChecked() )
+        t << "ALL";
+
+    ItemCheckBox** countiesCB[NCOUNTIES] = {
+        &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
+        &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
+        &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
+    };
+    for(int i=0; i<NCOUNTIES; ++i) {
+        ItemCheckBox* cb = *countiesCB[i];
+        if( cb->isChecked() )
+            t << cb->getItem();
+    }
+    return t;
+}
+
+void ListDialog::setSelectedCounties(const QStringList& c)
+{
+    allCoun->setChecked(c.contains("ALL"));
+
+    ItemCheckBox** countiesCB[NCOUNTIES] = {
+        &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
+        &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
+        &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
+    };
+    for(int i=0; i<NCOUNTIES; ++i) {
+        ItemCheckBox* cb = *countiesCB[i];
+        cb->setChecked(c.contains(cb->getItem()));
+    }
 }
 
 StationTable::StationTable(QWidget* parent)

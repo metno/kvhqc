@@ -81,129 +81,103 @@ private:
     QString mItem;
 };
 
-class ListDialog : public QDialog {
-  Q_OBJECT
-    friend class HqcMainWindow;
+#include "ui_listdialog.h"
+
+class ListDialog : public QDialog, private Ui_ListDialog
+{   Q_OBJECT
+
 public:
-  ListDialog(QWidget*);
+    ListDialog(QWidget*);
 
-  void hideAll();
-  void showAll();
+    void hideAll();
+    void showAll();
 
-  QString getStart();
-  QString getEnd();
-  QString getWeatherElement();
-
-  QCheckBox* twiType;
-  QCheckBox* prcType;
-  QCheckBox* aprType;
-  QCheckBox* winType;
-  QCheckBox* marType;
-  QCheckBox* visType;
-
-    std::list<ItemCheckBox*> mStationTypes;
-    QCheckBox* allType;
-
-  QCheckBox* oslCoun;
-  QCheckBox* akeCoun;
-  QCheckBox* ostCoun;
-  QCheckBox* hedCoun;
-  QCheckBox* oppCoun;
-  QCheckBox* busCoun;
-  QCheckBox* vefCoun;
-  QCheckBox* telCoun;
-  QCheckBox* ausCoun;
-  QCheckBox* veaCoun;
-  QCheckBox* rogCoun;
-  QCheckBox* horCoun;
-  QCheckBox* sogCoun;
-  QCheckBox* morCoun;
-  QCheckBox* sorCoun;
-  QCheckBox* ntrCoun;
-  QCheckBox* norCoun;
-  QCheckBox* troCoun;
-  QCheckBox* finCoun;
-  QCheckBox* svaCoun;
-  QCheckBox* allCoun;
-
-  QCheckBox* ausReg;
-  QCheckBox* vesReg;
-  QCheckBox* troReg;
-  QCheckBox* norReg;
-  QCheckBox* webReg;
-  QCheckBox* priReg;
-
-  QRadioButton* priTypes;
-  QRadioButton* allTypes;
-
-public slots:
-  void chooseParameters(const QString &);
-  void appendStatInListbox(QString);
-  void removeStatFromListbox(QString);
-  void removeAllStatFromListbox();
-  void twiCheck();
-  void prcCheck();
-  void aprCheck();
-  void winCheck();
-  void visCheck();
-  void marCheck();
-  void otwiCheck();
-  void oprcCheck();
-  void oaprCheck();
-  void owinCheck();
-  void ovisCheck();
-  void omarCheck();
-
-  void ausCheck();
-  void oausCheck();
-  void vesCheck();
-  void ovesCheck();
-  void troCheck();
-  void otroCheck();
-  void norCheck();
-  void onorCheck();
-  void webCheck();
-  void owebCheck();
-  void priCheck();
-  void opriCheck();
-  void allCounCheck();
-  void allCounUnCheck();
-
-  void setMaxDate(const QDate&);
-  void setMinDate(const QDate&);
-  void setMaxTime(const QTime&);
-  void setMinTime(const QTime&);
+    QDateTime getStart();
+    QDateTime getEnd();
+    void setEnd(const QDateTime& e);
 
     QStringList getSelectedStationTypes();
-    QStringList getSelectedCounties();
-
     void setSelectedStationTypes(const QStringList& stationTypes);
-
+    QStringList getSelectedCounties();
+    void setSelectedCounties(const QStringList& c);
+    bool showSynop() const { return webReg->isChecked(); }
+    bool showPrioritized() const { return priReg->isChecked(); }
+    
 private:
     void uncheckTypes();
     void checkTypes(const char* these[]);
 
 private:
-  QLabel* stationLabel;
-  QLabel* fromLabel;
-  QLabel* toLabel;
-  QLabel* parameterLabel;
-  QComboBox* parameterCombo;
-  QDateTimeEdit* fromTime;
-  QDateTimeEdit* toTime;
-  QLineEdit* fromEdit;
-  QLineEdit* toEdit;
-  QPushButton* stationSelect;
-  Q3ListBox* stationNames;
-  Q3VBoxLayout* topLayout;
-  QString weatherElement;
+    std::list<ItemCheckBox*> mStationTypes;
+    QCheckBox* allType;
+
+    ItemCheckBox* oslCoun;
+    ItemCheckBox* akeCoun;
+    ItemCheckBox* ostCoun;
+    ItemCheckBox* hedCoun;
+    ItemCheckBox* oppCoun;
+    ItemCheckBox* busCoun;
+    ItemCheckBox* vefCoun;
+    ItemCheckBox* telCoun;
+    ItemCheckBox* ausCoun;
+    ItemCheckBox* veaCoun;
+    ItemCheckBox* rogCoun;
+    ItemCheckBox* horCoun;
+    ItemCheckBox* sogCoun;
+    ItemCheckBox* morCoun;
+    ItemCheckBox* sorCoun;
+    ItemCheckBox* ntrCoun;
+    ItemCheckBox* norCoun;
+    ItemCheckBox* troCoun;
+    ItemCheckBox* finCoun;
+    ItemCheckBox* svaCoun;
+    ItemCheckBox* allCoun;
+
+public slots:
+    void appendStatInListbox(QString);
+    void removeStatFromListbox(QString);
+    void removeAllStatFromListbox();
+
+private slots:
+    void twiCheck();
+    void prcCheck();
+    void aprCheck();
+    void winCheck();
+    void visCheck();
+    void marCheck();
+    void otwiCheck();
+    void oprcCheck();
+    void oaprCheck();
+    void owinCheck();
+    void ovisCheck();
+    void omarCheck();
+
+    void ausCheck();
+    void oausCheck();
+    void vesCheck();
+    void ovesCheck();
+    void troCheck();
+    void otroCheck();
+    void norCheck();
+    void onorCheck();
+    void webCheck();
+    void owebCheck();
+    void priCheck();
+    void opriCheck();
+    void allCounCheck();
+    void allCounUnCheck();
+
+    void setMaxDate(const QDate&);
+    void setMinDate(const QDate&);
+    void setMaxTime(const QTime&);
+    void setMinTime(const QTime&);
 
 signals:
-  void ListHide();
-  void ListApply();
-  void selectStation();
-  void fromTimeChanged(const QDateTime&);
-  void toTimeChanged(const QDateTime&);
+    void ListHide();
+    void ListApply();
+    void selectStation();
+    void fromTimeChanged(const QDateTime&);
+    void toTimeChanged(const QDateTime&);
 };
 
 class StationTable : public Q3Table

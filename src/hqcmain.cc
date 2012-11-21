@@ -342,7 +342,7 @@ HqcMainWindow::HqcMainWindow()
   connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
 
   clkdlg->hide();
-  timeFilterChanged = FALSE;
+  timeFilterChanged = false;
   connect( clkdlg, SIGNAL(ClockApply()), SLOT(ClkOK()));
   connect( clkdlg, SIGNAL(ClockHide()), SLOT(clockMenu()));
 
@@ -398,7 +398,7 @@ HqcMainWindow::HqcMainWindow()
 
 void HqcMainWindow::startup()
 {
-    listExist = FALSE;
+    listExist = false;
     firstObs = true;
     sLevel = 0;
     dianaconnected = false;
@@ -517,7 +517,7 @@ void HqcMainWindow::paramOK()
 }
 
 void HqcMainWindow::ClkOK() {
-  timeFilterChanged = TRUE;
+  timeFilterChanged = true;
 }
 
 void HqcMainWindow::dianaShowOK() {
@@ -701,10 +701,10 @@ void HqcMainWindow::ListOK() {
 			  Qt::NoButton);
     return;
   }
-  bool noTimes = TRUE;
+  bool noTimes = true;
   for ( int hour = 0; hour < 24; hour++ ) {
     if ( (clkdlg->clk[hour]->isChecked()) )
-      noTimes = FALSE;
+      noTimes = false;
   }
   if ( noTimes ) {
     QMessageBox::warning(this,
@@ -727,7 +727,7 @@ void HqcMainWindow::ListOK() {
   }
 
   BusyIndicator busyIndicator;
-  listExist = TRUE;
+  listExist = true;
   std::vector<int> stList;
   for ( QStringList::Iterator sit = statSelect->stlist.begin();
         sit != statSelect->stlist.end();
@@ -736,8 +736,8 @@ void HqcMainWindow::ListOK() {
     stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
   }
 
-  timeutil::ptime stime = timeutil::from_iso_extended_string(lstdlg->getStart().latin1());
-  timeutil::ptime etime = timeutil::from_iso_extended_string(lstdlg->getEnd().latin1());
+  timeutil::ptime stime = timeutil::from_QDateTime(lstdlg->getStart());
+  timeutil::ptime etime = timeutil::from_QDateTime(lstdlg->getEnd());
 
   QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
   if ( find ==  parameterGroups.end() ) {
@@ -771,7 +771,7 @@ void HqcMainWindow::ListOK() {
   mi_foreach(int p, parameterList)
     qDebug() << "Selected: "<< p;
 
-  isShTy = lstdlg->allTypes->isChecked();
+  isShTy = (lstdlg->getSelectedStationTypes().contains("ALL"));
 
   readFromData(stime, etime, stList);
 
@@ -953,7 +953,7 @@ void HqcMainWindow::TimeseriesOK() {
 
   if(tslist.size() == 0){
     tspdialog->hide();
-    tsVisible = FALSE;
+    tsVisible = false;
     return;
   }
 
@@ -974,7 +974,7 @@ void HqcMainWindow::TimeseriesOK() {
 
   tspdialog->prepare(tsplot);
   tspdialog->show();
-  tsVisible = TRUE;
+  tsVisible = true;
 }
 
 void HqcMainWindow::stationOK() {
@@ -986,8 +986,8 @@ void HqcMainWindow::stationOK() {
   statSelect = new StationSelection(listStat,
 				    lstdlg->getSelectedStationTypes(),
 				    lstdlg->getSelectedCounties(),
-				    lstdlg->webReg->isChecked(),
-				    lstdlg->priReg->isChecked(),
+				    lstdlg->showSynop(),
+				    lstdlg->showPrioritized(),
 				    &otpList,
                                     lstdlg);
 
@@ -1168,11 +1168,11 @@ void HqcMainWindow::listMenu() {
     lstdlg->hideAll();
   } else {
     QDateTime mx = QDateTime::currentDateTime();
-    int noDays = lstdlg->fromTime->dateTime().daysTo(lstdlg->toTime->dateTime());
+    int noDays = lstdlg->getStart().daysTo(lstdlg->getEnd());
     if ( noDays < 27 ) {
       mx = mx.addSecs(-60*mx.time().minute());
       mx = mx.addSecs(3600);
-      lstdlg->toTime->setDateTime(mx);
+      lstdlg->setEnd(mx);
     }
 
     lstdlg->showAll();
@@ -1354,38 +1354,38 @@ HqcMainWindow::~HqcMainWindow()
 
 bool HqcMainWindow::timeFilter(int hour) {
   if ( clkdlg->clk[hour]->isChecked() )
-    return TRUE;
-  return FALSE;
+    return true;
+  return false;
 }
 
 bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/)
 {
     const QStringList stationTypes = lstdlg->getSelectedStationTypes();
-  if ( typeId == -1 || typeId == 501 ) return FALSE;
-  //  if ( typeId == -1 ) return FALSE;
-  if ( lstdlg->webReg->isChecked() || lstdlg->priReg->isChecked() ) return TRUE;
+  if ( typeId == -1 || typeId == 501 ) return false;
+  //  if ( typeId == -1 ) return false;
+  if ( lstdlg->showSynop() or lstdlg->showPrioritized() ) return true;
   int atypeId = typeId < 0 ? -typeId : typeId;
   // FIXME this needs to match ListDialog.cc: StationTable::StationTable
-  if ( stationTypes.contains("ALL") ) return TRUE;
-  if ( environment == 1 && atypeId == 311 && stationTypes.contains("AF") ) return TRUE;
-  if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && stationTypes.contains("AA") ) return TRUE;
-  if ( environment == 2 && atypeId == 3 && stationTypes.contains("AL") ) return TRUE;
-  if ( environment == 12 && atypeId == 3 && stationTypes.contains("AV") ) return TRUE;
-  if ( atypeId == 410 && stationTypes.contains("AO") ) return TRUE;
-  if ( environment == 7 && stationTypes.contains("MV") ) return TRUE;
-  if ( environment == 5 && stationTypes.contains("MP") ) return TRUE;
-  if ( environment == 4 && stationTypes.contains("MM") ) return TRUE;
-  if ( environment == 6 && stationTypes.contains("MS") ) return TRUE;
-  if ( (atypeId == 4 || atypeId == 404) && stationTypes.contains("P") ) return TRUE;
-  if ( (atypeId == 4 || atypeId == 404)&& stationTypes.contains("PT") ) return TRUE;
-  if ( atypeId == 302 && stationTypes.contains("NS") ) return TRUE;
-  if ( environment == 9 && atypeId == 402 && stationTypes.contains("ND") ) return TRUE;
-  if ( environment == 10 && atypeId == 402 && stationTypes.contains("NO") ) return TRUE;
-  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) && stationTypes.contains("VS") ) return TRUE;
-  if ( environment == 3 && atypeId == 412 && stationTypes.contains("VK") ) return TRUE;
-  if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && stationTypes.contains("VM") ) return TRUE;
-  if ( atypeId == 2 && stationTypes.contains("FM") ) return TRUE;
-  return FALSE;
+  if ( stationTypes.contains("ALL") ) return true;
+  if ( environment == 1 && atypeId == 311 && stationTypes.contains("AF") ) return true;
+  if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && stationTypes.contains("AA") ) return true;
+  if ( environment == 2 && atypeId == 3 && stationTypes.contains("AL") ) return true;
+  if ( environment == 12 && atypeId == 3 && stationTypes.contains("AV") ) return true;
+  if ( atypeId == 410 && stationTypes.contains("AO") ) return true;
+  if ( environment == 7 && stationTypes.contains("MV") ) return true;
+  if ( environment == 5 && stationTypes.contains("MP") ) return true;
+  if ( environment == 4 && stationTypes.contains("MM") ) return true;
+  if ( environment == 6 && stationTypes.contains("MS") ) return true;
+  if ( (atypeId == 4 || atypeId == 404) && stationTypes.contains("P") ) return true;
+  if ( (atypeId == 4 || atypeId == 404)&& stationTypes.contains("PT") ) return true;
+  if ( atypeId == 302 && stationTypes.contains("NS") ) return true;
+  if ( environment == 9 && atypeId == 402 && stationTypes.contains("ND") ) return true;
+  if ( environment == 10 && atypeId == 402 && stationTypes.contains("NO") ) return true;
+  if ( (atypeId == 1 || atypeId == 6 || atypeId == 312 || atypeId == 412) && stationTypes.contains("VS") ) return true;
+  if ( environment == 3 && atypeId == 412 && stationTypes.contains("VK") ) return true;
+  if ( (atypeId == 306 || atypeId == 308 || atypeId == 412) && stationTypes.contains("VM") ) return true;
+  if ( atypeId == 2 && stationTypes.contains("FM") ) return true;
+  return false;
 }
 
 bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, const timeutil::ptime& otime, int par) {
@@ -2540,7 +2540,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             // UNUSED int astnr = dit->stationID();
             bool correctLevel = (dit->level() == HqcMainWindow::sLevel);
             bool correctTypeId;
-            if (lstdlg->allTypes->isChecked() && dit->sensor() - '0' == 0)
+            if (lstdlg->getSelectedStationTypes().contains("ALL") && dit->sensor() - '0' == 0) // FIXME sensor
                 correctTypeId = true;
             else
                 correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', timeutil::from_miTime(dit->obstime()), dit->paramID());
@@ -2563,8 +2563,8 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             int hour = otime.time_of_day().hours();
             int typeId = dit->typeID();
             int sensor = dit->sensor();
-            if ((otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor && lstdlg->priTypes->isChecked())
-                    || (!correctTypeId && !lstdlg->priTypes->isChecked())) {
+            if ((otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor && lstdlg->showPrioritized())
+                    || (!correctTypeId && !lstdlg->showPrioritized())) {
                 protime = otime;
                 prstnr = stnr;
                 prtypeId = typeId;
@@ -2640,7 +2640,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             }
             const bool timeFiltered = timeFilter(hour);
             if ((timeFiltered && !isAlreadyStored(protime, prstnr) && ((otime != protime || (otime == protime && stnr != prstnr))))
-                    || (lstdlg->allTypes->isChecked() && typeId != prtypeId)) {
+                    || (lstdlg->getSelectedStationTypes().contains("ALL") && typeId != prtypeId)) {
                 datalist->push_back(tdl);
                 tdl = model::KvalobsData();
                 std::fill(tdlUpd, tdlUpd + NOPARAM, false);
@@ -2708,53 +2708,54 @@ void HqcMainWindow::writeSettings()
   settings.setArrayIndex(st++);
   settings.setValue("s",QVariant(stationTypes.contains("VM")));
   settings.setArrayIndex(st++);
-  settings.setValue("s",lstdlg->allType->isChecked());
+  settings.setValue("s",QVariant(stationTypes.contains("ALL")));
   settings.endArray();
 
+  const QStringList counties = lstdlg->getSelectedCounties();
   int fy = 0;
   settings.beginWriteArray("c");
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->oslCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("OSLO")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->akeCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("AKERSHUS")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->ostCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("ØSTFOLD")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->hedCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("HEDMARK")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->oppCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("OPPLAND")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->busCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("BUSKERUD")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->vefCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("VESTFOLD")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->telCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("TELEMARK")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->ausCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("AUST-AGDER")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->veaCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("VEST-AGDER")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->rogCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("ROGALAND")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->horCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("HORDALAND")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->sogCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("SOGN OG FJORDANE")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->morCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("MØRE OG ROMSDAL")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->sorCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("SØR-TRØNDELAG")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->ntrCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("NORD-TRØNDELAG")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->norCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("NORDLAND")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->troCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("TROMS")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->finCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("FINNMARK")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->svaCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("ISHAVET")));
   settings.setArrayIndex(fy++);
-  settings.setValue("c",lstdlg->allCoun->isChecked());
+  settings.setValue("c",QVariant(counties.contains("ALL")));
   settings.endArray();
 
   settings.setValue("weather", wElement);
@@ -2859,49 +2860,51 @@ void HqcMainWindow::readSettings()
   settings.endArray();
   lstdlg->setSelectedStationTypes(t);
 
+  QStringList c;
   int fy = 0;
-  settings.beginReadArray("c");
+  settings.beginWriteArray("c");
   settings.setArrayIndex(fy++);
-  lstdlg->oslCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "OSLO";
   settings.setArrayIndex(fy++);
-  lstdlg->akeCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "AKERSHUS";
   settings.setArrayIndex(fy++);
-  lstdlg->ostCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "ØSTFOLD";
   settings.setArrayIndex(fy++);
-  lstdlg->hedCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "HEDMARK";
   settings.setArrayIndex(fy++);
-  lstdlg->oppCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "OPPLAND";
   settings.setArrayIndex(fy++);
-  lstdlg->busCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "BUSKERUD";
   settings.setArrayIndex(fy++);
-  lstdlg->vefCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "VESTFOLD";
   settings.setArrayIndex(fy++);
-  lstdlg->telCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "TELEMARK";
   settings.setArrayIndex(fy++);
-  lstdlg->ausCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "AUST-AGDER";
   settings.setArrayIndex(fy++);
-  lstdlg->veaCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "VEST-AGDER";
   settings.setArrayIndex(fy++);
-  lstdlg->rogCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "ROGALAND";
   settings.setArrayIndex(fy++);
-  lstdlg->horCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "HORDALAND";
   settings.setArrayIndex(fy++);
-  lstdlg->sogCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "SOGN OG FJORDANE";
   settings.setArrayIndex(fy++);
-  lstdlg->morCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "MØRE OG ROMSDAL";
   settings.setArrayIndex(fy++);
-  lstdlg->sorCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "SØR-TRØNDELAG";
   settings.setArrayIndex(fy++);
-  lstdlg->ntrCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "NORD-TRØNDELAG";
   settings.setArrayIndex(fy++);
-  lstdlg->norCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "NORDLAND";
   settings.setArrayIndex(fy++);
-  lstdlg->troCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "TROMS";
   settings.setArrayIndex(fy++);
-  lstdlg->finCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "FINNMARK";
   settings.setArrayIndex(fy++);
-  lstdlg->svaCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "ISHAVET";
   settings.setArrayIndex(fy++);
-  lstdlg->allCoun->setChecked(settings.value("c",true).toBool());
+  if( settings.value("c",true).toBool() ) c << "ALL";
   settings.endArray();
+  lstdlg->setSelectedCounties(c);
 }

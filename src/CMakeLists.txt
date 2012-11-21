@@ -60,6 +60,7 @@ INCLUDE_DIRECTORIES(
 
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
+  listdialog.ui
   parameterdialog.ui
   stationselection.ui
 )
