@@ -60,7 +60,8 @@ INCLUDE_DIRECTORIES(
 
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
-    parameterdialog.ui
+  parameterdialog.ui
+  stationselection.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

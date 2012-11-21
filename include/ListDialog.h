@@ -206,27 +206,21 @@ signals:
   void toTimeChanged(const QDateTime&);
 };
 
-class StationTable : public Q3Table {
-Q_OBJECT
+class StationTable : public Q3Table
+{   Q_OBJECT
 public:
- StationTable(const listStat_l& listStat,
-              const QStringList& stationTypes,
-              const QStringList& counties,
-	      bool,
-	      bool,
-	      ObsTypeList*,
-	      QWidget*);
+    StationTable(QWidget* parent=0);
+    void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties,
+                 bool web, bool pri, ObsTypeList* otpList);
  bool findInTypes(ObsTypeList::iterator, int);
  QString getEnvironment(const int envID, ObsTypeList::iterator);
  void sortColumn( int col, bool ascending, bool wholeRows );
 };
 
-class StationSelection : public QDialog {
-Q_OBJECT
-private:
- QPushButton* selectionOK;
- QPushButton* selectAllStations;
- StationTable* stationTable;
+#include "ui_stationselection.h"
+
+class StationSelection : public QDialog, public Ui_StationSelectionDialog
+{   Q_OBJECT
 public:
  StationSelection(const listStat_l& listStat,
                   const QStringList& stationTypes,

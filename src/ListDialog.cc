@@ -848,18 +848,10 @@ void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
         cb->setChecked(stationTypes.contains(cb->getItem()));
 }
 
-StationTable::StationTable(const listStat_l& listStat,
-                           const QStringList& stationTypes,
-                           const QStringList& counties,
-			   bool web,
-			   bool pri,
-			   ObsTypeList* otpList,
-			   QWidget* parent)
-    : Q3Table(listStat.size(), 7, parent)
+StationTable::StationTable(QWidget* parent)
+    : Q3Table(0, 7, parent)
 {
-  setCaption(tr("Stasjoner"));
   setSorting( true );
-  setGeometry(10,100,800,600);
 
   horizontalHeader()->setLabel( 0, tr( "Stnr" ) );
   horizontalHeader()->setLabel( 1, tr( "Navn" ) );
@@ -868,6 +860,17 @@ StationTable::StationTable(const listStat_l& listStat,
   horizontalHeader()->setLabel( 4, tr( "Fylke" ) );
   horizontalHeader()->setLabel( 5, tr( "Kommune" ) );
   horizontalHeader()->setLabel( 6, tr( "Pri" ) );
+}
+
+void StationTable::setData(const listStat_l& listStat,
+                           const QStringList& stationTypes,
+                           const QStringList& counties,
+			   bool web,
+			   bool pri,
+			   ObsTypeList* otpList)
+{
+  setNumRows(listStat.size());
+
   int stInd = 0;
   mi_foreach(const listStat_t& s, listStat) {
     bool webStat = (s.wmonr != "    ");
@@ -950,7 +953,7 @@ StationTable::StationTable(const listStat_l& listStat,
 
 bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
 {
-    if( tList->empty() )
+    if( tList->size() < 2 )
         return false;
     // '++' in next is necessary as the first entry in tList is not a
     // typeId but a station id number
@@ -1015,27 +1018,14 @@ StationSelection::StationSelection(const listStat_l& listStat,
                                    QWidget* parent)
     : QDialog(parent)
 {
-    // setGeometry(0,0,870,700);
-    resize(870,700);
+    setupUi(this);
 
-  selectionOK = new QPushButton("Lukk", this);
-  selectionOK->setGeometry(50,10,130,30);
-  selectionOK->setDefault(true);
   connect(selectionOK, SIGNAL(clicked()),SLOT(listSelectedStations()));
-
-  selectAllStations = new QPushButton("Velg &alle stasjoner", this);
-  selectAllStations->setGeometry(200,10,130,30);
   connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
 
-  stationTable = new StationTable(listStat,
-                                  stationTypes,
-                                  counties,
-				  web,
-				  pri,
-				  otpList,
-				  this);
-  connect( stationTable,SIGNAL(currentChanged(int, int)),
-	   SLOT(tableCellClicked(int, int)));
+  stationTable->setData(listStat, stationTypes, counties, web, pri, otpList);
+  connect(stationTable,SIGNAL(currentChanged(int, int)),
+          SLOT(tableCellClicked(int, int)));
 }
 
 void StationSelection::tableCellClicked() {
