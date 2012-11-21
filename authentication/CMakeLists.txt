@@ -1,6 +1,7 @@
 
 SET(auth_HEADERS
   Authenticator.h
+  HideApplyBox.hh
   MiDateTimeEdit.hh
 )
 
@@ -8,6 +9,7 @@ SET(auth_SOURCES
   Authenticator.cc
   BusyIndicator.cc
   FunctionLogger.cc
+  HideApplyBox.cc
   HqcDataReinserter.cc
   hqc_paths.cc
   hqc_utilities.cc
@@ -19,11 +21,12 @@ SET(auth_SOURCES
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})
 SET(auth_UIS
     authenticationdialog.ui
+    hideapplybox.ui
 )
 QT4_WRAP_UI(auth_UIS_H ${auth_UIS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_LIBRARY(authentication STATIC
-  ${auth_SOURCES} 
+  ${auth_SOURCES}
   ${auth_HEADERS_MOC}
   ${auth_UIS_H})

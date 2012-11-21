@@ -29,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "parameterdialog.h"
+#include "HideApplyBox.hh"
 
 #include <QtCore/QStringList>
 #include <QtGui/QGroupBox>
@@ -44,7 +45,6 @@ ParameterDialog::ParameterDialog(QWidget* parent)
     setCaption(tr("Parametervalg"));
     resize(300,580);
 
-  QVBoxLayout * vl = new QVBoxLayout(this,10);
 
   QGroupBox *pVal = new QGroupBox(tr("Parametervalg"), this);
 
@@ -61,36 +61,16 @@ ParameterDialog::ParameterDialog(QWidget* parent)
   rbvl->addWidget(markPar);
   rbvl->addWidget(noMarkPar);
 
-  QFont smallFont("Arial", 9);
+  HideApplyBox* hab = new HideApplyBox(this);
+  connect(hab, SIGNAL(hide()),  this, SIGNAL(paramHide()));
+  connect(hab, SIGNAL(apply()), this, SIGNAL(paramApply()));
 
-  sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setFont(smallFont);
-
-  excu = new QPushButton(tr("Utfør"), this);
-  excu->setFont(smallFont);
-
-  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setFont(smallFont);
-  hdnexcu->setDefault(true);
-
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
-  buttonLayout->addWidget(sthide, 10);
-  buttonLayout->addWidget(excu, 10);
-  buttonLayout->addWidget(hdnexcu, 10);
-
-  connect(sthide, SIGNAL(clicked()), this, SIGNAL( paramHide()));
-  connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
-  connect(excu, SIGNAL(clicked()), this, SIGNAL( paramApply()));
-
+  QVBoxLayout * vl = new QVBoxLayout(this,10);
   vl->addWidget(plb);
-
   vl->addWidget(pVal);
-
   vl->addLayout(rbvl);
+  vl->addWidget(hab);
 
-  vl->addLayout(buttonLayout);
-
-  hdnexcu->setFocus();
   selectionChanged();
 }
 
@@ -115,11 +95,6 @@ void ParameterDialog::showAll(){
 
 void ParameterDialog::hideAll(){
   this->hide();
-}
-
-void ParameterDialog::applyHideClicked(){
-  emit paramHide();
-  emit paramApply();
 }
 
 void ParameterDialog::selectionChanged()

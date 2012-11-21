@@ -56,16 +56,10 @@ public:
 
 private slots:
   void selectionChanged();
-  void applyHideClicked();
 
 signals:
   void paramHide();
   void paramApply();
-
-private:
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
 
 public:
   // TODO these things should not be public
