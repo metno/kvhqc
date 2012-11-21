@@ -11,6 +11,8 @@ class HideApplyBox : public QWidget, private Ui_HideApplyBox
 public:
     HideApplyBox(QWidget* parent);
 
+    void setCanApply(bool enabled);
+
 signals:
     void apply();
     void hide();

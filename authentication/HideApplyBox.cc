@@ -12,6 +12,12 @@ HideApplyBox::HideApplyBox(QWidget* parent)
     connect(applyHideButton, SIGNAL(clicked()), this, SLOT(hideApply()));
 }
 
+void HideApplyBox::setCanApply(bool enabled)
+{
+    applyButton->setEnabled(enabled);
+    applyHideButton->setEnabled(enabled);
+}
+
 void HideApplyBox::hideApply()
 {
     emit hide();

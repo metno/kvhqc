@@ -51,7 +51,7 @@
         </font>
        </property>
        <property name="text">
-        <string>U&amp;tfør+Skjul</string>
+        <string>&amp;Utfør+Skjul</string>
        </property>
        <property name="default">
         <bool>true</bool>

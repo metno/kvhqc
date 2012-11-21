@@ -187,6 +187,7 @@ ListDialog::ListDialog(QWidget* parent)
   connect( toTime,  SIGNAL(dateTimeChanged(const QDateTime&)),
 	   this,SIGNAL(toTimeChanged(const QDateTime&)));
 
+  hab->setCanApply(false);
   connect(hab, SIGNAL(hide()), this, SIGNAL(ListHide()));
   connect(hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
 }
@@ -231,26 +232,33 @@ void ListDialog::setEnd(const QDateTime& e)
     toTime->setDateTime(e);
 }
 
-void ListDialog::appendStatInListbox(QString station) {
-  stationNames->insertItem(station);
+void ListDialog::appendStatInListbox(QString station)
+{
+    stationNames->insertItem(station);
+    hab->setCanApply(true);
 }
 
-void ListDialog::removeStatFromListbox(QString station) {
-  int rind = -1;
-  for (  int ind = 0; ind < stationNames->numRows(); ind++ ) {
-    if ( stationNames->text(ind) == station ) {
-      rind = ind;
+void ListDialog::removeStatFromListbox(QString station)
+{
+    int rind = -1;
+    for (  int ind = 0; ind < stationNames->numRows(); ind++ ) {
+        if ( stationNames->text(ind) == station ) {
+            rind = ind;
+        }
     }
-  }
-  if ( rind >= 0 )
-    stationNames->removeItem(rind);
+    if ( rind >= 0 )
+        stationNames->removeItem(rind);
+    if( stationNames->count() == 0 )
+        hab->setCanApply(false);
 }
 
-void ListDialog::removeAllStatFromListbox() {
-  int nuRo = stationNames->count();
-  for (  int ind = 0; ind < nuRo; ind++ ) {
-    stationNames->removeItem(0);
-  }
+void ListDialog::removeAllStatFromListbox()
+{
+    int nuRo = stationNames->count();
+    for (  int ind = 0; ind < nuRo; ind++ ) {
+        stationNames->removeItem(0);
+    }
+    hab->setCanApply(false);
 }
 
 void ListDialog::twiCheck() {
