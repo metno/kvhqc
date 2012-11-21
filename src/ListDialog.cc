@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ListDialog.h"
 
 #include "HideApplyBox.hh"
+#include "hqcmain.h"
 #include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
@@ -88,8 +89,9 @@ void ItemCheckBox::clicked()
     emit clicked(mItem);
 }
 
-ListDialog::ListDialog(QWidget* parent)
+ListDialog::ListDialog(HqcMainWindow* parent)
   : QDialog(parent)
+  , statSelect(0)
 {
     setupUi(this);
 
@@ -165,7 +167,7 @@ ListDialog::ListDialog(QWidget* parent)
   connect(troCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
   connect(finCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
 
-  connect(stationSelect, SIGNAL(clicked()), this, SIGNAL( selectStation()));
+  connect(stationSelect, SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
 
   //Time selection
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
@@ -723,6 +725,39 @@ void ListDialog::setSelectedCounties(const QStringList& c)
     }
 }
 
+std::vector<int> ListDialog::getSelectedStations()
+{
+    if( statSelect )
+        return statSelect->getSelectedStations();
+    else
+        return std::vector<int>();
+}
+
+void ListDialog::showStationSelectionDialog()
+{
+    const std::list<listStat_t>& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
+    const ObsTypeList& otpList = static_cast<HqcMainWindow*>(parent())->getObsTypeList();
+
+    removeAllStatFromListbox();
+    if( statSelect )
+        delete statSelect;
+
+    statSelect = new StationSelection(listStat,
+                                      getSelectedStationTypes(),
+                                      getSelectedCounties(),
+                                      showSynop(),
+                                      showPrioritized(),
+                                      otpList,
+                                      this);
+    connect(statSelect, SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
+    connect(statSelect, SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
+    statSelect->show();
+}
+
+// ########################################################################
+// ########################################################################
+// ########################################################################
+
 StationTable::StationTable(QWidget* parent)
     : Q3Table(0, 7, parent)
 {
@@ -742,7 +777,7 @@ void StationTable::setData(const listStat_l& listStat,
                            const QStringList& counties,
 			   bool web,
 			   bool pri,
-			   ObsTypeList* otpList)
+			   const ObsTypeList& otpList)
 {
   setNumRows(listStat.size());
 
@@ -755,13 +790,13 @@ void StationTable::setData(const listStat_l& listStat,
         prty = QString::fromStdString(s.pri.substr(3,1));
 
     bool foundStat = false;
-    ObsTypeList::iterator oit = otpList->begin();
-    for ( ; oit != otpList->end(); oit++) {
-      TypeList::iterator tit = oit->begin();
-      if( s.stationid == (*tit) ) {
-	foundStat = true;
-	break;
-      }
+    ObsTypeList::const_iterator oit = otpList.begin();
+    for ( ; oit != otpList.end(); oit++) {
+        TypeList::const_iterator tit = oit->begin();
+        if( s.stationid == (*tit) ) {
+            foundStat = true;
+            break;
+        }
     }
     if ( !foundStat ) {
       continue;
@@ -826,7 +861,7 @@ void StationTable::setData(const listStat_l& listStat,
     hideColumn(6);
 }
 
-bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
+bool StationTable::findInTypes(ObsTypeList::const_iterator tList, int type)
 {
     if( tList->size() < 2 )
         return false;
@@ -835,7 +870,7 @@ bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
     return std::find(++tList->begin(), tList->end(), type) != tList->end();
 }
 
-QString StationTable::getEnvironment(const int envID, ObsTypeList::iterator oit) {
+QString StationTable::getEnvironment(const int envID, ObsTypeList::const_iterator oit) {
   QString env;
   if ( envID == 1 && findInTypes(oit, 311) )
     env = "AF";
@@ -884,23 +919,27 @@ void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
     Q3Table::sortColumn( col, ascending, true );
 }
 
+// ########################################################################
+// ########################################################################
+// ########################################################################
+
 StationSelection::StationSelection(const listStat_l& listStat,
                                    const QStringList& stationTypes,
                                    const QStringList& counties,
 				   bool web,
 				   bool pri,
-				   ObsTypeList* otpList,
+				   const ObsTypeList& otpList,
                                    QWidget* parent)
     : QDialog(parent)
 {
     setupUi(this);
 
-  connect(selectionOK, SIGNAL(clicked()),SLOT(listSelectedStations()));
-  connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
+    connect(selectionOK, SIGNAL(clicked()), this, SLOT(hide()));
+    connect(selectAllStations, SIGNAL(clicked()),SLOT(doSelectAllStations()));
 
-  stationTable->setData(listStat, stationTypes, counties, web, pri, otpList);
-  connect(stationTable,SIGNAL(currentChanged(int, int)),
-          SLOT(tableCellClicked(int, int)));
+    stationTable->setData(listStat, stationTypes, counties, web, pri, otpList);
+    connect(stationTable,SIGNAL(currentChanged(int, int)),
+            SLOT(tableCellClicked(int, int)));
 }
 
 void StationSelection::tableCellClicked() {
@@ -910,44 +949,56 @@ void StationSelection::tableCellClicked(int row,
 					int /*button*/,
 					const QPoint& /*mousePos*/) {
   stationTable->selectRow(row);
-  showSelectedStation(row, 0);
+  selectOrDeselectStation(row);
 }
 
 void StationSelection::tableCellClicked(int row, int /*col*/) {
   stationTable->selectRow(row);
-  showSelectedStation(row, 0);
+  selectOrDeselectStation(row);
 }
 
-void StationSelection::showSelectedStation(int row, int /*col*/) {
-  Q3TableItem* tStationNumber = stationTable->item( row, 0);
-  Q3TableItem* tStationName = stationTable->item( row, 1);
-  QString station = tStationNumber->text() + "  " + tStationName->text();
-  int rem = stlist.remove(station); // FIXME kind of weird procedure
-  if ( rem == 0 ) {
-      stlist.append(station);
-    emit stationAppended(station);
-  } else {
-    emit stationRemoved(station);
-  }
-}
-
-void StationSelection::showAllStations() {
-  for (  int row = 0; row < stationTable->numRows(); row++ ) {
+void StationSelection::selectOrDeselectStation(int row)
+{
     Q3TableItem* tStationNumber = stationTable->item( row, 0);
     Q3TableItem* tStationName = stationTable->item( row, 1);
     QString station = tStationNumber->text() + "  " + tStationName->text();
-    int rem = stlist.remove(station); // FIXME kind of weird procedure
-    if ( rem == 0 ) {
-        stlist.append(station);
-      emit stationAppended(station);
+    
+    const int stationID = tStationNumber->text().toInt();
+    std::set<int>::iterator it = mSelectedStations.find(stationID);
+    
+    if( it != mSelectedStations.end() ) {
+        mSelectedStations.erase(it);
+        emit stationRemoved(station);
+    } else {
+        mSelectedStations.insert(stationID);
+        emit stationAppended(station);
     }
-  }
 }
 
-void StationSelection::listSelectedStations() {
-  emit stationsSelected(stlist);
-  this->hide();
+void StationSelection::doSelectAllStations()
+{
+    for(int row = 0; row < stationTable->numRows(); row++) {
+        Q3TableItem* tStationNumber = stationTable->item( row, 0);
+        
+        const int stationID = tStationNumber->text().toInt();
+        if( mSelectedStations.find(stationID) == mSelectedStations.end() ) {
+            mSelectedStations.insert(stationID);
+
+            Q3TableItem* tStationName = stationTable->item( row, 1);
+            QString station = tStationNumber->text() + "  " + tStationName->text();
+            emit stationAppended(station);
+        }
+    }
 }
+
+std::vector<int> StationSelection::getSelectedStations()
+{
+    return std::vector<int>(mSelectedStations.begin(), mSelectedStations.end());
+}
+
+// ########################################################################
+// ########################################################################
+// ########################################################################
 
 QString StTableItem::key() const {
   QString item;

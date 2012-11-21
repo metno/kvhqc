@@ -32,17 +32,17 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HQCDEFS_H
 #define HQCDEFS_H
 
-
 #include "KvalobsData.h"
-#include <list>
-//#include <kvQtApp.h>
-#include <kvcpp/KvApp.h>
+
 #include <kvalobs/kvData.h>
+#include <kvalobs/kvModelData.h>
+#include <kvalobs/kvObsPgm.h>
 #include <kvalobs/kvStation.h>
-#include <kvalobs/kvDbGate.h>
-#include <string>
-#include <kvdb/dbdrivermgr.h>
+
 #include <qUtilities/QLetterCommands.h>
+
+#include <list>
+#include <string>
 
 typedef std::list<kvalobs::kvData>                              DataList;
 typedef std::list<kvalobs::kvData>::iterator                   IDataList;
@@ -61,21 +61,8 @@ const int NOPARAM          = 1043;
 const int NOPARAMMODEL     = 8;
 extern const int modelParam[NOPARAMMODEL]; // defined in hqcmain.cc
 const int NOPARAMALL       = 210;
-//const int NOPARAMAIRPRESS  = 23; //Ny gr.
-//const int NOPARAMTEMP      = 31; //Ny gr
-//const int NOPARAMPREC      = 40;
-//const int NOPARAMVISUAL    = 36;
-//const int NOPARAMWAVE      = 45;
-//const int NOPARAMSYNOP     = 39;
-//const int NOPARAMKLSTAT    = 33;
-//const int NOPARAMPRIORITY  = 31;
-//const int NOPARAMWIND      = 4;
-//const int NOPARAMPLU       = 6;
-const int noInfo = 7;
-const int nnn = 1;
 
 enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
-enum mettType {tabHead, tabList};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 
 struct modDatl {

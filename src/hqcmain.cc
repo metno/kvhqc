@@ -161,6 +161,11 @@ HqcMainWindow::HqcMainWindow()
   , datalist(new model::KvalobsDataList)
   , reinserter( NULL )
   , dataModel(0)
+  , firstObs(true)
+  , sLevel(0)
+  , listExist(false)
+  , tsVisible(false)
+  , dianaconnected(false)
 {
   // ---- ACTIONS -----------------------------------------------
 
@@ -336,7 +341,6 @@ HqcMainWindow::HqcMainWindow()
   rejdlg->hide();
   dianaShowOK();
   lstdlg->hide();
-  connect( lstdlg, SIGNAL(selectStation()), SLOT(stationOK()));
 
   connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
   connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
@@ -512,15 +516,18 @@ void HqcMainWindow::all() {
 
 void HqcMainWindow::paramOK()
 {
-  if ( listExist )
-    ListOK();
+    LOG_FUNCTION();
+    if( listExist )
+        ListOK();
 }
 
 void HqcMainWindow::ClkOK() {
   timeFilterChanged = true;
 }
 
-void HqcMainWindow::dianaShowOK() {
+void HqcMainWindow::dianaShowOK()
+{
+    LOG_FUNCTION();
   dnMap["TTT"] = "TA";
   mdMap["TTT"] = false;
   diMap["TTT"] = false;
@@ -655,8 +662,8 @@ void HqcMainWindow::dianaShowOK() {
   dnMap["s"] = "SG";
   dnMap["ds"] = "MDIR";
   dnMap["vs"] = "MSPEED";
-  if ( listExist )
-    ListOK();
+  if( listExist )
+      ListOK();
 }
 
 void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
@@ -682,25 +689,26 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
   }
 }
 
-void HqcMainWindow::ListOK() {
-  LOG_FUNCTION();
-  if ( !dianaconnected ) {
-    QMessageBox::warning(this,
-            tr("Dianaforbindelse"),
-            tr("Har ikke kontakt med diana! "
-               "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
-               "og kople diana til tjeneren via knappen i diana sin vindu."),
-            QMessageBox::Ok, QMessageBox::Ok);
-  }
-  if ( !statSelect || statSelect->stlist.size() == 0 ) {
-    QMessageBox::warning(this,
-			 tr("Stasjonsvalg"),
-			 tr("Ingen stasjoner er valgt!\n"
-                            "Minst en stasjon må velges"),
-			  QMessageBox::Ok,
-			  Qt::NoButton);
-    return;
-  }
+void HqcMainWindow::ListOK()
+{
+    LOG_FUNCTION();
+    if ( !dianaconnected ) {
+        QMessageBox::warning(this,
+                             tr("Dianaforbindelse"),
+                             tr("Har ikke kontakt med diana! "
+                                "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
+                                "og kople diana til tjeneren via knappen i diana sin vindu."),
+                             QMessageBox::Ok, QMessageBox::Ok);
+    }
+    std::vector<int> selectedStations = lstdlg->getSelectedStations();
+    if( selectedStations.empty() ) {
+        QMessageBox::warning(this,
+                             tr("Stasjonsvalg"),
+                             tr("Ingen stasjoner er valgt!\nMinst en stasjon må velges"),
+                             QMessageBox::Ok,
+                             Qt::NoButton);
+        return;
+    }
   bool noTimes = true;
   for ( int hour = 0; hour < 24; hour++ ) {
     if ( (clkdlg->clk[hour]->isChecked()) )
@@ -728,13 +736,6 @@ void HqcMainWindow::ListOK() {
 
   BusyIndicator busyIndicator;
   listExist = true;
-  std::vector<int> stList;
-  for ( QStringList::Iterator sit = statSelect->stlist.begin();
-        sit != statSelect->stlist.end();
-        ++sit ) {
-    int ind = QString(*sit).stripWhiteSpace().find(' ');
-    stList.push_back(QString(*sit).stripWhiteSpace().left(ind).toInt());
-  }
 
   timeutil::ptime stime = timeutil::from_QDateTime(lstdlg->getStart());
   timeutil::ptime etime = timeutil::from_QDateTime(lstdlg->getEnd());
@@ -773,7 +774,7 @@ void HqcMainWindow::ListOK() {
 
   isShTy = (lstdlg->getSelectedStationTypes().contains("ALL"));
 
-  readFromData(stime, etime, stList);
+  readFromData(stime, etime, selectedStations);
 
   // All windows are shown later, in the tileHorizontal function
 
@@ -977,29 +978,17 @@ void HqcMainWindow::TimeseriesOK() {
   tsVisible = true;
 }
 
-void HqcMainWindow::stationOK() {
-  if ( !readFromStInfoSys() ) {
-    int statCheck = 0;
-    readFromStationFile(statCheck);
-  }
-  lstdlg->removeAllStatFromListbox();
-  statSelect = new StationSelection(listStat,
-				    lstdlg->getSelectedStationTypes(),
-				    lstdlg->getSelectedCounties(),
-				    lstdlg->showSynop(),
-				    lstdlg->showPrioritized(),
-				    &otpList,
-                                    lstdlg);
-
-  connect(statSelect,
-	  SIGNAL(stationAppended(QString)),
-	  lstdlg,
-	  SLOT(appendStatInListbox(QString)));
-  connect(statSelect,
-	  SIGNAL(stationRemoved(QString)),
-	  lstdlg,
-	  SLOT(removeStatFromListbox(QString)));
-  statSelect->show();
+const std::list<listStat_t>& HqcMainWindow::getStationDetails()
+{
+    const timeutil::ptime now = timeutil::now();
+    if( mLastStationListUpdate.is_not_a_date_time()
+        or (mLastStationListUpdate - now).total_seconds() > 3600 )
+    {
+        mLastStationListUpdate = now;
+        readFromStInfoSys()
+            or readFromStationFile();
+    }
+    return listStat;
 }
 
 void HqcMainWindow::errListMenu() {
@@ -1709,12 +1698,12 @@ bool HqcMainWindow::readFromStInfoSys()
 	   << setw(4) << (ci.pri).toStdString()
 	   << setw(1) << (ci.ki).toStdString();
       outf << obuf.str() << std::endl;
-      cout << obuf.str() << std::endl;
+      //cout << obuf.str() << std::endl;
 
     }
     outf.close();
     cout << "Stationliste hentet fra stinfosys" << endl;
-  return true;
+    return true;
 }
 
 /*!
@@ -1735,6 +1724,7 @@ void HqcMainWindow::readFromStation()
 */
 void HqcMainWindow::readFromObsPgm() {
     LOG_FUNCTION();
+    std::list<long> statList;
     if (!KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
         cerr << "Can't connect to obs_pgm table!" << endl;
 
@@ -1781,7 +1771,8 @@ void HqcMainWindow::checkTypeId(int stnr) {
 /*!
  Read the station file, this must be done after the station table in the database is read
 */
-void HqcMainWindow::readFromStationFile(int /* UNUSED statCheck*/) {
+bool HqcMainWindow::readFromStationFile()
+{
   QString path = QString(getenv("HOME"));
   if ( path.isEmpty() ) {
     cerr << "Intet environment" << endl;
@@ -1824,6 +1815,7 @@ void HqcMainWindow::readFromStationFile(int /* UNUSED statCheck*/) {
     }
     prevStnr = stnr;
   }
+  return true;
 }
 
 /*!
@@ -1871,12 +1863,9 @@ void HqcMainWindow::readFromParam() {
 
   if(!KvApp::kvApp->getKvParams(plist))
     cerr << "Can't connect to param table!" << endl;
-  std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
 
-  for(;it!=plist.end(); it++){
-    parMap[it->paramID()] = it->name().c_str();
-    listParName.append(it->name().c_str());
-  }
+    mi_foreach(const kvalobs::kvParam& p, plist)
+        parMap[p.paramID()] = QString::fromStdString(p.name());
 }
 
 /*!
@@ -2045,8 +2034,6 @@ void HqcMainWindow::processLetter(miMessage& letter)
           if( *itD == "type" && *itC == "Diana" ) {
               firstObs = true;
               processConnect();
-              hqcFrom = letter.to;
-              hqcTo = letter.from;
               return;
           }
       }

@@ -31,8 +31,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
 
+#include "connect2stinfosys.h"
 #include "hqcdefs.h"
-#include "ListDialog.h"
 #include "textdatatable.h"
 
 #include <decodeutility/DataReinserter.h>
@@ -62,14 +62,17 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <fstream>
 
 class miMessage;
+QT_BEGIN_NAMESPACE
 class QAction;
 class QMdiArea;
 class QMdiSubWindow;
+QT_END_NAMESPACE
 
 class AcceptTimeseriesDialog;
 class ClockDialog;
 class DataTable;
 class DianaShowDialog;
+class ListDialog;
 class ParameterDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
@@ -85,23 +88,16 @@ class KvalobsDataModel;
  * \brief The application's main window.
  */
 class HqcMainWindow: public QMainWindow
-{
-  Q_OBJECT
+{   Q_OBJECT
 
 public:
+    HqcMainWindow();
+    ~HqcMainWindow();
 
-  HqcMainWindow();
-  ~HqcMainWindow();
-
-  void startup();
+    void startup();
 
   void makeObsDataList( kvservice::KvObsDataList& dataList );
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
-  int nuroprpar;
-  int nucoprpar;
-
-
-  //  QAction * lackListAction;
 
 public slots:
   /*!
@@ -147,19 +143,17 @@ public:
    * \brief
    */
   bool timeFilterChanged;
-  /*!
-   * \brief Reads station info from stinfosys
-   */
-  bool readFromStInfoSys();
+
   /*!
    * \brief Reads the station table in the kvalobs database
    *        and inserts the station information in slist
    */
   void readFromStation();
-  /*!
-   * \brief
-   */
-  void readFromStationFile(int);
+
+    //! \brief Reads station info from stinfosys
+    bool readFromStInfoSys();
+    bool readFromStationFile();
+
   /*!
    * \brief Reads the parameter order from the file paramorder, then reaads the param
    *        table in the kvalobs database and inserts the station information in parmap
@@ -224,13 +218,14 @@ public:
   /// This holds the value of the previously used stList
   std::vector<TxtDat> txtList;
   listType lity;
-  mettType metty;
   int selParNo[NOPARAMALL];
   std::vector<currentType> currentTypeList;
-  std::vector<QString> statLineList;
   kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
   /// True if all types have been selected, as opposed to prioritized parameters
   bool isShTy;
+
+    const std::list<listStat_t>& getStationDetails();
+    const ObsTypeList& getObsTypeList() { return otpList; }
 
 public slots:
 
@@ -258,10 +253,6 @@ public slots:
  * \brief Called when OK button in ParameterDialog is clicked
 */
   void paramOK();
-/*!
- * \brief Called when stationSelect button in ListDialog is clicked
-*/
-  void stationOK();
 
 private slots:
   void showFlags();
@@ -342,51 +333,25 @@ private:
   QAction * plID;
   QAction * alID;
 
-  int synopType;
-  int autoobsType;
-  int kvalobsType;
-  int hqcFrom;
-  int hqcTo;
-  bool isSynop;
-  bool isAuto;
-  bool isKvalobs;
   bool tsVisible;
   ClientButton* pluginB;
-  //  DianaConnection* diaCon;
 
-
-//  Q3PopupMenu* file;
   QAction * saveAction;
   QAction * printAction;
 
-  int filePrintMenuItem;
   QMenu* choice;
   QMenu* showmenu;
   QMenu* weathermenu;
   QMenu* clockmenu;
   QMenu* typeIdmenu;
 
-
-
   QMdiArea * ws;
-  //  QPainter* logo;
-  //  void paintEvent(QPaintEvent*);
-  // socket variables
-  bool usesocket;
   bool dianaconnected;
-  QString dateandTime;
-  QString kvParam[NOPARAMALL];
-  QString kdbParam[NOPARAMALL];
 
-  //  DataList dlist;
   ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;
-  std::list<kvalobs::kvStation> sillist;
   std::list<kvalobs::kvStation> slist;
   std::list<kvalobs::kvParam> plist;
-  std::list<long> statList;
-
-  std::vector<int> order;
 
   /**
    * Parameters from parameter groups. The keys will be the user's
@@ -397,12 +362,7 @@ private:
   QMap<QString, std::vector<int> > parameterGroups;
 
   TSPlotDialog* tspdialog; // timeseries-plot
-  StationTable* stationTable;
 
-  /// Station selection dialog
-  StationSelection* statSelect;
-
-  timeutil::ptime dianaObsTime;
   timeutil::ptime dianaTime;
   typedef QMap<std::string,std::string> NameMap;
   NameMap dnMap;
@@ -437,10 +397,8 @@ protected:
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 
-  std::list<listStat_t> listStat;
-
-QStringList listParName;
-QStringList listParNum;
+    std::list<listStat_t> listStat;
+    timeutil::ptime mLastStationListUpdate;
 
 private slots:
   void closeWindow();
@@ -449,10 +407,12 @@ private slots:
   void helpParam();
   void about();
   void aboutQt();
+
   // socket slots
   void processLetter(miMessage&);
   void processConnect();
   void cleanConnection();
+
   void errListMenu();
   void allListMenu();
   void errLogMenu();
@@ -485,8 +445,6 @@ signals:
   void statTimeReceived(const QString&);
   void newStationList(std::vector<QString>&);
   void newParameterList(const QStringList&);
-  void toggleWeather();
-  void toggleType();
   void saveData();
   void windowClose();
   void printErrorList();

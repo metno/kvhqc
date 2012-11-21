@@ -32,40 +32,19 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef LISTDIALOG_H
 #define LISTDIALOG_H
 
-#include "timeutil.hh"
+#include "connect2stinfosys.h"
 
-#include <QtGui/qdialog.h>
-#include <Qt3Support/q3buttongroup.h>
-#include <QtGui/qpushbutton.h>
-#include <QtGui/qlineedit.h>
-#include <QtGui/qcheckbox.h>
-#include <QtGui/qradiobutton.h>
-#include <QtGui/QGroupBox>
-#include <QtGui/qlabel.h>
-#include <Qt3Support/q3table.h>
-#include <Qt3Support/q3listbox.h>
-#include <QtGui/qcombobox.h>
-#include <QtGui/qlayout.h>
-#include <QtCore/qdatetime.h>
-#include <Qt3Support/Q3VBoxLayout>
+#include <QtGui/QCheckBox>
+#include <Qt3Support/Q3Table>
+
+#include <list>
+#include <set>
+#include <vector>
+
+class HqcMainWindow;
 
 typedef std::list<int>                                 TypeList;
 typedef std::list<TypeList>                         ObsTypeList;
-
-struct listStat_t {
-    std::string name;    // listStatName
-    int stationid;       // listStatNum
-    float altitude;      // listStatHoh
-    int environment;     // listStatType
-    std::string fylke;   // listStatFylke
-    std::string kommune; // listStatKommune
-    std::string wmonr;   // listStatWeb
-    std::string pri;     // listStatPri
-    timeutil::ptime fromtime;
-    timeutil::ptime totime;
-    bool coast;
-};
-typedef std::list<listStat_t> listStat_l;
 
 class ItemCheckBox : public QCheckBox
 { Q_OBJECT
@@ -87,7 +66,7 @@ class ListDialog : public QDialog, private Ui_ListDialog
 {   Q_OBJECT
 
 public:
-    ListDialog(QWidget*);
+    ListDialog(HqcMainWindow* parent);
 
     void hideAll();
     void showAll();
@@ -95,6 +74,8 @@ public:
     QDateTime getStart();
     QDateTime getEnd();
     void setEnd(const QDateTime& e);
+
+    std::vector<int> getSelectedStations();
 
     QStringList getSelectedStationTypes();
     void setSelectedStationTypes(const QStringList& stationTypes);
@@ -133,12 +114,11 @@ private:
     ItemCheckBox* svaCoun;
     ItemCheckBox* allCoun;
 
-public slots:
+private slots:
     void appendStatInListbox(QString);
     void removeStatFromListbox(QString);
     void removeAllStatFromListbox();
 
-private slots:
     void twiCheck();
     void prcCheck();
     void aprCheck();
@@ -171,13 +151,16 @@ private slots:
     void setMinDate(const QDate&);
     void setMaxTime(const QTime&);
     void setMinTime(const QTime&);
+    void showStationSelectionDialog();
 
 signals:
     void ListHide();
     void ListApply();
-    void selectStation();
     void fromTimeChanged(const QDateTime&);
     void toTimeChanged(const QDateTime&);
+
+private:
+    class StationSelection* statSelect;
 };
 
 class StationTable : public Q3Table
@@ -185,9 +168,9 @@ class StationTable : public Q3Table
 public:
     StationTable(QWidget* parent=0);
     void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties,
-                 bool web, bool pri, ObsTypeList* otpList);
- bool findInTypes(ObsTypeList::iterator, int);
- QString getEnvironment(const int envID, ObsTypeList::iterator);
+                 bool web, bool pri, const ObsTypeList& otpList);
+ bool findInTypes(ObsTypeList::const_iterator, int);
+ QString getEnvironment(const int envID, ObsTypeList::const_iterator);
  void sortColumn( int col, bool ascending, bool wholeRows );
 };
 
@@ -196,26 +179,31 @@ public:
 class StationSelection : public QDialog, public Ui_StationSelectionDialog
 {   Q_OBJECT
 public:
- StationSelection(const listStat_l& listStat,
-                  const QStringList& stationTypes,
-                  const QStringList& counties,
-		  bool,
-		  bool,
-		  ObsTypeList*,
-                  QWidget* parent);
- void showSelectedStation(int, int);
- QStringList stlist;
+    StationSelection(const listStat_l& listStat,
+                     const QStringList& stationTypes,
+                     const QStringList& counties,
+                     bool,
+                     bool,
+                     const ObsTypeList&,
+                     QWidget* parent);
+
+    std::vector<int> getSelectedStations();
+
 private slots:
-  void tableCellClicked(int, int, int, const QPoint&);
-  void tableCellClicked(int, int);
-  void tableCellClicked();
-  void listSelectedStations();
+    void tableCellClicked(int, int, int, const QPoint&);
+    void tableCellClicked(int, int);
+    void tableCellClicked();
+    void doSelectAllStations();
+
 signals:
   void stationAppended(QString);
   void stationRemoved(QString);
-  void stationsSelected(QStringList);
-public slots:
- void showAllStations();
+
+private:
+    void selectOrDeselectStation(int row);
+
+private:
+    std::set<int> mSelectedStations;
 };
 
 class StTableItem : public Q3TableItem{
