@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "HideApplyBox.hh"
 #include "MiDateTimeEdit.hh"
+#include "mi_foreach.hh"
 #include "timeutil.hh"
 
 #include <Qt3Support/Q3HBoxLayout>
@@ -948,15 +949,7 @@ void ListDialog::allCounUnCheck() {
   }
 }
 
-StationTable::StationTable(QStringList selStatNum,
-			   QStringList selStatName,
-			   QStringList selStatHoh,
-			   QStringList selStatType,
-			   QStringList selStatFylke,
-			   QStringList selStatKommune,
-			   QStringList selStatWeb,
-			   QStringList selStatPri,
-			   int noStat,
+StationTable::StationTable(const listStat_l& listStat,
 			   bool aa,
 			   bool af,
 			   bool al,
@@ -1017,23 +1010,18 @@ StationTable::StationTable(QStringList selStatNum,
   horizontalHeader()->setLabel( 5, tr( "Kommune" ) );
   horizontalHeader()->setLabel( 6, tr( "Pri" ) );
   int stInd = 0;
-  for ( int i = 0; i < noStat; i++) {
-    QString strStnr      = selStatNum.at(i);
-    QString testName     = selStatName.at(i);
-    QString strStName    = selStatName.at(i);
-    QString strStHoh     = selStatHoh.at(i);
-    QString strStType    = selStatType.at(i);
-    QString strStFylke   = selStatFylke.at(i);
-    QString strStKommune = selStatKommune.at(i);
-    bool webStat = selStatWeb.at(i) != "    ";
-    bool priStat = (selStatPri.at(i)).left(3) == "PRI";
-    QString prty =  (selStatPri.at(i)).right(1);
-    int stano = strStnr.toInt();
-    ObsTypeList::iterator oit = otpList->begin();
+  mi_foreach(const listStat_t& s, listStat) {
+    bool webStat = (s.wmonr != "    ");
+    bool priStat = (s.pri.substr(0, 3) == "PRI");
+    QString prty;
+    if( s.pri.size() >= 4 )
+        prty = QString::fromStdString(s.pri.substr(3,1));
+
     bool foundStat = false;
+    ObsTypeList::iterator oit = otpList->begin();
     for ( ; oit != otpList->end(); oit++) {
       TypeList::iterator tit = oit->begin();
-      if ( stano == (*tit) ) {
+      if( s.stationid == (*tit) ) {
 	foundStat = true;
 	break;
       }
@@ -1042,69 +1030,65 @@ StationTable::StationTable(QStringList selStatNum,
       continue;
     }
     if ( ! (allc == TRUE ||
-	    (osl == TRUE && strStFylke == "OSLO") ||
-	    (ake == TRUE && strStFylke == "AKERSHUS") ||
-	    (ost == TRUE && strStFylke == "ØSTFOLD") ||
-	    (hed == TRUE && strStFylke == "HEDMARK") ||
-	    (opp == TRUE && strStFylke == "OPPLAND") ||
-	    (bus == TRUE && strStFylke == "BUSKERUD") ||
-	    (vef == TRUE && strStFylke == "VESTFOLD") ||
-	    (tel == TRUE && strStFylke == "TELEMARK") ||
-	    (aus == TRUE && strStFylke == "AUST-AGDER") ||
-	    (vea == TRUE && strStFylke == "VEST-AGDER") ||
-	    (rog == TRUE && strStFylke == "ROGALAND") ||
-	    (hor == TRUE && strStFylke == "HORDALAND") ||
-	    (sog == TRUE && strStFylke == "SOGN OG FJORDANE") ||
-	    (mor == TRUE && strStFylke == "MØRE OG ROMSDAL") ||
-	    (sor == TRUE && strStFylke == "SØR-TRØNDELAG") ||
-	    (ntr == TRUE && strStFylke == "NORD-TRØNDELAG") ||
-	    (nor == TRUE && strStFylke == "NORDLAND") ||
-	    (tro == TRUE && strStFylke == "TROMS") ||
-	    (fin == TRUE && strStFylke == "FINNMARK") ||
-	    (sva == TRUE && strStFylke == "ISHAVET") ||
+	    (osl == TRUE && s.fylke == "OSLO") ||
+	    (ake == TRUE && s.fylke == "AKERSHUS") ||
+	    (ost == TRUE && s.fylke == "ØSTFOLD") ||
+	    (hed == TRUE && s.fylke == "HEDMARK") ||
+	    (opp == TRUE && s.fylke == "OPPLAND") ||
+	    (bus == TRUE && s.fylke == "BUSKERUD") ||
+	    (vef == TRUE && s.fylke == "VESTFOLD") ||
+	    (tel == TRUE && s.fylke == "TELEMARK") ||
+	    (aus == TRUE && s.fylke == "AUST-AGDER") ||
+	    (vea == TRUE && s.fylke == "VEST-AGDER") ||
+	    (rog == TRUE && s.fylke == "ROGALAND") ||
+	    (hor == TRUE && s.fylke == "HORDALAND") ||
+	    (sog == TRUE && s.fylke == "SOGN OG FJORDANE") ||
+	    (mor == TRUE && s.fylke == "MØRE OG ROMSDAL") ||
+	    (sor == TRUE && s.fylke == "SØR-TRØNDELAG") ||
+	    (ntr == TRUE && s.fylke == "NORD-TRØNDELAG") ||
+	    (nor == TRUE && s.fylke == "NORDLAND") ||
+	    (tro == TRUE && s.fylke == "TROMS") ||
+	    (fin == TRUE && s.fylke == "FINNMARK") ||
+	    (sva == TRUE && s.fylke == "ISHAVET") ||
        	    (webStat && web) || (priStat && pri) ))
       continue;
     QString strEnv;
-    if ( (aa == TRUE && ((strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
-    if ( (af == TRUE && strStType == "1" && findInTypes(oit, 311)) )  strEnv += "AF";
-    if ( (al == TRUE && strStType == "2" && findInTypes(oit, 3)) ) strEnv += "AL";
-    if ( (av == TRUE && strStType == "12" && findInTypes(oit, 3)) )  strEnv += "AV";
+    if ( (aa == TRUE && ((s.environment == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
+    if ( (af == TRUE && s.environment == 1 && findInTypes(oit, 311)) )  strEnv += "AF";
+    if ( (al == TRUE && s.environment == 2 && findInTypes(oit, 3)) ) strEnv += "AL";
+    if ( (av == TRUE && s.environment == 12 && findInTypes(oit, 3)) )  strEnv += "AV";
     if ( (ao == TRUE && findInTypes(oit, 410)) )  strEnv += "AO";
-    if ( (mv == TRUE && strStType == "7" && findInTypes(oit, 11)) ) strEnv += "MV";
-    if ( (mp == TRUE && strStType == "5" && findInTypes(oit, 11)) ) strEnv += "MP";
-    if ( (mm == TRUE && strStType == "4" && findInTypes(oit, 11)) ) strEnv += "MM";
-    if ( (ms == TRUE && strStType == "6" && findInTypes(oit, 11)) ) strEnv += "MS";
+    if ( (mv == TRUE && s.environment == 7 && findInTypes(oit, 11)) ) strEnv += "MV";
+    if ( (mp == TRUE && s.environment == 5 && findInTypes(oit, 11)) ) strEnv += "MP";
+    if ( (mm == TRUE && s.environment == 4 && findInTypes(oit, 11)) ) strEnv += "MM";
+    if ( (ms == TRUE && s.environment == 6 && findInTypes(oit, 11)) ) strEnv += "MS";
     if ( (pi == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "P";
     if ( (pt == TRUE && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "PT";
     if ( (ns == TRUE && findInTypes(oit, 302)) )  strEnv += "NS";
-    if ( (nd == TRUE && strStType == "9" && findInTypes(oit, 402)) ) strEnv += "ND";
-    if ( (no == TRUE && strStType == "10" && findInTypes(oit, 402)) ) strEnv += "NO";
+    if ( (nd == TRUE && s.environment == 9 && findInTypes(oit, 402)) ) strEnv += "ND";
+    if ( (no == TRUE && s.environment == 10 && findInTypes(oit, 402)) ) strEnv += "NO";
     if ( (vs == TRUE && (findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312))) ) strEnv += "VS";
-    if ( (vk == TRUE && strStType == "3" && findInTypes(oit, 412)) ) strEnv += "VK";
+    if ( (vk == TRUE && s.environment == 3 && findInTypes(oit, 412)) ) strEnv += "VK";
     if ( (vm == TRUE && (findInTypes(oit, 306) || findInTypes(oit, 308))) ) strEnv += "VM";
     if ( (fm == TRUE && (findInTypes(oit, 2))) ) strEnv += "FM";
     if (all == TRUE )
-      strEnv = getEnvironment(strStType, oit);
-    if ( !strEnv.isEmpty() ) {
-      StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, strStnr);
-      setItem(stInd, 0, stNum);
-      StTableItem* stName = new StTableItem(this, Q3TableItem::Never, strStName);
-      setItem(stInd, 1, stName);
-      StTableItem* stHoh = new StTableItem(this, Q3TableItem::Never, strStHoh);
-      setItem(stInd, 2, stHoh);
-      StTableItem* stType = new StTableItem(this, Q3TableItem::Never, strEnv);
-      setItem(stInd, 3, stType);
-      StTableItem* stFylke = new StTableItem(this, Q3TableItem::Never, strStFylke);
-      setItem(stInd, 4, stFylke);
-      StTableItem* stKommune = new StTableItem(this,
-					       Q3TableItem::Never,
-					       strStKommune);
-      setItem(stInd, 5, stKommune);
-      StTableItem* stPrior = new StTableItem(this,
-					       Q3TableItem::Never,
-					       prty);
-      setItem(stInd, 6, stPrior);
-      stInd++;
+      strEnv = getEnvironment(s.environment, oit);
+    if ( not strEnv.isEmpty() ) {
+        StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, QString::number(s.stationid));
+        setItem(stInd, 0, stNum);
+        StTableItem* stName = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.name));
+        setItem(stInd, 1, stName);
+        StTableItem* stHoh = new StTableItem(this, Q3TableItem::Never, QString::number(s.altitude, 'f', 0));
+        setItem(stInd, 2, stHoh);
+        StTableItem* stType = new StTableItem(this, Q3TableItem::Never, strEnv);
+        setItem(stInd, 3, stType);
+        StTableItem* stFylke = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.fylke));
+        setItem(stInd, 4, stFylke);
+        StTableItem* stKommune = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.kommune));
+        setItem(stInd, 5, stKommune);
+        StTableItem* stPrior = new StTableItem(this, Q3TableItem::Never, prty);
+        setItem(stInd, 6, stPrior);
+        stInd++;
     }
   }
   setNumRows(stInd);
@@ -1131,25 +1115,25 @@ bool StationTable::findInTypes(ObsTypeList::iterator tList, int type)
     return std::find(++tList->begin(), tList->end(), type) != tList->end();
 }
 
-QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oit) {
+QString StationTable::getEnvironment(const int envID, ObsTypeList::iterator oit) {
   QString env;
-  if ( strStType == "1" && findInTypes(oit, 311) )
+  if ( envID == 1 && findInTypes(oit, 311) )
     env = "AF";
-  else if ( strStType == "2" && findInTypes(oit, 3) )
+  else if ( envID == 2 && findInTypes(oit, 3) )
     env = "AL";
-  else if ( strStType == "4" && findInTypes(oit, 11) )
+  else if ( envID == 4 && findInTypes(oit, 11) )
     env = "MM";
-  else if ( strStType == "5" && findInTypes(oit, 11) )
+  else if ( envID == 5 && findInTypes(oit, 11) )
     env = "MP";
-  else if ( strStType == "6" && findInTypes(oit, 11) )
+  else if ( envID == 6 && findInTypes(oit, 11) )
     env = "MS";
-  else if ( strStType == "7" && findInTypes(oit, 11) )
+  else if ( envID == 7 && findInTypes(oit, 11) )
     env = "MV";
-  else if ( (strStType == "8" && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342) )
+  else if ( (envID == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342) )
     env = "AA";
-  else if ( strStType == "9" && findInTypes(oit, 402) )
+  else if ( envID == 9 && findInTypes(oit, 402) )
     env = "ND";
-  else if ( strStType == "10" && findInTypes(oit, 402) )
+  else if ( envID == 10 && findInTypes(oit, 402) )
     env = "NO";
   else if ( findInTypes(oit, 302) )
     env = "NS";
@@ -1163,9 +1147,9 @@ QString StationTable::getEnvironment(QString strStType, ObsTypeList::iterator oi
     env = "VS";
   else if ( findInTypes(oit, 306) || findInTypes(oit, 308) )
     env = "VM";
-  else if ( strStType == "11" )
+  else if ( envID == 11 )
     env = "TURISTFORENING";
-  else if ( strStType == "12" && findInTypes(oit, 3) )
+  else if ( envID == 12 && findInTypes(oit, 3) )
     env = "AV";
   else if ( findInTypes(oit, 412) )
     env = "VK";
@@ -1180,15 +1164,7 @@ void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
     Q3Table::sortColumn( col, ascending, TRUE );
 }
 
-StationSelection::StationSelection(QStringList listStatNum,
-				   QStringList listStatName,
-				   QStringList listStatHoh,
-				   QStringList listStatType,
-				   QStringList listStatFylke,
-				   QStringList listStatKommune,
-				   QStringList listStatWeb,
-				   QStringList listStatPri,
-				   int noStat,
+StationSelection::StationSelection(const listStat_l& listStat,
 				   bool aa,
 				   bool af,
 				   bool al,
@@ -1249,15 +1225,7 @@ StationSelection::StationSelection(QStringList listStatNum,
   selectAllStations->setGeometry(200,10,130,30);
   connect(selectAllStations, SIGNAL(clicked()),SLOT(showAllStations()));
 
-  stationTable = new StationTable(listStatNum,
-				  listStatName,
-				  listStatHoh,
-				  listStatType,
-				  listStatFylke,
-				  listStatKommune,
-				  listStatWeb,
-				  listStatPri,
-				  noStat,
+  stationTable = new StationTable(listStat,
 				  aa,
 				  af,
 				  al,

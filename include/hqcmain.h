@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define HQCMAIN_H
 
 #include "hqcdefs.h"
+#include "ListDialog.h"
 #include "textdatatable.h"
 
 #include <decodeutility/DataReinserter.h>
@@ -69,7 +70,6 @@ class AcceptTimeseriesDialog;
 class ClockDialog;
 class DataTable;
 class DianaShowDialog;
-class ListDialog;
 class ParameterDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
@@ -437,19 +437,10 @@ protected:
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 
-QStringList listStatName;
-QStringList listStatNum;
-QStringList listStatHoh;
-QStringList listStatType;
-QStringList listStatFylke;
-QStringList listStatKommune;
-QStringList listStatWeb;
-QStringList listStatPri;
-QStringList listStatFromTime;
-QStringList listStatToTime;
+  std::list<listStat_t> listStat;
+
 QStringList listParName;
 QStringList listParNum;
-QStringList listStatCoast;
 
 private slots:
   void closeWindow();

@@ -980,17 +980,8 @@ void HqcMainWindow::stationOK() {
     int statCheck = 0;
     readFromStationFile(statCheck);
   }
-  int noStat = listStatName.size();
   lstdlg->removeAllStatFromListbox();
-  statSelect = new StationSelection(listStatNum,
-				    listStatName,
-				    listStatHoh,
-				    listStatType,
-				    listStatFylke,
-				    listStatKommune,
-				    listStatWeb,
-				    listStatPri,
-				    noStat,
+  statSelect = new StationSelection(listStat,
 				    lstdlg->aaType->isChecked(),
 				    lstdlg->afType->isChecked(),
 				    lstdlg->alType->isChecked(),
@@ -1719,15 +1710,7 @@ bool HqcMainWindow::readFromStInfoSys()
       cerr << "FEIL I FIL" << endl;
       //      exit(1);
     }
-    listStatName.clear();
-    listStatNum.clear();
-    listStatHoh.clear();
-    listStatType.clear();
-    listStatFylke.clear();
-    listStatKommune.clear();
-    listStatWeb.clear();
-    listStatPri.clear();
-    listStatCoast.clear();
+    listStat.clear();
 
     mi_foreach(const kvalobs::kvStation& st, slist) {
       cList_t::const_iterator cit = cList.find(st.stationID());
@@ -1741,15 +1724,18 @@ bool HqcMainWindow::readFromStInfoSys()
       QString strHoh;
       QString strEnv;
       strEnv = strEnv.setNum(st.environmentid());
-      listStatName.append(st.name().c_str());
-      listStatNum.append(strStnr.setNum(st.stationID()));
-      listStatHoh.append(strHoh.setNum(st.height()));
-      listStatType.append(strEnv);
-      listStatFylke.append(ci.county);
-      listStatKommune.append(ci.municip);
-      listStatWeb.append(ci.web);
-      listStatPri.append(ci.pri);
-      listStatCoast.append(ci.ki);
+
+      listStat_t ls;
+      ls.name        = st.name();
+      ls.stationid   = st.stationID();
+      ls.altitude    = st.height();
+      ls.environment = st.environmentid();
+      ls.fylke       = ci.county.toStdString();
+      ls.kommune     = ci.municip.toStdString();
+      ls.wmonr       = ci.web.toStdString();
+      ls.pri         = ci.pri.toStdString();
+      ls.coast       = ci.ki == "K";
+      listStat.push_back(ls);
 
       std::ostringstream obuf;
       obuf << setw(7) << right << ci.stnr << " "
@@ -1859,15 +1845,18 @@ void HqcMainWindow::readFromStationFile(int /* UNUSED statCheck*/) {
       QString strSnr("    ");
       if(it->wmonr() > 0)
         strSnr = strSnr.setNum(it->wmonr());
-      listStatName.append(it->name().c_str());
-      listStatNum.append(strStnr.setNum(it->stationID()));
-      listStatHoh.append(strHoh.setNum(it->height()));
-      listStatType.append(strEnv);
-      listStatFylke.append(statLine.mid(8,30).stripWhiteSpace());
-      listStatKommune.append(statLine.mid(39,24).stripWhiteSpace());
-      listStatWeb.append(strSnr);
-      listStatPri.append(statLine.mid(67,4).stripWhiteSpace());
-      listStatCoast.append(statLine.mid(71,1).stripWhiteSpace());
+
+      listStat_t ls;
+      ls.name        = it->name();
+      ls.stationid   = it->stationID();
+      ls.altitude    = it->height();
+      ls.environment = it->environmentid();
+      ls.fylke       = statLine.mid(8,30).stripWhiteSpace().toStdString();
+      ls.kommune     = statLine.mid(39,24).stripWhiteSpace().toStdString();
+      ls.wmonr       = it->wmonr();
+      ls.pri         = statLine.mid(67,4).stripWhiteSpace().toStdString();
+      ls.coast       = statLine.mid(71,1).stripWhiteSpace() == "K";
+      listStat.push_back(ls);
     }
     prevStnr = stnr;
   }

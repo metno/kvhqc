@@ -32,6 +32,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef LISTDIALOG_H
 #define LISTDIALOG_H
 
+#include "timeutil.hh"
+
 #include <QtGui/qdialog.h>
 #include <Qt3Support/q3buttongroup.h>
 #include <QtGui/qpushbutton.h>
@@ -49,6 +51,21 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 typedef std::list<int>                                 TypeList;
 typedef std::list<TypeList>                         ObsTypeList;
+
+struct listStat_t {
+    std::string name;    // listStatName
+    int stationid;       // listStatNum
+    float altitude;      // listStatHoh
+    int environment;     // listStatType
+    std::string fylke;   // listStatFylke
+    std::string kommune; // listStatKommune
+    std::string wmonr;   // listStatWeb
+    std::string pri;     // listStatPri
+    timeutil::ptime fromtime;
+    timeutil::ptime totime;
+    bool coast;
+};
+typedef std::list<listStat_t> listStat_l;
 
 class ListDialog : public QDialog {
   Q_OBJECT
@@ -187,15 +204,7 @@ signals:
 class StationTable : public Q3Table {
 Q_OBJECT
 public:
- StationTable(QStringList,
-	      QStringList,
-	      QStringList,
-	      QStringList,
-	      QStringList,
-	      QStringList,
-	      QStringList,
-	      QStringList,
-	      int,
+ StationTable(const listStat_l& listStat,
 	      bool,
 	      bool,
 	      bool,
@@ -243,7 +252,7 @@ public:
 	      ObsTypeList*,
 	      QWidget*);
  bool findInTypes(ObsTypeList::iterator, int);
- QString getEnvironment(QString, ObsTypeList::iterator);
+ QString getEnvironment(const int envID, ObsTypeList::iterator);
  void sortColumn( int col, bool ascending, bool wholeRows );
 };
 
@@ -254,15 +263,7 @@ private:
  QPushButton* selectAllStations;
  StationTable* stationTable;
 public:
- StationSelection(QStringList,
-		  QStringList,
-		  QStringList,
-		  QStringList,
-		  QStringList,
-		  QStringList,
-		  QStringList,
-		  QStringList,
-		  int,
+ StationSelection(const listStat_l& listStat,
 		  bool,
 		  bool,
 		  bool,
