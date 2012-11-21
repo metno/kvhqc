@@ -32,12 +32,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef PARAMETERDIALOG_H
 #define PARAMETERDIALOG_H
 
-#include <QtGui/QDialog>
-#include <QtGui/QListWidget>
-#include <QtGui/QRadioButton>
-#include <QtGui/QPushButton>
+#include "ui_parameterdialog.h"
 
-class ParameterDialog : public QDialog {
+class ParameterDialog : public QDialog, public Ui_ParameterDialog
+{
   Q_OBJECT
 
 public:
@@ -60,14 +58,6 @@ private slots:
 signals:
   void paramHide();
   void paramApply();
-
-public:
-  // TODO these things should not be public
-  QRadioButton* allPar;
-  QRadioButton* markPar;
-  QRadioButton* noMarkPar;
-
-  QListWidget* plb;
 };
 
 #endif

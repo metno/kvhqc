@@ -42,36 +42,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 ParameterDialog::ParameterDialog(QWidget* parent)
   : QDialog(parent)
 {
-    setCaption(tr("Parametervalg"));
-    resize(300,580);
+    setupUi(this);
 
+    connect(plb, SIGNAL(itemSelectionChanged()), this, SLOT(selectionChanged()));
+    connect(hab, SIGNAL(hide()),  this, SIGNAL(paramHide()));
+    connect(hab, SIGNAL(apply()), this, SIGNAL(paramApply()));
 
-  QGroupBox *pVal = new QGroupBox(tr("Parametervalg"), this);
-
-  plb = new QListWidget(this);
-  plb->setSelectionMode( QAbstractItemView::MultiSelection );
-  connect(plb,SIGNAL(itemSelectionChanged()),SLOT(selectionChanged()));
-
-  allPar    = new QRadioButton( tr("Velg alle parametere"), pVal );
-  markPar   = new QRadioButton( tr("Velg merkede parametere"), pVal );
-  noMarkPar = new QRadioButton( tr("Velg bort merkede parametere"), pVal );
-
-  QVBoxLayout * rbvl = new QVBoxLayout();
-  rbvl->addWidget(allPar);
-  rbvl->addWidget(markPar);
-  rbvl->addWidget(noMarkPar);
-
-  HideApplyBox* hab = new HideApplyBox(this);
-  connect(hab, SIGNAL(hide()),  this, SIGNAL(paramHide()));
-  connect(hab, SIGNAL(apply()), this, SIGNAL(paramApply()));
-
-  QVBoxLayout * vl = new QVBoxLayout(this,10);
-  vl->addWidget(plb);
-  vl->addWidget(pVal);
-  vl->addLayout(rbvl);
-  vl->addWidget(hab);
-
-  selectionChanged();
+    selectionChanged();
 }
 
 void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
