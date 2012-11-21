@@ -2,7 +2,8 @@ Source: kvhqc
 Section: science
 Priority: extra
 Maintainer: Knut Johansen <knut.johansen@met.no>
-Build-Depends: debhelper (>= 7.0.50), quilt, g++, metno-devscripts,
+Build-Depends: debhelper (>= 7.0.50), quilt, g++,
+ metno-devscripts (>= 0.5.7),
  libqt4-dev, libgfortran3, libkvcpp2-dev,
 @metno_config_if ^lucid$
  metlibs-dev, metlibs-qtimeseries-dev, metlibs-qutilities-dev

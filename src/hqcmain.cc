@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "approvedialog.h"
 #include "BusyIndicator.h"
 #include "ClockDialog.h"
+#include "config.h"
 #include "connect2stinfosys.h"
 #include "dianashowdialog.h"
 #include "discarddialog.h"
@@ -1976,11 +1977,13 @@ void HqcMainWindow::about()
                            "Programmet består av editerbare tabeller med observasjoner samt\n"
                            "tidsseriediagram, og har forbindelse med Diana\n"
                            "\n"
-                           "Programmet utvikles av\n "
-                           "Lisbeth Bergholt, FoU,\n "
-                           "Vegard Bønes, IT,\n "
-                           "Audun Christoffersen, FoU,\n "
-                           "Knut Johansen, IT\n"));
+                           "Programmet utvikles av\n"
+                           "Knut Johansen,\n"
+                           "Alexander Bürger,\n"
+                           "Lisbeth Bergholt,\n"
+                           "Vegard Bønes,\n"
+                           "Audun Christoffersen\n\n"
+                           "Du bruker HQC versjon %1.").arg(PVERSION_FULL));
 }
 
 void HqcMainWindow::initDiana()

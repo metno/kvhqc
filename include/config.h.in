@@ -14,6 +14,9 @@
 /* program version "major.minor-suffix" (suffix only if specified) */
 #define PVERSION "@PVERSION@"
 
+/* program version "major.minor.patch.alpha/beta/rc-suffix" */
+#define PVERSION_FULL "@PVERSION_FULL@"
+
 /* program major version */
 #define PVERSION_MAJOR @PVERSION_MAJOR@
 
