@@ -90,6 +90,20 @@ void ClockDialog::hideAll(){
   this->hide();
 }
 
+void ClockDialog::setHour(int hour, bool on)
+{
+    if( hour >= 0 and hour < 24 )
+        clk[hour]->setChecked(on);
+}
+
+bool ClockDialog::hasHour(int hour) const
+{
+    if( hour >= 0 and hour < 24 )
+        return clk[hour]->isChecked();
+    else
+        return false;
+}
+
 void ClockDialog::standardCheck() {
   if ( allTimes->isChecked() )
     standardTimes->setChecked( FALSE );

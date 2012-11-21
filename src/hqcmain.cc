@@ -339,7 +339,6 @@ HqcMainWindow::HqcMainWindow()
   // --- START -----------------------------------------------------
   pardlg->hide();
   rejdlg->hide();
-  dianaShowOK();
   lstdlg->hide();
 
   connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
@@ -407,6 +406,7 @@ void HqcMainWindow::startup()
     sLevel = 0;
     dianaconnected = false;
     tsVisible = false;
+    dianaShowOK();
 
     // --- CHECK USER IDENTITY ----------------------------------------
 
@@ -709,20 +709,19 @@ void HqcMainWindow::ListOK()
                              Qt::NoButton);
         return;
     }
-  bool noTimes = true;
-  for ( int hour = 0; hour < 24; hour++ ) {
-    if ( (clkdlg->clk[hour]->isChecked()) )
-      noTimes = false;
-  }
-  if ( noTimes ) {
-    QMessageBox::warning(this,
-			 tr("Tidspunktvalg"),
-			 tr("Ingen tidspunkter er valgt!\n"
-                            "Minst ett tidspunkt må velges"),
-			  QMessageBox::Ok,
-			  Qt::NoButton);
-    return;
-  }
+    bool noTimes = true;
+    for( int hour=0; hour<24; hour++ ) {
+        if( clkdlg->hasHour(hour) )
+          noTimes = false;
+    }
+    if ( noTimes ) {
+        QMessageBox::warning(this,
+                             tr("Tidspunktvalg"),
+                             tr("Ingen tidspunkter er valgt!\nMinst ett tidspunkt må velges"),
+                             QMessageBox::Ok,
+                             Qt::NoButton);
+        return;
+    }
 
   if ( wElement.isEmpty() ) {
     QMessageBox::warning(this,
@@ -1168,12 +1167,9 @@ void HqcMainWindow::listMenu() {
   }
 }
 
-void HqcMainWindow::clockMenu() {
-  if ( clkdlg->isVisible() ) {
+void HqcMainWindow::clockMenu()
+{
     clkdlg->hideAll();
-  } else {
-    clkdlg->showAll();
-  }
 }
 
 void HqcMainWindow::dianaShowMenu() {
@@ -1341,10 +1337,9 @@ HqcMainWindow::~HqcMainWindow()
 {
 }
 
-bool HqcMainWindow::timeFilter(int hour) {
-  if ( clkdlg->clk[hour]->isChecked() )
-    return true;
-  return false;
+bool HqcMainWindow::timeFilter(int hour)
+{
+    return clkdlg->hasHour(hour);
 }
 
 bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/)
@@ -2649,7 +2644,7 @@ void HqcMainWindow::writeSettings()
   settings.beginWriteArray("t");
   for ( int hour = 0; hour < 24; hour++ ) {
     settings.setArrayIndex(hour);
-    settings.setValue("t", clkdlg->clk[hour]->isChecked());
+    settings.setValue("t", clkdlg->hasHour(hour));
   }
   settings.endArray();
 
@@ -2772,12 +2767,10 @@ void HqcMainWindow::readSettings()
   if ( !restoreGeometry(settings.value("geometry").toByteArray()) )
     cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
 
-  bool times[24];
   settings.beginReadArray("t");
-  for ( int hour = 0; hour < 24; hour++ ) {
+  for( int hour = 0; hour < 24; hour++ ) {
     settings.setArrayIndex(hour);
-    times[hour] = settings.value("t", true).toBool();
-    clkdlg->clk[hour]->setChecked(times[hour]);
+    clkdlg->setHour(hour, settings.value("t", true).toBool());
   }
   settings.endArray();
 

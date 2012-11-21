@@ -44,18 +44,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
  * \brief Dialog for selecting times to show.
  */
 
-class ClockDialog : public QDialog {
-  Q_OBJECT
+class ClockDialog : public QDialog
+{   Q_OBJECT
 public:
   ClockDialog(QWidget*);
 
   void hideAll();
   void showAll();
 
+    void setHour(int hour, bool on);
+    bool hasHour(int hour) const;
+
+private:
   QCheckBox* clk[24];
   QCheckBox* allTimes;
   QCheckBox* standardTimes;
-public slots:
+private slots:
   void standardCheck();
   void allCheck();
   void oStandardCheck();
