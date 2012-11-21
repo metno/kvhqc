@@ -32,16 +32,17 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef __identifyUser_h__
 #define __identifyUser_h__
 
-//#include <kvQtApp.h>
 #include <decodeutility/DataReinserter.h>
-//#include <kvQtApp.h>
 #include <kvcpp/KvApp.h>
 
 class QString;
+class QWidget;
 
 namespace Authentication {
-  kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(kvservice::KvApp *app, const char *ldap_server, QString& userName);
-  kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(kvservice::KvApp *app, const char *ldap_server,QString& userName, int port );
-}
+kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
+                                                        const char *ldap_server, QString& userName);
+kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
+                                                        const char *ldap_server, QString& userName, int port );
+} // namespace Authentication
 
 #endif // __identifyUser_h__

@@ -38,9 +38,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtCore/QDebug>
 
-ParameterDialog::ParameterDialog(QWidget* parent): QDialog(parent) {
-  setCaption(tr("Parametervalg"));
-  setGeometry(500,10,300,580);
+ParameterDialog::ParameterDialog(QWidget* parent)
+  : QDialog(parent)
+{
+    setCaption(tr("Parametervalg"));
+    resize(300,580);
 
   QVBoxLayout * vl = new QVBoxLayout(this,10);
 

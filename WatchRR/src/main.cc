@@ -83,8 +83,8 @@ int main( int argc, char* argv[] )
   KvApp kvapp(argc, argv, confSec);
 
   QString userName;
-  reinserter = Authentication::identifyUser( KvApp::kvApp,
-  					     "ldap-oslo.met.no", userName);
+  reinserter = Authentication::identifyUser(0, KvApp::kvApp,
+                                            "ldap-oslo.met.no", userName);
   if ( reinserter == 0 ) {
     int res = QMessageBox::warning( 0, "Autentisering",
 				    "Du er ikke registrert som operatør!\n"

@@ -90,13 +90,13 @@ int main( int argc, char* argv[] )
   QString caption = "HQC " + captionSuffix;
   mw->setCaption( caption );
   mw->setIcon( QPixmap( hqc::getPath(hqc::IMAGEDIR) + "/hqc.png") );
-  //  mw->setGeometry(10,10,1268,942);
   a.setMainWidget(mw);
 
-  //  mw->showMaximized();
   mw->show();
-  a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
+  mw->startup();
 
+  a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
   int res = a.exec();
+
   return res;
 }

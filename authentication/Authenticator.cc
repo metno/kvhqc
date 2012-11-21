@@ -67,28 +67,25 @@ namespace Authentication
 bool authenticate(const char *username, const char *password,
                   const char *server, int port)
 {
-	LDAP * ldap;
-	std::ostringstream uris;
-	uris << "ldaps://" << server << ':' << port;
-	std::string uri = uris.str();
-	cout << "connecting to " << uri << endl;
-	VERIFY(ldap_initialize(& ldap, uri.c_str()));
+    LDAP * ldap;
+    std::ostringstream uris;
+    uris << "ldaps://" << server << ':' << port;
+    std::string uri = uris.str();
+    cout << "connecting to " << uri << endl;
+    VERIFY(ldap_initialize(& ldap, uri.c_str()));
 
+    int ldapVersion = LDAP_VERSION3;
+    ldap_set_option(ldap, LDAP_OPT_PROTOCOL_VERSION, & ldapVersion);
 
-	int ldapVersion = LDAP_VERSION3;
-	ldap_set_option(ldap, LDAP_OPT_PROTOCOL_VERSION, & ldapVersion);
+    std::ostringstream uns;
+    uns << "uid=" << username << ",ou=user,ou=internal,dc=met,dc=no";
+    string un = uns.str();
 
-	std::ostringstream uns;
-	//uns << "uid=" << username << ", ou=People, o=dnmi.no";
-	uns << "uid=" << username << ",ou=user,ou=internal,dc=met,dc=no";
-	string un = uns.str();
-	//cout << un << endl;
+    VERIFY(ldap_simple_bind_s(ldap, un.c_str(), password));
 
-	VERIFY(ldap_simple_bind_s(ldap, un.c_str(), password));
-
-	ldap_unbind(ldap);
-	cout << "YESSSSS" << endl;
-	return true;
+    ldap_unbind(ldap);
+    cout << "YESSSSS" << endl;
+    return true;
 }
 
 
@@ -139,14 +136,14 @@ void Authenticator::doAuthenticate()
   }
 }
 
-const QString Authenticator::authenticate(const char *server, int port)
+const QString Authenticator::authenticate(QWidget* parent, const char *server, int port)
 {
-  Authenticator auth(server, port, 0,0,0);
+  Authenticator auth(server, port, parent, 0, 0);
   int result = auth.exec();
   if ( result == QDialog::Accepted )
     return auth.username->text();
 
   return QString();
 }
-}
 
+} // namespace Authentication

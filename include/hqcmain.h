@@ -92,10 +92,14 @@ public:
 
   HqcMainWindow();
   ~HqcMainWindow();
+
+  void startup();
+
   void makeObsDataList( kvservice::KvObsDataList& dataList );
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
   int nuroprpar;
   int nucoprpar;
+
 
   //  QAction * lackListAction;
 

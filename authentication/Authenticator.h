@@ -41,35 +41,30 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Authentication {
 
-  //  const int DEFAULT_LDAP_PORT = 389;
-  const int DEFAULT_LDAP_PORT = 636;
+const int DEFAULT_LDAP_PORT = 636;
 
-  bool authenticate(const char *username, const char *password, 
-		    const char *server, int port = DEFAULT_LDAP_PORT);
+bool authenticate(const char *username, const char *password,
+                  const char *server, int port = DEFAULT_LDAP_PORT);
 
-
-
-  class Authenticator : public QDialog, private Ui_AuthenticationDialog
-  {
+class Authenticator : public QDialog, private Ui_AuthenticationDialog
+{
     Q_OBJECT;
 
-  public:
-    Authenticator( const char *server, int port = DEFAULT_LDAP_PORT, 
-		   QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0 );
+public:
+    Authenticator(const char *server, int port = DEFAULT_LDAP_PORT,
+                  QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
     virtual ~Authenticator();
 
-    static const QString authenticate(const char *server, int port = DEFAULT_LDAP_PORT);
+    static const QString authenticate(QWidget* parent, const char *server, int port = DEFAULT_LDAP_PORT);
 
-  protected:
+protected:
     QString server;
     int port;
 
-  protected slots:
+protected slots:
     virtual void doAuthenticate();
-  };
+};
 
-
-}
-
+} // namespace Authentication
 
 #endif // __Authenticator_h__

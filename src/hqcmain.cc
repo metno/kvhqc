@@ -161,38 +161,6 @@ HqcMainWindow::HqcMainWindow()
   , reinserter( NULL )
   , dataModel(0)
 {
-  /////TEST
-  //  readSettings();
-  /////TEST SLUTT
-  // --- CHECK USER IDENTITY ----------------------------------------
-
-  reinserter = Authentication::identifyUser(  KvApp::kvApp,
-					     "ldap-oslo.met.no", userName);
-  if ( reinserter == NULL ) {
-    int mb = QMessageBox::information(this,
-                                      tr("Autentisering"),
-                                      tr("Du er ikke registrert som operatør!\n"
-                                         "Du kan se dataliste, feillog og feilliste,\n"
-                                         "men ikke gjøre endringer i Kvalobsdatabasen!"),
-                                      tr("Fortsett"),
-                                      tr("Avslutt"),
-                                      "");
-    if ( mb == 1 )
-      throw runtime_error( "Not authenticated" );
-  }
-  else {
-    cout << "Hei " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
-  }
-  //-----------------------------------------------------------------
-
-
-
-
-  firstObs = true;
-  sLevel  = 0;
-  dianaconnected=  false;  // connection to diana
-  tsVisible = false;
-
   // ---- ACTIONS -----------------------------------------------
 
   QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
@@ -220,9 +188,6 @@ HqcMainWindow::HqcMainWindow()
 
 
   // ---- MAIN MENU ---------------------------------------------
-  //  qApp->setStyle(new QSGIStyle);
-
-  listExist = FALSE;
 
   QMenu * file = menuBar()->addMenu(tr("&Fil"));
   saveAction = file->addAction( tr("Lagre"), this, SIGNAL( saveData() ), QKeySequence::Save );
@@ -339,15 +304,6 @@ HqcMainWindow::HqcMainWindow()
 	  SLOT(cleanConnection()));
   statusBar()->addPermanentWidget(pluginB,0);
 
-  //    }
-  statusBar()->message( tr("Ready"), 2000 );
-
-  // --- READ STATION INFO ----------------------------------------
-
-  readFromObsPgm();
-
-  readFromParam();
-
   // --- DEFINE DIALOGS --------------------------------------------
   const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
   lstdlg = new ListDialog(this);
@@ -405,39 +361,76 @@ HqcMainWindow::HqcMainWindow()
   tsdlg = new TimeseriesDialog();
   tsdlg->hide();
 
-  connect( tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
-  connect( tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
+  connect(tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
+  connect(tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
-	   tsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)),
-	   tsdlg,SLOT(newParameterList(const QStringList&)));
+  connect(this, SIGNAL(newStationList(std::vector<QString>&)),
+          tsdlg, SLOT(newStationList(std::vector<QString>&)));
+  connect(this, SIGNAL(newParameterList(const QStringList&)),
+          tsdlg, SLOT(newParameterList(const QStringList&)));
 
-  connect( rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
-  connect( rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
+  connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
+  connect(rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
 
-  connect( actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
-  connect( actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
+  connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
+  connect(actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
-	   rjtsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)),
-	   rjtsdlg,SLOT(newParameterList(const QStringList&)));
+  connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
+          rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
+  connect(this,  SIGNAL(newParameterList(const QStringList&)),
+          rjtsdlg, SLOT(newParameterList(const QStringList&)));
 
-  connect( this,SIGNAL(newStationList(std::vector<QString>&)),
-	   actsdlg,SLOT(newStationList(std::vector<QString>&)));
-  connect( this,SIGNAL(newParameterList(const QStringList&)),
-	   actsdlg,SLOT(newParameterList(const QStringList&)));
+  connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
+          actsdlg, SLOT(newStationList(std::vector<QString>&)));
+  connect(this,  SIGNAL(newParameterList(const QStringList&)),
+          actsdlg, SLOT(newParameterList(const QStringList&)));
 
-  connect( lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
-	   tsdlg,  SLOT(setFromTimeSlot(const QDateTime&)));
+  connect(lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
+          tsdlg, SLOT(setFromTimeSlot(const QDateTime&)));
 
-  connect( lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
-	   tsdlg,  SLOT(setToTimeSlot(const QDateTime&)));
+  connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
+          tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
 
   // make the timeseries-plot-dialog
   tspdialog = new TSPlotDialog(this);
-  readFromStation();
+}
+
+void HqcMainWindow::startup()
+{
+    listExist = FALSE;
+    firstObs = true;
+    sLevel = 0;
+    dianaconnected = false;
+    tsVisible = false;
+
+    // --- CHECK USER IDENTITY ----------------------------------------
+
+    reinserter = Authentication::identifyUser(this, KvApp::kvApp, "ldap-oslo.met.no", userName);
+    if( not reinserter ) {
+        int mb = QMessageBox::information(this,
+                                          tr("Autentisering"),
+                                          tr("Du er ikke registrert som operatør!\n"
+                                             "Du kan se dataliste, feillog og feilliste,\n"
+                                             "men ikke gjøre endringer i Kvalobsdatabasen!"),
+                                          tr("Fortsett"),
+                                          tr("Avslutt"),
+                                          "");
+        if ( mb == 1 )
+            throw runtime_error( "Not authenticated" );
+    } else {
+        cout << "Hei " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
+    }
+    //-----------------------------------------------------------------
+
+    // --- READ STATION INFO ----------------------------------------
+    {
+        BusyIndicator busy;
+        readFromObsPgm();
+        readFromParam();
+        readFromStation();
+    }
+
+    statusBar()->message( tr("Ready"), 2000 );
 }
 
 void HqcMainWindow::showFlags() {

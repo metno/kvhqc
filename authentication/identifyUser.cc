@@ -48,18 +48,18 @@ namespace Authentication {
     typedef opList::const_iterator opIter;
   };
 
-  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName)
-  {
-    return identifyUser(app, ldap_server, userName, DEFAULT_LDAP_PORT);
-  }
+DataReinserter<KvApp> *identifyUser(QWidget* widgetparent, KvApp *app, const char *ldap_server, QString& userName)
+{
+    return identifyUser(widgetparent, app, ldap_server, userName, DEFAULT_LDAP_PORT);
+}
 
-  DataReinserter<KvApp> *identifyUser(KvApp *app, const char *ldap_server, QString& userName, int ldap_port)
-  {
+DataReinserter<KvApp> *identifyUser(QWidget* widgetparent, KvApp *app, const char *ldap_server, QString& userName, int ldap_port)
+{
     // Authenticate user:
 
-    QString user = Authenticator::authenticate(ldap_server, ldap_port);
+    QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
     if ( user.isEmpty() )
-      return NULL; // Not authenticated
+      return 0; // Not authenticated
 
     // Get list of operators from database, and find our operator:
     opList operators;
@@ -76,7 +76,8 @@ namespace Authentication {
       }
     }
 
-    // Could not find user in database:
-    return NULL;
-  }
+    // could not find user in database
+    return 0;
 }
+
+} // namespace Authentication
