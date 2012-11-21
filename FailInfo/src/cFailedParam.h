@@ -33,7 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __cFailedParam_h__
 
 #include <string>
-#include <ostream>
+#include <iosfwd>
 #include <list>
 #include <kvalobs/kvData.h>
 

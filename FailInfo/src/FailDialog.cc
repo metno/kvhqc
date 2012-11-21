@@ -49,7 +49,7 @@ namespace FailInfo {
 	     this,   SLOT  ( close()   ) );
 
     Q3VBoxLayout *mainLayout = new Q3VBoxLayout( this, 2, 2 );
-    mainLayout->addWidget( dynamic_cast<QWidget*>(failList) );
+    mainLayout->addWidget(failList);
     
     Q3HBoxLayout *buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->insertStretch( 0 );

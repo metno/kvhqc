@@ -49,13 +49,14 @@ namespace model
 {
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
 
-  const int codeParam[] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
-			     13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
-			     24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
-			     35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-			     45, 46, 47, 48, 49, 54, 55, 56, 57,123,
-			     124,128151,273,301,302,303,304,305,306,
-			     307,308,1021,1022,1025,1026};
+const int NC = 66;
+const int codeParam[66] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
+                              13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
+                              24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
+                              35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
+                              45, 46, 47, 48, 49, 54, 55, 56, 57,123,
+                              124,128151,273,301,302,303,304,305,306,
+                              307,308,1021,1022,1025,1026 };
 
   KvalobsDataModel::KvalobsDataModel(
       const std::vector<int> & parameters,
@@ -74,20 +75,20 @@ namespace model
     showPositionInHeader_(showPositionInHeader),
     showHeightInHeader_(showHeightInHeader),
     correctedValuesAreEditable_(editable)
-  {
-    for ( std::vector<int>::const_iterator param = parameters.begin(); param != parameters.end(); ++ param ) {
+{
+    mi_foreach(const int param, parameters) {
         QString paramName = "unknown";
-        QMap<int,QString>::const_iterator find = paramIdToParamName.find(* param);
+        QMap<int,QString>::const_iterator find = paramIdToParamName.find(param);
         if ( find != paramIdToParamName.end() )
-          paramName = * find;
-        parametersToShow_.push_back(Parameter(* param, paramName));
+            paramName = * find;
+        parametersToShow_.push_back(Parameter(param, paramName));
     }
     qDebug() << "Statistics\n"
         "--------\n"
         "Number of parameters: " << parametersToShow_.size();
-    for ( std::vector<Parameter>::const_iterator it = parametersToShow_.begin(); it != parametersToShow_.end(); ++ it )
-      qDebug() << it->paramid << ":\t" << qPrintable(it->parameterName);
-  }
+    mi_foreach(const Parameter& p, parametersToShow_)
+        qDebug() << p.paramid << ":\t" << qPrintable(p.parameterName);
+}
 
   KvalobsDataModel::~KvalobsDataModel()
   {
@@ -120,23 +121,23 @@ namespace model
     return parametersToShow_.size() * COLUMNS_PER_PARAMETER;
   }
 
-  QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const {
-
-      if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
-      return QVariant();
+QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
+{
+    
+    if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
+        return QVariant();
 
     switch ( role ) {
     case Qt::DisplayRole:
     case Qt::EditRole:
-      return displayRoleData(index);
+        return displayRoleData(index);
     case Qt::TextColorRole:
-      return textColorRoleData(index);
+        return textColorRoleData(index);
     case Qt::TextAlignmentRole:
-      return textAlignmentRoleData(index);
-
+        return textAlignmentRoleData(index);
     }
     return QVariant();
-  }
+}
 
   QVariant KvalobsDataModel::headerData(int section, Qt::Orientation orientation, int role) const
   {
@@ -615,7 +616,7 @@ namespace model
   }
 
   bool KvalobsDataModel::paramIsCode(const int parNo) const {
-    for ( int i = 0; i < 66; i++ ) {
+    for ( int i = 0; i < NC; i++ ) {
       if ( parNo == codeParam[i] )
 	return true;
     }

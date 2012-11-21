@@ -303,7 +303,6 @@ QC1-6-329	Forholdet mellom værkode (W2) og totalt skydekke
 QC1-6-111	Forholdet mellom snøfokk og vindhastighet
 QC1-6-112	Forholdet mellom snøfokk og vindhastighet
 QC1-9		Kombinert vurdering
-QC2d-2		Interpolert av QC2
 QC1-1-129a  Kodeverdi for EE utenfor tillatt omraade
 QC1-1-129b  Kodeverdi for EE utenfor tillatt omraade
 QC1-1-129c  Kodeverdi for EE utenfor tillatt omraade
@@ -325,3 +324,9 @@ QC1-6-309c  Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0
 QC1-6-310a  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
 QC1-6-310b  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
 QC1-6-310c  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
+QC2d-1		Interpolert i DipTest
+QC2d-2		Interpolert i SingleLinear
+QC2d-2-I	Interpolert i GapInterpolation
+QC2h-1-highsingle	svært høy enestående minuttverdi
+QC2h-1-highstart	svært høy startverdi for en byge
+QC2h-1-interruptedrain	unormalt pause i en byge

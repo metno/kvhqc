@@ -29,11 +29,17 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "FailList.h"
-#include "explainQC.h"
+
 #include "cFailedParam.h"
+#include "explainQC.h"
+#include "FunctionLogger.hh"
+#include "mi_foreach.hh"
+
+#include <Qt/qdebug.h>
+#include <Qt3Support/Q3ListView>
+
 #include <map>
 #include <set>
-#include <Qt3Support/Q3ListView>
 
 #include <iostream>
 
@@ -60,50 +66,49 @@ namespace FailInfo
   typedef map< QString, set<QC::cFailedParam> >  SubElem;
   typedef map< QString, SubElem > Fails;
 
-  void FailList::newData( const kvalobs::kvData & data )
-  {
+void FailList::newData( const kvalobs::kvData & data )
+{
     if ( data == this->data )
-      return;
+        return;
     this->data = data;
+    
+    LOG_FUNCTION();
 
     cfailedList->clear();
-
+    
     QC::cFailList fail = QC::getFailList( data.cfailed() );
-    if ( fail.empty() )
-      return;
+    if( fail.empty() )
+        return;
 
     Fails fails;
-
-    for ( QC::cFailList::iterator it = fail.begin();
-	  it != fail.end();  it++ ) {
-      fails
-	[ QString::fromStdString(it->getPart( QC::cFailedParam::QcClass ))   ]
-	[ QString::fromStdString(it->getPart( QC::cFailedParam::Group )) ]
-	.insert( *it );
+    mi_foreach(const QC::cFailedParam& cf, fail) {
+        fails
+            [ QString::fromStdString(cf.getPart( QC::cFailedParam::QcClass ))   ]
+            [ QString::fromStdString(cf.getPart( QC::cFailedParam::Group )) ]
+            .insert( cf );
     }
-    for ( Fails::const_iterator top = fails.begin();
-	  top != fails.end();  top++ ) {
-      Q3ListViewItem *topItem =
-	new Q3ListViewItem( cfailedList, top->first, "" );
-      topItem->setOpen(true);
-      QC::FailGroupList &failGroupList = QC::failExpl[ top->first.toStdString() ];
-
-      for ( SubElem::const_iterator sub = top->second.begin();
-	    sub != top->second.end();  sub++ ) {
-	QC::FailGroup &failGroup =
-	  failGroupList[sub->first.ascii()];
-	Q3ListViewItem *subItem =
-	  new Q3ListViewItem( topItem, sub->first,
-			      QString::fromStdString(failGroup.explanation) );
-	subItem->setOpen(true);
-
-	for ( set<QC::cFailedParam>::const_iterator subsub = sub->second.begin();
-	      subsub != sub->second.end();  subsub++ ) {
-	  new Q3ListViewItem( subItem,
-			      QString::fromStdString(subsub->getPart( QC::cFailedParam::Detail )),
-			      QString::fromStdString(failGroup.getDetailExplanation( *subsub, data)) );
-	}
-      }
+    mi_foreach(Fails::value_type f, fails) {
+        Q3ListViewItem *topItem =
+            new Q3ListViewItem( cfailedList, f.first, "" );
+        topItem->setOpen(true);
+        qDebug() << "f.first=" << f.first;
+        QC::FailGroupList &failGroupList = QC::failExpl[ f.first.toStdString() ];
+        
+        mi_foreach(const SubElem::value_type& sub, f.second) {
+            QC::FailGroup &failGroup = failGroupList[sub.first.ascii()];
+            qDebug() << "sub.first=" << sub.first;
+            Q3ListViewItem *subItem =
+                new Q3ListViewItem( topItem, sub.first,
+                                    QString::fromStdString(failGroup.explanation) );
+            subItem->setOpen(true);
+            
+            mi_foreach( const QC::cFailedParam& subsub, sub.second) {
+                qDebug() << "subsub detail=" << QString::fromStdString(subsub.getPart( QC::cFailedParam::Detail ));
+                new Q3ListViewItem( subItem,
+                                    QString::fromStdString(subsub.getPart( QC::cFailedParam::Detail )),
+                                    QString::fromStdString(failGroup.getDetailExplanation(subsub, data)) );
+            }
+        }
     }
   }
 }

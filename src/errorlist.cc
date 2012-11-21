@@ -353,7 +353,6 @@ void ErrorList::fillMemoryStores(QStringList& selPar,
                                  model::KvalobsDataListPtr dtl,
                                  const std::vector<modDatl>& mdtl)
 {
-#if 1
   mi_foreach(const model::KvalobsData& data, *dtl) {
     if( data.stnr() > 99999 )
         continue;
@@ -453,7 +452,6 @@ void ErrorList::fillMemoryStores(QStringList& selPar,
       }
     }
   }
-#endif
 
   dumpMemstore(memStore1, "1");
   dumpMemstore(memStore2, "2");
@@ -721,17 +719,6 @@ void ErrorList::tableCellClicked(int row, int col, int /*button*/)
     if (col == 0 && row >= 0)
         selectRow(row);
     selectedRow = row;
-}
-
-double ErrorList::calcdist(double lon1, double lat1, double lon2, double lat2) {
-  double alon1 = M_PI*lon1/180.0;
-  double alon2 = M_PI*lon2/180.0;
-  double alat1 = M_PI*lat1/180.0;
-  double alat2 = M_PI*lat2/180.0;
-  double dist;
-  dist = 2.0*asin(sqrt((sin((alat1-alat2)/2.0))*(sin((alat1-alat2)/2.0)) +
-		       cos(alat1)*cos(alat2)*(sin((alon1-alon2)/2))*(sin((alon1-alon2)/2))));
-  return 6378.0*dist;
 }
 
 bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime)

@@ -334,7 +334,6 @@ private:
    */
   double FF();
 
-  double calcdist(double, double, double, double);
   void swapRows(int, int, bool);
   void sortColumn(int, bool, bool);
   /**

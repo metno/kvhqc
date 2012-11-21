@@ -29,20 +29,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "explainQC.h"
-#include <algorithm>
-#include <map>
-#include <list>
-#include <fstream>
-#include <sstream>
-#include <QtCore/qstring.h>
+
+#include "FunctionLogger.hh"
+#include "hqc_paths.hh"
+
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStationParam.h>
 #include <kvalobs/kvQCFlagTypes.h>
 
-#include "hqc_paths.hh"
+#include <QtCore/qstring.h>
 
 #include <boost/algorithm/string.hpp>
+
+#include <algorithm>
+#include <map>
+#include <list>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 using namespace kvalobs;
@@ -376,14 +380,16 @@ namespace QC
       return getExplanation( failDetail.toString() );
     }
 
-    static const int groups_ = 1;
-    static FailGroupList::value_type _failGroup[ groups_ ] = {
-      FailGroupList::value_type( "0",
-				 FailGroup( "Tidsserietilpasning",
-					    ftime ) )
-    };
-    FailGroupList failGroup( _failGroup, &_failGroup[ groups_ ] );
-  }
+  static FailGroupList::value_type _qc2d_failGroup[] = {
+      FailGroupList::value_type( "2", FailGroup( "Tidsserietilpasning", ftime ) )
+  };
+  FailGroupList qc2d_failGroup(_qc2d_failGroup, boost::end(_qc2d_failGroup));
+
+  static FailGroupList::value_type _qc2h_failGroup[] = {
+      FailGroupList::value_type( "1", FailGroup( "Pluviometer", ftime ) )
+  };
+  FailGroupList qc2h_failGroup(_qc2h_failGroup, boost::end(_qc2h_failGroup));
+  } // namespace QC2
 
 
 
@@ -401,9 +407,13 @@ namespace QC
   {
   }
 
-  static FailExplanation::value_type _failCheck[1] = {
-    FailExplanation::value_type( "QC1", QC1::failGroup )
-  };
+static FailExplanation::value_type _failCheck[] = {
+    FailExplanation::value_type( "QC1",  QC1::failGroup ),
+//    FailExplanation::value_type( "QC2",  QC2::failGroup ),
+    FailExplanation::value_type( "QC2d", QC2::qc2d_failGroup ),
+    FailExplanation::value_type( "QC2h", QC2::qc2h_failGroup )
+};
 
-  FailExplanation failExpl( _failCheck, &_failCheck[1] );
-}
+FailExplanation failExpl(_failCheck, boost::end(_failCheck));
+
+} // namespace QC
