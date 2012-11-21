@@ -57,9 +57,6 @@ public:
   QDateTimeEdit* fromTimeEdit;
   QDateTimeEdit* toTimeEdit;
 
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
   bool getResults(QString & parameter,
 		  QDateTime & fromTime,
 		  QDateTime & toTime,

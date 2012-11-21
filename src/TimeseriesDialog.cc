@@ -29,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "TimeseriesDialog.h"
+#include "HideApplyBox.hh"
 #include "hqc_utilities.hh"
 #include "MiDateTimeEdit.hh"
 #include "qtQTUtil.h"
@@ -179,25 +180,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
            this, SLOT(setMaxFromTime(const QDateTime&)));
 
   //////////////////// apply & hide ///////////////////////////////////////////
-  QPushButton* hideButton = new QPushButton(tr("Skjul"), this);
-  hideButton->setFont(QFont("Arial", 9));
-
-  QPushButton* applyButton = new QPushButton(tr("Utfør"), this);
-  applyButton->setFont(QFont("Arial", 9));
-
-  QPushButton* hideapplyButton = new QPushButton(tr("Utfør+Skjul"), this);
-  hideapplyButton->setFont(QFont("Arial", 9));
-
-
-  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
-  buttonLayout->addWidget(hideButton,10);
-  buttonLayout->addWidget(applyButton,10);
-  buttonLayout->addWidget(hideapplyButton,10);
-
-  connect(hideButton,      SIGNAL(clicked()), SIGNAL( TimeseriesHide()));
-  connect(hideapplyButton, SIGNAL(clicked()), SIGNAL( TimeseriesHide()));
-  connect(hideapplyButton, SIGNAL(clicked()), SIGNAL( TimeseriesApply()));
-  connect(applyButton,     SIGNAL(clicked()), SIGNAL( TimeseriesApply()));
+  HideApplyBox* hab = new HideApplyBox(this);
+  connect(hab, SIGNAL(hide()) , SIGNAL(TimeSeriesHide()));
+  connect(hab, SIGNAL(apply()), SIGNAL(TimeSeriesApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   topLayout->addWidget(dTypes);
@@ -216,7 +201,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   topLayout->addWidget(dte_from);
   topLayout->addWidget(new QLabel(tr("Til:")));
   topLayout->addWidget(dte_to);
-  topLayout->addLayout(buttonLayout);
+  topLayout->addWidget(hab);
 
   //Init
   tsInfo ts;

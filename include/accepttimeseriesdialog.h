@@ -59,9 +59,6 @@ public:
   QDateTimeEdit* fromTimeEdit;
   QDateTimeEdit* toTimeEdit;
 
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
   QRadioButton* qc2Yes;
   QRadioButton* qc2No;
   QGroupBox *qc2Val;

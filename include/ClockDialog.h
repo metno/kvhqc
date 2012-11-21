@@ -55,11 +55,7 @@ public:
   QCheckBox* clk[24];
   QCheckBox* allTimes;
   QCheckBox* standardTimes;
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
 public slots:
-  void applyHideClicked();
   void standardCheck();
   void allCheck();
   void oStandardCheck();

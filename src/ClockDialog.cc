@@ -29,6 +29,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "ClockDialog.h"
+
+#include "HideApplyBox.hh"
+
 #include <QBoxLayout>
 #include <QGridLayout>
 
@@ -70,32 +73,14 @@ ClockDialog::ClockDialog(QWidget* parent): QDialog(parent) {
   connect(allTimes, SIGNAL(clicked()),this,SLOT(oAllCheck()));
   connect(standardTimes, SIGNAL(clicked()),this,SLOT(oStandardCheck()));
 
-  sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setGeometry(20, 620, 90, 30);
-  sthide->setFont(QFont("Arial", 9));
-
-  excu = new QPushButton(tr("Utfør"), this);
-  excu->setGeometry(120, 620, 90, 30);
-  excu->setFont(QFont("Arial", 9));
-  
-  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setGeometry(220, 620, 90, 30);
-  hdnexcu->setFont(QFont("Arial", 9));
-  hdnexcu->setDefault(true);
-
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
-  buttonLayout->addWidget(sthide);
-  buttonLayout->addWidget(excu);
-  buttonLayout->addWidget(hdnexcu);
-
-  connect(sthide, SIGNAL(clicked()), this, SIGNAL( ClockHide()));
-  connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
-  connect(excu, SIGNAL(clicked()), this, SIGNAL( ClockApply()));
+  HideApplyBox* hab = new HideApplyBox(this);
+  connect(hab, SIGNAL(hide()) , SIGNAL(ClockHide()));
+  connect(hab, SIGNAL(apply()), SIGNAL(ClockApply()));
 
   QVBoxLayout* topLayout = new QVBoxLayout(this,10);
   topLayout->addWidget(staTime);
   topLayout->addWidget(oTime);
-  topLayout->addLayout(buttonLayout);
+  topLayout->addWidget(hab);
 }
 void ClockDialog::showAll(){
   this->show();
@@ -103,11 +88,6 @@ void ClockDialog::showAll(){
 
 void ClockDialog::hideAll(){
   this->hide();
-}
-
-void ClockDialog::applyHideClicked(){
-  emit ClockHide();
-  emit ClockApply();
 }
 
 void ClockDialog::standardCheck() {

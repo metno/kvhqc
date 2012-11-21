@@ -29,7 +29,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "dianashowdialog.h"
-//Added by qt3to4:
+
+#include "HideApplyBox.hh"
+
 #include <Q3GridLayout>
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
@@ -240,31 +242,13 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   paraLayout->addWidget(sdType    ,28,4);
   paraLayout->addWidget(emType    ,28,5);
 
-  sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setGeometry(20, 620, 90, 30);
-  sthide->setFont(QFont("Arial", 9));
-
-  excu = new QPushButton(tr("Utfør"), this);
-  excu->setGeometry(120, 620, 90, 30);
-  excu->setFont(QFont("Arial", 9));
-  
-  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setGeometry(220, 620, 90, 30);
-  hdnexcu->setFont(QFont("Arial", 9));
-  hdnexcu->setDefault(true);
-
-  Q3HBoxLayout* buttonLayout = new Q3HBoxLayout();
-  buttonLayout->addWidget(sthide, 10);
-  buttonLayout->addWidget(excu, 10);
-  buttonLayout->addWidget(hdnexcu, 10);
-
-  connect(sthide, SIGNAL(clicked()), this, SIGNAL( dianaShowHide()));
-  connect(hdnexcu, SIGNAL(clicked()), this, SLOT( applyHideClicked()));
-  connect(excu, SIGNAL(clicked()), this, SIGNAL( dianaShowApply()));
+  HideApplyBox* hab = new HideApplyBox(this);
+  connect(hab, SIGNAL(hide()) , SIGNAL(dianaShowHide()));
+  connect(hab, SIGNAL(apply()), SIGNAL(dianaShowApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   topLayout->addWidget(paraTyp);
-  topLayout->addLayout(buttonLayout);
+  topLayout->addWidget(hab);
 
   checkStandard();
 }
@@ -278,11 +262,6 @@ void DianaShowDialog::showAll(){
 
 void DianaShowDialog::hideAll(){
   this->hide();
-}
-
-void DianaShowDialog::applyHideClicked(){
-  emit dianaShowHide();
-  emit dianaShowApply();
 }
 
 void DianaShowDialog::checkStandard() {

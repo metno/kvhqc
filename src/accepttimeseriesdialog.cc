@@ -30,16 +30,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "accepttimeseriesdialog.h"
 
+#include "HideApplyBox.hh"
 #include "timeutil.hh"
 
 #include <QtGui/QGridLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
-
-#include <iostream>
-
-using namespace std;
 
 AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog() 
 {  
@@ -75,18 +72,7 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   toTimeEdit    = new MiDateTimeEdit(t,this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
-  sthide = new QPushButton(tr("Skjul"), this);
-  sthide->setGeometry(20, 620, 90, 30);
-  sthide->setFont(QFont("Arial", 9));
-
-  excu = new QPushButton(tr("Utfør"), this);
-  excu->setGeometry(120, 620, 90, 30);
-  excu->setFont(QFont("Arial", 9));
-  
-  hdnexcu = new QPushButton(tr("Utfør+Skjul"), this);
-  hdnexcu->setGeometry(220, 620, 90, 30);
-  hdnexcu->setFont(QFont("Arial", 9));
-  hdnexcu->setDefault(true);
+  HideApplyBox* hab = new HideApplyBox(this);
 
   QHBoxLayout* stationLayout = new QHBoxLayout();
   stationLayout->addWidget(statLabel, 10);
@@ -103,10 +89,6 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   QHBoxLayout* toLayout = new QHBoxLayout();
   toLayout->addWidget(toLabel, 10);
   toLayout->addWidget(toTimeEdit, 10);
-  QHBoxLayout* buttonLayout = new QHBoxLayout();
-  buttonLayout->addWidget(sthide, 10);
-  buttonLayout->addWidget(excu, 10);
-  buttonLayout->addWidget(hdnexcu, 10);
 
   QVBoxLayout* topLayout = new QVBoxLayout(this,10);
   topLayout->addWidget(statLabel);
@@ -118,12 +100,10 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   topLayout->addLayout(vl);
   topLayout->addLayout(fromLayout);
   topLayout->addLayout(toLayout);
-  topLayout->addLayout(buttonLayout);
+  topLayout->addWidget(hab);
 
-  connect(sthide,      SIGNAL(clicked()), SIGNAL( tsAcceptHide()));
-  connect(hdnexcu,     SIGNAL(clicked()), SIGNAL( tsAcceptHide()));
-  connect(hdnexcu,     SIGNAL(clicked()), SIGNAL( tsAcceptApply()));
-  connect(excu,        SIGNAL(clicked()), SIGNAL( tsAcceptApply()));
+  connect(hab, SIGNAL(hide()),  SIGNAL(tsAcceptHide()));
+  connect(hab, SIGNAL(apply()), SIGNAL(tsAcceptApply()));
 }
 
 void AcceptTimeseriesDialog::showAll(){

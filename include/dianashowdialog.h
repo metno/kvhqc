@@ -129,11 +129,6 @@ public:
   QRadioButton* sdType;
   QRadioButton* emType;
 
-  QPushButton* sthide;
-  QPushButton* hdnexcu;
-  QPushButton* excu;
-public slots:
-  void applyHideClicked();
 signals:
   void dianaShowHide();
   void dianaShowApply();
