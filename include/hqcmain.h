@@ -45,6 +45,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/qpoint.h>
 #include <QtCore/QScopedPointer>
 #include <QtGui/qwidget.h>
+#include <QtGui/qprinter.h>
 #include <QtGui/qmainwindow.h>
 #include <QtGui/qmenubar.h>
 #include <QtGui/qlabel.h>
@@ -280,6 +281,7 @@ private slots:
   void acceptTimeseries();
   void acceptTimeseriesOK();
   void startKro();
+  void screenshot();
 private:
   void selectParameterGroup(const QString& group);
 
