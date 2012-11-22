@@ -155,7 +155,9 @@ HqcMainWindow::HqcMainWindow()
   , dianaconnected(false)
 {
     ui->setupUi(this);
-    connect(ui->exitAction, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
+    connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
+    connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
+    connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
 
     QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
     ui->dataListAction->setIcon(icon_listdlg);
@@ -1684,49 +1686,47 @@ bool HqcMainWindow::readFromStationFile()
 /*!
  Read the param table in the kvalobs database
 */
-void HqcMainWindow::readFromParam() {
+void HqcMainWindow::readFromParam()
+{
     LOG_FUNCTION();
 
-  // First, read parameter order from file
+    // First, read parameter order from file
+    QString fileParamOrder = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
+    QFile paramOrder(fileParamOrder);
+    if( !paramOrder.open(QIODevice::ReadOnly) ) {
+        QMessageBox::critical(this,
+                              tr("Cannot read paramorder file"),
+                              tr("The file expected in '%1' could not be opened. Please set HQC_CONFDIR correctly.").arg(fileParamOrder),
+                              QMessageBox::Abort,
+                              Qt::NoButton);
+        ::exit(1);
+    }
 
-  QString fileParamOrder = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
-  QFile paramOrder(fileParamOrder);
-  if( !paramOrder.open(QIODevice::ReadOnly) ) {
-      QMessageBox msgBox;
-      msgBox.setIcon(QMessageBox::Critical);
-      msgBox.setText(tr("Cannot read paramorder file"));
-      msgBox.setInformativeText(tr("The file expected in '%1' could not be opened. Please set HQC_CONFDIR correctly.").arg(fileParamOrder));
-      msgBox.setStandardButtons(QMessageBox::Abort);
-      msgBox.setDefaultButton(QMessageBox::Abort);
-      msgBox.exec();
-      ::exit(1);
-  }
-  QTextStream paramStream(&paramOrder);
-
-  parameterGroups.clear();
-  QString group;
-  while ( not paramStream.atEnd() ) {
-      QString data;
-      paramStream >> data;
-      data.stripWhiteSpace();
-      if ( not data.isEmpty() ) {
-        bool ok;
-        int paramid = data.toInt(& ok);
-        if ( not ok )
-          group = data;
-        else {
-            QString name = "<No group>";
-            std::map<QString, QString>::const_iterator find = configNameToUserName.find(group);
-            if ( find != configNameToUserName.end() )
-              name = find->second;
-            parameterGroups[name].push_back(paramid);
+    QTextStream paramStream(&paramOrder);
+    parameterGroups.clear();
+    QString group;
+    while ( not paramStream.atEnd() ) {
+        QString data;
+        paramStream >> data;
+        data.stripWhiteSpace();
+        if ( not data.isEmpty() ) {
+            bool ok;
+            int paramid = data.toInt(& ok);
+            if ( not ok )
+                group = data;
+            else {
+                QString name = "<No group>";
+                std::map<QString, QString>::const_iterator find = configNameToUserName.find(group);
+                if ( find != configNameToUserName.end() )
+                    name = find->second;
+                parameterGroups[name].push_back(paramid);
+            }
         }
-      }
-  }
+    }
 
-  if(!kvservice::KvApp::kvApp->getKvParams(plist))
-    cerr << "Can't connect to param table!" << endl;
-
+    if(!kvservice::KvApp::kvApp->getKvParams(plist))
+        cerr << "Can't connect to param table!" << endl;
+    
     mi_foreach(const kvalobs::kvParam& p, plist)
         parMap[p.paramID()] = QString::fromStdString(p.name());
 }

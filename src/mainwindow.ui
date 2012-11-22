@@ -431,7 +431,7 @@
  <connections>
   <connection>
    <sender>actionDataAndErrorList</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>allListMenu()</slot>
    <hints>
@@ -447,7 +447,7 @@
   </connection>
   <connection>
    <sender>dataListAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>dataListMenu()</slot>
    <hints>
@@ -463,7 +463,7 @@
   </connection>
   <connection>
    <sender>timeSeriesAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>timeseriesMenu()</slot>
    <hints>
@@ -479,7 +479,7 @@
   </connection>
   <connection>
    <sender>timesAction</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>clk()</slot>
    <hints>
@@ -494,40 +494,8 @@
    </hints>
   </connection>
   <connection>
-   <sender>saveAction</sender>
-   <signal>activated()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>saveData()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>printAction</sender>
-   <signal>activated()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>printErrorList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>flID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showFlags()</slot>
    <hints>
@@ -543,7 +511,7 @@
   </connection>
   <connection>
    <sender>orID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showOrigs()</slot>
    <hints>
@@ -559,7 +527,7 @@
   </connection>
   <connection>
    <sender>moID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showMod()</slot>
    <hints>
@@ -575,7 +543,7 @@
   </connection>
   <connection>
    <sender>stID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showStat()</slot>
    <hints>
@@ -591,7 +559,7 @@
   </connection>
   <connection>
    <sender>heID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showHeight()</slot>
    <hints>
@@ -607,7 +575,7 @@
   </connection>
   <connection>
    <sender>poID</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showPos()</slot>
    <hints>
@@ -639,7 +607,7 @@
   </connection>
   <connection>
    <sender>actionErrorList</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>errListMenu()</slot>
    <hints>
@@ -655,7 +623,7 @@
   </connection>
   <connection>
    <sender>actionErrorLog</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>errLogMenu()</slot>
    <hints>
@@ -671,7 +639,7 @@
   </connection>
   <connection>
    <sender>actionErrorListSalen</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>errLisaMenu()</slot>
    <hints>
@@ -687,7 +655,7 @@
   </connection>
   <connection>
    <sender>actionWatchRR</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showWatchRR()</slot>
    <hints>
@@ -703,7 +671,7 @@
   </connection>
   <connection>
    <sender>actionWatchWeather</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showWeather()</slot>
    <hints>
@@ -719,7 +687,7 @@
   </connection>
   <connection>
    <sender>actionTextDataList</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>textDataMenu()</slot>
    <hints>
@@ -735,7 +703,7 @@
   </connection>
   <connection>
    <sender>actionRejectDecode</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>rejectedMenu()</slot>
    <hints>
@@ -751,7 +719,7 @@
   </connection>
   <connection>
    <sender>actionParametersDaily</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>climateStatistics()</slot>
    <hints>
@@ -767,7 +735,7 @@
   </connection>
   <connection>
    <sender>actionParametersPrioritized</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>priority()</slot>
    <hints>
@@ -783,7 +751,7 @@
   </connection>
   <connection>
    <sender>actionParametersTemperatureHumidity</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>temperature()</slot>
    <hints>
@@ -799,7 +767,7 @@
   </connection>
   <connection>
    <sender>actionParametersPrecipitationSnow</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>precipitation()</slot>
    <hints>
@@ -815,7 +783,7 @@
   </connection>
   <connection>
    <sender>actionParametersWindPressure</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>airPress()</slot>
    <hints>
@@ -831,7 +799,7 @@
   </connection>
   <connection>
    <sender>actionParametersVisual</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>visuals()</slot>
    <hints>
@@ -847,7 +815,7 @@
   </connection>
   <connection>
    <sender>actionParametersMaritime</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>sea()</slot>
    <hints>
@@ -863,7 +831,7 @@
   </connection>
   <connection>
    <sender>actionParametersSynop</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>synop()</slot>
    <hints>
@@ -879,7 +847,7 @@
   </connection>
   <connection>
    <sender>actionParametersWind</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>wind()</slot>
    <hints>
@@ -895,7 +863,7 @@
   </connection>
   <connection>
    <sender>actionParametersPluviometer</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>plu()</slot>
    <hints>
@@ -911,7 +879,7 @@
   </connection>
   <connection>
    <sender>actionParametersAll</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>all()</slot>
    <hints>
@@ -927,7 +895,7 @@
   </connection>
   <connection>
    <sender>actionRejectSeries</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>rejectTimeseries()</slot>
    <hints>
@@ -943,7 +911,7 @@
   </connection>
   <connection>
    <sender>actionAcceptSeries</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>acceptTimeseries()</slot>
    <hints>
@@ -959,7 +927,7 @@
   </connection>
   <connection>
    <sender>actionDianaConfig</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>dsh()</slot>
    <hints>
@@ -975,7 +943,7 @@
   </connection>
   <connection>
    <sender>actionStartKro</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>startKro()</slot>
    <hints>
@@ -991,7 +959,7 @@
   </connection>
   <connection>
    <sender>actionHelpManual</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>helpUse()</slot>
    <hints>
@@ -1007,7 +975,7 @@
   </connection>
   <connection>
    <sender>actionHelpFlags</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>helpFlag()</slot>
    <hints>
@@ -1023,7 +991,7 @@
   </connection>
   <connection>
    <sender>actionHelpParameters</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>helpParam()</slot>
    <hints>
@@ -1039,7 +1007,7 @@
   </connection>
   <connection>
    <sender>actionAboutHqc</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>about()</slot>
    <hints>
@@ -1055,7 +1023,7 @@
   </connection>
   <connection>
    <sender>actionAboutQt</sender>
-   <signal>activated()</signal>
+   <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>aboutQt()</slot>
    <hints>
@@ -1071,8 +1039,8 @@
   </connection>
  </connections>
  <slots>
-  <slot>saveData()</slot>
-  <slot>printErrorList()</slot>
+  <signal>saveData()</signal>
+  <signal>printErrorList()</signal>
   <slot>showFlags()</slot>
   <slot>showOrigs()</slot>
   <slot>showMod()</slot>

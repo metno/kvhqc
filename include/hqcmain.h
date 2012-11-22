@@ -46,7 +46,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/qstringlist.h>
 #include <QtGui/qmainwindow.h>
 
-#include <fstream>
 #include <memory>
 
 class miMessage;

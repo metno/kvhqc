@@ -30,21 +30,15 @@
 */
 
 #include "GetTextData.h"
-#include "hqcmain.h"
 
-using namespace std;
-
-GetTextData::
-GetTextData(HqcMainWindow* o) :w(o)
+GetTextData::GetTextData(HqcMainWindow* o)
+    : w(o)
 {
-  w->txtList.clear();
+    w->txtList.clear();
 }
 
-bool
-GetTextData::
-next( kvservice::KvObsDataList &textdatalist )
+bool GetTextData::next(kvservice::KvObsDataList &textdatalist)
 {
-  w->makeTextDataList( textdatalist );
-  return true;
+    w->makeTextDataList( textdatalist );
+    return true;
 }
-

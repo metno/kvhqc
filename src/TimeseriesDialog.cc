@@ -181,8 +181,8 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   //////////////////// apply & hide ///////////////////////////////////////////
   HideApplyBox* hab = new HideApplyBox(this);
-  connect(hab, SIGNAL(hide()) , SIGNAL(TimeSeriesHide()));
-  connect(hab, SIGNAL(apply()), SIGNAL(TimeSeriesApply()));
+  connect(hab, SIGNAL(hide()) , SIGNAL(TimeseriesHide()));
+  connect(hab, SIGNAL(apply()), SIGNAL(TimeseriesApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
   topLayout->addWidget(dTypes);

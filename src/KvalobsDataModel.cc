@@ -36,8 +36,6 @@
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/kvDataOperations.h>
 #include <QtCore/QDebug>
-#include <cmath>
-
 
 namespace
 {
