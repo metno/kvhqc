@@ -59,6 +59,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QHelpEvent>
 #include <QtGui/QLineEdit>
 #include <QtGui/QToolTip>
+#include <QtGui/QMessageBox>
 #include <QtGui/QPainter>
 #include <QtGui/QPrinter>
 #include <Qt3Support/Q3TextEdit>

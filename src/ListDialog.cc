@@ -792,6 +792,10 @@ void StationTable::setData(const listStat_l& listStat,
     bool foundStat = false;
     ObsTypeList::const_iterator oit = otpList.begin();
     for ( ; oit != otpList.end(); oit++) {
+        if( oit->empty() ) {
+            std::cerr << "bad otpList" << std::endl;
+            continue;
+        }
         TypeList::const_iterator tit = oit->begin();
         if( s.stationid == (*tit) ) {
             foundStat = true;

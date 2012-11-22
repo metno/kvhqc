@@ -1,0 +1,1115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>HqcMainWindow</class>
+ <widget class="QMainWindow" name="HqcMainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>800</width>
+    <height>600</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>HQC</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QMdiArea" name="ws"/>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;Fil</string>
+    </property>
+    <addaction name="saveAction"/>
+    <addaction name="printAction"/>
+    <addaction name="closeAction"/>
+    <addaction name="exitAction"/>
+   </widget>
+   <widget class="QMenu" name="menuValg">
+    <property name="title">
+     <string>&amp;Valg</string>
+    </property>
+    <addaction name="flID"/>
+    <addaction name="orID"/>
+    <addaction name="moID"/>
+    <addaction name="stID"/>
+    <addaction name="heID"/>
+    <addaction name="poID"/>
+   </widget>
+   <widget class="QMenu" name="menuListType">
+    <property name="title">
+     <string>&amp;Listetype</string>
+    </property>
+    <addaction name="actionDataAndErrorList"/>
+    <addaction name="actionErrorList"/>
+    <addaction name="actionErrorLog"/>
+    <addaction name="dataListAction"/>
+    <addaction name="actionErrorListSalen"/>
+    <addaction name="separator"/>
+    <addaction name="actionWatchRR"/>
+    <addaction name="actionWatchWeather"/>
+    <addaction name="separator"/>
+    <addaction name="timeSeriesAction"/>
+    <addaction name="separator"/>
+    <addaction name="actionTextDataList"/>
+    <addaction name="actionRejectDecode"/>
+   </widget>
+   <widget class="QMenu" name="menuWeatherElement">
+    <property name="title">
+     <string>Vær&amp;element</string>
+    </property>
+    <addaction name="actionParametersDaily"/>
+    <addaction name="actionParametersPrioritized"/>
+    <addaction name="actionParametersTemperatureHumidity"/>
+    <addaction name="actionParametersPrecipitationSnow"/>
+    <addaction name="actionParametersWindPressure"/>
+    <addaction name="actionParametersVisual"/>
+    <addaction name="actionParametersMaritime"/>
+    <addaction name="actionParametersSynop"/>
+    <addaction name="actionParametersWind"/>
+    <addaction name="actionParametersPluviometer"/>
+    <addaction name="actionParametersAll"/>
+   </widget>
+   <widget class="QMenu" name="menuTimes">
+    <property name="title">
+     <string>&amp;Tidspunkter</string>
+    </property>
+    <addaction name="timesAction"/>
+   </widget>
+   <widget class="QMenu" name="menuOther">
+    <property name="title">
+     <string>&amp;Annet</string>
+    </property>
+    <addaction name="actionRejectSeries"/>
+    <addaction name="actionAcceptSeries"/>
+    <addaction name="actionDianaConfig"/>
+    <addaction name="actionStartKro"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Hjelp</string>
+    </property>
+    <addaction name="actionHelpManual"/>
+    <addaction name="actionHelpFlags"/>
+    <addaction name="actionHelpParameters"/>
+    <addaction name="separator"/>
+    <addaction name="actionAboutHqc"/>
+    <addaction name="actionAboutQt"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuValg"/>
+   <addaction name="menuListType"/>
+   <addaction name="menuWeatherElement"/>
+   <addaction name="menuTimes"/>
+   <addaction name="menuOther"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="dataListAction"/>
+   <addaction name="timeSeriesAction"/>
+  </widget>
+  <action name="saveAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Lagre</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="printAction">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Skriv ut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="closeAction">
+   <property name="text">
+    <string>Lukk</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+W</string>
+   </property>
+  </action>
+  <action name="exitAction">
+   <property name="text">
+    <string>Avslutt</string>
+   </property>
+  </action>
+  <action name="flID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis &amp;flagg</string>
+   </property>
+  </action>
+  <action name="orID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis &amp;original</string>
+   </property>
+  </action>
+  <action name="moID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis &amp;modelldata</string>
+   </property>
+  </action>
+  <action name="stID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis &amp;stasjonsnavn</string>
+   </property>
+  </action>
+  <action name="heID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis s&amp;tasjonshøyde</string>
+   </property>
+  </action>
+  <action name="poID">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Vis &amp;posisjon</string>
+   </property>
+  </action>
+  <action name="actionDataAndErrorList">
+   <property name="text">
+    <string>Data&amp;liste og Feilliste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionErrorList">
+   <property name="text">
+    <string>&amp;Feilliste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionErrorLog">
+   <property name="text">
+    <string>F&amp;eillog</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="dataListAction">
+   <property name="text">
+    <string>&amp;Dataliste</string>
+   </property>
+  </action>
+  <action name="actionErrorListSalen">
+   <property name="text">
+    <string>&amp;Feilliste salen</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
+   </property>
+  </action>
+  <action name="actionWatchRR">
+   <property name="text">
+    <string>&amp;Nedbør</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionWatchWeather">
+   <property name="text">
+    <string>&amp;Vær</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="timeSeriesAction">
+   <property name="text">
+    <string>&amp;Tidsserie</string>
+   </property>
+  </action>
+  <action name="actionTextDataList">
+   <property name="text">
+    <string>Te&amp;xtData</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
+   </property>
+  </action>
+  <action name="actionRejectDecode">
+   <property name="text">
+    <string>Re&amp;jected</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+J</string>
+   </property>
+  </action>
+  <action name="actionParametersDaily">
+   <property name="text">
+    <string>For &amp;daglig rutine</string>
+   </property>
+  </action>
+  <action name="actionParametersPrioritized">
+   <property name="text">
+    <string>&amp;Prioriterte parametere</string>
+   </property>
+  </action>
+  <action name="actionParametersTemperatureHumidity">
+   <property name="text">
+    <string>&amp;Temperatur og fuktighet</string>
+   </property>
+  </action>
+  <action name="actionParametersPrecipitationSnow">
+   <property name="text">
+    <string>&amp;Nedbør og snøforhold</string>
+   </property>
+  </action>
+  <action name="actionParametersWindPressure">
+   <property name="text">
+    <string>&amp;Lufttrykk og vind</string>
+   </property>
+  </action>
+  <action name="actionParametersMaritime">
+   <property name="text">
+    <string>&amp;Maritime parametere</string>
+   </property>
+  </action>
+  <action name="actionParametersSynop">
+   <property name="text">
+    <string>&amp;Synop</string>
+   </property>
+  </action>
+  <action name="actionParametersWind">
+   <property name="text">
+    <string>&amp;Vind</string>
+   </property>
+  </action>
+  <action name="actionParametersPluviometer">
+   <property name="text">
+    <string>&amp;Pluviometerparametere</string>
+   </property>
+  </action>
+  <action name="actionParametersAll">
+   <property name="text">
+    <string>&amp;Alt</string>
+   </property>
+  </action>
+  <action name="timesAction">
+   <property name="text">
+    <string>&amp;Tidspunkter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+T</string>
+   </property>
+  </action>
+  <action name="actionRejectSeries">
+   <property name="text">
+    <string>&amp;Forkast tidsserie</string>
+   </property>
+  </action>
+  <action name="actionAcceptSeries">
+   <property name="text">
+    <string>&amp;Godkjenn tidsserie</string>
+   </property>
+  </action>
+  <action name="actionDianaConfig">
+   <property name="text">
+    <string>&amp;Dianavisning</string>
+   </property>
+  </action>
+  <action name="actionStartKro">
+   <property name="text">
+    <string>&amp;Kro</string>
+   </property>
+  </action>
+  <action name="actionHelpManual">
+   <property name="text">
+    <string>&amp;Brukerveiledning</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionHelpFlags">
+   <property name="text">
+    <string>&amp;Flagg</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionHelpParameters">
+   <property name="text">
+    <string>&amp;Parametere</string>
+   </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
+  </action>
+  <action name="actionAboutHqc">
+   <property name="text">
+    <string>&amp;Om Hqc</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutRole</enum>
+   </property>
+  </action>
+  <action name="actionAboutQt">
+   <property name="text">
+    <string>Om &amp;Qt</string>
+   </property>
+   <property name="menuRole">
+    <enum>QAction::AboutQtRole</enum>
+   </property>
+  </action>
+  <action name="actionParametersVisual">
+   <property name="text">
+    <string>&amp;Visuelle parametere</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>actionDataAndErrorList</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>allListMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dataListAction</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>dataListMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeSeriesAction</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>timeseriesMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timesAction</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>clk()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>saveAction</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>saveData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>printAction</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>printErrorList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>flID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showFlags()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>orID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showOrigs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>moID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showMod()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>stID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showStat()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>heID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showHeight()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>poID</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showPos()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>ws</sender>
+   <signal>subWindowActivated(QMdiSubWindow*)</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>updateSaveFunction(QMdiSubWindow*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>399</x>
+     <y>314</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionErrorList</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>errListMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionErrorLog</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>errLogMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionErrorListSalen</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>errLisaMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWatchRR</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showWatchRR()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionWatchWeather</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>showWeather()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionTextDataList</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>textDataMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRejectDecode</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>rejectedMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersDaily</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>climateStatistics()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersPrioritized</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>priority()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersTemperatureHumidity</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>temperature()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersPrecipitationSnow</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>precipitation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersWindPressure</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>airPress()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersVisual</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>visuals()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersMaritime</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>sea()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersSynop</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>synop()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersWind</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>wind()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersPluviometer</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>plu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionParametersAll</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>all()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionRejectSeries</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>rejectTimeseries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAcceptSeries</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>acceptTimeseries()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionDianaConfig</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>dsh()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionStartKro</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>startKro()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionHelpManual</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>helpUse()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionHelpFlags</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>helpFlag()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionHelpParameters</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>helpParam()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAboutHqc</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>about()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionAboutQt</sender>
+   <signal>activated()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>aboutQt()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>saveData()</slot>
+  <slot>printErrorList()</slot>
+  <slot>showFlags()</slot>
+  <slot>showOrigs()</slot>
+  <slot>showMod()</slot>
+  <slot>showStat()</slot>
+  <slot>showHeight()</slot>
+  <slot>showPos()</slot>
+  <slot>allListMenu()</slot>
+  <slot>errListMenu()</slot>
+  <slot>errLogMenu()</slot>
+  <slot>dataListMenu()</slot>
+  <slot>errLisaMenu()</slot>
+  <slot>showWatchRR()</slot>
+  <slot>showWeather()</slot>
+  <slot>timeseriesMenu()</slot>
+  <slot>textDataMenu()</slot>
+  <slot>rejectedMenu()</slot>
+  <slot>climateStatistics()</slot>
+  <slot>priority()</slot>
+  <slot>temperature()</slot>
+  <slot>precipitation()</slot>
+  <slot>airPress()</slot>
+  <slot>visuals()</slot>
+  <slot>sea()</slot>
+  <slot>synop()</slot>
+  <slot>wind()</slot>
+  <slot>plu()</slot>
+  <slot>all()</slot>
+  <slot>clk()</slot>
+  <slot>rejectTimeseries()</slot>
+  <slot>acceptTimeseries()</slot>
+  <slot>dsh()</slot>
+  <slot>startKro()</slot>
+  <slot>helpUse()</slot>
+  <slot>helpFlag()</slot>
+  <slot>helpParam()</slot>
+  <slot>about()</slot>
+  <slot>aboutQt()</slot>
+  <slot>updateSaveFunction(QMdiSubWindow*)</slot>
+ </slots>
+</ui>

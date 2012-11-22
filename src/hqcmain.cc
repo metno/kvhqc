@@ -36,6 +36,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "hqcmain.h"
+#include "ui_mainwindow.h"
 
 #include "accepttimeseriesdialog.h"
 #include "approvedialog.h"
@@ -73,24 +74,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
 
-#include <QtCore/QList>
-#include <QtCore/qmetaobject.h>
-#include <QtCore/QTextStream>
-#include <QtCore/QTime>
-#include <QtCore/QRegExp>
-#include <QtGui/QAction>
-#include <QtGui/qpixmap.h>
-#include <QtGui/qwindowsstyle.h>
-#include <QtGui/qvalidator.h>
-#include <QtGui/qlistview.h>
-#include <QtGui/QFrame>
-#include <QtGui/QMdiArea>
-#include <QtGui/QMdiSubWindow>
-#include <QtGui/QSizePolicy>
-#include <QtGui/QDesktopServices>
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>
 #include <QtCore/qurl.h>
+#include <QtGui/QDesktopServices>
+#include <QtGui/QPixmap>
+#include <QtGui/QMdiSubWindow>
+#include <QtGui/QMessageBox>
+#include <QtGui/qprinter.h>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
@@ -99,16 +90,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <deque>
-#include <stdexcept>
-#include <complex>
 #include <algorithm>
-#include <iomanip>
+#include <deque>
 #include <functional>
-
-using namespace std;
-using namespace kvalobs;
-using namespace kvservice;
+#include <iomanip>
+#include <stdexcept>
 
 // declared in hqcdefs.h
 const int modelParam[NOPARAMMODEL] =
@@ -165,239 +151,113 @@ HqcMainWindow::HqcMainWindow()
   , sLevel(0)
   , listExist(false)
   , tsVisible(false)
+  , ui(new Ui::HqcMainWindow)
   , dianaconnected(false)
 {
-  // ---- ACTIONS -----------------------------------------------
+    ui->setupUi(this);
+    connect(ui->exitAction, SIGNAL(activated()), qApp, SLOT(closeAllWindows()));
 
-  QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
-  QAction * dataListAction = new QAction(icon_listdlg, tr("&Dataliste"), this);
-  dataListAction->setShortcut(tr("Ctrl+D"));
-  connect(dataListAction, SIGNAL(activated()), this, SLOT(dataListMenu()));
+    QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
+    ui->dataListAction->setIcon(icon_listdlg);
 
-  QPixmap icon_ts( ::hqc::getPath(::hqc::IMAGEDIR) + "/kmplot.png");
-  QAction * timeSeriesAction = new QAction(icon_ts, tr("&Tidsserie"), this);
-  connect(timeSeriesAction, SIGNAL(activated()), this, SLOT(timeseriesMenu()));
+    QPixmap icon_ts( ::hqc::getPath(::hqc::IMAGEDIR) + "/kmplot.png");
+    ui->timeSeriesAction->setIcon(icon_ts);
 
-  QAction * timesAction = new QAction(tr("&Tidspunkter"), this);
-  timesAction->setShortcut( tr("Ctrl+T") );
-  connect(timesAction, SIGNAL(activated()), this, SLOT(clk()));
+    pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
+    pluginB->useLabel(true);
+    pluginB->connectToServer();
 
-  //  lackListAction = new QAction(tr("&Mangelliste"), this);
-  //  lackListAction->setShortcut(tr("Ctrl+M"));
-  // ---- Workspace ---------------------------------------------
-  ws = new QMdiArea(this);
-  setCentralWidget( ws );
-
-  connect( ws, SIGNAL(subWindowActivated(QMdiSubWindow*)),
-           this, SLOT(updateSaveFunction(QMdiSubWindow*)) );
+    connect(pluginB, SIGNAL(receivedMessage(miMessage&)),
+            SLOT(processLetter(miMessage&)));
+    connect(pluginB, SIGNAL(addressListChanged()),
+            SLOT(processConnect()));
+    connect(pluginB, SIGNAL(connectionClosed()),
+            SLOT(cleanConnection()));
+    statusBar()->addPermanentWidget(pluginB, 0);
 
 
+    // --- DEFINE DIALOGS --------------------------------------------
+    const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
+    lstdlg = new ListDialog(this);
+    lstdlg->setIcon( QPixmap(hqc_icon_path) );
+    clkdlg = new ClockDialog(this);
+    clkdlg->setIcon( QPixmap(hqc_icon_path) );
+    pardlg = new ParameterDialog(this);
+    pardlg->setIcon( QPixmap(hqc_icon_path) );
+    dshdlg = new DianaShowDialog(this);
+    dshdlg->setIcon( QPixmap(hqc_icon_path) );
+    txtdlg = new TextDataDialog(slist, this);
+    txtdlg->setIcon( QPixmap(hqc_icon_path) );
+    rejdlg = new RejectDialog(this);
+    rejdlg->setIcon( QPixmap(hqc_icon_path) );
+    actsdlg = new AcceptTimeseriesDialog();
+    actsdlg->hide();
+    rjtsdlg = new RejectTimeseriesDialog();
+    rjtsdlg->hide();
+    
+    readSettings();
 
-  // ---- MAIN MENU ---------------------------------------------
+    // --- START -----------------------------------------------------
+    pardlg->hide();
+    rejdlg->hide();
+    lstdlg->hide();
 
-  QMenu * file = menuBar()->addMenu(tr("&Fil"));
-  saveAction = file->addAction( tr("Lagre"), this, SIGNAL( saveData() ), QKeySequence::Save );
-  saveAction->setEnabled(false);
-  printAction = file->addAction( tr("Skriv ut"), this, SIGNAL( printErrorList() ), QKeySequence::Print );
-  printAction->setEnabled(false);
+    connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
+    connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
 
-  file->addAction( tr("&Lukk"),    ws, SLOT(closeActiveSubWindow()), QKeySequence::Close );
-  file->addAction( tr("&Avslutt"), qApp, SLOT( closeAllWindows() ));
+    clkdlg->hide();
+    timeFilterChanged = false;
+    connect( clkdlg, SIGNAL(ClockApply()), SLOT(ClkOK()));
+    connect( clkdlg, SIGNAL(ClockHide()), SLOT(clockMenu()));
 
+    dshdlg->hide();
+    connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
+    connect( dshdlg, SIGNAL(dianaShowHide()), SLOT(dianaShowMenu()));
 
-  choice = menuBar()->addMenu(tr("&Valg"));
-  flID = choice->addAction( tr("Vis &flagg"),                 this, SLOT(showFlags()));
-  flID->setCheckable(true);
-  flID->setChecked(false);
-  orID = choice->addAction( tr("Vis &original"),              this, SLOT(showOrigs()));
-  orID->setCheckable(true);
-  orID->setChecked(true);
-  moID = choice->addAction( tr("Vis &modeldata"),             this, SLOT(showMod()));
-  moID->setCheckable(true);
-  moID->setChecked(true);
-  stID = choice->addAction( tr("Vis &stasjonsnavn"),          this, SLOT(showStat()));
-  stID->setCheckable(true);
-  stID->setChecked(true);
-  heID = choice->addAction( tr("Vis s&tasjonshøyde"), this, SLOT(showHeight()));
-  heID->setCheckable(true);
-  heID->setChecked(true);
-  poID = choice->addAction( tr("Vis &posisjon"), this, SLOT(showPos()));
-  poID->setCheckable(true);
-  poID->setChecked(false);
+    connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
+    connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
+    
+    connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
+    connect( txtdlg, SIGNAL(textDataHide()), SLOT(textDataMenu()));
+    
+    connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
+    connect( rejdlg, SIGNAL(rejectHide()), SLOT(rejectedMenu()));
 
-  //isShTy;
-
-
-//  choice->setItemChecked(flID, isShFl);
-//  choice->setItemChecked(orID, isShOr);
-
-
-  QMenu * showmenu = new QMenu( this );
-  menuBar()->insertItem( tr("&Listetype"), showmenu);
-  showmenu->addAction( tr("Data&liste og Feilliste"), this, SLOT(allListMenu()), tr("Ctrl+L") );
-  showmenu->addAction( tr("&Feilliste"), this, SLOT(errListMenu()), tr("Ctrl+F") );
-  showmenu->addAction( tr("F&eillog"),   this, SLOT(errLogMenu()), tr("Ctrl+E") );
-  showmenu->addAction(dataListAction);
-  showmenu->addAction( tr("&Feilliste salen"), this, SLOT(errLisaMenu()), tr("Alt+S") );
-  showmenu->insertSeparator();
-  showmenu->addAction( tr("&Nedbør"), this, SLOT( showWatchRR() ), tr("Ctrl+R") );
-  showmenu->addAction( tr("&Vær"), this, SLOT( showWeather() ), tr("Ctrl+V") );
-  showmenu->insertSeparator();
-  showmenu->addAction(timeSeriesAction);
-  showmenu->insertSeparator();
-  showmenu->addAction( tr("Te&xtData"), this, SLOT(textDataMenu()), tr("Alt+X") );
-  showmenu->addAction( tr("Re&jected"), this, SLOT(rejectedMenu()), tr("Ctrl+J") );
-
-  QMenu * weathermenu = new QMenu( this );
-  menuBar()->insertItem( tr("Vær&element"), weathermenu);
-  //  wElement = "";
-  klID = weathermenu->addAction( tr("For &daglig rutine"),       this, SLOT(climateStatistics()) );
-  piID = weathermenu->addAction( tr("&Prioriterte parametere"),  this, SLOT(priority()) );
-  taID = weathermenu->addAction( tr("&Temperatur og fuktighet"), this, SLOT(temperature()) );
-  prID = weathermenu->addAction( tr("&Nedbør og snøforhold"),    this, SLOT(precipitation()) );
-  apID = weathermenu->addAction( tr("&Lufttrykk og vind"),       this, SLOT(airPress()) );
-  clID = weathermenu->addAction( tr("&Visuelle parametere"),     this, SLOT(visuals()) );
-  seID = weathermenu->addAction( tr("&Maritime parametere"),     this, SLOT(sea()) );
-  syID = weathermenu->addAction( tr("&Synop"),                   this, SLOT(synop()) );
-  wiID = weathermenu->addAction( tr("&Vind"),                    this, SLOT(wind()) );
-  plID = weathermenu->addAction( tr("&Pluviometerparametere"),   this, SLOT(plu()) );
-  alID = weathermenu->addAction( tr("&Alt"),                     this, SLOT(all()) );
-
-
-  QMenu * clockmenu = menuBar()->addMenu(tr("&Tidspunkter"));
-  clockmenu->addAction(timesAction);
-
-  QMenu* other = new QMenu(this);
-  other->addAction( tr("&Forkast tidsserie"), this, SLOT(rejectTimeseries()));
-  other->addAction( tr("&Godkjenn tidsserie"), this, SLOT(acceptTimeseries()));
-  other->addAction( tr("&Dianavisning"), this, SLOT(dsh()));
-  other->addAction( tr("&Kro"), this, SLOT(startKro()));
-  other->addAction( tr("&Skjermbilde"), this, SLOT(screenshot()));
-  menuBar()->insertItem( tr("&Annet"), other);
-
-  QMenu * help = new QMenu( this );
-  menuBar()->insertItem( tr("&Hjelp"), help );
-  help->addAction( tr("&Brukerveiledning"), this, SLOT(helpUse()), tr("F1"));
-  help->addAction( tr("&Flagg"), this, SLOT(helpFlag()), tr("F2"));
-  help->addAction( tr("&Parametere"), this, SLOT(helpParam()), tr("F3"));
-  help->insertSeparator();
-  help->addAction( tr("&Om Hqc"), this, SLOT(about()));
-  help->insertSeparator();
-  help->addAction( tr("Om &Qt"), this, SLOT(aboutQt()));
-
-  // --- MAIN WINDOW -----------------------------------------
-
-
-  // --- TOOL BAR --------------------------------------------
-  QToolBar * hqcTools = addToolBar(tr("Hqcfunksjoner"));
-  hqcTools->addAction(dataListAction);
-  hqcTools->addAction(timeSeriesAction);
-
-
-  // --- STATUS BAR -------------------------------------------
-
-  //  if(usesocket){
-  QString name = "hqc";
-  QString command = "/usr/bin/coserver4";
-  pluginB = new ClientButton(name, command, statusBar());
-  pluginB->useLabel(true);
-  pluginB->connectToServer();
-
-  connect(pluginB, SIGNAL(receivedMessage(miMessage&)),
-	  SLOT(processLetter(miMessage&)));
-  connect(pluginB, SIGNAL(addressListChanged()),
-	  SLOT(processConnect()));
-  connect(pluginB, SIGNAL(connectionClosed()),
-	  SLOT(cleanConnection()));
-  statusBar()->addPermanentWidget(pluginB,0);
-
-  // --- DEFINE DIALOGS --------------------------------------------
-  const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
-  lstdlg = new ListDialog(this);
-  lstdlg->setIcon( QPixmap(hqc_icon_path) );
-  clkdlg = new ClockDialog(this);
-  clkdlg->setIcon( QPixmap(hqc_icon_path) );
-  pardlg = new ParameterDialog(this);
-  pardlg->setIcon( QPixmap(hqc_icon_path) );
-  dshdlg = new DianaShowDialog(this);
-  dshdlg->setIcon( QPixmap(hqc_icon_path) );
-  txtdlg = new TextDataDialog(slist, this);
-  txtdlg->setIcon( QPixmap(hqc_icon_path) );
-  rejdlg = new RejectDialog(this);
-  rejdlg->setIcon( QPixmap(hqc_icon_path) );
-  actsdlg = new AcceptTimeseriesDialog();
-  actsdlg->hide();
-  rjtsdlg = new RejectTimeseriesDialog();
-  rjtsdlg->hide();
-
-  // --- READ PARAMETER INFO ---------------------------------------
-
-  /////TEST
-  readSettings();
-  /////TEST SLUTT
-
-
-  // --- START -----------------------------------------------------
-  pardlg->hide();
-  rejdlg->hide();
-  lstdlg->hide();
-
-  connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
-  connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
-
-  clkdlg->hide();
-  timeFilterChanged = false;
-  connect( clkdlg, SIGNAL(ClockApply()), SLOT(ClkOK()));
-  connect( clkdlg, SIGNAL(ClockHide()), SLOT(clockMenu()));
-
-  dshdlg->hide();
-  connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
-  connect( dshdlg, SIGNAL(dianaShowHide()), SLOT(dianaShowMenu()));
-
-  connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
-  connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
-
-  connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
-  connect( txtdlg, SIGNAL(textDataHide()), SLOT(textDataMenu()));
-
-  connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
-  connect( rejdlg, SIGNAL(rejectHide()), SLOT(rejectedMenu()));
-
-  tsdlg = new TimeseriesDialog();
-  tsdlg->hide();
-
-  connect(tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
-  connect(tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
-
-  connect(this, SIGNAL(newStationList(std::vector<QString>&)),
-          tsdlg, SLOT(newStationList(std::vector<QString>&)));
-  connect(this, SIGNAL(newParameterList(const QStringList&)),
-          tsdlg, SLOT(newParameterList(const QStringList&)));
-
-  connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
-  connect(rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
-
-  connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
-  connect(actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
-
-  connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
-          rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
-  connect(this,  SIGNAL(newParameterList(const QStringList&)),
-          rjtsdlg, SLOT(newParameterList(const QStringList&)));
-
-  connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
-          actsdlg, SLOT(newStationList(std::vector<QString>&)));
-  connect(this,  SIGNAL(newParameterList(const QStringList&)),
-          actsdlg, SLOT(newParameterList(const QStringList&)));
-
-  connect(lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
-          tsdlg, SLOT(setFromTimeSlot(const QDateTime&)));
-
-  connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
-          tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
-
-  // make the timeseries-plot-dialog
-  tspdialog = new TSPlotDialog(this);
+    tsdlg = new TimeseriesDialog();
+    tsdlg->hide();
+    
+    connect(tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
+    connect(tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
+    
+    connect(this, SIGNAL(newStationList(std::vector<QString>&)),
+            tsdlg, SLOT(newStationList(std::vector<QString>&)));
+    connect(this, SIGNAL(newParameterList(const QStringList&)),
+            tsdlg, SLOT(newParameterList(const QStringList&)));
+    
+    connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
+    connect(rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
+    
+    connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
+    connect(actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
+    
+    connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
+            rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
+    connect(this,  SIGNAL(newParameterList(const QStringList&)),
+            rjtsdlg, SLOT(newParameterList(const QStringList&)));
+    
+    connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
+            actsdlg, SLOT(newStationList(std::vector<QString>&)));
+    connect(this,  SIGNAL(newParameterList(const QStringList&)),
+            actsdlg, SLOT(newParameterList(const QStringList&)));
+    
+    connect(lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
+            tsdlg, SLOT(setFromTimeSlot(const QDateTime&)));
+    
+    connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
+            tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
+    
+    // make the timeseries-plot-dialog
+    tspdialog = new TSPlotDialog(this);
 }
 
 void HqcMainWindow::startup()
@@ -411,7 +271,7 @@ void HqcMainWindow::startup()
 
     // --- CHECK USER IDENTITY ----------------------------------------
 
-    reinserter = Authentication::identifyUser(this, KvApp::kvApp, "ldap-oslo.met.no", userName);
+    reinserter = Authentication::identifyUser(this, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
     if( not reinserter ) {
         int mb = QMessageBox::information(this,
                                           tr("Autentisering"),
@@ -786,7 +646,7 @@ void HqcMainWindow::ListOK()
       dataModel =
           new model::KvalobsDataModel(
               parameterList, parMap, datalist, modeldatalist,
-              stID->isChecked(), poID->isChecked(), heID->isChecked(),
+              ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
               reinserter != 0,
               tableView);
 
@@ -795,9 +655,9 @@ void HqcMainWindow::ListOK()
       connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
       // Functionality for hiding/showing rows in data list
-      connect(flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
-      connect(orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
-      connect(moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+      connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
+      connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
+      connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
 
       connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
 
@@ -805,9 +665,9 @@ void HqcMainWindow::ListOK()
       connect(tableView, SIGNAL(timeSelected(const timeutil::ptime &)), SLOT(sendObservations(const timeutil::ptime &)));
       connect(tableView, SIGNAL(parameterSelected(const QString &)), SLOT(sendSelectedParam(const QString &)));
 
-      connect(stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
-      connect(poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
-      connect(heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
+      connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
+      connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
+      connect(ui->heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
 
       tableView->setModel(dataModel);
 
@@ -820,11 +680,11 @@ void HqcMainWindow::ListOK()
       for ( int i = 0; i < rows; ++ i )
         tableView->setRowHeight(i,24);
 
-      tableView->toggleShowFlags(flID->isChecked());
-      tableView->toggleShowOriginal(orID->isChecked());
-      tableView->toggleShowModelData(moID->isChecked());
+      tableView->toggleShowFlags(ui->flID->isChecked());
+      tableView->toggleShowOriginal(ui->orID->isChecked());
+      tableView->toggleShowModelData(ui->moID->isChecked());
 
-      ws->addSubWindow(tableView);
+      ui->ws->addSubWindow(tableView);
 
       const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
       tableView->setIcon( QPixmap(hqc_icon_path) );
@@ -841,11 +701,11 @@ void HqcMainWindow::ListOK()
                           datalist,
                           modeldatalist,
                           userName);
-      connect(saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
+      connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
       //      connect( erl, SIGNAL( stationSelected( int, const timeutil::ptime & ) ), tableView, SLOT(selectStation(const QString &)));
       connect( erl, SIGNAL( statSel( miMessage& ) ),
 	       SLOT( processLetter( miMessage &) ) );
-      ws->addSubWindow(erl);
+      ui->ws->addSubWindow(erl);
   }
 
   tileHorizontal();
@@ -1053,10 +913,10 @@ void HqcMainWindow::textDataOK() {
   QDate fromdt = (txtdlg->dtfrom).date();
   QTime fromti = (txtdlg->dtfrom).time();
   timeutil::ptime dtfrom = timeutil::from_YMDhms(fromdt.year(), fromdt.month(), fromdt.day(), fromti.hour(), 0, 0);
-  WhichDataHelper whichData;
+  kvservice::WhichDataHelper whichData;
   whichData.addStation(stnr, timeutil::to_miTime(dtfrom), timeutil::to_miTime(dtto));
   GetTextData textDataReceiver(this);
-  if(!KvApp::kvApp->getKvData(textDataReceiver, whichData)){
+  if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)){
     //cerr << "Finner ikke  textdatareceiver!!" << endl;
   }
   TextData* txtDat = new TextData(txtList, parMap);
@@ -1108,48 +968,38 @@ void HqcMainWindow::rejectedOK() {
 
 void HqcMainWindow::showWatchRR()
 {
-  QMdiSubWindow * subWindow = ws->activeSubWindow();
+    kvalobs::kvData data;
 
-  kvalobs::kvData data;
+    QMdiSubWindow* subWindow = ui->ws->activeSubWindow();
+    if( subWindow ) {
+        ErrorList* errorList = dynamic_cast<ErrorList*>(subWindow->widget());
+        if( errorList )
+            data = errorList->getKvData();
+    }
 
-  // TODO: Reinstate this
-//  if ( subWindow ) {
-//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
-//    if ( current and current->dtt )
-//      data = current->dtt->getKvData();
-    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
-    if ( errorList )
-      data = errorList->getKvData();
-//  }
-
-  WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
-  if ( rrd ) {
-    rrd->setReinserter( reinserter );
-    rrd->show();
-  }
+    WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
+    if ( rrd ) {
+        rrd->setReinserter( reinserter );
+        rrd->show();
+    }
 }
 
 void HqcMainWindow::showWeather()
 {
-  QMdiSubWindow * subWindow = ws->activeSubWindow();
-
-  kvalobs::kvData data;
-
-  // TODO: Reinstate this
+    kvalobs::kvData data;
+    
+    QMdiSubWindow * subWindow = ui->ws->activeSubWindow();
     if ( subWindow ) {
-//    MDITabWindow * current = dynamic_cast<MDITabWindow *>(subWindow->widget());
-//    if ( current and current->dtt )
-//      data = current->dtt->getKvData();
-    ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
-    if ( errorList )
-      data = errorList->getKvData();
+        ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
+        if( errorList )
+            data = errorList->getKvData();
     }
 
-  Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
-  if ( wtd ) {
-    wtd->setReinserter( reinserter );
-    wtd->show();
-  }
+    Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
+    if ( wtd ) {
+        wtd->setReinserter( reinserter );
+        wtd->show();
+    }
 }
 
 void HqcMainWindow::listMenu() {
@@ -1252,7 +1102,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
   vector<double> newCorr;
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
-    const kvData & dt = dataModel->getKvData_(index);
+    const kvalobs::kvData & dt = dataModel->getKvData_(index);
     //    if ( dt.corrected() < -32760 )
     //      continue;
     QString ori;
@@ -1289,7 +1139,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
       break;
     }
   }
-  WhichDataHelper whichData;
+  kvservice::WhichDataHelper whichData;
   long int stnr = stationIndex;
   boost::posix_time::ptime ft = timeutil::from_iso_extended_string(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
@@ -1303,7 +1153,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
   vector<QString> chList;
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
-    const kvData & dt = dataModel->getKvData_(index);
+    const kvalobs::kvData & dt = dataModel->getKvData_(index);
     if ( dt.corrected() < -32760 )
       continue;
     QString cr;
@@ -1475,7 +1325,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
 				 const std::vector<int>& stList) {
   BusyIndicator busy();
 
-  WhichDataHelper whichData;
+  kvservice::WhichDataHelper whichData;
   for ( unsigned int i = 0; i < stList.size(); i++ ) {
     whichData.addStation(stList[i], timeutil::to_miTime(stime), timeutil::to_miTime(etime));
     checkTypeId(stList[i]);
@@ -1485,7 +1335,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   GetData dataReceiver(this);
 
-  if( KvApp::kvApp->getKvData(dataReceiver, whichData) ) {
+  if( kvservice::KvApp::kvApp->getKvData(dataReceiver, whichData) ) {
       // this will make calls to HqcMainWindow::makeObsDataList
   } else {
     std::cerr << "problems retrieving data" << std::endl;
@@ -1496,7 +1346,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   modeldatalist.reserve(131072);
   modeldatalist.clear();
 
-  if(!KvApp::kvApp->getKvModelData(mdlist, whichData))
+  if(!kvservice::KvApp::kvApp->getKvModelData(mdlist, whichData))
       cerr << "Can't connect to modeldata table!" << endl;
   modDatl mtdl;
   CIModelDataList it=mdlist.begin();
@@ -1724,7 +1574,7 @@ bool HqcMainWindow::readFromStInfoSys()
 */
 void HqcMainWindow::readFromStation()
 {
-    if (!KvApp::kvApp->getKvStations(slist)) {
+    if (!kvservice::KvApp::kvApp->getKvStations(slist)) {
         int noBase = QMessageBox::warning(this, tr("Kvalobs"), tr("Kvalobsdatabasen er ikke tilgjengelig,\n"
                 "vil du avslutte?"), tr("Ja"), tr("Nei"), "");
         if (noBase == 0)
@@ -1738,13 +1588,13 @@ void HqcMainWindow::readFromStation()
 void HqcMainWindow::readFromObsPgm() {
     LOG_FUNCTION();
     std::list<long> statList;
-    if (!KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
+    if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
         cerr << "Can't connect to obs_pgm table!" << endl;
 
     int prostnr = -1;
 
     TypeList tpList;
-    mi_foreach(const kvalobs::kvObsPgm op, obsPgmList) {
+    mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
         const int ostnr = op.stationID();
         if ( ostnr != prostnr ) {
             if ( prostnr != -1 )
@@ -1874,7 +1724,7 @@ void HqcMainWindow::readFromParam() {
       }
   }
 
-  if(!KvApp::kvApp->getKvParams(plist))
+  if(!kvservice::KvApp::kvApp->getKvParams(plist))
     cerr << "Can't connect to param table!" << endl;
 
     mi_foreach(const kvalobs::kvParam& p, plist)
@@ -1915,7 +1765,7 @@ void HqcMainWindow::tileHorizontal() {
 //  ws->tileSubWindows();
 
   // primitive horizontal tiling
-  QList<QMdiSubWindow *> windows = ws->subWindowList();
+  QList<QMdiSubWindow *> windows = ui->ws->subWindowList();
   if ( windows.empty() )
     return;
 
@@ -1927,7 +1777,7 @@ void HqcMainWindow::tileHorizontal() {
     return;
   }
   else {
-    int height[] = {0, 28 + ws->height() / 2, (ws->height() / 2) - 28} ;
+    int height[] = {0, 28 + ui->ws->height() / 2, (ui->ws->height() / 2) - 28} ;
 
     for ( int i = windows.count() -2; i < windows.count(); ++ i ) {
     //for ( int i = int(windows.count()) - 1; i > int(windows.count()) -2; --i ) {
@@ -1943,7 +1793,7 @@ void HqcMainWindow::tileHorizontal() {
       int preferredHeight = window->minimumHeight()+window->parentWidget()->baseSize().height();
       int actHeight = QMAX(height[i -int(windows.count()) + 3], preferredHeight);
 
-      window->setGeometry( 0, y, ws->width(), actHeight );
+      window->setGeometry( 0, y, ui->ws->width(), actHeight );
       y += actHeight;
     }
   }
@@ -1954,7 +1804,7 @@ void HqcMainWindow::closeWindow()
   firstObs=true;
   cerr << "HqcMainWindow::closeWindow()\n";
 
-  ws->closeActiveSubWindow();
+  ui->ws->closeActiveSubWindow();
 
   emit windowClose();
 }
@@ -2447,7 +2297,7 @@ void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
 
   ErrorList *win = dynamic_cast<ErrorList*>(w->widget());
   bool enabled = win;
-  saveAction->setEnabled(enabled);
+  ui->saveAction->setEnabled(enabled);
 }
 
 bool HqcMainWindow::isAlreadyStored(const timeutil::ptime& otime, int stnr) {
@@ -2492,13 +2342,11 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
     return tpId;
 }
 
-void
-HqcMainWindow::
-makeTextDataList( KvObsDataList& textDataList )
+void HqcMainWindow::makeTextDataList(kvservice::KvObsDataList& textDataList)
 {
   //  cout << "textDataList.size = " << textDataList.size() << endl;
-  for(IKvObsDataList it=textDataList.begin(); it!=textDataList.end(); it++ ) {
-    KvObsData::kvTextDataList::iterator dit=it->textDataList().begin();
+  for(kvservice::IKvObsDataList it=textDataList.begin(); it!=textDataList.end(); it++ ) {
+    kvservice::KvObsData::kvTextDataList::iterator dit=it->textDataList().begin();
     while( dit != it->textDataList().end() ) {
       TxtDat txtd;
       txtd.stationId = dit->stationID();
@@ -2527,9 +2375,9 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
     int aggStat = 0;
     timeutil::ptime aggTime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
 
-    for (IKvObsDataList it = dataList.begin(); it != dataList.end(); it++) {
+    for (kvservice::IKvObsDataList it = dataList.begin(); it != dataList.end(); it++) {
 
-        KvObsData::kvDataList::iterator dit = it->dataList().begin();
+        kvservice::KvObsData::kvDataList::iterator dit = it->dataList().begin();
         //    IDataList dit = it->dataList().begin();
         int ditSize = it->dataList().size();
         int stnr = dit->stationID();

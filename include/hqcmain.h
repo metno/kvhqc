@@ -40,27 +40,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <qTimeseries/TSPlotDialog.h>
 #include <qUtilities/ClientButton.h>
 
+#include <QtCore/qlist.h>
 #include <QtCore/qmap.h>
-#include <QtCore/qobject.h>
-#include <QtCore/qpoint.h>
-#include <QtCore/QScopedPointer>
-#include <QtGui/qwidget.h>
-#include <QtGui/qprinter.h>
+#include <QtCore/qstring.h>
+#include <QtCore/qstringlist.h>
 #include <QtGui/qmainwindow.h>
-#include <QtGui/qmenubar.h>
-#include <QtGui/qlabel.h>
-#include <QtGui/qstatusbar.h>
-#include <QtGui/QMessageBox>
-#include <QtGui/qapplication.h>
-#include <QtGui/qpushbutton.h>
-#include <QtGui/qimage.h>
-#include <QtGui/qpixmap.h>
-#include <QtGui/QToolBar>
-#include <QtGui/qtoolbutton.h>
-#include <QtGui/qicon.h>
-#include <QtGui/qcursor.h>
 
 #include <fstream>
+#include <memory>
 
 class miMessage;
 QT_BEGIN_NAMESPACE
@@ -81,8 +68,12 @@ class StationSelection;
 class StationTable;
 class TextDataDialog;
 class TimeseriesDialog;
+
 namespace model {
 class KvalobsDataModel;
+}
+namespace Ui {
+class HqcMainWindow;
 }
 
 /**
@@ -302,52 +293,10 @@ private:
   /// The parameters that the user have selected
   QStringList selPar;
 
-  /// User selection whether to display flags in data list
-  QAction * flID;
-
-  /// User selection whether to display original values in data list
-  QAction * orID;
-
-  /// User selection whether to display model data in data list
-  QAction * moID;
-
-  /// User selection whether to display station's name
-  QAction * stID;
-
-  /// User selection whether to display station's location
-  QAction * poID;
-
-  /// User selection whether to display station's height
-  QAction * heID;
-
-  QAction * tyID;
-  QAction * apID;
-  QAction * taID;
-  //  QAction * otID;
-  //  QAction * huID;
-  QAction * wiID;
-  QAction * prID;
-  QAction * clID;
-  QAction * seID;
-  QAction * syID;
-  QAction * klID;
-  QAction * piID;
-  QAction * plID;
-  QAction * alID;
-
   bool tsVisible;
+
+    std::auto_ptr<Ui::HqcMainWindow> ui;
   ClientButton* pluginB;
-
-  QAction * saveAction;
-  QAction * printAction;
-
-  QMenu* choice;
-  QMenu* showmenu;
-  QMenu* weathermenu;
-  QMenu* clockmenu;
-  QMenu* typeIdmenu;
-
-  QMdiArea * ws;
   bool dianaconnected;
 
   ObsTypeList otpList;
