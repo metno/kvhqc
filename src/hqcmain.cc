@@ -272,6 +272,7 @@ HqcMainWindow::HqcMainWindow()
   other->addAction( tr("&Godkjenn tidsserie"), this, SLOT(acceptTimeseries()));
   other->addAction( tr("&Dianavisning"), this, SLOT(dsh()));
   other->addAction( tr("&Kro"), this, SLOT(startKro()));
+  other->addAction( tr("&Skjermbilde"), this, SLOT(screenshot()));
   menuBar()->insertItem( tr("&Annet"), other);
 
   QMenu * help = new QMenu( this );
@@ -1325,6 +1326,23 @@ void HqcMainWindow::rejectTimeseriesOK() {
 
 void HqcMainWindow::startKro() {
     QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
+}
+
+void HqcMainWindow::screenshot() {
+  QPixmap hqcPixmap = QPixmap();
+  hqcPixmap = QPixmap::grabWidget(this);
+  
+  QPrinter printer;
+  printer.setPaperSize(QPrinter::A4);
+  printer.setOrientation(QPrinter::Landscape);
+  
+  QPainter painter(&printer);     
+  QRect rect = painter.viewport();
+  QSize size = hqcPixmap.size();
+  size.scale(rect.size(), Qt::KeepAspectRatio);
+  painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
+  painter.setWindow(hqcPixmap.rect());
+  painter.drawImage(0,0,hqcPixmap);
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
