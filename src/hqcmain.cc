@@ -78,10 +78,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/qsettings.h>
 #include <QtCore/qurl.h>
 #include <QtGui/QDesktopServices>
-#include <QtGui/QPixmap>
 #include <QtGui/QMdiSubWindow>
 #include <QtGui/QMessageBox>
-#include <QtGui/qprinter.h>
+#include <QtGui/QPixmap>
+#include <QtGui/QPrinter>
+#include <QtGui/QPrintDialog>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
@@ -1180,21 +1181,27 @@ void HqcMainWindow::startKro() {
     QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
 }
 
-void HqcMainWindow::screenshot() {
-  QPixmap hqcPixmap = QPixmap();
-  hqcPixmap = QPixmap::grabWidget(this);
-  
-  QPrinter printer;
-  printer.setPaperSize(QPrinter::A4);
-  printer.setOrientation(QPrinter::Landscape);
-  
-  QPainter painter(&printer);     
-  QRect rect = painter.viewport();
-  QSize size = hqcPixmap.size();
-  size.scale(rect.size(), Qt::KeepAspectRatio);
-  painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-  painter.setWindow(hqcPixmap.rect());
-  painter.drawImage(0,0,hqcPixmap);
+void HqcMainWindow::screenshot()
+{
+    QPixmap hqcPixmap = QPixmap();
+    hqcPixmap = QPixmap::grabWidget(this);
+    
+    QPrinter printer;
+    printer.setPaperSize(QPrinter::A4);
+    printer.setOrientation(QPrinter::Landscape);
+
+    QPrintDialog *dialog = new QPrintDialog(&printer, this);
+    dialog->setWindowTitle(tr("Utskrift skjermbilde"));
+    if (dialog->exec() != QDialog::Accepted)
+        return;
+
+    QPainter painter(&printer);
+    QRect rect = painter.viewport();
+    QSize size = hqcPixmap.size();
+    size.scale(rect.size(), Qt::KeepAspectRatio);
+    painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
+    painter.setWindow(hqcPixmap.rect());
+    painter.drawImage(0,0,hqcPixmap);
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)

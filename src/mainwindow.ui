@@ -100,6 +100,7 @@
     <addaction name="actionAcceptSeries"/>
     <addaction name="actionDianaConfig"/>
     <addaction name="actionStartKro"/>
+    <addaction name="actionScreenshot"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -424,6 +425,11 @@
   <action name="actionParametersVisual">
    <property name="text">
     <string>&amp;Visuelle parametere</string>
+   </property>
+  </action>
+  <action name="actionScreenshot">
+   <property name="text">
+    <string>&amp;Skjermbilde</string>
    </property>
   </action>
  </widget>
@@ -1037,6 +1043,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionScreenshot</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>screenshot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>saveData()</signal>
@@ -1073,6 +1095,7 @@
   <slot>acceptTimeseries()</slot>
   <slot>dsh()</slot>
   <slot>startKro()</slot>
+  <slot>screenshot()</slot>
   <slot>helpUse()</slot>
   <slot>helpFlag()</slot>
   <slot>helpParam()</slot>
