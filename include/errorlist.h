@@ -329,10 +329,6 @@ private:
    * \return TRUE if observation is missing.
    */
   bool obsInMissList(const mem&);
-  /**
-   * \brief Find FF in memory store 2
-   */
-  double FF();
 
   void swapRows(int, int, bool);
   void sortColumn(int, bool, bool);

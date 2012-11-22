@@ -843,9 +843,11 @@ void HqcMainWindow::TimeseriesOK() {
 
 const std::list<listStat_t>& HqcMainWindow::getStationDetails()
 {
+    LOG_FUNCTION();
     const timeutil::ptime now = timeutil::now();
+    std::cerr << "now=" << now << " last=" << mLastStationListUpdate << std::endl;
     if( mLastStationListUpdate.is_not_a_date_time()
-        or (mLastStationListUpdate - now).total_seconds() > 3600 )
+        or (now - mLastStationListUpdate).total_seconds() > 3600 )
     {
         mLastStationListUpdate = now;
         readFromStInfoSys()

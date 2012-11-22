@@ -1392,12 +1392,3 @@ QString DataCell::key() const {
   }
   return item;
 }
-
-double ErrorList::FF()
-{
-    mi_foreach(const mem& mo, memStore2) {
-        if ( mo.parNo == 81 )
-            return mo.orig;
-    }
-    return 0.0;
-}

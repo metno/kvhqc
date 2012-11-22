@@ -63,8 +63,6 @@ class ListDialog;
 class ParameterDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
-class StationSelection;
-class StationTable;
 class TextDataDialog;
 class TimeseriesDialog;
 
