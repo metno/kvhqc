@@ -19,3 +19,4 @@ moc_*.cpp
 /obj-x86_64-linux-gnu
 /hqc.log.20*
 /.pc
+/share/hqc_current_version

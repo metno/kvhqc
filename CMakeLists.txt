@@ -2,7 +2,7 @@ PROJECT(kvhqc)
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
 
 INCLUDE(MetnoVersions)
-METNO_PVERSION(2.13.0~a1)
+METNO_PVERSION(2.13.0~rc1)
 
 IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr")
   SET(SYSCONFDIR "/etc")
@@ -47,10 +47,12 @@ SET(etc_files
   etc/kvhqc/slimits)
 INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
 
+CONFIGURE_FILE(share/hqc_current_version.in share/hqc_current_version)
 INSTALL(FILES
   share/faildetail.txt
   share/failgroup.txt
   share/VxExplanations.txt
+  ${CMAKE_BINARY_DIR}/share/hqc_current_version
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 
 INSTALL(FILES

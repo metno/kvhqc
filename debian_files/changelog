@@ -1,3 +1,12 @@
+kvhqc (2.13.0~rc1-1) unstable; urgency=low
+
+  * some refactoring, functionality should be mostly the same
+  * show version in about dialog
+  * check hourly for new installed major.minor.patch version
+  * remind to review settings when changing major.minor version
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 23 Nov 2012 10:11:29 +0100
+
 kvhqc (2.12.2-2) unstable; urgency=low
 
   * improved lucid Build-Depends

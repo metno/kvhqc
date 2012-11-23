@@ -76,6 +76,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>
+#include <QtCore/qtimer.h>
 #include <QtCore/qurl.h>
 #include <QtGui/QDesktopServices>
 #include <QtGui/QMdiSubWindow>
@@ -116,6 +117,8 @@ const std::map<QString, QString> configNameToUserName = boost::assign::map_list_
         ("[plu]", "Pluviometerkontroll")
         ("[all]", "Alt");
 
+const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
+
 } // anonymous namespace
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
@@ -154,11 +157,15 @@ HqcMainWindow::HqcMainWindow()
   , tsVisible(false)
   , ui(new Ui::HqcMainWindow)
   , dianaconnected(false)
+  , mVersionCheckTimer(new QTimer(this))
 {
     ui->setupUi(this);
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
     connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
+    connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(on_versionCheck_timeout()));
+
+    mVersionCheckTimer->setSingleShot(true);
 
     QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
     ui->dataListAction->setIcon(icon_listdlg);
@@ -300,6 +307,7 @@ void HqcMainWindow::startup()
     readSettings();
     show();
     statusBar()->message( tr("Velkommen til kvhqc %1!").arg(PVERSION_FULL), 2000 );
+    mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
 
 void HqcMainWindow::showFlags() {
@@ -1205,6 +1213,32 @@ void HqcMainWindow::screenshot()
     painter.drawImage(0,0,hqcPixmap);
 }
 
+void HqcMainWindow::on_versionCheck_timeout()
+{
+    QFile versionFile(::hqc::getPath(::hqc::DATADIR) + "/hqc_current_version");
+    if (versionFile.open(QIODevice::ReadOnly)) {
+        QTextStream in(&versionFile);
+        if( !in.atEnd() ) {
+            const long installedVersion = in.readLine().toLong();
+            const long runningVersion = PVERSION_NUMBER_MAJOR_MINOR_PATCH;
+            if( installedVersion > runningVersion ) {
+                QMessageBox::information(this,
+                                         tr("HQC - Oppdatering"),
+                                         tr("Hqc-applikasjonen ble oppdatert på din datamaskin. "
+                                            "Du skulle lagre eventuelle endringer og starte "
+                                            "hqc-applikasjonen på nytt for å bruke den nye versjonen."),
+                                         QMessageBox::Ok, Qt::NoButton);
+            } else {
+                //std::cout << "no update, now=" << runningVersion << " installed=" << installedVersion << std::endl;
+            }
+            mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
+            return;
+        }
+    }
+    // something went wrong when reading the version info file
+    std::cout << "error reading share/.../hqc_current_version, not renewing timer" << std::endl;
+}
+
 void HqcMainWindow::closeEvent(QCloseEvent* event)
 {
   writeSettings();
@@ -1833,16 +1867,16 @@ void HqcMainWindow::helpParam() {
 void HqcMainWindow::about()
 {
     QMessageBox::about( this, tr("Om Hqc"),
-			tr("Hqc er et program for manuell kvalitetskontroll av observasjoner.\n"
-                           "Programmet består av editerbare tabeller med observasjoner samt\n"
-                           "tidsseriediagram, og har forbindelse med Diana\n"
-                           "\n"
-                           "Programmet utvikles av\n"
-                           "Knut Johansen,\n"
-                           "Alexander Bürger,\n"
-                           "Lisbeth Bergholt,\n"
-                           "Vegard Bønes,\n"
-                           "Audun Christoffersen\n\n"
+			tr("Hqc er et program for manuell kvalitetskontroll av observasjoner."
+                           "Programmet består av editerbare tabeller med observasjoner samt"
+                           "tidsseriediagram, og har forbindelse med Diana."
+                           "\n\n"
+                           "Programmet utvikles av "
+                           "Knut Johansen, "
+                           "Alexander Bürger, "
+                           "Lisbeth Bergholt, "
+                           "Vegard Bønes, "
+                           "Audun Christoffersen i met.no.\n\n"
                            "Du bruker HQC versjon %1.").arg(PVERSION_FULL));
 }
 

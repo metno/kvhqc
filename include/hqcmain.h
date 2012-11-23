@@ -53,6 +53,7 @@ QT_BEGIN_NAMESPACE
 class QAction;
 class QMdiArea;
 class QMdiSubWindow;
+class QTimer;
 QT_END_NAMESPACE
 
 class AcceptTimeseriesDialog;
@@ -270,6 +271,9 @@ private slots:
   void acceptTimeseriesOK();
   void startKro();
   void screenshot();
+
+    void on_versionCheck_timeout();
+
 private:
   void selectParameterGroup(const QString& group);
 
@@ -295,6 +299,8 @@ private:
     std::auto_ptr<Ui::HqcMainWindow> ui;
   ClientButton* pluginB;
   bool dianaconnected;
+
+    QTimer* mVersionCheckTimer;
 
   ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;
