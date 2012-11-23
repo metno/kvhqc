@@ -31,14 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "parameterdialog.h"
 #include "HideApplyBox.hh"
 
-#include <QtCore/QStringList>
-#include <QtGui/QGroupBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QVBoxLayout>
-
-#include <QtCore/QDebug>
-
 ParameterDialog::ParameterDialog(QWidget* parent)
   : QDialog(parent)
 {
@@ -56,7 +48,6 @@ void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder,
   int jj = 0;
   for (std::vector<int>::const_iterator it = porder.begin(); it != porder.end(); ++it) {
       QString sp = parMap[*it];
-      //      plb->insertItem(sp);
       plb->insertItem(jj,sp);
       jj++;
   }

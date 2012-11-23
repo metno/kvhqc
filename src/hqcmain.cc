@@ -198,8 +198,6 @@ HqcMainWindow::HqcMainWindow()
     rjtsdlg = new RejectTimeseriesDialog();
     rjtsdlg->hide();
     
-    readSettings();
-
     // --- START -----------------------------------------------------
     pardlg->hide();
     rejdlg->hide();
@@ -299,8 +297,9 @@ void HqcMainWindow::startup()
         readFromStation();
     }
 
+    readSettings();
     show();
-    statusBar()->message( tr("Ready"), 2000 );
+    statusBar()->message( tr("Velkommen til kvhqc %1!").arg(PVERSION_FULL), 2000 );
 }
 
 void HqcMainWindow::showFlags() {
@@ -2516,6 +2515,8 @@ void HqcMainWindow::writeSettings()
   QSettings settings("Meteorologisk Institutt", "Hqc");
   settings.setValue("geometry", saveGeometry());
 
+  settings.setValue("version", PVERSION);
+
   settings.beginWriteArray("t");
   for ( int hour = 0; hour < 24; hour++ ) {
     settings.setArrayIndex(hour);
@@ -2641,6 +2642,16 @@ void HqcMainWindow::readSettings()
   QSettings settings("Meteorologisk Institutt", "Hqc");
   if ( !restoreGeometry(settings.value("geometry").toByteArray()) )
     cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
+
+  QString savedVersion = settings.value("version", "??").toString();
+  if( savedVersion != PVERSION ) {
+      QMessageBox::information(this,
+                               tr("HQC - Versjonsendring"),
+                               tr("Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). "
+                                  "Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.")
+                               .arg(PVERSION).arg(savedVersion),
+                               QMessageBox::Ok, QMessageBox::Ok);
+  }
 
   settings.beginReadArray("t");
   for( int hour = 0; hour < 24; hour++ ) {
