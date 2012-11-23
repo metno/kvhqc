@@ -1215,7 +1215,7 @@ void HqcMainWindow::screenshot()
 
 void HqcMainWindow::on_versionCheck_timeout()
 {
-    QFile versionFile(::hqc::getPath(::hqc::DATADIR) + "/hqc_current_version");
+    QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
     if (versionFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&versionFile);
         if( !in.atEnd() ) {

@@ -7,5 +7,6 @@ for s in hqcdiana histhqcdiana testhqcdiana WatchRR histWatchRR WatchWeather his
     SLAVES="$SLAVES --slave /usr/bin/$s $s /usr/bin/$s-@METNO_VERSION@"
 done
 
-exec update-alternatives --install "/usr/bin/$MASTER" "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@" @PVERSION_NUMBER_MAJOR_MINOR@ \
+exec update-alternatives --install "/usr/bin/$MASTER" "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@" "@PVERSION_NUMBER_MAJOR_MINOR@" \
+    --slave "/etc/kvhqc/hqc_current_version" "hqc_current_version" "/usr/share/kvhqc/@METNO_VERSION@/hqc_current_version" \
     $SLAVES
