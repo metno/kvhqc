@@ -1132,6 +1132,15 @@ void HqcMainWindow::acceptTimeseriesOK() {
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
     dataModel->setAcceptedData(index, newCorr[irow-firstRow], maybeQC2);
+    const kvalobs::kvData & dt = dataModel->getKvData_(index);
+    std::list<kvalobs::kvData> modData;
+    modData.push_back( dt );
+    CKvalObs::CDataSource::Result_var result;
+    {
+      //      BusyIndicator busyIndicator;
+      result = reinserter->insert( modData );
+    }
+    modData.clear();
   }
   return;
 }
@@ -1182,6 +1191,15 @@ void HqcMainWindow::rejectTimeseriesOK() {
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
     dataModel->setDiscardedData(index, -32766);
+    const kvalobs::kvData & dt = dataModel->getKvData_(index);
+    std::list<kvalobs::kvData> modData;
+    modData.push_back( dt );
+    CKvalObs::CDataSource::Result_var result;
+    {
+      //      BusyIndicator busyIndicator;
+      result = reinserter->insert( modData );
+    }
+    modData.clear();
   }
   return;
 }
