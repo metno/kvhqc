@@ -255,7 +255,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	  // Update stored data
 	  d.set_corr(p.paramid, val);
 	  d.set_controlinfo(p.paramid, changeData.controlinfo());
-	  d.set_useinfo(p.paramid, changeData.useinfo());
+	  //	  d.set_useinfo(p.paramid, changeData.useinfo());
 	  if (abs(typ) > 999) {
 	    HqcMainWindow * hqcm = getHqcMainWindow(this);
 	    typ = hqcm->findTypeId(typ, d.stnr(), p.paramid, d.otime());
@@ -336,12 +336,12 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	    changeData.corrected(val);
             // Update stored data
             d.set_corr(p.paramid, val);
-            d.set_controlinfo(p.paramid, changeData.controlinfo());
-            d.set_useinfo(p.paramid, changeData.useinfo());
+	    d.set_controlinfo(p.paramid, changeData.controlinfo());
+	    //            d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             emit dataChanged(flagIndex, index);
-            emit dataModification(changeData);
+	    //            emit dataModification(changeData);
             qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
 		     << qPrintable(p.parameterName) << " from "
 		     << oldValue << " to " << val;
@@ -405,7 +405,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
             // Update stored data
             d.set_corr(p.paramid, val);
             d.set_controlinfo(p.paramid, changeData.controlinfo());
-            d.set_useinfo(p.paramid, changeData.useinfo());
+	    //            d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             emit dataChanged(flagIndex, index);
