@@ -69,7 +69,7 @@ DataReinserter<KvApp> *identifyUser(QWidget* widgetparent, KvApp *app, const cha
     app->getKvOperator(operators);  // FEIL SKJER HER!
     for (opIter it = operators.begin(); it != operators.end(); it++) {
       //cerr << it->username().cStr() << "  " << it->userID() << endl;
-      if ( strcmp(it->username().cStr(), user.ascii()) == 0 ) {
+      if ( strcmp(it->username().c_str(), user.ascii()) == 0 ) {
 	string uname = it->username();
 	userName = uname.c_str();
 	return new HqcDataReinserter( app, it->userID() );

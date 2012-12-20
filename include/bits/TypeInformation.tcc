@@ -1,4 +1,7 @@
+// -*- c++ -*-
+
 #include "../TypeInformation.h"
+#include <boost/algorithm/string.hpp>
 #include <list>
 #include <sstream>
 #include <cctype>
@@ -35,7 +38,10 @@ TypeInformation<App>::~TypeInformation( )
 static inline QString printableInfo( const kvalobs::kvTypes &typ, bool generated ) 
 {
   std::ostringstream stream;
-  stream << typ.format().split()[0] << "-stasjon";
+  std::vector<std::string> formats;
+  std::string f = typ.format();
+  boost::split(formats, f, boost::is_any_of(" ,"));
+  stream << formats[0] << "-stasjon";
   if ( generated )
     stream << " generert av kvalobs";
 

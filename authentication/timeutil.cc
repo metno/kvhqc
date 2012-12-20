@@ -63,7 +63,7 @@ b_pt::ptime from_iso_extended_string(const std::string& st)
     }
 }
 
-miutil::miTime to_miTime(const b_pt::ptime& pt)
+miutil::miTime make_miTime(const b_pt::ptime& pt)
 {
     if( pt.is_not_a_date_time() )
         return miutil::miTime();
@@ -72,6 +72,7 @@ miutil::miTime to_miTime(const b_pt::ptime& pt)
     return miutil::miTime(pd.year(), pd.month(), pd.day(), pc.hours(), pc.minutes(), pc.seconds());
 }
 
+#if KVCPP_USE_BOOST == 0
 b_pt::ptime from_miTime(const miutil::miTime& mt)
 {
     if( mt.undef() )
@@ -79,6 +80,7 @@ b_pt::ptime from_miTime(const miutil::miTime& mt)
     else
         return from_YMDhms(mt.year(), mt.month(), mt.day(), mt.hour(), mt.min(), mt.sec());
 }
+#endif
 
 b_pt::ptime from_QDateTime(const QDateTime& qdt) {
     const QDate qd = qdt.date();

@@ -782,7 +782,7 @@ void HqcMainWindow::TimeseriesOK() {
 	if ( modeldatalist[i].stnr == stationIndex[ip] &&
 	     modeldatalist[i].otime >= stime &&
 	     modeldatalist[i].otime <= etime ){
-	  tseries.add(TimeSeriesData::Data(timeutil::to_miTime(modeldatalist[i].otime),
+	  tseries.add(TimeSeriesData::Data(timeutil::make_miTime(modeldatalist[i].otime),
 					   modeldatalist[i].orig[parameterIndex[ip]]));
 	}
       }
@@ -798,7 +798,7 @@ void HqcMainWindow::TimeseriesOK() {
              otime <= etime &&
 	     otime.time_of_day().minutes() == 0 ) {
 	  if ( (*datalist)[i].corr(parameterIndex[ip]) > -32766.0 )
-	    tseries.add(TimeSeriesData::Data(timeutil::to_miTime(otime),
+	    tseries.add(TimeSeriesData::Data(timeutil::make_miTime(otime),
 					     (*datalist)[i].corr(parameterIndex[ip])));
 	}
       }
@@ -811,7 +811,7 @@ void HqcMainWindow::TimeseriesOK() {
 	if ( modeldatalist[i].stnr == stationIndex[ip] &&
 	     modeldatalist[i].otime >= stime &&
 	     modeldatalist[i].otime <= etime ){
-	  tseries.add(TimeSeriesData::Data(timeutil::to_miTime(modeldatalist[i].otime),
+	  tseries.add(TimeSeriesData::Data(timeutil::make_miTime(modeldatalist[i].otime),
 					  (*datalist)[i].corr(parameterIndex[ip])
 					  - modeldatalist[i].orig[parameterIndex[ip]]));
 	}
@@ -1121,7 +1121,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
     ori = ori.setNum(dt.original(), 'f', 1);
     QString stnr;
     stnr = stnr.setNum(dt.stationID());
-    ch = stnr + " " + QString::fromStdString(dt.obstime().isoTime()) + ": " + parMap[dt.paramID()] + ": " + ori;
+    ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
+        + ": " + parMap[dt.paramID()] + ": " + ori;
     chList.push_back(ch);
     newCorr.push_back(dt.original());
   }
@@ -1181,7 +1182,8 @@ void HqcMainWindow::rejectTimeseriesOK() {
     cr = cr.setNum(dt.corrected(), 'f', 1);
     QString stnr;
     stnr = stnr.setNum(dt.stationID());
-    ch = stnr + " " + QString::fromStdString(dt.obstime().isoTime()) + ": " + parMap[dt.paramID()] + ": " + cr;
+    ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
+        + ": " + parMap[dt.paramID()] + ": " + cr;
     chList.push_back(ch);
   }
   DiscardDialog* discardDialog = new DiscardDialog(chList);

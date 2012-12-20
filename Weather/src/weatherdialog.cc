@@ -295,7 +295,7 @@ void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
             nuOtimes++;
         }
         if ( nuOtimes == (int)opgtl.size() )
-            cerr << "Obstime not in obs_pgm " << dit->obstime().isoTime() << endl;
+            cerr << "Obstime not in obs_pgm " << dit->obstime() << endl;
         
         nexttime = protime;
         int hd = nexthour-nexttime.time_of_day().hours();
@@ -446,7 +446,8 @@ void WeatherDialog::setupGUI(int type)
 	oldCorVal = oldCorVal.setNum(mit->first,'f',1);
 	newCorVal = newCorVal.setNum(mit->second,'f',1);
 	QString parameterId(cTab->parm[cTab->kvCorrList[iii].paramID()]);
-	changedVals += QString(cTab->kvCorrList[iii].obstime().isoTime().cStr()) + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n';
+	changedVals += QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(cTab->kvCorrList[iii].obstime())))
+            + " " + parameterId + " " + oldCorVal + " --> " + newCorVal + '\n';
 	iii++;
       }
       changedVals = tr("Følgende endringer er gjort: \n") + changedVals + tr("Fullføre lagring?");

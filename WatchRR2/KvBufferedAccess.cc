@@ -25,7 +25,7 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
     
     const Sensor& s = st.sensor;
     kvalobs::kvData d(s.stationId, timeutil::to_miTime(st.time), kvalobs::MISSING,
-                      s.paramId, miutil::miTime(), s.typeId, s.level, s.sensor,
+                      s.paramId, timeutil::to_miTime(timeutil::ptime()), s.typeId, s.level, s.sensor,
                       kvalobs::NEW_ROW,
                       std::string("0000003000000000"), std::string("0000000000000000"), "");
     KvalobsDataPtr obs = boost::make_shared<KvalobsData>(d);

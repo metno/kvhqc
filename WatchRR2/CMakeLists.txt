@@ -124,8 +124,8 @@ ADD_EXECUTABLE(WatchRR2
 
 TARGET_LINK_LIBRARIES(WatchRR2
   watchrr2 authentication
-  ${PKGCONFIG_LIBRARIES}
-  -lkvalobs2_kvalobs -lboost_thread -lkvalobs2_decodeutility -lldap)
+  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
+  -lldap)
 
 SET_TARGET_PROPERTIES(WatchRR2 PROPERTIES
   OUTPUT_NAME WatchRR2-${PVERSION})

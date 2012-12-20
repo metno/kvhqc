@@ -27,8 +27,13 @@ int main(int argc, char* argv[])
     a.installTranslator(&qtTranslator);
 
     QTranslator wTranslator;
-    if( not wTranslator.load(QLocale::system(), "watchrr2", "_", "build/WatchRR2") )
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 8, 0))
+    if (not wTranslator.load(QLocale::system(), "watchrr2", "_", "build/WatchRR2"))
         qDebug() << "failed to load translations";
+#else
+    if (not wTranslator.load("watchrr2_" + QLocale::system().name(), "build/WatchRR2"))
+        qDebug() << "failed to load translations";
+#endif
     a.installTranslator(&wTranslator);
     
     QStringList args = a.arguments();

@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "debug.hh"
 #include "hqc_paths.hh"
+#include "timeutil.hh"
 
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
@@ -50,7 +51,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 
 namespace QC
 {
@@ -92,7 +92,7 @@ namespace QC
     	    assert( st != sParams.end() );
     	  }
     	  const StationParams & sp = st->second;
-    	  int day = data.obstime().dayOfYear();
+    	  int day = timeutil::day_of_year(data.obstime());
     	  if ( day < 1 )
     	    day = 1;
     	  else if ( day > 365 )

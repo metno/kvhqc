@@ -1,4 +1,5 @@
 #include "rejecttable.h"
+#include "timeutil.hh"
 #include <iostream>
 #include <QSizePolicy>
 
@@ -21,11 +22,13 @@ RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* paren
   setHorizontalHeaderLabels(horizontalHeaderLabels);
 
   for ( unsigned int iRow = 0; iRow < rejList.size(); iRow++ ) {
-    cout << rejList[iRow].tbtime() << " " << rejList[iRow].message() << endl;
-    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(rejList[iRow].tbtime().format("%e/%m %Y %H:%M:%S").cStr());
+    cout << timeutil::to_iso_extended_string(timeutil::from_miTime(rejList[iRow].tbtime()))
+         << " " << rejList[iRow].message() << endl;
+    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(rejList[iRow].tbtime()))));
+    // original format: format("%e/%m %Y %H:%M:%S")
     setItem(iRow, 0, tbtimeItem);
     resizeColumnToContents(0);
-    QString msg = rejList[iRow].message().cStr();
+    QString msg = QString::fromStdString(rejList[iRow].message());
     static QRegExp regexp( ".*\\<data\\>(.*)\\<\\/data\\>.*", false );
     if ( regexp.exactMatch( msg ) ) {
       msg = regexp.cap(1);
@@ -33,7 +36,7 @@ RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* paren
     QTableWidgetItem* messageItem = new QTableWidgetItem(msg);
     setItem(iRow, 1, messageItem);
     resizeColumnToContents(1);
-    QTableWidgetItem* commentItem = new QTableWidgetItem(rejList[iRow].comment().cStr());
+    QTableWidgetItem* commentItem = new QTableWidgetItem(QString::fromStdString(rejList[iRow].comment()));
     setItem(iRow, 2, commentItem);
     resizeColumnToContents(2);
   }

@@ -37,9 +37,7 @@ LINK_LIBRARIES(
   watchrr2test
   watchrr2
   authentication
-  ${PKGCONFIG_LIBRARIES}
-  -lkvalobs2_kvalobs # -lkvalobs2_decodeutility
-  -lpuTools
+  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
   ${SQLITE3_LIBRARY}
   ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
 

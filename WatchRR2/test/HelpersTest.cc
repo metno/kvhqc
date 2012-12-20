@@ -5,7 +5,7 @@
 
 TEST(HelpersTest, getFlagText)
 {
-    ASSERT_EQ(QString(""), Helpers::getFlagText(std::string("0000000000000000")));
+    ASSERT_EQ("", Helpers::getFlagText(std::string("0000000000000000")).toStdString());
 
     {
         kvalobs::kvControlInfo ci;
@@ -28,15 +28,15 @@ TEST(HelpersTest, getFlagText)
 
 TEST(HelpersTest, formatValue)
 {
-    ASSERT_EQ(QString("12.1"), kvalobs::formatValue(12.071f));
-    ASSERT_EQ(QString("-1.1"), kvalobs::formatValue(-1.071f));
+    ASSERT_EQ("12.1", kvalobs::formatValue(12.071f).toStdString());
+    ASSERT_EQ("-1.1", kvalobs::formatValue(-1.071f).toStdString());
 }
 
 
 TEST(HelpersTest, appendedText)
 {
-    ASSERT_EQ(QString("wo, ho"), Helpers::appendedText("wo", "ho", ", "));
-    ASSERT_EQ(QString("wo"), Helpers::appendedText("wo", "", ", "));
-    ASSERT_EQ(QString("ho"), Helpers::appendedText("", "ho", ", "));
-    ASSERT_EQ(QString(""), Helpers::appendedText("", "", ", "));
+    ASSERT_EQ("wo, ho", Helpers::appendedText("wo", "ho", ", ").toStdString());
+    ASSERT_EQ("wo", Helpers::appendedText("wo", "", ", ").toStdString());
+    ASSERT_EQ("ho", Helpers::appendedText("", "ho", ", ").toStdString());
+    ASSERT_EQ("", Helpers::appendedText("", "", ", ").toStdString());
 }

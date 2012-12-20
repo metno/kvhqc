@@ -40,9 +40,9 @@ ADD_EXECUTABLE(Weather
 
 TARGET_LINK_LIBRARIES(Weather
   weather authentication 
-  ${PKGCONFIG_LIBRARIES} 
-  -lkvalobs2_kvalobs -lboost_thread -lkvalobs2_decodeutility -lldap
-)
+  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
+  -lldap)
+
 SET_TARGET_PROPERTIES(Weather PROPERTIES
   OUTPUT_NAME WatchWeather-${PVERSION})
 

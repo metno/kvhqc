@@ -81,7 +81,7 @@ namespace WatchRR
     	: Q3ListViewItem( parent ), data( data )
       {
     	setText( 0, QString::number( data.stationID() ) );
-    	setText( 1, QString( data.obstime().isoDate().cStr() ) );
+    	setText( 1, QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(data.obstime()).date())) );
     	setText( 2, QString::number( data.typeID() ) );
     	setText( 3, QString::number( data.sensor() - '0' ) );
     	setText( 4, QString::number( data.level() ) );

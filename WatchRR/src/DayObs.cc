@@ -35,6 +35,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvalobs/kvDataOperations.h>
 #include <decodeutility/kvDataFormatter.h>
 
+#include <boost/range.hpp>
 #include <boost/thread.hpp>
 #include <boost/date_time/gregorian/gregorian_types.hpp>
 
@@ -44,13 +45,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace std;
 using namespace kvalobs;
-using namespace miutil;
 using namespace kvservice;
 
 namespace WatchRR
 {
-  static int interesting[9] = { V4, V4S, V5, V5S, V6, V6S, RR_24, SD, SA };
-  static set<int> ilarge( interesting, &interesting[9] );
+static const int interesting[9] = { V4, V4S, V5, V5S, V6, V6S, RR_24, SD, SA };
+static const std::set<int> ilarge(interesting, boost::end(interesting));
 
   static bool sameobs( const kvData &d, int type, int sensor, int level );
 

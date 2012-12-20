@@ -139,7 +139,7 @@ namespace WatchRR
 
     QString stationDescr = QString::number( station->stationID() );
     if ( this->station )
-      stationDescr += " - " + QString(this->station->name().cStr());
+        stationDescr += " - " + QString::fromStdString(this->station->name());
     QString caption = "Nedbør for stasjon " + stationDescr;
     if ( not captionSuffix_.isEmpty() )
       caption += " [" + captionSuffix_ + "]";

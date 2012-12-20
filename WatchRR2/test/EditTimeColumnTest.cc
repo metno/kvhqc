@@ -44,7 +44,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
     const timeutil::ptime t = s2t("2012-11-24 06:00:00");
     QVariant v = etc->data(t, Qt::DisplayRole);
     ASSERT_TRUE(v.isValid());
-    ASSERT_EQ("6.0", v.toString());
+    ASSERT_EQ("6.0", v.toString().toStdString());
 
     EditDataPtr obs = eda->findE(SensorTime(sensor, t));
     ASSERT_TRUE(obs);
@@ -56,7 +56,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
 
     v = etc->data(t, Qt::DisplayRole);
     ASSERT_TRUE(v.isValid());
-    ASSERT_EQ("5.5", v.toString());
+    ASSERT_EQ("5.5", v.toString().toStdString());
 
     eda->popUpdate();
     ASSERT_EQ(2, cccD .count);
@@ -64,5 +64,5 @@ TEST(EditTimeColumnTest, UpdateSignal)
 
     v = etc->data(t, Qt::DisplayRole);
     ASSERT_TRUE(v.isValid());
-    ASSERT_EQ("6.0", v.toString());
+    ASSERT_EQ("6.0", v.toString().toStdString());
 }

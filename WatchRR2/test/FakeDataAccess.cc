@@ -9,7 +9,7 @@ void FakeDataAccess::insert(int stationId, int paramId, int typeId, const std::s
                             const std::string& controlinfo, const std::string& cfailed)
 {
     const kvalobs::kvData data(stationId, timeutil::to_miTime(timeutil::from_iso_extended_string(obstime)), orig,
-                               paramId, miutil::miTime::nowTime(), typeId, 0, 0, corr,
+                               paramId, timeutil::to_miTime(timeutil::ptime()), typeId, 0, 0, corr,
                                controlinfo, kvalobs::kvUseInfo(), cfailed);
     receive(data);
 }

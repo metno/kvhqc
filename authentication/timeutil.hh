@@ -30,8 +30,11 @@
 #ifndef TIMEUTIL_HH_
 #define TIMEUTIL_HH_
 
-#include <QtCore/QDateTime>
+#include "config.h"
+// this is required for making a time-series plot
 #include <puTools/miTime.h>
+
+#include <QtCore/QDateTime>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iosfwd>
 #include <string>
@@ -46,9 +49,20 @@ std::string to_iso_extended_string(const pdate& pd);
 
 boost::posix_time::ptime from_iso_extended_string(const std::string& st);
 
-miutil::miTime to_miTime(const ptime& pt);
+miutil::miTime make_miTime(const ptime& pt);
 
+#if KVCPP_USE_BOOST == 0
+inline miutil::miTime to_miTime(const ptime& pt)
+{ return make_miTime(pt); }
 ptime from_miTime(const miutil::miTime& mt);
+inline int day_of_year(const miutil::miTime& mt)
+{ return mt.dayOfYear(); }
+#else
+inline ptime to_miTime(const ptime& pt) { return pt; }
+inline ptime from_miTime(const ptime& pt) { return pt; }
+inline int day_of_year(const ptime& pt)
+{ return pt.date().day_of_year(); }
+#endif
 
 ptime from_QDateTime(const QDateTime& qdt);
 

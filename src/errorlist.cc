@@ -161,7 +161,7 @@ ErrorList::ErrorList(QStringList& selPar,
     kvservice::KvApp::kvApp->getKvParams(paramList);
 
     mi_foreach(const kvalobs::kvParam& p, paramList) {
-        if ( p.unit().contains("kode") ) {
+        if (p.unit().find("kode") != string::npos) {
             cP.push_back(p.paramID());
         }
     }

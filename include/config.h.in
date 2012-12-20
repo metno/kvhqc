@@ -35,4 +35,6 @@
 /* program version number 1000000*major+1000*minor+patch */
 #define PVERSION_NUMBER_MAJOR_MINOR_PATCH @PVERSION_NUMBER_MAJOR_MINOR_PATCH@
 
+#define KVCPP_USE_BOOST @KVCPP_USE_BOOST@
+
 #endif /* KVHQC_CONFIG_H */

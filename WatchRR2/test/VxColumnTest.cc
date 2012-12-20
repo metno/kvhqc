@@ -42,7 +42,7 @@ TEST(VxColumnTest, Basic)
     v = dc->data(t, Qt::DisplayRole);
     ASSERT_TRUE(v.isValid());
     const QString expect = QString("SL") + QChar( 0xB2 );
-    ASSERT_EQ(expect, v.toString());
+    ASSERT_EQ(expect.toStdString(), v.toString().toStdString());
 
     eda->popUpdate();
 

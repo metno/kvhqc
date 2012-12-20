@@ -78,8 +78,8 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
 
 TARGET_LINK_LIBRARIES(hqc
   watchrr authentication weather failinfo
-  ${PKGCONFIG_LIBRARIES}
-  -lkvalobs2_kvalobs -lboost_thread -lkvalobs2_decodeutility -lGL -lQtNetwork -lldap
+  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
+  -lldap
 )
 
 INSTALL(TARGETS hqc DESTINATION bin)

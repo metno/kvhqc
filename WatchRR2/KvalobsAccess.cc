@@ -49,9 +49,8 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
     LOG_SCOPE();
     DBG(DBG1(st.sensor.stationId) << DBG1(st.time));
     
-    const miutil::miTime t = timeutil::to_miTime(st.time);
     kvservice::WhichDataHelper whichData;
-    whichData.addStation(st.sensor.stationId, t, t);
+    whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
     
     kvalobsdata_helpers::GetData get(*this);
     if (kvservice::KvApp::kvApp->getKvData(get, whichData))
