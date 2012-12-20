@@ -18,5 +18,7 @@ moc_*.cpp
 /build
 /obj-x86_64-linux-gnu
 /hqc.log.20*
+/w2.log.20*
 /.pc
 /etc/hqc_current_version
+/callgrind.out.*

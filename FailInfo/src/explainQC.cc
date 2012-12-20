@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "explainQC.h"
 
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "hqc_paths.hh"
 
 #include <kvcpp/KvApp.h>

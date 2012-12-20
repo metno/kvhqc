@@ -27,7 +27,7 @@
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "FunctionLogger.hh"
+#include "debug.hh"
 
 #include <Qt/qdebug.h>
 #include <sstream>
@@ -36,14 +36,20 @@
 namespace hqc {
 namespace debug {
 
-void FunctionLogger::log(bool entering) const
+void ScopeLogger::log(int line) const
 {
-    if( entering )
+    if( line >= 0 )
         indent += 1;
     std::ostringstream data;
     for ( int i = 0; i < indent; ++ i )
       data << "--+--";
-    data << '>' << ( entering ? " Entering " : " Leaving ") << name_;
+
+    if( line >= 0 ) {
+        data << "> Entering " << name_ << ":" << line << " ";
+    } else {
+        data << "< Leaving " << name_;
+        indent -= 1;
+    }
 
     struct timeval now;
     gettimeofday(&now, 0);
@@ -56,11 +62,9 @@ void FunctionLogger::log(bool entering) const
     }
 
     qDebug() << data.str().c_str();
-    if( !entering )
-        indent -= 1;
 }
 
-int FunctionLogger::indent = 3;
+int ScopeLogger::indent = 2;
 
 } // namespace debug
 } // namespace hqc

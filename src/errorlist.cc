@@ -40,7 +40,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "ErrorListFirstCol.h"
 #include "FailDialog.h"
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "missingtable.h"
@@ -148,11 +148,12 @@ ErrorList::ErrorList(QStringList& selPar,
   : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
 
     QMessageBox::information( this,
 			      tr("Feilliste"),
-			      tr("Bruk høyre musetast i \n\"Korrigert OK\",  \"Original OK\"  og \"Forkastet\"\nhvis QC2 skal kunne rette.\nVenstre musetast ellers."),
+			      tr("Bruk høyre musetast i \n\"Korrigert OK\",  \"Original OK\"  og"
+                                 " \"Forkastet\"\nhvis QC2 skal kunne rette.\nVenstre musetast ellers."),
 			      QMessageBox::Ok,
 			      Qt::NoButton );
     

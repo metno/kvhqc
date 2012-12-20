@@ -1,0 +1,217 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogStation</class>
+ <widget class="QDialog" name="DialogStation">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>242</width>
+    <height>182</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WatchRR -- Station</string>
+  </property>
+  <layout class="QFormLayout" name="formLayout">
+   <item row="0" column="0">
+    <widget class="QLabel" name="labelStation">
+     <property name="text">
+      <string>Station:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QLineEdit" name="editStation"/>
+   </item>
+   <item row="1" column="1">
+    <widget class="QLabel" name="labelStationInfo">
+     <property name="text">
+      <string notr="true">Blindern (12345m)</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="labelFrom">
+     <property name="text">
+      <string>From:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QDateEdit" name="dateFrom">
+     <property name="displayFormat">
+      <string notr="true">yyyy-MM-dd</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+     <property name="timeSpec">
+      <enum>Qt::UTC</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="labelTo">
+     <property name="text">
+      <string>To:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDateEdit" name="dateTo">
+     <property name="displayFormat">
+      <string notr="true">yyyy-MM-dd</string>
+     </property>
+     <property name="calendarPopup">
+      <bool>true</bool>
+     </property>
+     <property name="timeSpec">
+      <enum>Qt::UTC</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QLabel" name="labelType">
+     <property name="text">
+      <string>Type:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="labelTypeInfo">
+     <property name="text">
+      <string notr="true">X02</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonOK">
+       <property name="text">
+        <string>OK</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogStation</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>113</x>
+     <y>154</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>22</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonOK</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogStation</receiver>
+   <slot>onButtonOk()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>190</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>29</x>
+     <y>38</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editStation</sender>
+   <signal>editingFinished()</signal>
+   <receiver>DialogStation</receiver>
+   <slot>onUpdateType()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>82</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>51</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateFrom</sender>
+   <signal>editingFinished()</signal>
+   <receiver>DialogStation</receiver>
+   <slot>onUpdateType()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>160</x>
+     <y>71</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>2</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateTo</sender>
+   <signal>editingFinished()</signal>
+   <receiver>DialogStation</receiver>
+   <slot>onUpdateType()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>125</x>
+     <y>101</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>34</x>
+     <y>100</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onButtonOk()</slot>
+  <slot>onUpdateType()</slot>
+ </slots>
+</ui>

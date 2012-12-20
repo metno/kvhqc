@@ -21,7 +21,6 @@ INCLUDE_DIRECTORIES(
 
 QT4_WRAP_CPP(fail_HEADERS_MOC ${fail_HEADERS})
 
-message(${fail_UIS_H})
 ADD_LIBRARY(failinfo STATIC
   ${fail_SOURCES} 
   ${fail_HEADERS_MOC}

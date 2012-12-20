@@ -29,7 +29,7 @@
 
 #include "KvalobsDataModel.h"
 #include "hqcmain.h"
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
 
@@ -536,7 +536,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
   }
   int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm) const
   {
-      LOG_FUNCTION();
+      LOG_SCOPE();
       // FIXME this routine will probably cause segfault if rows == 0
 
       const KvalobsDataListPtr & data = kvalobsData();

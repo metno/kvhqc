@@ -1,7 +1,7 @@
 /* -*- c++ -*-
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  Copyright (C) 2011 met.no
+  Copyright (C) 2011-2012 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -27,38 +27,45 @@
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef FUNCTIONLOGGER_HH_
-#define FUNCTIONLOGGER_HH_
+#ifndef TIMERANGE_HH
+#define TIMERANGE_HH 1
 
-namespace hqc {
-namespace debug {
+#include "timeutil.hh"
+#include <iosfwd>
 
-class FunctionLogger {
+class TimeRange {
 public:
-    FunctionLogger(const char * name)
-        : name_(name) { log(true); }
-    ~FunctionLogger()
-        { log(false); }
+    TimeRange()
+        { }
+
+    TimeRange(const timeutil::ptime& T0, const timeutil::ptime& T1)
+        : mT0(T0), mT1(T1) { }
+    
+    const timeutil::ptime& t0() const
+        { return mT0; }
+
+    const timeutil::ptime& t1() const
+        { return mT1; }
+
+    bool contains(const timeutil::ptime& t) const
+        { return (mT0.is_not_a_date_time() or mT0 <= t)
+                and (mT1.is_not_a_date_time() or t <= mT1); }
+
+    bool undef() const;
+
+    int days() const;
+    int hours() const;
+
+    TimeRange extendedByHours(int nHours) const
+        { TimeRange t(*this); t.extendByHours(nHours); return t; }
+
+    void extendByHours(int nHours);
 
 private:
-    void log(bool entering) const;
-
-private:
-    const char* name_;
-    static int indent;
+    timeutil::ptime mT0;
+    timeutil::ptime mT1;
 };
 
-} // namespace debug
-} // namespace hqc
+std::ostream& operator<<(std::ostream& out, const TimeRange& tr);
 
-#ifdef NDEBUG
-#define LOG_FUNCTION() while(false) { }
-#else // NDEBUG
-#ifdef __GNUG__
-#define LOG_FUNCTION() ::hqc::debug::FunctionLogger INTERNAL_function_logger(__PRETTY_FUNCTION__)
-#else // __GNUG__
-#define LOG_FUNCTION() ::hqc::debug::FunctionLogger INTERNAL_function_logger(__func__)
-#endif // __GNUG__
-#endif // NDEBUG
-
-#endif /* FUNCTIONLOGGER_HH_ */
+#endif /* TIMERANGE_H */

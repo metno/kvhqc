@@ -27,7 +27,7 @@
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "KvalobsDataView.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataDelegate.h"
@@ -115,7 +115,7 @@ namespace model
 
   void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime)
   {
-    LOG_FUNCTION();
+    LOG_SCOPE();
 
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
@@ -156,7 +156,7 @@ namespace model
 
   void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
   {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     QTableView::currentChanged(current, previous);
 
     const KvalobsDataModel * model = getModel_();

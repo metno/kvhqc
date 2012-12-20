@@ -33,7 +33,7 @@
 #include <boost/format.hpp>
 #include <memory>
 
-#include "FunctionLogger.hh"
+#include "debug.hh"
 
 namespace b_pt = boost::posix_time;
 
@@ -54,7 +54,13 @@ std::string to_iso_extended_string(const pdate& pd)
 
 b_pt::ptime from_iso_extended_string(const std::string& st)
 {
-    return b_pt::time_from_string(st);
+    if( st.size() > 10 && st[10] == 'T' ) {
+        std::string t = st;
+        t[10] = ' ';
+        return b_pt::time_from_string(t);
+    } else {
+        return b_pt::time_from_string(st);
+    }
 }
 
 miutil::miTime to_miTime(const b_pt::ptime& pt)
@@ -82,7 +88,7 @@ b_pt::ptime from_QDateTime(const QDateTime& qdt) {
 
 b_pt::ptime from_YMDhms(int year, int month, int day, int hour, int minute, int second)
 {
-    //LOG_FUNCTION();
+    //LOG_SCOPE();
     //std::cerr << "YMD hms = " << year << '-' << month << '-' << day << ' ' << hour << ':' << minute << ':' << second << std::endl;
     try {
         return ptime(boost::gregorian::date(year, month, day), b_pt::time_duration(hour, minute, second));

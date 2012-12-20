@@ -8,13 +8,14 @@ SET(auth_HEADERS
 SET(auth_SOURCES
   Authenticator.cc
   BusyIndicator.cc
-  FunctionLogger.cc
+  debug.cc
   HideApplyBox.cc
   HqcDataReinserter.cc
   hqc_paths.cc
   hqc_utilities.cc
   identifyUser.cc
   MiDateTimeEdit.cc
+  TimeRange.cc
   timeutil.cc
 )
 

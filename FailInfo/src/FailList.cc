@@ -32,7 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "cFailedParam.h"
 #include "explainQC.h"
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "mi_foreach.hh"
 
 #include <Qt/qdebug.h>
@@ -72,7 +72,7 @@ void FailList::newData( const kvalobs::kvData & data )
         return;
     this->data = data;
     
-    LOG_FUNCTION();
+    LOG_SCOPE();
 
     cfailedList->clear();
     

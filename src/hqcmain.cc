@@ -47,7 +47,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dianashowdialog.h"
 #include "discarddialog.h"
 #include "errorlist.h"
-#include "FunctionLogger.hh"
+#include "debug.hh"
 #include "GetData.h"
 #include "GetTextData.h"
 #include "identifyUser.h"
@@ -387,7 +387,7 @@ void HqcMainWindow::all() {
 
 void HqcMainWindow::paramOK()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     if( listExist )
         ListOK();
 }
@@ -398,7 +398,7 @@ void HqcMainWindow::ClkOK() {
 
 void HqcMainWindow::dianaShowOK()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
   dnMap["TTT"] = "TA";
   mdMap["TTT"] = false;
   diMap["TTT"] = false;
@@ -562,7 +562,7 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 
 void HqcMainWindow::ListOK()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     if ( !dianaconnected ) {
         QMessageBox::warning(this,
                              tr("Dianaforbindelse"),
@@ -850,7 +850,7 @@ void HqcMainWindow::TimeseriesOK() {
 
 const std::list<listStat_t>& HqcMainWindow::getStationDetails()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     const timeutil::ptime now = timeutil::now();
     std::cerr << "now=" << now << " last=" << mLastStationListUpdate << std::endl;
     if( mLastStationListUpdate.is_not_a_date_time()
@@ -1648,7 +1648,7 @@ void HqcMainWindow::readFromStation()
  Read the obs_pgm table in the kvalobs database
 */
 void HqcMainWindow::readFromObsPgm() {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     std::list<long> statList;
     if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
         cerr << "Can't connect to obs_pgm table!" << endl;
@@ -1748,7 +1748,7 @@ bool HqcMainWindow::readFromStationFile()
 */
 void HqcMainWindow::readFromParam()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
 
     // First, read parameter order from file
     QString fileParamOrder = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
@@ -1900,7 +1900,7 @@ void HqcMainWindow::about()
 
 void HqcMainWindow::initDiana()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
     dianaconnected= false;
 
     if(pluginB->clientTypeExist("Diana"))
@@ -1913,7 +1913,7 @@ void HqcMainWindow::initDiana()
 // called when client-list changes
 void HqcMainWindow::processConnect()
 {
-  LOG_FUNCTION();
+  LOG_SCOPE();
   initDiana();
 }
 
@@ -1925,7 +1925,7 @@ void HqcMainWindow::cleanConnection()
 }
 
 void HqcMainWindow::sendTimes(){
-  LOG_FUNCTION();
+  LOG_SCOPE();
 
   //send times
   miMessage m;
@@ -1947,7 +1947,7 @@ void HqcMainWindow::sendTimes(){
 // processes incoming miMessages
 void HqcMainWindow::processLetter(miMessage& letter)
 {
-  LOG_FUNCTION();
+  LOG_SCOPE();
   qDebug() << "command=" << letter.command.c_str();
   if(letter.command == qmstrings::newclient) {
       vector<std::string> desc, valu;
@@ -1980,7 +1980,7 @@ void HqcMainWindow::processLetter(miMessage& letter)
 
 // send message to show ground analysis in Diana
 void HqcMainWindow::sendAnalysisMessage() {
-  LOG_FUNCTION();
+  LOG_SCOPE();
 
   //show analysis
   miMessage letter;
@@ -1995,7 +1995,7 @@ void HqcMainWindow::sendAnalysisMessage() {
 
 void HqcMainWindow::sendStation(int stnr)
 {
-  LOG_FUNCTION();
+  LOG_SCOPE();
 
   miMessage pLetter;
   pLetter.command = qmstrings::station;
@@ -2013,7 +2013,7 @@ void HqcMainWindow::aboutQt()
 
 void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
 {
-  LOG_FUNCTION();
+  LOG_SCOPE();
 
   //no data -> return
   if(selPar.count() == 0) return;
@@ -2197,7 +2197,7 @@ void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
 
 void HqcMainWindow::sendSelectedParam(const QString & param)
 {
-  LOG_FUNCTION();
+  LOG_SCOPE();
 
   std::string diParam = dianaName(param.latin1());
   if( diParam.empty() ) {
@@ -2606,7 +2606,7 @@ void HqcMainWindow::writeSettings()
 
 void HqcMainWindow::readSettings()
 {
-    LOG_FUNCTION();
+    LOG_SCOPE();
   QList<Param> params;
 
   QSettings settings("Meteorologisk Institutt", "Hqc");

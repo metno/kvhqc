@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DialogEdit</class>
+ <widget class="QDialog" name="DialogEdit">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>450</width>
+    <height>500</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>WatchRR - Single Values</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QLabel" name="labelStationInfo">
+     <property name="text">
+      <string notr="true">put info on station here</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QTableView" name="table"/>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="buttonAcceptAll">
+       <property name="text">
+        <string>&amp;Accept all</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRejectAll">
+       <property name="text">
+        <string>&amp;Reject all</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="spacer2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType">
+        <enum>QSizePolicy::Preferred</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonOK">
+       <property name="text">
+        <string>&amp;OK</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCancel">
+       <property name="text">
+        <string>Cancel</string>
+       </property>
+       <property name="autoDefault">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonOK</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogEdit</receiver>
+   <slot>onButtonOk()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>348</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>223</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonCancel</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogEdit</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>439</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>321</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAcceptAll</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogEdit</receiver>
+   <slot>onAcceptAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>47</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>25</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRejectAll</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogEdit</receiver>
+   <slot>onRejectAll()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>185</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>200</x>
+     <y>257</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onAcceptAll()</slot>
+  <slot>onRejectAll()</slot>
+  <slot>onButtonOk()</slot>
+ </slots>
+</ui>
