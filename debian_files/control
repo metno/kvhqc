@@ -5,7 +5,7 @@ Maintainer: Knut Johansen <knut.johansen@met.no>
 Build-Depends: debhelper (>= 7.0.50), quilt, g++,
  metno-devscripts (>= 0.5.7),
  libqt4-dev, libgfortran3, libgtest-dev,
- libkvcpp2-dev | libkvcpp-dev (>= 2.7.0~rc2),
+ libkvcpp2-dev | libkvcpp-dev (>= 2.7.0~rc3),
 @metno_config_if ^lucid$
  metlibs-dev, metlibs-qtimeseries-dev, metlibs-qutilities-dev
 @metno_config_else

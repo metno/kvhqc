@@ -72,7 +72,7 @@ miutil::miTime make_miTime(const b_pt::ptime& pt)
     return miutil::miTime(pd.year(), pd.month(), pd.day(), pc.hours(), pc.minutes(), pc.seconds());
 }
 
-#if KVCPP_USE_BOOST == 0
+#ifndef KVALOBS_USE_BOOST_DATE_TIME
 b_pt::ptime from_miTime(const miutil::miTime& mt)
 {
     if( mt.undef() )
@@ -80,7 +80,7 @@ b_pt::ptime from_miTime(const miutil::miTime& mt)
     else
         return from_YMDhms(mt.year(), mt.month(), mt.day(), mt.hour(), mt.min(), mt.sec());
 }
-#endif
+#endif // ! KVALOBS_USE_BOOST_DATE_TIME
 
 b_pt::ptime from_QDateTime(const QDateTime& qdt) {
     const QDate qd = qdt.date();

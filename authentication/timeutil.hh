@@ -51,18 +51,18 @@ boost::posix_time::ptime from_iso_extended_string(const std::string& st);
 
 miutil::miTime make_miTime(const ptime& pt);
 
-#if KVCPP_USE_BOOST == 0
+#ifndef KVALOBS_USE_BOOST_DATE_TIME
 inline miutil::miTime to_miTime(const ptime& pt)
 { return make_miTime(pt); }
 ptime from_miTime(const miutil::miTime& mt);
 inline int day_of_year(const miutil::miTime& mt)
 { return mt.dayOfYear(); }
-#else
+#else // ! KVALOBS_USE_BOOST_DATE_TIME
 inline ptime to_miTime(const ptime& pt) { return pt; }
 inline ptime from_miTime(const ptime& pt) { return pt; }
 inline int day_of_year(const ptime& pt)
 { return pt.date().day_of_year(); }
-#endif
+#endif // KVALOBS_USE_BOOST_DATE_TIME
 
 ptime from_QDateTime(const QDateTime& qdt);
 

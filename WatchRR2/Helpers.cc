@@ -127,15 +127,8 @@ void reject(EditDataEditorPtr editor) // same as kvDataOperations.cc
 
 void correct(EditDataEditorPtr editor, float newC) // same as kvDataOperations.cc, except that it sets fmis=0
 {
-    const FlagChange fc_diff("fmis=3->fmis=1;fmis=[02]->fmis=4;fhqc=7"),
-            fc_same("fmis=0;fhqc=1");
-
-    const bool same = (not is_orig_missing(editor->obs()) and float_eq()(editor->obs()->original(), newC));
-    
-    if (same)
-        editor->changeControlinfo(fc_same);
-    else
-        editor->changeControlinfo(fc_diff);
+    const FlagChange fc_diff("fmis=3->fmis=1;fmis=[02]->fmis=4;fhqc=7");
+    editor->changeControlinfo(fc_diff);
     editor->setCorrected(newC);
 }
 

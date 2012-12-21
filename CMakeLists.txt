@@ -25,16 +25,11 @@ LINK_LIBRARIES(${QT_LIBRARIES})
 
 INCLUDE(FindPkgConfig)
 
-UNSET(PC_KVCPP_FOUND)
-PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.0~rc1)
+PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.0~rc1 libkvalobs_decodeutility)
 IF(NOT PC_KVCPP_FOUND)
   PKG_CHECK_MODULES(PC_KVCPP libkvcpp2>=2.5.3 puTools)
-  SET(KVCPP_USE_BOOST "0")
   SET(PC_KVCPP_LIBRARIES ${PC_KVCPP_LIBRARIES} kvalobs2_kvalobs kvalobs2_decodeutility)
   MESSAGE(WARNING "using old kvcpp with static metlibs; this might cause conflicts or crashes")
-ELSE()
-  SET(KVCPP_USE_BOOST "1")
-  SET(PC_KVCPP_LIBRARIES ${PC_KVCPP_LIBRARIES} kvalobs_kvalobs kvalobs_decodeutility)
 ENDIF()
 
 PKG_CHECK_MODULES(PC_METLIBSQT REQUIRED qTimeseries qUtilities)

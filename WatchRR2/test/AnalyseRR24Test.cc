@@ -445,5 +445,5 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
     RR24::singles(eda, sensor, t0S, time, nc, na);
 
     EditDataPtr obs = eda->findE(SensorTime(sensor, t0S));
-    ASSERT_EQ(0, obs->controlinfo().flag((kvalobs::flag::fmis)));
+    ASSERT_EQ(4, obs->controlinfo().flag((kvalobs::flag::fmis)));
 }
