@@ -6,6 +6,8 @@
 #include "ModelAccess.hh"
 #include "TimeRange.hh"
 
+#include <kvcpp/kvservicetypes.h>
+
 #include <QtGui/QDialog>
 
 #include <memory>
@@ -37,6 +39,8 @@ private Q_SLOTS:
     void onUndo();
     void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void onDataChanged(const QModelIndex&, const QModelIndex&);
+
+    void onKvData(kvservice::KvObsDataListPtr data);
 
 private:
     struct Selection {

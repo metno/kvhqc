@@ -4,6 +4,7 @@ SET(watchrr2_HEADERS
   MainDialog.hh
   ObsDelegate.hh
   ObsTableModel.hh
+  QtKvService.hh
   RedistDialog.hh
   StationDialog.hh
 )
@@ -72,6 +73,8 @@ SET(watchrr2_SOURCES
   ObsTableModel.hh
   ObsTableModel.cc
   ObsUpdate.hh
+  QtKvService.hh
+  QtKvService.cc
   RedistDialog.hh
   RedistDialog.cc
   RedistTableModel.hh

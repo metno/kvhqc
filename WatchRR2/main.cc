@@ -1,10 +1,11 @@
 
 #include "Helpers.hh"
 #include "identifyUser.h"
-#include "MainDialog.hh"
-#include "StationDialog.hh"
 #include "KvalobsAccess.hh"
 #include "KvalobsModelAccess.hh"
+#include "MainDialog.hh"
+#include "QtKvService.hh"
+#include "StationDialog.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
@@ -68,8 +69,8 @@ int main(int argc, char* argv[])
             timeFrom = args.at(i).toStdString();
             i += 1;
             timeTo = args.at(i).toStdString();
-        } else if( args.at(i) == "--type" ) {
-            if( i+1 >= args.size() ) {
+        } else if (args.at(i) == "--type") {
+            if (i+1 >= args.size()) {
                 qDebug() << "invalid --type without typeid";
                 exit(1);
             }
@@ -80,7 +81,7 @@ int main(int argc, char* argv[])
             qDebug() << "Unknown option: " << args.at(i);
         }
     }
-    if( haveUnknownOptions ) {
+    if (haveUnknownOptions) {
         qDebug() << "have unknown options, stop";
         exit(1);
     }
@@ -92,6 +93,7 @@ int main(int argc, char* argv[])
     }
 
     kvservice::corba::CorbaKvApp kvapp(argc, argv, confSec);
+    QtKvService qkvs;
 
     boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<KvalobsAccess>();
     boost::shared_ptr<KvalobsModelAccess> kma = boost::make_shared<KvalobsModelAccess>();
@@ -127,6 +129,11 @@ int main(int argc, char* argv[])
     }
 
     MainDialog main(eda, kma, sensor, time);
+
+    kvservice::KvDataSubscribeInfoHelper dataSubscription;
+    dataSubscription.addStationId(sensor.stationId);
+    qkvs.subscribeData(dataSubscription, &main, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+
     if (main.exec()) {
         if (not eda->sendChangesToParent()) {
             QMessageBox::critical(0,
