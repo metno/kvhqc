@@ -44,6 +44,8 @@ public:
 
     void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);
 
+    boost::signal2<void, ObsDataChange, EditDataPtr> backendDataChanged;
+
 private:
     void onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 

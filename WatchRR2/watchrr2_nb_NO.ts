@@ -382,29 +382,39 @@
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="87"/>
+        <location filename="MainDialog.cc" line="90"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="142"/>
+        <location filename="MainDialog.cc" line="145"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="143"/>
+        <location filename="MainDialog.cc" line="146"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="144"/>
+        <location filename="MainDialog.cc" line="147"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="145"/>
+        <location filename="MainDialog.cc" line="148"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
+    </message>
+    <message>
+        <location filename="MainDialog.cc" line="233"/>
+        <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
+        <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
+    </message>
+    <message>
+        <location filename="MainDialog.cc" line="234"/>
+        <source>Quit and Discard changes</source>
+        <translation>Avslutt og forkast endringer</translation>
     </message>
 </context>
 <context>

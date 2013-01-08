@@ -36,11 +36,11 @@ bool EditDataEditor::applyChanges()
     const int u = mEA->currentUpdate();
     bool changed = false;
     if (mCorrected.commit()) {
-        mObs->mNewCorrected.push_back(std::make_pair(u, mCorrected.get()));
+        mObs->mCorrected.push_back(std::make_pair(u, mCorrected.get()));
         changed = true;
     }
     if (mControlinfo.commit()) {
-        mObs->mNewControlinfo.push_back(std::make_pair(u, mControlinfo.get()));
+        mObs->mControlinfo.push_back(std::make_pair(u, mControlinfo.get()));
         changed = true;
     }
     if (mTasks.commit()) {

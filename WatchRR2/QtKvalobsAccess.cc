@@ -2,7 +2,7 @@
 #include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
 
-// #define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 #ifndef NDEBUG
 #include "Helpers.hh"

@@ -47,10 +47,13 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
     connect(mModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
+
+    mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
 }
 
 MainDialog::~MainDialog()
 {
+    mDA->backendDataChanged.disconnect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
 }
 
 void MainDialog::initializeRR24Data()
@@ -219,4 +222,18 @@ void MainDialog::enableSave()
 void MainDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
 {
     enableSave();
+}
+
+void MainDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr ebs)
+{
+    if (ebs->modified() or ebs->hasTasks()) {
+        QMessageBox w(this);
+        w.setWindowTitle(windowTitle());
+        w.setIcon(QMessageBox::Warning);
+        w.setText(tr("Kvalobs data you are editing have been changed. You will have to start over again. Sorry!"));
+        QPushButton* discard = w.addButton(tr("Quit and Discard changes"), QMessageBox::ApplyRole);
+        w.setDefaultButton(discard);
+        w.exec();
+        QDialog::reject();
+    }
 }

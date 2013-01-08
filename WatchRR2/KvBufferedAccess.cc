@@ -7,7 +7,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "w2debug.hh"
 
 ObsDataPtr KvBufferedAccess::find(const SensorTime& st)

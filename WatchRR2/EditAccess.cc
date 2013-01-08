@@ -31,8 +31,6 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
 
     ObsDataPtr obs = mBackend->find(st);
     EditDataPtr ebs = obs ? boost::make_shared<EditData>(obs) : EditDataPtr();
-    if (EditDataPtr bobs = boost::dynamic_pointer_cast<EditData>(obs))
-        ebs->mOldTasks = bobs->allTasks();
     mData[st] = ebs;
     return ebs;
 }
@@ -119,10 +117,10 @@ bool EditAccess::popUpdate()
         }
 
         const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
-        bool changed = popUpdates<float, Helpers::float_eq>(ebs->mNewCorrected, mUpdateCount);
-        changed |= popUpdates(ebs->mNewControlinfo, mUpdateCount);
+        bool changed = popUpdates<float, Helpers::float_eq>(ebs->mCorrected, mUpdateCount);
+        changed |= popUpdates(ebs->mControlinfo, mUpdateCount);
         changed |= popUpdates(ebs->mTasks, mUpdateCount);
-        const bool destroyed = (ebs->created() and ebs->mNewCorrected.empty() and ebs->mNewControlinfo.empty() and not ebs->hasTasks());
+        const bool destroyed = (ebs->created() and ebs->mCorrected.empty() and ebs->mControlinfo.empty() and not ebs->hasTasks());
         const int isUpdated = (not destroyed and ebs->modified())?1:0, hasTasks = ebs->hasTasks()?1:0;
 
         if (changed or destroyed)
@@ -153,10 +151,20 @@ EditDataEditorPtr EditAccess::editor(EditDataPtr obs)
     return EditDataEditorPtr(new EditDataEditor(this, obs));
 }
 
-void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange DBGE(what), ObsDataPtr DBGE(obs))
+void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
     LOG_SCOPE();
     DBG(DBG1(what) << DBGO(obs));
-    // FIXME need to update mOldTasks etc. in editdata if data is changed in mBackend; not sure how -- it might even be necessary to re-analyse the data
-}
 
+    EditDataPtr ebs = findE(SensorTime(obs->sensorTime()));
+    if (not ebs)
+        return;
+
+    const int wasModified = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
+    const bool backendChanged = ebs->updateFromBackend();
+    if (backendChanged) {
+        const int isModified = ebs->modified()?1:0, hasTasks = ebs->hasTasks()?1:0;
+        sendObsDataChanged(EditAccess::MODIFIED, ebs, isModified - wasModified, hasTasks - hadTasks);
+        backendDataChanged(what, ebs);
+    }
+}

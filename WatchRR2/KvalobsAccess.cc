@@ -7,7 +7,7 @@
 
 #include <boost/foreach.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "w2debug.hh"
 
 namespace kvalobsdata_helpers {

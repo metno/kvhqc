@@ -39,6 +39,7 @@ private Q_SLOTS:
     void onUndo();
     void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void onDataChanged(const QModelIndex&, const QModelIndex&);
+    void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
 
 private:
     struct Selection {
