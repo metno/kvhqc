@@ -15,7 +15,7 @@
 #define NDEBUG
 #include "debug.hh"
 
-ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor)
+ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
     : mMA(ma)
     , mSensor(sensor)
     , mHeaderShowStation(true)

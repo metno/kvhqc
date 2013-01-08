@@ -34,8 +34,8 @@ QtKvService::QtKvService()
     connect(this, SIGNAL(internalKvData(kvservice::KvObsDataListPtr)),
             this, SLOT(internalSendKvData(kvservice::KvObsDataListPtr)),
             Qt::QueuedConnection);
-    connect(this, SIGNAL(internalKvDataNotify(kvservice::KvObsDataListPtr)),
-            this, SLOT(internalSendKvDataNotify(kvservice::KvObsDataListPtr)),
+    connect(this, SIGNAL(internalKvDataNotify(kvservice::KvWhatListPtr)),
+            this, SLOT(internalSendKvDataNotify(kvservice::KvWhatListPtr)),
             Qt::QueuedConnection);
     connect(this, SIGNAL(internalKvHint(bool)),
             this, SLOT(internalSendKvHint(bool)),
@@ -123,7 +123,9 @@ void QtKvService::run()
 {
     using namespace kvservice;
     while (not mStop) {
-        dnmi::thread::CommandBase* com = mSignalQueue.get(/*timeout=*/ 0 /*sec*/);
+        if (KvApp::kvApp->shutdown())
+            break;
+        dnmi::thread::CommandBase* com = mSignalQueue.get(/*timeout=*/ 2 /*sec*/);
         if (not com)
             continue;
 

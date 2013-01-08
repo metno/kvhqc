@@ -14,7 +14,7 @@ public:
                        MODEL,
                        N_DISPLAYTYPES };
 
-    DataColumn(EditAccessPtr da, const Sensor& sensor, DisplayType displayType);
+    DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType);
     ~DataColumn();
 
     void setEditable(bool e)
@@ -49,6 +49,7 @@ protected:
 protected:
     EditAccessPtr mDA;
     Sensor mSensor;
+    TimeRange mTime;
     DisplayType mDisplayType;
     bool mEditable;
     bool mHeaderShowStation;

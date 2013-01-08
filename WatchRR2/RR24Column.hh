@@ -6,7 +6,7 @@
 
 class RR24Column : public DataColumn {
 public:
-    RR24Column(EditAccessPtr kda, const Sensor& sensor, DisplayType displayType);
+    RR24Column(EditAccessPtr kda, const Sensor& sensor, const TimeRange& time, DisplayType displayType);
     virtual QVariant data(const timeutil::ptime& time, int role) const;
 };
 

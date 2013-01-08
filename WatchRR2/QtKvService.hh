@@ -53,4 +53,6 @@ private:
     std::set<SubscriberID> mSubscriptions;
 };
 
+QtKvService* qtKvService();
+
 #endif // QtKvService_hh

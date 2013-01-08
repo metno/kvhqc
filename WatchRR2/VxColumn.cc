@@ -35,8 +35,8 @@ struct VxData {
 };
 } // namespace anonymous
 
-VxColumn::VxColumn(EditAccessPtr da, const Sensor& sensor, DisplayType displayType)
-    : DataColumn(da, sensor, displayType)
+VxColumn::VxColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType)
+    : DataColumn(da, sensor, time, displayType)
     , mSensor2(sensor)
 {
     mSensor2.paramId += 1;

@@ -7,7 +7,7 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
+//#define NDEBUG
 #include "w2debug.hh"
 
 namespace kvalobsdata_helpers {
@@ -78,16 +78,11 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
     if (updates.empty())
         return true;
 
-    // reject anything with tasks
-    BOOST_FOREACH(const ObsUpdate& ou, updates) {
-        if (ou.tasks != 0) {
-            DBG(DBGO1(ou.obs) << " has tasks: " << ou.tasks);
-            return false;
-        }
-    }
+    if (updatesHaveTasks(updates))
+        return false;
 
     std::list<kvalobs::kvData> store;
-    timeutil::ptime tbtime = timeutil::now();
+    const timeutil::ptime tbtime = timeutil::now();
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         const SensorTime st(ou.obs->sensorTime());
         bool insert = false;
@@ -114,6 +109,7 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
             Helpers::updateCfailed(d, "WatchRR2-m");
         }
         store.push_back(d);
+        DBG(DBG1(d) << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);

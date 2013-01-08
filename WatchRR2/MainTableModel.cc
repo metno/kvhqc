@@ -43,7 +43,7 @@ MainTableModel::MainTableModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor
 {
     for(int i=0; i<N_COLUMNS; ++i) {
         const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
-        DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, columnTypes[i]);
+        DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
         oc->setHeaderShowStation(false);
         if (columnTimeOffsets[i] != 0)
             oc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
@@ -56,7 +56,7 @@ MainTableModel::MainTableModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor
     }
 
     if (ma) {
-        ModelColumnPtr mc = ColumnFactory::columnForSensor(ma, sensor);
+        ModelColumnPtr mc = ColumnFactory::columnForSensor(ma, sensor, time);
         mc->setHeaderShowStation(false);
         addColumn(mc);
     }

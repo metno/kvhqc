@@ -12,9 +12,9 @@ namespace ColumnFactory {
 
 Code2TextPtr codesForParam(int paramId);
 
-DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, DataColumn::DisplayType displayType);
+DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataColumn::DisplayType displayType);
 
-ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor);
+ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
 
 } // namespace ColumnFactory
 

@@ -40,8 +40,6 @@ private Q_SLOTS:
     void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void onDataChanged(const QModelIndex&, const QModelIndex&);
 
-    void onKvData(kvservice::KvObsDataListPtr data);
-
 private:
     struct Selection {
         TimeRange selTime;

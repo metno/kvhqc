@@ -64,6 +64,14 @@ void TimeRange::extendByHours(int nHours)
     mT1 += h;
 }
 
+// ------------------------------------------------------------------------
+
+void TimeRange::shift(const boost::posix_time::time_duration& s)
+{
+    mT0 += s;
+    mT1 += s;
+}
+
 // ========================================================================
 
 std::ostream& operator<<(std::ostream& out, const TimeRange& tr)

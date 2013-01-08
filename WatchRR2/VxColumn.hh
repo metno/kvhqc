@@ -6,7 +6,7 @@
 
 class VxColumn : public DataColumn {
 public:
-    VxColumn(EditAccessPtr kda, const Sensor& sensor, DisplayType displayType);
+    VxColumn(EditAccessPtr kda, const Sensor& sensor, const TimeRange& time, DisplayType displayType);
 
     virtual QVariant data(const timeutil::ptime& time, int role) const;
     virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);

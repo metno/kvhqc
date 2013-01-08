@@ -30,6 +30,9 @@ public:
         { insert(insertStation, insertParam, insertType, obstime, orig_corr, orig_corr, controlinfo, cfailed); }
     
     bool erase(ObsDataPtr obs);
+
+protected:
+    virtual bool isSubscribed(const SensorTime& st);
 };
 
 typedef boost::shared_ptr<FakeDataAccess> FakeDataAccessPtr;

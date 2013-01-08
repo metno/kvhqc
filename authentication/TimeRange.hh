@@ -61,6 +61,11 @@ public:
 
     void extendByHours(int nHours);
 
+    TimeRange shifted(const boost::posix_time::time_duration& s) const
+        { TimeRange t(*this); t.shift(s); return t; }
+
+    void shift(const boost::posix_time::time_duration& s);
+
 private:
     timeutil::ptime mT0;
     timeutil::ptime mT1;

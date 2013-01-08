@@ -19,6 +19,14 @@ bool FakeDataAccess::erase(ObsDataPtr obs)
     return drop(obs->sensorTime());
 }
 
+bool FakeDataAccess::isSubscribed(const SensorTime& st)
+{
+    if (mSubscriptions.empty())
+        return true;
+    else
+        return KvBufferedAccess::isSubscribed(st);
+}
+
 // ========================================================================
 
 ::testing::AssertionResult AssertCorrControl(const char* ec_expr, const char* eci_expr, const char* a_expr,

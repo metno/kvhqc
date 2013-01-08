@@ -23,6 +23,12 @@ public:
 
     virtual bool update(const std::vector<ObsUpdate>& updates);
 
+    virtual void addSubscription(const ObsSubscription& s)
+        { mBackend->addSubscription(s); }
+
+    virtual void removeSubscription(const ObsSubscription& s)
+        { mBackend->removeSubscription(s); }
+
     EditDataEditorPtr editor(EditDataPtr obs);
     int currentUpdate() const
         { return mUpdateCount; }

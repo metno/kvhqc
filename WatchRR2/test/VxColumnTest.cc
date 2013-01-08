@@ -17,7 +17,7 @@ TEST(VxColumnTest, Basic)
     const Sensor sensor1(31850, kvalobs::PARAMID_V6,   0, 0, 302);
     const Sensor sensor2(31850, kvalobs::PARAMID_V6+1, 0, 0, 302);
     EditAccessPtr eda = boost::make_shared<EditAccess>(fda);
-    DataColumnPtr dc = boost::make_shared<VxColumn>(eda, sensor1, DataColumn::NEW_CORRECTED);
+    DataColumnPtr dc = boost::make_shared<VxColumn>(eda, sensor1, t_31850_20121130(), DataColumn::NEW_CORRECTED);
     dc->setTimeOffset(boost::posix_time::hours(-18));
 
     //boost::signals::scoped_connection sc = eda->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, dc.get(), _1, _2));

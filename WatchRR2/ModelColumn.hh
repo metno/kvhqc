@@ -8,7 +8,7 @@
 
 class ModelColumn : public ObsColumn {
 public:
-    ModelColumn(ModelAccessPtr ma, const Sensor& sensor);
+    ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
     ~ModelColumn();
 
     void setHeaderShowStation(bool show)

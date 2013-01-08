@@ -42,27 +42,27 @@ Code2TextPtr codesForParam(int pid)
     return c2t;
 }
 
-DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, DataColumn::DisplayType displayType)
+DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataColumn::DisplayType displayType)
 {
     const int pid = sensor.paramId;
 
     if( pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6 )
-        return boost::make_shared<VxColumn>(da, sensor, displayType);
+        return boost::make_shared<VxColumn>(da, sensor, time, displayType);
     DataColumnPtr dc;
     if( pid == kvalobs::PARAMID_RR )
-        dc = boost::make_shared<RR24Column>(da, sensor, displayType);
+        dc = boost::make_shared<RR24Column>(da, sensor, time, displayType);
     else
-        dc = boost::make_shared<DataColumn>(da, sensor, displayType);
+        dc = boost::make_shared<DataColumn>(da, sensor, time, displayType);
     dc->setCodes(codesForParam(pid));
     return dc;
 }
 
-ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor)
+ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
 {
     const int pid = sensor.paramId;
     const Sensor ms = Helpers::modelSensor(sensor);
 
-    ModelColumnPtr mc = boost::make_shared<ModelColumn>(ma, ms);
+    ModelColumnPtr mc = boost::make_shared<ModelColumn>(ma, ms, time);
     mc->setCodes(codesForParam(pid));
     return mc;
 }

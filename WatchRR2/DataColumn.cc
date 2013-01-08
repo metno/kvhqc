@@ -14,20 +14,23 @@
 #define NDEBUG
 #include "w2debug.hh"
 
-DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, DisplayType displayType)
+DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& t, DisplayType displayType)
     : mDA(da)
     , mSensor(sensor)
+    , mTime(t)
     , mDisplayType(displayType)
     , mEditable(displayType == NEW_CORRECTED)
     , mHeaderShowStation(true)
     , mCodes(boost::make_shared<Code2Text>())
 {
+    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
     mDA->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
 }
 
 DataColumn::~DataColumn()
 {
     mDA->obsDataChanged.disconnect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
+    mDA->removeSubscription(ObsSubscription(mSensor.stationId, mTime));
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
@@ -204,7 +207,13 @@ float DataColumn::getValue(EditDataPtr obs) const
 
 void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
 {
+    const TimeRange oldTime = mTime;
+    mTime.shift(-mTimeOffset);
     mTimeOffset = timeOffset;
+    mTime.shift(mTimeOffset);
+
+    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
+    mDA->removeSubscription(ObsSubscription(mSensor.stationId, oldTime));
 }
 
 void DataColumn::setCodes(boost::shared_ptr<Code2Text> codes)

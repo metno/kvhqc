@@ -7,8 +7,8 @@
 #define NDEBUG
 #include "debug.hh"
 
-RR24Column::RR24Column(EditAccessPtr da, const Sensor& sensor, DisplayType displayType)
-    : DataColumn(da, sensor, displayType)
+RR24Column::RR24Column(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType)
+    : DataColumn(da, sensor, time, displayType)
 {
     setEditable(false);
 }

@@ -1,9 +1,9 @@
 
 #include "Helpers.hh"
 #include "identifyUser.h"
-#include "KvalobsAccess.hh"
 #include "KvalobsModelAccess.hh"
 #include "MainDialog.hh"
+#include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
 #include "StationDialog.hh"
 
@@ -42,8 +42,8 @@ int main(int argc, char* argv[])
     bool haveUnknownOptions = false;
     QString myconf = "kvalobs.conf";
 
-    Sensor sensor(54420, kvalobs::PARAMID_RR, 0, 0, 302);
-    std::string timeFrom("2012-10-01T06:00:00"), timeTo("2012-11-20T06:00:00");
+    Sensor sensor(83880, kvalobs::PARAMID_RR, 0, 0, 302);
+    std::string timeFrom("2012-12-27T06:00:00"), timeTo("2013-01-08T06:00:00");
 
     for (int i = 1; i < args.size(); ++i) {
         if( args.at(i) == "--config" ) {
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     kvservice::corba::CorbaKvApp kvapp(argc, argv, confSec);
     QtKvService qkvs;
 
-    boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<KvalobsAccess>();
+    boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<QtKvalobsAccess>();
     boost::shared_ptr<KvalobsModelAccess> kma = boost::make_shared<KvalobsModelAccess>();
     EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
 
@@ -129,11 +129,6 @@ int main(int argc, char* argv[])
     }
 
     MainDialog main(eda, kma, sensor, time);
-
-    kvservice::KvDataSubscribeInfoHelper dataSubscription;
-    dataSubscription.addStationId(sensor.stationId);
-    qkvs.subscribeData(dataSubscription, &main, SLOT(onKvData(kvservice::KvObsDataListPtr)));
-
     if (main.exec()) {
         if (not eda->sendChangesToParent()) {
             QMessageBox::critical(0,
