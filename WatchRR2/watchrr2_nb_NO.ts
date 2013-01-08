@@ -4,23 +4,23 @@
 <context>
     <name>Auth</name>
     <message>
-        <location filename="main.cc" line="100"/>
+        <location filename="main.cc" line="107"/>
         <source>Authentication</source>
         <translation>Autentisering</translation>
     </message>
     <message>
-        <location filename="main.cc" line="101"/>
+        <location filename="main.cc" line="108"/>
         <source>You are not registered as operator, so you cannot save data!</source>
         <translation>Du er ikke registrert som operatør, så du kan ikke lagre data!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="102"/>
+        <location filename="main.cc" line="109"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
     <message>
-        <location filename="main.cc" line="103"/>
-        <location filename="main.cc" line="130"/>
+        <location filename="main.cc" line="110"/>
+        <location filename="main.cc" line="137"/>
         <source>Exit</source>
         <translation>Avslutt</translation>
     </message>
@@ -99,63 +99,63 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataColumn.cc" line="108"/>
+        <location filename="DataColumn.cc" line="113"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="109"/>
-        <location filename="DataColumn.cc" line="110"/>
+        <location filename="DataColumn.cc" line="114"/>
+        <location filename="DataColumn.cc" line="115"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="111"/>
-        <location filename="DataColumn.cc" line="112"/>
+        <location filename="DataColumn.cc" line="116"/>
+        <location filename="DataColumn.cc" line="117"/>
         <source>controlflags</source>
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="115"/>
+        <location filename="DataColumn.cc" line="120"/>
         <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</source>
-        <translation>Stasjion %1 Parameter %2 Level %3 Sensor %4 Type %5
+        <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="126"/>
+        <location filename="DataColumn.cc" line="131"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="128"/>
+        <location filename="DataColumn.cc" line="133"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="133"/>
+        <location filename="DataColumn.cc" line="138"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="134"/>
-        <location filename="DataColumn.cc" line="135"/>
+        <location filename="DataColumn.cc" line="139"/>
+        <location filename="DataColumn.cc" line="140"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="136"/>
-        <location filename="DataColumn.cc" line="137"/>
+        <location filename="DataColumn.cc" line="141"/>
+        <location filename="DataColumn.cc" line="142"/>
         <source>flags</source>
         <translation>flagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="151"/>
+        <location filename="DataColumn.cc" line="156"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="153"/>
+        <location filename="DataColumn.cc" line="158"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
@@ -309,14 +309,67 @@
     </message>
 </context>
 <context>
+    <name>Form</name>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="14"/>
+        <source>Form</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="20"/>
+        <source>Station:</source>
+        <translation type="unfinished">Stasjon:</translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="45"/>
+        <source>Time:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="70"/>
+        <source>Parameter:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="95"/>
+        <source>Type:</source>
+        <translation type="unfinished">Type:</translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="120"/>
+        <source>Original:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="148"/>
+        <source>Corrected:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="173"/>
+        <source>Flags:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="183"/>
+        <source>Checks:</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_obsdetails.ui" line="193"/>
+        <source>Tasks:</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
-        <location filename="main.cc" line="128"/>
+        <location filename="main.cc" line="135"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="main.cc" line="129"/>
+        <location filename="main.cc" line="136"/>
         <source>Your changes could not be saved, sorry!</source>
         <translation>Beklager, dine endringer ble ikke lagret!</translation>
     </message>
@@ -324,12 +377,12 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="36"/>
+        <location filename="MainDialog.cc" line="37"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="90"/>
+        <location filename="MainDialog.cc" line="87"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
@@ -360,7 +413,7 @@
         <location filename="ModelColumn.cc" line="62"/>
         <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</source>
-        <translation>Stasjion %1 Parameter %2 Level %3 Sensor %4 Type %5
+        <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</translation>
     </message>
     <message>
@@ -464,14 +517,19 @@
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="99"/>
+        <location filename="StationDialog.cc" line="100"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="127"/>
+        <location filename="StationDialog.cc" line="128"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
+    </message>
+    <message>
+        <location filename="StationDialog.cc" line="133"/>
+        <source>typeid different at start and end</source>
+        <translation>forskjellige typeid ved start og slutt</translation>
     </message>
 </context>
 <context>

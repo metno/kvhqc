@@ -86,8 +86,9 @@ bool StationDialog::check()
     }
 
     if (ui->dateTo->date() < ui->dateFrom->date().addDays(MIN_DAYS)) {
-        if (ui->dateFrom->date().addDays(MIN_DAYS) <= ui->dateTo->maximumDate())
-            ui->dateTo->setDate(ui->dateFrom->date().addDays(MIN_DAYS));
+        const QDate fromPlusMIN = ui->dateFrom->date().addDays(MIN_DAYS);
+        if (fromPlusMIN <= ui->dateTo->maximumDate())
+            ui->dateTo->setDate(fromPlusMIN);
         else
             ui->dateFrom->setDate(ui->dateTo->date().addDays(-MIN_DAYS));
     }
@@ -105,7 +106,7 @@ bool StationDialog::check()
     int typeFrom = -1, typeTo = -1;
     timeutil::ptime tFromEnd, tToStart;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (op.paramID() == 110
+        if (op.paramID() == kvalobs::PARAMID_RR
             and (op.typeID() == 302 or op.typeID() == 402)
             and (op.kl06() or op.kl07() or op.collector()))
         {
@@ -129,20 +130,8 @@ bool StationDialog::check()
     }
 
     if (typeFrom != typeTo) {
-        // if types differ, set start/end date such that the longer period wins
-        if ((tFromEnd - mTimeFrom) < (mTimeTo - tToStart)) {
-            // period before dateTo is longer
-            const boost::gregorian::date d = tToStart.date();
-            ui->dateFrom->setDate(QDate(d.year(), d.month(), d.day()));
-            mTimeFrom = tToStart;
-            mSensor.typeId = typeTo;
-        } else {
-            // period after dateFrom is longer
-            const boost::gregorian::date d = tFromEnd.date();
-            ui->dateTo->setDate(QDate(d.year(), d.month(), d.day()));
-            mTimeTo = tFromEnd;
-            mSensor.typeId = typeFrom;
-        }
+        ui->labelStationInfo->setText(tr("typeid different at start and end"));
+        return false;
     } else {
         mSensor.typeId = typeFrom; // same as typeTo
     }

@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item row="2" column="1">
-    <widget class="QDateEdit" name="dateFrom">
+    <widget class="MiDateTimeEdit" name="dateFrom">
      <property name="displayFormat">
       <string notr="true">yyyy-MM-dd</string>
      </property>
@@ -62,7 +62,7 @@
     </widget>
    </item>
    <item row="3" column="1">
-    <widget class="QDateEdit" name="dateTo">
+    <widget class="MiDateTimeEdit" name="dateTo">
      <property name="displayFormat">
       <string notr="true">yyyy-MM-dd</string>
      </property>
@@ -127,6 +127,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MiDateTimeEdit</class>
+   <extends>QDateEdit</extends>
+   <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>
