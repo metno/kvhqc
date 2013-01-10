@@ -133,9 +133,15 @@ int main(int argc, char* argv[])
         if (not eda->sendChangesToParent()) {
             QMessageBox::critical(0,
                                   qApp->translate("Main", "WatchRR"),
-                                  qApp->translate("Main", "Your changes could not be saved, sorry!"),
+                                  qApp->translate("Main", "Sorry, your changes could not be saved and are lost!"),
                                   qApp->translate("Auth", "Exit"),
                                   "");
+        } else {
+            QMessageBox::information(0,
+                                     qApp->translate("Main", "WatchRR"),
+                                     qApp->translate("Main", "Your changes have been saved."),
+                                     qApp->translate("Auth", "Exit"),
+                                     "");
         }
     }
 

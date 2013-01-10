@@ -21,6 +21,9 @@ public:
     void setReinserter(kvalobs::DataReinserter<kvservice::KvApp>* reinserter)
         { mDataReinserter = reinserter; }
 
+protected:
+    virtual bool drop(const SensorTime& st);
+
 private:
     struct Fetched {
         int stationId;

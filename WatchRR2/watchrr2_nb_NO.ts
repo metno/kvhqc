@@ -21,6 +21,7 @@
     <message>
         <location filename="main.cc" line="110"/>
         <location filename="main.cc" line="137"/>
+        <location filename="main.cc" line="143"/>
         <source>Exit</source>
         <translation>Avslutt</translation>
     </message>
@@ -365,13 +366,20 @@
     <name>Main</name>
     <message>
         <location filename="main.cc" line="135"/>
+        <location filename="main.cc" line="141"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
         <location filename="main.cc" line="136"/>
-        <source>Your changes could not be saved, sorry!</source>
-        <translation>Beklager, dine endringer ble ikke lagret!</translation>
+        <source>Sorry, your changes could not be saved and are lost!</source>
+        <oldsource>Your changes could not be saved, sorry!</oldsource>
+        <translation>Beklager, dine endringer ble ikke lagret or er mistet!</translation>
+    </message>
+    <message>
+        <location filename="main.cc" line="142"/>
+        <source>Your changes have been saved.</source>
+        <translation>Dine endringer ble lagret.</translation>
     </message>
 </context>
 <context>

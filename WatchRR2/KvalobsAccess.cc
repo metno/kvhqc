@@ -126,3 +126,12 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         return false;
     }
 }
+
+bool KvalobsAccess::drop(const SensorTime& st)
+{
+    const Fetched f(st.sensor.stationId, st.time);
+    Fetched_t::iterator fit = mFetched.find(f);
+    if (fit != mFetched.end())
+        mFetched.erase(fit);
+    return KvBufferedAccess::drop(st);
+}

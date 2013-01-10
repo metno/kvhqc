@@ -1,3 +1,9 @@
+kvhqc (2.14.1-1) unstable; urgency=low
+
+  * new WatchRR implementation included in package as separate program
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 10 Jan 2013 10:03:33 +0100
+
 kvhqc (2.14.0-1) unstable; urgency=low
 
   * adapt for libkvcpp4 which is using boost posix_time

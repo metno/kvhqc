@@ -5,7 +5,7 @@ SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 ENABLE_TESTING()
 
 INCLUDE(MetnoVersions)
-METNO_PVERSION(2.14.0)
+METNO_PVERSION(2.14.1)
 
 IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr")
   SET(SYSCONFDIR "/etc")
@@ -86,7 +86,7 @@ INSTALL(FILES
   share/images/watchweather.png
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 
-FOREACH(df hqcdiana WatchRR WatchWeather histhqcdiana histWatchRR histWatchWeather)
+FOREACH(df hqcdiana WatchRR WatchRR2 WatchWeather histhqcdiana histWatchRR histWatchWeather)
   SET(dfi share/metno-${df}.desktop.in)
   SET(dfo share/metno-${df}-${PVERSION}.desktop)
   CONFIGURE_FILE(${dfi} ${dfo})
