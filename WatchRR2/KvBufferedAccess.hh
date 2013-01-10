@@ -2,8 +2,13 @@
 #ifndef KvBufferedAccess_hh
 #define KvBufferedAccess_hh 1
 
-#include "KvalobsData.hh"
 #include "ObsAccess.hh"
+
+namespace kvalobs {
+class kvData;
+}
+class KvalobsData;
+typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
 
 class KvBufferedAccess : public ObsAccess {
 public:

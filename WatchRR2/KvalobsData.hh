@@ -7,7 +7,7 @@
 
 class KvalobsData : public ObsData {
 public:
-    KvalobsData(const kvalobs::kvData& d);
+    KvalobsData(const kvalobs::kvData& d, bool created);
     virtual ~KvalobsData();
 
     virtual SensorTime sensorTime() const;
@@ -27,8 +27,12 @@ public:
     kvalobs::kvData& data()
         { return mKvData; }
 
+    bool isCreated() const
+        { return mCreated; }
+
 private:
     kvalobs::kvData mKvData;
+    bool mCreated;
 };
 typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
 

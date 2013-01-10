@@ -3,8 +3,9 @@
 
 #include "Helpers.hh"
 
-KvalobsData::KvalobsData(const kvalobs::kvData& d)
+KvalobsData::KvalobsData(const kvalobs::kvData& d, bool created)
     : mKvData(d)
+    , mCreated(created)
 {
 }
 

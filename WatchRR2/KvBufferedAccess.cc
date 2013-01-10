@@ -1,6 +1,7 @@
 
 #include "KvBufferedAccess.hh"
 #include "Helpers.hh"
+#include "KvalobsData.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -24,13 +25,13 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
     Data_t::iterator it = mData.find(st);
     if (it != mData.end() and it->second)
         return it->second;
-    
+
+    DBG(DBG1(st.sensor.stationId) << DBG1(st.sensor.paramId) << DBG1(st.time));
     const Sensor& s = st.sensor;
-    kvalobs::kvData d(s.stationId, timeutil::to_miTime(st.time), kvalobs::MISSING,
-                      s.paramId, timeutil::to_miTime(timeutil::ptime()), s.typeId, s.level, s.sensor,
-                      kvalobs::NEW_ROW,
-                      std::string("0000003000000000"), std::string("0000000000000000"), "");
-    KvalobsDataPtr obs = boost::make_shared<KvalobsData>(d);
+    kvalobs::kvData d = kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
+                                                  s.paramId, s.typeId, s.sensor, s.level);
+    d.corrected(kvalobs::NEW_ROW);
+    KvalobsDataPtr obs = boost::make_shared<KvalobsData>(d, true);
     mData[st] = obs;
     obsDataChanged(CREATED, obs);
     return obs;
@@ -70,7 +71,7 @@ bool KvBufferedAccess::update(const std::vector<ObsUpdate>& updates)
             changed = true;
             d.controlinfo(ou.controlinfo);
         }
-        DBGO(obs);
+        DBG(DBGO1(obs) << " tbtime=" << obs->data().tbtime());
         if (changed)
             obsDataChanged(MODIFIED, obs);
     }
@@ -87,7 +88,7 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
     Data_t::iterator it = mData.find(st);
     if (it == mData.end()) {
         DBGV(data);
-        obs = boost::make_shared<KvalobsData>(data);
+        obs = boost::make_shared<KvalobsData>(data, false);
         mData[st] = obs;
         obsDataChanged(CREATED, obs);
     } else {

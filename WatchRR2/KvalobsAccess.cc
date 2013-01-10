@@ -1,6 +1,7 @@
 
 #include "KvalobsAccess.hh"
 #include "Helpers.hh"
+#include "KvalobsData.hh"
 
 #include <kvcpp/KvGetDataReceiver.h>
 #include <kvcpp/WhichDataHelper.h>
@@ -47,7 +48,7 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
         return KvalobsDataPtr();
 
     LOG_SCOPE();
-    DBG(DBG1(st.sensor.stationId) << DBG1(st.time));
+    DBG(DBG1(st.sensor.stationId) << DBG1(st.sensor.paramId) << DBG1(st.time));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
@@ -82,24 +83,27 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         return false;
 
     std::list<kvalobs::kvData> store;
-    const timeutil::ptime tbtime = timeutil::now();
+    const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         const SensorTime st(ou.obs->sensorTime());
-        bool insert = false;
         KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
         if (not obs) {
-            insert = true;
+            // TODO is this an error?
+            DBGL;
             obs = boost::static_pointer_cast<KvalobsData>(create(st));
         }
+        const bool inserted = obs->isCreated();
         
         kvalobs::kvData& d = obs->data();
+        if (d.corrected() == kvalobs::NEW_ROW)
+            continue; // FIXME this is actually an error
         if (not Helpers::float_eq()(d.corrected(), ou.corrected))
             d.corrected(ou.corrected);
         if (d.controlinfo() != ou.controlinfo)
             d.controlinfo(ou.controlinfo);
         Helpers::updateUseInfo(d);
 
-        if (insert) {
+        if (inserted) {
             Helpers::updateCfailed(d, "WatchRR2-i");
             // specify tbtime
             d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
@@ -109,7 +113,9 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
             Helpers::updateCfailed(d, "WatchRR2-m");
         }
         store.push_back(d);
-        DBG(DBG1(d) << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
+        DBG(DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
+            << " ins=" << (inserted ? "y" : "n")
+            << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
