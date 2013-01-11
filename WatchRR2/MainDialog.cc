@@ -36,16 +36,17 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
     ui->labelStationInfo->setText(tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId));
     ui->buttonSave->setEnabled(false);
-    ui->rrTable->setModel(mModel);
+    ui->rrTable->setModel(mModel.get());
     ui->rrTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->rrTable->setItemDelegate(new ObsDelegate(this));
     ui->labelInfo->setText("");
     ui->buttonUndo->setEnabled(false);
+    ui->buttonRedo->setVisible(false);
 
     connect(ui->rrTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-    connect(mModel, SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+    connect(mModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
 
     mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));

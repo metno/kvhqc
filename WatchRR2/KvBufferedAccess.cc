@@ -26,7 +26,6 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
     if (it != mData.end() and it->second)
         return it->second;
 
-    DBG(DBG1(st.sensor.stationId) << DBG1(st.sensor.paramId) << DBG1(st.time));
     const Sensor& s = st.sensor;
     kvalobs::kvData d = kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
                                                   s.paramId, s.typeId, s.sensor, s.level);
@@ -40,18 +39,14 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
 bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
 {
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
-        if (ou.tasks != 0) {
-            DBG(DBGO1(ou.obs) << " has tasks: " << ou.tasks);
+        if (ou.tasks != 0)
             return true;
-        }
     }
     return false;
 }
 
 bool KvBufferedAccess::update(const std::vector<ObsUpdate>& updates)
 {
-    LOG_SCOPE();
-
     // reject anything with tasks
     if (updatesHaveTasks(updates))
         return false;
@@ -71,7 +66,6 @@ bool KvBufferedAccess::update(const std::vector<ObsUpdate>& updates)
             changed = true;
             d.controlinfo(ou.controlinfo);
         }
-        DBG(DBGO1(obs) << " tbtime=" << obs->data().tbtime());
         if (changed)
             obsDataChanged(MODIFIED, obs);
     }
@@ -87,38 +81,17 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
     KvalobsDataPtr obs;
     Data_t::iterator it = mData.find(st);
     if (it == mData.end()) {
-        DBGV(data);
         obs = boost::make_shared<KvalobsData>(data, false);
         mData[st] = obs;
         obsDataChanged(CREATED, obs);
     } else {
         obs = it->second;
 
-#if 0
-        bool changed = false;
-        // FIXME must also check for changes in tbtime, original, ...
-        kvalobs::kvData& d = obs->data();
-        if (not Helpers::float_eq()(d.corrected(), data.corrected())) {
-            changed = true;
-            d.corrected(data.corrected());
-        }
-        if (d.controlinfo() != data.controlinfo()) {
-            changed = true;
-            d.controlinfo(data.controlinfo());
-        }
-        DBGO(obs);
-        if (changed)
-            obsDataChanged(MODIFIED, obs);
-#else
         // FIXME this might compare too many things ...
         if (not kvalobs::compare::exactly_equal()(obs->data(), data)) {
-            DBG(DBG1(data) << " modified");
             obs->data() = data;
             obsDataChanged(MODIFIED, obs);
-        } else {
-            DBG(DBG1(data) << " unchanged");
         }
-#endif
     }
     return obs;
 }
@@ -179,12 +152,11 @@ void KvBufferedAccess::updateSubscribedTimes()
     BOOST_FOREACH(const ObsSubscription& sub, mSubscriptions) {
         SubscribedTimes_t::iterator it = mSubscribedTimes.find(sub.stationId());
         if (it != mSubscribedTimes.end()) {
+            // FIXME merge only overlapping time spans
             TimeRange r(std::min(sub.time().t0(), it->second.t0()), std::max(sub.time().t1(), it->second.t1()));
             it->second = r;
-            DBG(DBG1(sub.stationId()) << DBG1(r));
         } else {
             mSubscribedTimes.insert(SubscribedTimes_t::value_type(sub.stationId(), sub.time()));
-            DBG(DBG1(sub.stationId()) << DBG1(sub.time()));
         }
     }
 

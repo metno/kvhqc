@@ -68,7 +68,7 @@ private:
     Sensor mSensor;
     TimeRange mTime;
     TimeRange mEditableTime;
-    MainTableModel* mModel;
+    std::auto_ptr<MainTableModel> mModel;
 };
 
 #endif // MAINDIALOG_HH
