@@ -42,6 +42,13 @@ Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
     return f;
 }
 
+static int extract_ui2(EditDataPtr obs)
+{
+    kvalobs::kvUseInfo ui;
+    ui.setUseFlags(obs->controlinfo());
+    return ui.flag(2);
+}
+
 QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 {
     EditDataPtr obs = getObs(time);
@@ -52,6 +59,16 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
         if (mDisplayType == NEW_CORRECTED) {
             if (obs->hasTasks())
                 return QBrush(Qt::red);
+        } else if (mDisplayType == ORIGINAL) {
+            const int ui_2 = extract_ui2(obs);
+            if (ui_2 == 1)      // probably ok
+                return QBrush(QColor(0xFF, 0xFF, 0xF0)); // light yellow
+            else if (ui_2 == 2) // probably wrong
+                return QBrush(QColor(0xFF, 0xF0, 0xF0)); // light red
+            else if (ui_2 == 9) // no quality information
+                return QBrush(QColor(0xFF, 0xE0, 0xB0)); // light orange
+            else if (ui_2 != 0) // wrong
+                return QBrush(QColor(0xFF, 0xE0, 0xE0)); // light red
         }
     } else if (role == Qt::FontRole) {
         QFont f;
@@ -63,7 +80,19 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
             const kvalobs::kvControlInfo& ci = (mDisplayType == OLD_CONTROLINFO) ? obs->oldControlinfo() : obs->controlinfo();
             return Helpers::getFlagExplanation(ci);
         }
-        QString tip = mCodes->asTip(getValue(obs));
+        QString tip;
+        if (mDisplayType == ORIGINAL) {
+            const int ui_2 = extract_ui2(obs);
+            if (ui_2 == 3)
+                Helpers::appendText(tip, qApp->translate("DataColumn", "surely wrong"));
+            else if (ui_2 == 2)
+                Helpers::appendText(tip, qApp->translate("DataColumn", "very suspicious (probably wrong)"));
+            else if (ui_2 == 1)
+                Helpers::appendText(tip, qApp->translate("DataColumn", "suspicious (probably ok)"));
+            else if (ui_2 == 9)
+                Helpers::appendText(tip, qApp->translate("DataColumn", "no quality info available"));
+        }
+        Helpers::appendText(tip, mCodes->asTip(getValue(obs)));
         return Helpers::appendText(tip, tasks::asText(obs->allTasks()));
     } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
         if (mDisplayType == OLD_CONTROLINFO or mDisplayType == NEW_CONTROLINFO ) {

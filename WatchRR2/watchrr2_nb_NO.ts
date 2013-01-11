@@ -100,63 +100,85 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataColumn.cc" line="113"/>
+        <location filename="DataColumn.cc" line="89"/>
+        <source>surely wrong</source>
+        <translation>sikkert feilaktig</translation>
+    </message>
+    <message>
+        <location filename="DataColumn.cc" line="91"/>
+        <source>very suspicious (probably wrong)</source>
+        <oldsource>very suspicious</oldsource>
+        <translation>svært mistenkelig (antagelig feilaktig)</translation>
+    </message>
+    <message>
+        <location filename="DataColumn.cc" line="93"/>
+        <source>suspicious (probably ok)</source>
+        <oldsource>suspicious</oldsource>
+        <translation>noe mistenkelig (antagelig korrekt)</translation>
+    </message>
+    <message>
+        <location filename="DataColumn.cc" line="95"/>
+        <source>no quality info available</source>
+        <translation>kvalitetsinformasjon ikke git</translation>
+    </message>
+    <message>
+        <location filename="DataColumn.cc" line="144"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="114"/>
-        <location filename="DataColumn.cc" line="115"/>
+        <location filename="DataColumn.cc" line="145"/>
+        <location filename="DataColumn.cc" line="146"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="116"/>
-        <location filename="DataColumn.cc" line="117"/>
+        <location filename="DataColumn.cc" line="147"/>
+        <location filename="DataColumn.cc" line="148"/>
         <source>controlflags</source>
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="120"/>
+        <location filename="DataColumn.cc" line="151"/>
         <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</source>
         <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="131"/>
+        <location filename="DataColumn.cc" line="162"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="133"/>
+        <location filename="DataColumn.cc" line="164"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="138"/>
+        <location filename="DataColumn.cc" line="169"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="139"/>
-        <location filename="DataColumn.cc" line="140"/>
+        <location filename="DataColumn.cc" line="170"/>
+        <location filename="DataColumn.cc" line="171"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="141"/>
-        <location filename="DataColumn.cc" line="142"/>
+        <location filename="DataColumn.cc" line="172"/>
+        <location filename="DataColumn.cc" line="173"/>
         <source>flags</source>
         <translation>flagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="156"/>
+        <location filename="DataColumn.cc" line="187"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="158"/>
+        <location filename="DataColumn.cc" line="189"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
@@ -390,37 +412,37 @@
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="90"/>
+        <location filename="MainDialog.cc" line="91"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="145"/>
+        <location filename="MainDialog.cc" line="146"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="146"/>
+        <location filename="MainDialog.cc" line="147"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="147"/>
+        <location filename="MainDialog.cc" line="148"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="148"/>
+        <location filename="MainDialog.cc" line="149"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="233"/>
+        <location filename="MainDialog.cc" line="234"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="234"/>
+        <location filename="MainDialog.cc" line="235"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
