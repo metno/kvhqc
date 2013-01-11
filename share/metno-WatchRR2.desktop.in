@@ -1,0 +1,10 @@
+[Desktop Entry]
+Name=WatchRR2 @PVERSION@
+Comment=Precipitation (test version)
+Comment[no]=Nedbørkort (test-versjon)
+Exec=WatchRR2-@PVERSION@ --config /etc/kvhqc/@PVERSION@/kvalobs.conf
+Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/watchrr.png
+Terminal=false
+Type=Application
+StartupNotify=false
+Categories=Meteorologisk;Meteorologisk-Kvalobs
