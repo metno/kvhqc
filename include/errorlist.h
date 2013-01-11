@@ -85,7 +85,7 @@ public:
   OkTableItem(Q3Table* t,
 	      const QString &txt ) : Q3CheckTableItem( t, txt ) {}
   void paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected );
-  int pressedButton;
+  //  int pressedButton;
 };
 
 /**
