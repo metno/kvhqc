@@ -53,6 +53,8 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add);
 QString appendText(QString& text, const QString& append, const QString& separator = ", ");
 QString appendedText(const QString& text, const QString& append, const QString& separator = ", ");
 
+double distance(double lon1, double lat1, double lon2, double lat2);
+
 } // namespace Helpers
 
 namespace kvalobs {

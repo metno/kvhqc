@@ -133,7 +133,7 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
     }
 }
 
-QVariant DataColumn::headerData(int role) const
+QVariant DataColumn::headerData(int role, bool verticalHeader) const
 {
     const int offset = mTimeOffset.hours();
 
@@ -171,16 +171,17 @@ QVariant DataColumn::headerData(int role) const
             QT_TRANSLATE_NOOP("DataColumn", "flags")
         };
         
+        const QString sep = verticalHeader ? "\n" : " ";
         QString h;
         if (mHeaderShowStation)
-            h += QString("%1\n").arg(mSensor.stationId);
+            h += QString("%1").arg(mSensor.stationId) + sep;
         
-        h += QString("%1\n%2")
-            .arg(Helpers::parameterName(mSensor.paramId))
-            .arg(qApp->translate("DataColumn", displayTypes[mDisplayType]));
+        h += Helpers::parameterName(mSensor.paramId)
+            + sep
+            + qApp->translate("DataColumn", displayTypes[mDisplayType]);
 
         if (offset != 0) {
-            h += "\n";
+            h += sep;
             if (offset > 0)
                 h += qApp->translate("DataColumn", "+%1h").arg(offset);
             else

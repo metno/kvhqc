@@ -64,6 +64,8 @@ SET(watchrr2_SOURCES
   ModelColumn.cc
   ModelColumn.hh
   ModelData.hh
+  NeighborTableModel.hh
+  NeighborTableModel.cc
   ObsColumn.hh
   ObsColumn.cc
   ObsAccess.hh

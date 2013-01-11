@@ -6,6 +6,7 @@
 #include "EditDialog.hh"
 #include "Helpers.hh"
 #include "MainTableModel.hh"
+#include "NeighborTableModel.hh"
 #include "ObsDelegate.hh"
 #include "RedistDialog.hh"
 
@@ -28,7 +29,8 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mDA(da)
     , mSensor(sensor)
     , mTime(time)
-    , mModel(new MainTableModel(mDA, ma, mSensor, mTime))
+    , mRRModel(new MainTableModel(mDA, ma, mSensor, mTime))
+    , mNeighborModel(new NeighborTableModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
 
@@ -36,7 +38,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
     ui->labelStationInfo->setText(tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId));
     ui->buttonSave->setEnabled(false);
-    ui->rrTable->setModel(mModel.get());
+    ui->rrTable->setModel(mRRModel.get());
     ui->rrTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->rrTable->setItemDelegate(new ObsDelegate(this));
@@ -44,9 +46,15 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->buttonUndo->setEnabled(false);
     ui->buttonRedo->setVisible(false);
 
+    ui->neighborTable->setModel(mNeighborModel.get());
+    ui->neighborTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->neighborTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->neighborTable->verticalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->neighborTable->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
     connect(ui->rrTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-    connect(mModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+    connect(mRRModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
 
     mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
@@ -62,7 +70,7 @@ void MainDialog::initializeRR24Data()
     mEditableTime = mTime;
     RR24::analyse(mDA, mSensor, mEditableTime);
     FCC::analyse(mDA, mSensor, mEditableTime);
-    mModel->setRR24TimeRange(mEditableTime);
+    mRRModel->setRR24TimeRange(mEditableTime);
     mDA->pushUpdate();
 }
 
@@ -80,7 +88,7 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
 
     const int nDays = sel.selTime.days() + 1;
 
-    if( sel.minCol == mModel->getRR24Column() and sel.minCol == sel.maxCol ) {
+    if( sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol ) {
         ui->buttonEdit->setEnabled(true);
         ui->buttonAcceptRow->setEnabled(false);
         if( nDays <= 1 ) {
@@ -98,7 +106,7 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
         ui->buttonRedistQC2->setEnabled(false);
 
         const bool completeSingleRow = (sel.selTime.t0() == sel.selTime.t1())
-            and (sel.minCol == 0 and sel.maxCol >= mModel->columnCount(QModelIndex()) - 2);
+            and (sel.minCol == 0 and sel.maxCol >= mRRModel->columnCount(QModelIndex()) - 2);
         ui->buttonAcceptRow->setEnabled(completeSingleRow);
     }
 }
@@ -123,7 +131,7 @@ MainDialog::Selection MainDialog::findSelection()
         if( s.maxCol < c )
             s.maxCol = c;
     }
-    s.selTime = TimeRange(mModel->timeAtRow(minRow), mModel->timeAtRow(maxRow));
+    s.selTime = TimeRange(mRRModel->timeAtRow(minRow), mRRModel->timeAtRow(maxRow));
     return s;
 }
 
@@ -203,9 +211,9 @@ void MainDialog::onUndo()
 
 void MainDialog::clearSelection()
 {
-    const QModelIndex tl = mModel->index(0, 0, QModelIndex());
-    const QModelIndex br = mModel->index(mModel->rowCount(QModelIndex())-1,
-                                         mModel->columnCount(QModelIndex())-1, QModelIndex());
+    const QModelIndex tl = mRRModel->index(0, 0, QModelIndex());
+    const QModelIndex br = mRRModel->index(mRRModel->rowCount(QModelIndex())-1,
+                                           mRRModel->columnCount(QModelIndex())-1, QModelIndex());
     QItemSelection s;
     s.select(tl, br);
     ui->rrTable->selectionModel()->select(s, QItemSelectionModel::Clear);

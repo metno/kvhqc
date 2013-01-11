@@ -23,6 +23,9 @@ public:
 
     timeutil::ptime timeAtRow(int row) const;
 
+    void setTimeInRows(bool tir)
+        { mTimeInRows = tir; }
+
 protected:
     void addColumn(ObsColumnPtr c);
     ObsColumnPtr getColumn(int idx) const
@@ -32,10 +35,16 @@ protected:
 
 private:
     void onColumnChanged(const timeutil::ptime& time, ObsColumn* column);
+    int rowOrColumnCount(bool timeDirection) const;
+    int timeIndex(const QModelIndex& index) const
+        { return mTimeInRows ? index.row() : index.column(); }
+    int columnIndex(const QModelIndex& index) const
+        { return mTimeInRows ? index.column() : index.row(); }
 
 protected:
     EditAccessPtr mDA;
     TimeRange mTime;
+    bool mTimeInRows;
 
 private:
     std::vector<ObsColumnPtr> mColumns;

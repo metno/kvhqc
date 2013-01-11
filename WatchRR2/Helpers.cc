@@ -372,4 +372,14 @@ QString appendedText(const QString& text, const QString& append, const QString& 
     return appendText(t, append, separator);
 }
 
+double distance(double lon1, double lat1, double lon2, double lat2)
+{
+    const double DEG_RAD = M_PI/180, EARTH_RADIUS = 6371.0;
+    const double delta_lon=(lon1 - lon2)*DEG_RAD, slon = sin(delta_lon/2);
+    const double delta_lat=(lat1 - lat2)*DEG_RAD, slat = sin(delta_lat/2);
+    const double a = slat*slat + cos(lat1*DEG_RAD)*cos(lat2*DEG_RAD)*slon*slon;
+    const double c =2.0 * atan2(sqrt(a), sqrt(1-a));
+    return EARTH_RADIUS*c;
+}
+
 } // namespace Helpers

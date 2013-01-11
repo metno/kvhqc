@@ -21,6 +21,7 @@ namespace Ui {
 class DialogMain;
 }
 class MainTableModel;
+class NeighborTableModel;
 
 class MainDialog : public QDialog
 {   Q_OBJECT;
@@ -68,7 +69,8 @@ private:
     Sensor mSensor;
     TimeRange mTime;
     TimeRange mEditableTime;
-    std::auto_ptr<MainTableModel> mModel;
+    std::auto_ptr<MainTableModel> mRRModel;
+    std::auto_ptr<NeighborTableModel> mNeighborModel;
 };
 
 #endif // MAINDIALOG_HH

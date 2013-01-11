@@ -53,7 +53,7 @@ bool ModelColumn::setData(const timeutil::ptime& /*time*/, const QVariant& /*val
     return false;
 }
 
-QVariant ModelColumn::headerData(int role) const
+QVariant ModelColumn::headerData(int role, bool /*verticalHeader*/) const
 {
     const int offset = mTimeOffset.hours();
 

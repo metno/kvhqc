@@ -100,85 +100,85 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataColumn.cc" line="89"/>
+        <location filename="DataColumn.cc" line="87"/>
         <source>surely wrong</source>
         <translation>sikkert feilaktig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="91"/>
+        <location filename="DataColumn.cc" line="89"/>
         <source>very suspicious (probably wrong)</source>
         <oldsource>very suspicious</oldsource>
         <translation>svært mistenkelig (antagelig feilaktig)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="93"/>
+        <location filename="DataColumn.cc" line="91"/>
         <source>suspicious (probably ok)</source>
         <oldsource>suspicious</oldsource>
         <translation>noe mistenkelig (antagelig korrekt)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="95"/>
+        <location filename="DataColumn.cc" line="93"/>
         <source>no quality info available</source>
         <translation>kvalitetsinformasjon ikke git</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="144"/>
+        <location filename="DataColumn.cc" line="142"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="145"/>
-        <location filename="DataColumn.cc" line="146"/>
+        <location filename="DataColumn.cc" line="143"/>
+        <location filename="DataColumn.cc" line="144"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="147"/>
-        <location filename="DataColumn.cc" line="148"/>
+        <location filename="DataColumn.cc" line="145"/>
+        <location filename="DataColumn.cc" line="146"/>
         <source>controlflags</source>
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="151"/>
+        <location filename="DataColumn.cc" line="149"/>
         <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</source>
         <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="162"/>
+        <location filename="DataColumn.cc" line="160"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="164"/>
+        <location filename="DataColumn.cc" line="162"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="169"/>
+        <location filename="DataColumn.cc" line="167"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="170"/>
-        <location filename="DataColumn.cc" line="171"/>
+        <location filename="DataColumn.cc" line="168"/>
+        <location filename="DataColumn.cc" line="169"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="172"/>
-        <location filename="DataColumn.cc" line="173"/>
+        <location filename="DataColumn.cc" line="170"/>
+        <location filename="DataColumn.cc" line="171"/>
         <source>flags</source>
         <translation>flagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="187"/>
+        <location filename="DataColumn.cc" line="186"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="189"/>
+        <location filename="DataColumn.cc" line="188"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
@@ -219,52 +219,70 @@
         <translation>WatchRR</translation>
     </message>
     <message utf8="true">
-        <location filename="watchrr_main.ui" line="48"/>
+        <location filename="watchrr_main.ui" line="58"/>
         <source>&amp;Redistribute…</source>
         <translation>Tilfo&amp;rdel…</translation>
     </message>
     <message utf8="true">
-        <location filename="watchrr_main.ui" line="35"/>
+        <location filename="watchrr_main.ui" line="45"/>
         <source>&amp;Single values…</source>
         <translation>&amp;Enkeltverdier…</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="61"/>
+        <location filename="watchrr_main.ui" line="34"/>
+        <source>Precipitation Card</source>
+        <translation>Nedbørkort</translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="71"/>
         <source>Redistribute &amp;in QC2</source>
         <oldsource>Redistribute in QC2</oldsource>
         <translation>La QC2 t&amp;ilfordele</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="74"/>
+        <location filename="watchrr_main.ui" line="84"/>
         <source>&amp;Accept</source>
         <translation>&amp;Aksepter</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="134"/>
+        <location filename="watchrr_main.ui" line="120"/>
+        <source>Neighbor Stations</source>
+        <translation>Nabostasjoner</translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="165"/>
         <source>U&amp;ndo</source>
         <oldsource>Undo</oldsource>
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="147"/>
+        <location filename="watchrr_main.ui" line="178"/>
         <source>Redo is not yet implemented, sorry.</source>
         <oldsource>redo is not yet implemented, sorry</oldsource>
         <translation>Beklager, gjenta er ikke ennå implementert.</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="150"/>
+        <location filename="watchrr_main.ui" line="181"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="179"/>
+        <location filename="watchrr_main.ui" line="210"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="189"/>
+        <location filename="watchrr_main.ui" line="220"/>
         <source>Close</source>
         <translation>Lukk</translation>
+    </message>
+</context>
+<context>
+    <name>DialogNeighbors</name>
+    <message>
+        <location filename="watchrr_neighbors.ui" line="14"/>
+        <source>WatchRR - Neighbor Stations</source>
+        <translation>WatchRR - Nabostasjoner</translation>
     </message>
 </context>
 <context>
@@ -407,42 +425,47 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="37"/>
+        <location filename="MainDialog.cc" line="39"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="91"/>
+        <location filename="MainDialog.cc" line="54"/>
+        <source>Neighbors around station %1</source>
+        <translation>Nabostasjoner rundt %1</translation>
+    </message>
+    <message>
+        <location filename="MainDialog.cc" line="100"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="146"/>
+        <location filename="MainDialog.cc" line="155"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="147"/>
+        <location filename="MainDialog.cc" line="156"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="148"/>
+        <location filename="MainDialog.cc" line="157"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="149"/>
+        <location filename="MainDialog.cc" line="158"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="234"/>
+        <location filename="MainDialog.cc" line="243"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="235"/>
+        <location filename="MainDialog.cc" line="244"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
@@ -485,6 +508,15 @@
         <location filename="ModelColumn.cc" line="92"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
+    </message>
+</context>
+<context>
+    <name>NeighborDialog</name>
+    <message>
+        <location filename="NeighborDialog.cc" line="25"/>
+        <source>Neighbors around station %1</source>
+        <oldsource>Neighbors for station %1</oldsource>
+        <translation>Nabostasjoner rundt %1</translation>
     </message>
 </context>
 <context>

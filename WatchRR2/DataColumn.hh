@@ -25,7 +25,7 @@ public:
     virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
     virtual QVariant data(const timeutil::ptime& time, int role) const;
     virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
-    virtual QVariant headerData(int role) const;
+    virtual QVariant headerData(int role, bool verticalHeader) const;
 
     DisplayType getDisplayType() const
         { return mDisplayType; }

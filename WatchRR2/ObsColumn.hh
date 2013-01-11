@@ -18,7 +18,7 @@ public:
     virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
     virtual QVariant data(const timeutil::ptime& time, int role) const = 0;
     virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
-    virtual QVariant headerData(int role) const = 0;
+    virtual QVariant headerData(int role, bool verticalHeader) const = 0;
 
     virtual const boost::posix_time::time_duration& timeOffset() const = 0;
 

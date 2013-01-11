@@ -26,6 +26,7 @@ const char* weekdays[7] = {
 ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time)
     : mDA(da)
     , mTime(time)
+    , mTimeInRows(true)
 {
 }
 
@@ -46,36 +47,44 @@ void ObsTableModel::addColumn(ObsColumnPtr c)
 
 int ObsTableModel::rowCount(const QModelIndex&) const
 {
-    return mTime.days() + 1;
+    return rowOrColumnCount(true);
 }
 
 int ObsTableModel::columnCount(const QModelIndex&) const
 {
-    return mColumns.size();
+    return rowOrColumnCount(false);
+}
+
+int ObsTableModel::rowOrColumnCount(bool timeDirection) const
+{
+    if (timeDirection == mTimeInRows)
+        return mTime.days() + 1;
+    else
+        return mColumns.size();
 }
 
 Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
 {
-    ObsColumnPtr oc = getColumn(index.column());
+    ObsColumnPtr oc = getColumn(columnIndex(index));
     if (not oc)
         return 0;
-    return oc->flags(timeAtRow(index.row()));
+    return oc->flags(timeAtRow(timeIndex(index)));
 }
 
 QVariant ObsTableModel::data(const QModelIndex& index, int role) const
 {
-    ObsColumnPtr oc = getColumn(index.column());
+    ObsColumnPtr oc = getColumn(columnIndex(index));
     if (not oc)
         return QVariant();
-    return oc->data(timeAtRow(index.row()), role);
+    return oc->data(timeAtRow(timeIndex(index)), role);
 }
 
 bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-    ObsColumnPtr oc = getColumn(index.column());
+    ObsColumnPtr oc = getColumn(columnIndex(index));
     if (not oc)
         return false;
-    const bool updated = oc->setData(timeAtRow(index.row()), value, role);
+    const bool updated = oc->setData(timeAtRow(timeIndex(index)), value, role);
     if (updated)
         dataChanged(index, index);
     return updated;
@@ -83,20 +92,23 @@ bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int
 
 QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal) {
+    if ((mTimeInRows and orientation == Qt::Horizontal) or ((not mTimeInRows) and orientation == Qt::Vertical)) {
         ObsColumnPtr oc = getColumn(section);
         if (oc)
-            return oc->headerData(role);
+            return oc->headerData(role, mTimeInRows);
     } else {
         if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
             const timeutil::ptime time = timeAtRow(section);
             const boost::gregorian::greg_weekday wd = time.date().day_of_week();
             const QString weekday = qApp->translate("ObsTableModel", weekdays[wd]);
             if (role == Qt::DisplayRole) {
-                return QString("%1 %2/%3")
-                    .arg(weekday)
+                QString header = "";
+                if (orientation == Qt::Vertical)
+                    header = weekday + " ";
+                header += QString("%1/%2")
                     .arg(time.date().day(), 2)
                     .arg(time.date().month(), 2);
+                return header;
             } else if (role == Qt::ToolTipRole) {
                 return QString("%1, %2")
                     .arg(weekday)

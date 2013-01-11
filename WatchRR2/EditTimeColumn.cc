@@ -47,9 +47,9 @@ bool EditTimeColumn::setData(const timeutil::ptime& time, const QVariant& value,
     return mDC->setData(time, value, role);
 }
 
-QVariant EditTimeColumn::headerData(int role) const
+QVariant EditTimeColumn::headerData(int role, bool verticalHeader) const
 {
-    return mDC->headerData(role);
+    return mDC->headerData(role, verticalHeader);
 }
 
 void EditTimeColumn::setEditableTime(const TimeRange& et)
