@@ -150,13 +150,14 @@ ErrorList::ErrorList(QStringList& selPar,
 {
     LOG_SCOPE();
 
+    /*
     QMessageBox::information( this,
 			      tr("Feilliste"),
 			      tr("Bruk høyre musetast i \n\"Korrigert OK\",  \"Original OK\"  og"
                                  " \"Forkastet\"\nhvis QC2 skal kunne rette.\nVenstre musetast ellers."),
 			      QMessageBox::Ok,
 			      Qt::NoButton );
-    
+    */
     std::list<kvParam> paramList;
     kvservice::KvApp::kvApp->getKvParams(paramList);
 
@@ -691,17 +692,19 @@ bool ErrorList::paramIsCode(int parNo)
     return std::find(cP.begin(), cP.end(), parNo) != cP.end();
 }
 
-//void ErrorList::tableCellClicked(int row, int col, int /*button*/)
-void ErrorList::tableCellClicked(int row, int col, int button)
+void ErrorList::tableCellClicked(int row, int col, int /*button*/)
+//void ErrorList::tableCellClicked(int row, int col, int button)
 {
   if (col == 0 && row >= 0)
     selectRow(row);
   selectedRow = row;
+  /*
   if ( button == Qt::RightButton && (col == 14 || col == 15 || col == 19) ){
     OkTableItem* okIt = static_cast<OkTableItem*>(item(row,col));
     okIt->setChecked(true);
     okIt->pressedButton = button;
   }
+  */
 }
 
 bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime)
@@ -1166,24 +1169,24 @@ void ErrorList::saveChanges()
 	OkTableItem* okIt = static_cast<OkTableItem*>(item( row, ccol));
 	if ( kd.original() == kd.corrected() && ( fd == 0 || fd == 1 
 	     || fd == 3 ) && fmis < 2 ) {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,1);
 	  if ( fd == 3 )
 	    cif.set(kvalobs::flag::fd,1);
 	}
 	else {
 	  if ( fmis == 0 ) {
-	    if ( okIt->pressedButton == Qt::RightButton )
-	      cif.set(kvalobs::flag::fhqc,4);
-	    else
+	    //	    if ( okIt->pressedButton == Qt::RightButton )
+	    //	      cif.set(kvalobs::flag::fhqc,4);
+	    //     	    else
 	      cif.set(kvalobs::flag::fhqc,7);
 	  }
 	  else if ( fmis == 1 ) {
-	    if ( okIt->pressedButton == Qt::RightButton )
-	      cif.set(kvalobs::flag::fhqc,4);
-	    else
+	    //	    if ( okIt->pressedButton == Qt::RightButton )
+	    //	      cif.set(kvalobs::flag::fhqc,4);
+	    //	    else
 	      cif.set(kvalobs::flag::fhqc,5);
 	  }
 	}
@@ -1193,32 +1196,32 @@ void ErrorList::saveChanges()
       {
 	OkTableItem* okIt = static_cast<OkTableItem*>(item( row, ccol));
 	if ( cif.flag(kvalobs::flag::fnum) > 1 ) {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,1);
 	}
 	if ( fmis == 0 ) {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,1);
 	  kd.corrected(kd.original());
 	  if ( cif.flag(kvalobs::flag::fd) == 3 )
 	    cif.set(kvalobs::flag::fd,1);
 	}
 	else if ( fmis == 1 ) {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,1);
 	  cif.set(kvalobs::flag::fmis,3);
 	  kd.corrected(kd.original());
 	}
 	else if ( fmis == 2 ) {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,1);
 	  cif.set(kvalobs::flag::fmis,0);
 	  kd.corrected(kd.original());
@@ -1277,9 +1280,9 @@ void ErrorList::saveChanges()
 	else if ( fmis == 3 )
 	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
 	else {
-	  if ( okIt->pressedButton == Qt::RightButton )
-	    cif.set(kvalobs::flag::fhqc,4);
-	  else
+	  //	  if ( okIt->pressedButton == Qt::RightButton )
+	  //	    cif.set(kvalobs::flag::fhqc,4);
+	  //	  else
 	    cif.set(kvalobs::flag::fhqc,10);
 	  if ( fmis == 0 )
 	    cif.set(kvalobs::flag::fmis,2);
