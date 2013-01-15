@@ -1,6 +1,11 @@
 
+#include "EditAccess.hh"
+#include "FakeKvApp.hh"
 #include "Helpers.hh"
+#include "KvalobsModelAccess.hh"
 #include "MainDialog.hh"
+#include "QtKvalobsAccess.hh"
+#include "QtKvService.hh"
 
 #define LOAD_DECL_ONLY
 #include "load_31850_20121130.cc"
@@ -27,6 +32,15 @@ int main(int argc, char* argv[])
     const boost::gregorian::date_duration t0_offset = boost::gregorian::days(3);
     TimeRange time;
 
+    FakeKvApp fakeApp;
+    QtKvService qkvs;
+
+    load_31850_20121130(fakeApp);
+    load_32780_20121207(fakeApp);
+    load_44160_20121207(fakeApp);
+    load_54420_20121130(fakeApp);
+    load_84070_20120930(fakeApp);
+
     switch(stationId) {
     case 31850: time = t_31850_20121130(); break;
     case 32780: time = t_32780_20121207(); break;
@@ -39,16 +53,11 @@ int main(int argc, char* argv[])
     if (stationId != 32780)
         time = TimeRange(time.t0()+t0_offset, time.t1());
 
-    FakeDataAccessPtr fda = boost::make_shared<FakeDataAccess>();
-    FakeModelAccessPtr fma = boost::make_shared<FakeModelAccess>();
-    load_31850_20121130(fda, fma);
-    load_32780_20121207(fda);
-    load_44160_20121207(fda);
-    load_54420_20121130(fda);
-    load_84070_20120930(fda, fma);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fda);
+    boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<QtKvalobsAccess>();
+    boost::shared_ptr<KvalobsModelAccess> kma = boost::make_shared<KvalobsModelAccess>();
+    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
 
-    MainDialog main(eda, fma, sensor, time);
+    MainDialog main(eda, kma, sensor, time);
     if (main.exec())
         eda->sendChangesToParent();
 

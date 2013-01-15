@@ -43,6 +43,10 @@ struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStati
 std::vector<Sensor> NeighborTableModel::findNeighbors(const Sensor& sensor)
 {
     std::vector<Sensor> neighbors;
+    if (not kvservice::KvApp::kvApp) {
+        std::cerr << "no KvApp, probably running a test program" << std::endl;
+        return neighbors;
+    }
 
     std::list<kvalobs::kvStation> stationsList;
     if (not kvservice::KvApp::kvApp->getKvStations(stationsList)) {

@@ -1,6 +1,7 @@
 
-#include "VxColumn.hh"
 #include "Helpers.hh"
+#include "KvalobsAccess.hh"
+#include "VxColumn.hh"
 #include <boost/bind.hpp>
 
 #define LOAD_DECL_ONLY
@@ -11,12 +12,13 @@
 
 TEST(VxColumnTest, Basic)
 {
-    FakeDataAccessPtr fda = boost::make_shared<FakeDataAccess>();
-    load_31850_20121130(fda);
+    FakeKvApp fa;
+    load_31850_20121130(fa);
 
     const Sensor sensor1(31850, kvalobs::PARAMID_V6,   0, 0, 302);
     const Sensor sensor2(31850, kvalobs::PARAMID_V6+1, 0, 0, 302);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fda);
+    KvalobsAccessPtr kda = boost::make_shared<KvalobsAccess>();
+    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
     DataColumnPtr dc = boost::make_shared<VxColumn>(eda, sensor1, t_31850_20121130(), DataColumn::NEW_CORRECTED);
     dc->setTimeOffset(boost::posix_time::hours(-18));
 

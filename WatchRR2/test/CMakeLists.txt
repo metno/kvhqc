@@ -25,8 +25,12 @@ FIND_LIBRARY(SQLITE3_LIBRARY sqlite3)
 ADD_LIBRARY(watchrr2test
   FakeDataAccess.hh
   FakeDataAccess.cc
+  FakeKvApp.hh
+  FakeKvApp.cc
   FakeModelAccess.hh
   FakeModelAccess.cc
+  TestHelpers.hh
+  TestHelpers.cc
   load_31850_20121130.cc
   load_32780_20121207.cc
   load_54420_20121130.cc
@@ -49,7 +53,7 @@ ADD_EXECUTABLE(watchRR2test
   AnalyseFCCTest.cc
   AnalyseRR24Test.cc
   EditTimeColumnTest.cc
-  FakeDataAccessTest.cc
+#  FakeDataAccessTest.cc
   HelpersTest.cc
   VxColumnTest.cc
 )
