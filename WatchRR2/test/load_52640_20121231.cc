@@ -176,7 +176,7 @@ void load_52640_20121231(FakeKvApp& fa)
     fa.insertModel("2012-12-30 18:00:00",      28.4);
     fa.insertModel("2012-12-31 06:00:00",      29.9);
 
-    fa.mKvStations.push_back(kvalobs::kvStation(52640, 60.874000, 5.593700, 7.000000, 0.0f, "MATRE KRAFTSTASJON", 0, 0, "?", "?", "?", 10, true, timeutil::from_iso_extended_string("1975-07-01 00:00:00")));
+    fa.mKvStations.push_back(kvalobs::kvStation(52640, 60.874000, 5.593700, 7.000000, 0.0f, "MATRE KRAFTSTASJON", 0, 0, "?", "?", "?", 10, true, timeutil::to_miTime(timeutil::from_iso_extended_string("1975-07-01 00:00:00"))));
 
     fa.mObsPgm.push_back(kvalobs::kvObsPgm(52640, 110, 0, 1, 402, 0,
                                            0, 0, 0, 0, 0, 0,
@@ -184,7 +184,7 @@ void load_52640_20121231(FakeKvApp& fa)
                                            0, 0, 0, 0, 0, 0,
                                            0, 0, 0, 0, 0, 0,
                                            1, 1, 1, 1, 1, 1, 1,
-                                           timeutil::from_iso_extended_string("2004-12-24 00:00:00"), timeutil::ptime()));
+                                           timeutil::to_miTime(timeutil::from_iso_extended_string("2004-12-24 00:00:00")), timeutil::to_miTime(timeutil::ptime())));
 
     {
         const TimeRange t = t_52640_20121231();

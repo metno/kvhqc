@@ -153,7 +153,7 @@ void load_44160_20121207(FakeKvApp& fa)
     fa.insertModel("2012-12-06 18:00:00",       0.2);
     fa.insertModel("2012-12-07 06:00:00",       2.0);
 
-    fa.mKvStations.push_back(kvalobs::kvStation(44160, 58.694700, 5.641800, 19.000000, 0.0f, "HOGNESTAD", 0, 0, "?", "?", "?", 9, true, timeutil::from_iso_extended_string("1914-01-01 00:00:00")));
+    fa.mKvStations.push_back(kvalobs::kvStation(44160, 58.694700, 5.641800, 19.000000, 0.0f, "HOGNESTAD", 0, 0, "?", "?", "?", 9, true, timeutil::to_miTime(timeutil::from_iso_extended_string("1914-01-01 00:00:00"))));
 
     fa.mObsPgm.push_back(kvalobs::kvObsPgm(44160, 110, 0, 1, 302, 0,
                                            0, 0, 0, 0, 0, 0,
@@ -161,7 +161,8 @@ void load_44160_20121207(FakeKvApp& fa)
                                            0, 0, 0, 0, 0, 0,
                                            0, 0, 0, 0, 0, 0,
                                            1, 1, 1, 1, 1, 1, 1,
-                                           timeutil::from_iso_extended_string("2012-06-11 00:00:00"), timeutil::ptime()));
+                                           timeutil::to_miTime(timeutil::from_iso_extended_string("2012-06-11 00:00:00")),
+                                           timeutil::to_miTime(timeutil::ptime())));
 
     {
         const TimeRange t = t_44160_20121207();

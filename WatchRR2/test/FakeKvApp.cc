@@ -84,8 +84,9 @@ bool FakeKvApp::eraseModel(const SensorTime& st)
 
 void FakeKvApp::registerStation(int id, float lon, float lat, const std::string& name)
 {
+    const timeutil::ptime t = timeutil::from_iso_extended_string("1700-01-01 00:00:00");
     mKvStations.push_back(kvalobs::kvStation(id, lon, lat, 0.0f, 0.0f, name, 0, 0, "?", "?", "?", 0, true,
-                                             timeutil::from_iso_extended_string("1700-01-01 00:00:00")));
+                                             timeutil::to_miTime(t)));
 }
 
 bool FakeKvApp::getKvData(kvservice::KvGetDataReceiver &dataReceiver, const kvservice::WhichDataHelper &wd)
@@ -133,7 +134,8 @@ bool FakeKvApp::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const 
 
         for (ModelData_t::iterator it = low; it != high; ++it) {
             const kvalobs::kvModelData& data = it->second;
-            if (fromTime <= data.obstime() and ((not hasToTime) or (data.obstime() <= toTime)))
+            const timeutil::ptime ot = timeutil::from_miTime(data.obstime());
+            if (fromTime <= ot and ((not hasToTime) or (ot <= toTime)))
                 dataList.push_back(data);
         }
     }
@@ -165,7 +167,7 @@ bool FakeKvApp::getKvStationParam(std::list<kvalobs::kvStationParam> &stParam, i
 }
 
 bool FakeKvApp::getKvStationMetaData(std::list<kvalobs::kvStationMetadata> &stMeta,
-                                     int stationid, const boost::posix_time::ptime &obstime,
+                                     int stationid, const kvtime_t &obstime,
                                      const std::string & metadataName)
 {
     stMeta.clear();
@@ -203,9 +205,10 @@ bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::W
             const kvalobs::kvData& data = v.second;
             if (data.stationID() != sid)
                 continue;
-            if (fromTime > data.obstime())
+            const timeutil::ptime ot = timeutil::from_miTime(data.obstime());
+            if (fromTime > ot)
                 continue;
-            if (hasToTime and data.obstime() > toTime)
+            if (hasToTime and ot > toTime)
                 continue;
             od.dataList().push_back(data);
             DBGV(data);
@@ -216,7 +219,7 @@ bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::W
 }
 
 bool FakeKvApp::getKvWorkstatistik(CKvalObs::CService::WorkstatistikTimeType timeType,
-                                   const boost::posix_time::ptime &from, const boost::posix_time::ptime &to,
+                                   const kvtime_t &from, const kvtime_t &to,
                                    kvservice::WorkstatistikIterator &it)
 {
     return false;

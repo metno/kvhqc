@@ -1,3 +1,11 @@
+kvhqc (2.14.3-1) unstable; urgency=low
+
+  * fetch obs_pgm in chunks to avoid excessive CORBA message size
+  * added tabs with neighbor data to WatchRR2
+  * some changes for lucid / libkvcpp2
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 15 Jan 2013 16:00:02 +0100
+
 kvhqc (2.14.2-1) unstable; urgency=low
 
   * re-add libboost-thread to CMakeLists.txt and build-depends

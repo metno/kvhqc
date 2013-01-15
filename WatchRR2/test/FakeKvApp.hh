@@ -48,6 +48,11 @@ public:
 
     void registerStation(int id, float lon, float lat, const std::string& name);
 
+#ifndef KVALOBS_USE_BOOST_DATE_TIME
+    typedef miutil::miTime kvtime_t;
+#else // ! KVALOBS_USE_BOOST_DATE_TIME
+    typedef timeutil::ptime kvtime_t;
+#endif // KVALOBS_USE_BOOST_DATE_TIME
 
     virtual bool getKvData(kvservice::KvGetDataReceiver &dataReceiver, const kvservice::WhichDataHelper &wd);
     virtual bool getKvRejectDecode(const CKvalObs::CService::RejectDecodeInfo &decodeInfo, kvservice::RejectDecodeIterator &it);
@@ -59,12 +64,12 @@ public:
     virtual bool getKvOperator(std::list<kvalobs::kvOperator> &operatorList);
     virtual bool getKvStationParam(std::list<kvalobs::kvStationParam> &stParam, int stationid, int paramid = -1, int day = -1);
     virtual bool getKvStationMetaData(std::list<kvalobs::kvStationMetadata> &stMeta,
-                                       int stationid, const boost::posix_time::ptime &obstime,
+                                       int stationid, const kvtime_t &obstime,
                                        const std::string & metadataName = "");
     virtual bool getKvObsPgm(std::list<kvalobs::kvObsPgm> &obsPgm, const std::list<long> &stationList, bool aUnion);
     virtual bool getKvData(kvservice::KvObsDataList &dataList, const kvservice::WhichDataHelper &wd);
     virtual bool getKvWorkstatistik(CKvalObs::CService::WorkstatistikTimeType timeType,
-                                    const boost::posix_time::ptime &from, const boost::posix_time::ptime &to,
+                                    const kvtime_t &from, const kvtime_t &to,
                                     kvservice::WorkstatistikIterator &it);
 
 

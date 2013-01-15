@@ -272,10 +272,11 @@ private slots:
   void startKro();
   void screenshot();
 
-    void on_versionCheck_timeout();
+    void onVersionCheckTimeout();
 
 private:
   void selectParameterGroup(const QString& group);
+  void exitNoKvalobs();
 
 private:
   model::KvalobsDataModel * dataModel;

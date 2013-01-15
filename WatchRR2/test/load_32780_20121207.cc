@@ -63,7 +63,7 @@ void load_32780_20121207(FakeKvApp& fa)
     fa.insertModel("2012-12-06 18:00:00",       0.0);
     fa.insertModel("2012-12-07 06:00:00",       0.0);
 
-    fa.mKvStations.push_back(kvalobs::kvStation(32780, 59.144400, 9.266800, 113.000000, 0.0f, "HØIDALEN I SOLUM", 0, 0, "?", "?", "?", 9, true, timeutil::from_iso_extended_string("1897-06-01 00:00:00")));
+    fa.mKvStations.push_back(kvalobs::kvStation(32780, 59.144400, 9.266800, 113.000000, 0.0f, "HØIDALEN I SOLUM", 0, 0, "?", "?", "?", 9, true, timeutil::to_miTime(timeutil::from_iso_extended_string("1897-06-01 00:00:00"))));
 
     fa.mObsPgm.push_back(kvalobs::kvObsPgm(32780, 110, 0, 1, 302, 0,
                                            0, 0, 0, 0, 0, 0,
@@ -71,7 +71,8 @@ void load_32780_20121207(FakeKvApp& fa)
                                            0, 0, 0, 0, 0, 0,
                                            0, 0, 0, 0, 0, 0,
                                            1, 1, 1, 1, 1, 1, 1,
-                                           timeutil::from_iso_extended_string("2012-06-11 00:00:00"), timeutil::ptime()));
+                                           timeutil::to_miTime(timeutil::from_iso_extended_string("2012-06-11 00:00:00")),
+                                           timeutil::to_miTime(timeutil::ptime())));
 
     {
         const TimeRange t = t_32780_20121207();

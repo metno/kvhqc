@@ -163,7 +163,7 @@ HqcMainWindow::HqcMainWindow()
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
     connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
-    connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(on_versionCheck_timeout()));
+    connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
 
     mVersionCheckTimer->setSingleShot(true);
 
@@ -299,9 +299,9 @@ void HqcMainWindow::startup()
     // --- READ STATION INFO ----------------------------------------
     {
         BusyIndicator busy;
+        readFromStation();
         readFromObsPgm();
         readFromParam();
-        readFromStation();
     }
 
     readSettings();
@@ -1233,7 +1233,7 @@ void HqcMainWindow::screenshot()
     painter.drawImage(0,0,hqcPixmap);
 }
 
-void HqcMainWindow::on_versionCheck_timeout()
+void HqcMainWindow::onVersionCheckTimeout()
 {
     QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
     if (versionFile.open(QIODevice::ReadOnly)) {
@@ -1633,17 +1633,23 @@ bool HqcMainWindow::readFromStInfoSys()
     return true;
 }
 
+void HqcMainWindow::exitNoKvalobs()
+{
+    QMessageBox msg(this);
+    msg.setIcon(QMessageBox::Critical);
+    msg.setText(tr("Kvalobsdatabasen er dessverre ikke tilgjengelig."));
+    msg.setInformativeText(tr("HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen."));
+    msg.exec();
+    exit(1);
+}
+
 /*!
  Read the station table in the kvalobs database
 */
 void HqcMainWindow::readFromStation()
 {
-    if (!kvservice::KvApp::kvApp->getKvStations(slist)) {
-        int noBase = QMessageBox::warning(this, tr("Kvalobs"), tr("Kvalobsdatabasen er ikke tilgjengelig,\n"
-                "vil du avslutte?"), tr("Ja"), tr("Nei"), "");
-        if (noBase == 0)
-            exit(1);
-    }
+    if (!kvservice::KvApp::kvApp->getKvStations(slist))
+        exitNoKvalobs();
 }
 
 /*!
@@ -1651,9 +1657,21 @@ void HqcMainWindow::readFromStation()
 */
 void HqcMainWindow::readFromObsPgm() {
     LOG_SCOPE();
-    std::list<long> statList;
-    if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false))
-        cerr << "Can't connect to obs_pgm table!" << endl;
+
+    obsPgmList.clear();
+    const int N_STATIONS = 100;
+    std::list<kvalobs::kvStation>::const_iterator it = slist.begin();
+    while (it != slist.end()) {
+        std::list<long> statList;
+        for(int i=0; i<N_STATIONS and it != slist.end(); ++i, ++it)
+            statList.push_back(it->stationID());
+        if (not statList.empty()) {
+            std::list<kvalobs::kvObsPgm> obsPgmTmp;
+            if (not kvservice::KvApp::kvApp->getKvObsPgm(obsPgmTmp, statList, false))
+                exitNoKvalobs();
+            obsPgmList.insert(obsPgmList.end(), obsPgmTmp.begin(), obsPgmTmp.end());
+        }
+    }
 
     int prostnr = -1;
 

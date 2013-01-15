@@ -458,9 +458,8 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
     
     std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithRR24;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (op.paramID() == sensor.paramId
-            and op.fromtime() <= time.t0()
-            and (op.totime().is_not_a_date_time() or time.t1() <= op.totime()))
+        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
+        if (op.paramID() == sensor.paramId and ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto))
         {
             // FIXME this is not correct if there is more than one
             // klXX or collector or typeid or ...
