@@ -38,6 +38,7 @@ StationDialog::StationDialog(QDialog* parent)
   , mHour(-1)
 {
     init();
+    onUpdateType();
 }
 
 void StationDialog::init()
@@ -55,7 +56,6 @@ void StationDialog::init()
     ui->dateTo->setMaximumDate(today.addDays(365));
     ui->dateFrom->setDate(today.addDays(-4*MIN_DAYS));
     ui->dateTo->setDate(today);
-    onUpdateType();
 }
 
 StationDialog::~StationDialog()

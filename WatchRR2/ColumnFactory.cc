@@ -23,15 +23,18 @@ Code2TextPtr codesForParam(int pid)
                      qApp->translate("Column_RR_24", "precipitation not reported"));
         c2t->setRange(0, 1500);
     } else if( pid == kvalobs::PARAMID_SA ) {
+#if 0 // removed on request by POK on 2013-01-14
         c2t->addCode(-1, (QStringList()
                           << qApp->translate("Column_SA", "pat")
                           << qApp->translate("Column_SA", "p")),
-                    qApp->translate("Column_SA", "patchy snow"));
+                     qApp->translate("Column_SA", "patchy snow"));
+#endif
         c2t->addCode(-3, (QStringList()
                           << qApp->translate("Column_SA", "no m.")
                           << qApp->translate("Column_SA", "n")),
                      qApp->translate("Column_SA", "measurement impossible/inaccurate"));
         c2t->setRange(0, 5000);
+        c2t->setDecimals(0);
     } else if( pid == kvalobs::PARAMID_SD ) {
         c2t->addCode(-1, (QStringList()
                           << qApp->translate("Column_SD", "bare")

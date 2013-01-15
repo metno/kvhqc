@@ -5,6 +5,7 @@
 #include "AnalyseRR24.hh"
 #include "EditDialog.hh"
 #include "Helpers.hh"
+#include "KvStationBuffer.hh"
 #include "MainTableModel.hh"
 #include "NeighborTableModel.hh"
 #include "ObsDelegate.hh"
@@ -36,12 +37,25 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
     initializeRR24Data();
 
-    ui->labelStationInfo->setText(tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId));
+    QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
+    try {
+        const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(mSensor.stationId);
+        info += " " + QString::fromStdString(s.name());
+        if (s.environmentid() == 10)
+            info += " " + tr("[not daily]");
+    } catch(...) {
+        // TODO handle errors
+    }
+    ui->labelStationInfo->setText(info);
+
+    QFont mono("Monospace");
+
     ui->buttonSave->setEnabled(false);
     ui->rrTable->setModel(mRRModel.get());
     ui->rrTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->rrTable->setItemDelegate(new ObsDelegate(this));
+    ui->rrTable->verticalHeader()->setFont(mono);
     ui->labelInfo->setText("");
     ui->buttonUndo->setEnabled(false);
     ui->buttonRedo->setVisible(false);
@@ -51,6 +65,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->neighborTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->neighborTable->verticalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->neighborTable->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->neighborTable->verticalHeader()->setFont(mono);
 
     connect(ui->rrTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));

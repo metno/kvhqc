@@ -2,13 +2,19 @@
 #include "Code2Text.hh"
 
 #include "Helpers.hh"
+#include <QtCore/QCoreApplication>
 
 Code2Text::Code2Text()
     : mMinValue(-100)
     , mMaxValue(5000)
+    , mDecimals(1)
 {
-    addCode(kvalobs::MISSING,  (QStringList() << "mis" << "m"), "value is missing");
-    addCode(kvalobs::REJECTED, (QStringList() << "rej" << "r"), "value is rejected");
+    addCode(kvalobs::NEW_ROW,  (QStringList() << qApp->translate("Code2Text", "new")),
+            qApp->translate("Code2Text", "row not in database"));
+    addCode(kvalobs::MISSING,  (QStringList() << qApp->translate("Code2Text", "mis")),
+            qApp->translate("Code2Text", "value is missing"));
+    addCode(kvalobs::REJECTED, (QStringList() << qApp->translate("Code2Text", "rej") << qApp->translate("Code2Text", "r")),
+            qApp->translate("Code2Text", "value is rejected"));
 }
 
 Code2Text::~Code2Text()
@@ -20,16 +26,22 @@ QString Code2Text::asTip(float value)
     QMap<int,Code>::const_iterator it = mCodes.find(value);
     if (it == mCodes.end())
         return "";
-    return it.value().explain;
+    return QString("%2 (%1)").arg((int)value).arg(it.value().explain);
 }
 
 QString Code2Text::asText(float value)
 {
     QMap<int,Code>::const_iterator it = mCodes.find(value);
     if (it == mCodes.end())
-        return kvalobs::formatValue(value);
+        return QString::number(value, 'f', mDecimals);
 
     return it.value().shortText.front();
+}
+
+bool Code2Text::isCode(float value)
+{
+    QMap<int,Code>::const_iterator it = mCodes.find(value);
+    return (it != mCodes.end());
 }
 
 float Code2Text::fromText(const QString& text)
@@ -44,8 +56,15 @@ float Code2Text::fromText(const QString& text)
 
     bool numOk = false;
     const float num = text.toFloat(&numOk);
-    if (not numOk or num < mMinValue or num > mMaxValue)
-        throw "bad value";
+    if (not numOk)
+        throw "cannot parse number";
+    if (Helpers::float_eq()(num, Helpers::roundDecimals(num, mDecimals)))
+        throw "number unsupported precision";
+    it = mCodes.find(num);
+    if (it != mCodes.end())
+        return num;
+    if (num < mMinValue or num > mMaxValue)
+        throw "value out of range";
     return num;
 }
 

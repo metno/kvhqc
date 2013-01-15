@@ -4,26 +4,64 @@
 <context>
     <name>Auth</name>
     <message>
-        <location filename="main.cc" line="107"/>
+        <location filename="main.cc" line="109"/>
         <source>Authentication</source>
         <translation>Autentisering</translation>
     </message>
     <message>
-        <location filename="main.cc" line="108"/>
+        <location filename="main.cc" line="110"/>
         <source>You are not registered as operator, so you cannot save data!</source>
         <translation>Du er ikke registrert som operatør, så du kan ikke lagre data!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="109"/>
+        <location filename="main.cc" line="111"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
     <message>
-        <location filename="main.cc" line="110"/>
-        <location filename="main.cc" line="137"/>
-        <location filename="main.cc" line="143"/>
+        <location filename="main.cc" line="112"/>
+        <location filename="main.cc" line="139"/>
+        <location filename="main.cc" line="145"/>
         <source>Exit</source>
         <translation>Avslutt</translation>
+    </message>
+</context>
+<context>
+    <name>Code2Text</name>
+    <message>
+        <location filename="Code2Text.cc" line="12"/>
+        <source>new</source>
+        <translation>ny</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="13"/>
+        <source>row not in database</source>
+        <translation>ikke i databasen</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="14"/>
+        <source>mis</source>
+        <translation>mis</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="15"/>
+        <source>value is missing</source>
+        <translation>verdien mangler</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="16"/>
+        <source>rej</source>
+        <translation>rej</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="16"/>
+        <source>r</source>
+        <translation>r</translation>
+    </message>
+    <message>
+        <location filename="Code2Text.cc" line="17"/>
+        <source>value is rejected</source>
+        <translation>forkastet</translation>
     </message>
 </context>
 <context>
@@ -47,33 +85,32 @@
 <context>
     <name>Column_SA</name>
     <message>
-        <location filename="ColumnFactory.cc" line="27"/>
+        <location filename="ColumnFactory.cc" line="28"/>
         <source>pat</source>
         <translation>flk</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="28"/>
+        <location filename="ColumnFactory.cc" line="29"/>
         <source>p</source>
-        <oldsource>f</oldsource>
         <translation>f</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="29"/>
+        <location filename="ColumnFactory.cc" line="30"/>
         <source>patchy snow</source>
         <translation>flekkvis snø</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="31"/>
+        <location filename="ColumnFactory.cc" line="33"/>
         <source>no m.</source>
         <translation>ing.m.</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="32"/>
+        <location filename="ColumnFactory.cc" line="34"/>
         <source>n</source>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="33"/>
+        <location filename="ColumnFactory.cc" line="35"/>
         <source>measurement impossible/inaccurate</source>
         <translation>måling umulig eller unøyaktig</translation>
     </message>
@@ -81,18 +118,18 @@
 <context>
     <name>Column_SD</name>
     <message>
-        <location filename="ColumnFactory.cc" line="37"/>
+        <location filename="ColumnFactory.cc" line="40"/>
         <source>bare</source>
         <oldsource>bart</oldsource>
         <translation>bart</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="38"/>
+        <location filename="ColumnFactory.cc" line="41"/>
         <source>b</source>
         <translation>b</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="39"/>
+        <location filename="ColumnFactory.cc" line="42"/>
         <source>snow cover not reported</source>
         <translation>snødekke ikke meldt</translation>
     </message>
@@ -100,85 +137,85 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataColumn.cc" line="87"/>
+        <location filename="DataColumn.cc" line="96"/>
         <source>surely wrong</source>
         <translation>sikkert feilaktig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="89"/>
+        <location filename="DataColumn.cc" line="98"/>
         <source>very suspicious (probably wrong)</source>
         <oldsource>very suspicious</oldsource>
         <translation>svært mistenkelig (antagelig feilaktig)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="91"/>
+        <location filename="DataColumn.cc" line="100"/>
         <source>suspicious (probably ok)</source>
         <oldsource>suspicious</oldsource>
         <translation>noe mistenkelig (antagelig korrekt)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="93"/>
+        <location filename="DataColumn.cc" line="102"/>
         <source>no quality info available</source>
         <translation>kvalitetsinformasjon ikke git</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="142"/>
+        <location filename="DataColumn.cc" line="151"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="143"/>
-        <location filename="DataColumn.cc" line="144"/>
+        <location filename="DataColumn.cc" line="152"/>
+        <location filename="DataColumn.cc" line="153"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="145"/>
-        <location filename="DataColumn.cc" line="146"/>
+        <location filename="DataColumn.cc" line="154"/>
+        <location filename="DataColumn.cc" line="155"/>
         <source>controlflags</source>
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="149"/>
+        <location filename="DataColumn.cc" line="158"/>
         <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</source>
         <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
 %6</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="160"/>
+        <location filename="DataColumn.cc" line="169"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="162"/>
+        <location filename="DataColumn.cc" line="171"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="167"/>
+        <location filename="DataColumn.cc" line="176"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="168"/>
-        <location filename="DataColumn.cc" line="169"/>
+        <location filename="DataColumn.cc" line="177"/>
+        <location filename="DataColumn.cc" line="178"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="170"/>
-        <location filename="DataColumn.cc" line="171"/>
+        <location filename="DataColumn.cc" line="179"/>
+        <location filename="DataColumn.cc" line="180"/>
         <source>flags</source>
         <translation>flagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="186"/>
+        <location filename="DataColumn.cc" line="195"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="188"/>
+        <location filename="DataColumn.cc" line="197"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
@@ -275,14 +312,6 @@
         <location filename="watchrr_main.ui" line="220"/>
         <source>Close</source>
         <translation>Lukk</translation>
-    </message>
-</context>
-<context>
-    <name>DialogNeighbors</name>
-    <message>
-        <location filename="watchrr_neighbors.ui" line="14"/>
-        <source>WatchRR - Neighbor Stations</source>
-        <translation>WatchRR - Nabostasjoner</translation>
     </message>
 </context>
 <context>
@@ -405,19 +434,19 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="main.cc" line="135"/>
-        <location filename="main.cc" line="141"/>
+        <location filename="main.cc" line="137"/>
+        <location filename="main.cc" line="143"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="main.cc" line="136"/>
+        <location filename="main.cc" line="138"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <oldsource>Your changes could not be saved, sorry!</oldsource>
         <translation>Beklager, dine endringer ble ikke lagret or er mistet!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="142"/>
+        <location filename="main.cc" line="144"/>
         <source>Your changes have been saved.</source>
         <translation>Dine endringer ble lagret.</translation>
     </message>
@@ -425,47 +454,47 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="39"/>
+        <location filename="MainDialog.cc" line="40"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="54"/>
-        <source>Neighbors around station %1</source>
-        <translation>Nabostasjoner rundt %1</translation>
+        <location filename="MainDialog.cc" line="45"/>
+        <source>[not daily]</source>
+        <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="100"/>
+        <location filename="MainDialog.cc" line="114"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="155"/>
+        <location filename="MainDialog.cc" line="169"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="156"/>
+        <location filename="MainDialog.cc" line="170"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="157"/>
+        <location filename="MainDialog.cc" line="171"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="158"/>
+        <location filename="MainDialog.cc" line="172"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="243"/>
+        <location filename="MainDialog.cc" line="257"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="244"/>
+        <location filename="MainDialog.cc" line="258"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
@@ -508,15 +537,6 @@
         <location filename="ModelColumn.cc" line="92"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
-    </message>
-</context>
-<context>
-    <name>NeighborDialog</name>
-    <message>
-        <location filename="NeighborDialog.cc" line="25"/>
-        <source>Neighbors around station %1</source>
-        <oldsource>Neighbors for station %1</oldsource>
-        <translation>Nabostasjoner rundt %1</translation>
     </message>
 </context>
 <context>

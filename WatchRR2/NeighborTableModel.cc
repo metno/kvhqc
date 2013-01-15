@@ -3,6 +3,7 @@
 
 #include "ColumnFactory.hh"
 #include "Helpers.hh"
+#include "KvStationBuffer.hh"
 
 #include <kvalobs/kvObsPgm.h>
 #include <kvcpp/KvApp.h>
@@ -48,11 +49,7 @@ std::vector<Sensor> NeighborTableModel::findNeighbors(const Sensor& sensor)
         return neighbors;
     }
 
-    std::list<kvalobs::kvStation> stationsList;
-    if (not kvservice::KvApp::kvApp->getKvStations(stationsList)) {
-        std::cerr << "could not fetch station list" << std::endl;
-        return neighbors;
-    }
+    const std::list<kvalobs::kvStation>& stationsList = KvStationBuffer::instance()->allStations();
 
     std::vector<kvalobs::kvStation> stations;
     stations_by_distance ordering;
@@ -61,6 +58,7 @@ std::vector<Sensor> NeighborTableModel::findNeighbors(const Sensor& sensor)
             ordering.center = s;
             break;
         }
+    // FIXME handle station not found
 
     std::list<long int> stationIDs;
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {

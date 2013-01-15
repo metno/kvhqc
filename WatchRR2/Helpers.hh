@@ -55,6 +55,9 @@ QString appendedText(const QString& text, const QString& append, const QString& 
 
 double distance(double lon1, double lat1, double lon2, double lat2);
 
+float round(float f, float factor);
+float roundDecimals(float f, int decimals);
+
 } // namespace Helpers
 
 namespace kvalobs {

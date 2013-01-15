@@ -70,10 +70,20 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
             else if (ui_2 != 0) // wrong
                 return QBrush(QColor(0xFF, 0xE0, 0xE0)); // light red
         }
+    } else if (role == Qt::ForegroundRole) {
+        if (((mDisplayType == NEW_CORRECTED and not obs->hasTasks())
+             or mDisplayType == ORIGINAL or mDisplayType == OLD_CORRECTED)
+            and mCodes->isCode(getValue(obs)))
+        {
+            return Qt::darkGray;
+        }
     } else if (role == Qt::FontRole) {
         QFont f;
-        if ((mDisplayType == NEW_CORRECTED or mDisplayType == NEW_CONTROLINFO) and obs->modified())
+        if ((mDisplayType == NEW_CORRECTED and obs->modifiedCorrected())
+            or (mDisplayType == NEW_CONTROLINFO and obs->modifiedControlinfo()))
+        {
             f.setBold(true);
+        }
         return f;
     } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
         if (mDisplayType == OLD_CONTROLINFO or mDisplayType == NEW_CONTROLINFO ) {

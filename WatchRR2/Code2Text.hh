@@ -12,14 +12,18 @@ public:
     virtual ~Code2Text();
     virtual QString asTip(float value);
     virtual QString asText(float value);
+    virtual bool isCode(float value);
     virtual float fromText(const QString& text);
 
     virtual void addCode(int value, const QStringList& shortText, const QString& explain);
     void setRange(float mini, float maxi);
+    void setDecimals(int d)
+        { mDecimals = d; }
 
 private:
     float mMinValue;
     float mMaxValue;
+    float mDecimals;
 
     struct Code {
         QStringList shortText;

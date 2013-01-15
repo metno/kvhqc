@@ -382,4 +382,21 @@ double distance(double lon1, double lat1, double lon2, double lat2)
     return EARTH_RADIUS*c;
 }
 
+float round(float f, float factor)
+{
+    f *= factor;
+    if (f < 0.0f)
+        f -= 0.5;
+    else
+        f += 0.5;
+    float ff = 0;
+    modff(f, &ff);
+    return ff / factor;
+}
+
+float roundDecimals(float f, int decimals)
+{
+    return round(f, std::pow(10, -decimals));
+}
+
 } // namespace Helpers

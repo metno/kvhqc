@@ -2,6 +2,7 @@
 #include "Helpers.hh"
 #include "identifyUser.h"
 #include "KvalobsModelAccess.hh"
+#include "KvStationBuffer.hh"
 #include "MainDialog.hh"
 #include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
@@ -94,6 +95,7 @@ int main(int argc, char* argv[])
 
     kvservice::corba::CorbaKvApp kvapp(argc, argv, confSec);
     QtKvService qkvs;
+    KvStationBuffer kvsb;
 
     boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<QtKvalobsAccess>();
     boost::shared_ptr<KvalobsModelAccess> kma = boost::make_shared<KvalobsModelAccess>();
@@ -110,7 +112,7 @@ int main(int argc, char* argv[])
                                           qApp->translate("Auth", "Exit"),
                                           "");
         if (mb)
-            exit(1);
+            return 1;
     }
     kda->setReinserter(reinserter);
 

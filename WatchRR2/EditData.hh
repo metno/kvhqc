@@ -41,6 +41,10 @@ public:
 
     bool modified() const;
 
+    bool modifiedCorrected() const;
+
+    bool modifiedControlinfo() const;
+
     bool modifiedTasks() const
         { return mTasks.front().second != allTasks(); }
 

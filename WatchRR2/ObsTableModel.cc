@@ -96,28 +96,22 @@ QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int
         ObsColumnPtr oc = getColumn(section);
         if (oc)
             return oc->headerData(role, mTimeInRows);
-    } else {
-        if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
-            const timeutil::ptime time = timeAtRow(section);
-            const boost::gregorian::greg_weekday wd = time.date().day_of_week();
-            const QString weekday = qApp->translate("ObsTableModel", weekdays[wd]);
-            if (role == Qt::DisplayRole) {
-                QString header = "";
-                if (orientation == Qt::Vertical)
-                    header = weekday + " ";
-                header += QString("%1/%2")
-                    .arg(time.date().day(), 2)
-                    .arg(time.date().month(), 2);
-                return header;
-            } else if (role == Qt::ToolTipRole) {
-                return QString("%1, %2")
-                    .arg(weekday)
-                    .arg(QString::fromStdString(timeutil::to_iso_extended_string(time)));
-            }
-        } else if (role == Qt::FontRole) {
-            QFont font("Monospace");
-            font.setStyleHint(QFont::TypeWriter);
-            return font;
+    } else if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
+        const timeutil::ptime time = timeAtRow(section);
+        const boost::gregorian::greg_weekday wd = time.date().day_of_week();
+        const QString weekday = qApp->translate("ObsTableModel", weekdays[wd]);
+        if (role == Qt::DisplayRole) {
+            QString header = "";
+            if (orientation == Qt::Vertical)
+                header = weekday + " ";
+            header += QString("%1/%2")
+                .arg(time.date().day(), 2)
+                .arg(time.date().month(), 2);
+            return header;
+        } else if (role == Qt::ToolTipRole) {
+            return QString("%1, %2")
+                .arg(weekday)
+                .arg(QString::fromStdString(timeutil::to_iso_extended_string(time)));
         }
     }
     return QVariant();

@@ -21,13 +21,17 @@ EditData::EditData(ObsDataPtr data)
 
 bool EditData::modified() const
 {
-    if (mCreated)
-        return true;
-    if ((mCorrected.size() > 1) and not Helpers::float_eq()(oldCorrected(), corrected()))
-        return true;
-    if ((mControlinfo.size() > 1) and (oldControlinfo() != controlinfo()))
-        return true;
-    return false;
+    return (modifiedCorrected() or modifiedControlinfo());
+}
+
+bool EditData::modifiedCorrected() const
+{
+    return (mCreated or mCorrected.size() > 1) and not Helpers::float_eq()(oldCorrected(), corrected());
+}
+
+bool EditData::modifiedControlinfo() const
+{
+    return (mCreated or mControlinfo.size() > 1) and (oldControlinfo() != controlinfo());
 }
 
 bool EditData::updateFromBackend()
