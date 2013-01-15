@@ -17,8 +17,8 @@ RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const
     , mSensor(sensor)
     , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR))
 {
-    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, DataColumn::ORIGINAL));
-    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, DataColumn::NEW_CORRECTED));
+    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::ORIGINAL));
+    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::NEW_CORRECTED));
     addColumn(ObsColumnPtr());
 
     const int nDays = mTime.days() + 1;

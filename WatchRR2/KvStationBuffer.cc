@@ -1,5 +1,6 @@
 
 #include "KvStationBuffer.hh"
+#include "Helpers.hh"
 
 #include <kvcpp/KvApp.h>
 
@@ -16,23 +17,13 @@ KvStationBuffer::~KvStationBuffer()
     sInstance = 0;
 }
 
-namespace /* anonymous */ {
-struct find_stationid : public std::unary_function<bool, kvalobs::kvStation>
-{
-    int stationid;
-    find_stationid(int s) : stationid(s) { }
-    bool operator()(const kvalobs::kvStation& s) const
-        { return s.stationID() == stationid; }
-};
-} // anonymous namespace
-
 const kvalobs::kvStation& KvStationBuffer::findStation(int id)
 {
     if (mStations.empty())
         fetch();
 
     std::list<kvalobs::kvStation>::const_iterator it
-        = std::find_if(mStations.begin(), mStations.end(), find_stationid(id));
+        = std::find_if(mStations.begin(), mStations.end(), Helpers::station_by_id(id));
     if (it == mStations.end())
         throw "station not found";
     return *it;

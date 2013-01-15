@@ -7,6 +7,7 @@
 #include "Helpers.hh"
 #include "KvStationBuffer.hh"
 #include "MainTableModel.hh"
+#include "NeighborDataModel.hh"
 #include "NeighborTableModel.hh"
 #include "ObsDelegate.hh"
 #include "RedistDialog.hh"
@@ -32,6 +33,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mTime(time)
     , mRRModel(new MainTableModel(mDA, ma, mSensor, mTime))
     , mNeighborModel(new NeighborTableModel(mDA, mSensor, mTime))
+    , mNeighborData(new NeighborDataModel(mDA, mSensor))
 {
     ui->setupUi(this);
 
@@ -51,23 +53,34 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     QFont mono("Monospace");
 
     ui->buttonSave->setEnabled(false);
-    ui->rrTable->setModel(mRRModel.get());
-    ui->rrTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->rrTable->setItemDelegate(new ObsDelegate(this));
-    ui->rrTable->verticalHeader()->setFont(mono);
+    ui->tableRR->setModel(mRRModel.get());
+    ui->tableRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableRR->setItemDelegate(new ObsDelegate(this));
+    ui->tableRR->verticalHeader()->setFont(mono);
     ui->labelInfo->setText("");
     ui->buttonUndo->setEnabled(false);
     ui->buttonRedo->setVisible(false);
 
-    ui->neighborTable->setModel(mNeighborModel.get());
-    ui->neighborTable->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    ui->neighborTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->neighborTable->verticalHeader()->setResizeMode(QHeaderView::Interactive);
-    ui->neighborTable->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->neighborTable->verticalHeader()->setFont(mono);
+    ui->tableNeighborRR->setModel(mNeighborModel.get());
+    ui->tableNeighborRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->tableNeighborRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableNeighborRR->verticalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->tableNeighborRR->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableNeighborRR->verticalHeader()->setFont(mono);
 
-    connect(ui->rrTable->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+    ui->tableNeighborData->setModel(mNeighborData.get());
+    ui->tableNeighborData->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableNeighborData->verticalHeader()->setResizeMode(QHeaderView::Interactive);
+    ui->tableNeighborData->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
+    const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
+    ui->dateNeighborData->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
+    ui->dateNeighborData->setMaximumDate(QDate(d1.year(), d1.month(), d1.day()));
+    ui->dateNeighborData->setDate(QDate(d0.year(), d0.month(), d0.day()+1));
+
+    connect(ui->tableRR->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
     connect(mRRModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
@@ -128,7 +141,7 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
 
 MainDialog::Selection MainDialog::findSelection()
 {
-    QModelIndexList selected = ui->rrTable->selectionModel()->selectedIndexes();
+    QModelIndexList selected = ui->tableRR->selectionModel()->selectedIndexes();
     if( selected.isEmpty() )
         return Selection();
 
@@ -154,7 +167,7 @@ void MainDialog::onAcceptRow()
 {
     const Selection sel = findSelection();
     FCC::acceptRow(mDA, mSensor, sel.selTime.t0());
-    ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
 }
@@ -186,7 +199,7 @@ void MainDialog::onEdit()
     if (edit.exec()) {
         mDA->pushUpdate();
         eda->sendChangesToParent();
-        ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+        ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
         enableSave();
         clearSelection();
     }
@@ -200,7 +213,7 @@ void MainDialog::onRedistribute()
     if (redist.exec()) {
         mDA->pushUpdate();
         eda->sendChangesToParent();
-        ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+        ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
         enableSave();
         clearSelection();
     }
@@ -210,7 +223,7 @@ void MainDialog::onRedistributeQC2()
 {
     const Selection sel = findSelection();
     RR24::redistributeInQC2(mDA, mSensor, sel.selTime, mEditableTime);
-    ui->rrTable->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
 }
@@ -231,7 +244,7 @@ void MainDialog::clearSelection()
                                            mRRModel->columnCount(QModelIndex())-1, QModelIndex());
     QItemSelection s;
     s.select(tl, br);
-    ui->rrTable->selectionModel()->select(s, QItemSelectionModel::Clear);
+    ui->tableRR->selectionModel()->select(s, QItemSelectionModel::Clear);
 }
 
 void MainDialog::enableSave()
@@ -260,4 +273,11 @@ void MainDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr
         w.exec();
         QDialog::reject();
     }
+}
+
+void MainDialog::onNeighborDataDateChanged(const QDate& date)
+{
+    QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
+    mNeighborData->setTime(timeutil::from_QDateTime(qdt));
+    ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }

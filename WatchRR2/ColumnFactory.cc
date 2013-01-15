@@ -1,9 +1,11 @@
 
 #include "ColumnFactory.hh"
 
-#include "RR24Column.hh"
+#include "DataControlinfoItem.hh"
+#include "DataOriginalItem.hh"
+#include "DataRR24Item.hh"
+#include "DataVxItem.hh"
 #include "Sensor.hh"
-#include "VxColumn.hh"
 
 #include <QtCore/QCoreApplication>
 #include <boost/make_shared.hpp>
@@ -45,19 +47,33 @@ Code2TextPtr codesForParam(int pid)
     return c2t;
 }
 
-DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataColumn::DisplayType displayType)
+DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, DisplayType displayType)
 {
     const int pid = sensor.paramId;
 
-    if( pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6 )
-        return boost::make_shared<VxColumn>(da, sensor, time, displayType);
-    DataColumnPtr dc;
-    if( pid == kvalobs::PARAMID_RR )
-        dc = boost::make_shared<RR24Column>(da, sensor, time, displayType);
-    else
-        dc = boost::make_shared<DataColumn>(da, sensor, time, displayType);
-    dc->setCodes(codesForParam(pid));
-    return dc;
+    DataItemPtr item;
+    if( pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6 ) {
+        item = boost::make_shared<DataVxItem>(da);
+    } else if (displayType == OLD_CONTROLINFO or displayType == NEW_CONTROLINFO) {
+        item = boost::make_shared<DataControlinfoItem>(displayType == NEW_CONTROLINFO);
+    } else {
+        Code2TextPtr codes = codesForParam(pid);
+        if (displayType == OLD_CORRECTED or displayType == NEW_CORRECTED) {
+            const bool showNew = displayType == NEW_CORRECTED;
+            if (pid == kvalobs::PARAMID_RR)
+                item = boost::make_shared<DataRR24Item>(showNew, codes);
+            else
+                item = boost::make_shared<DataCorrectedItem>(showNew, codes);
+        } else if (displayType == ORIGINAL) {
+            item = boost::make_shared<DataOriginalItem>(codes);
+        }
+    }
+    return item;
+}
+
+DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType)
+{
+    return boost::make_shared<DataColumn>(da, sensor, time, itemForSensor(da, sensor, displayType));
 }
 
 ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)

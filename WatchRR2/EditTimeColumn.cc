@@ -32,11 +32,8 @@ Qt::ItemFlags EditTimeColumn::flags(const timeutil::ptime& time) const
 
 QVariant EditTimeColumn::data(const timeutil::ptime& time, int role) const
 {
-    if( role == Qt::BackgroundRole and mDC->getDisplayType() == DataColumn::NEW_CORRECTED
-        and not mEditableTime.contains(time) )
-    {
+    if (role == Qt::BackgroundRole and not mEditableTime.contains(time))
         return QBrush(Qt::lightGray);
-    }
     return mDC->data(time, role);
 }
 

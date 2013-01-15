@@ -5,9 +5,18 @@
 #include "EditData.hh"
 #include "EditDataEditor.hh"
 #include "FlagChange.hh"
+#include "KvStationBuffer.hh"
 #include "timeutil.hh"
+
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
+#include <kvalobs/kvObsPgm.h>
+#include <kvcpp/KvApp.h>
+
+#include <boost/foreach.hpp>
+
+#define NDEBUG
+#include "debug.hh"
 
 namespace {
 // from WatchRR/src/ControlFlagCell.cc
@@ -397,6 +406,71 @@ float round(float f, float factor)
 float roundDecimals(float f, int decimals)
 {
     return round(f, std::pow(10, -decimals));
+}
+
+int extract_ui2(ObsDataPtr obs)
+{
+    kvalobs::kvUseInfo ui;
+    ui.setUseFlags(obs->controlinfo());
+    return ui.flag(2);
+}
+
+std::vector<Sensor> findNeighbors(const Sensor& sensor, int maxNeighbors)
+{
+    std::vector<Sensor> neighbors;
+    if (not kvservice::KvApp::kvApp) {
+        std::cerr << "no KvApp, probably running a test program" << std::endl;
+        return neighbors;
+    }
+
+    const std::list<kvalobs::kvStation>& stationsList = KvStationBuffer::instance()->allStations();
+
+    std::vector<kvalobs::kvStation> stations;
+    std::list<kvalobs::kvObsPgm> obs_pgm;
+    try {
+        Helpers::stations_by_distance ordering(KvStationBuffer::instance()->findStation(sensor.stationId));
+
+        std::list<long int> stationIDs;
+        BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
+            const int sid = s.stationID();
+            if (sid < 60 or sid >= 100000)
+                continue;
+            if (ordering.distance(s) > 100 /*km*/)
+                continue;
+            stations.push_back(s);
+            stationIDs.push_back(s.stationID());
+            DBGV(s.stationID());
+        }
+        std::sort(stations.begin(), stations.end(), ordering);
+
+        if (not kvservice::KvApp::kvApp->getKvObsPgm(obs_pgm, stationIDs, false)) {
+            std::cerr << "problem loading obs_pgm" << std::endl;
+            return neighbors;
+        }
+    } catch(std::string&) {
+        return neighbors;
+    }
+    
+    std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithRR24;
+    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+        if (op.paramID() == sensor.paramId)
+            // FIXME this is not correct if there is more than one
+            // klXX or collector or typeid or ...
+            obsPgmForStationsWithRR24[op.stationID()] = op;
+    }
+
+    int count = 0;
+    BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
+        std::map<int,kvalobs::kvObsPgm>::const_iterator it = obsPgmForStationsWithRR24.find(s.stationID());
+        if (it == obsPgmForStationsWithRR24.end())
+            continue;
+        const kvalobs::kvObsPgm& op = it->second;
+        neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR, op.level(), 0, op.typeID()));
+        DBGV(s.stationID());
+        if (++count >= maxNeighbors)
+            break;
+    }
+    return neighbors;
 }
 
 } // namespace Helpers

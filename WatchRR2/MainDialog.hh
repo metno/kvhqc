@@ -21,6 +21,7 @@ namespace Ui {
 class DialogMain;
 }
 class MainTableModel;
+class NeighborDataModel;
 class NeighborTableModel;
 
 class MainDialog : public QDialog
@@ -41,6 +42,7 @@ private Q_SLOTS:
     void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void onDataChanged(const QModelIndex&, const QModelIndex&);
     void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
+    void onNeighborDataDateChanged(const QDate&);
 
 private:
     struct Selection {
@@ -71,6 +73,7 @@ private:
     TimeRange mEditableTime;
     std::auto_ptr<MainTableModel> mRRModel;
     std::auto_ptr<NeighborTableModel> mNeighborModel;
+    std::auto_ptr<NeighborDataModel> mNeighborData;
 };
 
 #endif // MAINDIALOG_HH

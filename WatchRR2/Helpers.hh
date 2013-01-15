@@ -3,6 +3,7 @@
 #define HELPERS_HH 1
 
 #include "Sensor.hh"
+#include <kvalobs/kvStation.h>
 #include <QtCore/QString>
 
 class FlagChange;
@@ -57,6 +58,31 @@ double distance(double lon1, double lat1, double lon2, double lat2);
 
 float round(float f, float factor);
 float roundDecimals(float f, int decimals);
+
+int extract_ui2(ObsDataPtr obs);
+
+struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStation, kvalobs::kvStation> {
+    stations_by_distance(const kvalobs::kvStation& c) : center(c) { }
+    bool operator()(const kvalobs::kvStation& a, const kvalobs::kvStation& b) const {
+        if (a.stationID() == b.stationID())
+            return false;
+        return distance(a) < distance(b);
+    }
+    float distance(const kvalobs::kvStation& neighbor) const {
+        return Helpers::distance(center.lon(), center.lat(), neighbor.lon(), neighbor.lat());
+    }
+private:
+    const kvalobs::kvStation& center;
+};
+
+struct station_by_id : public std::unary_function<bool, kvalobs::kvStation>
+{
+    station_by_id(int s) : stationid(s) { }
+    bool operator()(const kvalobs::kvStation& s) const
+        { return s.stationID() == stationid; }
+private:
+    int stationid;
+};
 
 } // namespace Helpers
 

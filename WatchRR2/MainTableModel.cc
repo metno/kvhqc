@@ -20,13 +20,13 @@ const int columnPars[N_COLUMNS] = {
     kvalobs::PARAMID_RR, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
     kvalobs::PARAMID_RR, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
 };
-const DataColumn::DisplayType columnTypes[N_COLUMNS] = {
-    DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,
-    DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,
-    DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,
-    DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,   DataColumn::NEW_CORRECTED,
-    DataColumn::ORIGINAL,        DataColumn::ORIGINAL,        DataColumn::ORIGINAL,
-    DataColumn::NEW_CONTROLINFO, DataColumn::NEW_CONTROLINFO, DataColumn::NEW_CONTROLINFO
+const ColumnFactory::DisplayType columnTypes[N_COLUMNS] = {
+    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
+    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
+    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
+    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
+    ColumnFactory::ORIGINAL,        ColumnFactory::ORIGINAL,        ColumnFactory::ORIGINAL,
+    ColumnFactory::NEW_CONTROLINFO, ColumnFactory::NEW_CONTROLINFO, ColumnFactory::NEW_CONTROLINFO
 };
 const int columnTimeOffsets[N_COLUMNS] = {
     -18, -18, -18,

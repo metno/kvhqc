@@ -104,7 +104,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTableView" name="rrTable">
+        <widget class="QTableView" name="tableRR">
          <property name="selectionMode">
           <enum>QAbstractItemView::ContiguousSelection</enum>
          </property>
@@ -115,13 +115,54 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="tabNeighbors">
+     <widget class="QWidget" name="tabNeighborRR">
       <attribute name="title">
-       <string>Neighbor Stations</string>
+       <string>Neighbor Precipitation</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QTableView" name="neighborTable">
+        <widget class="QTableView" name="tableNeighborRR">
+         <property name="selectionMode">
+          <enum>QAbstractItemView::ContiguousSelection</enum>
+         </property>
+         <attribute name="verticalHeaderDefaultSectionSize">
+          <number>20</number>
+         </attribute>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabNeighborData">
+      <attribute name="title">
+       <string>Neighbor Data</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_3">
+         <item>
+          <widget class="MiDateTimeEdit" name="dateNeighborData">
+           <property name="displayFormat">
+            <string notr="true">yyyy-MM-dd</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTableView" name="tableNeighborData">
          <property name="selectionMode">
           <enum>QAbstractItemView::ContiguousSelection</enum>
          </property>
@@ -228,8 +269,15 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MiDateTimeEdit</class>
+   <extends>QDateEdit</extends>
+   <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
-  <tabstop>rrTable</tabstop>
+  <tabstop>tableRR</tabstop>
   <tabstop>buttonSave</tabstop>
   <tabstop>buttonClose</tabstop>
  </tabstops>
@@ -242,8 +290,8 @@
    <slot>onRedistribute()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>228</x>
-     <y>57</y>
+     <x>239</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -258,8 +306,8 @@
    <slot>onEdit()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>119</x>
-     <y>57</y>
+     <x>130</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -322,8 +370,8 @@
    <slot>onRedistributeQC2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>323</x>
-     <y>46</y>
+     <x>380</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>277</x>
@@ -338,12 +386,28 @@
    <slot>onAcceptRow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>393</x>
-     <y>49</y>
+     <x>471</x>
+     <y>95</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
      <y>565</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>dateNeighborData</sender>
+   <signal>dateChanged(QDate)</signal>
+   <receiver>DialogMain</receiver>
+   <slot>onNeighborDataDateChanged(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>84</x>
+     <y>76</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>393</x>
+     <y>24</y>
     </hint>
    </hints>
   </connection>
@@ -355,5 +419,6 @@
   <slot>onRedistributeQC2()</slot>
   <slot>onAcceptRow()</slot>
   <slot>onShowNeighbors()</slot>
+  <slot>onNeighborDataDateChanged(QDate)</slot>
  </slots>
 </ui>

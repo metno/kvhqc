@@ -2,6 +2,7 @@
 SET(watchrr2_HEADERS
   EditDialog.hh
   MainDialog.hh
+  NeighborDataModel.hh
   ObsDelegate.hh
   ObsTableModel.hh
   QtKvalobsAccess.hh
@@ -21,6 +22,18 @@ SET(watchrr2_SOURCES
   ColumnFactory.cc
   DataColumn.hh
   DataColumn.cc
+  DataControlinfoItem.cc
+  DataControlinfoItem.hh
+  DataCorrectedItem.cc
+  DataCorrectedItem.hh
+  DataItem.cc
+  DataItem.hh
+  DataOriginalItem.cc
+  DataOriginalItem.hh
+  DataRR24Item.cc
+  DataRR24Item.hh
+  DataVxItem.cc
+  DataVxItem.hh
   EditAccess.hh
   EditAccess.cc
   EditData.hh
@@ -66,6 +79,8 @@ SET(watchrr2_SOURCES
   ModelColumn.cc
   ModelColumn.hh
   ModelData.hh
+  NeighborDataModel.hh
+  NeighborDataModel.cc
   NeighborTableModel.hh
   NeighborTableModel.cc
   ObsColumn.hh
@@ -87,16 +102,12 @@ SET(watchrr2_SOURCES
   RedistDialog.cc
   RedistTableModel.hh
   RedistTableModel.cc
-  RR24Column.hh
-  RR24Column.cc
   Sensor.hh
   Sensor.cc
   StationDialog.hh
   StationDialog.cc
   Tasks.hh
   Tasks.cc
-  VxColumn.hh
-  VxColumn.cc
 )
 
 SET(watchrr2_TRANS watchrr2_nb_NO.ts)

@@ -110,6 +110,8 @@ bool KvBufferedAccess::drop(const SensorTime& st)
 
 void KvBufferedAccess::addSubscription(const ObsSubscription& s)
 {
+    if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
+        return;
     mSubscriptions.push_back(s);
     updateSubscribedTimes();
 }
@@ -138,6 +140,8 @@ struct eq_ObsSubscription : public std::unary_function<bool, ObsSubscription> {
 
 void KvBufferedAccess::removeSubscription(const ObsSubscription& s)
 {
+    if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
+        return;
     Subscriptions_t::iterator it = std::find_if(mSubscriptions.begin(), mSubscriptions.end(), eq_ObsSubscription(s));
     //Subscriptions_t::iterator it = std::find(mSubscriptions.begin(), mSubscriptions.end(), s);
     if (it != mSubscriptions.end()) {
