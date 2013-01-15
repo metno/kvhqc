@@ -415,7 +415,12 @@ int extract_ui2(ObsDataPtr obs)
     return ui.flag(2);
 }
 
-std::vector<Sensor> findNeighbors(const Sensor& sensor, int maxNeighbors)
+QString stationName(const kvalobs::kvStation& s)
+{
+    return QString::fromLatin1(s.name().c_str());
+}
+
+std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {
     std::vector<Sensor> neighbors;
     if (not kvservice::KvApp::kvApp) {
@@ -453,10 +458,14 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, int maxNeighbors)
     
     std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithRR24;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (op.paramID() == sensor.paramId)
+        if (op.paramID() == sensor.paramId
+            and op.fromtime() <= time.t0()
+            and (op.totime().is_not_a_date_time() or time.t1() <= op.totime()))
+        {
             // FIXME this is not correct if there is more than one
             // klXX or collector or typeid or ...
             obsPgmForStationsWithRR24[op.stationID()] = op;
+        }
     }
 
     int count = 0;
@@ -465,7 +474,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, int maxNeighbors)
         if (it == obsPgmForStationsWithRR24.end())
             continue;
         const kvalobs::kvObsPgm& op = it->second;
-        neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR, op.level(), 0, op.typeID()));
+        neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, op.typeID()));
         DBGV(s.stationID());
         if (++count >= maxNeighbors)
             break;

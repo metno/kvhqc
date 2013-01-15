@@ -2,6 +2,8 @@
 #include "ObsTableModel.hh"
 
 #include "ObsAccess.hh"
+#include "TimeHeader.hh"
+
 #include <QtGui/QApplication>
 
 #include <boost/bind.hpp>
@@ -10,18 +12,6 @@
 
 #define NDEBUG
 #include "w2debug.hh"
-
-namespace /* anonymous */ {
-const char* weekdays[7] = {
-    QT_TRANSLATE_NOOP("ObsTableModel", "Mon"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Tue"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Wed"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Thu"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Fri"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Sat"),
-    QT_TRANSLATE_NOOP("ObsTableModel", "Sun")
-};
-} // namespace anonymous
 
 ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time)
     : mDA(da)
@@ -95,24 +85,9 @@ QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int
     if ((mTimeInRows and orientation == Qt::Horizontal) or ((not mTimeInRows) and orientation == Qt::Vertical)) {
         ObsColumnPtr oc = getColumn(section);
         if (oc)
-            return oc->headerData(role, mTimeInRows);
+            return oc->headerData(orientation, role);
     } else if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
-        const timeutil::ptime time = timeAtRow(section);
-        const boost::gregorian::greg_weekday wd = time.date().day_of_week();
-        const QString weekday = qApp->translate("ObsTableModel", weekdays[wd]);
-        if (role == Qt::DisplayRole) {
-            QString header = "";
-            if (orientation == Qt::Vertical)
-                header = weekday + " ";
-            header += QString("%1/%2")
-                .arg(time.date().day(), 2)
-                .arg(time.date().month(), 2);
-            return header;
-        } else if (role == Qt::ToolTipRole) {
-            return QString("%1, %2")
-                .arg(weekday)
-                .arg(QString::fromStdString(timeutil::to_iso_extended_string(time)));
-        }
+        return TimeHeader::headerData(timeAtRow(section), orientation, role);
     }
     return QVariant();
 }

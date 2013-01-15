@@ -4,6 +4,7 @@
 #include "FlagChange.hh"
 #include "Helpers.hh"
 #include "ModelData.hh"
+#include "SensorHeader.hh"
 #include "Tasks.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -53,47 +54,11 @@ bool ModelColumn::setData(const timeutil::ptime& /*time*/, const QVariant& /*val
     return false;
 }
 
-QVariant ModelColumn::headerData(int role, bool /*verticalHeader*/) const
+QVariant ModelColumn::headerData(Qt::Orientation orientation, int role) const
 {
-    const int offset = mTimeOffset.hours();
-
-    if (role == Qt::ToolTipRole) {
-        QString t = qApp->translate("ModelColumn",
-            QT_TRANSLATE_NOOP("ModelColumn", "Station %1 Parameter %2 Level %3 Sensor %4 Type %5\n%6"))
-            .arg(mSensor.stationId)
-            .arg(Helpers::parameterName(mSensor.paramId))
-            .arg(mSensor.level)
-            .arg(mSensor.sensor)
-            .arg(mSensor.typeId)
-            .arg(qApp->translate("ModelColumn", "model value"));
-
-        if (offset != 0) {
-            t += "\n";
-            if (offset > 0)
-                t += qApp->translate("ModelColumn", QT_TRANSLATE_NOOP("ModelColumn", "time offset +%1 hour(s)")).arg(offset);
-            else
-                t += qApp->translate("ModelColumn", QT_TRANSLATE_NOOP("ModelColumn", "time offset -%1 hour(s)")).arg(-offset);
-        }
-        return t;
-    } else if (role == Qt::DisplayRole) {
-        QString h;
-        if (mHeaderShowStation)
-            h += QString("%1\n").arg(mSensor.stationId);
-        
-        h += QString("%1\n%2")
-            .arg(Helpers::parameterName(mSensor.paramId))
-            .arg(qApp->translate("ModelColumn", "model"));
-
-        if (offset != 0) {
-            h += "\n";
-            if (offset > 0)
-                h += qApp->translate("ModelColumn", "+%1h").arg(offset);
-            else
-                h += qApp->translate("ModelColumn", "-%1h").arg(-offset);
-        }
-        return h;
-    }
-    return QVariant();
+    SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
+                    SensorHeader::ALWAYS, mTimeOffset.hours());
+    return sh.modelHeader(orientation, role);
 }
 
 bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)

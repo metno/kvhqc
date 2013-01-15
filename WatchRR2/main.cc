@@ -44,7 +44,7 @@ int main(int argc, char* argv[])
     QString myconf = "kvalobs.conf";
 
     Sensor sensor(83880, kvalobs::PARAMID_RR, 0, 0, 302);
-    std::string timeFrom("2012-12-27T06:00:00"), timeTo("2013-01-08T06:00:00");
+    std::string timeFrom("2013-01-05T06:00:00"), timeTo("2013-01-15T06:00:00");
 
     for (int i = 1; i < args.size(); ++i) {
         if( args.at(i) == "--config" ) {

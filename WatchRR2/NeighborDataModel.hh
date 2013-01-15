@@ -10,7 +10,7 @@
 class NeighborDataModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-    NeighborDataModel(EditAccessPtr da, const Sensor& sensor);
+    NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange);
     virtual ~NeighborDataModel();
 
     virtual int rowCount(const QModelIndex&) const;
@@ -31,6 +31,7 @@ private:
 
 private:
     EditAccessPtr mDA;
+    TimeRange mTimeRange;
     timeutil::ptime mTime;
 
     // rows

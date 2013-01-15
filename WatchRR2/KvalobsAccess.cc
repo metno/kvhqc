@@ -72,7 +72,6 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
 {
-    LOG_SCOPE();
     if (not mDataReinserter)
         return false;
 
@@ -113,9 +112,9 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
             Helpers::updateCfailed(d, "WatchRR2-m");
         }
         store.push_back(d);
-        DBG(DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
-            << " ins=" << (inserted ? "y" : "n")
-            << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
+        //DBG(DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
+        //    << " ins=" << (inserted ? "y" : "n")
+        //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);

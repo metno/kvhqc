@@ -1,8 +1,12 @@
 
 #include "KvStationBuffer.hh"
+#include "BusyIndicator.h"
 #include "Helpers.hh"
 
 #include <kvcpp/KvApp.h>
+
+#define NDEBUG
+#include "w2debug.hh"
 
 KvStationBuffer* KvStationBuffer::sInstance = 0;
 
@@ -36,7 +40,10 @@ const std::list<kvalobs::kvStation>& KvStationBuffer::allStations()
     return mStations;
 }
 
-void KvStationBuffer::fetch() {
+void KvStationBuffer::fetch()
+{
+    LOG_SCOPE();
+    BusyIndicator wait;
     mStations.clear();
     if (not kvservice::KvApp::kvApp->getKvStations(mStations)) {
         std::cerr << "could not fetch station list" << std::endl;

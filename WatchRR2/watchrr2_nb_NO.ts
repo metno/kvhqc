@@ -67,17 +67,17 @@
 <context>
     <name>Column_RR_24</name>
     <message>
-        <location filename="ColumnFactory.cc" line="21"/>
+        <location filename="ColumnFactory.cc" line="23"/>
         <source>dry</source>
         <translation>tørt</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="22"/>
+        <location filename="ColumnFactory.cc" line="24"/>
         <source>d</source>
         <translation>t</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="23"/>
+        <location filename="ColumnFactory.cc" line="25"/>
         <source>precipitation not reported</source>
         <translation>nedbørmengde ikke meldt</translation>
     </message>
@@ -85,32 +85,32 @@
 <context>
     <name>Column_SA</name>
     <message>
-        <location filename="ColumnFactory.cc" line="28"/>
+        <location filename="ColumnFactory.cc" line="30"/>
         <source>pat</source>
         <translation>flk</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="29"/>
+        <location filename="ColumnFactory.cc" line="31"/>
         <source>p</source>
         <translation>f</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="30"/>
+        <location filename="ColumnFactory.cc" line="32"/>
         <source>patchy snow</source>
         <translation>flekkvis snø</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="33"/>
+        <location filename="ColumnFactory.cc" line="35"/>
         <source>no m.</source>
         <translation>ing.m.</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="34"/>
+        <location filename="ColumnFactory.cc" line="36"/>
         <source>n</source>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="35"/>
+        <location filename="ColumnFactory.cc" line="37"/>
         <source>measurement impossible/inaccurate</source>
         <translation>måling umulig eller unøyaktig</translation>
     </message>
@@ -118,18 +118,18 @@
 <context>
     <name>Column_SD</name>
     <message>
-        <location filename="ColumnFactory.cc" line="40"/>
+        <location filename="ColumnFactory.cc" line="42"/>
         <source>bare</source>
         <oldsource>bart</oldsource>
         <translation>bart</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="41"/>
+        <location filename="ColumnFactory.cc" line="43"/>
         <source>b</source>
         <translation>b</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="42"/>
+        <location filename="ColumnFactory.cc" line="44"/>
         <source>snow cover not reported</source>
         <translation>snødekke ikke meldt</translation>
     </message>
@@ -137,87 +137,135 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataColumn.cc" line="96"/>
-        <source>surely wrong</source>
-        <translation>sikkert feilaktig</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="98"/>
-        <source>very suspicious (probably wrong)</source>
-        <oldsource>very suspicious</oldsource>
-        <translation>svært mistenkelig (antagelig feilaktig)</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="100"/>
-        <source>suspicious (probably ok)</source>
-        <oldsource>suspicious</oldsource>
-        <translation>noe mistenkelig (antagelig korrekt)</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="102"/>
-        <source>no quality info available</source>
-        <translation>kvalitetsinformasjon ikke git</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="151"/>
+        <location filename="DataOriginalItem.cc" line="58"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="152"/>
-        <location filename="DataColumn.cc" line="153"/>
+        <location filename="DataCorrectedItem.cc" line="86"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="154"/>
-        <location filename="DataColumn.cc" line="155"/>
+        <location filename="DataControlinfoItem.cc" line="40"/>
         <source>controlflags</source>
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="158"/>
-        <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
-%6</source>
-        <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
-%6</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="169"/>
-        <source>time offset +%1 hour(s)</source>
-        <translation>tidsskift +%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="171"/>
-        <source>time offset -%1 hour(s)</source>
-        <translation>tidsskift -%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="DataColumn.cc" line="176"/>
+        <location filename="DataOriginalItem.cc" line="56"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="177"/>
-        <location filename="DataColumn.cc" line="178"/>
+        <location filename="DataCorrectedItem.cc" line="84"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="179"/>
-        <location filename="DataColumn.cc" line="180"/>
+        <location filename="DataControlinfoItem.cc" line="38"/>
         <source>flags</source>
         <translation>flagg</translation>
     </message>
+</context>
+<context>
+    <name>DataOriginalItem</name>
     <message>
-        <location filename="DataColumn.cc" line="195"/>
-        <source>+%1h</source>
-        <translation>+%1t</translation>
+        <location filename="DataOriginalItem.cc" line="39"/>
+        <source>surely wrong</source>
+        <translation>sikkert feilaktig</translation>
     </message>
     <message>
-        <location filename="DataColumn.cc" line="197"/>
-        <source>-%1h</source>
-        <translation>-%1t</translation>
+        <location filename="DataOriginalItem.cc" line="41"/>
+        <source>very suspicious (probably wrong)</source>
+        <translation>svært mistenkelig (antagelig feilaktig)</translation>
+    </message>
+    <message>
+        <location filename="DataOriginalItem.cc" line="43"/>
+        <source>suspicious (probably ok)</source>
+        <translation>noe mistenkelig (antagelig korrekt)</translation>
+    </message>
+    <message>
+        <location filename="DataOriginalItem.cc" line="45"/>
+        <source>no quality info available</source>
+        <translation>kvalitetsinformasjon ikke git</translation>
+    </message>
+</context>
+<context>
+    <name>DataVxItem</name>
+    <message>
+        <location filename="DataVxItem.cc" line="23"/>
+        <source>no data</source>
+        <translation>ingen data</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="24"/>
+        <source>rain</source>
+        <translation>regn</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="25"/>
+        <source>rain shower</source>
+        <translation>regnbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="26"/>
+        <source>snow</source>
+        <translation>snø</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="27"/>
+        <source>snow shower</source>
+        <translation>snøbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="28"/>
+        <source>sleet</source>
+        <translation>sludd</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="29"/>
+        <source>sleet shower</source>
+        <translation>sluddbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="30"/>
+        <source>drizzle</source>
+        <translation>yr</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="31"/>
+        <source>hail</source>
+        <translation>hagl</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="32"/>
+        <source>dew</source>
+        <translation>dugg</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="33"/>
+        <source>rime</source>
+        <translation>rim</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="34"/>
+        <source>thunder</source>
+        <translation>torden</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="35"/>
+        <source>snowflakes</source>
+        <translation>snøfokk</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="80"/>
+        <source>weak</source>
+        <translation>svakt</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="82"/>
+        <source>strong</source>
+        <translation>sterkt</translation>
     </message>
 </context>
 <context>
@@ -283,33 +331,39 @@
     </message>
     <message>
         <location filename="watchrr_main.ui" line="120"/>
-        <source>Neighbor Stations</source>
-        <translation>Nabostasjoner</translation>
+        <source>Neighbor Precipitation</source>
+        <oldsource>Neighbor Stations</oldsource>
+        <translation>Nedbør Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="165"/>
+        <location filename="watchrr_main.ui" line="137"/>
+        <source>Neighbor Data</source>
+        <translation>Kortdata Naboer</translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="206"/>
         <source>U&amp;ndo</source>
         <oldsource>Undo</oldsource>
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="178"/>
+        <location filename="watchrr_main.ui" line="219"/>
         <source>Redo is not yet implemented, sorry.</source>
         <oldsource>redo is not yet implemented, sorry</oldsource>
         <translation>Beklager, gjenta er ikke ennå implementert.</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="181"/>
+        <location filename="watchrr_main.ui" line="222"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="210"/>
+        <location filename="watchrr_main.ui" line="251"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="220"/>
+        <location filename="watchrr_main.ui" line="261"/>
         <source>Close</source>
         <translation>Lukk</translation>
     </message>
@@ -454,127 +508,49 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="40"/>
+        <location filename="MainDialog.cc" line="47"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="45"/>
+        <location filename="MainDialog.cc" line="52"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="114"/>
+        <location filename="MainDialog.cc" line="137"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="169"/>
+        <location filename="MainDialog.cc" line="192"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="170"/>
+        <location filename="MainDialog.cc" line="193"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="171"/>
+        <location filename="MainDialog.cc" line="194"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="172"/>
+        <location filename="MainDialog.cc" line="195"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="257"/>
+        <location filename="MainDialog.cc" line="280"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="258"/>
+        <location filename="MainDialog.cc" line="281"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
-    </message>
-</context>
-<context>
-    <name>ModelColumn</name>
-    <message>
-        <location filename="ModelColumn.cc" line="62"/>
-        <source>Station %1 Parameter %2 Level %3 Sensor %4 Type %5
-%6</source>
-        <translation>Stasjon %1 Parameter %2 Level %3 Sensor %4 Type %5
-%6</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="68"/>
-        <source>model value</source>
-        <translation>modellverdi</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="73"/>
-        <source>time offset +%1 hour(s)</source>
-        <translation>tidsskift +%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="75"/>
-        <source>time offset -%1 hour(s)</source>
-        <translation>tidsskift -%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="85"/>
-        <source>model</source>
-        <translation>modell</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="90"/>
-        <source>+%1h</source>
-        <translation>+%1t</translation>
-    </message>
-    <message>
-        <location filename="ModelColumn.cc" line="92"/>
-        <source>-%1h</source>
-        <translation>-%1t</translation>
-    </message>
-</context>
-<context>
-    <name>ObsTableModel</name>
-    <message>
-        <location filename="ObsTableModel.cc" line="16"/>
-        <source>Mon</source>
-        <translation>Man</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="17"/>
-        <source>Tue</source>
-        <translation>Tir</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="18"/>
-        <source>Wed</source>
-        <translation>Ons</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="19"/>
-        <source>Thu</source>
-        <translation>Tor</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="20"/>
-        <source>Fri</source>
-        <translation>Fre</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="21"/>
-        <source>Sat</source>
-        <translation>Lør</translation>
-    </message>
-    <message>
-        <location filename="ObsTableModel.cc" line="22"/>
-        <source>Sun</source>
-        <translation>Søn</translation>
     </message>
 </context>
 <context>
@@ -594,6 +570,55 @@
         <source>Difference %1mm to original sum %2mm!</source>
         <oldsource>Difference %2mm to original sum %3mm!</oldsource>
         <translation>%1mm differanse til original oppsamling %2mm!</translation>
+    </message>
+</context>
+<context>
+    <name>SensorHeader</name>
+    <message>
+        <location filename="SensorHeader.cc" line="32"/>
+        <source>Parameter %1 %2</source>
+        <translation>Parameter %1 %2</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="25"/>
+        <source>Sensor %1 Type %2</source>
+        <translation>Sensor %1 Type %2</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="55"/>
+        <source>Parameter %1 model value</source>
+        <oldsource>Parameter %3 model value</oldsource>
+        <translation>Parameter %1 modellverdi</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="59"/>
+        <source>model</source>
+        <translation>modell</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="88"/>
+        <source>+%1h</source>
+        <translation>+%1t</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="89"/>
+        <source>time offset +%1 hour(s)</source>
+        <translation>tidsskift +%1 time(r)</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="92"/>
+        <source>-%1h</source>
+        <translation>-%1t</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="93"/>
+        <source>time offset -%1 hour(s)</source>
+        <translation>tidsskift -%1 time(r)</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="107"/>
+        <source>Station %1 [%2, %3masl] Level %4</source>
+        <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
     </message>
 </context>
 <context>
@@ -673,81 +698,41 @@
     </message>
 </context>
 <context>
-    <name>VxColumn</name>
+    <name>TimeHeader</name>
     <message>
-        <location filename="VxColumn.cc" line="21"/>
-        <source>no data</source>
-        <translation>ingen data</translation>
+        <location filename="TimeHeader.cc" line="8"/>
+        <source>Mon</source>
+        <translation>Man</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="22"/>
-        <source>rain</source>
-        <translation>regn</translation>
+        <location filename="TimeHeader.cc" line="9"/>
+        <source>Tue</source>
+        <translation>Tir</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="23"/>
-        <source>rain shower</source>
-        <translation>regnbyge</translation>
+        <location filename="TimeHeader.cc" line="10"/>
+        <source>Wed</source>
+        <translation>Ons</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="24"/>
-        <source>snow</source>
-        <translation>snø</translation>
+        <location filename="TimeHeader.cc" line="11"/>
+        <source>Thu</source>
+        <translation>Tor</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="25"/>
-        <source>snow shower</source>
-        <translation>snøbyge</translation>
+        <location filename="TimeHeader.cc" line="12"/>
+        <source>Fri</source>
+        <translation>Fre</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="26"/>
-        <source>sleet</source>
-        <translation>sludd</translation>
+        <location filename="TimeHeader.cc" line="13"/>
+        <source>Sat</source>
+        <translation>Lør</translation>
     </message>
     <message>
-        <location filename="VxColumn.cc" line="27"/>
-        <source>sleet shower</source>
-        <translation>sluddbyge</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="28"/>
-        <source>drizzle</source>
-        <translation>yr</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="29"/>
-        <source>hail</source>
-        <translation>hagl</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="30"/>
-        <source>dew</source>
-        <translation>dugg</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="31"/>
-        <source>rime</source>
-        <translation>rim</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="32"/>
-        <source>thunder</source>
-        <translation>torden</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="33"/>
-        <source>snowflakes</source>
-        <translation>snøfokk</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="92"/>
-        <source>weak</source>
-        <translation>svakt</translation>
-    </message>
-    <message>
-        <location filename="VxColumn.cc" line="94"/>
-        <source>strong</source>
-        <translation>sterkt</translation>
+        <location filename="TimeHeader.cc" line="14"/>
+        <source>Sun</source>
+        <translation>Søn</translation>
     </message>
 </context>
 </TS>

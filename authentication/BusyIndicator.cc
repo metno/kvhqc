@@ -29,15 +29,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "BusyIndicator.h"
-#include <QApplication>
+#include <QtGui/QApplication>
 
-BusyIndicator::BusyIndicator( )
+BusyIndicator::BusyIndicator(bool wait)
+    : mCursor(wait ? Qt::WaitCursor : Qt::BusyCursor)
 {
-  waitCursor.setShape( Qt::BusyCursor );
-  qApp->setOverrideCursor( waitCursor );
+    qApp->setOverrideCursor(mCursor);
+    qApp->processEvents();
 }
 
-BusyIndicator::~BusyIndicator( )
+BusyIndicator::~BusyIndicator()
 {
-  qApp->restoreOverrideCursor();
+    qApp->restoreOverrideCursor();
 }

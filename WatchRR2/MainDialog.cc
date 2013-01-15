@@ -3,6 +3,7 @@
 
 #include "AnalyseFCC.hh"
 #include "AnalyseRR24.hh"
+#include "BusyIndicator.h"
 #include "EditDialog.hh"
 #include "Helpers.hh"
 #include "KvStationBuffer.hh"
@@ -33,16 +34,20 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mTime(time)
     , mRRModel(new MainTableModel(mDA, ma, mSensor, mTime))
     , mNeighborModel(new NeighborTableModel(mDA, mSensor, mTime))
-    , mNeighborData(new NeighborDataModel(mDA, mSensor))
+    , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
+    show();
+
+    qApp->processEvents();
+    BusyIndicator wait;
 
     initializeRR24Data();
 
     QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
     try {
         const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(mSensor.stationId);
-        info += " " + QString::fromStdString(s.name());
+        info += " " + Helpers::stationName(s);
         if (s.environmentid() == 10)
             info += " " + tr("[not daily]");
     } catch(...) {
@@ -58,7 +63,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->tableRR->setItemDelegate(new ObsDelegate(this));
     ui->tableRR->verticalHeader()->setFont(mono);
-    ui->labelInfo->setText("");
+    ui->labelInfoRR->setText("");
     ui->buttonUndo->setEnabled(false);
     ui->buttonRedo->setVisible(false);
 
@@ -68,12 +73,14 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->tableNeighborRR->verticalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->tableNeighborRR->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->tableNeighborRR->verticalHeader()->setFont(mono);
+    qApp->processEvents();
 
     ui->tableNeighborData->setModel(mNeighborData.get());
     ui->tableNeighborData->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->tableNeighborData->verticalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->tableNeighborData->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    qApp->processEvents();
 
     const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
     ui->dateNeighborData->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
@@ -97,16 +104,19 @@ void MainDialog::initializeRR24Data()
 {
     mEditableTime = mTime;
     RR24::analyse(mDA, mSensor, mEditableTime);
+        qApp->processEvents();
     FCC::analyse(mDA, mSensor, mEditableTime);
+        qApp->processEvents();
     mRRModel->setRR24TimeRange(mEditableTime);
+        qApp->processEvents();
     mDA->pushUpdate();
 }
 
 void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
     const Selection sel = findSelection();
-    if( sel.empty() ) {
-        ui->labelInfo->setText("");
+    if (sel.empty()) {
+        ui->labelInfoRR->setText("");
         ui->buttonEdit->setEnabled(false);
         ui->buttonRedist->setEnabled(false);
         ui->buttonRedistQC2->setEnabled(false);
@@ -116,19 +126,20 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
 
     const int nDays = sel.selTime.days() + 1;
 
-    if( sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol ) {
+    if (sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol) {
         ui->buttonEdit->setEnabled(true);
         ui->buttonAcceptRow->setEnabled(false);
-        if( nDays <= 1 ) {
-            ui->labelInfo->setText("");
+        if (nDays <= 1) {
+            ui->labelInfoRR->setText("");
             ui->buttonRedist->setEnabled(false);
         } else {
             const float sum = RR24::calculateSum(mDA, mSensor, sel.selTime);
-            ui->labelInfo->setText(tr("Sum: %1mm").arg(QString::number(sum, 'f', 1)));
+            ui->labelInfoRR->setText(tr("Sum: %1mm").arg(QString::number(sum, 'f', 1)));
             ui->buttonRedist->setEnabled(true);
         }
         ui->buttonRedistQC2->setEnabled(RR24::canRedistributeInQC2(mDA, mSensor, sel.selTime));
     } else {
+        ui->labelInfoRR->setText("");
         ui->buttonEdit->setEnabled(false);
         ui->buttonRedist->setEnabled(false);
         ui->buttonRedistQC2->setEnabled(false);
@@ -277,6 +288,7 @@ void MainDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr
 
 void MainDialog::onNeighborDataDateChanged(const QDate& date)
 {
+    BusyIndicator wait;
     QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
     mNeighborData->setTime(timeutil::from_QDateTime(qdt));
     ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);

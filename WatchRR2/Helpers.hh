@@ -61,6 +61,8 @@ float roundDecimals(float f, int decimals);
 
 int extract_ui2(ObsDataPtr obs);
 
+QString stationName(const kvalobs::kvStation& s);
+
 struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStation, kvalobs::kvStation> {
     stations_by_distance(const kvalobs::kvStation& c) : center(c) { }
     bool operator()(const kvalobs::kvStation& a, const kvalobs::kvStation& b) const {

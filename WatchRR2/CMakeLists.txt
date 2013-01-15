@@ -104,10 +104,14 @@ SET(watchrr2_SOURCES
   RedistTableModel.cc
   Sensor.hh
   Sensor.cc
+  SensorHeader.hh
+  SensorHeader.cc
   StationDialog.hh
   StationDialog.cc
   Tasks.hh
   Tasks.cc
+  TimeHeader.hh
+  TimeHeader.cc
 )
 
 SET(watchrr2_TRANS watchrr2_nb_NO.ts)

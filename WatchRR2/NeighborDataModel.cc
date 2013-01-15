@@ -1,6 +1,7 @@
 
 #include "NeighborDataModel.hh"
 #include "ColumnFactory.hh"
+#include "SensorHeader.hh"
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -9,7 +10,7 @@
 #include "debug.hh"
 
 namespace Helpers {
-std::vector<Sensor> findNeighbors(const Sensor& sensor, int maxNeighbors);
+std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
 }
 
 namespace /* anonymous */ {
@@ -40,9 +41,11 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-NeighborDataModel::NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor)
+NeighborDataModel::NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange)
     : mDA(da)
-    , mSensors(Helpers::findNeighbors(sensor, 20))
+    , mTimeRange(timeRange)
+    , mTime(mTimeRange.t0())
+    , mSensors(Helpers::findNeighbors(sensor, mTimeRange, 20))
 {
     mItems.reserve(N_COLUMNS);
     mTimeOffsets.reserve(N_COLUMNS);
@@ -54,17 +57,15 @@ NeighborDataModel::NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, co
         mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
     }
 
-    const TimeRange time(mTime, mTime);
     BOOST_FOREACH(const Sensor& s, mSensors)
-        mDA->removeSubscription(ObsSubscription(s.stationId, time));
+        mDA->addSubscription(ObsSubscription(s.stationId, mTimeRange));
     mDA->obsDataChanged.connect(boost::bind(&NeighborDataModel::onDataChanged, this, _1, _2));
 }
 
 NeighborDataModel::~NeighborDataModel()
 {
-    const TimeRange time(mTime, mTime);
     BOOST_FOREACH(const Sensor& s, mSensors)
-        mDA->removeSubscription(ObsSubscription(s.stationId, time));
+        mDA->removeSubscription(ObsSubscription(s.stationId, mTimeRange));
 }
 
 int NeighborDataModel::rowCount(const QModelIndex&) const
@@ -89,25 +90,23 @@ QVariant NeighborDataModel::data(const QModelIndex& index, int role) const
 
 void NeighborDataModel::setTime(const timeutil::ptime& time)
 {
-    const TimeRange oldTime(mTime, mTime);
+    if (not mTimeRange.contains(time))
+        return;
+
     mTime = time;
-    const TimeRange newTime(mTime, mTime);
-
-    BOOST_FOREACH(const Sensor& s, mSensors) {
-        mDA->addSubscription   (ObsSubscription(s.stationId, newTime));
-        mDA->removeSubscription(ObsSubscription(s.stationId, oldTime));
-    }
-
     /*emit*/ dataChanged(createIndex(0,0), createIndex(mSensors.size()-1, mItems.size()-1));
 }
 
 QVariant NeighborDataModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
-        if (orientation == Qt::Vertical) {
-            return QString::number(mSensors[section].stationId);
+        if (orientation == Qt::Horizontal) {
+            const Sensor s(-1, columnPars[section], -1, -1, -1);
+            SensorHeader sh(s, SensorHeader::NEVER, SensorHeader::ALWAYS, columnTimeOffsets[section]);
+            return sh.sensorHeader(mItems[section], orientation, role);
         } else {
-            return QString::number(columnPars[section]) + "\n" + mItems[section]->description(role == Qt::DisplayRole);
+            SensorHeader sh(mSensors[section], SensorHeader::ALWAYS, SensorHeader::NEVER, 0);
+            return sh.sensorHeader(DataItemPtr(), orientation, role);
         }
     }
     return QVariant();

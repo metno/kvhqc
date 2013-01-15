@@ -3,6 +3,7 @@
 
 #include "Helpers.hh"
 #include "FlagChange.hh"
+#include "SensorHeader.hh"
 #include "Tasks.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -50,48 +51,11 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
     }
 }
 
-QVariant DataColumn::headerData(int role, bool verticalHeader) const
+QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
 {
-    const int offset = mTimeOffset.hours();
-
-    if (role == Qt::ToolTipRole) {
-        QString t = qApp->translate("DataColumn",
-            QT_TRANSLATE_NOOP("DataColumn", "Station %1 Parameter %2 Level %3 Sensor %4 Type %5\n%6"))
-            .arg(mSensor.stationId)
-            .arg(Helpers::parameterName(mSensor.paramId))
-            .arg(mSensor.level)
-            .arg(mSensor.sensor)
-            .arg(mSensor.typeId)
-            .arg(mItem->description(false));
-
-        if (offset != 0) {
-            t += "\n";
-            if (offset > 0)
-                t += qApp->translate("DataColumn", QT_TRANSLATE_NOOP("DataColumn", "time offset +%1 hour(s)")).arg(offset);
-            else
-                t += qApp->translate("DataColumn", QT_TRANSLATE_NOOP("DataColumn", "time offset -%1 hour(s)")).arg(-offset);
-        }
-        return t;
-    } else if (role == Qt::DisplayRole) {
-        
-        const QString sep = verticalHeader ? "\n" : " ";
-        QString h;
-        if (mHeaderShowStation)
-            h += QString("%1").arg(mSensor.stationId) + sep;
-        
-        h += Helpers::parameterName(mSensor.paramId)
-            + sep + mItem->description(true);
-
-        if (offset != 0) {
-            h += sep;
-            if (offset > 0)
-                h += qApp->translate("DataColumn", "+%1h").arg(offset);
-            else
-                h += qApp->translate("DataColumn", "-%1h").arg(-offset);
-        }
-        return h;
-    }
-    return QVariant();
+    SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
+                    SensorHeader::ALWAYS, mTimeOffset.hours());
+    return sh.sensorHeader(mItem, orientation, role);
 }
 
 bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)

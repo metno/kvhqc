@@ -13,7 +13,7 @@ public:
     virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
     virtual QVariant data(const timeutil::ptime& time, int role) const;
     virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
-    virtual QVariant headerData(int role, bool verticalHeader) const;
+    virtual QVariant headerData(Qt::Orientation orientation, int role) const;
 
     void setEditableTime(const TimeRange& et);
     const boost::posix_time::time_duration& timeOffset() const;

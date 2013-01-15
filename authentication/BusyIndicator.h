@@ -36,10 +36,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class BusyIndicator
 {
-    QCursor waitCursor;
 public:
-    BusyIndicator( );
-    ~BusyIndicator( );
+    BusyIndicator(bool wait=true);
+    ~BusyIndicator();
+
+private:
+    QCursor mCursor;
 };
 
 #endif // __BusyIndicator_h__
