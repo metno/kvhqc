@@ -1971,8 +1971,9 @@ void HqcMainWindow::processLetter(miMessage& letter)
   qDebug() << "command=" << letter.command.c_str();
   if(letter.command == qmstrings::newclient) {
       vector<std::string> desc, valu;
-      boost::split(desc, letter.commondesc, boost::is_any_of(":"));
-      boost::split(valu, letter.common, boost::is_any_of(":"));
+      const std::string cd(letter.commondesc), co(letter.common);
+      boost::split(desc, cd, boost::is_any_of(":"));
+      boost::split(valu, co, boost::is_any_of(":"));
       for(vector<std::string>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
           if( *itD == "type" && *itC == "Diana" ) {
               firstObs = true;

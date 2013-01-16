@@ -1,3 +1,9 @@
+kvhqc (2.14.4-1) unstable; urgency=low
+
+  * some more changes for lucid
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 16 Jan 2013 13:01:28 +0100
+
 kvhqc (2.14.3-1) unstable; urgency=low
 
   * fetch obs_pgm in chunks to avoid excessive CORBA message size
