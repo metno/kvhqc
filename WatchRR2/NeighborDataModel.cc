@@ -90,11 +90,12 @@ QVariant NeighborDataModel::data(const QModelIndex& index, int role) const
 
 void NeighborDataModel::setTime(const timeutil::ptime& time)
 {
-    if (not mTimeRange.contains(time))
+    if (not mTimeRange.contains(time) or mTime == time)
         return;
 
     mTime = time;
     /*emit*/ dataChanged(createIndex(0,0), createIndex(mSensors.size()-1, mItems.size()-1));
+    /*emit*/ timeChanged(mTime);
 }
 
 QVariant NeighborDataModel::headerData(int section, Qt::Orientation orientation, int role) const

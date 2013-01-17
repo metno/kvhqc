@@ -65,6 +65,7 @@ inline int day_of_year(const ptime& pt)
 #endif // KVALOBS_USE_BOOST_DATE_TIME
 
 ptime from_QDateTime(const QDateTime& qdt);
+QDateTime to_QDateTime(const ptime& t);
 
 ptime from_YMDhms(int year, int month, int day, int hour, int minute, int second);
 

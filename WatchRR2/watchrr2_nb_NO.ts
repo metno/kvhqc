@@ -330,40 +330,40 @@
         <translation>&amp;Aksepter</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="120"/>
+        <location filename="watchrr_main.ui" line="127"/>
         <source>Neighbor Precipitation</source>
         <oldsource>Neighbor Stations</oldsource>
         <translation>Nedbør Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="137"/>
+        <location filename="watchrr_main.ui" line="144"/>
         <source>Neighbor Data</source>
         <translation>Kortdata Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="206"/>
+        <location filename="watchrr_main.ui" line="213"/>
         <source>U&amp;ndo</source>
         <oldsource>Undo</oldsource>
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="219"/>
+        <location filename="watchrr_main.ui" line="226"/>
         <source>Redo is not yet implemented, sorry.</source>
         <oldsource>redo is not yet implemented, sorry</oldsource>
         <translation>Beklager, gjenta er ikke ennå implementert.</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="222"/>
+        <location filename="watchrr_main.ui" line="229"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="251"/>
+        <location filename="watchrr_main.ui" line="258"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="261"/>
+        <location filename="watchrr_main.ui" line="268"/>
         <source>Close</source>
         <translation>Lukk</translation>
     </message>
@@ -523,32 +523,32 @@
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="192"/>
+        <location filename="MainDialog.cc" line="193"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="193"/>
+        <location filename="MainDialog.cc" line="194"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="194"/>
+        <location filename="MainDialog.cc" line="195"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="195"/>
+        <location filename="MainDialog.cc" line="196"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="280"/>
+        <location filename="MainDialog.cc" line="281"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="281"/>
+        <location filename="MainDialog.cc" line="282"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
@@ -575,48 +575,48 @@
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="SensorHeader.cc" line="32"/>
+        <location filename="SensorHeader.cc" line="33"/>
         <source>Parameter %1 %2</source>
         <translation>Parameter %1 %2</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="25"/>
+        <location filename="SensorHeader.cc" line="26"/>
         <source>Sensor %1 Type %2</source>
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="55"/>
+        <location filename="SensorHeader.cc" line="56"/>
         <source>Parameter %1 model value</source>
         <oldsource>Parameter %3 model value</oldsource>
         <translation>Parameter %1 modellverdi</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="59"/>
+        <location filename="SensorHeader.cc" line="60"/>
         <source>model</source>
         <translation>modell</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="88"/>
+        <location filename="SensorHeader.cc" line="89"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="89"/>
+        <location filename="SensorHeader.cc" line="90"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="92"/>
+        <location filename="SensorHeader.cc" line="93"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="93"/>
+        <location filename="SensorHeader.cc" line="94"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="107"/>
+        <location filename="SensorHeader.cc" line="108"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
     </message>

@@ -12,6 +12,9 @@
 
 #include <memory>
 
+class ClientButton;
+class miMessage;
+
 QT_BEGIN_NAMESPACE
 class QItemSelection;
 class QModelIndex;
@@ -43,6 +46,11 @@ private Q_SLOTS:
     void onDataChanged(const QModelIndex&, const QModelIndex&);
     void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
     void onNeighborDataDateChanged(const QDate&);
+    void onNeighborDataTimeChanged(const timeutil::ptime& time);
+
+    void processLetter(const miMessage&);
+    void processConnect();
+    void cleanConnection();
 
 private:
     struct Selection {
@@ -65,8 +73,13 @@ private:
     void addRR24Task(const timeutil::ptime& time, QString task);
     void enableSave();
 
+    void sendTimesToDiana();
+    void sendTimeToDiana(const timeutil::ptime& time);
+
 private:
     std::auto_ptr<Ui::DialogMain> ui;
+    ClientButton* mDianaButton;
+    timeutil::ptime mDianaTime;
     EditAccessPtr mDA;
     Sensor mSensor;
     TimeRange mTime;

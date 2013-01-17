@@ -38,7 +38,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
 #include <qTimeseries/TSPlotDialog.h>
-#include <qUtilities/ClientButton.h>
 
 #include <QtCore/qlist.h>
 #include <QtCore/qmap.h>
@@ -48,6 +47,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <memory>
 
+class ClientButton;
 class miMessage;
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -364,7 +364,7 @@ private slots:
   void aboutQt();
 
   // socket slots
-  void processLetter(miMessage&);
+  void processLetter(const miMessage&);
   void processConnect();
   void cleanConnection();
 

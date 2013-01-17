@@ -88,6 +88,15 @@ b_pt::ptime from_QDateTime(const QDateTime& qdt) {
     return from_YMDhms(qd.year(), qd.month(), qd.day(), qt.hour(), qt.minute(), qt.second());
 }
 
+QDateTime to_QDateTime(const b_pt::ptime& pt)
+{
+    if( pt.is_not_a_date_time() )
+        return QDateTime();
+    const boost::gregorian::date pd = pt.date();
+    const boost::posix_time::time_duration pc = pt.time_of_day();
+    return QDateTime(QDate(pd.year(), pd.month(), pd.day()), QTime(pc.hours(), pc.minutes(), pc.seconds()), Qt::UTC);
+}
+
 b_pt::ptime from_YMDhms(int year, int month, int day, int hour, int minute, int second)
 {
     //LOG_SCOPE();

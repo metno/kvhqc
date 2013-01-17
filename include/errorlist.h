@@ -207,7 +207,7 @@ signals:
    *        errorlist.
    */
   //  void stationSelected( int station, const timeutil::ptime & obstime );
-  void statSel( miMessage& letter );
+  void statSel(const miMessage& letter);
 
   /**
    * \brief Reports the closing of the

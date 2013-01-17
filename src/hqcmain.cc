@@ -70,6 +70,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "weatherdialog.h"
 
 #include <qTimeseries/TSPlot.h>
+#include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
 #include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
@@ -86,6 +87,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPrintDialog>
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
+#include <qdebug.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
@@ -177,8 +179,7 @@ HqcMainWindow::HqcMainWindow()
     pluginB->useLabel(true);
     pluginB->connectToServer();
 
-    connect(pluginB, SIGNAL(receivedMessage(miMessage&)),
-            SLOT(processLetter(miMessage&)));
+    connect(pluginB, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
     connect(pluginB, SIGNAL(addressListChanged()),
             SLOT(processConnect()));
     connect(pluginB, SIGNAL(connectionClosed()),
@@ -713,8 +714,8 @@ void HqcMainWindow::ListOK()
                           userName);
       connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
       //      connect( erl, SIGNAL( stationSelected( int, const timeutil::ptime & ) ), tableView, SLOT(selectStation(const QString &)));
-      connect( erl, SIGNAL( statSel( miMessage& ) ),
-	       SLOT( processLetter( miMessage &) ) );
+      connect( erl, SIGNAL( statSel(const miMessage&) ),
+	       SLOT( processLetter(const miMessage &) ) );
       ui->ws->addSubWindow(erl);
   }
 
@@ -1965,7 +1966,7 @@ void HqcMainWindow::sendTimes(){
 }
 
 // processes incoming miMessages
-void HqcMainWindow::processLetter(miMessage& letter)
+void HqcMainWindow::processLetter(const miMessage& letter)
 {
   LOG_SCOPE();
   qDebug() << "command=" << letter.command.c_str();
@@ -2207,7 +2208,7 @@ void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
     firstObs = false;
     pLetter.description = synopDescription;
     pLetter.common = timeutil::to_iso_extended_string(time) + ",synop";
-    pLetter.data = std::vector<miutil::miString>(synopData.begin(), synopData.end());
+    pLetter.data = std::vector<std::string>(synopData.begin(), synopData.end());
     //TEST
     cerr << "HQC sender melding : " << pLetter.content() << endl;
     //TEST

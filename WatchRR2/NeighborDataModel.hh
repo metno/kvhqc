@@ -20,6 +20,11 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     void setTime(const timeutil::ptime& time);
+    const timeutil::ptime& getTime() const
+        { return mTime; }
+
+Q_SIGNALS:
+    void timeChanged(const timeutil::ptime& time);
 
 private:
     EditDataPtr getObs(const QModelIndex& index) const;

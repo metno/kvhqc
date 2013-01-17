@@ -17,6 +17,9 @@
 #include "ui_watchrr_redist.h"
 
 #include <kvalobs/kvDataOperations.h>
+#include <qUtilities/ClientButton.h>
+#include <qUtilities/miMessage.h>
+#include <qUtilities/QLetterCommands.h>
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -29,6 +32,7 @@ using namespace Helpers;
 
 MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
     : ui(new Ui::DialogMain)
+    , mDianaButton(0)
     , mDA(da)
     , mSensor(sensor)
     , mTime(time)
@@ -37,6 +41,9 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
+    mDianaButton = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
+    ui->neighborDataButtonLayout->insertWidget(1, mDianaButton);
+
     show();
 
     qApp->processEvents();
@@ -85,14 +92,21 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
     ui->dateNeighborData->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
     ui->dateNeighborData->setMaximumDate(QDate(d1.year(), d1.month(), d1.day()));
-    ui->dateNeighborData->setDate(QDate(d0.year(), d0.month(), d0.day()+1));
 
     connect(ui->tableRR->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
     connect(mRRModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
+    connect(mNeighborData.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
+            this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
+    connect(mDianaButton, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
+    connect(mDianaButton, SIGNAL(addressListChanged()), SLOT(processConnect()));
+    connect(mDianaButton, SIGNAL(connectionClosed()), SLOT(cleanConnection()));
 
     mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
+
+    mDianaButton->connectToServer();
+    mNeighborData->setTime(time.t1()-boost::posix_time::hours(24));
 }
 
 MainDialog::~MainDialog()
@@ -292,4 +306,67 @@ void MainDialog::onNeighborDataDateChanged(const QDate& date)
     QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
     mNeighborData->setTime(timeutil::from_QDateTime(qdt));
     ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+}
+
+void MainDialog::onNeighborDataTimeChanged(const timeutil::ptime& time)
+{
+    ui->dateNeighborData->setDateTime(timeutil::to_QDateTime(time));
+    sendTimeToDiana(time);
+}
+
+void MainDialog::processLetter(const miMessage& m)
+{
+    LOG_SCOPE();
+    std::cout << m.content();
+
+    if (m.command == qmstrings::timechanged) {
+        const timeutil::ptime newTime = timeutil::from_iso_extended_string(m.common);
+        if (newTime != mDianaTime) {
+            mDianaTime = newTime;
+            mNeighborData->setTime(mDianaTime);
+        }
+    }
+}
+
+void MainDialog::processConnect()
+{
+    if(mDianaButton->clientTypeExist("Diana"))
+        sendTimesToDiana();
+}
+
+void MainDialog::cleanConnection()
+{
+}
+
+void MainDialog::sendTimesToDiana()
+{
+    LOG_SCOPE();
+
+    miMessage m;
+    m.command= qmstrings::settime;
+    m.commondesc = "datatype";
+    m.common = "obs";
+    m.description= "time";
+    for(timeutil::ptime t = mTime.t0(); t <= mTime.t1(); t += boost::posix_time::hours(24))
+        m.data.push_back(timeutil::to_iso_extended_string(t));
+    DBG("Sending times: " << m.content());
+    mDianaButton->sendMessage(m);
+
+    sendTimeToDiana(mNeighborData->getTime());
+}
+
+void MainDialog::sendTimeToDiana(const timeutil::ptime& time)
+{
+    LOG_SCOPE();
+
+    if (time == mDianaTime)
+        return;
+
+    mDianaTime = time;
+    miMessage m2;
+    m2.command = qmstrings::settime;
+    m2.commondesc = "time";
+    m2.common = timeutil::to_iso_extended_string(mDianaTime);
+    DBG("Setting time: " << m2.content());
+    mDianaButton->sendMessage(m2);
 }
