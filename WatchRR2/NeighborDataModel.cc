@@ -142,3 +142,12 @@ void NeighborDataModel::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr obs)
     QModelIndex idx = createIndex(row, col);
     /*emit*/ dataChanged(idx, idx);
 }
+
+std::vector<int> NeighborDataModel::neighborStations() const
+{
+    std::vector<int> n;
+    n.reserve(mSensors.size());
+    BOOST_FOREACH(const Sensor& s, mSensors)
+        n.push_back(s.stationId);
+    return n;
+}

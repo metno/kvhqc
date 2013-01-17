@@ -1,5 +1,6 @@
 
 SET(watchrr2_HEADERS
+  DianaHelper.hh
   EditDialog.hh
   MainDialog.hh
   NeighborDataModel.hh
@@ -34,6 +35,8 @@ SET(watchrr2_SOURCES
   DataRR24Item.hh
   DataVxItem.cc
   DataVxItem.hh
+  DianaHelper.hh
+  DianaHelper.cc
   EditAccess.hh
   EditAccess.cc
   EditData.hh

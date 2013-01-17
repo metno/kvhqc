@@ -4,6 +4,7 @@
 #include "AnalyseFCC.hh"
 #include "AnalyseRR24.hh"
 #include "BusyIndicator.h"
+#include "DianaHelper.hh"
 #include "EditDialog.hh"
 #include "Helpers.hh"
 #include "KvStationBuffer.hh"
@@ -18,8 +19,6 @@
 
 #include <kvalobs/kvDataOperations.h>
 #include <qUtilities/ClientButton.h>
-#include <qUtilities/miMessage.h>
-#include <qUtilities/QLetterCommands.h>
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -32,7 +31,7 @@ using namespace Helpers;
 
 MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
     : ui(new Ui::DialogMain)
-    , mDianaButton(0)
+    , mDianaHelper(0)
     , mDA(da)
     , mSensor(sensor)
     , mTime(time)
@@ -41,8 +40,9 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
-    mDianaButton = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
-    ui->neighborDataButtonLayout->insertWidget(1, mDianaButton);
+    ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
+    ui->neighborDataButtonLayout->insertWidget(1, cb);
+    mDianaHelper.reset(new DianaHelper(cb));
 
     show();
 
@@ -99,13 +99,14 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
             this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
     connect(mNeighborData.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
             this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
-    connect(mDianaButton, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
-    connect(mDianaButton, SIGNAL(addressListChanged()), SLOT(processConnect()));
-    connect(mDianaButton, SIGNAL(connectionClosed()), SLOT(cleanConnection()));
+    connect(mDianaHelper.get(), SIGNAL(receivedTime(const timeutil::ptime&)),
+            this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
+    connect(mDianaHelper.get(), SIGNAL(connection(bool)),
+            this, SLOT(dianaConnection(bool)));
 
     mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
 
-    mDianaButton->connectToServer();
+    mDianaHelper->tryConnect();
     mNeighborData->setTime(time.t1()-boost::posix_time::hours(24));
 }
 
@@ -304,69 +305,30 @@ void MainDialog::onNeighborDataDateChanged(const QDate& date)
 {
     BusyIndicator wait;
     QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
-    mNeighborData->setTime(timeutil::from_QDateTime(qdt));
+    const timeutil::ptime& time = timeutil::from_QDateTime(qdt);
+    mNeighborData->setTime(time);
+    mDianaHelper->sendTime(time);
     ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 void MainDialog::onNeighborDataTimeChanged(const timeutil::ptime& time)
 {
     ui->dateNeighborData->setDateTime(timeutil::to_QDateTime(time));
-    sendTimeToDiana(time);
+    mDianaHelper->sendTime(time);
+    mNeighborData->setTime(time);
 }
 
-void MainDialog::processLetter(const miMessage& m)
+void MainDialog::dianaConnection(bool c)
 {
-    LOG_SCOPE();
-    std::cout << m.content();
-
-    if (m.command == qmstrings::timechanged) {
-        const timeutil::ptime newTime = timeutil::from_iso_extended_string(m.common);
-        if (newTime != mDianaTime) {
-            mDianaTime = newTime;
-            mNeighborData->setTime(mDianaTime);
-        }
-    }
-}
-
-void MainDialog::processConnect()
-{
-    if(mDianaButton->clientTypeExist("Diana"))
-        sendTimesToDiana();
-}
-
-void MainDialog::cleanConnection()
-{
-}
-
-void MainDialog::sendTimesToDiana()
-{
-    LOG_SCOPE();
-
-    miMessage m;
-    m.command= qmstrings::settime;
-    m.commondesc = "datatype";
-    m.common = "obs";
-    m.description= "time";
-    for(timeutil::ptime t = mTime.t0(); t <= mTime.t1(); t += boost::posix_time::hours(24))
-        m.data.push_back(timeutil::to_iso_extended_string(t));
-    DBG("Sending times: " << m.content());
-    mDianaButton->sendMessage(m);
-
-    sendTimeToDiana(mNeighborData->getTime());
-}
-
-void MainDialog::sendTimeToDiana(const timeutil::ptime& time)
-{
-    LOG_SCOPE();
-
-    if (time == mDianaTime)
+    if (not c)
         return;
 
-    mDianaTime = time;
-    miMessage m2;
-    m2.command = qmstrings::settime;
-    m2.commondesc = "time";
-    m2.common = timeutil::to_iso_extended_string(mDianaTime);
-    DBG("Setting time: " << m2.content());
-    mDianaButton->sendMessage(m2);
+    std::vector<timeutil::ptime> times;
+    for(timeutil::ptime t = mTime.t0(); t <= mTime.t1(); t += boost::posix_time::hours(24))
+        times.push_back(t);
+    mDianaHelper->sendTimes(times);
+    mDianaHelper->sendTime(mNeighborData->getTime());
+
+    const std::vector<int> stations = mNeighborData->neighborStations();
+    mDianaHelper->sendStations(stations);
 }

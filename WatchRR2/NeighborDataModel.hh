@@ -23,6 +23,8 @@ public:
     const timeutil::ptime& getTime() const
         { return mTime; }
 
+    std::vector<int> neighborStations() const;
+
 Q_SIGNALS:
     void timeChanged(const timeutil::ptime& time);
 

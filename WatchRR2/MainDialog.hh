@@ -12,8 +12,7 @@
 
 #include <memory>
 
-class ClientButton;
-class miMessage;
+class DianaHelper;
 
 QT_BEGIN_NAMESPACE
 class QItemSelection;
@@ -48,9 +47,7 @@ private Q_SLOTS:
     void onNeighborDataDateChanged(const QDate&);
     void onNeighborDataTimeChanged(const timeutil::ptime& time);
 
-    void processLetter(const miMessage&);
-    void processConnect();
-    void cleanConnection();
+    void dianaConnection(bool c);
 
 private:
     struct Selection {
@@ -73,13 +70,9 @@ private:
     void addRR24Task(const timeutil::ptime& time, QString task);
     void enableSave();
 
-    void sendTimesToDiana();
-    void sendTimeToDiana(const timeutil::ptime& time);
-
 private:
     std::auto_ptr<Ui::DialogMain> ui;
-    ClientButton* mDianaButton;
-    timeutil::ptime mDianaTime;
+    std::auto_ptr<DianaHelper> mDianaHelper;
     EditAccessPtr mDA;
     Sensor mSensor;
     TimeRange mTime;

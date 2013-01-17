@@ -87,6 +87,8 @@ INSTALL(FILES
   share/images/table.png
   share/images/watchrr.png
   share/images/watchweather.png
+  share/images/diana_icon_hqc.png
+  share/images/diana_img_hqc.png
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 
 FOREACH(df hqcdiana WatchRR WatchRR2 WatchWeather histhqcdiana histWatchRR histWatchWeather)
