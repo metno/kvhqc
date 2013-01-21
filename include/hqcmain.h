@@ -364,6 +364,9 @@ private slots:
   void aboutQt();
 
   // socket slots
+#ifdef METLIBS_BEFORE_4_9_5
+  void processLetterOld(miMessage&);
+#endif
   void processLetter(const miMessage&);
   void processConnect();
   void cleanConnection();

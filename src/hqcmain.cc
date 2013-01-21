@@ -179,7 +179,11 @@ HqcMainWindow::HqcMainWindow()
     pluginB->useLabel(true);
     pluginB->connectToServer();
 
+#ifdef METLIBS_BEFORE_4_9_5
+    connect(pluginB, SIGNAL(receivedMessage(miMessage&)), SLOT(processLetterOld(miMessage&)));
+#else
     connect(pluginB, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
+#endif
     connect(pluginB, SIGNAL(addressListChanged()),
             SLOT(processConnect()));
     connect(pluginB, SIGNAL(connectionClosed()),
@@ -1964,6 +1968,13 @@ void HqcMainWindow::sendTimes(){
   cerr << "HQC sender melding : " << m.content() << endl;
   pluginB->sendMessage(m);
 }
+
+#ifdef METLIBS_BEFORE_4_9_5
+void HqcMainWindow::processLetterOld(miMessage& letter)
+{
+    processLetter(letter);
+}
+#endif
 
 // processes incoming miMessages
 void HqcMainWindow::processLetter(const miMessage& letter)

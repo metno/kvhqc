@@ -1,3 +1,12 @@
+kvhqc (2.14.6-1) unstable; urgency=low
+
+  * WatchRR2: improve SA display
+  * WatchRR2: fixed bug in rounding and parsing with given decimals
+  * WatchRR2: QC2 cannot handle mixed not-yet/QC2/manual redistributions
+  * WatchRR2: allow resizing frozen column/row interactively
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 21 Jan 2013 14:40:42 +0100
+
 kvhqc (2.14.5-1) unstable; urgency=low
 
   * WatchRR2: send/receive times to/from diana; show stations
