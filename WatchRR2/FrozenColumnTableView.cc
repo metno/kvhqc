@@ -12,6 +12,8 @@ FrozenColumnTableView::FrozenColumnTableView(QWidget* parent)
     //connect the headers and scrollbars of both tableviews together
     connect(horizontalHeader(),SIGNAL(sectionResized(int,int,int)),
             this, SLOT(updateSectionWidth(int,int,int)));
+    connect(frozenTableView->horizontalHeader(),SIGNAL(sectionResized(int,int,int)),
+            this, SLOT(frozenSectionResized(int,int,int)));
     connect(verticalHeader(),SIGNAL(sectionResized(int,int,int)),
             this, SLOT(updateSectionHeight(int,int,int)));
     connect(horizontalHeader(),SIGNAL(geometriesChanged()),
@@ -54,7 +56,7 @@ void FrozenColumnTableView::init()
 {
     frozenTableView->setFocusPolicy(Qt::NoFocus);
     frozenTableView->verticalHeader()->hide();
-    frozenTableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    frozenTableView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 
     viewport()->stackUnder(frozenTableView);
 
@@ -73,7 +75,15 @@ void FrozenColumnTableView::init()
 void FrozenColumnTableView::updateSectionWidth(int logicalIndex, int, int newSize)
 {
     if (logicalIndex == 0) {
-        frozenTableView->setColumnWidth(0,newSize);
+        frozenTableView->setColumnWidth(0, newSize);
+        updateFrozenTableGeometry();
+    }
+}
+
+void FrozenColumnTableView::frozenSectionResized(int logicalIndex, int, int newSize)
+{
+    if (logicalIndex == 0) {
+        setColumnWidth(0, newSize);
         updateFrozenTableGeometry();
     }
 }

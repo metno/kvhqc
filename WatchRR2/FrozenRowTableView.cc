@@ -15,6 +15,8 @@ FrozenRowTableView::FrozenRowTableView(QWidget* parent)
             this, SLOT(updateSectionWidth(int,int,int)));
     connect(verticalHeader(),SIGNAL(sectionResized(int,int,int)),
             this, SLOT(updateSectionHeight(int,int,int)));
+    connect(frozenTableView->verticalHeader(),SIGNAL(sectionResized(int,int,int)),
+            this, SLOT(frozenSectionResized(int,int,int)));
     connect(horizontalHeader(),SIGNAL(geometriesChanged()),
             this, SLOT(updateFrozenTableGeometry()));
     connect(verticalHeader(),SIGNAL(geometriesChanged()),
@@ -55,7 +57,7 @@ void FrozenRowTableView::init()
 {
     frozenTableView->setFocusPolicy(Qt::NoFocus);
     frozenTableView->horizontalHeader()->hide();
-    frozenTableView->verticalHeader()->setResizeMode(QHeaderView::Fixed);
+    frozenTableView->verticalHeader()->setResizeMode(QHeaderView::Interactive);
 
     viewport()->stackUnder(frozenTableView);
 
@@ -80,6 +82,14 @@ void FrozenRowTableView::updateSectionHeight(int logicalIndex, int, int newSize)
 {
     if (logicalIndex == 0) {
         frozenTableView->setRowHeight(0, newSize);
+        updateFrozenTableGeometry();
+    }
+}
+
+void FrozenRowTableView::frozenSectionResized(int logicalIndex, int, int newSize)
+{
+    if (logicalIndex == 0) {
+        setRowHeight(0, newSize);
         updateFrozenTableGeometry();
     }
 }

@@ -25,6 +25,7 @@ private:
 
 private Q_SLOTS:
     void updateSectionWidth(int logicalIndex,int, int newSize);
+    void frozenSectionResized(int logicalIndex,int, int newSize);
     void updateSectionHeight(int logicalIndex, int, int newSize);
     void updateFrozenTableGeometry();
 
