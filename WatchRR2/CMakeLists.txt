@@ -2,7 +2,8 @@
 SET(watchrr2_HEADERS
   DianaHelper.hh
   EditDialog.hh
-  FreezeTableView.hh
+  FrozenColumnTableView.hh
+  FrozenRowTableView.hh
   MainDialog.hh
   NeighborDataModel.hh
   ObsDelegate.hh
@@ -58,8 +59,10 @@ SET(watchrr2_SOURCES
   FlagPattern.cc
   FlagPatterns.hh
   FlagPatterns.cc
-  FreezeTableView.hh
-  FreezeTableView.cc
+  FrozenColumnTableView.hh
+  FrozenColumnTableView.cc
+  FrozenRowTableView.hh
+  FrozenRowTableView.cc
   Helpers.hh
   Helpers.cc
   KvalobsAccess.hh

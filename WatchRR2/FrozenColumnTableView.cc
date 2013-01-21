@@ -2,9 +2,9 @@
 
 #include <QtGui>
 
-#include "FreezeTableView.hh"
+#include "FrozenColumnTableView.hh"
 
-FreezeTableView::FreezeTableView(QWidget* parent)
+FrozenColumnTableView::FrozenColumnTableView(QWidget* parent)
     : QTableView(parent)
     , frozenTableView(new QTableView(this))
 {
@@ -26,12 +26,12 @@ FreezeTableView::FreezeTableView(QWidget* parent)
             frozenTableView->verticalScrollBar(), SLOT(setValue(int)));
 }
 
-FreezeTableView::~FreezeTableView()
+FrozenColumnTableView::~FrozenColumnTableView()
 {
     delete frozenTableView;
 }
 
-void FreezeTableView::setModel(QAbstractItemModel* mdl)
+void FrozenColumnTableView::setModel(QAbstractItemModel* mdl)
 {
     QTableView::setModel(mdl);
     frozenTableView->setModel(model());
@@ -39,7 +39,7 @@ void FreezeTableView::setModel(QAbstractItemModel* mdl)
     initFrozenTableGeometry();
 }
 
-void FreezeTableView::initFrozenTableGeometry()
+void FrozenColumnTableView::initFrozenTableGeometry()
 {
     if (model()) {
         const int cc = model()->columnCount();
@@ -51,7 +51,7 @@ void FreezeTableView::initFrozenTableGeometry()
     }
 }
 
-void FreezeTableView::init()
+void FrozenColumnTableView::init()
 {
     frozenTableView->setFocusPolicy(Qt::NoFocus);
     frozenTableView->verticalHeader()->hide();
@@ -71,7 +71,7 @@ void FreezeTableView::init()
     initFrozenTableGeometry();
 }
 
-void FreezeTableView::updateSectionWidth(int logicalIndex, int, int newSize)
+void FrozenColumnTableView::updateSectionWidth(int logicalIndex, int, int newSize)
 {
     if (logicalIndex == 0) {
         frozenTableView->setColumnWidth(0,newSize);
@@ -79,18 +79,18 @@ void FreezeTableView::updateSectionWidth(int logicalIndex, int, int newSize)
     }
 }
 
-void FreezeTableView::updateSectionHeight(int logicalIndex, int, int newSize)
+void FrozenColumnTableView::updateSectionHeight(int logicalIndex, int, int newSize)
 {
     frozenTableView->setRowHeight(logicalIndex, newSize);
 }
 
-void FreezeTableView::resizeEvent(QResizeEvent * event)
+void FrozenColumnTableView::resizeEvent(QResizeEvent * event)
 {
     QTableView::resizeEvent(event);
     updateFrozenTableGeometry();
 }
 
-QModelIndex FreezeTableView::moveCursor(CursorAction cursorAction,
+QModelIndex FrozenColumnTableView::moveCursor(CursorAction cursorAction,
                                           Qt::KeyboardModifiers modifiers)
 {
     QModelIndex current = QTableView::moveCursor(cursorAction, modifiers);
@@ -105,13 +105,13 @@ QModelIndex FreezeTableView::moveCursor(CursorAction cursorAction,
     return current;
 }
 
-void FreezeTableView::scrollTo (const QModelIndex & index, ScrollHint hint)
+void FrozenColumnTableView::scrollTo (const QModelIndex & index, ScrollHint hint)
 {
     if (index.column() > 0)
         QTableView::scrollTo(index, hint);
 }
 
-void FreezeTableView::updateFrozenTableGeometry()
+void FrozenColumnTableView::updateFrozenTableGeometry()
 {
     if (not model() or model()->columnCount() == 0)
         return;

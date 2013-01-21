@@ -1,16 +1,16 @@
 // based on http://doc.qt.digia.com/main-snapshot/itemviews-frozencolumn.html
 
-#ifndef FREEZETABLEWIDGET_H
-#define FREEZETABLEWIDGET_H
+#ifndef FROZENCOLUMNTABLEVIEW_H
+#define FROZENCOLUMNTABLEVIEW_H
 
 #include <QTableView>
 
-class FreezeTableView : public QTableView {
+class FrozenColumnTableView : public QTableView {
     Q_OBJECT;
     
 public:
-    FreezeTableView(QWidget* parent=0);
-    ~FreezeTableView();
+    FrozenColumnTableView(QWidget* parent=0);
+    ~FrozenColumnTableView();
 
     virtual void setModel(QAbstractItemModel* model);
     
