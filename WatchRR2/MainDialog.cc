@@ -57,7 +57,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
         info += " " + Helpers::stationName(s);
         if (s.environmentid() == 10)
             info += " " + tr("[not daily]");
-    } catch(...) {
+    } catch(std::runtime_error&) {
         // TODO handle errors
     }
     ui->labelStationInfo->setText(info);

@@ -452,7 +452,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
             std::cerr << "problem loading obs_pgm" << std::endl;
             return neighbors;
         }
-    } catch(std::string&) {
+    } catch(std::runtime_error&) {
         return neighbors;
     }
     

@@ -113,7 +113,7 @@ bool EditTableModel::setData(const QModelIndex& index, const QVariant& value, in
             QModelIndex index2 = createIndex(row, AcceptReject);
             dataChanged(index, index2);
             return true;
-        } catch (std::string& error) {
+        } catch (std::runtime_error&) {
             return false;
         }
     } else if( column == AcceptReject ) {

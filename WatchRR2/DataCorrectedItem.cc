@@ -73,7 +73,8 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
         else
             Helpers::correct(da->editor(obs), newC);
         return true;
-    } catch (std::string& error) {
+    } catch (std::runtime_error& e) {
+        std::cerr << e.what() << std::endl;
         return false;
     }
 }

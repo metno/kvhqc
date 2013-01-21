@@ -27,6 +27,6 @@ QVariant DataItem::data(EditDataPtr, int role) const
 
 bool DataItem::setData(EditDataPtr, EditAccessPtr, const SensorTime&, const QVariant&, int)
 {
-    throw "cannot set original value";
+    throw std::runtime_error("cannot set original value");
     return false;
 }

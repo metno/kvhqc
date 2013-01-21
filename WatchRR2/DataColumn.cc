@@ -46,7 +46,7 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
 {
     try {
         return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
-    } catch (std::string& error) {
+    } catch (std::runtime_error& e) {
         return false;
     }
 }

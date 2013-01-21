@@ -167,7 +167,7 @@ void DianaHelper::sendStations(const std::vector<int>& stations)
                 std::ostringstream o;
                 o << s.name() << ':' << s.lat() << ':' << s.lon();
                 m2.data.push_back(o.str());
-            } catch(std::string&) {
+            } catch(std::runtime_error&) {
             }
         }
         mDianaButton->sendMessage(m2);

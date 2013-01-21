@@ -29,7 +29,7 @@ const kvalobs::kvStation& KvStationBuffer::findStation(int id)
     std::list<kvalobs::kvStation>::const_iterator it
         = std::find_if(mStations.begin(), mStations.end(), Helpers::station_by_id(id));
     if (it == mStations.end())
-        throw "station not found";
+        throw std::runtime_error("station not found");
     return *it;
 }
 

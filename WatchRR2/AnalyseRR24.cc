@@ -209,7 +209,7 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
         fc_dryEnd("fmis=4->fmis=0"), fc_wetEnd("fmis=0->fmis=4");
 
     if (not canRedistributeInQC2(da, sensor, time))
-        throw "cannot redistribute this in QC2";
+        throw std::runtime_error("cannot redistribute this in QC2");
 
     da->pushUpdate();
     timeutil::ptime t = time.t0();
