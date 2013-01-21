@@ -27,7 +27,7 @@
    <item>
     <widget class="QTabWidget" name="tabWidget">
      <property name="currentIndex">
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="tabRR">
       <attribute name="title">
@@ -128,7 +128,7 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
-        <widget class="QTableView" name="tableNeighborRR">
+        <widget class="FreezeTableView" name="tableNeighborRR">
          <property name="selectionMode">
           <enum>QAbstractItemView::ContiguousSelection</enum>
          </property>
@@ -274,6 +274,11 @@
    <class>MiDateTimeEdit</class>
    <extends>QDateEdit</extends>
    <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+  <customwidget>
+   <class>FreezeTableView</class>
+   <extends>QTableView</extends>
+   <header>FreezeTableView.hh</header>
   </customwidget>
  </customwidgets>
  <tabstops>

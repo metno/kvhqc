@@ -2,6 +2,7 @@
 SET(watchrr2_HEADERS
   DianaHelper.hh
   EditDialog.hh
+  FreezeTableView.hh
   MainDialog.hh
   NeighborDataModel.hh
   ObsDelegate.hh
@@ -57,6 +58,8 @@ SET(watchrr2_SOURCES
   FlagPattern.cc
   FlagPatterns.hh
   FlagPatterns.cc
+  FreezeTableView.hh
+  FreezeTableView.cc
   Helpers.hh
   Helpers.cc
   KvalobsAccess.hh
@@ -124,7 +127,7 @@ INCLUDE_DIRECTORIES(
 #  ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/authentication
 #  ${CMAKE_BINARY_DIR}/authentication
-#  ${CMAKE_CURRENT_SOURCE_DIR}/src
+  ${CMAKE_CURRENT_SOURCE_DIR}
 )
 
 QT4_WRAP_CPP(watchrr2_HEADERS_MOC ${watchrr2_HEADERS})
