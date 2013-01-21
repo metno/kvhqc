@@ -18,6 +18,10 @@
 #include "ui_watchrr_redist.h"
 
 #include <kvalobs/kvDataOperations.h>
+#ifdef METLIBS_BEFORE_4_9_5
+#define signals Q_SIGNALS
+#define slots Q_SLOTS
+#endif
 #include <qUtilities/ClientButton.h>
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>

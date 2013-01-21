@@ -17,6 +17,7 @@ moc_*.cpp
 /.settings
 /build
 /obj-x86_64-linux-gnu
+/obj-i486-linux-gnu
 /hqc.log.20*
 /w2.log.20*
 /.pc

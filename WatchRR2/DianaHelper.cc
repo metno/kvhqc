@@ -3,6 +3,10 @@
 #include "hqc_paths.hh"
 #include "KvStationBuffer.hh"
 
+#ifdef METLIBS_BEFORE_4_9_5
+#define signals Q_SIGNALS
+#define slots Q_SLOTS
+#endif
 #include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
 #include <qUtilities/QLetterCommands.h>
@@ -11,7 +15,7 @@
 
 #include <sstream>
 
-//#define NDEBUG
+#define NDEBUG
 #include "w2debug.hh"
 
 namespace {
@@ -24,7 +28,11 @@ DianaHelper::DianaHelper(ClientButton* cb)
     : mDianaButton(cb)
     , mConnected(mDianaButton->clientTypeExist("Diana"))
 {
+#ifdef METLIBS_BEFORE_4_9_5
+    connect(mDianaButton, SIGNAL(receivedMessage(miMessage&)), SLOT(processLetter(const miMessage&)));
+#else
     connect(mDianaButton, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
+#endif
     connect(mDianaButton, SIGNAL(addressListChanged()), SLOT(processConnect()));
     connect(mDianaButton, SIGNAL(connectionClosed()), SLOT(cleanConnection()));
 }
@@ -44,7 +52,7 @@ void DianaHelper::processConnect()
             DBGV(pStd.toStdString());
             const QImage iStd(pStd);
             const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
-            
+
             sendImage(IMG_STD_HQC, iStd);
             sendImage(IMG_ICON_HQC, iIcon);
 

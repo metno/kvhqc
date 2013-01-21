@@ -1991,9 +1991,7 @@ void HqcMainWindow::processLetter(const miMessage& letter)
   else if(letter.command == qmstrings::timechanged){
       const char* ccmn = letter.common.c_str();
       QString cmn = QString(ccmn);
-      qDebug() << "new time =" << cmn << " content=" << letter.content().c_str();
-      //cerr << "Innkommende melding: statTimeReceived is emitted."  << endl;
-      emit statTimeReceived(cmn);
+      /*emit*/ statTimeReceived(cmn);
 
     timeutil::ptime newTime = timeutil::from_iso_extended_string(letter.common);
     sendObservations(newTime,false);
@@ -2208,7 +2206,11 @@ void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
     firstObs = false;
     pLetter.description = synopDescription;
     pLetter.common = timeutil::to_iso_extended_string(time) + ",synop";
-    pLetter.data = std::vector<std::string>(synopData.begin(), synopData.end());
+#ifdef METLIBS_BEFORE_4_9_5
+    pLetter.data = std::vector<miutil::miString>(synopData.begin(), synopData.end());
+#else
+    pLetter.data = synopData;
+#endif
     //TEST
     cerr << "HQC sender melding : " << pLetter.content() << endl;
     //TEST
