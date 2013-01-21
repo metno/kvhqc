@@ -1,8 +1,7 @@
 // based on http://doc.qt.digia.com/main-snapshot/itemviews-frozencolumn.html
 
-#include <QtGui>
-
 #include "FrozenColumnTableView.hh"
+#include <QtGui>
 
 FrozenColumnTableView::FrozenColumnTableView(QWidget* parent)
     : QTableView(parent)
@@ -115,7 +114,9 @@ void FrozenColumnTableView::updateFrozenTableGeometry()
 {
     if (not model() or model()->columnCount() == 0)
         return;
-    frozenTableView->setGeometry(verticalHeader()->width()+frameWidth(),
-                                 frameWidth(), columnWidth(0),
-                                 viewport()->height()+horizontalHeader()->height());
+    QHeaderView* fhh = frozenTableView->horizontalHeader();
+    const int fw = frameWidth(), hh = horizontalHeader()->height();
+    fhh->setFixedHeight(hh);
+    frozenTableView->setGeometry(verticalHeader()->width()+fw, fw, columnWidth(0),
+                                 viewport()->height()+hh);
 }

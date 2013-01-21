@@ -1,6 +1,7 @@
 
 #include "NeighborDataModel.hh"
 #include "ColumnFactory.hh"
+#include "NeighborHeader.hh"
 #include "SensorHeader.hh"
 
 #include <boost/bind.hpp>
@@ -105,9 +106,11 @@ QVariant NeighborDataModel::headerData(int section, Qt::Orientation orientation,
             const Sensor s(-1, columnPars[section], -1, -1, -1);
             SensorHeader sh(s, SensorHeader::NEVER, SensorHeader::ALWAYS, columnTimeOffsets[section]);
             return sh.sensorHeader(mItems[section], orientation, role);
-        } else {
+        } else if (role == Qt::ToolTipRole) {
             SensorHeader sh(mSensors[section], SensorHeader::ALWAYS, SensorHeader::NEVER, 0);
             return sh.sensorHeader(DataItemPtr(), orientation, role);
+        } else {
+            return NeighborHeader::headerData(mSensors[0].stationId, mSensors[section].stationId, orientation, role);
         }
     }
     return QVariant();

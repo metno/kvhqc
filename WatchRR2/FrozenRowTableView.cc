@@ -113,6 +113,10 @@ void FrozenRowTableView::updateFrozenTableGeometry()
 {
     if (not model() or model()->rowCount() == 0)
         return;
-    frozenTableView->setGeometry(frameWidth(), horizontalHeader()->height()+frameWidth(),
-                                 viewport()->width()+verticalHeader()->width(), rowHeight(0));
+
+    QHeaderView* fvh = frozenTableView->verticalHeader();
+    const int fw = frameWidth(), vw = verticalHeader()->width();
+    fvh->setFixedWidth(vw);
+    frozenTableView->setGeometry(fw, horizontalHeader()->height()+fw,
+                                 viewport()->width()+vw, rowHeight(0));
 }

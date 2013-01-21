@@ -60,6 +60,7 @@ private:
 #define DBGV(x)        do { /* nothing */ } while(false)
 #define DBGE(x)
 #else // NDEBUG
+#include <iostream>
 #ifdef __GNUG__
 #define LOG_SCOPE() ::hqc::debug::ScopeLogger INTERNAL_scope_logger(__PRETTY_FUNCTION__, __LINE__)
 #else // __GNUG__

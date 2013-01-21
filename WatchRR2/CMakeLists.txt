@@ -90,6 +90,8 @@ SET(watchrr2_SOURCES
   ModelData.hh
   NeighborDataModel.hh
   NeighborDataModel.cc
+  NeighborHeader.hh
+  NeighborHeader.cc
   NeighborTableModel.hh
   NeighborTableModel.cc
   ObsColumn.hh

@@ -83,13 +83,20 @@ bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int
 QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
     if ((mTimeInRows and orientation == Qt::Horizontal) or ((not mTimeInRows) and orientation == Qt::Vertical)) {
-        ObsColumnPtr oc = getColumn(section);
-        if (oc)
-            return oc->headerData(orientation, role);
+        return columnHeader(section, orientation, role);
     } else if (role == Qt::DisplayRole or role == Qt::ToolTipRole) {
         return TimeHeader::headerData(timeAtRow(section), orientation, role);
     }
     return QVariant();
+}
+
+QVariant ObsTableModel::columnHeader(int section, Qt::Orientation orientation, int role) const
+{
+    ObsColumnPtr oc = getColumn(section);
+    if (oc)
+        return oc->headerData(orientation, role);
+    else
+        return QVariant();
 }
 
 timeutil::ptime ObsTableModel::timeAtRow(int row) const
