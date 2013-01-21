@@ -119,14 +119,15 @@
     <name>Column_SD</name>
     <message>
         <location filename="ColumnFactory.cc" line="42"/>
-        <source>bare</source>
-        <oldsource>bart</oldsource>
-        <translation>bart</translation>
+        <source>no m.</source>
+        <oldsource>no r.</oldsource>
+        <translation>ing.m.</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="43"/>
-        <source>b</source>
-        <translation>b</translation>
+        <source>n</source>
+        <oldsource>b</oldsource>
+        <translation>i</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="44"/>
@@ -142,7 +143,7 @@
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="86"/>
+        <location filename="DataCorrectedItem.cc" line="87"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -157,7 +158,7 @@
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="84"/>
+        <location filename="DataCorrectedItem.cc" line="85"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -341,29 +342,29 @@
         <translation>Kortdata Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="213"/>
+        <location filename="watchrr_main.ui" line="206"/>
         <source>U&amp;ndo</source>
         <oldsource>Undo</oldsource>
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="226"/>
+        <location filename="watchrr_main.ui" line="219"/>
         <source>Redo is not yet implemented, sorry.</source>
         <oldsource>redo is not yet implemented, sorry</oldsource>
         <translation>Beklager, gjenta er ikke ennå implementert.</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="229"/>
+        <location filename="watchrr_main.ui" line="222"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="258"/>
+        <location filename="watchrr_main.ui" line="251"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="268"/>
+        <location filename="watchrr_main.ui" line="261"/>
         <source>Close</source>
         <translation>Lukk</translation>
     </message>
@@ -508,47 +509,47 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="47"/>
+        <location filename="MainDialog.cc" line="58"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="52"/>
+        <location filename="MainDialog.cc" line="63"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="137"/>
+        <location filename="MainDialog.cc" line="156"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="193"/>
+        <location filename="MainDialog.cc" line="212"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="194"/>
+        <location filename="MainDialog.cc" line="213"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="195"/>
+        <location filename="MainDialog.cc" line="214"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="196"/>
+        <location filename="MainDialog.cc" line="215"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="281"/>
+        <location filename="MainDialog.cc" line="300"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="282"/>
+        <location filename="MainDialog.cc" line="301"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>

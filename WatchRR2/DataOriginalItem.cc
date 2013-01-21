@@ -32,6 +32,9 @@ QVariant DataOriginalItem::data(EditDataPtr obs, int role) const
             return QBrush(QColor(0xFF, 0xE0, 0xB0)); // light orange
         else if (ui_2 != 0) // wrong
             return QBrush(QColor(0xFF, 0xE0, 0xE0)); // light red
+    } else if (role == Qt::ForegroundRole) {
+        if (mCodes->isCode(getValue(obs)))
+            return Qt::darkGray;
     } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
         QString tip;
         const int ui_2 = Helpers::extract_ui2(obs);

@@ -39,10 +39,11 @@ Code2TextPtr codesForParam(int pid)
         c2t->setDecimals(0);
     } else if( pid == kvalobs::PARAMID_SD ) {
         c2t->addCode(-1, (QStringList()
-                          << qApp->translate("Column_SD", "bare")
-                          << qApp->translate("Column_SD", "b")),
+                          << qApp->translate("Column_SD", "no m.")
+                          << qApp->translate("Column_SD", "n")),
                      qApp->translate("Column_SD", "snow cover not reported"));
-        c2t->setRange(0, 5000);
+        c2t->setRange(-1, 4);
+        c2t->setDecimals(0);
     }
     return c2t;
 }
