@@ -58,6 +58,7 @@ double distance(double lon1, double lat1, double lon2, double lat2);
 
 float round(float f, float factor);
 float roundDecimals(float f, int decimals);
+float parseFloat(const QString& text, int nDecimals);
 
 int extract_ui2(ObsDataPtr obs);
 

@@ -3,7 +3,6 @@
 
 #include "Helpers.hh"
 #include <QtCore/QCoreApplication>
-#include <sstream>
 
 Code2Text::Code2Text()
     : mMinValue(-100)
@@ -55,17 +54,7 @@ float Code2Text::fromText(const QString& text)
             return it.key();
     }
 
-    bool numOk = false;
-    const float num = text.toFloat(&numOk);
-    if (not numOk)
-        throw std::runtime_error("cannot parse number");
-    if (not Helpers::float_eq()(num, Helpers::roundDecimals(num, mDecimals))) {
-        std::ostringstream w;
-        w << "text '" << text.toStdString() << "' converted to value " << num
-          << " has unsupported precision (rounded value is "
-          << Helpers::roundDecimals(num, mDecimals) << ")";
-        throw std::runtime_error(w.str());
-    }
+    const float num = Helpers::parseFloat(text, mDecimals);
     it = mCodes.find(num);
     if (it != mCodes.end())
         return num;

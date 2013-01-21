@@ -15,6 +15,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <sstream>
+
 #define NDEBUG
 #include "debug.hh"
 
@@ -405,9 +407,24 @@ float round(float f, float factor)
 
 float roundDecimals(float f, int decimals)
 {
-    return round(f, std::pow(10, -decimals));
+    return round(f, std::pow(10, decimals));
 }
 
+float parseFloat(const QString& text, int nDecimals)
+{
+    bool numOk = false;
+    const float num = text.toFloat(&numOk);
+    if (not numOk)
+        throw std::runtime_error("cannot parse number");
+    if (not Helpers::float_eq()(num, Helpers::roundDecimals(num, nDecimals))) {
+        std::ostringstream w;
+        w << "text '" << text.toStdString() << "' converted to value " << num
+          << " has unsupported precision (rounded value is "
+          << Helpers::roundDecimals(num, nDecimals) << ")";
+        throw std::runtime_error(w.str());
+    }
+    return num;
+}
 int extract_ui2(ObsDataPtr obs)
 {
     kvalobs::kvUseInfo ui;
