@@ -242,13 +242,22 @@ bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeRang
     const FlagPattern ok_miss("fmis=[13]", FlagPattern::CONTROLINFO),
         ok_end("fmis=[024]", FlagPattern::CONTROLINFO);
 
+    int acc_type = -1;
     for (timeutil::ptime t = time.t0(); t < time.t1(); t += step) {
         EditDataPtr obs = da->findE(SensorTime(sensor, t));
-        if (obs and not ok_miss.matches(obs->controlinfo()))
+        if (not obs)
+            continue;
+        if (not ok_miss.matches(obs->controlinfo()))
+            return false;
+        if (acc_type < 0)
+            acc_type = Helpers::is_accumulation(obs);
+        else if (acc_type != Helpers::is_accumulation(obs))
             return false;
     }
     EditDataPtr obs = da->findE(SensorTime(sensor, time.t1()));
     if (not obs or not ok_end.matches(obs->controlinfo()) or obs->original() < -1.0f)
+        return false;
+    if (acc_type >= 0 and acc_type != Helpers::is_accumulation(obs))
         return false;
     return true;
 }

@@ -465,3 +465,23 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
     ASSERT_TRUE(obs);
     ASSERT_EQ(4, obs->controlinfo().flag((kvalobs::flag::fmis)));
 }
+
+TEST(AnalyseRR24Test_2, QC2_1)
+{
+    const Sensor sensor(31850, 110, 0, 0, 302);
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-11-23 06:00:00",       1.2,       1.2, "0110000000004004", "watchRR");
+    fa.insertData("2012-11-24 06:00:00",  -32767.0,       6.0, "0000001000009006", "watchRR,watchRR");
+    fa.insertData("2012-11-25 06:00:00",  -32767.0,      -1.0, "0000001000009006", "watchRR,watchRR");
+    fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
+    fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
+
+    const TimeRange time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    ASSERT_FALSE(RR24::canRedistributeInQC2(eda, sensor, time));
+}
