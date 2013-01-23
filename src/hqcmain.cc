@@ -2480,18 +2480,26 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
         int prSensor = -1;
         int ditNo = 0;
         while (dit != it->dataList().end()) {
-            // UNUSED int astnr = dit->stationID();
+            timeutil::ptime otime = timeutil::from_miTime(dit->obstime());
+            timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
+            const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
+            if (d_param < 0 or d_param >= NOPARAM) {
+                std::cerr << "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit << endl;
+                dit++;
+                ditNo++;
+                continue;
+            }
             bool correctLevel = (dit->level() == HqcMainWindow::sLevel);
             bool correctTypeId;
-            if (lstdlg->getSelectedStationTypes().contains("ALL") && dit->sensor() - '0' == 0) // FIXME sensor
+            if (lstdlg->getSelectedStationTypes().contains("ALL") && d_sensor0 == 0) // FIXME sensor
                 correctTypeId = true;
             else
-                correctTypeId = typeIdFilter(stnr, dit->typeID(), dit->sensor() - '0', timeutil::from_miTime(dit->obstime()), dit->paramID());
-            //      if ( dit->typeID() < 0 && dit->typeID() != -342 ) {
-            if (dit->typeID() < 0) {
-                aggPar = dit->paramID();
-                aggTyp = dit->typeID();
-                aggTime = timeutil::from_miTime(dit->obstime());
+                correctTypeId = typeIdFilter(stnr, d_type, d_sensor0, otime, d_param);
+            //      if ( d_type < 0 && d_type != -342 ) {
+            if (d_type < 0) {
+                aggPar = d_param;
+                aggTyp = d_type;
+                aggTime = otime;
                 aggStat = dit->stationID();
             } else {
                 aggPar = 0;
@@ -2501,17 +2509,14 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             }
 
             int stnr = dit->stationID();
-            timeutil::ptime otime = timeutil::from_miTime(dit->obstime());
-            timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
             int hour = otime.time_of_day().hours();
-            int typeId = dit->typeID();
-            int sensor = dit->sensor();
-            if ((otime == protime && stnr == prstnr && dit->paramID() == prParam && typeId == prtypeId && sensor == prSensor && lstdlg->showPrioritized())
+            int typeId = d_type;
+            if ((otime == protime && stnr == prstnr && d_param == prParam && typeId == prtypeId && d_sensor == prSensor && lstdlg->showPrioritized())
                     || (!correctTypeId && !lstdlg->showPrioritized())) {
                 protime = otime;
                 prstnr = stnr;
                 prtypeId = typeId;
-                prSensor = sensor;
+                prSensor = d_sensor;
                 prParam = -1;
                 dit++;
                 ditNo++;
@@ -2520,26 +2525,26 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             tdl.set_otime(otime);
             tdl.set_tbtime(tbtime);
             tdl.set_stnr(stnr);
-            bool isaggreg = (stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == dit->paramID());
+            bool isaggreg = (stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == d_param);
 
-            if (correctTypeId && correctLevel && !isaggreg && !tdlUpd[dit->paramID()]) {
-                tdl.set_typeId(dit->paramID(), typeId);
+            if (correctTypeId && correctLevel && !isaggreg && !tdlUpd[d_param]) {
+                tdl.set_typeId(d_param, typeId);
                 tdl.set_showTypeId(typeId);
-                tdl.set_orig(dit->paramID(), dit->original());
-                tdl.set_corr(dit->paramID(), dit->corrected());
-                tdl.set_sensor(dit->paramID(), dit->sensor());
-                tdl.set_level(dit->paramID(), dit->level());
-                tdl.set_controlinfo(dit->paramID(), dit->controlinfo());
-                tdl.set_useinfo(dit->paramID(), dit->useinfo());
-                tdl.set_cfailed(dit->paramID(), dit->cfailed());
-                if (typeId != 501)
-                    tdlUpd[dit->paramID()] = true;
+                tdl.set_orig(d_param, dit->original());
+                tdl.set_corr(d_param, dit->corrected());
+                tdl.set_sensor(d_param, d_sensor);
+                tdl.set_level(d_param, dit->level());
+                tdl.set_controlinfo(d_param, dit->controlinfo());
+                tdl.set_useinfo(d_param, dit->useinfo());
+                tdl.set_cfailed(d_param, dit->cfailed());
+                if (d_type != 501)
+                    tdlUpd[d_param] = true;
             }
             protime = otime;
             prstnr = stnr;
             prtypeId = typeId;
-            prSensor = sensor;
-            prParam = dit->paramID();
+            prSensor = d_sensor;
+            prParam = d_param;
             QString name;
             double lat, lon, hoh;
             int env;
@@ -2550,7 +2555,6 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             tdl.set_longitude(lon);
             tdl.set_altitude(hoh);
             tdl.set_snr(snr);
-            // UNUSED int prid = dit->paramID();
             bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
 
             ++dit;
@@ -2581,7 +2585,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
                     continue;
                 }
             }
-            const bool timeFiltered = timeFilter(hour);
+            const bool timeFiltered = timeFilter(hour); // FIXME this is the hour from before ++dit, is this correct?
             if ((timeFiltered && !isAlreadyStored(protime, prstnr) && ((otime != protime || (otime == protime && stnr != prstnr))))
                     || (lstdlg->getSelectedStationTypes().contains("ALL") && typeId != prtypeId)) {
                 datalist->push_back(tdl);
