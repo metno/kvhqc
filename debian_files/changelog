@@ -1,3 +1,10 @@
+kvhqc (2.14.7-1) unstable; urgency=low
+
+  * remember state of east/west/north/synop/prio station selection checkboxes
+  * check for valid paramid before using it as array index
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 22 Jan 2013 17:09:39 +0100
+
 kvhqc (2.14.6-1) unstable; urgency=low
 
   * WatchRR2: improve SA display
