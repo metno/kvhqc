@@ -694,8 +694,14 @@ void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
 QStringList ListDialog::getSelectedCounties()
 {
     QStringList t;
-    if( allCoun->isChecked() )
-        t << "ALL";
+
+    const int NBOXES = 7;
+    QCheckBox* boxes[NBOXES] = { allCoun, ausReg,     vesReg,     troReg,          norReg,      webReg,     priReg };
+    QString    keys[NBOXES]  = { "ALL",   "REG_EAST", "REG_WEST", "REG_TRONDELAG", "REG_NORTH", "ST_SYNOP", "ST_PRIO" };
+    for(int i=0; i<NBOXES; ++i) {
+        if (boxes[i]->isChecked())
+            t << keys[i];
+    }
 
     ItemCheckBox** countiesCB[NCOUNTIES] = {
         &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
@@ -712,7 +718,11 @@ QStringList ListDialog::getSelectedCounties()
 
 void ListDialog::setSelectedCounties(const QStringList& c)
 {
-    allCoun->setChecked(c.contains("ALL"));
+    const int NBOXES = 7;
+    QCheckBox* boxes[NBOXES] = { allCoun, ausReg,     vesReg,     troReg,          norReg,      webReg,     priReg };
+    QString    keys[NBOXES]  = { "ALL",   "REG_EAST", "REG_WEST", "REG_TRONDELAG", "REG_NORTH", "ST_SYNOP", "ST_PRIO" };
+    for(int i=0; i<NBOXES; ++i)
+        boxes[i]->setChecked(c.contains(keys[i]));
 
     ItemCheckBox** countiesCB[NCOUNTIES] = {
         &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
