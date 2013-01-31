@@ -1,6 +1,7 @@
 kvhqc (2.14.8-1) unstable; urgency=low
 
   * show hint instead of dialog in some cases
+  * report crashes via catchcrash
 
  -- Alexander Bürger <alexander.buerger@met.no>  Fri, 25 Jan 2013 15:15:55 +0100
 

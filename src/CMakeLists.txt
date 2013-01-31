@@ -74,7 +74,7 @@ ADD_EXECUTABLE(hqc
   ${hqc_UIS_H})
 
 SET_TARGET_PROPERTIES(hqc PROPERTIES
-  OUTPUT_NAME hqc-${PVERSION})
+  OUTPUT_NAME "hqc-${PVERSION}.bin")
 
 TARGET_LINK_LIBRARIES(hqc
   watchrr authentication weather failinfo

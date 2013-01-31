@@ -3,8 +3,14 @@
 set -e
 
 MASTER=hqc
-for s in hqcdiana histhqcdiana testhqcdiana WatchRR histWatchRR WatchWeather histWatchWeather; do
+for s in hqcdiana histhqcdiana testhqcdiana WatchRR WatchRR2 histWatchRR WatchWeather histWatchWeather
+do
     SLAVES="$SLAVES --slave /usr/bin/$s $s /usr/bin/$s-@METNO_VERSION@"
+done
+
+for s in hqc WatchRR WatchRR2 WatchWeather
+do
+    SLAVES="$SLAVES --slave /usr/bin/$s.bin $s.bin /usr/bin/$s-@METNO_VERSION@.bin"
 done
 
 exec update-alternatives --install "/usr/bin/$MASTER" "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@" "@PVERSION_NUMBER_MAJOR_MINOR@" \

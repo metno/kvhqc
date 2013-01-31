@@ -1,0 +1,12 @@
+#!/bin/sh
+
+CATCHCRASH="/usr/bin/catchcrash"
+PROG="WatchRR2"
+EXE="${PROG}-@PVERSION@.bin"
+
+if test -x "$CATCHCRASH"; then
+    exec "$CATCHCRASH" --mail-to kvalobs-dev@met.no --subject "$PROG CRASH" -- \
+        "$EXE" "$@"
+else
+    exec "$EXE" "$@"
+fi
