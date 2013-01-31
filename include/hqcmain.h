@@ -60,6 +60,7 @@ class AcceptTimeseriesDialog;
 class ClockDialog;
 class DataTable;
 class DianaShowDialog;
+class HintWidget;
 class ListDialog;
 class ParameterDialog;
 class RejectDialog;
@@ -302,6 +303,7 @@ private:
   bool dianaconnected;
 
     QTimer* mVersionCheckTimer;
+    HintWidget* mHints;
 
   ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;

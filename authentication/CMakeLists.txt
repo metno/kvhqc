@@ -2,6 +2,7 @@
 SET(auth_HEADERS
   Authenticator.h
   HideApplyBox.hh
+  HintWidget.hh
   MiDateTimeEdit.hh
 )
 
@@ -10,6 +11,7 @@ SET(auth_SOURCES
   BusyIndicator.cc
   debug.cc
   HideApplyBox.cc
+  HintWidget.cc
   HqcDataReinserter.cc
   hqc_paths.cc
   hqc_utilities.cc

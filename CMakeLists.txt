@@ -5,7 +5,7 @@ SET(CMAKE_BUILD_TYPE RelWithDebInfo)
 ENABLE_TESTING()
 
 INCLUDE(MetnoVersions)
-METNO_PVERSION(2.14.7)
+METNO_PVERSION(2.14.8)
 
 IF("${CMAKE_INSTALL_PREFIX}" STREQUAL "/usr")
   SET(SYSCONFDIR "/etc")
@@ -31,7 +31,7 @@ IF(NOT PC_KVCPP_FOUND)
   IF(NOT PC_KVCPP_FOUND)
     ERROR("could not find required kvcpp libs")
   ENDIF()
-  SET(PC_KVCPP_LIBRARIES ${PC_KVCPP_LIBRARIES} kvalobs2_kvalobs kvalobs2_decodeutility)
+  SET(PC_KVCPP_LIBRARIES ${PC_KVCPP_LIBRARIES} kvalobs2_kvalobs kvalobs2_decodeutility kvalobs2_dnmithread CACHE INTERNAL "")
   MESSAGE(WARNING "using old kvcpp with static metlibs; this might cause conflicts or crashes")
 ENDIF()
 

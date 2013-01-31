@@ -50,6 +50,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "debug.hh"
 #include "GetData.h"
 #include "GetTextData.h"
+#include "HintWidget.hh"
 #include "identifyUser.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
@@ -160,6 +161,7 @@ HqcMainWindow::HqcMainWindow()
   , ui(new Ui::HqcMainWindow)
   , dianaconnected(false)
   , mVersionCheckTimer(new QTimer(this))
+  , mHints(new HintWidget(this))
 {
     ui->setupUi(this);
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
@@ -285,6 +287,7 @@ void HqcMainWindow::startup()
     // --- CHECK USER IDENTITY ----------------------------------------
 
     reinserter = Authentication::identifyUser(this, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
+#if 0
     if( not reinserter ) {
         int mb = QMessageBox::information(this,
                                           tr("Autentisering"),
@@ -299,18 +302,33 @@ void HqcMainWindow::startup()
     } else {
         cout << "Hei " << userName.toStdString() << ", du er registrert som godkjent operatør" << endl;
     }
+#endif
+
     //-----------------------------------------------------------------
+
+    readSettings();
+    show();
+    qApp->processEvents();
+#if 1
+    if( not reinserter ) {
+        mHints->addHint(tr("<h1>Autentisering</h1>"
+                           "Du er ikke registrert som operatør!<br/>"
+                           "Du kan se dataliste, feillog og feilliste, "
+                           "men ikke gjøre endringer i Kvalobsdatabasen!"));
+    }
+#endif
 
     // --- READ STATION INFO ----------------------------------------
     {
         BusyIndicator busy;
         readFromStation();
+        qApp->processEvents();
         readFromObsPgm();
+        qApp->processEvents();
         readFromParam();
+        qApp->processEvents();
     }
 
-    readSettings();
-    show();
     statusBar()->message( tr("Velkommen til kvhqc %1!").arg(PVERSION_FULL), 2000 );
     mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
@@ -569,12 +587,19 @@ void HqcMainWindow::ListOK()
 {
     LOG_SCOPE();
     if ( !dianaconnected ) {
+#if 0
         QMessageBox::warning(this,
                              tr("Dianaforbindelse"),
                              tr("Har ikke kontakt med diana! "
                                 "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
                                 "og kople diana til tjeneren via knappen i diana sin vindu."),
                              QMessageBox::Ok, QMessageBox::Ok);
+#else
+        mHints->addHint(tr("<h1>Dianaforbindelse</h1>"
+                           "Har ikke kontakt med diana! "
+                           "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
+                           "og kople diana til tjeneren via knappen i diana sin vindu."));
+#endif
     }
     std::vector<int> selectedStations = lstdlg->getSelectedStations();
     if( selectedStations.empty() ) {
