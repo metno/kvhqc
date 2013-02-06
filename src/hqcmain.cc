@@ -303,9 +303,13 @@ void HqcMainWindow::startup()
     // --- READ STATION INFO ----------------------------------------
     {
         BusyIndicator busy;
+        statusBar()->message(tr("Leser stasjonsliste..."));
+        qApp->processEvents();
         readFromStation();
+        statusBar()->message(tr("Leser obs_pgm..."));
         qApp->processEvents();
         readFromObsPgm();
+        statusBar()->message(tr("Leser parameterliste..."));
         qApp->processEvents();
         readFromParam();
         qApp->processEvents();

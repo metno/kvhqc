@@ -1,3 +1,13 @@
+kvhqc (2.14.9-1) unstable; urgency=low
+
+  * hide empty hint widget on startup
+  * added localization files to package
+  * WatchRR2: show station/date selection again after closing
+  * WatchRR2: enable accept button for RR24
+  * WatchRR2: show neighbors with aggregated precipitiation, too
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 01 Feb 2013 15:48:45 +0100
+
 kvhqc (2.14.8-1) unstable; urgency=low
 
   * show hint instead of dialog in some cases
