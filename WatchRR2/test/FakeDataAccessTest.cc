@@ -35,7 +35,7 @@ struct CountDataChanged : private boost::noncopyable
     ObsAccess::ObsDataChange filterWhat;
     CountDataChanged() : count(0), filterWhat(ObsAccess::MODIFIED) { }
     void operator()(ObsAccess::ObsDataChange what, ObsDataPtr obs)
-        { if (what == filterWhat and obs->sensorTime().sensor.paramId == kvalobs::PARAMID_RR) { count += 1; } }
+        { if (what == filterWhat and obs->sensorTime().sensor.paramId == kvalobs::PARAMID_RR_24) { count += 1; } }
 };
 
 TEST(FakeDataAccessTest, DataChangedLoad54420)

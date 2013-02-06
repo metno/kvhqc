@@ -17,7 +17,7 @@ extern const int pars[N_COLUMNS] = {
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
-    kvalobs::PARAMID_RR, kvalobs::PARAMID_SA
+    kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA
 };
 extern const int timeOffsets[N_COLUMNS] = {
     -18, -18, -18,

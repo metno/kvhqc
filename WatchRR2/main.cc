@@ -43,8 +43,10 @@ int main(int argc, char* argv[])
     QStringList args = a.arguments();
     
     QString myconf = "kvalobs.conf";
-    Sensor sensor(83880, kvalobs::PARAMID_RR, 0, 0, 302);
-    std::string timeFrom("2013-01-05T06:00:00"), timeTo("2013-01-15T06:00:00");
+    Sensor sensor(83880, kvalobs::PARAMID_RR_24, 0, 0, 302);
+
+    const timeutil::ptime now = timeutil::now();
+    timeutil::ptime timeTo = timeutil::ptime(now.date(), boost::posix_time::hours(6)), timeFrom = timeTo - boost::gregorian::days(21);
 
     for (int i = 1; i < args.size(); ++i) {
         if( args.at(i) == "--config" ) {
@@ -67,9 +69,9 @@ int main(int argc, char* argv[])
                 exit(1);
             }
             i += 1;
-            timeFrom = args.at(i).toStdString();
+            timeFrom = timeutil::from_iso_extended_string(args.at(i).toStdString());
             i += 1;
-            timeTo = args.at(i).toStdString();
+            timeTo = timeutil::from_iso_extended_string(args.at(i).toStdString());
         } else if (args.at(i) == "--type") {
             if (i+1 >= args.size()) {
                 qDebug() << "invalid --type without typeid";
@@ -107,9 +109,7 @@ int main(int argc, char* argv[])
             return 1;
     }
     kda->setReinserter(reinserter);
-
-    TimeRange time(timeutil::from_iso_extended_string(timeFrom),
-                   timeutil::from_iso_extended_string(timeTo));
+    TimeRange time(timeFrom, timeTo);
 
     while (true) {
         StationDialog sd(sensor, time);

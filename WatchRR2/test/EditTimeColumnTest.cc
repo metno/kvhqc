@@ -31,7 +31,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
     fda->insert("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
     fda->insert("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
-    const Sensor sensor(31850, kvalobs::PARAMID_RR, 0, 0, 302);
+    const Sensor sensor(31850, kvalobs::PARAMID_RR_24, 0, 0, 302);
     EditAccessPtr eda = boost::make_shared<EditAccess>(fda);
     const TimeRange time(s2t("2012-11-20 06:00:00"), s2t("2012-11-27 06:00:00"));
     DataColumnPtr dc = ColumnFactory::columnForSensor(eda, sensor, time, ColumnFactory::NEW_CORRECTED);

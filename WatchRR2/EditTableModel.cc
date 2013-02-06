@@ -25,7 +25,7 @@ enum Columns {
 EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)
     , mSensor(sensor)
-    , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR))
+    , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))
 {
     const int nDays = mTime.days() + 1;
     for(int d=0; d<nDays; ++d) {

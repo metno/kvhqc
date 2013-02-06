@@ -92,12 +92,17 @@ private:
 namespace kvalobs {
 
 enum {
-    PARAMID_RR = 110,
     PARAMID_SD = 18,
-    PARAMID_SA = 112,
     PARAMID_V4 = 34,
     PARAMID_V5 = 36,
-    PARAMID_V6 = 38
+    PARAMID_V6 = 38,
+    PARAMID_RR_01 = 105,
+    PARAMID_RR_1  = 106,
+    PARAMID_RR_3  = 107,
+    PARAMID_RR_6  = 108,
+    PARAMID_RR_12 = 109,
+    PARAMID_RR_24 = 110,
+    PARAMID_SA = 112
 };
 
 enum { REJECTED = -32766, MISSING = -32767, NEW_ROW = -32768 };

@@ -340,7 +340,7 @@ QString parameterName(int paramId)
     using namespace kvalobs;
 
     switch(paramId) {
-    case PARAMID_RR: return "RR_24";
+    case PARAMID_RR_24: return "RR_24";
     case PARAMID_V4: return "V4";
     case PARAMID_V5: return "V5";
     case PARAMID_V6: return "V6";
@@ -472,28 +472,42 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
     } catch(std::runtime_error&) {
         return neighbors;
     }
-    
+
     std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithRR24;
+    std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithAggregatedRR24;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
         const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
-        if (op.paramID() == sensor.paramId and ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto))
-        {
+        if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
+            continue;
+        if (op.paramID() == sensor.paramId) {
             // FIXME this is not correct if there is more than one
             // klXX or collector or typeid or ...
             obsPgmForStationsWithRR24[op.stationID()] = op;
+        } else if (op.paramID() >= kvalobs::PARAMID_RR_01 and op.paramID() <= kvalobs::PARAMID_RR_12) {
+            obsPgmForStationsWithAggregatedRR24[op.stationID()] = op;
         }
     }
 
     int count = 0;
     BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
         std::map<int,kvalobs::kvObsPgm>::const_iterator it = obsPgmForStationsWithRR24.find(s.stationID());
-        if (it == obsPgmForStationsWithRR24.end())
-            continue;
-        const kvalobs::kvObsPgm& op = it->second;
-        neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, op.typeID()));
-        DBGV(s.stationID());
-        if (++count >= maxNeighbors)
-            break;
+        if (it != obsPgmForStationsWithRR24.end()) {
+            const kvalobs::kvObsPgm& op = it->second;
+            neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, op.typeID()));
+            DBG(DBG1(s.stationID()) << DBG1(op.typeID()));
+            if (++count >= maxNeighbors)
+                break;
+        }
+
+        it = obsPgmForStationsWithAggregatedRR24.find(s.stationID());
+        if (it != obsPgmForStationsWithAggregatedRR24.end()) {
+            const kvalobs::kvObsPgm& op = it->second;
+            const int typeID = -op.typeID();
+            neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, typeID));
+            DBG(DBG1(s.stationID()) << DBG1(typeID));
+            if (++count >= maxNeighbors)
+                break;
+        }
     }
     return neighbors;
 }

@@ -1,7 +1,5 @@
-INCLUDE_DIRECTORIES(#"${CMAKE_SOURCE_DIR}/Watch"
+INCLUDE_DIRECTORIES(
   "${CMAKE_CURRENT_SOURCE_DIR}/.."
-#  # include directory for generated files
-#  "${CMAKE_CURRENT_BINARY_DIR}/algorithms"
 )
 
 FIND_PACKAGE(Boost COMPONENTS regex REQUIRED)
@@ -31,6 +29,7 @@ ADD_LIBRARY(watchrr2test
   FakeModelAccess.cc
   TestHelpers.hh
   TestHelpers.cc
+  load_1650_20130130.cc
   load_31850_20121130.cc
   load_32780_20121207.cc
   load_52640_20121231.cc

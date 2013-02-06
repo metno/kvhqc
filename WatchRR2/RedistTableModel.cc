@@ -15,7 +15,7 @@
 RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)
     , mSensor(sensor)
-    , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR))
+    , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))
 {
     addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::ORIGINAL));
     addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::NEW_CORRECTED));

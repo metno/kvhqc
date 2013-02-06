@@ -84,16 +84,12 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->tableNeighborRR->setModel(mNeighborModel.get());
     ui->tableNeighborRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->tableNeighborRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->tableNeighborRR->verticalHeader()->setResizeMode(QHeaderView::Interactive);
-    ui->tableNeighborRR->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     ui->tableNeighborRR->verticalHeader()->setFont(mono);
     qApp->processEvents();
 
     ui->tableNeighborData->setModel(mNeighborData.get());
     ui->tableNeighborData->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    ui->tableNeighborData->verticalHeader()->setResizeMode(QHeaderView::Interactive);
-    ui->tableNeighborData->verticalHeader()->resizeSections(QHeaderView::ResizeToContents);
     qApp->processEvents();
 
     const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();

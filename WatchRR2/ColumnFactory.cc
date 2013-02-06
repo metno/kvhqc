@@ -18,7 +18,7 @@ Code2TextPtr codesForParam(int pid)
         return Code2TextPtr();
 
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
-    if( pid == kvalobs::PARAMID_RR ) {
+    if( pid == kvalobs::PARAMID_RR_24 ) {
         c2t->addCode(-1, (QStringList()
                           << qApp->translate("Column_RR_24", "dry")
                           << qApp->translate("Column_RR_24", "d")),
@@ -61,7 +61,7 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, DisplayType di
         Code2TextPtr codes = codesForParam(pid);
         if (displayType == OLD_CORRECTED or displayType == NEW_CORRECTED) {
             const bool showNew = displayType == NEW_CORRECTED;
-            if (pid == kvalobs::PARAMID_RR)
+            if (pid == kvalobs::PARAMID_RR_24)
                 item = boost::make_shared<DataRR24Item>(showNew, codes);
             else
                 item = boost::make_shared<DataCorrectedItem>(showNew, codes);

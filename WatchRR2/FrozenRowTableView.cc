@@ -49,6 +49,11 @@ void FrozenRowTableView::initFrozenTableGeometry()
             frozenTableView->setRowHidden(row, true);
         const int rh = (rc>0) ? rowHeight(0) : 0;
         frozenTableView->setRowHeight(0, rh);
+
+        const int cc = model()->columnCount();
+        for(int col=0; col<cc; col++)
+            frozenTableView->setColumnWidth(col, columnWidth(col));
+
         updateFrozenTableGeometry();
     }
 }

@@ -34,7 +34,7 @@ StationDialog::StationDialog(const Sensor& sensor, const TimeRange& time, QDialo
 
 StationDialog::StationDialog(QDialog* parent)
   : QDialog(parent)
-  , mSensor(-1, kvalobs::PARAMID_RR, 0, 0, -1)
+  , mSensor(-1, kvalobs::PARAMID_RR_24, 0, 0, -1)
   , mHour(-1)
 {
     init();
@@ -106,7 +106,7 @@ bool StationDialog::check()
     int typeFrom = -1, typeTo = -1;
     timeutil::ptime tFromEnd, tToStart;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (op.paramID() == kvalobs::PARAMID_RR
+        if (op.paramID() == kvalobs::PARAMID_RR_24
             and (op.typeID() == 302 or op.typeID() == 402)
             and (op.kl06() or op.kl07() or op.collector()))
         {

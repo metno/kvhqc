@@ -20,9 +20,9 @@ const int columnPars[N_COLUMNS] = {
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
-    kvalobs::PARAMID_RR, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
-    kvalobs::PARAMID_RR, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
-    kvalobs::PARAMID_RR, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
+    kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
+    kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
+    kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
 };
 const ColumnFactory::DisplayType columnTypes[N_COLUMNS] = {
     ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
@@ -65,6 +65,7 @@ NeighborDataModel::NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, co
 
 NeighborDataModel::~NeighborDataModel()
 {
+    mDA->obsDataChanged.disconnect(boost::bind(&NeighborDataModel::onDataChanged, this, _1, _2));
     BOOST_FOREACH(const Sensor& s, mSensors)
         mDA->removeSubscription(ObsSubscription(s.stationId, mTimeRange));
 }
