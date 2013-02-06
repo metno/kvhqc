@@ -50,7 +50,15 @@ private:
     dnmi::thread::CommandQue mSignalQueue;
     bool mStop;
     bool mStopped;
-    std::set<SubscriberID> mSubscriptions;
+
+    struct Subscriber {
+        const char* emitted;
+        const QObject* receiver;
+        const char* member;
+        Subscriber(const char* e, const QObject* r, const char* m) : emitted(e), receiver(r), member(m) { }
+    };
+    typedef std::map<SubscriberID, Subscriber> Subscriptions_t;
+    Subscriptions_t mSubscriptions;
 };
 
 QtKvService* qtKvService();

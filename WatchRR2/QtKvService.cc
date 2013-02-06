@@ -49,8 +49,11 @@ QtKvService::~QtKvService()
     if (not mStopped)
         stop();
 
-    BOOST_FOREACH(const SubscriberID& sId, mSubscriptions)
-        app()->unsubscribe(sId);
+    BOOST_FOREACH(Subscriptions_t::value_type& sub, mSubscriptions) {
+        app()->unsubscribe(sub.first);
+        const Subscriber& s = sub.second;
+        disconnect(this, s.emitted, s.receiver, s.member);
+    }
 
     qkvs = 0;
 }
@@ -58,7 +61,6 @@ QtKvService::~QtKvService()
 QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const SubscriberID& subscriberId,
                                                                  const char* emitted, const QObject *receiver, const char* member)
 {
-    std::cerr << "subscriber id = '" << subscriberId << "'" << std::endl;
     if ((not subscriberId.empty()) and receiver and member) {
         if (not connect(this, emitted, receiver, member)) {
             std::cerr << " => failed to connect signal, unsubscribing again" << std::endl;
@@ -66,7 +68,7 @@ QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const Subscribe
 	    return "";
         }
     }
-    mSubscriptions.insert(subscriberId);
+    mSubscriptions.insert(Subscriptions_t::value_type(subscriberId, Subscriber(emitted, receiver, member)));
     return subscriberId;
 }
 
@@ -94,9 +96,11 @@ QtKvService::SubscriberID QtKvService::subscribeKvHint(const QObject *receiver, 
 
 void QtKvService::unsubscribe(const SubscriberID& subscriberId)
 {
-    std::set<SubscriberID>::iterator it = mSubscriptions.find(subscriberId);
+    Subscriptions_t::iterator it = mSubscriptions.find(subscriberId);
     if (it != mSubscriptions.end()) {
         app()->unsubscribe(subscriberId);
+        const Subscriber& s = it->second;
+        disconnect(this, s.emitted, s.receiver, s.member);
         mSubscriptions.erase(it);
     }
 }

@@ -16,8 +16,8 @@ QtKvalobsAccess::QtKvalobsAccess()
 
 QtKvalobsAccess::~QtKvalobsAccess()
 {
-    if (not mKvServiceSubsription.empty())
-        qtKvService()->unsubscribe(mKvServiceSubsription);
+    if (not mKvServiceSubscriberID.empty())
+        qtKvService()->unsubscribe(mKvServiceSubscriberID);
 }
 
 void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
@@ -51,16 +51,16 @@ void QtKvalobsAccess::updateSubscribedTimes()
 {
     KvalobsAccess::updateSubscribedTimes();
 
-    std::string newKvServiceSubsription;
+    std::string newKvServiceSubscriberID;
     if (not mSubscribedTimes.empty()) {
         kvservice::KvDataSubscribeInfoHelper dataSubscription;
         BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
             dataSubscription.addStationId(st.first);
-        newKvServiceSubsription = qtKvService()
+        newKvServiceSubscriberID = qtKvService()
             ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
     }
     
-    if (not mKvServiceSubsription.empty())
-        qtKvService()->unsubscribe(mKvServiceSubsription);
-    mKvServiceSubsription = newKvServiceSubsription;
+    if (not mKvServiceSubscriberID.empty())
+        qtKvService()->unsubscribe(mKvServiceSubscriberID);
+    mKvServiceSubscriberID = newKvServiceSubscriberID;
 }

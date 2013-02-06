@@ -17,7 +17,7 @@ protected:
     virtual void updateSubscribedTimes();
 
 private:
-    std::string mKvServiceSubsription;
+    std::string mKvServiceSubscriberID;
 };
 
 #endif // KvalobsAccess_hh
