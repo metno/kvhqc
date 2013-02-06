@@ -13,6 +13,9 @@ public:
 private Q_SLOTS:
     void onKvData(kvservice::KvObsDataListPtr data);
 
+protected:
+    virtual void updateSubscribedTimes();
+
 private:
     std::string mKvServiceSubsription;
 };

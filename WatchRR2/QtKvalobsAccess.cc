@@ -2,22 +2,22 @@
 #include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
 
+#include <boost/foreach.hpp>
+
 #define NDEBUG
 #include "debug.hh"
 #ifndef NDEBUG
 #include "Helpers.hh"
-#include <boost/foreach.hpp>
 #endif
 
 QtKvalobsAccess::QtKvalobsAccess()
 {
-    kvservice::KvDataSubscribeInfoHelper dataSubscription;
-    mKvServiceSubsription = qtKvService()->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
 }
 
 QtKvalobsAccess::~QtKvalobsAccess()
 {
-    qtKvService()->unsubscribe(mKvServiceSubsription);
+    if (not mKvServiceSubsription.empty())
+        qtKvService()->unsubscribe(mKvServiceSubsription);
 }
 
 void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
@@ -28,7 +28,7 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
         BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
             const bool sub = isSubscribed(Helpers::sensorTimeFromKvData(kvd));
             if (sub)
-            std::cout << '[' << kvd.stationID() << ' ' << timeutil::to_iso_extended_string(kvd.obstime())
+            std::cout << '[' << kvd.stationID() << ' ' << timeutil::to_iso_extended_string(timeutil::from_miTime(kvd.obstime()))
                       << " p:" << std::setw(4) << kvd.paramID()
                       << " l:" << kvd.level()
                       << " s:" << (kvd.sensor() % '0')
@@ -45,4 +45,22 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
 #endif
 
     nextData(*data);
+}
+
+void QtKvalobsAccess::updateSubscribedTimes()
+{
+    KvalobsAccess::updateSubscribedTimes();
+
+    std::string newKvServiceSubsription;
+    if (not mSubscribedTimes.empty()) {
+        kvservice::KvDataSubscribeInfoHelper dataSubscription;
+        BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
+            dataSubscription.addStationId(st.first);
+        newKvServiceSubsription = qtKvService()
+            ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+    }
+    
+    if (not mKvServiceSubsription.empty())
+        qtKvService()->unsubscribe(mKvServiceSubsription);
+    mKvServiceSubsription = newKvServiceSubsription;
 }
