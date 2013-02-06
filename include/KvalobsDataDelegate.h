@@ -36,6 +36,7 @@
 
 class HqcMainWindow;
 class QLineEdit;
+class QValidator;
 
 namespace model
 {
@@ -58,8 +59,11 @@ namespace model
     virtual QString displayText(const QVariant& value, const QLocale& locale) const;
 
   private:
-    HqcMainWindow * mainWindow;
     void setup_();
+
+  private:
+    HqcMainWindow * mainWindow;
+    QValidator* mValidator;
 
     typedef QLineEdit Editor;
 

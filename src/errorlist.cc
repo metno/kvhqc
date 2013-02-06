@@ -219,8 +219,6 @@ ErrorList::ErrorList(QStringList& selPar,
     connect( mainWindow, SIGNAL( windowClose() ),
              this, SIGNAL( errorListClosed() ) );
     
-    if (!kvservice::KvApp::kvApp->getKvObsPgm(obsPgmList, statList, FALSE))
-        cerr << "Can't connect to obs_pgm table!" << endl;
     cerr.setf(ios::fixed);
 
     setNumRows( 0 );

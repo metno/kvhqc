@@ -1,3 +1,11 @@
+kvhqc (2.14.10-1) unstable; urgency=low
+
+  * show status messages on startup and while fetching data list
+  * avoid useless fetching of obs_pgm in errorlist.cc
+  * WatchRR2: align numbers to the right
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 06 Feb 2013 19:52:57 +0100
+
 kvhqc (2.14.9-1) unstable; urgency=low
 
   * hide empty hint widget on startup

@@ -38,11 +38,31 @@
 #include <QTextStream>
 #include <QDebug>
 
+#define NDEBUG
+#include "debug.hh"
+
+namespace { /* anonymous */
+
+class InputValidator : public QDoubleValidator
+{
+public:
+    InputValidator(QObject* parent) : QDoubleValidator(parent) {}
+    virtual State validate(QString & input, int & pos) const
+        {
+            if (input.isEmpty())
+                return Acceptable;
+            return QDoubleValidator::validate(input, pos);
+        }
+};
+} // anonymous namespace
+
 namespace model
 {
 
-  KvalobsDataDelegate::KvalobsDataDelegate(QObject * parent) :
-    QStyledItemDelegate(parent), mainWindow( getHqcMainWindow( parent ) )
+KvalobsDataDelegate::KvalobsDataDelegate(QObject * parent)
+    : QStyledItemDelegate(parent)
+    , mainWindow(getHqcMainWindow(parent))
+    , mValidator(new InputValidator(this))
   {
     setup_();
   }
@@ -51,27 +71,10 @@ namespace model
   {
   }
 
-  namespace
-  {
-    class InputValidator : public QDoubleValidator
-    {
-    public:
-      InputValidator() : QDoubleValidator(0) {}
-      virtual State validate(QString & input, int & pos) const
-      {
-        if ( input.isEmpty() )
-          return Acceptable;
-        return QDoubleValidator::validate(input, pos);
-      }
-    };
-  }
-
   QWidget * KvalobsDataDelegate::createEditor(QWidget * parent, const QStyleOptionViewItem & /*option*/, const QModelIndex & /*index*/) const
   {
     Editor * ret = new Editor(parent);
-    //static QDoubleValidator validator(0);
-    static InputValidator validator;
-    ret->setValidator(& validator);
+    ret->setValidator(mValidator);
     return ret;
   }
 
@@ -90,8 +93,10 @@ namespace model
 
 void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
   {
+      LOG_SCOPE();
     kvalobs::DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
-    if ( ! reinserter ) {
+#ifdef NDEBUG
+    if (not reinserter) {
       QMessageBox::critical( editor,
 			     "Ikke autentisert",
 			     "Du er ikke autentisert som operatør.\n"
@@ -100,6 +105,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
 			     Qt::NoButton );
       return;
     }
+#endif
 
     Editor * e = static_cast<Editor *>(editor);
     QString enteredValue = e->text();
@@ -184,17 +190,15 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     if (corrMb == 1) // "Nei"
         return;
 
+    DBGL;
     QStyledItemDelegate::setModelData(editor, model, index);
     kvalobs::kvData kd = kvalobsData->getKvData(paramid);
-    std::list<kvalobs::kvData> modData;
-    modData.push_back( kd );
-
-    CKvalObs::CDataSource::Result_var result;
-    {
-      //      BusyIndicator busyIndicator;
-      result = reinserter->insert( modData );
+    std::list<kvalobs::kvData> modData(1, kd);
+    DBGV(kd);
+    if (reinserter) {
+        CKvalObs::CDataSource::Result_var result;
+        result = reinserter->insert( modData );
     }
-    modData.clear();
   }
 
   void KvalobsDataDelegate::updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & /*index*/) const
@@ -204,19 +208,21 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
 
   bool KvalobsDataDelegate::legalTime(int hour, int par, double val) const
   {
-    bool lT = true;
-    if ( (par == 214 || par == 216 || par == 224 || par == 109) &&
-         !(hour == 6 || hour == 18) || par == 110 && hour != 6 ) lT = false;
-    if ( val == -32766.0 ) lT = true; //Always possible to delete
-    return lT;
+      if (val == -32766.0)
+          return true; // always possible to delete
+      if (((par == 214 or par == 216 or par == 224 or par == 109) && hour != 6 and hour != 18)
+          or (par == 110 && hour != 6))
+      {
+          return false;
+      }
+      return true;
   }
 
   bool KvalobsDataDelegate::legalValue(double val, int par) const
   {
-    bool lT = true;
-    if ( par == 105 && ( val != -5.0 && val != -6.0 && val != -32766.0 && val < 0.0 ) )
-      lT = false;
-    return lT;
+      if ( par == 105 && ( val != -5.0 && val != -6.0 && val != -32766.0 && val < 0.0 ) )
+          return false;
+      return true;
   }
 
   QString KvalobsDataDelegate::displayText(const QVariant& value, const QLocale& locale) const

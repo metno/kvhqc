@@ -36,7 +36,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsDataModel.h"
 
 #include <kvalobs/kvData.h>
-#include <kvalobs/kvObsPgm.h>
 
 #include <QtCore/QString>
 #include <QtGui/QValidator>
@@ -247,7 +246,6 @@ private:
    */
   QString opName;
   FailInfo::FailDialog* fDlg;
-  std::list<kvalobs::kvObsPgm> obsPgmList;
   std::list<long> statList;
   /*!
    * \brief Temporary store for observations with these flags:

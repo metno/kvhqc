@@ -37,6 +37,9 @@
 #include <kvalobs/kvDataOperations.h>
 #include <QtCore/QDebug>
 
+#define NDEBUG
+#include "debug.hh"
+
 namespace
 {
   // Only for internal use
@@ -53,7 +56,7 @@ const int codeParam[66] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
                               24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
                               35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
                               45, 46, 47, 48, 49, 54, 55, 56, 57,123,
-                              124,128151,273,301,302,303,304,305,306,
+                              124,128,151,273,301,302,303,304,305,306,
                               307,308,1021,1022,1025,1026 };
 
   KvalobsDataModel::KvalobsDataModel(
@@ -201,6 +204,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 
   bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value, int role)
   {
+      LOG_SCOPE();
       if ( not index.isValid() or index.row() >= (int)kvalobsData_->size() )
       return false;
 
@@ -613,11 +617,8 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
     return d.getKvData(parameter.paramid);
   }
 
-  bool KvalobsDataModel::paramIsCode(const int parNo) const {
-    for ( int i = 0; i < NC; i++ ) {
-      if ( parNo == codeParam[i] )
-	return true;
-    }
-    return false;
+  bool KvalobsDataModel::paramIsCode(const int parNo) const
+  {
+      return std::binary_search(codeParam, codeParam+NC, parNo);
   }
 }

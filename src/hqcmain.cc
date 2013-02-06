@@ -47,7 +47,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dianashowdialog.h"
 #include "discarddialog.h"
 #include "errorlist.h"
-#include "debug.hh"
 #include "GetData.h"
 #include "GetTextData.h"
 #include "HintWidget.hh"
@@ -101,6 +100,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iomanip>
 #include <stdexcept>
 
+#define NDEBUG
+#include "debug.hh"
+
 // declared in hqcdefs.h
 const int modelParam[NOPARAMMODEL] =
     { 61, 81, 109, 110, 177, 178, 211, 262 };
@@ -121,6 +123,32 @@ const std::map<QString, QString> configNameToUserName = boost::assign::map_list_
         ("[all]", "Alt");
 
 const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
+
+class DisableGUI {
+public:
+    DisableGUI(QWidget* widget);
+    ~DisableGUI();
+private:
+    QWidget* mWidget;
+    bool mWasEnabled;
+};
+
+DisableGUI::DisableGUI(QWidget* widget)
+    : mWidget(widget)
+    , mWasEnabled(mWidget->isEnabled())
+{
+    if (mWasEnabled) {
+        mWidget->setEnabled(false);
+        qApp->processEvents();
+    }
+}
+DisableGUI::~DisableGUI()
+{
+    if (mWasEnabled) {
+        mWidget->setEnabled(true);
+        qApp->processEvents();
+    }
+}
 
 } // anonymous namespace
 
@@ -277,6 +305,7 @@ HqcMainWindow::HqcMainWindow()
 
 void HqcMainWindow::startup()
 {
+    DisableGUI disableGUI(this);
     listExist = false;
     firstObs = true;
     sLevel = 0;
@@ -548,6 +577,7 @@ void HqcMainWindow::dianaShowOK()
 
 void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 {
+    DBGV(toSave);
   if ( ! reinserter ) {
     qDebug("Skipping data save, since user is not authenticated");
     return;
@@ -611,6 +641,7 @@ void HqcMainWindow::ListOK()
     return;
   }
 
+  DisableGUI disableGUI(this);
   BusyIndicator busyIndicator;
   listExist = true;
 
@@ -656,6 +687,8 @@ void HqcMainWindow::ListOK()
   // All windows are shown later, in the tileHorizontal function
 
   if ( lity == daLi or lity == alLi ) {
+      statusBar()->message(tr("Bygger dataliste..."));
+      qApp->processEvents();
 
       model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
@@ -709,6 +742,8 @@ void HqcMainWindow::ListOK()
   }
 
   if ( lity == erLi or lity == erSa or lity == alLi ) {
+      statusBar()->message(tr("Bygger feilliste..."));
+      qApp->processEvents();
       ErrorList * erl = new ErrorList(selPar,
                           stime,
                           etime,
@@ -753,6 +788,8 @@ void HqcMainWindow::ListOK()
     sendAnalysisMessage();
     sendTimes();
   }
+
+  statusBar()->message("");
 }
 
 void HqcMainWindow::TimeseriesOK() {
@@ -1108,8 +1145,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
   }
   kvservice::WhichDataHelper whichData;
   long int stnr = stationIndex;
-  boost::posix_time::ptime ft = timeutil::from_iso_extended_string(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
-  boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
+  const boost::posix_time::ptime ft = timeutil::from_QDateTime(stime);
+  const boost::posix_time::ptime tt = timeutil::from_QDateTime(etime);
   whichData.addStation(stnr, timeutil::to_miTime(ft), timeutil::to_miTime(tt));
   checkTypeId(stnr);
   int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
@@ -1150,7 +1187,6 @@ void HqcMainWindow::acceptTimeseriesOK() {
     }
     modData.clear();
   }
-  return;
 }
 
 void HqcMainWindow::rejectTimeseriesOK() {
@@ -1412,7 +1448,8 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
     std::cerr << "problems retrieving data" << std::endl;
   }
 
-
+  statusBar()->message(tr("Leser modelldata..."));
+  qApp->processEvents();
   ModelDataList mdlist;
   modeldatalist.reserve(131072);
   modeldatalist.clear();
@@ -2461,6 +2498,12 @@ void HqcMainWindow::makeTextDataList(kvservice::KvObsDataList& textDataList)
 
 void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
 {
+    if (dataList.empty() or dataList.begin()->dataList().empty())
+        return;
+
+    statusBar()->message(tr("Leser data for stasjon %1").arg(dataList.begin()->dataList().begin()->stationID()));
+    qApp->processEvents();
+
     model::KvalobsData tdl;
     bool tdlUpd[NOPARAM];
     std::fill(tdlUpd, tdlUpd + NOPARAM, false);
