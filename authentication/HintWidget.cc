@@ -21,6 +21,7 @@ HintWidget::HintWidget(QWidget* parent)
     , mTimer(new QTimer(this))
 {
     setStyleSheet(QString("QLabel { background-color: #ffd; border: 3px solid blue; border-radius: %1px; }").arg(edge));
+    setVisible(false);
 
     mText->setOpenLinks(false);
     mText->viewport()->setAutoFillBackground(false);
