@@ -45,25 +45,26 @@ void DianaHelper::tryConnect()
 void DianaHelper::processConnect()
 {
     const bool c = mDianaButton->clientTypeExist("Diana");
-    if (c != mConnected) {
-        mConnected = c;
-        if (mConnected) {
-            const QString pStd = ::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_STD_HQC  + ".png";
-            DBGV(pStd.toStdString());
-            const QImage iStd(pStd);
-            const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
+    if (c == mConnected)
+        return;
 
-            sendImage(IMG_STD_HQC, iStd);
-            sendImage(IMG_ICON_HQC, iIcon);
-
-            miMessage m;
-            m.command = qmstrings::showpositionname;
-            m.description = "normal:selected:icon";
-            m.data.push_back("true:true:true");
-            mDianaButton->sendMessage(m);
-        }
-        /*emit*/ connection(mConnected);
+    mConnected = c;
+    if (mConnected) {
+        const QString pStd = ::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_STD_HQC  + ".png";
+        DBGV(pStd.toStdString());
+        const QImage iStd(pStd);
+        const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
+        
+        sendImage(IMG_STD_HQC, iStd);
+        sendImage(IMG_ICON_HQC, iIcon);
+        
+        miMessage m;
+        m.command = qmstrings::showpositionname;
+        m.description = "normal:selected:icon";
+        m.data.push_back("true:true:true");
+        mDianaButton->sendMessage(m);
     }
+    /*emit*/ connection(mConnected);
 }
 
 void DianaHelper::cleanConnection()

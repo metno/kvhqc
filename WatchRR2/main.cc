@@ -42,9 +42,7 @@ int main(int argc, char* argv[])
     
     QStringList args = a.arguments();
     
-    bool haveUnknownOptions = false;
     QString myconf = "kvalobs.conf";
-
     Sensor sensor(83880, kvalobs::PARAMID_RR, 0, 0, 302);
     std::string timeFrom("2013-01-05T06:00:00"), timeTo("2013-01-15T06:00:00");
 
@@ -79,14 +77,7 @@ int main(int argc, char* argv[])
             }
             i += 1;
             sensor.typeId = args.at(i).toInt();
-        } else {
-            haveUnknownOptions = true;
-            qDebug() << "Unknown option: " << args.at(i);
         }
-    }
-    if (haveUnknownOptions) {
-        qDebug() << "have unknown options, stop";
-        exit(1);
     }
     
     miutil::conf::ConfSection *confSec = kvservice::corba::CorbaKvApp::readConf(myconf.toStdString());
@@ -101,7 +92,6 @@ int main(int argc, char* argv[])
 
     boost::shared_ptr<KvalobsAccess> kda = boost::make_shared<QtKvalobsAccess>();
     boost::shared_ptr<KvalobsModelAccess> kma = boost::make_shared<KvalobsModelAccess>();
-    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
 
     QString userName;
     kvalobs::DataReinserter<kvservice::KvApp>* reinserter
@@ -121,31 +111,30 @@ int main(int argc, char* argv[])
     TimeRange time(timeutil::from_iso_extended_string(timeFrom),
                    timeutil::from_iso_extended_string(timeTo));
 
-    {
+    while (true) {
         StationDialog sd(sensor, time);
-        if (sd.exec()) {
-            sensor = sd.selectedSensor();
-            time = sd.selectedTime();
-        } else {
-            return 1;
-        }
-        std::cout << "sensor = " << sensor.stationId << "/" << sensor.typeId << " time=" << time << std::endl;
-    }
+        if (not sd.exec())
+            break;
 
-    MainDialog main(eda, kma, sensor, time);
-    if (main.exec()) {
-        if (not eda->sendChangesToParent()) {
-            QMessageBox::critical(0,
-                                  qApp->translate("Main", "WatchRR"),
-                                  qApp->translate("Main", "Sorry, your changes could not be saved and are lost!"),
-                                  qApp->translate("Auth", "Exit"),
-                                  "");
-        } else {
-            QMessageBox::information(0,
+        sensor = sd.selectedSensor();
+        time = sd.selectedTime();
+        
+        EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
+        MainDialog main(eda, kma, sensor, time);
+        if (main.exec()) {
+            if (not eda->sendChangesToParent()) {
+                QMessageBox::critical(0,
+                                      qApp->translate("Main", "WatchRR"),
+                                      qApp->translate("Main", "Sorry, your changes could not be saved and are lost!"),
+                                      qApp->translate("Auth", "Exit"),
+                                      "");
+            } else {
+                QMessageBox::information(0,
                                      qApp->translate("Main", "WatchRR"),
-                                     qApp->translate("Main", "Your changes have been saved."),
-                                     qApp->translate("Auth", "Exit"),
-                                     "");
+                                         qApp->translate("Main", "Your changes have been saved."),
+                                         qApp->translate("Auth", "Exit"),
+                                         "");
+            }
         }
     }
 

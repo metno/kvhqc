@@ -18,8 +18,12 @@ public:
     virtual bool update(const std::vector<ObsUpdate>& updates);
 
     void nextData(kvservice::KvObsDataList &dl);
-    void setReinserter(kvalobs::DataReinserter<kvservice::KvApp>* reinserter)
+
+    typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
+    void setReinserter(Reinserter_t* reinserter)
         { mDataReinserter = reinserter; }
+    bool hasReinserter() const
+        { return (mDataReinserter != 0); }
 
 protected:
     virtual bool drop(const SensorTime& st);
@@ -36,7 +40,7 @@ private:
     typedef std::set<Fetched> Fetched_t;
     Fetched_t mFetched;
 
-    kvalobs::DataReinserter<kvservice::KvApp>* mDataReinserter;
+    Reinserter_t* mDataReinserter;
 };
 typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 

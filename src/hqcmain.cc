@@ -2405,9 +2405,10 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
 {
     int tpId = typ;
     mi_foreach_r(const kvalobs::kvObsPgm& op, obsPgmList) {
-        if ( op.stationID() == pos && op.paramID() == par
-                && timeutil::from_miTime(op.fromtime()) < oTime
-                && timeutil::from_miTime(op.totime()) > oTime )
+        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
+        const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
+        if (op.stationID() == pos and op.paramID() == par
+            and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
         {
             tpId = op.typeID();
             break;

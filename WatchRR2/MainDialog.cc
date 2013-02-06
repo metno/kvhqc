@@ -44,6 +44,10 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
+    QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
+    ui->labelStationInfo->setText(info);
+    ui->labelInfoRR->setText("");
+
     ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
     ui->neighborDataButtonLayout->insertWidget(1, cb);
     mDianaHelper.reset(new DianaHelper(cb));
@@ -55,7 +59,6 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
     initializeRR24Data();
 
-    QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
     try {
         const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(mSensor.stationId);
         info += " " + Helpers::stationName(s);
@@ -116,6 +119,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
 MainDialog::~MainDialog()
 {
+    mDianaHelper.reset(0);
     mDA->backendDataChanged.disconnect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
 }
 
