@@ -149,9 +149,9 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
 
     const int nDays = sel.selTime.days() + 1;
 
-    if (sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol) {
+    if (isRR24Selection(sel)) {
         ui->buttonEdit->setEnabled(true);
-        ui->buttonAcceptRow->setEnabled(false);
+        ui->buttonAcceptRow->setEnabled(RR24::canAccept(mDA, mSensor, sel.selTime));
         if (nDays <= 1) {
             ui->labelInfoRR->setText("");
             ui->buttonRedist->setEnabled(false);
@@ -166,11 +166,19 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
         ui->buttonEdit->setEnabled(false);
         ui->buttonRedist->setEnabled(false);
         ui->buttonRedistQC2->setEnabled(false);
-
-        const bool completeSingleRow = (sel.selTime.t0() == sel.selTime.t1())
-            and (sel.minCol == 0 and sel.maxCol >= mRRModel->columnCount(QModelIndex()) - 2);
-        ui->buttonAcceptRow->setEnabled(completeSingleRow);
+        ui->buttonAcceptRow->setEnabled(isCompleteSingleRowSelection(sel));
     }
+}
+
+bool MainDialog::isRR24Selection(const Selection& sel) const
+{
+    return (sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol);
+}
+
+bool MainDialog::isCompleteSingleRowSelection(const Selection& sel) const
+{
+    return (sel.selTime.t0() == sel.selTime.t1())
+        and (sel.minCol == 0 and sel.maxCol >= mRRModel->columnCount(QModelIndex()) - 2);
 }
 
 MainDialog::Selection MainDialog::findSelection()
@@ -200,7 +208,14 @@ MainDialog::Selection MainDialog::findSelection()
 void MainDialog::onAcceptRow()
 {
     const Selection sel = findSelection();
-    FCC::acceptRow(mDA, mSensor, sel.selTime.t0());
+    if (isRR24Selection(sel)) {
+        RR24::accept(mDA, mSensor, sel.selTime);
+    } else if (isCompleteSingleRowSelection(sel)) {
+        FCC::acceptRow(mDA, mSensor, sel.selTime.t0());
+    } else {
+        // should not happen, button is disabled
+        return;
+    }
     ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();

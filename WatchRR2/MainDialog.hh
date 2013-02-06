@@ -65,6 +65,8 @@ private:
 private:
     Selection findSelection();
     void clearSelection();
+    bool isRR24Selection(const Selection& sel) const;
+    bool isCompleteSingleRowSelection(const Selection& sel) const;
 
     void initializeRR24Data();
     void addRR24Task(const timeutil::ptime& time, QString task);

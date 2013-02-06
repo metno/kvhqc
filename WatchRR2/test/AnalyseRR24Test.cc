@@ -64,7 +64,7 @@ TEST_F(AnalyseRR24Test, TaskPeriods)
             tasks = TimeRange(s2t(times[iTasks][0]), s2t(times[iTasks][1]));
         }
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_FALSE(not obs);
+        ASSERT_TRUE(obs);
         ASSERT_EQ(tasks.contains(t), obs->hasTasks()) << "t=" << t;;
     }
 }
@@ -236,7 +236,7 @@ TEST(AnalyseRR24Test_2, OnlyEndpointRow)
 
     for (timeutil::ptime t = timeR.t0(); t < timeR.t1(); t += days(1)) {
         ObsDataPtr obs = fa.kda->find(SensorTime(sensor, t));
-        ASSERT_FALSE(not obs);
+        ASSERT_TRUE(obs);
     }
 }
 
@@ -484,4 +484,56 @@ TEST(AnalyseRR24Test_2, QC2_1)
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
 
     ASSERT_FALSE(RR24::canRedistributeInQC2(eda, sensor, time));
+}
+
+TEST(AnalyseRR24Test_2, Accept)
+{
+    const boost::gregorian::date_duration step = boost::gregorian::days(1);
+
+    const Sensor sensor(31850, 110, 0, 0, 302);
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-11-23 06:00:00",       1.2,       1.2, "0110000000004004", "watchRR");
+    fa.insertData("2012-11-24 06:00:00",  -32767.0,       6.0, "0000001000009006", "watchRR,watchRR");
+    fa.insertData("2012-11-25 06:00:00",  -32767.0,      -1.0, "0000001000009006", "watchRR,watchRR");
+    fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
+    fa.insertData("2012-11-27 06:00:00",  -32767.0,       6.0, "0000001000007000", "QC2-redist");
+    fa.insertData("2012-11-28 06:00:00",  -32767.0,      -1.0, "0000001000007000", "QC2-redist");
+    fa.insertData("2012-11-29 06:00:00",       8.9,       2.9, "0110004000002000", "QC1-7-110");
+    fa.insertData("2012-11-30 06:00:00",  -32767.0,       6.0, "0000001000007000", "QC2-redist");
+    fa.insertData("2012-12-01 06:00:00",  -32767.0,      -1.0, "0000001000007000", "QC2-redist");
+    fa.insertData("2012-12-02 06:00:00",       8.9,       2.9, "0110004000008000", "QC1-7-110,QC2-redist");
+    fa.insertData("2012-12-03 06:00:00",       2.8,       2.8, "0110000000001000", "");
+
+    const TimeRange time_all(s2t("2012-11-23 06:00:00"), s2t("2012-12-03 06:00:00"));
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time_all));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    TimeRange editableTime(time_all);
+    RR24::analyse(eda, sensor, editableTime);
+
+    {
+        const TimeRange time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
+        EXPECT_FALSE(RR24::canAccept(eda, sensor, time));
+    }
+
+    {
+        // some tasks in this time range
+        const TimeRange time(s2t("2012-11-27 06:00:00"), s2t("2012-11-29 06:00:00"));
+        EXPECT_FALSE(RR24::canAccept(eda, sensor, time));
+    }
+
+    {
+        const TimeRange time(s2t("2012-11-30 06:00:00"), s2t("2012-12-02 06:00:00"));
+        ASSERT_TRUE(RR24::canAccept(eda, sensor, time));
+
+        RR24::accept(eda, sensor, time);
+        for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
+            EditDataPtr obs = eda->findE(SensorTime(sensor, t));
+            ASSERT_TRUE(obs) << " t=" << t;
+            EXPECT_EQ(1, obs->controlinfo().flag(kvalobs::flag::fhqc)) << " t=" << t;
+        }
+    }
 }

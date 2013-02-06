@@ -20,6 +20,9 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
              const std::vector<float>& newCorrected, const std::vector<int>& acceptReject);
 
 float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
+
+bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
+void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
 } // namespace RR24
 
 #endif // AnalyseRR24_hh

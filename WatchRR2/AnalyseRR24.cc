@@ -328,4 +328,41 @@ float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time
     return sum;
 }
 
+// ========================================================================
+
+bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+{
+    LOG_SCOPE();
+    const boost::gregorian::date_duration step = boost::gregorian::days(1);
+
+    const FlagPattern acceptable("fhqc=[01234]", FlagPattern::CONTROLINFO);
+    for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
+        EditDataPtr obs = da->findE(SensorTime(sensor, t));
+        if (not obs)
+            continue;
+        if (not acceptable.matches(obs->controlinfo()))
+            return false;
+        if ((obs->allTasks() & ALL_RR24_TASKS) != 0)
+            return false;
+    }
+    return true;
+}
+
+// ========================================================================
+
+void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+{
+    LOG_SCOPE();
+    const boost::gregorian::date_duration step = boost::gregorian::days(1);
+
+    const FlagChange fc_accept("fhqc=[0234]->fhqc=1");
+    da->pushUpdate();
+    for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
+        EditDataPtr obs = da->findE(SensorTime(sensor, t));
+        if (not obs)
+            continue;
+        da->editor(obs)->changeControlinfo(fc_accept);
+    }
+}
+
 } // namespace RR24
