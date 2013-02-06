@@ -50,6 +50,8 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
         return Helpers::appendText(tip, tasks::asText(obs->allTasks()));
     } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
         return mCodes->asText(getValue(obs));
+    } else if (role == Qt::TextAlignmentRole) {
+        return mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight;
     }
     return DataItem::data(obs, role);
 }

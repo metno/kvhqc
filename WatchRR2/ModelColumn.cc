@@ -45,6 +45,8 @@ QVariant ModelColumn::data(const timeutil::ptime& time, int role) const
         return mCodes->asTip(getValue(mdl));
     } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
         return mCodes->asText(getValue(mdl));
+    } else if (role == Qt::TextAlignmentRole) {
+        return Qt::AlignRight;
     }
     return QVariant();
 }
