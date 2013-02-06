@@ -1,5 +1,6 @@
 
 #include "Helpers.hh"
+#include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvalobsModelAccess.hh"
 #include "KvStationBuffer.hh"
@@ -28,14 +29,15 @@ int main(int argc, char* argv[])
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     a.installTranslator(&qtTranslator);
 
+    const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
     QTranslator wTranslator;
 #if (QT_VERSION >= QT_VERSION_CHECK(4, 8, 0))
-    if (not wTranslator.load(QLocale::system(), "watchrr2", "_", "build/WatchRR2"))
-        qDebug() << "failed to load translations";
+    const bool translationsLoaded = wTranslator.load(QLocale::system(), "watchrr2", "_", langDir);
 #else
-    if (not wTranslator.load("watchrr2_" + QLocale::system().name(), "build/WatchRR2"))
-        qDebug() << "failed to load translations";
+    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir);
 #endif
+    if (not translationsLoaded)
+        qDebug() << "failed to load translations from " << langDir;
     a.installTranslator(&wTranslator);
     
     QStringList args = a.arguments();
