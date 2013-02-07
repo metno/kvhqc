@@ -2,15 +2,15 @@
 #ifndef HintWidget_hh
 #define HintWidget_hh 1
 
-#include <QtCore/QList>
+#include <QtCore/QStringList>
 #include <QtGui/QLabel>
 
 QT_BEGIN_NAMESPACE
-class QTextBrowser;
+class QTextDocument;
 class QTimer;
 QT_END_NAMESPACE
 
-class HintWidget : public QLabel
+class HintWidget : public QWidget
 { Q_OBJECT;
 public:
     HintWidget(QWidget* parent);
@@ -18,17 +18,22 @@ public:
 
     void addHint(const QString& text);
 
+public Q_SLOTS:
+    void updatePosition();
+
+protected:
+    void paintEvent(QPaintEvent*);
+
 private:
     void updateText();
-    void updatePosition();
 
 private Q_SLOTS:
     void hideHints();
 
 private:
-    QTextBrowser* mText;
+    QTextDocument* mText;
     QTimer* mTimer;
-    QList<QString> mHints;
+    QStringList mHints;
 };
 
 #endif /* HintWidget_hh */

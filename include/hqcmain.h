@@ -90,7 +90,7 @@ public:
   void makeObsDataList( kvservice::KvObsDataList& dataList );
   void makeTextDataList( kvservice::KvObsDataList& textdataList );
 
-public slots:
+public Q_SLOTS:
   /*!
    * \brief Send observation times to Diana
    */
@@ -218,7 +218,7 @@ public:
     const std::list<listStat_t>& getStationDetails();
     const ObsTypeList& getObsTypeList() { return otpList; }
 
-public slots:
+public Q_SLOTS:
 
   void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
@@ -245,7 +245,7 @@ public slots:
 */
   void paramOK();
 
-private slots:
+private Q_SLOTS:
   void showFlags();
   void showOrigs();
   void showMod();
@@ -357,7 +357,10 @@ protected:
     std::list<listStat_t> listStat;
     timeutil::ptime mLastStationListUpdate;
 
-private slots:
+    void moveEvent(QMoveEvent* event);
+    void resizeEvent(QResizeEvent* event);
+
+private Q_SLOTS:
   void closeWindow();
   void helpUse();
   void helpFlag();
@@ -401,7 +404,7 @@ private slots:
 
   void updateSaveFunction( QMdiSubWindow * w );
 
-signals:
+Q_SIGNALS:
   void statTimeReceived(const QString&);
   void newStationList(std::vector<QString>&);
   void newParameterList(const QStringList&);

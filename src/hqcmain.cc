@@ -697,7 +697,11 @@ void HqcMainWindow::ListOK()
           new model::KvalobsDataModel(
               parameterList, parMap, datalist, modeldatalist,
               ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
+#ifdef NDEBUG
               reinserter != 0,
+#else
+              true,
+#endif
               tableView);
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
@@ -2578,7 +2582,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
                 tdl.set_showTypeId(typeId);
                 tdl.set_orig(d_param, dit->original());
                 tdl.set_corr(d_param, dit->corrected());
-                tdl.set_sensor(d_param, d_sensor);
+                tdl.set_sensor(d_param, d_sensor % '0');
                 tdl.set_level(d_param, dit->level());
                 tdl.set_controlinfo(d_param, dit->controlinfo());
                 tdl.set_useinfo(d_param, dit->useinfo());
@@ -2748,4 +2752,16 @@ void HqcMainWindow::readSettings()
       lstdlg->setSelectedCounties(counties);
       settings.endGroup();
   }
+}
+
+void HqcMainWindow::moveEvent(QMoveEvent* event)
+{
+    QMainWindow::moveEvent(event);
+    mHints->updatePosition();
+}
+
+void HqcMainWindow::resizeEvent(QResizeEvent* event)
+{
+    QMainWindow::resizeEvent(event);
+    mHints->updatePosition();
 }
