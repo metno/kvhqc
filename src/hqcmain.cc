@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -100,7 +98,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iomanip>
 #include <stdexcept>
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
 
 // declared in hqcdefs.h
@@ -1321,9 +1319,8 @@ bool HqcMainWindow::timeFilter(int hour)
     return clkdlg->hasHour(hour);
 }
 
-bool HqcMainWindow::hqcTypeFilter(int typeId, int environment, int /* UNUSED stnr*/)
+bool HqcMainWindow::hqcTypeFilter(const QSet<QString>& stationTypes, int typeId, int environment)
 {
-    const QStringList stationTypes = lstdlg->getSelectedStationTypes();
   if ( typeId == -1 || typeId == 501 ) return false;
   //  if ( typeId == -1 ) return false;
   if ( lstdlg->showSynop() or lstdlg->showPrioritized() ) return true;
@@ -1706,6 +1703,7 @@ void HqcMainWindow::readFromStation()
 void HqcMainWindow::readFromObsPgm() {
     LOG_SCOPE();
 
+    mStationDetailsMap.clear();
     obsPgmList.clear();
     const int N_STATIONS = 100;
     std::list<kvalobs::kvStation>::const_iterator it = slist.begin();
@@ -1719,46 +1717,35 @@ void HqcMainWindow::readFromObsPgm() {
                 exitNoKvalobs();
             obsPgmList.insert(obsPgmList.end(), obsPgmTmp.begin(), obsPgmTmp.end());
         }
+        qApp->processEvents();
     }
 
-    int prostnr = -1;
-
-    TypeList tpList;
     mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
-        const int ostnr = op.stationID();
-        if ( ostnr != prostnr ) {
-            if ( prostnr != -1 )
-                otpList.push_back(tpList);
-            tpList.clear();
-            tpList.push_back(ostnr);
-        }
-        int otpid = op.typeID();
-        TypeList::iterator tpind = std::find(tpList.begin(), tpList.end(), otpid);
-        if ( tpind ==  tpList.end() )
-            tpList.push_back(otpid);
-        prostnr = ostnr;
+        StationDetails& sd = mStationDetailsMap[op.stationID()];
+        sd.obs_pgm.push_back(op);
+        sd.typeIDs.insert(op.typeID());
     }
-    otpList.push_back(tpList);
 }
 
 /*!
  Read the typeid file
 */
-void HqcMainWindow::checkTypeId(int stnr) {
-  mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
-    int stationId = op.stationID();
-    if ( stationId == stnr ) {
-      currentType crT;
-      crT.stnr    = stationId;
-      crT.par     = op.paramID();
-      crT.fDate   = timeutil::from_miTime(op.fromtime()).date();
-      crT.tDate   = timeutil::from_miTime(op.totime()).date();;
-      crT.cLevel  = op.level();
-      crT.cSensor = 0;
-      crT.cTypeId = op.typeID();
-      currentTypeList.push_back(crT);
+void HqcMainWindow::checkTypeId(int stnr)
+{
+    StationDetailsMap_t::iterator it = mStationDetailsMap.find(stnr);
+    if (it != mStationDetailsMap.end()) {
+        mi_foreach(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
+            currentType crT;
+            crT.stnr    = stnr;
+            crT.par     = op.paramID();
+            crT.fDate   = timeutil::from_miTime(op.fromtime()).date();
+            crT.tDate   = timeutil::from_miTime(op.totime()).date();;
+            crT.cLevel  = op.level();
+            crT.cSensor = 0;
+            crT.cTypeId = op.typeID();
+            currentTypeList.push_back(crT);
+        }
     }
-  }
 }
 
 /*!
@@ -2449,31 +2436,35 @@ bool HqcMainWindow::isAlreadyStored(const timeutil::ptime& otime, int stnr) {
 int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime)
 {
     int tpId = typ;
-    mi_foreach_r(const kvalobs::kvObsPgm& op, obsPgmList) {
-        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
-        const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
-        if (op.stationID() == pos and op.paramID() == par
-            and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
-        {
-            tpId = op.typeID();
-            break;
+    StationDetailsMap_t::const_iterator it = mStationDetailsMap.find(pos);
+    if (it != mStationDetailsMap.end()) {
+        mi_foreach_r(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
+            const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
+            const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
+            if (op.paramID() == par and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
+            {
+                tpId = op.typeID();
+                break;
+            }
         }
     }
     if( abs(tpId) > 503 ) {
         tpId = -32767;
-        mi_foreach_r(const kvalobs::kvObsPgm& op, obsPgmList) {
-            if(op.stationID() == pos && timeutil::from_miTime(op.fromtime()) < oTime) {
-                const int opar = op.paramID();
-                if((par == 105 && opar == 105)
-                    || (par == 106 && opar == 105)
-                    || (par == 109 && (opar == 104 || opar == 105 || opar == 106))
-                    || (par == 110 && (opar == 104 || opar == 105 || opar == 106 || opar == 109))
-                    || (par == 214 && opar == 213)
-                    || (par == 216 && opar == 215)
-                    || (par == 224 && opar == 223))
-                {
-                    tpId = -op.typeID();
-                    break;
+        if (it != mStationDetailsMap.end()) {
+            mi_foreach_r(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
+                if(timeutil::from_miTime(op.fromtime()) < oTime) {
+                    const int opar = op.paramID();
+                    if((par == 105 && opar == 105)
+                       || (par == 106 && opar == 105)
+                       || (par == 109 && (opar == 104 || opar == 105 || opar == 106))
+                       || (par == 110 && (opar == 104 || opar == 105 || opar == 106 || opar == 109))
+                       || (par == 214 && opar == 213)
+                       || (par == 216 && opar == 215)
+                       || (par == 224 && opar == 223))
+                    {
+                        tpId = -op.typeID();
+                        break;
+                    }
                 }
             }
         }
@@ -2512,13 +2503,17 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
     bool tdlUpd[NOPARAM];
     std::fill(tdlUpd, tdlUpd + NOPARAM, false);
 
-    timeutil::ptime protime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
+    const QSet<QString> selectedStationTypes = QSet<QString>::fromList(lstdlg->getSelectedStationTypes());
+    const bool allStationTypes = (selectedStationTypes.contains("ALL"));
+    const bool showPrioritized = lstdlg->showPrioritized();
+    const timeutil::ptime badtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
+
+    timeutil::ptime protime = badtime, aggTime = badtime;
     int prtypeId = -1;
     int prstnr = 0;
     int aggPar = 0;
     int aggTyp = 0;
     int aggStat = 0;
-    timeutil::ptime aggTime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
 
     for (kvservice::IKvObsDataList it = dataList.begin(); it != dataList.end(); it++) {
 
@@ -2541,7 +2536,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             }
             bool correctLevel = (dit->level() == HqcMainWindow::sLevel);
             bool correctTypeId;
-            if (lstdlg->getSelectedStationTypes().contains("ALL") && d_sensor0 == 0) // FIXME sensor
+            if (allStationTypes && d_sensor0 == 0) // FIXME sensor
                 correctTypeId = true;
             else
                 correctTypeId = typeIdFilter(stnr, d_type, d_sensor0, otime, d_param);
@@ -2555,14 +2550,14 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
                 aggPar = 0;
                 aggTyp = 0;
                 aggStat = 0;
-                aggTime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
+                aggTime = badtime;
             }
 
             int stnr = dit->stationID();
             int hour = otime.time_of_day().hours();
             int typeId = d_type;
-            if ((otime == protime && stnr == prstnr && d_param == prParam && typeId == prtypeId && d_sensor == prSensor && lstdlg->showPrioritized())
-                    || (!correctTypeId && !lstdlg->showPrioritized())) {
+            if ((otime == protime && stnr == prstnr && d_param == prParam && typeId == prtypeId && d_sensor == prSensor && showPrioritized)
+                    || (!correctTypeId && not showPrioritized)) {
                 protime = otime;
                 prstnr = stnr;
                 prtypeId = typeId;
@@ -2605,12 +2600,12 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             tdl.set_longitude(lon);
             tdl.set_altitude(hoh);
             tdl.set_snr(snr);
-            bool correctHqcType = hqcTypeFilter(tdl.showTypeId(), env, stnr); //  !!!
+            const bool correctHqcType = hqcTypeFilter(selectedStationTypes, tdl.showTypeId(), env);
 
             ++dit;
             ++ditNo;
             if( dit == it->dataList().end() ) {
-                otime = timeutil::from_iso_extended_string("1801-01-01 00:00:00");
+                otime = badtime;
                 stnr = 0;
                 typeId = 0;
             } else {
@@ -2637,7 +2632,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             }
             const bool timeFiltered = timeFilter(hour); // FIXME this is the hour from before ++dit, is this correct?
             if ((timeFiltered && !isAlreadyStored(protime, prstnr) && ((otime != protime || (otime == protime && stnr != prstnr))))
-                    || (lstdlg->getSelectedStationTypes().contains("ALL") && typeId != prtypeId)) {
+                    || (allStationTypes && typeId != prtypeId)) {
                 datalist->push_back(tdl);
                 tdl = model::KvalobsData();
                 std::fill(tdlUpd, tdlUpd + NOPARAM, false);

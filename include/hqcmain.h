@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtCore/qlist.h>
 #include <QtCore/qmap.h>
+#include <QtCore/qset.h>
 #include <QtCore/qstring.h>
 #include <QtCore/qstringlist.h>
 #include <QtGui/qmainwindow.h>
@@ -127,7 +128,7 @@ public:
    * \brief Returns true if the given typeId and environment corresponds
    *        to a station type checked in the ListDialog
    */
-  bool hqcTypeFilter(int typeId, int environment, int stationId);
+  bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
   bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
   bool isAlreadyStored(const timeutil::ptime&, int);
   /*!
@@ -216,7 +217,14 @@ public:
   bool isShTy;
 
     const std::list<listStat_t>& getStationDetails();
-    const ObsTypeList& getObsTypeList() { return otpList; }
+
+    struct StationDetails {
+        std::set<int> typeIDs;
+        std::vector<kvalobs::kvObsPgm> obs_pgm;
+    };
+    typedef std::map<int, StationDetails> StationDetailsMap_t;
+
+    const StationDetailsMap_t& getStationDetailsMap() { return mStationDetailsMap; }
 
 public Q_SLOTS:
 
@@ -305,10 +313,11 @@ private:
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;
 
-  ObsTypeList otpList;
   std::list<kvalobs::kvObsPgm> obsPgmList;
   std::list<kvalobs::kvStation> slist;
   std::list<kvalobs::kvParam> plist;
+
+    StationDetailsMap_t mStationDetailsMap;
 
   /**
    * Parameters from parameter groups. The keys will be the user's

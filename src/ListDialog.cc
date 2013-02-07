@@ -746,7 +746,7 @@ std::vector<int> ListDialog::getSelectedStations()
 void ListDialog::showStationSelectionDialog()
 {
     const std::list<listStat_t>& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
-    const ObsTypeList& otpList = static_cast<HqcMainWindow*>(parent())->getObsTypeList();
+    const HqcMainWindow::StationDetailsMap_t& stationDetailsMap = static_cast<HqcMainWindow*>(parent())->getStationDetailsMap();
 
     removeAllStatFromListbox();
     if( statSelect )
@@ -757,7 +757,7 @@ void ListDialog::showStationSelectionDialog()
                                       getSelectedCounties(),
                                       showSynop(),
                                       showPrioritized(),
-                                      otpList,
+                                      stationDetailsMap,
                                       this);
     connect(statSelect, SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
     connect(statSelect, SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
@@ -787,7 +787,7 @@ void StationTable::setData(const listStat_l& listStat,
                            const QStringList& counties,
 			   bool web,
 			   bool pri,
-			   const ObsTypeList& otpList)
+			   const HqcMainWindow::StationDetailsMap_t& stationDetailsMap)
 {
   setNumRows(listStat.size());
 
@@ -799,22 +799,10 @@ void StationTable::setData(const listStat_l& listStat,
     if( s.pri.size() >= 4 )
         prty = QString::fromStdString(s.pri.substr(3,1));
 
-    bool foundStat = false;
-    ObsTypeList::const_iterator oit = otpList.begin();
-    for ( ; oit != otpList.end(); oit++) {
-        if( oit->empty() ) {
-            std::cerr << "bad otpList" << std::endl;
-            continue;
-        }
-        TypeList::const_iterator tit = oit->begin();
-        if( s.stationid == (*tit) ) {
-            foundStat = true;
-            break;
-        }
-    }
-    if ( !foundStat ) {
-      continue;
-    }
+    HqcMainWindow::StationDetailsMap_t::const_iterator oit = stationDetailsMap.find(s.stationid);
+    if (oit == stationDetailsMap.end())
+        continue;
+
     if ( ! (counties.contains("ALL") ||
 	    counties.contains(QString::fromStdString(s.fylke)) ||
        	    (webStat && web) || (priStat && pri) ))
@@ -875,16 +863,12 @@ void StationTable::setData(const listStat_l& listStat,
     hideColumn(6);
 }
 
-bool StationTable::findInTypes(ObsTypeList::const_iterator tList, int type)
+bool StationTable::findInTypes(HqcMainWindow::StationDetailsMap_t::const_iterator tList, int type)
 {
-    if( tList->size() < 2 )
-        return false;
-    // '++' in next is necessary as the first entry in tList is not a
-    // typeId but a station id number
-    return std::find(++tList->begin(), tList->end(), type) != tList->end();
+    return (tList->second.typeIDs.find(type) != tList->second.typeIDs.end());
 }
 
-QString StationTable::getEnvironment(const int envID, ObsTypeList::const_iterator oit) {
+QString StationTable::getEnvironment(const int envID, HqcMainWindow::StationDetailsMap_t::const_iterator oit) {
   QString env;
   if ( envID == 1 && findInTypes(oit, 311) )
     env = "AF";
@@ -942,7 +926,7 @@ StationSelection::StationSelection(const listStat_l& listStat,
                                    const QStringList& counties,
 				   bool web,
 				   bool pri,
-				   const ObsTypeList& otpList,
+				   const HqcMainWindow::StationDetailsMap_t& stationDetailsMap,
                                    QWidget* parent)
     : QDialog(parent)
 {
@@ -951,7 +935,7 @@ StationSelection::StationSelection(const listStat_l& listStat,
     connect(selectionOK, SIGNAL(clicked()), this, SLOT(hide()));
     connect(selectAllStations, SIGNAL(clicked()),SLOT(doSelectAllStations()));
 
-    stationTable->setData(listStat, stationTypes, counties, web, pri, otpList);
+    stationTable->setData(listStat, stationTypes, counties, web, pri, stationDetailsMap);
     connect(stationTable,SIGNAL(currentChanged(int, int)),
             SLOT(tableCellClicked(int, int)));
 }

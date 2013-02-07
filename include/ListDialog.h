@@ -33,6 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define LISTDIALOG_H
 
 #include "connect2stinfosys.h"
+#include "hqcmain.h"
 
 #include <QtGui/QCheckBox>
 #include <Qt3Support/Q3Table>
@@ -40,11 +41,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <list>
 #include <set>
 #include <vector>
-
-class HqcMainWindow;
-
-typedef std::list<int>                                 TypeList;
-typedef std::list<TypeList>                         ObsTypeList;
 
 class ItemCheckBox : public QCheckBox
 { Q_OBJECT
@@ -168,9 +164,9 @@ class StationTable : public Q3Table
 public:
     StationTable(QWidget* parent=0);
     void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties,
-                 bool web, bool pri, const ObsTypeList& otpList);
- bool findInTypes(ObsTypeList::const_iterator, int);
- QString getEnvironment(const int envID, ObsTypeList::const_iterator);
+                 bool web, bool pri, const HqcMainWindow::StationDetailsMap_t& stationDetailsMap);
+ bool findInTypes(HqcMainWindow::StationDetailsMap_t::const_iterator, int);
+ QString getEnvironment(const int envID, HqcMainWindow::StationDetailsMap_t::const_iterator);
  void sortColumn( int col, bool ascending, bool wholeRows );
 };
 
@@ -184,7 +180,7 @@ public:
                      const QStringList& counties,
                      bool,
                      bool,
-                     const ObsTypeList&,
+                     const HqcMainWindow::StationDetailsMap_t& stationDetailsMap,
                      QWidget* parent);
 
     std::vector<int> getSelectedStations();
