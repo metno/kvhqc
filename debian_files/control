@@ -12,7 +12,7 @@ Build-Depends: debhelper (>= 7.0.50), quilt, g++,
  metlibs-qtimeseries-dev (=4.4.1~svn3810-1lucid1),
  metlibs-qutilities-dev (=4.4.1~svn3810-1lucid1)
 @metno_config_else
- libkvcpp-dev (>= 2.7.0~rc3),
+ libkvcpp-dev (>= 2.7.0~rc5),
  metlibs-dev (>= 4.9.6-1)
 @metno_config_endif
 Standards-Version: 3.8.4
@@ -21,7 +21,12 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
-Depends: coserver4, libqt4-sql-psql, ${shlibs:Depends}, ${misc:Depends}
+Depends: coserver4, libqt4-sql-psql,
+@metno_config_if ^lucid$
+@metno_config_else
+ libkvcpp4 (>= 2.7.0~rc5),
+@metno_config_endif
+ ${shlibs:Depends}, ${misc:Depends}
 Recommends: diana, dianaconfig, catchcrash
 Provides: kvhqc
 Description: manual quality control for kvalobs
