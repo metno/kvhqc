@@ -6,12 +6,13 @@ Build-Depends: debhelper (>= 7.0.50), quilt, g++,
  metno-devscripts (>= 0.5.7),
  libqt4-dev, libgfortran3, libgtest-dev,
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev,
- libkvcpp2-dev | libkvcpp-dev (>= 2.7.0~rc3),
 @metno_config_if ^lucid$
+ libkvcpp2-dev,
  metlibs-dev (=4.4.1~svn3810-1lucid1),
  metlibs-qtimeseries-dev (=4.4.1~svn3810-1lucid1),
  metlibs-qutilities-dev (=4.4.1~svn3810-1lucid1)
 @metno_config_else
+ libkvcpp-dev (>= 2.7.0~rc3),
  metlibs-dev (>= 4.9.6-1)
 @metno_config_endif
 Standards-Version: 3.8.4
