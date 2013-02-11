@@ -192,7 +192,7 @@ public:
   kvalobs::kvData getKvData( ) const { return getKvData( currentRow() ); }
 
 
-public slots:
+public Q_SLOTS:
   /*!
    * \brief Updates controlinfo and sends the changed data to the kvalobs database
    */
@@ -200,7 +200,7 @@ public slots:
   //  void printErrorList();
 
 
-signals:
+Q_SIGNALS:
 
   /**
    * \brief Reports the selection of a new station and/or obstime in the
@@ -331,7 +331,7 @@ private:
    */
   bool specialTimeFilter(int, const timeutil::ptime&);
   bool typeFilter(int, int, int, const timeutil::ptime&);
-private slots:
+private Q_SLOTS:
   //  void tableCellClicked(int, int, int, const QPoint&, vector<model::KvalobsData>&);
   void tableCellClicked(int, int, int);
   void updateFaillist(int, int);

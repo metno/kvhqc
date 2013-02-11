@@ -1,7 +1,8 @@
 [Desktop Entry]
-Name=WatchRR @PVERSION@
-Comment=Nedbørkort
-Comment[no]=Nedbørkort
+Name=WatchRR @PVERSION@ (old)
+Name[no]=WatchRR @PVERSION@ (gammel)
+Comment=Precipitation (old version)
+Comment[no]=Nedbørkort (gammel versjon)
 Exec=WatchRR-@PVERSION@
 Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/watchrr.png
 Terminal=false

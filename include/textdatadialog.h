@@ -44,13 +44,13 @@ public:
     QDateTime dtto;
     QDateTime dtfrom;
 
-public slots:
+public Q_SLOTS:
     void setStation(const QString& st);
     void setFromTime(const QDateTime& dt);
     void setToTime(const QDateTime& dt);
     void checkStationId();
 
-signals:
+Q_SIGNALS:
     void textDataHide();
     void textDataApply();
 };

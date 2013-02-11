@@ -51,6 +51,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
+#include "KvalobsModelAccess.hh"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
 #include "KvMetaDataBuffer.hh"
@@ -58,16 +59,26 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
 #include "parameterdialog.h"
+#include "QtKvalobsAccess.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "rejecttimeseriesdialog.h"
-#include "RRDialog.h"
 #include "StationInformation.h"
 #include "textdatadialog.h"
 #include "TimeseriesDialog.h"
 #include "timeutil.hh"
 #include "weatherdialog.h"
 
+#include "StationDialog.hh"
+#include "MainDialog.hh"
+
+#ifndef slots
+#define slots
+#include <qTimeseries/TSPlotDialog.h>
+#undef slots
+#else
+#include <qTimeseries/TSPlotDialog.h>
+#endif
 #include <qTimeseries/TSPlot.h>
 #include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
@@ -93,6 +104,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
+#include <boost/make_shared.hpp>
 
 #include <algorithm>
 #include <deque>
@@ -176,7 +188,7 @@ HqcMainWindow * getHqcMainWindow( QObject * o )
 HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, tr("HQC"))
   , datalist(new model::KvalobsDataList)
-  , reinserter( NULL )
+  , reinserter(0)
   , dataModel(0)
   , firstObs(true)
   , sLevel(0)
@@ -186,6 +198,8 @@ HqcMainWindow::HqcMainWindow()
   , dianaconnected(false)
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
+  , kda(boost::make_shared<QtKvalobsAccess>())
+  , kma(boost::make_shared<KvalobsModelAccess>())
 {
     ui->setupUi(this);
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
@@ -312,15 +326,16 @@ void HqcMainWindow::startup()
     // --- CHECK USER IDENTITY ----------------------------------------
 
     reinserter = Authentication::identifyUser(this, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
+    kda->setReinserter(reinserter);
 
     //-----------------------------------------------------------------
 
     readSettings();
     show();
     qApp->processEvents();
-    if( not reinserter ) {
+    if (not reinserter) {
         mHints->addHint(tr("<h1>Autentisering</h1>"
-                           "Du er ikke registrert som operatør!<br/>"
+                           "Du er ikke registrert som operatør! "
                            "Du kan se dataliste, feillog og feilliste, "
                            "men ikke gjøre endringer i Kvalobsdatabasen!"));
     }
@@ -585,8 +600,8 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
    // Insert any custom messages here
   default:
       QMessageBox::critical(this, tr("Unable to insert"),
-              tr("An error occured when attempting to insert data into kvalobs.\n"
-                      "The message from kvalobs was\n%1").arg(QString(result->message)),
+                            tr("An error occured when attempting to insert data into kvalobs.\n"
+                               "The message from kvalobs was\n%1").arg(QString(result->message)),
               QMessageBox::Ok, QMessageBox::NoButton);
     return;
   }
@@ -779,12 +794,12 @@ void HqcMainWindow::ListOK()
       stationList.push_back(statId);
     }
   }
-  emit newStationList(stationList);
+  /*emit*/ newStationList(stationList);
   cerr << "newStationList emitted " << endl;
 
 
   //  send parameter names to ts dialog
-  emit newParameterList(selPar);
+  /*emit*/ newParameterList(selPar);
   if ( lity != erLi && lity != erSa  ) {
     sendAnalysisMessage();
     sendTimes();
@@ -897,6 +912,8 @@ void HqcMainWindow::TimeseriesOK() {
 const std::list<listStat_t>& HqcMainWindow::getStationDetails()
 {
     LOG_SCOPE();
+    statusBar()->message(tr("Loading station info..."));
+    BusyIndicator busy;
     const timeutil::ptime now = timeutil::now();
     std::cerr << "now=" << now << " last=" << mLastStationListUpdate << std::endl;
     if( mLastStationListUpdate.is_not_a_date_time()
@@ -906,6 +923,7 @@ const std::list<listStat_t>& HqcMainWindow::getStationDetails()
         readFromStInfoSys()
             or readFromStationFile();
     }
+    statusBar()->message("");
     return listStat;
 }
 
@@ -1026,19 +1044,50 @@ void HqcMainWindow::rejectedOK() {
 
 void HqcMainWindow::showWatchRR()
 {
-    kvalobs::kvData data;
+    Sensor sensor(83880, 110 /*kvalobs::PARAMID_RR_24*/, 0, 0, 302);
+    const timeutil::ptime now = timeutil::now();
+    timeutil::ptime tMiddle = now;
 
     QMdiSubWindow* subWindow = ui->ws->activeSubWindow();
     if( subWindow ) {
         ErrorList* errorList = dynamic_cast<ErrorList*>(subWindow->widget());
-        if( errorList )
-            data = errorList->getKvData();
+        if (errorList) {
+            const kvalobs::kvData data = errorList->getKvData();
+            sensor.stationId = data.stationID();
+            sensor.typeId = data.typeID();
+            tMiddle = timeutil::from_miTime(data.obstime());
+        }
     }
 
-    WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog(data, this, Qt::Window);
-    if ( rrd ) {
-        rrd->setReinserter( reinserter );
-        rrd->show();
+    timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
+    timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
+    if (timeTo > now)
+        timeTo = now;
+    TimeRange time(timeFrom, timeTo);
+
+    StationDialog sd(sensor, time);
+    if (not sd.exec())
+        return;
+
+    sensor = sd.selectedSensor();
+    time = sd.selectedTime();
+    
+    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
+    MainDialog main(eda, kma, sensor, time);
+    if (main.exec()) {
+        if (not eda->sendChangesToParent()) {
+            QMessageBox::critical(0,
+                                  tr("WatchRR"),
+                                  tr("Sorry, your changes could not be saved and are lost!"),
+                                  tr("OK"),
+                                  "");
+        } else {
+            QMessageBox::information(0,
+                                     tr("WatchRR"),
+                                     tr("Your changes have been saved."),
+                                     tr("OK"),
+                                     "");
+        }
     }
 }
 
@@ -1897,7 +1946,7 @@ void HqcMainWindow::closeWindow()
 
   ui->ws->closeActiveSubWindow();
 
-  emit windowClose();
+  /*emit*/ windowClose();
 }
 
 
@@ -2003,7 +2052,7 @@ void HqcMainWindow::processLetter(const miMessage& letter)
   else if (letter.command == "station" ) {
     const char* ccmn = letter.common.c_str();
     QString cmn = QString(ccmn);
-    emit statTimeReceived(cmn);
+    /*emit*/ statTimeReceived(cmn);
   }
   else if(letter.command == qmstrings::timechanged){
       const char* ccmn = letter.common.c_str();

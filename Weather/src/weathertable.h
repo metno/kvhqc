@@ -116,7 +116,7 @@ extern const int params[NP];
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
     int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime);
-  protected slots:
+  protected Q_SLOTS:
     /**
      * \brief Update status bar with info from cell.
      */

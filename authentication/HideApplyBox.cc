@@ -20,6 +20,6 @@ void HideApplyBox::setCanApply(bool enabled)
 
 void HideApplyBox::hideApply()
 {
-    emit hide();
-    emit apply();
+    /*emit*/ hide();
+    /*emit*/ apply();
 }

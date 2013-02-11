@@ -104,12 +104,12 @@ namespace model
 
     kvalobs::kvData getKvData_(const QModelIndex & index) const;
 
-  public slots:
+  public Q_SLOTS:
     void setShowStationName(bool show);
     void setShowPosition(bool show);
     void setShowHeight(bool show);
 
-  signals:
+  Q_SIGNALS:
     void dataModification(const kvalobs::kvData & modifiedData);
 
   private:

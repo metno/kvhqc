@@ -48,7 +48,7 @@ namespace FailInfo {
     virtual ~FailDialog();
     FailList *failList;
 
-  public slots:
+  public Q_SLOTS:
     virtual void newData( const kvalobs::kvData & data )
     { failList->newData( data ); }
 

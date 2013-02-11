@@ -67,13 +67,13 @@ public:
 		  QDateTime & toTime,
 		  int& stationID,
 		  bool& maybeQC2);
-public slots:
+public Q_SLOTS:
   void newStationList(std::vector<QString>& stationList);
   void newParameterList(const QStringList& parameterList);
   void parameterSelectionChanged(QListWidgetItem *item);
   void stationSelected(QListWidgetItem *item);
 
-signals:
+Q_SIGNALS:
   void tsAcceptHide();
   void tsAcceptApply();
 };

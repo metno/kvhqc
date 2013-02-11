@@ -96,7 +96,7 @@ namespace WatchRR
 
     //    QToolTipGroup *ttGroup;
 
-  public slots:
+  public Q_SLOTS:
     virtual void polish();
 
   protected:
@@ -105,7 +105,7 @@ namespace WatchRR
 
     const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter;
 
-  protected slots:
+  protected Q_SLOTS:
     virtual void reject();
     virtual void accept();
 

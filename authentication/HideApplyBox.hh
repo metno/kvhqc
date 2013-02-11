@@ -13,11 +13,11 @@ public:
 
     void setCanApply(bool enabled);
 
-signals:
+Q_SIGNALS:
     void apply();
     void hide();
 
-private slots:
+private Q_SLOTS:
     void hideApply();
 };
 

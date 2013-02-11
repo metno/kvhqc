@@ -42,7 +42,7 @@ public:
     QDateTime dtto;
     QDateTime dtfrom;
 
-public slots:
+public Q_SLOTS:
     void setFromTime(const QDateTime& dt);
     void setToTime(const QDateTime& dt);
     //    Reject getReject();
@@ -54,13 +54,13 @@ protected:
     QHBoxLayout* Layout1;
     QSpacerItem* Horizontal_Spacing2;
 
-protected slots:
+protected Q_SLOTS:
     virtual void languageChange();
 
-private slots:
+private Q_SLOTS:
     void timeRangeCheck();
     */
-signals:
+Q_SIGNALS:
     void rejectHide();
     void rejectApply();
 };

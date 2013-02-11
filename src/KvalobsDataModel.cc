@@ -259,12 +259,12 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	  }
 
 	  QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
-	  emit dataChanged(flagIndex, index);
-	  emit dataModification(changeData);
+	  /*emit*/ dataChanged(flagIndex, index);
+	  /*emit*/ dataModification(changeData);
 	  qDebug() << "SetData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
 		   << qPrintable(p.parameterName) << " from " << oldValue
 		   << " to " << val << "," << d.typeId(p.paramid);
-	  cerr << changeData.useinfo() << endl;
+	  std::cerr << changeData.useinfo() << std::endl;
 	  return true;
 	}
 	catch ( InvalidIndex & ) {
@@ -336,12 +336,12 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	    //            d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
-            emit dataChanged(flagIndex, index);
-	    //            emit dataModification(changeData);
+            /*emit*/ dataChanged(flagIndex, index);
+	    //            /*emit*/ dataModification(changeData);
             qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
 		     << qPrintable(p.parameterName) << " from "
 		     << oldValue << " to " << val;
-	    cerr << changeData.useinfo() << endl;
+	    std::cerr << changeData.useinfo() << std::endl;
             return true;
           }
           catch ( InvalidIndex & ) {
@@ -404,8 +404,8 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	    //            d.set_useinfo(p.paramid, changeData.useinfo());
 
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
-            emit dataChanged(flagIndex, index);
-            emit dataModification(changeData);
+            /*emit*/ dataChanged(flagIndex, index);
+            /*emit*/ dataModification(changeData);
             qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val;
             return true;
           }
@@ -421,7 +421,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
   {
     if ( show != showStationNameInHeader_ ) {
       showStationNameInHeader_ = show;
-      emit headerDataChanged(Qt::Vertical, 0, rowCount());
+      /*emit*/ headerDataChanged(Qt::Vertical, 0, rowCount());
     }
   }
 
@@ -429,7 +429,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
   {
     if ( show != showPositionInHeader_ ) {
         showPositionInHeader_ = show;
-        emit headerDataChanged(Qt::Vertical, 0, rowCount());
+        /*emit*/ headerDataChanged(Qt::Vertical, 0, rowCount());
     }
   }
 
@@ -437,13 +437,13 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
   {
     if ( show != showHeightInHeader_ ) {
         showHeightInHeader_ = show;
-        emit headerDataChanged(Qt::Vertical, 0, rowCount());
+        /*emit*/ headerDataChanged(Qt::Vertical, 0, rowCount());
     }
   }
 
   QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
   {
-    cerr.flags(ios::fixed);
+    std::cerr.flags(std::ios::fixed);
     const Parameter & p = getParameter(index);
 
     const KvalobsData & d = kvalobsData_->at(index.row());

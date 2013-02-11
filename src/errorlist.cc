@@ -205,7 +205,7 @@ ErrorList::ErrorList(QStringList& selPar,
     connect( mainWindow, SIGNAL( windowClose() ),
              this, SIGNAL( errorListClosed() ) );
     
-    cerr.setf(ios::fixed);
+    std::cerr.setf(std::ios::fixed);
 
     setNumRows( 0 );
     setNumCols( 0 );
@@ -426,7 +426,7 @@ void ErrorList::setTableCells()
         setRowReadOnly( insRow, false);
         setItem( insRow, 0, new ErrorListFirstCol( this, insRow ) );
         
-        //std::cerr << decodeutility::kvdataformatter::createString( getKvData( mo ) ) << endl;
+        //std::cerr << decodeutility::kvdataformatter::createString( getKvData( mo ) ) << std::endl;
         
         if( mo.flg <= 1 && mo.flg > -3 )
             continue;
@@ -479,7 +479,7 @@ void ErrorList::setTableCells()
         insRow++;
     }
     
-    cerr << "Antall rader = " << insRow << endl;
+    std::cerr << "Antall rader = " << insRow << std::endl;
     
     for( int icol = 14; icol < 16; icol++ ) {
         for( int irow = 0; irow < insRow; irow++ ) {
@@ -563,7 +563,7 @@ int ErrorList::priorityControlFilter(QString cfailed)
     return 1;
 }
 
-int ErrorList::errorFilter(int parNo,string ctrInfo, string cFailed, QString& flTyp)
+int ErrorList::errorFilter(int parNo, std::string ctrInfo, std::string cFailed, QString& flTyp)
 {
     QString flTypes[] = {"fagg","fr","fcc","fs","fnum","fpos","fmis","ftime","fw","fstat","fcp","fclim","fd","fpre","fcombi","fhqc"};
     QString qStrCtrInfo = QString::fromStdString(ctrInfo);
@@ -715,9 +715,9 @@ void ErrorList::updateKvBase(const mem& memStore)
       result = mainWindow->reinserter->insert(kd);
     }
     if ( result->res != CKvalObs::CDataSource::OK ) {
-      cerr << "Could not send data!" << endl
-	   << "Message was:" << endl
-	   << result->message << endl;
+      std::cerr << "Could not send data!" << std::endl
+	   << "Message was:" << std::endl
+	   << result->message << std::endl;
       // TODO Handle Error!
       return;
     }
@@ -952,7 +952,7 @@ void ErrorList::markModified( int row, int col )
   default:
     break;
   }
-  //  cerr << "markModified( " << elfc->memStoreIndex() << ");\n";
+  //  std::cerr << "markModified( " << elfc->memStoreIndex() << ");\n";
   // Test starter
   bool emptyRec;
   if ( col == 14 || col == 15 || col == 19 ) {
@@ -970,7 +970,7 @@ void ErrorList::markModified( int row, int col )
 
 void ErrorList::clearOtherMods( int row, int col )
 {
-  cerr << "clearOtherMods( " << row << ", " << col << ")\n";
+  std::cerr << "clearOtherMods( " << row << ", " << col << ")\n";
 
   if ( col > 13 && col < 20 ) {
     if ( (col > 15 && col < 19 && text( row, col ).stripWhiteSpace().isEmpty()) ) {
@@ -1015,7 +1015,7 @@ void ErrorList::signalStationSelected( int row )
   oldRow = row;
 
 
-  cerr << "getMem(" << row << ");" << endl;
+  std::cerr << "getMem(" << row << ");" << std::endl;
   const struct mem * m = getMem( row );
   ((HqcMainWindow*)getHqcMainWindow( this ))->sendObservations(m->obstime,true);
   ((HqcMainWindow*)getHqcMainWindow( this ))->sendStation(m->stnr);
@@ -1074,11 +1074,11 @@ kvData ErrorList::getKvData(int row) const
     return getKvData( *m );
 }
 
-typedef list<kvData> kvDataList;
+typedef std::list<kvData> kvDataList;
 
 void ErrorList::saveChanges()
 {
-  cerr << "saving changes" << endl;
+  std::cerr << "saving changes" << std::endl;
 
   DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
   if ( ! reinserter ) {
@@ -1129,7 +1129,7 @@ void ErrorList::saveChanges()
     kvData kd = getKvData( row );
     kvControlInfo cif = kd.controlinfo();
     kvUseInfo uif = kd.useinfo();
-    cerr << "Gamle flagg = " << cif << " " << uif << endl;
+    std::cerr << "Gamle flagg = " << cif << " " << uif << std::endl;
 
     int fmis = cif.flag(kvalobs::flag::fmis);
     int fd = cif.flag(kvalobs::flag::fd);
@@ -1199,7 +1199,7 @@ void ErrorList::saveChanges()
 	    cif.set(kvalobs::flag::fd,1);
 	}
 	else if ( fmis == 3 ) {
-	  cerr << "Vi skulle ikke vært her" << endl;
+	  std::cerr << "Vi skulle ikke vært her" << std::endl;
 	}
       }
       break;
@@ -1246,9 +1246,9 @@ void ErrorList::saveChanges()
       {
 	int fmis = cif.flag(kvalobs::flag::fmis);
 	if ( fmis == 1 )
-	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
+	  std::cerr << "VI SKULLE IKKE VÆRT HER!!!" << std::endl;
 	else if ( fmis == 3 )
-	  cerr << "VI SKULLE IKKE VÆRT HER!!!" << endl;
+	  std::cerr << "VI SKULLE IKKE VÆRT HER!!!" << std::endl;
 	else {
 	  //	  if ( okIt->pressedButton == Qt::RightButton )
 	  //	    cif.set(kvalobs::flag::fhqc,4);
@@ -1263,11 +1263,11 @@ void ErrorList::saveChanges()
       break;
     default:
       // Undo changes:
-      cerr << "KNUT tester er vi her ???? " << endl;
+      std::cerr << "KNUT tester er vi her ???? " << std::endl;
       cif.set(kvalobs::flag::fhqc,0); break;
     }
     kd.controlinfo( cif );
-    cerr << "Nye flagg    = " << cif << " " << uif << endl;
+    std::cerr << "Nye flagg    = " << cif << " " << uif << std::endl;
 
     //    if ( ccol > 14 and ccol < 19 )
     if ( ccol > 15 and ccol < 19 )
@@ -1289,7 +1289,7 @@ void ErrorList::saveChanges()
     modData.push_back( kd );
   }
 
-  cerr << decodeutility::kvdataformatter::createString( modData ) << endl;
+  std::cerr << decodeutility::kvdataformatter::createString( modData ) << std::endl;
 
 
   CKvalObs::CDataSource::Result_var result;
@@ -1323,7 +1323,7 @@ void ErrorList::readLimits() {
   QString limitsFile = ::hqc::getPath(::hqc::CONFDIR) + "/slimits";
   QFile limits(limitsFile);
   if ( !limits.open(QIODevice::ReadOnly) ) {
-    cerr << "kan ikke åpne " << limitsFile.toStdString() << endl;
+    std::cerr << "kan ikke åpne " << limitsFile.toStdString() << std::endl;
     exit(1);
   }
   Q3TextStream limitStream(&limits);

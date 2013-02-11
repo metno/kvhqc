@@ -59,12 +59,12 @@ private:
   QCheckBox* clk[24];
   QCheckBox* allTimes;
   QCheckBox* standardTimes;
-private slots:
+private Q_SLOTS:
   void standardCheck();
   void allCheck();
   void oStandardCheck();
   void oAllCheck();
-signals:
+Q_SIGNALS:
   void ClockHide();
   void ClockApply();
 };

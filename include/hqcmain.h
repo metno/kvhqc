@@ -37,7 +37,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
-#include <qTimeseries/TSPlotDialog.h>
 
 #include <QtCore/qlist.h>
 #include <QtCore/qmap.h>
@@ -50,6 +49,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class ClientButton;
 class miMessage;
+class TSPlotDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMdiArea;
@@ -68,6 +68,8 @@ class RejectDialog;
 class RejectTimeseriesDialog;
 class TextDataDialog;
 class TimeseriesDialog;
+class KvalobsAccess;
+class KvalobsModelAccess;
 
 namespace model {
 class KvalobsDataModel;
@@ -333,6 +335,9 @@ private:
     bool noMark;
     bool all;
   };
+
+    boost::shared_ptr<KvalobsAccess> kda;
+    boost::shared_ptr<KvalobsModelAccess> kma;
 
 protected:
   // socket methods

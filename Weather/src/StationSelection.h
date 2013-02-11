@@ -56,7 +56,7 @@ namespace Weather
     int typeID() const;
     int sensor() const;
 
-  private slots:
+  private Q_SLOTS:
     void updateTypeID_();
 
   private:

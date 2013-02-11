@@ -450,8 +450,8 @@ void WeatherDialog::setupGUI(int type)
       if ( corrMb != 1 )
 	res = ri->insert( dl );
       else {
-	//	emit dontStore(cTab->oldNew);
-	emit dontStore();
+	//	/*emit*/ dontStore(cTab->oldNew);
+	/*emit*/ dontStore();
 	cTab->kvCorrList.clear();
 	cTab->oldNew.clear();
 	cTab->rowCol.clear();

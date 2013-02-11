@@ -52,10 +52,10 @@ public:
 
   bool isSelectedParameter(int paramIndex) const;
 
-private slots:
+private Q_SLOTS:
   void selectionChanged();
 
-signals:
+Q_SIGNALS:
   void paramHide();
   void paramApply();
 };

@@ -1,7 +1,7 @@
 [Desktop Entry]
-Name=WatchRR2 @PVERSION@
-Comment=Precipitation (test version)
-Comment[no]=Nedbørkort (test-versjon)
+Name=WatchRR @PVERSION@
+Comment=Precipitation
+Comment[no]=Nedbørkort
 Exec=WatchRR2-@PVERSION@ --config /etc/kvhqc/@PVERSION@/kvalobs.conf
 Icon=/usr/share/${PROJECT_NAME}/${PVERSION}/images/watchrr.png
 Terminal=false

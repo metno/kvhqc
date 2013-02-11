@@ -30,11 +30,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
+#include "QtKvService.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
-#include <qapplication.h>
-#include <qdebug.h>
+#include <QtCore/qdebug.h>
+#include <QtCore/QLibraryInfo>
+#include <QtCore/QTranslator>
+#include <QtGui/QApplication>
 
 #include <iostream>
 
@@ -45,62 +48,57 @@ using kvservice::corba::CorbaKvApp;
 
 int main( int argc, char* argv[] )
 {
-  QApplication a( argc, argv, true );
+    QApplication a( argc, argv, true );
 
-  QStringList args = a.arguments();
+    QTranslator qtTranslator;
+    qtTranslator.load("qt_" + QLocale::system().name(),
+                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    a.installTranslator(&qtTranslator);
 
-  bool haveUnknownOptions = false;
-  QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
-  for (int i = 1; i < args.size(); ++i) {
-      if( args.at(i) == "--config" ) {
-          if( i+1 >= args.size() ) {
-              qDebug() << "invalid --config without filename";
-              exit(1);
-          }
-          i += 1;
-          myconf = args.at(i);
-          qDebug() << "--config '" << myconf << "'";
-      } else {
-          haveUnknownOptions = true;
-          qDebug() << "Unknown option: " << args.at(i);
-      }
-  }
-  if( haveUnknownOptions ) {
-      qDebug() << "have unknown options, stop";
-      exit(1);
-  }
+    const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
+    QTranslator wTranslator;
+#if (QT_VERSION >= QT_VERSION_CHECK(4, 8, 0))
+    const bool translationsLoaded = wTranslator.load(QLocale::system(), "watchrr2", "_", langDir);
+#else
+    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir);
+#endif
+    if (not translationsLoaded)
+        qDebug() << "failed to load translations from " << langDir;
+    a.installTranslator(&wTranslator);
+    
+    QStringList args = a.arguments();
 
-  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
-  if(!confSec) {
-    clog << "Can't open configuration file: " << myconf.toStdString() << endl;
-    return 1;
-  }
+    QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
+    for (int i = 1; i < args.size(); ++i) {
+        if( args.at(i) == "--config" ) {
+            if( i+1 >= args.size() ) {
+                qDebug() << "invalid --config without filename";
+                exit(1);
+            }
+            i += 1;
+            myconf = args.at(i);
+        }
+    }
 
-  KvMetaDataBuffer kvsb;
-  CorbaKvApp kvapp(argc, argv, confSec);
-  HqcMainWindow * mw;
+    miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
+    if(!confSec) {
+        clog << "Can't open configuration file: " << myconf.toStdString() << endl;
+        return 1;
+    }
+    
+    CorbaKvApp kvapp(argc, argv, confSec);
+  
+    QtKvService qkvs;
+    KvMetaDataBuffer kvsb;
 
-  try {
-    mw = new HqcMainWindow();
-  }
-  catch ( std::exception &e ) {
-    std::cerr << "Error: " << e.what() << std::endl;
-    std::cerr << "Exiting application" << std::endl;
-    return 1;
-  }
-
-  cerr << "C\n";
-
-  QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
-  QString caption = "HQC " + captionSuffix;
-  mw->setCaption( caption );
-  mw->setIcon( QPixmap( hqc::getPath(hqc::IMAGEDIR) + "/hqc.png") );
-  a.setMainWidget(mw);
-
-  mw->startup();
-
-  a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
-  int res = a.exec();
-
-  return res;
+    HqcMainWindow mw;
+    QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
+    QString caption = "HQC " + captionSuffix;
+    mw.setCaption( caption );
+    mw.setIcon( QPixmap( hqc::getPath(hqc::IMAGEDIR) + "/hqc.png") );
+    a.setMainWidget(&mw);
+    mw.startup();
+    
+    a.connect(&a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()));
+    return a.exec();
 }

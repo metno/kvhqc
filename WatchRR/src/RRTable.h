@@ -99,7 +99,7 @@ namespace WatchRR
     virtual QSize sizeHint() const;
     //    virtual QSizePolicy sizePolicy() const;
 
-  public slots:
+  public Q_SLOTS:
     /**
      * \brief Save modified data
      */
@@ -107,7 +107,7 @@ namespace WatchRR
 
     //    virtual void ensurePolished();
 
-  protected slots:
+  protected Q_SLOTS:
     /**
      * \brief Update status bar with info from cell.
      */

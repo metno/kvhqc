@@ -129,7 +129,7 @@ public:
   QRadioButton* sdType;
   QRadioButton* emType;
 
-signals:
+Q_SIGNALS:
   void dianaShowHide();
   void dianaShowApply();
 };

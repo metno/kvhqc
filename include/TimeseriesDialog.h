@@ -75,7 +75,7 @@ public:
   QCheckBox* obsCheckBox;
   QCheckBox* modCheckBox;
 
-public slots:
+public Q_SLOTS:
 
   //  void setFromTimeSlot(const timeutil::ptime& t);
   //  void setToTimeSlot(const timeutil::ptime& t);
@@ -131,11 +131,11 @@ private:
   QComboBox* markerBox;
   QComboBox* fillcolourBox;
 
-private slots:
+private Q_SLOTS:
   void setMinToTime(const QDateTime&);
   void setMaxFromTime(const QDateTime&);
 
-signals:
+Q_SIGNALS:
   void TimeseriesHide();
   void TimeseriesApply();
 };

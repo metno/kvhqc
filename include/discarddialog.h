@@ -47,7 +47,7 @@ public:
   QPushButton* okButton;
   QPushButton* cancelButton;
 
-signals:
+Q_SIGNALS:
   void tsReject();
   void tsCancel();
 };

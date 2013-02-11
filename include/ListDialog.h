@@ -46,9 +46,9 @@ public:
     ItemCheckBox(QString label, QString item, QWidget* parent=0)
         : QCheckBox(label, parent), mItem(item) { }
     QString getItem() const { return mItem; }
-private slots:
+private Q_SLOTS:
     void clicked();
-signals:
+Q_SIGNALS:
     void clicked(QString item);
 private:
     QString mItem;
@@ -108,7 +108,7 @@ private:
     ItemCheckBox* svaCoun;
     ItemCheckBox* allCoun;
 
-private slots:
+private Q_SLOTS:
     void appendStatInListbox(QString);
     void removeStatFromListbox(QString);
     void removeAllStatFromListbox();
@@ -147,7 +147,7 @@ private slots:
     void setMinTime(const QTime&);
     void showStationSelectionDialog();
 
-signals:
+Q_SIGNALS:
     void ListHide();
     void ListApply();
     void fromTimeChanged(const QDateTime&);
@@ -181,13 +181,13 @@ public:
 
     std::vector<int> getSelectedStations();
 
-private slots:
+private Q_SLOTS:
     void tableCellClicked(int, int, int, const QPoint&);
     void tableCellClicked(int, int);
     void tableCellClicked();
     void doSelectAllStations();
 
-signals:
+Q_SIGNALS:
   void stationAppended(QString);
   void stationRemoved(QString);
 

@@ -138,11 +138,11 @@ public:
     //    QToolTipGroup *ttGroup;
     kvservice::KvObsDataList ldList;
 
-  public slots:
+  public Q_SLOTS:
     //    virtual void polish();
     bool saveData();
 
-signals:
+Q_SIGNALS:
     void dontStore();
 
   protected:

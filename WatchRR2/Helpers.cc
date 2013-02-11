@@ -493,6 +493,8 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
                 haveRRaggregated = true;
             }
         }
+        if (count >= maxNeighbors)
+            break;
     }
     return neighbors;
 }

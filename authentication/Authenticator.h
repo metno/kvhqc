@@ -61,7 +61,7 @@ protected:
     QString server;
     int port;
 
-protected slots:
+protected Q_SLOTS:
     virtual void doAuthenticate();
 };
 

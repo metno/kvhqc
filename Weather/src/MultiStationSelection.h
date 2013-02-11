@@ -72,10 +72,10 @@ namespace Weather
     virtual void keyPressEvent( QKeyEvent * e );
 
 
-  public slots:
+  public Q_SLOTS:
     void start();
 
-  private slots:
+  private Q_SLOTS:
     void doTransfer();
   };
 }

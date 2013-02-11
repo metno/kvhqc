@@ -50,7 +50,7 @@ namespace FailInfo
     virtual ~FailList( );
     virtual QSize sizeHint () const;
 
-  public slots:
+  public Q_SLOTS:
     /**
      * \brief Triggers an update of the FailList widget, unless \c
      * data's errors was already displayed there from before.

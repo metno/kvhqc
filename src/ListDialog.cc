@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -30,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "ListDialog.h"
 
+#include "BusyIndicator.h"
 #include "HideApplyBox.hh"
 #include "hqcmain.h"
 #include "KvMetaDataBuffer.hh"
@@ -87,7 +86,7 @@ const char* countiesU[NCOUNTIES] =  {
 
 void ItemCheckBox::clicked()
 {
-    emit clicked(mItem);
+    /*emit*/ clicked(mItem);
 }
 
 ListDialog::ListDialog(HqcMainWindow* parent)
@@ -787,6 +786,7 @@ void StationTable::setData(const listStat_l& listStat,
 			   bool web,
 			   bool pri)
 {
+  BusyIndicator busy;
   setNumRows(listStat.size());
 
   int stInd = 0;
@@ -797,15 +797,16 @@ void StationTable::setData(const listStat_l& listStat,
     if( s.pri.size() >= 4 )
         prty = QString::fromStdString(s.pri.substr(3,1));
 
+    if (not (counties.contains("ALL")
+             or counties.contains(QString::fromStdString(s.fylke))
+             or (webStat and web) or (priStat or pri)))
+        continue;
+
     const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(s.stationid);
     std::set<int> typeIDs;
     mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList)
         typeIDs.insert(op.typeID());
 
-    if ( ! (counties.contains("ALL") ||
-	    counties.contains(QString::fromStdString(s.fylke)) ||
-       	    (webStat && web) || (priStat && pri) ))
-      continue;
     QString strEnv;
     if( stationTypes.contains("ALL") ) {
         strEnv = getEnvironment(s.environment, typeIDs);
@@ -959,10 +960,10 @@ void StationSelection::selectOrDeselectStation(int row)
     
     if( it != mSelectedStations.end() ) {
         mSelectedStations.erase(it);
-        emit stationRemoved(station);
+        /*emit*/ stationRemoved(station);
     } else {
         mSelectedStations.insert(stationID);
-        emit stationAppended(station);
+        /*emit*/ stationAppended(station);
     }
 }
 
@@ -977,7 +978,7 @@ void StationSelection::doSelectAllStations()
 
             Q3TableItem* tStationName = stationTable->item( row, 1);
             QString station = tStationNumber->text() + "  " + tStationName->text();
-            emit stationAppended(station);
+            /*emit*/ stationAppended(station);
         }
     }
 }
