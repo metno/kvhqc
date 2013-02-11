@@ -409,7 +409,7 @@ void ErrorList::fillMemoryStores(QStringList& selPar,
                        flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == "fcc" ) ||
                      ((flg == 3 || flg == 4 || flg == 6 || flg == 7 ||
                        flg == 0xA || flg == 0xB ) && flTyp == "fcp" ) ||
-                     ((flg == 3 || flg == 6 || flg == 9)&& flTyp == "fs" ) ||
+                     ((flg == 3 || flg == 6 || flg == 8 || flg == 9)&& flTyp == "fs" ) ||
                      (flg == 6 && flTyp == "fnum") ||
                      (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
                      ((flg == 2 || flg == 3) && flTyp == "ftime") ||
