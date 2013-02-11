@@ -1072,8 +1072,9 @@ void HqcMainWindow::showWatchRR()
     sensor = sd.selectedSensor();
     time = sd.selectedTime();
     
+    pluginB->connectToServer(); // disconnect
     EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
-    MainDialog main(eda, kma, sensor, time);
+    MainDialog main(eda, kma, sensor, time, this);
     if (main.exec()) {
         if (not eda->sendChangesToParent()) {
             QMessageBox::critical(0,
@@ -1089,6 +1090,7 @@ void HqcMainWindow::showWatchRR()
                                      "");
         }
     }
+    pluginB->connectToServer(); // re-connect
 }
 
 void HqcMainWindow::showWeather()

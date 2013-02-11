@@ -33,8 +33,9 @@
 
 using namespace Helpers;
 
-MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
-    : ui(new Ui::DialogMain)
+MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent)
+    : QDialog(parent)
+    , ui(new Ui::DialogMain)
     , mDianaHelper(0)
     , mDA(da)
     , mSensor(sensor)

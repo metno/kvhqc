@@ -29,7 +29,7 @@ class NeighborTableModel;
 class MainDialog : public QDialog
 {   Q_OBJECT;
 public:
-    MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
+    MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
     ~MainDialog();
 
 public Q_SLOTS:
