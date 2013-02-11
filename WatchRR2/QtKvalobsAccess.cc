@@ -49,18 +49,28 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
 
 void QtKvalobsAccess::updateSubscribedTimes()
 {
+    std::set<int> oldSubscribedStations;
+    BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
+        oldSubscribedStations.insert(st.first);
+
     KvalobsAccess::updateSubscribedTimes();
 
-    std::string newKvServiceSubscriberID;
-    if (not mSubscribedTimes.empty()) {
-        kvservice::KvDataSubscribeInfoHelper dataSubscription;
-        BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
-            dataSubscription.addStationId(st.first);
-        newKvServiceSubscriberID = qtKvService()
-            ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+    std::set<int> newSubscribedStations;
+    BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
+        newSubscribedStations.insert(st.first);
+
+    if (oldSubscribedStations != newSubscribedStations) {
+        if (not mKvServiceSubscriberID.empty()) {
+            qtKvService()->unsubscribe(mKvServiceSubscriberID);
+            mKvServiceSubscriberID = "";
+        }
+
+        if (not mSubscribedTimes.empty()) {
+            kvservice::KvDataSubscribeInfoHelper dataSubscription;
+            BOOST_FOREACH(int sid, newSubscribedStations)
+                dataSubscription.addStationId(sid);
+            mKvServiceSubscriberID = qtKvService()
+                ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+        }
     }
-    
-    if (not mKvServiceSubscriberID.empty())
-        qtKvService()->unsubscribe(mKvServiceSubscriberID);
-    mKvServiceSubscriberID = newKvServiceSubscriberID;
 }
