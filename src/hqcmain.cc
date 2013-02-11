@@ -725,7 +725,8 @@ void HqcMainWindow::ListOK()
       connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
       connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
 
-      connect(this, SIGNAL(statTimeReceived(const QString &)), tableView, SLOT(selectStation(const QString &)));
+      connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
+      connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
 
       connect(tableView, SIGNAL(stationSelected(int, const timeutil::ptime &)), this, SLOT(sendStation(int)));
       connect(tableView, SIGNAL(timeSelected(const timeutil::ptime &)), SLOT(sendObservations(const timeutil::ptime &)));
@@ -767,12 +768,8 @@ void HqcMainWindow::ListOK()
                           lity,
                           selParNo,
                           datalist,
-                          modeldatalist,
-                          userName);
+                          modeldatalist);
       connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
-      //      connect( erl, SIGNAL( stationSelected( int, const timeutil::ptime & ) ), tableView, SLOT(selectStation(const QString &)));
-      connect( erl, SIGNAL( statSel(const miMessage&) ),
-	       SLOT( processLetter(const miMessage &) ) );
       ui->ws->addSubWindow(erl);
   }
 
@@ -1185,23 +1182,13 @@ void HqcMainWindow::acceptTimeseriesOK() {
   QDateTime etime;
   QString parameter;
   int stationIndex;
-  // UNUSED int parameterIndex;
   bool maybeQC2;
   bool result = actsdlg->getResults(parameter,stime,etime,stationIndex, maybeQC2);
-  if ( !result ) return;
-  const std::list<kvalobs::kvParam> plist = KvMetaDataBuffer::instance()->allParams();
-  std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
-  for(;it!=plist.end(); it++){
-    if ( it->name().c_str() == parameter ){
-      // UNUSED parameterIndex = it->paramID();
-      break;
-    }
-  }
-  kvservice::WhichDataHelper whichData;
+  if ( !result )
+      return;
   long int stnr = stationIndex;
   const boost::posix_time::ptime ft = timeutil::from_QDateTime(stime);
   const boost::posix_time::ptime tt = timeutil::from_QDateTime(etime);
-  whichData.addStation(stnr, timeutil::to_miTime(ft), timeutil::to_miTime(tt));
   checkTypeId(stnr);
   int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
   int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
@@ -1252,22 +1239,12 @@ void HqcMainWindow::rejectTimeseriesOK() {
   QDateTime etime;
   QString parameter;
   int stationIndex;
-  // UNUSED int parameterIndex;
   bool result = rjtsdlg->getResults(parameter,stime,etime,stationIndex);
-  if ( !result ) return;
-  const std::list<kvalobs::kvParam> plist = KvMetaDataBuffer::instance()->allParams();
-  std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
-  for(;it!=plist.end(); it++){
-    if ( it->name().c_str() == parameter ){
-        // UNUSED parameterIndex = it->paramID();
-      break;
-    }
-  }
-  kvservice::WhichDataHelper whichData;
+  if ( !result )
+      return;
   long int stnr = stationIndex;
   boost::posix_time::ptime ft = timeutil::from_iso_extended_string(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
   boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
-  whichData.addStation(stnr, timeutil::to_miTime(ft), timeutil::to_miTime(tt));
   checkTypeId(stnr);
   int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
   int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
@@ -2036,34 +2013,41 @@ void HqcMainWindow::processLetterOld(miMessage& letter)
 // processes incoming miMessages
 void HqcMainWindow::processLetter(const miMessage& letter)
 {
-  LOG_SCOPE();
-  qDebug() << "command=" << letter.command.c_str();
-  if(letter.command == qmstrings::newclient) {
-      vector<std::string> desc, valu;
-      const std::string cd(letter.commondesc), co(letter.common);
-      boost::split(desc, cd, boost::is_any_of(":"));
-      boost::split(valu, co, boost::is_any_of(":"));
-      for(vector<std::string>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
-          if( *itD == "type" && *itC == "Diana" ) {
-              firstObs = true;
-              processConnect();
-              return;
-          }
-      }
-  }
-  else if (letter.command == "station" ) {
-    const char* ccmn = letter.common.c_str();
-    QString cmn = QString(ccmn);
-    /*emit*/ statTimeReceived(cmn);
-  }
-  else if(letter.command == qmstrings::timechanged){
-      const char* ccmn = letter.common.c_str();
-      QString cmn = QString(ccmn);
-      /*emit*/ statTimeReceived(cmn);
-
-    timeutil::ptime newTime = timeutil::from_iso_extended_string(letter.common);
-    sendObservations(newTime,false);
-  }
+    LOG_SCOPE();
+    std::cerr << "command=" << letter.command.c_str() << std::endl;
+    if(letter.command == qmstrings::newclient) {
+        vector<std::string> desc, valu;
+        const std::string cd(letter.commondesc), co(letter.common);
+        boost::split(desc, cd, boost::is_any_of(":"));
+        boost::split(valu, co, boost::is_any_of(":"));
+        for(vector<std::string>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
+            if( *itD == "type" && *itC == "Diana" ) {
+                firstObs = true;
+                processConnect();
+                return;
+            }
+        }
+    } else if (letter.command == qmstrings::station) {
+        if (letter.commondesc == "name,time") {
+            QStringList name_time = QString::fromStdString(letter.common).split(',');
+            bool ok = false;
+            const int stationid = name_time[0].toInt(&ok);
+            if (not ok) {
+                std::cerr << "Unable to parse first element as stationid: '" << letter.common << "'" << std::endl;
+                return;
+            }
+            const timeutil::ptime obstime = timeutil::from_iso_extended_string(name_time[1].toStdString());
+            if (obstime.is_not_a_date_time()) {
+                std::cerr << "Unable to parse second element as obstime: '" << letter.common << "'" << std::endl;
+                return;
+            }
+            /*emit*/ statTimeReceived(stationid, obstime, 0);
+        }
+    } else if(letter.command == qmstrings::timechanged) {
+        timeutil::ptime newTime = timeutil::from_iso_extended_string(letter.common);
+        /*emit*/ timeReceived(newTime);
+        sendObservations(newTime, false);
+    }
 }
 
 // send message to show ground analysis in Diana
@@ -2099,12 +2083,23 @@ void HqcMainWindow::aboutQt()
     QMessageBox::aboutQt(this);
 }
 
+void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
+{
+    if (dianaconnected) {
+        sendObservations(kd.obstime(), true);
+        sendStation(kd.stationID());
+    }
+
+    /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), kd.typeID());
+}
+
 void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
 {
   LOG_SCOPE();
 
   //no data -> return
-  if(selPar.count() == 0) return;
+  if(selPar.count() == 0)
+      return;
 
   //just sent
   if(dianaTime == time)

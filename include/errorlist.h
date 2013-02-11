@@ -120,8 +120,7 @@ public:
 	    int,
 	    int*,
 	    model::KvalobsDataListPtr,
-	    const std::vector<modDatl>&,
-	    QString&);
+	    const std::vector<modDatl>&);
   virtual ~ErrorList();
 
   /*!
@@ -201,14 +200,6 @@ public Q_SLOTS:
 
 
 Q_SIGNALS:
-
-  /**
-   * \brief Reports the selection of a new station and/or obstime in the
-   *        errorlist.
-   */
-  //  void stationSelected( int station, const timeutil::ptime & obstime );
-  void statSel(const miMessage& letter);
-
   /**
    * \brief Reports the closing of the
    *        errorlist.
@@ -224,28 +215,16 @@ protected:
 
 
 private:
-  /*!
-   * \brief
-   */
   int stationidCol;
-  /*!
-   * \brief
-   */
   int typeidCol;
 
-  /*!
-   * \brief
-   */
   struct refs {
     int stnr;
     int rstnr;
     int parNo;
     double dist;
   };
-  /*!
-   * \brief
-   */
-  QString opName;
+
   FailInfo::FailDialog* fDlg;
   std::list<long> statList;
   /*!
@@ -261,6 +240,7 @@ private:
 
 private:
   HqcMainWindow * mainWindow;
+    int mLastSelectedRow;
 //  /**
 //   * \brief Indexes of elements wchich are not transferred to the error list
 //   */

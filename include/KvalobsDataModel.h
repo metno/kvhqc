@@ -96,7 +96,7 @@ namespace model
     const Parameter & getParameter(int column) const;
 
       enum ObstimeMatch { OBSTIME_EXACT, OBSTIME_AFTER, OBSTIME_BEFORE };
-      int dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm) const;
+      int dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm, int typeToSearch=0) const;
 
     int dataRow(int stationid, const timeutil::ptime& obstime) const
           { return dataRow(stationid, obstime, OBSTIME_EXACT); }

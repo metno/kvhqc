@@ -142,10 +142,10 @@ ErrorList::ErrorList(QStringList& selPar,
 		     int lity,
 		     int* noSelPar,
 		     model::KvalobsDataListPtr dtl,
-		     const std::vector<modDatl>& mdtl,
-		     QString& userName)
+		     const std::vector<modDatl>& mdtl)
   : Q3Table( 1000, 100, parent, "table")
   , mainWindow( getHqcMainWindow( parent ) )
+  , mLastSelectedRow(-1)
 {
     LOG_SCOPE();
 
@@ -172,7 +172,6 @@ ErrorList::ErrorList(QStringList& selPar,
     QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
     lackListAction->setShortcut(tr("Ctrl+M"));
     
-    opName = userName;
     fDlg = new FailInfo::FailDialog(this);
     
     connect( this, SIGNAL( clicked( int, int, int, const QPoint& ) ),
@@ -1006,26 +1005,11 @@ void ErrorList::clearOtherMods( int row, int col )
 
 void ErrorList::signalStationSelected( int row )
 {
-  if ( row < 0 )
-    return;
+    if (row < 0 or row == mLastSelectedRow)
+        return;
+    mLastSelectedRow = row;
 
-  static int oldRow = -1;
-  if ( row == oldRow )
-    return;
-  oldRow = row;
-
-
-  std::cerr << "getMem(" << row << ");" << std::endl;
-  const struct mem * m = getMem( row );
-  ((HqcMainWindow*)getHqcMainWindow( this ))->sendObservations(m->obstime,true);
-  ((HqcMainWindow*)getHqcMainWindow( this ))->sendStation(m->stnr);
-  miMessage letter;
-  letter.command = qmstrings::station;
-  letter.common = boost::lexical_cast<std::string>(m->stnr);
-  letter.common.append(",");
-  letter.common.append(timeutil::to_iso_extended_string(m->obstime));
-  /*emit*/ statSel( letter );
-
+    mainWindow->navigateTo(getKvData(row));
 }
 
 void ErrorList::execMissingList()
@@ -1058,7 +1042,7 @@ const struct ErrorList::mem *ErrorList::getMem(int row) const
     return &memStore2[ elfc->memStoreIndex() ];
 }
 
-kvData ErrorList::getKvData(const ErrorList::mem &m) const
+kvData ErrorList::getKvData(const mem& m) const
 {
     return kvData( m.stnr, timeutil::to_miTime(m.obstime), m.orig,
                    m.parNo, timeutil::to_miTime(m.tbtime),

@@ -52,8 +52,7 @@ public Q_SLOTS:
     void toggleShowOriginal(bool show);
     void toggleShowModelData(bool show);
 
-    void selectStation(const QString & station);
-    void selectStation(int stationid, const timeutil::ptime& obstime);
+    void selectStation(int stationid, const timeutil::ptime& obstime, int typeID);
     void selectTime(const timeutil::ptime& obstime);
 
 Q_SIGNALS:

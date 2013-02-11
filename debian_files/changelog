@@ -1,3 +1,14 @@
+kvhqc (2.15.0-1) unstable; urgency=low
+
+  * jump to same typeid in data list when selecting a row in error list
+  * integrate new WatchRR (old version available via system menu)
+  * some speed improvements
+
+  [Knut Johansen]
+  * show fs=8 from QC2 Pluviometer check in error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 11 Feb 2013 18:52:03 +0100
+
 kvhqc (2.14.11-1) unstable; urgency=low
 
   * improved hint widget display

@@ -90,37 +90,7 @@ void KvalobsDataView::toggleShowModelData(bool show)
     }
 }
 
-  void KvalobsDataView::selectStation(const QString & station)
-  {
-    QStringList elements = station.split(',');
-    int elementCount = elements.size();
-    if ( elementCount == 1 ) {
-        timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[0].toStdString());
-        if ( obstime.is_not_a_date_time() ) {
-            qDebug() << "Unable to parse second element as obstime: " << station;
-            return;
-        }
-        selectTime(obstime);
-    }
-    else if ( elementCount == 2 ) {
-      bool ok;
-      int stationid = elements[0].toInt(& ok);
-      if ( not ok ) {
-          qDebug() << "Unable to parse first element as stationid: " << station;
-          return;
-      }
-      const timeutil::ptime obstime = timeutil::from_iso_extended_string(elements[1].toStdString());
-      if ( obstime.is_not_a_date_time() ) {
-          qDebug() << "Unable to parse second element as obstime: " << station;
-          return;
-      }
-      selectStation(stationid, obstime);
-    }
-    else
-      qDebug() << "Unable to parse station string: " << station;
-  }
-
-  void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime)
+void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
   {
     LOG_SCOPE();
 
@@ -135,7 +105,7 @@ void KvalobsDataView::toggleShowModelData(bool show)
         return;
     }
 
-    int row = model->dataRow(stationid, obstime);
+    int row = model->dataRow(stationid, obstime, KvalobsDataModel::OBSTIME_EXACT, typeID);
     int column = current.column();
     // UNUSED int currow = current.row();
     QModelIndex index = model->index(row, column);
@@ -158,7 +128,7 @@ void KvalobsDataView::toggleShowModelData(bool show)
 
     const KvalobsData * data = model->kvalobsData(currentIndex());
     if ( data )
-      selectStation(data->stnr(), obstime);
+        selectStation(data->stnr(), obstime, data->showTypeId());
   }
 
   void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)

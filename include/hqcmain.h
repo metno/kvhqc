@@ -216,7 +216,7 @@ public:
     const std::list<listStat_t>& getStationDetails();
 
 public Q_SLOTS:
-
+    void navigateTo(const kvalobs::kvData& d);
   void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
 /*!
@@ -397,7 +397,9 @@ private Q_SLOTS:
   void updateSaveFunction( QMdiSubWindow * w );
 
 Q_SIGNALS:
-  void statTimeReceived(const QString&);
+    void statTimeReceived(int stationid, const timeutil::ptime& obstime, int typeID);
+  void timeReceived(const timeutil::ptime& obstime);
+
   void newStationList(std::vector<QString>&);
   void newParameterList(const QStringList&);
   void saveData();

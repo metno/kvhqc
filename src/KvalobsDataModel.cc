@@ -458,10 +458,11 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
       {
         if ( fmis == 1 or fmis == 3 )
           return QVariant();
-	if ( paramIsCode(p.paramid) )
-	  return int(d.orig(p.paramid));
+        const double orig = d.orig(p.paramid);
+	if (paramIsCode(p.paramid) or orig == -32767 or orig == -32766)
+            return int(orig);
 	else
-	  return d.orig(p.paramid);
+            return orig;
       }
     case Flag:
       {
@@ -474,10 +475,11 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
         if ( fmis == 2 or fmis == 3 )
           return QVariant();
 	//	double ccoor = d.corr(p.paramid);
-	if ( paramIsCode(p.paramid) )
-	  return int(d.corr(p.paramid));
+        const double corr = d.corr(p.paramid);
+	if (paramIsCode(p.paramid) or corr == -32767 or corr == -32766)
+            return int(corr);
 	else
-	  return d.corr(p.paramid);
+            return corr;
       }
     case Model:
       {
@@ -530,7 +532,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
     }
     return index;
   }
-  int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm) const
+int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm, int typeToSearch) const
   {
       LOG_SCOPE();
       // FIXME this routine will probably cause segfault if rows == 0
@@ -544,7 +546,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
           const KvalobsData & d = (*data)[index];
           if( d.stnr() == stationid ) {
               second_best_index = index;
-              if (d.otime() == obstime) {
+              if (d.otime() == obstime and (typeToSearch == 0 or typeToSearch == d.showTypeId())) {
                   qDebug() << "exact obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(obstime))
                            << "found";
                   return index;
