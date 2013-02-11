@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QValidator>
 #include <Qt3Support/q3table.h>
 
+#include <set>
 #include <vector>
 
 class ErrorListFirstCol;
@@ -257,12 +258,6 @@ private:
    * fr=4, fr=5, fs=2, fnum=4, fnum=5
    */
   std::vector<mem> memStore2;
-  /*!
-   * \brief
-   */
-  //  vector<mem> memStore3;
-
-  std::vector<int> cP;
 
 private:
   HqcMainWindow * mainWindow;

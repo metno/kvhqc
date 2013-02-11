@@ -48,7 +48,7 @@ public:
    * \brief Inserts the parameters in a weather element
    *        into a listbox in the parameter dialog.
    */
-  void insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap);
+  void insertParametersInListBox(const std::vector<int> & porder);
 
   bool isSelectedParameter(int paramIndex) const;
 

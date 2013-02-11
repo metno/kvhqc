@@ -29,7 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "StationSelection.h"
-#include "BusyIndicator.h"
+#include "KvMetaDataBuffer.hh"
 #include "MiDateTimeEdit.hh"
 
 #include <kvalobs/kvData.h>
@@ -40,6 +40,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/qlayout.h>
 #include <Qt3Support/Q3GridLayout>
 
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <cassert>
 
@@ -47,8 +49,6 @@ using kvalobs::kvData;
 
 namespace Weather
 {
-  StationSelection::TypeFromStation StationSelection::typeFromStation_;
-
   StationSelection::StationSelection( QWidget * parent, const kvData * data_ )
     : QWidget( parent )
   {
@@ -97,10 +97,6 @@ namespace Weather
     if ( ! data.sensor() )
       sensor_->setText( "" );
 
-    // Level:
-    if ( typeFromStation_.empty() )
-      setupTypeFromStation_();
-
     connect( station_, SIGNAL( textChanged(const QString &) ), this, SLOT( updateTypeID_() ) );
   }
 
@@ -135,28 +131,15 @@ namespace Weather
 
   void StationSelection::updateTypeID_()
   {
-    TypeFromStation::const_iterator find = typeFromStation_.find( station() );
-    if ( find != typeFromStation_.end() )
-      typeID_->setText( QString::number( find->second ) );
-  }
-
-  void StationSelection::setupTypeFromStation_()
-  {
-    BusyIndicator busy;
-    assert( kvservice::KvApp::kvApp );
-    typeFromStation_.clear();
-    std::list<kvalobs::kvObsPgm> opgm;
-    bool ok = kvservice::KvApp::kvApp->getKvObsPgm( opgm, std::list<long>(), false );
-    if ( not ok )
-      return; // Got no contact with kvalobs: return.
-    for ( std::list<kvalobs::kvObsPgm>::const_iterator it = opgm.begin(); it != opgm.end(); ++ it ) {
-      if ( it->paramID() == 110
-        and ( it->typeID() == 302 or it->typeID() == 402 )
-        and ( it->kl06() or it->kl07() )
-      ) {
-        typeFromStation_[ it->stationID() ] = it->typeID();
+      const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(station());
+      BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
+          if (op.paramID() == 110 /* RR_24 */
+              and (op.typeID() == 302 or op.typeID() == 402 )
+              and (op.kl06() or op.kl07()))
+          {
+              typeID_->setText(QString::number(op.typeID()));
+          }
       }
-    }
   }
 
 }

@@ -1,7 +1,7 @@
 
 #include "SensorHeader.hh"
 #include "Helpers.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 
 #include <QtCore/QCoreApplication>
 
@@ -104,7 +104,7 @@ QString SensorHeader::separator(Qt::Orientation orientation) const
 QString SensorHeader::stationTooltip() const
 {
     try {
-        const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(mSensor.stationId);
+        const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(mSensor.stationId);
         return qApp->translate("SensorHeader", "Station %1 [%2, %3masl] Level %4")
             .arg(mSensor.stationId)
             .arg(Helpers::stationName(s))

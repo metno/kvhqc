@@ -2,6 +2,7 @@
 #ifndef HELPERS_HH
 #define HELPERS_HH 1
 
+#include <Functors.hh>
 #include "Sensor.hh"
 #include <kvalobs/kvStation.h>
 #include <QtCore/QString>
@@ -18,11 +19,6 @@ class kvModelData;
 }
 
 namespace Helpers {
-
-struct float_eq : public std::binary_function<float, float, bool>
-{
-    bool operator()(float a, float b) const;
-};
 
 enum { NO, BEFORE_REDIST, QC2_REDIST, HQC_REDIST };
 int is_accumulation(ObsDataPtr obs);
@@ -76,15 +72,6 @@ struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStati
     }
 private:
     const kvalobs::kvStation& center;
-};
-
-struct station_by_id : public std::unary_function<bool, kvalobs::kvStation>
-{
-    station_by_id(int s) : stationid(s) { }
-    bool operator()(const kvalobs::kvStation& s) const
-        { return s.stationID() == stationid; }
-private:
-    int stationid;
 };
 
 } // namespace Helpers

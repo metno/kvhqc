@@ -10,12 +10,16 @@ SET(auth_SOURCES
   Authenticator.cc
   BusyIndicator.cc
   debug.cc
+  Functors.hh
+  Functors.cc
   HideApplyBox.cc
   HintWidget.cc
   HqcDataReinserter.cc
   hqc_paths.cc
   hqc_utilities.cc
   identifyUser.cc
+  KvMetaDataBuffer.hh
+  KvMetaDataBuffer.cc
   MiDateTimeEdit.cc
   TimeRange.cc
   timeutil.cc

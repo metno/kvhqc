@@ -33,7 +33,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "timeutil.hh"
 #include <QtGui/qwidget.h>
-#include <map>
 
 class QLineEdit;
 class MiDateTimeEdit;
@@ -56,21 +55,15 @@ namespace Weather
     timeutil::ptime obstime() const;
     int typeID() const;
     int sensor() const;
-    //    int level() const;
 
   private slots:
     void updateTypeID_();
-    void setupTypeFromStation_();
 
   private:
     QLineEdit * station_;
     MiDateTimeEdit * obstime_;
     QLineEdit * typeID_;
     QLineEdit * sensor_;
-    //    QLineEdit * level_;
-
-    typedef std::map<int,int> TypeFromStation;
-    static TypeFromStation typeFromStation_;
   };
 }
 

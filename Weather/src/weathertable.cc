@@ -30,7 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "weathertable.h"
 
-#include "BusyIndicator.h"
+#include "KvMetaDataBuffer.hh"
 #include "enums.h"
 #include "fdchecktableitem.h"
 #include "flagitem.h"
@@ -51,6 +51,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/Q3TextStream>
 
 #include <boost/assign/std/vector.hpp>
+#include <boost/foreach.hpp>
 
 #include <algorithm>
 #include <cmath>
@@ -178,8 +179,6 @@ const int params[NP] = {
     else if ( pName == "flag" )
       displayFlags(flagList);
     toolTip = new WeatherTableToolTip( this );
-
-    BusyIndicator busy;
   }
 
   QString WeatherTable::flagText(const string& controlInfo)
@@ -364,13 +363,10 @@ const int params[NP] = {
       return;
     }
 
-    std::list<kvalobs::kvObsPgm> obsPgmList;
-    bool ok = kvservice::KvApp::kvApp->getKvObsPgm( obsPgmList, std::list<long>(), false );
-
     int typ = kvDat.typeID();
 
     if ( abs(kvDat.typeID()) > 503 || kvDat.typeID() == 0 )
-      typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),timeutil::from_miTime(kvDat.obstime()),obsPgmList);
+      typ =findTypeId(kvDat.typeID(),kvDat.stationID(),kvDat.paramID(),timeutil::from_miTime(kvDat.obstime()));
     if ( typ == -32767 ) {
       QMessageBox::information( this,
 				tr("Ulovlig parameter"),
@@ -584,70 +580,69 @@ const int params[NP] = {
   {}
 
   //  int WeatherTable::findTypeId(int typ, int pos, int par, timeutil::ptime oTime, ObsPgmList obsPgmList)
-int WeatherTable::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, const std::list<kvalobs::kvObsPgm>& obsPgmList)
+int WeatherTable::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime)
   {
-    int tpId;
-    tpId = typ;
-    //    for(CIObsPgmList obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-    for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-      if ( obit->stationID() == pos && obit->paramID() == par && timeutil::from_miTime(obit->fromtime()) < oTime && timeutil::from_miTime(obit->totime()) >= oTime) {
-	tpId = obit->typeID();
-	break;
-      }
+    int tpId = typ;
+    const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(pos);
+    BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+        if (op.paramID() == par && timeutil::from_miTime(op.fromtime()) < oTime && timeutil::from_miTime(op.totime()) >= oTime) {
+            tpId = op.typeID();
+            break;
+        }
     }
-    if ( abs(tpId) > 503 ) {
+    if (abs(tpId) > 503) {
       switch (par) {
       case 106:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 105 && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if (op.paramID() == 105 && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       case 109:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106) && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if ((op.paramID() == 104 || op.paramID() == 105 || op.paramID() == 106) && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       case 110:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && (obit->paramID() == 104 || obit->paramID() == 105 || obit->paramID() == 106 || obit->paramID() == 109) && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if ((op.paramID() == 104 || op.paramID() == 105 || op.paramID() == 106 || op.paramID() == 109) && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       case 214:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 213 && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if (op.paramID() == 213 && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       case 216:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 215 && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if (op.paramID() == 215 && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       case 224:
-	for(list<kvObsPgm>::const_iterator obit=obsPgmList.end();obit!=obsPgmList.begin(); obit--){
-	  if ( obit->stationID() == pos && obit->paramID() == 223 && timeutil::from_miTime(obit->fromtime()) < oTime) {
-	    tpId = -obit->typeID();
-	    break;
-	  }
-	}
-	break;
+          BOOST_REVERSE_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
+              if (op.paramID() == 223 && timeutil::from_miTime(op.fromtime()) < oTime) {
+                  tpId = -op.typeID();
+                  break;
+              }
+          }
+          break;
       default:
-	tpId = -32767;
-	break;
+          tpId = -32767;
+          break;
       }
     }
     return tpId;

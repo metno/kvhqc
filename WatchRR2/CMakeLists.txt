@@ -77,8 +77,6 @@ SET(watchrr2_SOURCES
   KvBufferedAccess.cc
   KvModelAccess.hh
   KvModelAccess.cc
-  KvStationBuffer.hh
-  KvStationBuffer.cc
   MainDialog.hh
   MainDialog.cc
   MainTableModel.hh

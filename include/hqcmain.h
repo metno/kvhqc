@@ -157,11 +157,6 @@ public:
   //  void readFromTypeIdFile();
   void checkTypeId(int);
   /*!
-   * \brief Reads the obs_pgm table in the kvalobs database and
-   *       inserts the station information in obsPgmList and statList
-   */
-  void readFromObsPgm();
-  /*!
    * \brief Retrieves from stlist the position and height of a given station
    */
   void findStationPos(int, double&, double&, double&);
@@ -217,14 +212,6 @@ public:
   bool isShTy;
 
     const std::list<listStat_t>& getStationDetails();
-
-    struct StationDetails {
-        std::set<int> typeIDs;
-        std::vector<kvalobs::kvObsPgm> obs_pgm;
-    };
-    typedef std::map<int, StationDetails> StationDetailsMap_t;
-
-    const StationDetailsMap_t& getStationDetailsMap() { return mStationDetailsMap; }
 
 public Q_SLOTS:
 
@@ -292,9 +279,6 @@ private:
   bool firstObs;
   int sLevel;
 
-  /// Paramid to parameter name
-  QMap<int,QString> parMap;
-
   /// True after first time ListOk() have been invoked with valid input
   bool listExist;
 
@@ -312,12 +296,6 @@ private:
 
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;
-
-  std::list<kvalobs::kvObsPgm> obsPgmList;
-  std::list<kvalobs::kvStation> slist;
-  std::list<kvalobs::kvParam> plist;
-
-    StationDetailsMap_t mStationDetailsMap;
 
   /**
    * Parameters from parameter groups. The keys will be the user's

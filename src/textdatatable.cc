@@ -1,10 +1,8 @@
 #include "textdatatable.h"
-#include <iostream>
-#include <QSizePolicy>
 
-using namespace std;
+#include "KvMetaDataBuffer.hh"
 
-TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, QWidget* parent)
+TextDataTable::TextDataTable(const std::vector<TxtDat>& txtList, QWidget* parent)
   : QTableWidget(3000,7,parent) {
 
   setWindowTitle(tr("TextData"));
@@ -38,7 +36,8 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
     QTableWidgetItem* paramItem = new QTableWidgetItem(QString::number(txtList[iRow].paramId));
     setItem(iRow, 3, paramItem);
     resizeColumnToContents(3);
-    QTableWidgetItem* paramNameItem = new QTableWidgetItem(QString(parMap[txtList[iRow].paramId]));
+    QString name = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(txtList[iRow].paramId).name());
+    QTableWidgetItem* paramNameItem = new QTableWidgetItem(name);
     setItem(iRow, 4, paramNameItem);
     resizeColumnToContents(4);
     QTableWidgetItem* tbtimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(txtList[iRow].tbtime)));
@@ -51,7 +50,7 @@ TextDataTable::TextDataTable(vector<TxtDat> txtList, QMap<int,QString> parMap, Q
   adjustSize();
 }
 
-TextData::TextData(vector<TxtDat> txtList, QMap<int,QString> parMap) {
+TextData::TextData(const std::vector<TxtDat>& txtList) {
   setGeometry(0,0,700,1200);
-  txtTab = new TextDataTable(txtList, parMap, this);
+  txtTab = new TextDataTable(txtList, this);
 }

@@ -39,22 +39,15 @@
 
 namespace model
 {
-  class KvalobsDataModel;
+class KvalobsDataModel;
 
-  class KvalobsDataView : public QTableView
-  {
-    Q_OBJECT
-  public:
-    template<class Iterator>
-    KvalobsDataView(Iterator modelValuesStart, Iterator modelValuesStop, QWidget * parent = 0) :
-      QTableView(parent), modelParameters_(modelValuesStart, modelValuesStop)
-    {
-      setup_();
-    }
-
+class KvalobsDataView : public QTableView
+{ Q_OBJECT
+public:
+    KvalobsDataView(QWidget* parent);
     virtual ~KvalobsDataView();
-
-  public slots:
+                              
+public Q_SLOTS:
     void toggleShowFlags(bool show);
     void toggleShowOriginal(bool show);
     void toggleShowModelData(bool show);
@@ -63,21 +56,19 @@ namespace model
     void selectStation(int stationid, const timeutil::ptime& obstime);
     void selectTime(const timeutil::ptime& obstime);
 
-  signals:
+Q_SIGNALS:
     void stationSelected(int stationid, const timeutil::ptime& obstime);
     void timeSelected(const timeutil::ptime& obstime);
     void parameterSelected(const QString & parameterName);
-
-  protected slots:
+                                                         
+protected Q_SLOTS:
     virtual void currentChanged(const QModelIndex & current, const QModelIndex & previous);
 
-  private:
+private:
     const KvalobsDataModel * getModel_() const;
     void setup_();
+};
 
-    const std::set<int> modelParameters_;
-  };
-
-}
+} // namespace model
 
 #endif /* KVALOBSDATAVIEW_H_ */

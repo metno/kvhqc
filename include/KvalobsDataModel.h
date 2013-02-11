@@ -48,7 +48,6 @@ namespace model
   public:
     KvalobsDataModel(
         const std::vector<int> & parameters,
-        QMap<int,QString> & paramIdToParamName,
         KvalobsDataListPtr datalist,
         const std::vector<modDatl> & modeldatalist,
         bool showStationNameInHeader,

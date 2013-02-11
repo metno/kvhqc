@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "HideApplyBox.hh"
 #include "hqcmain.h"
+#include "KvMetaDataBuffer.hh"
 #include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
@@ -746,7 +747,6 @@ std::vector<int> ListDialog::getSelectedStations()
 void ListDialog::showStationSelectionDialog()
 {
     const std::list<listStat_t>& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
-    const HqcMainWindow::StationDetailsMap_t& stationDetailsMap = static_cast<HqcMainWindow*>(parent())->getStationDetailsMap();
 
     removeAllStatFromListbox();
     if( statSelect )
@@ -757,7 +757,6 @@ void ListDialog::showStationSelectionDialog()
                                       getSelectedCounties(),
                                       showSynop(),
                                       showPrioritized(),
-                                      stationDetailsMap,
                                       this);
     connect(statSelect, SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
     connect(statSelect, SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
@@ -786,8 +785,7 @@ void StationTable::setData(const listStat_l& listStat,
                            const QStringList& stationTypes,
                            const QStringList& counties,
 			   bool web,
-			   bool pri,
-			   const HqcMainWindow::StationDetailsMap_t& stationDetailsMap)
+			   bool pri)
 {
   setNumRows(listStat.size());
 
@@ -799,9 +797,10 @@ void StationTable::setData(const listStat_l& listStat,
     if( s.pri.size() >= 4 )
         prty = QString::fromStdString(s.pri.substr(3,1));
 
-    HqcMainWindow::StationDetailsMap_t::const_iterator oit = stationDetailsMap.find(s.stationid);
-    if (oit == stationDetailsMap.end())
-        continue;
+    const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(s.stationid);
+    std::set<int> typeIDs;
+    mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList)
+        typeIDs.insert(op.typeID());
 
     if ( ! (counties.contains("ALL") ||
 	    counties.contains(QString::fromStdString(s.fylke)) ||
@@ -809,26 +808,26 @@ void StationTable::setData(const listStat_l& listStat,
       continue;
     QString strEnv;
     if( stationTypes.contains("ALL") ) {
-        strEnv = getEnvironment(s.environment, oit);
+        strEnv = getEnvironment(s.environment, typeIDs);
     } else {
-        if ( (stationTypes.contains("AA") && ((s.environment == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342))) ) strEnv += "AA";
-        if ( (stationTypes.contains("AF") && s.environment == 1 && findInTypes(oit, 311)) )  strEnv += "AF";
-        if ( (stationTypes.contains("AL") && s.environment == 2 && findInTypes(oit, 3)) ) strEnv += "AL";
-        if ( (stationTypes.contains("AV") && s.environment == 12 && findInTypes(oit, 3)) )  strEnv += "AV";
-        if ( (stationTypes.contains("AO") && findInTypes(oit, 410)) )  strEnv += "AO";
-        if ( (stationTypes.contains("MV") && s.environment == 7 && findInTypes(oit, 11)) ) strEnv += "MV";
-        if ( (stationTypes.contains("MP") && s.environment == 5 && findInTypes(oit, 11)) ) strEnv += "MP";
-        if ( (stationTypes.contains("MM") && s.environment == 4 && findInTypes(oit, 11)) ) strEnv += "MM";
-        if ( (stationTypes.contains("MS") && s.environment == 6 && findInTypes(oit, 11)) ) strEnv += "MS";
-        if ( (stationTypes.contains("P")  && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "P";
-        if ( (stationTypes.contains("PT") && (findInTypes(oit, 4) || findInTypes(oit, 404))) ) strEnv += "PT";
-        if ( (stationTypes.contains("NS") && findInTypes(oit, 302)) )  strEnv += "NS";
-        if ( (stationTypes.contains("ND") && s.environment == 9 && findInTypes(oit, 402)) ) strEnv += "ND";
-        if ( (stationTypes.contains("NO") && s.environment == 10 && findInTypes(oit, 402)) ) strEnv += "NO";
-        if ( (stationTypes.contains("VS") && (findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312))) ) strEnv += "VS";
-        if ( (stationTypes.contains("VK") && s.environment == 3 && findInTypes(oit, 412)) ) strEnv += "VK";
-        if ( (stationTypes.contains("VM") && (findInTypes(oit, 306) || findInTypes(oit, 308))) ) strEnv += "VM";
-        if ( (stationTypes.contains("FM") && (findInTypes(oit, 2))) ) strEnv += "FM";
+        if ( (stationTypes.contains("AA") && ((s.environment == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342))) ) strEnv += "AA";
+        if ( (stationTypes.contains("AF") && s.environment == 1 && typeIDs.count(311)) )  strEnv += "AF";
+        if ( (stationTypes.contains("AL") && s.environment == 2 && typeIDs.count(3)) ) strEnv += "AL";
+        if ( (stationTypes.contains("AV") && s.environment == 12 && typeIDs.count(3)) )  strEnv += "AV";
+        if ( (stationTypes.contains("AO") && typeIDs.count(410)) )  strEnv += "AO";
+        if ( (stationTypes.contains("MV") && s.environment == 7 && typeIDs.count(11)) ) strEnv += "MV";
+        if ( (stationTypes.contains("MP") && s.environment == 5 && typeIDs.count(11)) ) strEnv += "MP";
+        if ( (stationTypes.contains("MM") && s.environment == 4 && typeIDs.count(11)) ) strEnv += "MM";
+        if ( (stationTypes.contains("MS") && s.environment == 6 && typeIDs.count(11)) ) strEnv += "MS";
+        if ( (stationTypes.contains("P")  && (typeIDs.count(4) || typeIDs.count(404))) ) strEnv += "P";
+        if ( (stationTypes.contains("PT") && (typeIDs.count(4) || typeIDs.count(404))) ) strEnv += "PT";
+        if ( (stationTypes.contains("NS") && typeIDs.count(302)) )  strEnv += "NS";
+        if ( (stationTypes.contains("ND") && s.environment == 9 && typeIDs.count(402)) ) strEnv += "ND";
+        if ( (stationTypes.contains("NO") && s.environment == 10 && typeIDs.count(402)) ) strEnv += "NO";
+        if ( (stationTypes.contains("VS") && (typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312))) ) strEnv += "VS";
+        if ( (stationTypes.contains("VK") && s.environment == 3 && typeIDs.count(412)) ) strEnv += "VK";
+        if ( (stationTypes.contains("VM") && (typeIDs.count(306) || typeIDs.count(308))) ) strEnv += "VM";
+        if ( (stationTypes.contains("FM") && (typeIDs.count(2))) ) strEnv += "FM";
     }
     if ( not strEnv.isEmpty() ) {
         StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, QString::number(s.stationid));
@@ -863,51 +862,46 @@ void StationTable::setData(const listStat_l& listStat,
     hideColumn(6);
 }
 
-bool StationTable::findInTypes(HqcMainWindow::StationDetailsMap_t::const_iterator tList, int type)
-{
-    return (tList->second.typeIDs.find(type) != tList->second.typeIDs.end());
-}
-
-QString StationTable::getEnvironment(const int envID, HqcMainWindow::StationDetailsMap_t::const_iterator oit) {
+QString StationTable::getEnvironment(const int envID, const std::set<int>& typeIDs) {
   QString env;
-  if ( envID == 1 && findInTypes(oit, 311) )
+  if ( envID == 1 && typeIDs.count(311) )
     env = "AF";
-  else if ( envID == 2 && findInTypes(oit, 3) )
+  else if ( envID == 2 && typeIDs.count(3) )
     env = "AL";
-  else if ( envID == 4 && findInTypes(oit, 11) )
+  else if ( envID == 4 && typeIDs.count(11) )
     env = "MM";
-  else if ( envID == 5 && findInTypes(oit, 11) )
+  else if ( envID == 5 && typeIDs.count(11) )
     env = "MP";
-  else if ( envID == 6 && findInTypes(oit, 11) )
+  else if ( envID == 6 && typeIDs.count(11) )
     env = "MS";
-  else if ( envID == 7 && findInTypes(oit, 11) )
+  else if ( envID == 7 && typeIDs.count(11) )
     env = "MV";
-  else if ( (envID == 8 && (findInTypes(oit, 3)  || findInTypes(oit, 311))) || findInTypes(oit, 330) || findInTypes(oit, 342) )
+  else if ( (envID == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342) )
     env = "AA";
-  else if ( envID == 9 && findInTypes(oit, 402) )
+  else if ( envID == 9 && typeIDs.count(402) )
     env = "ND";
-  else if ( envID == 10 && findInTypes(oit, 402) )
+  else if ( envID == 10 && typeIDs.count(402) )
     env = "NO";
-  else if ( findInTypes(oit, 302) )
+  else if ( typeIDs.count(302) )
     env = "NS";
-  else if ( findInTypes(oit, 410) )
+  else if ( typeIDs.count(410) )
     env = "AO";
-  else if ( findInTypes(oit, 4) || findInTypes(oit, 404) )
+  else if ( typeIDs.count(4) || typeIDs.count(404) )
     env = "P,PT";
-  else if ( findInTypes(oit, 2) )
+  else if ( typeIDs.count(2) )
     env = "FM";
-  else if ( findInTypes(oit, 1) || findInTypes(oit, 6) || findInTypes(oit, 312) )
+  else if ( typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312) )
     env = "VS";
-  else if ( findInTypes(oit, 306) || findInTypes(oit, 308) )
+  else if ( typeIDs.count(306) || typeIDs.count(308) )
     env = "VM";
   else if ( envID == 11 )
     env = "TURISTFORENING";
-  else if ( envID == 12 && findInTypes(oit, 3) )
+  else if ( envID == 12 && typeIDs.count(3) )
     env = "AV";
-  else if ( findInTypes(oit, 412) )
+  else if ( typeIDs.count(412) )
     env = "VK";
-  //  else if ( findInTypes(oit, 503) )
-  else if ( findInTypes(oit, 502) || findInTypes(oit, 503) || findInTypes(oit, 504) || findInTypes(oit, 505) || findInTypes(oit, 506) || findInTypes(oit, 514) )
+  //  else if ( typeIDs.count(503) )
+  else if ( typeIDs.count(502) || typeIDs.count(503) || typeIDs.count(504) || typeIDs.count(505) || typeIDs.count(506) || typeIDs.count(514) )
     env = "X";
   return env;
 }
@@ -926,7 +920,6 @@ StationSelection::StationSelection(const listStat_l& listStat,
                                    const QStringList& counties,
 				   bool web,
 				   bool pri,
-				   const HqcMainWindow::StationDetailsMap_t& stationDetailsMap,
                                    QWidget* parent)
     : QDialog(parent)
 {
@@ -935,7 +928,7 @@ StationSelection::StationSelection(const listStat_l& listStat,
     connect(selectionOK, SIGNAL(clicked()), this, SLOT(hide()));
     connect(selectAllStations, SIGNAL(clicked()),SLOT(doSelectAllStations()));
 
-    stationTable->setData(listStat, stationTypes, counties, web, pri, stationDetailsMap);
+    stationTable->setData(listStat, stationTypes, counties, web, pri);
     connect(stationTable,SIGNAL(currentChanged(int, int)),
             SLOT(tableCellClicked(int, int)));
 }

@@ -30,6 +30,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "identifyUser.h"
 #include "hqc_paths.hh"
+#include "KvMetaDataBuffer.hh"
 #include "MultiStationSelection.h"
 
 #include <kvcpp/corba/CorbaKvApp.h>
@@ -97,12 +98,8 @@ int main( int argc, char* argv[] )
   }
 
 
-  std::list<kvalobs::kvStation> slist;
-  if (!KvApp::kvApp->getKvStations(slist)) {
-    std::clog << "Can't connect to station table!" << std::endl;
-  }
-
-  WatchRR::MultiStationSelection d(QString::fromStdString( kvapp.kvpathInCorbaNameserver()), slist, 0, 0/*& dl.front()*/ );
+  KvMetaDataBuffer kvmdb;
+  WatchRR::MultiStationSelection d(QString::fromStdString( kvapp.kvpathInCorbaNameserver()), 0, 0/*& dl.front()*/ );
   d.show();
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );
   return a.exec();

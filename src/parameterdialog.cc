@@ -28,8 +28,10 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "parameterdialog.h"
 #include "HideApplyBox.hh"
+#include "KvMetaDataBuffer.hh"
 
 ParameterDialog::ParameterDialog(QWidget* parent)
   : QDialog(parent)
@@ -43,13 +45,16 @@ ParameterDialog::ParameterDialog(QWidget* parent)
     selectionChanged();
 }
 
-void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder, const QMap<int,QString> & parMap) {
+void ParameterDialog::insertParametersInListBox(const std::vector<int> & porder) {
   plb->clear();
   int jj = 0;
   for (std::vector<int>::const_iterator it = porder.begin(); it != porder.end(); ++it) {
-      QString sp = parMap[*it];
-      plb->insertItem(jj,sp);
-      jj++;
+      try {
+          QString sp = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(*it).name());
+          plb->insertItem(jj,sp);
+          jj++;
+      } catch(std::runtime_error&) {
+      }
   }
 }
 

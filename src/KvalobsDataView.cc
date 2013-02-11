@@ -31,6 +31,7 @@
 #include "KvalobsDataView.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataDelegate.h"
+#include "KvMetaDataBuffer.hh"
 
 #include <QtGui/QMessageBox>
 #include <QtGui/QLineEdit>
@@ -40,6 +41,12 @@
 
 namespace model
 {
+KvalobsDataView::KvalobsDataView(QWidget* parent)
+    : QTableView(parent)
+{
+    setup_();
+}
+
   KvalobsDataView::~KvalobsDataView()
   {
   }
@@ -66,22 +73,22 @@ namespace model
     }
   }
 
-  void KvalobsDataView::toggleShowModelData(bool show)
-  {
+void KvalobsDataView::toggleShowModelData(bool show)
+{
     const KvalobsDataModel * model = getModel_();
-    if ( model ) {
-      int columns = model->columnCount();
-      for ( int i = 0; i < columns; ++ i) {
-        if ( model->getColumnType(i) == KvalobsDataModel::Model ) {
-            if ( modelParameters_.find(model->getParameter(i).paramid) == modelParameters_.end() )
-              setColumnHidden (i, true);
-            else
-              setColumnHidden (i, not show);
-        }
-      }
-    }
-  }
+    if (not model)
+        return;
 
+    const int columns = model->columnCount();
+    for (int i=0; i<columns; ++i) {
+        if (model->getColumnType(i) != KvalobsDataModel::Model)
+            continue;
+        if (KvMetaDataBuffer::instance()->isModelParam(model->getParameter(i).paramid))
+            setColumnHidden(i, true);
+        else
+            setColumnHidden (i, not show);
+    }
+}
 
   void KvalobsDataView::selectStation(const QString & station)
   {
@@ -203,4 +210,4 @@ namespace model
       setSelectionMode(QAbstractItemView::SingleSelection);
       setItemDelegate(new KvalobsDataDelegate(this));
   }
-}
+} // namespace model

@@ -5,7 +5,7 @@
 #include "EditData.hh"
 #include "EditDataEditor.hh"
 #include "FlagChange.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 #include "timeutil.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -445,12 +445,11 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
         return neighbors;
     }
 
-    const std::list<kvalobs::kvStation>& stationsList = KvStationBuffer::instance()->allStations();
+    const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
 
     std::vector<kvalobs::kvStation> stations;
-    std::list<kvalobs::kvObsPgm> obs_pgm;
     try {
-        Helpers::stations_by_distance ordering(KvStationBuffer::instance()->findStation(sensor.stationId));
+        Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
 
         std::list<long int> stationIDs;
         BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
@@ -464,49 +463,35 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
             DBGV(s.stationID());
         }
         std::sort(stations.begin(), stations.end(), ordering);
-
-        if (not kvservice::KvApp::kvApp->getKvObsPgm(obs_pgm, stationIDs, false)) {
-            std::cerr << "problem loading obs_pgm" << std::endl;
-            return neighbors;
-        }
     } catch(std::runtime_error&) {
         return neighbors;
     }
 
-    std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithRR24;
-    std::map<int, kvalobs::kvObsPgm> obsPgmForStationsWithAggregatedRR24;
-    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
-        if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
-            continue;
-        if (op.paramID() == sensor.paramId) {
-            // FIXME this is not correct if there is more than one
-            // klXX or collector or typeid or ...
-            obsPgmForStationsWithRR24[op.stationID()] = op;
-        } else if (op.paramID() >= kvalobs::PARAMID_RR_01 and op.paramID() <= kvalobs::PARAMID_RR_12) {
-            obsPgmForStationsWithAggregatedRR24[op.stationID()] = op;
-        }
-    }
-
     int count = 0;
     BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-        std::map<int,kvalobs::kvObsPgm>::const_iterator it = obsPgmForStationsWithRR24.find(s.stationID());
-        if (it != obsPgmForStationsWithRR24.end()) {
-            const kvalobs::kvObsPgm& op = it->second;
-            neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, op.typeID()));
-            DBG(DBG1(s.stationID()) << DBG1(op.typeID()));
-            if (++count >= maxNeighbors)
-                break;
-        }
-
-        it = obsPgmForStationsWithAggregatedRR24.find(s.stationID());
-        if (it != obsPgmForStationsWithAggregatedRR24.end()) {
-            const kvalobs::kvObsPgm& op = it->second;
-            const int typeID = -op.typeID();
-            neighbors.push_back(Sensor(s.stationID(), sensor.paramId, op.level(), 0, typeID));
-            DBG(DBG1(s.stationID()) << DBG1(typeID));
-            if (++count >= maxNeighbors)
-                break;
+        const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
+        bool haveRR24 = false, haveRRaggregated = false;
+        BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+            const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
+            if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
+                continue;
+            // FIXME this is not correct if there is more than one
+            // klXX or collector or typeid or ...
+            if (not haveRR24 and op.paramID() == kvalobs::PARAMID_RR_24) {
+                neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, op.typeID()));
+                DBG(DBG1(s.stationID()) << DBG1(op.typeID()));
+                if (++count >= maxNeighbors)
+                    break;
+                haveRR24 = true;
+            }
+            if (not haveRRaggregated and op.paramID() >= kvalobs::PARAMID_RR_01 and op.paramID() <= kvalobs::PARAMID_RR_12) {
+                const int typeID = -op.typeID();
+                neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, typeID));
+                DBG(DBG1(s.stationID()) << DBG1(typeID));
+                if (++count >= maxNeighbors)
+                    break;
+                haveRRaggregated = true;
+            }
         }
     }
     return neighbors;

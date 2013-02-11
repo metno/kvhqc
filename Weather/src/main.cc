@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,22 +26,22 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <kvcpp/corba/CorbaKvApp.h>
-#include <QtGui/qapplication.h>
-#include <decodeutility/kvDataFormatter.h>
 #include "identifyUser.h"
+#include "KvMetaDataBuffer.hh"
+#include "MultiStationSelection.h"
+#include "hqc_paths.hh"
+
+#include <kvcpp/corba/CorbaKvApp.h>
+#include <decodeutility/kvDataFormatter.h>
+
+#include <QtGui/qapplication.h>
 #include <QtGui/qmessagebox.h>
 #include <QtCore/QDebug>
-
-#include "MultiStationSelection.h"
-
-#include "hqc_paths.hh"
 
 using namespace std;
 
 typedef kvservice::corba::CorbaKvApp KvApp;
 typedef std::list<kvalobs::kvData> kvDataList;
-
 
 namespace Weather {
   kvalobs::DataReinserter<kvservice::KvApp> * reinserter;
@@ -99,11 +97,8 @@ int main( int argc, char* argv[] )
       return 1;
   }
 
-  std::list<kvalobs::kvStation> slist;
-  if (!KvApp::kvApp->getKvStations(slist)) {
-    std::clog << "Can't connect to station table!" << std::endl;
-  }
-  Weather::MultiStationSelection d(slist, 0, 0/*& dl.front()*/ );
+  KvMetaDataBuffer kvmdb;
+  Weather::MultiStationSelection d(0, 0/*& dl.front()*/ );
   d.show();
 
   a.connect( &a, SIGNAL(lastWindowClosed()), &a, SLOT(quit()) );

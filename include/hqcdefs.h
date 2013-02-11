@@ -55,8 +55,6 @@ typedef std::list<kvalobs::kvObsPgm>                          ObsPgmList;
 typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
 
 const int NOPARAM          = 1043;
-const int NOPARAMMODEL     = 8;
-extern const int modelParam[NOPARAMMODEL]; // defined in hqcmain.cc
 const int NOPARAMALL       = 210;
 
 enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};

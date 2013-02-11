@@ -59,9 +59,8 @@ namespace WatchRR
     int sensor() const;
     int level() const;
 
-  private slots:
+  private Q_SLOTS:
     void updateTypeID_();
-    void setupTypeFromStation_();
 
   private:
     QLineEdit * station_;
@@ -69,9 +68,6 @@ namespace WatchRR
     QLineEdit * typeID_;
     QLineEdit * sensor_;
     QLineEdit * level_;
-
-    typedef std::map<int,int> TypeFromStation;
-    static TypeFromStation typeFromStation_;
   };
 }
 

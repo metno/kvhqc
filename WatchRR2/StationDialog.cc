@@ -2,6 +2,7 @@
 #include "StationDialog.hh"
 
 #include "AnalyseRR24.hh"
+#include "KvMetaDataBuffer.hh"
 #include "RedistTableModel.hh"
 
 #include "ui_watchrr_station.h"
@@ -94,9 +95,8 @@ bool StationDialog::check()
     }
 
     mSensor.stationId = stationId;
-    std::list<long> stations(1, mSensor.stationId);
-    std::list<kvalobs::kvObsPgm> obs_pgm;
-    if (not kvservice::KvApp::kvApp->getKvObsPgm(obs_pgm, stations, false)) {
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(mSensor.stationId);
+    if (obs_pgm.empty()) {
         ui->labelStationInfo->setText(tr("problem loading obs_pgm"));
         return false;
     }

@@ -65,8 +65,6 @@ struct SynObs {
 };
 
 typedef std::list<kvalobs::kvData>::iterator                   IDataList;
-typedef std::list<kvalobs::kvObsPgm>                          ObsPgmList;
-typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
 typedef std::list<int>                                          OpgmList;
 typedef std::list<int>::iterator                               IOpgmList;
 
@@ -89,7 +87,7 @@ public:
 /**
  * \brief Get o's owning WeatherDialog, or NULL if there is none.
  */
-    static WeatherDialog * getWeatherDialog( const kvalobs::kvData & data, std::list<kvalobs::kvStation>& slist, QWidget * parent, Qt::WindowFlags f );
+    static WeatherDialog * getWeatherDialog(const kvalobs::kvData & data, QWidget * parent, Qt::WindowFlags f);
 
     WeatherDialog(TimeObsListPtr dol, int type, int sensor,
                   const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
@@ -157,15 +155,12 @@ signals:
     int stationId;
     DateRange dateRange;
     bool shownFirstTime;
-    void setupOrigTab( SynObsList&, int, QTabWidget* );
-    void setupCorrTab( SynObsList&, int, QTabWidget* );
-    void setupFlagTab( SynObsList&, int, QTabWidget* );
+    void setupOrigTab(int, QTabWidget* );
+    void setupCorrTab(int, QTabWidget* );
+    void setupFlagTab(int, QTabWidget* );
     void setupStationInfo();
     void opgmList( OpgmList& opgtl, const kvalobs::kvObsPgm& op);
     WeatherTable* cTab;
-    std::list<kvalobs::kvObsPgm> obsPgmList;
-    std::list<long> statList;
-
   };
 }
 

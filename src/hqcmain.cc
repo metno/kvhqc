@@ -53,6 +53,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqc_utilities.hh"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
+#include "KvMetaDataBuffer.hh"
 #include "ListDialog.h"
 #include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
@@ -89,6 +90,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <boost/algorithm/string.hpp>
 #include <boost/assign.hpp>
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -100,10 +102,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 //#define NDEBUG
 #include "debug.hh"
-
-// declared in hqcdefs.h
-const int modelParam[NOPARAMMODEL] =
-    { 61, 81, 109, 110, 177, 178, 211, 262 };
 
 namespace {
 
@@ -229,7 +227,7 @@ HqcMainWindow::HqcMainWindow()
     pardlg->setIcon( QPixmap(hqc_icon_path) );
     dshdlg = new DianaShowDialog(this);
     dshdlg->setIcon( QPixmap(hqc_icon_path) );
-    txtdlg = new TextDataDialog(slist, this);
+    txtdlg = new TextDataDialog(this);
     txtdlg->setIcon( QPixmap(hqc_icon_path) );
     rejdlg = new RejectDialog(this);
     rejdlg->setIcon( QPixmap(hqc_icon_path) );
@@ -333,9 +331,6 @@ void HqcMainWindow::startup()
         statusBar()->message(tr("Leser stasjonsliste..."));
         qApp->processEvents();
         readFromStation();
-        statusBar()->message(tr("Leser obs_pgm..."));
-        qApp->processEvents();
-        readFromObsPgm();
         statusBar()->message(tr("Leser parameterliste..."));
         qApp->processEvents();
         readFromParam();
@@ -373,7 +368,7 @@ void HqcMainWindow::selectParameterGroup(const QString& group) {
     firstObs = true;
     const std::vector<int> & parameters = parameterGroups[wElement];
     Q_ASSERT(not parameters.empty());
-    pardlg->insertParametersInListBox(parameters, parMap);
+    pardlg->insertParametersInListBox(parameters);
     pardlg->showAll();
 }
 
@@ -662,7 +657,11 @@ void HqcMainWindow::ListOK()
 
   for ( unsigned int jj = 0; jj < find->size(); jj++ ) {
     int paramIndex = (*find)[jj];
-    const QString & sp =  parMap[paramIndex];
+    QString sp;
+    try {
+        sp = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(paramIndex).name());
+    } catch(std::runtime_error&) {
+    }
 
     bool found = pardlg->plb->item(jj)->isSelected();
     qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": " << found << " (" << pardlg->markPar->isChecked() << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
@@ -688,12 +687,12 @@ void HqcMainWindow::ListOK()
       statusBar()->message(tr("Bygger dataliste..."));
       qApp->processEvents();
 
-      model::KvalobsDataView * tableView = new model::KvalobsDataView(modelParam, boost::end(modelParam), this);
+      model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
       tableView->setAttribute(Qt::WA_DeleteOnClose);
 
       dataModel =
           new model::KvalobsDataModel(
-              parameterList, parMap, datalist, modeldatalist,
+              parameterList, datalist, modeldatalist,
               ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
 #ifdef NDEBUG
               reinserter != 0,
@@ -810,13 +809,14 @@ void HqcMainWindow::TimeseriesOK() {
   int nTypes = tsdlg->obsCheckBox->isChecked() + tsdlg->modCheckBox->isChecked();
 
   for ( unsigned int ip = 0; ip < parameter.size(); ip++ ) {
-    std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
-    for(;it!=plist.end(); it++){
-      if ( it->name() == parameter[ip] ){
-	parameterIndex.push_back(it->paramID());
-	break;
+      const std::list<kvalobs::kvParam>& plist = KvMetaDataBuffer::instance()->allParams();
+      std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
+      BOOST_FOREACH(const kvalobs::kvParam& p, plist) {
+          if (p.name() == parameter[ip]) {
+              parameterIndex.push_back(it->paramID());
+              break;
+          }
       }
-    }
 
     TimeSeriesData::TimeSeries tseries;
     tseries.stationid(stationIndex[ip]);  // set stationid
@@ -977,7 +977,7 @@ void HqcMainWindow::textDataOK() {
   if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)){
     //cerr << "Finner ikke  textdatareceiver!!" << endl;
   }
-  TextData* txtDat = new TextData(txtList, parMap);
+  TextData* txtDat = new TextData(txtList);
   txtDat->show();
   if ( txtdlg->isVisible() ) {
     txtdlg->hide();
@@ -1035,7 +1035,7 @@ void HqcMainWindow::showWatchRR()
             data = errorList->getKvData();
     }
 
-    WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog( data, slist, this, Qt::Window );
+    WatchRR::RRDialog * rrd = WatchRR::RRDialog::getRRDialog(data, this, Qt::Window);
     if ( rrd ) {
         rrd->setReinserter( reinserter );
         rrd->show();
@@ -1053,7 +1053,7 @@ void HqcMainWindow::showWeather()
             data = errorList->getKvData();
     }
 
-    Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog( data, slist, this, Qt::Window );
+    Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
     if ( wtd ) {
         wtd->setReinserter( reinserter );
         wtd->show();
@@ -1138,6 +1138,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
   bool maybeQC2;
   bool result = actsdlg->getResults(parameter,stime,etime,stationIndex, maybeQC2);
   if ( !result ) return;
+  const std::list<kvalobs::kvParam> plist = KvMetaDataBuffer::instance()->allParams();
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
     if ( it->name().c_str() == parameter ){
@@ -1165,10 +1166,14 @@ void HqcMainWindow::acceptTimeseriesOK() {
     //      continue;
     QString ori;
     ori = ori.setNum(dt.original(), 'f', 1);
-    QString stnr;
+    QString stnr, parName = "???";
     stnr = stnr.setNum(dt.stationID());
+    try {
+        parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(dt.paramID()).name());
+    } catch(std::runtime_error&) {
+    }
     ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
-        + ": " + parMap[dt.paramID()] + ": " + ori;
+        + ": " + parName + ": " + ori;
     chList.push_back(ch);
     newCorr.push_back(dt.original());
   }
@@ -1199,6 +1204,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
   // UNUSED int parameterIndex;
   bool result = rjtsdlg->getResults(parameter,stime,etime,stationIndex);
   if ( !result ) return;
+  const std::list<kvalobs::kvParam> plist = KvMetaDataBuffer::instance()->allParams();
   std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
   for(;it!=plist.end(); it++){
     if ( it->name().c_str() == parameter ){
@@ -1225,10 +1231,14 @@ void HqcMainWindow::rejectTimeseriesOK() {
       continue;
     QString cr;
     cr = cr.setNum(dt.corrected(), 'f', 1);
-    QString stnr;
+    QString stnr, parName = "???";
     stnr = stnr.setNum(dt.stationID());
+    try {
+        parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(dt.paramID()).name());
+    } catch(std::runtime_error&) {
+    }
     ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
-        + ": " + parMap[dt.paramID()] + ": " + cr;
+        + ": " + parName + ": " + cr;
     chList.push_back(ch);
   }
   DiscardDialog* discardDialog = new DiscardDialog(chList);
@@ -1637,6 +1647,7 @@ bool HqcMainWindow::readFromStInfoSys()
     }
     listStat.clear();
 
+    const std::list<kvalobs::kvStation> slist = KvMetaDataBuffer::instance()->allStations();
     mi_foreach(const kvalobs::kvStation& st, slist) {
       cList_t::const_iterator cit = cList.find(st.stationID());
       if( cit == cList.end() ) {
@@ -1693,38 +1704,8 @@ void HqcMainWindow::exitNoKvalobs()
 */
 void HqcMainWindow::readFromStation()
 {
-    if (!kvservice::KvApp::kvApp->getKvStations(slist))
+    if (KvMetaDataBuffer::instance()->allStations().empty())
         exitNoKvalobs();
-}
-
-/*!
- Read the obs_pgm table in the kvalobs database
-*/
-void HqcMainWindow::readFromObsPgm() {
-    LOG_SCOPE();
-
-    mStationDetailsMap.clear();
-    obsPgmList.clear();
-    const int N_STATIONS = 100;
-    std::list<kvalobs::kvStation>::const_iterator it = slist.begin();
-    while (it != slist.end()) {
-        std::list<long> statList;
-        for(int i=0; i<N_STATIONS and it != slist.end(); ++i, ++it)
-            statList.push_back(it->stationID());
-        if (not statList.empty()) {
-            std::list<kvalobs::kvObsPgm> obsPgmTmp;
-            if (not kvservice::KvApp::kvApp->getKvObsPgm(obsPgmTmp, statList, false))
-                exitNoKvalobs();
-            obsPgmList.insert(obsPgmList.end(), obsPgmTmp.begin(), obsPgmTmp.end());
-        }
-        qApp->processEvents();
-    }
-
-    mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
-        StationDetails& sd = mStationDetailsMap[op.stationID()];
-        sd.obs_pgm.push_back(op);
-        sd.typeIDs.insert(op.typeID());
-    }
 }
 
 /*!
@@ -1732,19 +1713,17 @@ void HqcMainWindow::readFromObsPgm() {
 */
 void HqcMainWindow::checkTypeId(int stnr)
 {
-    StationDetailsMap_t::iterator it = mStationDetailsMap.find(stnr);
-    if (it != mStationDetailsMap.end()) {
-        mi_foreach(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
-            currentType crT;
-            crT.stnr    = stnr;
-            crT.par     = op.paramID();
-            crT.fDate   = timeutil::from_miTime(op.fromtime()).date();
-            crT.tDate   = timeutil::from_miTime(op.totime()).date();;
-            crT.cLevel  = op.level();
-            crT.cSensor = 0;
-            crT.cTypeId = op.typeID();
-            currentTypeList.push_back(crT);
-        }
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
+    mi_foreach(const kvalobs::kvObsPgm& op, obs_pgm) {
+        currentType crT;
+        crT.stnr    = stnr;
+        crT.par     = op.paramID();
+        crT.fDate   = timeutil::from_miTime(op.fromtime()).date();
+        crT.tDate   = timeutil::from_miTime(op.totime()).date();;
+        crT.cLevel  = op.level();
+        crT.cSensor = 0;
+        crT.cTypeId = op.typeID();
+        currentTypeList.push_back(crT);
     }
 }
 
@@ -1771,6 +1750,7 @@ bool HqcMainWindow::readFromStationFile()
     if ( stnr == prevStnr )
         continue;
 
+    const std::list<kvalobs::kvStation> slist = KvMetaDataBuffer::instance()->allStations();
     std::list<kvalobs::kvStation>::const_iterator it = std::find_if(slist.begin(), slist.end(), kvStationById(stnr));
     if(it != slist.end()) {
       QString strStnr;
@@ -1838,12 +1818,6 @@ void HqcMainWindow::readFromParam()
             }
         }
     }
-
-    if(!kvservice::KvApp::kvApp->getKvParams(plist))
-        cerr << "Can't connect to param table!" << endl;
-    
-    mi_foreach(const kvalobs::kvParam& p, plist)
-        parMap[p.paramID()] = QString::fromStdString(p.name());
 }
 
 /*!
@@ -1857,14 +1831,16 @@ void HqcMainWindow::findStationInfo(int stnr,
 				    double& hoh,
 				    int& snr,
 				    int& env) {
-    std::list<kvalobs::kvStation>::const_iterator it = std::find_if(slist.begin(), slist.end(), kvStationById(stnr));
-    if( it != slist.end() ) {
-      name = QString(it->name().c_str());
-      lat  = (it->lat());
-      lon  = (it->lon());
-      hoh  = (it->height());
-      snr  = (it->wmonr());
-      env  = (it->environmentid());
+    try {
+        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
+        name = QString(station.name().c_str());
+        lat  = (station.lat());
+        lon  = (station.lon());
+        hoh  = (station.height());
+        snr  = (station.wmonr());
+        env  = (station.environmentid());
+    } catch (std::runtime_error& e) {
+        std::cerr << "Error in station lookup: " << e.what() << std::endl;
     }
 }
 
@@ -2436,35 +2412,31 @@ bool HqcMainWindow::isAlreadyStored(const timeutil::ptime& otime, int stnr) {
 int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime)
 {
     int tpId = typ;
-    StationDetailsMap_t::const_iterator it = mStationDetailsMap.find(pos);
-    if (it != mStationDetailsMap.end()) {
-        mi_foreach_r(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
-            const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
-            const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
-            if (op.paramID() == par and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
-            {
-                tpId = op.typeID();
-                break;
-            }
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(pos);
+    mi_foreach_r(const kvalobs::kvObsPgm& op, obs_pgm) {
+        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
+        const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
+        if (op.paramID() == par and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
+        {
+            tpId = op.typeID();
+            break;
         }
     }
     if( abs(tpId) > 503 ) {
         tpId = -32767;
-        if (it != mStationDetailsMap.end()) {
-            mi_foreach_r(const kvalobs::kvObsPgm& op, it->second.obs_pgm) {
-                if(timeutil::from_miTime(op.fromtime()) < oTime) {
-                    const int opar = op.paramID();
-                    if((par == 105 && opar == 105)
-                       || (par == 106 && opar == 105)
-                       || (par == 109 && (opar == 104 || opar == 105 || opar == 106))
-                       || (par == 110 && (opar == 104 || opar == 105 || opar == 106 || opar == 109))
-                       || (par == 214 && opar == 213)
-                       || (par == 216 && opar == 215)
+        mi_foreach_r(const kvalobs::kvObsPgm& op, obs_pgm) {
+            if (timeutil::from_miTime(op.fromtime()) < oTime) {
+                const int opar = op.paramID();
+                if((par == 105 && opar == 105)
+                   || (par == 106 && opar == 105)
+                   || (par == 109 && (opar == 104 || opar == 105 || opar == 106))
+                   || (par == 110 && (opar == 104 || opar == 105 || opar == 106 || opar == 109))
+                   || (par == 214 && opar == 213)
+                   || (par == 216 && opar == 215)
                        || (par == 224 && opar == 223))
-                    {
-                        tpId = -op.typeID();
-                        break;
-                    }
+                {
+                    tpId = -op.typeID();
+                    break;
                 }
             }
         }

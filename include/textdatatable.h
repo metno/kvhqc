@@ -4,19 +4,18 @@
 #define TEXTDATATABLE_H
 
 #include <QtGui/QTableWidget>
-#include <QtCore/QMap>
 #include "hqcdefs.h"
 
 class TextDataTable : public QTableWidget
 {
  public:
-  TextDataTable(std::vector<TxtDat>, QMap<int,QString> parMap, QWidget*);
+  TextDataTable(const std::vector<TxtDat>&, QWidget*);
 };
 
 class TextData : public QWidget {
 Q_OBJECT
   public:
-  TextData(std::vector<TxtDat>, QMap<int,QString> parMap);
+  TextData(const std::vector<TxtDat>&);
   TextDataTable* txtTab;
 };
 

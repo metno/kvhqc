@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id: hqc.cc 388 2008-04-28 10:18:55Z knutj $
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -31,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "hqcmain.h"
 #include "hqc_paths.hh"
+#include "KvMetaDataBuffer.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
@@ -76,6 +75,8 @@ int main( int argc, char* argv[] )
     clog << "Can't open configuration file: " << myconf.toStdString() << endl;
     return 1;
   }
+
+  KvMetaDataBuffer kvsb;
   CorbaKvApp kvapp(argc, argv, confSec);
   HqcMainWindow * mw;
 

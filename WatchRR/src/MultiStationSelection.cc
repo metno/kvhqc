@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StationSelection.h"
 #include "RRDialog.h"
 #include "BusyIndicator.h"
+#include "KvMetaDataBuffer.hh"
 
 #include <kvcpp/KvApp.h>
 
@@ -89,10 +90,9 @@ namespace WatchRR
     };
   }
 
-  MultiStationSelection::MultiStationSelection( QString captionSuffix, std::list<kvStation>& slist, QWidget * parent, const kvData * data )
+  MultiStationSelection::MultiStationSelection( QString captionSuffix, QWidget * parent, const kvData * data )
     : QDialog( parent )
     , captionSuffix_( captionSuffix )
-    , slist_(slist)
   {
 
     Q3VBoxLayout * mainLayout = new Q3VBoxLayout( this );
@@ -145,21 +145,12 @@ namespace WatchRR
 
   void MultiStationSelection::doTransfer()
   {
-    int cstnr = selector->getKvData().stationID();
-    bool legalStation = false;
-    for(std::list<kvalobs::kvStation>::const_iterator sit=slist_.begin();sit!=slist_.end(); sit++){
-      int stnr = sit->stationID();
-      if ( cstnr == stnr ) {
-	legalStation  = true;
-	break;
-      }
-    }
-    if ( !legalStation ) {
-      cerr << "Ugyldig stasjonsnummer er " << cstnr << endl;
-      cerr << "legalStation er " << legalStation << endl;
-      QMessageBox::information( this, tr("WatchRR"),
-				tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
-      return;
+    const int cstnr = selector->getKvData().stationID();
+    const bool legalStation = KvMetaDataBuffer::instance()->isKnownStation(cstnr);
+    if (not legalStation) {
+        QMessageBox::information( this, tr("WatchRR"),
+                                  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
+        return;
     }
     MSSListItem * item = new MSSListItem( stations, selector->getKvData() );
     Q3ListViewItem * it = dynamic_cast<Q3ListViewItem *>( item );

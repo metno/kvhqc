@@ -1,20 +1,21 @@
 #include "textdatadialog.h"
 
 #include "hqc_utilities.hh"
+#include "KvMetaDataBuffer.hh"
 #include "MiDateTimeEdit.hh"
 #include "timeutil.hh"
 
 #include <QtGui/QCheckBox>
 #include <QtGui/QLabel>
+#include <QtGui/QLineEdit>
 #include <QtGui/qmessagebox.h>
 #include <QtGui/QPushButton>
 #include <Qt3Support/Q3HBoxLayout>
 #include <Qt3Support/Q3VBoxLayout>
 #include <QtCore/QDebug>
 
-TextDataDialog::TextDataDialog(const std::list<kvalobs::kvStation>& slist, QWidget* parent)
+TextDataDialog::TextDataDialog(QWidget* parent)
     : QDialog(parent)
-    , stationList(slist)
 {
   setCaption(tr("TextData"));
 
@@ -112,13 +113,10 @@ TimeSpan TextDataDialog::getTimeSpan()
 
 void TextDataDialog::checkStationId()
 {
-    qDebug() << "n.stations=" << stationList.size();
-    std::list<kvalobs::kvStation>::const_iterator it = std::find_if(stationList.begin(), stationList.end(), kvStationById(stnr));
-    const bool legalStation = ( it != stationList.end() );
-    if ( legalStation ) {
-        emit textDataApply();
+    if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
+        /*emit*/ textDataApply();
     } else {
         QMessageBox::information( this, tr("TextData"),
-                tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
+                                  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     }
 }

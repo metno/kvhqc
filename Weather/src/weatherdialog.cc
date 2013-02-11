@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "weatherdialog.h"
 
+#include "KvMetaDataBuffer.hh"
 #include "mi_foreach.hh"
 #include "StationSelection.h"
 #include "StationInformation.h"
@@ -59,8 +60,9 @@ using namespace std;
 
 namespace Weather
 {
-  WeatherDialog * WeatherDialog::getWeatherDialog( const kvData & data, list<kvStation>& slist, QWidget * parent, Qt::WindowFlags f )
-  {
+
+WeatherDialog * WeatherDialog::getWeatherDialog(const kvData & data, QWidget* parent, Qt::WindowFlags f)
+{
     cout << "WeatherDialog::getWeatherDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
@@ -89,17 +91,9 @@ namespace Weather
       return 0;
 
     int             st = ss->station();
-    bool legalStation = false;
-    for(list<kvalobs::kvStation>::const_iterator it=slist.begin();it!=slist.end(); it++){
-      int cstnr = it->stationID();
-      if ( cstnr == st ) {
-	legalStation  = true;
-	break;
-      }
-    }
-    if ( !legalStation ) {
-    	QMessageBox::information( ss, "WatchWeather",
-				  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
+    if (not KvMetaDataBuffer::instance()->isKnownStation(st)) {
+    	QMessageBox::information(ss, tr("WatchWeather"),
+                                 tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     	return 0;
     }
     timeutil::ptime cl = ss->obstime();
@@ -147,14 +141,14 @@ bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
     return pipl;
   }
 
-  void WeatherDialog::setupOrigTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+  void WeatherDialog::setupOrigTab(int type, QTabWidget* tabWidget ) {
     QFrame* orig = new QFrame(this);
     WeatherTable* origTab = new WeatherTable(orig, "orig", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), origTab, SLOT( showCurrentPage() ) );
     tabWidget->addTab(origTab, tr("Original"));
   }
 
-  void WeatherDialog::setupCorrTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+  void WeatherDialog::setupCorrTab(int type, QTabWidget* tabWidget ) {
     QFrame* corr = new QFrame(this);
     WeatherTable* corrTab = new WeatherTable(corr, "corr", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), corrTab, SLOT( showCurrentPage() ) );
@@ -162,7 +156,7 @@ bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
     cTab = corrTab;
   }
 
-  void WeatherDialog::setupFlagTab( SynObsList& sList, int type, QTabWidget* tabWidget ) {
+  void WeatherDialog::setupFlagTab(int type, QTabWidget* tabWidget ) {
     QFrame* flag = new QFrame(this);
     WeatherTable* flagTab = new WeatherTable(flag, "flag", type);
     connect( tabWidget, SIGNAL(currentChanged(int) ), flagTab, SLOT( showCurrentPage() ) );
@@ -221,43 +215,38 @@ void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
     const int stationID = station->stationID();
 
     OpgmList opgtl;
-    if( !KvApp::kvApp->getKvObsPgm(obsPgmList, statList, false) ) {
-        cerr << "Ingen obspgm" << endl;
-    } else {
-        mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
-            if( op.stationID() == stationID ) {
-                cerr << op.stationID() << " "
-                     << setw(3) << op.paramID() << " "
-                     << setw(3) << op.typeID() <<  " "
-                     << op.kl00() << " "
-                     << op.kl01() << " "
-                     << op.kl02() << " "
-                     << op.kl03() << " "
-                     << op.kl04() << " "
-                     << op.kl05() << " "
-                     << op.kl06() << " "
-                     << op.kl07() << " "
-                     << op.kl08() << " "
-                     << op.kl09() << " "
-                     << op.kl10() << " "
-                     << op.kl11() << " "
-                     << op.kl12() << " "
-                     << op.kl13() << " "
-                     << op.kl14() << " "
-                     << op.kl15() << " "
-                     << op.kl16() << " "
-                     << op.kl17() << " "
-                     << op.kl18() << " "
-                     << op.kl19() << " "
-                     << op.kl20() << " "
-                     << op.kl21() << " "
-                     << op.kl22() << " "
-                     << op.kl23() << " "
-                     << op.fromtime() << " "
-                     << op.totime() << endl;
-                opgmList(opgtl, op);
-            }
-        }
+    const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(stationID);
+    mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
+        cerr << op.stationID() << " "
+             << setw(3) << op.paramID() << " "
+             << setw(3) << op.typeID() <<  " "
+             << op.kl00() << " "
+             << op.kl01() << " "
+             << op.kl02() << " "
+             << op.kl03() << " "
+             << op.kl04() << " "
+             << op.kl05() << " "
+             << op.kl06() << " "
+             << op.kl07() << " "
+             << op.kl08() << " "
+             << op.kl09() << " "
+             << op.kl10() << " "
+             << op.kl11() << " "
+             << op.kl12() << " "
+             << op.kl13() << " "
+             << op.kl14() << " "
+             << op.kl15() << " "
+             << op.kl16() << " "
+             << op.kl17() << " "
+             << op.kl18() << " "
+             << op.kl19() << " "
+             << op.kl20() << " "
+             << op.kl21() << " "
+             << op.kl22() << " "
+             << op.kl23() << " "
+             << op.fromtime() << " "
+             << op.totime() << endl;
+        opgmList(opgtl, op);
     }
 
     synObsList.clear();
@@ -382,9 +371,9 @@ void WeatherDialog::setupGUI(int type)
 {
     tabWidget = new QTabWidget;
     setupStationInfo();
-    setupCorrTab(synObsList, type, tabWidget);
-    setupOrigTab(synObsList, type, tabWidget);
-    setupFlagTab(synObsList, type, tabWidget);
+    setupCorrTab(type, tabWidget);
+    setupOrigTab(type, tabWidget);
+    setupFlagTab(type, tabWidget);
     
     QPushButton* saveButton = new QPushButton(tr("Lagre"));
     saveButton->setDefault(true);

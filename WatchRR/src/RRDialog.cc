@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,6 +26,7 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#include "KvMetaDataBuffer.hh"
 #include "RRDialog.h"
 #include "StationSelection.h"
 #include "StationInformation.h"
@@ -56,14 +55,13 @@ using namespace std;
 
 namespace WatchRR
 {
-  RRDialog * RRDialog::getRRDialog( const kvData & data, list<kvStation>& slist, QWidget * parent, Qt::WindowFlags f )
+  RRDialog * RRDialog::getRRDialog( const kvData & data, QWidget * parent, Qt::WindowFlags f )
   {
     cout << "RRDialog::getRRDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
     QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose );
     selector->setCaption( "Velg stasjonsinformasjon" );
-    cerr << slist.size() << endl;
 
     Q3VBoxLayout * mainLayout = new Q3VBoxLayout( selector );
 
@@ -87,18 +85,9 @@ namespace WatchRR
       return 0;
 
     int            st = ss->station();
-
-    bool legalStation = false;
-    for(list<kvalobs::kvStation>::const_iterator it=slist.begin();it!=slist.end(); it++){
-      int cstnr = it->stationID();
-      if ( cstnr == st ) {
-	legalStation  = true;
-	break;
-      }
-    }
-    if ( !legalStation ) {
-    	QMessageBox::information( ss, "WatchRR",
-				  "Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer.");
+    if (not KvMetaDataBuffer::instance()->isKnownStation(st)) {
+    	QMessageBox::information(ss, tr("WatchRR"),
+                                 tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
     	return 0;
     }
     timeutil::pdate da(ss->obstime().year(), ss->obstime().month(), ss->obstime().day());

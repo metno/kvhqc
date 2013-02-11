@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -43,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "debug.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
+#include "KvMetaDataBuffer.hh"
 #include "missingtable.h"
 #include "mi_foreach.hh"
 #include "StationInformation.h"
@@ -158,19 +157,6 @@ ErrorList::ErrorList(QStringList& selPar,
 			      QMessageBox::Ok,
 			      Qt::NoButton );
     */
-    std::list<kvParam> paramList;
-    kvservice::KvApp::kvApp->getKvParams(paramList);
-
-    mi_foreach(const kvalobs::kvParam& p, paramList) {
-        if (p.unit().find("kode") != string::npos) {
-            cP.push_back(p.paramID());
-        }
-    }
-    //std::cerr << "end of kode params" << std::endl;
-    //std::cerr << "dumping cP" << std::endl;
-    //mi_foreach(int cp, cP)
-    //    cerr << cp << endl;
-    //std::cerr << "end of dumping cP" << std::endl;
     
     setVScrollBarMode( Q3ScrollView::AlwaysOn  );
     setMouseTracking(true);
@@ -363,11 +349,10 @@ void ErrorList::fillMemoryStores(QStringList& selPar,
         memObs.parName     = selPar[j];
         memObs.morig = -32767.0;
 
-        const int* mP = std::find(modelParam, boost::end(modelParam), memObs.parNo);
-        if( mP != boost::end(modelParam) ) {
+        if (KvMetaDataBuffer::instance()->isModelParam(memObs.parNo)) {
             mi_foreach(const modDatl& md, mdtl) {
                 if( md.stnr == memObs.stnr && md.otime == memObs.obstime ) {
-                    memObs.morig = md.orig[*mP];
+                    memObs.morig = md.orig[memObs.parNo];
                 }
             }
         }
@@ -471,7 +456,7 @@ void ErrorList::setTableCells()
         DataCell* tiIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.typeId));
         setItem(insRow,7,tiIt);
 
-        const bool isCodeParam = paramIsCode(mo.parNo);
+        const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(mo.parNo);
         const int nDigits = isCodeParam ? 0 : 1;
         DataCell* ogIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.orig,'f',nDigits));
         setItem(insRow,8,ogIt);
@@ -558,12 +543,9 @@ void DataCell::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool 
 }
 
 bool ErrorList::priorityParameterFilter(int parNo) {
-    if( std::find(parNoControl, boost::end(parNoControl), parNo) != boost::end(parNoControl) )
+    if (std::binary_search(parNoControl, boost::end(parNoControl), parNo))
         return false;
-    if( parNo >= 1000 )
-        return false;
-    else
-        return true;
+    return (parNo < 1000);
 }
 
 int ErrorList::priorityControlFilter(QString cfailed)
@@ -624,7 +606,7 @@ bool ErrorList::isErrorInMemstore1(const mem& mo)
     const int fs   = cif.flag(kvalobs::flag::fs),   fcp = cif.flag(kvalobs::flag::fcp);
     const int fr   = cif.flag(kvalobs::flag::fr),   fcc = cif.flag(kvalobs::flag::fcc);
     if( mo.flTyp == "fr" ) {
-        if ( paramHasModel(mo.parNo) ) {
+        if (KvMetaDataBuffer::instance()->isModelParam(mo.parNo)) {
             if ( fnum == 1 || (fnum > 1 && fw == 1) ) {
             } else if ( (fnum > 1 && fw > 1) || fw == 0 ) {
                 return true;
@@ -678,16 +660,6 @@ bool ErrorList::isErrorInMemstore1(const mem& mo)
     } else {
     }
     return false;
-}
-
-bool ErrorList::paramHasModel(int parNo)
-{
-    return std::find(modelParam, boost::end(modelParam), parNo) != boost::end(modelParam);
-}
-
-bool ErrorList::paramIsCode(int parNo)
-{
-    return std::find(cP.begin(), cP.end(), parNo) != cP.end();
 }
 
 void ErrorList::tableCellClicked(int row, int col, int /*button*/)
@@ -767,11 +739,11 @@ void ErrorList::swapRows( int row1, int row2, bool /*swapHeader*/ ) {
   Q3Table::swapRows( row1, row2, TRUE );
 }
 void ErrorList::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
-  emit currentChanged( currentRow(), currentColumn() );
-  Q3Table::sortColumn( col, ascending, TRUE );
-  emit currentChanged( currentRow(), currentColumn() );
-  clearSelection( true );
-  ensureCellVisible( currentRow(), 0 );
+    /*emit*/ currentChanged( currentRow(), currentColumn() );
+    Q3Table::sortColumn( col, ascending, TRUE );
+    /*emit*/ currentChanged( currentRow(), currentColumn() );
+    clearSelection( true );
+    ensureCellVisible( currentRow(), 0 );
 }
 
 void ErrorList::showSameStation()
@@ -1052,7 +1024,7 @@ void ErrorList::signalStationSelected( int row )
   letter.common = boost::lexical_cast<std::string>(m->stnr);
   letter.common.append(",");
   letter.common.append(timeutil::to_iso_extended_string(m->obstime));
-  emit statSel( letter );
+  /*emit*/ statSel( letter );
 
 }
 

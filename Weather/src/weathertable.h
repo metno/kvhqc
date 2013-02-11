@@ -115,8 +115,7 @@ extern const int params[NP];
     void readLimits();
     kvalobs::kvData getKvData(int, int);
     WeatherTableToolTip *toolTip;
-    //    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, ObsPgmList obsPgmList);
-    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime, const std::list<kvalobs::kvObsPgm>& obsPgmList);
+    int findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime);
   protected slots:
     /**
      * \brief Update status bar with info from cell.

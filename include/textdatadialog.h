@@ -3,14 +3,8 @@
 #ifndef TEXTDATADIALOG_H
 #define TEXTDATADIALOG_H
 
-#include <kvalobs/kvStation.h>
-
-#include <QtCore/qvariant.h>
 #include <QtGui/qdialog.h>
 #include <QtCore/qdatetime.h>
-#include <QtGui/qlineedit.h>
-
-#include <list>
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;
@@ -28,7 +22,7 @@ class TextDataDialog : public QDialog
     Q_OBJECT
 
 public:
-  TextDataDialog(const std::list<kvalobs::kvStation>& slist, QWidget* parent = 0);
+  TextDataDialog(QWidget* parent = 0);
     //    ~TextDataDialog();
 
     QLabel* textLabel0;
@@ -49,8 +43,6 @@ public:
     int stnr;
     QDateTime dtto;
     QDateTime dtfrom;
-private:
-    const std::list<kvalobs::kvStation>& stationList;
 
 public slots:
     void setStation(const QString& st);

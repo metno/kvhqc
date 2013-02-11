@@ -28,6 +28,7 @@
  */
 
 #include "KvalobsDataModel.h"
+#include "KvMetaDataBuffer.hh"
 #include "hqcmain.h"
 #include "debug.hh"
 #include "mi_foreach.hh"
@@ -50,18 +51,8 @@ namespace model
 {
   const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
 
-const int NC = 66;
-const int codeParam[66] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
-                              13, 14, 15, 17, 18, 19, 20, 21, 22, 23,
-                              24, 25, 26, 27, 27, 28, 31, 32, 33, 34,
-                              35, 36, 37, 38, 39, 40, 41, 42, 43, 44,
-                              45, 46, 47, 48, 49, 54, 55, 56, 57,123,
-                              124,128,151,273,301,302,303,304,305,306,
-                              307,308,1021,1022,1025,1026 };
-
   KvalobsDataModel::KvalobsDataModel(
       const std::vector<int> & parameters,
-      QMap<int,QString> & paramIdToParamName,
       KvalobsDataListPtr datalist,
       const std::vector<modDatl> & modeldatalist,
       bool showStationNameInHeader,
@@ -79,9 +70,10 @@ const int codeParam[66] = {   1,  2,  3,  4,  6,  7,  9, 10, 11, 12,
 {
     mi_foreach(const int param, parameters) {
         QString paramName = "unknown";
-        QMap<int,QString>::const_iterator find = paramIdToParamName.find(param);
-        if ( find != paramIdToParamName.end() )
-            paramName = * find;
+        try {
+            paramName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(param).name());
+        } catch(std::runtime_error&) {
+        }
         parametersToShow_.push_back(Parameter(param, paramName));
     }
     qDebug() << "Statistics\n"
@@ -619,6 +611,6 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 
   bool KvalobsDataModel::paramIsCode(const int parNo) const
   {
-      return std::binary_search(codeParam, codeParam+NC, parNo);
+      return KvMetaDataBuffer::instance()->isCodeParam(parNo);
   }
 }

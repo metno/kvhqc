@@ -1,7 +1,7 @@
 
 #include "DianaHelper.hh"
 #include "hqc_paths.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 
 #ifdef METLIBS_BEFORE_4_9_5
 #define signals Q_SIGNALS
@@ -172,7 +172,7 @@ void DianaHelper::sendStations(const std::vector<int>& stations)
 
         BOOST_FOREACH(int sid, stations) {
             try {
-                const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(sid);
+                const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(sid);
                 std::ostringstream o;
                 o << s.name() << ':' << s.lat() << ':' << s.lon();
                 m2.data.push_back(o.str());

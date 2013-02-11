@@ -2,9 +2,7 @@
 
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -163,11 +161,10 @@ class StationTable : public Q3Table
 {   Q_OBJECT
 public:
     StationTable(QWidget* parent=0);
-    void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties,
-                 bool web, bool pri, const HqcMainWindow::StationDetailsMap_t& stationDetailsMap);
- bool findInTypes(HqcMainWindow::StationDetailsMap_t::const_iterator, int);
- QString getEnvironment(const int envID, HqcMainWindow::StationDetailsMap_t::const_iterator);
- void sortColumn( int col, bool ascending, bool wholeRows );
+    void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties, bool web, bool pri);
+    void sortColumn( int col, bool ascending, bool wholeRows );
+private:
+    QString getEnvironment(const int envID, const std::set<int>& typeIDs);
 };
 
 #include "ui_stationselection.h"
@@ -180,7 +177,6 @@ public:
                      const QStringList& counties,
                      bool,
                      bool,
-                     const HqcMainWindow::StationDetailsMap_t& stationDetailsMap,
                      QWidget* parent);
 
     std::vector<int> getSelectedStations();

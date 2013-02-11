@@ -2,7 +2,7 @@
 #include "NeighborHeader.hh"
 
 #include "Helpers.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 
 QVariant NeighborHeader::headerData(int ctr, int nbr, Qt::Orientation orientation, int role)
 {
@@ -11,8 +11,8 @@ QVariant NeighborHeader::headerData(int ctr, int nbr, Qt::Orientation orientatio
 
     const QString sep = (orientation == Qt::Horizontal) ? "\n" : " ";
     try {
-        const kvalobs::kvStation& sc = KvStationBuffer::instance()->findStation(ctr);
-        const kvalobs::kvStation& sn = KvStationBuffer::instance()->findStation(nbr);
+        const kvalobs::kvStation& sc = KvMetaDataBuffer::instance()->findStation(ctr);
+        const kvalobs::kvStation& sn = KvMetaDataBuffer::instance()->findStation(nbr);
 
         QString header = QString::number(nbr) + sep, name = Helpers::stationName(sn);
         const int MAX_NAME = 5;

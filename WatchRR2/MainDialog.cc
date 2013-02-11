@@ -7,7 +7,7 @@
 #include "DianaHelper.hh"
 #include "EditDialog.hh"
 #include "Helpers.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 #include "MainTableModel.hh"
 #include "NeighborDataModel.hh"
 #include "NeighborTableModel.hh"
@@ -60,7 +60,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     initializeRR24Data();
 
     try {
-        const kvalobs::kvStation& s = KvStationBuffer::instance()->findStation(mSensor.stationId);
+        const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(mSensor.stationId);
         info += " " + Helpers::stationName(s);
         if (s.environmentid() == 10)
             info += " " + tr("[not daily]");

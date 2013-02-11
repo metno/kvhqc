@@ -29,7 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "StationSelection.h"
-#include "BusyIndicator.h"
+#include "KvMetaDataBuffer.hh"
 #include "timeutil.hh"
 
 #include <kvalobs/kvData.h>
@@ -41,6 +41,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/q3datetimeedit.h>
 #include <Qt3Support/Q3GridLayout>
 
+#include <boost/foreach.hpp>
+
 #include <iostream>
 #include <cassert>
 
@@ -48,8 +50,6 @@ using kvalobs::kvData;
 
 namespace WatchRR
 {
-  StationSelection::TypeFromStation StationSelection::typeFromStation_;
-
   StationSelection::StationSelection( QWidget * parent, const kvData * data_ )
     : QWidget( parent )
   {
@@ -100,9 +100,6 @@ namespace WatchRR
       new QLineEdit( QString::number( data.level() ), "0", this );
     layout->addWidget( level_, row, 1 );
     layout->addWidget( new QLabel( level_, tr("&Level:"), this ), row++, 0 );
-
-    if ( typeFromStation_.empty() )
-      setupTypeFromStation_();
 
     connect( station_, SIGNAL( textChanged(const QString &) ), this, SLOT( updateTypeID_() ) );
     connect( obstime_, SIGNAL( valueChanged(const QDate &) ), this, SLOT( updateTypeID_() ) );
@@ -159,32 +156,16 @@ namespace WatchRR
 
   void StationSelection::updateTypeID_()
   {
-    TypeFromStation::const_iterator find = typeFromStation_.find( station() );
-    if ( find != typeFromStation_.end() )
-      typeID_->setText( QString::number( find->second ) );
-  }
-
-  void StationSelection::setupTypeFromStation_()
-  {
-    BusyIndicator busy;
-    assert( kvservice::KvApp::kvApp );
-    typeFromStation_.clear();
-    std::list<kvalobs::kvObsPgm> opgm;
-    bool ok = kvservice::KvApp::kvApp->getKvObsPgm( opgm, std::list<long>(), false );
-    if ( not ok )
-      return; // Got no contact with kvalobs: return.
-    std::cerr << timeutil::to_iso_extended_string(obstime()) << std::endl;
-    for ( std::list<kvalobs::kvObsPgm>::const_iterator it = opgm.begin(); it != opgm.end(); ++ it ) {
-      //      std::cerr << it->stationID() << "," << it->paramID() << "," << it->fromtime() << "," << it->totime() << "," << it->typeID() << std::endl;
-        const timeutil::ptime today0000 = timeutil::ptime(timeutil::now().date(), boost::posix_time::time_duration(0,0,0));
-      if ( it->paramID() == 110
-              and ( it->typeID() == 302 or it->typeID() == 402 )
-	      and ( it->kl06() or it->kl07() or it->collector() )
-	      and ( timeutil::from_miTime(it->fromtime()) < today0000 and today0000 < timeutil::from_miTime(it->totime())) )
-      {
-        typeFromStation_[ it->stationID() ] = it->typeID();
-	std::cerr << it->stationID() << "," <<  typeFromStation_[ it->stationID() ] << std::endl;
+      const std::list<kvalobs::kvObsPgm>& opgm = KvMetaDataBuffer::instance()->findObsPgm(station());
+      BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+          const timeutil::ptime today0000 = timeutil::ptime(timeutil::now().date(), boost::posix_time::time_duration(0,0,0));
+          if (op.paramID() == 110
+              and (op.typeID() == 302 or op.typeID() == 402)
+	      and (op.kl06() or op.kl07() or op.collector())
+	      and (timeutil::from_miTime(op.fromtime()) < today0000 and today0000 < timeutil::from_miTime(op.totime())))
+          {
+              typeID_->setText(QString::number(op.typeID()));
+          }
       }
-    }
   }
-}
+} // namespace WatchRR

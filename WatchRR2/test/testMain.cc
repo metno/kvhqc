@@ -3,7 +3,7 @@
 #include "FakeKvApp.hh"
 #include "Helpers.hh"
 #include "KvalobsModelAccess.hh"
-#include "KvStationBuffer.hh"
+#include "KvMetaDataBuffer.hh"
 #include "MainDialog.hh"
 #include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 
     FakeKvApp fakeApp;
     QtKvService qkvs;
-    KvStationBuffer kvsb;
+    KvMetaDataBuffer kvsb;
 
     load_1650_20130130(fakeApp);
     load_31850_20121130(fakeApp);
