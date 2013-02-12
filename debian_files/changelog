@@ -1,3 +1,12 @@
+kvhqc (2.15.1-1) unstable; urgency=low
+
+  * fixed typo in station list preparation (prio stations were always included,
+    independent of any selection)
+  * show model value for those parameters which have model values, not for those
+    which do not
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 12 Feb 2013 11:05:36 +0100
+
 kvhqc (2.15.0-1) unstable; urgency=low
 
   * jump to same typeid in data list when selecting a row in error list
