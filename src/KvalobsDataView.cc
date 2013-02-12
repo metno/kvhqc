@@ -83,10 +83,9 @@ void KvalobsDataView::toggleShowModelData(bool show)
     for (int i=0; i<columns; ++i) {
         if (model->getColumnType(i) != KvalobsDataModel::Model)
             continue;
-        if (KvMetaDataBuffer::instance()->isModelParam(model->getParameter(i).paramid))
-            setColumnHidden(i, true);
-        else
-            setColumnHidden (i, not show);
+        const bool showParam
+            = show and (KvMetaDataBuffer::instance()->isModelParam(model->getParameter(i).paramid));
+        setColumnHidden(i, not showParam);
     }
 }
 
