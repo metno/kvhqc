@@ -29,19 +29,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ListDialog.h"
 
 #include "BusyIndicator.h"
-#include "HideApplyBox.hh"
 #include "hqcmain.h"
 #include "KvMetaDataBuffer.hh"
-#include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
 
-#include <Qt3Support/Q3HBoxLayout>
-#include <QtGui/QLabel>
-#include <Qt3Support/Q3GridLayout>
-#include <Qt3Support/Q3VBoxLayout>
-
 #include <algorithm>
+
+#define NDEBUG
+#include "debug.hh"
+#include <qdebug.h>
 
 namespace /* anonymous */ {
 struct stationtype_t {
@@ -745,7 +742,7 @@ std::vector<int> ListDialog::getSelectedStations()
 
 void ListDialog::showStationSelectionDialog()
 {
-    const std::list<listStat_t>& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
+    const listStat_l& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
 
     removeAllStatFromListbox();
     if( statSelect )
@@ -789,8 +786,11 @@ void StationTable::setData(const listStat_l& listStat,
   BusyIndicator busy;
   setNumRows(listStat.size());
 
+  DBGE(qDebug() << counties);
+
   int stInd = 0;
   mi_foreach(const listStat_t& s, listStat) {
+      DBG(DBG1(s.stationid) << DBG1(s.fylke) << DBG1(s.wmonr) << DBG1(s.pri));
     bool webStat = (s.wmonr != "    ");
     bool priStat = (s.pri.substr(0, 3) == "PRI");
     QString prty;
@@ -799,7 +799,7 @@ void StationTable::setData(const listStat_l& listStat,
 
     if (not (counties.contains("ALL")
              or counties.contains(QString::fromStdString(s.fylke))
-             or (webStat and web) or (priStat or pri)))
+             or (webStat and web) or (priStat and pri)))
         continue;
 
     const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(s.stationid);

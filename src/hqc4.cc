@@ -63,7 +63,7 @@ int main( int argc, char* argv[] )
     const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir);
 #endif
     if (not translationsLoaded)
-        qDebug() << "failed to load translations from " << langDir;
+        qDebug() << "failed to load translations from " << langDir << " for locale " << QLocale::system().name();
     a.installTranslator(&wTranslator);
     
     QStringList args = a.arguments();

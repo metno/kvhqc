@@ -213,7 +213,7 @@ public:
   /// True if all types have been selected, as opposed to prioritized parameters
   bool isShTy;
 
-    const std::list<listStat_t>& getStationDetails();
+    const listStat_l& getStationDetails();
 
 public Q_SLOTS:
     void navigateTo(const kvalobs::kvData& d);
@@ -346,7 +346,7 @@ protected:
   void readErrorsFromqaBase(int&, int&);
   void showWindow(QWidget* w);
 
-    std::list<listStat_t> listStat;
+    listStat_l listStat;
     timeutil::ptime mLastStationListUpdate;
 
     void moveEvent(QMoveEvent* event);
