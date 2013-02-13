@@ -27,7 +27,6 @@
  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "debug.hh"
 #include "KvalobsDataView.h"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataDelegate.h"
@@ -38,6 +37,9 @@
 #include <QtCore/QDebug>
 
 #include <stdexcept>
+
+#define NDEBUG
+#include "debug.hh"
 
 namespace model
 {
@@ -92,6 +94,7 @@ void KvalobsDataView::toggleShowModelData(bool show)
 void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
   {
     LOG_SCOPE();
+    DBG(DBG1(stationid) << DBG1(obstime) << DBG1(typeID));
 
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
@@ -130,53 +133,33 @@ void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstim
         selectStation(data->stnr(), obstime, data->showTypeId());
   }
 
-  void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
-  {
+void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
+{
     LOG_SCOPE();
     QTableView::currentChanged(current, previous);
 
-    const KvalobsDataModel * model = getModel_();
-    if ( model ) {
-      if ( current.column() != previous.column() ) {
-          try {
-            QString parameterName = model->getParameter(current).parameterName;
-            qDebug() << "parameterSelected(" << qPrintable(parameterName) << ")";
-            /*emit*/ parameterSelected(parameterName);
-          }
-          catch (std::out_of_range & ) {
-              // invalid index - do not do anything
-          }
-      }
-
-      const KvalobsData * oldData = model->kvalobsData(previous);
-      const KvalobsData * newData = model->kvalobsData(current);
-
-      if ( ! oldData )
-        qDebug() << "Invalid oldData";
-      if ( ! newData ) {
-          qDebug() << "Invalid newData";
+    if (not current.isValid())
         return;
-      }
-      if ( (! oldData) or newData->stnr() != oldData->stnr() ) {
-	   qDebug() << "stationSelected(" << newData->stnr() << ")";
-	 /*emit*/ stationSelected(newData->stnr(), newData->otime());
-      }
-      if ( (! oldData) or newData->otime() != oldData->otime() ) {
-          qDebug() << "timeSelected(" << QString::fromStdString(timeutil::to_iso_extended_string(newData->otime())) << ")";
-        /*emit*/ timeSelected(newData->otime());
-      }
+    
+    const KvalobsDataModel * model = getModel_();
+    if (not model)
+        return;
+
+    try {
+        /*emit*/ signalNavigateTo(model->getKvData_(current));
+    } catch (std::exception&) {
     }
-  }
+}
 
-  const KvalobsDataModel * KvalobsDataView::getModel_() const
-  {
+const KvalobsDataModel * KvalobsDataView::getModel_() const
+{
     return dynamic_cast<const KvalobsDataModel *>(model());
-  }
+}
 
-  void KvalobsDataView::setup_()
-  {
-      setSelectionBehavior(QAbstractItemView::SelectRows);
-      setSelectionMode(QAbstractItemView::SingleSelection);
-      setItemDelegate(new KvalobsDataDelegate(this));
-  }
+void KvalobsDataView::setup_()
+{
+    setSelectionBehavior(QAbstractItemView::SelectRows);
+    setSelectionMode(QAbstractItemView::SingleSelection);
+    setItemDelegate(new KvalobsDataDelegate(this));
+}
 } // namespace model

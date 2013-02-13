@@ -21,6 +21,7 @@ public:
     bool isKnownParam(int id);
     const kvalobs::kvParam& findParam(int id);
     const std::list<kvalobs::kvParam>& allParams();
+    std::string findParamName(int paramId);
     bool isCodeParam(int paramid);
     bool isModelParam(int paramid);
 

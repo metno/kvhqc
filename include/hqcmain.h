@@ -1,32 +1,30 @@
 /* -*- c++ -*-
-HQC - Free Software for Manual Quality Control of Meteorological Observations
+   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
+   Copyright (C) 2013 met.no
 
-Copyright (C) 2007 met.no
+   Contact information:
+   Norwegian Meteorological Institute
+   Box 43 Blindern
+   0313 OSLO
+   NORWAY
+   email: kvalobs-dev@met.no
 
-Contact information:
-Norwegian Meteorological Institute
-Box 43 Blindern
-0313 OSLO
-NORWAY
-email: kvalobs-dev@met.no
+   This file is part of HQC
 
-This file is part of HQC
+   HQC is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public License as
+   published by the Free Software Foundation; either version 2
+   of the License, or (at your option) any later version.
 
-HQC is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+   HQC is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   General Public License for more details.
 
-HQC is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
-
-You should have received a copy of the GNU General Public License along
-with HQC; if not, write to the Free Software Foundation Inc.,
-51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+   You should have received a copy of the GNU General Public License along
+   with HQC; if not, write to the Free Software Foundation Inc.,
+   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
@@ -62,6 +60,7 @@ class ClockDialog;
 class DataTable;
 class DianaShowDialog;
 class HintWidget;
+class HqcDianaHelper;
 class ListDialog;
 class ParameterDialog;
 class RejectDialog;
@@ -78,9 +77,6 @@ namespace Ui {
 class HqcMainWindow;
 }
 
-/**
- * \brief The application's main window.
- */
 class HqcMainWindow: public QMainWindow
 {   Q_OBJECT
 
@@ -90,262 +86,185 @@ public:
 
     void startup();
 
-  void makeObsDataList( kvservice::KvObsDataList& dataList );
-  void makeTextDataList( kvservice::KvObsDataList& textdataList );
+    void makeObsDataList( kvservice::KvObsDataList& dataList);
+    void makeTextDataList( kvservice::KvObsDataList& textdataList);
 
 public Q_SLOTS:
-  /*!
-   * \brief Send observation times to Diana
-   */
-  void sendTimes();
-  /*!
-   * \brief Send message to show ground analysis in Diana
-   */
-  void sendAnalysisMessage();
-  /*!
-   * \brief Send station information to Diana
-   */
-  void sendStation(int);
-  /*!
-   * \brief Send complete observation at given time to Diana
-   */
-  void sendObservations(const timeutil::ptime& time, bool sendtime = true);
-  /*!
-   * \brief Send a parameter to Diana
-   */
-  void sendSelectedParam(const QString & param);
-  /*!
-   * \brief Reads the data and model_data tables in the kvalobs database
-   *        and inserts the observations/model values in datalist/modeldatalist.
-   */
-  void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
+    //! send all observation times to Diana
+    void sendTimes();
 
 public:
+    /*!
+     * \brief Returns true if the hour given as input is checked in the ClockDialog
+     */
+    bool timeFilter(int);
 
-  /*!
-   * \brief Returns true if the hour given as input is checked in the ClockDialog
-   */
-  bool timeFilter(int);
-  /*!
-   * \brief Returns true if the given typeId and environment corresponds
-   *        to a station type checked in the ListDialog
-   */
-  bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
-  bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
-  bool isAlreadyStored(const timeutil::ptime&, int);
-  /*!
-   * \brief
-   */
-  bool timeFilterChanged;
+    //! true if the given typeId and environment corresponds to a station type checked in the ListDialog
+    bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
+    bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
+    bool isAlreadyStored(const timeutil::ptime&, int);
 
-  /*!
-   * \brief Reads the station table in the kvalobs database
-   *        and inserts the station information in slist
-   */
-  void readFromStation();
+    bool timeFilterChanged;
 
-    //! \brief Reads station info from stinfosys
+    void readFromStation();
+
+    //! reads station info from stinfosys
     bool readFromStInfoSys();
     bool readFromStationFile();
 
-  /*!
-   * \brief Reads the parameter order from the file paramorder, then reaads the param
-   *        table in the kvalobs database and inserts the station information in parmap
-   */
-  void readFromParam();
-  /*!
-   * \brief Reads the typeids file to find which typeids to show
-   */
-  //  void readFromTypeIdFile();
-  void checkTypeId(int);
-  /*!
-   * \brief Retrieves from stlist the position and height of a given station
-   */
-  void findStationPos(int, double&, double&, double&);
-  /*!
-   * \brief Retrieves from stlist information about a given station
-   */
-  void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
-  /*!
-   * \brief A primitive horizontal tiling of the errorhead and errorlist windows
-   */
-  void tileHorizontal();
-  /*!
-   * \brief Extract the typeid from the obspgmlist for a given station, parameter and obstime
-   */
-  int findTypeId(int, int, int, const timeutil::ptime&);
-  //  int findTypeId(int, int, const timeutil::ptime&);
-  /*!
-   * \brief Some parameters are displayed in Diana with other units than those in the kvalobs database.
-   *        This method converts from "Kvalobs" to "Diana" units
-   */
-  double dianaValue(int, bool, double, double);
-  /*!
-   * \brief Some parameters are displayed in Diana with other names than those in the kvalobs database.
-   *        This method converts from "Kvalobs" to "Diana" names.
-   */
-  std::string dianaName(const std::string&);
-  /*!
-   * \brief From given typeId and environment is generated a text string to be sent to Diana
-   */
-  std::string hqcType(int, int);
+    /*! \brief Reads the parameter order from the file paramorder, then reaads the param
+     *        table in the kvalobs database and inserts the station information in parmap */
+    void readFromParam();
 
-  ListDialog* lstdlg;
-  ClockDialog* clkdlg;
-  DianaShowDialog* dshdlg;
-  ParameterDialog* pardlg;
-  TextDataDialog* txtdlg;
-  RejectDialog* rejdlg;
-  std::vector<kvalobs::kvRejectdecode> rejList;
-  TimeseriesDialog* tsdlg;
-  RejectTimeseriesDialog* rjtsdlg;
-  AcceptTimeseriesDialog* actsdlg;
+    //! read data and model_data from kvalobs to datalist/modeldatalist
+    void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
 
-  model::KvalobsDataListPtr datalist;
-  std::vector<modDatl> modeldatalist;
+    void checkTypeId(int);
 
-  /// This holds the value of the previously used stList
-  std::vector<TxtDat> txtList;
-  listType lity;
-  int selParNo[NOPARAMALL];
-  std::vector<currentType> currentTypeList;
-  kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
-  /// True if all types have been selected, as opposed to prioritized parameters
-  bool isShTy;
+    //! Retrieves from stlist the position and height of a given station
+    void findStationPos(int, double&, double&, double&);
+
+    //! Retrieves from stlist information about a given station
+    void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
+
+    //! A primitive horizontal tiling of the errorhead and errorlist windows
+    void tileHorizontal();
+
+    //! Extract the typeid from the obspgmlist for a given station, parameter and obstime
+    int findTypeId(int, int, int, const timeutil::ptime&);
+
+    ListDialog* lstdlg;
+    ClockDialog* clkdlg;
+    DianaShowDialog* dshdlg;
+    ParameterDialog* pardlg;
+    TextDataDialog* txtdlg;
+    RejectDialog* rejdlg;
+    std::vector<kvalobs::kvRejectdecode> rejList;
+    TimeseriesDialog* tsdlg;
+    RejectTimeseriesDialog* rjtsdlg;
+    AcceptTimeseriesDialog* actsdlg;
+
+    model::KvalobsDataListPtr datalist;
+    std::vector<modDatl> modeldatalist;
+
+    /// This holds the value of the previously used stList
+    std::vector<TxtDat> txtList;
+    listType lity;
+    int selParNo[NOPARAMALL];
+    std::vector<currentType> currentTypeList;
+    kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
+    /// True if all types have been selected, as opposed to prioritized parameters
+    bool isShTy;
 
     const listStat_l& getStationDetails();
 
-public Q_SLOTS:
+private Q_SLOTS:
     void navigateTo(const kvalobs::kvData& d);
-  void saveDataToKvalobs(const kvalobs::kvData& toSave);
+    void receivedStationFromDiana(int stationid);
+    void receivedTimeFromDiana(const timeutil::ptime& time);
 
-/*!
- * \brief Produces the data table or the error list
-*/
-  void ListOK();
+    void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
-/*!
- * \brief Called when OK button in ClockDialog is clicked
-*/
-  void ClkOK();
-/*!
- * \brief Called when OK button in DianaShowDialog is clicked.
- *        Initializes the maps with the parameters to be shown in Diana.
-*/
-  void dianaShowOK();
-/*!
- * \brief Produces time series plots
-*/
-  void TimeseriesOK();
-/*!
- * \brief Called when OK button in ParameterDialog is clicked
-*/
-  void paramOK();
+    //! Produces the data table or the error list
+    void ListOK();
+
+    //! Called when OK button in ClockDialog is clicked
+    void ClkOK();
+
+    //! Called when OK button in DianaShowDialog is clicked.
+    /*! Initializes the maps with the parameters to be shown in Diana. */
+    void dianaShowOK();
+
+    //! Produces time series plots
+    void TimeseriesOK();
+
+    //! Called when OK button in ParameterDialog is clicked
+    void paramOK();
 
 private Q_SLOTS:
-  void showFlags();
-  void showOrigs();
-  void showMod();
-  void showStat();
-  void showPos();
-  void showHeight();
-  void showTyp();
-  void airPress();
-  void temperature();
-  void precipitation();
-  void visuals();
-  void sea();
-  void synop();
-  void climateStatistics();
-  void priority();
-  void wind();
-  void plu();
-  void all();
-  void clk();
-  void dsh();
-  void rejectTimeseries();
-  void rejectTimeseriesOK();
-  void acceptTimeseries();
-  void acceptTimeseriesOK();
-  void startKro();
-  void screenshot();
+    void showFlags();
+    void showOrigs();
+    void showMod();
+    void showStat();
+    void showPos();
+    void showHeight();
+    void showTyp();
+    void airPress();
+    void temperature();
+    void precipitation();
+    void visuals();
+    void sea();
+    void synop();
+    void climateStatistics();
+    void priority();
+    void wind();
+    void plu();
+    void all();
+    void clk();
+    void dsh();
+    void rejectTimeseries();
+    void rejectTimeseriesOK();
+    void acceptTimeseries();
+    void acceptTimeseriesOK();
+    void startKro();
+    void screenshot();
 
     void onVersionCheckTimeout();
 
 private:
-  void selectParameterGroup(const QString& group);
-  void exitNoKvalobs();
+    void selectParameterGroup(const QString& group);
+    void exitNoKvalobs();
 
 private:
-  model::KvalobsDataModel * dataModel;
-  bool firstObs;
-  int sLevel;
+    model::KvalobsDataModel * dataModel;
+    int sLevel;
 
-  /// True after first time ListOk() have been invoked with valid input
-  bool listExist;
+    /// True after first time ListOk() have been invoked with valid input
+    bool listExist;
 
-  QString wElement;
-  QString userName;
+    QString wElement;
+    QString userName;
 
-  /// The parameters that the user have selected
-  QStringList selPar;
+    /// The parameters that the user have selected
+    QStringList selPar;
 
-  bool tsVisible;
+    bool tsVisible;
 
     std::auto_ptr<Ui::HqcMainWindow> ui;
-  ClientButton* pluginB;
-  bool dianaconnected;
+    ClientButton* pluginB;
+    std::auto_ptr<HqcDianaHelper> mDianaHelper;
 
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;
 
-  /**
-   * Parameters from parameter groups. The keys will be the user's
-   * presentation strings, and not the strings in the config file
-   *
-   * @todo make bindings between menu elements and config file dynamic
-   */
-  QMap<QString, std::vector<int> > parameterGroups;
+    /**
+     * Parameters from parameter groups. The keys will be the user's
+     * presentation strings, and not the strings in the config file
+     *
+     * @todo make bindings between menu elements and config file dynamic
+     */
+    QMap<QString, std::vector<int> > parameterGroups;
 
-  TSPlotDialog* tspdialog; // timeseries-plot
+    TSPlotDialog* tspdialog; // timeseries-plot
 
-  timeutil::ptime dianaTime;
-  typedef QMap<std::string,std::string> NameMap;
-  NameMap dnMap;
-  typedef QMap<std::string,bool> ModelMap;
-  ModelMap mdMap;
-  typedef QMap<std::string,bool> DiffMap;
-  DiffMap diMap;
-  typedef QMap<std::string,bool> PropMap;
-  PropMap prMap;
+    void closeEvent(QCloseEvent* event);
+    void writeSettings();
+    void readSettings();
+    int parFind;
 
-  /**
-   * Settings
-   */
-  void closeEvent(QCloseEvent* event);
-  void writeSettings();
-  void readSettings();
-  int parFind;
-
-  struct Param
-  {
-    bool item;
-    QString text;
-    bool mark;
-    bool noMark;
-    bool all;
-  };
+    struct Param
+    {
+        bool item;
+        QString text;
+        bool mark;
+        bool noMark;
+        bool all;
+    };
 
     boost::shared_ptr<KvalobsAccess> kda;
     boost::shared_ptr<KvalobsModelAccess> kma;
 
 protected:
-  // socket methods
-  void initDiana();
-  void sendMessage(miMessage&);
-  void readErrorsFromqaBase(int&, int&);
-  void showWindow(QWidget* w);
-
     listStat_l listStat;
     timeutil::ptime mLastStationListUpdate;
 
@@ -353,70 +272,50 @@ protected:
     void resizeEvent(QResizeEvent* event);
 
 private Q_SLOTS:
-  void closeWindow();
-  void helpUse();
-  void helpFlag();
-  void helpParam();
-  void about();
-  void aboutQt();
+    void closeWindow();
+    void helpUse();
+    void helpFlag();
+    void helpParam();
+    void about();
+    void aboutQt();
 
-  // socket slots
-#ifdef METLIBS_BEFORE_4_9_5
-  void processLetterOld(miMessage&);
-#endif
-  void processLetter(const miMessage&);
-  void processConnect();
-  void cleanConnection();
+    void errListMenu();
+    void allListMenu();
+    void errLogMenu();
+    void dataListMenu();
+    void errLisaMenu();
+    void rejectedMenu();
+    void textDataMenu();
+    void rejectedOK();
+    void textDataOK();
 
-  void errListMenu();
-  void allListMenu();
-  void errLogMenu();
-  void dataListMenu();
-  void errLisaMenu();
-  //  void textDataMenu();
-  void rejectedMenu();
-  void textDataMenu();
-  void rejectedOK();
-  void textDataOK();
+    //! bring up the WatchRR dialog
+    void showWatchRR();
 
-  /**
-   * Bring up a the WatchRR specification dialog
-   */
-  void showWatchRR();
-  /**
-   * Bring up a the WatchWeather specification dialog
-   */
-  void showWeather();
+    //! bring up the WatchWeather dialog
+    void showWeather();
 
-  void listMenu();
-  void clockMenu();
-  void dianaShowMenu();
-  void paramMenu();
-  void timeseriesMenu();
+    void listMenu();
+    void clockMenu();
+    void dianaShowMenu();
+    void paramMenu();
+    void timeseriesMenu();
 
-  void updateSaveFunction( QMdiSubWindow * w );
+    void updateSaveFunction(QMdiSubWindow * w);
 
 Q_SIGNALS:
     void statTimeReceived(int stationid, const timeutil::ptime& obstime, int typeID);
-  void timeReceived(const timeutil::ptime& obstime);
+    void timeReceived(const timeutil::ptime& obstime);
 
-  void newStationList(std::vector<QString>&);
-  void newParameterList(const QStringList&);
-  void saveData();
-  void windowClose();
-  void printErrorList();
-
-  /**
-   * \brief Emitted when a new station and/or obstime has been selected in the
-   *        errorlist.
-   */
-  void errorListStationSelected(int station, const timeutil::ptime& obstime);
+    void newStationList(std::vector<QString>&);
+    void newParameterList(const QStringList&);
+    void saveData();
+    void windowClose();
+    void printErrorList();
 };
 
-/**
- * \brief Get o's owning HqcMainWindow, or NULL if there is none.
- */
-HqcMainWindow * getHqcMainWindow( const QObject * o );
-HqcMainWindow * getHqcMainWindow( QObject * o );
+//! Get o's owning HqcMainWindow, or NULL if there is none.
+HqcMainWindow * getHqcMainWindow(const QObject* o);
+HqcMainWindow * getHqcMainWindow(QObject* o);
 
 #endif

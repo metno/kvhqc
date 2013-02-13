@@ -6,6 +6,7 @@
 #include <kvcpp/KvApp.h>
 
 #include <boost/foreach.hpp>
+#include <boost/format.hpp>
 
 #define NDEBUG
 #include "debug.hh"
@@ -81,6 +82,19 @@ const std::list<kvalobs::kvParam>& KvMetaDataBuffer::allParams()
     if (not mHaveParams)
         fetchParams();
     return mParams;
+}
+
+std::string KvMetaDataBuffer::findParamName(int paramId)
+{
+    if (not mHaveParams)
+        fetchParams();
+
+    std::list<kvalobs::kvParam>::const_iterator it
+        = std::find_if(mParams.begin(), mParams.end(), Helpers::param_by_id(paramId));
+    if (it != mParams.end())
+        return it->name();
+    
+    return (boost::format("{%1$d}") % paramId).str();
 }
 
 bool KvMetaDataBuffer::isCodeParam(int paramid)

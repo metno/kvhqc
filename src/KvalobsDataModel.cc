@@ -1,7 +1,7 @@
 /*
  Kvalobs - Free Quality Control Software for Meteorological Observations
 
- Copyright (C) 2010 met.no
+ Copyright (C) 2013 met.no
 
  Contact information:
  Norwegian Meteorological Institute
@@ -30,7 +30,6 @@
 #include "KvalobsDataModel.h"
 #include "KvMetaDataBuffer.hh"
 #include "hqcmain.h"
-#include "debug.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
 

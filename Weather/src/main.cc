@@ -40,9 +40,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace std;
 
-typedef kvservice::corba::CorbaKvApp KvApp;
-typedef std::list<kvalobs::kvData> kvDataList;
-
 namespace Weather {
   kvalobs::DataReinserter<kvservice::KvApp> * reinserter;
 }
@@ -53,7 +50,6 @@ int main( int argc, char* argv[] )
 {
   QApplication a( argc, argv, true );
   QStringList args = a.arguments();
-  bool haveUnknownOptions = false;
   QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
   for (int i = 1; i < args.size(); ++i) {
       if( args.at(i) == "--config" ) {
@@ -64,26 +60,19 @@ int main( int argc, char* argv[] )
           i += 1;
           myconf = args.at(i);
           qDebug() << "--config '" << myconf << "'";
-      } else {
-          haveUnknownOptions = true;
-          qDebug() << "Unknown option: " << args.at(i);
       }
   }
-  if( haveUnknownOptions ) {
-      qDebug() << "have unknown options, stop";
-      exit(1);
-  }
 
-  miutil::conf::ConfSection *confSec = KvApp::readConf(myconf.toStdString());
+  miutil::conf::ConfSection *confSec = kvservice::corba::CorbaKvApp::readConf(myconf.toStdString());
   if(!confSec) {
     std::clog << "Can't open configuration file: " << myconf.toStdString() << std::endl;
     return 1;
   }
-  KvApp kvapp(argc, argv, confSec);
+  kvservice::corba::CorbaKvApp kvapp(argc, argv, confSec);
 
 
   QString userName;
-  reinserter = Authentication::identifyUser(0, KvApp::kvApp,
+  reinserter = Authentication::identifyUser(0, kvservice::corba::CorbaKvApp::kvApp,
                                             "ldap-oslo.met.no", userName);
   if ( reinserter == 0 ) {
     int res = QMessageBox::warning( 0, "Autentisering",

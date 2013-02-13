@@ -51,6 +51,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
+#include "HqcDianaHelper.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
@@ -190,12 +191,10 @@ HqcMainWindow::HqcMainWindow()
   , datalist(new model::KvalobsDataList)
   , reinserter(0)
   , dataModel(0)
-  , firstObs(true)
   , sLevel(0)
   , listExist(false)
   , tsVisible(false)
   , ui(new Ui::HqcMainWindow)
-  , dianaconnected(false)
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
   , kda(boost::make_shared<QtKvalobsAccess>())
@@ -216,18 +215,6 @@ HqcMainWindow::HqcMainWindow()
     ui->timeSeriesAction->setIcon(icon_ts);
 
     pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
-    pluginB->useLabel(true);
-    pluginB->connectToServer();
-
-#ifdef METLIBS_BEFORE_4_9_5
-    connect(pluginB, SIGNAL(receivedMessage(miMessage&)), SLOT(processLetterOld(miMessage&)));
-#else
-    connect(pluginB, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
-#endif
-    connect(pluginB, SIGNAL(addressListChanged()),
-            SLOT(processConnect()));
-    connect(pluginB, SIGNAL(connectionClosed()),
-            SLOT(cleanConnection()));
     statusBar()->addPermanentWidget(pluginB, 0);
 
 
@@ -254,6 +241,12 @@ HqcMainWindow::HqcMainWindow()
     pardlg->hide();
     rejdlg->hide();
     lstdlg->hide();
+
+    mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
+    connect(mDianaHelper.get(), SIGNAL(receivedTime(const timeutil::ptime&)),
+            this, SLOT(receivedTimeFromDiana(const timeutil::ptime&)));
+    connect(mDianaHelper.get(), SIGNAL(receivedStation(int)),
+            this, SLOT(receivedStationFromDiana(int)));
 
     connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
     connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
@@ -317,11 +310,8 @@ void HqcMainWindow::startup()
 {
     DisableGUI disableGUI(this);
     listExist = false;
-    firstObs = true;
     sLevel = 0;
-    dianaconnected = false;
     tsVisible = false;
-    dianaShowOK();
 
     // --- CHECK USER IDENTITY ----------------------------------------
 
@@ -380,7 +370,7 @@ void HqcMainWindow::showTyp() {
 void HqcMainWindow::selectParameterGroup(const QString& group) {
     wElement = group;
     lity = daLi;
-    firstObs = true;
+    mDianaHelper->setFirstObs();
     const std::vector<int> & parameters = parameterGroups[wElement];
     Q_ASSERT(not parameters.empty());
     pardlg->insertParametersInListBox(parameters);
@@ -445,142 +435,9 @@ void HqcMainWindow::ClkOK() {
 void HqcMainWindow::dianaShowOK()
 {
     LOG_SCOPE();
-  dnMap["TTT"] = "TA";
-  mdMap["TTT"] = false;
-  diMap["TTT"] = false;
-  if ( dshdlg->tameType->isChecked() )
-    dnMap["TTT"] = "TAM";
-  if ( dshdlg->tamoType->isChecked() ) {
-    dnMap["TTT"] = "TA";
-    mdMap["TTT"] = true;
-  }
-  if ( dshdlg->tadiType->isChecked() ) {
-    dnMap["TTT"] = "TA";
-    diMap["TTT"] = true;
-  }
-
-  dnMap["TdTdTd"] = "TD";
-  mdMap["TdTdTd"] = false;
-  if ( dshdlg->uuType->isChecked() )
-    dnMap["TdTdTd"] = "UU";
-  if ( dshdlg->uumoType->isChecked() ) {
-    dnMap["TdTdTd"] = "UU";
-    mdMap["TdTdTd"] = true;
-  }
-  if ( dshdlg->uumeType->isChecked() )
-    dnMap["TdTdTd"] = "UM";
-  if ( dshdlg->uumiType->isChecked() )
-    dnMap["TdTdTd"] = "UN";
-  if ( dshdlg->uumaType->isChecked() )
-    dnMap["TdTdTd"] = "UX";
-
-  dnMap["PPPP"] = "PR";
-  mdMap["PPPP"] = false;
-  diMap["PPPP"] = false;
-  if ( dshdlg->poType->isChecked() )
-    dnMap["PPPP"] = "PO";
-  if ( dshdlg->prmoType->isChecked() ) {
-    dnMap["PPPP"] = "PR";
-    mdMap["PPPP"] = true;
-  }
-  if ( dshdlg->podiType->isChecked() ) {
-    dnMap["PPPP"] = "PR";
-    diMap["PPPP"] = true;
-  }
-  if ( dshdlg->pomeType->isChecked() )
-    dnMap["PPPP"] = "POM";
-  if ( dshdlg->pomiType->isChecked() )
-    dnMap["PPPP"] = "PON";
-  if ( dshdlg->pomaType->isChecked() )
-    dnMap["PPPP"] = "POX";
-  if ( dshdlg->phType->isChecked() )
-    dnMap["PPPP"] = "PH";
-
-  dnMap["ppp"] = "PP";
-  mdMap["ppp"] = false;
-  if ( dshdlg->ppmoType->isChecked() ) {
-    dnMap["ppp"] = "PP";
-    mdMap["ppp"] = true;
-  }
-
-  dnMap["RRR"] = "RR_12";
-  mdMap["RRR"] = false;
-  if ( dshdlg->rrmoType->isChecked() ) {
-    dnMap["RRR"] = "RR_12";
-    mdMap["RRR"] = true;
-  }
-  if ( dshdlg->rr1Type->isChecked() )
-    dnMap["RRR"] = "RR_1";
-  if ( dshdlg->rr6Type->isChecked() )
-    dnMap["RRR"] = "RR_6";
-  if ( dshdlg->rr24Type->isChecked() )
-    dnMap["RRR"] = "RR_24";
-  if ( dshdlg->rr24moType->isChecked() ) {
-    dnMap["RRR"] = "RR_24";
-    mdMap["RRR"] = true;
-  }
-  if ( dshdlg->rrprType->isChecked() ) {
-    dnMap["RRR"] = "RR_12";
-    prMap["RRR"] = true;
-  }
-
-  dnMap["TxTn"] = "TAN_12";
-  if ( dshdlg->tx12Type->isChecked() ) {
-    dnMap["TxTn"] = "TAX_12";
-  }
-  if ( dshdlg->tnType->isChecked() )
-    dnMap["TxTn"] = "TAN";
-  if ( dshdlg->txType->isChecked() )
-    dnMap["TxTn"] = "TAX";
-
-  dnMap["dd"] = "DD";
-  mdMap["dd"] = false;
-  if ( dshdlg->ddmoType->isChecked() )
-    mdMap["dd"] = true;
-
-  dnMap["ff"] = "FF";
-  mdMap["ff"] = false;
-  if ( dshdlg->ffmoType->isChecked() )
-    mdMap["ff"] = true;
-
-  dnMap["fxfx"] = "FX";
-  if ( dshdlg->fx01Type->isChecked() )
-    dnMap["fxfx"] = "FX_1";
-
-  dnMap["ff_911"] = "FG";
-  if ( dshdlg->fg01Type->isChecked() )
-    dnMap["ff_911"] = "FG_1";
-  if ( dshdlg->fg10Type->isChecked() )
-    dnMap["ff_911"] = "FG_10";
-
-  dnMap["sss"] = "SA";
-  if ( dshdlg->sdType->isChecked() )
-    dnMap["sss"] = "SD";
-  if ( dshdlg->emType->isChecked() )
-    dnMap["sss"] = "EM";
-
-  dnMap["h"] = "HL";
-  dnMap["N"] = "NN";
-  dnMap["a"] = "AA";
-  dnMap["ww"] = "WW";
-  dnMap["Nh"] = "NH";
-  dnMap["Cl"] = "CL";
-  dnMap["Cm"] = "CM";
-  dnMap["Ch"] = "CH";
-  dnMap["TwTwTw"] = "TW";
-  dnMap["VV"] = "VV";
-  dnMap["W1"] = "W1";
-  dnMap["W2"] = "W2";
-  dnMap["HwaHwa"] = "HWA";
-  dnMap["PwaPwa"] = "PWA";
-  dnMap["dw1dw1"] = "DW1";
-  dnMap["Pw1Pw1"] = "PW1";
-  dnMap["Hw1Hw1"] = "HW1";
-  dnMap["s"] = "SG";
-  dnMap["ds"] = "MDIR";
-  dnMap["vs"] = "MSPEED";
-  if( listExist )
-      ListOK();
+    mDianaHelper->updateDianaParameters();
+    if (listExist)
+        ListOK();
 }
 
 void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
@@ -610,7 +467,7 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 void HqcMainWindow::ListOK()
 {
     LOG_SCOPE();
-    if (not dianaconnected) {
+    if (not mDianaHelper->isConnected()) {
         mHints->addHint(tr("<h1>Dianaforbindelse</h1>"
                            "Har ikke kontakt med diana! "
                            "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
@@ -678,8 +535,12 @@ void HqcMainWindow::ListOK()
     } catch(std::runtime_error&) {
     }
 
-    bool found = pardlg->plb->item(jj)->isSelected();
-    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": " << found << " (" << pardlg->markPar->isChecked() << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
+    const bool found = pardlg->plb->item(jj)->isSelected();
+#if 0
+    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": "
+             << found << " (" << pardlg->markPar->isChecked()
+             << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
+#endif
     if ( (found && pardlg->markPar->isChecked()) ||
 	 (!found && pardlg->noMarkPar->isChecked()) ||
 	 pardlg->allPar->isChecked() ) {
@@ -689,8 +550,10 @@ void HqcMainWindow::ListOK()
       parameterList.push_back(paramIndex);
     }
   }
+#if 0
   mi_foreach(int p, parameterList)
     qDebug() << "Selected: "<< p;
+#endif
 
   isShTy = (lstdlg->getSelectedStationTypes().contains("ALL"));
 
@@ -717,7 +580,6 @@ void HqcMainWindow::ListOK()
               tableView);
 
       connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
-      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(sendAnalysisMessage()));
       connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
 
       // Functionality for hiding/showing rows in data list
@@ -728,9 +590,7 @@ void HqcMainWindow::ListOK()
       connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
       connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
 
-      connect(tableView, SIGNAL(stationSelected(int, const timeutil::ptime &)), this, SLOT(sendStation(int)));
-      connect(tableView, SIGNAL(timeSelected(const timeutil::ptime &)), SLOT(sendObservations(const timeutil::ptime &)));
-      connect(tableView, SIGNAL(parameterSelected(const QString &)), SLOT(sendSelectedParam(const QString &)));
+      connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
 
       connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
       connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
@@ -770,6 +630,8 @@ void HqcMainWindow::ListOK()
                           datalist,
                           modeldatalist);
       connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
+      connect(erl, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
+              this, SLOT(navigateTo(const kvalobs::kvData&)));
       ui->ws->addSubWindow(erl);
   }
 
@@ -798,7 +660,6 @@ void HqcMainWindow::ListOK()
   //  send parameter names to ts dialog
   /*emit*/ newParameterList(selPar);
   if ( lity != erLi && lity != erSa  ) {
-    sendAnalysisMessage();
     sendTimes();
   }
 
@@ -1920,14 +1781,11 @@ void HqcMainWindow::tileHorizontal() {
 
 void HqcMainWindow::closeWindow()
 {
-  firstObs=true;
-  cerr << "HqcMainWindow::closeWindow()\n";
-
-  ui->ws->closeActiveSubWindow();
-
-  /*emit*/ windowClose();
+    mDianaHelper->setFirstObs();
+    cerr << "HqcMainWindow::closeWindow()\n";
+    ui->ws->closeActiveSubWindow();
+    /*emit*/ windowClose();
 }
-
 
 void HqcMainWindow::helpUse() {
     QDesktopServices::openUrl(QUrl("https://dokit.met.no/klima/tools/qc/hqc-help"));
@@ -1957,125 +1815,26 @@ void HqcMainWindow::about()
                            "Du bruker HQC versjon %1.").arg(PVERSION_FULL));
 }
 
-void HqcMainWindow::initDiana()
+void HqcMainWindow::sendTimes()
 {
     LOG_SCOPE();
-    dianaconnected= false;
-
-    if(pluginB->clientTypeExist("Diana"))
-        dianaconnected= true;
-
-    sendTimes();
-    sendAnalysisMessage();
+    
+    std::set<timeutil::ptime> allTimes;
+    BOOST_FOREACH(const model::KvalobsData& d, *datalist)
+        allTimes.insert(d.otime());
+    mDianaHelper->sendTimes(allTimes);
 }
 
-// called when client-list changes
-void HqcMainWindow::processConnect()
+void HqcMainWindow::receivedStationFromDiana(int stationid)
 {
-  LOG_SCOPE();
-  initDiana();
+    /*emit*/ statTimeReceived(stationid, mDianaHelper->dianaTime(), 0);
 }
 
-void HqcMainWindow::cleanConnection()
+void HqcMainWindow::receivedTimeFromDiana(const timeutil::ptime& time)
 {
-  dianaconnected = false;
-  firstObs = true;
-  cout << "< DISCONNECTING >" << endl;
-}
-
-void HqcMainWindow::sendTimes(){
-  LOG_SCOPE();
-
-  //send times
-  miMessage m;
-  m.command= qmstrings::settime;
-  m.commondesc = "datatype";
-  m.common = "obs";
-  m.description= "time";
-  std::set<timeutil::ptime> allTimes;
-  mi_foreach(const model::KvalobsData& d, *datalist) {
-      allTimes.insert(d.otime());
-  }
-  mi_foreach(const timeutil::ptime& t, allTimes) {
-      m.data.push_back(timeutil::to_iso_extended_string(t));
-  }
-  cerr << "HQC sender melding : " << m.content() << endl;
-  pluginB->sendMessage(m);
-}
-
-#ifdef METLIBS_BEFORE_4_9_5
-void HqcMainWindow::processLetterOld(miMessage& letter)
-{
-    processLetter(letter);
-}
-#endif
-
-// processes incoming miMessages
-void HqcMainWindow::processLetter(const miMessage& letter)
-{
-    LOG_SCOPE();
-    std::cerr << "command=" << letter.command.c_str() << std::endl;
-    if(letter.command == qmstrings::newclient) {
-        vector<std::string> desc, valu;
-        const std::string cd(letter.commondesc), co(letter.common);
-        boost::split(desc, cd, boost::is_any_of(":"));
-        boost::split(valu, co, boost::is_any_of(":"));
-        for(vector<std::string>::const_iterator itD=desc.begin(), itC=valu.begin(); itD != desc.end(); ++itC, ++itD) {
-            if( *itD == "type" && *itC == "Diana" ) {
-                firstObs = true;
-                processConnect();
-                return;
-            }
-        }
-    } else if (letter.command == qmstrings::station) {
-        if (letter.commondesc == "name,time") {
-            QStringList name_time = QString::fromStdString(letter.common).split(',');
-            bool ok = false;
-            const int stationid = name_time[0].toInt(&ok);
-            if (not ok) {
-                std::cerr << "Unable to parse first element as stationid: '" << letter.common << "'" << std::endl;
-                return;
-            }
-            const timeutil::ptime obstime = timeutil::from_iso_extended_string(name_time[1].toStdString());
-            if (obstime.is_not_a_date_time()) {
-                std::cerr << "Unable to parse second element as obstime: '" << letter.common << "'" << std::endl;
-                return;
-            }
-            /*emit*/ statTimeReceived(stationid, obstime, 0);
-        }
-    } else if(letter.command == qmstrings::timechanged) {
-        timeutil::ptime newTime = timeutil::from_iso_extended_string(letter.common);
-        /*emit*/ timeReceived(newTime);
-        sendObservations(newTime, false);
-    }
-}
-
-// send message to show ground analysis in Diana
-void HqcMainWindow::sendAnalysisMessage() {
-  LOG_SCOPE();
-
-  //show analysis
-  miMessage letter;
-  letter.command=qmstrings::apply_quickmenu;
-  letter.data.push_back("Hqc");
-  letter.data.push_back("Bakkeanalyse");
-    cerr << "HQC sender melding : " << letter.content() << endl;
-  pluginB->sendMessage(letter);
-
-  dianaTime = timeutil::from_iso_extended_string("2000-01-01 00:00:00");
-}
-
-void HqcMainWindow::sendStation(int stnr)
-{
-  LOG_SCOPE();
-
-  miMessage pLetter;
-  pLetter.command = qmstrings::station;
-  const std::string stationstr = boost::lexical_cast<std::string>(stnr);
-  pLetter.common = stationstr;
-    cerr << "HQC sender melding : " << pLetter.content() << endl;
-  pluginB->sendMessage(pLetter);
-
+    /*emit*/ timeReceived(time);
+    const std::vector<int> selectedParameters(selParNo, selParNo + selPar.size());
+    mDianaHelper->sendObservations(*datalist, modeldatalist, selectedParameters);
 }
 
 void HqcMainWindow::aboutQt()
@@ -2085,356 +1844,18 @@ void HqcMainWindow::aboutQt()
 
 void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
 {
-    if (dianaconnected) {
-        sendObservations(kd.obstime(), true);
-        sendStation(kd.stationID());
-    }
+    LOG_SCOPE();
+    DBGV(kd);
+    mDianaHelper->sendTime(kd.obstime());
+    const std::vector<int> selectedParameters(selParNo, selParNo + selPar.size());
+    mDianaHelper->sendObservations(*datalist, modeldatalist, selectedParameters);
+    mDianaHelper->sendStation(kd.stationID());
+    mDianaHelper->sendSelectedParam(kd.paramID());
 
-    /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), kd.typeID());
-}
-
-void HqcMainWindow::sendObservations(const timeutil::ptime& time, bool sendtime)
-{
-  LOG_SCOPE();
-
-  //no data -> return
-  if(selPar.count() == 0)
-      return;
-
-  //just sent
-  if(dianaTime == time)
-    return;
-
-  dianaTime = time;
-
-  if(sendtime){
-    miMessage tLetter;
-    tLetter.command = qmstrings::settime;
-    tLetter.commondesc = "time";
-    tLetter.common = timeutil::to_iso_extended_string(time);
-    cerr << "HQC sender melding : " << tLetter.content() << endl;
-    pluginB->sendMessage(tLetter);
-  }
-  miMessage pLetter;
-  if ( firstObs ) {
-    pLetter.command = qmstrings::init_HQC_params;
-  }
-  else
-    pLetter.command = qmstrings::update_HQC_params;
-  pLetter.commondesc = "time,plottype";
-
-  //finding parameter names and indexes
-  vector<int> parIndex;
-  QStringList parName;
-  deque<bool> parSynop;
-  deque<bool> parModel;
-  deque<bool> parDiff;
-  deque<bool> parProp;
-  parSynop.insert(parSynop.begin(),selPar.count(),false);
-  for ( int i=0; i<selPar.count(); ++i ) {
-    parIndex.push_back(selParNo[i]);
-    const std::string diPar = dianaName(selPar[i].latin1());
-    if( not diPar.empty() ) {
-      parName.append(diPar.c_str());
-      parSynop[i] = true;
-      parModel[i] = mdMap[diPar];
-      parDiff[i]  = diMap[diPar];
-      parProp[i]  = prMap[diPar];
-    }
-  }
-
-  std::string synopDescription = "id,St.type,auto,lon,lat,";
-  if ( not parName.empty() )
-    synopDescription += parName.join(",").latin1();
-  const std::string enkelDescription = synopDescription;
-
-  std::vector<std::string> synopData;
-  std::vector<std::string> enkelData;
-
-  int prStnr = 0;
-
-  for ( unsigned int i = 0; i < datalist->size(); i++) { // fill data
-    if ( (*datalist)[i].otime() == time || (firstObs && (*datalist)[i].stnr() != prStnr )){
-      double lat,lon,h;
-      std::string str = boost::lexical_cast<std::string>((*datalist)[i].stnr());
-      QString name;
-      int env;
-      int snr;
-      //      int typeId = (*datalist)[i].typeId;
-      int typeId = (*datalist)[i].showTypeId();
-      findStationInfo((*datalist)[i].stnr(),name,lat,lon,h,snr,env);
-      str += ",";
-      std::string isAuto = "x";
-      std::string strType = hqcType(typeId, env);
-      if ( strType.c_str()[0] == 'A' )
-	isAuto = "a";
-      else if ( strType.c_str()[0] == 'N' || strType.c_str()[0] == 'P' )
-	isAuto = "n";
-      if ( (isAuto == "a" && strType.c_str()[1] == 'A') ||
-	   (strType.c_str()[0] == 'V' && strType.c_str()[1] != 'M') ||
-	   (strType == "none")  )
-    	str += "none";
-      else if ( strType.c_str()[0] == 'P' )
-	str += strType.c_str()[0];
-      else
-	str += strType.c_str()[1];
-      str += ",";
-      str += isAuto;
-      str += ",";
-
-      str += (boost::format("%1$.4f,%2$.4f") % lat % lon).str();
-      std::string synopStr = str, enkelStr = str;
-      double aa = (*datalist)[i].corr(1);
-      for(unsigned int j=0; j<parIndex.size();j++){
-	double corr = (*datalist)[i].corr(parIndex[j]);
-	if ( parModel[j] ) {
-	  for ( unsigned int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
-		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
-	      corr = modeldatalist[k].orig[parIndex[j]];
-	      break;
-	    }
-	  }
-	}
-	if ( parDiff[j] ) {
-	  for ( unsigned int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
-		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
-	      corr = corr - modeldatalist[k].orig[parIndex[j]];
-	      break;
-	    }
-	  }
-	}
-	if ( parProp[j] ) {
-	  for ( unsigned int k = 0; k < modeldatalist.size(); k++ ) {
-	    if ( modeldatalist[k].stnr == (*datalist)[i].stnr() &&
-		 modeldatalist[k].otime == (*datalist)[i].otime() ) {
-	      if ( abs(modeldatalist[k].orig[parIndex[j]]) > 0.00001 )
-		corr = corr/modeldatalist[k].orig[parIndex[j]];
-	      else
-		corr = -32767.0;
-	      break;
-	    }
-	  }
-	}
-	if(corr<-999){
-	  if(parSynop[j]) {
-	    enkelStr += ",X";
-	    synopStr += ",-32767";
-	  }
-	} else {
-	  corr = dianaValue(parIndex[j], parModel[j], corr, aa);
-	  int flag = (*datalist)[i].flag(parIndex[j]);
-	  int shFl1 = flag/10000;
-	  int shFl2 = flag%10000/1000;
-	  int shFl3 = flag%1000/100;
-	  int shFl4 = flag%100/10;
-	  int shFl5 = flag%10;
-	  int maxFlag = shFl1 >shFl2 ? shFl1 : shFl2;
-	  maxFlag = shFl3 > maxFlag ? shFl3 : maxFlag;
-	  maxFlag = shFl4 > maxFlag ? shFl4 : maxFlag;
-       	  std::string flagstr = (boost::format("%1$05d") % flag).str();
-       	  std::string colorstr;
-	  if ( maxFlag == 0 )
-       	    colorstr = ";0:0:0";
-	  //	  else if ( maxFlag == 1 )
-	  if ( maxFlag == 1 || (shFl5 != 0 && shFl5 != 9))
-	    colorstr = ";0:255:0";
-	  else if ( maxFlag >= 2 && maxFlag <= 5 )
-	    colorstr = ";255:175:0";
-	  else if ( maxFlag >= 6 )
-	    colorstr = ";255:0:0";
-
-	  std::string valstr = boost::lexical_cast<std::string>(corr), synvalstr = valstr;
-	  synvalstr += ";";
-	  synvalstr +=flagstr;
-	  if(parSynop[j]){
-	    enkelStr += ",";
-	    enkelStr += valstr;
-	    //	    cerr << enkelStr << endl;
-	    synopStr += ",";
-	    synopStr += synvalstr;
-	    //	    if ( firstObs)
-	      synopStr += colorstr;
-	  }
-	}
-      }
-      synopData.push_back(synopStr);
-      enkelData.push_back(enkelStr);
-    }
-    prStnr = (*datalist)[i].stnr();
-  }
-  //send letters
-  if(synopData.size()){
-    firstObs = false;
-    pLetter.description = synopDescription;
-    pLetter.common = timeutil::to_iso_extended_string(time) + ",synop";
-#ifdef METLIBS_BEFORE_4_9_5
-    pLetter.data = std::vector<miutil::miString>(synopData.begin(), synopData.end());
-#else
-    pLetter.data = synopData;
-#endif
-    //TEST
-    cerr << "HQC sender melding : " << pLetter.content() << endl;
-    //TEST
-    pluginB->sendMessage(pLetter);
-  }
-}
-
-
-void HqcMainWindow::sendSelectedParam(const QString & param)
-{
-  LOG_SCOPE();
-
-  std::string diParam = dianaName(param.latin1());
-  if( diParam.empty() ) {
-      qDebug() << qPrintable(param) << ": No such diana parameter";
-      return;
-  }
-
-  miMessage pLetter;
-  pLetter.command = qmstrings::select_HQC_param;
-  pLetter.commondesc = "diParam";
-  pLetter.common = diParam;
-    cerr << "HQC sender melding : " << pLetter.content() << endl;
-  pluginB->sendMessage(pLetter);
-}
-
-
-// Help function to translate from kvalobs parameter value to diana parameter value
-double HqcMainWindow::dianaValue(int parNo, bool isModel, double qVal, double aa) {
-  double dVal;
-  if ( parNo == 273 ) {
-    if ( qVal <= 5000 )
-      dVal = int(qVal)/100;
-    else if ( qVal <= 30000 )
-      dVal = int(qVal)/1000 + 50;
-    else if ( qVal < 75000 )
-      dVal = int(qVal)/5000 + 74;
-    else
-      dVal = 89;
-    return dVal;
-  }
-  else if ( parNo == 55 ) {
-    if ( qVal < 50 )
-      dVal = 0;
-    else if ( qVal < 100 )
-      dVal = 1;
-    else if ( qVal < 200 )
-      dVal = 2;
-    else if ( qVal < 300 )
-      dVal = 3;
-    else if ( qVal < 600 )
-      dVal = 4;
-    else if ( qVal < 1000 )
-      dVal = 5;
-    else if ( qVal < 1500 )
-      dVal = 6;
-    else if ( qVal < 2000 )
-      dVal = 7;
-    else if ( qVal < 2500 )
-      dVal = 8;
-    else
-      dVal = 9;
-    return dVal;
- }
-  else if ( parNo == 177 ) {
-    if ( aa >= 5.0 && !isModel ) {
-      dVal = -qVal;
-    }
-    else {
-      dVal = qVal;
-    }
-    return dVal;
-  }
-  //  else if ( parNo > 80 && parNo < 95 ) {
-  //    dVal = 1.94384*qVal;
-  //    return dVal;
-  //  }
-  else
-    return qVal;
-}
-
-
-// Help function to translate from kvalobs parameter names to diana parameter names
-std::string HqcMainWindow::dianaName(const std::string& lbl) {
-  NameMap::iterator dnit;
-  for ( dnit = dnMap.begin(); dnit != dnMap.end(); dnit++ ) {
-    if ( lbl == dnit.data() ) {
-      return dnit.key();
-    }
-  }
-  return "";
-}
-
-std::string HqcMainWindow::hqcType(int typeId, int env) {
-  // Generates string to send to Diana
-  std::string hqct = "none";
-  if ( env == 8 ) {
-    if ( typeId == 3 || typeId == 330 || typeId == 342 )
-      hqct = "AA";
-    else if ( typeId == 1 || typeId == 6 || typeId == 312 || typeId == 412 )
-      hqct = "VS";
-    else if ( typeId == 306 )
-      hqct = "VM";
-  }
-  else if ( env == 2 ) {
-    if ( typeId == 3 )
-      hqct = "AL";
-  }
-  else if ( env == 12 ) {
-    if ( typeId == 3 )
-      hqct = "AV";
-  }
-  else if ( env == 3 ) {
-    if ( typeId == 3 || typeId == 410 )
-      hqct = "AP";
-    else if ( typeId == 412 )
-      hqct = "VK";
-  }
-  else if ( env == 1 ) {
-    if ( typeId == 310 || typeId == 311 || typeId == 410 || typeId == 1 )
-      hqct = "AF";
-    else if ( typeId == 2 )
-      hqct = "FM";
-    else if ( typeId == 1 || typeId == 6 || typeId == 312 || typeId == 412 )
-      hqct = "VS";
-  }
-  else if ( env == 5 ) {
-    if ( typeId == 6 || typeId == 430 )
-      hqct = "AE";
-    else if ( typeId == 11 )
-      hqct = "MP";
-  }
-  else if ( env == 7 ) {
-    if ( typeId == 11 )
-      hqct = "MV";
-  }
-  else if ( env == 4 ) {
-    if ( typeId == 11 )
-      hqct = "MM";
-  }
-  else if ( env == 6 ) {
-    if ( typeId == 11 )
-      hqct = "MS";
-  }
-  else if ( env == 9 ) {
-    if ( typeId == 302 || typeId == 303 )
-      hqct = "NS";
-    else if ( typeId == 402 )
-      hqct = "ND";
-    else if ( typeId == 4 || typeId == 405 )
-      hqct = "P ";
-  }
-  else if ( env == 10 ) {
-    if ( typeId == 402 )
-      hqct = "NO";
-  }
-  else if ( env == 11 ) {
-    if ( typeId == 309 )
-      hqct = "VT";
-  }
-  return hqct;
+    int typeID = kd.typeID();
+    if (typeID == -32767)
+        typeID = 0;
+    /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), typeID);
 }
 
 void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
@@ -2692,11 +2113,13 @@ void HqcMainWindow::writeSettings()
   settings.beginWriteArray("p");
   for ( int jj = 0; jj < parFind; jj++ ) {
     settings.setArrayIndex(jj);
+#if 0
     qDebug() << qPrintable(pardlg->plb->item(jj)->text())
 	     << pardlg->plb->item(jj)->isSelected() << ": ("
 	     << pardlg->markPar->isChecked() << ""
 	     << pardlg->noMarkPar->isChecked() << ""
 	     << pardlg->allPar->isChecked() << ")";
+#endif
     settings.setValue("item", pardlg->plb->item(jj)->isSelected());
     settings.setValue("text", pardlg->plb->item(jj)->text());
     settings.setValue("mark", pardlg->markPar->isChecked());

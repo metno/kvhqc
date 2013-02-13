@@ -2,6 +2,7 @@
 SET(hqc_HEADERS
   ../include/approvedialog.h
   ../include/dianashowdialog.h
+  ../include/HqcDianaHelper.hh
   ../include/KvalobsDataView.h
   ../include/rejecttimeseriesdialog.h
   ../include/accepttimeseriesdialog.h
@@ -30,6 +31,7 @@ SET(hqc_SOURCES
   GetData.cc
   GetTextData.cc
   hqc4.cc
+  HqcDianaHelper.cc
   hqcmain.cc
   KvalobsData.cc
   KvalobsDataDelegate.cc

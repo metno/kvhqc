@@ -336,12 +336,7 @@ QString getFlagExplanation(const kvalobs::kvControlInfo & cInfo)
 
 QString parameterName(int paramId)
 {
-    try {
-        const kvalobs::kvParam& p = KvMetaDataBuffer::instance()->findParam(paramId);
-        return QString::fromStdString(p.name());
-    } catch (std::runtime_error& e) {
-        return QString("{%1}").arg(paramId);
-    }
+    return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
 }
 
 void updateUseInfo(kvalobs::kvData& data)

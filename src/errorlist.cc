@@ -197,9 +197,6 @@ ErrorList::ErrorList(QStringList& selPar,
     
     connect( lackListAction, SIGNAL( activated() ),
              this, SLOT  ( setupMissingList() ) );
-    //  	   this, SLOT  ( setupMissingList( int, int ) ) );
-    //  connect( this, SIGNAL( stationSelected( miMessage ) ),
-    //	   mainWindow, SLOT  ( signalStationSelected( miMessage ) ) );
     
     connect( mainWindow, SIGNAL( windowClose() ),
              this, SIGNAL( errorListClosed() ) );
@@ -1009,7 +1006,7 @@ void ErrorList::signalStationSelected( int row )
         return;
     mLastSelectedRow = row;
 
-    mainWindow->navigateTo(getKvData(row));
+    /*emit*/ signalNavigateTo(getKvData(row));
 }
 
 void ErrorList::execMissingList()

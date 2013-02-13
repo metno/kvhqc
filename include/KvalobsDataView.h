@@ -32,10 +32,12 @@
 #define KVALOBSDATAVIEW_H_
 
 #include "timeutil.hh"
-
 #include <QtGui/QTableView>
-
 #include <set>
+
+namespace kvalobs {
+class kvData;
+}
 
 namespace model
 {
@@ -56,9 +58,7 @@ public Q_SLOTS:
     void selectTime(const timeutil::ptime& obstime);
 
 Q_SIGNALS:
-    void stationSelected(int stationid, const timeutil::ptime& obstime);
-    void timeSelected(const timeutil::ptime& obstime);
-    void parameterSelected(const QString & parameterName);
+    void signalNavigateTo(const kvalobs::kvData&);
                                                          
 protected Q_SLOTS:
     virtual void currentChanged(const QModelIndex & current, const QModelIndex & previous);
