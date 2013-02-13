@@ -226,11 +226,10 @@ static const char* flagExplanations[16][16] = {
     { // fw
         "Ikke kontrollert",
         "Kontrollert. Funnet i orden",
-        "Kontrollert. Observert verdis avvik fra beregnet verdi er større enn høy testverdi",
-        "Kontrollert. Observert verdis avvik fra beregnet verdi er mindre enn lav testverdi",
-        "Kontrollert. Observert verdis avvik fra beregnet verdi er større enn høyeste testverdi",
-        "Kontrollert. Observert verdis avvik fra beregnet verdi er mindre enn laveste testverdi",
-        "Original verdi mangler eller er forkastet. Interpolert/korrigert med beregnet verdi" },
+        "Kontrollert. Funnet litt mistenkelig",
+        "Kontrollert. Funnet svært mistenkelig",
+        0, 0, 0, 0, 0, 0,
+        "Forkastet" },
     { // fstat
         "Ikke kontrollert",
         "Kontrollert. Funnet i orden",
@@ -337,16 +336,10 @@ QString getFlagExplanation(const kvalobs::kvControlInfo & cInfo)
 
 QString parameterName(int paramId)
 {
-    using namespace kvalobs;
-
-    switch(paramId) {
-    case PARAMID_RR_24: return "RR_24";
-    case PARAMID_V4: return "V4";
-    case PARAMID_V5: return "V5";
-    case PARAMID_V6: return "V6";
-    case PARAMID_SA: return "SA";
-    case PARAMID_SD: return "SD";
-    default:
+    try {
+        const kvalobs::kvParam& p = KvMetaDataBuffer::instance()->findParam(paramId);
+        return QString::fromStdString(p.name());
+    } catch (std::runtime_error& e) {
         return QString("{%1}").arg(paramId);
     }
 }
