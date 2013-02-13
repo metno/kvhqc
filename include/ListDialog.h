@@ -34,11 +34,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 
 #include <QtGui/QCheckBox>
+#include <QtGui/QDialog>
 #include <Qt3Support/Q3Table>
 
 #include <list>
 #include <set>
 #include <vector>
+
+namespace Ui {
+class ListDialog;
+}
 
 class ItemCheckBox : public QCheckBox
 { Q_OBJECT
@@ -54,16 +59,10 @@ private:
     QString mItem;
 };
 
-#include "ui_listdialog.h"
-
-class ListDialog : public QDialog, private Ui_ListDialog
-{   Q_OBJECT
-
+class ListDialog : public QDialog
+{ Q_OBJECT;
 public:
     ListDialog(HqcMainWindow* parent);
-
-    void hideAll();
-    void showAll();
 
     QDateTime getStart();
     QDateTime getEnd();
@@ -75,8 +74,8 @@ public:
     void setSelectedStationTypes(const QStringList& stationTypes);
     QStringList getSelectedCounties();
     void setSelectedCounties(const QStringList& c);
-    bool showSynop() const { return webReg->isChecked(); }
-    bool showPrioritized() const { return priReg->isChecked(); }
+    bool showSynop() const;
+    bool showPrioritized() const;
     
 private:
     void uncheckTypes();
@@ -145,7 +144,10 @@ private Q_SLOTS:
     void setMinDate(const QDate&);
     void setMaxTime(const QTime&);
     void setMinTime(const QTime&);
+
+    void prepareStationSelectionDialog();
     void showStationSelectionDialog();
+    void selectAllStations();
 
 Q_SIGNALS:
     void ListHide();
@@ -154,6 +156,7 @@ Q_SIGNALS:
     void toTimeChanged(const QDateTime&);
 
 private:
+    std::auto_ptr<Ui::ListDialog> ui;
     class StationSelection* statSelect;
 };
 
@@ -181,11 +184,13 @@ public:
 
     std::vector<int> getSelectedStations();
 
+public Q_SLOTS:
+    void doSelectAllStations();
+
 private Q_SLOTS:
     void tableCellClicked(int, int, int, const QPoint&);
     void tableCellClicked(int, int);
     void tableCellClicked();
-    void doSelectAllStations();
 
 Q_SIGNALS:
   void stationAppended(QString);

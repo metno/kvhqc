@@ -787,30 +787,30 @@ const std::list<listStat_t>& HqcMainWindow::getStationDetails()
 
 void HqcMainWindow::errListMenu() {
   lity = erLi;
-  lstdlg->hideAll();
+  lstdlg->hide();
   listMenu();
 }
 
 void HqcMainWindow::errLogMenu() {
   lity = erLo;
-  lstdlg->hideAll();
+  lstdlg->hide();
   listMenu();
 }
 
 void HqcMainWindow::allListMenu() {
   lity = alLi;
-  lstdlg->hideAll();
+  lstdlg->hide();
   listMenu();
 }
 void HqcMainWindow::dataListMenu() {
   lity = daLi;
-  lstdlg->hideAll();
+  lstdlg->hide();
   listMenu();
 }
 
 void HqcMainWindow::errLisaMenu() {
   lity = erSa;
-  lstdlg->hideAll();
+  lstdlg->hide();
   listMenu();
 }
 
@@ -971,7 +971,7 @@ void HqcMainWindow::showWeather()
 
 void HqcMainWindow::listMenu() {
   if ( lstdlg->isVisible() ) {
-    lstdlg->hideAll();
+    lstdlg->hide();
   } else {
     QDateTime mx = QDateTime::currentDateTime();
     int noDays = lstdlg->getStart().daysTo(lstdlg->getEnd());
@@ -981,7 +981,7 @@ void HqcMainWindow::listMenu() {
       lstdlg->setEnd(mx);
     }
 
-    lstdlg->showAll();
+    lstdlg->show();
   }
 }
 
