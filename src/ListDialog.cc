@@ -26,14 +26,21 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "ListDialog.h"
+#include "ListDialog.hh"
 
 #include "BusyIndicator.h"
 #include "hqcmain.h"
+#include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
+
 #include "ui_listdialog.h"
+#include "ui_stationselection.h"
+
+#include <QtGui/QMessageBox>
+
+#include <boost/foreach.hpp>
 
 #include <algorithm>
 
@@ -71,43 +78,54 @@ const stationtype_t stationTypes[NSTATIONTYPES] = {
 
 const int NCOUNTIES = 20;
 const char* counties[NCOUNTIES] =  {
-  "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark",
-  "Aust-Agder", "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane", "Møre og Romsdal",
-  "Sør-Trøndelag", "Nord-Trøndelag", "Nordland", "Troms", "Finnmark", "Ishavet"
+    "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark",
+    "Aust-Agder", "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane", "Møre og Romsdal",
+    "Sør-Trøndelag", "Nord-Trøndelag", "Nordland", "Troms", "Finnmark", "Ishavet"
 };
 const char* countiesU[NCOUNTIES] =  {
     "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK",
     "AUST-AGDER", "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE", "MØRE OG ROMSDAL",
     "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET"
 };
+const int REG_EAST[2]  = { 0, 9 };
+const int REG_WEST[2]  = { 9, 14 };
+const int REG_TROND[2] = { 14, 16 };
+const int REG_NORTH[2] = { 16, NCOUNTIES };
 } // anonymous namespace
 
-void ItemCheckBox::clicked()
-{
-    /*emit*/ clicked(mItem);
-}
+// ========================================================================
 
 ListDialog::ListDialog(HqcMainWindow* parent)
-  : QDialog(parent)
-  , ui(new Ui::ListDialog)
-  , statSelect(0)
+    : QDialog(parent)
+    , ui(new Ui::ListDialog)
+    , statSelect(0)
 {
     ui->setupUi(this);
+    ui->buttonRestore->setEnabled(false);
+    ui->buttonSave   ->setEnabled(false);
 
-    connect(ui->twiType, SIGNAL(clicked()), this, SLOT(twiCheck()));
-    connect(ui->twiType, SIGNAL(clicked()), this, SLOT(otwiCheck()));
-    connect(ui->prcType, SIGNAL(clicked()), this, SLOT(prcCheck()));
-    connect(ui->prcType, SIGNAL(clicked()), this, SLOT(oprcCheck()));
-    connect(ui->aprType, SIGNAL(clicked()), this, SLOT(aprCheck()));
-    connect(ui->aprType, SIGNAL(clicked()), this, SLOT(oaprCheck()));
-    connect(ui->winType, SIGNAL(clicked()), this, SLOT(winCheck()));
-    connect(ui->winType, SIGNAL(clicked()), this, SLOT(owinCheck()));
-    connect(ui->visType, SIGNAL(clicked()), this, SLOT(visCheck()));
-    connect(ui->visType, SIGNAL(clicked()), this, SLOT(ovisCheck()));
-    connect(ui->marType, SIGNAL(clicked()), this, SLOT(marCheck()));
-    connect(ui->marType, SIGNAL(clicked()), this, SLOT(omarCheck()));
+    setupStationTab();
+    setupParameterTab();
+    setupClockTab();
     
-    // Create a button group for station type
+    connect(ui->hab, SIGNAL(hide()), this, SLOT(hide()));
+    connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
+    
+    enableButtons();
+}
+
+ListDialog::~ListDialog()
+{
+}
+
+void ListDialog::setupStationTab()
+{
+    connect(ui->twiType, SIGNAL(clicked()), this, SLOT(twiCheck()));
+    connect(ui->prcType, SIGNAL(clicked()), this, SLOT(prcCheck()));
+    connect(ui->aprType, SIGNAL(clicked()), this, SLOT(aprCheck()));
+    connect(ui->winType, SIGNAL(clicked()), this, SLOT(winCheck()));
+    connect(ui->visType, SIGNAL(clicked()), this, SLOT(visCheck()));
+    connect(ui->marType, SIGNAL(clicked()), this, SLOT(marCheck()));
     
     for (int i=0; i<NSTATIONTYPES; ++i) {
         const stationtype_t& s = stationTypes[i];
@@ -120,53 +138,29 @@ ListDialog::ListDialog(HqcMainWindow* parent)
 
     // insert checkbuttons for station location selection
     int x=0, y=0;
-    ItemCheckBox** countiesCB[NCOUNTIES] = {
-        &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
-        &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
-        &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
-    };
     for(int i=0; i<NCOUNTIES; ++i) {
-        *countiesCB[i] = new ItemCheckBox(counties[i], countiesU[i], ui->stCounty);
-        ui->statCountyLayout->addWidget(*countiesCB[i], x, y);
+        ItemCheckBox* countyCB = new ItemCheckBox(counties[i], countiesU[i], ui->stCounty);
+        connect(countyCB, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
+        ui->statCountyLayout->addWidget(countyCB, x, y);
+        mCounties.push_back(countyCB);
         y += 1; if (y >= 3 ) { y = 0; x += 1; }
     }
     allCoun = new ItemCheckBox(tr("Alle"), "ALL", ui->stCounty);
     ui->statCountyLayout->addWidget(allCoun, x, y);
     
-    connect(ui->ausReg,SIGNAL(clicked()), this,SLOT(ausCheck()));
-    connect(ui->ausReg,SIGNAL(clicked()), this,SLOT(oausCheck()));
-    connect(ui->vesReg,SIGNAL(clicked()), this,SLOT(vesCheck()));
-    connect(ui->vesReg,SIGNAL(clicked()), this,SLOT(ovesCheck()));
-    connect(ui->troReg,SIGNAL(clicked()), this,SLOT(troCheck()));
-    connect(ui->troReg,SIGNAL(clicked()), this,SLOT(otroCheck()));
-    connect(ui->norReg,SIGNAL(clicked()), this,SLOT(norCheck()));
-    connect(ui->norReg,SIGNAL(clicked()), this,SLOT(onorCheck()));
-    connect(ui->webReg,SIGNAL(clicked()), this,SLOT(webCheck()));
-    connect(ui->webReg,SIGNAL(clicked()), this,SLOT(owebCheck()));
-    connect(ui->priReg,SIGNAL(clicked()), this,SLOT(priCheck()));
-    connect(ui->priReg,SIGNAL(clicked()), this,SLOT(opriCheck()));
-    connect(allCoun,SIGNAL(clicked()), this,SLOT(allCounCheck()));
-    connect(oslCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(akeCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(ostCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(hedCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(oppCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(busCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(vefCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(telCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(ausCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(veaCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(rogCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(horCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(sogCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(morCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(sorCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(ntrCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(norCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(troCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
-    connect(finCoun,SIGNAL(clicked()), this,SLOT(allCounUnCheck()));
+    connect(ui->regionEastAdd,     SIGNAL(clicked()), this, SLOT(regionEastAdd()));
+    connect(ui->regionEastRemove,  SIGNAL(clicked()), this, SLOT(regionEastRemove()));
+    connect(ui->regionWestAdd,     SIGNAL(clicked()), this, SLOT(regionWestAdd()));
+    connect(ui->regionWestRemove,  SIGNAL(clicked()), this, SLOT(regionWestRemove()));
+    connect(ui->regionTrondAdd,    SIGNAL(clicked()), this, SLOT(regionTrondAdd()));
+    connect(ui->regionTrondRemove, SIGNAL(clicked()), this, SLOT(regionTrondRemove()));
+    connect(ui->regionNorthAdd,    SIGNAL(clicked()), this, SLOT(regionNorthAdd()));
+    connect(ui->regionNorthRemove, SIGNAL(clicked()), this, SLOT(regionNorthRemove()));
+    connect(ui->webReg, SIGNAL(clicked()), this, SLOT(webCheck()));
+    connect(ui->priReg, SIGNAL(clicked()), this, SLOT(priCheck()));
+    connect(allCoun,    SIGNAL(clicked()), this, SLOT(allCounCheck()));
     
-    connect(ui->stationSelect, SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
+    connect(ui->stationSelect,    SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
     connect(ui->stationSelectAll, SIGNAL(clicked()), this, SLOT(selectAllStations()));
 
     QDateTime t = timeutil::nowWithMinutes0Seconds0();
@@ -187,10 +181,241 @@ ListDialog::ListDialog(HqcMainWindow* parent)
 	   this, SLOT( setMaxTime(const QTime&)));
     connect(ui->toTime, SIGNAL(dateTimeChanged(const QDateTime&)),
             this, SIGNAL(toTimeChanged(const QDateTime&)));
+}
 
-    ui->hab->setCanApply(false);
-    connect(ui->hab, SIGNAL(hide()), this, SIGNAL(ListHide()));
-    connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
+void ListDialog::setupParameterTab()
+{
+    LOG_SCOPE();
+
+    const std::vector<int> empty;
+    mParamSelectedModel.reset(new ParamIdModel(empty));
+    ui->listParamChosen->setModel(mParamSelectedModel.get());
+
+    connect(ui->buttonParamSelect, SIGNAL(clicked()), this, SLOT(selectParameters()));
+    connect(ui->buttonParamDeselect, SIGNAL(clicked()), this, SLOT(deselectParameters()));
+    connect(ui->buttonParamSelectAll, SIGNAL(clicked()), this, SLOT(selectAllParameters()));
+    connect(ui->buttonParamDeselectAll, SIGNAL(clicked()), this, SLOT(deselectAllParameters()));
+    connect(ui->comboParamGroup, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(showParamGroup(const QString&)));
+
+    QSettings paramOrder(::hqc::getPath(::hqc::CONFDIR) + "/paramorder", QSettings::IniFormat);
+
+    const QStringList groups = paramOrder.value("paramgroups").toStringList();
+    if (groups.empty()) {
+        QMessageBox::critical(this,
+                              tr("Cannot read paramorder file"),
+                              tr("The paramorder file could not be opened. Please set HQC_CONFDIR correctly."),
+                              QMessageBox::Abort,
+                              Qt::NoButton);
+        ::exit(1);
+    }
+
+    QStringList labels;
+    mParameterGroups.clear();
+    BOOST_FOREACH(const QString& group, groups) {
+        paramOrder.beginGroup(group);
+        QString label = paramOrder.value("label").toString();
+        std::vector<int>& parameters = mParameterGroups[label];
+
+        labels << label;
+
+        const QStringList paramIds = paramOrder.value("parameters").toStringList();
+        BOOST_FOREACH(const QString& paramId, paramIds)
+            parameters.push_back(paramId.toInt());
+        paramOrder.endGroup();
+    }
+
+    ui->comboParamGroup->addItems(labels);
+    ui->comboParamGroup->setCurrentIndex(0);
+}
+
+void ListDialog::setupClockTab()
+{
+    for (int i = 0; i < 24; i++) {
+        QString time;
+        time.sprintf("%02d", i);
+        mClockCheckBoxes[i] = new QCheckBox(time, ui->groupClockByHour);
+    }
+
+    QGridLayout* clockLayout = new QGridLayout;
+    ui->groupClockByHour->setLayout(clockLayout);
+    for (int i = 0; i < 8; i++) {
+        for (int j = 0; j < 3; j++)
+            clockLayout->addWidget(mClockCheckBoxes[3*i+j],i,j);
+    }
+    
+    connect(ui->buttonClockAddAll,    SIGNAL(clicked()), this, SLOT(selectAllTimes()));
+    connect(ui->buttonClockRemoveAll, SIGNAL(clicked()), this, SLOT(deselectAllTimes()));
+    connect(ui->buttonClockAddStandard,    SIGNAL(clicked()), this, SLOT(selectStandardTimes()));
+    connect(ui->buttonClockRemoveStandard, SIGNAL(clicked()), this, SLOT(deselectStandardTimes()));
+}
+
+void ListDialog::saveSettings(QSettings& settings)
+{
+    settings.beginGroup("lstdlg2");
+
+    {
+        QStringList times;
+        for (int i = 0; i < 24; i++)
+            times << (mClockCheckBoxes[i]->isChecked() ? "1" : "0");
+        settings.setValue("selected_times", times);
+    }
+
+    {
+        QStringList parameters;
+        const std::vector<int> params = getSelectedParameters();
+        BOOST_FOREACH(int pid, params)
+            parameters << QString::number(pid);
+        settings.setValue("selected_parameters", parameters);
+    }
+
+    const QStringList stationTypes = getSelectedStationTypes();
+    settings.setValue("stationTypes", stationTypes);
+    
+    const QStringList counties = getSelectedCounties();
+    settings.setValue("counties", counties);
+    
+    settings.endGroup();
+}
+
+void ListDialog::restoreSettings(QSettings& settings)
+{
+    settings.beginGroup("lstdlg2");
+
+    {
+        QStringList times = settings.value("selected_times").toStringList();
+        if (times.size() == 24) {
+            for (int i = 0; i < 24; i++)
+                mClockCheckBoxes[i]->setChecked(times.at(i) != "0");
+        }
+    }
+    
+    {
+        const QStringList parameters = settings.value("selected_parameters").toStringList();
+        std::vector<int> params;
+        BOOST_FOREACH(const QString& p, parameters)
+            params.push_back(p.toInt());
+
+        mParamSelectedModel.reset(new ParamIdModel(params));
+        ui->listParamChosen->setModel(mParamSelectedModel.get());
+        showParamGroup(ui->comboParamGroup->currentText());
+    }
+
+    QStringList stationTypesDefault;
+    stationTypesDefault << "ALL";
+    QStringList stationTypes = settings.value("stationTypes", stationTypesDefault).toStringList();
+    setSelectedStationTypes(stationTypes);
+    
+    QStringList countiesDefault;
+    countiesDefault << "ALL";
+    QStringList counties = settings.value("counties", countiesDefault).toStringList();
+    setSelectedCounties(counties);
+    
+    settings.endGroup();
+}
+
+void ListDialog::showParamGroup(const QString& paramGroup)
+{
+    const std::vector<int>& sel = mParamSelectedModel->parameterIds();
+    std::set<int> sel_set(sel.begin(), sel.end());
+
+    const std::vector<int>& group = mParameterGroups[paramGroup];
+    std::vector<int> avail;
+    BOOST_FOREACH(int pid, group) {
+        if (sel_set.find(pid) == sel_set.end())
+            avail.push_back(pid);
+    }
+    mParamAvailableModel.reset(new ParamIdModel(avail));
+    ui->listParamAvailable->setModel(mParamAvailableModel.get());
+}
+
+void ListDialog::selectParameters()
+{
+    const std::vector<int>& add = mParamAvailableModel->parameterIds();
+
+    std::vector<int> sel = mParamSelectedModel->parameterIds();
+    std::set<int> sel_set(sel.begin(), sel.end());
+
+    const QItemSelectionModel* selection = ui->listParamAvailable->selectionModel();
+    for (size_t i=0; i<add.size(); ++i) {
+        if (sel_set.find(add[i]) == sel_set.end() and selection->isRowSelected(i, QModelIndex()))
+            sel.push_back(add[i]);
+    }
+
+    mParamSelectedModel.reset(new ParamIdModel(sel));
+    ui->listParamChosen->setModel(mParamSelectedModel.get());
+
+    showParamGroup(ui->comboParamGroup->currentText());
+}
+
+void ListDialog::selectAllParameters()
+{
+    const std::vector<int>& add = mParamAvailableModel->parameterIds();
+
+    std::vector<int> sel = mParamSelectedModel->parameterIds();
+    std::set<int> sel_set(sel.begin(), sel.end());
+
+    for (size_t i=0; i<add.size(); ++i) {
+        if (sel_set.find(add[i]) == sel_set.end())
+            sel.push_back(add[i]);
+    }
+
+    mParamSelectedModel.reset(new ParamIdModel(sel));
+    ui->listParamChosen->setModel(mParamSelectedModel.get());
+    
+    showParamGroup(ui->comboParamGroup->currentText());
+}
+
+void ListDialog::deselectParameters()
+{
+    const std::vector<int>& sel = mParamSelectedModel->parameterIds();
+    std::vector<int> new_sel;
+    const QItemSelectionModel* selection = ui->listParamChosen->selectionModel();
+    for (size_t i=0; i<sel.size(); ++i) {
+        if (not selection->isRowSelected(i, QModelIndex()))
+            new_sel.push_back(sel[i]);
+    }
+
+    mParamSelectedModel.reset(new ParamIdModel(new_sel));
+    ui->listParamChosen->setModel(mParamSelectedModel.get());
+
+    showParamGroup(ui->comboParamGroup->currentText());
+}
+
+void ListDialog::deselectAllParameters()
+{
+    const std::vector<int> empty;
+    mParamSelectedModel.reset(new ParamIdModel(empty));
+    ui->listParamChosen->setModel(mParamSelectedModel.get());
+
+    showParamGroup(ui->comboParamGroup->currentText());
+}
+
+void ListDialog::selectAllTimes()
+{
+    for (int i = 0; i < 24; i++)
+        mClockCheckBoxes[i]->setChecked(true);
+    enableButtons();
+}
+
+void ListDialog::deselectAllTimes()
+{
+    for (int i = 0; i < 24; i++)
+        mClockCheckBoxes[i]->setChecked(false);
+    enableButtons();
+}
+
+void ListDialog::selectStandardTimes()
+{
+    for (int i = 0; i < 24; i+=3)
+        mClockCheckBoxes[i]->setChecked(true);
+    enableButtons();
+}
+
+void ListDialog::deselectStandardTimes()
+{
+    for (int i = 0; i < 24; i+=3)
+        mClockCheckBoxes[i]->setChecked(false);
+    enableButtons();
 }
 
 void ListDialog::setMaxTime(const QTime& maxTime)
@@ -231,7 +456,7 @@ void ListDialog::setEnd(const QDateTime& e)
 void ListDialog::appendStatInListbox(QString station)
 {
     ui->stationNames->insertItem(station);
-    ui->hab->setCanApply(true);
+    enableButtons();
 }
 
 void ListDialog::removeStatFromListbox(QString station)
@@ -244,8 +469,31 @@ void ListDialog::removeStatFromListbox(QString station)
     }
     if (rind >= 0 )
         ui->stationNames->removeItem(rind);
-    if (ui->stationNames->count() == 0)
-        ui->hab->setCanApply(false);
+    enableButtons();
+}
+
+void ListDialog::enableButtons()
+{
+    const bool allowSelectStation =
+        (not getSelectedStationTypes().empty()
+         and not getSelectedCounties().empty());
+    const bool haveStations = (ui->stationNames->count() > 0);
+
+    bool haveTimes = false;
+    for (int i = 0; !haveTimes and i<24; i++)
+        if (mClockCheckBoxes[i]->isChecked())
+            haveTimes = true;
+
+    const bool haveParameters = not getSelectedParameters().empty();
+
+
+    const bool allowApply = haveStations and allowSelectStation
+        and haveTimes and haveParameters;
+
+    ui->stationSelect   ->setEnabled(allowSelectStation);
+    ui->stationSelectAll->setEnabled(allowSelectStation);
+
+    ui->hab->setCanApply(allowApply);
 }
 
 void ListDialog::removeAllStatFromListbox()
@@ -253,68 +501,7 @@ void ListDialog::removeAllStatFromListbox()
     int nuRo = ui->stationNames->count();
     for (int ind = 0; ind < nuRo; ind++)
         ui->stationNames->removeItem(0);
-    ui->hab->setCanApply(false);
-}
-
-void ListDialog::twiCheck()
-{
-    if (ui->twiType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-}
-
-void ListDialog::prcCheck()
-{
-    if (ui->prcType->isChecked()) {
-        ui->twiType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-}
-
-void ListDialog::aprCheck()
-{
-    if (ui->aprType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-}
-
-void ListDialog::winCheck() {
-    if (ui->winType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-}
-
-void ListDialog::visCheck() {
-    if (ui->visType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-}
-
-void ListDialog::marCheck() {
-    if (ui->marType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->visType->setChecked(false);
-    }
+    enableButtons();
 }
 
 void ListDialog::uncheckTypes()
@@ -329,7 +516,7 @@ void ListDialog::checkTypes(const char* these[])
     mi_foreach(ItemCheckBox* cb, mStationTypes) {
         const QString item = cb->getItem();
         for(int i=0; these[i]; ++i) {
-            if (item == these[i] ) {
+            if (item == these[i]) {
                 cb->setChecked(true);
                 break;
             }
@@ -337,28 +524,44 @@ void ListDialog::checkTypes(const char* these[])
     }
 }
 
-void ListDialog::otwiCheck()
+void ListDialog::twiCheck()
 {
     uncheckTypes();
     if (ui->twiType->isChecked()) {
+        ui->prcType->setChecked(false);
+        ui->aprType->setChecked(false);
+        ui->winType->setChecked(false);
+        ui->visType->setChecked(false);
+        ui->marType->setChecked(false);
         const char* doCheck[] = { "AA", "AF", "AL", "AV", "AO", "AE", "MV", "MP",
                                   "MM", "MS", "NS", "FM", "PT", "VS", "VK", "VM", 0 };
         checkTypes(doCheck);
     }
 }
 
-void ListDialog::oprcCheck()
+void ListDialog::prcCheck()
 {
     uncheckTypes();
     if (ui->prcType->isChecked()) {
+        ui->twiType->setChecked(false);
+        ui->aprType->setChecked(false);
+        ui->winType->setChecked(false);
+        ui->visType->setChecked(false);
+        ui->marType->setChecked(false);
         const char* doCheck[] = { "AA", "AL", "AO", "NS", "ND", "NO", "P", "VS", "VK", "VM", 0 };
         checkTypes(doCheck);
     }
 }
 
-void ListDialog::oaprCheck()
+void ListDialog::aprCheck()
 {
     uncheckTypes();
+    if (ui->aprType->isChecked() or ui->winType->isChecked()) {
+        ui->prcType->setChecked(false);
+        ui->twiType->setChecked(false);
+        ui->visType->setChecked(false);
+        ui->marType->setChecked(false);
+    }
     if (ui->aprType->isChecked()) {
         const char* doCheck[] = { "AA", "AF", "AE", "MV", "MP", "MM", "MS", "VS", 0 };
         checkTypes(doCheck);
@@ -369,315 +572,161 @@ void ListDialog::oaprCheck()
     }
 }
 
-void ListDialog::owinCheck()
+void ListDialog::winCheck()
 {
-    oaprCheck(); // TODO this does not seem right
+    aprCheck(); // TODO this does not seem right
 }
 
-void ListDialog::ovisCheck()
+void ListDialog::visCheck()
 {
     uncheckTypes();
     if (ui->visType->isChecked()) {
+        ui->prcType->setChecked(false);
+        ui->aprType->setChecked(false);
+        ui->winType->setChecked(false);
+        ui->twiType->setChecked(false);
+        ui->marType->setChecked(false);
         const char* doCheck[] = { "MV", "MP", "MM", "MS", "FM", "NS", "ND", "NO", "VS", "VK", "VM", 0 };
         checkTypes(doCheck);
     }
 }
 
-void ListDialog::omarCheck() {
+void ListDialog::marCheck()
+{
     uncheckTypes();
     if (ui->marType->isChecked()) {
+        ui->prcType->setChecked(false);
+        ui->aprType->setChecked(false);
+        ui->winType->setChecked(false);
+        ui->twiType->setChecked(false);
+        ui->visType->setChecked(false);
         const char* doCheck[] = { "MV", "MP", "MM", "MS", 0 };
         checkTypes(doCheck);
     }
 }
 
-void ListDialog::ausCheck()
+void ListDialog::regionEastAdd()
 {
-    if (ui->ausReg->isChecked()) {
-        ui->vesReg->setChecked(false);
-        ui->troReg->setChecked(false);
-        ui->norReg->setChecked(false);
-        ui->webReg->setChecked(false);
-        ui->priReg->setChecked(false);
-    }
+    regionEastToggle(true);
 }
 
-void ListDialog::oausCheck()
+void ListDialog::regionEastRemove()
 {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-    if (ui->ausReg->isChecked()) {
-        oslCoun->setChecked(true);
-        akeCoun->setChecked(true);
-        ostCoun->setChecked(true);
-        hedCoun->setChecked(true);
-        oppCoun->setChecked(true);
-        busCoun->setChecked(true);
-        vefCoun->setChecked(true);
-        telCoun->setChecked(true);
-        ausCoun->setChecked(true);
-    }
+    regionEastToggle(false);
 }
 
-void ListDialog::vesCheck()
+void ListDialog::regionEastToggle(bool on)
 {
-    if (ui->vesReg->isChecked()) {
-        ui->ausReg->setChecked(false);
-        ui->troReg->setChecked(false);
-        ui->norReg->setChecked(false);
-        ui->webReg->setChecked(false);
-        ui->priReg->setChecked(false);
-    }
+    for(int i=REG_EAST[0]; i<REG_EAST[1]; ++i)
+        mCounties[i]->setChecked(on);
+    ui->webReg->setChecked(false);
+    ui->priReg->setChecked(false);
+    allCounUnCheck();
 }
 
-void ListDialog::ovesCheck()
+void ListDialog::regionWestAdd()
 {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-    if (ui->vesReg->isChecked()) {
-        veaCoun->setChecked(true);
-        rogCoun->setChecked(true);
-        horCoun->setChecked(true);
-        sogCoun->setChecked(true);
-        morCoun->setChecked(true);
-    }
+    regionWestToggle(true);
 }
 
-void ListDialog::troCheck()
+void ListDialog::regionWestRemove()
 {
-    if (ui->troReg->isChecked()) {
-        ui->ausReg->setChecked(false);
-        ui->vesReg->setChecked(false);
-        ui->norReg->setChecked(false);
-        ui->webReg->setChecked(false);
-        ui->priReg->setChecked(false);
-    }
+    regionWestToggle(false);
 }
 
-void ListDialog::otroCheck()
+void ListDialog::regionWestToggle(bool on)
 {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-    if (ui->troReg->isChecked()) {
-        sorCoun->setChecked(true);
-        ntrCoun->setChecked(true);
-    }
+    for(int i=REG_WEST[0]; i<REG_WEST[1]; ++i)
+        mCounties[i]->setChecked(on);
+    ui->webReg->setChecked(false);
+    ui->priReg->setChecked(false);
+    allCounUnCheck();
 }
 
-void ListDialog::norCheck() {
-    if (ui->norReg->isChecked()) {
-        ui->vesReg->setChecked(false);
-        ui->troReg->setChecked(false);
-        ui->ausReg->setChecked(false);
-        ui->webReg->setChecked(false);
-        ui->priReg->setChecked(false);
-    }
+void ListDialog::regionTrondAdd()
+{
+    regionTrondToggle(true);
 }
 
-void ListDialog::onorCheck() {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-    if (ui->norReg->isChecked()) {
-        norCoun->setChecked(true);
-        troCoun->setChecked(true);
-        finCoun->setChecked(true);
-        svaCoun->setChecked(true);
-    }
+void ListDialog::regionTrondRemove()
+{
+    regionTrondToggle(false);
 }
 
-void ListDialog::webCheck() {
+void ListDialog::regionTrondToggle(bool on)
+{
+    for(int i=REG_TROND[0]; i<REG_TROND[1]; ++i)
+        mCounties[i]->setChecked(on);
+    ui->webReg->setChecked(false);
+    ui->priReg->setChecked(false);
+    allCounUnCheck();
+}
+
+void ListDialog::regionNorthAdd()
+{
+    regionNorthToggle(true);
+}
+
+void ListDialog::regionNorthRemove()
+{
+    regionNorthToggle(false);
+}
+
+void ListDialog::regionNorthToggle(bool on)
+{
+    for(int i=REG_NORTH[0]; i<REG_NORTH[1]; ++i)
+        mCounties[i]->setChecked(on);
+    ui->webReg->setChecked(false);
+    ui->priReg->setChecked(false);
+    allCounUnCheck();
+}
+
+void ListDialog::webCheck()
+{
     if (ui->webReg->isChecked()) {
         allType->setChecked(true);
     }
+    for(int i=0; i<NCOUNTIES; ++i)
+        mCounties[i]->setChecked(false);
+    allCoun->setChecked(false);
+    enableButtons();
 }
 
-void ListDialog::owebCheck() {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-}
-void ListDialog::priCheck() {
+void ListDialog::priCheck()
+{
     if (ui->priReg->isChecked()) {
         allType->setChecked(true);
     }
+    for(int i=0; i<NCOUNTIES; ++i)
+        mCounties[i]->setChecked(false);
+    allCoun->setChecked(false);
+    enableButtons();
 }
 
-void ListDialog::opriCheck() {
-    oslCoun->setChecked(false);
-    akeCoun->setChecked(false);
-    ostCoun->setChecked(false);
-    hedCoun->setChecked(false);
-    oppCoun->setChecked(false);
-    busCoun->setChecked(false);
-    vefCoun->setChecked(false);
-    telCoun->setChecked(false);
-    ausCoun->setChecked(false);
-    veaCoun->setChecked(false);
-    rogCoun->setChecked(false);
-    horCoun->setChecked(false);
-    sogCoun->setChecked(false);
-    morCoun->setChecked(false);
-    sorCoun->setChecked(false);
-    ntrCoun->setChecked(false);
-    norCoun->setChecked(false);
-    troCoun->setChecked(false);
-    finCoun->setChecked(false);
-    svaCoun->setChecked(false);
-    allCoun->setChecked(false);
-}
-void ListDialog::allCounCheck() {
+void ListDialog::allCounCheck()
+{
     if (allCoun->isChecked()) {
-        oslCoun->setChecked(false);
-        akeCoun->setChecked(false);
-        ostCoun->setChecked(false);
-        hedCoun->setChecked(false);
-        oppCoun->setChecked(false);
-        busCoun->setChecked(false);
-        vefCoun->setChecked(false);
-        telCoun->setChecked(false);
-        ausCoun->setChecked(false);
-        veaCoun->setChecked(false);
-        rogCoun->setChecked(false);
-        horCoun->setChecked(false);
-        sogCoun->setChecked(false);
-        morCoun->setChecked(false);
-        sorCoun->setChecked(false);
-        ntrCoun->setChecked(false);
-        norCoun->setChecked(false);
-        troCoun->setChecked(false);
-        finCoun->setChecked(false);
-        svaCoun->setChecked(false);
-        ui->vesReg->setChecked(false);
-        ui->troReg->setChecked(false);
-        ui->ausReg->setChecked(false);
-        ui->norReg->setChecked(false);
+        for(int i=0; i<NCOUNTIES; ++i)
+            mCounties[i]->setChecked(false);
         ui->priReg->setChecked(false);
     }
+    enableButtons();
 }
 
-void ListDialog::allCounUnCheck() {
-    if (oslCoun->isChecked() ||
-        oslCoun->isChecked() ||
-        akeCoun->isChecked() ||
-        ostCoun->isChecked() ||
-        hedCoun->isChecked() ||
-        oppCoun->isChecked() ||
-        busCoun->isChecked() ||
-        vefCoun->isChecked() ||
-        telCoun->isChecked() ||
-        ausCoun->isChecked() ||
-        veaCoun->isChecked() ||
-        rogCoun->isChecked() ||
-        horCoun->isChecked() ||
-        sogCoun->isChecked() ||
-        morCoun->isChecked() ||
-        sorCoun->isChecked() ||
-        ntrCoun->isChecked() ||
-        norCoun->isChecked() ||
-        svaCoun->isChecked() ||
-        finCoun->isChecked()) {
+void ListDialog::allCounUnCheck()
+{
+    bool anyCountyIsChecked = false;
+    for(int i=0; not anyCountyIsChecked and i<NCOUNTIES; ++i)
+        anyCountyIsChecked |= mCounties[i]->isChecked();
+    if (anyCountyIsChecked)
         allCoun->setChecked(false);
-    }
+    enableButtons();
 }
 
 QStringList ListDialog::getSelectedStationTypes()
 {
     QStringList t;
-    if (allType->isChecked())
+    if (isSelectAllStationTypes())
         t << "ALL";
     mi_foreach(ItemCheckBox* cb, mStationTypes) {
         if (cb->isChecked())
@@ -686,32 +735,33 @@ QStringList ListDialog::getSelectedStationTypes()
     return t;
 }
 
+bool ListDialog::isSelectAllStationTypes() const
+{
+    return allType->isChecked();
+}
+
 void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
 {
     allType->setChecked(stationTypes.contains("ALL"));
     mi_foreach(ItemCheckBox* cb, mStationTypes)
         cb->setChecked(stationTypes.contains(cb->getItem()));
+    enableButtons();
 }
 
 QStringList ListDialog::getSelectedCounties()
 {
     QStringList t;
 
-    const int NBOXES = 7;
-    QCheckBox* boxes[NBOXES] = { allCoun, ui->ausReg, ui->vesReg, ui->troReg,      ui->norReg,  ui->webReg, ui->priReg };
-    QString    keys[NBOXES]  = { "ALL",   "REG_EAST", "REG_WEST", "REG_TRONDELAG", "REG_NORTH", "ST_SYNOP", "ST_PRIO" };
+    const int NBOXES = 3;
+    QCheckBox* boxes[NBOXES] = { allCoun, ui->webReg, ui->priReg };
+    QString    keys[NBOXES]  = { "ALL",   "ST_SYNOP", "ST_PRIO" };
     for(int i=0; i<NBOXES; ++i) {
         if (boxes[i]->isChecked())
             t << keys[i];
     }
 
-    ItemCheckBox** countiesCB[NCOUNTIES] = {
-        &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
-        &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
-        &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
-    };
     for(int i=0; i<NCOUNTIES; ++i) {
-        ItemCheckBox* cb = *countiesCB[i];
+        ItemCheckBox* cb = mCounties[i];
         if (cb->isChecked())
             t << cb->getItem();
     }
@@ -720,21 +770,17 @@ QStringList ListDialog::getSelectedCounties()
 
 void ListDialog::setSelectedCounties(const QStringList& c)
 {
-    const int NBOXES = 7;
-    QCheckBox* boxes[NBOXES] = { allCoun, ui->ausReg, ui->vesReg, ui->troReg,      ui->norReg,  ui->webReg, ui->priReg };
-    QString    keys[NBOXES]  = { "ALL",   "REG_EAST", "REG_WEST", "REG_TRONDELAG", "REG_NORTH", "ST_SYNOP", "ST_PRIO" };
+    const int NBOXES = 3;
+    QCheckBox* boxes[NBOXES] = { allCoun, ui->webReg, ui->priReg };
+    QString    keys[NBOXES]  = { "ALL",   "ST_SYNOP", "ST_PRIO" };
     for(int i=0; i<NBOXES; ++i)
         boxes[i]->setChecked(c.contains(keys[i]));
 
-    ItemCheckBox** countiesCB[NCOUNTIES] = {
-        &oslCoun, &akeCoun, &ostCoun, &hedCoun, &oppCoun, &busCoun, &vefCoun,
-        &telCoun, &ausCoun, &veaCoun, &rogCoun, &horCoun, &sogCoun, &morCoun,
-        &sorCoun, &ntrCoun, &norCoun, &troCoun, &finCoun, &svaCoun
-    };
     for(int i=0; i<NCOUNTIES; ++i) {
-        ItemCheckBox* cb = *countiesCB[i];
+        ItemCheckBox* cb = mCounties[i];
         cb->setChecked(c.contains(cb->getItem()));
     }
+    enableButtons();
 }
 
 bool ListDialog::showSynop() const
@@ -749,28 +795,39 @@ bool ListDialog::showPrioritized() const
 
 std::vector<int> ListDialog::getSelectedStations()
 {
-    if (statSelect )
-        return statSelect->getSelectedStations();
-    else
+    if (not statSelect.get())
         return std::vector<int>();
+
+    return statSelect->getSelectedStations();
 }
+
+std::vector<int> ListDialog::getSelectedParameters()
+{
+    return mParamSelectedModel->parameterIds();
+}
+
+std::set<int> ListDialog::getSelectedTimes()
+{
+    std::set<int> hours;
+    for (int i = 0; i < 24; i++)
+        if (mClockCheckBoxes[i]->isChecked())
+            hours.insert(i);
+    return hours;
+}    
 
 void ListDialog::prepareStationSelectionDialog()
 {
     const listStat_l& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
 
     removeAllStatFromListbox();
-    if (statSelect )
-        delete statSelect;
-    
-    statSelect = new StationSelection(listStat,
-                                      getSelectedStationTypes(),
-                                      getSelectedCounties(),
-                                      showSynop(),
-                                      showPrioritized(),
-                                      this);
-    connect(statSelect, SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
-    connect(statSelect, SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
+    statSelect.reset(new StationSelection(listStat,
+                                          getSelectedStationTypes(),
+                                          getSelectedCounties(),
+                                          showSynop(),
+                                          showPrioritized(),
+                                          this));
+    connect(statSelect.get(), SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
+    connect(statSelect.get(), SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
 }
 
 void ListDialog::showStationSelectionDialog()
@@ -783,246 +840,4 @@ void ListDialog::selectAllStations()
 {
     prepareStationSelectionDialog();
     statSelect->doSelectAllStations();
-}
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
-StationTable::StationTable(QWidget* parent)
-    : Q3Table(0, 7, parent)
-{
-    setSorting( true );
-
-    horizontalHeader()->setLabel( 0, tr( "Stnr" ) );
-    horizontalHeader()->setLabel( 1, tr( "Navn" ) );
-    horizontalHeader()->setLabel( 2, tr( "HOH" ) );
-    horizontalHeader()->setLabel( 3, tr( "Type" ) );
-    horizontalHeader()->setLabel( 4, tr( "Fylke" ) );
-    horizontalHeader()->setLabel( 5, tr( "Kommune" ) );
-    horizontalHeader()->setLabel( 6, tr( "Pri" ) );
-}
-
-void StationTable::setData(const listStat_l& listStat,
-                           const QStringList& stationTypes,
-                           const QStringList& counties,
-			   bool web,
-			   bool pri)
-{
-    BusyIndicator busy;
-    setNumRows(listStat.size());
-
-    DBGE(qDebug() << counties);
-
-    int stInd = 0;
-    mi_foreach(const listStat_t& s, listStat) {
-        DBG(DBG1(s.stationid) << DBG1(s.fylke) << DBG1(s.wmonr) << DBG1(s.pri));
-        bool webStat = (s.wmonr != "    ");
-        bool priStat = (s.pri.substr(0, 3) == "PRI");
-        QString prty;
-        if (s.pri.size() >= 4 )
-            prty = QString::fromStdString(s.pri.substr(3,1));
-
-        if (not (counties.contains("ALL")
-                 or counties.contains(QString::fromStdString(s.fylke))
-                 or (webStat and web) or (priStat and pri)))
-            continue;
-
-        const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(s.stationid);
-        std::set<int> typeIDs;
-        mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList)
-            typeIDs.insert(op.typeID());
-
-        QString strEnv;
-        if (stationTypes.contains("ALL") ) {
-            strEnv = getEnvironment(s.environment, typeIDs);
-        } else {
-            if ((stationTypes.contains("AA") && ((s.environment == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342))) ) strEnv += "AA";
-            if ((stationTypes.contains("AF") && s.environment == 1 && typeIDs.count(311)) )  strEnv += "AF";
-            if ((stationTypes.contains("AL") && s.environment == 2 && typeIDs.count(3)) ) strEnv += "AL";
-            if ((stationTypes.contains("AV") && s.environment == 12 && typeIDs.count(3)) )  strEnv += "AV";
-            if ((stationTypes.contains("AO") && typeIDs.count(410)) )  strEnv += "AO";
-            if ((stationTypes.contains("MV") && s.environment == 7 && typeIDs.count(11)) ) strEnv += "MV";
-            if ((stationTypes.contains("MP") && s.environment == 5 && typeIDs.count(11)) ) strEnv += "MP";
-            if ((stationTypes.contains("MM") && s.environment == 4 && typeIDs.count(11)) ) strEnv += "MM";
-            if ((stationTypes.contains("MS") && s.environment == 6 && typeIDs.count(11)) ) strEnv += "MS";
-            if ((stationTypes.contains("P")  && (typeIDs.count(4) || typeIDs.count(404))) ) strEnv += "P";
-            if ((stationTypes.contains("PT") && (typeIDs.count(4) || typeIDs.count(404))) ) strEnv += "PT";
-            if ((stationTypes.contains("NS") && typeIDs.count(302)) )  strEnv += "NS";
-            if ((stationTypes.contains("ND") && s.environment == 9 && typeIDs.count(402)) ) strEnv += "ND";
-            if ((stationTypes.contains("NO") && s.environment == 10 && typeIDs.count(402)) ) strEnv += "NO";
-            if ((stationTypes.contains("VS") && (typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312))) ) strEnv += "VS";
-            if ((stationTypes.contains("VK") && s.environment == 3 && typeIDs.count(412)) ) strEnv += "VK";
-            if ((stationTypes.contains("VM") && (typeIDs.count(306) || typeIDs.count(308))) ) strEnv += "VM";
-            if ((stationTypes.contains("FM") && (typeIDs.count(2))) ) strEnv += "FM";
-        }
-        if (not strEnv.isEmpty() ) {
-            StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, QString::number(s.stationid));
-            setItem(stInd, 0, stNum);
-            StTableItem* stName = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.name));
-            setItem(stInd, 1, stName);
-            StTableItem* stHoh = new StTableItem(this, Q3TableItem::Never, QString::number(s.altitude, 'f', 0));
-            setItem(stInd, 2, stHoh);
-            StTableItem* stType = new StTableItem(this, Q3TableItem::Never, strEnv);
-            setItem(stInd, 3, stType);
-            StTableItem* stFylke = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.fylke));
-            setItem(stInd, 4, stFylke);
-            StTableItem* stKommune = new StTableItem(this, Q3TableItem::Never, QString::fromStdString(s.kommune));
-            setItem(stInd, 5, stKommune);
-            StTableItem* stPrior = new StTableItem(this, Q3TableItem::Never, prty);
-            setItem(stInd, 6, stPrior);
-            stInd++;
-        }
-    }
-    setNumRows(stInd);
-
-    adjustColumn( 0 );
-    adjustColumn( 1 );
-    adjustColumn( 2 );
-    adjustColumn( 3 );
-    adjustColumn( 4 );
-    adjustColumn( 5 );
-    adjustColumn( 6 );
-    if (pri)
-        sortColumn(6, true, true);
-    else
-        hideColumn(6);
-}
-
-QString StationTable::getEnvironment(const int envID, const std::set<int>& typeIDs) {
-    QString env;
-    if (envID == 1 && typeIDs.count(311) )
-        env = "AF";
-    else if (envID == 2 && typeIDs.count(3) )
-        env = "AL";
-    else if (envID == 4 && typeIDs.count(11) )
-        env = "MM";
-    else if (envID == 5 && typeIDs.count(11) )
-        env = "MP";
-    else if (envID == 6 && typeIDs.count(11) )
-        env = "MS";
-    else if (envID == 7 && typeIDs.count(11) )
-        env = "MV";
-    else if ((envID == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342) )
-        env = "AA";
-    else if (envID == 9 && typeIDs.count(402) )
-        env = "ND";
-    else if (envID == 10 && typeIDs.count(402) )
-        env = "NO";
-    else if (typeIDs.count(302) )
-        env = "NS";
-    else if (typeIDs.count(410) )
-        env = "AO";
-    else if (typeIDs.count(4) || typeIDs.count(404) )
-        env = "P,PT";
-    else if (typeIDs.count(2) )
-        env = "FM";
-    else if (typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312) )
-        env = "VS";
-    else if (typeIDs.count(306) || typeIDs.count(308) )
-        env = "VM";
-    else if (envID == 11 )
-        env = "TURISTFORENING";
-    else if (envID == 12 && typeIDs.count(3) )
-        env = "AV";
-    else if (typeIDs.count(412) )
-        env = "VK";
-    //  else if (typeIDs.count(503) )
-    else if (typeIDs.count(502) || typeIDs.count(503) || typeIDs.count(504) || typeIDs.count(505) || typeIDs.count(506) || typeIDs.count(514) )
-        env = "X";
-    return env;
-}
-
-
-void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
-    Q3Table::sortColumn( col, ascending, true );
-}
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
-StationSelection::StationSelection(const listStat_l& listStat,
-                                   const QStringList& stationTypes,
-                                   const QStringList& counties,
-				   bool web,
-				   bool pri,
-                                   QWidget* parent)
-    : QDialog(parent)
-{
-    setupUi(this);
-
-    connect(selectionOK, SIGNAL(clicked()), this, SLOT(hide()));
-    connect(selectAllStations, SIGNAL(clicked()),SLOT(doSelectAllStations()));
-
-    stationTable->setData(listStat, stationTypes, counties, web, pri);
-    connect(stationTable,SIGNAL(currentChanged(int, int)),
-            SLOT(tableCellClicked(int, int)));
-}
-
-void StationSelection::tableCellClicked() {
-}
-void StationSelection::tableCellClicked(int row,
-					int /*col*/,
-					int /*button*/,
-					const QPoint& /*mousePos*/) {
-    stationTable->selectRow(row);
-    selectOrDeselectStation(row);
-}
-
-void StationSelection::tableCellClicked(int row, int /*col*/) {
-    stationTable->selectRow(row);
-    selectOrDeselectStation(row);
-}
-
-void StationSelection::selectOrDeselectStation(int row)
-{
-    Q3TableItem* tStationNumber = stationTable->item( row, 0);
-    Q3TableItem* tStationName = stationTable->item( row, 1);
-    QString station = tStationNumber->text() + "  " + tStationName->text();
-    
-    const int stationID = tStationNumber->text().toInt();
-    std::set<int>::iterator it = mSelectedStations.find(stationID);
-    
-    if (it != mSelectedStations.end() ) {
-        mSelectedStations.erase(it);
-        /*emit*/ stationRemoved(station);
-    } else {
-        mSelectedStations.insert(stationID);
-        /*emit*/ stationAppended(station);
-    }
-}
-
-void StationSelection::doSelectAllStations()
-{
-    for(int row = 0; row < stationTable->numRows(); row++) {
-        Q3TableItem* tStationNumber = stationTable->item( row, 0);
-        
-        const int stationID = tStationNumber->text().toInt();
-        if (mSelectedStations.find(stationID) == mSelectedStations.end()) {
-            mSelectedStations.insert(stationID);
-
-            Q3TableItem* tStationName = stationTable->item( row, 1);
-            QString station = tStationNumber->text() + "  " + tStationName->text();
-            /*emit*/ stationAppended(station);
-        }
-    }
-}
-
-std::vector<int> StationSelection::getSelectedStations()
-{
-    return std::vector<int>(mSelectedStations.begin(), mSelectedStations.end());
-}
-
-// ########################################################################
-// ########################################################################
-// ########################################################################
-
-QString StTableItem::key() const {
-    QString item;
-    if (col() == 0 || col() == 2)
-        item.sprintf("%08d",text().toInt());
-    else
-        item = text();
-    return item;
 }

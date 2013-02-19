@@ -6,10 +6,11 @@ SET(hqc_HEADERS
   ../include/KvalobsDataView.h
   ../include/rejecttimeseriesdialog.h
   ../include/accepttimeseriesdialog.h
-  ../include/parameterdialog.h
+  ../include/ItemCheckBox.hh
   ../include/KvalobsDataModel.h
-  ../include/ListDialog.h
+  ../include/ListDialog.hh
   ../include/textdatadialog.h
+  ../include/StationSelection.hh
   ../include/TimeseriesDialog.h
   ../include/discarddialog.h
   ../include/KvalobsDataDelegate.h
@@ -17,13 +18,14 @@ SET(hqc_HEADERS
   ../include/textdatatable.h
   ../include/rejecttable.h
   ../include/rejectdialog.h
-  ../include/ClockDialog.h
   ../include/errorlist.h)
 
 SET(hqc_SOURCES
+  ParamIdModel.cc
+  ListDialog.cc
+  StationSelection.cc
   accepttimeseriesdialog.cc
   approvedialog.cc
-  ClockDialog.cc
   dianashowdialog.cc
   discarddialog.cc
   errorlist.cc
@@ -32,13 +34,12 @@ SET(hqc_SOURCES
   hqc4.cc
   HqcDianaHelper.cc
   hqcmain.cc
+  ItemCheckBox.cc
   KvalobsData.cc
   KvalobsDataDelegate.cc
   KvalobsDataModel.cc
   KvalobsDataView.cc
-  ListDialog.cc
   missingtable.cc
-  parameterdialog.cc
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
@@ -64,7 +65,6 @@ QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
   listdialog.ui
   mainwindow.ui
-  parameterdialog.ui
   stationselection.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})

@@ -39,7 +39,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "accepttimeseriesdialog.h"
 #include "approvedialog.h"
 #include "BusyIndicator.h"
-#include "ClockDialog.h"
 #include "config.h"
 #include "dianashowdialog.h"
 #include "discarddialog.h"
@@ -55,10 +54,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
 #include "KvMetaDataBuffer.hh"
-#include "ListDialog.h"
+#include "ListDialog.hh"
 #include "MiDateTimeEdit.hh"
 #include "mi_foreach.hh"
-#include "parameterdialog.h"
 #include "QtKvalobsAccess.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
@@ -195,10 +193,6 @@ HqcMainWindow::HqcMainWindow()
     const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
     lstdlg = new ListDialog(this);
     lstdlg->setIcon( QPixmap(hqc_icon_path) );
-    clkdlg = new ClockDialog(this);
-    clkdlg->setIcon( QPixmap(hqc_icon_path) );
-    pardlg = new ParameterDialog(this);
-    pardlg->setIcon( QPixmap(hqc_icon_path) );
     dshdlg = new DianaShowDialog(this);
     dshdlg->setIcon( QPixmap(hqc_icon_path) );
     txtdlg = new TextDataDialog(this);
@@ -211,7 +205,6 @@ HqcMainWindow::HqcMainWindow()
     rjtsdlg->hide();
     
     // --- START -----------------------------------------------------
-    pardlg->hide();
     rejdlg->hide();
     lstdlg->hide();
 
@@ -221,21 +214,12 @@ HqcMainWindow::HqcMainWindow()
     connect(mDianaHelper.get(), SIGNAL(receivedStation(int)),
             this, SLOT(receivedStationFromDiana(int)));
 
-    connect( lstdlg, SIGNAL(ListApply()), SLOT(ListOK()));
-    connect( lstdlg, SIGNAL(ListHide()), SLOT(listMenu()));
-
-    clkdlg->hide();
-    timeFilterChanged = false;
-    connect( clkdlg, SIGNAL(ClockApply()), SLOT(ClkOK()));
-    connect( clkdlg, SIGNAL(ClockHide()), SLOT(clockMenu()));
+    connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
     dshdlg->hide();
     connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
     connect( dshdlg, SIGNAL(dianaShowHide()), SLOT(dianaShowMenu()));
 
-    connect( pardlg, SIGNAL(paramApply()), SLOT(paramOK()));
-    connect( pardlg, SIGNAL(paramHide()), SLOT(paramMenu()));
-    
     connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
     connect( txtdlg, SIGNAL(textDataHide()), SLOT(textDataMenu()));
     
@@ -250,8 +234,8 @@ HqcMainWindow::HqcMainWindow()
     
     connect(this, SIGNAL(newStationList(std::vector<QString>&)),
             tsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this, SIGNAL(newParameterList(const QStringList&)),
-            tsdlg, SLOT(newParameterList(const QStringList&)));
+    connect(this, SIGNAL(newParameterList(const std::vector<int>&)),
+            tsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
     connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
     connect(rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
@@ -261,13 +245,13 @@ HqcMainWindow::HqcMainWindow()
     
     connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
             rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this,  SIGNAL(newParameterList(const QStringList&)),
-            rjtsdlg, SLOT(newParameterList(const QStringList&)));
+    connect(this,  SIGNAL(newParameterList(const std::vector<int>&)),
+            rjtsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
     connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
             actsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this,  SIGNAL(newParameterList(const QStringList&)),
-            actsdlg, SLOT(newParameterList(const QStringList&)));
+    connect(this,  SIGNAL(newParameterList(const std::vector<int>&)),
+            actsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
     connect(lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
             tsdlg, SLOT(setFromTimeSlot(const QDateTime&)));
@@ -319,92 +303,6 @@ void HqcMainWindow::startup()
     mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
 
-void HqcMainWindow::showFlags() {
-}
-
-void HqcMainWindow::showOrigs() {
-}
-
-void HqcMainWindow::showMod() {
-}
-
-void HqcMainWindow::showStat() {
-}
-
-void HqcMainWindow::showPos() {
-}
-
-void HqcMainWindow::showHeight() {
-}
-
-void HqcMainWindow::showTyp() {
-}
-
-void HqcMainWindow::selectParameterGroup(const QString& group) {
-    wElement = group;
-    lity = daLi;
-    mDianaHelper->setFirstObs();
-    const std::vector<int> & parameters = parameterGroups[wElement];
-    Q_ASSERT(not parameters.empty());
-    pardlg->insertParametersInListBox(parameters);
-    pardlg->showAll();
-}
-
-void HqcMainWindow::airPress() {
-    selectParameterGroup("Lufttrykk");
-}
-
-void HqcMainWindow::temperature() {
-    selectParameterGroup("Temperatur");
-}
-
-void HqcMainWindow::precipitation() {
-    selectParameterGroup("Nedbør");
-}
-
-void HqcMainWindow::visuals() {
-    selectParameterGroup("Visuell");
-}
-
-void HqcMainWindow::sea() {
-    selectParameterGroup("Sjøgang");
-}
-
-void HqcMainWindow::synop() {
-    selectParameterGroup("Synop");
-}
-
-void HqcMainWindow::climateStatistics() {
-    selectParameterGroup("Klimastatistikk");
-}
-
-void HqcMainWindow::priority() {
-    selectParameterGroup("Prioriterte parametere");
-}
-
-void HqcMainWindow::wind() {
-    selectParameterGroup("Vind");
-}
-
-void HqcMainWindow::plu() {
-    selectParameterGroup("Pluviometerkontroll");
-}
-
-void HqcMainWindow::all() {
-    selectParameterGroup("Alt");
-}
-
-void HqcMainWindow::paramOK()
-{
-    LOG_SCOPE();
-    if( listExist )
-        ListOK();
-}
-
-void HqcMainWindow::ClkOK() {
-  timeFilterChanged = true;
-}
-
 void HqcMainWindow::dianaShowOK()
 {
     LOG_SCOPE();
@@ -446,197 +344,149 @@ void HqcMainWindow::ListOK()
                            "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
                            "og kople diana til tjeneren via knappen i diana sin vindu."));
     }
-    std::vector<int> selectedStations = lstdlg->getSelectedStations();
-    if( selectedStations.empty() ) {
+    const std::vector<int> selectedStations = lstdlg->getSelectedStations();
+    if (selectedStations.empty()) {
         QMessageBox::warning(this,
                              tr("Stasjonsvalg"),
-                             tr("Ingen stasjoner er valgt!\nMinst en stasjon må velges"),
+                             tr("Ingen stasjoner er valgt! Minst en stasjon må velges"),
                              QMessageBox::Ok,
                              Qt::NoButton);
         return;
     }
-    bool noTimes = true;
-    for( int hour=0; hour<24; hour++ ) {
-        if( clkdlg->hasHour(hour) )
-          noTimes = false;
-    }
-    if ( noTimes ) {
+
+    mSelectedTimes = lstdlg->getSelectedTimes();
+    if (mSelectedTimes.empty()) {
         QMessageBox::warning(this,
                              tr("Tidspunktvalg"),
-                             tr("Ingen tidspunkter er valgt!\nMinst ett tidspunkt må velges"),
+                             tr("Ingen tidspunkter er valgt! Minst ett tidspunkt må velges"),
                              QMessageBox::Ok,
                              Qt::NoButton);
         return;
     }
 
-  if ( wElement.isEmpty() ) {
-    QMessageBox::warning(this,
-			 tr("Værelement"),
-			 tr("Ingen værelement er valgt!\n"
-                            "Værelement må velges"),
-			  QMessageBox::Ok,
-			  Qt::NoButton);
-    return;
-  }
-
-  DisableGUI disableGUI(this);
-  BusyIndicator busyIndicator;
-  listExist = true;
-
-  timeutil::ptime stime = timeutil::from_QDateTime(lstdlg->getStart());
-  timeutil::ptime etime = timeutil::from_QDateTime(lstdlg->getEnd());
-
-  QMap<QString, std::vector<int> >::const_iterator find = parameterGroups.find(wElement);
-  if ( find ==  parameterGroups.end() ) {
-      QMessageBox::critical(this, tr("Internal error"),
-          tr("Configuration file does not seem to have an entry for parameter group %1").arg(wElement),
-          QMessageBox::Ok, QMessageBox::NoButton);
-      return;
-  }
-
-  parFind = find->size();
-  std::vector<int> parameterList;
-
-  selPar.clear();
-  int kk = 0;
-
-  for ( unsigned int jj = 0; jj < find->size(); jj++ ) {
-    int paramIndex = (*find)[jj];
-    QString sp;
-    try {
-        sp = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(paramIndex).name());
-    } catch(std::runtime_error&) {
+    mSelectedParameters = lstdlg->getSelectedParameters();
+    if (mSelectedParameters.empty()) {
+        QMessageBox::warning(this,
+                             tr("Værelement"),
+                             tr("Ingen værelement er valgt! Værelement må velges"),
+                             QMessageBox::Ok,
+                             Qt::NoButton);
+        return;
     }
 
-    const bool found = pardlg->plb->item(jj)->isSelected();
-#if 0
-    qDebug() << qPrintable(pardlg->plb->item(jj)->text()) << ": "
-             << found << " (" << pardlg->markPar->isChecked()
-             << "" << pardlg->noMarkPar->isChecked() << "" << pardlg->allPar->isChecked() << ")";
-#endif
-    if ( (found && pardlg->markPar->isChecked()) ||
-	 (!found && pardlg->noMarkPar->isChecked()) ||
-	 pardlg->allPar->isChecked() ) {
-      selParNo[kk] = paramIndex;
-      selPar.append(sp);
-      kk++;
-      parameterList.push_back(paramIndex);
-    }
-  }
-#if 0
-  mi_foreach(int p, parameterList)
-    qDebug() << "Selected: "<< p;
-#endif
-
-  isShTy = (lstdlg->getSelectedStationTypes().contains("ALL"));
-
-  readFromData(stime, etime, selectedStations);
-
+    DisableGUI disableGUI(this);
+    BusyIndicator busyIndicator;
+    listExist = true;
+    
+    timeutil::ptime stime = timeutil::from_QDateTime(lstdlg->getStart());
+    timeutil::ptime etime = timeutil::from_QDateTime(lstdlg->getEnd());
+    
+    readFromData(stime, etime, selectedStations);
+    
   // All windows are shown later, in the tileHorizontal function
+    
+    if (lity == daLi or lity == alLi) {
+        statusBar()->message(tr("Bygger dataliste..."));
+        qApp->processEvents();
 
-  if ( lity == daLi or lity == alLi ) {
-      statusBar()->message(tr("Bygger dataliste..."));
-      qApp->processEvents();
-
-      model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
-      tableView->setAttribute(Qt::WA_DeleteOnClose);
-
-      dataModel =
-          new model::KvalobsDataModel(
-              parameterList, datalist, modeldatalist,
-              ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
+        model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
+        tableView->setAttribute(Qt::WA_DeleteOnClose);
+        
+        dataModel =
+            new model::KvalobsDataModel(
+                mSelectedParameters, datalist, modeldatalist,
+                ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
 #ifdef NDEBUG
-              reinserter != 0,
+                reinserter != 0,
 #else
-              true,
+                true,
 #endif
-              tableView);
+                tableView);
+        
+        connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
+        connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
+        
+        // Functionality for hiding/showing rows in data list
+        connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
+        connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
+        connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
 
-      connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
-      connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
+        connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
+        connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
 
-      // Functionality for hiding/showing rows in data list
-      connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
-      connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
-      connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
+        connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
 
-      connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
-      connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
+        connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
+        connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
+        connect(ui->heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
 
-      connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
+        tableView->setModel(dataModel);
 
-      connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
-      connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
-      connect(ui->heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
+        // Smaller cells. This should probably be done dynamically, somehow
+        int columns = dataModel->columnCount();
+        for ( int i = 0; i < columns; ++ i )
+            tableView->setColumnWidth(i, 56);
 
-      tableView->setModel(dataModel);
+        int rows = dataModel->rowCount();
+        for ( int i = 0; i < rows; ++ i )
+            tableView->setRowHeight(i,24);
 
-      // Smaller cells. This should probably be done dynamically, somehow
-      int columns = dataModel->columnCount();
-      for ( int i = 0; i < columns; ++ i )
-        tableView->setColumnWidth(i, 56);
+        tableView->toggleShowFlags(ui->flID->isChecked());
+        tableView->toggleShowOriginal(ui->orID->isChecked());
+        tableView->toggleShowModelData(ui->moID->isChecked());
 
-      int rows = dataModel->rowCount();
-      for ( int i = 0; i < rows; ++ i )
-        tableView->setRowHeight(i,24);
+        ui->ws->addSubWindow(tableView);
 
-      tableView->toggleShowFlags(ui->flID->isChecked());
-      tableView->toggleShowOriginal(ui->orID->isChecked());
-      tableView->toggleShowModelData(ui->moID->isChecked());
-
-      ui->ws->addSubWindow(tableView);
-
-      const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
-      tableView->setIcon( QPixmap(hqc_icon_path) );
-      tableView->setCaption(tr("Dataliste"));
-  }
-
-  if ( lity == erLi or lity == erSa or lity == alLi ) {
-      statusBar()->message(tr("Bygger feilliste..."));
-      qApp->processEvents();
-      ErrorList * erl = new ErrorList(selPar,
-                          stime,
-                          etime,
-                          this,
-                          lity,
-                          selParNo,
-                          datalist,
-                          modeldatalist);
-      connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
-      connect(erl, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
-              this, SLOT(navigateTo(const kvalobs::kvData&)));
-      ui->ws->addSubWindow(erl);
-  }
-
-  tileHorizontal();
-
-  vector<QString> stationList;
-  int stnr=-1;
-  for ( unsigned int i = 0; i < datalist->size(); i++) {
-    QString name;
-    double lat,lon,hoh;
-    int env;
-    int snr;
-    if(stnr != (*datalist)[i].stnr()){
-      stnr = (*datalist)[i].stnr();
-      findStationInfo(stnr,name,lat,lon,hoh,snr,env);
-      QString nrStr;
-      nrStr = nrStr.setNum(stnr);
-      QString statId = nrStr + " " + name;
-      stationList.push_back(statId);
+        const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
+        tableView->setIcon( QPixmap(hqc_icon_path) );
+        tableView->setCaption(tr("Dataliste"));
     }
-  }
-  /*emit*/ newStationList(stationList);
-  cerr << "newStationList emitted " << endl;
+
+    if ( lity == erLi or lity == erSa or lity == alLi ) {
+        statusBar()->message(tr("Bygger feilliste..."));
+        qApp->processEvents();
+        ErrorList * erl = new ErrorList(mSelectedParameters,
+                                        stime,
+                                        etime,
+                                        this,
+                                        lity,
+                                        datalist,
+                                        modeldatalist);
+        connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
+        connect(erl, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
+                this, SLOT(navigateTo(const kvalobs::kvData&)));
+        ui->ws->addSubWindow(erl);
+    }
+
+    tileHorizontal();
+
+    vector<QString> stationList;
+    int stnr=-1;
+    for ( unsigned int i = 0; i < datalist->size(); i++) {
+        QString name;
+        double lat,lon,hoh;
+        int env;
+        int snr;
+        if(stnr != (*datalist)[i].stnr()){
+            stnr = (*datalist)[i].stnr();
+            findStationInfo(stnr,name,lat,lon,hoh,snr,env);
+            QString nrStr;
+            nrStr = nrStr.setNum(stnr);
+            QString statId = nrStr + " " + name;
+            stationList.push_back(statId);
+        }
+    }
+    /*emit*/ newStationList(stationList);
+    cerr << "newStationList emitted " << endl;
 
 
-  //  send parameter names to ts dialog
-  /*emit*/ newParameterList(selPar);
-  if ( lity != erLi && lity != erSa  ) {
-    sendTimes();
-  }
+    //  send parameter names to ts dialog
+    /*emit*/ newParameterList(mSelectedParameters);
+    if ( lity != erLi && lity != erSa  ) {
+        sendTimes();
+    }
 
-  statusBar()->message("");
+    statusBar()->message("");
 }
 
 void HqcMainWindow::TimeseriesOK() {
@@ -740,9 +590,14 @@ void HqcMainWindow::TimeseriesOK() {
   tsVisible = true;
 }
 
+bool HqcMainWindow::isShowTypeidInDataList() const
+{
+    return lstdlg->isSelectAllStationTypes();
+}
+
 const listStat_l& HqcMainWindow::getStationDetails()
 {
-    BusyStatus(this, tr("Loading station info..."));
+    BusyStatus busy(this, tr("Loading station info..."));
     return StInfoSysBuffer::instance()->getStationDetails();
 }
 
@@ -800,28 +655,32 @@ inline QString dateStr_( const QDateTime & dt )
   return ret;
 }
 
-void HqcMainWindow::textDataOK() {
-  int stnr = txtdlg->stnr;
-  QDate todt = (txtdlg->dtto).date();
-  QTime toti = (txtdlg->dtto).time();
-  timeutil::ptime dtto = timeutil::from_YMDhms(todt.year(), todt.month(), todt.day(), toti.hour(), 0, 0);
-  QDate fromdt = (txtdlg->dtfrom).date();
-  QTime fromti = (txtdlg->dtfrom).time();
-  timeutil::ptime dtfrom = timeutil::from_YMDhms(fromdt.year(), fromdt.month(), fromdt.day(), fromti.hour(), 0, 0);
-  kvservice::WhichDataHelper whichData;
-  whichData.addStation(stnr, timeutil::to_miTime(dtfrom), timeutil::to_miTime(dtto));
-  GetTextData textDataReceiver(this);
-  if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)){
-    //cerr << "Finner ikke  textdatareceiver!!" << endl;
-  }
-  TextData* txtDat = new TextData(txtList);
-  txtDat->show();
-  if ( txtdlg->isVisible() ) {
-    txtdlg->hide();
-  }
-  else {
-    txtdlg->show();
-  }
+void HqcMainWindow::textDataOK()
+{
+    int stnr = txtdlg->stnr;
+    QDate todt = (txtdlg->dtto).date();
+    QTime toti = (txtdlg->dtto).time();
+    timeutil::ptime dtto = timeutil::from_YMDhms(todt.year(), todt.month(), todt.day(), toti.hour(), 0, 0);
+    QDate fromdt = (txtdlg->dtfrom).date();
+    QTime fromti = (txtdlg->dtfrom).time();
+    timeutil::ptime dtfrom = timeutil::from_YMDhms(fromdt.year(), fromdt.month(), fromdt.day(), fromti.hour(), 0, 0);
+
+    kvservice::WhichDataHelper whichData;
+    whichData.addStation(stnr, timeutil::to_miTime(dtfrom), timeutil::to_miTime(dtto));
+
+    txtList.clear();
+    GetTextData textDataReceiver(this);
+    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)){
+        //cerr << "Finner ikke  textdatareceiver!!" << endl;
+    }
+    TextData* txtDat = new TextData(txtList);
+    txtDat->show();
+    if ( txtdlg->isVisible() ) {
+        txtdlg->hide();
+    }
+    else {
+        txtdlg->show();
+    }
 }
 
 void HqcMainWindow::rejectedOK() {
@@ -930,25 +789,18 @@ void HqcMainWindow::showWeather()
     }
 }
 
-void HqcMainWindow::listMenu() {
-  if ( lstdlg->isVisible() ) {
-    lstdlg->hide();
-  } else {
+void HqcMainWindow::listMenu()
+{
+    LOG_SCOPE();
+
     QDateTime mx = QDateTime::currentDateTime();
     int noDays = lstdlg->getStart().daysTo(lstdlg->getEnd());
     if ( noDays < 27 ) {
-      mx = mx.addSecs(-60*mx.time().minute());
-      mx = mx.addSecs(3600);
-      lstdlg->setEnd(mx);
+        mx = mx.addSecs(-60*mx.time().minute());
+        mx = mx.addSecs(3600);
+        lstdlg->setEnd(mx);
     }
-
     lstdlg->show();
-  }
-}
-
-void HqcMainWindow::clockMenu()
-{
-    clkdlg->hideAll();
 }
 
 void HqcMainWindow::dianaShowMenu() {
@@ -959,24 +811,12 @@ void HqcMainWindow::dianaShowMenu() {
   }
 }
 
-void HqcMainWindow::paramMenu() {
-  if ( pardlg->isVisible() ) {
-    pardlg->hideAll();
-  } else {
-    pardlg->showAll();
-  }
-}
-
 void HqcMainWindow::timeseriesMenu() {
   if ( tsdlg->isVisible() ) {
     tsdlg->hideAll();
   } else {
     tsdlg->showAll();
   }
-}
-
-void HqcMainWindow::clk() {
-  clkdlg->showAll();
 }
 
 void HqcMainWindow::dsh() {
@@ -1176,7 +1016,7 @@ HqcMainWindow::~HqcMainWindow()
 
 bool HqcMainWindow::timeFilter(int hour)
 {
-    return clkdlg->hasHour(hour);
+    return mSelectedTimes.find(hour) != mSelectedTimes.end();
 }
 
 bool HqcMainWindow::hqcTypeFilter(const QSet<QString>& stationTypes, int typeId, int environment)
@@ -1186,7 +1026,7 @@ bool HqcMainWindow::hqcTypeFilter(const QSet<QString>& stationTypes, int typeId,
   if ( lstdlg->showSynop() or lstdlg->showPrioritized() ) return true;
   int atypeId = typeId < 0 ? -typeId : typeId;
   // FIXME this needs to match ListDialog.cc: StationTable::StationTable
-  if ( stationTypes.contains("ALL") ) return true;
+  if (lstdlg->isSelectAllStationTypes()) return true;
   if ( environment == 1 && atypeId == 311 && stationTypes.contains("AF") ) return true;
   if ( environment == 8 && (atypeId == 3 || atypeId == 311 || atypeId == 412 || atypeId == 330 || atypeId == 342) && stationTypes.contains("AA") ) return true;
   if ( environment == 2 && atypeId == 3 && stationTypes.contains("AL") ) return true;
@@ -1387,40 +1227,6 @@ void HqcMainWindow::checkTypeId(int stnr)
 void HqcMainWindow::readFromParam()
 {
     LOG_SCOPE();
-
-    // First, read parameter order from file
-    QString fileParamOrder = ::hqc::getPath(::hqc::CONFDIR) + "/paramorder";
-    QFile paramOrder(fileParamOrder);
-    if( !paramOrder.open(QIODevice::ReadOnly) ) {
-        QMessageBox::critical(this,
-                              tr("Cannot read paramorder file"),
-                              tr("The file expected in '%1' could not be opened. Please set HQC_CONFDIR correctly.").arg(fileParamOrder),
-                              QMessageBox::Abort,
-                              Qt::NoButton);
-        ::exit(1);
-    }
-
-    QTextStream paramStream(&paramOrder);
-    parameterGroups.clear();
-    QString group;
-    while ( not paramStream.atEnd() ) {
-        QString data;
-        paramStream >> data;
-        data.stripWhiteSpace();
-        if ( not data.isEmpty() ) {
-            bool ok;
-            int paramid = data.toInt(& ok);
-            if ( not ok )
-                group = data;
-            else {
-                QString name = "<No group>";
-                std::map<QString, QString>::const_iterator find = configNameToUserName.find(group);
-                if ( find != configNameToUserName.end() )
-                    name = find->second;
-                parameterGroups[name].push_back(paramid);
-            }
-        }
-    }
 }
 
 /*!
@@ -1547,8 +1353,7 @@ void HqcMainWindow::receivedStationFromDiana(int stationid)
 void HqcMainWindow::receivedTimeFromDiana(const timeutil::ptime& time)
 {
     /*emit*/ timeReceived(time);
-    const std::vector<int> selectedParameters(selParNo, selParNo + selPar.size());
-    mDianaHelper->sendObservations(*datalist, modeldatalist, selectedParameters);
+    mDianaHelper->sendObservations(*datalist, modeldatalist, mSelectedParameters);
 }
 
 void HqcMainWindow::aboutQt()
@@ -1561,8 +1366,7 @@ void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
     LOG_SCOPE();
     DBGV(kd);
     mDianaHelper->sendTime(kd.obstime());
-    const std::vector<int> selectedParameters(selParNo, selParNo + selPar.size());
-    mDianaHelper->sendObservations(*datalist, modeldatalist, selectedParameters);
+    mDianaHelper->sendObservations(*datalist, modeldatalist, mSelectedParameters);
     mDianaHelper->sendStation(kd.stationID());
     mDianaHelper->sendSelectedParam(kd.paramID());
 
@@ -1657,7 +1461,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
     std::fill(tdlUpd, tdlUpd + NOPARAM, false);
 
     const QSet<QString> selectedStationTypes = QSet<QString>::fromList(lstdlg->getSelectedStationTypes());
-    const bool allStationTypes = (selectedStationTypes.contains("ALL"));
+    const bool allStationTypes = lstdlg->isSelectAllStationTypes();
     const bool showPrioritized = lstdlg->showPrioritized();
     const timeutil::ptime badtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
 
@@ -1799,109 +1603,35 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
 
 void HqcMainWindow::writeSettings()
 {
-  QList<Param> params;
+    QList<Param> params;
 
-  QSettings settings("Meteorologisk Institutt", "Hqc");
-  settings.setValue("geometry", saveGeometry());
+    QSettings settings;
+    settings.setValue("geometry", saveGeometry());
 
-  settings.setValue("version", PVERSION);
+    settings.setValue("version", PVERSION);
 
-  settings.beginWriteArray("t");
-  for ( int hour = 0; hour < 24; hour++ ) {
-    settings.setArrayIndex(hour);
-    settings.setValue("t", clkdlg->hasHour(hour));
-  }
-  settings.endArray();
-
-  {
-      settings.beginGroup("lstdlg");
-      const QStringList stationTypes = lstdlg->getSelectedStationTypes();
-      settings.setValue("stationTypes", stationTypes);
-      
-      const QStringList counties = lstdlg->getSelectedCounties();
-      settings.setValue("counties", counties);
-      settings.endGroup();
-  }
-
-  settings.setValue("weather", wElement);
-  settings.beginWriteArray("p");
-  for ( int jj = 0; jj < parFind; jj++ ) {
-    settings.setArrayIndex(jj);
-#if 0
-    qDebug() << qPrintable(pardlg->plb->item(jj)->text())
-	     << pardlg->plb->item(jj)->isSelected() << ": ("
-	     << pardlg->markPar->isChecked() << ""
-	     << pardlg->noMarkPar->isChecked() << ""
-	     << pardlg->allPar->isChecked() << ")";
-#endif
-    settings.setValue("item", pardlg->plb->item(jj)->isSelected());
-    settings.setValue("text", pardlg->plb->item(jj)->text());
-    settings.setValue("mark", pardlg->markPar->isChecked());
-    settings.setValue("noMark", pardlg->noMarkPar->isChecked());
-    settings.setValue("all", pardlg->allPar->isChecked());
-  }
-  settings.endArray();
+    lstdlg->saveSettings(settings);
 }
 
 void HqcMainWindow::readSettings()
 {
     LOG_SCOPE();
-  QList<Param> params;
 
-  QSettings settings("Meteorologisk Institutt", "Hqc");
-  if ( !restoreGeometry(settings.value("geometry").toByteArray()) )
-    cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
+    QSettings settings;
+    if (not restoreGeometry(settings.value("geometry").toByteArray()))
+        cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
 
-  QString savedVersion = settings.value("version", "??").toString();
-  if( savedVersion != PVERSION ) {
-      QMessageBox::information(this,
-                               tr("HQC - Versjonsendring"),
-                               tr("Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). "
-                                  "Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.")
-                               .arg(PVERSION).arg(savedVersion),
-                               QMessageBox::Ok, QMessageBox::Ok);
-  }
+    QString savedVersion = settings.value("version", "??").toString();
+    if (savedVersion != PVERSION) {
+        QMessageBox::information(this,
+                                 tr("HQC - Versjonsendring"),
+                                 tr("Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). "
+                                    "Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.")
+                                 .arg(PVERSION).arg(savedVersion),
+                                 QMessageBox::Ok, QMessageBox::Ok);
+    }
 
-  settings.beginReadArray("t");
-  for( int hour = 0; hour < 24; hour++ ) {
-    settings.setArrayIndex(hour);
-    clkdlg->setHour(hour, settings.value("t", true).toBool());
-  }
-  settings.endArray();
-
-  wElement = settings.value("weather","").toString();
-  parFind = settings.beginReadArray("p");
-  for ( int jj = 0; jj < parFind; jj++ ) {
-    settings.setArrayIndex(jj);
-    Param param;
-    param.item   = settings.value("item",true).toBool();
-    QListWidgetItem* it = new QListWidgetItem(pardlg->plb,jj);
-    it->setSelected(param.item);
-    param.text   = settings.value("text","").toString();
-    it->setText(param.text);
-    param.mark   = settings.value("mark",true).toBool();
-    pardlg->markPar->setChecked(param.mark);
-    param.noMark = settings.value("noMark",true).toBool();
-    pardlg->noMarkPar->setChecked(param.noMark);
-    param.all    = settings.value("all",true).toBool();
-    pardlg->allPar->setChecked(param.all);
-    params.append(param);
-  }
-  settings.endArray();
-
-  {
-      settings.beginGroup("lstdlg");
-      QStringList stationTypesDefault;
-      stationTypesDefault << "ALL";
-      QStringList stationTypes = settings.value("stationTypes", stationTypesDefault).toStringList();
-      lstdlg->setSelectedStationTypes(stationTypes);
-      
-      QStringList countiesDefault;
-      countiesDefault << "ALL";
-      QStringList counties = settings.value("counties", countiesDefault).toStringList();
-      lstdlg->setSelectedCounties(counties);
-      settings.endGroup();
-  }
+    lstdlg->restoreSettings(settings);
 }
 
 void HqcMainWindow::moveEvent(QMoveEvent* event)

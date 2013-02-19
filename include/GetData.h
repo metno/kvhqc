@@ -2,9 +2,7 @@
 
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  $Id$
-
-  Copyright (C) 2007 met.no
+  Copyright (C) 2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -34,23 +32,22 @@
 #define __GETDATA_H__
 
 #include <kvcpp/KvGetDataReceiver.h>
-#include "hqcmain.h"
 
-class GetData :
-   public kvservice::KvGetDataReceiver
+class HqcMainWindow;
+
+class GetData : public kvservice::KvGetDataReceiver
 {
-   public:
-      GetData( HqcMainWindow* o);
-      HqcMainWindow* w;
-      /**
-       * next, this function is called for every data set!
-       *
-       * \datalist the data.
-       * \return true if we shall continue. False if you want to
-       *         stop retriving data from kvalobs.
-       */
-      bool next( kvservice::KvObsDataList &datalist );
+public:
+    GetData(HqcMainWindow* o);
+    HqcMainWindow* w;
+    /**
+     * next, this function is called for every data set!
+     *
+     * \datalist the data.
+     * \return true if we shall continue. False if you want to
+     *         stop retriving data from kvalobs.
+     */
+    bool next(kvservice::KvObsDataList &datalist);
 };
-
 
 #endif

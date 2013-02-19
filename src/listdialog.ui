@@ -6,297 +6,718 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>674</width>
+    <width>653</width>
     <height>776</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Datautvalg HQC</string>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
-    <layout class="QHBoxLayout" name="typeLayout">
-     <item>
-      <widget class="QGroupBox" name="controlGroup">
-       <property name="title">
-        <string>Kontrolltype</string>
-       </property>
-       <layout class="QVBoxLayout" name="controlLayout">
-        <property name="spacing">
-         <number>3</number>
-        </property>
-        <item>
-         <layout class="QVBoxLayout" name="typeBoxesLayout">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-          <item>
-           <widget class="QCheckBox" name="twiType">
-            <property name="text">
-             <string>&amp;Temperatur,fuktighet</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="prcType">
-            <property name="text">
-             <string>&amp;Nedbør,snøforhold</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="aprType">
-            <property name="text">
-             <string>&amp;Lufttrykk</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="winType">
-            <property name="text">
-             <string>&amp;Vind</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="marType">
-            <property name="text">
-             <string>&amp;Maritime parametere</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="visType">
-            <property name="text">
-             <string>V&amp;isuelle parametere</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="stTyp">
-       <property name="title">
-        <string>Stasjonstype</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="statSelLayout">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="regionLayout">
-     <item>
-      <widget class="QGroupBox" name="stRegion">
-       <property name="title">
-        <string>Landsdel</string>
-       </property>
-       <layout class="QVBoxLayout" name="regionBoxesLayout">
-        <property name="spacing">
-         <number>3</number>
-        </property>
-        <item>
-         <widget class="QCheckBox" name="ausReg">
-          <property name="text">
-           <string>&amp;Østlandet</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="vesReg">
-          <property name="text">
-           <string>V&amp;estlandet</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="troReg">
-          <property name="text">
-           <string>T&amp;røndelag</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="norReg">
-          <property name="text">
-           <string>N&amp;ord-Norge</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="webReg">
-          <property name="text">
-           <string>S&amp;ynop-stasjoner</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QCheckBox" name="priReg">
-          <property name="text">
-           <string>&amp;Prioriterte stasjoner</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </item>
-     <item>
-      <widget class="QGroupBox" name="stCounty">
-       <property name="title">
-        <string>Fylke</string>
-       </property>
-       <layout class="QGridLayout" name="gridLayout_3">
-        <item row="0" column="0">
-         <layout class="QGridLayout" name="statCountyLayout">
-          <property name="spacing">
-           <number>3</number>
-          </property>
-         </layout>
-        </item>
-       </layout>
-      </widget>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QGroupBox" name="stationGroup">
-     <property name="title">
-      <string>Stasjoner</string>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>0</number>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QPushButton" name="stationSelect">
-          <property name="text">
-           <string>Velg &amp;stasjon</string>
+     <widget class="QWidget" name="tabStations">
+      <attribute name="title">
+       <string>Stasjoner</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <item>
+        <layout class="QHBoxLayout" name="typeLayout">
+         <item>
+          <widget class="QGroupBox" name="controlGroup">
+           <property name="title">
+            <string>Kontrolltype</string>
+           </property>
+           <layout class="QVBoxLayout" name="controlLayout">
+            <property name="spacing">
+             <number>3</number>
+            </property>
+            <item>
+             <layout class="QVBoxLayout" name="typeBoxesLayout">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+              <item>
+               <widget class="QCheckBox" name="twiType">
+                <property name="text">
+                 <string>&amp;Temperatur,fuktighet</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="prcType">
+                <property name="text">
+                 <string>&amp;Nedbør,snøforhold</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="aprType">
+                <property name="text">
+                 <string>&amp;Lufttrykk</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="winType">
+                <property name="text">
+                 <string>&amp;Vind</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="marType">
+                <property name="text">
+                 <string>&amp;Maritime parametere</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QCheckBox" name="visType">
+                <property name="text">
+                 <string>V&amp;isuelle parametere</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="stTyp">
+           <property name="title">
+            <string>Stasjonstype</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_2">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="statSelLayout">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_2">
+         <item>
+          <widget class="QGroupBox" name="stRegion">
+           <property name="title">
+            <string>Landsdel</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout">
+            <item row="0" column="0">
+             <widget class="QToolButton" name="regionEastAdd">
+              <property name="toolTip">
+               <string>Velg alle fylker i Østlandet</string>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+              <property name="icon">
+               <iconset theme="add">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QToolButton" name="regionEastRemove">
+              <property name="toolTip">
+               <string>Fjern alle fylker i Østlandet</string>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+              <property name="icon">
+               <iconset theme="remove">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="2">
+             <widget class="QLabel" name="regionEastLabel">
+              <property name="text">
+               <string>Østlandet</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QToolButton" name="regionWestAdd">
+              <property name="toolTip">
+               <string>Velg alle fylker i Vestlandet</string>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+              <property name="icon">
+               <iconset theme="add">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QToolButton" name="regionWestRemove">
+              <property name="toolTip">
+               <string>Fjern alle fylker i Vestlandet</string>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+              <property name="icon">
+               <iconset theme="remove">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="2">
+             <widget class="QLabel" name="regionWestLabel">
+              <property name="text">
+               <string>Vestlandet</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QToolButton" name="regionTrondAdd">
+              <property name="toolTip">
+               <string>Velg alle fylker i Trøndelag</string>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+              <property name="icon">
+               <iconset theme="add">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QToolButton" name="regionTrondRemove">
+              <property name="toolTip">
+               <string>Fjern alle fylker i Trøndelag</string>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+              <property name="icon">
+               <iconset theme="remove">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="2">
+             <widget class="QLabel" name="regionTrondLabel">
+              <property name="text">
+               <string>Trøndelag</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0">
+             <widget class="QToolButton" name="regionNorthAdd">
+              <property name="toolTip">
+               <string>Velg alle fylker i Nord-Norge</string>
+              </property>
+              <property name="text">
+               <string>+</string>
+              </property>
+              <property name="icon">
+               <iconset theme="add">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="1">
+             <widget class="QToolButton" name="regionNorthRemove">
+              <property name="toolTip">
+               <string>Fjern alle fylker i Nord-Norge</string>
+              </property>
+              <property name="text">
+               <string>-</string>
+              </property>
+              <property name="icon">
+               <iconset theme="remove">
+                <normaloff/>
+               </iconset>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2">
+             <widget class="QLabel" name="regionNorthLabel">
+              <property name="text">
+               <string>Nord-Norge</string>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="0">
+             <spacer name="verticalSpacer">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>10</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="stCounty">
+           <property name="title">
+            <string>Fylke</string>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="0">
+             <layout class="QGridLayout" name="statCountyLayout">
+              <property name="spacing">
+               <number>3</number>
+              </property>
+             </layout>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="stationGroup">
+         <property name="title">
+          <string>Stasjoner</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout">
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout">
+            <item>
+             <widget class="QCheckBox" name="webReg">
+              <property name="text">
+               <string>S&amp;ynop</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="priReg">
+              <property name="text">
+               <string>&amp;Prioriterte</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="stationSelect">
+              <property name="text">
+               <string>Velg &amp;stasjoner…</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="stationSelectAll">
+              <property name="text">
+               <string>&amp;Alle passende</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer name="horizontalSpacer_3">
+              <property name="orientation">
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>268</width>
+                <height>24</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="Q3ListBox" name="stationNames"/>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="timeMessageLayout">
+         <item>
+          <widget class="QGroupBox" name="typeGroup">
+           <property name="title">
+            <string>Meldingstyper</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout_2">
+            <property name="fieldGrowthPolicy">
+             <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+            </property>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="priTypes">
+              <property name="text">
+               <string>Prioriterte typer</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="allTypes">
+              <property name="text">
+               <string>Alle typer</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="QGroupBox" name="timeGroup">
+           <property name="title">
+            <string>Tidsrom</string>
+           </property>
+           <layout class="QFormLayout" name="formLayout">
+            <item row="0" column="0">
+             <widget class="QLabel" name="labelFrom">
+              <property name="text">
+               <string>Fra</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1">
+             <widget class="MiDateTimeEdit" name="fromTime">
+              <property name="displayFormat">
+               <string>yyyy-MM-dd hh:mm</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QLabel" name="labelTo">
+              <property name="text">
+               <string>Til</string>
+              </property>
+              <property name="alignment">
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="MiDateTimeEdit" name="toTime">
+              <property name="displayFormat">
+               <string>yyyy-MM-dd hh:mm</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabParameters">
+      <attribute name="title">
+       <string>Værelement</string>
+      </attribute>
+      <layout class="QHBoxLayout" name="horizontalLayout_4">
+       <item>
+        <widget class="QGroupBox" name="groupBox">
+         <property name="title">
+          <string>Tilgjengelig</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_4">
+          <item>
+           <widget class="QListView" name="listParamAvailable">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::MultiSelection</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_5">
+            <item>
+             <widget class="QLabel" name="label">
+              <property name="text">
+               <string>Vis kun:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboParamGroup"/>
+            </item>
+           </layout>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonParamSelect">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset theme="next">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonParamDeselect">
+           <property name="text">
+            <string notr="true"/>
+           </property>
+           <property name="icon">
+            <iconset theme="previous">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonParamSelectAll">
+           <property name="text">
+            <string>&amp;Alle</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="buttonParamDeselectAll">
+           <property name="text">
+            <string>&amp;Ingen</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Valgt</string>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="leftMargin">
+           <number>0</number>
           </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="stationSelectAll">
-          <property name="text">
-           <string>&amp;Alle i området</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_3">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>408</width>
-            <height>24</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <widget class="Q3ListBox" name="stationNames"/>
-      </item>
-     </layout>
+          <item>
+           <widget class="QListView" name="listParamChosen">
+            <property name="selectionMode">
+             <enum>QAbstractItemView::MultiSelection</enum>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tabClock">
+      <attribute name="title">
+       <string>Tidspunkter</string>
+      </attribute>
+      <layout class="QVBoxLayout" name="verticalLayout_7">
+       <item>
+        <layout class="QGridLayout" name="gridLayout_4">
+         <item row="0" column="0">
+          <widget class="QToolButton" name="buttonClockAddAll">
+           <property name="toolTip">
+            <string>Velg alle tidspunkter</string>
+           </property>
+           <property name="text">
+            <string>Alle tidpunkter</string>
+           </property>
+           <property name="icon">
+            <iconset theme="add">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QToolButton" name="buttonClockRemoveAll">
+           <property name="toolTip">
+            <string>Fjern alle tidspunkter</string>
+           </property>
+           <property name="text">
+            <string>Alle tidpunkter</string>
+           </property>
+           <property name="icon">
+            <iconset theme="remove">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="labelClockAll">
+           <property name="text">
+            <string>Alle tidspunkter</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QToolButton" name="buttonClockAddStandard">
+           <property name="toolTip">
+            <string>Velg alle standardtidspunkter</string>
+           </property>
+           <property name="text">
+            <string>Alle tidpunkter</string>
+           </property>
+           <property name="icon">
+            <iconset theme="add">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QToolButton" name="buttonClockRemoveStandard">
+           <property name="toolTip">
+            <string>Fjern alle standardtidspunkter</string>
+           </property>
+           <property name="text">
+            <string>Alle tidpunkter</string>
+           </property>
+           <property name="icon">
+            <iconset theme="remove">
+             <normaloff/>
+            </iconset>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="labelClockStandard">
+           <property name="text">
+            <string>Standardtidspunkter</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
+         <item>
+          <widget class="QGroupBox" name="groupClockByHour">
+           <property name="title">
+            <string>Utvalgte tidspunkter</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer name="verticalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>583</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="timeMessageLayout">
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
-      <widget class="QGroupBox" name="typeGroup">
-       <property name="title">
-        <string>Meldingstyper</string>
+      <widget class="QPushButton" name="buttonRestore">
+       <property name="text">
+        <string>Hente…</string>
        </property>
-       <layout class="QFormLayout" name="formLayout_2">
-        <property name="fieldGrowthPolicy">
-         <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-        </property>
-        <item row="0" column="0">
-         <widget class="QRadioButton" name="priTypes">
-          <property name="text">
-           <string>Prioriterte typer</string>
-          </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QRadioButton" name="allTypes">
-          <property name="text">
-           <string>Alle typer</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="timeGroup">
-       <property name="title">
-        <string>Tidsrom</string>
+      <widget class="QPushButton" name="buttonSave">
+       <property name="text">
+        <string>Lagre…</string>
        </property>
-       <layout class="QFormLayout" name="formLayout">
-        <item row="0" column="0">
-         <widget class="QLabel" name="labelFrom">
-          <property name="text">
-           <string>Fra</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="MiDateTimeEdit" name="fromTime">
-          <property name="displayFormat">
-           <string>yyyy-MM-dd hh:mm</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="labelTo">
-          <property name="text">
-           <string>Til</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="MiDateTimeEdit" name="toTime">
-          <property name="displayFormat">
-           <string>yyyy-MM-dd hh:mm</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="HideApplyBox" name="hab" native="true">
+       <property name="minimumSize">
+        <size>
+         <width>10</width>
+         <height>10</height>
+        </size>
+       </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="HideApplyBox" name="hab" native="true">
-     <property name="minimumSize">
-      <size>
-       <width>10</width>
-       <height>10</height>
-      </size>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
@@ -324,14 +745,6 @@
    <header>MiDateTimeEdit.hh</header>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>twiType</tabstop>
-  <tabstop>prcType</tabstop>
-  <tabstop>aprType</tabstop>
-  <tabstop>winType</tabstop>
-  <tabstop>marType</tabstop>
-  <tabstop>visType</tabstop>
- </tabstops>
  <resources/>
  <connections/>
 </ui>

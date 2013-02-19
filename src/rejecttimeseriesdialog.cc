@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id: dianashowdialog.cc 684 2011-04-12 11:55:00Z knutj $
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -31,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejecttimeseriesdialog.h"
 
 #include "HideApplyBox.hh"
+#include "KvMetaDataBuffer.hh"
 #include "timeutil.hh"
 
 #include <QtGui/QGridLayout>
@@ -38,7 +37,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
 
-#include <iostream>
+#include <boost/foreach.hpp>
 
 RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog() 
 {  
@@ -107,12 +106,16 @@ void RejectTimeseriesDialog::hideAll(){
   this->hide();
 }
 
-void RejectTimeseriesDialog::newParameterList(const QStringList& parameterList)
+void RejectTimeseriesDialog::newParameterList(const std::vector<int>& parameters)
 {
-  int n = parameterList.size();
-  for(int i=0; i<n; i++ ){
-    new QListWidgetItem(parameterList[i], parameterWidget);
-  }
+    BOOST_FOREACH(int pid, parameters) {
+        try {
+            QString parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(pid).name());
+            new QListWidgetItem(parName, parameterWidget);
+        } catch (std::runtime_error&) {
+            // unknown param
+        }
+    }
 }
 
 void RejectTimeseriesDialog::newStationList(std::vector<QString>& stationList)

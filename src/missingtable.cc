@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -30,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "missingtable.h"
 #include "errorlist.h"
+#include "KvMetaDataBuffer.hh"
 
 MissingTable::MissingTable(QWidget* parent, ErrorList* el)
   : Q3Table( 1000, 100, parent, "table" )
@@ -77,7 +76,13 @@ MissingTable::MissingTable(QWidget* parent, ErrorList* el)
     Q3TableItem* clIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,4,clIt);
 
-    strDat = el->missList[insRow].parName;
+    QString parName = "???";
+    try {
+        parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(el->missList[insRow].parNo).name());
+    } catch (std::runtime_error&) {
+        // unknown parameter
+    }
+    strDat = parName;
     Q3TableItem* paIt = new Q3TableItem(this, Q3TableItem::Never,strDat);
     setItem(insRow,5,paIt);
 

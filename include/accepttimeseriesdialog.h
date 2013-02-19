@@ -69,7 +69,7 @@ public:
 		  bool& maybeQC2);
 public Q_SLOTS:
   void newStationList(std::vector<QString>& stationList);
-  void newParameterList(const QStringList& parameterList);
+    void newParameterList(const std::vector<int>& parameterList);
   void parameterSelectionChanged(QListWidgetItem *item);
   void stationSelected(QListWidgetItem *item);
 

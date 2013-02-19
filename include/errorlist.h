@@ -111,15 +111,14 @@ public:
 class ErrorList : public Q3Table {
   Q_OBJECT
 public:
-  ErrorList(QStringList&,
-	    const timeutil::ptime&,
-	    const timeutil::ptime&,
-	    QWidget*,
-	    int,
-	    int*,
-	    model::KvalobsDataListPtr,
-	    const std::vector<modDatl>&);
-  virtual ~ErrorList();
+    ErrorList(const std::vector<int>& selectedParameters,
+              const timeutil::ptime&,
+              const timeutil::ptime&,
+              QWidget*,
+              int,
+              model::KvalobsDataListPtr,
+              const std::vector<modDatl>&);
+    virtual ~ErrorList();
 
   /*!
    * \brief Reads the climatological limits from a file
@@ -141,7 +140,6 @@ public:
     int lev;
     QString flTyp;
     int parNo;
-    QString parName;
     int stnr;
     QString name;
     timeutil::ptime obstime;
@@ -249,16 +247,14 @@ private:
    */
   std::vector<int> error;
 
-    void makeMissingList(QStringList& selPar,
+    void makeMissingList(const std::vector<int>& selectedParameters,
                          const timeutil::ptime& stime,
                          const timeutil::ptime& etime,
-                         int* noSelPar,
                          model::KvalobsDataListPtr dtl);
-    void fillMemoryStores(QStringList& selPar,
+    void fillMemoryStores(const std::vector<int>& selectedParameters,
                           const timeutil::ptime& stime,
                           const timeutil::ptime& etime,
                           int lity,
-                          int* noSelPar,
                           model::KvalobsDataListPtr dtl,
                           const std::vector<modDatl>& mdtl);
     void setTableCells();

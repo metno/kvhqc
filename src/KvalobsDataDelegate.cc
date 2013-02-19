@@ -92,18 +92,18 @@ KvalobsDataDelegate::KvalobsDataDelegate(QObject * parent)
   }
 
 void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
-  {
-      LOG_SCOPE();
-    kvalobs::DataReinserter<kvservice::KvApp> *reinserter = mainWindow->reinserter;
+{
+    LOG_SCOPE();
+    kvalobs::DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
 #ifdef NDEBUG
     if (not reinserter) {
-      QMessageBox::critical( editor,
-			     "Ikke autentisert",
-			     "Du er ikke autentisert som operatør.\n"
-			     "Kan ikke lagre data.",
-			     QMessageBox::Ok,
-			     Qt::NoButton );
-      return;
+        QMessageBox::critical( editor,
+                               "Ikke autentisert",
+                               "Du er ikke autentisert som operatør.\n"
+                               "Kan ikke lagre data.",
+                               QMessageBox::Ok,
+                               Qt::NoButton );
+        return;
     }
 #endif
 

@@ -31,12 +31,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "accepttimeseriesdialog.h"
 
 #include "HideApplyBox.hh"
+#include "KvMetaDataBuffer.hh"
 #include "timeutil.hh"
 
 #include <QtGui/QGridLayout>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
+
+#include <boost/foreach.hpp>
 
 AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog() 
 {  
@@ -114,12 +117,16 @@ void AcceptTimeseriesDialog::hideAll(){
   this->hide();
 }
 
-void AcceptTimeseriesDialog::newParameterList(const QStringList& parameterList)
+void AcceptTimeseriesDialog::newParameterList(const std::vector<int>& parameters)
 {
-  int n = parameterList.size();
-  for(int i=0; i<n; i++ ){
-    new QListWidgetItem(parameterList[i], parameterWidget);
-  }
+    BOOST_FOREACH(int pid, parameters) {
+        try {
+            QString parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(pid).name());
+            new QListWidgetItem(parName, parameterWidget);
+        } catch (std::runtime_error&) {
+            // unknown param
+        }
+    }
 }
 
 void AcceptTimeseriesDialog::newStationList(std::vector<QString>& stationList)

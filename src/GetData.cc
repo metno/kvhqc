@@ -1,9 +1,7 @@
 /*
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  $Id$
-
-  Copyright (C) 2007 met.no
+  Copyright (C) 2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -32,19 +30,13 @@
 #include "GetData.h"
 #include "hqcmain.h"
 
-using namespace std;
-
-GetData::
-GetData(HqcMainWindow* o) :w(o)
+GetData::GetData(HqcMainWindow* o)
+    : w(o)
 {
-  w->datalist->reserve(32768);
 }
 
-bool
-GetData::
-next( kvservice::KvObsDataList &datalist )
+bool GetData::next(kvservice::KvObsDataList &datalist)
 {
-  w->makeObsDataList( datalist );
-  return true;
+    w->makeObsDataList(datalist);
+    return true;
 }
-

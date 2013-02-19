@@ -50,6 +50,10 @@ int main( int argc, char* argv[] )
 {
     QApplication a( argc, argv, true );
 
+    QCoreApplication::setOrganizationName("Meteorologisk Institutt");
+    QCoreApplication::setOrganizationDomain("met.no");
+    QCoreApplication::setApplicationName("Hqc");
+    
     QTranslator qtTranslator;
     qtTranslator.load("qt_" + QLocale::system().name(),
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));

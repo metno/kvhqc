@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "TimeseriesDialog.h"
 #include "HideApplyBox.hh"
 #include "hqc_utilities.hh"
+#include "KvMetaDataBuffer.hh"
 #include "MiDateTimeEdit.hh"
 #include "qtQTUtil.h"
 
@@ -40,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/Q3HBoxLayout>
 
 #include <boost/algorithm/string.hpp>
+#include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
 
 using namespace miutil;
@@ -410,10 +412,18 @@ void TimeseriesDialog::resultSelected(Q3ListBoxItem*)
   freeze=false;
 }
 
-void TimeseriesDialog::newParameterList(const QStringList& parameterList)
+void TimeseriesDialog::newParameterList(const std::vector<int>& parameters)
 {
-  parameterListbox->clear();
-  parameterListbox->insertStringList(parameterList);
+    QStringList parameterNames;
+    BOOST_FOREACH(int pid, parameters) {
+        try {
+            parameterNames << QString::fromStdString(KvMetaDataBuffer::instance()->findParam(pid).name());
+        } catch (std::runtime_error&) {
+            // unknown param
+        }
+    }
+    parameterListbox->clear();
+    parameterListbox->insertStringList(parameterNames);
 }
 
 void TimeseriesDialog::newStationList(std::vector<QString>& stationList)

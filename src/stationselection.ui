@@ -61,7 +61,7 @@
   <customwidget>
    <class>StationTable</class>
    <extends>QWidget</extends>
-   <header>ListDialog.h</header>
+   <header>StationSelection.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

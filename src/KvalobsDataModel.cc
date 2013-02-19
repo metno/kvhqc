@@ -174,7 +174,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	    header += ' ' + synopNumber;
 
 	    HqcMainWindow * hqcm = getHqcMainWindow(this);
-	    if ( hqcm->isShTy ) {
+	    if (hqcm->isShowTypeidInDataList()) {
 	      const QString typeId = QString::number(d.showTypeId());
 	      header += ' ' + typeId;
 	    }

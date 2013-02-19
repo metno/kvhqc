@@ -92,7 +92,7 @@ public Q_SLOTS:
   void markerSlot(int);
   void fillcolourSlot(int);
   void newStationList(std::vector<QString>& stationList);
-  void newParameterList(const QStringList& parameterList);
+  void newParameterList(const std::vector<int>& parameterList);
 
 private:
 
