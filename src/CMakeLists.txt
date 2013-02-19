@@ -24,7 +24,6 @@ SET(hqc_SOURCES
   accepttimeseriesdialog.cc
   approvedialog.cc
   ClockDialog.cc
-  connect2stinfosys.cc
   dianashowdialog.cc
   discarddialog.cc
   errorlist.cc
@@ -44,6 +43,7 @@ SET(hqc_SOURCES
   rejectdialog.cc
   rejecttable.cc
   rejecttimeseriesdialog.cc
+  StInfoSysBuffer.cc
   textdatadialog.cc
   textdatatable.cc
   TimeseriesDialog.cc

@@ -29,7 +29,7 @@
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
 
-#include "connect2stinfosys.h"
+#include "StInfoSysBuffer.hh"
 #include "hqcdefs.h"
 #include "textdatatable.h"
 
@@ -265,9 +265,6 @@ private:
     boost::shared_ptr<KvalobsModelAccess> kma;
 
 protected:
-    listStat_l listStat;
-    timeutil::ptime mLastStationListUpdate;
-
     void moveEvent(QMoveEvent* event);
     void resizeEvent(QResizeEvent* event);
 

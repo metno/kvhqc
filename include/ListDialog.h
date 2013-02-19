@@ -30,7 +30,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef LISTDIALOG_H
 #define LISTDIALOG_H
 
-#include "connect2stinfosys.h"
 #include "hqcmain.h"
 
 #include <QtGui/QCheckBox>

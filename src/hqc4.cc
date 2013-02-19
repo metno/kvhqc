@@ -89,7 +89,8 @@ int main( int argc, char* argv[] )
     CorbaKvApp kvapp(argc, argv, confSec);
   
     QtKvService qkvs;
-    KvMetaDataBuffer kvsb;
+    KvMetaDataBuffer kvmdbuf;
+    StInfoSysBuffer stinfobuf(confSec);
 
     HqcMainWindow mw;
     QString captionSuffix = QString::fromStdString(kvapp.kvpathInCorbaNameserver());

@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,17 +26,57 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "BusyIndicator.h"
+
 #include <QtGui/QApplication>
+#include <QtGui/QCursor>
+#include <QtGui/QMainWindow>
+#include <QtGui/QStatusBar>
+#include <QtGui/QWidget>
 
 BusyIndicator::BusyIndicator(bool wait)
-    : mCursor(wait ? Qt::WaitCursor : Qt::BusyCursor)
 {
-    qApp->setOverrideCursor(mCursor);
+    qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
     qApp->processEvents();
 }
 
 BusyIndicator::~BusyIndicator()
 {
     qApp->restoreOverrideCursor();
+}
+
+// ========================================================================
+
+DisableGUI::DisableGUI(QWidget* widget)
+    : mWidget(widget)
+    , mWasEnabled(mWidget->isEnabled())
+{
+    if (mWasEnabled) {
+        mWidget->setEnabled(false);
+        qApp->processEvents();
+    }
+}
+DisableGUI::~DisableGUI()
+{
+    if (mWasEnabled) {
+        mWidget->setEnabled(true);
+        qApp->processEvents();
+    }
+}
+
+// ========================================================================
+
+BusyStatus::BusyStatus(QMainWindow* mw, const QString& message, bool wait)
+    : DisableGUI(mw)
+    , BusyIndicator(wait)
+{
+    mw->statusBar()->showMessage(message);
+    qApp->processEvents();
+}
+
+BusyStatus::~BusyStatus()
+{
+    static_cast<QMainWindow*>(mWidget)->statusBar()->clearMessage();
+    qApp->processEvents();
 }

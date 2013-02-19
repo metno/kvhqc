@@ -30,6 +30,7 @@
 #include "KvalobsDataModel.h"
 #include "KvMetaDataBuffer.hh"
 #include "hqcmain.h"
+#include "hqc_utilities.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
 
@@ -241,11 +242,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	  }
 	  else
 	    kvalobs::hqc::hqc_reject(changeData);
-	  std::string cfailed = changeData.cfailed();
-	  if ( not cfailed.empty() )
-	    cfailed += ",";
-	  cfailed += "hqc";
-	  changeData.cfailed(cfailed);
+          updateCfailed(changeData, "hqc");
 
 	  // Update stored data
 	  d.set_corr(p.paramid, val);
@@ -323,11 +320,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	      changeData.controlinfo(ctr);
 	      kvalobs::hqc::hqc_accept(changeData);
 	    }
-            std::string cfailed = changeData.cfailed();
-            if ( not cfailed.empty() )
-              cfailed += ",";
-            cfailed += "hqc";
-            changeData.cfailed(cfailed);
+            updateCfailed(changeData, "hqc");
 	    changeData.corrected(val);
             // Update stored data
             d.set_corr(p.paramid, val);
@@ -391,11 +384,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
               kvalobs::hqc::hqc_auto_correct(changeData, val);
             else
               kvalobs::hqc::hqc_reject(changeData);
-            std::string cfailed = changeData.cfailed();
-            if ( not cfailed.empty() )
-              cfailed += ",";
-            cfailed += "hqc";
-            changeData.cfailed(cfailed);
+            updateCfailed(changeData, "hqc");
 
             // Update stored data
             d.set_corr(p.paramid, val);

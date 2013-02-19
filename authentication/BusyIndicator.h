@@ -2,9 +2,7 @@
 
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -29,19 +27,39 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #ifndef __BusyIndicator_h__
 #define __BusyIndicator_h__
 
-#include <QCursor>
+#include <qglobal.h>
+
+QT_BEGIN_NAMESPACE
+class QMainWindow;
+class QString;
+class QWidget;
+QT_END_NAMESPACE
 
 class BusyIndicator
 {
 public:
     BusyIndicator(bool wait=true);
     ~BusyIndicator();
+};
 
-private:
-    QCursor mCursor;
+class DisableGUI {
+public:
+    DisableGUI(QWidget* widget);
+    ~DisableGUI();
+protected:
+    QWidget* mWidget;
+    bool mWasEnabled;
+};
+
+class BusyStatus : public DisableGUI, public BusyIndicator
+{
+public:
+    BusyStatus(QMainWindow* mw, const QString& message, bool wait=true);
+    ~BusyStatus();
 };
 
 #endif // __BusyIndicator_h__
