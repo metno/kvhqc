@@ -116,6 +116,9 @@ private Q_SLOTS:
     void selectStandardTimes();
     void deselectStandardTimes();
 
+    void onSaveSettings();
+    void onRestoreSettings();
+
 Q_SIGNALS:
     void ListHide();
     void ListApply();
@@ -138,6 +141,9 @@ private:
     void setSelectedStationTypes(const QStringList& stationTypes);
     QStringList getSelectedCounties();
     void setSelectedCounties(const QStringList& c);
+
+    void doSaveSettings(QSettings& settings);
+    void doRestoreSettings(QSettings& settings);
 
 private:
     std::auto_ptr<Ui::ListDialog> ui;

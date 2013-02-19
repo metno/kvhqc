@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ui_listdialog.h"
 #include "ui_stationselection.h"
 
+#include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
@@ -91,6 +92,8 @@ const int REG_EAST[2]  = { 0, 9 };
 const int REG_WEST[2]  = { 9, 14 };
 const int REG_TROND[2] = { 14, 16 };
 const int REG_NORTH[2] = { 16, NCOUNTIES };
+
+const char QSETTINGS_GROUP[] = "lstdlg";
 } // anonymous namespace
 
 // ========================================================================
@@ -101,12 +104,13 @@ ListDialog::ListDialog(HqcMainWindow* parent)
     , statSelect(0)
 {
     ui->setupUi(this);
-    ui->buttonRestore->setEnabled(false);
-    ui->buttonSave   ->setEnabled(false);
 
     setupStationTab();
     setupParameterTab();
     setupClockTab();
+
+    connect(ui->buttonSave,    SIGNAL(clicked()), this, SLOT(onSaveSettings()));
+    connect(ui->buttonRestore, SIGNAL(clicked()), this, SLOT(onRestoreSettings()));
     
     connect(ui->hab, SIGNAL(hide()), this, SLOT(hide()));
     connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
@@ -251,8 +255,20 @@ void ListDialog::setupClockTab()
 
 void ListDialog::saveSettings(QSettings& settings)
 {
-    settings.beginGroup("lstdlg2");
+    settings.beginGroup(QSETTINGS_GROUP);
+    doSaveSettings(settings);
+    settings.endGroup();
+}
 
+void ListDialog::restoreSettings(QSettings& settings)
+{
+    settings.beginGroup(QSETTINGS_GROUP);
+    doRestoreSettings(settings);
+    settings.endGroup();
+}
+
+void ListDialog::doSaveSettings(QSettings& settings)
+{
     {
         QStringList times;
         for (int i = 0; i < 24; i++)
@@ -273,14 +289,10 @@ void ListDialog::saveSettings(QSettings& settings)
     
     const QStringList counties = getSelectedCounties();
     settings.setValue("counties", counties);
-    
-    settings.endGroup();
 }
 
-void ListDialog::restoreSettings(QSettings& settings)
+void ListDialog::doRestoreSettings(QSettings& settings)
 {
-    settings.beginGroup("lstdlg2");
-
     {
         QStringList times = settings.value("selected_times").toStringList();
         if (times.size() == 24) {
@@ -309,8 +321,66 @@ void ListDialog::restoreSettings(QSettings& settings)
     countiesDefault << "ALL";
     QStringList counties = settings.value("counties", countiesDefault).toStringList();
     setSelectedCounties(counties);
-    
-    settings.endGroup();
+}
+
+void ListDialog::onSaveSettings()
+{
+    QString group = QString("data_") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
+
+    bool ok = false;
+    QString label = QInputDialog::getText(this, tr("Lagre datavalg"),
+                                          tr("Navn:"), QLineEdit::Normal, group, &ok);
+    if (ok && !label.isEmpty()) {
+        QSettings settings;
+        const QStringList groups = settings.childGroups();
+        BOOST_FOREACH(const QString g, groups) {
+            const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
+            if (lud == label) {
+                QMessageBox msgBox(this);
+                msgBox.setIcon(QMessageBox::Question);
+                msgBox.setWindowTitle(tr("Lagre datavalg"));
+                msgBox.setText(tr("Datavalg med navn '%1' finnes.").arg(label));
+                msgBox.setInformativeText(tr("Ønsker du å lagre og overskrive den?"));
+                msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
+                msgBox.setDefaultButton(QMessageBox::Save);
+                if (msgBox.exec() != QMessageBox::Save)
+                    return;
+                group = g;
+                break;
+            }
+        }
+        settings.beginGroup(group);
+        settings.setValue("label_user_data", label);
+        doSaveSettings(settings);
+        settings.endGroup();
+    }
+}
+
+void ListDialog::onRestoreSettings()
+{
+    QSettings settings;
+    const QStringList groups = settings.childGroups();
+    QStringList stored;
+    BOOST_FOREACH(const QString g, groups) {
+        const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
+        if (not lud.isEmpty())
+            stored << lud;
+    }
+
+    bool ok;
+    QString recall = QInputDialog::getItem(this, tr("Tilbakekalle datavalg"),
+                                           tr("Navn:"), stored, 0, false, &ok);
+    if (ok && !recall.isEmpty()) {
+        BOOST_FOREACH(const QString g, groups) {
+            const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
+            if (not lud.isEmpty() and lud == recall) {
+                settings.beginGroup(g);
+                doRestoreSettings(settings);
+                settings.endGroup();
+                return;
+            }
+        }
+    }
 }
 
 void ListDialog::showParamGroup(const QString& paramGroup)
