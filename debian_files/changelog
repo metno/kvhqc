@@ -1,3 +1,14 @@
+kvhqc (2.16.0-1) unstable; urgency=low
+
+  * moved stinfosys config (host, user, port, ...) to config file
+  * ListDialog includes ClockDialog and parameterdialog and has save/restore
+    buttons
+  * when starting WatchRR, stop hqc-diana communication temporarily
+  * new email address for crash reports
+  * translations for english and norwegian
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 14 Feb 2013 17:26:08 +0100
+
 kvhqc (2.15.2-1) unstable; urgency=low
 
   * moved most of hqc-diana communication to HqcDianaHelper; improved
