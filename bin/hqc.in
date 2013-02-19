@@ -5,7 +5,7 @@ PROG="hqc"
 EXE="${PROG}-@PVERSION@.bin"
 
 if test -x "$CATCHCRASH"; then
-    exec "$CATCHCRASH" --mail-to kvalobs-dev@met.no --subject "$PROG CRASH" -- \
+    exec "$CATCHCRASH" --mail-to kvhqc-devel@met.no --subject "$PROG CRASH" -- \
         "$EXE" "$@"
 else
     exec "$EXE" "$@"
