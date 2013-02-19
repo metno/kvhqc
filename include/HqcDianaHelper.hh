@@ -26,6 +26,8 @@ public:
     const timeutil::ptime& dianaTime() const
         { return mDianaTime; }
 
+    void setEnabled(bool enabled);
+
     void setFirstObs()
         { mDianaNeedsHqcInit = true; }
 
@@ -70,6 +72,8 @@ private:
     bool mDianaNeedsHqcInit;
     timeutil::ptime mDianaTime;
     int mCountSameTime;
+    bool mEnabled;
+
     std::set<timeutil::ptime> mAllTimes;
 
     struct SendPar {

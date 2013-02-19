@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
 
 HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
@@ -23,6 +23,7 @@ HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
     , mDianaConnected(false)
     , mDianaNeedsHqcInit(true)
     , mCountSameTime(0)
+    , mEnabled(true)
 {
     mClientButton->useLabel(true);
     mClientButton->connectToServer();
@@ -36,6 +37,19 @@ HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
     connect(mClientButton, SIGNAL(connectionClosed()),   this, SLOT(handleConnectionClosed()));
 
     updateDianaParameters();
+}
+
+void HqcDianaHelper::setEnabled(bool enabled)
+{
+    if (enabled == mEnabled)
+        return;
+
+    mEnabled = enabled;
+    if (mEnabled and mDianaConnected) {
+        mDianaNeedsHqcInit = true;
+        sendTimes();
+        sendTime();
+    }
 }
 
 void HqcDianaHelper::handleAddressListChanged()
@@ -67,7 +81,7 @@ void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
 
     mAllTimes = allTimes;
     sendTimes();
-    if (not isKnownTime(mDianaTime)) {
+    if (mEnabled and not isKnownTime(mDianaTime)) {
         DBGV(mDianaTime);
         if (not mAllTimes.empty()) {
             mDianaTime = *mAllTimes.begin();
@@ -83,7 +97,7 @@ void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
 void HqcDianaHelper::sendTimes()
 {
     LOG_SCOPE();
-    if (mAllTimes.empty())
+    if (not mEnabled or not mDianaConnected or mAllTimes.empty())
         return;
 
     miMessage m;
@@ -119,7 +133,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
                 return;
             }
         }
-    } else if (letter.command == qmstrings::station) {
+    } else if (letter.command == qmstrings::station and mEnabled) {
         if (letter.commondesc == "name,time") {
             QStringList name_time = QString::fromStdString(letter.common).split(',');
             bool ok = false;
@@ -131,7 +145,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
             /*emit*/ receivedStation(stationid);
             handleDianaTime(name_time[1].toStdString());
         }
-    } else if (letter.command == qmstrings::timechanged) {
+    } else if (letter.command == qmstrings::timechanged and mEnabled) {
         handleDianaTime(letter.common);
     } else {
         std::cerr << "Diana sent a command that HQC does not understand:" << std::endl
@@ -143,6 +157,8 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
 
 void HqcDianaHelper::handleDianaTime(const std::string& time_txt)
 {
+    if (not mEnabled)
+        return;
     timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
     if (not isKnownTime(time)) {
         std::cerr << "Invalid/unknown time from diana: '" << time_txt << "'" << std::endl;
@@ -160,6 +176,8 @@ void HqcDianaHelper::handleDianaTime(const std::string& time_txt)
 void HqcDianaHelper::applyQuickMenu()
 {
     LOG_SCOPE();
+    if (not mEnabled)
+        return;
 #if 0 // FIXME this does not actually show the data
     miMessage m;
     m.command = qmstrings::apply_quickmenu;
@@ -173,6 +191,8 @@ void HqcDianaHelper::applyQuickMenu()
 void HqcDianaHelper::sendStation(int stnr)
 {
     LOG_SCOPE();
+    if (not mEnabled or not mDianaConnected)
+        return;
     miMessage m;
     m.command = qmstrings::station;
     m.common  = boost::lexical_cast<std::string>(stnr);
@@ -183,7 +203,7 @@ void HqcDianaHelper::sendStation(int stnr)
 void HqcDianaHelper::sendTime(const timeutil::ptime& time)
 {
     DBG(DBG1(time) << DBG1(mDianaTime));
-    if (mDianaTime == time or not isKnownTime(time))
+    if (not mEnabled or not mDianaConnected or mDianaTime == time or not isKnownTime(time))
         return;
     mDianaTime = time;
     sendTime();
@@ -192,7 +212,7 @@ void HqcDianaHelper::sendTime(const timeutil::ptime& time)
 void HqcDianaHelper::sendTime()
 {
     DBGV(mDianaTime);
-    if (not isKnownTime(mDianaTime))
+    if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaTime))
         return;
 
     miMessage m;
@@ -213,7 +233,7 @@ void HqcDianaHelper::sendObservations(const model::KvalobsDataList& datalist,
                                       const std::vector<int>& selectedParameters)
 {
     LOG_SCOPE();
-    if (selectedParameters.empty() or mDianaTime.is_not_a_date_time())
+    if (not mEnabled or not mDianaConnected or selectedParameters.empty() or mDianaTime.is_not_a_date_time())
         return;
     
     std::ostringstream synopDescription;
@@ -335,6 +355,8 @@ void HqcDianaHelper::sendSelectedParam(int paramId)
 {
     LOG_SCOPE();
 
+    if (not mEnabled or not mDianaConnected)
+        return;
     SendPars_t::const_iterator it = mSendPars.find(paramId);
     if (it == mSendPars.end()) {
         std::cerr << "No such diana parameter: " << paramId << std::endl;

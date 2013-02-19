@@ -749,8 +749,8 @@ void HqcMainWindow::showWatchRR()
 
     sensor = sd.selectedSensor();
     time = sd.selectedTime();
-    
-    pluginB->connectToServer(); // disconnect
+
+    mDianaHelper->setEnabled(false);
     EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
     MainDialog main(eda, kma, sensor, time, this);
     if (main.exec()) {
@@ -768,7 +768,7 @@ void HqcMainWindow::showWatchRR()
                                      "");
         }
     }
-    pluginB->connectToServer(); // re-connect
+    mDianaHelper->setEnabled(true);
 }
 
 void HqcMainWindow::showWeather()
