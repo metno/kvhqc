@@ -60,15 +60,13 @@ int main( int argc, char* argv[] )
     a.installTranslator(&qtTranslator);
 
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
-    QTranslator wTranslator;
-#if (QT_VERSION >= QT_VERSION_CHECK(4, 8, 0))
-    const bool translationsLoaded = wTranslator.load(QLocale::system(), "watchrr2", "_", langDir);
-#else
-    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir);
-#endif
+    QTranslator wTranslator, hTranslator;
+    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir)
+        and hTranslator.load("hqc_" + QLocale::system().name(), langDir);
     if (not translationsLoaded)
         qDebug() << "failed to load translations from " << langDir << " for locale " << QLocale::system().name();
     a.installTranslator(&wTranslator);
+    a.installTranslator(&hTranslator);
     
     QStringList args = a.arguments();
 

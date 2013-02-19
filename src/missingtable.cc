@@ -33,22 +33,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 MissingTable::MissingTable(QWidget* parent, ErrorList* el)
   : Q3Table( 1000, 100, parent, "table" )
 {
-  setCaption(tr("Mangelliste"));
+  setCaption(tr("Missing list"));
   // UNUSED int antRow = 0;
   QString fTyp = "";
   setNumRows( 0 );
   setNumCols(12);
   horizontalHeader()->setLabel(0, tr("Stnr"));
-  horizontalHeader()->setLabel(1, tr("Navn"));
-  horizontalHeader()->setLabel(2, tr("  Md"));
-  horizontalHeader()->setLabel(3, tr("  Dg"));
-  horizontalHeader()->setLabel(4, tr("  Kl"));
+  horizontalHeader()->setLabel(1, tr("Name"));
+  horizontalHeader()->setLabel(2, tr("  Mt"));
+  horizontalHeader()->setLabel(3, tr("  Dy"));
+  horizontalHeader()->setLabel(4, tr("  Hr"));
   horizontalHeader()->setLabel(5, tr("Para"));
   horizontalHeader()->setLabel(6, tr("Type"));
   horizontalHeader()->setLabel(7, tr("Orig.d"));
-  horizontalHeader()->setLabel(8, tr("Korr.d"));
+  horizontalHeader()->setLabel(8, tr("Corr.d"));
   horizontalHeader()->setLabel(9, tr("mod.v"));
-  horizontalHeader()->setLabel(10, tr("Flagg"));
+  horizontalHeader()->setLabel(10, tr("Flags"));
   horizontalHeader()->setLabel(11, tr("Fl.v"));
   int numRows = el->mList.size();
   setNumRows( numRows );

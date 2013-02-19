@@ -48,13 +48,13 @@ using namespace miutil;
 
 TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
-  setCaption(tr("Tidsserie HQC"));
+  setCaption(tr("Time series HQC"));
 //Test
   Q3ButtonGroup* dTypes = new Q3ButtonGroup(1,
 					  Qt::Horizontal,
-					  tr("Datatyper"), this);
-  obsCheckBox = new QCheckBox(tr("Observasjoner"), dTypes);
-  modCheckBox = new QCheckBox(tr("Modelldata   "), dTypes);
+					  tr("Data types"), this);
+  obsCheckBox = new QCheckBox(tr("Observationer"), dTypes);
+  modCheckBox = new QCheckBox(tr("Model data"), dTypes);
   //  connect( obsCheckBox, SIGNAL(
   //  QGridLayout* checkLayout = new QGridLayout(dTypes->layout());
   //  checkLayout->addWidget(obsCheckBox,0,0);
@@ -71,7 +71,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( parameterSelectionChanged(Q3ListBoxItem * ) ) );
 
   /////////////////////////////////////////////////////////////////////
-  QLabel* statLabel = new QLabel(tr("Stasjon"),this);
+  QLabel* statLabel = new QLabel(tr("Station"),this);
   statLabel->setFont(QFont("Arial", 12));
   statLabel->setAlignment(Qt::AlignLeft);
   statLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -82,7 +82,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( stationSelected(Q3ListBoxItem * ) ) );
   ////////////////////////////////////////////////////////////////////////
   currentResult=-1;
-  QLabel* resultLabel = new QLabel(tr("Valgte Tidsserier"),this);
+  QLabel* resultLabel = new QLabel(tr("Chosen time series"),this);
   resultLabel->setFont(QFont("Arial", 12));
   resultLabel->setAlignment(Qt::AlignLeft);
   resultLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -93,9 +93,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 	   this, SLOT( resultSelected(Q3ListBoxItem * ) ) );
   /////////////////////////////////////////////////////////////////////////
 
-  QPushButton* delButton = new QPushButton(tr("Slett"),this);
-  QPushButton* delallButton = new QPushButton(tr("Slett alt"),this);
-  newcurveButton = new QPushButton(tr("Ny kurve"),this);
+  QPushButton* delButton = new QPushButton(tr("Delete"),this);
+  QPushButton* delallButton = new QPushButton(tr("Delete all"),this);
+  newcurveButton = new QPushButton(tr("New curve"),this);
   newcurveButton->setToggleButton(true);
 
   connect( delButton, SIGNAL(clicked()),SLOT(deleteSlot()));
@@ -116,7 +116,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
     pixcolor[i]=QColor(colours[i].R(),colours[i].G(),colours[i].B());
   }
 
-  QLabel* lineLabel = new QLabel(tr("Linje"),this);
+  QLabel* lineLabel = new QLabel(tr("Line"),this);
   lineLabel->setFont(QFont("Arial", 12));
   lineLabel->setAlignment(Qt::AlignLeft);
   lineLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -140,7 +140,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   lineLayout->addWidget(linewidthBox,10);
   lineLayout->addWidget(linecolourBox,10);
 
-  QLabel* markerLabel = new QLabel(tr("Markør"),this);
+  QLabel* markerLabel = new QLabel(tr("Marker"),this);
   markerLabel->setFont(QFont("Arial", 12));
   markerLabel->setAlignment(Qt::AlignLeft);
   markerLabel->setPaletteForegroundColor(Qt::darkBlue);
@@ -199,9 +199,9 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
   topLayout->addLayout(lineLayout);
   topLayout->addWidget(markerLabel);
   topLayout->addLayout(markerLayout);
-  topLayout->addWidget(new QLabel(tr("Fra:")));
+  topLayout->addWidget(new QLabel(tr("From:")));
   topLayout->addWidget(dte_from);
-  topLayout->addWidget(new QLabel(tr("Til:")));
+  topLayout->addWidget(new QLabel(tr("To:")));
   topLayout->addWidget(dte_to);
   topLayout->addWidget(hab);
 

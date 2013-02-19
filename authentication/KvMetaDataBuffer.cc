@@ -115,6 +115,35 @@ bool KvMetaDataBuffer::isModelParam(int paramid)
     return std::binary_search(modelParam, boost::end(modelParam), paramid);
 }
 
+bool KvMetaDataBuffer::isKnownType(int id)
+{
+    if (not mHaveTypes)
+        fetchTypes();
+
+    std::list<kvalobs::kvTypes>::const_iterator it
+        = std::find_if(mTypes.begin(), mTypes.end(), Helpers::type_by_id(id));
+    return (it != mTypes.end());
+}
+
+const kvalobs::kvTypes& KvMetaDataBuffer::findType(int id)
+{
+    if (not mHaveTypes)
+        fetchTypes();
+
+    std::list<kvalobs::kvTypes>::const_iterator it
+        = std::find_if(mTypes.begin(), mTypes.end(), Helpers::type_by_id(id));
+    if (it == mTypes.end())
+        throw std::runtime_error("type not found");
+    return *it;
+}
+
+const std::list<kvalobs::kvTypes>& KvMetaDataBuffer::allTypes()
+{
+    if (not mHaveTypes)
+        fetchTypes();
+    return mTypes;
+}
+
 const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
 {
     ObsPgms_t::iterator it = mObsPgms.find(stationid);
@@ -153,8 +182,19 @@ void KvMetaDataBuffer::fetchParams()
     }
 }
 
+void KvMetaDataBuffer::fetchTypes()
+{
+    LOG_SCOPE();
+    BusyIndicator wait;
+    mHaveTypes = true;
+    mTypes.clear();
+    if (not kvservice::KvApp::kvApp->getKvTypes(mTypes)) {
+        std::cerr << "could not fetch type list" << std::endl;
+    }
+}
+
 void KvMetaDataBuffer::reload()
 {
-    mHaveStations = mHaveParams = false;
+    mHaveStations = mHaveParams = mHaveTypes = false;
     mObsPgms.clear();
 }

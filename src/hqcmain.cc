@@ -61,7 +61,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "rejecttimeseriesdialog.h"
-#include "StationInformation.h"
 #include "textdatadialog.h"
 #include "TimeseriesDialog.h"
 #include "timeutil.hh"
@@ -281,25 +280,25 @@ void HqcMainWindow::startup()
     show();
     qApp->processEvents();
     if (not reinserter) {
-        mHints->addHint(tr("<h1>Autentisering</h1>"
-                           "Du er ikke registrert som operatør! "
-                           "Du kan se dataliste, feillog og feilliste, "
-                           "men ikke gjøre endringer i Kvalobsdatabasen!"));
+        mHints->addHint(tr("<h1>Authentication</h1>"
+                           "You are not registered as operator! "
+                           "You can see the data list, error log and error list, "
+                           "but you cannot make changes in the kvalobs database!"));
     }
 
     // --- READ STATION INFO ----------------------------------------
     {
         BusyIndicator busy;
-        statusBar()->message(tr("Leser stasjonsliste..."));
+        statusBar()->message(tr("Reading station list..."));
         qApp->processEvents();
         readFromStation();
-        statusBar()->message(tr("Leser parameterliste..."));
+        statusBar()->message(tr("Reading parameter list..."));
         qApp->processEvents();
         readFromParam();
         qApp->processEvents();
     }
 
-    statusBar()->message( tr("Velkommen til kvhqc %1!").arg(PVERSION_FULL), 2000 );
+    statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
     mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
 
@@ -328,7 +327,7 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
    // Insert any custom messages here
   default:
       QMessageBox::critical(this, tr("Unable to insert"),
-                            tr("An error occured when attempting to insert data into kvalobs.\n"
+                            tr("An error occured when attempting to insert data into kvalobs. "
                                "The message from kvalobs was\n%1").arg(QString(result->message)),
               QMessageBox::Ok, QMessageBox::NoButton);
     return;
@@ -339,16 +338,16 @@ void HqcMainWindow::ListOK()
 {
     LOG_SCOPE();
     if (not mDianaHelper->isConnected()) {
-        mHints->addHint(tr("<h1>Dianaforbindelse</h1>"
-                           "Har ikke kontakt med diana! "
-                           "Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, "
-                           "og kople diana til tjeneren via knappen i diana sin vindu."));
+        mHints->addHint(tr("<h1>Diana-Connection</h1>"
+                           "No contact with diana! "
+                           "You should connect to the command server via the button in the lower right in the hqc window, "
+                           "and connect diana to the command server using the button in diana's window."));
     }
     const std::vector<int> selectedStations = lstdlg->getSelectedStations();
     if (selectedStations.empty()) {
         QMessageBox::warning(this,
-                             tr("Stasjonsvalg"),
-                             tr("Ingen stasjoner er valgt! Minst en stasjon må velges"),
+                             tr("Station Selection"),
+                             tr("No stations selected! At least one statione must be chosen."),
                              QMessageBox::Ok,
                              Qt::NoButton);
         return;
@@ -357,8 +356,8 @@ void HqcMainWindow::ListOK()
     mSelectedTimes = lstdlg->getSelectedTimes();
     if (mSelectedTimes.empty()) {
         QMessageBox::warning(this,
-                             tr("Tidspunktvalg"),
-                             tr("Ingen tidspunkter er valgt! Minst ett tidspunkt må velges"),
+                             tr("Time Selection"),
+                             tr("No times selected! At least one time must be selected."),
                              QMessageBox::Ok,
                              Qt::NoButton);
         return;
@@ -367,8 +366,8 @@ void HqcMainWindow::ListOK()
     mSelectedParameters = lstdlg->getSelectedParameters();
     if (mSelectedParameters.empty()) {
         QMessageBox::warning(this,
-                             tr("Værelement"),
-                             tr("Ingen værelement er valgt! Værelement må velges"),
+                             tr("Weather Element"),
+                             tr("No weather element selected! At least one has to be chosen."),
                              QMessageBox::Ok,
                              Qt::NoButton);
         return;
@@ -386,7 +385,7 @@ void HqcMainWindow::ListOK()
   // All windows are shown later, in the tileHorizontal function
     
     if (lity == daLi or lity == alLi) {
-        statusBar()->message(tr("Bygger dataliste..."));
+        statusBar()->message(tr("Building data list..."));
         qApp->processEvents();
 
         model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
@@ -439,11 +438,11 @@ void HqcMainWindow::ListOK()
 
         const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
         tableView->setIcon( QPixmap(hqc_icon_path) );
-        tableView->setCaption(tr("Dataliste"));
+        tableView->setCaption(tr("Data List"));
     }
 
     if ( lity == erLi or lity == erSa or lity == alLi ) {
-        statusBar()->message(tr("Bygger feilliste..."));
+        statusBar()->message(tr("Building error list..."));
         qApp->processEvents();
         ErrorList * erl = new ErrorList(mSelectedParameters,
                                         stime,
@@ -755,13 +754,13 @@ void HqcMainWindow::showWatchRR()
     MainDialog main(eda, kma, sensor, time, this);
     if (main.exec()) {
         if (not eda->sendChangesToParent()) {
-            QMessageBox::critical(0,
+            QMessageBox::critical(this,
                                   tr("WatchRR"),
                                   tr("Sorry, your changes could not be saved and are lost!"),
                                   tr("OK"),
                                   "");
         } else {
-            QMessageBox::information(0,
+            QMessageBox::information(this,
                                      tr("WatchRR"),
                                      tr("Your changes have been saved."),
                                      tr("OK"),
@@ -878,7 +877,7 @@ void HqcMainWindow::acceptTimeseriesOK() {
     newCorr.push_back(dt.original());
   }
   ApproveDialog* approveDialog = new ApproveDialog(chList);
-  approveDialog->setWindowTitle(tr("%1 - Godkjenning av data").arg(QApplication::applicationName()));
+  approveDialog->setWindowTitle(tr("%1 - Accepting Data").arg(QApplication::applicationName()));
   int res = approveDialog->exec();
   if ( res == QDialog::Accepted )
   for ( int irow = firstRow; irow <= lastRow; irow++) {
@@ -932,7 +931,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
     chList.push_back(ch);
   }
   DiscardDialog* discardDialog = new DiscardDialog(chList);
-  discardDialog->setWindowTitle(tr("%1 - Forkasting av data").arg(QApplication::applicationName()));
+  discardDialog->setWindowTitle(tr("%1 - Rejecting Data").arg(QApplication::applicationName()));
   int res = discardDialog->exec();
   if ( res == QDialog::Accepted )
   for ( int irow = firstRow; irow <= lastRow; irow++) {
@@ -965,7 +964,7 @@ void HqcMainWindow::screenshot()
     printer.setOrientation(QPrinter::Landscape);
 
     QPrintDialog *dialog = new QPrintDialog(&printer, this);
-    dialog->setWindowTitle(tr("Utskrift skjermbilde"));
+    dialog->setWindowTitle(tr("Print screenshot"));
     if (dialog->exec() != QDialog::Accepted)
         return;
 
@@ -988,10 +987,10 @@ void HqcMainWindow::onVersionCheckTimeout()
             const long runningVersion = PVERSION_NUMBER_MAJOR_MINOR_PATCH;
             if( installedVersion > runningVersion ) {
                 QMessageBox::information(this,
-                                         tr("HQC - Oppdatering"),
-                                         tr("Hqc-applikasjonen ble oppdatert på din datamaskin. "
-                                            "Du skulle lagre eventuelle endringer og starte "
-                                            "hqc-applikasjonen på nytt for å bruke den nye versjonen."),
+                                         tr("HQC - Update"),
+                                         tr("The hqc-application has been updated on your computer. "
+                                            "You should save any changes and start the hqc-application "
+                                            "again to use the new version."),
                                          QMessageBox::Ok, Qt::NoButton);
             } else {
                 //std::cout << "no update, now=" << runningVersion << " installed=" << installedVersion << std::endl;
@@ -1149,7 +1148,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
     std::cerr << "problems retrieving data" << std::endl;
   }
 
-  statusBar()->message(tr("Leser modelldata..."));
+  statusBar()->message(tr("Reading model data..."));
   qApp->processEvents();
   ModelDataList mdlist;
   modeldatalist.reserve(131072);
@@ -1187,8 +1186,8 @@ void HqcMainWindow::exitNoKvalobs()
 {
     QMessageBox msg(this);
     msg.setIcon(QMessageBox::Critical);
-    msg.setText(tr("Kvalobsdatabasen er dessverre ikke tilgjengelig."));
-    msg.setInformativeText(tr("HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen."));
+    msg.setText(tr("The kvalobs databasen is not accessible."));
+    msg.setInformativeText(tr("HQC terminates because it cannot be used without the kvalobs database."));
     msg.exec();
     exit(1);
 }
@@ -1321,18 +1320,18 @@ void HqcMainWindow::helpParam() {
 
 void HqcMainWindow::about()
 {
-    QMessageBox::about( this, tr("Om Hqc"),
-			tr("Hqc er et program for manuell kvalitetskontroll av observasjoner."
-                           "Programmet består av editerbare tabeller med observasjoner samt"
-                           "tidsseriediagram, og har forbindelse med Diana."
+    QMessageBox::about( this, tr("About Hqc"),
+			tr("Hqc is a program for manual quality control of observations. "
+                           "The program consists of editable tables with observations including "
+                           "a time series diagram, and it can be connected to Diana."
                            "\n\n"
-                           "Programmet utvikles av "
+                           "The program is developed by "
                            "Knut Johansen, "
                            "Alexander Bürger, "
                            "Lisbeth Bergholt, "
                            "Vegard Bønes, "
-                           "Audun Christoffersen i met.no.\n\n"
-                           "Du bruker HQC versjon %1.").arg(PVERSION_FULL));
+                           "Audun Christoffersen at met.no.\n\n"
+                           "You are using HQC version %1.").arg(PVERSION_FULL));
 }
 
 void HqcMainWindow::sendTimes()
@@ -1453,7 +1452,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
     if (dataList.empty() or dataList.begin()->dataList().empty())
         return;
 
-    statusBar()->message(tr("Leser data for stasjon %1").arg(dataList.begin()->dataList().begin()->stationID()));
+    statusBar()->message(tr("Reading data for station %1").arg(dataList.begin()->dataList().begin()->stationID()));
     qApp->processEvents();
 
     model::KvalobsData tdl;
@@ -1624,9 +1623,9 @@ void HqcMainWindow::readSettings()
     QString savedVersion = settings.value("version", "??").toString();
     if (savedVersion != PVERSION) {
         QMessageBox::information(this,
-                                 tr("HQC - Versjonsendring"),
-                                 tr("Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). "
-                                    "Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.")
+                                 tr("HQC - Version Change"),
+                                 tr("You are using a different version of HQC than before (now: %1, before: %2). "
+                                    "You have to check that all settings (chosen parameters, times, etc) are still correct.")
                                  .arg(PVERSION).arg(savedVersion),
                                  QMessageBox::Ok, QMessageBox::Ok);
     }

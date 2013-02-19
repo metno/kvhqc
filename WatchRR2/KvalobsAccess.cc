@@ -1,6 +1,7 @@
 
 #include "KvalobsAccess.hh"
 #include "Helpers.hh"
+#include "hqc_utilities.hh"
 #include "KvalobsData.hh"
 
 #include <kvcpp/KvGetDataReceiver.h>

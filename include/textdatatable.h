@@ -7,16 +7,16 @@
 #include "hqcdefs.h"
 
 class TextDataTable : public QTableWidget
-{
- public:
-  TextDataTable(const std::vector<TxtDat>&, QWidget*);
+{ Q_OBJECT;
+public:
+    TextDataTable(const std::vector<TxtDat>&, QWidget*);
 };
 
-class TextData : public QWidget {
-Q_OBJECT
-  public:
-  TextData(const std::vector<TxtDat>&);
-  TextDataTable* txtTab;
+class TextData : public QWidget
+{ Q_OBJECT;
+public:
+    TextData(const std::vector<TxtDat>&);
+    TextDataTable* txtTab;
 };
 
 #endif

@@ -242,7 +242,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	  }
 	  else
 	    kvalobs::hqc::hqc_reject(changeData);
-          updateCfailed(changeData, "hqc");
+          Helpers::updateCfailed(changeData, "hqc");
 
 	  // Update stored data
 	  d.set_corr(p.paramid, val);
@@ -320,7 +320,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	      changeData.controlinfo(ctr);
 	      kvalobs::hqc::hqc_accept(changeData);
 	    }
-            updateCfailed(changeData, "hqc");
+            Helpers::updateCfailed(changeData, "hqc");
 	    changeData.corrected(val);
             // Update stored data
             d.set_corr(p.paramid, val);
@@ -384,7 +384,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
               kvalobs::hqc::hqc_auto_correct(changeData, val);
             else
               kvalobs::hqc::hqc_reject(changeData);
-            updateCfailed(changeData, "hqc");
+            Helpers::updateCfailed(changeData, "hqc");
 
             // Update stored data
             d.set_corr(p.paramid, val);

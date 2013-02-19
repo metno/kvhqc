@@ -346,15 +346,6 @@ void updateUseInfo(kvalobs::kvData& data)
     data.useinfo( ui );
 }
 
-void updateCfailed(kvalobs::kvData& data, const std::string& add)
-{
-    std::string new_cfailed = data.cfailed();
-    if( new_cfailed.length() > 0 )
-        new_cfailed += ",";
-    new_cfailed += add;
-    data.cfailed(new_cfailed);
-}
-
 QString appendText(QString& text, const QString& append, const QString& separator)
 {
     if (append.isEmpty())

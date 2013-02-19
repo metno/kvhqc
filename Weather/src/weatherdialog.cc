@@ -34,7 +34,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvMetaDataBuffer.hh"
 #include "mi_foreach.hh"
 #include "StationSelection.h"
-#include "StationInformation.h"
 
 #include <kvcpp/KvApp.h>
 
@@ -163,18 +162,16 @@ bool WeatherDialog::sensorFilter(int gSensor, int cSensor) {
     tabWidget->addTab(flagTab, tr("Flagg"));
   }
 
-  void WeatherDialog::setupStationInfo() {
-    if ( station == 0 ) {
-      QMessageBox::information( this, tr("HQC - synop"),
-                             tr("Det valgte stasjonsnummer fins ikke i databasen."),
-                             QMessageBox::Ok,  QMessageBox::NoButton );
-      return;
+void WeatherDialog::setupStationInfo()
+{
+    QString stationDescr = QString::number(stationId);
+    try {
+        const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationId);
+        stationDescr += " - " + QString::fromStdString(s.name());
+    } catch (std::runtime_error&) {
     }
-    QString stationDescr = QString::number( station->stationID() );
-    if ( this->station )
-      stationDescr += " - " + QString::fromStdString(this->station->name());
-    setCaption( tr("Synop for stasjon %1").arg(stationDescr) );
-  }
+    setCaption(tr("Synop for stasjon %1").arg(stationDescr));
+}
 
   WeatherDialog::DateRange getDateRange_( std::vector<TimeObs> * timeobs )
   {
@@ -189,7 +186,7 @@ WeatherDialog::WeatherDialog(TimeObsListPtr tobs, int type, int sensor,
                              QWidget *parent)
     : QDialog( parent, Qt::Window )
     , dataReinserter( dataReinserter )
-    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*tobs)[0].getStation()] )
+    , stationId((*tobs)[0].getStation())
     , shownFirstTime( false )
 {
     initData((*tobs)[0].getTime(), type, sensor);
@@ -201,7 +198,7 @@ WeatherDialog::WeatherDialog(int station, const timeutil::ptime& clock, int type
                              QWidget* parent)
     : QDialog( parent, Qt::Window)
     , dataReinserter( dataReinserter )
-    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
+    , stationId(station)
     , shownFirstTime( false )
 {
     initData(clock, type, sensor);
@@ -210,12 +207,8 @@ WeatherDialog::WeatherDialog(int station, const timeutil::ptime& clock, int type
 
 void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
 {
-    if( station == 0 )
-        return;
-    const int stationID = station->stationID();
-
     OpgmList opgtl;
-    const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(stationID);
+    const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
         cerr << op.stationID() << " "
              << setw(3) << op.paramID() << " "
@@ -260,7 +253,7 @@ void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
     sTime += boost::gregorian::days(-7);
     eTime += boost::gregorian::days(1);
     WhichDataHelper whichData;
-    whichData.addStation( stationID, timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
+    whichData.addStation(stationId, timeutil::to_miTime(sTime), timeutil::to_miTime(eTime));
     
     if ( !KvApp::kvApp->getKvData(ldList, whichData))
         cerr << "Can't connect to data table!" << endl;

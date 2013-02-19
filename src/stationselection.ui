@@ -21,7 +21,7 @@
        <item>
         <widget class="QPushButton" name="selectionOK">
          <property name="text">
-          <string>Lukk</string>
+          <string>Close</string>
          </property>
          <property name="default">
           <bool>true</bool>
@@ -31,7 +31,7 @@
        <item>
         <widget class="QPushButton" name="selectAllStations">
          <property name="text">
-          <string>Velg &amp;alle stasjoner</string>
+          <string>Choose &amp;all stations</string>
          </property>
         </widget>
        </item>

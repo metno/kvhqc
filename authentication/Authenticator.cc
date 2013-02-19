@@ -128,8 +128,8 @@ void Authenticator::doAuthenticate()
     return accept();
   } else {
     QMessageBox::information(this,
-                             "Feil brukernavn eller passord",
-                             "Feil brukernavn eller passord. Vennligst prœóõ½v igjen.",
+                             tr("Wrong username or password"),
+                             tr("Wrong username or password. Please try again."),
                              QMessageBox::Ok);
 
     return;

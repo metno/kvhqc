@@ -5,6 +5,7 @@
 #include <kvalobs/kvObsPgm.h>
 #include <kvalobs/kvParam.h>
 #include <kvalobs/kvStation.h>
+#include <kvalobs/kvTypes.h>
 
 #include <list>
 #include <set>
@@ -25,6 +26,10 @@ public:
     bool isCodeParam(int paramid);
     bool isModelParam(int paramid);
 
+    bool isKnownType(int id);
+    const kvalobs::kvTypes& findType(int id);
+    const std::list<kvalobs::kvTypes>& allTypes();
+
     typedef std::list<kvalobs::kvObsPgm> ObsPgmList;
     const ObsPgmList& findObsPgm(int stationid);
 
@@ -36,6 +41,7 @@ public:
 private:
     void fetchStations();
     void fetchParams();
+    void fetchTypes();
 
 private:
     bool mHaveStations;
@@ -44,6 +50,9 @@ private:
     bool mHaveParams;
     std::list<kvalobs::kvParam> mParams;
     std::set<int> mCodeParams;
+
+    bool mHaveTypes;
+    std::list<kvalobs::kvTypes> mTypes;
 
     typedef std::map<int, ObsPgmList> ObsPgms_t;
     ObsPgms_t mObsPgms;

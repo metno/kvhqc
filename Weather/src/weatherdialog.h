@@ -114,11 +114,10 @@ public:
 
     QTabWidget* tabWidget;
 
-    const kvalobs::kvStation *getStation() const { return station; }
     int getStationId() const { return stationId; }
 
     void setReinserter( const kvalobs::DataReinserter<kvservice::KvApp> * ri )
-    { dataReinserter = ri; }
+        { dataReinserter = ri; }
 
     bool paramInParamsList(int);
     bool typeFilter(int, int);
@@ -151,7 +150,6 @@ Q_SIGNALS:
 
   private:
     QMap<int, int> parameterIndex;
-    const kvalobs::kvStation *station;
     int stationId;
     DateRange dateRange;
     bool shownFirstTime;

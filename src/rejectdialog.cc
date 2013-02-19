@@ -12,15 +12,15 @@
 
 RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
 
-  setCaption(tr("Forkastet"));
+  setCaption(tr("Rejected"));
   textLabel1 = new QLabel(this);
-  textLabel1->setText(tr("Velg tidsrom for forkastetliste"));
+  textLabel1->setText(tr("Select time range for reject list"));
 
   textLabel2 = new QLabel(this);
-  textLabel2->setText(tr("Fra"));
+  textLabel2->setText(tr("From"));
 
   textLabel3 = new QLabel(this);
-  textLabel3->setText(tr("Til"));
+  textLabel3->setText(tr("To"));
 
   QDateTime ldtto = timeutil::nowWithMinutes0Seconds0();
   dtto = ldtto;
@@ -44,7 +44,7 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
 
-  cancelButton = new QPushButton(tr("Avbryt"), this);
+  cancelButton = new QPushButton(tr("Cancel"), this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
 

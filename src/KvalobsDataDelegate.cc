@@ -97,12 +97,11 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     kvalobs::DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
 #ifdef NDEBUG
     if (not reinserter) {
-        QMessageBox::critical( editor,
-                               "Ikke autentisert",
-                               "Du er ikke autentisert som operatør.\n"
-                               "Kan ikke lagre data.",
-                               QMessageBox::Ok,
-                               Qt::NoButton );
+        QMessageBox::critical(editor,
+                              tr("Not authenticated"),
+                              tr("You are not not authenticated as operator. Cannot save data."),
+                              QMessageBox::Ok,
+                              Qt::NoButton );
         return;
     }
 #endif
@@ -120,7 +119,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     const KvalobsDataModel * kvalobsModel = static_cast<KvalobsDataModel *>(model);
     const KvalobsData * kvalobsData = kvalobsModel->kvalobsData(index);
     if ( ! kvalobsData ) {
-        QMessageBox::information(editor, "Internal error", "Unable to modify data", QMessageBox::Ok);
+        QMessageBox::information(editor, tr("Internal error"), tr("Unable to modify data"), QMessageBox::Ok);
         return;
     }
     int paramid = kvalobsModel->getParameter(index).paramid;
@@ -134,59 +133,55 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
     if ( std::abs(newValue - corr) < 0.00005 )
       return;
 
-    if (stationid > 99999)
-      {
-        QMessageBox::information(editor, "Utenlandsk stasjon",
-            "Utenlandske stasjoner kan ikke korrigeres", QMessageBox::Ok,
-            Qt::NoButton);
+    if (stationid > 99999) {
+        QMessageBox::information(editor, tr("Foreign station"),
+                                 tr("Foreign stations cannot be corrected"), QMessageBox::Ok,
+                                 Qt::NoButton);
         return;
-      }
+    }
 
     if (abs(typ) > 999) {
         HqcMainWindow * hqcm = getHqcMainWindow(editor);
         typ = hqcm->findTypeId(typ, stationid, paramid, obt);
     }
     if (typ == -32767) {
-        QMessageBox::information(editor, "Ulovlig parameter",
-            "Denne parameteren fins ikke i obs_pgm\nfor denne stasjonen",
-            QMessageBox::Ok, Qt::NoButton);
+        QMessageBox::information(editor, tr("Illegal parameter"),
+                                 tr("This parameter is not in obs_pgm for this station"),
+                                 QMessageBox::Ok, Qt::NoButton);
         return;
     }
 
     if ( highMap.contains(paramid) and lowMap.contains(paramid) ) {
-      float uplim = highMap[paramid];
-      float downlim = lowMap[paramid];
-      if ((newValue > uplim || newValue < downlim) && newValue != -32766 && paramid != 105)
-        {
-          QMessageBox::information(editor, "Ulovlig verdi",
-              "Verdien er utenfor fysikalske grenser", QMessageBox::Ok,
-              Qt::NoButton);
-          return;
+        float uplim = highMap[paramid];
+        float downlim = lowMap[paramid];
+        if ((newValue > uplim || newValue < downlim) && newValue != -32766 && paramid != 105) {
+            QMessageBox::information(editor, tr("Illegal value"),
+                                     tr("Value outside physical limits"), QMessageBox::Ok,
+                                     Qt::NoButton);
+            return;
         }
     }
-    if (!legalTime(obt.time_of_day().hours(), paramid, newValue))
-      {
-        QMessageBox::information(editor, "Ulovlig tidspunkt",
-            "Denne parameteren kan ikke lagres ved dette tidspunktet",
-            QMessageBox::Ok, Qt::NoButton);
+    if (!legalTime(obt.time_of_day().hours(), paramid, newValue)) {
+        QMessageBox::information(editor, tr("Illegal time"),
+                                 tr("This parameter cannot be saved for this time"),
+                                 QMessageBox::Ok, Qt::NoButton);
         return;
-      }
-    if (!legalValue(newValue, paramid))
-      {
-        QMessageBox::information(editor, "Ulovlig verdi",
-            "Lovlige verdier er -5 og -6", QMessageBox::Ok, Qt::NoButton);
+    }
+    if (!legalValue(newValue, paramid)) {
+        QMessageBox::information(editor, tr("Illegal value"),
+                                 tr("Legal values are -5 and -6"), QMessageBox::Ok, Qt::NoButton);
         return;
-      }
+    }
 
     QString newCorVal;
     newCorVal = newCorVal.setNum(newValue, 'f', 1);
     QString changeVal;
     if (newValue == -32766)
-      changeVal = "Vil du forkaste " + oldCorVal + " ?";
+        changeVal = tr("Do you want to reject %1?").arg(oldCorVal);
     else
-      changeVal = "Vil du endre " + oldCorVal + " til " + newCorVal + " ?";
+        changeVal = tr("Do you want to change %1 to %2?").arg(oldCorVal).arg(newCorVal);
 
-    int corrMb = QMessageBox::information(editor, "Korrigering", changeVal, "Ja",  "Nei", "");
+    int corrMb = QMessageBox::information(editor, tr("Correction"), changeVal, tr("Yes"), tr("No"), "");
     if (corrMb == 1) // "Nei"
         return;
 

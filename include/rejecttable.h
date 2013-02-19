@@ -8,16 +8,16 @@
 #include <vector>
 
 class RejectTable : public QTableWidget
-{
- public:
-  RejectTable(std::vector<kvalobs::kvRejectdecode>, QWidget*);
+{ Q_OBJECT;
+public:
+    RejectTable(std::vector<kvalobs::kvRejectdecode>, QWidget*);
 };
 
-class Rejects : public QWidget {
-Q_OBJECT
-  public:
-  Rejects(std::vector<kvalobs::kvRejectdecode>);
-  RejectTable* rTab;
+class Rejects : public QWidget
+{ Q_OBJECT;
+public:
+    Rejects(std::vector<kvalobs::kvRejectdecode>);
+    RejectTable* rTab;
 };
 
 #endif

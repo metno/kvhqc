@@ -137,7 +137,7 @@ void ListDialog::setupStationTab()
         ui->statSelLayout->addWidget(cb, s.gridX, s.gridY);
         mStationTypes.push_back(cb);
     }
-    allType = new QCheckBox( tr("Alle"), ui->stTyp);
+    allType = new QCheckBox( tr("All"), ui->stTyp);
     ui->statSelLayout->addWidget(allType, 5, 3);
 
     // insert checkbuttons for station location selection
@@ -149,7 +149,7 @@ void ListDialog::setupStationTab()
         mCounties.push_back(countyCB);
         y += 1; if (y >= 3 ) { y = 0; x += 1; }
     }
-    allCoun = new ItemCheckBox(tr("Alle"), "ALL", ui->stCounty);
+    allCoun = new ItemCheckBox(tr("All"), "ALL", ui->stCounty);
     ui->statCountyLayout->addWidget(allCoun, x, y);
     
     connect(ui->regionEastAdd,     SIGNAL(clicked()), this, SLOT(regionEastAdd()));
@@ -328,8 +328,8 @@ void ListDialog::onSaveSettings()
     QString group = QString("data_") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
 
     bool ok = false;
-    QString label = QInputDialog::getText(this, tr("Lagre datavalg"),
-                                          tr("Navn:"), QLineEdit::Normal, group, &ok);
+    QString label = QInputDialog::getText(this, tr("Save data selection"),
+                                          tr("Name:"), QLineEdit::Normal, group, &ok);
     if (ok && !label.isEmpty()) {
         QSettings settings;
         const QStringList groups = settings.childGroups();
@@ -338,9 +338,9 @@ void ListDialog::onSaveSettings()
             if (lud == label) {
                 QMessageBox msgBox(this);
                 msgBox.setIcon(QMessageBox::Question);
-                msgBox.setWindowTitle(tr("Lagre datavalg"));
-                msgBox.setText(tr("Datavalg med navn '%1' finnes.").arg(label));
-                msgBox.setInformativeText(tr("Ønsker du å lagre og overskrive den?"));
+                msgBox.setWindowTitle(tr("Save data selection"));
+                msgBox.setText(tr("Data selection with name '%1' exists.").arg(label));
+                msgBox.setInformativeText(tr("Do you want to overwrite it?"));
                 msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::Cancel);
                 msgBox.setDefaultButton(QMessageBox::Save);
                 if (msgBox.exec() != QMessageBox::Save)
@@ -368,8 +368,8 @@ void ListDialog::onRestoreSettings()
     }
 
     bool ok;
-    QString recall = QInputDialog::getItem(this, tr("Tilbakekalle datavalg"),
-                                           tr("Navn:"), stored, 0, false, &ok);
+    QString recall = QInputDialog::getItem(this, tr("Load data selection"),
+                                           tr("Name:"), stored, 0, false, &ok);
     if (ok && !recall.isEmpty()) {
         BOOST_FOREACH(const QString g, groups) {
             const QString lud = settings.value(g + "/" + "label_user_data", "").toString();

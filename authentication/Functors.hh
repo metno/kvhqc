@@ -4,6 +4,7 @@
 
 #include <kvalobs/kvParam.h>
 #include <kvalobs/kvStation.h>
+#include <kvalobs/kvTypes.h>
 
 #include <functional>
 
@@ -25,11 +26,20 @@ private:
 
 struct param_by_id : public std::unary_function<bool, kvalobs::kvParam>
 {
-    param_by_id(int s) : paramid(s) { }
+    param_by_id(int p) : paramid(p) { }
     bool operator()(const kvalobs::kvParam& p) const
         { return p.paramID() == paramid; }
 private:
     int paramid;
+};
+
+struct type_by_id : public std::unary_function<bool, kvalobs::kvTypes>
+{
+    type_by_id(int t) : type(t) { }
+    bool operator()(const kvalobs::kvTypes& t) const
+        { return t.typeID() == type; }
+private:
+    int type;
 };
 
 } // namespace Helpers

@@ -27,7 +27,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Skjul</string>
+        <string>Hide</string>
        </property>
       </widget>
      </item>
@@ -39,7 +39,7 @@
         </font>
        </property>
        <property name="text">
-        <string>Utfør</string>
+        <string>Apply</string>
        </property>
       </widget>
      </item>
@@ -51,7 +51,7 @@
         </font>
        </property>
        <property name="text">
-        <string>&amp;Utfør+Skjul</string>
+        <string>&amp;Apply+Hide</string>
        </property>
        <property name="default">
         <bool>true</bool>

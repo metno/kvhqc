@@ -41,10 +41,9 @@
 #include "debug.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
+#include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
 #include "missingtable.h"
-#include "StationInformation.h"
-#include "TypeInformation.h"
 
 #include <qUtilities/miMessage.h>
 
@@ -69,9 +68,6 @@
 #include <boost/range.hpp>
 
 #include <cassert>
-
-typedef StationInformation<kvservice::KvApp> StationInfo;
-typedef TypeInformation<kvservice::KvApp>    TypeInfo;
 
 using namespace kvalobs;
 
@@ -162,12 +158,12 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     stationidCol = 1;
     typeidCol = 7;
     
-    setCaption(tr("HQC - Feilliste"));
+    setCaption(tr("HQC - Error List"));
     setSorting(TRUE);
     readLimits();
     setSelectionMode( Q3Table::SingleRow );
     
-    QAction* lackListAction = new QAction(tr("&Mangelliste"), this);
+    QAction* lackListAction = new QAction(tr("&Missing list"), this);
     lackListAction->setShortcut(tr("Ctrl+M"));
     
     fDlg = new FailInfo::FailDialog(this);
@@ -214,17 +210,17 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     horizontalHeader()->setLabel(6, tr("Para"));
     horizontalHeader()->setLabel(7, tr("Type"));
     horizontalHeader()->setLabel(8, tr("Orig.d"));
-    horizontalHeader()->setLabel(9, tr("Korr.d"));
+    horizontalHeader()->setLabel(9, tr("Corr.d"));
     horizontalHeader()->setLabel(10, tr("mod.v"));
-    horizontalHeader()->setLabel(11, tr("Flagg"));
+    horizontalHeader()->setLabel(11, tr("Flag"));
     horizontalHeader()->setLabel(12, tr("="));
     horizontalHeader()->setLabel(13, tr("Fl.v"));
-    horizontalHeader()->setLabel(14, tr("Korrigert OK"));
+    horizontalHeader()->setLabel(14, tr("Corrected OK"));
     horizontalHeader()->setLabel(15, tr("Original OK"));
-    horizontalHeader()->setLabel(16, tr("Interpolert"));
-    horizontalHeader()->setLabel(17, tr("Tilfordelt"));
-    horizontalHeader()->setLabel(18, tr("Korrigert"));
-    horizontalHeader()->setLabel(19, tr("Forkastet"));
+    horizontalHeader()->setLabel(16, tr("Interpolated"));
+    horizontalHeader()->setLabel(17, tr("Redistributed"));
+    horizontalHeader()->setLabel(18, tr("Corrected"));
+    horizontalHeader()->setLabel(19, tr("Rejected"));
     horizontalHeader()->setLabel(20, "");
     
     makeMissingList(selectedParameters, stime, etime, dtl);
@@ -235,7 +231,7 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     showSameStation();
     
     setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
-    setCaption(tr("Feilliste"));
+    setCaption(tr("Error list"));
 }
 
 ErrorList::~ErrorList()
@@ -790,8 +786,8 @@ void ErrorList::markModified( int row, int col )
     float downlim = lowMap[panr];
     if ( ( !text(row, col).isEmpty() && (cor > uplim || cor < downlim)) && col < 19 && col > 15) {
         QMessageBox::warning( this,
-                              tr("Ulovlig verdi"),
-                              tr("Verdien er utenfor fysikalske grenser"),
+                              tr("Illegal value"),
+                              tr("Value outside physical values"),
                               QMessageBox::Ok,
                               Qt::NoButton );
         item( row, col )->setText("");;
@@ -805,8 +801,8 @@ void ErrorList::markModified( int row, int col )
         if ( fmis == 0 ) {
             if ( fd == 2 || fd == 3 || fd > 5 ) {
                 QMessageBox::information( this,
-                                          tr("Feil kolonne"),
-                                          tr("Oppsamling.\nBenytt feltet Tilfordelt."),
+                                          tr("Wrong column"),
+                                          tr("Accumulation. Use field 'redistributed'."),
                                           QMessageBox::Ok,
                                           Qt::NoButton );
                 OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -819,8 +815,8 @@ void ErrorList::markModified( int row, int col )
         else if ( fmis == 1 ) {
             if ( fd == 2 || fd > 5 ) {
                 QMessageBox::information( this,
-                                          tr("Feil kolonne"),
-                                          tr("Oppsamling.\nBenytt feltet Tilfordelt."),
+                                          tr("Wrong column"),
+                                          tr("Accumulation. Use field &apos;redistributed&apos;."),
                                           QMessageBox::Ok,
                                           Qt::NoButton );
                 OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -832,8 +828,8 @@ void ErrorList::markModified( int row, int col )
         }
         else if ( fmis == 2 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Korrigert mangler.\nBenytt feltet Original OK eller Forkastet."),
+                                      tr("Wrong column"),
+                                      tr("Corrected is missing. Use field 'Original OK' or 'Forkastet'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -844,8 +840,8 @@ void ErrorList::markModified( int row, int col )
         }
         else if ( fmis == 3 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Både original og Korrigert mangler.\nBenytt feltet Interpolert."),
+                                      tr("Wrong column"),
+                                      tr("Both original and corrected are missing. Use field 'Interpolated'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -860,14 +856,15 @@ void ErrorList::markModified( int row, int col )
     {
         if ( fmis == 1 ) {
             int dsc = QMessageBox::information( this,
-                                                tr("Original mangler"),
-                                                tr("Ønsker du å sette inn -32767 som korrigert verdi?\n"),
-                                                tr("Ja"),
-                                                tr("Nei") );
+                                                tr("Original missing"),
+                                                tr("Do you want to set in -32767 as corrected value?"),
+                                                tr("Yes"),
+                                                tr("No") );
             if ( dsc == 1 ) { // Nei
                 QMessageBox::information( this,
-                                          tr("Feil kolonne"),
-                                          tr("Benytt feltet Interpolert hvis du ønsker ny interpolert verdi,\neller Korrigert OK hvis du ønsker å godkjenne eksisterende verdi"),
+                                          tr("Wrong column"),
+                                          tr("Use field 'Interpolated' if you want a new interpolated value, "
+                                             "or 'Corrected OK' if you want to accept an existing value"),
                                           QMessageBox::Ok,
                                           Qt::NoButton );
                 OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -883,8 +880,8 @@ void ErrorList::markModified( int row, int col )
             item( row, col )->setText("");
             updateCell(row, col);
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Både original og korrigert mangler.\nBenytt feltet Interpolert."),
+                                      tr("Wrong column"),
+                                      tr("Both original and corrected value ar missing. Use field 'Interpolated'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             return;
@@ -895,8 +892,8 @@ void ErrorList::markModified( int row, int col )
     {
         if ( fd > 1 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Oppsamling.\nBenytt feltet Tilfordelt."),
+                                      tr("Wrong column"),
+                                      tr("Accumulation. Use field &apos;redistributed&apos;."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             item( row, col )->setText("");
@@ -910,8 +907,8 @@ void ErrorList::markModified( int row, int col )
     {
         if ( fd >= 2 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Oppsamling.\nBenytt feltet Tilfordelt."),
+                                      tr("Wrong column"),
+                                      tr("Accumulation. Use field &apos;redistributed&apos;."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             // UNUSED OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -925,8 +922,8 @@ void ErrorList::markModified( int row, int col )
     {
         if ( fmis == 1 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Kan ikke forkaste.\nBenytt feltet Original OK."),
+                                      tr("Wrong column"),
+                                      tr("Cannot reject. Use field 'Original OK'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -937,8 +934,8 @@ void ErrorList::markModified( int row, int col )
         }
         else if ( fmis == 3 ) {
             QMessageBox::information( this,
-                                      tr("Feil kolonne"),
-                                      tr("Kan ikke forkaste.\nBenytt feltet Interpolert."),
+                                      tr("Wrong column"),
+                                      tr("Cannot reject. Use field 'Interpolert'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -1021,8 +1018,8 @@ void ErrorList::execMissingList()
         mt->show();
     } else {
         QMessageBox::information(this,
-                                 tr("Mangelliste"),
-                                 tr("Mangellisten inneholder ikke fler \nelementer enn de som vises i feillisten"),
+                                 tr("Missing list"),
+                                 tr("Missing list does not contain more elements that shown in the error list"),
                                  tr("OK"));
     }
 }
@@ -1068,9 +1065,8 @@ void ErrorList::saveChanges()
     DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
     if (not reinserter) {
         QMessageBox::critical( this,
-                               tr("Ikke autentisert"),
-                               tr("Du er ikke autentisert som operatør.\n"
-                                  "Kan ikke lagre data."),
+                               tr("Not authenticated"),
+                               tr("You are not authenticated as operator. Cannot save sata."),
                                QMessageBox::Ok,
                                Qt::NoButton );
         return;
@@ -1078,8 +1074,8 @@ void ErrorList::saveChanges()
 
     if (modifiedRows.empty()) {
         QMessageBox::information( this,
-                                  tr("Ingen ulagret data."),
-                                  tr("Det fins ingen ulagrede data"),
+                                  tr("No unsaved data"),
+                                  tr("There are no unsaved data."),
                                   QMessageBox::Ok,
                                   Qt::NoButton );
         return;
@@ -1285,17 +1281,17 @@ void ErrorList::saveChanges()
 
     if ( result->res != CKvalObs::CDataSource::OK ) {
         QMessageBox::critical( this,
-                               tr("Kan ikke lagre data"),
-                               tr("Kan ikke lagre data!\n"
-                                  "Meldingen fra Kvalobs var:\n%1").arg(QString(result->message)),
+                               tr("Cannot save data"),
+                               tr("Cannot save data! Message from kvalobs was:\n%1")
+                               .arg(QString(result->message)),
                                QMessageBox::Ok,
                                Qt::NoButton );
         return;
     }
 
     QMessageBox::information( this,
-                              tr("Data lagret"),
-                              tr("%1 rader ble lagret til kvalobs.").arg(modifiedRows.size()),
+                              tr("Data saved"),
+                              tr("%1 rows have been saved to kvalobs.").arg(modifiedRows.size()),
                               QMessageBox::Ok,
                               Qt::NoButton );
 
@@ -1326,9 +1322,8 @@ bool ErrorList::maybeSave()
     if ( not modifiedRows.empty() ) {
         int result =
             QMessageBox::warning( this, tr("HQC"),
-                                  tr("Du har ulagrede endringer i feillista.\n"
-                                     "Vil du lagre dem?"),
-                                  tr("&Ja"), tr("&Nei"), tr("&Avbryt"),
+                                  tr("You have unsaved changes in the error list. Do you want to save them?"),
+                                  tr("&Yes"), tr("&No"), tr("&Cancel"),
                                   0, 2 );
         if ( ! result )
             saveChanges();
@@ -1349,21 +1344,28 @@ bool ErrorList::event(QEvent *event)
         QString cellText = text( row, stationidCol );
         if ( cellText.isNull() )
             return false;
-
-        bool ok = true;
-        QString tipString =
-            StationInfo::getInstance(kvservice::KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
-        if ( !ok ) {// Cold not convert cell contents to int.
-            return false;
+        
+        
+        QString tipString;
+        {
+            bool ok = true;
+            int stationID = cellText.toInt(&ok);
+            if ( !ok ) // Could not convert cell contents to int.
+                return false;
+            tipString += Helpers::stationInfo(stationID);
         }
 
         cellText = text( row, typeidCol );
-        if ( cellText.isNull() )
+        if (cellText.isNull())
             return false;
-        ok = true;
-        tipString += " - " + TypeInfo::getInstance(kvservice::KvApp::kvApp)->getInfo( cellText.toInt( &ok ) );
-        if ( !ok ) { // Cold not convert cell contents to int.
-            return false;
+
+        {
+            bool ok = true;
+            int typeID = cellText.toInt(&ok);
+            if ( !ok ) // Could not convert cell contents to int.
+                return false;
+
+            tipString += Helpers::typeInfo(typeID);
         }
         QToolTip::showText(helpEvent->globalPos(), tipString);
     }

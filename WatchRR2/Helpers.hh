@@ -45,7 +45,6 @@ SensorTime sensorTimeFromKvModelData(const kvalobs::kvModelData& d);
 Sensor modelSensor(const Sensor& sensor);
 
 void updateUseInfo(kvalobs::kvData& data);
-void updateCfailed(kvalobs::kvData& data, const std::string& add);
 
 QString appendText(QString& text, const QString& append, const QString& separator = ", ");
 QString appendedText(const QString& text, const QString& append, const QString& separator = ", ");

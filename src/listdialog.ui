@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Datautvalg HQC</string>
+   <string>Data selection HQC</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <item>
@@ -21,7 +21,7 @@
      </property>
      <widget class="QWidget" name="tabStations">
       <attribute name="title">
-       <string>Stasjoner</string>
+       <string>Stations</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_3">
        <item>
@@ -29,7 +29,7 @@
          <item>
           <widget class="QGroupBox" name="controlGroup">
            <property name="title">
-            <string>Kontrolltype</string>
+            <string>Control type</string>
            </property>
            <layout class="QVBoxLayout" name="controlLayout">
             <property name="spacing">
@@ -43,42 +43,42 @@
               <item>
                <widget class="QCheckBox" name="twiType">
                 <property name="text">
-                 <string>&amp;Temperatur,fuktighet</string>
+                 <string>&amp;Temperature, humidity</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="prcType">
                 <property name="text">
-                 <string>&amp;Nedbør,snøforhold</string>
+                 <string>&amp;Precipitation,snow</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="aprType">
                 <property name="text">
-                 <string>&amp;Lufttrykk</string>
+                 <string>&amp;Air pressure</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="winType">
                 <property name="text">
-                 <string>&amp;Vind</string>
+                 <string>&amp;Wind</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="marType">
                 <property name="text">
-                 <string>&amp;Maritime parametere</string>
+                 <string>&amp;Maritime parameters</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="visType">
                 <property name="text">
-                 <string>V&amp;isuelle parametere</string>
+                 <string>V&amp;isual parameters</string>
                 </property>
                </widget>
               </item>
@@ -90,7 +90,7 @@
          <item>
           <widget class="QGroupBox" name="stTyp">
            <property name="title">
-            <string>Stasjonstype</string>
+            <string>Station type</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_2">
             <item row="0" column="0">
@@ -110,13 +110,13 @@
          <item>
           <widget class="QGroupBox" name="stRegion">
            <property name="title">
-            <string>Landsdel</string>
+            <string>Region</string>
            </property>
            <layout class="QGridLayout" name="gridLayout">
             <item row="0" column="0">
              <widget class="QToolButton" name="regionEastAdd">
               <property name="toolTip">
-               <string>Velg alle fylker i Østlandet</string>
+               <string>Select all counties in Østlandet</string>
               </property>
               <property name="text">
                <string>+</string>
@@ -131,7 +131,7 @@
             <item row="0" column="1">
              <widget class="QToolButton" name="regionEastRemove">
               <property name="toolTip">
-               <string>Fjern alle fylker i Østlandet</string>
+               <string>Deselect all counties in Østlandet</string>
               </property>
               <property name="text">
                <string>-</string>
@@ -153,7 +153,7 @@
             <item row="1" column="0">
              <widget class="QToolButton" name="regionWestAdd">
               <property name="toolTip">
-               <string>Velg alle fylker i Vestlandet</string>
+               <string>Select all counties in Vestlandet</string>
               </property>
               <property name="text">
                <string>+</string>
@@ -168,7 +168,7 @@
             <item row="1" column="1">
              <widget class="QToolButton" name="regionWestRemove">
               <property name="toolTip">
-               <string>Fjern alle fylker i Vestlandet</string>
+               <string>Deselect all counties in Vestlandet</string>
               </property>
               <property name="text">
                <string>-</string>
@@ -190,7 +190,7 @@
             <item row="2" column="0">
              <widget class="QToolButton" name="regionTrondAdd">
               <property name="toolTip">
-               <string>Velg alle fylker i Trøndelag</string>
+               <string>Select all counties in Trøndelag</string>
               </property>
               <property name="text">
                <string>+</string>
@@ -205,7 +205,7 @@
             <item row="2" column="1">
              <widget class="QToolButton" name="regionTrondRemove">
               <property name="toolTip">
-               <string>Fjern alle fylker i Trøndelag</string>
+               <string>Deselect all counties in Trøndelag</string>
               </property>
               <property name="text">
                <string>-</string>
@@ -227,7 +227,7 @@
             <item row="3" column="0">
              <widget class="QToolButton" name="regionNorthAdd">
               <property name="toolTip">
-               <string>Velg alle fylker i Nord-Norge</string>
+               <string>Select all counties in Nord-Norge</string>
               </property>
               <property name="text">
                <string>+</string>
@@ -242,7 +242,7 @@
             <item row="3" column="1">
              <widget class="QToolButton" name="regionNorthRemove">
               <property name="toolTip">
-               <string>Fjern alle fylker i Nord-Norge</string>
+               <string>Deselect all counties in Nord-Norge</string>
               </property>
               <property name="text">
                <string>-</string>
@@ -280,7 +280,7 @@
          <item>
           <widget class="QGroupBox" name="stCounty">
            <property name="title">
-            <string>Fylke</string>
+            <string>County</string>
            </property>
            <layout class="QGridLayout" name="gridLayout_3">
             <item row="0" column="0">
@@ -298,7 +298,7 @@
        <item>
         <widget class="QGroupBox" name="stationGroup">
          <property name="title">
-          <string>Stasjoner</string>
+          <string>Stations</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
@@ -313,21 +313,21 @@
             <item>
              <widget class="QCheckBox" name="priReg">
               <property name="text">
-               <string>&amp;Prioriterte</string>
+               <string>&amp;Prioritised</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="stationSelect">
               <property name="text">
-               <string>Velg &amp;stasjoner…</string>
+               <string>Choose &amp;stations…</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="stationSelectAll">
               <property name="text">
-               <string>&amp;Alle passende</string>
+               <string>&amp;All matching</string>
               </property>
              </widget>
             </item>
@@ -357,7 +357,7 @@
          <item>
           <widget class="QGroupBox" name="typeGroup">
            <property name="title">
-            <string>Meldingstyper</string>
+            <string>Message types</string>
            </property>
            <layout class="QFormLayout" name="formLayout_2">
             <property name="fieldGrowthPolicy">
@@ -366,7 +366,7 @@
             <item row="0" column="0">
              <widget class="QRadioButton" name="priTypes">
               <property name="text">
-               <string>Prioriterte typer</string>
+               <string>Prioritised types</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -376,7 +376,7 @@
             <item row="0" column="1">
              <widget class="QRadioButton" name="allTypes">
               <property name="text">
-               <string>Alle typer</string>
+               <string>All types</string>
               </property>
              </widget>
             </item>
@@ -386,13 +386,13 @@
          <item>
           <widget class="QGroupBox" name="timeGroup">
            <property name="title">
-            <string>Tidsrom</string>
+            <string>Time range</string>
            </property>
            <layout class="QFormLayout" name="formLayout">
             <item row="0" column="0">
              <widget class="QLabel" name="labelFrom">
               <property name="text">
-               <string>Fra</string>
+               <string>From</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -409,7 +409,7 @@
             <item row="1" column="0">
              <widget class="QLabel" name="labelTo">
               <property name="text">
-               <string>Til</string>
+               <string>To</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -432,13 +432,13 @@
      </widget>
      <widget class="QWidget" name="tabParameters">
       <attribute name="title">
-       <string>Værelement</string>
+       <string>Weather element</string>
       </attribute>
       <layout class="QHBoxLayout" name="horizontalLayout_4">
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
-          <string>Tilgjengelig</string>
+          <string>Available</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_4">
           <item>
@@ -453,7 +453,7 @@
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Vis kun:</string>
+               <string>Show only:</string>
               </property>
              </widget>
             </item>
@@ -507,14 +507,14 @@
          <item>
           <widget class="QPushButton" name="buttonParamSelectAll">
            <property name="text">
-            <string>&amp;Alle</string>
+            <string>&amp;All</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="buttonParamDeselectAll">
            <property name="text">
-            <string>&amp;Ingen</string>
+            <string>&amp;None</string>
            </property>
           </widget>
          </item>
@@ -536,7 +536,7 @@
        <item>
         <widget class="QGroupBox" name="groupBox_2">
          <property name="title">
-          <string>Valgt</string>
+          <string>Chosen</string>
          </property>
          <layout class="QVBoxLayout" name="verticalLayout_5">
           <property name="leftMargin">
@@ -556,7 +556,7 @@
      </widget>
      <widget class="QWidget" name="tabClock">
       <attribute name="title">
-       <string>Tidspunkter</string>
+       <string>Times</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_7">
        <item>
@@ -564,10 +564,10 @@
          <item row="0" column="0">
           <widget class="QToolButton" name="buttonClockAddAll">
            <property name="toolTip">
-            <string>Velg alle tidspunkter</string>
+            <string>Choose all times</string>
            </property>
            <property name="text">
-            <string>Alle tidpunkter</string>
+            <string>All times</string>
            </property>
            <property name="icon">
             <iconset theme="add">
@@ -579,10 +579,10 @@
          <item row="0" column="1">
           <widget class="QToolButton" name="buttonClockRemoveAll">
            <property name="toolTip">
-            <string>Fjern alle tidspunkter</string>
+            <string>Rmeove all times</string>
            </property>
            <property name="text">
-            <string>Alle tidpunkter</string>
+            <string>All times</string>
            </property>
            <property name="icon">
             <iconset theme="remove">
@@ -594,17 +594,17 @@
          <item row="0" column="2">
           <widget class="QLabel" name="labelClockAll">
            <property name="text">
-            <string>Alle tidspunkter</string>
+            <string>All times</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0">
           <widget class="QToolButton" name="buttonClockAddStandard">
            <property name="toolTip">
-            <string>Velg alle standardtidspunkter</string>
+            <string>Choose all standard times</string>
            </property>
            <property name="text">
-            <string>Alle tidpunkter</string>
+            <string>All times</string>
            </property>
            <property name="icon">
             <iconset theme="add">
@@ -616,10 +616,10 @@
          <item row="1" column="1">
           <widget class="QToolButton" name="buttonClockRemoveStandard">
            <property name="toolTip">
-            <string>Fjern alle standardtidspunkter</string>
+            <string>Remove all standard times</string>
            </property>
            <property name="text">
-            <string>Alle tidpunkter</string>
+            <string>All times</string>
            </property>
            <property name="icon">
             <iconset theme="remove">
@@ -631,7 +631,7 @@
          <item row="1" column="2">
           <widget class="QLabel" name="labelClockStandard">
            <property name="text">
-            <string>Standardtidspunkter</string>
+            <string>Standard times</string>
            </property>
           </widget>
          </item>
@@ -642,7 +642,7 @@
          <item>
           <widget class="QGroupBox" name="groupClockByHour">
            <property name="title">
-            <string>Utvalgte tidspunkter</string>
+            <string>Selected times</string>
            </property>
           </widget>
          </item>
@@ -683,14 +683,14 @@
      <item>
       <widget class="QPushButton" name="buttonRestore">
        <property name="text">
-        <string>Hente…</string>
+        <string>Load…</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonSave">
        <property name="text">
-        <string>Lagre…</string>
+        <string>Save…</string>
        </property>
       </widget>
      </item>

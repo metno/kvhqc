@@ -1,24 +1,26 @@
 
 SET(hqc_HEADERS
+  ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
-  ../include/HqcDianaHelper.hh
-  ../include/KvalobsDataView.h
-  ../include/rejecttimeseriesdialog.h
-  ../include/accepttimeseriesdialog.h
-  ../include/ItemCheckBox.hh
-  ../include/KvalobsDataModel.h
-  ../include/ListDialog.hh
-  ../include/textdatadialog.h
-  ../include/StationSelection.hh
-  ../include/TimeseriesDialog.h
   ../include/discarddialog.h
-  ../include/KvalobsDataDelegate.h
+  ../include/errorlist.h
+  ../include/HqcDianaHelper.hh
   ../include/hqcmain.h
-  ../include/textdatatable.h
-  ../include/rejecttable.h
+  ../include/ItemCheckBox.hh
+  ../include/KvalobsDataDelegate.h
+  ../include/KvalobsDataModel.h
+  ../include/KvalobsDataView.h
+  ../include/ListDialog.hh
+  ../include/missingtable.h
   ../include/rejectdialog.h
-  ../include/errorlist.h)
+  ../include/rejecttable.h
+  ../include/rejecttimeseriesdialog.h
+  ../include/StationSelection.hh
+  ../include/textdatadialog.h
+  ../include/textdatatable.h
+  ../include/TimeseriesDialog.h
+)
 
 SET(hqc_SOURCES
   ParamIdModel.cc
@@ -61,6 +63,9 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
+SET(hqc_TRANS hqc_nb_NO.ts)
+QT4_ADD_TRANSLATION(hqc_QM ${hqc_TRANS})
+
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
   listdialog.ui
@@ -73,7 +78,9 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 ADD_EXECUTABLE(hqc
   ${hqc_SOURCES}
   ${hqc_HEADERS_MOC}
-  ${hqc_UIS_H})
+  ${hqc_UIS_H}
+  ${hqc_QM}
+)
 
 SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}.bin")
@@ -85,3 +92,6 @@ TARGET_LINK_LIBRARIES(hqc
 )
 
 INSTALL(TARGETS hqc DESTINATION bin)
+
+INSTALL(FILES ${hqc_QM}
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")

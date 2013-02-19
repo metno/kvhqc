@@ -43,9 +43,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog() 
 {  
-  setCaption(tr("Godkjenn tidsserie"));
+  setCaption(tr("Accept Time Series"));
 
-  QLabel* statLabel = new QLabel(tr("Stasjon"), this );
+  QLabel* statLabel = new QLabel(tr("Station"), this );
   stationWidget   = new QListWidget(this);
   connect(stationWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(stationSelected(QListWidgetItem*)));
@@ -55,23 +55,23 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   connect(parameterWidget, SIGNAL(itemClicked(QListWidgetItem*)),
 	  this, SLOT(parameterSelectionChanged(QListWidgetItem*)));
 
-  QLabel* resultLabel = new QLabel( "Valgt tidsserie", this );
+  QLabel* resultLabel = new QLabel( "Chosen time series", this );
   resultWidget = new QListWidget(this);
   resultWidget->setFixedHeight(30);
 
   qc2Val = new QGroupBox(this);
-  qc2Yes    = new QRadioButton(tr("Retting av QC2 mulig"), qc2Val );
+  qc2Yes    = new QRadioButton(tr("Update by QC2 allowed"), qc2Val );
   qc2Yes->setChecked(true);
-  qc2No   = new QRadioButton(tr("Retting av QC2 IKKE mulig"), qc2Val );
+  qc2No   = new QRadioButton(tr("Update by QC2 NOT allowed"), qc2Val );
 
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
 
-  QLabel* fromLabel = new QLabel(tr("Fra"), this );
+  QLabel* fromLabel = new QLabel(tr("From"), this );
   fromTimeEdit  = new MiDateTimeEdit(f,this);
   fromTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
-  QLabel* toLabel   = new QLabel(tr("Til"), this );
+  QLabel* toLabel   = new QLabel(tr("To"), this );
   toTimeEdit    = new MiDateTimeEdit(t,this);
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 

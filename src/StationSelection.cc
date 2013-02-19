@@ -20,11 +20,11 @@ StationTable::StationTable(QWidget* parent)
     setSorting( true );
 
     horizontalHeader()->setLabel( 0, tr( "Stnr" ) );
-    horizontalHeader()->setLabel( 1, tr( "Navn" ) );
+    horizontalHeader()->setLabel( 1, tr( "Name" ) );
     horizontalHeader()->setLabel( 2, tr( "HOH" ) );
     horizontalHeader()->setLabel( 3, tr( "Type" ) );
-    horizontalHeader()->setLabel( 4, tr( "Fylke" ) );
-    horizontalHeader()->setLabel( 5, tr( "Kommune" ) );
+    horizontalHeader()->setLabel( 4, tr( "County" ) );
+    horizontalHeader()->setLabel( 5, tr( "Commune" ) );
     horizontalHeader()->setLabel( 6, tr( "Pri" ) );
 }
 

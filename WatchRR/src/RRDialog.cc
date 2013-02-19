@@ -1,35 +1,34 @@
 /*
-HQC - Free Software for Manual Quality Control of Meteorological Observations
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2013 met.no
+  Copyright (C) 2013 met.no
 
-Contact information:
-Norwegian Meteorological Institute
-Box 43 Blindern
-0313 OSLO
-NORWAY
-email: kvalobs-dev@met.no
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
 
-This file is part of HQC
+  This file is part of HQC
 
-HQC is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+  HQC is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
-HQC is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+  HQC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-You should have received a copy of the GNU General Public License along
-with HQC; if not, write to the Free Software Foundation Inc.,
-51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  You should have received a copy of the GNU General Public License along
+  with HQC; if not, write to the Free Software Foundation Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "KvMetaDataBuffer.hh"
 #include "RRDialog.h"
 #include "StationSelection.h"
-#include "StationInformation.h"
 #include "StationSelection.h"
 #include <qlabel.h>
 #include <qpushbutton.h>
@@ -55,14 +54,15 @@ using namespace std;
 
 namespace WatchRR
 {
-  RRDialog * RRDialog::getRRDialog( const kvData & data, QWidget * parent, Qt::WindowFlags f )
-  {
+
+RRDialog * RRDialog::getRRDialog(const kvData& data, QWidget* parent, Qt::WindowFlags f)
+{
     cout << "RRDialog::getRRDialog:" << endl
 	 << decodeutility::kvdataformatter::createString( data ) << endl;
 
-    QDialog * selector = new QDialog( parent, "", Qt::WDestructiveClose );
-    selector->setCaption( "Velg stasjonsinformasjon" );
-
+    QDialog * selector = new QDialog(parent, "", Qt::WDestructiveClose);
+    selector->setCaption(tr("Velg stasjonsinformasjon"));
+    
     Q3VBoxLayout * mainLayout = new Q3VBoxLayout( selector );
 
     StationSelection * ss = new StationSelection( selector, & data );
@@ -72,17 +72,17 @@ namespace WatchRR
     Q3HBoxLayout * buttonLayout = new Q3HBoxLayout( mainLayout );
     buttonLayout->addStretch( 1 );
 
-    QPushButton * ok = new QPushButton( "&Ok", selector );
+    QPushButton * ok = new QPushButton(tr("&Ok"), selector );
     buttonLayout->addWidget( ok );
     connect( ok, SIGNAL( clicked() ), selector, SLOT( accept() ) );
 
-    QPushButton * can = new QPushButton( "&Avbryt", selector );
+    QPushButton * can = new QPushButton(tr("&Avbryt"), selector );
     buttonLayout->addWidget( can );
     connect( can, SIGNAL( clicked() ), selector, SLOT( reject() ) );
 
     const int result = selector->exec();
     if ( result == QDialog::Rejected )
-      return 0;
+        return 0;
 
     int            st = ss->station();
     if (not KvMetaDataBuffer::instance()->isKnownStation(st)) {
@@ -102,40 +102,40 @@ namespace WatchRR
     RRDialog * ret = 0;
 
     if ( st ) {
-      try {
-        ret= new RRDialog( st, da, ty, se, lv, 0, parent );
-      }
-      catch( invalid_argument & e ) {
-      }
-      catch( exception & ){
-      }
+        try {
+            ret= new RRDialog( st, da, ty, se, lv, 0, parent );
+        }
+        catch( invalid_argument & e ) {
+        }
+        catch( exception & ){
+        }
     }
     return ret;
-  }
+}
 
-  void RRDialog::setup( RRTable * rrt )
-  {
-    if ( ! this->station ) {
-      ostringstream ss;
-      ss << "Ingen stasjon " << station;
-      throw invalid_argument( ss.str() );
+void RRDialog::setup(RRTable* rrt)
+{
+    // Display station information:
+    stationInfo = new QLineEdit(this, tr("Station Info"));
+    stationInfo->setReadOnly(true);
+    stationInfo->setFocusPolicy(Qt::NoFocus);
+
+    QString stationDescr = QString::number(mStationId), stationDetail;
+    try {
+        const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(mStationId);
+        stationDescr += " - " + QString::fromStdString(s.name());
+        stationDetail = stationDescr;
+        if (s.environmentid() == 10)
+            stationDetail += tr(" (Ikke daglig)");
+    } catch (std::runtime_error&) {
     }
 
-    // Display station information:
-    stationInfo = new QLineEdit( this, "Station Info" );
-    stationInfo->setReadOnly( true );
-    stationInfo->setFocusPolicy( Qt::NoFocus );
-
-    QString stationDescr = QString::number( station->stationID() );
-    if ( this->station )
-        stationDescr += " - " + QString::fromStdString(this->station->name());
     QString caption = "Nedbør for stasjon " + stationDescr;
-    if ( not captionSuffix_.isEmpty() )
-      caption += " [" + captionSuffix_ + "]";
+    if (not captionSuffix_.isEmpty())
+        caption += " [" + captionSuffix_ + "]";
     setCaption( caption );
-    if ( station->environmentid() == 10 )
-        stationDescr += "  (Ikke daglig)";
-    stationInfo->setText( stationDescr );
+
+    stationInfo->setText(stationDetail);
 
     // Buttons:
     help   = new QPushButton( "&Hjelp", this, "Hjelp" );
@@ -156,155 +156,155 @@ namespace WatchRR
     // Layout:
     mainLayout = new Q3VBoxLayout( this, 0, -1, "Main Layout" );
     {
-      Q3HBoxLayout *topLayout = new Q3HBoxLayout( mainLayout, -1, "Top Layout" );
-      {
-	topLayout->addWidget( new QLabel("Stasjon:", this ) );
-	topLayout->addWidget( stationInfo );
-      }
+        Q3HBoxLayout *topLayout = new Q3HBoxLayout( mainLayout, -1, "Top Layout" );
+        {
+            topLayout->addWidget( new QLabel("Stasjon:", this ) );
+            topLayout->addWidget( stationInfo );
+        }
 
-      mainLayout->addWidget( table );
+        mainLayout->addWidget( table );
 
-      Q3HBoxLayout *buttonLayout = new Q3HBoxLayout( mainLayout, -1, "Button Layout" );
-      {
-	buttonLayout->addWidget( help );
-	buttonLayout->addStretch( 1 );
-	buttonLayout->addWidget( save );
-	buttonLayout->addWidget( ok );
-      }
-      mainLayout->addWidget( statusBar );
+        Q3HBoxLayout *buttonLayout = new Q3HBoxLayout( mainLayout, -1, "Button Layout" );
+        {
+            buttonLayout->addWidget( help );
+            buttonLayout->addStretch( 1 );
+            buttonLayout->addWidget( save );
+            buttonLayout->addWidget( ok );
+        }
+        mainLayout->addWidget( statusBar );
     }
-  }
+}
 
-  RRDialog::RRDialog( DayObsListPtr dol,
-		      const DataReinserter<kvservice::KvApp> * dataReinserter,
-		      const QString & captionSuffix,
-		      QWidget *parent, const char* name, bool modal )
-    //    : QDialog( parent, name, modal, f | Qt::WDestructiveClose )
+RRDialog::RRDialog(DayObsListPtr dol,
+                   const DataReinserter<kvservice::KvApp> * dataReinserter,
+                   const QString & captionSuffix,
+                   QWidget *parent, const char* name, bool modal )
     : QDialog( parent, Qt::Window )
     , dataReinserter( dataReinserter )
     , captionSuffix_( captionSuffix )
-    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[(*dol)[0].getStation()] )
+    , mStationId((*dol)[0].getStation())
     , shownFirstTime( false )
-  {
+{
     RRTable * rrt = new RRTable( dol, /*ttGroup,*/ this, "Table" );
     setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     rrt->setMinimumSize(rrt->sizeHint());
     setup( rrt );
     //    rrt->ttGroup = ttGroup;
-  }
+}
 
 
-  RRDialog::RRDialog( int station, const timeutil::pdate& date,
-		      int type, int sensor, int level,
-		      const DataReinserter<KvApp> * dataReinserter,
-		      QWidget* parent, const char* name, bool modal )
+RRDialog::RRDialog( int station, const timeutil::pdate& date,
+                    int type, int sensor, int level,
+                    const DataReinserter<KvApp> * dataReinserter,
+                    QWidget* parent, const char* name, bool modal )
     : QDialog( parent, name, modal, Qt::Window )
     , dataReinserter( dataReinserter )
-    , station( (*StationInformation<KvApp>::getInstance( KvApp::kvApp ))[station] )
+    , mStationId(station)
     , shownFirstTime( false )
-  {
+{
     RRTable * rrt;
     try {
-      rrt = new RRTable( station, date, type, sensor, level, /*0,*/ this, "Table" );
-      setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-      rrt->setMinimumSize(rrt->sizeHint());
+        rrt = new RRTable( station, date, type, sensor, level, /*0,*/ this, "Table" );
+        setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
+        rrt->setMinimumSize(rrt->sizeHint());
     }
     catch( std::runtime_error &e ) {
-      int res = QMessageBox::critical( this, "HQC",
-				       QString("Feil i kontakt med kvalobs!\n"
-					       "Meldingen var:\n") + e.what(),
-				       QMessageBox::Retry | QMessageBox::Default,
-				       QMessageBox::Abort | QMessageBox::Escape );
-      if ( res == QMessageBox::Retry ) {
-	try {
-	  rrt = new RRTable( station, date, type, sensor, level, /*ttGroup,*/ this, "Table" );
-	}
-	catch( std::runtime_error &e ) {
-	  res = QMessageBox::critical( this, "HQC",
-				       QString("Fremdeles feil i kontakt med kvalobs!\n"
-					       "Meldingen var:\n") + e.what(),
-				       QMessageBox::Abort | QMessageBox::Default,
-				       Qt::NoButton );
-	}
-      }
-      if ( res == QMessageBox::Abort ) {
-	throw;
-      }
+        int res = QMessageBox::critical( this, "HQC",
+                                         QString("Feil i kontakt med kvalobs!\n"
+                                                 "Meldingen var:\n") + e.what(),
+                                         QMessageBox::Retry | QMessageBox::Default,
+                                         QMessageBox::Abort | QMessageBox::Escape );
+        if ( res == QMessageBox::Retry ) {
+            try {
+                rrt = new RRTable( station, date, type, sensor, level, /*ttGroup,*/ this, "Table" );
+            }
+            catch( std::runtime_error &e ) {
+                res = QMessageBox::critical( this, "HQC",
+                                             QString("Fremdeles feil i kontakt med kvalobs!\n"
+                                                     "Meldingen var:\n") + e.what(),
+                                             QMessageBox::Abort | QMessageBox::Default,
+                                             Qt::NoButton );
+            }
+        }
+        if ( res == QMessageBox::Abort ) {
+            throw;
+        }
     }
     setup ( rrt );
     //    rrt->ttGroup = ttGroup;
-  }
+}
 
-  RRDialog::~RRDialog( )
-  {
-  }
+RRDialog::~RRDialog( )
+{
+}
 
-  void RRDialog::polish()
-  {
+void RRDialog::polish()
+{
     QDialog::polish();
     table->ensureCellVisible( table->numRows() -1, 0 );
-  }
+}
 
-  bool RRDialog::saveData()
-  {
+bool RRDialog::saveData()
+{
     return table->saveData( dataReinserter );
-  }
+}
 
-  enum ConfirmSaveValue { Yes, No, Cancel };
+enum ConfirmSaveValue { Yes, No, Cancel };
 
-  ConfirmSaveValue confirmSave( RRDialog *dialog, int noOfChanges,
-				const DataReinserter<KvApp> * dataReinserter )
-  {
+ConfirmSaveValue confirmSave( RRDialog *dialog, int noOfChanges,
+                              const DataReinserter<KvApp> * dataReinserter )
+{
     ConfirmSaveValue save = (ConfirmSaveValue)
-      QMessageBox::information( dialog, "HQC - Nedbør",
-        QString( "Du har endret ") + QString::number( noOfChanges ) + " parametre.\n"
-        "Vil du lagre endringene du har gjort?" ,
-  			"&Ja", "&Nei", "&Avbryt", 0, 2 );
+        QMessageBox::information( dialog, "HQC - Nedbør",
+                                  QString( "Du har endret ") + QString::number( noOfChanges ) + " parametre.\n"
+                                  "Vil du lagre endringene du har gjort?" ,
+                                  "&Ja", "&Nei", "&Avbryt", 0, 2 );
     if ( save == Yes ) {
-      bool ok = dialog->table->saveData( dataReinserter );
-      if ( ok )
-        return Yes;
-      else
-        return Cancel;
+        bool ok = dialog->table->saveData( dataReinserter );
+        if ( ok )
+            return Yes;
+        else
+            return Cancel;
     }
     return save;
-  }
+}
 
-  void RRDialog::showEvent( QShowEvent * e )
-  {
+void RRDialog::showEvent( QShowEvent * e )
+{
     QDialog::showEvent( e );
     if ( not shownFirstTime ) {
-      shownFirstTime = true;
-      table->ensureCellVisible( table->numRows() -1, 0 );
+        shownFirstTime = true;
+        table->ensureCellVisible( table->numRows() -1, 0 );
     }
-  }
+}
 
 
-  void RRDialog::closeEvent( QCloseEvent * e )
-  {
+void RRDialog::closeEvent( QCloseEvent * e )
+{
     QDialog::closeEvent( e );
-  }
+}
 
-  void RRDialog::reject()
-  {
+void RRDialog::reject()
+{
     // If user presses escape, reject will be called, but not closeEvent
     accept();
-  }
+}
 
-  void RRDialog::accept()
-  {
+void RRDialog::accept()
+{
     DataConsistencyVerifier::DataSet mod;
     table->getModifiedData( mod );
 
     if ( mod.empty() ) {
-      QDialog::accept();
-      return;
+        QDialog::accept();
+        return;
     }
 
     ConfirmSaveValue saved = confirmSave( this, mod.size(), dataReinserter );
     if ( saved == Yes )
-      QDialog::accept();
+        QDialog::accept();
     else if ( saved == No )
-      QDialog::reject();
-  }
+        QDialog::reject();
 }
+
+} // namespace WatchRR

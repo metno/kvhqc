@@ -34,7 +34,7 @@
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>&amp;Fil</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="saveAction"/>
     <addaction name="printAction"/>
@@ -43,7 +43,7 @@
    </widget>
    <widget class="QMenu" name="menuValg">
     <property name="title">
-     <string>&amp;Valg</string>
+     <string>&amp;Options</string>
     </property>
     <addaction name="flID"/>
     <addaction name="orID"/>
@@ -54,7 +54,7 @@
    </widget>
    <widget class="QMenu" name="menuListType">
     <property name="title">
-     <string>&amp;Listetype</string>
+     <string>&amp;List type</string>
     </property>
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorList"/>
@@ -72,7 +72,7 @@
    </widget>
    <widget class="QMenu" name="menuOther">
     <property name="title">
-     <string>&amp;Annet</string>
+     <string>&amp;Other</string>
     </property>
     <addaction name="actionRejectSeries"/>
     <addaction name="actionAcceptSeries"/>
@@ -82,7 +82,7 @@
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>&amp;Hjelp</string>
+     <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpManual"/>
     <addaction name="actionHelpFlags"/>
@@ -116,7 +116,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Lagre</string>
+    <string>Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -127,7 +127,7 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Skriv ut</string>
+    <string>print</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -135,7 +135,7 @@
   </action>
   <action name="closeAction">
    <property name="text">
-    <string>Lukk</string>
+    <string>Close</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+W</string>
@@ -143,7 +143,7 @@
   </action>
   <action name="exitAction">
    <property name="text">
-    <string>Avslutt</string>
+    <string>Exit</string>
    </property>
   </action>
   <action name="flID">
@@ -151,7 +151,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis &amp;flagg</string>
+    <string>Show &amp;flags</string>
    </property>
   </action>
   <action name="orID">
@@ -162,7 +162,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis &amp;original</string>
+    <string>Show &amp;original</string>
    </property>
   </action>
   <action name="moID">
@@ -173,7 +173,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis &amp;modelldata</string>
+    <string>Show &amp;model data</string>
    </property>
   </action>
   <action name="stID">
@@ -184,7 +184,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis &amp;stasjonsnavn</string>
+    <string>Show &amp;station name</string>
    </property>
   </action>
   <action name="heID">
@@ -195,7 +195,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis s&amp;tasjonshøyde</string>
+    <string>Show s&amp;tation altitude</string>
    </property>
   </action>
   <action name="poID">
@@ -203,12 +203,12 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Vis &amp;posisjon</string>
+    <string>Show &amp;position</string>
    </property>
   </action>
   <action name="actionDataAndErrorList">
    <property name="text">
-    <string>Data&amp;liste og Feilliste</string>
+    <string>Data &amp;list and Error list</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -216,7 +216,7 @@
   </action>
   <action name="actionErrorList">
    <property name="text">
-    <string>&amp;Feilliste</string>
+    <string>&amp;Error list</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
@@ -224,7 +224,7 @@
   </action>
   <action name="actionErrorLog">
    <property name="text">
-    <string>F&amp;eillog</string>
+    <string>E&amp;rror log</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+E</string>
@@ -232,12 +232,12 @@
   </action>
   <action name="dataListAction">
    <property name="text">
-    <string>&amp;Dataliste</string>
+    <string>&amp;Data list</string>
    </property>
   </action>
   <action name="actionErrorListSalen">
    <property name="text">
-    <string>&amp;Feilliste salen</string>
+    <string>&amp;Error list salen</string>
    </property>
    <property name="shortcut">
     <string>Alt+S</string>
@@ -245,7 +245,7 @@
   </action>
   <action name="actionWatchRR">
    <property name="text">
-    <string>&amp;Nedbør</string>
+    <string>&amp;Precipitation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+R</string>
@@ -253,7 +253,7 @@
   </action>
   <action name="actionWatchWeather">
    <property name="text">
-    <string>&amp;Vær</string>
+    <string>&amp;Weather</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
@@ -261,12 +261,12 @@
   </action>
   <action name="timeSeriesAction">
    <property name="text">
-    <string>&amp;Tidsserie</string>
+    <string>&amp;Time series</string>
    </property>
   </action>
   <action name="actionTextDataList">
    <property name="text">
-    <string>Te&amp;xtData</string>
+    <string>Te&amp;xt data</string>
    </property>
    <property name="shortcut">
     <string>Alt+X</string>
@@ -282,32 +282,32 @@
   </action>
   <action name="actionParametersDaily">
    <property name="text">
-    <string>For &amp;daglig rutine</string>
+    <string>For &amp;daily routine</string>
    </property>
   </action>
   <action name="actionParametersPrioritized">
    <property name="text">
-    <string>&amp;Prioriterte parametere</string>
+    <string>&amp;Prioritised parameters</string>
    </property>
   </action>
   <action name="actionParametersTemperatureHumidity">
    <property name="text">
-    <string>&amp;Temperatur og fuktighet</string>
+    <string>&amp;Temperature and humidity</string>
    </property>
   </action>
   <action name="actionParametersPrecipitationSnow">
    <property name="text">
-    <string>&amp;Nedbør og snøforhold</string>
+    <string>&amp;Precipitation and snow</string>
    </property>
   </action>
   <action name="actionParametersWindPressure">
    <property name="text">
-    <string>&amp;Lufttrykk og vind</string>
+    <string>&amp;Air pressure and wind</string>
    </property>
   </action>
   <action name="actionParametersMaritime">
    <property name="text">
-    <string>&amp;Maritime parametere</string>
+    <string>&amp;Maritime parameters</string>
    </property>
   </action>
   <action name="actionParametersSynop">
@@ -317,12 +317,12 @@
   </action>
   <action name="actionParametersWind">
    <property name="text">
-    <string>&amp;Vind</string>
+    <string>&amp;Wind</string>
    </property>
   </action>
   <action name="actionParametersPluviometer">
    <property name="text">
-    <string>&amp;Pluviometerparametere</string>
+    <string>&amp;Pluviometer parameters</string>
    </property>
   </action>
   <action name="actionParametersAll">
@@ -332,7 +332,7 @@
   </action>
   <action name="timesAction">
    <property name="text">
-    <string>&amp;Tidspunkter</string>
+    <string>Observation &amp;times</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -340,17 +340,17 @@
   </action>
   <action name="actionRejectSeries">
    <property name="text">
-    <string>&amp;Forkast tidsserie</string>
+    <string>&amp;Reject time series</string>
    </property>
   </action>
   <action name="actionAcceptSeries">
    <property name="text">
-    <string>&amp;Godkjenn tidsserie</string>
+    <string>&amp;Accept time series</string>
    </property>
   </action>
   <action name="actionDianaConfig">
    <property name="text">
-    <string>&amp;Dianavisning</string>
+    <string>&amp;Diana presentation</string>
    </property>
   </action>
   <action name="actionStartKro">
@@ -360,7 +360,7 @@
   </action>
   <action name="actionHelpManual">
    <property name="text">
-    <string>&amp;Brukerveiledning</string>
+    <string>&amp;User manual</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -368,7 +368,7 @@
   </action>
   <action name="actionHelpFlags">
    <property name="text">
-    <string>&amp;Flagg</string>
+    <string>&amp;Flags</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
@@ -376,7 +376,7 @@
   </action>
   <action name="actionHelpParameters">
    <property name="text">
-    <string>&amp;Parametere</string>
+    <string>&amp;Parameters</string>
    </property>
    <property name="shortcut">
     <string>F3</string>
@@ -384,7 +384,7 @@
   </action>
   <action name="actionAboutHqc">
    <property name="text">
-    <string>&amp;Om Hqc</string>
+    <string>&amp;About Hqc</string>
    </property>
    <property name="menuRole">
     <enum>QAction::AboutRole</enum>
@@ -392,7 +392,7 @@
   </action>
   <action name="actionAboutQt">
    <property name="text">
-    <string>Om &amp;Qt</string>
+    <string>About &amp;Qt</string>
    </property>
    <property name="menuRole">
     <enum>QAction::AboutQtRole</enum>
@@ -400,12 +400,12 @@
   </action>
   <action name="actionParametersVisual">
    <property name="text">
-    <string>&amp;Visuelle parametere</string>
+    <string>&amp;Visual parameters</string>
    </property>
   </action>
   <action name="actionScreenshot">
    <property name="text">
-    <string>&amp;Skjermbilde</string>
+    <string>&amp;Screenshot</string>
    </property>
   </action>
  </widget>

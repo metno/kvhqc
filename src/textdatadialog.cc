@@ -22,16 +22,16 @@ TextDataDialog::TextDataDialog(QWidget* parent)
   stnr = 0;
 
   textLabel0 = new QLabel(this);
-  textLabel0->setText(tr("Stasjon"));
+  textLabel0->setText(tr("Station"));
 
   textLabel1 = new QLabel(this);
-  textLabel1->setText(tr("Tidsrom"));
+  textLabel1->setText(tr("Time range"));
 
   textLabel2 = new QLabel(this);
-  textLabel2->setText(tr("Fra"));
+  textLabel2->setText(tr("From"));
 
   textLabel3 = new QLabel(this);
-  textLabel3->setText(tr("Til"));
+  textLabel3->setText(tr("To"));
 
   stationEdit = new QLineEdit(this);
 
@@ -117,6 +117,6 @@ void TextDataDialog::checkStationId()
         /*emit*/ textDataApply();
     } else {
         QMessageBox::information( this, tr("TextData"),
-                                  tr("Ugyldig stasjonsnummer.\nVelg et annet stasjonsnummer."));
+                                  tr("Illegal station number. Choose a different station number."));
     }
 }

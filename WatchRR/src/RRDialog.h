@@ -2,9 +2,7 @@
 
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -33,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __WatchRR__RRDialog_h__
 
 #include "RRTable.h"
-#include <kvalobs/kvStation.h>
 #include <kvcpp/KvApp.h>
 #include <QtGui/QDialog>
 #include <QtGui/QShowEvent>
@@ -51,15 +48,11 @@ namespace kvalobs {
 
 namespace WatchRR
 {
-  class RRDialog
-    : public QDialog
-  {
-    Q_OBJECT;
 
-    void setup( RRTable * rrt );
-
-  public:
-
+class RRDialog : public QDialog
+{ Q_OBJECT;
+    
+public:
     /**
      * \brief Will prompt user for a what data, and return the appropriate
      *        RRDialog
@@ -67,7 +60,7 @@ namespace WatchRR
      * \parameter data represents the default values for station, obstime etc.
      */
     static RRDialog * getRRDialog( const kvalobs::kvData & data, QWidget* parent, Qt::WindowFlags f );
-
+    
     RRDialog( DayObsListPtr dol,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      const QString & captionSuffix,
@@ -78,45 +71,45 @@ namespace WatchRR
 	      int type, int sensor, int level,
 	      const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter,
 	      QWidget *parent = 0, const char* name = 0, bool modal = FALSE );
-    virtual ~RRDialog( );
 
-    const kvalobs::kvStation *getStation() const { return station; }
+    ~RRDialog();
 
-    void setReinserter( const kvalobs::DataReinserter<kvservice::KvApp> * ri )
-    { dataReinserter = ri; }
+    void setReinserter(const kvalobs::DataReinserter<kvservice::KvApp> * ri)
+        { dataReinserter = ri; }
 
-  public:
-    QLineEdit *stationInfo;
     RRTable *table;
+
+public Q_SLOTS:
+    void polish();
+    
+protected:
+    void closeEvent(QCloseEvent * e);
+    void showEvent(QShowEvent * e);
+    
+protected Q_SLOTS:
+    virtual void reject();
+    virtual void accept();
+    
+private:
+    void setup( RRTable * rrt );
+    bool saveData();
+
+private:
+    QLineEdit *stationInfo;
     QPushButton *help;
     QPushButton * save;
     QPushButton *ok;
     QStatusBar *statusBar;
     Q3BoxLayout *mainLayout;
 
-    //    QToolTipGroup *ttGroup;
-
-  public Q_SLOTS:
-    virtual void polish();
-
-  protected:
-    virtual void closeEvent( QCloseEvent * e );
-    virtual void showEvent( QShowEvent * e );
-
     const kvalobs::DataReinserter<kvservice::KvApp> * dataReinserter;
 
-  protected Q_SLOTS:
-    virtual void reject();
-    virtual void accept();
-
-    bool saveData();
-
-  private:
     QString captionSuffix_;
-    const kvalobs::kvStation *station;
+    int mStationId;
     bool shownFirstTime;
     std::list<kvalobs::kvStation> slist;
-  };
-}
+};
+
+} // namespace WatchRR
 
 #endif // __WatchRR__RRDialog_h__

@@ -408,7 +408,7 @@ namespace WatchRR
 
     std::list<kvalobs::kvData> dl( mod.begin(), mod.end() );
     mi_foreach(kvData& data, dl)
-        updateCfailed(data, "watchRR");
+        Helpers::updateCfailed(data, "watchRR");
 
     cerr << "Lagrer:" << endl
     << decodeutility::kvdataformatter::createString( dl ) << endl;

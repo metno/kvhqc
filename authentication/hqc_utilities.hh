@@ -31,8 +31,16 @@
 #define UTILITIES_HH_
 
 #include <kvalobs/kvData.h>
+#include <QtCore/QString>
 #include <string>
 
+namespace Helpers {
+
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
+
+QString typeInfo(int typeID);
+QString stationInfo(int stationID);
+
+} // namespace Helpers
 
 #endif /* UTILITIES_HH_ */
