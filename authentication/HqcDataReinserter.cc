@@ -26,7 +26,10 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "HqcDataReinserter.h"
+#include "HqcLogging.hh"
+#include "hqc_utilities.hh"
 #include <kvalobs/kvDataOperations.h>
 #include <algorithm>
 
@@ -35,49 +38,26 @@ using namespace kvalobs;
 
 namespace internal_
 {
-  void addCFailed( kvalobs::kvData &d )
-  {
-    std::string cf = d.cfailed();
-    const bool notWatchRRWeather = (std::string::npos == cf.find("watchweather") &&
-                std::string::npos == cf.find("watchRR"));
-    const kvalobs::kvControlInfo cinfo = d.controlinfo();
-    if ( cinfo.flag( flag::fhqc ) >= 2 ) {
-      if ( cf.empty() )
-	cf = "hqc";
-      else if ( notWatchRRWeather )
-	cf += ",hqc";
-    }
-    else if ( cinfo.flag( flag::fhqc ) == 1 && !cf.empty() && notWatchRRWeather )
-      cf += ",hqc";
-    else if ( cinfo.flag( flag::fhqc ) == 0 && !cf.empty() && notWatchRRWeather
-              && d.corrected() == d.original() && d.corrected() == -32767 )
-    {
-      cf += ",hqc";
-    }
 
-    d.cfailed( cf );
+void updateUseAddCFailed(kvalobs::kvData &d)
+{
+    const std::string& cf = d.cfailed();
+    const bool notWatchRRWeather = (std::string::npos == cf.find("watchweather") &&
+                                    std::string::npos == cf.find("atchRR"));
+    const kvalobs::kvControlInfo cinfo = d.controlinfo();
+    const int fhqc = cinfo.flag(flag::fhqc);
+    if (fhqc == 0)
+        LOG4HQC_WARN("HqcDataReinserter", "inserting data with fhqc==0: " << d);
+    if (notWatchRRWeather and fhqc >= 1)
+        Helpers::updateCfailed(d, "hqc");
+    
     kvUseInfo ui = d.useinfo();
+    ui.setUseFlags(cinfo);
     ui.addToErrorCount();
     d.useinfo( ui );
-  }
-
-  void updateUseInfo( kvalobs::kvData & d )
-  {
-    const kvalobs::kvControlInfo ci = d.controlinfo();
-    kvalobs::kvUseInfo ui = d.useinfo();
-    std::string cf = d.cfailed();
-
-    if (( std::string::npos != cf.find("hqc") || std::string::npos != cf.find("watchweather") || std::string::npos != cf.find("watchRR")) && ci.flag( flag::fhqc ) == 0 ) {
-      kvalobs::kvControlInfo tci = d.controlinfo();
-      tci.set(kvalobs::flag::fhqc,1);
-      ui.setUseFlags( tci );
-    }
-    else {
-      ui.setUseFlags( ci );
-    }
-    d.useinfo( ui );
-  }
 }
+
+} // namespace internal_
 
 HqcDataReinserter::HqcDataReinserter( KvApp *app, int operatorID )
   : DataReinserter<KvApp>( app, operatorID )
@@ -88,19 +68,21 @@ HqcDataReinserter::~HqcDataReinserter( )
 {
 }
 
-const CKvalObs::CDataSource::Result_var
-HqcDataReinserter::insert( kvalobs::kvData &d ) const
+const HqcDataReinserter::Result HqcDataReinserter::insert(kvalobs::kvData &d) const
 {
-  ::internal_::addCFailed( d );
-  ::internal_::updateUseInfo( d );
-  return DataReinserter<KvApp>::insert( d );
+    ::internal_::updateUseAddCFailed(d);
+    return DataReinserter<KvApp>::insert(d);
 }
 
 
-const CKvalObs::CDataSource::Result_var
-HqcDataReinserter::insert( std::list<kvalobs::kvData> &dl ) const
+const HqcDataReinserter::Result HqcDataReinserter::insert(std::list<kvalobs::kvData> &dl) const
 {
-  std::for_each( dl.begin(), dl.end(), ::internal_::addCFailed );
-  std::for_each( dl.begin(), dl.end(), ::internal_::updateUseInfo );
-  return DataReinserter<KvApp>::insert( dl );
+    std::for_each(dl.begin(), dl.end(), ::internal_::updateUseAddCFailed);
+    return DataReinserter<KvApp>::insert(dl);
+}
+
+const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::serialize::KvalobsData& data) const
+{
+    LOG4HQC_WARN("HqcDataReinserter", "inserting kvalobs::serialize::KvalobsData will not update useinfo!");
+    return DataReinserter<KvApp>::insert(data);
 }

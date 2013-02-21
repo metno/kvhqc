@@ -2,9 +2,7 @@
 
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -33,21 +31,22 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define __HqcDataReinserter_h__
 
 #include <decodeutility/DataReinserter.h>
-//#include <kvQtApp.h>
 #include <kvcpp/KvApp.h>
 
 class HqcDataReinserter
   : public kvalobs::DataReinserter<kvservice::KvApp>
 {
 public:
-  HqcDataReinserter( kvservice::KvApp *app, int operatorID );
-  virtual ~HqcDataReinserter( );
+    typedef CKvalObs::CDataSource::Result_var Result;
 
-  virtual const CKvalObs::CDataSource::Result_var
-  insert( kvalobs::kvData &d ) const;
+    HqcDataReinserter( kvservice::KvApp *app, int operatorID );
+    virtual ~HqcDataReinserter( );
 
-  virtual const CKvalObs::CDataSource::Result_var
-  insert( std::list<kvalobs::kvData> &dl ) const;
+    virtual const Result insert(kvalobs::kvData &d) const;
+
+    virtual const Result insert(std::list<kvalobs::kvData> &dl) const;
+
+    virtual const Result insert(const kvalobs::serialize::KvalobsData& data) const;
 };
 
 #endif // __HqcDataReinserter_h__
