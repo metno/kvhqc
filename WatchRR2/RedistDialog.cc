@@ -40,7 +40,7 @@ void RedistDialog::updateSumInfo()
     ui->labelSum->setText(tr("Sum: %1mm").arg(cs, 0, 'f', 1));
 
     const float os = rtm->originalSum(), diff = cs - os;
-    if( os >= -1 and fabs(diff) >= 0.05 )
+    if( os >= 0 and fabs(diff) >= 0.05 )
         ui->labelSumWarn->setText(tr("Difference %1mm to original sum %2mm!").arg(diff, 0, 'f', 1).arg(os, 0, 'f', 1));
     else
         ui->labelSumWarn->setText("");

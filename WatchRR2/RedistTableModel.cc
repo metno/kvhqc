@@ -88,7 +88,7 @@ float RedistTableModel::originalSum() const
     if (not lastObs or Helpers::is_orig_missing(lastObs))
         return kvalobs::MISSING;
     else
-        return lastObs->original();
+        return std::max(0.0f, lastObs->original());
 }
 
 float RedistTableModel::currentSum() const
