@@ -1,3 +1,11 @@
+kvhqc (2.16.1-1) unstable; urgency=low
+
+  * Hqc: added news file; improved logging
+  * error list: added fw from QC2 plu check to error list
+  * WatchRR2: fixed problem with sum==-1 in RedistDialog
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 20 Feb 2013 18:21:44 +0100
+
 kvhqc (2.16.0-1) unstable; urgency=low
 
   * moved stinfosys config (host, user, port, ...) to config file
