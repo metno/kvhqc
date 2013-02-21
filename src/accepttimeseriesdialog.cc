@@ -105,16 +105,8 @@ AcceptTimeseriesDialog::AcceptTimeseriesDialog(): QDialog()
   topLayout->addLayout(toLayout);
   topLayout->addWidget(hab);
 
-  connect(hab, SIGNAL(hide()),  SIGNAL(tsAcceptHide()));
+  connect(hab, SIGNAL(hide()),  SLOT(hide()));
   connect(hab, SIGNAL(apply()), SIGNAL(tsAcceptApply()));
-}
-
-void AcceptTimeseriesDialog::showAll(){
-  this->show();
-}
-
-void AcceptTimeseriesDialog::hideAll(){
-  this->hide();
 }
 
 void AcceptTimeseriesDialog::newParameterList(const std::vector<int>& parameters)

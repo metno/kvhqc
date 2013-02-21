@@ -85,9 +85,8 @@ TextDataDialog::TextDataDialog(QWidget* parent)
   topLayout->addLayout(toLayout);
   topLayout->addLayout(buttonLayout);
 
-  connect(cancelButton,SIGNAL(clicked()), this, SIGNAL(textDataHide()));
-  connect(okButton,SIGNAL(clicked()), this, SLOT(checkStationId()));
-  //  connect(okButton,SIGNAL(clicked()), this, SIGNAL(textDataApply()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
+  connect(okButton,     SIGNAL(clicked()), this, SLOT(checkStationId()));
 }
 
 void TextDataDialog::setStation(const QString& st) {
@@ -114,6 +113,7 @@ TimeSpan TextDataDialog::getTimeSpan()
 void TextDataDialog::checkStationId()
 {
     if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
+        hide();
         /*emit*/ textDataApply();
     } else {
         QMessageBox::information( this, tr("TextData"),

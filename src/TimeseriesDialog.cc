@@ -183,7 +183,7 @@ TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
 
   //////////////////// apply & hide ///////////////////////////////////////////
   HideApplyBox* hab = new HideApplyBox(this);
-  connect(hab, SIGNAL(hide()) , SIGNAL(TimeseriesHide()));
+  connect(hab, SIGNAL(hide()) , SLOT(hide()));
   connect(hab, SIGNAL(apply()), SIGNAL(TimeseriesApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
@@ -315,15 +315,6 @@ void TimeseriesDialog::fillcolourSlot(int){
   }  else {
     tsinfo[0].fillcolour=fillcolourBox->currentItem();
   }
-}
-
-void TimeseriesDialog::showAll(){
-  this->show();
-}
-
-
-void TimeseriesDialog::hideAll(){
-  this->hide();
 }
 
 void TimeseriesDialog::parameterSelectionChanged(Q3ListBoxItem *item) {

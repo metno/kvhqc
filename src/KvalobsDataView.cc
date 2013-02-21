@@ -1,7 +1,7 @@
 /*
  Kvalobs - Free Quality Control Software for Meteorological Observations
 
- Copyright (C) 2010 met.no
+ Copyright (C) 2013 met.no
 
  Contact information:
  Norwegian Meteorological Institute
@@ -28,6 +28,8 @@
  */
 
 #include "KvalobsDataView.h"
+
+#include "hqc_paths.hh"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataDelegate.h"
 #include "KvMetaDataBuffer.hh"
@@ -158,6 +160,10 @@ const KvalobsDataModel * KvalobsDataView::getModel_() const
 
 void KvalobsDataView::setup_()
 {
+    setAttribute(Qt::WA_DeleteOnClose);
+    const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
+    setIcon(QPixmap(hqc_icon_path));
+    setCaption(tr("Data List"));
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
     setItemDelegate(new KvalobsDataDelegate(this));

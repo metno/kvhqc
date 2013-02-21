@@ -50,8 +50,6 @@ public:
   DianaShowDialog(QWidget*);
   //  ~DianaShowDialog();
 
-  void hideAll();
-  void showAll();
   void checkStandard();
 
   //  QCheckBox* enkType;
@@ -130,7 +128,6 @@ public:
   QRadioButton* emType;
 
 Q_SIGNALS:
-  void dianaShowHide();
   void dianaShowApply();
 };
 #endif

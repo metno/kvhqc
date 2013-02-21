@@ -45,11 +45,6 @@ class RejectTimeseriesDialog : public QDialog {
 public:
   RejectTimeseriesDialog();
 
-  //  void newStationList();
-
-  void hideAll();
-  void showAll();
-
   QListWidget* stationWidget;
   QListWidget* parameterWidget;
   QListWidget* resultWidget;
@@ -68,7 +63,6 @@ public Q_SLOTS:
   void stationSelected(QListWidgetItem *item);
 
 Q_SIGNALS:
-  void tsRejectHide();
   void tsRejectApply();
 };
 

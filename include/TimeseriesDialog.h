@@ -63,9 +63,6 @@ class TimeseriesDialog : public QDialog {
 public:
   TimeseriesDialog();
 
-  void hideAll();
-  void showAll();
-
   void getResults(std::vector<std::string>& parameter,
 		  timeutil::ptime& fromTime,
 		  timeutil::ptime& toTime,
@@ -136,7 +133,6 @@ private Q_SLOTS:
   void setMaxFromTime(const QDateTime&);
 
 Q_SIGNALS:
-  void TimeseriesHide();
   void TimeseriesApply();
 };
 #endif

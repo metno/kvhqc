@@ -241,7 +241,7 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   paraLayout->addWidget(emType    ,28,5);
 
   HideApplyBox* hab = new HideApplyBox(this);
-  connect(hab, SIGNAL(hide()) , SIGNAL(dianaShowHide()));
+  connect(hab, SIGNAL(hide()),  SLOT(hide()));
   connect(hab, SIGNAL(apply()), SIGNAL(dianaShowApply()));
 
   Q3VBoxLayout* topLayout = new Q3VBoxLayout(this,10);
@@ -249,17 +249,6 @@ DianaShowDialog::DianaShowDialog(QWidget* parent): QDialog(parent) {
   topLayout->addWidget(hab);
 
   checkStandard();
-}
-
-//DianaShowDialog::~DianaShowDialog() {
-//}
-
-void DianaShowDialog::showAll(){
-  this->show();
-}
-
-void DianaShowDialog::hideAll(){
-  this->hide();
 }
 
 void DianaShowDialog::checkStandard() {

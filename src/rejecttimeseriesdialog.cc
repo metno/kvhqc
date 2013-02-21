@@ -70,7 +70,7 @@ RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog()
   toTimeEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   HideApplyBox* hab = new HideApplyBox(this);
-  connect(hab, SIGNAL(hide()) , SIGNAL(tsRejectHide()));
+  connect(hab, SIGNAL(hide()),  SLOT(hide()));
   connect(hab, SIGNAL(apply()), SIGNAL(tsRejectApply()));
 
   QHBoxLayout* stationLayout = new QHBoxLayout();
@@ -96,14 +96,6 @@ RejectTimeseriesDialog::RejectTimeseriesDialog(): QDialog()
   topLayout->addLayout(fromLayout);
   topLayout->addLayout(toLayout);
   topLayout->addWidget(hab);
-}
-
-void RejectTimeseriesDialog::showAll(){
-  this->show();
-}
-
-void RejectTimeseriesDialog::hideAll(){
-  this->hide();
 }
 
 void RejectTimeseriesDialog::newParameterList(const std::vector<int>& parameters)

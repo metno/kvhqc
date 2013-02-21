@@ -97,12 +97,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#include <algorithm>
-#include <deque>
-#include <functional>
-#include <iomanip>
-#include <stdexcept>
-
 //#define NDEBUG
 #include "debug.hh"
 
@@ -197,13 +191,8 @@ HqcMainWindow::HqcMainWindow()
 
     dshdlg->hide();
     connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
-    connect( dshdlg, SIGNAL(dianaShowHide()), SLOT(dianaShowMenu()));
-
     connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
-    connect( txtdlg, SIGNAL(textDataHide()), SLOT(textDataMenu()));
-    
     connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
-    connect( rejdlg, SIGNAL(rejectHide()), SLOT(rejectedMenu()));
 
     tsdlg = new TimeseriesDialog();
     tsdlg->hide();
@@ -217,10 +206,7 @@ HqcMainWindow::HqcMainWindow()
             tsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
     connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
-    connect(rjtsdlg, SIGNAL(tsRejectHide()), SLOT(rejectTimeseries()));
-    
     connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
-    connect(actsdlg, SIGNAL(tsAcceptHide()), SLOT(acceptTimeseries()));
     
     connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
             rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
@@ -368,8 +354,6 @@ void HqcMainWindow::ListOK()
         qApp->processEvents();
 
         model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
-        tableView->setAttribute(Qt::WA_DeleteOnClose);
-        
         dataModel =
             new model::KvalobsDataModel(
                 mSelectedParameters, datalist, modeldatalist,
@@ -385,19 +369,17 @@ void HqcMainWindow::ListOK()
         connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
         
         // Functionality for hiding/showing rows in data list
-        connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
-        connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
-        connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
-
-        connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
-        connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
-
-        connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
-
         connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
         connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
         connect(ui->heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
 
+        connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
+        connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
+        connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
+
+        connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
+        connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
+        connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
         tableView->setModel(dataModel);
 
         // Smaller cells. This should probably be done dynamically, somehow
@@ -414,10 +396,6 @@ void HqcMainWindow::ListOK()
         tableView->toggleShowModelData(ui->moID->isChecked());
 
         ui->ws->addSubWindow(tableView);
-
-        const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
-        tableView->setIcon( QPixmap(hqc_icon_path) );
-        tableView->setCaption(tr("Data List"));
     }
 
     if ( lity == erLi or lity == erSa or lity == alLi ) {
@@ -606,22 +584,14 @@ void HqcMainWindow::errLisaMenu() {
   listMenu();
 }
 
-void HqcMainWindow::textDataMenu() {
-  if ( txtdlg->isVisible() ) {
-    txtdlg->hide();
-  }
-  else {
+void HqcMainWindow::textDataMenu()
+{
     txtdlg->show();
-  }
 }
 
-void HqcMainWindow::rejectedMenu() {
-  if ( rejdlg->isVisible() ) {
-    rejdlg->hide();
-  }
-  else {
+void HqcMainWindow::rejectedMenu()
+{
     rejdlg->show();
-  }
 }
 
 inline QString dateStr_( const QDateTime & dt )
@@ -656,7 +626,8 @@ void HqcMainWindow::textDataOK()
     txtDat->show();
 }
 
-void HqcMainWindow::rejectedOK() {
+void HqcMainWindow::rejectedOK()
+{
   CKvalObs::CService::RejectDecodeInfo rdInfo;
   rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
   rdInfo.toTime = dateStr_( rejdlg->dtto );
@@ -776,40 +747,29 @@ void HqcMainWindow::listMenu()
     lstdlg->show();
 }
 
-void HqcMainWindow::dianaShowMenu() {
-  if ( dshdlg->isVisible() ) {
-    dshdlg->hideAll();
-  } else {
-    dshdlg->showAll();
-  }
+void HqcMainWindow::dianaShowMenu()
+{
+    dshdlg->show();
 }
 
-void HqcMainWindow::timeseriesMenu() {
-  if ( tsdlg->isVisible() ) {
-    tsdlg->hideAll();
-  } else {
-    tsdlg->showAll();
-  }
+void HqcMainWindow::timeseriesMenu()
+{
+    tsdlg->show();
 }
 
-void HqcMainWindow::dsh() {
-  dshdlg->showAll();
+void HqcMainWindow::dsh()
+{
+    dshdlg->show();
 }
 
-void HqcMainWindow::rejectTimeseries() {
-  if ( rjtsdlg->isVisible() ) {
-    rjtsdlg->hideAll();
-  } else {
-    rjtsdlg->showAll();
-  }
+void HqcMainWindow::rejectTimeseries()
+{
+    rjtsdlg->show();
 }
 
-void HqcMainWindow::acceptTimeseries() {
-  if ( actsdlg->isVisible() ) {
-    actsdlg->hideAll();
-  } else {
-    actsdlg->showAll();
-  }
+void HqcMainWindow::acceptTimeseries()
+{
+    actsdlg->show();
 }
 
 void HqcMainWindow::acceptTimeseriesOK() {

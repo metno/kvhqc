@@ -65,8 +65,9 @@ RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
   topLayout->addLayout(toLayout);
   topLayout->addLayout(buttonLayout);
 
-  connect(cancelButton,SIGNAL(clicked()), this, SIGNAL(rejectHide()));
-  connect(okButton,SIGNAL(clicked()), this, SIGNAL(rejectApply()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
+  connect(okButton,     SIGNAL(clicked()), this, SLOT(hide()));
+  connect(okButton,     SIGNAL(clicked()), this, SIGNAL(rejectApply()));
 }
 
 void RejectDialog::setFromTime(const QDateTime& dt) {
