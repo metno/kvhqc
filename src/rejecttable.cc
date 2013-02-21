@@ -2,58 +2,83 @@
 #include "rejecttable.h"
 #include "timeutil.hh"
 #include <kvalobs/kvRejectdecode.h>
+#include <QtGui/QHeaderView>
+#include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
-#include <iostream>
 
-using namespace std;
+namespace {
+const int NCOLUMNS = 3;
+const char* headers[NCOLUMNS] = {
+    QT_TRANSLATE_NOOP("RejectDecodeTable", "Tbtime"),
+    QT_TRANSLATE_NOOP("RejectDecodeTable", "Observation"),
+    QT_TRANSLATE_NOOP("RejectDecodeTable", "Comment")
+};
+}
 
-RejectTable::RejectTable(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* parent)
-  : QTableWidget(3000,3,parent) {
+RejectDecodeTableModel::RejectDecodeTableModel(const std::vector<kvalobs::kvRejectdecode>& rList)
+    : mRecjectList(rList)
+    , mDataRegexp(".*\\<data\\>(.*)\\<\\/data\\>.*", false)
+{
+}
 
-  setWindowTitle(tr("Rejected"));
-  setRowCount(rejList.size());
-  setGeometry(10,10,1200,1200);
-  setMinimumWidth(1000);
-  setMinimumHeight(1000);
-  QFont font("Courier", 9, QFont::DemiBold);
-  setFont(font);  
-  QStringList horizontalHeaderLabels;
-  horizontalHeaderLabels.append(  tr( "Tbtime" ) );
-  horizontalHeaderLabels.append(  tr( "Observation" ) );
-  horizontalHeaderLabels.append(  tr( "Message" ) );
-  setHorizontalHeaderLabels(horizontalHeaderLabels);
+RejectDecodeTableModel::~RejectDecodeTableModel()
+{
+}
 
-  for ( unsigned int iRow = 0; iRow < rejList.size(); iRow++ ) {
-    cout << timeutil::to_iso_extended_string(timeutil::from_miTime(rejList[iRow].tbtime()))
-         << " " << rejList[iRow].message() << endl;
-    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(rejList[iRow].tbtime()))));
-    // original format: format("%e/%m %Y %H:%M:%S")
-    setItem(iRow, 0, tbtimeItem);
-    resizeColumnToContents(0);
-    QString msg = QString::fromStdString(rejList[iRow].message());
-    static QRegExp regexp( ".*\\<data\\>(.*)\\<\\/data\\>.*", false );
-    if ( regexp.exactMatch( msg ) ) {
-      msg = regexp.cap(1);
+int RejectDecodeTableModel::rowCount(const QModelIndex&) const
+{
+    return mRecjectList.size();
+}
+
+int RejectDecodeTableModel::columnCount(const QModelIndex&) const
+{
+    return NCOLUMNS;
+}
+
+QVariant RejectDecodeTableModel::data(const QModelIndex& index, int role) const
+{
+    const int column = index.column();
+    if (role == Qt::DisplayRole) {
+        const kvalobs::kvRejectdecode& rd = mRecjectList[index.row()];
+        switch (column) {
+        case 0: return QString::fromStdString(timeutil::to_iso_extended_string(rd.tbtime()));
+        case 1: {
+            QString msg = QString::fromStdString(rd.message());
+            if (mDataRegexp.exactMatch(msg))
+                msg = mDataRegexp.cap(1);
+            return msg;
+        }
+        case 2: return QString::fromStdString(rd.comment());
+        }
+    } else if (role == Qt::FontRole and (column == 1 or column == 2)) {
+        return QFont("Monospace");
     }
-    QTableWidgetItem* messageItem = new QTableWidgetItem(msg);
-    setItem(iRow, 1, messageItem);
-    resizeColumnToContents(1);
-    QTableWidgetItem* commentItem = new QTableWidgetItem(QString::fromStdString(rejList[iRow].comment()));
-    setItem(iRow, 2, commentItem);
-    resizeColumnToContents(2);
-  }
-  adjustSize();
+    return QVariant();
+}
+
+QVariant RejectDecodeTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation == Qt::Horizontal and role == Qt::DisplayRole) {
+        return headers[section];
+    }
+    return QVariant();
 }
 
 Rejects::Rejects(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* parent)
     : QDialog(parent)
+    , mTableModel(new RejectDecodeTableModel(rejList))
 {
-    setCaption(tr("Rejected"));
-    resize(1200, 1000);
+    setCaption(tr("RejectDecode"));
+    resize(1200, 700);
 
-    rTab = new RejectTable(rejList, this);
+    QTableView* tv = new QTableView(this);
+    tv->setModel(mTableModel.get());
+    tv->verticalHeader()->setDefaultSectionSize(20);
+    tv->verticalHeader()->hide();
+    tv->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    tv->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
     QVBoxLayout* topLayout = new QVBoxLayout(this);
-    topLayout->addWidget(rTab);
-
+    topLayout->addWidget(tv);
     show();
 }

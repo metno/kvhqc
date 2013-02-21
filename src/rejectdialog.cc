@@ -12,7 +12,7 @@
 
 RejectDialog::RejectDialog(QWidget* parent): QDialog(parent) {
 
-  setCaption(tr("Rejected"));
+  setCaption(tr("RejectDecode"));
   textLabel1 = new QLabel(this);
   textLabel1->setText(tr("Select time range for reject list"));
 

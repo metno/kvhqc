@@ -1,66 +1,86 @@
 #include "textdatatable.h"
 
 #include "KvMetaDataBuffer.hh"
-
+#include "TimeHeader.hh"
+#include <QtGui/QHeaderView>
+#include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
 
-TextDataTable::TextDataTable(const std::vector<TxtDat>& txtList, QWidget* parent)
-  : QTableWidget(3000,7,parent) {
+namespace {
+const int NCOLUMNS = 7;
+const char* headers[NCOLUMNS] = {
+    QT_TRANSLATE_NOOP("TextDataTable", "Stationid"),
+    QT_TRANSLATE_NOOP("TextDataTable", "Obstime"),
+    QT_TRANSLATE_NOOP("TextDataTable", "Original"),
+    QT_TRANSLATE_NOOP("TextDataTable", "Paramid"),
+    QT_TRANSLATE_NOOP("TextDataTable", "ParamName"),
+    QT_TRANSLATE_NOOP("TextDataTable", "Tbtime"),
+    QT_TRANSLATE_NOOP("TextDataTable", "Typeid")
+};
+}
 
-  setWindowTitle(tr("TextData"));
-  setRowCount(txtList.size() + 1);
-  setGeometry(10,10,800,1200);
-  setMinimumWidth(720);
-  setMinimumHeight(1000);
-  QFont font("Courier", 9, QFont::DemiBold);
-  setFont(font);
-  QStringList horizontalHeaderLabels;
-  horizontalHeaderLabels.append(  tr( "Stationid" ) );
-  horizontalHeaderLabels.append(  tr( "Obstime" ) );
-  horizontalHeaderLabels.append(  tr( "Original " ) );
-  horizontalHeaderLabels.append(  tr( "Paramid " ) );
-  horizontalHeaderLabels.append(  tr( "ParamName ") );
-  horizontalHeaderLabels.append(  tr( "Tbtime " ) );
-  horizontalHeaderLabels.append(   tr( "Typeid " ) );
-  setHorizontalHeaderLabels(horizontalHeaderLabels);
+TextDataTableModel::TextDataTableModel(const std::vector<TxtDat>& txtList)
+    : mTxtList(txtList)
+{
+}
 
-  for ( unsigned int iRow = 0; iRow < txtList.size(); iRow++ ) {
-    QTableWidgetItem* stationItem = new QTableWidgetItem(QString::number(txtList[iRow].stationId));
-    setItem(iRow, 0, stationItem);
-    resizeColumnToContents(0);
-    //    QTableWidgetItem* obstimeItem = new QTableWidgetItem(txtList[iRow].obstime.format("%e/%m %Y %H:%M:%S").cStr());
-    QTableWidgetItem* obstimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(txtList[iRow].obstime)));
-    setItem(iRow, 1, obstimeItem);
-    resizeColumnToContents(1);
-    QTableWidgetItem* originalItem = new QTableWidgetItem(QString(txtList[iRow].original.c_str()));
-    setItem(iRow, 2, originalItem);
-    resizeColumnToContents(2);
-    QTableWidgetItem* paramItem = new QTableWidgetItem(QString::number(txtList[iRow].paramId));
-    setItem(iRow, 3, paramItem);
-    resizeColumnToContents(3);
-    QString name = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(txtList[iRow].paramId).name());
-    QTableWidgetItem* paramNameItem = new QTableWidgetItem(name);
-    setItem(iRow, 4, paramNameItem);
-    resizeColumnToContents(4);
-    QTableWidgetItem* tbtimeItem = new QTableWidgetItem(QString::fromStdString(timeutil::to_iso_extended_string(txtList[iRow].tbtime)));
-    setItem(iRow, 5, tbtimeItem);
-    resizeColumnToContents(5);
-    QTableWidgetItem* typeItem = new QTableWidgetItem(QString::number(txtList[iRow].typeId));
-    setItem(iRow, 6, typeItem);
-    resizeColumnToContents(6);
-  }
-  adjustSize();
+TextDataTableModel::~TextDataTableModel()
+{
+}
+
+int TextDataTableModel::rowCount(const QModelIndex&) const
+{
+    return mTxtList.size();
+}
+
+int TextDataTableModel::columnCount(const QModelIndex&) const
+{
+    return NCOLUMNS;
+}
+
+QVariant TextDataTableModel::data(const QModelIndex& index, int role) const
+{
+    const int column = index.column();
+    if (role == Qt::DisplayRole) {
+        const TxtDat& td = mTxtList[index.row()];
+        switch (column) {
+        case 0: return QString::number(td.stationId);
+        case 1: return TimeHeader::headerData(td.obstime, Qt::Vertical, Qt::ToolTipRole);
+        case 2: return QString::fromStdString(td.original);
+        case 3: return QString::number(td.paramId);
+        case 4: return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(td.paramId).name());
+        case 5: return QString::fromStdString(timeutil::to_iso_extended_string(td.tbtime));
+        case 6: return QString::number(td.typeId);
+        }
+    } else if (role == Qt::FontRole and (column == 1 or column == 2)) {
+        return QFont("Monospace");
+    }
+    return QVariant();
+}
+
+QVariant TextDataTableModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if (orientation == Qt::Horizontal and role == Qt::DisplayRole) {
+        return headers[section];
+    }
+    return QVariant();
 }
 
 TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
     : QDialog(parent)
+    , mTableModel(new TextDataTableModel(txtList))
 {
     setCaption(tr("TextData"));
-    resize(700,1000);
+    resize(700, 1000);
 
-    txtTab = new TextDataTable(txtList, this);
+    QTableView* tv = new QTableView(this);
+    tv->setModel(mTableModel.get());
+    tv->verticalHeader()->setDefaultSectionSize(20);
+    tv->verticalHeader()->hide();
+    tv->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    tv->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
     QVBoxLayout* topLayout = new QVBoxLayout(this);
-    topLayout->addWidget(txtTab);
-
+    topLayout->addWidget(tv);
     show();
 }

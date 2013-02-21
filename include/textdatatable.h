@@ -6,19 +6,29 @@
 #include "hqcdefs.h"
 
 #include <QtGui/QDialog>
-#include <QtGui/QTableWidget>
+#include <QtCore/QAbstractTableModel>
 
-class TextDataTable : public QTableWidget
+class TextDataTableModel : public QAbstractTableModel
 { Q_OBJECT;
 public:
-    TextDataTable(const std::vector<TxtDat>&, QWidget*);
+    TextDataTableModel(const std::vector<TxtDat>& txtList);
+    virtual ~TextDataTableModel();
+
+    virtual int rowCount(const QModelIndex&) const;
+    virtual int columnCount(const QModelIndex&) const;
+    virtual QVariant data(const QModelIndex& index, int role) const;
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+private:
+    std::vector<TxtDat> mTxtList;
 };
 
 class TextData : public QDialog
 { Q_OBJECT;
 public:
     TextData(const std::vector<TxtDat>&, QWidget* parent=0);
-    TextDataTable* txtTab;
+
+private:
+    std::auto_ptr<TextDataTableModel> mTableModel;
 };
 
 #endif
