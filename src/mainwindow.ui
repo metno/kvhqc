@@ -444,22 +444,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>timeSeriesAction</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>timeseriesMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>ws</sender>
    <signal>subWindowActivated(QMdiSubWindow*)</signal>
    <receiver>HqcMainWindow</receiver>
@@ -544,86 +528,6 @@
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>showWeather()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionTextDataList</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>textDataMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionRejectDecode</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>rejectedMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionRejectSeries</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>rejectTimeseries()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionAcceptSeries</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>acceptTimeseries()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionDianaConfig</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>dsh()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

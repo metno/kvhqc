@@ -140,40 +140,28 @@ private Q_SLOTS:
 
     void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
-    //! Produces the data table or the error list
+    void errListMenu();
+    void allListMenu();
+    void errLogMenu();
+    void dataListMenu();
+    void errLisaMenu();
     void ListOK();
-
-    //! Called when OK button in DianaShowDialog is clicked.
-    /*! Initializes the maps with the parameters to be shown in Diana. */
+    void rejectedOK();
+    void textDataOK();
     void dianaShowOK();
-
-    //! Produces time series plots
     void TimeseriesOK();
-
-    void dsh();
-    void rejectTimeseries();
     void rejectTimeseriesOK();
-    void acceptTimeseries();
     void acceptTimeseriesOK();
+
     void startKro();
     void screenshot();
-
-    void closeWindow();
     void helpUse();
     void helpFlag();
     void helpParam();
     void about();
     void aboutQt();
 
-    void errListMenu();
-    void allListMenu();
-    void errLogMenu();
-    void dataListMenu();
-    void errLisaMenu();
-    void rejectedMenu();
-    void textDataMenu();
-    void rejectedOK();
-    void textDataOK();
+    void closeWindow();
 
     //! bring up the WatchRR dialog
     void showWatchRR();
@@ -181,15 +169,12 @@ private Q_SLOTS:
     //! bring up the WatchWeather dialog
     void showWeather();
 
-    void listMenu();
-    void dianaShowMenu();
-    void timeseriesMenu();
-
     void updateSaveFunction(QMdiSubWindow * w);
 
     void onVersionCheckTimeout();
 
 private:
+    void listMenu(listType lt);
     void exitNoKvalobs();
     void closeEvent(QCloseEvent* event);
     void writeSettings();

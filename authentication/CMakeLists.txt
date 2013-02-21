@@ -15,6 +15,7 @@ SET(auth_SOURCES
   HideApplyBox.cc
   HintWidget.cc
   HqcDataReinserter.cc
+  HqcLogging.cc
   hqc_paths.cc
   hqc_utilities.cc
   identifyUser.cc

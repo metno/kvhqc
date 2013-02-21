@@ -50,6 +50,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 #include "HqcDianaHelper.hh"
+#include "HqcLogging.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvalobsDataModel.h"
 #include "KvalobsDataView.h"
@@ -190,22 +191,29 @@ HqcMainWindow::HqcMainWindow()
     connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
     dshdlg->hide();
-    connect( dshdlg, SIGNAL(dianaShowApply()), SLOT(dianaShowOK()));
-    connect( txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
-    connect( rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
+    connect(ui->actionDianaConfig, SIGNAL(triggered()), dshdlg, SLOT(show()));
+    connect(dshdlg, SIGNAL(dianaShowApply()), this, SLOT(dianaShowOK()));
+
+    connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
+    connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
+
+    connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
+    connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
     tsdlg = new TimeseriesDialog();
     tsdlg->hide();
-    
+    connect(ui->timeSeriesAction, SIGNAL(triggered()), tsdlg, SLOT(show()));
     connect(tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
-    connect(tsdlg, SIGNAL(TimeseriesHide()), SLOT(timeseriesMenu()));
     
     connect(this, SIGNAL(newStationList(std::vector<QString>&)),
             tsdlg, SLOT(newStationList(std::vector<QString>&)));
     connect(this, SIGNAL(newParameterList(const std::vector<int>&)),
             tsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
+    connect(ui->actionRejectSeries, SIGNAL(triggered()), rjtsdlg, SLOT(show()));
     connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
+
+    connect(ui->actionAcceptSeries, SIGNAL(triggered()), actsdlg, SLOT(show()));
     connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
     
     connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
@@ -226,6 +234,10 @@ HqcMainWindow::HqcMainWindow()
     
     // make the timeseries-plot-dialog
     tspdialog = new TSPlotDialog(this);
+}
+
+HqcMainWindow::~HqcMainWindow()
+{
 }
 
 void HqcMainWindow::startup()
@@ -433,8 +445,7 @@ void HqcMainWindow::ListOK()
         }
     }
     /*emit*/ newStationList(stationList);
-    cerr << "newStationList emitted " << endl;
-
+    LOG4HQC_DEBUG("hqc", "newStationList emitted");
 
     //  send parameter names to ts dialog
     /*emit*/ newParameterList(mSelectedParameters);
@@ -555,45 +566,6 @@ const listStat_l& HqcMainWindow::getStationDetails()
     return StInfoSysBuffer::instance()->getStationDetails();
 }
 
-void HqcMainWindow::errListMenu() {
-  lity = erLi;
-  lstdlg->hide();
-  listMenu();
-}
-
-void HqcMainWindow::errLogMenu() {
-  lity = erLo;
-  lstdlg->hide();
-  listMenu();
-}
-
-void HqcMainWindow::allListMenu() {
-  lity = alLi;
-  lstdlg->hide();
-  listMenu();
-}
-void HqcMainWindow::dataListMenu() {
-  lity = daLi;
-  lstdlg->hide();
-  listMenu();
-}
-
-void HqcMainWindow::errLisaMenu() {
-  lity = erSa;
-  lstdlg->hide();
-  listMenu();
-}
-
-void HqcMainWindow::textDataMenu()
-{
-    txtdlg->show();
-}
-
-void HqcMainWindow::rejectedMenu()
-{
-    rejdlg->show();
-}
-
 inline QString dateStr_( const QDateTime & dt )
 {
   QString ret = dt.toString( Qt::ISODate );
@@ -621,47 +593,34 @@ void HqcMainWindow::textDataOK()
         return;
     }
 
-    txtdlg->hide();
-    TextData* txtDat = new TextData(textDataReceiver.textData(), this);
-    txtDat->show();
+    new TextData(textDataReceiver.textData(), this);
 }
 
 void HqcMainWindow::rejectedOK()
 {
-  CKvalObs::CService::RejectDecodeInfo rdInfo;
-  rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
-  rdInfo.toTime = dateStr_( rejdlg->dtto );
-  cout << rdInfo.fromTime << " <-> " << rdInfo.toTime << endl;
-  kvservice::RejectDecodeIterator rdIt;
-  bool result = kvservice::KvApp::kvApp->getKvRejectDecode( rdInfo, rdIt );
-  if ( result ) {
-    string decoder = "comobs";
-
-    kvalobs::kvRejectdecode reject;
-    while ( rdIt.next( reject ) ) {
-
-      if ( reject.decoder().substr( 0, decoder.size() ) != decoder ) {
-        continue;
-      }
-      if ( reject.comment() == "No decoder for SMS code <12>!" ) {
-        continue;
-      }
-
-      cout << reject.tbtime() << " " << reject.message() << " " << reject.comment() << reject.decoder() << endl;
-      rejList.push_back(reject);
+    CKvalObs::CService::RejectDecodeInfo rdInfo;
+    rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
+    rdInfo.toTime = dateStr_( rejdlg->dtto );
+    LOG4HQC_INFO("hqc", rdInfo.fromTime << " <-> " << rdInfo.toTime);
+    kvservice::RejectDecodeIterator rdIt;
+    if (not kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt)) {
+        QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        return;
     }
-  } else {
-    cout << "No rejectdecode!" << endl;
 
-  }
-  Rejects* rejects = new Rejects(rejList);
-  rejects->show();
-  if ( rejdlg->isVisible() ) {
-    rejdlg->hide();
-  }
-  else {
-    rejdlg->show();
-  }
+    string decoder = "comobs";
+    kvalobs::kvRejectdecode reject;
+    while (rdIt.next(reject)) {
+        if (reject.decoder().substr(0, decoder.size()) != decoder)
+            continue;
+        if (reject.comment() == "No decoder for SMS code <12>!")
+            continue;
+
+        LOG4HQC_INFO("hqc", reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+        rejList.push_back(reject);
+    }
+    new Rejects(rejList, this);
 }
 
 void HqcMainWindow::showWatchRR()
@@ -733,9 +692,35 @@ void HqcMainWindow::showWeather()
     }
 }
 
-void HqcMainWindow::listMenu()
+void HqcMainWindow::errListMenu()
+{
+  listMenu(erLi);
+}
+
+void HqcMainWindow::errLogMenu()
+{
+  listMenu(erLo);
+}
+
+void HqcMainWindow::allListMenu()
+{
+  listMenu(alLi);
+}
+
+void HqcMainWindow::dataListMenu()
+{
+  listMenu(daLi);
+}
+
+void HqcMainWindow::errLisaMenu()
+{
+  listMenu(erSa);
+}
+
+void HqcMainWindow::listMenu(listType lt)
 {
     LOG_SCOPE();
+    lity = lt;
 
     QDateTime mx = QDateTime::currentDateTime();
     int noDays = lstdlg->getStart().daysTo(lstdlg->getEnd());
@@ -745,31 +730,6 @@ void HqcMainWindow::listMenu()
         lstdlg->setEnd(mx);
     }
     lstdlg->show();
-}
-
-void HqcMainWindow::dianaShowMenu()
-{
-    dshdlg->show();
-}
-
-void HqcMainWindow::timeseriesMenu()
-{
-    tsdlg->show();
-}
-
-void HqcMainWindow::dsh()
-{
-    dshdlg->show();
-}
-
-void HqcMainWindow::rejectTimeseries()
-{
-    rjtsdlg->show();
-}
-
-void HqcMainWindow::acceptTimeseries()
-{
-    actsdlg->show();
 }
 
 void HqcMainWindow::acceptTimeseriesOK() {
@@ -934,17 +894,13 @@ void HqcMainWindow::onVersionCheckTimeout()
         }
     }
     // something went wrong when reading the version info file
-    std::cout << "error reading share/.../hqc_current_version, not renewing timer" << std::endl;
+    LOG4HQC_WARN("hqc", "error reading share/.../hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
 {
   writeSettings();
   QWidget::closeEvent(event);
-}
-
-HqcMainWindow::~HqcMainWindow()
-{
 }
 
 bool HqcMainWindow::timeFilter(int hour)
@@ -1076,10 +1032,11 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   GetData dataReceiver(this);
 
-  if( kvservice::KvApp::kvApp->getKvData(dataReceiver, whichData) ) {
-      // this will make calls to HqcMainWindow::makeObsDataList
-  } else {
-    std::cerr << "problems retrieving data" << std::endl;
+  if (not kvservice::KvApp::kvApp->getKvData(dataReceiver, whichData)) {
+      QMessageBox::critical(this, tr("Data Retrieval"),
+                            tr("An error occured when attempting to retrieve data from kvalobs."),
+                            QMessageBox::Abort, QMessageBox::NoButton);
+      return;
   }
 
   statusBar()->message(tr("Reading model data..."));
@@ -1088,8 +1045,11 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   modeldatalist.reserve(131072);
   modeldatalist.clear();
 
-  if(!kvservice::KvApp::kvApp->getKvModelData(mdlist, whichData))
-      cerr << "Can't connect to modeldata table!" << endl;
+  if (not kvservice::KvApp::kvApp->getKvModelData(mdlist, whichData)) {
+      QMessageBox::critical(this, tr("Model Data Retrieval"),
+                            tr("An error occured when attempting to retrieve model data from kvalobs."),
+                            QMessageBox::Ignore, QMessageBox::NoButton);
+  }
   modDatl mtdl;
   CIModelDataList it=mdlist.begin();
   if (it != mdlist.end()) {
@@ -1182,7 +1142,7 @@ void HqcMainWindow::findStationInfo(int stnr,
         snr  = (station.wmonr());
         env  = (station.environmentid());
     } catch (std::runtime_error& e) {
-        std::cerr << "Error in station lookup: " << e.what() << std::endl;
+        LOG4HQC_WARN("hqc", "Error in station lookup: " << e.what());
     }
 }
 
@@ -1216,8 +1176,6 @@ void HqcMainWindow::tileHorizontal() {
     //for ( int i = int(windows.count()) - 1; i > int(windows.count()) -2; --i ) {
       QWidget *window = windows.at(i);
 
-      qDebug() << window->caption();
-
       if ( window->windowState() == Qt::WindowMaximized ) {
 	// prevent flicker
 	window->hide();
@@ -1234,8 +1192,8 @@ void HqcMainWindow::tileHorizontal() {
 
 void HqcMainWindow::closeWindow()
 {
+    LOG_SCOPE();
     mDianaHelper->setFirstObs();
-    cerr << "HqcMainWindow::closeWindow()\n";
     ui->ws->closeActiveSubWindow();
     /*emit*/ windowClose();
 }
@@ -1400,7 +1358,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
             const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
             if (d_param < 0 or d_param >= NOPARAM) {
-                std::cerr << "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit << endl;
+                LOG4HQC_WARN("hqc", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
                 dit++;
                 ditNo++;
                 continue;
@@ -1533,7 +1491,7 @@ void HqcMainWindow::readSettings()
 
     QSettings settings;
     if (not restoreGeometry(settings.value("geometry").toByteArray()))
-        cout << "CANNOT RESTORE GEOMETRY!!!!" << endl;
+        LOG4HQC_WARN("hqc", "Cannot restore geometry!");
 
     QString savedVersion = settings.value("version", "??").toString();
     if (savedVersion != PVERSION) {

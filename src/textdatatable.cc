@@ -61,4 +61,6 @@ TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
     txtTab = new TextDataTable(txtList, this);
     QVBoxLayout* topLayout = new QVBoxLayout(this);
     topLayout->addWidget(txtTab);
+
+    show();
 }

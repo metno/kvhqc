@@ -1,11 +1,13 @@
+
 #include "rejecttable.h"
 #include "timeutil.hh"
+#include <kvalobs/kvRejectdecode.h>
+#include <QtGui/QVBoxLayout>
 #include <iostream>
-#include <QSizePolicy>
 
 using namespace std;
 
-RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* parent)
+RejectTable::RejectTable(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* parent)
   : QTableWidget(3000,3,parent) {
 
   setWindowTitle(tr("Rejected"));
@@ -43,7 +45,15 @@ RejectTable::RejectTable(vector<kvalobs::kvRejectdecode> rejList, QWidget* paren
   adjustSize();
 }
 
-Rejects::Rejects(vector<kvalobs::kvRejectdecode> rejList) {
-  setGeometry(0,0,1200,1200);
-  rTab = new RejectTable(rejList, this);
+Rejects::Rejects(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* parent)
+    : QDialog(parent)
+{
+    setCaption(tr("Rejected"));
+    resize(1200, 1000);
+
+    rTab = new RejectTable(rejList, this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    topLayout->addWidget(rTab);
+
+    show();
 }

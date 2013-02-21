@@ -27,6 +27,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+#include "HqcLogging.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
@@ -34,17 +35,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
-#include <QtCore/qdebug.h>
 #include <QtCore/QLibraryInfo>
+#include <QtCore/QLocale>
 #include <QtCore/QTranslator>
 #include <QtGui/QApplication>
 
-#include <iostream>
-
-using namespace std;
-
 using kvservice::corba::CorbaKvApp;
-
 
 int main( int argc, char* argv[] )
 {
@@ -64,27 +60,37 @@ int main( int argc, char* argv[] )
     const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir)
         and hTranslator.load("hqc_" + QLocale::system().name(), langDir);
     if (not translationsLoaded)
-        qDebug() << "failed to load translations from " << langDir << " for locale " << QLocale::system().name();
+        LOG4HQC_WARN("hqc", "failed to load translations from " << langDir
+                 << " for locale " << QLocale::system().name());
     a.installTranslator(&wTranslator);
     a.installTranslator(&hTranslator);
     
     QStringList args = a.arguments();
 
     QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
+    QString log4cpp_properties = hqc::getPath(hqc::DATADIR) + "/log4cpp.properties";
     for (int i = 1; i < args.size(); ++i) {
-        if( args.at(i) == "--config" ) {
-            if( i+1 >= args.size() ) {
-                qDebug() << "invalid --config without filename";
+        if (args.at(i) == "--config") {
+            if (i+1 >= args.size()) {
+                LOG4HQC_FATAL("hqc", "invalid --config without filename");
                 exit(1);
             }
             i += 1;
             myconf = args.at(i);
+        } else if (args.at(i) == "--log4cpp-properties") {
+            if (i+1 >= args.size()) {
+                LOG4HQC_FATAL("hqc", "invalid --log4cpp-properties without filename");
+                return 1;
+            }
+            i += 1;
+            log4cpp_properties = args.at(i);
         }
     }
 
+    Log4CppConfig log4cpp(log4cpp_properties.toStdString());
     miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
-    if(!confSec) {
-        clog << "Can't open configuration file: " << myconf.toStdString() << endl;
+    if (not confSec) {
+        LOG4HQC_FATAL("hqc", "cannot open configuration file '" << myconf << "'");
         return 1;
     }
     

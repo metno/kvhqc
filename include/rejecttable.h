@@ -3,20 +3,24 @@
 #ifndef REJECTTABLE_H
 #define REJECTTABLE_H
 
+#include <QtGui/QDialog>
 #include <QtGui/QTableWidget>
-#include <kvalobs/kvRejectdecode.h>
 #include <vector>
+
+namespace kvalobs {
+class kvRejectdecode;
+}
 
 class RejectTable : public QTableWidget
 { Q_OBJECT;
 public:
-    RejectTable(std::vector<kvalobs::kvRejectdecode>, QWidget*);
+    RejectTable(const std::vector<kvalobs::kvRejectdecode>&, QWidget* parent);
 };
 
-class Rejects : public QWidget
+class Rejects : public QDialog
 { Q_OBJECT;
 public:
-    Rejects(std::vector<kvalobs::kvRejectdecode>);
+    Rejects(const std::vector<kvalobs::kvRejectdecode>&, QWidget* parent=0);
     RejectTable* rTab;
 };
 
