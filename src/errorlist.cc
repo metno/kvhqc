@@ -255,11 +255,11 @@ void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
             //      if (  data.typeId(parameterID) < 0 )
             //        continue;
             //??
-            if( data.otime() < stime || data.otime() > etime )
+            if (data.otime() < stime || data.otime() > etime)
                 continue;
-            if( not specialTimeFilter(parameterID, data.otime()) )
+            if (not specialTimeFilter(parameterID, data.otime()))
                 continue;
-            if( not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+            if (not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
                 continue;
             
             const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
@@ -319,9 +319,9 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
         memObs.stnr = data.stnr();
 
         BOOST_FOREACH(const int parameterID, selectedParameters) {
-            if( not specialTimeFilter(parameterID, data.otime()) )
+            if (not specialTimeFilter(parameterID, data.otime()))
                 continue;
-            if( not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()) )
+            if (not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
                 continue;
             memObs.typeId      = data.typeId(parameterID);
             memObs.orig        = data.orig(parameterID);
@@ -365,7 +365,6 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                 if( ((flg == 2 || flg == 3) && flTyp == "fr" ) ||
                     (flg == 2 && (flTyp == "fcc" || flTyp == "fcp") ) ||
                     ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == "fnum") ||
-                    ((flg == 2 || flg == 3)&& flTyp == "fw") ||
                     ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
                 {
                     if( isErrorInMemstore1(memObs) ) {
@@ -383,7 +382,7 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                            (flg == 6 && flTyp == "fnum") ||
                            (( flg == 3 || flg == 4 || flg == 6) && flTyp == "fpos") ||
                            ((flg == 2 || flg == 3) && flTyp == "ftime") ||
-                           ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fw") ||
+                           ((flg == 2 || flg == 3 || flg == 0xA) && flTyp == "fw") ||
                            (flg > 0 && flTyp == "fmis" ) ||
                            (flg == 7 && flTyp == "fd") )
                 {
