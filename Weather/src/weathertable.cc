@@ -69,9 +69,9 @@ using namespace boost::assign;
 static const int NC = 5;
 
 // columns with checkboxes
-static const int cbCol[]  = {2,4,22,24,26};
+static const int cbCol[NC] = {2,4,22,24,26};
 // columns with possible distributed values
-static const int dbCol[]  = {1,2,19,20,21};
+static const int dbCol[NC] = {1,2,19,20,21};
 // number of decimals in respective column
 static const int d1Par[]  = {
     1,1,1,1,1,0,1,1,1,0,0,1,1,1,1,1,0,0,0,1,1,1,1,0,0,0,0,
@@ -292,19 +292,21 @@ const int params[NP] = {
    for ( int icol = 0; icol < NL; icol++ )
       adjustColumn(icol);
 
-    bool bdat[NL];
     for ( int icol = 0; icol < NP; icol++ ) {
-      bdat[icol] = false;
-      for ( int irow = 0; irow < iRow; irow++ ) {
-	if ( !datRowList[irow][icol].isEmpty() ) {
-	  bdat[icol] = true;
-	  break;
-	}
-      }
-      if ( !bdat[icol] )
-	hideColumn(datCol[icol]);
+        bool bdat = false;
+        for ( int irow = 0; irow < iRow; irow++ ) {
+            if ( !datRowList[irow][icol].isEmpty() ) {
+                bdat = true;
+                break;
+            }
+        }
+        if (not bdat) {
+            const int c = datCol[icol];
+            hideColumn(c);
+            if (std::binary_search(cbCol, cbCol+NC, c+1))
+                hideColumn(c+1);
+        }
     }
-
   }
 
   void WeatherTable::displayFlags(vector<synFlg>& flagList) {
@@ -330,17 +332,16 @@ const int params[NP] = {
     for ( int icol = 0; icol < NC; icol++ )
       hideColumn(cbCol[icol]);
 
-    bool bfl[NL];
     for ( int icol = 0; icol < NP; icol++ ) {
-      bfl[icol] = false;
-      for ( int irow = 0; irow < iRow; irow++ ) {
-	if ( !flagRowList[irow][icol].isEmpty() ) {
-	  bfl[icol] = true;
-	  break;
-	}
-      }
-      if ( !bfl[icol] )
-	hideColumn(datCol[icol]);
+        bool bfl = false;
+        for ( int irow = 0; irow < iRow; irow++ ) {
+            if ( !flagRowList[irow][icol].isEmpty() ) {
+                bfl = true;
+                break;
+            }
+        }
+        if (not bfl)
+            hideColumn(datCol[icol]);
     }
   }
 
