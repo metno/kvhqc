@@ -2,6 +2,8 @@
 
 #include "KvMetaDataBuffer.hh"
 
+#include <QtGui/QVBoxLayout>
+
 TextDataTable::TextDataTable(const std::vector<TxtDat>& txtList, QWidget* parent)
   : QTableWidget(3000,7,parent) {
 
@@ -50,7 +52,13 @@ TextDataTable::TextDataTable(const std::vector<TxtDat>& txtList, QWidget* parent
   adjustSize();
 }
 
-TextData::TextData(const std::vector<TxtDat>& txtList) {
-  setGeometry(0,0,700,1200);
-  txtTab = new TextDataTable(txtList, this);
+TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
+    : QDialog(parent)
+{
+    setCaption(tr("TextData"));
+    resize(700,1000);
+
+    txtTab = new TextDataTable(txtList, this);
+    QVBoxLayout* topLayout = new QVBoxLayout(this);
+    topLayout->addWidget(txtTab);
 }

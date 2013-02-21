@@ -1,9 +1,7 @@
 /*
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  $Id$
-
-  Copyright (C) 2007 met.no
+  Copyright (C) 2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -31,13 +29,24 @@
 
 #include "GetTextData.h"
 
-GetTextData::GetTextData(HqcMainWindow* o)
-    : w(o)
+#include <boost/foreach.hpp>
+
+GetTextData::GetTextData()
 {
 }
 
 bool GetTextData::next(kvservice::KvObsDataList &textdatalist)
 {
-    w->makeTextDataList( textdatalist );
-    return true;
+    BOOST_FOREACH(const std::list<kvalobs::kvTextData>& tdl, textdatalist) {
+        BOOST_FOREACH(const kvalobs::kvTextData& td, tdl) {
+            TxtDat txtd;
+            txtd.stationId = td.stationID();
+            txtd.obstime   = timeutil::from_miTime(td.obstime());
+            txtd.original  = td.original();
+            txtd.paramId   = td.paramID();
+            txtd.tbtime    = timeutil::from_miTime(td.tbtime());
+            txtd.typeId    = td.typeID();
+            txtList.push_back(txtd);
+        }
+    }
 }

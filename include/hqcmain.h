@@ -31,16 +31,12 @@
 
 #include "StInfoSysBuffer.hh"
 #include "hqcdefs.h"
-#include "textdatatable.h"
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
 
-#include <QtCore/qlist.h>
-#include <QtCore/qmap.h>
 #include <QtCore/qset.h>
 #include <QtCore/qstring.h>
-#include <QtCore/qstringlist.h>
 #include <QtGui/qmainwindow.h>
 
 #include <memory>
@@ -85,7 +81,6 @@ public:
     void startup();
 
     void makeObsDataList(kvservice::KvObsDataList& dataList);
-    void makeTextDataList(kvservice::KvObsDataList& textdataList);
 
     bool isShowTypeidInDataList() const;
 
@@ -226,13 +221,9 @@ private:
     model::KvalobsDataListPtr datalist;
     std::vector<modDatl> modeldatalist;
 
-    /// This holds the value of the previously used stList
-    std::vector<TxtDat> txtList;
     listType lity;
     std::vector<currentType> currentTypeList;
     kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
-    /// True if all types have been selected, as opposed to prioritized parameters
-    bool isShTy;
 
     model::KvalobsDataModel * dataModel;
     int sLevel;
@@ -244,8 +235,6 @@ private:
 
     std::vector<int> mSelectedParameters;
     std::set<int> mSelectedTimes;
-
-    bool tsVisible;
 
     std::auto_ptr<Ui::HqcMainWindow> ui;
     ClientButton* pluginB;

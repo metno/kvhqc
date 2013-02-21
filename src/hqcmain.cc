@@ -62,6 +62,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejecttable.h"
 #include "rejecttimeseriesdialog.h"
 #include "textdatadialog.h"
+#include "textdatatable.h"
 #include "TimeseriesDialog.h"
 #include "timeutil.hh"
 #include "weatherdialog.h"
@@ -78,7 +79,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #endif
 #include <qTimeseries/TSPlot.h>
 #include <qUtilities/ClientButton.h>
-#include <qUtilities/miMessage.h>
 #include <glText/glTextQtTexture.h>
 #include <kvalobs/kvData.h>
 
@@ -92,15 +92,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPixmap>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
 #include <qdebug.h>
 
-#include <boost/algorithm/string.hpp>
-#include <boost/assign.hpp>
 #include <boost/foreach.hpp>
-#include <boost/format.hpp>
-#include <boost/lexical_cast.hpp>
 #include <boost/make_shared.hpp>
 
 #include <algorithm>
@@ -113,19 +107,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "debug.hh"
 
 namespace {
-
-const std::map<QString, QString> configNameToUserName = boost::assign::map_list_of
-        ("[airpress]", "Lufttrykk")
-        ("[temperature]", "Temperatur")
-        ("[prec]", "Nedbør")
-        ("[visual]", "Visuell")
-        ("[wave]", "Sjøgang")
-        ("[synop]", "Synop")
-        ("[klstat]", "Klimastatistikk")
-        ("[priority]", "Prioriterte parametere")
-        ("[wind]", "Vind")
-        ("[plu]", "Pluviometerkontroll")
-        ("[all]", "Alt");
 
 const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
 
@@ -163,7 +144,6 @@ HqcMainWindow::HqcMainWindow()
   , dataModel(0)
   , sLevel(0)
   , listExist(false)
-  , tsVisible(false)
   , ui(new Ui::HqcMainWindow)
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
@@ -267,7 +247,6 @@ void HqcMainWindow::startup()
     DisableGUI disableGUI(this);
     listExist = false;
     sLevel = 0;
-    tsVisible = false;
 
     // --- CHECK USER IDENTITY ----------------------------------------
 
@@ -565,7 +544,6 @@ void HqcMainWindow::TimeseriesOK() {
 
   if(tslist.size() == 0){
     tspdialog->hide();
-    tsVisible = false;
     return;
   }
 
@@ -586,7 +564,6 @@ void HqcMainWindow::TimeseriesOK() {
 
   tspdialog->prepare(tsplot);
   tspdialog->show();
-  tsVisible = true;
 }
 
 bool HqcMainWindow::isShowTypeidInDataList() const
@@ -667,19 +644,16 @@ void HqcMainWindow::textDataOK()
     kvservice::WhichDataHelper whichData;
     whichData.addStation(stnr, timeutil::to_miTime(dtfrom), timeutil::to_miTime(dtto));
 
-    txtList.clear();
-    GetTextData textDataReceiver(this);
-    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)){
-        //cerr << "Finner ikke  textdatareceiver!!" << endl;
+    GetTextData textDataReceiver;
+    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)) {
+        QMessageBox::critical(this, tr("No Textdata"), tr("Could not read text data."),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        return;
     }
-    TextData* txtDat = new TextData(txtList);
+
+    txtdlg->hide();
+    TextData* txtDat = new TextData(textDataReceiver.textData(), this);
     txtDat->show();
-    if ( txtdlg->isVisible() ) {
-        txtdlg->hide();
-    }
-    else {
-        txtdlg->show();
-    }
 }
 
 void HqcMainWindow::rejectedOK() {
@@ -1426,25 +1400,6 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
         }
     }
     return tpId;
-}
-
-void HqcMainWindow::makeTextDataList(kvservice::KvObsDataList& textDataList)
-{
-  //  cout << "textDataList.size = " << textDataList.size() << endl;
-  for(kvservice::IKvObsDataList it=textDataList.begin(); it!=textDataList.end(); it++ ) {
-    kvservice::KvObsData::kvTextDataList::iterator dit=it->textDataList().begin();
-    while( dit != it->textDataList().end() ) {
-      TxtDat txtd;
-      txtd.stationId = dit->stationID();
-      txtd.obstime   = timeutil::from_miTime(dit->obstime());
-      txtd.original  = dit->original();
-      txtd.paramId   = dit->paramID();
-      txtd.tbtime    = timeutil::from_miTime(dit->tbtime());
-      txtd.typeId    = dit->typeID();
-      txtList.push_back(txtd);
-      dit++;
-    }
-  }
 }
 
 void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)

@@ -33,24 +33,28 @@
 #ifndef __GETTEXTDATA_H__
 #define __GETTEXTDATA_H__
 
+#include "hqcdefs.h"
 #include <kvcpp/KvGetDataReceiver.h>
-#include "hqcmain.h"
 
-class GetTextData :
-   public kvservice::KvGetDataReceiver
+class GetTextData : public kvservice::KvGetDataReceiver
 {
-   public:
-      GetTextData( HqcMainWindow* o);
-      HqcMainWindow* w;
-      /**
-       * next, this function is called for every data set!
-       *
-       * \datalist the data.
-       * \return true if we shall continue. False if you want to
-       *         stop retriving data from kvalobs.
-       */
-      bool next( kvservice::KvObsDataList &textdatalist );
-      //      bool next( kvservice::KvObsDataList &kvTextDataList );
+public:
+    GetTextData();
+
+    /**
+     * next, this function is called for every data set!
+     *
+     * \datalist the data.
+     * \return true if we shall continue. False if you want to
+     *         stop retriving data from kvalobs.
+     */
+    bool next( kvservice::KvObsDataList &textdatalist );
+
+    const std::vector<TxtDat>& textData() const
+        { return txtList; }
+
+private:
+    std::vector<TxtDat> txtList;
 };
 
 
