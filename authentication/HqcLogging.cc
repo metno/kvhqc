@@ -6,7 +6,7 @@
 #include <log4cpp/PropertyConfigurator.hh>
 #include <log4cpp/OstreamAppender.hh>
 #include <log4cpp/Layout.hh>
-#include <log4cpp/BasicLayout.hh>
+#include <log4cpp/PatternLayout.hh>
 
 #include <QtCore/QString>
 
@@ -21,11 +21,13 @@ Log4CppConfig::Log4CppConfig(const std::string& l4c_p)
         log4cpp::PropertyConfigurator::configure(l4c_p);
     } else {
         log4cpp::Appender *a = new log4cpp::OstreamAppender("console", &std::cout);
-	a->setLayout(new log4cpp::BasicLayout());
+        log4cpp::PatternLayout* layout = new log4cpp::PatternLayout();
+        layout->setConversionPattern("%d %p %c: %m%n");
+        a->setLayout(layout);
 
         log4cpp::Category& root = log4cpp::Category::getRoot();
-	root.setPriority(log4cpp::Priority::INFO);
-	root.addAppender(a);
+        root.setPriority(log4cpp::Priority::WARN);
+        root.addAppender(a);
     }
 }
 

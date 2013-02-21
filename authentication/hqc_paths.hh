@@ -10,6 +10,7 @@ enum PathId {
     CONFDIR = 0,
     DATADIR,
     IMAGEDIR,
+    DOCDIR,
     PATHID__END
 };
 

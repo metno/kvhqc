@@ -72,7 +72,7 @@ void FailList::newData( const kvalobs::kvData & data )
         return;
     this->data = data;
     
-    LOG_SCOPE();
+    LOG_SCOPE("FailList");
 
     cfailedList->clear();
     

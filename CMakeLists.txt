@@ -99,6 +99,10 @@ INSTALL(FILES
   share/images/diana_img_hqc.png
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 
+INSTALL(FILES
+  share/doc/news.html
+  DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
+
 FOREACH(df hqcdiana WatchRR WatchRR2 WatchWeather histhqcdiana histWatchRR histWatchWeather)
   SET(dfi share/metno-${df}.desktop.in)
   SET(dfo share/metno-${df}-${PVERSION}.desktop)

@@ -73,9 +73,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #ifndef slots
 #define slots
+#include <qUtilities/qtHelpDialog.h>
 #include <qTimeseries/TSPlotDialog.h>
 #undef slots
 #else
+#include <qUtilities/qtHelpDialog.h>
 #include <qTimeseries/TSPlotDialog.h>
 #endif
 #include <qTimeseries/TSPlot.h>
@@ -234,6 +236,18 @@ HqcMainWindow::HqcMainWindow()
     
     // make the timeseries-plot-dialog
     tspdialog = new TSPlotDialog(this);
+
+    HelpDialog::Info info;
+    info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
+
+    HelpDialog::Info::Source helpsource;
+    helpsource.source = "news.html";
+    helpsource.name = "Kvhqc News";
+    helpsource.defaultlink = "";
+    info.src.push_back(helpsource);
+    
+    mHelpDialog = new HelpDialog(this, info);
+    mHelpDialog->hide();
 }
 
 HqcMainWindow::~HqcMainWindow()
@@ -255,6 +269,7 @@ void HqcMainWindow::startup()
 
     readSettings();
     show();
+    checkVersionSettings();
     qApp->processEvents();
     if (not reinserter) {
         mHints->addHint(tr("<h1>Authentication</h1>"
@@ -281,7 +296,7 @@ void HqcMainWindow::startup()
 
 void HqcMainWindow::dianaShowOK()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     mDianaHelper->updateDianaParameters();
     if (listExist)
         ListOK();
@@ -313,7 +328,7 @@ void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 
 void HqcMainWindow::ListOK()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     if (not mDianaHelper->isConnected()) {
         mHints->addHint(tr("<h1>Diana-Connection</h1>"
                            "No contact with diana! "
@@ -445,7 +460,7 @@ void HqcMainWindow::ListOK()
         }
     }
     /*emit*/ newStationList(stationList);
-    LOG4HQC_DEBUG("hqc", "newStationList emitted");
+    LOG4HQC_DEBUG("HqcMainWindow", "newStationList emitted");
 
     //  send parameter names to ts dialog
     /*emit*/ newParameterList(mSelectedParameters);
@@ -601,7 +616,7 @@ void HqcMainWindow::rejectedOK()
     CKvalObs::CService::RejectDecodeInfo rdInfo;
     rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
     rdInfo.toTime = dateStr_( rejdlg->dtto );
-    LOG4HQC_INFO("hqc", rdInfo.fromTime << " <-> " << rdInfo.toTime);
+    LOG4HQC_INFO("HqcMainWindow", rdInfo.fromTime << " <-> " << rdInfo.toTime);
     kvservice::RejectDecodeIterator rdIt;
     if (not kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt)) {
         QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
@@ -617,7 +632,7 @@ void HqcMainWindow::rejectedOK()
         if (reject.comment() == "No decoder for SMS code <12>!")
             continue;
 
-        LOG4HQC_INFO("hqc", reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+        LOG4HQC_INFO("HqcMainWindow", reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
         rejList.push_back(reject);
     }
     new Rejects(rejList, this);
@@ -719,7 +734,7 @@ void HqcMainWindow::errLisaMenu()
 
 void HqcMainWindow::listMenu(listType lt)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     lity = lt;
 
     QDateTime mx = QDateTime::currentDateTime();
@@ -894,7 +909,7 @@ void HqcMainWindow::onVersionCheckTimeout()
         }
     }
     // something went wrong when reading the version info file
-    LOG4HQC_WARN("hqc", "error reading share/.../hqc_current_version, not renewing timer");
+    LOG4HQC_WARN("HqcMainWindow", "error reading share/.../hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
@@ -1119,7 +1134,7 @@ void HqcMainWindow::checkTypeId(int stnr)
 */
 void HqcMainWindow::readFromParam()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
 }
 
 /*!
@@ -1142,7 +1157,7 @@ void HqcMainWindow::findStationInfo(int stnr,
         snr  = (station.wmonr());
         env  = (station.environmentid());
     } catch (std::runtime_error& e) {
-        LOG4HQC_WARN("hqc", "Error in station lookup: " << e.what());
+        LOG4HQC_WARN("HqcMainWindow", "Error in station lookup: " << e.what());
     }
 }
 
@@ -1192,7 +1207,7 @@ void HqcMainWindow::tileHorizontal() {
 
 void HqcMainWindow::closeWindow()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     mDianaHelper->setFirstObs();
     ui->ws->closeActiveSubWindow();
     /*emit*/ windowClose();
@@ -1228,7 +1243,7 @@ void HqcMainWindow::about()
 
 void HqcMainWindow::sendTimes()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     
     std::set<timeutil::ptime> allTimes;
     BOOST_FOREACH(const model::KvalobsData& d, *datalist)
@@ -1254,7 +1269,7 @@ void HqcMainWindow::aboutQt()
 
 void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
     DBGV(kd);
     mDianaHelper->sendTime(kd.obstime());
     mDianaHelper->sendObservations(*datalist, modeldatalist, mSelectedParameters);
@@ -1358,7 +1373,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
             const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
             if (d_param < 0 or d_param >= NOPARAM) {
-                LOG4HQC_WARN("hqc", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
+                LOG4HQC_WARN("HqcMainWindow", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
                 dit++;
                 ditNo++;
                 continue;
@@ -1480,21 +1495,33 @@ void HqcMainWindow::writeSettings()
     QSettings settings;
     settings.setValue("geometry", saveGeometry());
 
-    settings.setValue("version", PVERSION);
-
     lstdlg->saveSettings(settings);
 }
 
 void HqcMainWindow::readSettings()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("HqcMainWindow");
 
     QSettings settings;
     if (not restoreGeometry(settings.value("geometry").toByteArray()))
-        LOG4HQC_WARN("hqc", "Cannot restore geometry!");
+        LOG4HQC_WARN("HqcMainWindow", "Cannot restore geometry!");
+
+    lstdlg->restoreSettings(settings);
+}
+
+void HqcMainWindow::checkVersionSettings()
+{
+    QSettings settings;
+
+    QString savedVersionFull = settings.value("version_full", "??").toString();
+    if (savedVersionFull != PVERSION_FULL) {
+        settings.setValue("version_full", PVERSION_FULL);
+        helpNews();
+    }
 
     QString savedVersion = settings.value("version", "??").toString();
     if (savedVersion != PVERSION) {
+        settings.setValue("version", PVERSION);
         QMessageBox::information(this,
                                  tr("HQC - Version Change"),
                                  tr("You are using a different version of HQC than before (now: %1, before: %2). "
@@ -1502,8 +1529,11 @@ void HqcMainWindow::readSettings()
                                  .arg(PVERSION).arg(savedVersion),
                                  QMessageBox::Ok, QMessageBox::Ok);
     }
+}
 
-    lstdlg->restoreSettings(settings);
+void HqcMainWindow::helpNews()
+{
+    mHelpDialog->showdoc(0);
 }
 
 void HqcMainWindow::moveEvent(QMoveEvent* event)

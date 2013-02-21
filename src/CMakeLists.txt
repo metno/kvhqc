@@ -63,7 +63,7 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_CURRENT_SOURCE_DIR}/src
 )
 
-SET(hqc_TRANS hqc_nb_NO.ts)
+SET(hqc_TRANS hqc_nb.ts hqc_de.ts)
 QT4_ADD_TRANSLATION(hqc_QM ${hqc_TRANS})
 
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})

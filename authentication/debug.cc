@@ -1,7 +1,7 @@
 /* -*- c++ -*-
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  Copyright (C) 2011 met.no
+  Copyright (C) 2013 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -29,39 +29,34 @@
 
 #include "debug.hh"
 
-#include <Qt/qdebug.h>
 #include <sstream>
-#include <sys/time.h>
 
 namespace hqc {
 namespace debug {
 
-void ScopeLogger::log(int line) const
+ScopeLogger::ScopeLogger(const char* cat, const char* fun)
+    : category(log4cpp::Category::getInstance(cat))
+    , function(fun)
 {
-    if( line >= 0 )
-        indent += 1;
-    std::ostringstream data;
-    for ( int i = 0; i < indent; ++ i )
-      data << "--+--";
+    indent += 1;
+    log("> ENTER");
+}
+ 
+ScopeLogger::~ScopeLogger()
+{
+    log("< LEAVE");
+    indent -= 1;
+}
 
-    if( line >= 0 ) {
-        data << "> Entering " << name_ << ":" << line << " ";
-    } else {
-        data << "< Leaving " << name_;
-        indent -= 1;
+void ScopeLogger::log(const char* txt)
+{
+    if (category.isPriorityEnabled(log4cpp::Priority::DEBUG)) {
+        std::ostringstream data;
+        for (int i = 0; i < indent; ++ i)
+            data << "+-";
+        category << log4cpp::Priority::DEBUG
+                 << '[' << function << "] " << data.str() << txt;
     }
-
-    struct timeval now;
-    gettimeofday(&now, 0);
-    struct tm *tmp = localtime(&now.tv_sec);
-    if (tmp != NULL) {
-        char txt[64], mtxt[12];
-        strftime(txt, sizeof(txt), "%F %T", tmp);
-        snprintf(mtxt, sizeof(mtxt), "%06ld", now.tv_usec);
-        data << " [" << txt << '.' << mtxt << ']';
-    }
-
-    qDebug() << data.str().c_str();
 }
 
 int ScopeLogger::indent = 2;

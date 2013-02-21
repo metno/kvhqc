@@ -85,6 +85,7 @@
      <string>&amp;Help</string>
     </property>
     <addaction name="actionHelpManual"/>
+    <addaction name="actionHelpNews"/>
     <addaction name="actionHelpFlags"/>
     <addaction name="actionHelpParameters"/>
     <addaction name="separator"/>
@@ -100,7 +101,7 @@
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QToolBar" name="toolBar">
    <property name="windowTitle">
-    <string>toolBar</string>
+    <string notr="true">toolBar</string>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -280,64 +281,6 @@
     <string>Ctrl+J</string>
    </property>
   </action>
-  <action name="actionParametersDaily">
-   <property name="text">
-    <string>For &amp;daily routine</string>
-   </property>
-  </action>
-  <action name="actionParametersPrioritized">
-   <property name="text">
-    <string>&amp;Prioritised parameters</string>
-   </property>
-  </action>
-  <action name="actionParametersTemperatureHumidity">
-   <property name="text">
-    <string>&amp;Temperature and humidity</string>
-   </property>
-  </action>
-  <action name="actionParametersPrecipitationSnow">
-   <property name="text">
-    <string>&amp;Precipitation and snow</string>
-   </property>
-  </action>
-  <action name="actionParametersWindPressure">
-   <property name="text">
-    <string>&amp;Air pressure and wind</string>
-   </property>
-  </action>
-  <action name="actionParametersMaritime">
-   <property name="text">
-    <string>&amp;Maritime parameters</string>
-   </property>
-  </action>
-  <action name="actionParametersSynop">
-   <property name="text">
-    <string>&amp;Synop</string>
-   </property>
-  </action>
-  <action name="actionParametersWind">
-   <property name="text">
-    <string>&amp;Wind</string>
-   </property>
-  </action>
-  <action name="actionParametersPluviometer">
-   <property name="text">
-    <string>&amp;Pluviometer parameters</string>
-   </property>
-  </action>
-  <action name="actionParametersAll">
-   <property name="text">
-    <string>&amp;Alt</string>
-   </property>
-  </action>
-  <action name="timesAction">
-   <property name="text">
-    <string>Observation &amp;times</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+T</string>
-   </property>
-  </action>
   <action name="actionRejectSeries">
    <property name="text">
     <string>&amp;Reject time series</string>
@@ -398,14 +341,14 @@
     <enum>QAction::AboutQtRole</enum>
    </property>
   </action>
-  <action name="actionParametersVisual">
-   <property name="text">
-    <string>&amp;Visual parameters</string>
-   </property>
-  </action>
   <action name="actionScreenshot">
    <property name="text">
     <string>&amp;Screenshot</string>
+   </property>
+  </action>
+  <action name="actionHelpNews">
+   <property name="text">
+    <string>&amp;News</string>
    </property>
   </action>
  </widget>
@@ -651,6 +594,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionHelpNews</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>helpNews()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>saveData()</signal>
@@ -694,5 +653,6 @@
   <slot>about()</slot>
   <slot>aboutQt()</slot>
   <slot>updateSaveFunction(QMdiSubWindow*)</slot>
+  <slot>helpNews()</slot>
  </slots>
 </ui>

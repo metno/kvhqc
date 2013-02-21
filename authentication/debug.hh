@@ -30,22 +30,22 @@
 #ifndef DEBUG_HH_
 #define DEBUG_HH_
 
+#include "HqcLogging.hh"
+#include <string>
+
 namespace hqc {
 namespace debug {
 
 class ScopeLogger {
 public:
-    ScopeLogger(const char * name, int line)
-        : name_(name) { log(line); }
-    ~ScopeLogger()
-        { log(-1); }
+    ScopeLogger(const char* category, const char* function);
+    ~ScopeLogger();
 
 private:
-    /// \param line line number for entering, or -1 for leaving
-    void log(int line) const;
+    void log(const char* txt);
 
-private:
-    const char* name_;
+    log4cpp::Category& category;
+    const char* function;
     static int indent;
 };
 
@@ -53,22 +53,17 @@ private:
 } // namespace hqc
 
 #ifdef NDEBUG
-#define LOG_SCOPE()    do { /* nothing */ } while(false)
+#define LOG_SCOPE(c)   do { /* nothing */ } while(false)
 #define DBG(x)         do { /* nothing */ } while(false)
 #define DBGL           do { /* nothing */ } while(false)
 #define DBG1(x) 
 #define DBGV(x)        do { /* nothing */ } while(false)
 #define DBGE(x)
 #else // NDEBUG
-#include <iostream>
-#ifdef __GNUG__
-#define LOG_SCOPE() ::hqc::debug::ScopeLogger INTERNAL_scope_logger(__PRETTY_FUNCTION__, __LINE__)
-#else // __GNUG__
-#define LOG_SCOPE() ::hqc::debug::ScopeLogger INTERNAL_scope_logger(__func__, __LINE__)
-#endif // __GNUG__
-#define DBGHDR std::cout << __FILE__ << ":" << __LINE__ << "[" << __FUNCTION__ << "]"
-#define DBG(x) do { DBGHDR << "\n    " << x << std::endl; } while(false)
-#define DBGL   do { DBGHDR << std::endl; } while(false)
+#include "HqcLogging.hh"
+#define LOG_SCOPE(category) const ::hqc::debug::ScopeLogger INTERNAL_scope_logger(category, __PRETTY_FUNCTION__)
+#define DBG(x) LOG4HQC_DEBUG("hqc", x)
+#define DBGL   LOG4HQC_DEBUG("hqc", "L:" << __LINE__)
 #define DBG1(x) " " #x "='" << x << "'"
 #define DBGV(x) DBG(DBG1(x))
 #define DBGE(x) x

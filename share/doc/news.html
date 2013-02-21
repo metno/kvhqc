@@ -1,0 +1,79 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>Kvhqc News</title>
+  </head>
+  <body>
+    <h1>Kvhqc News</h1>
+    
+    <a nem="2.16.1"><h2>Version 2.16.1</h2></a>
+    <ul>
+      <li><b>Hqc:</b> news window</li>
+      <li><b>Hqc:</b> added fw flags from QC2 plu check to error
+      list</li>
+      <li><b>WatchRR:</b> slightly smaller window and narrower
+      columns</li>
+      <li><b>WatchRR:</b> fixed problem with sum=-1 in redistribution dialog</li>
+    </ul>
+
+    <a nem="2.16.0"><h2>Version 2.16.0</h2></a>
+    <ul>
+      <li><b>Hqc:</b> det finnes ikke lenger en egen dialog for
+        parameter-valg og tidsvalg. Disse to er nå faner i dialogen
+        for stasjonsvalg. Denne dialogen har også fått to nye knapper
+        underst til venstre, nemlig "Hente..." og "Lagre..." der man
+        kan lagre og tilbakekalle parametere, kontrolltyper, tider, og
+        fylker med et navn man kan velge selv. Selve stasjoner lagres
+        ikke for å unngå at nye stasjoner blir ikke med.
+      </li>
+      <li><b>Hqc:</b> knappene for Østlandet osv har nå et "+" og et
+        "-" for å legge til eller fjerne alle fylker i Østlandet; det
+        er også mulig å velge f.eks + for Østlandet og Nord-Norge
+      </li>
+      <li><b>Hqc:</b> det finnes en ny knapp i hovedmeny som heter
+        "Hqc (aktuell versjon)" som skulle alltid starte den aktuelle
+        versjonen. De som vil har en ikon på desktop skulle bruke den
+        istedenfor en knapp med versjonsnummer
+      </li>
+      <li><b>WatchRR:</b> når WatchRR startes brytes ikke lenger
+        koblingen av hoved-vindu til diana, men den går i en
+        "sovemodus"; da slipper man å sette opp diana på nytt når
+        WatchRR avsluttes
+      </li>
+    </ul>
+
+    <a nem="2.15.2"><h2>Version 2.15.2</h2></a>
+    <ul>
+      <li><b>Hqc:</b> ny knapp "alle i området" i
+        dataliste-dialog. Den har samme effekt som "velg stasjon"
+        &mdash; "velg alle" -&mdash; "lukk", men dere sparer to
+        knappe-trykk
+      </li>
+
+      <li><b>Hqc:</b> kommunikasjonen mellom hqc og diana skulle være
+        mye bedre. Hos meg kan jeg nå se et par data fra datalisten i
+        diana, hoppe til ny tid i hqc med å klikke på pilknappene for
+        å endre tid i diana, og hoppe til andre stasjoner i dataliste
+        ved å peke på dem med musen i diana. Det er fortsatt en stor
+        ulempe: hqc-data vises ikke automatisk i diana, man må trykke
+        flere knapper:
+        <ol>
+          <li>først koble sammen hqc og diana (automatisk i hqc, men ikke i diana)</li>
+          <li>klikke på en rad i dataliste i hqc (viktig!)</li>
+          <li>i diana:<ol>
+              <li>åpne obs-meny (den gylne ved høyre siden av diana-vinduet)</li>
+              <li>velge "Hqc_synop" øverst</li>
+              <li>trykke "Hqc_synop"-knappen under "Hqc_synop"</li>
+              <li>trykke "Alle" under listen som sier "id" osv</li>
+              <li>"utfør og skjul"</li>
+            </ol></li>
+        </ol>
+        Hvis data forsvinner fra diana, må man gjenta minst tredje
+        trinnet. Dette må også gjøres når man bruker WatchRR
+        innimellom (fordi den bryter forbindelsen mellom hqc og
+        diana). I "Annet/Dianavisning" i hqc velges hvilke parametere
+        skal vises i diana, men de vises bare hvis de er også valgt
+        for datalisten.
+      </li>
+  </body>
+</html>

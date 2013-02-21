@@ -42,6 +42,7 @@
 #include <memory>
 
 class ClientButton;
+class HelpDialog;
 class miMessage;
 class TSPlotDialog;
 QT_BEGIN_NAMESPACE
@@ -156,6 +157,7 @@ private Q_SLOTS:
     void startKro();
     void screenshot();
     void helpUse();
+    void helpNews();
     void helpFlag();
     void helpParam();
     void about();
@@ -179,6 +181,7 @@ private:
     void closeEvent(QCloseEvent* event);
     void writeSettings();
     void readSettings();
+    void checkVersionSettings();
 
     void readFromStation();
 
@@ -202,6 +205,7 @@ private:
     TimeseriesDialog* tsdlg;
     RejectTimeseriesDialog* rjtsdlg;
     AcceptTimeseriesDialog* actsdlg;
+    HelpDialog* mHelpDialog;
 
     model::KvalobsDataListPtr datalist;
     std::vector<modDatl> modeldatalist;

@@ -50,21 +50,6 @@ int main( int argc, char* argv[] )
     QCoreApplication::setOrganizationDomain("met.no");
     QCoreApplication::setApplicationName("Hqc");
     
-    QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
-                      QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    a.installTranslator(&qtTranslator);
-
-    const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
-    QTranslator wTranslator, hTranslator;
-    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir)
-        and hTranslator.load("hqc_" + QLocale::system().name(), langDir);
-    if (not translationsLoaded)
-        LOG4HQC_WARN("hqc", "failed to load translations from " << langDir
-                 << " for locale " << QLocale::system().name());
-    a.installTranslator(&wTranslator);
-    a.installTranslator(&hTranslator);
-    
     QStringList args = a.arguments();
 
     QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
@@ -72,14 +57,14 @@ int main( int argc, char* argv[] )
     for (int i = 1; i < args.size(); ++i) {
         if (args.at(i) == "--config") {
             if (i+1 >= args.size()) {
-                LOG4HQC_FATAL("hqc", "invalid --config without filename");
-                exit(1);
+                std::cerr << "invalid --config without filename" << std::endl;
+                return 1;
             }
             i += 1;
             myconf = args.at(i);
         } else if (args.at(i) == "--log4cpp-properties") {
             if (i+1 >= args.size()) {
-                LOG4HQC_FATAL("hqc", "invalid --log4cpp-properties without filename");
+                std::cerr << "invalid --log4cpp-properties without filename" << std::endl;
                 return 1;
             }
             i += 1;
@@ -88,6 +73,24 @@ int main( int argc, char* argv[] )
     }
 
     Log4CppConfig log4cpp(log4cpp_properties.toStdString());
+
+    QTranslator qtTranslator;
+    qtTranslator.load(QLocale::system(), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    a.installTranslator(&qtTranslator);
+
+    const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
+    QTranslator wTranslator, hTranslator;
+    const bool translationsLoaded = wTranslator.load(QLocale::system() ,"watchrr2", "_", langDir)
+        and hTranslator.load(QLocale::system(), "hqc", "_", langDir);
+    if (not translationsLoaded)
+        LOG4HQC_WARN("hqc", "failed to load translations from " << langDir
+                     << " for ui languages=" << QLocale::system().uiLanguages().join(","));
+    else
+        LOG4HQC_INFO("hqc", "loaded translations from " << langDir
+                     << " for ui languages=" << QLocale::system().uiLanguages().join(","));
+    a.installTranslator(&wTranslator);
+    a.installTranslator(&hTranslator);
+    
     miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
     if (not confSec) {
         LOG4HQC_FATAL("hqc", "cannot open configuration file '" << myconf << "'");

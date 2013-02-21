@@ -9,15 +9,18 @@ namespace {
 const char* hqc_pathnames[hqc::PATHID__END] = {
     "HQC_CONFDIR",
     "HQC_DATADIR",
-    "HQC_IMAGEDIR"
+    "HQC_IMAGEDIR",
+    "HQC_DOCDIR"
 };
 
 #define DATADIR PREFIX "/share/kvhqc/" PVERSION
+#define DOCDIR  PREFIX "/share/doc/kvhqc-" PVERSION
 
 const char* hqc_defaultpaths[hqc::PATHID__END] = {
     SYSCONFDIR "/kvhqc/" PVERSION,
     DATADIR,
-    DATADIR "/images"
+    DATADIR "/images",
+    DOCDIR
 };
 
 } // anonymous namespace

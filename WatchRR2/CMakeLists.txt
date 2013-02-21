@@ -123,7 +123,7 @@ SET(watchrr2_SOURCES
   TimeHeader.cc
 )
 
-SET(watchrr2_TRANS watchrr2_nb_NO.ts)
+SET(watchrr2_TRANS watchrr2_nb.ts)
 QT4_ADD_TRANSLATION(watchrr2_QM ${watchrr2_TRANS})
 
 INCLUDE_DIRECTORIES(

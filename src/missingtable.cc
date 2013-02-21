@@ -40,9 +40,9 @@ MissingTable::MissingTable(QWidget* parent, ErrorList* el)
   setNumCols(12);
   horizontalHeader()->setLabel(0, tr("Stnr"));
   horizontalHeader()->setLabel(1, tr("Name"));
-  horizontalHeader()->setLabel(2, tr("  Mt"));
-  horizontalHeader()->setLabel(3, tr("  Dy"));
-  horizontalHeader()->setLabel(4, tr("  Hr"));
+  horizontalHeader()->setLabel(2, tr("Mt"));
+  horizontalHeader()->setLabel(3, tr("Dy"));
+  horizontalHeader()->setLabel(4, tr("Hr"));
   horizontalHeader()->setLabel(5, tr("Para"));
   horizontalHeader()->setLabel(6, tr("Type"));
   horizontalHeader()->setLabel(7, tr("Orig.d"));

@@ -203,17 +203,17 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     setShowGrid(FALSE);
     verticalHeader()->hide();
     horizontalHeader()->setLabel(1, tr("Stnr"));
-    horizontalHeader()->setLabel(2, tr("Navn"));
-    horizontalHeader()->setLabel(3, tr("  Md"));
-    horizontalHeader()->setLabel(4, tr("  Dg"));
-    horizontalHeader()->setLabel(5, tr("  Kl"));
+    horizontalHeader()->setLabel(2, tr("Name"));
+    horizontalHeader()->setLabel(3, tr("Mt"));
+    horizontalHeader()->setLabel(4, tr("Dy"));
+    horizontalHeader()->setLabel(5, tr("Hr"));
     horizontalHeader()->setLabel(6, tr("Para"));
     horizontalHeader()->setLabel(7, tr("Type"));
     horizontalHeader()->setLabel(8, tr("Orig.d"));
     horizontalHeader()->setLabel(9, tr("Corr.d"));
     horizontalHeader()->setLabel(10, tr("mod.v"));
     horizontalHeader()->setLabel(11, tr("Flag"));
-    horizontalHeader()->setLabel(12, tr("="));
+    horizontalHeader()->setLabel(12, "=");
     horizontalHeader()->setLabel(13, tr("Fl.v"));
     horizontalHeader()->setLabel(14, tr("Corrected OK"));
     horizontalHeader()->setLabel(15, tr("Original OK"));
@@ -815,7 +815,7 @@ void ErrorList::markModified( int row, int col )
             if ( fd == 2 || fd > 5 ) {
                 QMessageBox::information( this,
                                           tr("Wrong column"),
-                                          tr("Accumulation. Use field &apos;redistributed&apos;."),
+                                          tr("Accumulation. Use field 'redistributed'."),
                                           QMessageBox::Ok,
                                           Qt::NoButton );
                 OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
@@ -892,7 +892,7 @@ void ErrorList::markModified( int row, int col )
         if ( fd > 1 ) {
             QMessageBox::information( this,
                                       tr("Wrong column"),
-                                      tr("Accumulation. Use field &apos;redistributed&apos;."),
+                                      tr("Accumulation. Use field 'redistributed'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             item( row, col )->setText("");
@@ -907,7 +907,7 @@ void ErrorList::markModified( int row, int col )
         if ( fd >= 2 ) {
             QMessageBox::information( this,
                                       tr("Wrong column"),
-                                      tr("Accumulation. Use field &apos;redistributed&apos;."),
+                                      tr("Accumulation. Use field 'redistributed'."),
                                       QMessageBox::Ok,
                                       Qt::NoButton );
             // UNUSED OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));

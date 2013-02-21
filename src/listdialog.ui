@@ -579,7 +579,7 @@
          <item row="0" column="1">
           <widget class="QToolButton" name="buttonClockRemoveAll">
            <property name="toolTip">
-            <string>Rmeove all times</string>
+            <string>Remove all times</string>
            </property>
            <property name="text">
             <string>All times</string>

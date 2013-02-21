@@ -34,9 +34,9 @@
 #include "KvalobsDataDelegate.h"
 #include "KvMetaDataBuffer.hh"
 
-#include <QtGui/QMessageBox>
+#include <QtGui/QHeaderView>
 #include <QtGui/QLineEdit>
-#include <QtCore/QDebug>
+#include <QtGui/QMessageBox>
 
 #include <stdexcept>
 
@@ -166,6 +166,10 @@ void KvalobsDataView::setup_()
     setCaption(tr("Data List"));
     setSelectionBehavior(QAbstractItemView::SelectRows);
     setSelectionMode(QAbstractItemView::SingleSelection);
+    verticalHeader()->setDefaultSectionSize(20);
+    horizontalHeader()->setMinimumSectionSize(20);
+    horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     setItemDelegate(new KvalobsDataDelegate(this));
 }
 } // namespace model

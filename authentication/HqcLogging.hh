@@ -24,9 +24,9 @@ log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString&
 #define LOG4HQC(logger, level, message)                                 \
     do {                                                                \
         if (logger.isPriorityEnabled(level)) {                          \
-            logger << level << __FILE__ << ':'                          \
-                   << __LINE__ << '[' << __FUNCTION__ << "]"            \
-                   << log4cpp::eol << "  " << message;                  \
+            logger << level                                             \
+                   << '[' << __PRETTY_FUNCTION__ << "] "                \
+                   << message;                                          \
         }                                                               \
     } while(false)
 
