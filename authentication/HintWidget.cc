@@ -18,7 +18,7 @@ const float readingSpeed = 1000/35.0f; // milliseconds per character
 }
 
 HintWidget::HintWidget(QWidget* parent)
-    : QWidget(parent, Qt::Tool|Qt::FramelessWindowHint)
+    : QWidget(parent, Qt::ToolTip)
     , mText(new QTextDocument(this))
     , mTimer(new QTimer(this))
 {
