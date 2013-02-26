@@ -1,5 +1,6 @@
 
 #include "Helpers.hh"
+#include "HqcLogging.hh"
 #include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvalobsModelAccess.hh"
@@ -24,14 +25,16 @@ int main(int argc, char* argv[])
 {
     QApplication a( argc, argv, true );
 
+    Log4CppConfig log4cpp("-.!!=-:");
+
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),
+    qtTranslator.load(QLocale::system(), "qt", "_",
                       QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     a.installTranslator(&qtTranslator);
 
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
     QTranslator wTranslator;
-    const bool translationsLoaded = wTranslator.load("watchrr2_" + QLocale::system().name(), langDir);
+    const bool translationsLoaded = wTranslator.load(QLocale::system(), "watchrr2", "_", langDir);
     if (not translationsLoaded)
         qDebug() << "failed to load translations from " << langDir;
     a.installTranslator(&wTranslator);

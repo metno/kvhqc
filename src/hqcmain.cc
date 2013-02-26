@@ -460,7 +460,7 @@ void HqcMainWindow::ListOK()
         }
     }
     /*emit*/ newStationList(stationList);
-    LOG4HQC_DEBUG("HqcMainWindow", "newStationList emitted");
+    LOG4SCOPE_DEBUG("newStationList emitted");
 
     //  send parameter names to ts dialog
     /*emit*/ newParameterList(mSelectedParameters);
@@ -613,10 +613,11 @@ void HqcMainWindow::textDataOK()
 
 void HqcMainWindow::rejectedOK()
 {
+    LOG_SCOPE("HqcMainWindow");
     CKvalObs::CService::RejectDecodeInfo rdInfo;
     rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
     rdInfo.toTime = dateStr_( rejdlg->dtto );
-    LOG4HQC_INFO("HqcMainWindow", rdInfo.fromTime << " <-> " << rdInfo.toTime);
+    LOG4SCOPE_INFO(rdInfo.fromTime << " <-> " << rdInfo.toTime);
     kvservice::RejectDecodeIterator rdIt;
     if (not kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt)) {
         QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
@@ -632,7 +633,7 @@ void HqcMainWindow::rejectedOK()
         if (reject.comment() == "No decoder for SMS code <12>!")
             continue;
 
-        LOG4HQC_INFO("HqcMainWindow", reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+        LOG4SCOPE_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
         rejList.push_back(reject);
     }
     new Rejects(rejList, this);
@@ -888,8 +889,9 @@ void HqcMainWindow::screenshot()
 
 void HqcMainWindow::onVersionCheckTimeout()
 {
+    LOG_SCOPE("HqcMainWindow");
     QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
-    if (versionFile.open(QIODevice::ReadOnly)) {
+    if (not versionFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&versionFile);
         if( !in.atEnd() ) {
             const long installedVersion = in.readLine().toLong();
@@ -909,7 +911,7 @@ void HqcMainWindow::onVersionCheckTimeout()
         }
     }
     // something went wrong when reading the version info file
-    LOG4HQC_WARN("HqcMainWindow", "error reading share/.../hqc_current_version, not renewing timer");
+    LOG4SCOPE_WARN("error reading share/.../hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
@@ -1147,7 +1149,9 @@ void HqcMainWindow::findStationInfo(int stnr,
 				    double& lon,
 				    double& hoh,
 				    int& snr,
-				    int& env) {
+				    int& env)
+{
+    LOG_SCOPE("HqcMainWindow");
     try {
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
         name = QString(station.name().c_str());
@@ -1157,7 +1161,7 @@ void HqcMainWindow::findStationInfo(int stnr,
         snr  = (station.wmonr());
         env  = (station.environmentid());
     } catch (std::runtime_error& e) {
-        LOG4HQC_WARN("HqcMainWindow", "Error in station lookup: " << e.what());
+        LOG4SCOPE_WARN("Error in station lookup: " << e.what());
     }
 }
 
@@ -1337,6 +1341,7 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
 
 void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
 {
+    LOG_SCOPE("HqcMainWindow");
     if (dataList.empty() or dataList.begin()->dataList().empty())
         return;
 
@@ -1373,7 +1378,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
             const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
             if (d_param < 0 or d_param >= NOPARAM) {
-                LOG4HQC_WARN("HqcMainWindow", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
+                LOG4SCOPE_WARN("paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
                 dit++;
                 ditNo++;
                 continue;
@@ -1504,7 +1509,7 @@ void HqcMainWindow::readSettings()
 
     QSettings settings;
     if (not restoreGeometry(settings.value("geometry").toByteArray()))
-        LOG4HQC_WARN("HqcMainWindow", "Cannot restore geometry!");
+        LOG4SCOPE_WARN("Cannot restore geometry!");
 
     lstdlg->restoreSettings(settings);
 }

@@ -12,6 +12,7 @@ public:
     virtual QVariant data(EditDataPtr obs, int role) const;
     virtual bool setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role);
     virtual QString description(bool mini) const = 0;
+    virtual bool matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const;
 };
 
 typedef boost::shared_ptr<DataItem> DataItemPtr;

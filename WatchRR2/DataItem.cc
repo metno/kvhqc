@@ -30,3 +30,8 @@ bool DataItem::setData(EditDataPtr, EditAccessPtr, const SensorTime&, const QVar
     throw std::runtime_error("cannot set original value");
     return false;
 }
+
+bool DataItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const
+{
+    return eq_Sensor()(sensorColumn, sensorObs);
+}

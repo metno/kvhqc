@@ -26,7 +26,7 @@ Log4CppConfig::Log4CppConfig(const std::string& l4c_p)
         a->setLayout(layout);
 
         log4cpp::Category& root = log4cpp::Category::getRoot();
-        root.setPriority(log4cpp::Priority::WARN);
+        root.setPriority(log4cpp::Priority::DEBUG);
         root.addAppender(a);
     }
 }

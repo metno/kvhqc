@@ -40,7 +40,30 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/QTranslator>
 #include <QtGui/QApplication>
 
+#include <boost/foreach.hpp>
+
 using kvservice::corba::CorbaKvApp;
+
+static void installTranslations(QApplication& app, QTranslator& translator,
+                                const QString& file, const QStringList& paths)
+{
+    BOOST_FOREACH(const QString& p, paths)
+        if (translator.load(QLocale::system(), file, "_", p)) {
+            LOG4HQC_INFO("hqc", "loaded '" << file << "' translations from " << p
+                         << " for ui languages=" << QLocale::system().uiLanguages().join(","));
+            app.installTranslator(&translator);
+            return;
+        }
+    LOG4HQC_WARN("hqc", "failed to load '" << file << "' translations from [" 
+                 << paths.join(",")
+                 << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
+}
+
+static void installTranslations(QApplication& app, QTranslator& translator,
+                                const QString& file, const QString& path)
+{
+    installTranslations(app, translator, file, QStringList(path));
+}
 
 int main( int argc, char* argv[] )
 {
@@ -75,21 +98,12 @@ int main( int argc, char* argv[] )
     Log4CppConfig log4cpp(log4cpp_properties.toStdString());
 
     QTranslator qtTranslator;
-    qtTranslator.load(QLocale::system(), "qt", "_", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    a.installTranslator(&qtTranslator);
-
+    installTranslations(a, qtTranslator, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
     QTranslator wTranslator, hTranslator;
-    const bool translationsLoaded = wTranslator.load(QLocale::system() ,"watchrr2", "_", langDir)
-        and hTranslator.load(QLocale::system(), "hqc", "_", langDir);
-    if (not translationsLoaded)
-        LOG4HQC_WARN("hqc", "failed to load translations from " << langDir
-                     << " for ui languages=" << QLocale::system().uiLanguages().join(","));
-    else
-        LOG4HQC_INFO("hqc", "loaded translations from " << langDir
-                     << " for ui languages=" << QLocale::system().uiLanguages().join(","));
-    a.installTranslator(&wTranslator);
-    a.installTranslator(&hTranslator);
+    installTranslations(a, wTranslator, "watchrr2", langDir);
+    installTranslations(a, hTranslator, "hqc",      langDir);
     
     miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
     if (not confSec) {

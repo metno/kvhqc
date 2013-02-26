@@ -46,17 +46,17 @@ log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString&
 #define LOGHQC_DEBUG(logger, message)                  \
     LOG4HQC(logger, log4cpp::Priority::DEBUG, message)
 
-#define LOGHQC_CATEGORY(category, level, message)                          \
+#define LOG4HQC_LEVEL(category, level, message)                         \
     LOG4HQC(log4cpp::Category::getInstance(category), level, message)
 #define LOG4HQC_FATAL(category, message)                            \
-    LOGHQC_CATEGORY(category, log4cpp::Priority::FATAL, message)
+    LOG4HQC_LEVEL(category, log4cpp::Priority::FATAL, message)
 #define LOG4HQC_ERROR(category, message)                            \
-    LOGHQC_CATEGORY(category, log4cpp::Priority::ERROR, message)
+    LOG4HQC_LEVEL(category, log4cpp::Priority::ERROR, message)
 #define LOG4HQC_WARN(category, message)                             \
-    LOGHQC_CATEGORY(category, log4cpp::Priority::WARN, message)
+    LOG4HQC_LEVEL(category, log4cpp::Priority::WARN, message)
 #define LOG4HQC_INFO(category, message)                             \
-    LOGHQC_CATEGORY(category, log4cpp::Priority::INFO, message)
+    LOG4HQC_LEVEL(category, log4cpp::Priority::INFO, message)
 #define LOG4HQC_DEBUG(category, message)                            \
-    LOGHQC_CATEGORY(category, log4cpp::Priority::DEBUG, message)
+    LOG4HQC_LEVEL(category, log4cpp::Priority::DEBUG, message)
 
 #endif // HQC_LOGGING_HH

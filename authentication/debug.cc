@@ -35,31 +35,31 @@ namespace hqc {
 namespace debug {
 
 ScopeLogger::ScopeLogger(const char* cat, const char* fun)
-    : category(log4cpp::Category::getInstance(cat))
-    , function(fun)
+    : mCategory(log4cpp::Category::getInstance(cat))
+    , mFunction(fun)
 {
-    indent += 1;
+    sIndent += 1;
     log("> ENTER");
 }
  
 ScopeLogger::~ScopeLogger()
 {
     log("< LEAVE");
-    indent -= 1;
+    sIndent -= 1;
 }
 
 void ScopeLogger::log(const char* txt)
 {
-    if (category.isPriorityEnabled(log4cpp::Priority::DEBUG)) {
+    if (mCategory.isPriorityEnabled(log4cpp::Priority::DEBUG)) {
         std::ostringstream data;
-        for (int i = 0; i < indent; ++ i)
+        for (int i = 0; i < sIndent; ++ i)
             data << "+-";
-        category << log4cpp::Priority::DEBUG
-                 << '[' << function << "] " << data.str() << txt;
+        mCategory << log4cpp::Priority::DEBUG
+                  << '[' << mFunction << "] " << data.str() << txt;
     }
 }
 
-int ScopeLogger::indent = 2;
+int ScopeLogger::sIndent = 2;
 
 } // namespace debug
 } // namespace hqc

@@ -50,7 +50,7 @@ ObsDataPtr EditAccess::create(const SensorTime& st)
 
 bool EditAccess::update(const std::vector<ObsUpdate>& updates)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("EditAccess");
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         EditDataPtr ebs = findOrCreateE(ou.obs->sensorTime());
         editor(ebs)->setCorrected(ou.corrected).setControlinfo(ou.controlinfo).setTasks(ou.tasks);
@@ -60,13 +60,13 @@ bool EditAccess::update(const std::vector<ObsUpdate>& updates)
 
 bool EditAccess::sendChangesToParent()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("EditAccess");
     std::vector<ObsUpdate> updates;
     for(Data_t::iterator it = mData.begin(); it != mData.end(); ++it) {
         EditDataPtr ebs = it->second;
         if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
             updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
-            DBGO(ebs);
+            LOG4SCOPE_DEBUG(DBGO1(ebs));
         }
     }
     return mBackend->update(updates);
@@ -101,13 +101,13 @@ struct PopUpdate {
 
 void EditAccess::pushUpdate()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("EditAccess");
     mUpdateCount += 1;
 }
 
 bool EditAccess::popUpdate()
 {
-    LOG_SCOPE();
+    LOG_SCOPE("EditAccess");
     std::list<PopUpdate> send;
     for(Data_t::iterator it = mData.begin(); it != mData.end();) {
         EditDataPtr ebs = it->second;
@@ -153,8 +153,8 @@ EditDataEditorPtr EditAccess::editor(EditDataPtr obs)
 
 void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE();
-    DBG(DBG1(what) << DBGO(obs));
+    LOG_SCOPE("EditAccess");
+    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs));
 
     EditDataPtr ebs = findE(SensorTime(obs->sensorTime()));
     if (not ebs)

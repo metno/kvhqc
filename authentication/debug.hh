@@ -40,13 +40,15 @@ class ScopeLogger {
 public:
     ScopeLogger(const char* category, const char* function);
     ~ScopeLogger();
+    log4cpp::Category& category() const
+        { return mCategory; }
 
 private:
     void log(const char* txt);
 
-    log4cpp::Category& category;
-    const char* function;
-    static int indent;
+    log4cpp::Category& mCategory;
+    const char* mFunction;
+    static int sIndent;
 };
 
 } // namespace debug
@@ -54,6 +56,8 @@ private:
 
 #ifdef NDEBUG
 #define LOG_SCOPE(c)   do { /* nothing */ } while(false)
+#define LOG4SCOPE_LEVEL(level, message)         \
+    do { /* nothing */ } while(false)
 #define DBG(x)         do { /* nothing */ } while(false)
 #define DBGL           do { /* nothing */ } while(false)
 #define DBG1(x) 
@@ -62,11 +66,25 @@ private:
 #else // NDEBUG
 #include "HqcLogging.hh"
 #define LOG_SCOPE(category) const ::hqc::debug::ScopeLogger INTERNAL_scope_logger(category, __PRETTY_FUNCTION__)
+#define LOG4SCOPE_LEVEL(level, message)                           \
+    LOG4HQC(INTERNAL_scope_logger.category(), level, message)
 #define DBG(x) LOG4HQC_DEBUG("hqc", x)
 #define DBGL   LOG4HQC_DEBUG("hqc", "L:" << __LINE__)
 #define DBG1(x) " " #x "='" << x << "'"
 #define DBGV(x) DBG(DBG1(x))
 #define DBGE(x) x
 #endif // NDEBUG
+
+#define LOG4SCOPE_FATAL(message)                                          \
+    LOG4SCOPE_LEVEL(log4cpp::Priority::FATAL, message)
+#define LOG4SCOPE_ERROR(message)                                          \
+    LOG4SCOPE_LEVEL(log4cpp::Priority::ERROR, message)
+#define LOG4SCOPE_WARN(message)                                           \
+    LOG4SCOPE_LEVEL(log4cpp::Priority::WARN, message)
+#define LOG4SCOPE_INFO(message)                                           \
+    LOG4SCOPE_LEVEL(log4cpp::Priority::INFO, message)
+#define LOG4SCOPE_DEBUG(message)                                          \
+    LOG4SCOPE_LEVEL(log4cpp::Priority::DEBUG, message)
+
 
 #endif /* DEBUG_HH_ */

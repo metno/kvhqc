@@ -8,7 +8,7 @@
 #include <boost/foreach.hpp>
 
 #define NDEBUG
-#include "debug.hh"
+#include "w2debug.hh"
 
 namespace Helpers {
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
@@ -22,6 +22,11 @@ const int columnPars[N_COLUMNS] = {
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
     kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD,
+    kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
+};
+const int N_UNIQUE_PARS = 6;
+const int uniqueColumnPars[N_UNIQUE_PARS] = {
+    kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
 };
 const ColumnFactory::DisplayType columnTypes[N_COLUMNS] = {
@@ -124,27 +129,24 @@ EditDataPtr NeighborDataModel::getObs(const QModelIndex& index) const
     return mDA->findE(SensorTime(sensor, getTime(index)));
 }
 
-void NeighborDataModel::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr obs)
+void NeighborDataModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("NeighborDataModel");
     const SensorTime st(obs->sensorTime());
+    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs) << DBG1(st.sensor.stationId));
 
-    unsigned int row = 0;
-    for(;row < mSensors.size(); row += 1)
-        if (eq_Sensor()(st.sensor, mSensors[row]))
-            break;
-    if (row >= mSensors.size())
-        return;
-
-    unsigned int col = 0;
-    for(;col < mTimeOffsets.size(); col += 1)
-        if (st.time == mTime + mTimeOffsets[col])
-            break;
-    if (col >= mTimeOffsets.size())
-        return;
-
-    QModelIndex idx = createIndex(row, col);
-    /*emit*/ dataChanged(idx, idx);
+    for(size_t col = 0; col < mTimeOffsets.size(); col += 1) {
+        if (st.time == mTime + mTimeOffsets[col]) {
+            for(size_t row = 0;row < mItems.size(); row += 1) {
+                Sensor sensor = mSensors[row];
+                sensor.paramId = columnPars[col];
+                if (mItems[row]->matchSensor(sensor, st.sensor)) {
+                    QModelIndex idx = createIndex(row, col);
+                    /*emit*/ dataChanged(idx, idx);
+                }
+            }
+        }
+    }
 }
 
 std::vector<int> NeighborDataModel::neighborStations() const

@@ -51,9 +51,7 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
 {
     if (obs1 and (role == Qt::DisplayRole or role == Qt::EditRole or role == Qt::ToolTipRole or role == Qt::StatusTipRole))
     {
-        SensorTime st2(obs1->sensorTime());
-        st2.sensor.paramId += 1;
-        EditDataPtr obs2 = mDA->findE(st2);
+        EditDataPtr obs2 = getObs2(obs1);
 
         Codes_t codes = getCodes(obs1, obs2);
         int i=0;
@@ -100,6 +98,15 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
                 codes << "";
         }
         return codes;
+    } else if (role == Qt::FontRole) {
+        bool modified = (obs1 and obs1->modified());
+        if (not modified) {
+            EditDataPtr obs2 = getObs2(obs1);
+            modified = (obs2 and obs2->modified());
+        }
+        QFont f;
+        f.setBold(modified);
+        return f;
     } else {
         return DataItem::data(obs1, role);
     }
@@ -110,10 +117,8 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     if (role != Qt::EditRole)
         return false;
 
-    SensorTime st2(st);
-    st2.sensor.paramId += 1;
-
-    EditDataPtr obs2 = mDA->findE(st2);
+    LOG_SCOPE("DataVxItem");
+    EditDataPtr obs2 = getObs2(obs1);
     const Codes_t oldCodes = getCodes(obs1, obs2);
 
     const QString v = value.toString();
@@ -154,6 +159,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     else
         return false;
 
+    LOG4SCOPE_DEBUG(DBG1(oldCodes.first) << DBG1(newCode1) << DBG1(oldCodes.second) << DBG1(newCode2));
     bool pushed = false;
     if (newCode1 != oldCodes.first) {
         mDA->pushUpdate();
@@ -165,11 +171,22 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     if (newCode2 != oldCodes.second) {
         if (not pushed)
             mDA->pushUpdate();
-        if (not obs2)
+        if (not obs2) {
+            SensorTime st2(st);
+            st2.sensor.paramId += 1;
             obs2 = mDA->createE(st2);
+        }
         Helpers::correct(mDA->editor(obs2), newCode2);
     }
     return true;
+}
+
+
+bool DataVxItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const
+{
+    return (eq_Sensor()(sensorColumn, sensorObs)
+            or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
+        return true;
 }
 
 QString DataVxItem::description(bool mini) const
@@ -181,4 +198,20 @@ DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) con
 {
     return std::make_pair(obs1 ? static_cast<int>(obs1->corrected()) :  0,
                           obs2 ? static_cast<int>(obs2->corrected()) : -1);
+}
+
+EditDataPtr DataVxItem::getObs2(EditDataPtr obs1) const
+{
+    if (not obs1)
+        return EditDataPtr();
+    SensorTime st2(obs1->sensorTime());
+    st2.sensor.paramId += 1;
+    return mDA->findE(st2);
+}
+
+Sensor DataVxItem::getSensor2(const Sensor& sensor1) const
+{
+    Sensor sensor2(sensor1);
+    sensor2.paramId += 1;
+    return sensor2;
 }

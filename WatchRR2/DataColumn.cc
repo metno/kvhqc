@@ -44,9 +44,12 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 
 bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int role)
 {
+    LOG_SCOPE("DataColumn");
     try {
+        LOG4SCOPE_DEBUG(DBG1(value.toString()));
         return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
     } catch (std::runtime_error& e) {
+        LOG4SCOPE_WARN(e.what());
         return false;
     }
 }
@@ -60,14 +63,18 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
 
 bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("DataColumn");
     const SensorTime st(obs->sensorTime());
-    if (not eq_Sensor()(st.sensor, mSensor))
+    if (not mItem->matchSensor(mSensor, st.sensor))
         return false;
+
+    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs));
     const timeutil::ptime timeo = st.time - mTimeOffset;
     ObsCache_t::iterator it = mObsCache.find(timeo);
-    if (it == mObsCache.end())
+    if (it == mObsCache.end()) {
+        LOG4SCOPE_DEBUG("not in cache");
         return false;
+    }
     
     mObsCache.erase(it);
     columnChanged(timeo, this);
