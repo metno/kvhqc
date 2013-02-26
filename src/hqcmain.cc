@@ -380,7 +380,7 @@ void HqcMainWindow::ListOK()
     
   // All windows are shown later, in the tileHorizontal function
     
-    if (lity == daLi or lity == alLi) {
+    if (lity == daLi or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building data list..."));
         qApp->processEvents();
 
@@ -429,7 +429,7 @@ void HqcMainWindow::ListOK()
         ui->ws->addSubWindow(tableView);
     }
 
-    if ( lity == erLi or lity == erSa or lity == alLi ) {
+    if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building error list..."));
         qApp->processEvents();
         ErrorList * erl = new ErrorList(mSelectedParameters,
@@ -738,6 +738,11 @@ void HqcMainWindow::errLisaMenu()
   listMenu(erSa);
 }
 
+void HqcMainWindow::allListSalenMenu()
+{
+    listMenu(alSa);
+}
+
 void HqcMainWindow::listMenu(listType lt)
 {
     LOG_SCOPE("HqcMainWindow");
@@ -898,7 +903,7 @@ void HqcMainWindow::onVersionCheckTimeout()
     QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
     if (not versionFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&versionFile);
-        if( !in.atEnd() ) {
+        if (not in.atEnd()) {
             const long installedVersion = in.readLine().toLong();
             const long runningVersion = PVERSION_NUMBER_MAJOR_MINOR_PATCH;
             if( installedVersion > runningVersion ) {
@@ -1345,7 +1350,6 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
 
 void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
 {
-    LOG_SCOPE("HqcMainWindow");
     if (dataList.empty() or dataList.begin()->dataList().empty())
         return;
 
@@ -1382,7 +1386,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
             timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
             const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
             if (d_param < 0 or d_param >= NOPARAM) {
-                LOG4SCOPE_WARN("paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
+                LOG4HQC_WARN("HqcMainWindow", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
                 dit++;
                 ditNo++;
                 continue;

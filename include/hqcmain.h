@@ -146,6 +146,7 @@ private Q_SLOTS:
     void errLogMenu();
     void dataListMenu();
     void errLisaMenu();
+    void allListSalenMenu();
     void ListOK();
     void rejectedOK();
     void textDataOK();

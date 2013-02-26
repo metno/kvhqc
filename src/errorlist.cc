@@ -388,7 +388,7 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                 {
                     memStore2.push_back(memObs);
                 }
-            } else if ( lity == erSa ) {
+            } else if (lity == erSa or lity == alSa) {
                 if( ((flg == 4 || flg == 5 || flg == 6) && flTyp == "fr" )
                     || (flg == 2 && flTyp == "fs") )
                 {

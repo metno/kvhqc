@@ -57,7 +57,7 @@ typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
 const int NOPARAM          = 1043;
 const int NOPARAMALL       = 210;
 
-enum listType {erLi, erLo, daLi,erSa, alLi, dumLi};
+enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
 enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
 
 struct modDatl {

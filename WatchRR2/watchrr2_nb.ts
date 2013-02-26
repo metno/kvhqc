@@ -4,24 +4,24 @@
 <context>
     <name>Auth</name>
     <message>
-        <location filename="main.cc" line="99"/>
+        <location filename="main.cc" line="102"/>
         <source>Authentication</source>
         <translation>Autentisering</translation>
     </message>
     <message>
-        <location filename="main.cc" line="100"/>
+        <location filename="main.cc" line="103"/>
         <source>You are not registered as operator, so you cannot save data!</source>
         <translation>Du er ikke registrert som operatør, så du kan ikke lagre data!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="101"/>
+        <location filename="main.cc" line="104"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
     <message>
-        <location filename="main.cc" line="102"/>
-        <location filename="main.cc" line="125"/>
-        <location filename="main.cc" line="131"/>
+        <location filename="main.cc" line="105"/>
+        <location filename="main.cc" line="128"/>
+        <location filename="main.cc" line="134"/>
         <source>Exit</source>
         <translation>Avslutt</translation>
     </message>
@@ -259,12 +259,12 @@
         <translation>snøfokk</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="80"/>
+        <location filename="DataVxItem.cc" line="78"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="82"/>
+        <location filename="DataVxItem.cc" line="80"/>
         <source>strong</source>
         <translation>sterkt</translation>
     </message>
@@ -489,19 +489,19 @@
 <context>
     <name>Main</name>
     <message>
-        <location filename="main.cc" line="123"/>
-        <location filename="main.cc" line="129"/>
+        <location filename="main.cc" line="126"/>
+        <location filename="main.cc" line="132"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="main.cc" line="124"/>
+        <location filename="main.cc" line="127"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <oldsource>Your changes could not be saved, sorry!</oldsource>
         <translation>Beklager, dine endringer ble ikke lagret or er mistet!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="130"/>
+        <location filename="main.cc" line="133"/>
         <source>Your changes have been saved.</source>
         <translation>Dine endringer ble lagret.</translation>
     </message>
@@ -509,47 +509,47 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="48"/>
+        <location filename="MainDialog.cc" line="59"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="67"/>
+        <location filename="MainDialog.cc" line="78"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="157"/>
+        <location filename="MainDialog.cc" line="171"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="228"/>
+        <location filename="MainDialog.cc" line="242"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="229"/>
+        <location filename="MainDialog.cc" line="243"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="230"/>
+        <location filename="MainDialog.cc" line="244"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="231"/>
+        <location filename="MainDialog.cc" line="245"/>
         <source>Continue</source>
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="316"/>
+        <location filename="MainDialog.cc" line="330"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="317"/>
+        <location filename="MainDialog.cc" line="331"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>

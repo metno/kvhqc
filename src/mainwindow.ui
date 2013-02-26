@@ -57,6 +57,7 @@
      <string>&amp;List type</string>
     </property>
     <addaction name="actionDataAndErrorList"/>
+    <addaction name="actionErrorDataSalen"/>
     <addaction name="actionErrorList"/>
     <addaction name="actionErrorLog"/>
     <addaction name="dataListAction"/>
@@ -128,7 +129,10 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>print</string>
+    <string>Print</string>
+   </property>
+   <property name="toolTip">
+    <string>Print</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -210,6 +214,9 @@
   <action name="actionDataAndErrorList">
    <property name="text">
     <string>Data &amp;list and Error list</string>
+   </property>
+   <property name="toolTip">
+    <string>Produce datalist and error list</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+L</string>
@@ -349,6 +356,14 @@
   <action name="actionHelpNews">
    <property name="text">
     <string>&amp;News</string>
+   </property>
+  </action>
+  <action name="actionErrorDataSalen">
+   <property name="text">
+    <string>Error+data list Salen</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+L</string>
    </property>
   </action>
  </widget>
@@ -610,6 +625,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionErrorDataSalen</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>allListSalenMenu()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <signal>saveData()</signal>
@@ -654,5 +685,6 @@
   <slot>aboutQt()</slot>
   <slot>updateSaveFunction(QMdiSubWindow*)</slot>
   <slot>helpNews()</slot>
+  <slot>allListSalenMenu()</slot>
  </slots>
 </ui>

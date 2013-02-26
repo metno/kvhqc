@@ -36,7 +36,6 @@
 
 #include <kvalobs/flag/kvControlInfo.h>
 #include <kvalobs/kvDataOperations.h>
-#include <QtCore/QDebug>
 
 #define NDEBUG
 #include "debug.hh"
@@ -68,6 +67,7 @@ namespace model
     showHeightInHeader_(showHeightInHeader),
     correctedValuesAreEditable_(editable)
 {
+    LOG_SCOPE("KvalobsDataModel");
     mi_foreach(const int param, parameters) {
         QString paramName = "unknown";
         try {
@@ -76,11 +76,11 @@ namespace model
         }
         parametersToShow_.push_back(Parameter(param, paramName));
     }
-    qDebug() << "Statistics\n"
-        "--------\n"
-        "Number of parameters: " << parametersToShow_.size();
+#ifndef NDEBUG
+    LOG4SCOPE_DEBUG("#parameters: " << parametersToShow_.size() << "; statistics:");
     mi_foreach(const Parameter& p, parametersToShow_)
-        qDebug() << p.paramid << ":\t" << qPrintable(p.parameterName);
+        LOG4SCOPE_DEBUG(p.paramid << ":\t" << p.parameterName);
+#endif
 }
 
   KvalobsDataModel::~KvalobsDataModel()
@@ -257,10 +257,10 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
 	  QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
 	  /*emit*/ dataChanged(flagIndex, index);
 	  /*emit*/ dataModification(changeData);
-	  qDebug() << "SetData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
-		   << qPrintable(p.parameterName) << " from " << oldValue
-		   << " to " << val << "," << d.typeId(p.paramid);
-	  std::cerr << changeData.useinfo() << std::endl;
+	  LOG4SCOPE_DEBUG("Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
+                          << p.parameterName << " from " << oldValue
+                          << " to " << val << "," << d.typeId(p.paramid)
+                          << " useinfo="  << changeData.useinfo());
 	  return true;
 	}
 	catch ( InvalidIndex & ) {
@@ -330,10 +330,9 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             /*emit*/ dataChanged(flagIndex, index);
 	    //            /*emit*/ dataModification(changeData);
-            qDebug() << "SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
-		     << qPrintable(p.parameterName) << " from "
-		     << oldValue << " to " << val;
-	    std::cerr << changeData.useinfo() << std::endl;
+            LOG4SCOPE_DEBUG("SetAcceptedData Station " << d.stnr() << " (" << d.name() << "): Changed parameter "
+                            << p.parameterName << " from "
+                            << oldValue << " to " << val << "useinfo=" << changeData.useinfo());
             return true;
           }
           catch ( InvalidIndex & ) {
@@ -394,7 +393,8 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
             QModelIndex flagIndex = createIndex(index.row(), index.column() -1, 0);
             /*emit*/ dataChanged(flagIndex, index);
             /*emit*/ dataModification(changeData);
-            qDebug() << "Station " << d.stnr() << " (" << d.name() << "): Changed parameter " << qPrintable(p.parameterName) << " from " << oldValue << " to " << val;
+            LOG4SCOPE_DEBUG("Station " << d.stnr() << " (" << d.name()
+                            << "): Changed parameter " << p.parameterName << " from " << oldValue << " to " << val);
             return true;
           }
           catch ( InvalidIndex & ) {
@@ -522,7 +522,7 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
   }
 int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm, int typeToSearch) const
   {
-      LOG_SCOPE();
+      LOG_SCOPE("KvalobsDataModel");
       // FIXME this routine will probably cause segfault if rows == 0
 
       const KvalobsDataListPtr & data = kvalobsData();
@@ -535,8 +535,7 @@ int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, Obs
           if( d.stnr() == stationid ) {
               second_best_index = index;
               if (d.otime() == obstime and (typeToSearch == 0 or typeToSearch == d.showTypeId())) {
-                  qDebug() << "exact obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(obstime))
-                           << "found";
+                  LOG4SCOPE_DEBUG("exact obstime=" << timeutil::to_iso_extended_string(obstime) << "found");
                   return index;
               } else if( (otm == OBSTIME_BEFORE    and d.otime() <= obstime and (best_index < 0 or d.otime() > best_time))
                          or (otm == OBSTIME_AFTER  and d.otime() >= obstime and (best_index < 0 or d.otime() < best_time)) )
@@ -547,12 +546,10 @@ int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, Obs
           }
       }
       if( best_index>=0 ) {
-          qDebug() << "relative obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(best_time))
-                   << "found";
+          LOG4SCOPE_DEBUG("relative obstime=" << timeutil::to_iso_extended_string(best_time) << "found");
           return best_index;
       } else {
-          qDebug() << "no good obstime=" << QString::fromStdString(timeutil::to_iso_extended_string(best_time))
-                   << "found";
+          LOG4SCOPE_DEBUG("no good obstime=" << timeutil::to_iso_extended_string(best_time) << "found");
           return second_best_index;
       }
   }
