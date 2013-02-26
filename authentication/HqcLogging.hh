@@ -25,7 +25,6 @@ log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString&
     do {                                                                \
         if (logger.isPriorityEnabled(level)) {                          \
             logger << level                                             \
-                   << '[' << __PRETTY_FUNCTION__ << "] "                \
                    << message;                                          \
         }                                                               \
     } while(false)

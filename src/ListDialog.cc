@@ -321,6 +321,8 @@ void ListDialog::doRestoreSettings(QSettings& settings)
     countiesDefault << "ALL";
     QStringList counties = settings.value("counties", countiesDefault).toStringList();
     setSelectedCounties(counties);
+
+    removeAllStatFromListbox();
 }
 
 void ListDialog::onSaveSettings()

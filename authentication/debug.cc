@@ -39,23 +39,23 @@ ScopeLogger::ScopeLogger(const char* cat, const char* fun)
     , mFunction(fun)
 {
     sIndent += 1;
-    log("> ENTER");
+    log("> ENTER ");
 }
  
 ScopeLogger::~ScopeLogger()
 {
-    log("< LEAVE");
+    log("< LEAVE ");
     sIndent -= 1;
 }
 
 void ScopeLogger::log(const char* txt)
 {
     if (mCategory.isPriorityEnabled(log4cpp::Priority::DEBUG)) {
-        std::ostringstream data;
+        std::ostringstream indent;
         for (int i = 0; i < sIndent; ++ i)
-            data << "+-";
+            indent << "+-";
         mCategory << log4cpp::Priority::DEBUG
-                  << '[' << mFunction << "] " << data.str() << txt;
+                  << indent.str() << txt << mFunction;
     }
 }
 
