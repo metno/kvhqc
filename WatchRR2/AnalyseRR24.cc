@@ -330,6 +330,27 @@ float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time
 
 // ========================================================================
 
+float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+{
+    if (time.days() < 1)
+        return kvalobs::MISSING;
+
+    const boost::gregorian::date_duration step = boost::gregorian::days(1);
+    for (timeutil::ptime t = time.t0(); t < time.t1(); t += step) {
+        EditDataPtr obs = da->findE(SensorTime(sensor, t));
+        if (not obs)
+            continue;
+        if (not Helpers::is_orig_missing(obs))
+            return kvalobs::MISSING;
+    }
+    EditDataPtr obs = da->findE(SensorTime(sensor, time.t1()));
+    if (not obs or Helpers::is_orig_missing(obs))
+        return kvalobs::MISSING;
+    return std::max(0.0f, obs->original());
+}
+
+// ========================================================================
+
 bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 {
     LOG_SCOPE();

@@ -21,6 +21,12 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
 
 float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
 
+/**
+   Calculate original sum before redistribution.
+   @return sum, or MISSING in case it cannot be calculated
+*/
+float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
+
 bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
 void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
 } // namespace RR24

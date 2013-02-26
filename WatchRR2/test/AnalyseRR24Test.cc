@@ -537,3 +537,30 @@ TEST(AnalyseRR24Test_2, Accept)
         }
     }
 }
+
+TEST(AnalyseRR24Test_2, CalculateSum)
+{
+    using boost::gregorian::days;
+
+    const Sensor sensor(32780, 110, 0, 0, 302);
+    const TimeRange time(s2t("2012-12-01 06:00:00"), s2t("2012-12-06 06:00:00"));
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-12-01 06:00:00",       2.0,       2.0, "0110000000001000", "");
+    fa.insertData("2012-12-02 06:00:00",  -32767.0,  -32767.0, "0000003000002000", "QC1...");
+    fa.insertData("2012-12-03 06:00:00",  -32767.0,  -32767.0, "0000003000002000", "QC1...");
+    fa.insertData("2012-12-04 06:00:00",  -32767.0,  -32767.0, "0000003000002000", "QC1...");
+    fa.insertData("2012-12-05 06:00:00",       -1.0,     -1.0, "0000004000004000", "");
+    fa.insertData("2012-12-06 06:00:00",       2.0,       2.0, "0110000000001000", "");
+
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    const TimeRange timeS1(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
+    ASSERT_EQ(0, RR24::calculateSum(eda, sensor, timeS1));
+
+    const TimeRange timeS2(s2t("2012-12-05 06:00:00"), s2t("2012-12-06 06:00:00"));
+    ASSERT_EQ(kvalobs::MISSING, RR24::calculateOriginalSum(eda, sensor, timeS2));
+}

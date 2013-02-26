@@ -1,6 +1,7 @@
 
 #include "RedistTableModel.hh"
 
+#include "AnalyseRR24.hh"
 #include "ColumnFactory.hh"
 #include "Helpers.hh"
 #include "mi_foreach.hh"
@@ -84,11 +85,7 @@ bool RedistTableModel::setData(const QModelIndex& index, const QVariant& value, 
 
 float RedistTableModel::originalSum() const
 {
-    EditDataPtr lastObs = mDA->findE(SensorTime(mSensor, mTime.t1()));
-    if (not lastObs or Helpers::is_orig_missing(lastObs))
-        return kvalobs::MISSING;
-    else
-        return std::max(0.0f, lastObs->original());
+    return RR24::calculateOriginalSum(mDA, mSensor, mTime);
 }
 
 float RedistTableModel::currentSum() const
