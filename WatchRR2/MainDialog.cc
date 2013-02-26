@@ -23,6 +23,7 @@
 #define slots Q_SLOTS
 #endif
 #include <qUtilities/ClientButton.h>
+#include <QtCore/qsettings.h>
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -32,6 +33,10 @@
 #include "debug.hh"
 
 using namespace Helpers;
+
+namespace {
+const char SETTING_WATCHRR_GEOMETRY[] = "geometry_watchrr";
+} // anonymous namespace
 
 MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent)
     : QDialog(parent)
@@ -45,6 +50,12 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
 {
     ui->setupUi(this);
+    {
+        QSettings settings;
+        if (not restoreGeometry(settings.value(SETTING_WATCHRR_GEOMETRY).toByteArray()))
+            LOG4HQC_WARN("WatchRRMainDialog", "cannot restore WatchRR geometry");
+    }
+
     QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
     ui->labelStationInfo->setText(info);
     ui->labelInfoRR->setText("");
@@ -118,6 +129,9 @@ MainDialog::~MainDialog()
 {
     mDianaHelper.reset(0);
     mDA->backendDataChanged.disconnect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
+
+    QSettings settings;
+    settings.setValue(SETTING_WATCHRR_GEOMETRY, saveGeometry());
 }
 
 void MainDialog::initializeRR24Data()

@@ -107,6 +107,10 @@ namespace {
 
 const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
 
+const char SETTING_HQC_GEOMETRY[] = "geometry";
+const char SETTING_VERSION[] = "version";
+const char SETTING_VERSION_FULL[] = "version_full";
+
 } // anonymous namespace
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
@@ -671,6 +675,7 @@ void HqcMainWindow::showWatchRR()
 
     mDianaHelper->setEnabled(false);
     EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
+
     MainDialog main(eda, kma, sensor, time, this);
     if (main.exec()) {
         if (not eda->sendChangesToParent()) {
@@ -1151,7 +1156,6 @@ void HqcMainWindow::findStationInfo(int stnr,
 				    int& snr,
 				    int& env)
 {
-    LOG_SCOPE("HqcMainWindow");
     try {
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
         name = QString(station.name().c_str());
@@ -1161,7 +1165,7 @@ void HqcMainWindow::findStationInfo(int stnr,
         snr  = (station.wmonr());
         env  = (station.environmentid());
     } catch (std::runtime_error& e) {
-        LOG4SCOPE_WARN("Error in station lookup: " << e.what());
+        LOG4HQC_WARN("HqcMainWindow", "Error in station lookup: " << e.what());
     }
 }
 
@@ -1498,7 +1502,7 @@ void HqcMainWindow::writeSettings()
     QList<Param> params;
 
     QSettings settings;
-    settings.setValue("geometry", saveGeometry());
+    settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
 
     lstdlg->saveSettings(settings);
 }
@@ -1508,8 +1512,8 @@ void HqcMainWindow::readSettings()
     LOG_SCOPE("HqcMainWindow");
 
     QSettings settings;
-    if (not restoreGeometry(settings.value("geometry").toByteArray()))
-        LOG4SCOPE_WARN("Cannot restore geometry!");
+    if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
+        LOG4SCOPE_WARN("cannot restore hqc main window geometry");
 
     lstdlg->restoreSettings(settings);
 }
@@ -1518,15 +1522,15 @@ void HqcMainWindow::checkVersionSettings()
 {
     QSettings settings;
 
-    QString savedVersionFull = settings.value("version_full", "??").toString();
+    QString savedVersionFull = settings.value(SETTING_VERSION_FULL, "??").toString();
     if (savedVersionFull != PVERSION_FULL) {
-        settings.setValue("version_full", PVERSION_FULL);
+        settings.setValue(SETTING_VERSION_FULL, PVERSION_FULL);
         helpNews();
     }
 
-    QString savedVersion = settings.value("version", "??").toString();
+    QString savedVersion = settings.value(SETTING_VERSION, "??").toString();
     if (savedVersion != PVERSION) {
-        settings.setValue("version", PVERSION);
+        settings.setValue(SETTING_VERSION, PVERSION);
         QMessageBox::information(this,
                                  tr("HQC - Version Change"),
                                  tr("You are using a different version of HQC than before (now: %1, before: %2). "
