@@ -1,5 +1,6 @@
 
 SET(hqc_HEADERS
+  ErrorListTableModel.hh
   ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
@@ -23,6 +24,7 @@ SET(hqc_HEADERS
 )
 
 SET(hqc_SOURCES
+  ErrorListTableModel.cc
   ParamIdModel.cc
   ListDialog.cc
   StationSelection.cc

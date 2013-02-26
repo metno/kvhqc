@@ -1,9 +1,15 @@
 
 #include "KvMetaDataBuffer.hh"
+#include "hqc_paths.hh"
 #include "BusyIndicator.h"
 #include "Functors.hh"
 
 #include <kvcpp/KvApp.h>
+
+#include <QtCore/QCoreApplication>
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+#include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
@@ -19,6 +25,23 @@ KvMetaDataBuffer::KvMetaDataBuffer()
 {
     assert(not sInstance);
     sInstance = this;
+
+    QString limitsFile = ::hqc::getPath(::hqc::CONFDIR) + "/slimits";
+    QFile limits(limitsFile);
+    if (not limits.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(0, qApp->translate("ErrorList", "Cannot open file"),
+                              qApp->translate("ErrorList", "Could not open file '%1' for reading. Have to exit kvhqc.").arg(limitsFile),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        exit(1);
+    }
+    
+    QTextStream limitStream(&limits);
+    while (not limitStream.atEnd()) {
+        int par, dum;
+        float low, high;
+        limitStream >> par >> dum >> low >> high;
+        mParamLimits[par] = std::make_pair(low, high);
+    }
 }
 
 KvMetaDataBuffer::~KvMetaDataBuffer()
@@ -113,6 +136,19 @@ const int modelParam[NOPARAMMODEL] =
 bool KvMetaDataBuffer::isModelParam(int paramid)
 {
     return std::binary_search(modelParam, boost::end(modelParam), paramid);
+}
+
+bool KvMetaDataBuffer::checkPhysicalLimits(int paramid, float value)
+{
+    if (value == -32767 or value == -32766)
+        return true;
+
+    ParamLimits_t::const_iterator it = mParamLimits.find(paramid);
+    if (it == mParamLimits.end()) {
+        LOG4HQC_DEBUG("KvMetaDataBuffer", "no limits for paramid " << paramid);
+        return true;
+    }
+    return (it->second.first < value and it->second.second > value);
 }
 
 bool KvMetaDataBuffer::isKnownType(int id)

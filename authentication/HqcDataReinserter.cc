@@ -47,8 +47,8 @@ void updateUseAddCFailed(kvalobs::kvData &d)
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     const int fhqc = cinfo.flag(flag::fhqc);
     if (fhqc == 0)
-        LOG4HQC_WARN("HqcDataReinserter", "inserting data with fhqc==0: " << d);
-    if (notWatchRRWeather and fhqc >= 1)
+        LOG4HQC_ERROR("HqcDataReinserter", "inserting data with fhqc==0: " << d);
+    if (notWatchRRWeather)
         Helpers::updateCfailed(d, "hqc");
     
     kvUseInfo ui = d.useinfo();

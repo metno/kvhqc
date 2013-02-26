@@ -26,48 +26,39 @@
   with HQC; if not, write to the Free Software Foundation Inc.,
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/*! \file errolist.cc
+/*! \file errorlist.cc
  *  \brief Code for the ErrorList class.
  *
  *  Displays the error list.
  *
  */
-#define NDEBUG
 
 #include "errorlist.h"
+#include "ErrorListTableModel.hh"
 #include "BusyIndicator.h"
-#include "ErrorListFirstCol.h"
 #include "FailDialog.h"
-#include "debug.hh"
+#include "Functors.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
 #include "missingtable.h"
 
-#include <qUtilities/miMessage.h>
-
 #include <kvalobs/kvDataOperations.h>
 #include <kvcpp/KvApp.h>
 
-#include <QtCore/QFile>
-#include <QtGui/QAction>
-#include <QtGui/QCursor>
-#include <QtGui/QHelpEvent>
-#include <QtGui/QLineEdit>
-#include <QtGui/QToolTip>
+#include <QtGui/QCloseEvent>
+#include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QMessageBox>
-#include <QtGui/QPainter>
-#include <QtGui/QPrinter>
-#include <Qt3Support/Q3TextEdit>
-#include <Qt3Support/q3textstream.h>
-#include <Qt3Support/Q3SimpleRichText>
 
 #include <boost/lexical_cast.hpp>
 #include <boost/foreach.hpp>
 #include <boost/range.hpp>
 
 #include <cassert>
+
+//#define NDEBUG
+#include "debug.hh"
 
 using namespace kvalobs;
 
@@ -107,22 +98,24 @@ const QString controlNoControl[] = {"QC1-2-100","QC1-2-123A","QC1-2-123B","QC1-2
 
 const float discardedValue_ = -32766.0;
 
-void dumpMemstore(const std::vector<ErrorList::mem>& memstore, const char* label)
+void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char* DBGE(label))
 {
-    std::cerr << "memory store " << label << " size = " << memstore.size() << std::endl;
+#ifndef NDEBUG
+    LOG_SCOPE("ErrorList");
+    LOG4SCOPE_DEBUG("memory store " << label << " size = " << memstore.size());
     int i = -1;
     BOOST_FOREACH(const ErrorList::mem& mo, memstore) {
-        std::cerr << std::setw(7) << (++i)
-                  << std::setw(7) << mo.stnr
-                  << std::setw(21) << mo.obstime
-                  << std::setw(5) << mo.parNo
-                  << std::setw(9) << std::setprecision(1) << mo.orig
-                  << std::setw(9) << std::setprecision(1) << mo.corr
-                  << std::setw(9) << std::setprecision(1) << mo.morig << "  "
-                  << std::setw(5) << mo.flTyp.toStdString() << "  " << mo.flg << "  "
-                  << mo.controlinfo << "  " << mo.cfailed << std::endl;
+        LOG4SCOPE_DEBUG(std::setw(7) << (++i)
+                        << std::setw(7) << mo.stnr
+                        << std::setw(21) << mo.obstime
+                        << std::setw(5) << mo.parNo
+                        << std::setw(9) << std::setprecision(1) << mo.orig
+                        << std::setw(9) << std::setprecision(1) << mo.corr
+                        << std::setw(9) << std::setprecision(1) << mo.morig << "  "
+                        << std::setw(5) << mo.flTyp.toStdString() << "  " << mo.flg << "  "
+                        << mo.controlinfo << "  " << mo.cfailed);
     }
-    std::cerr << std::endl;
+#endif
 }
 
 } /* anonymous namespace */
@@ -137,101 +130,51 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
 		     int lity,
 		     model::KvalobsDataListPtr dtl,
 		     const std::vector<modDatl>& mdtl)
-    : Q3Table( 1000, 100, parent, "table")
+    : QTableView(parent)
     , mainWindow( getHqcMainWindow( parent ) )
     , mLastSelectedRow(-1)
 {
-    LOG_SCOPE();
+    LOG_SCOPE("ErrorList");
 
-    /*
-      QMessageBox::information( this,
-      tr("Feilliste"),
-      tr("Bruk høyre musetast i \n\"Korrigert OK\",  \"Original OK\"  og"
-      " \"Forkastet\"\nhvis QC2 skal kunne rette.\nVenstre musetast ellers."),
-      QMessageBox::Ok,
-      Qt::NoButton );
-    */
-    
-    setVScrollBarMode( Q3ScrollView::AlwaysOn  );
-    setMouseTracking(true);
-    BusyIndicator busyIndicator;
-    stationidCol = 1;
-    typeidCol = 7;
-    
     setCaption(tr("HQC - Error List"));
-    setSorting(TRUE);
-    readLimits();
-    setSelectionMode( Q3Table::SingleRow );
+    setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
+
+    verticalHeader()->setDefaultSectionSize(20);
+    verticalHeader()->hide();
+    setSelectionBehavior(SelectRows);
+    setSelectionMode(SingleSelection);
+    setSortingEnabled(true);
+    QSortFilterProxyModel* sortProxy = new QSortFilterProxyModel(this);
+    setModel(sortProxy);
     
     QAction* lackListAction = new QAction(tr("&Missing list"), this);
     lackListAction->setShortcut(tr("Ctrl+M"));
+    connect(lackListAction, SIGNAL(activated()), this, SLOT(setupMissingList()));
     
-    fDlg = new FailInfo::FailDialog(this);
+    connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
+    connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
     
-    connect( this, SIGNAL( clicked( int, int, int, const QPoint& ) ),
-             SLOT( tableCellClicked( int, int, int) ) );
-    
-    connect( this, SIGNAL( valueChanged( int, int ) ),
-             SLOT( markModified( int, int ) ) );
-    
-    connect( this, SIGNAL( valueChanged( int, int ) ),
-             SLOT( clearOtherMods( int, int ) ) );
-    
-    connect( this, SIGNAL( doubleClicked( int, int, int, const QPoint&) ),
-             this, SLOT( showFail(int, int, int, const QPoint&) ) );
-    
-    connect( this, SIGNAL( currentChanged(int, int) ),
-             this, SLOT  ( updateFaillist(int, int) ) );
-    
-    connect( this, SIGNAL( currentChanged(int, int) ),
-             this, SLOT  ( showSameStation()  ) );
-    
-    connect( this, SIGNAL( currentChanged(int, int) ),
-             this, SLOT  ( signalStationSelected( int ) ) );
-    
-    connect( lackListAction, SIGNAL( activated() ),
-             this, SLOT  ( setupMissingList() ) );
-    
-    connect( mainWindow, SIGNAL( windowClose() ),
-             this, SIGNAL( errorListClosed() ) );
-    
-    std::cerr.setf(std::ios::fixed);
+    makeErrorList(selectedParameters, stime, etime, lity, dtl, mdtl);
+    sortProxy->setSourceModel(mTableModel.get());
 
-    setNumRows( 0 );
-    setNumCols( 0 );
-    setNumCols(21);
-    setShowGrid(FALSE);
-    verticalHeader()->hide();
-    horizontalHeader()->setLabel(1, tr("Stnr"));
-    horizontalHeader()->setLabel(2, tr("Name"));
-    horizontalHeader()->setLabel(3, tr("Mt"));
-    horizontalHeader()->setLabel(4, tr("Dy"));
-    horizontalHeader()->setLabel(5, tr("Hr"));
-    horizontalHeader()->setLabel(6, tr("Para"));
-    horizontalHeader()->setLabel(7, tr("Type"));
-    horizontalHeader()->setLabel(8, tr("Orig.d"));
-    horizontalHeader()->setLabel(9, tr("Corr.d"));
-    horizontalHeader()->setLabel(10, tr("mod.v"));
-    horizontalHeader()->setLabel(11, tr("Flag"));
-    horizontalHeader()->setLabel(12, "=");
-    horizontalHeader()->setLabel(13, tr("Fl.v"));
-    horizontalHeader()->setLabel(14, tr("Corrected OK"));
-    horizontalHeader()->setLabel(15, tr("Original OK"));
-    horizontalHeader()->setLabel(16, tr("Interpolated"));
-    horizontalHeader()->setLabel(17, tr("Redistributed"));
-    horizontalHeader()->setLabel(18, tr("Corrected"));
-    horizontalHeader()->setLabel(19, tr("Rejected"));
-    horizontalHeader()->setLabel(20, "");
-    
-    makeMissingList(selectedParameters, stime, etime, dtl);
-    fillMemoryStores(selectedParameters, stime, etime, lity, dtl, mdtl);
-    
-    setTableCells();
+    connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+            this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
-    showSameStation();
-    
-    setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
-    setCaption(tr("Error list"));
+    horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    horizontalHeader()->resizeSection( 0, 50); // stationid
+    horizontalHeader()->resizeSection( 1, 80); // name
+    horizontalHeader()->resizeSection( 2, 30); // month
+    horizontalHeader()->resizeSection( 3, 30); // day
+    horizontalHeader()->resizeSection( 4, 30); // hour
+    horizontalHeader()->resizeSection( 5, 50); // parameter
+    horizontalHeader()->resizeSection( 6, 40); // typeid
+    horizontalHeader()->resizeSection( 7, 60); // orig
+    horizontalHeader()->resizeSection( 8, 60); // corr
+    horizontalHeader()->resizeSection( 9, 60); // model
+    horizontalHeader()->resizeSection(10, 40); // flag
+    horizontalHeader()->resizeSection(11, 20); // =
+    horizontalHeader()->resizeSection(12, 30); // flag-value
 }
 
 ErrorList::~ErrorList()
@@ -267,18 +210,17 @@ void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
                 const int tdiff = timeutil::hourDiff(data.otime(),stime);
                 missObs mobs;
                 mobs.oTime = data.otime();
-                mobs.time = tdiff;
                 mobs.parno  = parameterID;
                 mobs.statno = data.stnr();
                 mobs.missNo = missCount;
-                if ( mobs.time - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat  ) {
+                if (tdiff - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat) {
                     missCount = 0;
                 }
-                if ( mobs.time - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4 ) {
+                if (tdiff - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4) {
                     mList.push_back(mobs);
                 }
                 missCount++;
-                prevTime = mobs.time;
+                prevTime = tdiff;
                 prevStat = mobs.statno;
                 prevPara = mobs.parno;
             }
@@ -402,137 +344,32 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
     dumpMemstore(memStore2, "2");
 }
 
-void ErrorList::setTableCells()
+void ErrorList::makeErrorList(const std::vector<int>& selectedParameters,
+                              const timeutil::ptime& stime,
+                              const timeutil::ptime& etime,
+                              int lity,
+                              model::KvalobsDataListPtr dtl,
+                              const std::vector<modDatl>& mdtl)
 {
-    int insRow = 0;
-    setNumRows( memStore2.size() );
+    LOG_SCOPE("ErrorList");
+    BusyIndicator busyIndicator;
+
+    makeMissingList(selectedParameters, stime, etime, dtl);
+    fillMemoryStores(selectedParameters, stime, etime, lity, dtl, mdtl);
+
+    std::vector<mem> errorList;
     BOOST_FOREACH(const mem& mo, memStore2) {
-        setRowReadOnly( insRow, false);
-        setItem( insRow, 0, new ErrorListFirstCol( this, insRow ) );
-        
-        //std::cerr << decodeutility::kvdataformatter::createString( getKvData( mo ) ) << std::endl;
-        
         if( mo.flg <= 1 && mo.flg > -3 )
             continue;
-        
         if( mo.controlinfo.substr(kvalobs::flag::fr,1) == "6" && mo.controlinfo.substr(kvalobs::flag::ftime,1) == "1"  )
             continue;
-        
-        DataCell* snIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.stnr));
-        setItem(insRow,1,snIt);
-        
-        DataCell* naIt = new DataCell(this, Q3TableItem::Never,mo.name.left(8));
-        setItem(insRow,2,naIt);
-        
-        const QString isoDate = QString::fromStdString(timeutil::to_iso_extended_string(mo.obstime));
-        DataCell* moIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(5,2));
-        setItem(insRow,3,moIt);
-        
-        DataCell* dyIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(8,2));
-        setItem(insRow,4,dyIt);
-        
-        DataCell* clIt = new DataCell(this, Q3TableItem::Never,isoDate.mid(11,2));
-        setItem(insRow,5,clIt);
-        
-        QString parName = "???";
-        try {
-            parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(mo.parNo).name());
-        } catch (std::runtime_error&) {
-            // unknown parameter
-        }
-        DataCell* paIt = new DataCell(this, Q3TableItem::Never,parName);
-        setItem(insRow,6,paIt);
-        
-        DataCell* tiIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.typeId));
-        setItem(insRow,7,tiIt);
-
-        const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(mo.parNo);
-        const int nDigits = isCodeParam ? 0 : 1;
-        DataCell* ogIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.orig,'f',nDigits));
-        setItem(insRow,8,ogIt);
-        
-        DataCell* coIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.corr,'f',nDigits));
-        setItem(insRow,9,coIt);
-        
-        DataCell* mlIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.morig,'f',nDigits));
-        setItem(insRow,10,mlIt);
-        
-        DataCell* fiIt = new DataCell(this, Q3TableItem::Never,mo.flTyp);
-        setItem(insRow,11,fiIt);
-        
-        DataCell* eqIt = new DataCell(this, Q3TableItem::Never,"=");
-        setItem(insRow,12,eqIt);
-        
-        DataCell* fgIt = new DataCell(this, Q3TableItem::Never,QString::number(mo.flg));
-        setItem(insRow,13,fgIt);
-        
-        insRow++;
+        errorList.push_back(mo);
     }
-    
-    std::cerr << "Antall rader = " << insRow << std::endl;
-    
-    for( int icol = 14; icol < 16; icol++ ) {
-        for( int irow = 0; irow < insRow; irow++ ) {
-            OkTableItem* okIt = new OkTableItem(this, "");
-            setItem(irow,icol,okIt);
-        }
-    }
-    
-    for(int icol = 16; icol < 19; icol++ ) {
-        for( int irow = 0; irow < insRow; irow++ ) {
-            CrTableItem* crIt = new CrTableItem(this, Q3TableItem::WhenCurrent, "" ,// );
-                                                icol != 14 and icol != 15 and icol != 19 );
-            setItem(irow,icol,crIt);
-        }
-    }
-    
-    for( int irow = 0; irow < insRow; irow++ ) {
-        OkTableItem* okIt = new OkTableItem(this, "");
-        setItem(irow, 19, okIt);
-    }
-
-    for ( int icol = 0; icol < 14; icol++ )
-        adjustColumn(icol);
-    for ( int icol = 14; icol < 16; icol++ )
-        setColumnWidth(icol, 90);
-    for ( int icol = 16; icol < 20; icol++ )
-        setColumnWidth(icol, 70);
-    
-    setColumnReadOnly ( 20, true );
-    setColumnStretchable( 20, true );
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(errorList));
 }
 
-void CrTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected ) {
-    Q3TableItem::paint( p, cg, cr, selected );
-    p->drawRect( 0, 0, cr.width(), cr.height());
-}
-
-const QRegExp CrTableItem::re( "(\\-?[0-9]+(\\.[0-9])?)" );
-const QRegExpValidator CrTableItem::validator( CrTableItem::re, NULL );
-QWidget *CrTableItem::createEditor() const
+bool ErrorList::priorityParameterFilter(int parNo)
 {
-    QLineEdit *le = dynamic_cast<QLineEdit *>( Q3TableItem::createEditor() );
-    if ( numbers )
-        le->setValidator( &validator );
-    return le;
-}
-
-
-void OkTableItem::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected ) {
-    Q3CheckTableItem::paint( p, cg, cr, selected );
-    p->drawRect( 0, 0, cr.width(), cr.height());
-}
-
-
-void DataCell::paint( QPainter *p, const QColorGroup &cg, const QRect &cr, bool selected )
-{
-    p->setBrush(Qt::green);
-    QColorGroup g( cg );
-    g.setColor( QColorGroup::Background, Qt::green );
-    Q3TableItem::paint( p, g, cr, selected );
-}
-
-bool ErrorList::priorityParameterFilter(int parNo) {
     if (std::binary_search(parNoControl, boost::end(parNoControl), parNo))
         return false;
     return (parNo < 1000);
@@ -652,21 +489,6 @@ bool ErrorList::isErrorInMemstore1(const mem& mo)
     return false;
 }
 
-void ErrorList::tableCellClicked(int row, int col, int /*button*/)
-//void ErrorList::tableCellClicked(int row, int col, int button)
-{
-    if (col == 0 && row >= 0)
-        selectRow(row);
-    selectedRow = row;
-    /*
-      if ( button == Qt::RightButton && (col == 14 || col == 15 || col == 19) ){
-      OkTableItem* okIt = static_cast<OkTableItem*>(item(row,col));
-      okIt->setChecked(true);
-      okIt->pressedButton = button;
-      }
-    */
-}
-
 bool ErrorList::specialTimeFilter( int par, const timeutil::ptime& otime)
 {
     const int otime_hour = otime.time_of_day().hours();
@@ -688,320 +510,72 @@ bool ErrorList::typeFilter(int stnr, int par, int typeId, const timeutil::ptime&
     return false;
 }
 
+void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+{
+    LOG_SCOPE("ErrorList");
+    showSameStation();
+    signalStationSelected();
+}
+
+void ErrorList::showFail(const QModelIndex& index)
+{
+    if (index.column() < 10 or index.column() > 12)
+        return;
+    FailInfo::FailDialog fDlg;
+    fDlg.failList->newData(getKvData(index.row()));
+    fDlg.exec();
+}
+
+int ErrorList::getSelectedRow() const
+{
+    QModelIndexList selectedRows = selectionModel()->selectedRows();
+    if (selectedRows.size() != 1)
+        return -1;
+    const QModelIndex indexProxy = selectedRows.at(0);
+    const QModelIndex indexModel = static_cast<QSortFilterProxyModel*>(model())->mapToSource(indexProxy);
+    return indexModel.row();
+}
+
+void ErrorList::showSameStation()
+{
+    LOG_SCOPE("ErrorList");
+    const int row = getSelectedRow();
+    LOG4SCOPE_DEBUG(DBG1(row));
+    if (row < 0)
+        return;
+    mTableModel->showSameStation(mTableModel->mem4Row(row).stnr);
+}
+
 /*!
  * \brief Update kvalobs, set hqc-flag = 2 for obs not in errorlist
  */
 void ErrorList::updateKvBase(const mem& memStore)
 {
-    if (mainWindow->getReinserter()) {
-        kvData kd = getKvData( memStore );
-        //TODO: Remove next 3 lines when the new QC1-9 is ready
-        kvControlInfo cif = kd.controlinfo();
-        cif.set(kvalobs::flag::fhqc,2);
-        kd.controlinfo(cif);
-        CKvalObs::CDataSource::Result_var result;
-        {
-            BusyIndicator busyIndicator;
-            result = mainWindow->getReinserter()->insert(kd);
-        }
-        if ( result->res != CKvalObs::CDataSource::OK ) {
-            std::cerr << "Could not send data!" << std::endl
-                      << "Message was:" << std::endl
-                      << result->message << std::endl;
-            // TODO Handle Error!
-            return;
-        }
-    }
-}
-
-void ErrorList::updateFaillist( int row, int /*col*/)
-{
-    if ( row >= 0 && row <  numRows() )
-        fDlg->failList->newData( getKvData( row ) );
-}
-
-void ErrorList::showFail( int row, int col, int /*button*/, const QPoint& /*p*/)
-{
-    if ( (col > 10 && col < 14) && (row >= 0 && row <  numRows()) ) {
-        fDlg->show();
-    }
-}
-
-void ErrorList::swapRows( int row1, int row2, bool /*swapHeader*/ )
-{
-    Q3Table::swapRows( row1, row2, TRUE );
-}
-
-void ErrorList::sortColumn( int col, bool ascending, bool /*wholeRows*/ )
-{
-    /*emit*/ currentChanged( currentRow(), currentColumn() );
-    Q3Table::sortColumn( col, ascending, TRUE );
-    /*emit*/ currentChanged( currentRow(), currentColumn() );
-    clearSelection( true );
-    ensureCellVisible( currentRow(), 0 );
-}
-
-void ErrorList::showSameStation()
-{
-    int row = currentRow();
-    if ( row < 0 )
+    if (not mainWindow->getReinserter())
         return;
-    QString station = text( row, 1 );
-    for ( int i = 0; i < numRows(); i++ ) {
-        ErrorListFirstCol *elfc = dynamic_cast<ErrorListFirstCol*>(item( i, 0 ));
-        if ( elfc != NULL ) {
-            elfc->setSameStation( text( i, 1 ) == station );
-            updateCell( i, 0 );
-        }
-    }
-}
 
-void ErrorList::markModified( int row, int col )
-{
-    ErrorListFirstCol * elfc = dynamic_cast<ErrorListFirstCol*>( item( row, 0) );
-    assert( elfc );
-    struct mem &msItem =
-        memStore2[ elfc->memStoreIndex() ];
-
-    kvData kd = getKvData( row );
+    kvData kd = getKvData( memStore );
+    //TODO: Remove next 3 lines when the new QC1-9 is ready
     kvControlInfo cif = kd.controlinfo();
-
-
-    bool OK = true;
-    float cor;
-    if ( col > 15 && col < 19 )
-        cor = item(row, col)->text().toFloat(&OK);
-    else if ( col == 15 ) {
-        cor = msItem.orig;
+    cif.set(kvalobs::flag::fhqc, 2);
+    kd.controlinfo(cif);
+    CKvalObs::CDataSource::Result_var result;
+    {
+        BusyIndicator busyIndicator;
+        result = mainWindow->getReinserter()->insert(kd);
     }
-    else if ( col == 19 )
-        cor = discardedValue_;
-    else
-        cor = msItem.corr;
-
-    int panr = msItem.parNo;
-
-    float uplim = highMap[panr];
-    float downlim = lowMap[panr];
-    if ( ( !text(row, col).isEmpty() && (cor > uplim || cor < downlim)) && col < 19 && col > 15) {
-        QMessageBox::warning( this,
-                              tr("Illegal value"),
-                              tr("Value outside physical values"),
-                              QMessageBox::Ok,
-                              Qt::NoButton );
-        item( row, col )->setText("");;
+    if (result->res != CKvalObs::CDataSource::OK) {
+        QMessageBox::critical(this, tr("Error List"),
+                              tr("An error occured when attempting to insert data into kvalobs. "
+                                 "The message from kvalobs was\n%1").arg(QString(result->message)),
+                              QMessageBox::Ok, QMessageBox::NoButton);
         return;
     }
-    int fmis = cif.flag(kvalobs::flag::fmis);
-    int fd = cif.flag(kvalobs::flag::fd);
-    switch (col) {
-    case 14:
-    {
-        if ( fmis == 0 ) {
-            if ( fd == 2 || fd == 3 || fd > 5 ) {
-                QMessageBox::information( this,
-                                          tr("Wrong column"),
-                                          tr("Accumulation. Use field 'redistributed'."),
-                                          QMessageBox::Ok,
-                                          Qt::NoButton );
-                OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-                okIt->setChecked(false);
-                item( row, col )->setText("");
-                updateCell(row, col);
-                return;
-            }
-        }
-        else if ( fmis == 1 ) {
-            if ( fd == 2 || fd > 5 ) {
-                QMessageBox::information( this,
-                                          tr("Wrong column"),
-                                          tr("Accumulation. Use field 'redistributed'."),
-                                          QMessageBox::Ok,
-                                          Qt::NoButton );
-                OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-                okIt->setChecked(false);
-                item( row, col )->setText("");
-                updateCell(row, col);
-                return;
-            }
-        }
-        else if ( fmis == 2 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Corrected is missing. Use field 'Original OK' or 'Forkastet'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            okIt->setChecked(false);
-            item( row, col )->setText("");
-            updateCell(row, col);
-            return;
-        }
-        else if ( fmis == 3 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Both original and corrected are missing. Use field 'Interpolated'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            okIt->setChecked(false);
-            item( row, col )->setText("");
-            updateCell(row, col);
-            return;
-        }
-    }
-    break;
-    case 15:
-    {
-        if ( fmis == 1 ) {
-            int dsc = QMessageBox::information( this,
-                                                tr("Original missing"),
-                                                tr("Do you want to set in -32767 as corrected value?"),
-                                                tr("Yes"),
-                                                tr("No") );
-            if ( dsc == 1 ) { // Nei
-                QMessageBox::information( this,
-                                          tr("Wrong column"),
-                                          tr("Use field 'Interpolated' if you want a new interpolated value, "
-                                             "or 'Corrected OK' if you want to accept an existing value"),
-                                          QMessageBox::Ok,
-                                          Qt::NoButton );
-                OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-                okIt->setChecked(false);
-                item( row, col )->setText("");
-                updateCell(row, col);
-                return;
-            }
-        }
-        else if ( fmis == 3 ) {
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            okIt->setChecked(false);
-            item( row, col )->setText("");
-            updateCell(row, col);
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Both original and corrected value ar missing. Use field 'Interpolated'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            return;
-        }
-    }
-    break;
-    case 16:
-    {
-        if ( fd > 1 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Accumulation. Use field 'redistributed'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            item( row, col )->setText("");
-            return;
-        }
-    }
-    break;
-    case 17:
-        break;
-    case 18:
-    {
-        if ( fd >= 2 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Accumulation. Use field 'redistributed'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            // UNUSED OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            item( row, col )->setText("");
-            //	updateCell(row, col);
-            return;
-        }
-    }
-    break;
-    case 19:
-    {
-        if ( fmis == 1 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Cannot reject. Use field 'Original OK'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            okIt->setChecked(false);
-            item( row, col )->setText("");
-            updateCell(row, col);
-            return;
-        }
-        else if ( fmis == 3 ) {
-            QMessageBox::information( this,
-                                      tr("Wrong column"),
-                                      tr("Cannot reject. Use field 'Interpolert'."),
-                                      QMessageBox::Ok,
-                                      Qt::NoButton );
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-            okIt->setChecked(false);
-            item( row, col )->setText("");
-            updateCell(row, col);
-            return;
-        }
-    }
-    break;
-    default:
-        break;
-    }
-    //  std::cerr << "markModified( " << elfc->memStoreIndex() << ");\n";
-    // Test starter
-    bool emptyRec;
-    if ( col == 14 || col == 15 || col == 19 ) {
-        OkTableItem* okIt = static_cast<OkTableItem*>(item( row, col));
-        emptyRec = !okIt->isChecked();
-    }
-    else
-        emptyRec = text(row, col).isEmpty();
-    if ( emptyRec )
-        modifiedRows.erase( elfc );
-    else
-        //Test slutter
-        modifiedRows.insert( elfc );
 }
 
-void ErrorList::clearOtherMods( int row, int col )
+void ErrorList::signalStationSelected()
 {
-    std::cerr << "clearOtherMods( " << row << ", " << col << ")\n";
-
-    if ( col > 13 && col < 20 ) {
-        if ( (col > 15 && col < 19 && text( row, col ).stripWhiteSpace().isEmpty()) ) {
-            item( row, col )->setText("");;
-            return;
-        }
-
-        // Check if another column contains data
-        for ( int icol = 14; icol < 16; icol++ ) {
-            if ( icol != col ) {
-                OkTableItem* okIt = static_cast<OkTableItem*>(item( row, icol));
-                okIt->setChecked(false);
-                updateCell(row, icol);
-            }
-        }
-
-        for ( int icol = 16; icol < 19; icol++ ) {
-            if ( icol != col ) {
-                if ( not text(row, icol).isEmpty() ) {
-                    item( row, icol )->setText("");
-
-                    updateCell(row, icol);
-                }
-            }
-        }
-        if ( col != 19 ) {
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, 19));
-            okIt->setChecked(false);
-            updateCell(row, 19);
-        }
-    }
-}
-
-void ErrorList::signalStationSelected( int row )
-{
+    const int row = getSelectedRow();
     if (row < 0 or row == mLastSelectedRow)
         return;
     mLastSelectedRow = row;
@@ -1025,300 +599,199 @@ void ErrorList::execMissingList()
 
 void ErrorList::setupMissingList()
 {
-    const struct mem *m = getMem( selectedRow );
-    if ( m and m->controlinfo[4] == '6' ) {
+    const int row = getSelectedRow();
+    if (row < 0)
+        return;
+
+    const mem& m = getMem(row);
+    if (m.controlinfo[4] == '6')
         execMissingList();
-    }
 }
 
-const struct ErrorList::mem *ErrorList::getMem(int row) const
+const ErrorList::mem& ErrorList::getMem(int row) const
 {
-    ErrorListFirstCol *elfc = dynamic_cast<ErrorListFirstCol*>(item(row, 0));
-    if( !elfc )
-        return 0;
-    return &memStore2[ elfc->memStoreIndex() ];
+    return mTableModel->mem4Row(row);
 }
 
 kvData ErrorList::getKvData(const mem& m) const
 {
-    return kvData( m.stnr, timeutil::to_miTime(m.obstime), m.orig,
-                   m.parNo, timeutil::to_miTime(m.tbtime),
-                   m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
-                   m.useinfo, m.cfailed );
+    return kvData(m.stnr, timeutil::to_miTime(m.obstime), m.orig,
+                  m.parNo, timeutil::to_miTime(m.tbtime),
+                  m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
+                  m.useinfo, m.cfailed);
 }
 
-kvData ErrorList::getKvData(int row) const
+kvalobs::kvData ErrorList::getKvData() const
 {
-    const struct mem *m = getMem( row );
-    if( !m )
-        return kvData();
-    return getKvData( *m );
+    const int row = getSelectedRow();
+    if (row < 0)
+        return kvData(0, timeutil::ptime(), -32767,
+                      0, timeutil::ptime(), 0, 0, 0, -32767,
+                      std::string("FFFFFFFFFFFFFFFF"),
+                      std::string("FFFFFFFFFFFFFFFF"),
+                      "no-row-in-errorlist");
+    else
+        return getKvData(getMem(row));
 }
 
-typedef std::list<kvData> kvDataList;
+namespace /* anonymous */ {
+
+bool set_no_accumulation(kvalobs::kvData& kd)
+{
+    kvalobs::kvControlInfo ci = kd.controlinfo();
+    if (ci.flag(kvalobs::flag::fd) != 3)
+        return false;
+    ci.set(kvalobs::flag::fd, 1);
+    kd.controlinfo(ci);
+    return true;
+}
+
+void set_fhqc(kvalobs::kvData& kd, int fhqc)
+{
+    kvalobs::kvControlInfo ci = kd.controlinfo();
+    ci.set(kvalobs::flag::fhqc, fhqc);
+    kd.controlinfo(ci);
+}
+
+void set_fmis(kvalobs::kvData& kd, int fmis)
+{
+    kvalobs::kvControlInfo ci = kd.controlinfo();
+    ci.set(kvalobs::flag::fmis, fmis);
+    kd.controlinfo(ci);
+}
+
+} // anonymous namespace
 
 void ErrorList::saveChanges()
 {
-    std::cerr << "saving changes" << std::endl;
+    LOG_SCOPE("ErrorList");
 
-    DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
-    if (not reinserter) {
-        QMessageBox::critical( this,
-                               tr("Not authenticated"),
-                               tr("You are not authenticated as operator. Cannot save sata."),
-                               QMessageBox::Ok,
-                               Qt::NoButton );
-        return;
-    }
-
-    if (modifiedRows.empty()) {
-        QMessageBox::information( this,
-                                  tr("No unsaved data"),
-                                  tr("There are no unsaved data."),
-                                  QMessageBox::Ok,
-                                  Qt::NoButton );
-        return;
-    }
-
+    typedef std::list<kvData> kvDataList;
     kvDataList modData;
+    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
+        if (mo.change == NO_CHANGE)
+            continue;
+        kvalobs::kvData kd = getKvData(mo);
+        const kvalobs::kvControlInfo cif = kd.controlinfo();
 
-    for ( CIModList it = modifiedRows.begin(); it != modifiedRows.end(); it++ ) {
-        int row = (*it)->row();
+        const int fmis = cif.flag(kvalobs::flag::fmis);
+        const int fd   = cif.flag(kvalobs::flag::fd);
+        bool qc2ok = mo.changed_qc2allowed;
 
-        int ccol = 0;
-
-        for ( int icol = 14; icol < 16; icol++ ) {
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, icol));
-            if ( okIt->isChecked() ) {
-                ccol = icol;
-                break;
+        switch (mo.change) {
+        case NO_CHANGE:
+            continue;
+        case CORR_OK:
+            if (Helpers::float_eq()(kd.original(), kd.corrected())
+                and (not Helpers::is_accumulation(fd)) and fmis < 2)
+            {
+                kvalobs::hqc::hqc_accept(kd);
+                set_no_accumulation(kd);
+            } else if (fmis == 0) {
+                set_fhqc(kd, 7);
+            } else if (fmis == 1) {
+                set_fhqc(kd, 5);
+            } else {
+                LOG4SCOPE_ERROR("bad corr ok, would not set fhqc, kd=" << kd);
+                continue;
             }
-        }
-
-        for ( int icol = 16; icol < 19; icol++ ) {
-            if ( not text(row, icol).isEmpty() ) {
-                ccol = icol;
-                break;
-            }
-        }
-
-        OkTableItem* okIt = static_cast<OkTableItem*>(item( row, 19));
-        if ( okIt->isChecked() )
-            ccol = 19;
-
-        kvData kd = getKvData( row );
-        kvControlInfo cif = kd.controlinfo();
-        kvUseInfo uif = kd.useinfo();
-        std::cerr << "Gamle flagg = " << cif << " " << uif << std::endl;
-
-        int fmis = cif.flag(kvalobs::flag::fmis);
-        int fd = cif.flag(kvalobs::flag::fd);
-        switch ( ccol ) {
-        case 14:
-        {
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, ccol));
-            if ( kd.original() == kd.corrected() && ( fd == 0 || fd == 1 
-                                                      || fd == 3 ) && fmis < 2 ) {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,1);
-                if ( fd == 3 )
-                    cif.set(kvalobs::flag::fd,1);
-            }
-            else {
-                if ( fmis == 0 ) {
-                    //	    if ( okIt->pressedButton == Qt::RightButton )
-                    //	      cif.set(kvalobs::flag::fhqc,4);
-                    //     	    else
-                    cif.set(kvalobs::flag::fhqc,7);
-                }
-                else if ( fmis == 1 ) {
-                    //	    if ( okIt->pressedButton == Qt::RightButton )
-                    //	      cif.set(kvalobs::flag::fhqc,4);
-                    //	    else
-                    cif.set(kvalobs::flag::fhqc,5);
-                }
-            }
-        }
-        break;
-        case 15:
-        {
-            OkTableItem* okIt = static_cast<OkTableItem*>(item( row, ccol));
-            if ( cif.flag(kvalobs::flag::fnum) > 1 ) {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,1);
-            }
-            if ( fmis == 0 ) {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,1);
-                kd.corrected(kd.original());
-                if ( cif.flag(kvalobs::flag::fd) == 3 )
-                    cif.set(kvalobs::flag::fd,1);
-            }
-            else if ( fmis == 1 ) {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,1);
-                cif.set(kvalobs::flag::fmis,3);
-                kd.corrected(kd.original());
-            }
-            else if ( fmis == 2 ) {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,1);
-                cif.set(kvalobs::flag::fmis,0);
-                kd.corrected(kd.original());
-                if ( cif.flag(kvalobs::flag::fd) == 3 )
-                    cif.set(kvalobs::flag::fd,1);
-            }
-            else if ( fmis == 3 ) {
-                std::cerr << "Vi skulle ikke vært her" << std::endl;
-            }
-        }
-        break;
-        case 16:
-        {
-            if ( fmis == 0 || fmis == 2 ) {  //original exists, this is a correction
-                //	  cif.set(kvalobs::flag::fmis,0);
-                cif.set(kvalobs::flag::fmis,4);
-                cif.set(kvalobs::flag::fhqc,7);
-            }
-            else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
-                cif.set(kvalobs::flag::fmis,1);
-                cif.set(kvalobs::flag::fhqc,5);
-            }
-        }
-        break;
-        case 17:
-        {
-            if ( fmis == 0 || fmis == 2 ) {
-                //	if ( fmis == 0 ) {
-                cif.set(kvalobs::flag::fmis,4);
-            }
-            else if ( fmis == 1 || fmis == 3 ) {
-                cif.set(kvalobs::flag::fmis,1);
-            }
-            cif.set(kvalobs::flag::fd,2);
-            cif.set(kvalobs::flag::fhqc,6);
-        }
-        break;
-        case 18:
-        {
-            if ( fmis == 0 || fmis == 2 || fmis == 4 ) {  //original exists, this is a correction
-                //	  cif.set(kvalobs::flag::fmis,0);
-                cif.set(kvalobs::flag::fmis,4);
-                cif.set(kvalobs::flag::fhqc,7);
-            }
-            else if ( fmis == 1 || fmis == 3 ) {  //original is missing, this is an interpolation
-                cif.set(kvalobs::flag::fmis,1);
-                cif.set(kvalobs::flag::fhqc,5);
-            }
-        }
-        break;
-        case 19:
-        {
-            int fmis = cif.flag(kvalobs::flag::fmis);
-            if ( fmis == 1 )
-                std::cerr << "VI SKULLE IKKE VÆRT HER!!!" << std::endl;
-            else if ( fmis == 3 )
-                std::cerr << "VI SKULLE IKKE VÆRT HER!!!" << std::endl;
-            else {
-                //	  if ( okIt->pressedButton == Qt::RightButton )
-                //	    cif.set(kvalobs::flag::fhqc,4);
-                //	  else
-                cif.set(kvalobs::flag::fhqc,10);
-                if ( fmis == 0 )
-                    cif.set(kvalobs::flag::fmis,2);
-            }
-        }
-        break;
-        case 0:
             break;
-        default:
-            // Undo changes:
-            std::cerr << "KNUT tester er vi her ???? " << std::endl;
-            cif.set(kvalobs::flag::fhqc,0); break;
+        case ORIG_OK:
+            if (fmis == 3) {
+                LOG4SCOPE_ERROR("fmis=3, orig ok not possible, should not have been here, kd=" << kd);
+                continue;
+            }
+            if (cif.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
+                LOG4SCOPE_ERROR("bad orig ok, would not set fhqc, kd=" << kd);
+                continue;
+            }
+            kd.corrected(kd.original());
+            kvalobs::hqc::hqc_accept(kd);
+            if (fmis == 0 or fmis == 2) {
+                set_fmis(kd, 0);
+                set_no_accumulation(kd);
+            } else if (fmis == 1) {
+                set_fmis(kd, 3);
+            }
+            break;
+        case CORRECTED:
+        case INTERPOLATED:
+            if (Helpers::is_accumulation(fd)) {
+                LOG4SCOPE_WARN("corr/interp for accumulation, should not have been here, kd=" << kd);
+                continue;
+            }
+            kvalobs::hqc::hqc_auto_correct(kd, mo.changed_value);
+            qc2ok = false;
+            break;
+        case REDISTRIBUTED:
+            LOG4SCOPE_ERROR("should not make redistributions in error list, kd=" << kd);
+            continue;
+        case REJECTED:
+            if (fmis == 1 or fmis == 3) {
+                LOG4SCOPE_ERROR("fmis=1/3, cannot reject, should not have been here, kd=" << kd);
+                continue;
+            }
+            kvalobs::hqc::hqc_reject(kd);
+            break;
         }
-        kd.controlinfo( cif );
-        std::cerr << "Nye flagg    = " << cif << " " << uif << std::endl;
-
-        //    if ( ccol > 14 and ccol < 19 )
-        if ( ccol > 15 and ccol < 19 )
-            kd.corrected( text( row, ccol ).toFloat() );
-        else if ( ccol == 15 ) {
-            // UNUSED const int tableOriginalValuePos = 8;
-            // UNUSED float newCorrected = text( row, tableOriginalValuePos ).toFloat();
-            kd.corrected( kd.original() );
-        }
-        else if ( ccol == 19 ) {
-            kd.corrected( discardedValue_ );
-        }
-        else if ( ccol == 0 ) {
-            const int tableOriginalValuePos = 9;
-            // UNUSED float newCorrected = text( row, tableOriginalValuePos ).toFloat();
-            kd.corrected( text( row, tableOriginalValuePos ).toFloat() );
-        }
+        if (qc2ok)
+            set_fhqc(kd, 4);
 
         modData.push_back( kd );
     }
 
-    std::cerr << decodeutility::kvdataformatter::createString( modData ) << std::endl;
+    LOG4SCOPE_DEBUG("modData =\n" << decodeutility::kvdataformatter::createString(modData));
 
+    if (modData.empty()) {
+        QMessageBox::information(this,
+                                 tr("No unsaved data"),
+                                 tr("There are no unsaved data."),
+                                 QMessageBox::Ok, Qt::NoButton);
+        return;
+    }
+
+    DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
+    if (not reinserter) {
+        QMessageBox::critical(this,
+                              tr("Not authenticated"),
+                              tr("You are not authenticated as operator. Cannot save sata."),
+                              QMessageBox::Ok, Qt::NoButton);
+        return;
+    }
 
     CKvalObs::CDataSource::Result_var result;
     {
         BusyIndicator busyIndicator;
-        result = reinserter->insert( modData );
+        result = reinserter->insert(modData);
     }
 
-    if ( result->res != CKvalObs::CDataSource::OK ) {
-        QMessageBox::critical( this,
-                               tr("Cannot save data"),
-                               tr("Cannot save data! Message from kvalobs was:\n%1")
-                               .arg(QString(result->message)),
-                               QMessageBox::Ok,
-                               Qt::NoButton );
+    if (result->res != CKvalObs::CDataSource::OK) {
+        QMessageBox::critical(this,
+                              tr("Cannot save data"),
+                              tr("Cannot save data! Message from kvalobs was:\n%1").arg(QString(result->message)),
+                              QMessageBox::Ok, Qt::NoButton);
         return;
     }
 
-    QMessageBox::information( this,
-                              tr("Data saved"),
-                              tr("%1 rows have been saved to kvalobs.").arg(modifiedRows.size()),
-                              QMessageBox::Ok,
-                              Qt::NoButton );
-
-    modifiedRows.clear();
-}
-
-void ErrorList::readLimits()
-{
-    int par, dum;
-    float low, high;
-    QString limitsFile = ::hqc::getPath(::hqc::CONFDIR) + "/slimits";
-    QFile limits(limitsFile);
-    if ( !limits.open(QIODevice::ReadOnly) ) {
-        std::cerr << "kan ikke åpne " << limitsFile.toStdString() << std::endl;
-        exit(1);
-    }
-    Q3TextStream limitStream(&limits);
-    while ( limitStream.atEnd() == 0 ) {
-        limitStream >> par >> dum >> low >> high;
-        lowMap[par] = low;
-        highMap[par] = high;
-    }
+    QMessageBox::information(this,
+                             tr("Data saved"),
+                             tr("%1 rows have been saved to kvalobs. Warning: data shown in error "
+                                "and data list might no longer be consistent with kvalobs.").arg(modData.size()),
+                             QMessageBox::Ok, Qt::NoButton);
 }
 
 bool ErrorList::maybeSave()
 {
+    bool modified = false;
+    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
+        if (mo.change != NO_CHANGE) {
+            modified = true;
+            break;
+        }
+    }
+
     bool ret = true;
-    if ( not modifiedRows.empty() ) {
+    if (modified) {
         int result =
             QMessageBox::warning( this, tr("HQC"),
                                   tr("You have unsaved changes in the error list. Do you want to save them?"),
@@ -1331,66 +804,10 @@ bool ErrorList::maybeSave()
     return ret;
 }
 
-bool ErrorList::event(QEvent *event)
+void ErrorList::closeEvent(QCloseEvent* event)
 {
-    if (event->type() == QEvent::ToolTip) {
-        QHelpEvent *helpEvent = static_cast<QHelpEvent *>(event);
-        QPoint cp = mapFromGlobal(helpEvent->globalPos());
-        int cy = contentsY();
-        int row = rowAt( cp.y() + cy )-1;
-        // UNUSED int col = columnAt( cp.x() );
-
-        QString cellText = text( row, stationidCol );
-        if ( cellText.isNull() )
-            return false;
-        
-        
-        QString tipString;
-        {
-            bool ok = true;
-            int stationID = cellText.toInt(&ok);
-            if ( !ok ) // Could not convert cell contents to int.
-                return false;
-            tipString += Helpers::stationInfo(stationID);
-        }
-
-        cellText = text( row, typeidCol );
-        if (cellText.isNull())
-            return false;
-
-        {
-            bool ok = true;
-            int typeID = cellText.toInt(&ok);
-            if ( !ok ) // Could not convert cell contents to int.
-                return false;
-
-            tipString += Helpers::typeInfo(typeID);
-        }
-        QToolTip::showText(helpEvent->globalPos(), tipString);
-    }
-    return QWidget::event(event);
-}
-
-void ErrorList::closeEvent( QCloseEvent * event )
-{
-    if ( maybeSave() )
-        Q3Table::closeEvent(event);
+    if (maybeSave())
+        QTableView::closeEvent(event);
     else
         event->ignore();
-}
-
-
-QString DataCell::key() const
-{
-    QString item;
-    if ( col() == 1 || col() == 3 || col() == 5 || col() == 7 || col() == 11) {
-        item.sprintf("%08d",text().toInt());
-    }
-    else if ( col() == 8 || col() == 9 || col() == 10 ) {
-        item.sprintf("%08.1f",text().toDouble()+33000);
-    }
-    else {
-        item = text();
-    }
-    return item;
 }

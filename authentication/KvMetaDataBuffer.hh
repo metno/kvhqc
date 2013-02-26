@@ -25,6 +25,7 @@ public:
     std::string findParamName(int paramId);
     bool isCodeParam(int paramid);
     bool isModelParam(int paramid);
+    bool checkPhysicalLimits(int paramid, float value);
 
     bool isKnownType(int id);
     const kvalobs::kvTypes& findType(int id);
@@ -50,6 +51,8 @@ private:
     bool mHaveParams;
     std::list<kvalobs::kvParam> mParams;
     std::set<int> mCodeParams;
+    typedef std::map<int, std::pair<float, float> > ParamLimits_t;
+    ParamLimits_t mParamLimits;
 
     bool mHaveTypes;
     std::list<kvalobs::kvTypes> mTypes;

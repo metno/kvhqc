@@ -187,87 +187,76 @@ Parameter</translation>
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="errorlist.cc" line="161"/>
+        <location filename="errorlist.cc" line="139"/>
         <source>HQC - Error List</source>
         <translation>HQC - Fehlerliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="166"/>
+        <location filename="errorlist.cc" line="150"/>
         <source>&amp;Missing list</source>
         <translation>&amp;Mangelliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="167"/>
+        <location filename="errorlist.cc" line="151"/>
         <source>Ctrl+M</source>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="205"/>
-        <location filename="ErrorListTableModel.cc" line="14"/>
+        <location filename="ErrorListTableModel.cc" line="28"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="206"/>
-        <location filename="ErrorListTableModel.cc" line="15"/>
+        <location filename="ErrorListTableModel.cc" line="29"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="207"/>
-        <location filename="ErrorListTableModel.cc" line="16"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Mt</source>
         <oldsource>  Mt</oldsource>
         <translation>Mt</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="208"/>
-        <location filename="ErrorListTableModel.cc" line="17"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Dy</source>
         <oldsource>  Dy</oldsource>
         <translation>Tg</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="209"/>
-        <location filename="ErrorListTableModel.cc" line="18"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Hr</source>
         <oldsource>  Hr</oldsource>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="210"/>
-        <location filename="ErrorListTableModel.cc" line="19"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="211"/>
-        <location filename="ErrorListTableModel.cc" line="20"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="212"/>
-        <location filename="ErrorListTableModel.cc" line="21"/>
+        <location filename="ErrorListTableModel.cc" line="35"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="213"/>
-        <location filename="ErrorListTableModel.cc" line="22"/>
+        <location filename="ErrorListTableModel.cc" line="36"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="214"/>
-        <location filename="ErrorListTableModel.cc" line="23"/>
+        <location filename="ErrorListTableModel.cc" line="37"/>
         <source>mod.v</source>
         <translation>Mod.v</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="215"/>
-        <location filename="ErrorListTableModel.cc" line="24"/>
+        <location filename="ErrorListTableModel.cc" line="38"/>
         <source>Flag</source>
         <translation>Flag</translation>
     </message>
@@ -276,215 +265,263 @@ Parameter</translation>
         <translation type="obsolete">=</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="217"/>
-        <location filename="ErrorListTableModel.cc" line="26"/>
+        <location filename="ErrorListTableModel.cc" line="40"/>
         <source>Fl.v</source>
         <translation>Fl.v</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="218"/>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListTableModel.cc" line="41"/>
         <source>Corrected OK</source>
         <translation>Korrigiert OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="219"/>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListTableModel.cc" line="42"/>
         <source>Original OK</source>
         <translation>Original OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="220"/>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListTableModel.cc" line="43"/>
         <source>Interpolated</source>
         <translation>Interpoliert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="221"/>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListTableModel.cc" line="44"/>
         <source>Redistributed</source>
         <translation>Umverteilt</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="222"/>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="45"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="223"/>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="46"/>
         <source>Rejected</source>
         <translation>Verworfen</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="234"/>
         <source>Error list</source>
-        <translation>Fehlerliste</translation>
+        <translation type="obsolete">Fehlerliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="788"/>
         <source>Illegal value</source>
-        <translation>Ungültiger Wert</translation>
+        <translation type="obsolete">Ungültiger Wert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="789"/>
         <source>Value outside physical values</source>
-        <translation>Wert außerhalb physikalischer Grenzen</translation>
+        <translation type="obsolete">Wert außerhalb physikalischer Grenzen</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="803"/>
-        <location filename="errorlist.cc" line="817"/>
-        <location filename="errorlist.cc" line="830"/>
-        <location filename="errorlist.cc" line="842"/>
-        <location filename="errorlist.cc" line="864"/>
-        <location filename="errorlist.cc" line="882"/>
-        <location filename="errorlist.cc" line="894"/>
-        <location filename="errorlist.cc" line="909"/>
-        <location filename="errorlist.cc" line="924"/>
-        <location filename="errorlist.cc" line="936"/>
         <source>Wrong column</source>
-        <translation>Falsche Spalte</translation>
+        <translation type="obsolete">Falsche Spalte</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="804"/>
-        <location filename="errorlist.cc" line="818"/>
-        <location filename="errorlist.cc" line="895"/>
-        <location filename="errorlist.cc" line="910"/>
         <source>Accumulation. Use field &apos;redistributed&apos;.</source>
-        <translation>Sammelwert. Verwenden Sie die Spalte &apos;Umverteilt&apos;.</translation>
+        <translation type="obsolete">Sammelwert. Verwenden Sie die Spalte &apos;Umverteilt&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="831"/>
         <source>Corrected is missing. Use field &apos;Original OK&apos; or &apos;Forkastet&apos;.</source>
-        <translation>Korrigierter Wert fehlt. Verwenden Sie die Spalte &apos;Original OK&apos; oder &apos;Verworfen&apos;.</translation>
+        <translation type="obsolete">Korrigierter Wert fehlt. Verwenden Sie die Spalte &apos;Original OK&apos; oder &apos;Verworfen&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="843"/>
         <source>Both original and corrected are missing. Use field &apos;Interpolated&apos;.</source>
-        <translation>Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
+        <translation type="obsolete">Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="858"/>
         <source>Original missing</source>
-        <translation>Originalwert fehlt</translation>
+        <translation type="obsolete">Originalwert fehlt</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="859"/>
         <source>Do you want to set in -32767 as corrected value?</source>
-        <translation>Möchten Sie -32767 als korrigierten Wert eintragen?</translation>
+        <translation type="obsolete">Möchten Sie -32767 als korrigierten Wert eintragen?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="860"/>
         <source>Yes</source>
-        <translation>Ja</translation>
+        <translation type="obsolete">Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="861"/>
         <source>No</source>
-        <translation>Nein</translation>
+        <translation type="obsolete">Nein</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="865"/>
         <source>Use field &apos;Interpolated&apos; if you want a new interpolated value, or &apos;Corrected OK&apos; if you want to accept an existing value</source>
-        <translation>Verwenden Sie die Spalte &apos;Interpoliert&apos; um zu interpolieren, oder &apos;Korrigiert OK&apos; wenn Sie einen vorhandenen korrigierten Wert akzeptieren möchten</translation>
+        <translation type="obsolete">Verwenden Sie die Spalte &apos;Interpoliert&apos; um zu interpolieren, oder &apos;Korrigiert OK&apos; wenn Sie einen vorhandenen korrigierten Wert akzeptieren möchten</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="883"/>
         <source>Both original and corrected value ar missing. Use field &apos;Interpolated&apos;.</source>
-        <translation>Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
+        <translation type="obsolete">Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="925"/>
         <source>Cannot reject. Use field &apos;Original OK&apos;.</source>
-        <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Original OK&apos;.</translation>
+        <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Original OK&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="937"/>
         <source>Cannot reject. Use field &apos;Interpolert&apos;.</source>
-        <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
+        <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1020"/>
+        <location filename="errorlist.cc" line="594"/>
         <source>Missing list</source>
         <translation>Mangelliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1021"/>
+        <location filename="errorlist.cc" line="595"/>
         <source>Missing list does not contain more elements that shown in the error list</source>
         <translation>Mangelliste enthält nicht mehr Elemente als in der Fehlerliste gezeigt werden</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1022"/>
+        <location filename="errorlist.cc" line="596"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1067"/>
+        <location filename="errorlist.cc" line="756"/>
         <source>Not authenticated</source>
         <translation>Nicht authentifiziert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1068"/>
+        <location filename="errorlist.cc" line="757"/>
         <source>You are not authenticated as operator. Cannot save sata.</source>
         <translation>Sie sind nicht als Operateur authentifiziert. Kann keine Daten speichern.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1076"/>
+        <location filename="errorlist.cc" line="747"/>
         <source>No unsaved data</source>
         <translation>Keine ungespeicherten Daten</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1077"/>
+        <location filename="errorlist.cc" line="568"/>
+        <source>Error List</source>
+        <translation>Fehlerliste</translation>
+    </message>
+    <message>
+        <location filename="errorlist.cc" line="569"/>
+        <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
+%1</source>
+        <translation>Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
+%1</translation>
+    </message>
+    <message>
+        <location filename="errorlist.cc" line="748"/>
         <source>There are no unsaved data.</source>
         <translation>Keine ungespeicherten Daten vorhanden.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1283"/>
+        <location filename="errorlist.cc" line="770"/>
         <source>Cannot save data</source>
         <translation>Kann Daten nicht speichern</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1284"/>
+        <location filename="errorlist.cc" line="771"/>
         <source>Cannot save data! Message from kvalobs was:
 %1</source>
         <translation>Kann Daten nicht speichern! Meldung von Kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1292"/>
+        <location filename="errorlist.cc" line="777"/>
         <source>Data saved</source>
         <translation>Daten gespeichert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1293"/>
-        <source>%1 rows have been saved to kvalobs.</source>
-        <translation>%1 Zeilen wurden in kvalobs gespeichert.</translation>
+        <location filename="errorlist.cc" line="778"/>
+        <source>%1 rows have been saved to kvalobs. Warning: data shown in error and data list might no longer be consistent with kvalobs.</source>
+        <oldsource>%1 rows have been saved to kvalobs. Be aware that data shown in error and data list might no longer be consistent with kvalobs</oldsource>
+        <translation>%1 Zeilen wurden in kvalobs gespeichert. Warnung: Datenliste und Fehlerliste sind möglicherweise nicht länger konsistent mit kvalobs.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1323"/>
+        <source>%1 rows have been saved to kvalobs.</source>
+        <translation type="obsolete">%1 Zeilen wurden in kvalobs gespeichert.</translation>
+    </message>
+    <message>
+        <location filename="errorlist.cc" line="796"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1324"/>
+        <location filename="errorlist.cc" line="797"/>
         <source>You have unsaved changes in the error list. Do you want to save them?</source>
         <translation>Die Fehlerliste enthält ungespeicherte Änderungen. Möchten Sie diese speichern?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1325"/>
+        <location filename="errorlist.cc" line="798"/>
         <source>&amp;Yes</source>
         <translation>&amp;Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1325"/>
+        <location filename="errorlist.cc" line="798"/>
         <source>&amp;No</source>
         <translation>&amp;Nein</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="1325"/>
+        <location filename="errorlist.cc" line="798"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../authentication/KvMetaDataBuffer.cc" line="32"/>
+        <source>Cannot open file</source>
+        <translation>Kann Datei nicht öffnen</translation>
+    </message>
+    <message>
+        <location filename="../authentication/KvMetaDataBuffer.cc" line="33"/>
+        <source>Could not open file &apos;%1&apos; for reading. Have to exit kvhqc.</source>
+        <translation>Kann Datei &apos;%1&apos; nicht lesen. Kvhqc muss beendet werden.</translation>
+    </message>
+</context>
+<context>
+    <name>ErrorListTableModel</name>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="168"/>
+        <location filename="ErrorListTableModel.cc" line="194"/>
+        <source>Accumulation. Use WatchRR to modify.</source>
+        <translation>Sammelwert. Benutzen Sie WatchRR um diesen zu ändern.</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="170"/>
+        <source>Corrected is missing. Use field &apos;Original OK&apos; or &apos;Recjected&apos;.</source>
+        <translation>Korrigierter Wert fehlt. Benutzen Sie &apos;Original OK&apos; oder &apos;Verworfen&apos;.</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="172"/>
+        <location filename="ErrorListTableModel.cc" line="196"/>
+        <source>Both original and corrected are missing. Use field &apos;Interpolated&apos;.</source>
+        <translation>Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="174"/>
+        <source>Cannot reject. Use field &apos;Original OK&apos;.</source>
+        <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Original OK&apos;.</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="176"/>
+        <source>Cannot reject. Use field &apos;Interpolated&apos;.</source>
+        <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;. </translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="180"/>
+        <source>QC2 may override</source>
+        <translation>QC2 darf überschreiben</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="180"/>
+        <source>QC2 ok</source>
+        <translation>QC2 erlaubt</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="182"/>
+        <source>QC2 may not override</source>
+        <translation>QC2 darf nicht überschreiben</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="182"/>
+        <source>no QC2</source>
+        <translation>kein QC2</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="187"/>
+        <source>Use WatchRR for redistributions.</source>
+        <translation>Benutzen Sie WatchRR für Sammelwerte.</translation>
     </message>
 </context>
 <context>
@@ -690,8 +727,9 @@ Parameter</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="363"/>
-        <source>Produce errorlist and datalist for Salen</source>
-        <translation>Erstelle Daten- und Fehler-Liste fü Salen</translation>
+        <source>Error+data list Salen</source>
+        <oldsource>Produce errorlist and datalist for Salen</oldsource>
+        <translation>Erstelle Daten- und Fehler-Liste für Salen</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="366"/>

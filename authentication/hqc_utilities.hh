@@ -41,6 +41,9 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add);
 QString typeInfo(int typeID);
 QString stationInfo(int stationID);
 
+inline bool is_accumulation(int fd)
+{ return fd==2 or fd>=4; }
+
 } // namespace Helpers
 
 #endif /* UTILITIES_HH_ */
