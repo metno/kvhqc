@@ -366,6 +366,13 @@ void ListDialog::onRestoreSettings()
         if (not lud.isEmpty())
             stored << lud;
     }
+    if (stored.isEmpty()) {
+        QMessageBox::information(this,
+                                 tr("Load data selection"),
+                                 tr("No saved data selections found."),
+                                 QMessageBox::Ok, Qt::NoButton);
+        return;
+    }
 
     bool ok;
     QString recall = QInputDialog::getItem(this, tr("Load data selection"),

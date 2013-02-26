@@ -1346,7 +1346,7 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="ListDialog.cc" line="332"/>
-        <location filename="ListDialog.cc" line="372"/>
+        <location filename="ListDialog.cc" line="379"/>
         <source>Name:</source>
         <translation>Navn:</translation>
     </message>
@@ -1362,8 +1362,14 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="ListDialog.cc" line="371"/>
+        <location filename="ListDialog.cc" line="378"/>
         <source>Load data selection</source>
         <translation>Tilbakekalle datavalg</translation>
+    </message>
+    <message>
+        <location filename="ListDialog.cc" line="372"/>
+        <source>No saved data selections found.</source>
+        <translation>Det finnes ingen lagrete valg.</translation>
     </message>
 </context>
 <context>
