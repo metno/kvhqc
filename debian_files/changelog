@@ -1,3 +1,13 @@
+kvhqc (2.17.0-1) unstable; urgency=low
+
+  * WatchRR2: fixed original sum in RedistDialog
+  * WatchRR2: fixed some update problems in tables
+  * WatchRR2: remember geometry (works badly if several windows)
+  * added menu for error+data list Salen
+  * error list explains what is permitted; check twice to allow QC2
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 25 Feb 2013 12:29:00 +0100
+
 kvhqc (2.16.1-1) unstable; urgency=low
 
   * Hqc: added news file; improved logging
