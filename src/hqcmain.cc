@@ -447,7 +447,7 @@ void HqcMainWindow::ListOK()
 
     tileHorizontal();
 
-    vector<QString> stationList;
+    std::vector<QString> stationList;
     int stnr=-1;
     for ( unsigned int i = 0; i < datalist->size(); i++) {
         QString name;
@@ -478,10 +478,10 @@ void HqcMainWindow::ListOK()
 void HqcMainWindow::TimeseriesOK() {
   timeutil::ptime stime;
   timeutil::ptime etime;
-  vector<std::string> parameter;
-  vector<POptions::PlotOptions> plotoptions;
-  vector<int> parameterIndex;
-  vector<int> stationIndex;
+  std::vector<std::string> parameter;
+  std::vector<POptions::PlotOptions> plotoptions;
+  std::vector<int> parameterIndex;
+  std::vector<int> stationIndex;
 
   tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
 
@@ -629,7 +629,7 @@ void HqcMainWindow::rejectedOK()
         return;
     }
 
-    string decoder = "comobs";
+    std::string decoder = "comobs";
     kvalobs::kvRejectdecode reject;
     while (rdIt.next(reject)) {
         if (reject.decoder().substr(0, decoder.size()) != decoder)
@@ -776,8 +776,8 @@ void HqcMainWindow::acceptTimeseriesOK() {
   int column   = dataModel->dataColumn(parameter);
 
   QString ch;
-  vector<QString> chList;
-  vector<double> newCorr;
+  std::vector<QString> chList;
+  std::vector<double> newCorr;
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
     const kvalobs::kvData & dt = dataModel->getKvData_(index);
@@ -832,7 +832,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
   int column   = dataModel->dataColumn(parameter);
 
   QString ch;
-  vector<QString> chList;
+  std::vector<QString> chList;
   for ( int irow = firstRow; irow <= lastRow; irow++) {
     QModelIndex index = dataModel->index(irow, column);
     const kvalobs::kvData & dt = dataModel->getKvData_(index);
@@ -1546,7 +1546,7 @@ void HqcMainWindow::checkVersionSettings()
 
 void HqcMainWindow::helpNews()
 {
-    mHelpDialog->showdoc(0);
+    mHelpDialog->showdoc(0, PVERSION_FULL);
 }
 
 void HqcMainWindow::moveEvent(QMoveEvent* event)
