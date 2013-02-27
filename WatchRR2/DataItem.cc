@@ -18,8 +18,6 @@ QVariant DataItem::data(EditDataPtr, int role) const
 {
     if (role == ObsColumn::ValueTypeRole)
         return ObsColumn::Numerical;
-    else if (role == ObsColumn::TextCodesRole)
-        return QStringList();
     else
         return QVariant();
 }

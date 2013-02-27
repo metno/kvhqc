@@ -10,7 +10,7 @@
 class ObsColumn {
 public:
     enum ValueType { Numerical=1, TextCode=2, Text=4 };
-    enum { ValueTypeRole = Qt::UserRole, TextCodesRole };
+    enum { ValueTypeRole = Qt::UserRole, TextCodesRole, TextCodeExplanationsRole };
 
     ObsColumn() { }
     virtual ~ObsColumn() { }

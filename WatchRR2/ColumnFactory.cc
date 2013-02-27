@@ -35,7 +35,7 @@ Code2TextPtr codesForParam(int pid)
                           << qApp->translate("Column_SA", "no m.")
                           << qApp->translate("Column_SA", "n")),
                      qApp->translate("Column_SA", "measurement impossible/inaccurate"));
-        c2t->setRange(0, 5000);
+        c2t->setRange(-1, 5000);
         c2t->setDecimals(0);
     } else if( pid == kvalobs::PARAMID_SD ) {
         c2t->addCode(-1, (QStringList()

@@ -3,6 +3,7 @@
 
 #include "Helpers.hh"
 #include <QtCore/QCoreApplication>
+#include <boost/foreach.hpp>
 
 Code2Text::Code2Text()
     : mMinValue(-100)
@@ -47,7 +48,7 @@ bool Code2Text::isCode(float value)
 float Code2Text::fromText(const QString& text)
 {
     QMap<int, Code>::const_iterator it = mCodes.constBegin();
-    ++it; // do not allow setting "mis"
+    ++it; ++it; // do not allow setting "mis" or "new"
     for (; it != mCodes.constEnd(); ++it) {
         const Code& c = it.value();
         if( c.shortText.contains(text) )
@@ -72,4 +73,26 @@ void Code2Text::setRange(float mini, float maxi)
 {
     mMinValue = mini;
     mMaxValue = maxi;
+}
+
+QStringList Code2Text::allCodes() const
+{
+    QStringList all;
+
+    QMap<int, Code>::const_iterator it = mCodes.constBegin();
+    ++it; ++it; // do not allow setting "mis" or "new"
+    for (; it != mCodes.constEnd(); ++it)
+        all << it.value().shortText.at(0);
+    return all;
+}
+
+QStringList Code2Text::allExplanations() const
+{
+    QStringList all;
+
+    QMap<int, Code>::const_iterator it = mCodes.constBegin();
+    ++it; ++it; // do not allow setting "mis" or new
+    for (; it != mCodes.constEnd(); ++it)
+        all << QString("%2 (%1)").arg(it.key()).arg(it.value().explain);
+    return all;
 }

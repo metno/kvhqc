@@ -19,6 +19,8 @@ public:
     void setRange(float mini, float maxi);
     void setDecimals(int d)
         { mDecimals = d; }
+    QStringList allCodes() const;
+    QStringList allExplanations() const;
 
 private:
     float mMinValue;

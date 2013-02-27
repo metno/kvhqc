@@ -2,6 +2,7 @@
 #include "DataCorrectedItem.hh"
 
 #include "Helpers.hh"
+#include "ObsColumn.hh"
 #include "Tasks.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -52,6 +53,16 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
         return mCodes->asText(getValue(obs));
     } else if (role == Qt::TextAlignmentRole) {
         return mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight;
+    } else if (role == ObsColumn::ValueTypeRole or role == ObsColumn::TextCodesRole) {
+        const QStringList allCodes = mCodes->allCodes();
+        if (role == ObsColumn::TextCodesRole)
+            return allCodes;
+        int valueTypes = ObsColumn::Numerical;
+        if (not allCodes.empty())
+            valueTypes |= ObsColumn::TextCode;
+        return valueTypes;
+    } else if (role ==  ObsColumn::TextCodeExplanationsRole) {
+        return mCodes->allExplanations();
     }
     return DataItem::data(obs, role);
 }
