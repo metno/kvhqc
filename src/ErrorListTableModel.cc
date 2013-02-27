@@ -12,38 +12,36 @@
 namespace {
 
 enum EDIT_COLUMNS {
-    COL_OBS_ORIG       = 7,
-    COL_OBS_CORR       = 8,
-    COL_OBS_MODEL      = 9,
-    COL_CORR_OK        = 13,
-    COL_ORIG_OK        = 14,
-    COL_INTERPOLATED   = 15,
-    COL_REDISTRIBUTED  = 16,
-    COL_CORRECTED      = 17,
-    COL_REJECTED       = 18,
-    NCOLUMNS = 19
+    COL_OBS_ORIG = 7,
+    COL_OBS_CORR,
+    COL_OBS_MODEL,
+    COL_CORR_OK = 13,
+    COL_ORIG_OK,
+    COL_INTERPOLATED,
+    COL_CORRECTED,
+    COL_REJECTED,
+    NCOLUMNS
 };
 
 const char* headers[NCOLUMNS] = {
-    /*  0 */QT_TRANSLATE_NOOP("ErrorList", "Stnr"),
-    /*  1 */QT_TRANSLATE_NOOP("ErrorList", "Name"),
-    /*  2 */QT_TRANSLATE_NOOP("ErrorList", "Mt"),
-    /*  3 */QT_TRANSLATE_NOOP("ErrorList", "Dy"),
-    /*  4 */QT_TRANSLATE_NOOP("ErrorList", "Hr"),
-    /*  5 */QT_TRANSLATE_NOOP("ErrorList", "Para"),
-    /*  6 */QT_TRANSLATE_NOOP("ErrorList", "Type"),
-    /*  7 */QT_TRANSLATE_NOOP("ErrorList", "Orig.d"),
-    /*  8 */QT_TRANSLATE_NOOP("ErrorList", "Corr.d"),
-    /*  9 */QT_TRANSLATE_NOOP("ErrorList", "mod.v"),
-    /* 10 */QT_TRANSLATE_NOOP("ErrorList", "Flag"),
-    /* 11 */"=",
-    /* 12 */QT_TRANSLATE_NOOP("ErrorList", "Fl.v"),
-    /* 13 */QT_TRANSLATE_NOOP("ErrorList", "Corrected OK"),
-    /* 14 */QT_TRANSLATE_NOOP("ErrorList", "Original OK"),
-    /* 15 */QT_TRANSLATE_NOOP("ErrorList", "Interpolated"),
-    /* 16 */QT_TRANSLATE_NOOP("ErrorList", "Redistributed"),
-    /* 17 */QT_TRANSLATE_NOOP("ErrorList", "Corrected"),
-    /* 18 */QT_TRANSLATE_NOOP("ErrorList", "Rejected")
+    QT_TRANSLATE_NOOP("ErrorList", "Stnr"),
+    QT_TRANSLATE_NOOP("ErrorList", "Name"),
+    QT_TRANSLATE_NOOP("ErrorList", "Mt"),
+    QT_TRANSLATE_NOOP("ErrorList", "Dy"),
+    QT_TRANSLATE_NOOP("ErrorList", "Hr"),
+    QT_TRANSLATE_NOOP("ErrorList", "Para"),
+    QT_TRANSLATE_NOOP("ErrorList", "Type"),
+    QT_TRANSLATE_NOOP("ErrorList", "Orig.d"),
+    QT_TRANSLATE_NOOP("ErrorList", "Corr.d"),
+    QT_TRANSLATE_NOOP("ErrorList", "mod.v"),
+    QT_TRANSLATE_NOOP("ErrorList", "Flag"),
+    "=",
+    QT_TRANSLATE_NOOP("ErrorList", "Fl.v"),
+    QT_TRANSLATE_NOOP("ErrorList", "Corrected OK"),
+    QT_TRANSLATE_NOOP("ErrorList", "Original OK"),
+    QT_TRANSLATE_NOOP("ErrorList", "Interpolated"),
+    QT_TRANSLATE_NOOP("ErrorList", "Corrected"),
+    QT_TRANSLATE_NOOP("ErrorList", "Rejected")
 };
 
 // may only be used 
@@ -90,10 +88,7 @@ Qt::ItemFlags ErrorListTableModel::flags(const QModelIndex& index) const
         const kvalobs::kvControlInfo cif(mo.controlinfo);
         const int fd = cif.flag(kvalobs::flag::fd);
         const int fmis = cif.flag(kvalobs::flag::fmis);
-        if (c==COL_REDISTRIBUTED) {
-            // to redistribute, always use WatchRR (or data list, for now)
-            flags &= ~Qt::ItemIsEnabled;
-        } else if (Helpers::is_accumulation(fd)) {
+        if (Helpers::is_accumulation(fd)) {
             // for accumulations, always use WatchRR (or data list, for now)
             flags &= ~Qt::ItemIsEnabled;
         } else if (fmis == 3) {
@@ -103,7 +98,7 @@ Qt::ItemFlags ErrorListTableModel::flags(const QModelIndex& index) const
                 flags &= ~Qt::ItemIsEnabled;
         } else if ((c==COL_CORR_OK and fmis == 2) or (c==COL_REJECTED and fmis == 1)) {
             flags &= ~Qt::ItemIsEnabled;
-        } else if (c != COL_REDISTRIBUTED) {
+        } else {
             flags |= Qt::ItemIsEditable;
             if (c==COL_CORR_OK or c==COL_ORIG_OK or c==COL_REJECTED)
                 flags |= Qt::ItemIsUserCheckable;
@@ -183,8 +178,6 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
             }
             break;
         }
-        case COL_REDISTRIBUTED:
-            return isTT ? tr("Use WatchRR for redistributions.") : "WatchRR!";
         case COL_INTERPOLATED:
         case COL_CORRECTED: {
             const kvalobs::kvControlInfo cif(mo.controlinfo);
