@@ -101,7 +101,7 @@ TEST_F(AnalyseRR24Test, Redistribute)
         TimeRange editableTime(time);
         EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
         RR24::analyse(eda, sensor, editableTime);
-        
+
         for(int i=0; times[i][0]; ++i) {
             const TimeRange timeAcc(s2t(times[i][0]), s2t(times[i][1]));
             const std::vector<float> newCorrected(timeAcc.days()+1, value);
@@ -464,6 +464,71 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
     EditDataPtr obs = eda->findE(SensorTime(sensor, t0S));
     ASSERT_TRUE(obs);
     ASSERT_EQ(4, obs->controlinfo().flag((kvalobs::flag::fmis)));
+}
+
+TEST(AnalyseRR24Test_2, RedistEndDryAsBefore)
+{
+    const Sensor sensor(84070, 110, 0, 0, 302);
+    const TimeRange time(s2t("2012-09-22 06:00:00"), s2t("2012-09-23 06:00:00"));
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
+    fa.insertData("2012-09-23 06:00:00",      -1.0,      -1.0, "0000004000004000", "QC...");
+
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    std::vector<float> nc(2);
+    nc[0] = -1;
+    nc[1] = -1;
+    RR24::redistribute(eda, sensor, time.t0(), time, nc);
+
+    EditDataPtr obs = eda->findE(SensorTime(sensor, time.t0()));
+    ASSERT_TRUE(obs);
+    EXPECT_EQ(1, obs->controlinfo().flag((kvalobs::flag::fmis)));
+    EXPECT_EQ(9, obs->controlinfo().flag((kvalobs::flag::fd)));
+    EXPECT_EQ(6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
+
+    obs = eda->findE(SensorTime(sensor, time.t1()));
+    ASSERT_TRUE(obs);
+    // next fmis is important: as both old and new corrected are -1, is has to be 0
+    EXPECT_EQ( 0, obs->controlinfo().flag((kvalobs::flag::fmis)));
+    EXPECT_EQ(10, obs->controlinfo().flag((kvalobs::flag::fd)));
+    EXPECT_EQ( 6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
+}
+
+TEST(AnalyseRR24Test_2, RedistEndDryNew)
+{
+    const Sensor sensor(84070, 110, 0, 0, 302);
+    const TimeRange time(s2t("2012-09-22 06:00:00"), s2t("2012-09-23 06:00:00"));
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
+    fa.insertData("2012-09-23 06:00:00",       0.0,       0.0, "0000004000004000", "QC...");
+
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    std::vector<float> nc(2);
+    nc[0] =  0;
+    nc[1] = -1;
+    RR24::redistribute(eda, sensor, time.t0(), time, nc);
+
+    EditDataPtr obs = eda->findE(SensorTime(sensor, time.t0()));
+    ASSERT_TRUE(obs);
+    EXPECT_EQ(1, obs->controlinfo().flag((kvalobs::flag::fmis)));
+    EXPECT_EQ(9, obs->controlinfo().flag((kvalobs::flag::fd)));
+    EXPECT_EQ(6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
+
+    obs = eda->findE(SensorTime(sensor, time.t1()));
+    ASSERT_TRUE(obs);
+    EXPECT_EQ( 4, obs->controlinfo().flag((kvalobs::flag::fmis)));
+    EXPECT_EQ(10, obs->controlinfo().flag((kvalobs::flag::fd)));
+    EXPECT_EQ( 6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
 }
 
 TEST(AnalyseRR24Test_2, QC2_1)

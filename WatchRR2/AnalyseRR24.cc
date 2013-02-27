@@ -182,15 +182,16 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
         editor->setCorrected(newC);
         if (redistRow == newCorr.size()-1) {
             DBGL;
+            const float oldC = obs[redistRow]->corrected();
             editor->changeControlinfo(fc_end)
-                .changeControlinfo(newC == -1 ? fc_dryEnd : fc_wetEnd);
+                .changeControlinfo((newC == -1 and oldC == -1) ? fc_dryEnd : fc_wetEnd);
         } else
             editor->changeControlinfo(fc_miss);
         editor->clearTasks(ALL_RR24_TASKS);
         editor->commit();
         DBGO(obs[redistRow]);
     }
-    
+
     // mark all accumulation rows around period with task
     markPreviousAccumulation(da, sensor, TimeRange(editableTime.t0(), t0-step), true);
     if (newEndpoint)
@@ -224,7 +225,7 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
     da->editor(obs)->changeControlinfo(fc_end)
         .changeControlinfo((obs->corrected() == -1 and obs->original() == -1) ? fc_dryEnd : fc_wetEnd)
         .clearTasks(ALL_RR24_TASKS);
-    
+
     // mark all accumulation rows around period with task
     markPreviousAccumulation(da, sensor, TimeRange(editableTime.t0(), time.t0()-step), true);
     if( newEndpoint )
