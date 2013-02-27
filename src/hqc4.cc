@@ -99,6 +99,9 @@ int main( int argc, char* argv[] )
 
     QTranslator qtTranslator;
     installTranslations(a, qtTranslator, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+
+    QTranslator mQuTranslator;
+    installTranslations(a, mQuTranslator, "qUtilities", "/usr/share/metlibs/translations");
     
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
     QTranslator wTranslator, hTranslator;

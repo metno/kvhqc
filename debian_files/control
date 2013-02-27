@@ -28,7 +28,8 @@ Depends: coserver4, libqt4-sql-psql,
 @metno_config_endif
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: diana, dianaconfig, catchcrash,
- metno-qt4-translations (>= 0.2.0)
+ metno-qt4-translations (>= 0.2.0),
+ metlibs-translations
 Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs
