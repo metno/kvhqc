@@ -86,16 +86,28 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
         return QVariant();
     } else if (role == ObsColumn::ValueTypeRole) {
         return ObsColumn::TextCode;
-    } else if (role == ObsColumn::TextCodesRole) {
+    } else if (role == ObsColumn::TextCodesRole or role == ObsColumn::TextCodeExplanationsRole) {
         QStringList codes;
         for(int i=0; vxdata[i].code >= 0; ++i) {
-            QString mc = vxdata[i].metCode;
-            if (vxdata[i].code != 0)
-                codes << (mc + QChar( 0xB0 ))
-                      << (mc + " ")
-                      << (mc + QChar( 0xB2 ));
-            else
-                codes << "";
+            if (role == ObsColumn::TextCodesRole) {
+                QString mc = vxdata[i].metCode;
+                if (vxdata[i].code != 0) {
+                    codes << (mc + QChar( 0xB0 ))
+                          << (mc + " ")
+                          << (mc + QChar( 0xB2 ));
+                } else {
+                    codes << "";
+                }
+            } else {
+                QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
+                if (vxdata[i].code != 0) {
+                    codes << (tooltip + " -- " + qApp->translate("DataVxItem", "weak"))
+                          << tooltip
+                          << (tooltip + " -- " + qApp->translate("DataVxItem", "strong"));
+                } else {
+                    codes << tooltip;
+                }
+            }
         }
         return codes;
     } else if (role == Qt::FontRole) {
