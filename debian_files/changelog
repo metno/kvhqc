@@ -1,3 +1,10 @@
+kvhqc (2.17.2-1) unstable; urgency=low
+
+  * fixed bug in ObsDelegate
+  * improved listdialog texts/tooltips
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 05 Mar 2013 12:22:32 +0100
+
 kvhqc (2.17.1-1) unstable; urgency=low
 
   * WatchRR: fixed bad fmis for original==corrected==-1 after redistribution
