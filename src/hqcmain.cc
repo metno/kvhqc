@@ -901,7 +901,7 @@ void HqcMainWindow::onVersionCheckTimeout()
 {
     LOG_SCOPE("HqcMainWindow");
     QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
-    if (not versionFile.open(QIODevice::ReadOnly)) {
+    if (versionFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&versionFile);
         if (not in.atEnd()) {
             const long installedVersion = in.readLine().toLong();
@@ -921,7 +921,7 @@ void HqcMainWindow::onVersionCheckTimeout()
         }
     }
     // something went wrong when reading the version info file
-    LOG4SCOPE_WARN("error reading share/.../hqc_current_version, not renewing timer");
+    LOG4SCOPE_WARN("error reading hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
