@@ -482,25 +482,27 @@
          </item>
          <item>
           <widget class="QPushButton" name="buttonParamSelect">
+           <property name="toolTip">
+            <string>add to chosen values</string>
+           </property>
            <property name="text">
-            <string notr="true"/>
+            <string notr="true">Add</string>
            </property>
            <property name="icon">
-            <iconset theme="next">
-             <normaloff/>
-            </iconset>
+            <iconset theme="add"/>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="buttonParamDeselect">
+           <property name="toolTip">
+            <string>remove from chosen values</string>
+           </property>
            <property name="text">
-            <string notr="true"/>
+            <string notr="true">Remove</string>
            </property>
            <property name="icon">
-            <iconset theme="previous">
-             <normaloff/>
-            </iconset>
+            <iconset theme="remove"/>
            </property>
           </widget>
          </item>
@@ -508,6 +510,9 @@
           <widget class="QPushButton" name="buttonParamSelectAll">
            <property name="text">
             <string>&amp;All</string>
+           </property>
+           <property name="icon">
+            <iconset theme="add"/>
            </property>
           </widget>
          </item>
@@ -567,7 +572,7 @@
             <string>Choose all times</string>
            </property>
            <property name="text">
-            <string>All times</string>
+            <string>Add</string>
            </property>
            <property name="icon">
             <iconset theme="add">
@@ -582,7 +587,7 @@
             <string>Remove all times</string>
            </property>
            <property name="text">
-            <string>All times</string>
+            <string>Remove</string>
            </property>
            <property name="icon">
             <iconset theme="remove">
@@ -604,7 +609,7 @@
             <string>Choose all standard times</string>
            </property>
            <property name="text">
-            <string>All times</string>
+            <string>Add</string>
            </property>
            <property name="icon">
             <iconset theme="add">
@@ -619,7 +624,7 @@
             <string>Remove all standard times</string>
            </property>
            <property name="text">
-            <string>All times</string>
+            <string>Remove</string>
            </property>
            <property name="icon">
             <iconset theme="remove">
