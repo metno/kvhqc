@@ -115,6 +115,17 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
         return textColorRoleData(index);
     case Qt::TextAlignmentRole:
         return Qt::AlignRight;
+    case Qt::ToolTipRole:
+    case Qt::StatusTipRole: {
+        const ColumnType columnType = getColumnType(index);
+        if (columnType == Original or columnType == Corrected) {
+            const KvalobsData& d = kvalobsData_->at(index.row());
+            const int pid = getParameter(index).paramid;
+            if (d.typeId(pid) < 0)
+                return tr("Aggregated");
+        }
+        break;
+    }
     }
     return QVariant();
 }
@@ -466,18 +477,24 @@ QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
     
 QVariant KvalobsDataModel::textColorRoleData(const QModelIndex & index) const
 {
-    ColumnType columnType = getColumnType(index);
-    if (Corrected == columnType) {
-        if (index.isValid() and index.row() < (int)kvalobsData_->size()) {
-            const KvalobsData & d = kvalobsData_->at(index.row());
-            const kvalobs::kvControlInfo & ci = d.controlinfo(getParameter(index).paramid);
-            if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
-                if (ci.qc2dDone())
-                    return Qt::darkMagenta;
-                if (ci.flag(kvalobs::flag::fnum) >= 6)
-                    return Qt::red;
-            }
+    const ColumnType columnType = getColumnType(index);
+
+    const KvalobsData& d = kvalobsData_->at(index.row());
+    const int pid = getParameter(index).paramid;
+
+    if (columnType == Original) {
+        if (d.typeId(pid) < 0)
+            return Qt::darkGreen;
+    } else if (columnType == Corrected) {
+        const kvalobs::kvControlInfo & ci = d.controlinfo(pid);
+        if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
+            if (ci.qc2dDone())
+                return Qt::darkMagenta;
+            if (ci.flag(kvalobs::flag::fnum) >= 6)
+                return Qt::red;
         }
+        if (d.typeId(pid) < 0)
+            return Qt::darkGreen;
     }
     return Qt::black;
 }

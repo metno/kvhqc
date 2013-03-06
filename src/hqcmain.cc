@@ -952,79 +952,81 @@ bool HqcMainWindow::hqcTypeFilter(const QSet<QString>& stationTypes, int typeId,
   return false;
 }
 
-bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, const timeutil::ptime& otime, int par) {
-  bool tpf = false;
-  //
-  // Midlertidig spesialtilfelle for Oppdal!!!!!!!!!!!!!!!
-  //
-  if ( stnr == 63705 ) {
-    if ( typeId == -330 )
-      return false;
-  }
-  //
-  // Midlertidig spesialtilfelle for Venabu!!!!!!!!!!!!!!!
-  //
-  if ( stnr == 13420 && par == 112 ) {
-    if ( typeId == 330 )
-      return false;
-    else if ( typeId == 308 )
-      return true;
-  }
-  //
-  // Midlertidig spesialtilfelle for Rygge!!!!!!!!!!!!!!!
-  //
-  if ( stnr == 17150 && (par == 109 || par == 110)) {
-    if ( typeId == -342 )
-      return false;
-    else if ( typeId == 342 )
-      return true;
-  }
-  //
-  // Midlertidig spesialtilfelle for Jan Mayen!!!!!!!!!!!!!!!
-  //
-  if ( stnr == 99950 ) {
-    int hr = otime.time_of_day().hours();
-    int dg = otime.date().day();
-    int mn = otime.date().month();
-    int ar = otime.date().year();
-    if ( ar == 2008 && mn == 7 && dg == 28 && (( hr < 10 && typeId == 3) || ( hr >= 10 && typeId == 330)) )
-      return true;
-    else if ( ar == 2008 && mn == 7 && dg == 28 && ( hr >= 10 && typeId == 3 ) )
-      return false;
-  }
-  //Spesialtilfelle slutt
-  //
-  // Midlertidig spesialtilfelle for Fokstugu!!!!!!!!!!!!!!!
-  //
-  if ( stnr == 16610 ) {
-      int hr = otime.time_of_day().hours();
-      int dg = otime.date().day();
-      int mn = otime.date().month();
-      int ar = otime.date().year();
-    if ( ar == 2008 && mn == 10 && dg == 9 && (( hr < 16 && typeId == 3) || ( hr >= 16 && typeId == 330)) )
-      return true;
-    else if ( ar == 2008 && mn == 10 && dg == 9 && ( hr >= 16 && typeId == 3 ) )
-      return false;
-  }
-  //Spesialtilfelle slutt
-  //  if ( typeId == -404 || (typeId == -342 && (par == 109 || par == 110))) return false;
-  //  if ( par == 173 && typeId < 0 ) return false;
-  if ( typeId == -404 ) return false;
-  if ( stnr == 4780 && typeId == 1 ) return true;
-  if ( (stnr == 68860 ) && typeId == -4 ) return false;
-  if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
-  mi_foreach(const currentType& ct, currentTypeList) {
-    if ( stnr == ct.stnr &&
-	 abs(typeId) == ct.cTypeId &&
-	 sensor == ct.cSensor &&
-	 par == ct.par &&
-	 (ct.fDate.is_not_a_date() || otime.date() >= ct.fDate) &&
-	 (ct.tDate.is_not_a_date() || otime.date() <= ct.tDate) ) {
-      tpf = true;
-      break;
+bool HqcMainWindow::typeIdFilter(int stnr, int typeId, int sensor, const timeutil::ptime& otime, int par)
+{
+    bool tpf = false;
+    //
+    // Midlertidig spesialtilfelle for Oppdal!!!!!!!!!!!!!!!
+    //
+    if ( stnr == 63705 ) {
+        if ( typeId == -330 )
+            return false;
     }
+    //
+    // Midlertidig spesialtilfelle for Venabu!!!!!!!!!!!!!!!
+    //
+    if ( stnr == 13420 && par == 112 ) {
+        if ( typeId == 330 )
+            return false;
+        else if ( typeId == 308 )
+            return true;
+    }
+    //
+    // Midlertidig spesialtilfelle for Rygge!!!!!!!!!!!!!!!
+    //
+    if ( stnr == 17150 && (par == 109 || par == 110)) {
+        if ( typeId == -342 )
+            return false;
+        else if ( typeId == 342 )
+            return true;
+    }
+    //
+    // Midlertidig spesialtilfelle for Jan Mayen!!!!!!!!!!!!!!!
+    //
+    if ( stnr == 99950 ) {
+        int hr = otime.time_of_day().hours();
+        int dg = otime.date().day();
+        int mn = otime.date().month();
+        int ar = otime.date().year();
+        if ( ar == 2008 && mn == 7 && dg == 28 && (( hr < 10 && typeId == 3) || ( hr >= 10 && typeId == 330)) )
+            return true;
+        else if ( ar == 2008 && mn == 7 && dg == 28 && ( hr >= 10 && typeId == 3 ) )
+            return false;
+    }
+    //Spesialtilfelle slutt
+    //
+    // Midlertidig spesialtilfelle for Fokstugu!!!!!!!!!!!!!!!
+    //
+    if ( stnr == 16610 ) {
+        int hr = otime.time_of_day().hours();
+        int dg = otime.date().day();
+        int mn = otime.date().month();
+        int ar = otime.date().year();
+        if ( ar == 2008 && mn == 10 && dg == 9 && (( hr < 16 && typeId == 3) || ( hr >= 16 && typeId == 330)) )
+            return true;
+        else if ( ar == 2008 && mn == 10 && dg == 9 && ( hr >= 16 && typeId == 3 ) )
+            return false;
   }
-  return tpf;
+    //Spesialtilfelle slutt
+    //  if ( typeId == -404 || (typeId == -342 && (par == 109 || par == 110))) return false;
+    //  if ( par == 173 && typeId < 0 ) return false;
+    if ( typeId == -404 ) return false;
+    if ( stnr == 4780 && typeId == 1 ) return true;
+    if ( (stnr == 68860 ) && typeId == -4 ) return false;
+    if ( typeId < 0 && !((stnr == 18700 || stnr == 50540 || stnr == 90450 || stnr == 99910) && par == 109) ) return true;
+    BOOST_FOREACH(const currentType& ct, currentTypeList) {
+        if (stnr == ct.stnr &&
+            abs(typeId) == ct.cTypeId &&
+            sensor == ct.cSensor &&
+            par == ct.par &&
+            (ct.fDate.is_not_a_date() || otime.date() >= ct.fDate) &&
+            (ct.tDate.is_not_a_date() || otime.date() <= ct.tDate))
+        {
+            tpf = true;
+            break;
+        }
+    }
+    return tpf;
 }
 
 /**
@@ -1348,149 +1350,107 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
     statusBar()->message(tr("Reading data for station %1").arg(dataList.begin()->dataList().begin()->stationID()));
     qApp->processEvents();
 
-    model::KvalobsData tdl;
-    bool tdlUpd[NOPARAM];
-    std::fill(tdlUpd, tdlUpd + NOPARAM, false);
-
     const QSet<QString> selectedStationTypes = QSet<QString>::fromList(lstdlg->getSelectedStationTypes());
     const bool allStationTypes = lstdlg->isSelectAllStationTypes();
     const bool showPrioritized = lstdlg->showPrioritized();
-    const timeutil::ptime badtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
 
-    timeutil::ptime protime = badtime, aggTime = badtime;
-    int prtypeId = -1;
-    int prstnr = 0;
-    int aggPar = 0;
-    int aggTyp = 0;
-    int aggStat = 0;
+    int prStation = -1;
+    int env;
 
-    for (kvservice::IKvObsDataList it = dataList.begin(); it != dataList.end(); it++) {
-
-        kvservice::KvObsData::kvDataList::iterator dit = it->dataList().begin();
-        //    IDataList dit = it->dataList().begin();
-        int ditSize = it->dataList().size();
-        int stnr = dit->stationID();
-        int prParam = -1;
-        int prSensor = -1;
-        int ditNo = 0;
-        while (dit != it->dataList().end()) {
-            timeutil::ptime otime = timeutil::from_miTime(dit->obstime());
-            timeutil::ptime tbtime = timeutil::from_miTime(dit->tbtime());
-            const int d_param = dit->paramID(), d_type = dit->typeID(), d_sensor = dit->sensor(), d_sensor0 = d_sensor - '0';
-            if (d_param < 0 or d_param >= NOPARAM) {
-                LOG4HQC_WARN("HqcMainWindow", "paramid out of range 0.." << NOPARAM << " for this observation:\n   " << *dit);
-                dit++;
-                ditNo++;
-                continue;
-            }
-            bool correctLevel = (dit->level() == HqcMainWindow::sLevel);
-            bool correctTypeId;
-            if (allStationTypes && d_sensor0 == 0) // FIXME sensor
-                correctTypeId = true;
-            else
-                correctTypeId = typeIdFilter(stnr, d_type, d_sensor0, otime, d_param);
-            //      if ( d_type < 0 && d_type != -342 ) {
-            if (d_type < 0) {
-                aggPar = d_param;
-                aggTyp = d_type;
-                aggTime = otime;
-                aggStat = dit->stationID();
-            } else {
-                aggPar = 0;
-                aggTyp = 0;
-                aggStat = 0;
-                aggTime = badtime;
+    BOOST_FOREACH(kvservice::KvObsData& od, dataList) {
+        BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
+            if (prStation != kvd.stationID()) {
+                int snr;
+                QString name;
+                double lat, lon, hoh;
+                findStationInfo(kvd.stationID(), name, lat, lon, hoh, snr, env);
+                prStation = kvd.stationID();
             }
 
-            int stnr = dit->stationID();
-            int hour = otime.time_of_day().hours();
-            int typeId = d_type;
-            if ((otime == protime && stnr == prstnr && d_param == prParam && typeId == prtypeId && d_sensor == prSensor && showPrioritized)
-                    || (!correctTypeId && not showPrioritized)) {
-                protime = otime;
-                prstnr = stnr;
-                prtypeId = typeId;
-                prSensor = d_sensor;
-                prParam = -1;
-                dit++;
-                ditNo++;
-                continue;
-            }
-            tdl.set_otime(otime);
-            tdl.set_tbtime(tbtime);
-            tdl.set_stnr(stnr);
-            bool isaggreg = (stnr == aggStat && otime == aggTime && typeId == abs(aggTyp) && aggPar == d_param);
+            if (not acceptData(kvd, abs(kvd.typeID()), env, selectedStationTypes, allStationTypes, showPrioritized))
+               continue;
 
-            if (correctTypeId && correctLevel && !isaggreg && !tdlUpd[d_param]) {
-                tdl.set_typeId(d_param, typeId);
-                tdl.set_showTypeId(typeId);
-                tdl.set_orig(d_param, dit->original());
-                tdl.set_corr(d_param, dit->corrected());
-                tdl.set_sensor(d_param, d_sensor % '0');
-                tdl.set_level(d_param, dit->level());
-                tdl.set_controlinfo(d_param, dit->controlinfo());
-                tdl.set_useinfo(d_param, dit->useinfo());
-                tdl.set_cfailed(d_param, dit->cfailed());
-                if (d_type != 501)
-                    tdlUpd[d_param] = true;
-            }
-            protime = otime;
-            prstnr = stnr;
-            prtypeId = typeId;
-            prSensor = d_sensor;
-            prParam = d_param;
-            QString name;
-            double lat, lon, hoh;
-            int env;
-            int snr;
-            findStationInfo(stnr, name, lat, lon, hoh, snr, env);
-            tdl.set_name(name);
-            tdl.set_latitude(lat);
-            tdl.set_longitude(lon);
-            tdl.set_altitude(hoh);
-            tdl.set_snr(snr);
-            const bool correctHqcType = hqcTypeFilter(selectedStationTypes, tdl.showTypeId(), env);
-
-            ++dit;
-            ++ditNo;
-            if( dit == it->dataList().end() ) {
-                otime = badtime;
-                stnr = 0;
-                typeId = 0;
-            } else {
-                otime = timeutil::from_miTime(dit->obstime());
-                stnr = dit->stationID();
-                typeId = dit->typeID();
-            }
-            bool errFl = false;
-            if ((!correctHqcType || !correctLevel || !correctTypeId) && ditNo < ditSize - 1) {
-                continue;
-            } else if (ditNo != ditSize - 1) {
-                for (int ip = 0; ip < NOPARAM; ip++) {
-                    int shFl = tdl.flag(ip);
-                    int shFl1 = shFl / 10000;
-                    int shFl2 = shFl % 10000 / 1000;
-                    int shFl3 = shFl % 1000 / 100;
-                    int shFl4 = shFl % 100 / 10;
-                    if (shFl1 > 1 || shFl2 > 1 || shFl3 > 1 || shFl4 > 1)
-                        errFl = true;
-                }
-                if (!errFl && (lity == erLi || lity == erSa || lity == erLo)) {
-                    continue;
-                }
-            }
-            const bool timeFiltered = timeFilter(hour); // FIXME this is the hour from before ++dit, is this correct?
-            if ((timeFiltered && !isAlreadyStored(protime, prstnr) && ((otime != protime || (otime == protime && stnr != prstnr))))
-                    || (allStationTypes && typeId != prtypeId)) {
-                datalist->push_back(tdl);
-                tdl = model::KvalobsData();
-                std::fill(tdlUpd, tdlUpd + NOPARAM, false);
-            } else if (not timeFiltered) {
-                tdl = model::KvalobsData();
-                std::fill(tdlUpd, tdlUpd + NOPARAM, false);
-            }
+            putToDataList(kvd);
         }
     }
+}
+
+void HqcMainWindow::putToDataList(const kvalobs::kvData& kvd)
+{
+    const int absTypeID = /*std::abs*/(kvd.typeID());
+    const model::KvalobsDataList::reverse_iterator rstop = datalist->rend();
+    model::KvalobsDataList::reverse_iterator rit;
+    for(rit = datalist->rbegin(); rit != rstop; ++rit) {
+        const model::KvalobsData& inList = *rit;
+
+        if (inList.otime() != kvd.obstime()) {
+            // different obstime, stop searching and put new model::KvalobsData at end
+            rit = rstop;
+            break;
+        }
+        if (inList.stnr() == kvd.stationID() and inList.showTypeId() == absTypeID) {
+            // found
+            break;
+        }
+    }
+
+    if (rit == rstop) {
+        // did not find same station/|type|/sensor/level, put new model::KvalobsData at end
+
+        int env, snr;
+        QString name;
+        double lat, lon, hoh;
+        findStationInfo(kvd.stationID(), name, lat, lon, hoh, snr, env);
+
+        model::KvalobsData tdl;
+        tdl.set_stnr(kvd.stationID());
+        tdl.set_name(name);
+        tdl.set_latitude(lat);
+        tdl.set_longitude(lon);
+        tdl.set_altitude(hoh);
+        tdl.set_snr(snr);
+        tdl.set_showTypeId(absTypeID);
+        tdl.set_otime(kvd.obstime());
+        tdl.set_tbtime(kvd.tbtime()); // FIXME this assumes all parameters have the same tbtime
+
+        datalist->push_back(tdl);
+        rit = datalist->rbegin(); // new item at end
+    }
+    
+    model::KvalobsData& tdl = *rit;
+    const int pid = kvd.paramID();
+    tdl.set_typeId     (pid, kvd.typeID());
+    tdl.set_orig       (pid, kvd.original());
+    tdl.set_corr       (pid, kvd.corrected());
+    tdl.set_sensor     (pid, kvd.sensor() % '0');
+    tdl.set_level      (pid, kvd.level());
+    tdl.set_controlinfo(pid, kvd.controlinfo());
+    tdl.set_useinfo    (pid, kvd.useinfo());
+    tdl.set_cfailed    (pid, kvd.cfailed());
+}
+
+bool HqcMainWindow::acceptData(const kvalobs::kvData& kvd, int absTypeId, int env,
+                               const QSet<QString> selectedStationTypes,
+                               const bool allStationTypes, const bool showPrioritized)
+{
+    if (kvd.level() != HqcMainWindow::sLevel)
+        return false;
+
+    const int d_sensor0 = kvd.sensor() % '0';
+    if (not (allStationTypes && d_sensor0 == 0)) // FIXME sensor
+        if (not typeIdFilter(kvd.stationID(), kvd.typeID(), d_sensor0, kvd.obstime(), kvd.paramID()))
+            return false;
+
+    if (std::find(mSelectedParameters.begin(), mSelectedParameters.end(), kvd.paramID()) == mSelectedParameters.end())
+        return false;
+
+    if (not hqcTypeFilter(selectedStationTypes, absTypeId, env))
+        return false;
+
+    if (not timeFilter(kvd.obstime().time_of_day().hours()))
+        return false;
+
+    return true;
 }
 
 void HqcMainWindow::writeSettings()
