@@ -1,3 +1,9 @@
+kvhqc (2.17.3-1) unstable; urgency=low
+
+  * when editing in data list, ask for typeid if unsure
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 06 Mar 2013 09:15:44 +0100
+
 kvhqc (2.17.2-1) unstable; urgency=low
 
   * fixed bug in ObsDelegate
