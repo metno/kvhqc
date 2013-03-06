@@ -306,28 +306,25 @@ void HqcMainWindow::dianaShowOK()
         ListOK();
 }
 
-void HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
+bool HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
 {
-    DBGV(toSave);
-  if ( ! reinserter ) {
-    qDebug("Skipping data save, since user is not authenticated");
-    return;
-  }
-  kvalobs::serialize::KvalobsData dataList;
-  dataList.insert(toSave);
-  const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
-  switch (result->res )
-  {
-  case OK:
-     break;
-   // Insert any custom messages here
-  default:
-      QMessageBox::critical(this, tr("Unable to insert"),
-                            tr("An error occured when attempting to insert data into kvalobs. "
-                               "The message from kvalobs was\n%1").arg(QString(result->message)),
-              QMessageBox::Ok, QMessageBox::NoButton);
-    return;
-  }
+    LOG_SCOPE("HqcMainWindow");
+    LOG4SCOPE_DEBUG(DBG1(toSave));
+    if (not reinserter) {
+        LOG4SCOPE_DEBUG("skipping data save, since user is not authenticated");
+        return false;
+    }
+    kvalobs::serialize::KvalobsData dataList;
+    dataList.insert(toSave);
+    const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
+    if (result->res != CKvalObs::CDataSource::OK) {
+        QMessageBox::critical(this, tr("Unable to insert"),
+                              tr("An error occured when attempting to insert data into kvalobs. "
+                                 "The message from kvalobs was\n%1").arg(QString(result->message)),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        return false;
+    }
+    return true;
 }
 
 void HqcMainWindow::ListOK()
@@ -385,19 +382,15 @@ void HqcMainWindow::ListOK()
         qApp->processEvents();
 
         model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
-        dataModel =
-            new model::KvalobsDataModel(
-                mSelectedParameters, datalist, modeldatalist,
-                ui->stID->isChecked(), ui->poID->isChecked(), ui->heID->isChecked(),
-#ifdef NDEBUG
-                reinserter != 0,
-#else
-                true,
-#endif
-                tableView);
+        dataModel = new model::KvalobsDataModel(mSelectedParameters, datalist,
+                                                modeldatalist, DBGE(true or) reinserter != 0);
+        dataModel->setParent(tableView);
+        dataModel->setShowStationName(ui->stID->isChecked());
+        dataModel->setShowPosition(ui->poID->isChecked());
+        dataModel->setShowHeight(ui->heID->isChecked());
+        dataModel->setShowTypeId(true /* lstdlg->isSelectAllStationTypes()*/); // always show typeid
         
         connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
-        connect(dataModel, SIGNAL(dataModification(const kvalobs::kvData &)), this, SLOT(saveDataToKvalobs(const kvalobs::kvData &)));
         
         // Functionality for hiding/showing rows in data list
         connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
@@ -572,11 +565,6 @@ void HqcMainWindow::TimeseriesOK() {
 
   tspdialog->prepare(tsplot);
   tspdialog->show();
-}
-
-bool HqcMainWindow::isShowTypeidInDataList() const
-{
-    return lstdlg->isSelectAllStationTypes();
 }
 
 const listStat_l& HqcMainWindow::getStationDetails()
@@ -1313,20 +1301,22 @@ bool HqcMainWindow::isAlreadyStored(const timeutil::ptime& otime, int stnr) {
   return false;
 }
 
-int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& oTime)
+int HqcMainWindow::findTypeId(int tpId, int pos, int par, const timeutil::ptime& oTime)
 {
-    int tpId = typ;
+    LOG_SCOPE("HqcMainWindow");
     const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(pos);
     mi_foreach_r(const kvalobs::kvObsPgm& op, obs_pgm) {
         const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime());
         const timeutil::ptime oto   = timeutil::from_miTime(op.totime());
         if (op.paramID() == par and ofrom <= oTime and (oto.is_not_a_date_time() or oto >= oTime))
         {
+            LOG4SCOPE_DEBUG("found obs_pgm " << op);
             tpId = op.typeID();
             break;
         }
     }
-    if( abs(tpId) > 503 ) {
+    if (abs(tpId) > 503) {
+        LOG4SCOPE_DEBUG("typeid reset from " << tpId);
         tpId = -32767;
         mi_foreach_r(const kvalobs::kvObsPgm& op, obs_pgm) {
             if (timeutil::from_miTime(op.fromtime()) < oTime) {
@@ -1340,11 +1330,13 @@ int HqcMainWindow::findTypeId(int typ, int pos, int par, const timeutil::ptime& 
                        || (par == 224 && opar == 223))
                 {
                     tpId = -op.typeID();
+                    LOG4SCOPE_DEBUG(DBG1(tpId));
                     break;
                 }
             }
         }
     }
+    LOG4SCOPE_DEBUG("final" << DBG1(tpId));
     return tpId;
 }
 

@@ -2,7 +2,7 @@
 
  Kvalobs - Free Quality Control Software for Meteorological Observations 
 
- Copyright (C) 2010 met.no
+ Copyright (C) 2013 met.no
 
  Contact information:
  Norwegian Meteorological Institute
@@ -32,7 +32,6 @@
 #define KVALOBSDATADELEGATE_H_
 
 #include <QStyledItemDelegate>
-#include <QMap>
 
 class HqcMainWindow;
 class QLineEdit;
@@ -41,38 +40,28 @@ class QValidator;
 namespace model
 {
 
-  class KvalobsDataDelegate : public QStyledItemDelegate
-  {
-    Q_OBJECT
-  public:
-    KvalobsDataDelegate(QObject * parent = 0);
-    virtual ~KvalobsDataDelegate();
+class KvalobsDataDelegate : public QStyledItemDelegate
+{ Q_OBJECT;
+public:
+    KvalobsDataDelegate(QObject* parent=0);
+    ~KvalobsDataDelegate();
 
-    QWidget * createEditor(QWidget * parent, const QStyleOptionViewItem & option, const QModelIndex & index) const;
+    QWidget* createEditor(QWidget* parent, const QStyleOptionViewItem& option, const QModelIndex& index) const;
 
-    void setEditorData(QWidget * editor, const QModelIndex & index) const;
+    void setEditorData(QWidget* editor, const QModelIndex& index) const;
+    void setModelData(QWidget* editor, QAbstractItemModel* model, const QModelIndex& index) const;
+    void updateEditorGeometry(QWidget* editor, const QStyleOptionViewItem& option, const QModelIndex& index) const;
+    QString displayText(const QVariant& value, const QLocale& locale) const;
 
-    virtual void setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const;
-
-    virtual void updateEditorGeometry(QWidget * editor, const QStyleOptionViewItem & option, const QModelIndex & index) const;
-
-    virtual QString displayText(const QVariant& value, const QLocale& locale) const;
-
-  private:
-    void setup_();
-
-  private:
-    HqcMainWindow * mainWindow;
-    QValidator* mValidator;
-
-    typedef QLineEdit Editor;
-
+private:
     bool legalTime(int hour, int parameter, double value) const;
     bool legalValue(double value, int parameter) const;
-    QMap<int, float> lowMap;
-    QMap<int, float> highMap;
-  };
 
-}
+private:
+    HqcMainWindow * mainWindow;
+    QValidator* mValidator;
+};
+
+} // namespace model
 
 #endif /* KVALOBSDATADELEGATE_H_ */

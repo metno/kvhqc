@@ -1,31 +1,31 @@
 /*
- Kvalobs - Free Quality Control Software for Meteorological Observations
+  Kvalobs - Free Quality Control Software for Meteorological Observations
 
- Copyright (C) 2013 met.no
+  Copyright (C) 2013 met.no
 
- Contact information:
- Norwegian Meteorological Institute
- Box 43 Blindern
- 0313 OSLO
- NORWAY
- email: kvalobs-dev@met.no
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
 
- This file is part of KVALOBS
+  This file is part of KVALOBS
 
- KVALOBS is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License as
- published by the Free Software Foundation; either version 2
- of the License, or (at your option) any later version.
+  KVALOBS is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
- KVALOBS is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- General Public License for more details.
+  KVALOBS is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
- You should have received a copy of the GNU General Public License along
- with KVALOBS; if not, write to the Free Software Foundation Inc.,
- 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
- */
+  You should have received a copy of the GNU General Public License along
+  with KVALOBS; if not, write to the Free Software Foundation Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
 
 #include "KvalobsDataView.h"
 
@@ -51,31 +51,31 @@ KvalobsDataView::KvalobsDataView(QWidget* parent)
     setup_();
 }
 
-  KvalobsDataView::~KvalobsDataView()
-  {
-  }
+KvalobsDataView::~KvalobsDataView()
+{
+}
 
-  void KvalobsDataView::toggleShowFlags(bool show)
-  {
+void KvalobsDataView::toggleShowFlags(bool show)
+{
     const KvalobsDataModel * model = getModel_();
     if ( model ) {
         int columns = model->columnCount();
         for ( int i = 0; i < columns; ++ i)
-          if ( model->getColumnType(i) == KvalobsDataModel::Flag )
-            setColumnHidden (i, not show);
+            if ( model->getColumnType(i) == KvalobsDataModel::Flag )
+                setColumnHidden (i, not show);
     }
-  }
+}
 
-  void KvalobsDataView::toggleShowOriginal(bool show)
-  {
+void KvalobsDataView::toggleShowOriginal(bool show)
+{
     const KvalobsDataModel * model = getModel_();
     if ( model ) {
         int columns = model->columnCount();
         for ( int i = 0; i < columns; ++ i)
-          if ( model->getColumnType(i) == KvalobsDataModel::Original )
-            setColumnHidden (i, not show);
+            if ( model->getColumnType(i) == KvalobsDataModel::Original )
+                setColumnHidden (i, not show);
     }
-  }
+}
 
 void KvalobsDataView::toggleShowModelData(bool show)
 {
@@ -94,24 +94,23 @@ void KvalobsDataView::toggleShowModelData(bool show)
 }
 
 void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
-  {
+{
     LOG_SCOPE();
     DBG(DBG1(stationid) << DBG1(obstime) << DBG1(typeID));
 
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
-      return;
+        return;
 
     QModelIndex current = currentIndex();
     if ( not current.isValid() ) {
-      current = model->index(0, 0);
-      if ( not current.isValid() )
-        return;
+        current = model->index(0, 0);
+        if ( not current.isValid() )
+            return;
     }
 
     int row = model->dataRow(stationid, obstime, KvalobsDataModel::OBSTIME_EXACT, typeID);
     int column = current.column();
-    // UNUSED int currow = current.row();
     QModelIndex index = model->index(row, column);
 
     blockSignals(true);
@@ -122,18 +121,18 @@ void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstim
         clearSelection();
     }
     blockSignals(false);
-  }
+}
 
-  void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
-  {
+void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
+{
     const KvalobsDataModel * model = getModel_();
     if ( ! model )
-      return;
+        return;
 
     const KvalobsData * data = model->kvalobsData(currentIndex());
     if ( data )
         selectStation(data->stnr(), obstime, data->showTypeId());
-  }
+}
 
 void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
 {

@@ -82,8 +82,7 @@ public:
     void startup();
 
     void makeObsDataList(kvservice::KvObsDataList& dataList);
-
-    bool isShowTypeidInDataList() const;
+    bool saveDataToKvalobs(const kvalobs::kvData& toSave);
 
 public Q_SLOTS:
     //! send all observation times to Diana
@@ -138,8 +137,6 @@ private Q_SLOTS:
     void navigateTo(const kvalobs::kvData& d);
     void receivedStationFromDiana(int stationid);
     void receivedTimeFromDiana(const timeutil::ptime& time);
-
-    void saveDataToKvalobs(const kvalobs::kvData& toSave);
 
     void errListMenu();
     void allListMenu();

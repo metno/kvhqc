@@ -30,8 +30,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
 
+#include "hqcdefs.h"
 #include "KvalobsData.h"
-#include "KvalobsDataModel.h"
 
 #include <kvalobs/kvData.h>
 
