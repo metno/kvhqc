@@ -29,37 +29,37 @@
 <context>
     <name>Code2Text</name>
     <message>
-        <location filename="Code2Text.cc" line="12"/>
+        <location filename="Code2Text.cc" line="13"/>
         <source>new</source>
         <translation>ny</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="13"/>
+        <location filename="Code2Text.cc" line="14"/>
         <source>row not in database</source>
         <translation>ikke i databasen</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="14"/>
+        <location filename="Code2Text.cc" line="15"/>
         <source>mis</source>
         <translation>mis</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="15"/>
+        <location filename="Code2Text.cc" line="16"/>
         <source>value is missing</source>
         <translation>verdien mangler</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="16"/>
+        <location filename="Code2Text.cc" line="17"/>
         <source>rej</source>
         <translation>rej</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="16"/>
+        <location filename="Code2Text.cc" line="17"/>
         <source>r</source>
         <translation>r</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="17"/>
+        <location filename="Code2Text.cc" line="18"/>
         <source>value is rejected</source>
         <translation>forkastet</translation>
     </message>
@@ -143,7 +143,7 @@
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="89"/>
+        <location filename="DataCorrectedItem.cc" line="100"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -158,7 +158,7 @@
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="87"/>
+        <location filename="DataCorrectedItem.cc" line="98"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -260,11 +260,13 @@
     </message>
     <message>
         <location filename="DataVxItem.cc" line="78"/>
+        <location filename="DataVxItem.cc" line="104"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="80"/>
+        <location filename="DataVxItem.cc" line="106"/>
         <source>strong</source>
         <translation>sterkt</translation>
     </message>
