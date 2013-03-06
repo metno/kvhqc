@@ -106,12 +106,12 @@ void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char*
     int i = -1;
     BOOST_FOREACH(const ErrorList::mem& mo, memstore) {
         LOG4SCOPE_DEBUG(std::setw(7) << (++i)
-                        << std::setw(7) << mo.stnr
+                        << std::setw(7) << mo.stnr << ' '
                         << std::setw(21) << mo.obstime
                         << std::setw(5) << mo.parNo
-                        << std::setw(9) << std::setprecision(1) << mo.orig
-                        << std::setw(9) << std::setprecision(1) << mo.corr
-                        << std::setw(9) << std::setprecision(1) << mo.morig << "  "
+                        << std::setw(9) << mo.orig
+                        << std::setw(9) << mo.corr
+                        << std::setw(9) << mo.morig << "  "
                         << std::setw(5) << mo.flTyp.toStdString() << "  " << mo.flg << "  "
                         << mo.controlinfo << "  " << mo.cfailed);
     }
@@ -162,19 +162,20 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
 
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    horizontalHeader()->resizeSection( 0, 50); // stationid
-    horizontalHeader()->resizeSection( 1, 80); // name
-    horizontalHeader()->resizeSection( 2, 30); // month
-    horizontalHeader()->resizeSection( 3, 30); // day
-    horizontalHeader()->resizeSection( 4, 30); // hour
-    horizontalHeader()->resizeSection( 5, 50); // parameter
-    horizontalHeader()->resizeSection( 6, 40); // typeid
-    horizontalHeader()->resizeSection( 7, 60); // orig
-    horizontalHeader()->resizeSection( 8, 60); // corr
-    horizontalHeader()->resizeSection( 9, 60); // model
-    horizontalHeader()->resizeSection(10, 40); // flag
-    horizontalHeader()->resizeSection(11, 20); // =
-    horizontalHeader()->resizeSection(12, 30); // flag-value
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    50);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME,  80);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MINUTE,    30);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     50);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TYPEID,    40);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MODEL,     60);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_NAME, 50);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   15);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  30);
 }
 
 ErrorList::~ErrorList()
@@ -244,6 +245,7 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                                  model::KvalobsDataListPtr dtl,
                                  const std::vector<modDatl>& mdtl)
 {
+    LOG_SCOPE("ErrorList");
     BOOST_FOREACH(const model::KvalobsData& data, *dtl) {
         if( data.stnr() > 99999 )
             continue;

@@ -14,6 +14,29 @@ public:
     ErrorListTableModel(const std::vector<ErrorList::mem>& errorList);
     ~ErrorListTableModel();
 
+    enum EDIT_COLUMNS {
+        COL_STATION_ID = 0,
+        COL_STATION_NAME,
+        COL_OBS_MONTH,
+        COL_OBS_DAY,
+        COL_OBS_HOUR,
+        COL_OBS_MINUTE,
+        COL_OBS_PARAM,
+        COL_OBS_TYPEID,
+        COL_OBS_ORIG,
+        COL_OBS_CORR,
+        COL_OBS_MODEL,
+        COL_OBS_FLAG_NAME,
+        COL_OBS_FLAG_EQ,
+        COL_OBS_FLAG_VAL,
+        COL_CORR_OK,
+        COL_ORIG_OK,
+        COL_INTERPOLATED,
+        COL_CORRECTED,
+        COL_REJECTED,
+        NCOLUMNS
+    };
+
     virtual int rowCount(const QModelIndex&) const;
     virtual int columnCount(const QModelIndex&) const;
     Qt::ItemFlags flags(const QModelIndex& index) const;

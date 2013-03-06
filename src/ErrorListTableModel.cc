@@ -6,29 +6,20 @@
 
 #include <kvalobs/kvDataOperations.h>
 
+#include <QtCore/QCoreApplication>
+
 //#define NDEBUG
 #include "debug.hh"
 
 namespace {
 
-enum EDIT_COLUMNS {
-    COL_OBS_ORIG = 7,
-    COL_OBS_CORR,
-    COL_OBS_MODEL,
-    COL_CORR_OK = 13,
-    COL_ORIG_OK,
-    COL_INTERPOLATED,
-    COL_CORRECTED,
-    COL_REJECTED,
-    NCOLUMNS
-};
-
-const char* headers[NCOLUMNS] = {
+const char* headers[ErrorListTableModel::NCOLUMNS] = {
     QT_TRANSLATE_NOOP("ErrorList", "Stnr"),
     QT_TRANSLATE_NOOP("ErrorList", "Name"),
     QT_TRANSLATE_NOOP("ErrorList", "Mt"),
     QT_TRANSLATE_NOOP("ErrorList", "Dy"),
     QT_TRANSLATE_NOOP("ErrorList", "Hr"),
+    QT_TRANSLATE_NOOP("ErrorList", "Mn"),
     QT_TRANSLATE_NOOP("ErrorList", "Para"),
     QT_TRANSLATE_NOOP("ErrorList", "Type"),
     QT_TRANSLATE_NOOP("ErrorList", "Orig.d"),
@@ -44,14 +35,36 @@ const char* headers[NCOLUMNS] = {
     QT_TRANSLATE_NOOP("ErrorList", "Rejected")
 };
 
+const char* tooltips[ErrorListTableModel::NCOLUMNS] = {
+    QT_TRANSLATE_NOOP("ErrorList", "Station number"),
+    QT_TRANSLATE_NOOP("ErrorList", "Station name"),
+    QT_TRANSLATE_NOOP("ErrorList", "Obs month"),
+    QT_TRANSLATE_NOOP("ErrorList", "Obs day"),
+    QT_TRANSLATE_NOOP("ErrorList", "Obs hour"),
+    QT_TRANSLATE_NOOP("ErrorList", "Obs minute"),
+    QT_TRANSLATE_NOOP("ErrorList", "Parameter name"),
+    QT_TRANSLATE_NOOP("ErrorList", "Type ID"),
+    QT_TRANSLATE_NOOP("ErrorList", "Original value"),
+    QT_TRANSLATE_NOOP("ErrorList", "Corrected value"),
+    QT_TRANSLATE_NOOP("ErrorList", "Model value"),
+    QT_TRANSLATE_NOOP("ErrorList", "Flag name"),
+    "",
+    QT_TRANSLATE_NOOP("ErrorList", "Flag value"),
+    "",
+    "",
+    "",
+    "",
+    ""
+};
+
 // may only be used 
 ErrorList::mem_change change4column(int column)
 {
-    if (column==COL_CORR_OK)
+    if (column==ErrorListTableModel::COL_CORR_OK)
         return ErrorList::CORR_OK;
-    if (column==COL_ORIG_OK)
+    if (column==ErrorListTableModel::COL_ORIG_OK)
         return ErrorList::ORIG_OK;
-    assert(column==COL_REJECTED);
+    assert(column==ErrorListTableModel::COL_REJECTED);
     return ErrorList::REJECTED;
 }
 
@@ -123,26 +136,35 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         if (isTT and column <= 12)
             return QVariant();
         switch (column) {
-        case 0: return mo.stnr;
-        case 1: return mo.name;
-        case 2: return twoDigits(mo.obstime.date().month());
-        case 3: return twoDigits(mo.obstime.date().day());
-        case 4: return twoDigits(mo.obstime.time_of_day().hours());
-        case 5: try {
+        case COL_STATION_ID:
+            return mo.stnr;
+        case COL_STATION_NAME:
+            return mo.name;
+        case COL_OBS_MONTH:
+            return twoDigits(mo.obstime.date().month());
+        case COL_OBS_DAY:
+            return twoDigits(mo.obstime.date().day());
+        case COL_OBS_HOUR:
+            return twoDigits(mo.obstime.time_of_day().hours());
+        case COL_OBS_MINUTE:
+            return twoDigits(mo.obstime.time_of_day().minutes());
+        case COL_OBS_PARAM:
+            try {
                 return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(mo.parNo).name());
             } catch (std::runtime_error&) {
                 return QVariant(); // unknown parameter
             }
-        case 6: return mo.typeId;
-        case 7:
-        case 8:
-        case 9: {
+        case COL_OBS_TYPEID:
+            return mo.typeId;
+        case COL_OBS_ORIG:
+        case COL_OBS_CORR:
+        case COL_OBS_MODEL: {
             const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(mo.parNo);
             const int nDigits = isCodeParam ? 0 : 1;
             float value;
-            if (column == 7)
+            if (column == COL_OBS_ORIG)
                 value = mo.orig;
-            else if (column == 8)
+            else if (column == COL_OBS_CORR)
                 value = mo.corr;
             else
                 value = mo.morig;
@@ -150,9 +172,12 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
                 return (int)value;
             return QString::number(value ,'f', nDigits);
         }
-        case 10: return mo.flTyp;
-        case 11: return "=";
-        case 12: return mo.flg;
+        case COL_OBS_FLAG_NAME:
+            return mo.flTyp;
+        case COL_OBS_FLAG_EQ:
+            return "=";
+        case COL_OBS_FLAG_VAL:
+            return mo.flg;
         case COL_CORR_OK:
         case COL_ORIG_OK:
         case COL_REJECTED: {
@@ -278,8 +303,14 @@ bool ErrorListTableModel::setData(const QModelIndex& index, const QVariant& valu
 
 QVariant ErrorListTableModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
-    if (orientation == Qt::Horizontal and role == Qt::DisplayRole) {
-        return headers[section];
+    if (orientation == Qt::Horizontal) {
+        if (role == Qt::DisplayRole)
+            return qApp->translate("ErrorList", headers[section]);
+        else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+            const QString tt = qApp->translate("ErrorList", tooltips[section]);
+            if (not tt.isEmpty())
+                return tt;
+        }
     }
     return QVariant();
 }
