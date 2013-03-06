@@ -202,85 +202,155 @@ Parameter</translation>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListTableModel.cc" line="17"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListTableModel.cc" line="18"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListTableModel.cc" line="19"/>
         <source>Mt</source>
         <oldsource>  Mt</oldsource>
         <translation>Mt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListTableModel.cc" line="20"/>
         <source>Dy</source>
         <oldsource>  Dy</oldsource>
         <translation>Tg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="21"/>
         <source>Hr</source>
         <oldsource>  Hr</oldsource>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="22"/>
+        <source>Mn</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="23"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListTableModel.cc" line="24"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="34"/>
+        <location filename="ErrorListTableModel.cc" line="25"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="35"/>
+        <location filename="ErrorListTableModel.cc" line="26"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="36"/>
+        <location filename="ErrorListTableModel.cc" line="27"/>
         <source>mod.v</source>
         <translation>Mod.v</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="37"/>
+        <location filename="ErrorListTableModel.cc" line="28"/>
         <source>Flag</source>
         <translation>Flag</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="39"/>
+        <source>Station number</source>
+        <translation>Stationsnummer</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="40"/>
+        <source>Station name</source>
+        <translation>Stationsname</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="41"/>
+        <source>Obs month</source>
+        <translation>Obs Monat</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="42"/>
+        <source>Obs day</source>
+        <translation>Obs Tag</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="43"/>
+        <source>Obs hour</source>
+        <translation>Obs Stunde</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="44"/>
+        <source>Obs minute</source>
+        <translation>Obs Minute</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="45"/>
+        <source>Parameter name</source>
+        <translation>Parameter-Name</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="46"/>
+        <source>Type ID</source>
+        <translation>Type ID</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="47"/>
+        <source>Original value</source>
+        <translation>Originalwert</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="48"/>
+        <source>Corrected value</source>
+        <translation>Korrigierter Wert</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="49"/>
+        <source>Model value</source>
+        <translation>Modell-Wert</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="50"/>
+        <source>Flag name</source>
+        <translation>Flag-Name</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="52"/>
+        <source>Flag value</source>
+        <translation>Flag-Wert</translation>
     </message>
     <message>
         <source>=</source>
         <translation type="obsolete">=</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Fl.v</source>
         <translation>Fl.v</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Corrected OK</source>
         <translation>Korrigiert OK</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="41"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Original OK</source>
         <translation>Original OK</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="42"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>Interpolated</source>
         <translation>Interpoliert</translation>
     </message>
@@ -289,12 +359,12 @@ Parameter</translation>
         <translation type="obsolete">Umverteilt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
+        <location filename="ErrorListTableModel.cc" line="35"/>
         <source>Rejected</source>
         <translation>Verworfen</translation>
     </message>
@@ -359,71 +429,71 @@ Parameter</translation>
         <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="594"/>
+        <location filename="errorlist.cc" line="596"/>
         <source>Missing list</source>
         <translation>Mangelliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="595"/>
+        <location filename="errorlist.cc" line="597"/>
         <source>Missing list does not contain more elements that shown in the error list</source>
         <translation>Mangelliste enthält nicht mehr Elemente als in der Fehlerliste gezeigt werden</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="596"/>
+        <location filename="errorlist.cc" line="598"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="756"/>
+        <location filename="errorlist.cc" line="758"/>
         <source>Not authenticated</source>
         <translation>Nicht authentifiziert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="757"/>
+        <location filename="errorlist.cc" line="759"/>
         <source>You are not authenticated as operator. Cannot save sata.</source>
         <translation>Sie sind nicht als Operateur authentifiziert. Kann keine Daten speichern.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="747"/>
+        <location filename="errorlist.cc" line="749"/>
         <source>No unsaved data</source>
         <translation>Keine ungespeicherten Daten</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="568"/>
+        <location filename="errorlist.cc" line="570"/>
         <source>Error List</source>
         <translation>Fehlerliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="569"/>
+        <location filename="errorlist.cc" line="571"/>
         <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
 %1</source>
         <translation>Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="748"/>
+        <location filename="errorlist.cc" line="750"/>
         <source>There are no unsaved data.</source>
         <translation>Keine ungespeicherten Daten vorhanden.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="770"/>
+        <location filename="errorlist.cc" line="772"/>
         <source>Cannot save data</source>
         <translation>Kann Daten nicht speichern</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="771"/>
+        <location filename="errorlist.cc" line="773"/>
         <source>Cannot save data! Message from kvalobs was:
 %1</source>
         <translation>Kann Daten nicht speichern! Meldung von Kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="777"/>
+        <location filename="errorlist.cc" line="779"/>
         <source>Data saved</source>
         <translation>Daten gespeichert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="778"/>
+        <location filename="errorlist.cc" line="780"/>
         <source>%1 rows have been saved to kvalobs. Warning: data shown in error and data list might no longer be consistent with kvalobs.</source>
         <oldsource>%1 rows have been saved to kvalobs. Be aware that data shown in error and data list might no longer be consistent with kvalobs</oldsource>
         <translation>%1 Zeilen wurden in kvalobs gespeichert. Warnung: Datenliste und Fehlerliste sind möglicherweise nicht länger konsistent mit kvalobs.</translation>
@@ -433,27 +503,27 @@ Parameter</translation>
         <translation type="obsolete">%1 Zeilen wurden in kvalobs gespeichert.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="796"/>
+        <location filename="errorlist.cc" line="798"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="797"/>
+        <location filename="errorlist.cc" line="799"/>
         <source>You have unsaved changes in the error list. Do you want to save them?</source>
         <translation>Die Fehlerliste enthält ungespeicherte Änderungen. Möchten Sie diese speichern?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;Yes</source>
         <translation>&amp;Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;No</source>
         <translation>&amp;Nein</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
@@ -471,49 +541,49 @@ Parameter</translation>
 <context>
     <name>ErrorListTableModel</name>
     <message>
-        <location filename="ErrorListTableModel.cc" line="163"/>
-        <location filename="ErrorListTableModel.cc" line="187"/>
+        <location filename="ErrorListTableModel.cc" line="188"/>
+        <location filename="ErrorListTableModel.cc" line="212"/>
         <source>Accumulation. Use WatchRR to modify.</source>
         <translation>Sammelwert. Benutzen Sie WatchRR um diesen zu ändern.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="165"/>
+        <location filename="ErrorListTableModel.cc" line="190"/>
         <source>Corrected is missing. Use field &apos;Original OK&apos; or &apos;Recjected&apos;.</source>
         <translation>Korrigierter Wert fehlt. Benutzen Sie &apos;Original OK&apos; oder &apos;Verworfen&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="167"/>
-        <location filename="ErrorListTableModel.cc" line="189"/>
+        <location filename="ErrorListTableModel.cc" line="192"/>
+        <location filename="ErrorListTableModel.cc" line="214"/>
         <source>Both original and corrected are missing. Use field &apos;Interpolated&apos;.</source>
         <translation>Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="169"/>
+        <location filename="ErrorListTableModel.cc" line="194"/>
         <source>Cannot reject. Use field &apos;Original OK&apos;.</source>
         <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Original OK&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="171"/>
+        <location filename="ErrorListTableModel.cc" line="196"/>
         <source>Cannot reject. Use field &apos;Interpolated&apos;.</source>
         <translation>Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;. </translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="175"/>
+        <location filename="ErrorListTableModel.cc" line="200"/>
         <source>QC2 may override</source>
         <translation>QC2 darf überschreiben</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="175"/>
+        <location filename="ErrorListTableModel.cc" line="200"/>
         <source>QC2 ok</source>
         <translation>QC2 erlaubt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="177"/>
+        <location filename="ErrorListTableModel.cc" line="202"/>
         <source>QC2 may not override</source>
         <translation>QC2 darf nicht überschreiben</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="177"/>
+        <location filename="ErrorListTableModel.cc" line="202"/>
         <source>no QC2</source>
         <translation>kein QC2</translation>
     </message>
@@ -721,12 +791,18 @@ Parameter</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="363"/>
+        <location filename="mainwindow.ui" line="366"/>
         <source>Error+data list Salen</source>
         <oldsource>Produce errorlist and datalist for Salen</oldsource>
+        <translation>Daten- und Fehler-Liste Salen</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="369"/>
+        <source>Build error list and data list for Salen</source>
         <translation>Erstelle Daten- und Fehler-Liste für Salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="366"/>
+        <location filename="mainwindow.ui" line="372"/>
         <source>Ctrl+Shift+L</source>
         <translation>Ctrl+Shift+L</translation>
     </message>
@@ -1044,47 +1120,47 @@ Parameter</translation>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1051"/>
+        <location filename="hqcmain.cc" line="1053"/>
         <source>Data Retrieval</source>
         <translation>Einlesen von Daten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1052"/>
+        <location filename="hqcmain.cc" line="1054"/>
         <source>An error occured when attempting to retrieve data from kvalobs.</source>
         <translation>Beim Lesen von Daten von kvalobs ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1057"/>
+        <location filename="hqcmain.cc" line="1059"/>
         <source>Reading model data...</source>
         <translation>Lese Modelldaten...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1064"/>
+        <location filename="hqcmain.cc" line="1066"/>
         <source>Model Data Retrieval</source>
         <translation>Lesen von Modelldaten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1065"/>
+        <location filename="hqcmain.cc" line="1067"/>
         <source>An error occured when attempting to retrieve model data from kvalobs.</source>
         <translation>Beim Lesen der Modelldaten von kvalobs ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1098"/>
+        <location filename="hqcmain.cc" line="1100"/>
         <source>The kvalobs databasen is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1099"/>
+        <location filename="hqcmain.cc" line="1101"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Dataenbank nicht benutzt werden kann.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1231"/>
+        <location filename="hqcmain.cc" line="1233"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1232"/>
+        <location filename="hqcmain.cc" line="1234"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at met.no.
@@ -1097,17 +1173,17 @@ Das Programm wird von Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1348"/>
+        <location filename="hqcmain.cc" line="1351"/>
         <source>Reading data for station %1</source>
         <translation>Lese Daten für Station %1</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1531"/>
+        <location filename="hqcmain.cc" line="1493"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1532"/>
+        <location filename="hqcmain.cc" line="1494"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
@@ -2042,12 +2118,17 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>model::KvalobsDataModel</name>
     <message>
-        <location filename="KvalobsDataModel.cc" line="219"/>
+        <location filename="KvalobsDataModel.cc" line="125"/>
+        <source>Aggregated</source>
+        <translation>Aggregiert</translation>
+    </message>
+    <message>
+        <location filename="KvalobsDataModel.cc" line="230"/>
         <source>Data Change</source>
         <translation>Daten-Änderung</translation>
     </message>
     <message>
-        <location filename="KvalobsDataModel.cc" line="220"/>
+        <location filename="KvalobsDataModel.cc" line="231"/>
         <source>Confirm typeid:</source>
         <translation>Typeid bestätigen:</translation>
     </message>

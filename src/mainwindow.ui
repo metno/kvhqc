@@ -362,6 +362,12 @@
    <property name="text">
     <string>Error+data list Salen</string>
    </property>
+   <property name="iconText">
+    <string>Error+data list Salen</string>
+   </property>
+   <property name="toolTip">
+    <string>Build error list and data list for Salen</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+Shift+L</string>
    </property>

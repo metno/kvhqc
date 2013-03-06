@@ -202,85 +202,155 @@ parametere</translation>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListTableModel.cc" line="17"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListTableModel.cc" line="18"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Navn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListTableModel.cc" line="19"/>
         <source>Mt</source>
         <oldsource>  Mt</oldsource>
         <translation>Md</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListTableModel.cc" line="20"/>
         <source>Dy</source>
         <oldsource>  Dy</oldsource>
         <translation>Dg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="21"/>
         <source>Hr</source>
         <oldsource>  Hr</oldsource>
         <translation>Kl</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="22"/>
+        <source>Mn</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="23"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListTableModel.cc" line="24"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="34"/>
+        <location filename="ErrorListTableModel.cc" line="25"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="35"/>
+        <location filename="ErrorListTableModel.cc" line="26"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="36"/>
+        <location filename="ErrorListTableModel.cc" line="27"/>
         <source>mod.v</source>
         <translation>mod.v</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="37"/>
+        <location filename="ErrorListTableModel.cc" line="28"/>
         <source>Flag</source>
         <translation>Flagg</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="39"/>
+        <source>Station number</source>
+        <translation>Stasjonsnummer</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="40"/>
+        <source>Station name</source>
+        <translation>Stasjonsnavn</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="41"/>
+        <source>Obs month</source>
+        <translation>Obs måned</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="42"/>
+        <source>Obs day</source>
+        <translation>Obs dag</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="43"/>
+        <source>Obs hour</source>
+        <translation>Obs time</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="44"/>
+        <source>Obs minute</source>
+        <translation>Obs minutt</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="45"/>
+        <source>Parameter name</source>
+        <translation>Parameternavn</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="46"/>
+        <source>Type ID</source>
+        <translation>Type ID</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="47"/>
+        <source>Original value</source>
+        <translation>Originalverdi</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="48"/>
+        <source>Corrected value</source>
+        <translation>Korrigert verdi</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="49"/>
+        <source>Model value</source>
+        <translation>Modellverdi</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="50"/>
+        <source>Flag name</source>
+        <translation>Flaggnavn</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="52"/>
+        <source>Flag value</source>
+        <translation>Flaggverdi</translation>
     </message>
     <message>
         <source>=</source>
         <translation type="obsolete">=</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Fl.v</source>
         <translation>Fl.v</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Corrected OK</source>
         <translation>Korrigert OK</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="41"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Original OK</source>
         <translation>Original OK</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="42"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>Interpolated</source>
         <translation>Interpolert</translation>
     </message>
@@ -289,12 +359,12 @@ parametere</translation>
         <translation type="obsolete">Tilfordelt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
+        <location filename="ErrorListTableModel.cc" line="35"/>
         <source>Rejected</source>
         <translation>Forkastet</translation>
     </message>
@@ -359,71 +429,71 @@ parametere</translation>
         <translation type="obsolete">Kan ikke forkaste. Benytt feltet &apos;Interpolert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="594"/>
+        <location filename="errorlist.cc" line="596"/>
         <source>Missing list</source>
         <translation>Mangelliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="595"/>
+        <location filename="errorlist.cc" line="597"/>
         <source>Missing list does not contain more elements that shown in the error list</source>
         <translation>Mangellisten inneholder ikke flere elementer enn de som vises i feillisten</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="596"/>
+        <location filename="errorlist.cc" line="598"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="756"/>
+        <location filename="errorlist.cc" line="758"/>
         <source>Not authenticated</source>
         <translation>Ikke autentisert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="757"/>
+        <location filename="errorlist.cc" line="759"/>
         <source>You are not authenticated as operator. Cannot save sata.</source>
         <translation>Du er ikke autentisert som operatør. Kan ikke lagre data.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="747"/>
+        <location filename="errorlist.cc" line="749"/>
         <source>No unsaved data</source>
         <translation>Ingen ulagret data</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="568"/>
+        <location filename="errorlist.cc" line="570"/>
         <source>Error List</source>
         <translation>Feilliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="569"/>
+        <location filename="errorlist.cc" line="571"/>
         <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
 %1</source>
         <translation>Feil ved lagring til kvalobs. Meldingen var
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="748"/>
+        <location filename="errorlist.cc" line="750"/>
         <source>There are no unsaved data.</source>
         <translation>Det fins ingen ulagrede data.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="770"/>
+        <location filename="errorlist.cc" line="772"/>
         <source>Cannot save data</source>
         <translation>Kan ikke lagre data</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="771"/>
+        <location filename="errorlist.cc" line="773"/>
         <source>Cannot save data! Message from kvalobs was:
 %1</source>
         <translation>Kan ikke lagre data! Meldingen fra Kvalobs var:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="777"/>
+        <location filename="errorlist.cc" line="779"/>
         <source>Data saved</source>
         <translation>Data lagret</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="778"/>
+        <location filename="errorlist.cc" line="780"/>
         <source>%1 rows have been saved to kvalobs. Warning: data shown in error and data list might no longer be consistent with kvalobs.</source>
         <oldsource>%1 rows have been saved to kvalobs. Be aware that data shown in error and data list might no longer be consistent with kvalobs</oldsource>
         <translation>%1 rader ble lagret til kvalobs. Advarsel: dataliste og feilliste er muligens ikke lenger konsistent med kvalobs-databasen.</translation>
@@ -433,27 +503,27 @@ parametere</translation>
         <translation type="obsolete">%1 rader ble lagret til kvalobs.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="796"/>
+        <location filename="errorlist.cc" line="798"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="797"/>
+        <location filename="errorlist.cc" line="799"/>
         <source>You have unsaved changes in the error list. Do you want to save them?</source>
         <translation>Du har ulagrede endringer i feillista. Vil du lagre dem?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;Yes</source>
         <translation>&amp;Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;No</source>
         <translation>&amp;Nei</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="800"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Avbryt</translation>
     </message>
@@ -471,49 +541,49 @@ parametere</translation>
 <context>
     <name>ErrorListTableModel</name>
     <message>
-        <location filename="ErrorListTableModel.cc" line="163"/>
-        <location filename="ErrorListTableModel.cc" line="187"/>
+        <location filename="ErrorListTableModel.cc" line="188"/>
+        <location filename="ErrorListTableModel.cc" line="212"/>
         <source>Accumulation. Use WatchRR to modify.</source>
         <translation>Oppsamling. Bruk WatchRR til å endre.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="165"/>
+        <location filename="ErrorListTableModel.cc" line="190"/>
         <source>Corrected is missing. Use field &apos;Original OK&apos; or &apos;Recjected&apos;.</source>
         <translation>Korrigert verdi mangler. Bruk &apos;Original OK&apos; eller &apos;Forkastet&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="167"/>
-        <location filename="ErrorListTableModel.cc" line="189"/>
+        <location filename="ErrorListTableModel.cc" line="192"/>
+        <location filename="ErrorListTableModel.cc" line="214"/>
         <source>Both original and corrected are missing. Use field &apos;Interpolated&apos;.</source>
         <translation>Både original og korrigert verdi mangler. Benytt feltet &apos;Interpolert&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="169"/>
+        <location filename="ErrorListTableModel.cc" line="194"/>
         <source>Cannot reject. Use field &apos;Original OK&apos;.</source>
         <translation>Kan ikke forkaste. Benytt feltet &apos;Original OK&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="171"/>
+        <location filename="ErrorListTableModel.cc" line="196"/>
         <source>Cannot reject. Use field &apos;Interpolated&apos;.</source>
         <translation>Kan ikke forkaste. Benytt feltet &apos;Interpolert&apos;.</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="175"/>
+        <location filename="ErrorListTableModel.cc" line="200"/>
         <source>QC2 may override</source>
         <translation>QC2 kan overskrive</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="175"/>
+        <location filename="ErrorListTableModel.cc" line="200"/>
         <source>QC2 ok</source>
         <translation>QC2 tillatt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="177"/>
+        <location filename="ErrorListTableModel.cc" line="202"/>
         <source>QC2 may not override</source>
         <translation>QC2 kan ikke overskrive</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="177"/>
+        <location filename="ErrorListTableModel.cc" line="202"/>
         <source>no QC2</source>
         <translation>QC2 forbudt</translation>
     </message>
@@ -721,12 +791,18 @@ parametere</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="363"/>
+        <location filename="mainwindow.ui" line="366"/>
         <source>Error+data list Salen</source>
         <oldsource>Produce errorlist and datalist for Salen</oldsource>
-        <translation>Bygg dataliste og feilliste for Salen</translation>
+        <translation>Data- og feilliste salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="366"/>
+        <location filename="mainwindow.ui" line="369"/>
+        <source>Build error list and data list for Salen</source>
+        <translation>Vis data- og feilliste for salen</translation>
+    </message>
+    <message>
+        <location filename="mainwindow.ui" line="372"/>
         <source>Ctrl+Shift+L</source>
         <translation>Ctrl+Shift+L</translation>
     </message>
@@ -1044,47 +1120,47 @@ parametere</translation>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1051"/>
+        <location filename="hqcmain.cc" line="1053"/>
         <source>Data Retrieval</source>
         <translation>Innlesing av Data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1052"/>
+        <location filename="hqcmain.cc" line="1054"/>
         <source>An error occured when attempting to retrieve data from kvalobs.</source>
         <translation>En feil oppsto under lesing av data fra kvalobs.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1057"/>
+        <location filename="hqcmain.cc" line="1059"/>
         <source>Reading model data...</source>
         <translation>Leser modelldata...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1064"/>
+        <location filename="hqcmain.cc" line="1066"/>
         <source>Model Data Retrieval</source>
         <translation>Lesing av modelldata</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1065"/>
+        <location filename="hqcmain.cc" line="1067"/>
         <source>An error occured when attempting to retrieve model data from kvalobs.</source>
         <translation>En feil oppsto under lesing av modelldata fra kvalobs.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1098"/>
+        <location filename="hqcmain.cc" line="1100"/>
         <source>The kvalobs databasen is not accessible.</source>
         <translation>Kvalobsdatabasen er dessverre ikke tilgjengelig.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1099"/>
+        <location filename="hqcmain.cc" line="1101"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1231"/>
+        <location filename="hqcmain.cc" line="1233"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1232"/>
+        <location filename="hqcmain.cc" line="1234"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at met.no.
@@ -1097,17 +1173,17 @@ Programmet utvikles av Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegar
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1348"/>
+        <location filename="hqcmain.cc" line="1351"/>
         <source>Reading data for station %1</source>
         <translation>Leser data for stasjon %1</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1531"/>
+        <location filename="hqcmain.cc" line="1493"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1532"/>
+        <location filename="hqcmain.cc" line="1494"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
@@ -2042,12 +2118,17 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>model::KvalobsDataModel</name>
     <message>
-        <location filename="KvalobsDataModel.cc" line="219"/>
+        <location filename="KvalobsDataModel.cc" line="125"/>
+        <source>Aggregated</source>
+        <translation>Aggregert</translation>
+    </message>
+    <message>
+        <location filename="KvalobsDataModel.cc" line="230"/>
         <source>Data Change</source>
         <translation>Data-Endring</translation>
     </message>
     <message>
-        <location filename="KvalobsDataModel.cc" line="220"/>
+        <location filename="KvalobsDataModel.cc" line="231"/>
         <source>Confirm typeid:</source>
         <translation>Bekreft typeid:</translation>
     </message>
