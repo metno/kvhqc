@@ -1,6 +1,6 @@
 kvhqc (2.18.1-1) unstable; urgency=low
 
-  * new upstream version
+  * bugfix: show model data
 
  -- Alexander Bürger <alexander.buerger@met.no>  Thu, 07 Mar 2013 10:35:53 +0100
 

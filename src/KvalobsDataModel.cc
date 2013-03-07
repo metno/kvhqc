@@ -56,8 +56,8 @@ namespace model
 {
 const int KvalobsDataModel::COLUMNS_PER_PARAMETER = int(ColumnType_SENTRY);
 
-KvalobsDataModel::KvalobsDataModel(const std::vector<int> & parameters, KvalobsDataListPtr datalist,
-                                   const std::vector<modDatl> & modeldatalist, bool editable)
+KvalobsDataModel::KvalobsDataModel(const std::vector<int>& parameters, KvalobsDataListPtr datalist,
+                                   const std::vector<modDatl>& modeldatalist, bool editable)
     : QAbstractTableModel(),
       kvalobsData_(datalist),
       modeldatalist_(modeldatalist),
@@ -467,11 +467,11 @@ QVariant KvalobsDataModel::displayRoleData(const QModelIndex & index) const
                 else
                     return QVariant();
             }
-            return QVariant();
         }
-        default:
-            return QVariant();
+        return QVariant();
     }
+    default:
+        return QVariant();
     }
 }
     
