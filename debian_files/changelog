@@ -1,3 +1,11 @@
+kvhqc (2.18.2-1) unstable; urgency=low
+
+  * for physical limits, use <= and >= instead of < and >
+  * try not to select multiple rows in data list when clicking on cells without data
+  * try to always set useinfo before writing to kvalobs
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 07 Mar 2013 13:58:24 +0100
+
 kvhqc (2.18.1-1) unstable; urgency=low
 
   * bugfix: show model data
