@@ -148,7 +148,7 @@ bool KvMetaDataBuffer::checkPhysicalLimits(int paramid, float value)
         LOG4HQC_DEBUG("KvMetaDataBuffer", "no limits for paramid " << paramid);
         return true;
     }
-    return (it->second.first < value and it->second.second > value);
+    return (it->second.first <= value and it->second.second >= value);
 }
 
 bool KvMetaDataBuffer::isKnownType(int id)
