@@ -194,9 +194,9 @@ private:
     //! A primitive horizontal tiling of the errorhead and errorlist windows
     void tileHorizontal();
 
-    bool acceptData(const kvalobs::kvData& kvd, int absTypeId, int env,
-                    const QSet<QString> selectedStationTypes,
-                    const bool allStationTypes, const bool showPrioritized);
+    bool keepDataInList(const kvalobs::kvData& kvd, int absTypeId, int env,
+                        const QSet<QString> selectedStationTypes,
+                        const bool allStationTypes, const bool showPrioritized);
     void putToDataList(const kvalobs::kvData& kvd);
 
 private:

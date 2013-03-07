@@ -1367,7 +1367,7 @@ void HqcMainWindow::makeObsDataList(kvservice::KvObsDataList& dataList)
                 prStation = kvd.stationID();
             }
 
-            if (not acceptData(kvd, abs(kvd.typeID()), env, selectedStationTypes, allStationTypes, showPrioritized))
+            if (not keepDataInList(kvd, abs(kvd.typeID()), env, selectedStationTypes, allStationTypes, showPrioritized))
                continue;
 
             putToDataList(kvd);
@@ -1429,9 +1429,9 @@ void HqcMainWindow::putToDataList(const kvalobs::kvData& kvd)
     tdl.set_cfailed    (pid, kvd.cfailed());
 }
 
-bool HqcMainWindow::acceptData(const kvalobs::kvData& kvd, int absTypeId, int env,
-                               const QSet<QString> selectedStationTypes,
-                               const bool allStationTypes, const bool showPrioritized)
+bool HqcMainWindow::keepDataInList(const kvalobs::kvData& kvd, int absTypeId, int env,
+                                   const QSet<QString> selectedStationTypes,
+                                   const bool allStationTypes, const bool showPrioritized)
 {
     if (kvd.level() != HqcMainWindow::sLevel)
         return false;
