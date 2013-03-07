@@ -82,35 +82,12 @@ public:
     void startup();
 
     void makeObsDataList(kvservice::KvObsDataList& dataList);
-    bool saveDataToKvalobs(const kvalobs::kvData& toSave);
 
-public Q_SLOTS:
-    //! send all observation times to Diana
-    void sendTimes();
-
-public:
-    //! true if the hour given as input is checked in the ListDialog
-    bool timeFilter(int);
-
-    //! true if the given typeId and environment corresponds to a station type checked in the ListDialog
-    bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
-    bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
-
-    void checkTypeId(int);
+    bool saveDataToKvalobs(std::list<kvalobs::kvData>& toSave);
+    bool saveDataToKvalobs(kvalobs::kvData& toSave1);
 
     //! Extract the typeid from the obspgmlist for a given station, parameter and obstime
     int findTypeId(int, int, int, const timeutil::ptime&);
-
-    bool isAlreadyStored(const timeutil::ptime&, int);
-
-    //! read data and model_data from kvalobs to datalist/modeldatalist
-    void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
-
-    //! Retrieves from stlist the position and height of a given station
-    void findStationPos(int, double&, double&, double&);
-
-    //! Retrieves from stlist information about a given station
-    void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
 
     const listStat_l& getStationDetails();
     const std::vector<currentType>& getCurrentTypeList() const
@@ -118,6 +95,10 @@ public:
 
     kvalobs::DataReinserter<kvservice::KvApp>* getReinserter()
         { return reinserter; }
+
+public Q_SLOTS:
+    //! send all observation times to Diana
+    void sendTimes();
 
 protected:
     void moveEvent(QMoveEvent* event);
@@ -174,6 +155,24 @@ private Q_SLOTS:
     void onVersionCheckTimeout();
 
 private:
+    //! read data and model_data from kvalobs to datalist/modeldatalist
+    void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
+
+    //! Retrieves from stlist information about a given station
+    void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
+
+    //! Retrieves from stlist the position and height of a given station
+    void findStationPos(int, double&, double&, double&);
+
+    void checkTypeId(int);
+    bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
+
+    //! true if the given typeId and environment corresponds to a station type checked in the ListDialog
+    bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
+
+    //! true if the hour given as input is checked in the ListDialog
+    bool timeFilter(int);
+
     void listMenu(listType lt);
     void exitNoKvalobs();
     void closeEvent(QCloseEvent* event);

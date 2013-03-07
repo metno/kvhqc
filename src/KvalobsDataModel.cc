@@ -43,7 +43,7 @@
 
 #include <boost/foreach.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace

@@ -100,7 +100,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace {
@@ -306,17 +306,42 @@ void HqcMainWindow::dianaShowOK()
         ListOK();
 }
 
-bool HqcMainWindow::saveDataToKvalobs(const kvalobs::kvData & toSave)
+bool HqcMainWindow::saveDataToKvalobs(std::list<kvalobs::kvData>& toSave)
 {
     LOG_SCOPE("HqcMainWindow");
-    LOG4SCOPE_DEBUG(DBG1(toSave));
+#ifndef NDEBUG
+    LOG4SCOPE_DEBUG(DBG1(toSave.size()));
+    BOOST_FOREACH(const kvalobs::kvData& d, toSave)
+        LOG4SCOPE_DEBUG(DBG1(d));
+#endif
+
     if (not reinserter) {
         LOG4SCOPE_DEBUG("skipping data save, since user is not authenticated");
         return false;
     }
-    kvalobs::serialize::KvalobsData dataList;
-    dataList.insert(toSave);
-    const CKvalObs::CDataSource::Result_var result = reinserter->insert(dataList);
+    BusyIndicator busy;
+    const CKvalObs::CDataSource::Result_var result = reinserter->insert(toSave);
+    if (result->res != CKvalObs::CDataSource::OK) {
+        QMessageBox::critical(this, tr("Unable to insert"),
+                              tr("An error occured when attempting to insert data into kvalobs. "
+                                 "The message from kvalobs was\n%1").arg(QString(result->message)),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        return false;
+    }
+    return true;
+}
+
+bool HqcMainWindow::saveDataToKvalobs(kvalobs::kvData& toSave1)
+{
+    LOG_SCOPE("HqcMainWindow");
+    LOG4SCOPE_DEBUG(DBG1(toSave1));
+
+    if (not reinserter) {
+        LOG4SCOPE_DEBUG("skipping data save, since user is not authenticated");
+        return false;
+    }
+    BusyIndicator busy;
+    const CKvalObs::CDataSource::Result_var result = reinserter->insert(toSave1);
     if (result->res != CKvalObs::CDataSource::OK) {
         QMessageBox::critical(this, tr("Unable to insert"),
                               tr("An error occured when attempting to insert data into kvalobs. "
@@ -1293,14 +1318,6 @@ void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
   ErrorList *win = dynamic_cast<ErrorList*>(w->widget());
   bool enabled = win;
   ui->saveAction->setEnabled(enabled);
-}
-
-bool HqcMainWindow::isAlreadyStored(const timeutil::ptime& otime, int stnr) {
-  for ( unsigned int i = 0; i < datalist->size(); i++) {
-    if ( (*datalist)[i].otime() == otime && (*datalist)[i].stnr() == stnr )
-      return true;
-  }
-  return false;
 }
 
 int HqcMainWindow::findTypeId(int tpId, int pos, int par, const timeutil::ptime& oTime)

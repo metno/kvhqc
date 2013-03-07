@@ -40,7 +40,7 @@
 
 #include <stdexcept>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace model

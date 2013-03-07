@@ -8,7 +8,7 @@
 
 #include <QtCore/QCoreApplication>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace {

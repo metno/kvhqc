@@ -40,7 +40,7 @@
 #include <QFile>
 #include <QTextStream>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace { /* anonymous */
@@ -117,10 +117,8 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
 
     const timeutil::ptime& obt = kvalobsData->otime();
     int typ = kvalobsData->typeId(paramid);
-    if (abs(typ) > 999) {
-        const int stationid = kvalobsData->stnr();
-        typ = mainWindow->findTypeId(typ, stationid, paramid, obt);
-    }
+    if (abs(typ) > 999)
+        typ = mainWindow->findTypeId(typ, kvalobsData->stnr(), paramid, obt);
     if (typ <= -32767) {
         QMessageBox::information(mainWindow, tr("Illegal parameter"),
                                  tr("This parameter is not in obs_pgm for this station."),

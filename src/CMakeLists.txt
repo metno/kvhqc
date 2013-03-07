@@ -88,7 +88,7 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}.bin")
 
 TARGET_LINK_LIBRARIES(hqc
-  watchrr2 authentication weather failinfo
+  watchrr2 weather failinfo authentication
   ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
   -lldap
 )

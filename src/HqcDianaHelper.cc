@@ -14,7 +14,7 @@
 #include <iostream>
 #include <sstream>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
@@ -82,14 +82,14 @@ void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
     mAllTimes = allTimes;
     sendTimes();
     if (mEnabled and not isKnownTime(mDianaTime)) {
-        LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaTime));
+        LOG4SCOPE_DEBUG(DBG1(mDianaTime));
         if (not mAllTimes.empty()) {
             mDianaTime = *mAllTimes.begin();
-            LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaTime));
+            LOG4SCOPE_DEBUG(DBG1(mDianaTime));
             sendTime();
         } else {
             mDianaTime = timeutil::ptime();
-            LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaTime));
+            LOG4SCOPE_DEBUG(DBG1(mDianaTime));
         }
     }
 }
@@ -107,7 +107,7 @@ void HqcDianaHelper::sendTimes()
     m.description= "time";
     BOOST_FOREACH(const timeutil::ptime& t, mAllTimes)
         m.data.push_back(timeutil::to_iso_extended_string(t));
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(m.content()));
+    LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -121,7 +121,7 @@ void HqcDianaHelper::processLetterOld(miMessage& letter)
 void HqcDianaHelper::processLetter(const miMessage& letter)
 {
     LOG_SCOPE("HqcDianaHelper");
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(letter.command));
+    LOG4SCOPE_DEBUG(DBG1(letter.command));
     if (letter.command == qmstrings::newclient) {
         std::vector<std::string> desc, valu;
         const std::string cd(letter.commondesc), co(letter.common);
@@ -167,7 +167,7 @@ void HqcDianaHelper::handleDianaTime(const std::string& time_txt)
         mDianaTime = time;
         /*emit*/ receivedTime(mDianaTime);
     } else {
-        LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaTime));
+        LOG4SCOPE_DEBUG(DBG1(mDianaTime));
     }
 }
 
@@ -181,7 +181,7 @@ void HqcDianaHelper::applyQuickMenu()
     m.command = qmstrings::apply_quickmenu;
     m.data.push_back("hqc_qmenu");
     m.data.push_back("hqc_obs_...");
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(m.content()));
+    LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 #endif
 }
@@ -194,7 +194,7 @@ void HqcDianaHelper::sendStation(int stnr)
     miMessage m;
     m.command = qmstrings::station;
     m.common  = boost::lexical_cast<std::string>(stnr);
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(m.content()));
+    LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -209,7 +209,7 @@ void HqcDianaHelper::sendTime(const timeutil::ptime& time)
     
 void HqcDianaHelper::sendTime()
 {
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaTime));
+    LOG4SCOPE_DEBUG(DBG1(mDianaTime));
     if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaTime))
         return;
 
@@ -217,7 +217,7 @@ void HqcDianaHelper::sendTime()
     m.command = qmstrings::settime;
     m.commondesc = "time";
     m.common = timeutil::to_iso_extended_string(mDianaTime);
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(m.content()));
+    LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -245,7 +245,7 @@ void HqcDianaHelper::sendObservations(const model::KvalobsDataList& datalist,
     std::vector<std::string> synopData;
     
     int prStnr = 0;
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(mDianaNeedsHqcInit));
+    LOG4SCOPE_DEBUG(DBG1(mDianaNeedsHqcInit));
     BOOST_FOREACH(const model::KvalobsData& d, datalist) {
         if (d.otime() != mDianaTime or d.stnr() == prStnr)
             continue;
@@ -324,7 +324,7 @@ void HqcDianaHelper::sendObservations(const model::KvalobsDataList& datalist,
             prStnr = d.stnr();
         } catch (std::runtime_error& e) {
             // unknown station, ignore
-            LOG4HQC_DEBUG("HqcDianaHelper", DBG1(d.stnr()));
+            LOG4SCOPE_DEBUG(DBG1(d.stnr()));
         }
     }
 
@@ -340,7 +340,7 @@ void HqcDianaHelper::sendObservations(const model::KvalobsDataList& datalist,
 #else
         pLetter.data = synopData;
 #endif
-        LOG4HQC_DEBUG("HqcDianaHelper", DBG1(pLetter.content()));
+        LOG4SCOPE_DEBUG(DBG1(pLetter.content()));
         mClientButton->sendMessage(pLetter);
 
         if (mDianaNeedsHqcInit)
@@ -365,7 +365,7 @@ void HqcDianaHelper::sendSelectedParam(int paramId)
     m.command = qmstrings::select_HQC_param;
     m.commondesc = "diParam";
     m.common     = it->second.dianaName;
-    LOG4HQC_DEBUG("HqcDianaHelper", DBG1(m.content()));
+    LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 }
 

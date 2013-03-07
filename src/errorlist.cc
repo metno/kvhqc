@@ -57,7 +57,7 @@
 
 #include <cassert>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 using namespace kvalobs;
@@ -553,26 +553,14 @@ void ErrorList::showSameStation()
  */
 void ErrorList::updateKvBase(const mem& memStore)
 {
-    if (not mainWindow->getReinserter())
-        return;
+    kvalobs::kvData kd = getKvData(memStore);
 
-    kvData kd = getKvData( memStore );
     //TODO: Remove next 3 lines when the new QC1-9 is ready
     kvControlInfo cif = kd.controlinfo();
     cif.set(kvalobs::flag::fhqc, 2);
     kd.controlinfo(cif);
-    CKvalObs::CDataSource::Result_var result;
-    {
-        BusyIndicator busyIndicator;
-        result = mainWindow->getReinserter()->insert(kd);
-    }
-    if (result->res != CKvalObs::CDataSource::OK) {
-        QMessageBox::critical(this, tr("Error List"),
-                              tr("An error occured when attempting to insert data into kvalobs. "
-                                 "The message from kvalobs was\n%1").arg(QString(result->message)),
-                              QMessageBox::Ok, QMessageBox::NoButton);
-        return;
-    }
+
+    mainWindow->saveDataToKvalobs(kd);
 }
 
 void ErrorList::signalStationSelected()
@@ -752,34 +740,13 @@ void ErrorList::saveChanges()
         return;
     }
 
-    DataReinserter<kvservice::KvApp> *reinserter = mainWindow->getReinserter();
-    if (not reinserter) {
-        QMessageBox::critical(this,
-                              tr("Not authenticated"),
-                              tr("You are not authenticated as operator. Cannot save sata."),
-                              QMessageBox::Ok, Qt::NoButton);
-        return;
+    if (mainWindow->saveDataToKvalobs(modData)) {
+        QMessageBox::information(this,
+                                 tr("Data saved"),
+                                 tr("%1 rows have been saved to kvalobs. Warning: data shown in error "
+                                    "and data list might no longer be consistent with kvalobs.").arg(modData.size()),
+                                 QMessageBox::Ok, Qt::NoButton);
     }
-
-    CKvalObs::CDataSource::Result_var result;
-    {
-        BusyIndicator busyIndicator;
-        result = reinserter->insert(modData);
-    }
-
-    if (result->res != CKvalObs::CDataSource::OK) {
-        QMessageBox::critical(this,
-                              tr("Cannot save data"),
-                              tr("Cannot save data! Message from kvalobs was:\n%1").arg(QString(result->message)),
-                              QMessageBox::Ok, Qt::NoButton);
-        return;
-    }
-
-    QMessageBox::information(this,
-                             tr("Data saved"),
-                             tr("%1 rows have been saved to kvalobs. Warning: data shown in error "
-                                "and data list might no longer be consistent with kvalobs.").arg(modData.size()),
-                             QMessageBox::Ok, Qt::NoButton);
 }
 
 bool ErrorList::maybeSave()
