@@ -121,7 +121,8 @@ QVariant KvalobsDataModel::data(const QModelIndex & index, int role) const
         if (columnType == Original or columnType == Corrected) {
             const KvalobsData& d = kvalobsData_->at(index.row());
             const int pid = getParameter(index).paramid;
-            if (d.typeId(pid) < 0)
+            const int tid = d.typeId(pid);
+            if (tid < 0 and tid > -32767)
                 return tr("Aggregated");
         }
         break;
@@ -217,7 +218,7 @@ bool KvalobsDataModel::setData(const QModelIndex & index, const QVariant & value
 
     kvalobs::kvData changeData = getKvData_(index);
     int typ = changeData.typeID();
-    bool confirmTypeId = (typ == -32767);
+    bool confirmTypeId = (typ <= -32767);
     LOG4SCOPE_DEBUG(DBG1(changeData) << DBG1(confirmTypeId));
     if (abs(typ) > 999)
         typ = d.showTypeId();
@@ -514,6 +515,8 @@ int KvalobsDataModel::dataColumn(QString parameter) const
 int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, ObstimeMatch otm, int typeToSearch) const
 {
     LOG_SCOPE("KvalobsDataModel");
+    LOG4SCOPE_DEBUG(DBG1(stationid) << DBG1(obstime) << DBG1(otm) << DBG1(typeToSearch));
+
     // FIXME this routine will probably cause segfault if rows == 0
     
     const KvalobsDataListPtr & data = kvalobsData();
@@ -525,8 +528,8 @@ int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, Obs
         const KvalobsData & d = (*data)[index];
         if (d.stnr() == stationid) {
             second_best_index = index;
-            if (d.otime() == obstime and (typeToSearch == 0 or typeToSearch == d.showTypeId())) {
-                LOG4SCOPE_DEBUG("exact obstime=" << timeutil::to_iso_extended_string(obstime) << "found");
+            if (d.otime() == obstime and (typeToSearch == 0 or typeToSearch == -99999 or typeToSearch == d.showTypeId())) {
+                LOG4SCOPE_DEBUG("exact obstime=" << timeutil::to_iso_extended_string(obstime) << " found");
                 return index;
             } else if ((otm == OBSTIME_BEFORE    and d.otime() <= obstime and (best_index < 0 or d.otime() > best_time))
                        or (otm == OBSTIME_AFTER  and d.otime() >= obstime and (best_index < 0 or d.otime() < best_time)))
@@ -537,7 +540,7 @@ int KvalobsDataModel::dataRow(int stationid, const timeutil::ptime& obstime, Obs
         }
     }
     if (best_index>=0) {
-        LOG4SCOPE_DEBUG("relative obstime=" << timeutil::to_iso_extended_string(best_time) << "found");
+        LOG4SCOPE_DEBUG("relative obstime=" << timeutil::to_iso_extended_string(best_time) << " found");
         return best_index;
     } else {
         LOG4SCOPE_DEBUG("no good obstime=" << timeutil::to_iso_extended_string(best_time) << "found");

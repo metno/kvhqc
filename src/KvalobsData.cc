@@ -33,13 +33,13 @@
 #include <functional>
 #include <map>
 
-namespace model
-{
+namespace model {
 
-  namespace {
-    /// Internal missing representation
-    const int missing_ = -32767;
-  }
+namespace {
+/// internal missing representation
+const int missing_ = -32767;
+const int missing_type = -99999;
+}
 
 class KvalobsData::Impl
 {
@@ -65,7 +65,7 @@ public:
   struct ObservationData
   {
     ObservationData() :
-      typeId(missing_),
+      typeId(missing_type),
       original(missing_),
       corrected(missing_),
       level(0),
@@ -220,15 +220,17 @@ void KvalobsData::set_typeIdChanged(int value)
 
 int KvalobsData::typeId(std::size_t parameter) const
 {
-  const Impl::ObservationData * obs = impl().obsData(parameter);
-  if ( ! obs )
-    return missing_;
-  return obs->typeId;
+    const Impl::ObservationData * obs = impl().obsData(parameter);
+    if (not obs)
+        return missing_type;
+    return obs->typeId;
 }
+
 void KvalobsData::set_typeId(std::size_t parameter, int value)
 {
   impl().obsData(parameter)->typeId = value;
 }
+
 
 double KvalobsData::orig(std::size_t parameter) const
 {
@@ -241,6 +243,7 @@ void KvalobsData::set_orig(std::size_t parameter, double value)
 {
   impl().obsData(parameter)->original = value;
 }
+
 
 namespace
 {
@@ -422,10 +425,12 @@ double KvalobsData::corr(std::size_t parameter) const
     return missing_;
   return obs->corrected;
 }
+
 void KvalobsData::set_corr(std::size_t parameter, double value)
 {
   impl().obsData(parameter)->corrected = value;
 }
+
 
 int KvalobsData::level(std::size_t parameter) const
 {
@@ -434,6 +439,7 @@ int KvalobsData::level(std::size_t parameter) const
     return 0;
   return obs->level;
 }
+
 void KvalobsData::set_level(std::size_t parameter, int value)
 {
   impl().obsData(parameter)->level = value;
@@ -447,6 +453,7 @@ int KvalobsData::sensor(std::size_t parameter) const
     return 0;
   return obs->sensor;
 }
+
 void KvalobsData::set_sensor(std::size_t parameter, int value)
 {
   impl().obsData(parameter)->sensor = value;
@@ -462,6 +469,7 @@ const kvalobs::kvControlInfo & KvalobsData::controlinfo(std::size_t parameter) c
   }
   return obs->controlinfo;
 }
+
 void KvalobsData::set_controlinfo(std::size_t parameter, const kvalobs::kvControlInfo & value)
 {
   impl().obsData(parameter)->controlinfo = value;
@@ -477,6 +485,7 @@ const kvalobs::kvUseInfo & KvalobsData::useinfo(std::size_t parameter) const
   }
   return obs->useinfo;
 }
+
 void KvalobsData::set_useinfo(std::size_t parameter, const kvalobs::kvUseInfo & value)
 {
   impl().obsData(parameter)->useinfo = value;
@@ -490,20 +499,25 @@ const std::string KvalobsData::cfailed(std::size_t parameter) const
     return std::string();
   return obs->cfailed;
 }
+
 void KvalobsData::set_cfailed(std::size_t parameter, const std::string & value)
 {
   impl().obsData(parameter)->cfailed = value;
 }
 
+
 kvalobs::kvData KvalobsData::getKvData(std::size_t paramid) const
 {
+    int typeID = typeId(paramid);
+    if (typeID == missing_type)
+        typeID = showTypeId();
   return kvalobs::kvData(
       stnr(),
       timeutil::to_miTime(otime()),
       orig(paramid),
       paramid,
       timeutil::to_miTime(tbtime()),
-      typeId(paramid),
+      typeID,
       sensor(paramid),
       level(paramid),
       corr(paramid),
@@ -513,17 +527,15 @@ kvalobs::kvData KvalobsData::getKvData(std::size_t paramid) const
       );
 }
 
+
 KvalobsData::Impl & KvalobsData::impl()
 {
   return * impl_;
-//  return * static_cast<KvalobsData::Impl *>(impl_.data());
 }
 
 const KvalobsData::Impl & KvalobsData::impl() const
 {
   return * impl_;
-//  return * static_cast<const KvalobsData::Impl *>(impl_.data());
 }
 
-
-}
+} // namespace model

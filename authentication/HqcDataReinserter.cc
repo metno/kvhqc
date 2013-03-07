@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HqcLogging.hh"
 #include "hqc_utilities.hh"
 #include <kvalobs/kvDataOperations.h>
+#include <boost/foreach.hpp>
 #include <algorithm>
 
 using namespace kvservice;
@@ -70,6 +71,8 @@ HqcDataReinserter::~HqcDataReinserter( )
 
 const HqcDataReinserter::Result HqcDataReinserter::insert(kvalobs::kvData &d) const
 {
+    if (d.typeID() <= -32767)
+        return fail("invalid typeid <= -32767");
     ::internal_::updateUseAddCFailed(d);
     return DataReinserter<KvApp>::insert(d);
 }
@@ -77,12 +80,24 @@ const HqcDataReinserter::Result HqcDataReinserter::insert(kvalobs::kvData &d) co
 
 const HqcDataReinserter::Result HqcDataReinserter::insert(std::list<kvalobs::kvData> &dl) const
 {
+    BOOST_FOREACH(const kvalobs::kvData &d, dl) {
+        if (d.typeID() <= -32767)
+            return fail("invalid typeid <= -32767");
+    }
     std::for_each(dl.begin(), dl.end(), ::internal_::updateUseAddCFailed);
     return DataReinserter<KvApp>::insert(dl);
 }
 
 const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::serialize::KvalobsData& data) const
 {
-    LOG4HQC_WARN("HqcDataReinserter", "inserting kvalobs::serialize::KvalobsData will not update useinfo!");
+    LOG4HQC_WARN("HqcDataReinserter", "inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
     return DataReinserter<KvApp>::insert(data);
+}
+
+CKvalObs::CDataSource::Result_var HqcDataReinserter::fail(const std::string& why) const
+{
+    CKvalObs::CDataSource::Result_var ret(new CKvalObs::CDataSource::Result);
+    ret->res = CKvalObs::CDataSource::ERROR;
+    ret->message = why.c_str();
+    return ret;
 }

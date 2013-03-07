@@ -628,7 +628,7 @@ kvalobs::kvData ErrorList::getKvData() const
     const int row = getSelectedRow();
     if (row < 0)
         return kvData(0, timeutil::ptime(), -32767,
-                      0, timeutil::ptime(), 0, 0, 0, -32767,
+                      0, timeutil::ptime(), 0, 0, 0, -99999,
                       std::string("FFFFFFFFFFFFFFFF"),
                       std::string("FFFFFFFFFFFFFFFF"),
                       "no-row-in-errorlist");

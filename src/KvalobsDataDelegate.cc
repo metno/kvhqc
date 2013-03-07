@@ -121,7 +121,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
         const int stationid = kvalobsData->stnr();
         typ = mainWindow->findTypeId(typ, stationid, paramid, obt);
     }
-    if (typ == -32767) {
+    if (typ <= -32767) {
         QMessageBox::information(mainWindow, tr("Illegal parameter"),
                                  tr("This parameter is not in obs_pgm for this station."),
                                  QMessageBox::Ok, Qt::NoButton);

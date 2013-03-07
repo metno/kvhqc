@@ -40,124 +40,13 @@
 
 #include <stdexcept>
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
 
 namespace model
 {
 KvalobsDataView::KvalobsDataView(QWidget* parent)
     : QTableView(parent)
-{
-    setup_();
-}
-
-KvalobsDataView::~KvalobsDataView()
-{
-}
-
-void KvalobsDataView::toggleShowFlags(bool show)
-{
-    const KvalobsDataModel * model = getModel_();
-    if ( model ) {
-        int columns = model->columnCount();
-        for ( int i = 0; i < columns; ++ i)
-            if ( model->getColumnType(i) == KvalobsDataModel::Flag )
-                setColumnHidden (i, not show);
-    }
-}
-
-void KvalobsDataView::toggleShowOriginal(bool show)
-{
-    const KvalobsDataModel * model = getModel_();
-    if ( model ) {
-        int columns = model->columnCount();
-        for ( int i = 0; i < columns; ++ i)
-            if ( model->getColumnType(i) == KvalobsDataModel::Original )
-                setColumnHidden (i, not show);
-    }
-}
-
-void KvalobsDataView::toggleShowModelData(bool show)
-{
-    const KvalobsDataModel * model = getModel_();
-    if (not model)
-        return;
-
-    const int columns = model->columnCount();
-    for (int i=0; i<columns; ++i) {
-        if (model->getColumnType(i) != KvalobsDataModel::Model)
-            continue;
-        const bool showParam
-            = show and (KvMetaDataBuffer::instance()->isModelParam(model->getParameter(i).paramid));
-        setColumnHidden(i, not showParam);
-    }
-}
-
-void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
-{
-    LOG_SCOPE();
-    DBG(DBG1(stationid) << DBG1(obstime) << DBG1(typeID));
-
-    const KvalobsDataModel * model = getModel_();
-    if ( ! model )
-        return;
-
-    QModelIndex current = currentIndex();
-    if ( not current.isValid() ) {
-        current = model->index(0, 0);
-        if ( not current.isValid() )
-            return;
-    }
-
-    int row = model->dataRow(stationid, obstime, KvalobsDataModel::OBSTIME_EXACT, typeID);
-    int column = current.column();
-    QModelIndex index = model->index(row, column);
-
-    blockSignals(true);
-    if ( index.isValid() ) {
-        setCurrentIndex(index);
-        selectRow(row);
-    } else {
-        clearSelection();
-    }
-    blockSignals(false);
-}
-
-void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
-{
-    const KvalobsDataModel * model = getModel_();
-    if ( ! model )
-        return;
-
-    const KvalobsData * data = model->kvalobsData(currentIndex());
-    if ( data )
-        selectStation(data->stnr(), obstime, data->showTypeId());
-}
-
-void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
-{
-    LOG_SCOPE();
-    QTableView::currentChanged(current, previous);
-
-    if (not current.isValid())
-        return;
-    
-    const KvalobsDataModel * model = getModel_();
-    if (not model)
-        return;
-
-    try {
-        /*emit*/ signalNavigateTo(model->getKvData_(current));
-    } catch (std::exception&) {
-    }
-}
-
-const KvalobsDataModel * KvalobsDataView::getModel_() const
-{
-    return dynamic_cast<const KvalobsDataModel *>(model());
-}
-
-void KvalobsDataView::setup_()
 {
     setAttribute(Qt::WA_DeleteOnClose);
     const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
@@ -171,4 +60,97 @@ void KvalobsDataView::setup_()
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     setItemDelegate(new KvalobsDataDelegate(this));
 }
+
+KvalobsDataView::~KvalobsDataView()
+{
+}
+
+void KvalobsDataView::toggleShowFlags(bool show)
+{
+    const KvalobsDataModel* model = getModel_();
+    const int columns = model->columnCount();
+    for (int i=0; i<columns; ++i)
+        if (model->getColumnType(i) == KvalobsDataModel::Flag)
+            setColumnHidden (i, not show);
+}
+
+void KvalobsDataView::toggleShowOriginal(bool show)
+{
+    const KvalobsDataModel* model = getModel_();
+    const int columns = model->columnCount();
+    for (int i=0; i<columns; ++i)
+        if (model->getColumnType(i) == KvalobsDataModel::Original)
+            setColumnHidden (i, not show);
+}
+
+void KvalobsDataView::toggleShowModelData(bool show)
+{
+    const KvalobsDataModel * model = getModel_();
+    const int columns = model->columnCount();
+    for (int i=0; i<columns; ++i) {
+        if (model->getColumnType(i) != KvalobsDataModel::Model)
+            continue;
+        const bool showParam
+            = show and (KvMetaDataBuffer::instance()->isModelParam(model->getParameter(i).paramid));
+        setColumnHidden(i, not showParam);
+    }
+}
+
+void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
+{
+    LOG_SCOPE("KvalobsDataView");
+    LOG4SCOPE_DEBUG(DBG1(stationid) << DBG1(obstime) << DBG1(typeID));
+
+    const KvalobsDataModel* model = getModel_();
+
+    QModelIndex current = currentIndex();
+    if (not current.isValid()) {
+        current = model->index(0, 0);
+        if (not current.isValid())
+            return;
+    }
+
+    const int row = model->dataRow(stationid, obstime, KvalobsDataModel::OBSTIME_EXACT, typeID);
+    const QModelIndex index = model->index(row, current.column());
+
+    blockSignals(true);
+    if (index.isValid()) {
+        setCurrentIndex(index);
+        selectRow(row);
+    } else {
+        clearSelection();
+    }
+    blockSignals(false);
+}
+
+void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
+{
+    LOG_SCOPE("KvalobsDataView");
+
+    const KvalobsData* data = getModel_()->kvalobsData(currentIndex());
+    if (data)
+        selectStation(data->stnr(), obstime, data->showTypeId());
+}
+
+void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
+{
+    LOG_SCOPE("KvalobsDataView");
+    QTableView::currentChanged(current, previous);
+
+    if (not current.isValid())
+        return;
+    
+    try {
+        const kvalobs::kvData d = getModel_()->getKvData_(current);
+        /*emit*/ signalNavigateTo(d);
+    } catch (std::exception&) {
+        // should be a problem in getKvData_
+    }
+}
+
+const KvalobsDataModel * KvalobsDataView::getModel_() const
+{
+    return static_cast<const KvalobsDataModel *>(model());
+}
+
 } // namespace model

@@ -47,6 +47,9 @@ public:
     virtual const Result insert(std::list<kvalobs::kvData> &dl) const;
 
     virtual const Result insert(const kvalobs::serialize::KvalobsData& data) const;
+
+private:
+    CKvalObs::CDataSource::Result_var fail(const std::string& why) const;
 };
 
 #endif // __HqcDataReinserter_h__

@@ -41,13 +41,14 @@ class kvData;
 
 namespace model
 {
+
 class KvalobsDataModel;
 
 class KvalobsDataView : public QTableView
 { Q_OBJECT
 public:
     KvalobsDataView(QWidget* parent);
-    virtual ~KvalobsDataView();
+    ~KvalobsDataView();
                               
 public Q_SLOTS:
     void toggleShowFlags(bool show);
@@ -61,11 +62,10 @@ Q_SIGNALS:
     void signalNavigateTo(const kvalobs::kvData&);
                                                          
 protected Q_SLOTS:
-    virtual void currentChanged(const QModelIndex & current, const QModelIndex & previous);
+    void currentChanged(const QModelIndex & current, const QModelIndex & previous);
 
 private:
-    const KvalobsDataModel * getModel_() const;
-    void setup_();
+    const KvalobsDataModel* getModel_() const;
 };
 
 } // namespace model
