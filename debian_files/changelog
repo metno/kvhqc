@@ -1,3 +1,10 @@
+kvhqc (2.18.3-1) unstable; urgency=low
+
+  * in error list, allow QC2 on first click, forbid on second
+  * fixed day of week in WatchRR2
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 19 Mar 2013 17:24:12 +0100
+
 kvhqc (2.18.2-1) unstable; urgency=low
 
   * for physical limits, use <= and >= instead of < and >

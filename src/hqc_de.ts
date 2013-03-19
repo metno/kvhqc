@@ -429,71 +429,65 @@ Parameter</translation>
         <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="596"/>
+        <location filename="errorlist.cc" line="591"/>
         <source>Missing list</source>
         <translation>Mangelliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="597"/>
+        <location filename="errorlist.cc" line="592"/>
         <source>Missing list does not contain more elements that shown in the error list</source>
         <translation>Mangelliste enthält nicht mehr Elemente als in der Fehlerliste gezeigt werden</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="598"/>
+        <location filename="errorlist.cc" line="593"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="758"/>
         <source>Not authenticated</source>
-        <translation>Nicht authentifiziert</translation>
+        <translation type="obsolete">Nicht authentifiziert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="759"/>
         <source>You are not authenticated as operator. Cannot save sata.</source>
-        <translation>Sie sind nicht als Operateur authentifiziert. Kann keine Daten speichern.</translation>
+        <translation type="obsolete">Sie sind nicht als Operateur authentifiziert. Kann keine Daten speichern.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="749"/>
+        <location filename="errorlist.cc" line="744"/>
         <source>No unsaved data</source>
         <translation>Keine ungespeicherten Daten</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="570"/>
         <source>Error List</source>
-        <translation>Fehlerliste</translation>
+        <translation type="obsolete">Fehlerliste</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="571"/>
         <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
 %1</source>
-        <translation>Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
+        <translation type="obsolete">Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="750"/>
+        <location filename="errorlist.cc" line="745"/>
         <source>There are no unsaved data.</source>
         <translation>Keine ungespeicherten Daten vorhanden.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="772"/>
         <source>Cannot save data</source>
-        <translation>Kann Daten nicht speichern</translation>
+        <translation type="obsolete">Kann Daten nicht speichern</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="773"/>
         <source>Cannot save data! Message from kvalobs was:
 %1</source>
-        <translation>Kann Daten nicht speichern! Meldung von Kvalobs ist:
+        <translation type="obsolete">Kann Daten nicht speichern! Meldung von Kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="779"/>
+        <location filename="errorlist.cc" line="752"/>
         <source>Data saved</source>
         <translation>Daten gespeichert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="780"/>
+        <location filename="errorlist.cc" line="753"/>
         <source>%1 rows have been saved to kvalobs. Warning: data shown in error and data list might no longer be consistent with kvalobs.</source>
         <oldsource>%1 rows have been saved to kvalobs. Be aware that data shown in error and data list might no longer be consistent with kvalobs</oldsource>
         <translation>%1 Zeilen wurden in kvalobs gespeichert. Warnung: Datenliste und Fehlerliste sind möglicherweise nicht länger konsistent mit kvalobs.</translation>
@@ -503,27 +497,27 @@ Parameter</translation>
         <translation type="obsolete">%1 Zeilen wurden in kvalobs gespeichert.</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="798"/>
+        <location filename="errorlist.cc" line="772"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="799"/>
+        <location filename="errorlist.cc" line="773"/>
         <source>You have unsaved changes in the error list. Do you want to save them?</source>
         <translation>Die Fehlerliste enthält ungespeicherte Änderungen. Möchten Sie diese speichern?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="800"/>
+        <location filename="errorlist.cc" line="774"/>
         <source>&amp;Yes</source>
         <translation>&amp;Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="800"/>
+        <location filename="errorlist.cc" line="774"/>
         <source>&amp;No</source>
         <translation>&amp;Nein</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="800"/>
+        <location filename="errorlist.cc" line="774"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
@@ -987,54 +981,56 @@ Parameter</translation>
         <translation>Willkommen zu kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="321"/>
+        <location filename="hqcmain.cc" line="325"/>
+        <location filename="hqcmain.cc" line="346"/>
         <source>Unable to insert</source>
         <translation>Kann nicht einfügen</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="322"/>
+        <location filename="hqcmain.cc" line="326"/>
+        <location filename="hqcmain.cc" line="347"/>
         <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
 %1</source>
         <translation>Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
 %1</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="334"/>
+        <location filename="hqcmain.cc" line="359"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
         <translation>&lt;h1&gt;Diana-Verbindung&lt;/h1&gt;Kein Kontakt mit diana! Sie sollten hqc und diana mit dem Kommando-server verbinden, indem Sie den Knopf unten rechts drücken.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="343"/>
+        <location filename="hqcmain.cc" line="368"/>
         <source>No stations selected! At least one statione must be chosen.</source>
         <translation>Keine Stationen ausgwählt. Mindestens eine Station muss gewählt werden.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="362"/>
+        <location filename="hqcmain.cc" line="387"/>
         <source>Weather Element</source>
         <translation>Wetter-Element</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="342"/>
+        <location filename="hqcmain.cc" line="367"/>
         <source>Station Selection</source>
         <translation>Stastionswahl</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="352"/>
+        <location filename="hqcmain.cc" line="377"/>
         <source>Time Selection</source>
         <translation>Zeitwahl</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="353"/>
+        <location filename="hqcmain.cc" line="378"/>
         <source>No times selected! At least one time must be selected.</source>
         <translation>Kein Zeitpunkt gewählt! Mindestens ein Zeitpunkt muss gewählt werden.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="363"/>
+        <location filename="hqcmain.cc" line="388"/>
         <source>No weather element selected! At least one has to be chosen.</source>
         <translation>Kein Wetter-Element ausgewählt. Mindestens eins muss ausgewählt werden.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="381"/>
+        <location filename="hqcmain.cc" line="406"/>
         <source>Building data list...</source>
         <translation>Baue Datenliste...</translation>
     </message>
@@ -1043,124 +1039,124 @@ Parameter</translation>
         <translation type="obsolete">Dataliste</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="426"/>
+        <location filename="hqcmain.cc" line="451"/>
         <source>Building error list...</source>
         <translation>Baue Fehlerliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="572"/>
+        <location filename="hqcmain.cc" line="597"/>
         <source>Loading station info...</source>
         <translation>Lade Stationsinfo...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="598"/>
+        <location filename="hqcmain.cc" line="623"/>
         <source>No Textdata</source>
         <translation>Keine Textdaten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="598"/>
+        <location filename="hqcmain.cc" line="623"/>
         <source>Could not read text data.</source>
         <translation>Kann Textdaten nicht lesen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="615"/>
+        <location filename="hqcmain.cc" line="640"/>
         <source>No RejectDecode</source>
         <translation>Kein RejectDecode</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="615"/>
+        <location filename="hqcmain.cc" line="640"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kann rejectdecode nicht lesen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="671"/>
-        <location filename="hqcmain.cc" line="677"/>
+        <location filename="hqcmain.cc" line="696"/>
+        <location filename="hqcmain.cc" line="702"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="672"/>
+        <location filename="hqcmain.cc" line="697"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Ihre Änderungen konnten nicht gespeichert werden und sind leider verloren!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="673"/>
-        <location filename="hqcmain.cc" line="679"/>
+        <location filename="hqcmain.cc" line="698"/>
+        <location filename="hqcmain.cc" line="704"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="678"/>
+        <location filename="hqcmain.cc" line="703"/>
         <source>Your changes have been saved.</source>
         <translation>Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="788"/>
+        <location filename="hqcmain.cc" line="813"/>
         <source>%1 - Accepting Data</source>
         <translation>%1 -Daten akzeptieren</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="842"/>
+        <location filename="hqcmain.cc" line="867"/>
         <source>%1 - Rejecting Data</source>
         <translation>%1 - Daten verwerfen</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="875"/>
+        <location filename="hqcmain.cc" line="900"/>
         <source>Print screenshot</source>
         <translation>Bildschirmfoto ausdrucken</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="899"/>
+        <location filename="hqcmain.cc" line="924"/>
         <source>HQC - Update</source>
         <translation>HQC - Aktualisierung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="900"/>
+        <location filename="hqcmain.cc" line="925"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1053"/>
+        <location filename="hqcmain.cc" line="1078"/>
         <source>Data Retrieval</source>
         <translation>Einlesen von Daten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1054"/>
+        <location filename="hqcmain.cc" line="1079"/>
         <source>An error occured when attempting to retrieve data from kvalobs.</source>
         <translation>Beim Lesen von Daten von kvalobs ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1059"/>
+        <location filename="hqcmain.cc" line="1084"/>
         <source>Reading model data...</source>
         <translation>Lese Modelldaten...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1066"/>
+        <location filename="hqcmain.cc" line="1091"/>
         <source>Model Data Retrieval</source>
         <translation>Lesen von Modelldaten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1067"/>
+        <location filename="hqcmain.cc" line="1092"/>
         <source>An error occured when attempting to retrieve model data from kvalobs.</source>
         <translation>Beim Lesen der Modelldaten von kvalobs ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1100"/>
+        <location filename="hqcmain.cc" line="1125"/>
         <source>The kvalobs databasen is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1101"/>
+        <location filename="hqcmain.cc" line="1126"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Dataenbank nicht benutzt werden kann.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1233"/>
+        <location filename="hqcmain.cc" line="1258"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1234"/>
+        <location filename="hqcmain.cc" line="1259"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at met.no.
@@ -1173,17 +1169,17 @@ Das Programm wird von Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1351"/>
+        <location filename="hqcmain.cc" line="1367"/>
         <source>Reading data for station %1</source>
         <translation>Lese Daten für Station %1</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1493"/>
+        <location filename="hqcmain.cc" line="1508"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="1494"/>
+        <location filename="hqcmain.cc" line="1509"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
@@ -2039,7 +2035,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation type="obsolete">Ausländische Stationen können nicht korrigiert werden</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="125"/>
+        <location filename="KvalobsDataDelegate.cc" line="123"/>
         <source>Illegal parameter</source>
         <translation>Parameter nicht erlaubt</translation>
     </message>
@@ -2048,8 +2044,8 @@ Sie benutzen HQC Version %1.</translation>
         <translation type="obsolete">Dieser Parameter steht nicht im obs_pgm für diese Station</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="132"/>
-        <location filename="KvalobsDataDelegate.cc" line="144"/>
+        <location filename="KvalobsDataDelegate.cc" line="130"/>
+        <location filename="KvalobsDataDelegate.cc" line="142"/>
         <source>Illegal value</source>
         <translation>Wert nicht erlaubt</translation>
     </message>
@@ -2058,7 +2054,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation type="obsolete">Wert außerhalb physikalischer Grenzen</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="138"/>
+        <location filename="KvalobsDataDelegate.cc" line="136"/>
         <source>Illegal time</source>
         <translation>Zeitpunkt nicht erlaubt</translation>
     </message>
@@ -2072,37 +2068,37 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Kann Daten nicht ändern.</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="126"/>
+        <location filename="KvalobsDataDelegate.cc" line="124"/>
         <source>This parameter is not in obs_pgm for this station.</source>
         <translation>Dieser Parameter ist für diesen Zeitpunkt nicht in obs_pgm.</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="133"/>
+        <location filename="KvalobsDataDelegate.cc" line="131"/>
         <source>Value outside physical limits.</source>
         <translation>Wert außerhalb physikalischer Grenzen.</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="139"/>
+        <location filename="KvalobsDataDelegate.cc" line="137"/>
         <source>This parameter cannot be saved for this time.</source>
         <translation>Dieser Parameter kann für diesen Zeitpunkt nicht gespeichert werden.</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="145"/>
+        <location filename="KvalobsDataDelegate.cc" line="143"/>
         <source>Legal values are -5 and -6</source>
         <translation>Erleubte Werte sind -5 und -6</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="153"/>
+        <location filename="KvalobsDataDelegate.cc" line="151"/>
         <source>Do you want to reject %1?</source>
         <translation>Möchten Sie %1 verwerfen?</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="155"/>
+        <location filename="KvalobsDataDelegate.cc" line="153"/>
         <source>Do you want to change %1 to %2?</source>
         <translation>Möchten Sie %1 nach %2 ändern?</translation>
     </message>
     <message>
-        <location filename="KvalobsDataDelegate.cc" line="157"/>
+        <location filename="KvalobsDataDelegate.cc" line="155"/>
         <source>Correction</source>
         <translation>Korrektion</translation>
     </message>
@@ -2118,17 +2114,17 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>model::KvalobsDataModel</name>
     <message>
-        <location filename="KvalobsDataModel.cc" line="125"/>
+        <location filename="KvalobsDataModel.cc" line="126"/>
         <source>Aggregated</source>
         <translation>Aggregiert</translation>
     </message>
     <message>
-        <location filename="KvalobsDataModel.cc" line="230"/>
+        <location filename="KvalobsDataModel.cc" line="231"/>
         <source>Data Change</source>
         <translation>Daten-Änderung</translation>
     </message>
     <message>
-        <location filename="KvalobsDataModel.cc" line="231"/>
+        <location filename="KvalobsDataModel.cc" line="232"/>
         <source>Confirm typeid:</source>
         <translation>Typeid bestätigen:</translation>
     </message>
@@ -2136,7 +2132,7 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>model::KvalobsDataView</name>
     <message>
-        <location filename="KvalobsDataView.cc" line="165"/>
+        <location filename="KvalobsDataView.cc" line="54"/>
         <source>Data List</source>
         <translation>Datenliste</translation>
     </message>
