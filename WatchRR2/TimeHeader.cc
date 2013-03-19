@@ -5,13 +5,13 @@
 
 namespace /* anonymous */ {
 const char* weekdays[7] = {
+    QT_TRANSLATE_NOOP("TimeHeader", "Sun"),
     QT_TRANSLATE_NOOP("TimeHeader", "Mon"),
     QT_TRANSLATE_NOOP("TimeHeader", "Tue"),
     QT_TRANSLATE_NOOP("TimeHeader", "Wed"),
     QT_TRANSLATE_NOOP("TimeHeader", "Thu"),
     QT_TRANSLATE_NOOP("TimeHeader", "Fri"),
-    QT_TRANSLATE_NOOP("TimeHeader", "Sat"),
-    QT_TRANSLATE_NOOP("TimeHeader", "Sun")
+    QT_TRANSLATE_NOOP("TimeHeader", "Sat")
 };
 } // namespace anonymous
 

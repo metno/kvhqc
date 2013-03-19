@@ -703,37 +703,37 @@
 <context>
     <name>TimeHeader</name>
     <message>
-        <location filename="TimeHeader.cc" line="8"/>
+        <location filename="TimeHeader.cc" line="9"/>
         <source>Mon</source>
         <translation>Man</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="9"/>
+        <location filename="TimeHeader.cc" line="10"/>
         <source>Tue</source>
         <translation>Tir</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="10"/>
+        <location filename="TimeHeader.cc" line="11"/>
         <source>Wed</source>
         <translation>Ons</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="11"/>
+        <location filename="TimeHeader.cc" line="12"/>
         <source>Thu</source>
         <translation>Tor</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="12"/>
+        <location filename="TimeHeader.cc" line="13"/>
         <source>Fri</source>
         <translation>Fre</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="13"/>
+        <location filename="TimeHeader.cc" line="14"/>
         <source>Sat</source>
         <translation>Lør</translation>
     </message>
     <message>
-        <location filename="TimeHeader.cc" line="14"/>
+        <location filename="TimeHeader.cc" line="8"/>
         <source>Sun</source>
         <translation>Søn</translation>
     </message>
