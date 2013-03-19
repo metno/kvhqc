@@ -265,11 +265,11 @@ bool ErrorListTableModel::setData(const QModelIndex& index, const QVariant& valu
         const ErrorList::mem_change mc = change4column(column);
         if (mo.change != mc) {
             mo.change = mc;
-            mo.changed_qc2allowed = false;
-        } else if (mo.changed_qc2allowed) {
+            mo.changed_qc2allowed = true;
+        } else if (not mo.changed_qc2allowed) {
             mo.change = ErrorList::NO_CHANGE;
         } else {
-            mo.changed_qc2allowed = true;
+            mo.changed_qc2allowed = false;
         }
         LOG4SCOPE_DEBUG("cb change " << DBG1(mo.change) << DBG1(mo.changed_qc2allowed));
     } else if ((column==COL_INTERPOLATED or column==COL_CORRECTED) and role == Qt::EditRole) {
