@@ -48,8 +48,8 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
     if (mFetched.find(f) != mFetched.end())
         return KvalobsDataPtr();
 
-    LOG_SCOPE();
-    DBG(DBG1(st.sensor.stationId) << DBG1(st.sensor.paramId) << DBG1(st.time));
+    LOG_SCOPE("KvalobsAccess");
+    LOG4SCOPE_DEBUG(DBG1(st.sensor.stationId) << DBG1(st.sensor.paramId) << DBG1(st.time));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
@@ -58,13 +58,12 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
     if (kvservice::KvApp::kvApp->getKvData(get, whichData))
         mFetched.insert(f);
     else
-        std::cerr << "problem receiving data" << std::endl;
+        LOG4HQC_ERROR("KvalobsAccess", "problem receiving data");
     return KvBufferedAccess::find(st);
 }
 
 void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 {
-    LOG_SCOPE();
     BOOST_FOREACH(kvservice::KvObsData& od, dl) {
         BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList())
             receive(kvd);
@@ -73,9 +72,11 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
 {
+    LOG_SCOPE("KvalobsAccess");
     if (not mDataReinserter)
         return false;
 
+    LOG4SCOPE_DEBUG(updates.size() << " updates");
     if (updates.empty())
         return true;
 
@@ -87,16 +88,11 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         const SensorTime st(ou.obs->sensorTime());
         KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
-        if (not obs) {
-            // TODO is this an error?
-            DBGL;
+        if (not obs)
             obs = boost::static_pointer_cast<KvalobsData>(create(st));
-        }
         const bool inserted = obs->isCreated();
         
         kvalobs::kvData& d = obs->data();
-        if (d.corrected() == kvalobs::NEW_ROW)
-            continue; // FIXME this is actually an error
         if (not Helpers::float_eq()(d.corrected(), ou.corrected))
             d.corrected(ou.corrected);
         if (d.controlinfo() != ou.controlinfo)
@@ -117,6 +113,7 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         //    << " ins=" << (inserted ? "y" : "n")
         //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
+    LOG4SCOPE_DEBUG(store.size() << " to store");
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
     if (res->res == CKvalObs::CDataSource::OK) {

@@ -134,6 +134,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     const Codes_t oldCodes = getCodes(obs1, obs2);
 
     const QString v = value.toString();
+    LOG4SCOPE_DEBUG(DBG1(v));
     if (v == "") {
         mDA->pushUpdate();
         bool changed = false;
@@ -157,6 +158,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
         if (mc == vxdata[i].metCode)
             break;
     }
+    LOG4SCOPE_DEBUG(DBG1(vxdata[i].code));
     if (vxdata[i].code < 0)
         return false;
     const int newCode1 = vxdata[i].code;
@@ -179,6 +181,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
         if (not obs1)
             obs1 = mDA->createE(st);
         Helpers::correct(mDA->editor(obs1), newCode1);
+        LOG4SCOPE_DEBUG(DBG1(obs1->corrected()));
     }
     if (newCode2 != oldCodes.second) {
         if (not pushed)
@@ -189,6 +192,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
             obs2 = mDA->createE(st2);
         }
         Helpers::correct(mDA->editor(obs2), newCode2);
+        LOG4SCOPE_DEBUG(DBG1(obs2->corrected()));
     }
     return true;
 }
@@ -198,7 +202,7 @@ bool DataVxItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs
 {
     return (eq_Sensor()(sensorColumn, sensorObs)
             or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
-        return true;
+    return true;
 }
 
 QString DataVxItem::description(bool mini) const

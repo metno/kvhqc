@@ -136,7 +136,7 @@ void reject(EditDataEditorPtr editor) // same as kvDataOperations.cc
         editor->setCorrected(kvalobs::REJECTED);
 }
 
-void correct(EditDataEditorPtr editor, float newC) // same as kvDataOperations.cc, except that it sets fmis=0
+void correct(EditDataEditorPtr editor, float newC)
 {
     const FlagChange fc_diff("fmis=3->fmis=1;fmis=[02]->fmis=4;fhqc=7");
     editor->changeControlinfo(fc_diff);
