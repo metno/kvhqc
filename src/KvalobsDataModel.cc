@@ -420,7 +420,7 @@ void KvalobsDataModel::setShowFlag(bool& showFlag, bool showNow)
 {
     if (showFlag != showNow) {
         showFlag = showNow;
-        /*emit*/ headerDataChanged(Qt::Vertical, 0, rowCount());
+        /*emit*/ headerDataChanged(Qt::Vertical, 0, rowCount()-1);
     }
 }
 
