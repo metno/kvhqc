@@ -150,6 +150,7 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     QAction* lackListAction = new QAction(tr("&Missing list"), this);
     lackListAction->setShortcut(tr("Ctrl+M"));
     connect(lackListAction, SIGNAL(activated()), this, SLOT(setupMissingList()));
+    addAction(lackListAction);
     
     connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
@@ -187,6 +188,7 @@ void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
                                 const timeutil::ptime& etime,
                                 model::KvalobsDataListPtr dtl)
 {
+    LOG_SCOPE("ErrorList");
     int missCount = 0;
     int prevTime = -12345678;
     int prevStat = -1;
@@ -218,6 +220,7 @@ void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
                     missCount = 0;
                 }
                 if (tdiff - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4) {
+                    LOG4SCOPE_DEBUG(DBG1(mobs.oTime) << DBG1(mobs.statno) << DBG1(parameterID) << DBG1(missCount));
                     mList.push_back(mobs);
                 }
                 missCount++;
@@ -232,8 +235,10 @@ void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
 bool ErrorList::obsInMissList(const mem& memO)
 {
     BOOST_FOREACH(const missObs& miss, mList) {
-        if( miss.statno == memO.stnr && miss.parno == memO.parNo && miss.oTime == memO.obstime )
+        if( miss.statno == memO.stnr && miss.parno == memO.parNo && miss.oTime == memO.obstime ) {
+            LOG4HQC_DEBUG("ErrorList", "obs in miss list");
             return true;
+        }
     }
     return false;
 }
@@ -263,6 +268,7 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
         memObs.stnr = data.stnr();
 
         BOOST_FOREACH(const int parameterID, selectedParameters) {
+            LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
             if (not specialTimeFilter(parameterID, data.otime()))
                 continue;
             if (not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
@@ -297,6 +303,7 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                                   memObs.controlinfo,
                                   memObs.cfailed,
                                   flTyp);
+            LOG4SCOPE_DEBUG(DBG1(flg) << DBG1(flTyp));
             if( flg > -3 and flg <= 1 )
                 continue;
             if( flg == -3 )
@@ -594,7 +601,7 @@ void ErrorList::setupMissingList()
         return;
 
     const mem& m = getMem(row);
-    if (m.controlinfo[4] == '6')
+    if (m.controlinfo[kvalobs::flag::fnum] == '6')
         execMissingList();
 }
 
