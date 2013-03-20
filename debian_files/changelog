@@ -1,3 +1,10 @@
+kvhqc (2.18.4-1) unstable; urgency=low
+
+  * enable Ctrl-M to show missing list
+  * save new rows in WatchRR2
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 20 Mar 2013 17:27:00 +0100
+
 kvhqc (2.18.3-1) unstable; urgency=low
 
   * in error list, allow QC2 on first click, forbid on second
