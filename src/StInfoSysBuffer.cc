@@ -22,6 +22,7 @@
 #include <boost/foreach.hpp>
 #include <boost/range.hpp>
 
+#include <iomanip>
 #include <fstream>
 #include <set>
 

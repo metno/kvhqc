@@ -13,6 +13,7 @@
 
 #include <boost/foreach.hpp>
 
+#include <iomanip>
 #include <sstream>
 
 #define NDEBUG
