@@ -42,7 +42,6 @@
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
-#include "missingtable.h"
 
 #include <kvalobs/kvDataOperations.h>
 #include <kvcpp/KvApp.h>
@@ -147,11 +146,6 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     QSortFilterProxyModel* sortProxy = new QSortFilterProxyModel(this);
     setModel(sortProxy);
     
-    QAction* lackListAction = new QAction(tr("&Missing list"), this);
-    lackListAction->setShortcut(tr("Ctrl+M"));
-    connect(lackListAction, SIGNAL(activated()), this, SLOT(setupMissingList()));
-    addAction(lackListAction);
-    
     connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
     
@@ -181,66 +175,6 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
 
 ErrorList::~ErrorList()
 {
-}
-
-void ErrorList::makeMissingList(const std::vector<int>& selectedParameters,
-                                const timeutil::ptime& stime,
-                                const timeutil::ptime& etime,
-                                model::KvalobsDataListPtr dtl)
-{
-    LOG_SCOPE("ErrorList");
-    int missCount = 0;
-    int prevTime = -12345678;
-    int prevStat = -1;
-    int prevPara = -1;
-    BOOST_FOREACH(const int parameterID, selectedParameters) {
-        BOOST_FOREACH(const model::KvalobsData& data, *dtl) {
-            if( data.stnr() > 99999 )
-                continue;
-            //??
-            //      if (  data.typeId(parameterID) < 0 )
-            //        continue;
-            //??
-            if (data.otime() < stime || data.otime() > etime)
-                continue;
-            if (not specialTimeFilter(parameterID, data.otime()))
-                continue;
-            if (not typeFilter(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
-                continue;
-            
-            const int fnum = data.controlinfo(parameterID).flag(kvalobs::flag::fnum);
-            if( fnum == 6 ) {
-                const int tdiff = timeutil::hourDiff(data.otime(),stime);
-                missObs mobs;
-                mobs.oTime = data.otime();
-                mobs.parno  = parameterID;
-                mobs.statno = data.stnr();
-                mobs.missNo = missCount;
-                if (tdiff - prevTime != 1 || mobs.parno != prevPara || mobs.statno != prevStat) {
-                    missCount = 0;
-                }
-                if (tdiff - prevTime == 1 && mobs.parno == prevPara && mobs.statno == prevStat && missCount > 4) {
-                    LOG4SCOPE_DEBUG(DBG1(mobs.oTime) << DBG1(mobs.statno) << DBG1(parameterID) << DBG1(missCount));
-                    mList.push_back(mobs);
-                }
-                missCount++;
-                prevTime = tdiff;
-                prevStat = mobs.statno;
-                prevPara = mobs.parno;
-            }
-        }
-    }
-}
-
-bool ErrorList::obsInMissList(const mem& memO)
-{
-    BOOST_FOREACH(const missObs& miss, mList) {
-        if( miss.statno == memO.stnr && miss.parno == memO.parNo && miss.oTime == memO.obstime ) {
-            LOG4HQC_DEBUG("ErrorList", "obs in miss list");
-            return true;
-        }
-    }
-    return false;
 }
 
 void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
@@ -291,12 +225,6 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                     }
                 }
             }
-
-            if( obsInMissList(memObs) ) {
-                missList.push_back(memObs);
-                continue;
-            }
-
             // priority filters for controls and parameters
             QString flTyp = "";
             int flg = errorFilter(parameterID,
@@ -363,7 +291,6 @@ void ErrorList::makeErrorList(const std::vector<int>& selectedParameters,
     LOG_SCOPE("ErrorList");
     BusyIndicator busyIndicator;
 
-    makeMissingList(selectedParameters, stime, etime, dtl);
     fillMemoryStores(selectedParameters, stime, etime, lity, dtl, mdtl);
 
     std::vector<mem> errorList;
@@ -563,9 +490,9 @@ void ErrorList::updateKvBase(const mem& memStore)
     kvalobs::kvData kd = getKvData(memStore);
 
     //TODO: Remove next 3 lines when the new QC1-9 is ready
-    kvControlInfo cif = kd.controlinfo();
-    cif.set(kvalobs::flag::fhqc, 2);
-    kd.controlinfo(cif);
+    //    kvControlInfo cif = kd.controlinfo();
+    //    cif.set(kvalobs::flag::fhqc, 2);
+    //    kd.controlinfo(cif);
 
     mainWindow->saveDataToKvalobs(kd);
 }
@@ -578,31 +505,6 @@ void ErrorList::signalStationSelected()
     mLastSelectedRow = row;
 
     /*emit*/ signalNavigateTo(getKvData(row));
-}
-
-void ErrorList::execMissingList()
-{
-    BusyIndicator busy;
-    if( not mList.empty() ) {
-        MissingTable* mt = new MissingTable( 0, this);
-        mt->show();
-    } else {
-        QMessageBox::information(this,
-                                 tr("Missing list"),
-                                 tr("Missing list does not contain more elements that shown in the error list"),
-                                 tr("OK"));
-    }
-}
-
-void ErrorList::setupMissingList()
-{
-    const int row = getSelectedRow();
-    if (row < 0)
-        return;
-
-    const mem& m = getMem(row);
-    if (m.controlinfo[kvalobs::flag::fnum] == '6')
-        execMissingList();
 }
 
 const ErrorList::mem& ErrorList::getMem(int row) const
