@@ -125,10 +125,7 @@ private:
                        int lity,
                        model::KvalobsDataListPtr dtl,
                        const std::vector<modDatl>& mdtl);
-    void makeMissingList(const std::vector<int>& selectedParameters,
-                         const timeutil::ptime& stime,
-                         const timeutil::ptime& etime,
-                         model::KvalobsDataListPtr dtl);
+
     void fillMemoryStores(const std::vector<int>& selectedParameters,
                           const timeutil::ptime& stime,
                           const timeutil::ptime& etime,
@@ -186,7 +183,7 @@ private:
      *
      * \return TRUE if observation is missing.
      */
-    bool obsInMissList(const mem&);
+  //    bool obsInMissList(const mem&);
     
     /*!
      * \brief Constructs a kvData object from a memory store object
@@ -204,9 +201,6 @@ private Q_SLOTS:
 
     void showSameStation();
     void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
-
-    void setupMissingList();
-    void execMissingList();
 
     void signalStationSelected();
 
