@@ -1,3 +1,11 @@
+kvhqc (2.18.5-1) unstable; urgency=low
+
+  * check time range when searching typeid in WatchWeather station selection
+  * show WMO/synop number in error list
+  * removed limitation to 5 missing rows
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 19 Apr 2013 15:03:47 +0200
+
 kvhqc (2.18.4-1) unstable; urgency=low
 
   * enable Ctrl-M to show missing list
