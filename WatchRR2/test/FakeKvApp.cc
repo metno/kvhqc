@@ -6,6 +6,10 @@
 
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
+
+#include <fstream>
 
 #define NDEBUG
 #include "debug.hh"
@@ -50,6 +54,38 @@ void FakeKvApp::insertData(int stationId, int paramId, int typeId, const std::st
     mData.insert(Data_t::value_type(st, data));
 }
 
+void FakeKvApp::insertDataFromFile(const std::string& filename)
+{
+    std::ifstream f(filename.c_str());
+    std::string line;
+
+    while (std::getline(f, line)) {
+        if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+            continue;
+
+        std::vector<std::string> columns;
+        boost::split(columns, line, boost::is_any_of("\t"));
+        if (columns.size() != 7 and columns.size() != 8) {
+            std::cerr << "bad line '" << line << "'" << std::endl;
+            continue;
+        }
+
+        unsigned int c = 0;
+        const int stationId = boost::lexical_cast<int>(columns[c++]);
+        const int paramId   = boost::lexical_cast<int>(columns[c++]);
+        const int typeId    = boost::lexical_cast<int>(columns[c++]);
+        const std::string obstime = columns[c++];
+        const float original  = boost::lexical_cast<float>(columns[c++]);
+        const float corrected = boost::lexical_cast<float>(columns[c++]);
+        const std::string controlinfo = columns[c++];
+        std::string cfailed;
+        if (c<columns.size())
+            cfailed = columns[c++];
+
+        insertData(stationId, paramId, typeId, obstime, original, corrected, controlinfo, cfailed);
+    }
+}
+
 bool FakeKvApp::eraseData(const SensorTime& st)
 {
     Data_t::iterator it = mData.find(st);
@@ -69,6 +105,32 @@ void FakeKvApp::insertModel(int stationId, int paramId, const std::string& obsti
     if (it != mModelData.end())
         mModelData.erase(it);
     mModelData.insert(ModelData_t::value_type(st, model));
+}
+
+void FakeKvApp::insertModelFromFile(const std::string& filename)
+{
+    std::ifstream f(filename.c_str());
+    std::string line;
+
+    while (std::getline(f, line)) {
+        if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+            continue;
+
+        std::vector<std::string> columns;
+        boost::split(columns, line, boost::is_any_of("\t"));
+        if (columns.size() != 4) {
+            std::cerr << "bad line '" << line << "'" << std::endl;
+            continue;
+        }
+
+        unsigned int c = 0;
+        const int stationId = boost::lexical_cast<int>(columns[c++]);
+        const int paramId   = boost::lexical_cast<int>(columns[c++]);
+        const std::string obstime = columns[c++];
+        const float original  = boost::lexical_cast<float>(columns[c++]);
+
+        insertModel(stationId, paramId, obstime, original);
+    }
 }
 
 bool FakeKvApp::eraseModel(const SensorTime& st)

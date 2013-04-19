@@ -26,6 +26,8 @@ public:
     int insertParam;
     int insertType;
 
+    void insertDataFromFile(const std::string& filename);
+
     void insertData(int stationId, int paramId, int typeId, const std::string& obstime, float orig, float corr,
                     const std::string& controlinfo="0000000000000000", const std::string& cfailed="");
 
@@ -38,6 +40,8 @@ public:
         { insertData(insertStation, insertParam, insertType, obstime, orig_corr, orig_corr, controlinfo, cfailed); }
     
     bool eraseData(const SensorTime& st);
+
+    void insertModelFromFile(const std::string& filename);
 
     void insertModel(int stationId, int paramId, const std::string& obstime, float value);
 
