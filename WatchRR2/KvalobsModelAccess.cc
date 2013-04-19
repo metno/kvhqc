@@ -35,12 +35,16 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
 
     std::list<kvalobs::kvModelData> model;    
-    if (kvservice::KvApp::kvApp->getKvModelData(model, whichData)) {
+    try {
+      if (kvservice::KvApp::kvApp->getKvModelData(model, whichData)) {
         mFetched.insert(f);
         BOOST_FOREACH(const kvalobs::kvModelData& md, model)
             receive(md);
-    } else {
-        std::cerr << "problem receiving model data" << std::endl;
+      } else {
+        LOG4HQC_ERROR("KvalobsModelAccess", "problem receiving model data");
+      }
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvalobsModelAccess", "exception while retrieving model data: " << e.what());
     }
     return KvModelAccess::find(st);
 }

@@ -619,12 +619,17 @@ void HqcMainWindow::textDataOK()
     whichData.addStation(stnr, timeutil::to_miTime(dtfrom), timeutil::to_miTime(dtto));
 
     GetTextData textDataReceiver;
-    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)) {
-        QMessageBox::critical(this, tr("No Textdata"), tr("Could not read text data."),
-                              QMessageBox::Ok, QMessageBox::NoButton);
-        return;
+    bool ok = false;
+    try {
+      ok = kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData);
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving text data: " << e.what());
     }
-
+    if (not ok) {
+      QMessageBox::critical(this, tr("No Textdata"), tr("Could not read text data."),
+          QMessageBox::Ok, QMessageBox::NoButton);
+      return;
+    }
     new TextData(textDataReceiver.textData(), this);
 }
 
@@ -636,10 +641,16 @@ void HqcMainWindow::rejectedOK()
     rdInfo.toTime = dateStr_( rejdlg->dtto );
     LOG4SCOPE_INFO(rdInfo.fromTime << " <-> " << rdInfo.toTime);
     kvservice::RejectDecodeIterator rdIt;
-    if (not kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt)) {
-        QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
-                              QMessageBox::Ok, QMessageBox::NoButton);
-        return;
+    bool ok = false;
+    try {
+      ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving rejectdecode data: " << e.what());
+    }
+    if (not ok) {
+      QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
+          QMessageBox::Ok, QMessageBox::NoButton);
+      return;
     }
 
     std::string decoder = "comobs";
@@ -1074,11 +1085,17 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   datalist = model::KvalobsDataListPtr(new model::KvalobsDataList);
   GetData dataReceiver(this);
 
-  if (not kvservice::KvApp::kvApp->getKvData(dataReceiver, whichData)) {
-      QMessageBox::critical(this, tr("Data Retrieval"),
-                            tr("An error occured when attempting to retrieve data from kvalobs."),
-                            QMessageBox::Abort, QMessageBox::NoButton);
-      return;
+  bool ok = false;
+  try {
+    ok = kvservice::KvApp::kvApp->getKvData(dataReceiver, whichData);
+  } catch (std::exception& e) {
+    LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving rejectdecode data: " << e.what());
+  }
+  if (not ok) {
+    QMessageBox::critical(this, tr("Data Retrieval"),
+        tr("An error occured when attempting to retrieve data from kvalobs."),
+        QMessageBox::Abort, QMessageBox::NoButton);
+    return;
   }
 
   statusBar()->message(tr("Reading model data..."));
@@ -1087,10 +1104,16 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
   modeldatalist.reserve(131072);
   modeldatalist.clear();
 
-  if (not kvservice::KvApp::kvApp->getKvModelData(mdlist, whichData)) {
-      QMessageBox::critical(this, tr("Model Data Retrieval"),
-                            tr("An error occured when attempting to retrieve model data from kvalobs."),
-                            QMessageBox::Ignore, QMessageBox::NoButton);
+  ok = false;
+  try {
+    ok = kvservice::KvApp::kvApp->getKvModelData(mdlist, whichData);
+  } catch (std::exception& e) {
+    LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving model data: " << e.what());
+  }
+  if (not ok) {
+    QMessageBox::critical(this, tr("Model Data Retrieval"),
+        tr("An error occured when attempting to retrieve model data from kvalobs."),
+        QMessageBox::Ignore, QMessageBox::NoButton);
   }
   modDatl mtdl;
   CIModelDataList it=mdlist.begin();

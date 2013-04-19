@@ -185,7 +185,11 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
     ObsPgms_t::iterator it = mObsPgms.find(stationid);
     if (it == mObsPgms.end()) {
         std::list<long> stations(1, stationid);
-        kvservice::KvApp::kvApp->getKvObsPgm(mObsPgms[stationid], stations, false);
+        try {
+          kvservice::KvApp::kvApp->getKvObsPgm(mObsPgms[stationid], stations, false);
+        } catch (std::exception& e) {
+          LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
+        }
     }
     return mObsPgms[stationid];
 }
@@ -196,8 +200,11 @@ void KvMetaDataBuffer::fetchStations()
     BusyIndicator wait;
     mHaveStations = true;
     mStations.clear();
-    if (not kvservice::KvApp::kvApp->getKvStations(mStations)) {
-        std::cerr << "could not fetch station list" << std::endl;
+    try {
+      if (not kvservice::KvApp::kvApp->getKvStations(mStations))
+        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch station list");
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving station list: " << e.what());
     }
 }
 
@@ -207,8 +214,11 @@ void KvMetaDataBuffer::fetchParams()
     BusyIndicator wait;
     mHaveParams = true;
     mParams.clear();
-    if (not kvservice::KvApp::kvApp->getKvParams(mParams)) {
-        std::cerr << "could not fetch param list" << std::endl;
+    try {
+      if (not kvservice::KvApp::kvApp->getKvParams(mParams))
+        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch param list");
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving param list: " << e.what());
     }
     mCodeParams.clear();
     BOOST_FOREACH(const kvalobs::kvParam& p, mParams) {
@@ -224,8 +234,11 @@ void KvMetaDataBuffer::fetchTypes()
     BusyIndicator wait;
     mHaveTypes = true;
     mTypes.clear();
-    if (not kvservice::KvApp::kvApp->getKvTypes(mTypes)) {
-        std::cerr << "could not fetch type list" << std::endl;
+    try {
+      if (not kvservice::KvApp::kvApp->getKvTypes(mTypes))
+        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch type list");
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving param list: " << e.what());
     }
 }
 

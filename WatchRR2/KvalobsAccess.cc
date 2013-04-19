@@ -55,10 +55,14 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
     
     kvalobsdata_helpers::GetData get(*this);
-    if (kvservice::KvApp::kvApp->getKvData(get, whichData))
+    try {
+      if (kvservice::KvApp::kvApp->getKvData(get, whichData))
         mFetched.insert(f);
-    else
+      else
         LOG4HQC_ERROR("KvalobsAccess", "problem receiving data");
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvalobsAccess", "exception while retrieving data: " << e.what());
+    }
     return KvBufferedAccess::find(st);
 }
 
