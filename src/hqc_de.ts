@@ -187,19 +187,9 @@ Parameter</translation>
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="errorlist.cc" line="139"/>
+        <location filename="errorlist.cc" line="138"/>
         <source>HQC - Error List</source>
         <translation>HQC - Fehlerliste</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="150"/>
-        <source>&amp;Missing list</source>
-        <translation>&amp;Mangelliste</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="151"/>
-        <source>Ctrl+M</source>
-        <translation>Ctrl+M</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="17"/>
@@ -258,7 +248,7 @@ Parameter</translation>
     <message>
         <location filename="ErrorListTableModel.cc" line="27"/>
         <source>mod.v</source>
-        <translation>Mod.v</translation>
+        <translation>Mod.w</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="28"/>
@@ -331,13 +321,9 @@ Parameter</translation>
         <translation>Flag-Wert</translation>
     </message>
     <message>
-        <source>=</source>
-        <translation type="obsolete">=</translation>
-    </message>
-    <message>
         <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Fl.v</source>
-        <translation>Fl.v</translation>
+        <translation>Fl.w</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="31"/>
@@ -355,10 +341,6 @@ Parameter</translation>
         <translation>Interpoliert</translation>
     </message>
     <message>
-        <source>Redistributed</source>
-        <translation type="obsolete">Umverteilt</translation>
-    </message>
-    <message>
         <location filename="ErrorListTableModel.cc" line="34"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
@@ -369,155 +351,48 @@ Parameter</translation>
         <translation>Verworfen</translation>
     </message>
     <message>
-        <source>Error list</source>
-        <translation type="obsolete">Fehlerliste</translation>
-    </message>
-    <message>
-        <source>Illegal value</source>
-        <translation type="obsolete">Ungültiger Wert</translation>
-    </message>
-    <message>
-        <source>Value outside physical values</source>
-        <translation type="obsolete">Wert außerhalb physikalischer Grenzen</translation>
-    </message>
-    <message>
-        <source>Wrong column</source>
-        <translation type="obsolete">Falsche Spalte</translation>
-    </message>
-    <message>
-        <source>Accumulation. Use field &apos;redistributed&apos;.</source>
-        <translation type="obsolete">Sammelwert. Verwenden Sie die Spalte &apos;Umverteilt&apos;.</translation>
-    </message>
-    <message>
-        <source>Corrected is missing. Use field &apos;Original OK&apos; or &apos;Forkastet&apos;.</source>
-        <translation type="obsolete">Korrigierter Wert fehlt. Verwenden Sie die Spalte &apos;Original OK&apos; oder &apos;Verworfen&apos;.</translation>
-    </message>
-    <message>
-        <source>Both original and corrected are missing. Use field &apos;Interpolated&apos;.</source>
-        <translation type="obsolete">Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
-    </message>
-    <message>
-        <source>Original missing</source>
-        <translation type="obsolete">Originalwert fehlt</translation>
-    </message>
-    <message>
-        <source>Do you want to set in -32767 as corrected value?</source>
-        <translation type="obsolete">Möchten Sie -32767 als korrigierten Wert eintragen?</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="obsolete">Ja</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation type="obsolete">Nein</translation>
-    </message>
-    <message>
-        <source>Use field &apos;Interpolated&apos; if you want a new interpolated value, or &apos;Corrected OK&apos; if you want to accept an existing value</source>
-        <translation type="obsolete">Verwenden Sie die Spalte &apos;Interpoliert&apos; um zu interpolieren, oder &apos;Korrigiert OK&apos; wenn Sie einen vorhandenen korrigierten Wert akzeptieren möchten</translation>
-    </message>
-    <message>
-        <source>Both original and corrected value ar missing. Use field &apos;Interpolated&apos;.</source>
-        <translation type="obsolete">Originalwert und korrigierter Wert fehlen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
-    </message>
-    <message>
-        <source>Cannot reject. Use field &apos;Original OK&apos;.</source>
-        <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Original OK&apos;.</translation>
-    </message>
-    <message>
-        <source>Cannot reject. Use field &apos;Interpolert&apos;.</source>
-        <translation type="obsolete">Kann nicht verwerfen. Verwenden Sie die Spalte &apos;Interpoliert&apos;.</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="591"/>
-        <source>Missing list</source>
-        <translation>Mangelliste</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="592"/>
-        <source>Missing list does not contain more elements that shown in the error list</source>
-        <translation>Mangelliste enthält nicht mehr Elemente als in der Fehlerliste gezeigt werden</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="593"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <source>Not authenticated</source>
-        <translation type="obsolete">Nicht authentifiziert</translation>
-    </message>
-    <message>
-        <source>You are not authenticated as operator. Cannot save sata.</source>
-        <translation type="obsolete">Sie sind nicht als Operateur authentifiziert. Kann keine Daten speichern.</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="744"/>
+        <location filename="errorlist.cc" line="630"/>
         <source>No unsaved data</source>
         <translation>Keine ungespeicherten Daten</translation>
     </message>
     <message>
-        <source>Error List</source>
-        <translation type="obsolete">Fehlerliste</translation>
-    </message>
-    <message>
-        <source>An error occured when attempting to insert data into kvalobs. The message from kvalobs was
-%1</source>
-        <translation type="obsolete">Fehler beim Speichern in kvalobs. Die Fehlermeldung von kvalobs ist:
-%1</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="745"/>
+        <location filename="errorlist.cc" line="631"/>
         <source>There are no unsaved data.</source>
         <translation>Keine ungespeicherten Daten vorhanden.</translation>
     </message>
     <message>
-        <source>Cannot save data</source>
-        <translation type="obsolete">Kann Daten nicht speichern</translation>
-    </message>
-    <message>
-        <source>Cannot save data! Message from kvalobs was:
-%1</source>
-        <translation type="obsolete">Kann Daten nicht speichern! Meldung von Kvalobs ist:
-%1</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="752"/>
+        <location filename="errorlist.cc" line="638"/>
         <source>Data saved</source>
         <translation>Daten gespeichert</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="753"/>
+        <location filename="errorlist.cc" line="639"/>
         <source>%1 rows have been saved to kvalobs. Warning: data shown in error and data list might no longer be consistent with kvalobs.</source>
         <oldsource>%1 rows have been saved to kvalobs. Be aware that data shown in error and data list might no longer be consistent with kvalobs</oldsource>
         <translation>%1 Zeilen wurden in kvalobs gespeichert. Warnung: Datenliste und Fehlerliste sind möglicherweise nicht länger konsistent mit kvalobs.</translation>
     </message>
     <message>
-        <source>%1 rows have been saved to kvalobs.</source>
-        <translation type="obsolete">%1 Zeilen wurden in kvalobs gespeichert.</translation>
-    </message>
-    <message>
-        <location filename="errorlist.cc" line="772"/>
+        <location filename="errorlist.cc" line="658"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="773"/>
+        <location filename="errorlist.cc" line="659"/>
         <source>You have unsaved changes in the error list. Do you want to save them?</source>
         <translation>Die Fehlerliste enthält ungespeicherte Änderungen. Möchten Sie diese speichern?</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="774"/>
+        <location filename="errorlist.cc" line="660"/>
         <source>&amp;Yes</source>
         <translation>&amp;Ja</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="774"/>
+        <location filename="errorlist.cc" line="660"/>
         <source>&amp;No</source>
         <translation>&amp;Nein</translation>
     </message>
     <message>
-        <location filename="errorlist.cc" line="774"/>
+        <location filename="errorlist.cc" line="660"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
@@ -603,10 +478,6 @@ Parameter</translation>
 <context>
     <name>HideApplyBox</name>
     <message>
-        <source>Form</source>
-        <translation type="obsolete">Form</translation>
-    </message>
-    <message>
         <location filename="../authentication/hideapplybox.ui" line="30"/>
         <source>Hide</source>
         <translation>Ausblenden</translation>
@@ -656,10 +527,6 @@ Parameter</translation>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <source>toolBar</source>
-        <translation type="obsolete">toolBar</translation>
-    </message>
-    <message>
         <location filename="mainwindow.ui" line="121"/>
         <source>Save</source>
         <translation>Speichern</translation>
@@ -668,10 +535,6 @@ Parameter</translation>
         <location filename="mainwindow.ui" line="124"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
-    </message>
-    <message>
-        <source>print</source>
-        <translation type="obsolete">Ausdrucken</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="138"/>
@@ -801,10 +664,6 @@ Parameter</translation>
         <translation>Ctrl+Shift+L</translation>
     </message>
     <message>
-        <source>&amp;Precipitation and snow</source>
-        <translation type="obsolete">&amp;Niederschlag und Schnee</translation>
-    </message>
-    <message>
         <location filename="mainwindow.ui" line="358"/>
         <source>&amp;News</source>
         <translation>&amp;Neuigkeiten</translation>
@@ -851,50 +710,10 @@ Parameter</translation>
         <translation>Ctrl+J</translation>
     </message>
     <message>
-        <source>For &amp;daily routine</source>
-        <translation type="obsolete">For &amp;daglig rutine</translation>
-    </message>
-    <message>
         <location filename="mainwindow.ui" line="298"/>
         <source>&amp;Accept time series</source>
         <oldsource>&amp;Prioritised parameters</oldsource>
-        <translation>&amp;Priorisierte Parameter</translation>
-    </message>
-    <message>
-        <source>&amp;Temperature and humidity</source>
-        <translation type="obsolete">&amp;Temperatur og fuktighet</translation>
-    </message>
-    <message>
-        <source>&amp;Air pressure and wind</source>
-        <translation type="obsolete">&amp;Lufttrykk og vind</translation>
-    </message>
-    <message>
-        <source>&amp;Maritime parameters</source>
-        <translation type="obsolete">&amp;Maritime parametere</translation>
-    </message>
-    <message>
-        <source>&amp;Synop</source>
-        <translation type="obsolete">&amp;Synop</translation>
-    </message>
-    <message>
-        <source>&amp;Wind</source>
-        <translation type="obsolete">&amp;Vind</translation>
-    </message>
-    <message>
-        <source>&amp;Pluviometer parameters</source>
-        <translation type="obsolete">&amp;Pluviometerparametere</translation>
-    </message>
-    <message>
-        <source>&amp;Alt</source>
-        <translation type="obsolete">&amp;Alt</translation>
-    </message>
-    <message>
-        <source>Observation &amp;times</source>
-        <translation type="obsolete">&amp;Tidspunkter</translation>
-    </message>
-    <message>
-        <source>Ctrl+T</source>
-        <translation type="obsolete">Ctrl+T</translation>
+        <translation>&amp;Zeitreihe akzeptieren</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="293"/>
@@ -950,10 +769,6 @@ Parameter</translation>
         <location filename="mainwindow.ui" line="345"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
-    </message>
-    <message>
-        <source>&amp;Visual parameters</source>
-        <translation type="obsolete">&amp;Visuelle Parameter</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="353"/>
@@ -1033,10 +848,6 @@ Parameter</translation>
         <location filename="hqcmain.cc" line="406"/>
         <source>Building data list...</source>
         <translation>Baue Datenliste...</translation>
-    </message>
-    <message>
-        <source>Data List</source>
-        <translation type="obsolete">Dataliste</translation>
     </message>
     <message>
         <location filename="hqcmain.cc" line="451"/>
@@ -1533,77 +1344,6 @@ Sie benutzen HQC Version %1.</translation>
     </message>
 </context>
 <context>
-    <name>MissingTable</name>
-    <message>
-        <location filename="missingtable.cc" line="36"/>
-        <source>Missing list</source>
-        <translation>Mangelliste</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="41"/>
-        <source>Stnr</source>
-        <translation>Stnr</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="42"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="43"/>
-        <source>Mt</source>
-        <oldsource>  Mt</oldsource>
-        <translation>Mt</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="44"/>
-        <source>Dy</source>
-        <oldsource>  Dy</oldsource>
-        <translation>Tg</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="45"/>
-        <source>Hr</source>
-        <oldsource>  Hr</oldsource>
-        <translation>H</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="46"/>
-        <source>Para</source>
-        <translation>Para</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="47"/>
-        <source>Type</source>
-        <translation>Typ</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="48"/>
-        <source>Orig.d</source>
-        <translation>Orig.d</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="49"/>
-        <source>Corr.d</source>
-        <translation>Korr.d</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="50"/>
-        <source>mod.v</source>
-        <translation>Mod.v</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="51"/>
-        <source>Flags</source>
-        <translation>Flags</translation>
-    </message>
-    <message>
-        <location filename="missingtable.cc" line="52"/>
-        <source>Fl.v</source>
-        <translation>Fl.v</translation>
-    </message>
-</context>
-<context>
     <name>RejectDecodeTable</name>
     <message>
         <location filename="rejecttable.cc" line="12"/>
@@ -1656,25 +1396,6 @@ Sie benutzen HQC Version %1.</translation>
     </message>
 </context>
 <context>
-    <name>RejectTable</name>
-    <message>
-        <source>RejectDecode</source>
-        <translation type="obsolete">RejectDecode</translation>
-    </message>
-    <message>
-        <source>Tbtime</source>
-        <translation type="obsolete">Tbtime</translation>
-    </message>
-    <message>
-        <source>Observation</source>
-        <translation type="obsolete">Observasjion</translation>
-    </message>
-    <message>
-        <source>Comment</source>
-        <translation type="obsolete">Kommentar</translation>
-    </message>
-</context>
-<context>
     <name>RejectTimeseriesDialog</name>
     <message>
         <location filename="rejecttimeseriesdialog.cc" line="45"/>
@@ -1710,11 +1431,6 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>Rejects</name>
     <message>
-        <source>Rejectdecode</source>
-        <oldsource>Rejected</oldsource>
-        <translation type="obsolete">Rejectdecode</translation>
-    </message>
-    <message>
         <location filename="rejecttable.cc" line="71"/>
         <source>RejectDecode</source>
         <translation>RejectDecode</translation>
@@ -1723,18 +1439,18 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>StInfoSysBuffer</name>
     <message>
-        <location filename="StInfoSysBuffer.cc" line="218"/>
-        <location filename="StInfoSysBuffer.cc" line="270"/>
+        <location filename="StInfoSysBuffer.cc" line="219"/>
+        <location filename="StInfoSysBuffer.cc" line="271"/>
         <source>StInfoSys Cache</source>
         <translation>StInfoSys Cache</translation>
     </message>
     <message>
-        <location filename="StInfoSysBuffer.cc" line="219"/>
+        <location filename="StInfoSysBuffer.cc" line="220"/>
         <source>An error occured when attempting to write the stinfosys cache.</source>
         <translation>Beim Lesen des stinfosys cache ist ein Fehler aufgetreten.</translation>
     </message>
     <message>
-        <location filename="StInfoSysBuffer.cc" line="271"/>
+        <location filename="StInfoSysBuffer.cc" line="272"/>
         <source>No $HOME environment, there is something severely wrong with your settings.</source>
         <translation>Keine $HOME Umgebungsvariable, es gibt ein ernsthaftes Problem mit den Einstellungen Ihres Computers.</translation>
     </message>
@@ -1850,10 +1566,6 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>TextDataTable</name>
     <message>
-        <source>TextData</source>
-        <translation type="obsolete">TextData</translation>
-    </message>
-    <message>
         <location filename="textdatatable.cc" line="12"/>
         <source>Stationid</source>
         <translation>Stationid</translation>
@@ -1887,26 +1599,6 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="textdatatable.cc" line="18"/>
         <source>Typeid</source>
         <translation>Typeid</translation>
-    </message>
-    <message>
-        <source>Original </source>
-        <translation type="obsolete">Original </translation>
-    </message>
-    <message>
-        <source>Paramid </source>
-        <translation type="obsolete">Paramid </translation>
-    </message>
-    <message>
-        <source>ParamName </source>
-        <translation type="obsolete">ParamName </translation>
-    </message>
-    <message>
-        <source>Tbtime </source>
-        <translation type="obsolete">Tbtime </translation>
-    </message>
-    <message>
-        <source>Typeid </source>
-        <translation type="obsolete">Typeid </translation>
     </message>
 </context>
 <context>
@@ -2010,38 +1702,14 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>model::KvalobsDataDelegate</name>
     <message>
-        <source>Not authenticated</source>
-        <translation type="obsolete">Nicht authentifiziert</translation>
-    </message>
-    <message>
-        <source>You are not not authenticated as operator. Cannot save data.</source>
-        <translation type="obsolete">Sie sind nicht als Operatuer authentifiziert. Kann keine Daten speichern.</translation>
-    </message>
-    <message>
         <location filename="KvalobsDataDelegate.cc" line="109"/>
         <source>Internal error</source>
         <translation>Interner Fehler</translation>
     </message>
     <message>
-        <source>Unable to modify data</source>
-        <translation type="obsolete">Kann Daten nicht ändern</translation>
-    </message>
-    <message>
-        <source>Foreign station</source>
-        <translation type="obsolete">Ausländische Station</translation>
-    </message>
-    <message>
-        <source>Foreign stations cannot be corrected</source>
-        <translation type="obsolete">Ausländische Stationen können nicht korrigiert werden</translation>
-    </message>
-    <message>
         <location filename="KvalobsDataDelegate.cc" line="123"/>
         <source>Illegal parameter</source>
         <translation>Parameter nicht erlaubt</translation>
-    </message>
-    <message>
-        <source>This parameter is not in obs_pgm for this station</source>
-        <translation type="obsolete">Dieser Parameter steht nicht im obs_pgm für diese Station</translation>
     </message>
     <message>
         <location filename="KvalobsDataDelegate.cc" line="130"/>
@@ -2050,17 +1718,9 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Wert nicht erlaubt</translation>
     </message>
     <message>
-        <source>Value outside physical limits</source>
-        <translation type="obsolete">Wert außerhalb physikalischer Grenzen</translation>
-    </message>
-    <message>
         <location filename="KvalobsDataDelegate.cc" line="136"/>
         <source>Illegal time</source>
         <translation>Zeitpunkt nicht erlaubt</translation>
-    </message>
-    <message>
-        <source>This parameter cannot be saved for this time</source>
-        <translation type="obsolete">Dieser Parameter kann für diesen Zeitpunkt nicht gespeichert werden</translation>
     </message>
     <message>
         <location filename="KvalobsDataDelegate.cc" line="110"/>
@@ -2101,14 +1761,6 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="KvalobsDataDelegate.cc" line="155"/>
         <source>Correction</source>
         <translation>Korrektion</translation>
-    </message>
-    <message>
-        <source>Yes</source>
-        <translation type="obsolete">Ja</translation>
-    </message>
-    <message>
-        <source>No</source>
-        <translation type="obsolete">Nein</translation>
     </message>
 </context>
 <context>
