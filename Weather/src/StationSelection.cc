@@ -132,8 +132,10 @@ namespace Weather
   void StationSelection::updateTypeID_()
   {
       const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(station());
+      const timeutil::ptime ot = obstime();
       BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
           if (op.paramID() == 110 /* RR_24 */
+              and (ot.is_not_a_date_time() or (op.fromtime() <= ot and (op.fromtime().is_not_a_date_time() or ot <= op.fromtime())))
               and (op.typeID() == 302 or op.typeID() == 402 )
               and (op.kl06() or op.kl07()))
           {
