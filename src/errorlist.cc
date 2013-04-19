@@ -199,6 +199,8 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
         memObs.obstime = data.otime();
         memObs.tbtime = data.tbtime();
         memObs.name = data.name();
+        if (data.snr() > 0)
+          memObs.name += " [" + QString::number(data.snr()) + "]";
         memObs.stnr = data.stnr();
 
         BOOST_FOREACH(const int parameterID, selectedParameters) {
