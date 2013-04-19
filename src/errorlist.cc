@@ -247,7 +247,6 @@ void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
                     ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == "fs" ) )
                 {
                     if( isErrorInMemstore1(memObs) ) {
-                        updateKvBase(memObs);
                         memStore2.push_back(memObs);
                     } else {
                         memStore1.push_back(memObs);
@@ -480,21 +479,6 @@ void ErrorList::showSameStation()
     if (row < 0)
         return;
     mTableModel->showSameStation(mTableModel->mem4Row(row).stnr);
-}
-
-/*!
- * \brief Update kvalobs, set hqc-flag = 2 for obs not in errorlist
- */
-void ErrorList::updateKvBase(const mem& memStore)
-{
-    kvalobs::kvData kd = getKvData(memStore);
-
-    //TODO: Remove next 3 lines when the new QC1-9 is ready
-    //    kvControlInfo cif = kd.controlinfo();
-    //    cif.set(kvalobs::flag::fhqc, 2);
-    //    kd.controlinfo(cif);
-
-    mainWindow->saveDataToKvalobs(kd);
 }
 
 void ErrorList::signalStationSelected()

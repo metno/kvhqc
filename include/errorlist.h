@@ -177,13 +177,6 @@ private:
      * \return 0 if given parameter is code, 1 otherwise.
      */
     bool paramIsCode(int);
-
-    /**
-     * \brief Checks if an observation is in the missing list
-     *
-     * \return TRUE if observation is missing.
-     */
-  //    bool obsInMissList(const mem&);
     
     /*!
      * \brief Constructs a kvData object from a memory store object
@@ -196,12 +189,12 @@ private:
     int getSelectedRow() const;
                                     
 private Q_SLOTS:
-    void updateKvBase(const mem&);
     void showFail(const QModelIndex& index);
 
-    void showSameStation();
     void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
+private:
+    void showSameStation();
     void signalStationSelected();
 
 private:

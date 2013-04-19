@@ -13,7 +13,6 @@ SET(hqc_HEADERS
   ../include/KvalobsDataModel.h
   ../include/KvalobsDataView.h
   ../include/ListDialog.hh
-  ../include/missingtable.h
   ../include/rejectdialog.h
   ../include/rejecttable.h
   ../include/rejecttimeseriesdialog.h
@@ -43,7 +42,6 @@ SET(hqc_SOURCES
   KvalobsDataDelegate.cc
   KvalobsDataModel.cc
   KvalobsDataView.cc
-  missingtable.cc
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
