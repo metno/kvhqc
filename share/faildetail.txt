@@ -1,3 +1,6 @@
+QC1-1-129a      Kodeverdi for EE utenfor tillatt omraade
+QC1-1-129b      Kodeverdi for EE utenfor tillatt omraade
+QC1-1-129c      Kodeverdi for EE utenfor tillatt omraade
 QC1-2-21	AA mangler, PP eksisterer
 QC1-2-22	AA eksisterer, PP mangler
 QC1-2-23	AA=4 (konstant), PP forskjellig fra 0
@@ -202,7 +205,20 @@ QC1-2-176	Ikke samsvar mellom skymengde og sikt
 QC1-2-303	Ikke samsvar mellom markas tilstand og snødybde
 QC1-2-304.a	Inkonsistens i markas tilstand og snødybde
 QC1-2-304.b	Inkonsistens i markas tilstand og snødybde
+QC1-2-305a      Flekkvis snoe(EE) med snoedybde(SA)
+QC1-2-305b      Flekkvis snoe(EE) med snoedybde(SA)
+QC1-2-305c      Flekkvis snoe(EE) med snoedybde(SA)
+QC1-2-306a      Snoe dekker marka(EE) uten snoedybde(SA)
+QC1-2-306b      Snoe dekker marka(EE) uten snoedybde(SA)
+QC1-2-306c      Snoe dekker marka(EE) uten snoedybde(SA)
+QC1-2-307a      Snoe dekker ikke marka(EE) med snoedybde(SA)
+QC1-2-307b      Snoe dekker ikke marka(EE) med snoedybde(SA)
 QC1-2-328	Ikke samsvar mellom skydekke og værkode W1/W2 ( NN >=5 og W1 = W2 = 0 ) 
+QC1-3a          Sprang-sjekk. Synking eller okning siden forrige obs storre enn testverdi.
+QC1-3b          Frys-sjekk. Varighet av samme verdi storre enn testverdi.
+QC1-3c          Dip- og Peak-sjekk. Dip eller Peak storre enn testverdi.
+QC1-4-213       TAN's avvik fra TA's laveste modellverdi fra forrige obs storre enn testverdi.
+QC1-4-215       TAX's avvik fra TA's hoyeste modellverdi fra forrige obs storre enn testverdi.
 QC1-6-66.a	Forholdet mellom markas tilstand, snødybde og nedbørtype
 QC1-6-66.b_66.c	Forholdet mellom markas tilstand, snødybde og nedbørtype
 QC1-6-66.d	Forholdet mellom markas tilstand, snødybde og nedbørtype
@@ -281,6 +297,18 @@ QC1-6-301	Islag (EM) og TGN_12>+3°C
 QC1-6-302	Løs og tørr snø (EM) og TGN_12>0°C
 QC1-6-305	Snø som fonner seg (EM) og SA<15 cm
 QC1-6-306	Bøtteverdi (RA) ved TA<-25
+QC1-6-307a      Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
+QC1-6-307b      Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
+QC1-6-307c      Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
+QC1-6-308a      Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
+QC1-6-308b      Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
+QC1-6-308c      Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
+QC1-6-309a      Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
+QC1-6-309b      Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
+QC1-6-309c      Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
+QC1-6-310a      Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
+QC1-6-310b      Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
+QC1-6-310c      Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
 QC1-6-311	Forholdet mellom synsvidde og værkode
 QC1-6-312	Forholdet mellom synsvidde og værkode
 QC1-6-313	Forholdet mellom synsvidde og værkode
@@ -303,27 +331,6 @@ QC1-6-329	Forholdet mellom værkode (W2) og totalt skydekke
 QC1-6-111	Forholdet mellom snøfokk og vindhastighet
 QC1-6-112	Forholdet mellom snøfokk og vindhastighet
 QC1-9		Kombinert vurdering
-QC1-1-129a  Kodeverdi for EE utenfor tillatt omraade
-QC1-1-129b  Kodeverdi for EE utenfor tillatt omraade
-QC1-1-129c  Kodeverdi for EE utenfor tillatt omraade
-QC1-2-305a  Flekkvis snoe(EE) med snoedybde(SA)
-QC1-2-305b  Flekkvis snoe(EE) med snoedybde(SA)
-QC1-2-305c  Flekkvis snoe(EE) med snoedybde(SA)
-QC1-2-306a  Snoe dekker marka(EE) uten snoedybde(SA)
-QC1-2-306b  Snoe dekker marka(EE) uten snoedybde(SA)
-QC1-2-306c  Snoe dekker marka(EE) uten snoedybde(SA)
-QC1-6-307a  Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
-QC1-6-307b  Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
-QC1-6-307c  Is-lag dekker marka(EE) med varm Gressminimum(TGN>3.0)
-QC1-6-308a  Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
-QC1-6-308b  Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
-QC1-6-308c  Toerr snoe dekker marka(EE) med varm Gressminimum(TGN>0.0)
-QC1-6-309a  Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
-QC1-6-309b  Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
-QC1-6-309c  Snoe som fonner seg(EE) med for hoey eller for lav snoedybde(SA<15.0||SA>150.0)
-QC1-6-310a  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
-QC1-6-310b  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
-QC1-6-310c  Nytt snoedekke(EE) men uten snoe-nedboer(WW,W1,W2)
 QC2d-1		Interpolert i DipTest
 QC2d-2		Interpolert i SingleLinear
 QC2d-2-I	Interpolert i GapInterpolation
