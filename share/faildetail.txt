@@ -214,9 +214,124 @@ QC1-2-306c      Snoe dekker marka(EE) uten snoedybde(SA)
 QC1-2-307a      Snoe dekker ikke marka(EE) med snoedybde(SA)
 QC1-2-307b      Snoe dekker ikke marka(EE) med snoedybde(SA)
 QC1-2-328	Ikke samsvar mellom skydekke og værkode W1/W2 ( NN >=5 og W1 = W2 = 0 ) 
-QC1-3a          Sprang-sjekk. Synking eller okning siden forrige obs storre enn testverdi.
-QC1-3b          Frys-sjekk. Varighet av samme verdi storre enn testverdi.
-QC1-3c          Dip- og Peak-sjekk. Dip eller Peak storre enn testverdi.
+QC1-3a-1        Sprang-sjekk. Synking eller okning av AA siden forrige obs storre enn testverdi.
+QC1-3a-104      Sprang-sjekk. Synking eller okning av RA siden forrige obs storre enn testverdi.
+QC1-3a-105      Sprang-sjekk. Synking eller okning av RR_01 siden forrige obs storre enn testverdi.
+QC1-3a-113      Sprang-sjekk. Synking eller okning av SS_1 siden forrige obs storre enn testverdi.
+QC1-3a-123      Sprang-sjekk. Synking eller okning av RT_1 siden forrige obs storre enn testverdi.
+QC1-3a-135      Sprang-sjekk. Synking eller okning av WHMAX siden forrige obs storre enn testverdi.
+QC1-3a-136      Sprang-sjekk. Synking eller okning av WHM0 siden forrige obs storre enn testverdi.
+QC1-3a-172      Sprang-sjekk. Synking eller okning av PH siden forrige obs storre enn testverdi.
+QC1-3a-174      Sprang-sjekk. Synking eller okning av POM siden forrige obs storre enn testverdi.
+QC1-3a-175      Sprang-sjekk. Synking eller okning av PON siden forrige obs storre enn testverdi.
+QC1-3a-176      Sprang-sjekk. Synking eller okning av POX siden forrige obs storre enn testverdi.
+QC1-3a-177      Sprang-sjekk. Synking eller okning av PP siden forrige obs storre enn testverdi.
+QC1-3a-178      Sprang-sjekk. Synking eller okning av PR siden forrige obs storre enn testverdi.
+QC1-3a-197      Sprang-sjekk. Synking eller okning av QE siden forrige obs storre enn testverdi.
+QC1-3a-198      Sprang-sjekk. Synking eller okning av QL siden forrige obs storre enn testverdi.
+QC1-3a-199      Sprang-sjekk. Synking eller okning av QLX siden forrige obs storre enn testverdi.
+QC1-3a-2        Sprang-sjekk. Synking eller okning av BI siden forrige obs storre enn testverdi.
+QC1-3a-200      Sprang-sjekk. Synking eller okning av QO siden forrige obs storre enn testverdi.
+QC1-3a-201      Sprang-sjekk. Synking eller okning av QOX siden forrige obs storre enn testverdi.
+QC1-3a-211      Sprang-sjekk. Synking eller okning av TA siden forrige obs storre enn testverdi.
+QC1-3a-212      Sprang-sjekk. Synking eller okning av TAM siden forrige obs storre enn testverdi.
+QC1-3a-213      Sprang-sjekk. Synking eller okning av TAN siden forrige obs storre enn testverdi.
+QC1-3a-215      Sprang-sjekk. Synking eller okning av TAX siden forrige obs storre enn testverdi.
+QC1-3a-221      Sprang-sjekk. Synking eller okning av TG siden forrige obs storre enn testverdi.
+QC1-3a-223      Sprang-sjekk. Synking eller okning av TGN siden forrige obs storre enn testverdi.
+QC1-3a-225      Sprang-sjekk. Synking eller okning av TGX siden forrige obs storre enn testverdi.
+QC1-3a-227      Sprang-sjekk. Synking eller okning av TJM siden forrige obs storre enn testverdi.
+QC1-3a-238      Sprang-sjekk. Synking eller okning av TV siden forrige obs storre enn testverdi.
+QC1-3a-262      Sprang-sjekk. Synking eller okning av UU siden forrige obs storre enn testverdi.
+QC1-3a-264      Sprang-sjekk. Synking eller okning av UN siden forrige obs storre enn testverdi.
+QC1-3a-265      Sprang-sjekk. Synking eller okning av UX siden forrige obs storre enn testverdi.
+QC1-3a-81       Sprang-sjekk. Synking eller okning av FF siden forrige obs storre enn testverdi.
+QC1-3a-85       Sprang-sjekk. Synking eller okning av FM siden forrige obs storre enn testverdi.
+QC1-3a-86       Sprang-sjekk. Synking eller okning av FX siden forrige obs storre enn testverdi.
+QC1-3a-87       Sprang-sjekk. Synking eller okning av FX_1 siden forrige obs storre enn testverdi.
+QC1-3a-88       Sprang-sjekk. Synking eller okning av FX_6 siden forrige obs storre enn testverdi.
+QC1-3a-89       Sprang-sjekk. Synking eller okning av FX_12 siden forrige obs storre enn testverdi.
+QC1-3a-90       Sprang-sjekk. Synking eller okning av FG_1 siden forrige obs storre enn testverdi.
+QC1-3a-91       Sprang-sjekk. Synking eller okning av FG_6 siden forrige obs storre enn testverdi.
+QC1-3a-92       Sprang-sjekk. Synking eller okning av FG_12 siden forrige obs storre enn testverdi.
+QC1-3a-93       Sprang-sjekk. Synking eller okning av FX_X siden forrige obs storre enn testverdi.
+QC1-3a-94       Sprang-sjekk. Synking eller okning av FG_X siden forrige obs storre enn testverdi.
+QC1-3b-1        Frys-sjekk. Varighet av samme verdi av AA storre enn testverdi.
+QC1-3b-104      Frys-sjekk. Varighet av samme verdi av RA storre enn testverdi.
+QC1-3b-135      Frys-sjekk. Varighet av samme verdi av WHMAX storre enn testverdi.
+QC1-3b-136      Frys-sjekk. Varighet av samme verdi av WHM0 storre enn testverdi.
+QC1-3b-172      Frys-sjekk. Varighet av samme verdi av PH storre enn testverdi.
+QC1-3b-174      Frys-sjekk. Varighet av samme verdi av POM storre enn testverdi.
+QC1-3b-175      Frys-sjekk. Varighet av samme verdi av PON storre enn testverdi.
+QC1-3b-176      Frys-sjekk. Varighet av samme verdi av POX storre enn testverdi.
+QC1-3b-177      Frys-sjekk. Varighet av samme verdi av PP storre enn testverdi.
+QC1-3b-178      Frys-sjekk. Varighet av samme verdi av PR storre enn testverdi.
+QC1-3b-197      Frys-sjekk. Varighet av samme verdi av QE storre enn testverdi.
+QC1-3b-198      Frys-sjekk. Varighet av samme verdi av QL storre enn testverdi.
+QC1-3b-199      Frys-sjekk. Varighet av samme verdi av QLX storre enn testverdi.
+QC1-3b-2        Frys-sjekk. Varighet av samme verdi av BI storre enn testverdi.
+QC1-3b-200      Frys-sjekk. Varighet av samme verdi av QO storre enn testverdi.
+QC1-3b-201      Frys-sjekk. Varighet av samme verdi av QOX storre enn testverdi.
+QC1-3b-211      Frys-sjekk. Varighet av samme verdi av TA storre enn testverdi.
+QC1-3b-212      Frys-sjekk. Varighet av samme verdi av TAM storre enn testverdi.
+QC1-3b-213      Frys-sjekk. Varighet av samme verdi av TAN storre enn testverdi.
+QC1-3b-215      Frys-sjekk. Varighet av samme verdi av TAX storre enn testverdi.
+QC1-3b-221      Frys-sjekk. Varighet av samme verdi av TG storre enn testverdi.
+QC1-3b-222      Frys-sjekk. Varighet av samme verdi av TGM storre enn testverdi.
+QC1-3b-223      Frys-sjekk. Varighet av samme verdi av TGN storre enn testverdi.
+QC1-3b-225      Frys-sjekk. Varighet av samme verdi av TGX storre enn testverdi.
+QC1-3b-227      Frys-sjekk. Varighet av samme verdi av TJM storre enn testverdi.
+QC1-3b-238      Frys-sjekk. Varighet av samme verdi av TV storre enn testverdi.
+QC1-3b-262      Frys-sjekk. Varighet av samme verdi av UU storre enn testverdi.
+QC1-3b-264      Frys-sjekk. Varighet av samme verdi av UN storre enn testverdi.
+QC1-3b-265      Frys-sjekk. Varighet av samme verdi av UX storre enn testverdi.
+QC1-3b-61       Frys-sjekk. Varighet av samme verdi av DD storre enn testverdi.
+QC1-3b-63       Frys-sjekk. Varighet av samme verdi av DG storre enn testverdi.
+QC1-3b-64       Frys-sjekk. Varighet av samme verdi av DDM storre enn testverdi.
+QC1-3b-67       Frys-sjekk. Varighet av samme verdi av DX storre enn testverdi.
+QC1-3b-81       Frys-sjekk. Varighet av samme verdi av FF storre enn testverdi.
+QC1-3b-85       Frys-sjekk. Varighet av samme verdi av FM storre enn testverdi.
+QC1-3b-86       Frys-sjekk. Varighet av samme verdi av FX storre enn testverdi.
+QC1-3b-87       Frys-sjekk. Varighet av samme verdi av FX_1 storre enn testverdi.
+QC1-3b-88       Frys-sjekk. Varighet av samme verdi av FX_6 storre enn testverdi.
+QC1-3b-89       Frys-sjekk. Varighet av samme verdi av FX_12 storre enn testverdi.
+QC1-3b-90       Frys-sjekk. Varighet av samme verdi av FG_1 storre enn testverdi.
+QC1-3b-91       Frys-sjekk. Varighet av samme verdi av FG_6 storre enn testverdi.
+QC1-3b-92       Frys-sjekk. Varighet av samme verdi av FG_12 storre enn testverdi.
+QC1-3b-93       Frys-sjekk. Varighet av samme verdi av FX_X storre enn testverdi.
+QC1-3b-94       Frys-sjekk. Varighet av samme verdi av FG_X storre enn testverdi.
+QC1-3b-95       Frys-sjekk. Varighet av samme verdi av FX_3 storre enn testverdi.
+QC1-3c-1        Dip- og Peak-sjekk. Dip eller Peak av AA storre enn testverdi.
+QC1-3c-104      Dip- og Peak-sjekk. Dip eller Peak av RA storre enn testverdi.
+QC1-3c-105      Dip- og Peak-sjekk. Dip eller Peak av RR_01 storre enn testverdi.
+QC1-3c-113      Dip- og Peak-sjekk. Dip eller Peak av SS_1 storre enn testverdi.
+QC1-3c-135      Dip- og Peak-sjekk. Dip eller Peak av WHMAX storre enn testverdi.
+QC1-3c-136      Dip- og Peak-sjekk. Dip eller Peak av WHM0 storre enn testverdi.
+QC1-3c-172      Dip- og Peak-sjekk. Dip eller Peak av PH storre enn testverdi.
+QC1-3c-174      Dip- og Peak-sjekk. Dip eller Peak av POM storre enn testverdi.
+QC1-3c-175      Dip- og Peak-sjekk. Dip eller Peak av PON storre enn testverdi.
+QC1-3c-176      Dip- og Peak-sjekk. Dip eller Peak av POX storre enn testverdi.
+QC1-3c-177      Dip- og Peak-sjekk. Dip eller Peak av PP storre enn testverdi.
+QC1-3c-178      Dip- og Peak-sjekk. Dip eller Peak av PR storre enn testverdi.
+QC1-3c-197      Dip- og Peak-sjekk. Dip eller Peak av QE storre enn testverdi.
+QC1-3c-198      Dip- og Peak-sjekk. Dip eller Peak av QL storre enn testverdi.
+QC1-3c-199      Dip- og Peak-sjekk. Dip eller Peak av QLX storre enn testverdi.
+QC1-3c-2        Dip- og Peak-sjekk. Dip eller Peak av BI storre enn testverdi.
+QC1-3c-200      Dip- og Peak-sjekk. Dip eller Peak av QO storre enn testverdi.
+QC1-3c-201      Dip- og Peak-sjekk. Dip eller Peak av QOX storre enn testverdi.
+QC1-3c-211      Dip- og Peak-sjekk. Dip eller Peak av TA storre enn testverdi.
+QC1-3c-212      Dip- og Peak-sjekk. Dip eller Peak av TAM storre enn testverdi.
+QC1-3c-213      Dip- og Peak-sjekk. Dip eller Peak av TAN storre enn testverdi.
+QC1-3c-215      Dip- og Peak-sjekk. Dip eller Peak av TAX storre enn testverdi.
+QC1-3c-221      Dip- og Peak-sjekk. Dip eller Peak av TG storre enn testverdi.
+QC1-3c-222      Dip- og Peak-sjekk. Dip eller Peak av TGM storre enn testverdi.
+QC1-3c-223      Dip- og Peak-sjekk. Dip eller Peak av TGN storre enn testverdi.
+QC1-3c-225      Dip- og Peak-sjekk. Dip eller Peak av TGX storre enn testverdi.
+QC1-3c-227      Dip- og Peak-sjekk. Dip eller Peak av TJM storre enn testverdi.
+QC1-3c-238      Dip- og Peak-sjekk. Dip eller Peak av TV storre enn testverdi.
+QC1-3c-262      Dip- og Peak-sjekk. Dip eller Peak av UU storre enn testverdi.
+QC1-3c-264      Dip- og Peak-sjekk. Dip eller Peak av UN storre enn testverdi.
+QC1-3c-265      Dip- og Peak-sjekk. Dip eller Peak av UX storre enn testverdi.
 QC1-4-213       TAN's avvik fra TA's laveste modellverdi fra forrige obs storre enn testverdi.
 QC1-4-215       TAX's avvik fra TA's hoyeste modellverdi fra forrige obs storre enn testverdi.
 QC1-6-66.a	Forholdet mellom markas tilstand, snødybde og nedbørtype
