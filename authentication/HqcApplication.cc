@@ -165,6 +165,7 @@ void HqcApplication::onException(const QString& message)
     w.setStandardButtons(QMessageBox::Close);
     w.setDefaultButton(QMessageBox::Close);
     w.exec();
+    HQC_LOG_WARN("exception in gui thread: '" << message << "'");
   } else {
     HQC_LOG_WARN("exception in non-gui thread: '" << message << "'");
   }
