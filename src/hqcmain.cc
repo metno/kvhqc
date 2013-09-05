@@ -601,8 +601,8 @@ void HqcMainWindow::onTabCloseRequested(int index)
 {
   QWidget* w = ui->tabs->widget(index);
   if (w != mAutoViewSplitter) {
-    BusyIndicator busy;
     ui->tabs->removeTab(index);
+    BusyIndicator busy;
     delete w;
   }
 }
