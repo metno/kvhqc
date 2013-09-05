@@ -270,7 +270,7 @@
              </widget>
             </item>
             <item row="2" column="0">
-             <widget class="QToolButton" name="regionTrondAdd">
+             <widget class="QToolButton" name="regionMidAdd">
               <property name="toolTip">
                <string>Select all counties in Trøndelag</string>
               </property>
@@ -285,7 +285,7 @@
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QToolButton" name="regionTrondRemove">
+             <widget class="QToolButton" name="regionMidRemove">
               <property name="toolTip">
                <string>Deselect all counties in Trøndelag</string>
               </property>
@@ -300,9 +300,9 @@
              </widget>
             </item>
             <item row="2" column="2">
-             <widget class="QLabel" name="regionTrondLabel">
+             <widget class="QLabel" name="regionMidLabel">
               <property name="text">
-               <string>Trøndelag</string>
+               <string>Midt-Norge</string>
               </property>
              </widget>
             </item>

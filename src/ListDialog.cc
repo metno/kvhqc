@@ -79,9 +79,10 @@ const stationtype_t stationTypes[NSTATIONTYPES] = {
 
 const int NCOUNTIES = 20;
 const char* counties[NCOUNTIES] =  {
-    "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark",
-    "Aust-Agder", "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane", "Møre og Romsdal",
-    "Sør-Trøndelag", "Nord-Trøndelag", "Nordland", "Troms", "Finnmark", "Ishavet"
+    "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark", "Aust-Agder",
+    "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane",
+    "Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag", "Nordland",
+    "Troms", "Finnmark", "Ishavet"
 };
 const char* countiesU[NCOUNTIES] =  {
     "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK",
@@ -89,8 +90,8 @@ const char* countiesU[NCOUNTIES] =  {
     "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET"
 };
 const int REG_EAST[2]  = { 0, 9 };
-const int REG_WEST[2]  = { 9, 14 };
-const int REG_TROND[2] = { 14, 16 };
+const int REG_WEST[2]  = { 9, 13 };
+const int REG_MID[2]   = { 13, 16 };
 const int REG_NORTH[2] = { 16, NCOUNTIES };
 
 const char QSETTINGS_GROUP[] = "lstdlg";
@@ -159,8 +160,8 @@ void ListDialog::setupStationTab()
     connect(ui->regionEastRemove,  SIGNAL(clicked()), this, SLOT(regionEastRemove()));
     connect(ui->regionWestAdd,     SIGNAL(clicked()), this, SLOT(regionWestAdd()));
     connect(ui->regionWestRemove,  SIGNAL(clicked()), this, SLOT(regionWestRemove()));
-    connect(ui->regionTrondAdd,    SIGNAL(clicked()), this, SLOT(regionTrondAdd()));
-    connect(ui->regionTrondRemove, SIGNAL(clicked()), this, SLOT(regionTrondRemove()));
+    connect(ui->regionMidAdd,      SIGNAL(clicked()), this, SLOT(regionMidAdd()));
+    connect(ui->regionMidRemove,   SIGNAL(clicked()), this, SLOT(regionMidRemove()));
     connect(ui->regionNorthAdd,    SIGNAL(clicked()), this, SLOT(regionNorthAdd()));
     connect(ui->regionNorthRemove, SIGNAL(clicked()), this, SLOT(regionNorthRemove()));
     connect(ui->webReg, SIGNAL(clicked()), this, SLOT(webCheck()));
@@ -636,19 +637,19 @@ void ListDialog::regionWestToggle(bool on)
     allCounUnCheck();
 }
 
-void ListDialog::regionTrondAdd()
+void ListDialog::regionMidAdd()
 {
-    regionTrondToggle(true);
+    regionMidToggle(true);
 }
 
-void ListDialog::regionTrondRemove()
+void ListDialog::regionMidRemove()
 {
-    regionTrondToggle(false);
+    regionMidToggle(false);
 }
 
-void ListDialog::regionTrondToggle(bool on)
+void ListDialog::regionMidToggle(bool on)
 {
-    for(int i=REG_TROND[0]; i<REG_TROND[1]; ++i)
+    for(int i=REG_MID[0]; i<REG_MID[1]; ++i)
         mCounties[i]->setChecked(on);
     ui->webReg->setChecked(false);
     ui->priReg->setChecked(false);

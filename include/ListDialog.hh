@@ -85,8 +85,8 @@ private Q_SLOTS:
     void regionEastRemove();
     void regionWestAdd();
     void regionWestRemove();
-    void regionTrondAdd();
-    void regionTrondRemove();
+    void regionMidAdd();
+    void regionMidRemove();
     void regionNorthAdd();
     void regionNorthRemove();
 
@@ -119,7 +119,7 @@ private:
     void checkTypes(const char* these[]);
     void regionEastToggle(bool);
     void regionWestToggle(bool);
-    void regionTrondToggle(bool);
+    void regionMidToggle(bool);
     void regionNorthToggle(bool);
     void enableButtons();
 
