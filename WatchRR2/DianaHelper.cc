@@ -177,7 +177,7 @@ void DianaHelper::sendStations(const std::vector<int>& stations)
                 std::ostringstream o;
                 o << s.name() << ':' << sid << ':' << s.lat() << ':' << s.lon();
                 m2.data.push_back(o.str());
-            } catch(std::runtime_error&) {
+            } catch (std::exception&) {
             }
         }
         METLIBS_LOG_DEBUG(m2.content());

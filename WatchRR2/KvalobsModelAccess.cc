@@ -46,6 +46,8 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
       }
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving model data for sensor/time " << st << ", exception is: " << e.what());
+    } catch (...) {
+      METLIBS_LOG_ERROR("exception while retrieving model data for sensor/time " << st);
     }
     return KvModelAccess::find(st);
 }

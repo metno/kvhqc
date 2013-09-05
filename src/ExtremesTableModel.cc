@@ -141,7 +141,7 @@ QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
     } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR)) {
       return Qt::AlignRight+Qt::AlignVCenter;
     }
-  } catch (std::runtime_error&) {
+  } catch (std::exception& e) {
   }
   return QVariant();
 }

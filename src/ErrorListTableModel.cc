@@ -90,6 +90,7 @@ static QString twoDigits(int number)
 
 QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
 {
+  METLIBS_LOG_SCOPE();
   try {
     const Errors::ErrorInfo& ei = mErrorList.at(index.row());
     const EditDataPtr& obs = ei.obs;
@@ -176,7 +177,10 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
     } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR or column==COL_OBS_MODEL)) {
       return Qt::AlignRight+Qt::AlignVCenter;
     }
-  } catch (std::runtime_error&) {
+  } catch (std::exception& e) {
+    METLIBS_LOG_WARN("exception: " << e.what());
+  } catch (...) {
+    METLIBS_LOG_WARN("exception without message");
   }
   return QVariant();
 }

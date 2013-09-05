@@ -69,7 +69,7 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
     else
       Helpers::auto_correct(da->editor(obs), newC);
     return true;
-  } catch (std::runtime_error& e) {
+  } catch (std::exception& e) {
     METLIBS_LOG_ERROR("exception while editing data for sensor/time " << st << ": " << e.what());
     return false;
   }

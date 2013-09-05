@@ -6,6 +6,8 @@
 #include "BusyIndicator.h"
 #include "Functors.hh"
 
+#include <puTools/miStringBuilder.h>
+
 #include <QtCore/QCoreApplication>
 #include <QtCore/QVariant>
 #include <QtGui/QMessageBox>
@@ -52,7 +54,7 @@ const kvalobs::kvStation& KvMetaDataBuffer::findStation(int id)
     std::list<kvalobs::kvStation>::const_iterator it
         = std::find_if(mStations.begin(), mStations.end(), Helpers::station_by_id(id));
     if (it == mStations.end())
-        throw std::runtime_error("station not found");
+      throw std::runtime_error(miutil::StringBuilder() << "station " << id << "' not found");
     return *it;
 }
 
@@ -81,7 +83,7 @@ const kvalobs::kvParam& KvMetaDataBuffer::findParam(int id)
     std::list<kvalobs::kvParam>::const_iterator it
         = std::find_if(mParams.begin(), mParams.end(), Helpers::param_by_id(id));
     if (it == mParams.end())
-        throw std::runtime_error("param not found");
+      throw std::runtime_error(miutil::StringBuilder() << "param '" << id << " not found");
     return *it;
 }
 
@@ -162,7 +164,7 @@ const kvalobs::kvTypes& KvMetaDataBuffer::findType(int id)
     std::list<kvalobs::kvTypes>::const_iterator it
         = std::find_if(mTypes.begin(), mTypes.end(), Helpers::type_by_id(id));
     if (it == mTypes.end())
-        throw std::runtime_error("type not found");
+      throw std::runtime_error(miutil::StringBuilder() << "type " << id << " not found");
     return *it;
 }
 
@@ -196,24 +198,23 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
       std::back_inserter(stationsToFetch));
 
   if (not stationsToFetch.empty()) {
-    try {
-      METLIBS_LOG_DEBUG(LOGVAL(stationids.size()) << LOGVAL(stationsToFetch.size()));
+    METLIBS_LOG_DEBUG(LOGVAL(stationids.size()) << LOGVAL(stationsToFetch.size()));
+    
+    // obs_pgm is too large for a single CORBA reply, split in chunks of 100 stations
+    const size_t total = stationsToFetch.size(), chunk = 100;
+    size_t start = 0;
+    std::vector<long>::const_iterator f0 = stationsToFetch.begin(), f1 = f0;
+    while (f0 != stationsToFetch.end()) {
+      const size_t n = std::min(total-start, chunk);
+      start += n;
+      f1    += n;
+      const std::list<long> chunkIds(f0, f1);
+      f0 = f1;
 
-      // obs_pgm is too large for a single CORBA reply, split in chunks of 100 stations
-      const size_t total = stationsToFetch.size(), chunk = 100;
-      size_t start = 0;
-      std::vector<long>::const_iterator f0 = stationsToFetch.begin(), f1 = f0;
-      while (f0 != stationsToFetch.end()) {
-        const size_t n = std::min(total-start, chunk);
-        start += n;
-        f1    += n;
-        const std::list<long> chunkIds(f0, f1);
-        f0 = f1;
-
+      try {
         ObsPgmList mixed;
         hqcApp->getKvObsPgm(mixed, chunkIds);
-
-        // the following assumes that ObsPgmList is sorted by stationid
+          
         ObsPgmList::const_iterator i0 = mixed.begin(), i1 = i0;
         while (i0 != mixed.end()) {
           const long s0 = i0->stationID();
@@ -223,9 +224,9 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
           l0.insert(l0.end(), i0, i1);
           i0 = i1;
         }
+      } catch (std::exception& e) {
+        METLIBS_LOG_ERROR("exception retrieving obs_pgm for station list chunk");
       }
-    } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving obs_pgm for station list: " << e.what());
     }
   }
 }

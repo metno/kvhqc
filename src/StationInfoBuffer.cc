@@ -116,7 +116,7 @@ bool StationInfoBuffer::readFromStationFile()
       // FIXME fromtime and totime
         
       listStat.push_back(ls);
-    } catch (std::runtime_error& e) {
+    } catch (std::exception& e) {
       METLIBS_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
     }
   }

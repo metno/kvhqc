@@ -480,7 +480,7 @@ std::string HqcDianaHelper::synopStart(int stationId)
         synop << isAuto << ',';
         
         synop << (boost::format("%1$.4f,%2$.4f") % station.lon() % station.lat()).str();
-    } catch (std::runtime_error&) {
+    } catch (std::exception&) {
         // ignore unknown station
     }
     return synop.str();

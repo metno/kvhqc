@@ -341,7 +341,7 @@ void HqcMainWindow::ListOK()
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
         const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
         stationList.push_back(statId);
-      } catch (std::runtime_error& e) {
+      } catch (std::exception& e) {
         METLIBS_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
       }
     }

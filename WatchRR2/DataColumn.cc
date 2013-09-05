@@ -48,7 +48,7 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
     try {
         METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
         return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
-    } catch (std::runtime_error& e) {
+    } catch (std::exception& e) {
         METLIBS_LOG_WARN(e.what());
         return false;
     }

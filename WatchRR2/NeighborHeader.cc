@@ -23,7 +23,7 @@ QVariant NeighborHeader::headerData(int ctr, int nbr, Qt::Orientation orientatio
         if (ctr != nbr)
             header += sep + "[" + QString::number(Helpers::distance(sc.lon(), sc.lat(), sn.lon(), sn.lat()), 'f', 0) + "km]";
         return header;
-    } catch (std::runtime_error&) {
+    } catch (std::exception&) {
         return QString("?%1?").arg(nbr);
     }
 }

@@ -98,7 +98,7 @@ bool StationDialog::checkStation()
     try {
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
         name = QString::fromStdString(station.name());
-    } catch (std::runtime_error& e) {
+    } catch (std::exception& e) {
         METLIBS_LOG_WARN("Error in station lookup: " << e.what());
     }
     ui->labelStationInfo->setText(name);

@@ -78,7 +78,7 @@ bool RedistTableModel::setData(const QModelIndex& index, const QVariant& value, 
         mNewValues.at(row) = rrNew;
         dataChanged(index, index);
         return true;
-    } catch (std::runtime_error&) {
+    } catch (std::exception&) {
         return false;
     }
 }

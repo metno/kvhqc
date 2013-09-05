@@ -398,7 +398,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
             //METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
         }
         std::sort(stations.begin(), stations.end(), ordering);
-    } catch(std::runtime_error&) {
+    } catch (std::exception&) {
         return neighbors;
     }
 

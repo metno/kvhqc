@@ -110,7 +110,7 @@ QString SensorHeader::stationTooltip() const
             .arg(Helpers::stationName(s))
             .arg(s.height(), 0)
             .arg(mSensor.level);
-    } catch (std::runtime_error&) {
+    } catch (std::exception& ) {
         return QString("?%1?").arg(mSensor.stationId);
     }
 }

@@ -106,10 +106,12 @@ void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
     try {
       if (hqcApp->getKvData(get, whichData))
         addFetched(sensor.stationId, limits);
-     else
-       METLIBS_LOG_ERROR("problem receiving data");
+      else
+        METLIBS_LOG_ERROR("problem receiving data for sensor " << sensor << " and time " << limits);
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving data: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving data for sensor " << sensor << " and time " << limits << ", message is: " << e.what());
+    } catch (...) {
+      METLIBS_LOG_ERROR("exception while retrieving data for sensor " << sensor << " and time " << limits);
     }
 }
 

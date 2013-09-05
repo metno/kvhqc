@@ -411,7 +411,7 @@ void TimeseriesDialog::newParameterList(const std::vector<int>& parameters)
     BOOST_FOREACH(int pid, parameters) {
         try {
             parameterNames << QString::fromStdString(KvMetaDataBuffer::instance()->findParam(pid).name());
-        } catch (std::runtime_error&) {
+        } catch (std::exception&) {
             // unknown param
         }
     }
