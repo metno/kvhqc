@@ -222,10 +222,12 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
 
     std::ostringstream ss;
     bool first = true;
+
+    const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
     for(int f=1; f<16; f++) {
 	const int flag = cInfo.flag(f);
         using namespace kvalobs::flag;
-	if( (f != fmis and f != ftime and flag > 1) or ((f == fmis or f == ftime) and flag > 0) ) {
+	if (flag > showFlagAbove[f]) {
             if( not first )
                 ss << (query.get() ? '\n' : ' ');
             ss << flagnames[f] << '=' << int2char(flag);
