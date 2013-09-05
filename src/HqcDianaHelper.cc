@@ -17,8 +17,8 @@
 #include <iostream>
 #include <sstream>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.HqcDianaHelper"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 
@@ -220,7 +220,7 @@ HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
 
 void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     DataView::setSensorsAndTimes(sensors, limits);
 
     mDianaNeedsHqcInit = true;
@@ -233,14 +233,14 @@ void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
         if (s.stationId > 0)
             mDA->addAllTimes(allTimes, s, limits);
         else
-            LOG4SCOPE_WARN("stationId = 0: " << s);
+            METLIBS_LOG_WARN("stationId = 0: " << s);
     }
     sendTimes(allTimes);
 }
 
 void HqcDianaHelper::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
 
     if (not data or not eq_SensorTime()(mDianaSensorTime, data->sensorTime()))
         return;
@@ -250,13 +250,13 @@ void HqcDianaHelper::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
 
 void HqcDianaHelper::navigateTo(const SensorTime& st)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
 
     if (eq_SensorTime()(mDianaSensorTime, st))
         return;
 
     mDianaSensorTime = st;
-    LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+    METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
 
     sendTime();
     sendObservations();
@@ -279,7 +279,7 @@ void HqcDianaHelper::setEnabled(bool enabled)
 
 void HqcDianaHelper::handleAddressListChanged()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     const bool dc = (mClientButton->clientTypeExist("Diana"));
     if (dc == mDianaConnected)
         return;
@@ -295,33 +295,33 @@ void HqcDianaHelper::handleAddressListChanged()
 
 void HqcDianaHelper::handleConnectionClosed()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     mDianaConnected = false;
     /*emit*/ connectedToDiana(false);
 }
 
 void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
 
     mAllTimes = allTimes;
     sendTimes();
     if (mEnabled and not isKnownTime(mDianaSensorTime.time)) {
-        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+        METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
         if (not mAllTimes.empty()) {
             mDianaSensorTime.time = *mAllTimes.begin();
-            LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+            METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
             sendTime();
         } else {
             mDianaSensorTime.time = timeutil::ptime();
-            LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+            METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
         }
     }
 }
 
 void HqcDianaHelper::sendTimes()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     if (not mEnabled or not mDianaConnected or mAllTimes.empty())
         return;
 
@@ -332,7 +332,7 @@ void HqcDianaHelper::sendTimes()
     m.description= "time";
     BOOST_FOREACH(const timeutil::ptime& t, mAllTimes)
         m.data.push_back(timeutil::to_iso_extended_string(t));
-    LOG4SCOPE_DEBUG(DBG1(m.content()));
+    METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -345,8 +345,8 @@ void HqcDianaHelper::processLetterOld(miMessage& letter)
 
 void HqcDianaHelper::processLetter(const miMessage& letter)
 {
-    LOG_SCOPE("HqcDianaHelper");
-    LOG4SCOPE_DEBUG(DBG1(letter.command));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(letter.command));
     if (letter.command == qmstrings::newclient) {
         std::vector<std::string> desc, valu;
         const std::string cd(letter.commondesc), co(letter.common);
@@ -372,7 +372,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
     } else if (letter.command == qmstrings::timechanged and mEnabled) {
         handleDianaStationAndTime(0, letter.common);
     } else {
-        LOG4HQC_INFO("HqcDianaHelper", "Diana sent a command that HQC does not understand:\n"
+        METLIBS_LOG_INFO("Diana sent a command that HQC does not understand:\n"
                      << "====================\n" << letter.content() << "====================");
     }
 }
@@ -381,13 +381,13 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
 {
     if (not mEnabled)
         return;
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
 
     bool sendSignal = false;
 
     timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
     if (not isKnownTime(time)) {
-        LOG4SCOPE_INFO("Invalid/unknown time from diana: '" << time_txt << "'");
+        METLIBS_LOG_INFO("Invalid/unknown time from diana: '" << time_txt << "'");
         sendTimes();
         sendTime();
     } else if (time != mDianaSensorTime.time) {
@@ -395,7 +395,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
         sendObservations();
         sendSignal = true;
     } else {
-        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+        METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
     }
     if (stationId != 0 and stationId != mDianaSensorTime.sensor.stationId) {
         sendSignal = true;
@@ -403,14 +403,14 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     }
 
     if (sendSignal) {
-        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+        METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
         /*emit*/ signalNavigateTo(mDianaSensorTime);
     }
 }
 
 void HqcDianaHelper::applyQuickMenu()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     if (not mEnabled)
         return;
 #if 0 // FIXME this does not actually show the data
@@ -418,27 +418,27 @@ void HqcDianaHelper::applyQuickMenu()
     m.command = qmstrings::apply_quickmenu;
     m.data.push_back("hqc_qmenu");
     m.data.push_back("hqc_obs_...");
-    LOG4SCOPE_DEBUG(DBG1(m.content()));
+    METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 #endif
 }
 
 void HqcDianaHelper::sendStation(int stnr)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     if (not mEnabled or not mDianaConnected)
         return;
     miMessage m;
     m.command = qmstrings::station;
     m.common  = boost::lexical_cast<std::string>(stnr);
-    LOG4SCOPE_DEBUG(DBG1(m.content()));
+    METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 }
 
 void HqcDianaHelper::sendTime()
 {
-    LOG_SCOPE("HqcDianaHelper");
-    LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
     if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaSensorTime.time))
         return;
 
@@ -446,7 +446,7 @@ void HqcDianaHelper::sendTime()
     m.command = qmstrings::settime;
     m.commondesc = "time";
     m.common = timeutil::to_iso_extended_string(mDianaSensorTime.time);
-    LOG4SCOPE_DEBUG(DBG1(m.content()));
+    METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -549,12 +549,12 @@ std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, 
 
 void HqcDianaHelper::sendObservations()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     const timeutil::ptime& t = mDianaSensorTime.time;
     if (not mEnabled or not mDianaConnected or mSensors.empty() or t.is_not_a_date_time())
         return;
     
-    LOG4SCOPE_ERROR("FIXME need to reimplement sendObservations");
+    METLIBS_LOG_ERROR("FIXME need to reimplement sendObservations");
 
     typedef std::map<int, Sensor> SensorByParam_t;
     typedef std::map<int, SensorByParam_t> SensorByStationAndParam_t;
@@ -612,7 +612,7 @@ void HqcDianaHelper::sendObservations()
 #else
         pLetter.data = synopData;
 #endif
-        LOG4SCOPE_DEBUG(DBG1(pLetter.content()));
+        METLIBS_LOG_DEBUG(LOGVAL(pLetter.content()));
         mClientButton->sendMessage(pLetter);
 
         if (mDianaNeedsHqcInit)
@@ -623,13 +623,13 @@ void HqcDianaHelper::sendObservations()
 
 void HqcDianaHelper::sendSelectedParam(int paramId)
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
 
     if (not mEnabled or not mDianaConnected)
         return;
     SendPars_t::const_iterator it = mSendPars.find(paramId);
     if (it == mSendPars.end()) {
-        LOG4SCOPE_WARN("No such diana parameter: " << paramId);
+        METLIBS_LOG_WARN("No such diana parameter: " << paramId);
         return;
     }
 
@@ -637,7 +637,7 @@ void HqcDianaHelper::sendSelectedParam(int paramId)
     m.command = qmstrings::select_HQC_param;
     m.commondesc = "diParam";
     m.common     = it->second.dianaName;
-    LOG4SCOPE_DEBUG(DBG1(m.content()));
+    METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 }
 
@@ -768,7 +768,7 @@ std::string HqcDianaHelper::hqcType(int typeId, int env)
 
 void HqcDianaHelper::updateDianaParameters()
 {
-    LOG_SCOPE("HqcDianaHelper");
+    METLIBS_LOG_SCOPE();
     mSendPars.clear();
 
     const char* item = "TTT";

@@ -35,7 +35,9 @@
 #include <iostream>
 
 #define HAVE_SQL_WITH_WORKING_SUBSTR_IN 1
-#include "debug.hh"
+
+#define MILOGGER_CATEGORY "kvhqc.FlagPattern"
+#include "HqcLogging.hh"
 
 //using Helpers::int2char;
 //using Helpers::count_bits;

@@ -28,7 +28,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcApplication.hh"
-#include "HqcLogging.hh"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
 #include "QtKvService.hh"
@@ -48,9 +47,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "test/load_54420_20121130.cc"
 #include "test/load_84070_20120930.cc"
 
+#define MILOGGER_CATEGORY "kvhqc.offline"
+#include "HqcLogging.hh"
+
 int main( int argc, char* argv[] )
 {
-    Log4CppConfig log4cpp("!§%$!§%§");
+    milogger::LoggingConfig log4cpp("!§%$!§%§");
 
     // >>>>> move to HqcApplication somehow
     FakeKvApp fa;

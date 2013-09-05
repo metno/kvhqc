@@ -9,7 +9,6 @@ SET(auth_HEADERS
 SET(auth_SOURCES
   Authenticator.cc
   BusyIndicator.cc
-  debug.cc
   Functors.hh
   Functors.cc
   HideApplyBox.cc

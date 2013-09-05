@@ -32,16 +32,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "cFailedParam.h"
 #include "explainQC.h"
-#include "debug.hh"
 #include "mi_foreach.hh"
 
-#include <Qt/qdebug.h>
 #include <Qt3Support/Q3ListView>
 
 #include <map>
 #include <set>
 
-#include <iostream>
+#define MILOGGER_CATEGORY "kvhqc.FailList"
+#include "HqcLogging.hh"
 
 using namespace std;
 using namespace kvalobs;
@@ -72,7 +71,7 @@ void FailList::newData( const kvalobs::kvData & data )
         return;
     this->data = data;
     
-    LOG_SCOPE("FailList");
+    METLIBS_LOG_SCOPE();
 
     cfailedList->clear();
     
@@ -91,19 +90,19 @@ void FailList::newData( const kvalobs::kvData & data )
         Q3ListViewItem *topItem =
             new Q3ListViewItem( cfailedList, f.first, "" );
         topItem->setOpen(true);
-        qDebug() << "f.first=" << f.first;
+        METLIBS_LOG_DEBUG(LOGVAL(f.first));
         QC::FailGroupList &failGroupList = QC::failExpl[ f.first.toStdString() ];
         
         mi_foreach(const SubElem::value_type& sub, f.second) {
             QC::FailGroup &failGroup = failGroupList[sub.first.ascii()];
-            qDebug() << "sub.first=" << sub.first;
+            METLIBS_LOG_DEBUG(LOGVAL(sub.first));
             Q3ListViewItem *subItem =
                 new Q3ListViewItem( topItem, sub.first,
                                     QString::fromStdString(failGroup.explanation) );
             subItem->setOpen(true);
             
             mi_foreach( const QC::cFailedParam& subsub, sub.second) {
-                qDebug() << "subsub detail=" << QString::fromStdString(subsub.getPart( QC::cFailedParam::Detail ));
+                METLIBS_LOG_DEBUG("subsub detail='" << subsub.getPart( QC::cFailedParam::Detail ));
                 new Q3ListViewItem( subItem,
                                     QString::fromStdString(subsub.getPart( QC::cFailedParam::Detail )),
                                     QString::fromStdString(failGroup.getDetailExplanation(subsub, data)) );

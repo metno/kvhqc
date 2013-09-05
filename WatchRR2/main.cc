@@ -1,6 +1,5 @@
 
 #include "Helpers.hh"
-#include "HqcLogging.hh"
 #include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvalobsModelAccess.hh"
@@ -12,8 +11,8 @@
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
-#include <QtCore/qdebug.h>
 #include <QtCore/QLibraryInfo>
+#include <QtCore/QLocale>
 #include <QtCore/QStringList>
 #include <QtCore/QTranslator>
 #include <QtGui/QApplication>
@@ -21,11 +20,14 @@
 
 #include <boost/make_shared.hpp>
 
+#define MILOGGER_CATEGORY "kvhqc.WatchRR2.main"
+#include "HqcLogging.hh"
+
 int main(int argc, char* argv[])
 {
     QApplication a( argc, argv, true );
 
-    Log4CppConfig log4cpp("-.!!=-:");
+    milogger::LoggingConfig log4cpp("-.!!=-:");
 
     QTranslator qtTranslator;
     qtTranslator.load(QLocale::system(), "qt", "_",
@@ -36,7 +38,7 @@ int main(int argc, char* argv[])
     QTranslator wTranslator;
     const bool translationsLoaded = wTranslator.load(QLocale::system(), "watchrr2", "_", langDir);
     if (not translationsLoaded)
-        qDebug() << "failed to load translations from " << langDir;
+      METLIBS_LOG_INFO("failed to load translations from '" << langDir << "'");
     a.installTranslator(&wTranslator);
     
     QStringList args = a.arguments();
@@ -50,21 +52,21 @@ int main(int argc, char* argv[])
     for (int i = 1; i < args.size(); ++i) {
         if( args.at(i) == "--config" ) {
             if( i+1 >= args.size() ) {
-                qDebug() << "invalid --config without filename";
+                METLIBS_LOG_ERROR("invalid --config without filename");
                 exit(1);
             }
             i += 1;
             myconf = args.at(i);
         } else if( args.at(i) == "--station" ) {
             if( i+1 >= args.size() ) {
-                qDebug() << "invalid --station without station number";
+                METLIBS_LOG_ERROR("invalid --station without station number");
                 exit(1);
             }
             i += 1;
             sensor.stationId = args.at(i).toInt();
         } else if( args.at(i) == "--time" ) {
             if( i+2 >= args.size() ) {
-                qDebug() << "invalid --time without time-from time-to";
+                METLIBS_LOG_ERROR("invalid --time without time-from time-to");
                 exit(1);
             }
             i += 1;
@@ -73,7 +75,7 @@ int main(int argc, char* argv[])
             timeTo = timeutil::from_iso_extended_string(args.at(i).toStdString());
         } else if (args.at(i) == "--type") {
             if (i+1 >= args.size()) {
-                qDebug() << "invalid --type without typeid";
+                METLIBS_LOG_ERROR("invalid --type without typeid");
                 exit(1);
             }
             i += 1;
@@ -83,7 +85,7 @@ int main(int argc, char* argv[])
     
     miutil::conf::ConfSection *confSec = kvservice::corba::CorbaKvApp::readConf(myconf.toStdString());
     if(!confSec) {
-        qDebug() << "Can't open configuration file: " << myconf << endl;
+        METLIBS_LOG_ERROR("cannot open configuration file '" << myconf << "'");
         return 1;
     }
 

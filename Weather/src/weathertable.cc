@@ -58,7 +58,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <sstream>
 
-//#define NDEBUG
+#define MILOGGER_CATEGORY "kvhqc.weathertable"
 #include <cassert>
 
 using namespace kvservice;

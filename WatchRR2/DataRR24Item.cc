@@ -6,8 +6,8 @@
 #include <QtCore/QVariant>
 #include <QtGui/QBrush>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataRR24Item"
+#include "HqcLogging.hh"
 
 DataRR24Item::DataRR24Item(bool showNew, Code2TextPtr codes)
     : DataCorrectedItem(showNew, codes)

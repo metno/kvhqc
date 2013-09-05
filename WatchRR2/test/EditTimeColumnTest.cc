@@ -10,8 +10,8 @@
 #include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.test.EditTimeColumnTest"
+#include "HqcLogging.hh"
 
 struct CountColumnChanged : private boost::noncopyable
 {

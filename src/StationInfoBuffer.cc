@@ -19,8 +19,8 @@
 #include <fstream>
 #include <set>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.StationInfoBuffer"
+#include "HqcLogging.hh"
 
 namespace /*anonymous*/ {
 
@@ -54,7 +54,7 @@ StationInfoBuffer::~StationInfoBuffer()
 */
 bool StationInfoBuffer::writeToStationFile()
 {
-    LOG_SCOPE("StationInfoBuffer");
+    METLIBS_LOG_SCOPE();
 
     const std::string path = localCacheFileName();
     if (path.empty())
@@ -73,7 +73,7 @@ bool StationInfoBuffer::writeToStationFile()
              << std::endl;
     }
     outf.close();
-    LOG4HQC_INFO("StationInfoBuffer", "station list written to local cache");
+    METLIBS_LOG_INFO("station list written to local cache");
     return true;
 }
 
@@ -82,14 +82,14 @@ bool StationInfoBuffer::writeToStationFile()
 */
 bool StationInfoBuffer::readFromStationFile()
 {
-    LOG_SCOPE("StationInfoBuffer");
+    METLIBS_LOG_SCOPE();
     const std::string path = localCacheFileName();
     if (path.empty())
         return false;
 
     QFile stations(QString::fromStdString(path));
     if (not stations.open(QIODevice::ReadOnly)) {
-        LOG4HQC_INFO("StationInfoBuffer", "cannot open '" << path << "' for reading");
+        METLIBS_LOG_INFO("cannot open '" << path << "' for reading");
         return false;
     }
     QTextStream stationStream(&stations);
@@ -142,10 +142,10 @@ bool StationInfoBuffer::isConnected()
 
 const listStat_l& StationInfoBuffer::getStationDetails()
 {
-    LOG_SCOPE("StationInfoBuffer");
+    METLIBS_LOG_SCOPE();
 
     const timeutil::ptime now = timeutil::now();
-    DBG(DBG1(now) << DBG1(mLastStationListUpdate));
+    METLIBS_LOG_DEBUG(LOGVAL(now) << LOGVAL(mLastStationListUpdate));
     if (mLastStationListUpdate.is_not_a_date_time()
         or (now - mLastStationListUpdate).total_seconds() > 3600)
     {

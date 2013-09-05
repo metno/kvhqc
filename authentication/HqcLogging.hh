@@ -2,9 +2,8 @@
 #ifndef HQC_LOGGING_HH
 #define HQC_LOGGING_HH 1
 
-#include "timeutil.hh"
 #include <Qt/qglobal.h>
-#include <string>
+#include <iosfwd>
 
 QT_BEGIN_NAMESPACE;
 class QString;
@@ -13,60 +12,20 @@ QT_END_NAMESPACE;
 class Sensor;
 class SensorTime;
 
-namespace log4cpp {
-class CategoryStream;
-}
+std::ostream& operator<<(std::ostream& out, const QString& qs);
+std::ostream& operator<<(std::ostream& out, const Sensor&  s);
+std::ostream& operator<<(std::ostream& out, const SensorTime& st);
 
-class Log4CppConfig {
-public:
-    Log4CppConfig(const std::string& l4c_p);
-    ~Log4CppConfig();
-};
+#define LOGEBS(obs) " t=" << (obs)->sensorTime().time \
+    << " pid=" << (obs)->sensorTime().sensor.paramId                    \
+    << " corr=" << (obs)->corrected() << " ci='" << (obs)->controlinfo().flagstring() << "'" \
+    << " old_corr=" << (obs)->oldCorrected() << " old_ci='" << (obs)->oldControlinfo().flagstring() << "'" \
+    << " tasks=" << (obs)->allTasks()
 
-log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString& qs);
-log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const Sensor&  s);
-log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const SensorTime& st);
-log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const timeutil::ptime& t);
+#define LOGOBS(obs) " t=" << (obs)->sensorTime().time \
+    << " pid=" << (obs)->sensorTime().sensor.paramId                    \
+    << " corr=" << (obs)->corrected() << " ci='" << (obs)->controlinfo().flagstring() << "'"
 
-#ifndef NO_LOG4CPP
-#include <log4cpp/Category.hh>
-#include <log4cpp/Priority.hh>
-
-#define LOG4HQC(logger, level, message)                                 \
-    do {                                                                \
-        if (logger.isPriorityEnabled(level)) {                          \
-            logger << level                                             \
-                   << message;                                          \
-        }                                                               \
-    } while(false)
-
-#else // NO_LOG4CPP
-#define LOG4HQC(logger, level, message)         \
-    do { /* nothing */ } while(false)
-#endif // NO_LOG4CPP
-
-#define LOGHQC_FATAL(logger, message)                  \
-    LOG4HQC(logger, log4cpp::Priority::FATAL, message)
-#define LOGHQC_ERROR(logger, message)                  \
-    LOG4HQC(logger, log4cpp::Priority::ERROR, message)
-#define LOGHQC_WARN(logger, message)                   \
-    LOG4HQC(logger, log4cpp::Priority::WARN, message)
-#define LOGHQC_INFO(logger, message)                   \
-    LOG4HQC(logger, log4cpp::Priority::INFO, message)
-#define LOGHQC_DEBUG(logger, message)                  \
-    LOG4HQC(logger, log4cpp::Priority::DEBUG, message)
-
-#define LOG4HQC_LEVEL(category, level, message)                         \
-    LOG4HQC(log4cpp::Category::getInstance(category), level, message)
-#define LOG4HQC_FATAL(category, message)                            \
-    LOG4HQC_LEVEL(category, log4cpp::Priority::FATAL, message)
-#define LOG4HQC_ERROR(category, message)                            \
-    LOG4HQC_LEVEL(category, log4cpp::Priority::ERROR, message)
-#define LOG4HQC_WARN(category, message)                             \
-    LOG4HQC_LEVEL(category, log4cpp::Priority::WARN, message)
-#define LOG4HQC_INFO(category, message)                             \
-    LOG4HQC_LEVEL(category, log4cpp::Priority::INFO, message)
-#define LOG4HQC_DEBUG(category, message)                            \
-    LOG4HQC_LEVEL(category, log4cpp::Priority::DEBUG, message)
+#include <miLogger/miLogging.h>
 
 #endif // HQC_LOGGING_HH

@@ -13,8 +13,8 @@
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.ModelColumn"
+#include "HqcLogging.hh"
 
 ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
     : mMA(ma)
@@ -23,7 +23,7 @@ ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRang
     , mCodes(boost::make_shared<Code2Text>())
 {
     if (not ModelAccess::isModelSensor(mSensor)) {
-        LOG4HQC_WARN("ModelColumn", "not a model sensor: " << mSensor << ", adapting");
+        METLIBS_LOG_WARN("not a model sensor: " << mSensor << ", adapting");
         mSensor = ModelAccess::makeModelSensor(mSensor);
     }
     mMA->modelDataChanged.connect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));

@@ -14,8 +14,8 @@
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataCorrectedItem"
+#include "HqcLogging.hh"
 
 DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextPtr codes)
     : mCodes(codes)

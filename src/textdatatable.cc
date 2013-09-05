@@ -13,7 +13,7 @@
 #include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
 
-#define NDEBUG
+#define MILOGGER_CATEGORY "kvhqc.TextData"
 #include "HqcLogging.hh"
 
 namespace {
@@ -105,7 +105,7 @@ void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget*
     try {
       ok = kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData);
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("TextData", "exception while retrieving text data: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving text data: " << e.what());
     }
     if (not ok) {
       QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),

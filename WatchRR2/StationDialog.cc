@@ -12,8 +12,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.StationDialog"
+#include "HqcLogging.hh"
 
 static const int MIN_DAYS = 7, MAX_DAYS = 120;
 
@@ -44,7 +44,7 @@ StationDialog::StationDialog(QDialog* parent)
 
 void StationDialog::init()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     ui.reset(new Ui::DialogStation);
     ui->setupUi(this);
 
@@ -61,7 +61,7 @@ void StationDialog::init()
 
 StationDialog::~StationDialog()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
 }
 
 void StationDialog::onUpdateType()
@@ -149,7 +149,7 @@ bool StationDialog::valid() const
 
 void StationDialog::onButtonOk()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     if (valid())
         accept();
 }

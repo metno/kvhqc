@@ -8,8 +8,8 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvBufferedAccess"
+#include "HqcLogging.hh"
 
 ObsAccess::TimeSet KvBufferedAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
@@ -25,7 +25,7 @@ ObsAccess::TimeSet KvBufferedAccess::allTimes(const Sensor& sensor, const TimeRa
 ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 {
     if (not st.valid()) {
-        LOG4HQC_ERROR("KvBufferedAccess", "invalid sensorTime: " << st);
+        METLIBS_LOG_ERROR("invalid sensorTime: " << st);
         return ObsDataPtr();
     }
 
@@ -39,7 +39,7 @@ ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
 {
     if (not st.valid())
-        LOG4HQC_ERROR("KvBufferedAccess", "invalid sensorTime: " << st);
+        METLIBS_LOG_ERROR("invalid sensorTime: " << st);
 
     Data_t::iterator it = mData.find(st);
     if (it != mData.end() and it->second)
@@ -68,7 +68,7 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
 {
     const SensorTime st(Helpers::sensorTimeFromKvData(data));
     if (not isSubscribed(st)) {
-        LOG4HQC_DEBUG("KvBufferedAccess", "no subscription for " << data);
+        METLIBS_LOG_DEBUG("no subscription for " << data);
         return KvalobsDataPtr();
     }
     

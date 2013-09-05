@@ -7,8 +7,8 @@
 
 #include "ui_simplecorrections.h"
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.SimpleCorrections"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 
@@ -30,18 +30,18 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
 {
     EditDataPtr obs = eda->findE(sensorTime);
     if (not obs) {
-        LOG4HQC_ERROR("SimpleCorrections", "accept_original without obs for " << sensorTime);
+        METLIBS_LOG_ERROR("accept_original without obs for " << sensorTime);
         return;
     }
 
     const kvalobs::kvControlInfo ci = obs->controlinfo();
     const int fmis = ci.flag(kvalobs::flag::fmis);
     if (fmis == 3) {
-        LOG4HQC_ERROR("SimpleCorrections", "fmis=3, accept_original not possible for " << sensorTime);
+        METLIBS_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
         return;
     }
     if (ci.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
-        LOG4HQC_ERROR("SimpleCorrections", "bad accept_original, would not set fhqc for " << sensorTime);
+        METLIBS_LOG_ERROR("bad accept_original, would not set fhqc for " << sensorTime);
         return;
     }
 
@@ -66,7 +66,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
 {
     EditDataPtr obs = eda->findE(sensorTime);
     if (not obs) {
-        LOG4HQC_ERROR("SimpleCorrections", "accept_corrected without obs for " << sensorTime);
+        METLIBS_LOG_ERROR("accept_corrected without obs for " << sensorTime);
         return;
     }
 
@@ -83,7 +83,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
     } else if (fmis == 1) {
         Helpers::set_fhqc(editor, 5);
     } else {
-        LOG4HQC_ERROR("SimpleCorrections", "bad accept_corrected for " << sensorTime);
+        METLIBS_LOG_ERROR("bad accept_corrected for " << sensorTime);
         return;
     }
     if (qc2ok)
@@ -97,13 +97,13 @@ void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
 {
     EditDataPtr obs = eda->findE(sensorTime);
     if (not obs) {
-        LOG4HQC_ERROR("SimpleCorrections", "reject without obs for " << sensorTime);
+        METLIBS_LOG_ERROR("reject without obs for " << sensorTime);
         return;
     }
 
     const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
     if (fmis == 1 or fmis == 3) {
-        LOG4HQC_ERROR("SimpleCorrections", "bad reject with fmis=1/3 for " << sensorTime);
+        METLIBS_LOG_ERROR("bad reject with fmis=1/3 for " << sensorTime);
         return;
     }
 
@@ -120,11 +120,11 @@ void interpolate_or_correct(EditAccessPtr eda, const SensorTime& sensorTime, flo
 {
     EditDataPtr obs = eda->findE(sensorTime);
     if (not obs) {
-        LOG4HQC_ERROR("SimpleCorrections", "interpolate_or_correct without obs for " << sensorTime);
+        METLIBS_LOG_ERROR("interpolate_or_correct without obs for " << sensorTime);
         return;
     }
     if (Helpers::is_accumulation(obs)) {
-        LOG4HQC_ERROR("SimpleCorrections", "accept_corrected for accumulation for " << sensorTime);
+        METLIBS_LOG_ERROR("accept_corrected for accumulation for " << sensorTime);
         return;
     }
 
@@ -166,19 +166,19 @@ void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 
 void SimpleCorrections::navigateTo(const SensorTime& st)
 {
-    LOG_SCOPE("SimpleCorrections");
+    METLIBS_LOG_SCOPE();
     if (eq_SensorTime()(mSensorTime, st))
         return;
 
     mSensorTime = st;
-    LOG4SCOPE_DEBUG(DBG1(mSensorTime));
+    METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
     update();
 }
 
 void SimpleCorrections::update()
 {
-    LOG_SCOPE("SimpleCorrections");
+    METLIBS_LOG_SCOPE();
 
     const Sensor& s = mSensorTime.sensor;
     ModelDataPtr mdl;
@@ -193,9 +193,9 @@ void SimpleCorrections::update()
         obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
         mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
         if (not mMA)
-            LOG4SCOPE_DEBUG("no model access");
+            METLIBS_LOG_DEBUG("no model access");
         if (not mdl)
-            LOG4SCOPE_DEBUG("no model value for " << mSensorTime);
+            METLIBS_LOG_DEBUG("no model value for " << mSensorTime);
     } else {
         ui->textStation->setText("");
         ui->textParam->setText("");
@@ -215,7 +215,7 @@ void SimpleCorrections::update()
 
 void SimpleCorrections::enableEditing()
 {
-    LOG_SCOPE("SimpleCorrections");
+    METLIBS_LOG_SCOPE();
 
     enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
            NEW_CORRECTED, N_BUTTONS };
@@ -255,8 +255,8 @@ void SimpleCorrections::enableEditing()
 
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
 {
-    LOG_SCOPE("SimpleCorrections");
-    LOG4SCOPE_DEBUG(DBG1(data->sensorTime()) << DBG1(mSensorTime));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(mSensorTime));
     if (data and eq_SensorTime()(data->sensorTime(), mSensorTime))
         update();
 }

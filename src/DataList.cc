@@ -14,8 +14,8 @@
 
 #include "ui_dl_addcolumn.h"
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataList"
+#include "HqcLogging.hh"
 
 struct DataList::eq_Column : public std::unary_function<Column, bool> {
     const Column& a;
@@ -114,12 +114,12 @@ ObsColumnPtr DataList::makeColumn(const Column& c)
 
 void DataList::navigateTo(const SensorTime& st)
 {
-    LOG_SCOPE("DataList");
+    METLIBS_LOG_SCOPE();
     if (not st.valid() or eq_SensorTime()(mSensorTime, st))
         return;
 
     mSensorTime = st;
-    LOG4SCOPE_DEBUG(DBG1(mSensorTime));
+    METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
     const QModelIndexList idxs = mTableModel->findIndexes(st);
 
@@ -140,11 +140,11 @@ void DataList::navigateTo(const SensorTime& st)
 
 void DataList::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
-    LOG_SCOPE("DataList");
+    METLIBS_LOG_SCOPE();
     QTableView::currentChanged(current, previous);
     if (current.isValid()) {
         const SensorTime st = mTableModel->findSensorTime(current);
-        LOG4SCOPE_DEBUG(DBG1(st));
+        METLIBS_LOG_DEBUG(LOGVAL(st));
         if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
             mSensorTime = st;
             /*emit*/ signalNavigateTo(st);
@@ -289,7 +289,7 @@ void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nV
 
 std::string DataList::changes()
 {
-    LOG_SCOPE("DataList");
+    METLIBS_LOG_SCOPE();
 
     Columns_t reordered;
     for(unsigned int visual=0; visual<mColumns.size(); ++visual) {
@@ -297,7 +297,7 @@ std::string DataList::changes()
         if (logical >= 0 and logical < (int)mColumns.size()) {
             reordered.push_back(mColumns[logical]);
         } else {
-            LOG4SCOPE_ERROR("column without logical index");
+            METLIBS_LOG_ERROR("column without logical index");
         }
     }
 
@@ -351,14 +351,14 @@ std::string DataList::changes()
         changes.appendChild(timeshift);
     }
 
-    LOG4SCOPE_DEBUG("changes=" << doc.toString());
+    METLIBS_LOG_DEBUG("changes=" << doc.toString());
     return doc.toString().toStdString();
 }
 
 void DataList::replay(const std::string& changesText)
 {
-    LOG_SCOPE("DataList");
-    LOG4SCOPE_DEBUG("replaying " << changesText);
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG("replaying " << changesText);
 
     QDomDocument doc;
     doc.setContent(QString::fromStdString(changesText));
@@ -372,7 +372,7 @@ void DataList::replay(const std::string& changesText)
             n.toText(c);
             doc.appendChild(c);
         }
-        LOG4SCOPE_DEBUG(doc.toString().toStdString());
+        METLIBS_LOG_DEBUG(doc.toString().toStdString());
     }
 #endif
 
@@ -386,9 +386,9 @@ void DataList::replay(const std::string& changesText)
             Columns_t::iterator it = std::find_if(newColumns.begin(), newColumns.end(), eq_Column(col));
             if (it != newColumns.end()) {
                 newColumns.erase(it);
-                LOG4SCOPE_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+                METLIBS_LOG_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
             } else {
-                LOG4SCOPE_DEBUG("cannot remove " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+                METLIBS_LOG_DEBUG("cannot remove " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
             }
         }
     }            
@@ -405,9 +405,9 @@ void DataList::replay(const std::string& changesText)
             const int oIdx = (oit - mOriginalColumns.begin()), nIdx = oIdx + by;
             newColumns.erase(nit);
             newColumns.insert(newColumns.begin() + nIdx, col);
-            LOG4SCOPE_DEBUG("moved " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+            METLIBS_LOG_DEBUG("moved " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
         } else {
-            LOG4SCOPE_DEBUG("cannot move " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+            METLIBS_LOG_DEBUG("cannot move " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
         }
     }
 
@@ -417,7 +417,7 @@ void DataList::replay(const std::string& changesText)
         const QDomElement c = a.firstChildElement(E_TAG_COLUMN);
         col.fromText(c);
         newColumns.insert(newColumns.begin() + at, col);
-        LOG4SCOPE_DEBUG("added " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+        METLIBS_LOG_DEBUG("added " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
     }
 
 #ifndef NDEBUG
@@ -428,7 +428,7 @@ void DataList::replay(const std::string& changesText)
             n.toText(c);
             doc.appendChild(c);
         }
-        LOG4SCOPE_DEBUG(doc.toString().toStdString());
+        METLIBS_LOG_DEBUG(doc.toString().toStdString());
     }
 #endif
 
@@ -440,7 +440,7 @@ void DataList::replay(const std::string& changesText)
         const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
         const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
         TimeRange newTimeLimits(t0, t1);
-        LOG4SCOPE_DEBUG(DBG1(newTimeLimits));
+        METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
     }
 
     mColumns = newColumns;

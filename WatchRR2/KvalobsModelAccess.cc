@@ -7,8 +7,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
+#include "HqcLogging.hh"
 
 KvalobsModelAccess::KvalobsModelAccess()
 {
@@ -28,8 +28,8 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
     if (mFetched.find(f) != mFetched.end())
         return KvalobsModelDataPtr();
 
-    LOG_SCOPE("KvalobsModelAccess");
-    LOG4SCOPE_DEBUG(DBG1(st));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(st));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
@@ -40,10 +40,10 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
         mFetched.insert(f);
         BOOST_FOREACH(const kvalobs::kvModelData& md, model)
             receive(md);
-        LOG4HQC_ERROR("KvalobsModelAccess", "problem receiving model data");
+        METLIBS_LOG_ERROR("problem receiving model data");
       }
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvalobsModelAccess", "exception while retrieving model data: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving model data: " << e.what());
     }
     return KvModelAccess::find(st);
 }

@@ -10,8 +10,8 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
+#include "HqcLogging.hh"
 
 ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time)
     : mDA(da)
@@ -232,7 +232,7 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn* colu
             const int row = rowAtTime(time);
             if (row >= 0) {
                 const QModelIndex index = createIndex(row, col);
-                DBG(DBG1(time) << DBG1(col));
+                METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(col));
                 dataChanged(index, index);
             }
             break;

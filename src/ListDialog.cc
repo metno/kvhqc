@@ -44,9 +44,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <algorithm>
 
-#define NDEBUG
-#include "debug.hh"
-#include <qdebug.h>
+#define MILOGGER_CATEGORY "kvhqc.ListDialog"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 struct stationtype_t {
@@ -188,7 +187,7 @@ void ListDialog::setupStationTab()
 
 void ListDialog::setupParameterTab()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
 
     const std::vector<int> empty;
     mParamSelectedModel.reset(new ParamIdModel(empty));

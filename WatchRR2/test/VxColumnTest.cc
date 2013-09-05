@@ -7,8 +7,8 @@
 #define LOAD_DECL_ONLY
 #include "load_31850_20121130.cc"
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.test.VxColumnTest"
+#include "HqcLogging.hh"
 
 TEST(VxColumnTest, Basic)
 {

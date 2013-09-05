@@ -5,13 +5,13 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvModelAccess"
+#include "HqcLogging.hh"
 
 ModelDataPtr KvModelAccess::find(const SensorTime& st)
 {
-    LOG_SCOPE("KvModelAccess");
-    LOG4SCOPE_DEBUG(DBG1(st));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(st));
 
     Data_t::iterator it;
     if (isModelSensorTime(st)) {
@@ -22,15 +22,15 @@ ModelDataPtr KvModelAccess::find(const SensorTime& st)
     if (it != mData.end())
         return it->second;
 
-    LOG4SCOPE_DEBUG("no model data found");
+    METLIBS_LOG_DEBUG("no model data found");
     return KvalobsModelDataPtr();
 }
 
 KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
 {
-    LOG_SCOPE("KvModelAccess");
+    METLIBS_LOG_SCOPE();
     const SensorTime st(Helpers::sensorTimeFromKvModelData(data)); 
-    LOG4SCOPE_DEBUG(DBG1(st) << DBG1(data));
+    METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(data));
 
     KvalobsModelDataPtr mdl;
     Data_t::iterator it = mData.find(st);
@@ -38,7 +38,7 @@ KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
         mdl = boost::make_shared<KvalobsModelData>(data);
         mData[st] = mdl;
         modelDataChanged(mdl);
-        LOG4SCOPE_DEBUG("new model data");
+        METLIBS_LOG_DEBUG("new model data");
     } else {
         mdl = it->second;
 

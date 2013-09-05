@@ -9,8 +9,8 @@
 
 #include <stdexcept>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditAccess"
+#include "HqcLogging.hh"
 
 EditAccess::EditAccess(ObsAccessPtr backend)
     : mBackend(backend)
@@ -43,7 +43,7 @@ ObsAccess::TimeSet EditAccess::allTimes(const Sensor& sensor, const TimeRange& l
 ObsDataPtr EditAccess::find(const SensorTime& st)
 {
     if (not st.valid()) {
-        LOG4HQC_ERROR("EditAccess", "invalid sensorTime: " << st);
+        METLIBS_LOG_ERROR("invalid sensorTime: " << st);
         return ObsDataPtr();
     }
 
@@ -60,7 +60,7 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
 ObsDataPtr EditAccess::create(const SensorTime& st)
 {
     if (not st.valid())
-        LOG4HQC_ERROR("EditAccess", "invalid sensorTime: " << st);
+        METLIBS_LOG_ERROR("invalid sensorTime: " << st);
 
     Data_t::iterator it = mData.find(st);
     if (it != mData.end() and it->second)
@@ -75,7 +75,7 @@ ObsDataPtr EditAccess::create(const SensorTime& st)
 
 bool EditAccess::update(const std::vector<ObsUpdate>& updates)
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         EditDataPtr ebs = findOrCreateE(ou.obs->sensorTime());
         editor(ebs)->setCorrected(ou.corrected).setControlinfo(ou.controlinfo).setTasks(ou.tasks);
@@ -85,26 +85,26 @@ bool EditAccess::update(const std::vector<ObsUpdate>& updates)
 
 bool EditAccess::sendChangesToParent()
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     std::vector<ObsUpdate> updates;
     std::vector<EditDataPtr> obsToReset;
     BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
         if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
             updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
-            LOG4SCOPE_DEBUG(DBGO1(ebs));
+            METLIBS_LOG_DEBUG(LOGOBS(ebs));
             obsToReset.push_back(ebs);
         }
     }
 
     const bool success = mBackend->update(updates);
-    LOG4SCOPE_DEBUG(DBG1(success));
+    METLIBS_LOG_DEBUG(LOGVAL(success));
     if (success) {
         mVersionTimestamps = VersionTimestamps_t(1, timeutil::now());
         mCurrentVersion = mUpdated = mTasks = 0;
         /* emit */ currentVersionChanged(currentVersion(), highestVersion());
         BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
             ebs->reset();
-            LOG4SCOPE_DEBUG(DBG1(ebs->sensorTime()));
+            METLIBS_LOG_DEBUG(LOGVAL(ebs->sensorTime()));
         }
     }
     return success;
@@ -112,7 +112,7 @@ bool EditAccess::sendChangesToParent()
 
 void EditAccess::reset()
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     if (mVersionTimestamps.size() > 1)
         mVersionTimestamps.erase(mVersionTimestamps.begin() + 1, mVersionTimestamps.end());
     mCurrentVersion = mUpdated = mTasks = 0;
@@ -127,11 +127,11 @@ void EditAccess::reset()
         const bool changed = ebs->modified() or ebs->modifiedTasks();
         ebs->reset();
         if (ebs->created()) {
-            LOG4SCOPE_DEBUG(DBGOO1(ebs) << " des");
+            METLIBS_LOG_DEBUG(LOGEBS(ebs) << " des");
             obsDataChanged(DESTROYED, ebs);
             mData.erase(oit);
         } else if (changed) {
-            LOG4SCOPE_DEBUG(DBGOO1(ebs) << " mod");
+            METLIBS_LOG_DEBUG(LOGEBS(ebs) << " mod");
             obsDataChanged(MODIFIED, ebs);
         }
     }
@@ -148,7 +148,7 @@ struct PopUpdate {
 
 void EditAccess::newVersion()
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     mCurrentVersion += 1;
     if ((int)mVersionTimestamps.size() >= mCurrentVersion)
         mVersionTimestamps.erase(mVersionTimestamps.begin() + mCurrentVersion, mVersionTimestamps.end());
@@ -181,7 +181,7 @@ void EditAccess::updateToCurrentVersion(bool drop)
 
 void EditAccess::undoVersion()
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     if (mCurrentVersion == 0)
         return;
     mCurrentVersion -= 1;
@@ -190,7 +190,7 @@ void EditAccess::undoVersion()
 
 void EditAccess::redoVersion()
 {
-    LOG_SCOPE("EditAccess");
+    METLIBS_LOG_SCOPE();
     if (mCurrentVersion >= highestVersion())
         return;
     mCurrentVersion += 1;
@@ -209,7 +209,7 @@ EditAccess::ChangedData_t EditAccess::versionChanges(int version) const
 
 void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks)
 {
-    DBGE(LOG4HQC_DEBUG("EditAccess", DBG1(obs->sensorTime()) << DBG1(dUpdated) << DBG1(dTasks)));
+    METLIBS_LOG_DEBUG(LOGVAL(obs->sensorTime()) << LOGVAL(dUpdated) << LOGVAL(dTasks));
     mUpdated += dUpdated;
     mTasks += dTasks;
     obsDataChanged(what, obs);
@@ -252,8 +252,8 @@ bool EditAccess::commit(EditDataEditor* editor)
 
 void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE("EditAccess");
-    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
 
     EditDataPtr ebs = findE(SensorTime(obs->sensorTime()));
     if (not ebs)
@@ -261,7 +261,7 @@ void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr 
 
     const int wasModified = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
     const bool backendChanged = ebs->updateFromBackend();
-    LOG4SCOPE_DEBUG(DBG1(backendChanged));
+    METLIBS_LOG_DEBUG(LOGVAL(backendChanged));
     if (backendChanged) {
         const int isModified = ebs->modified()?1:0, hasTasks = ebs->hasTasks()?1:0;
         sendObsDataChanged(EditAccess::MODIFIED, ebs, isModified - wasModified, hasTasks - hadTasks);

@@ -47,8 +47,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.ErrorList"
+#include "HqcLogging.hh"
 
 using namespace kvalobs;
 
@@ -61,7 +61,7 @@ ErrorList::ErrorList(QWidget* parent)
     , mErrorsForSalen(false)
     , mSortProxy(new QSortFilterProxyModel(this))
 {
-    LOG_SCOPE("ErrorList");
+    METLIBS_LOG_SCOPE();
 
     verticalHeader()->setDefaultSectionSize(20);
     verticalHeader()->hide();
@@ -112,7 +112,7 @@ void ErrorList::resizeHeaders()
 
 void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    LOG_SCOPE("ErrorList");
+    METLIBS_LOG_SCOPE();
     DataView::setSensorsAndTimes(sensors, limits);
 
     mLastSelectedRow = -1;
@@ -127,7 +127,7 @@ void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& li
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    LOG_SCOPE("ErrorList");
+    METLIBS_LOG_SCOPE();
     showSameStation();
     signalStationSelected();
 }
@@ -137,7 +137,7 @@ void ErrorList::showFail(const QModelIndex& index)
     if (index.column() < 10 or index.column() > 12)
         return;
 
-    LOG4SCOPE_DEBUG("sorry, FailDialog needs update");
+    METLIBS_LOG_DEBUG("sorry, FailDialog needs update");
     //// FIXME re-enable FailInfo
     // FailInfo::FailDialog fDlg;
     // fDlg.failList->newData(getKvData(index.row()));
@@ -156,9 +156,9 @@ int ErrorList::getSelectedRow() const
 
 void ErrorList::showSameStation()
 {
-    LOG_SCOPE("ErrorList");
+    METLIBS_LOG_SCOPE();
     const int row = getSelectedRow();
-    LOG4SCOPE_DEBUG(DBG1(row));
+    METLIBS_LOG_DEBUG(LOGVAL(row));
     if (row < 0)
         return;
     EditDataPtr obs = mTableModel->mem4Row(row);

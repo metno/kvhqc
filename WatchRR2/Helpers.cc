@@ -18,8 +18,8 @@
 
 #include <sstream>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.Helpers"
+#include "HqcLogging.hh"
 
 namespace {
 // from WatchRR/src/ControlFlagCell.cc
@@ -510,7 +510,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
                 continue;
             stations.push_back(s);
             stationIDs.push_back(s.stationID());
-            DBGV(s.stationID());
+            METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
         }
         std::sort(stations.begin(), stations.end(), ordering);
     } catch(std::runtime_error&) {
@@ -529,7 +529,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
             // klXX or collector or typeid or ...
             if (not haveRR24 and op.paramID() == kvalobs::PARAMID_RR_24) {
                 neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, op.typeID()));
-                DBG(DBG1(s.stationID()) << DBG1(op.typeID()));
+                METLIBS_LOG_DEBUG(LOGVAL(s.stationID()) << LOGVAL(op.typeID()));
                 if (++count >= maxNeighbors)
                     break;
                 haveRR24 = true;
@@ -537,7 +537,7 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
             if (not haveRRaggregated and op.paramID() >= kvalobs::PARAMID_RR_01 and op.paramID() <= kvalobs::PARAMID_RR_12) {
                 const int typeID = -op.typeID();
                 neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, typeID));
-                DBG(DBG1(s.stationID()) << DBG1(typeID));
+                METLIBS_LOG_DEBUG(LOGVAL(s.stationID()) << LOGVAL(typeID));
                 if (++count >= maxNeighbors)
                     break;
                 haveRRaggregated = true;

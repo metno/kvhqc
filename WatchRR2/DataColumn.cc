@@ -12,8 +12,8 @@
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataColumn"
+#include "HqcLogging.hh"
 
 DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& t, DataItemPtr item)
     : mDA(da)
@@ -44,12 +44,12 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 
 bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int role)
 {
-    LOG_SCOPE("DataColumn");
+    METLIBS_LOG_SCOPE();
     try {
-        LOG4SCOPE_DEBUG(DBG1(value.toString()));
+        METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
         return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
     } catch (std::runtime_error& e) {
-        LOG4SCOPE_WARN(e.what());
+        METLIBS_LOG_WARN(e.what());
         return false;
     }
 }
@@ -63,16 +63,16 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
 
 bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE("DataColumn");
+    METLIBS_LOG_SCOPE();
     const SensorTime st(obs->sensorTime());
     if (not mItem->matchSensor(mSensor, st.sensor))
         return false;
 
-    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs));
+    METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
     const timeutil::ptime timeo = st.time - mTimeOffset;
     ObsCache_t::iterator it = mObsCache.find(timeo);
     if (it == mObsCache.end()) {
-        LOG4SCOPE_DEBUG("not in cache");
+        METLIBS_LOG_DEBUG("not in cache");
         return false;
     }
     

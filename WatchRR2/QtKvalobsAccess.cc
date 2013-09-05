@@ -4,8 +4,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.QtKvalobsAccess"
+#include "HqcLogging.hh"
 #ifndef NDEBUG
 #include "Helpers.hh"
 #endif

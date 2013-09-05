@@ -4,8 +4,8 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataView"
+#include "HqcLogging.hh"
 
 DataView::DataView()
 {
@@ -19,7 +19,7 @@ DataView::~DataView()
 
 void DataView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    LOG_SCOPE("DataView");
+    METLIBS_LOG_SCOPE();
     if (eda != mDA) {
         unsubscribeAll();
         if (mDA)
@@ -30,18 +30,18 @@ void DataView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
     }
     mMA = mda;
     if (not mMA)
-        LOG4SCOPE_DEBUG("no model access");
+        METLIBS_LOG_DEBUG("no model access");
 }
 
 void DataView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    LOG_SCOPE("DataView");
+    METLIBS_LOG_SCOPE();
     subscribeAll(sensors, limits);
 }
 
 void DataView::subscribeAll(const Sensors_t& sensors, const TimeRange& limits)
 {
-    LOG_SCOPE("DataView");
+    METLIBS_LOG_SCOPE();
     // do not unsubscribe before subscribing for the new time limits
     Subscriptions_t newSubscriptions;
     if (mDA) {
@@ -57,7 +57,7 @@ void DataView::subscribeAll(const Sensors_t& sensors, const TimeRange& limits)
 
 void DataView::unsubscribeAll()
 {
-    LOG_SCOPE("DataView");
+    METLIBS_LOG_SCOPE();
     if (mDA) {
         BOOST_FOREACH(const ObsSubscription sub, mSubscriptions)
             mDA->removeSubscription(sub);
@@ -67,6 +67,6 @@ void DataView::unsubscribeAll()
 
 void DataView::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE("DataView");
+    METLIBS_LOG_SCOPE();
     // TODO
 }

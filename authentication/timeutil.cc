@@ -33,7 +33,8 @@
 #include <boost/format.hpp>
 #include <memory>
 
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.timeutil"
+#include "HqcLogging.hh"
 
 namespace b_pt = boost::posix_time;
 
@@ -99,7 +100,7 @@ QDateTime to_QDateTime(const b_pt::ptime& pt)
 
 b_pt::ptime from_YMDhms(int year, int month, int day, int hour, int minute, int second)
 {
-    //LOG_SCOPE();
+    //METLIBS_LOG_SCOPE();
     //std::cerr << "YMD hms = " << year << '-' << month << '-' << day << ' ' << hour << ':' << minute << ':' << second << std::endl;
     try {
         return ptime(boost::gregorian::date(year, month, day), b_pt::time_duration(hour, minute, second));

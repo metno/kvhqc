@@ -5,8 +5,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.AutoColumnView"
+#include "HqcLogging.hh"
 
 AutoColumnView::AutoColumnView()
 {
@@ -51,7 +51,7 @@ void AutoColumnView::detachView(ViewP v)
             return;
         }
     }
-    LOG4HQC_WARN("AutoColumnView", "cannot detach view");
+    METLIBS_LOG_WARN("cannot detach view");
 }
 
 namespace /* anonymous */ {

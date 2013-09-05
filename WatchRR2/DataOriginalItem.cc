@@ -9,8 +9,8 @@
 
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataOriginalItem"
+#include "HqcLogging.hh"
 
 DataOriginalItem::DataOriginalItem(Code2TextPtr codes)
     : mCodes(codes)

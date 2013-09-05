@@ -30,7 +30,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 #include "explainQC.h"
 
-#include "debug.hh"
 #include "hqc_paths.hh"
 #include "timeutil.hh"
 
@@ -48,6 +47,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <list>
 #include <fstream>
 #include <sstream>
+
+#define MILOGGER_CATEGORY "kvhqc.explainQC"
+#include "HqcLogging.hh"
 
 using namespace std;
 using namespace kvalobs;

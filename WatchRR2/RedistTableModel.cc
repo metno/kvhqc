@@ -10,8 +10,8 @@
 
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.RedistTableModel"
+#include "HqcLogging.hh"
 
 RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)
@@ -34,7 +34,7 @@ RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const
 
 RedistTableModel::~RedistTableModel()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
 }
 
 Qt::ItemFlags RedistTableModel::flags(const QModelIndex& index) const

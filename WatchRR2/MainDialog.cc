@@ -29,8 +29,8 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.MainDialog"
+#include "HqcLogging.hh"
 
 using namespace Helpers;
 
@@ -53,7 +53,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     {
         QSettings settings;
         if (not restoreGeometry(settings.value(SETTING_WATCHRR_GEOMETRY).toByteArray()))
-            LOG4HQC_WARN("WatchRRMainDialog", "cannot restore WatchRR geometry");
+            METLIBS_LOG_WARN("cannot restore WatchRR geometry");
     }
 
     QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
@@ -309,7 +309,7 @@ void MainDialog::clearSelection()
 
 void MainDialog::enableSave()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     int updates = mDA->countU(), tasks = mDA->countT();
 
     ui->buttonSave->setEnabled(tasks == 0 and updates > 0);

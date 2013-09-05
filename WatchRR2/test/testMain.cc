@@ -2,7 +2,6 @@
 #include "EditAccess.hh"
 #include "FakeKvApp.hh"
 #include "Helpers.hh"
-#include "HqcLogging.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
 #include "MainDialog.hh"
@@ -18,16 +17,18 @@
 #include "load_54420_20121130.cc"
 #include "load_84070_20120930.cc"
 
-#include <QtCore/qdebug.h>
 #include <QtGui/QApplication>
 
 #include <boost/make_shared.hpp>
+
+#define MILOGGER_CATEGORY "kvhqc.WatchRR2.testMain"
+#include "HqcLogging.hh"
 
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv, true);
 
-    Log4CppConfig log4cpp("-.!!=-:");
+    milogger::LoggingConfig log4cpp("-.!!=-:");
 
     int stationId = 54420;
     QStringList args = a.arguments();

@@ -6,8 +6,8 @@
 #include "Helpers.hh"
 #include "Tasks.hh"
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.AnalyseFCC"
+#include "HqcLogging.hh"
 
 namespace FCC {
 
@@ -43,7 +43,7 @@ timeutil::ptime timeWithOffset(const timeutil::ptime& t, int column)
 
 void analyse(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     using namespace Helpers;
     using namespace detail;
 
@@ -58,12 +58,12 @@ void analyse(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
         for(int i=0; i<detail::N_COLUMNS; ++i) {
             obs[i] = da->findE(SensorTime(sensors[i], timeWithOffset(t, i)));
             if (obs[i] and bad_fcc.matches(obs[i]->controlinfo())) {
-                DBG(DBGO1(obs[i]) << DBG1(obs[i]->controlinfo().flagstring()));
+                METLIBS_LOG_DEBUG(LOGOBS(obs[i]) << LOGVAL(obs[i]->controlinfo().flagstring()));
                 have_bad = true;
             }
         }
         if (have_bad) {
-            DBGV(t);
+            METLIBS_LOG_DEBUG(LOGVAL(t));
             for(int i=0; i<N_COLUMNS; ++i) {
                 if (obs[i])
                     da->editor(obs[i])->addTask(tasks::TASK_FCC_ERROR);
@@ -74,7 +74,7 @@ void analyse(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 
 void acceptRow(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     using namespace detail;
 
     const std::vector<Sensor> sensors = makeSensors(sensor);

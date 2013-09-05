@@ -11,8 +11,8 @@
 #include <QtGui/QApplication>
 #include <QtGui/QFont>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataVxItem"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 struct VxData {
@@ -129,12 +129,12 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     if (role != Qt::EditRole)
         return false;
 
-    LOG_SCOPE("DataVxItem");
+    METLIBS_LOG_SCOPE();
     EditDataPtr obs2 = getObs2(obs1);
     const Codes_t oldCodes = getCodes(obs1, obs2);
 
     const QString v = value.toString();
-    LOG4SCOPE_DEBUG(DBG1(v));
+    METLIBS_LOG_DEBUG(LOGVAL(v));
     if (v == "") {
         mDA->newVersion();
         bool changed = false;
@@ -158,7 +158,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
         if (mc == vxdata[i].metCode)
             break;
     }
-    LOG4SCOPE_DEBUG(DBG1(vxdata[i].code));
+    METLIBS_LOG_DEBUG(LOGVAL(vxdata[i].code));
     if (vxdata[i].code < 0)
         return false;
     const int newCode1 = vxdata[i].code;
@@ -173,7 +173,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     else
         return false;
 
-    LOG4SCOPE_DEBUG(DBG1(oldCodes.first) << DBG1(newCode1) << DBG1(oldCodes.second) << DBG1(newCode2));
+    METLIBS_LOG_DEBUG(LOGVAL(oldCodes.first) << LOGVAL(newCode1) << LOGVAL(oldCodes.second) << LOGVAL(newCode2));
     bool pushed = false;
     if (newCode1 != oldCodes.first) {
         mDA->newVersion();
@@ -181,7 +181,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
         if (not obs1)
             obs1 = mDA->createE(st);
         Helpers::auto_correct(mDA->editor(obs1), newCode1);
-        LOG4SCOPE_DEBUG(DBG1(obs1->corrected()));
+        METLIBS_LOG_DEBUG(LOGVAL(obs1->corrected()));
     }
     if (newCode2 != oldCodes.second) {
         if (not pushed)
@@ -192,7 +192,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
             obs2 = mDA->createE(st2);
         }
         Helpers::auto_correct(mDA->editor(obs2), newCode2);
-        LOG4SCOPE_DEBUG(DBG1(obs2->corrected()));
+        METLIBS_LOG_DEBUG(LOGVAL(obs2->corrected()));
     }
     return true;
 }

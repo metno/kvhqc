@@ -7,8 +7,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.NeighborTableModel"
+#include "HqcLogging.hh"
 
 NeighborTableModel::NeighborTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)

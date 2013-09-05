@@ -7,8 +7,8 @@
 
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.MainTableModel"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 const int N_COLUMNS = 18;

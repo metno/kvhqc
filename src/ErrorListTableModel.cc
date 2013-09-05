@@ -13,8 +13,8 @@
 
 #include <boost/bind.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.ErrorListTableModel"
+#include "HqcLogging.hh"
 
 namespace {
 
@@ -191,12 +191,12 @@ QVariant ErrorListTableModel::headerData(int section, Qt::Orientation orientatio
 
 void ErrorListTableModel::showSameStation(int stationID)
 {
-    LOG_SCOPE("ErrorListTableModel");
+    METLIBS_LOG_SCOPE();
     if (mShowStation == stationID)
         return;
 
     mShowStation = stationID;
-    LOG4SCOPE_DEBUG(DBG1(mShowStation));
+    METLIBS_LOG_DEBUG(LOGVAL(mShowStation));
     QModelIndex index1 = createIndex(0, 0);
     QModelIndex index2 = createIndex(mErrorList.size()-1, 0);
     /*emit*/ dataChanged(index1, index2);
@@ -204,8 +204,8 @@ void ErrorListTableModel::showSameStation(int stationID)
 
 void ErrorListTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
 {
-    LOG_SCOPE("ErrorListTableModel");
-    LOG4SCOPE_DEBUG(DBG1(data->sensorTime()) << DBG1(mSensorTime) << DBG1(what));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(what));
     if (what == ObsAccess::CREATED)
         return; // ignore for now
 

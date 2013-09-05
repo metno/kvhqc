@@ -3,8 +3,8 @@
 
 #include "DataColumn.hh"
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DataListModel"
+#include "HqcLogging.hh"
 
 DataListModel::DataListModel(EditAccessPtr eda, const TimeRange& limits)
     : ObsTableModel(eda, limits)

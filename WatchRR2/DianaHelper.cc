@@ -16,8 +16,8 @@
 #include <iomanip>
 #include <sstream>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.DianaHelper"
+#include "HqcLogging.hh"
 
 namespace {
 const char ANNOTATION[] = "HQC";
@@ -52,7 +52,7 @@ void DianaHelper::processConnect()
     mConnected = c;
     if (mConnected) {
         const QString pStd = ::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_STD_HQC  + ".png";
-        DBGV(pStd.toStdString());
+        METLIBS_LOG_DEBUG(LOGVAL(pStd.toStdString()));
         const QImage iStd(pStd);
         const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
         
@@ -76,8 +76,8 @@ void DianaHelper::cleanConnection()
 
 void DianaHelper::processLetter(const miMessage& m)
 {
-    LOG_SCOPE();
-    DBG(m.content());
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(m.content());
 
     if (m.command == qmstrings::timechanged) {
         const timeutil::ptime newTime = timeutil::from_iso_extended_string(m.common);
@@ -91,7 +91,7 @@ void DianaHelper::processLetter(const miMessage& m)
 // send one image to diana (with name); copied from tseries/qtsMain.cc
 void DianaHelper::sendImage(const std::string& name, const QImage& image)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     if (image.isNull()) {
         std::cerr << "image '" << name << "' is null" << std::endl;
         return;
@@ -124,7 +124,7 @@ void DianaHelper::sendImage(const std::string& name, const QImage& image)
 
 void DianaHelper::sendTimes(const std::vector<timeutil::ptime>& times)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     if (not mConnected or times.empty())
         return;
 
@@ -140,7 +140,7 @@ void DianaHelper::sendTimes(const std::vector<timeutil::ptime>& times)
 
 void DianaHelper::sendTime(const timeutil::ptime& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     if (not mConnected or time == mDianaTime)
         return;
 
@@ -154,7 +154,7 @@ void DianaHelper::sendTime(const timeutil::ptime& time)
 
 void DianaHelper::sendStations(const std::vector<int>& stations)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     if (not mConnected)
         return;
 

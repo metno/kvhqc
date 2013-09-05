@@ -8,8 +8,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.AnalyseErrors"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 
@@ -280,12 +280,12 @@ bool isMemStore2(EditDataPtr obs, bool errorsForSalen)
     return whichMemStore(obs, errorsForSalen, flg, flTyp) == 2;
 }
 
-void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), int DBGE(flg), int DBGE(memStore))
+//#define DUMPOBS 1
+#ifdef DUMPOBS
+void dumpObs(const EditDataPtr obs, float model, int flTyp, int flg, int memStore)
 {
-#ifndef NDEBUG
     const SensorTime& st = obs->sensorTime();
-    LOG4HQC_DEBUG("AnalyseErrors",
-                  "ms " << memStore << ": "
+    METLIBS_LOG_DEBUG("ms " << memStore << ": "
                   << std::setw(7)  << st.sensor.stationId << ' '
                   << std::setw(21) << st.time
                   << std::setw(5)  << st.sensor.paramId
@@ -294,8 +294,8 @@ void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), in
                   << std::setw(9)  << model << "  "
                   << std::setw(5)  << flTyp << "  " << flg << "  "
                   << obs->controlinfo().flagstring() << "  " << obs->cfailed());
-#endif
 }
+#endif
 
 } // namespace anonymous
 
@@ -314,16 +314,16 @@ bool recheck(ErrorInfo& ei, bool errorsForSalen)
 Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
 {
     // FIXME add timeFilter from ClockDialog
-    LOG_SCOPE("AnalyseErrors");
+    METLIBS_LOG_SCOPE();
 
     Errors_t memStore2;
     BOOST_FOREACH(const Sensor& s, sensors) {
-        LOG4SCOPE_DEBUG(DBG1(s));
+        METLIBS_LOG_DEBUG(LOGVAL(s));
         const ObsAccess::TimeSet allTimes = eda->allTimes(s, limits);
 #ifndef NDEBUG
-        LOG4SCOPE_DEBUG(DBG1(allTimes.size()));
+        METLIBS_LOG_DEBUG(LOGVAL(allTimes.size()));
         BOOST_FOREACH(const timeutil::ptime& t, allTimes)
-            LOG4SCOPE_DEBUG(timeutil::to_iso_extended_string(t));
+            METLIBS_LOG_DEBUG(timeutil::to_iso_extended_string(t));
 #endif
 
         // IMPORTANT: if this should be removed from isMemoryStore2, it must also be removed here
@@ -334,7 +334,7 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
             const SensorTime sensorTime(s, obstime);
             ErrorInfo ei(eda->findE(sensorTime));
             if (not ei.obs) {
-                LOG4HQC_DEBUG("AnalyseErrors", "no obs for " << sensorTime);
+                METLIBS_LOG_DEBUG("no obs for " << sensorTime);
                 continue;
             }
             int memstore = whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp);
@@ -342,7 +342,9 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
                 continue;
             if (memstore == 2)
                 memStore2.push_back(ei);
+#ifdef DUMPOBS
             dumpObs(ei.obs, -99999, ei.flTyp, ei.flg, memstore);
+#endif
         }
     }
 

@@ -14,8 +14,8 @@
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
+#include "HqcLogging.hh"
 
 KvMetaDataBuffer* KvMetaDataBuffer::sInstance = 0;
 
@@ -145,7 +145,7 @@ bool KvMetaDataBuffer::checkPhysicalLimits(int paramid, float value)
 
     ParamLimits_t::const_iterator it = mParamLimits.find(paramid);
     if (it == mParamLimits.end()) {
-        LOG4HQC_DEBUG("KvMetaDataBuffer", "no limits for paramid " << paramid);
+        METLIBS_LOG_DEBUG("no limits for paramid " << paramid);
         return true;
     }
     return (it->second.first <= value and it->second.second >= value);
@@ -188,7 +188,7 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
         try {
           kvservice::KvApp::kvApp->getKvObsPgm(mObsPgms[stationid], stations, false);
         } catch (std::exception& e) {
-          LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
+          METLIBS_LOG_ERROR("exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
         }
     }
     return mObsPgms[stationid];
@@ -196,29 +196,29 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
 
 void KvMetaDataBuffer::fetchStations()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     BusyIndicator wait;
     mHaveStations = true;
     mStations.clear();
     try {
       if (not kvservice::KvApp::kvApp->getKvStations(mStations))
-        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch station list");
+        METLIBS_LOG_ERROR("could not fetch station list");
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving station list: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving station list: " << e.what());
     }
 }
 
 void KvMetaDataBuffer::fetchParams()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     BusyIndicator wait;
     mHaveParams = true;
     mParams.clear();
     try {
       if (not kvservice::KvApp::kvApp->getKvParams(mParams))
-        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch param list");
+        METLIBS_LOG_ERROR("could not fetch param list");
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving param list: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());
     }
     mCodeParams.clear();
     BOOST_FOREACH(const kvalobs::kvParam& p, mParams) {
@@ -230,15 +230,15 @@ void KvMetaDataBuffer::fetchParams()
 
 void KvMetaDataBuffer::fetchTypes()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     BusyIndicator wait;
     mHaveTypes = true;
     mTypes.clear();
     try {
       if (not kvservice::KvApp::kvApp->getKvTypes(mTypes))
-        LOG4HQC_ERROR("KvMetaDataBuffer", "could not fetch type list");
+        METLIBS_LOG_ERROR("could not fetch type list");
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving param list: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());
     }
 }
 

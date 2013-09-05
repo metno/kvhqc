@@ -6,8 +6,8 @@
 
 #include "ui_watchrr_edit.h"
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditDialog"
+#include "HqcLogging.hh"
 
 EditDialog::EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime)
   : QDialog(parent)
@@ -39,7 +39,7 @@ void EditDialog::onRejectAll()
 
 void EditDialog::onButtonOk()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     RR24::singles(mDA, etm->sensor(), etm->time().t0(), mEditableTime, etm->newCorrected(), etm->acceptReject());
     accept();
 }

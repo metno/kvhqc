@@ -6,8 +6,8 @@
 
 #include "ui_watchrr_redist.h"
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.RedistDialog"
+#include "HqcLogging.hh"
 
 RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime)
   : QDialog(parent)
@@ -16,7 +16,7 @@ RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sens
   , rtm(new RedistTableModel(da, sensor, time))
   , ui(new Ui::DialogRedist)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     ui->setupUi(this);
     connect(rtm.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
             this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
@@ -31,7 +31,7 @@ RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sens
 
 RedistDialog::~RedistDialog()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
 }
 
 void RedistDialog::updateSumInfo()
@@ -53,7 +53,7 @@ void RedistDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
 
 void RedistDialog::onButtonOk()
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     RR24::redistribute(mDA, rtm->sensor(), rtm->time().t0(), mEditableTime, rtm->newCorrected());
     accept();
 }

@@ -31,8 +31,8 @@
 
 #include <ostream>
 
-#define NDEBUG 1
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.TimeRange"
+#include "HqcLogging.hh"
 
 bool TimeRange::undef() const
 {

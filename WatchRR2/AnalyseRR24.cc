@@ -7,8 +7,8 @@
 #include <kvalobs/kvDataOperations.h>
 #include <QtCore/QCoreApplication>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.AnalyseRR24"
+#include "HqcLogging.hh"
 
 namespace { // anonymous
 void addRR24Task(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& time, int task)
@@ -32,7 +32,7 @@ namespace RR24 {
 
 bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     using namespace Helpers;
 
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
@@ -62,7 +62,7 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
         if (not is_accumulation(obs) or is_endpoint(obs))
             break;
     }
-    DBG(DBG1(mTS) << DBG1(mTE));
+    METLIBS_LOG_DEBUG(LOGVAL(mTS) << LOGVAL(mTE));
     time = TimeRange(mTS, mTE);
 
     // add tasks for RR24 observations if the have errors
@@ -78,36 +78,28 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
 
         int task = 0;
         int acc = is_accumulation(obs), end = is_endpoint(obs);
-        DBG(DBG1(t) << DBG1(obs->controlinfo().flagstring()) << DBG1(acc) << DBG1(end));
+        METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(obs->controlinfo().flagstring()) << LOGVAL(acc) << LOGVAL(end));
         if (acc != NO) {
-            DBGL;
             const int f_fhqc = obs->controlinfo().flag(kvalobs::flag::fhqc);
             if (acc == BEFORE_REDIST and f_fhqc != 0 and f_fhqc != 4)
                 task = tasks::TASK_HQC_BEFORE_REDIST;
             else if (acc == QC2_REDIST and f_fhqc != 0 and f_fhqc != 4 and f_fhqc != 1)
                 task = tasks::TASK_HQC_AUTOMATIC;
             if (end != NO) {
-                DBGL;
                 if (last_endpoint != NO) {
-                    DBGL;
                     addRR24Task(da, sensor, t+step, tasks::TASK_NO_ACCUMULATION_DAYS);
                 }
                 have_endpoint = last_endpoint = end;
             } else {
-                DBGL;
                 if (have_endpoint == NO) {
-                    DBGL;
                     task = tasks::TASK_NO_ENDPOINT;
                 } else if (have_endpoint != acc or last_acc != acc) {
-                    DBGL;
                     task = tasks::TASK_MIXED_REDISTRIBUTION;
                 }
                 last_endpoint = NO;
             }
         } else {
-            DBGL;
             if (last_endpoint != NO) {
-                DBGL;
                 addRR24Task(da, sensor, t+step, tasks::TASK_NO_ENDPOINT);
             }
             last_endpoint = have_endpoint = NO;
@@ -125,8 +117,8 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
 
 void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, bool before)
 {
-    LOG_SCOPE();
-    DBGV(time);
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(time));
     using namespace Helpers;
 
     const boost::gregorian::date_duration step = boost::gregorian::days(before ? -1 : 1);
@@ -137,13 +129,13 @@ void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const Time
         if (is_accumulation(obs) == NO)
             break;
         if (not before) {
-            DBGV(t);
+            METLIBS_LOG_DEBUG(LOGVAL(t));
             da->editor(obs)->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
         }
         if (is_endpoint(obs) != NO)
             break;
         if (before) {
-            DBGV(t);
+            METLIBS_LOG_DEBUG(LOGVAL(t));
             da->editor(obs)->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
         }
     }
@@ -154,7 +146,7 @@ void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const Time
 void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeRange& editableTime,
                   const std::vector<float>& newCorr)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     using namespace Helpers;
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
@@ -181,7 +173,6 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
         const float newC = newCorr.at(redistRow);
         editor->setCorrected(newC);
         if (redistRow == newCorr.size()-1) {
-            DBGL;
             const float oldC = obs[redistRow]->corrected();
             editor->changeControlinfo(fc_end)
                 .changeControlinfo((newC == -1 and oldC == -1) ? fc_dryEnd : fc_wetEnd);
@@ -189,7 +180,7 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
             editor->changeControlinfo(fc_miss);
         editor->clearTasks(ALL_RR24_TASKS);
         editor->commit();
-        DBGO(obs[redistRow]);
+        METLIBS_LOG_DEBUG(LOGOBS(obs[redistRow]));
     }
 
     // mark all accumulation rows around period with task
@@ -277,7 +268,7 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
     unsigned int editRow = 0;
     timeutil::ptime t = t0, tMarkStart = editableTime.t0();
     for (; editRow < newCorrected.size(); t += step, editRow += 1) {
-        DBG(DBG1(t) << DBG1(previousWasSingle) << DBG1(previousWasAcc));
+        METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(previousWasSingle) << LOGVAL(previousWasAcc));
         EditDataPtr obs = da->findOrCreateE(SensorTime(sensor, t));
         const int ar = acceptReject.at(editRow);
 
@@ -299,13 +290,13 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
             editor->changeControlinfo(fc_clear_fd).clearTasks(ALL_RR24_TASKS);
         } else if (previousWasSingle) {
             tMarkStart = t;
-            DBGV(tMarkStart);
+            METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
             previousWasSingle = false;
         }
     }
     if (previousWasSingle) {
         tMarkStart = t;
-        DBGV(tMarkStart);
+        METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
     }
 
     // mark all accumulation rows around period with task
@@ -354,7 +345,7 @@ float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeRan
 
 bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
     const FlagPattern acceptable("fhqc=[01234]", FlagPattern::CONTROLINFO);
@@ -374,7 +365,7 @@ bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 
 void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
     const FlagChange fc_accept("fhqc=[0234]->fhqc=1");

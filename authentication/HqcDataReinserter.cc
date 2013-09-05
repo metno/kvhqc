@@ -28,7 +28,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcDataReinserter.h"
-#include "HqcLogging.hh"
 #include "hqc_utilities.hh"
 #include <kvalobs/kvDataOperations.h>
 #include <boost/foreach.hpp>
@@ -36,6 +35,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace kvservice;
 using namespace kvalobs;
+
+#define MILOGGER_CATEGORY "kvhqc.HqcDataReinserter"
+#include "HqcLogging.hh"
 
 namespace internal_
 {
@@ -48,7 +50,7 @@ void updateUseAddCFailed(kvalobs::kvData &d)
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     const int fhqc = cinfo.flag(flag::fhqc);
     if (fhqc == 0)
-        LOG4HQC_ERROR("HqcDataReinserter", "inserting data with fhqc==0: " << d);
+        METLIBS_LOG_ERROR("inserting data with fhqc==0: " << d);
     if (notWatchRRWeather)
         Helpers::updateCfailed(d, "hqc");
     
@@ -90,7 +92,7 @@ const HqcDataReinserter::Result HqcDataReinserter::insert(std::list<kvalobs::kvD
 
 const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::serialize::KvalobsData& data) const
 {
-    LOG4HQC_WARN("HqcDataReinserter", "inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
+    METLIBS_LOG_WARN("inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
     return DataReinserter<KvApp>::insert(data);
 }
 

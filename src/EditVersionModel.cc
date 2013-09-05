@@ -6,14 +6,14 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditVersionModel"
+#include "HqcLogging.hh"
 
 EditVersionModel::EditVersionModel(EditAccessPtr eda)
     : mDA(eda)
 {
-    LOG_SCOPE("EditVersionModel");
-    LOG4SCOPE_DEBUG(DBG1(mDA->currentVersion()) << DBG1(mDA->highestVersion()));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
     mDA->currentVersionChanged.connect(boost::bind(&EditVersionModel::onCurrentVersionChanged, this, _1, _2));
     mDA->obsDataChanged       .connect(boost::bind(&EditVersionModel::onDataChanged,           this, _1, _2));
 }
@@ -26,29 +26,29 @@ EditVersionModel::~EditVersionModel()
 
 void EditVersionModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE("EditVersionModel");
+    METLIBS_LOG_SCOPE();
     dump();
 }
 
 void EditVersionModel::onCurrentVersionChanged(int current, int highest)
 {
-    LOG_SCOPE("EditVersionModel");
-    LOG4SCOPE_DEBUG(DBG1(current) << DBG1(highest));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(current) << LOGVAL(highest));
     dump();
 }
 
 void EditVersionModel::dump()
 {
-    LOG_SCOPE("EditVersionModel");
-    LOG4SCOPE_DEBUG(DBG1(mDA->currentVersion()) << DBG1(mDA->highestVersion()));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
     /*emit*/ beginResetModel();
     mHistory = ChangeHistory_t();
     for(int v=1; v<=mDA->highestVersion(); ++v) {
         mHistory.push_back(mDA->versionChanges(v));
         const std::vector<EditDataPtr> changes = mHistory.back();
-        LOG4SCOPE_DEBUG("changes for version " << v << " from " << mDA->versionTimestamp(v) << ":");
+        METLIBS_LOG_DEBUG("changes for version " << v << " from " << mDA->versionTimestamp(v) << ":");
         BOOST_FOREACH(EditDataPtr obs, changes)
-            LOG4SCOPE_DEBUG("   " << obs->sensorTime() << " c=" << obs->corrected(v) << " f=" << obs->controlinfo(v).flagstring());
+            METLIBS_LOG_DEBUG("   " << obs->sensorTime() << " c=" << obs->corrected(v) << " f=" << obs->controlinfo(v).flagstring());
     }
     /*emit*/ endResetModel();
 }

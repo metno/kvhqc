@@ -24,8 +24,8 @@
 #include <fstream>
 #include <set>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.StInfoSysBuffer"
+#include "HqcLogging.hh"
 
 namespace /*anonymous*/ {
 
@@ -45,7 +45,7 @@ using namespace miutil::conf;
 
 bool connect2stinfosys(miutil::conf::ConfSection *conf)
 {
-    LOG_SCOPE("StInfoSysBuffer");
+    METLIBS_LOG_SCOPE();
     const ValElementList valHost     = conf->getValue("stinfosys.host");
     const ValElementList valDbname   = conf->getValue("stinfosys.dbname");
     const ValElementList valUser     = conf->getValue("stinfosys.user");
@@ -74,7 +74,7 @@ bool connect2stinfosys(miutil::conf::ConfSection *conf)
 */
 bool StInfoSysBuffer::readFromStInfoSys()
 {
-    LOG_SCOPE("StInfoSysBuffer");
+    METLIBS_LOG_SCOPE();
     if (not isConnected())
         return false;
 
@@ -168,12 +168,12 @@ bool StInfoSysBuffer::readFromStInfoSys()
         " ORDER by s.stationid";
     QSqlQuery query(QSqlDatabase::database(QSQLNAME_REMOTE));
     if (not query.exec(stinfosys_SQL)) {
-        LOG4HQC_ERROR("StInfoSysBuffer", "query to stinfosys failed: " << query.lastError().text());
+        METLIBS_LOG_ERROR("query to stinfosys failed: " << query.lastError().text());
         return false;
     }
     typedef std::map<int,countyInfo> cList_t;
     cList_t cList;
-    LOG4HQC_INFO("StInfoSysBuffer", "got " << query.size() << " station city/county names from stinfosys");
+    METLIBS_LOG_INFO("got " << query.size() << " station city/county names from stinfosys");
     while( query.next() ) {
         countyInfo cInfo;
         cInfo.stnr    = query.value(0).toInt();
@@ -215,7 +215,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
         cList_t::const_iterator cit = cList.find(st.stationID());
         if( cit == cList.end() ) {
             if( st.stationID() < 100000 )
-                LOG4HQC_ERROR("StInfoSysBuffer", "station " << st.stationID() << " from kvalobs' station table not found in stinfosys");
+                METLIBS_LOG_ERROR("station " << st.stationID() << " from kvalobs' station table not found in stinfosys");
             continue;
         }
         const countyInfo& ci = cit->second;
@@ -232,7 +232,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
         ls.coast       = ci.ki == "K";
         listStat.push_back(ls);
     }
-    LOG4HQC_INFO("StInfoSysBuffer", "stationliste hentet fra stinfosys");
+    METLIBS_LOG_INFO("stationliste hentet fra stinfosys");
     writeToStationFile();
     return true;
 }

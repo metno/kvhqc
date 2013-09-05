@@ -28,7 +28,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcApplication.hh"
-#include "HqcLogging.hh"
 #include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvMetaDataBuffer.hh"
@@ -36,6 +35,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "StInfoSysBuffer.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
+
+#include <iostream>
+
+#define MILOGGER_CATEGORY "kvhqc.main"
+#include "HqcLogging.hh"
 
 using kvservice::corba::CorbaKvApp;
 
@@ -62,11 +66,11 @@ int main( int argc, char* argv[] )
         }
     }
 
-    Log4CppConfig log4cpp(log4cpp_properties);
+    milogger::LoggingConfig log4cpp(log4cpp_properties);
 
     miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
     if (not confSec) {
-        LOG4HQC_FATAL("hqc", "cannot open configuration file '" << myconf << "'");
+        METLIBS_LOG_ERROR("cannot open configuration file '" << myconf << "'");
         return 1;
     }
     

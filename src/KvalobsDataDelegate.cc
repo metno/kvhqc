@@ -40,8 +40,8 @@
 #include <QFile>
 #include <QTextStream>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvalobsDataDelegate"
+#include "HqcLogging.hh"
 
 namespace { /* anonymous */
 
@@ -94,7 +94,7 @@ void KvalobsDataDelegate::setEditorData(QWidget * editor, const QModelIndex & in
 
 void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * model, const QModelIndex & index) const
 {
-    LOG_SCOPE("KvalobsDataDelegate");
+    METLIBS_LOG_SCOPE();
 
     QLineEdit * e = static_cast<QLineEdit *>(editor);
     QString enteredValue = e->text();
@@ -156,7 +156,7 @@ void KvalobsDataDelegate::setModelData(QWidget * editor, QAbstractItemModel * mo
                                                  QMessageBox::Yes|QMessageBox::No, QMessageBox::Yes))
         return;
 
-    LOG4SCOPE_DEBUG("calling setModelData");
+    METLIBS_LOG_DEBUG("calling setModelData");
     QStyledItemDelegate::setModelData(editor, model, index);
 }
 

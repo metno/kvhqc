@@ -4,8 +4,8 @@
 #include <QtGui/QBrush>
 #include <boost/bind.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditTimeColumn"
+#include "HqcLogging.hh"
 
 EditTimeColumn::EditTimeColumn(DataColumnPtr dc)
     : mDC(dc)
@@ -20,13 +20,13 @@ EditTimeColumn::~EditTimeColumn()
 
 Qt::ItemFlags EditTimeColumn::flags(const timeutil::ptime& time) const
 {
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     Qt::ItemFlags of = mDC->flags(time), f = of;
     const int removeFlags = Qt::ItemIsSelectable|Qt::ItemIsEditable;
     if( (f & removeFlags) and not mEditableTime.contains(time) ) {
         f &= ~removeFlags;
     }
-    DBG(DBG1(time) << DBG1(of) << DBG1(f) << DBG1(mEditableTime.t0()));
+    METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(of) << LOGVAL(f) << LOGVAL(mEditableTime.t0()));
     return f;
 }
 

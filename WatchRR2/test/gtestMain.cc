@@ -1,10 +1,12 @@
 
-#include "HqcLogging.hh"
 #include <gtest/gtest.h>
+
+#define MILOGGER_CATEGORY "kvhqc.WatchRR2.gtestMain"
+#include "HqcLogging.hh"
 
 int main(int argc, char **argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    Log4CppConfig log4cpp("-.!!=-:");
+    milogger::LoggingConfig log4cpp("-.!!=-:");
     return RUN_ALL_TESTS();
 }

@@ -9,8 +9,8 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.NeighborDataModel"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 const int N_COLUMNS = 18;
@@ -129,9 +129,9 @@ EditDataPtr NeighborDataModel::getObs(const QModelIndex& index) const
 
 void NeighborDataModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG_SCOPE("NeighborDataModel");
+    METLIBS_LOG_SCOPE();
     const SensorTime st(obs->sensorTime());
-    LOG4SCOPE_DEBUG(DBG1(what) << DBGO1(obs) << DBG1(st.sensor.stationId));
+    METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs) << LOGVAL(st.sensor.stationId));
 
     for(size_t col = 0; col < mTimeOffsets.size(); col += 1) {
         if (st.time == mTime + mTimeOffsets[col]) {

@@ -3,8 +3,8 @@
 #include "EditAccess.hh"
 #include "FlagChange.hh"
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditDataEditor"
+#include "HqcLogging.hh"
 
 EditDataEditor::EditDataEditor(EditAccess* ea, EditDataPtr obs)
     : mEA(ea)

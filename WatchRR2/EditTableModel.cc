@@ -9,8 +9,8 @@
 
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.EditTableModel"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 enum Columns {
@@ -30,7 +30,7 @@ EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const Tim
     const int nDays = mTime.days() + 1;
     for(int d=0; d<nDays; ++d) {
         const timeutil::ptime t = timeAtRow(d);
-        DBGV(t);
+        METLIBS_LOG_DEBUG(LOGVAL(t));
         EditDataPtr obs = mDA->findE(SensorTime(mSensor, t));
         if( not obs ) {
             mNewValues.push_back(kvalobs::MISSING);
@@ -95,7 +95,7 @@ bool EditTableModel::setData(const QModelIndex& index, const QVariant& value, in
     if( role != Qt::EditRole or getColumn(index.column()) )
         return false;
 
-    LOG_SCOPE();
+    METLIBS_LOG_SCOPE();
     const int row = index.row(), column = index.column();
     if( column == RR_24_new ) {
         try {

@@ -12,8 +12,8 @@
 
 #include <fstream>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.test.FakeKvApp"
+#include "HqcLogging.hh"
 
 FakeKvApp::FakeKvApp()
     : mFakeReinserter(new FakeReinserter)
@@ -67,7 +67,7 @@ void FakeKvApp::insertData(int stationId, int paramId, int typeId, const std::st
 
 void FakeKvApp::insertDataFromFile(const std::string& filename)
 {
-    LOG4HQC_INFO("FakeKvApp", "loading data from file '" << filename << "'");
+    METLIBS_LOG_INFO("loading data from file '" << filename << "'");
     std::ifstream f(filename.c_str());
     std::string line;
 
@@ -78,7 +78,7 @@ void FakeKvApp::insertDataFromFile(const std::string& filename)
         std::vector<std::string> columns;
         boost::split(columns, line, boost::is_any_of("\t"));
         if (columns.size() != 7 and columns.size() != 8) {
-            LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
+            METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
             continue;
         }
 
@@ -121,7 +121,7 @@ void FakeKvApp::insertModel(int stationId, int paramId, const std::string& obsti
 
 void FakeKvApp::insertModelFromFile(const std::string& filename)
 {
-    LOG4HQC_INFO("FakeKvApp", "loading model data from file '" << filename << "'");
+    METLIBS_LOG_INFO("loading model data from file '" << filename << "'");
 
     std::ifstream f(filename.c_str());
     std::string line;
@@ -134,7 +134,7 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
             std::vector<std::string> columns;
             boost::split(columns, line, boost::is_any_of("\t"));
             if (columns.size() != 4) {
-                LOG4HQC_WARN("FakeKvApp", "bad model line '" << line << "' cols=" << columns.size());
+                METLIBS_LOG_WARN("bad model line '" << line << "' cols=" << columns.size());
                 continue;
             }
 
@@ -146,7 +146,7 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
             
             insertModel(stationId, paramId, obstime, value);
         } catch (std::exception& e) {
-            LOG4HQC_WARN("FakeKvApp", "error parsing model line '" << line << "' in file '" + filename + "'");
+            METLIBS_LOG_WARN("error parsing model line '" << line << "' in file '" + filename + "'");
         }
     }
 }
@@ -160,7 +160,7 @@ void FakeKvApp::addStation(const std::string& line)
         std::vector<std::string> columns;
         boost::split(columns, line, boost::is_any_of("\t;"));
         if (columns.size() != 7) {
-            LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
+            METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
             return;
         }
         
@@ -177,7 +177,7 @@ void FakeKvApp::addStation(const std::string& line)
         if (std::find_if(mKvStations.begin(), mKvStations.end(), Helpers::stations_by_id(station)) == mKvStations.end())
             mKvStations.push_back(kvalobs::kvStation(station, lat, lon, height, 0.0f, name, 0, 0, "?", "?", "?", env, true, from));
     } catch (std::exception& e) {
-        LOG4HQC_WARN("FakeKvApp", "error parsing station line '" << line << "'");
+        METLIBS_LOG_WARN("error parsing station line '" << line << "'");
     }
 }
 
@@ -189,7 +189,7 @@ void FakeKvApp::addObsPgm(const std::string& line)
     std::vector<std::string> columns;
     boost::split(columns, line, boost::is_any_of("\t;"));
     if (columns.size() != 39) {
-        LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
+        METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
         return;
     }
 
@@ -252,7 +252,7 @@ bool FakeKvApp::getKvStations(std::list<kvalobs::kvStation> &stationList)
 
 bool FakeKvApp::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper &wd )
 {
-    LOG_SCOPE("FakeKvApp");
+    METLIBS_LOG_SCOPE();
     dataList.clear();
 
     const int BIG = 999999;
@@ -270,12 +270,12 @@ bool FakeKvApp::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const 
             const kvalobs::kvModelData& data = it->second;
             const timeutil::ptime ot = timeutil::from_miTime(data.obstime());
             if (fromTime <= ot and ((not hasToTime) or (ot <= toTime))) {
-                LOG4SCOPE_DEBUG(DBG1(data));
+                METLIBS_LOG_DEBUG(LOGVAL(data));
                 dataList.push_back(data);
             }
         }
     }
-    LOG4SCOPE_DEBUG(DBG1(dataList.size()));
+    METLIBS_LOG_DEBUG(LOGVAL(dataList.size()));
     return true;
 }
 
@@ -327,7 +327,7 @@ bool FakeKvApp::getKvObsPgm(std::list<kvalobs::kvObsPgm> &obsPgm, const std::lis
 
 bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::WhichDataHelper &wd)
 {
-    LOG_SCOPE("FakeKvApp");
+    METLIBS_LOG_SCOPE();
     dataList.clear();
 
     const CKvalObs::CService::WhichDataList& whichData = *wd.whichData();
@@ -336,7 +336,7 @@ bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::W
         const timeutil::ptime fromTime = timeutil::from_iso_extended_string(std::string(whichData[wi].fromObsTime));
         const timeutil::ptime toTime   = timeutil::from_iso_extended_string(std::string(whichData[wi].toObsTime));
         const bool hasToTime = (not toTime.is_not_a_date_time());
-        LOG4SCOPE_DEBUG(DBG1(sid) << DBG1(fromTime) << DBG1(toTime) << DBG1(hasToTime));
+        METLIBS_LOG_DEBUG(LOGVAL(sid) << LOGVAL(fromTime) << LOGVAL(toTime) << LOGVAL(hasToTime));
 
         kvservice::KvObsData od;
         BOOST_FOREACH(const Data_t::value_type& v, mData) {
@@ -349,7 +349,7 @@ bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::W
             if (hasToTime and ot > toTime)
                 continue;
             od.dataList().push_back(data);
-            DBGV(data);
+            METLIBS_LOG_DEBUG(LOGVAL(data));
         }
         dataList.push_back(od);
     }

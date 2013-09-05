@@ -10,9 +10,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "qdebug.h"
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.StationSelection"
+#include "HqcLogging.hh"
 
 StationTable::StationTable(QWidget* parent)
     : Q3Table(0, 7, parent)
@@ -34,14 +33,13 @@ void StationTable::setData(const listStat_l& listStat,
 			   bool web,
 			   bool pri)
 {
+    METLIBS_LOG_SCOPE();
     BusyIndicator busy;
     setNumRows(listStat.size());
 
-    DBGE(qDebug() << counties);
-
     int stInd = 0;
     BOOST_FOREACH(const listStat_t& s, listStat) {
-        DBG(DBG1(s.stationid) << DBG1(s.fylke) << DBG1(s.wmonr) << DBG1(s.pri));
+        METLIBS_LOG_DEBUG(LOGVAL(s.stationid) << LOGVAL(s.fylke) << LOGVAL(s.wmonr) << LOGVAL(s.pri));
         bool webStat = (s.wmonr != "    ");
         bool priStat = (s.pri.substr(0, 3) == "PRI");
         QString prty;

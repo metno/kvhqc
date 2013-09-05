@@ -7,8 +7,8 @@
 
 // based on http://qt-project.org/wiki/Combo_Boxes_in_Item_Views
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.ObsDelegate"
+#include "HqcLogging.hh"
 
 class TooltipListStringListModel : public QStringListModel {
 public:
@@ -25,7 +25,7 @@ void TooltipListStringListModel::setToolTipList(const QStringList& ttl)
 {
     mToolTips = ttl;
     if (rowCount() != mToolTips.size()) {
-        LOG4HQC_ERROR("TooltipListStringListModel", "have " << rowCount() << " items but "
+        METLIBS_LOG_ERROR("have " << rowCount() << " items but "
                       << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
     }
 }
@@ -35,7 +35,7 @@ QVariant TooltipListStringListModel::data(const QModelIndex& index, int role) co
     if (role != Qt::ToolTipRole)
         return QStringListModel::data(index, role);
     if (index.row() >= mToolTips.size()) {
-        LOG4HQC_ERROR("TooltipListStringListModel", "tooltip for item " << index.row() << " requested, but only "
+        METLIBS_LOG_ERROR("tooltip for item " << index.row() << " requested, but only "
                       << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
         return QVariant();
     }

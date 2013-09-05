@@ -51,7 +51,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 #include "HqcDianaHelper.hh"
-#include "HqcLogging.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ListDialog.hh"
@@ -101,8 +100,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-//#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.HqcMainWindow"
+#include "HqcLogging.hh"
 
 namespace {
 
@@ -315,7 +314,7 @@ void HqcMainWindow::startup()
 
 void HqcMainWindow::dianaShowOK()
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
     mDianaHelper->updateDianaParameters();
     if (listExist)
         ListOK();
@@ -323,7 +322,7 @@ void HqcMainWindow::dianaShowOK()
 
 void HqcMainWindow::ListOK()
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
     if (not mDianaHelper->isConnected()) {
         mHints->addHint(tr("<h1>Diana-Connection</h1>"
                            "No contact with diana! "
@@ -385,11 +384,11 @@ void HqcMainWindow::ListOK()
             }
             if (sensor.typeId != 0) {
                 sensors.push_back(sensor);
-                LOG4SCOPE_DEBUG(DBG1(sensor));
+                METLIBS_LOG_DEBUG(LOGVAL(sensor));
             }
         }
     }
-    LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
+    METLIBS_LOG_DEBUG(LOGVAL(stime) << LOGVAL(etime));
     const TimeRange timeLimits(stime, etime);
 
     if (lity == daLi or lity == alLi or lity == alSa) {
@@ -423,7 +422,7 @@ void HqcMainWindow::ListOK()
         stationList.push_back(statId);
     }
     /*emit*/ newStationList(stationList);
-    LOG4SCOPE_DEBUG("newStationList emitted");
+    METLIBS_LOG_DEBUG("newStationList emitted");
 
     //  send parameter names to ts dialog
     /*emit*/ newParameterList(mSelectedParameters);
@@ -436,7 +435,7 @@ void HqcMainWindow::ListOK()
 
 void HqcMainWindow::TimeseriesOK()
 {
-    LOG4HQC_ERROR("HqcMainWindow", "FIXME implement this in TimeSeriesView");
+    METLIBS_LOG_ERROR("FIXME implement this in TimeSeriesView");
 }
 
 inline QString dateStr_( const QDateTime & dt )
@@ -455,17 +454,17 @@ void HqcMainWindow::textDataOK()
 
 void HqcMainWindow::rejectedOK()
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
     CKvalObs::CService::RejectDecodeInfo rdInfo;
     rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
     rdInfo.toTime = dateStr_( rejdlg->dtto );
-    LOG4SCOPE_INFO(rdInfo.fromTime << " <-> " << rdInfo.toTime);
+    METLIBS_LOG_INFO(rdInfo.fromTime << " <-> " << rdInfo.toTime);
     kvservice::RejectDecodeIterator rdIt;
     bool ok = false;
     try {
       ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvMetaDataBuffer", "exception while retrieving rejectdecode data: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
     }
     if (not ok) {
       QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
@@ -482,7 +481,7 @@ void HqcMainWindow::rejectedOK()
         if (reject.comment() == "No decoder for SMS code <12>!")
             continue;
 
-        LOG4SCOPE_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+        METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
         rejList.push_back(reject);
     }
     new Rejects(rejList, this);
@@ -541,7 +540,7 @@ void HqcMainWindow::showWeather()
 {
     EditDataPtr obs = ui->treeErrors->getObs();
     if (obs) {
-        LOG4HQC_DEBUG("HqcMainWindow", "sorry, no weather dialog for " << obs->sensorTime());
+        METLIBS_LOG_DEBUG("sorry, no weather dialog for " << obs->sensorTime());
 //         Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
 //         if ( wtd ) {
 //             wtd->setReinserter( reinserter );
@@ -582,7 +581,7 @@ void HqcMainWindow::allListSalenMenu()
 
 void HqcMainWindow::listMenu(listType lt)
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
     lity = lt;
 
     QDateTime mx = QDateTime::currentDateTime();
@@ -741,7 +740,7 @@ void HqcMainWindow::screenshot()
 
 void HqcMainWindow::onVersionCheckTimeout()
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
     QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
     if (versionFile.open(QIODevice::ReadOnly)) {
         QTextStream in(&versionFile);
@@ -763,7 +762,7 @@ void HqcMainWindow::onVersionCheckTimeout()
         }
     }
     // something went wrong when reading the version info file
-    LOG4SCOPE_WARN("error reading hqc_current_version, not renewing timer");
+    METLIBS_LOG_WARN("error reading hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)
@@ -812,7 +811,7 @@ void HqcMainWindow::findStationInfo(int stnr,
         snr  = (station.wmonr());
         env  = (station.environmentid());
     } catch (std::runtime_error& e) {
-        LOG4HQC_WARN("HqcMainWindow", "Error in station lookup: " << e.what());
+        METLIBS_LOG_WARN("Error in station lookup: " << e.what());
     }
 }
 
@@ -916,8 +915,8 @@ void HqcMainWindow::onSaveChanges()
 
 void HqcMainWindow::navigateTo(const SensorTime& st)
 {
-    LOG_SCOPE("HqcMainWindow");
-    LOG4SCOPE_DEBUG(DBG1(st));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(st));
 
     mDianaHelper->navigateTo(st);
     ui->simpleCorrrections->navigateTo(st);
@@ -932,7 +931,7 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 
 void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    LOG4HQC_DEBUG("HqcMainWindow", DBG1(eda->countU()));
+    METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
     ui->saveAction->setEnabled(eda->countU() > 0);
     ui->actionUndo->setEnabled(eda->canUndo());
     ui->actionRedo->setEnabled(eda->canRedo());
@@ -951,11 +950,11 @@ void HqcMainWindow::writeSettings()
 
 void HqcMainWindow::readSettings()
 {
-    LOG_SCOPE("HqcMainWindow");
+    METLIBS_LOG_SCOPE();
 
     QSettings settings;
     if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
-        LOG4SCOPE_WARN("cannot restore hqc main window geometry");
+        METLIBS_LOG_WARN("cannot restore hqc main window geometry");
 
     lstdlg->restoreSettings(settings);
 }

@@ -40,8 +40,8 @@
 
 #include <stdexcept>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvalobsDataView"
+#include "HqcLogging.hh"
 
 namespace model
 {
@@ -98,8 +98,8 @@ void KvalobsDataView::toggleShowModelData(bool show)
 
 void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstime, int typeID)
 {
-    LOG_SCOPE("KvalobsDataView");
-    LOG4SCOPE_DEBUG(DBG1(stationid) << DBG1(obstime) << DBG1(typeID));
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(stationid) << LOGVAL(obstime) << LOGVAL(typeID));
 
     const KvalobsDataModel* model = getModel_();
 
@@ -125,7 +125,7 @@ void KvalobsDataView::selectStation(int stationid, const timeutil::ptime& obstim
 
 void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
 {
-    LOG_SCOPE("KvalobsDataView");
+    METLIBS_LOG_SCOPE();
 
     const KvalobsData* data = getModel_()->kvalobsData(currentIndex());
     if (data)
@@ -134,7 +134,7 @@ void KvalobsDataView::selectTime(const timeutil::ptime& obstime)
 
 void KvalobsDataView::currentChanged(const QModelIndex & current, const QModelIndex & previous)
 {
-    LOG_SCOPE("KvalobsDataView");
+    METLIBS_LOG_SCOPE();
     QTableView::currentChanged(current, previous);
 
     if (not current.isValid())

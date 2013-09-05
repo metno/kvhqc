@@ -9,8 +9,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.HqcApplication"
+#include "HqcLogging.hh"
 
 HqcApplication::HqcApplication(int & argc, char ** argv)
     : QApplication(argc, argv)
@@ -49,12 +49,12 @@ void HqcApplication::installTranslations(const QString& file, const QStringList&
     
     BOOST_FOREACH(const QString& p, paths)
         if (translator->load(QLocale::system(), file, "_", p)) {
-            LOG4HQC_INFO("HqcApplication", "loaded '" << file << "' translations from " << p
+            METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p
                          << " for ui languages=" << QLocale::system().uiLanguages().join(","));
             installTranslator(translator);
             return;
         }
-    LOG4HQC_WARN("HqcApplication", "failed to load '" << file << "' translations from [" 
+    METLIBS_LOG_WARN("failed to load '" << file << "' translations from [" 
                  << paths.join(",")
                  << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
 }

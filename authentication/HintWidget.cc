@@ -9,8 +9,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.HintWidget"
+#include "HqcLogging.hh"
 
 namespace {
 const int margin = 6;

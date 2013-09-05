@@ -9,8 +9,8 @@
 
 #include <boost/foreach.hpp>
 
-#define NDEBUG
-#include "w2debug.hh"
+#define MILOGGER_CATEGORY "kvhqc.KvalobsAccess"
+#include "HqcLogging.hh"
 
 namespace kvalobsdata_helpers {
 
@@ -42,12 +42,12 @@ KvalobsAccess::~KvalobsAccess()
 
 ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
-    LOG_SCOPE("KvalobsAccess");
+    METLIBS_LOG_SCOPE();
     if (not sensor.valid() or limits.undef()) {
-        LOG4SCOPE_ERROR("invalid sensor/time: " << sensor << DBG1(limits.t0()) << DBG1(limits.t1()));
+        METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
         return ObsAccess::TimeSet();
     }
-    LOG4SCOPE_DEBUG("allTimes" << DBG1(sensor) << DBG1(limits.t0()) << DBG1(limits.t1()));
+    METLIBS_LOG_DEBUG("allTimes" << LOGVAL(sensor) << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
 
     Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
     if (f == mFetched.end()) {
@@ -78,13 +78,13 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 
 void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
 {
-    LOG_SCOPE("KvalobsAccess");
+    METLIBS_LOG_SCOPE();
     if (not sensor.valid() or limits.undef()) {
-        LOG4SCOPE_ERROR("invalid sensor/time: " << sensor << DBG1(limits.t0()) << DBG1(limits.t1()));
+        METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
         return;
     }
 
-    LOG4SCOPE_DEBUG(DBG1(sensor) << DBG1(limits.t0()) << DBG1(limits.t1()));
+    METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(sensor.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
@@ -94,9 +94,9 @@ void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
       if (kvservice::KvApp::kvApp->getKvData(get, whichData))
         addFetched(sensor.stationId, limits);
      else
-       LOG4HQC_ERROR("KvalobsAccess", "problem receiving data");
+       METLIBS_LOG_ERROR("problem receiving data");
     } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvalobsAccess", "exception while retrieving data: " << e.what());
+      METLIBS_LOG_ERROR("exception while retrieving data: " << e.what());
     }
 }
 
@@ -111,16 +111,16 @@ bool KvalobsAccess::isFetched(int stationId, const timeutil::ptime& t) const
 
 void KvalobsAccess::addFetched(int stationId, const TimeRange& limits)
 {
-    LOG_SCOPE("KvalobsAccess");
+    METLIBS_LOG_SCOPE();
     mFetched[stationId] += boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1());
-    LOG4SCOPE_DEBUG(DBG1(stationId) << DBG1(mFetched[stationId]));
+    METLIBS_LOG_DEBUG(LOGVAL(stationId) << LOGVAL(mFetched[stationId]));
 }
 
 void KvalobsAccess::removeFetched(int stationId, const timeutil::ptime& t)
 {
-    LOG_SCOPE("KvalobsAccess");
+    METLIBS_LOG_SCOPE();
     mFetched[stationId] -= t; //boost::icl::interval<timeutil::ptime>::type(limits.t0(), limits.t1());
-    LOG4SCOPE_DEBUG(DBG1(mFetched[stationId]));
+    METLIBS_LOG_DEBUG(LOGVAL(mFetched[stationId]));
 }
 
 void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
@@ -133,13 +133,13 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
 {
-    LOG_SCOPE("KvalobsAccess");
+    METLIBS_LOG_SCOPE();
     if (not hasReinserter()) {
-        LOG4SCOPE_DEBUG("not authorized");
+        METLIBS_LOG_DEBUG("not authorized");
         return false;
     }
 
-    LOG4SCOPE_DEBUG(updates.size() << " updates");
+    METLIBS_LOG_DEBUG(updates.size() << " updates");
     if (updates.empty())
         return true;
 
@@ -177,12 +177,12 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         }
         store.push_back(d);
         (created ? createdObs : modifiedObs).push_back(obs);
-        LOG4SCOPE_DEBUG(DBG1(st) << DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
+        METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(d) << LOGVAL(d.tbtime()) << LOGVAL(d.cfailed())
                         << " ins=" << (inserted ? "y" : "n")
                         << " create=" << (created ? "y" : "n"));
         //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
-    LOG4SCOPE_DEBUG(store.size() << " to store");
+    METLIBS_LOG_DEBUG(store.size() << " to store");
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
     if (res->res == CKvalObs::CDataSource::OK) {
