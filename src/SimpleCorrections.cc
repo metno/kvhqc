@@ -1,6 +1,7 @@
 
 #include "SimpleCorrections.hh"
 
+#include "ChecksTableModel.hh"
 #include "ColumnFactory.hh"
 #include "ModelData.hh"
 #include "ToolTipStringListModel.hh"
@@ -143,9 +144,11 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SimpleCorrections)
 {
+    METLIBS_LOG_SCOPE();
     ui->setupUi(this);
     ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
     ui->comboCorrected->setModel(ttl);
+    ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
 
     // TODO move setting of minimum sizes to retranslateUi somehow
     QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
@@ -153,7 +156,23 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
     QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
     setCommonMinWidth(labels2);
 
+    METLIBS_LOG_DEBUG(LOGVAL(minimumSize().height()) << LOGVAL(ui->tableChecks->minimumSize().height()));
+
     setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
+
+#if 0
+#include "../src/icon_accept.xpm"
+#include "../src/icon_reject.xpm"
+    QIcon iconAccept, iconReject;
+    iconAccept.addPixmap(QPixmap(icon_accept));
+    iconReject.addPixmap(QPixmap(icon_reject));
+    ui->buttonAcceptCorrected   ->setIcon(iconAccept);
+    ui->buttonAcceptCorrectedQC2->setIcon(iconAccept);
+    ui->buttonAcceptOriginal    ->setIcon(iconAccept);
+    ui->buttonAcceptOriginalQC2 ->setIcon(iconAccept);
+    ui->buttonReject   ->setIcon(iconReject);
+    ui->buttonRejectQC2->setIcon(iconReject);
+#endif
 
     update();
 }
@@ -165,12 +184,15 @@ SimpleCorrections::~SimpleCorrections()
 void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
     DataView::setDataAccess(eda, mda);
+    mChecksModel.reset(new ChecksTableModel(eda));
+    ui->tableChecks->setModel(mChecksModel.get());
     update();
 }
 
 void SimpleCorrections::navigateTo(const SensorTime& st)
 {
     METLIBS_LOG_SCOPE();
+    mChecksModel->navigateTo(st);
     if (eq_SensorTime()(mSensorTime, st))
         return;
 
@@ -180,6 +202,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CONTROLINFO);
     mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::ORIGINAL);
     mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CORRECTED);
+
     update();
 }
 

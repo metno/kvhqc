@@ -8,6 +8,7 @@
 #include <QtGui/QWidget>
 #include <memory>
 
+class ChecksTableModel;
 namespace Ui {
 class SimpleCorrections;
 }
@@ -40,6 +41,7 @@ private Q_SLOTS:
 
 private:
   std::auto_ptr<Ui::SimpleCorrections> ui;
+  std::auto_ptr<ChecksTableModel> mChecksModel;
   DataItemPtr mItemFlags;
   DataItemPtr mItemOriginal;
   DataItemPtr mItemCorrected;

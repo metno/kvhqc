@@ -1,0 +1,15 @@
+
+#ifndef QSmallTable_HH
+#define QSmallTable_HH
+
+#include <QtGui/QTableView>
+
+class QSmallTable : public QTableView {
+public:
+  QSmallTable(QWidget* parent=0)
+    : QTableView(parent) { }
+  QSize sizeHint() const
+    { return QSize(128, 64); }
+};
+
+#endif // QSmallTable_HH
