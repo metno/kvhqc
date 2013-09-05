@@ -36,10 +36,9 @@
 #include "hqcmain.h"
 #include "ui_mainwindow.h"
 
-#include "AutoColumnView.hh"
+#include "AutoDataList.hh"
 #include "BusyIndicator.h"
 #include "config.h"
-#include "DataList.hh"
 #include "DataView.hh"
 #include "dianashowdialog.h"
 #include "EditVersionModel.hh"
@@ -58,6 +57,7 @@
 #include "QNoCloseMdiSubWindow.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
+#include "StaticDataList.hh"
 #include "textdatadialog.h"
 #include "textdatatable.h"
 #include "TimeSeriesView.hh"
@@ -98,6 +98,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
+#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.HqcMainWindow"
 #include "HqcLogging.hh"
 
@@ -123,9 +124,8 @@ HqcMainWindow::HqcMainWindow()
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(kda))
   , mEditVersions(new EditVersionModel(eda))
+  , mAutoDataList(new AutoDataList(this))
   , mTimeSeriesView(new TimeSeriesView(this))
-  , mAutoColumnView(new AutoColumnView)
-  , mAutoDataList(new DataList(this))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -142,7 +142,6 @@ HqcMainWindow::HqcMainWindow()
 
   mExtremesView = new ExtremesView(ui->dockExtremes);
   mExtremesView->setDataAccess(eda);
-  mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->dockExtremes->setWidget(mExtremesView);
   tabifyDockWidget(ui->dockErrors, ui->dockExtremes);
   ui->dockExtremes->setVisible(false);
@@ -172,13 +171,8 @@ HqcMainWindow::HqcMainWindow()
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
 
-  mAutoDataList->setShowDistances(true);
   mAutoDataList->setDataAccess(eda, kma);
-
   mTimeSeriesView->setDataAccess(eda, kma);
-
-  mAutoColumnView->attachView(mAutoDataList);
-  mAutoColumnView->attachView(mTimeSeriesView);
 
   connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
@@ -192,6 +186,8 @@ HqcMainWindow::HqcMainWindow()
   connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
   connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
+  mAutoDataList ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mExtremesView ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
@@ -219,6 +215,8 @@ HqcMainWindow::HqcMainWindow()
 
 HqcMainWindow::~HqcMainWindow()
 {
+  mAutoDataList ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mExtremesView ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper  ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 }
@@ -334,7 +332,7 @@ void HqcMainWindow::ListOK()
   if (lity == daLi or lity == alLi or lity == alSa) {
     BusyStatus busyData(this, tr("Building data list..."));
 
-    DataList* dl = new DataList(this);
+    StaticDataList* dl = new StaticDataList(this);
     dl->setDataAccess(eda, kma);
     dl->setSensorsAndTimes(sensors, timeLimits);
     dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
@@ -694,20 +692,25 @@ void HqcMainWindow::closeEvent(QCloseEvent* event)
 
 void HqcMainWindow::navigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   METLIBS_LOG_DEBUG(LOGVAL(st));
 
+#if 1
+  BusyIndicator busy;
+#else
+  // this disables the GUI and is therefore often much slower than updating the views
   BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
       .arg(st.sensor.stationId)
       .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
+#endif
   mDianaHelper->navigateTo(st);
   ui->simpleCorrrections->navigateTo(st);
-  mAutoColumnView->navigateTo(st);
-  for(int idx = 0; idx < ui->tabs->count(); ++idx) {
+  mAutoDataList->navigateTo(st);
+  mTimeSeriesView->navigateTo(st);
+  for(int idx = 1; idx < ui->tabs->count(); ++idx) {
     QWidget* w = ui->tabs->widget(idx);
-    if (DataList* dl = dynamic_cast<DataList*>(w)) {
-      if (dl != mAutoDataList)
-        dl->navigateTo(st);
+    if (StaticDataList* sdl = static_cast<StaticDataList*>(w)) {
+      sdl->navigateTo(st);
     }
   }
 }

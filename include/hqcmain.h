@@ -49,16 +49,15 @@ class QSplitter;
 class QTimer;
 QT_END_NAMESPACE
 
-class AutoColumnView;
-class DataList;
+class AutoDataList;
 class DianaShowDialog;
+class EditAccess;
 class EditVersionModel;
 class ExtremesView;
 class HintWidget;
 class HqcDianaHelper;
 class KvalobsAccess;
 class KvalobsModelAccess;
-class EditAccess;
 class ListDialog;
 class RejectDialog;
 class SensorTime;
@@ -73,59 +72,59 @@ class HqcMainWindow : public QMainWindow
 { Q_OBJECT;
 
 public:
-    HqcMainWindow();
-    ~HqcMainWindow();
+  HqcMainWindow();
+  ~HqcMainWindow();
 
-    void startup(const QString& captionSuffix);
+  void startup(const QString& captionSuffix);
 
-    HqcReinserter* getReinserter()
-        { return reinserter; }
+  HqcReinserter* getReinserter()
+    { return reinserter; }
 
-    void setReinserter(HqcReinserter* r, const QString& userName);
+  void setReinserter(HqcReinserter* r, const QString& userName);
 
 protected:
-    void moveEvent(QMoveEvent* event);
-    void resizeEvent(QResizeEvent* event);
-    void closeEvent(QCloseEvent* event);
+  void moveEvent(QMoveEvent* event);
+  void resizeEvent(QResizeEvent* event);
+  void closeEvent(QCloseEvent* event);
 
 Q_SIGNALS:
-    void newStationList(std::vector<QString>&);
-    void newParameterList(const std::vector<int>&);
-    void printErrorList();
+  void newStationList(std::vector<QString>&);
+  void newParameterList(const std::vector<int>&);
+  void printErrorList();
 
 private Q_SLOTS:
-    void errListMenu();
-    void allListMenu();
-    void errLogMenu();
-    void dataListMenu();
-    void errLisaMenu();
-    void allListSalenMenu();
-    void ListOK();
-    void rejectedOK();
-    void textDataOK();
-    void dianaShowOK();
+  void errListMenu();
+  void allListMenu();
+  void errLogMenu();
+  void dataListMenu();
+  void errLisaMenu();
+  void allListSalenMenu();
+  void ListOK();
+  void rejectedOK();
+  void textDataOK();
+  void dianaShowOK();
 
-    void startKro();
-    void screenshot();
-    void helpUse();
-    void helpNews();
-    void helpFlag();
-    void helpParam();
-    void about();
-    void aboutQt();
+  void startKro();
+  void screenshot();
+  void helpUse();
+  void helpNews();
+  void helpFlag();
+  void helpParam();
+  void about();
+  void aboutQt();
 
   void kvalobsAvailable(bool);
 
-    //! bring up the WatchRR dialog
-    void showWatchRR();
+  //! bring up the WatchRR dialog
+  void showWatchRR();
 
-    //! bring up the WatchWeather dialog
-    void showWeather();
+  //! bring up the WatchWeather dialog
+  void showWeather();
 
-    void onVersionCheckTimeout();
-    void onSaveChanges();
-    void onUndoChanges();
-    void onRedoChanges();
+  void onVersionCheckTimeout();
+  void onSaveChanges();
+  void onUndoChanges();
+  void onRedoChanges();
 
   void onShowExtremes();
   void onShowErrorList();
@@ -135,53 +134,52 @@ private Q_SLOTS:
   void onTabCloseRequested(int index);
 
 private:
-    void navigateTo(const SensorTime& st);
-    void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+  void navigateTo(const SensorTime& st);
+  void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
-    enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
-    void listMenu(listType lt);
+  enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
+  void listMenu(listType lt);
 
-    void writeSettings();
-    void readSettings();
-    void checkVersionSettings();
+  void writeSettings();
+  void readSettings();
+  void checkVersionSettings();
 
 private:
-    ListDialog* lstdlg;
-    DianaShowDialog* dshdlg;
-    TextDataDialog* txtdlg;
-    RejectDialog* rejdlg;
-    HelpDialog* mHelpDialog;
+  ListDialog* lstdlg;
+  DianaShowDialog* dshdlg;
+  TextDataDialog* txtdlg;
+  RejectDialog* rejdlg;
+  HelpDialog* mHelpDialog;
 
-    listType lity;
+  listType lity;
 
-    HqcReinserter* reinserter;
+  HqcReinserter* reinserter;
 
-    /// True after first time ListOk() have been invoked with valid input
-    bool listExist;
+  /// True after first time ListOk() have been invoked with valid input
+  bool listExist;
 
-    QString userName;
+  QString userName;
 
-    std::auto_ptr<Ui::HqcMainWindow> ui;
-    QSplitter* mAutoViewSplitter;
+  std::auto_ptr<Ui::HqcMainWindow> ui;
+  QSplitter* mAutoViewSplitter;
 
-    QTimer* mVersionCheckTimer;
-    HintWidget* mHints;
+  QTimer* mVersionCheckTimer;
+  HintWidget* mHints;
 
-    boost::shared_ptr<KvalobsAccess> kda;
-    boost::shared_ptr<KvalobsModelAccess> kma;
-    boost::shared_ptr<EditAccess> eda;
+  boost::shared_ptr<KvalobsAccess> kda;
+  boost::shared_ptr<KvalobsModelAccess> kma;
+  boost::shared_ptr<EditAccess> eda;
 
-    std::auto_ptr<EditVersionModel> mEditVersions;
+  std::auto_ptr<EditVersionModel> mEditVersions;
 
-    TimeSeriesView* mTimeSeriesView;
 
-    ClientButton* pluginB;
-    std::auto_ptr<HqcDianaHelper> mDianaHelper;
+  ClientButton* pluginB;
+  std::auto_ptr<HqcDianaHelper> mDianaHelper;
 
   QLabel* mKvalobsAvailable;
 
-    std::auto_ptr<AutoColumnView> mAutoColumnView;
-    DataList* mAutoDataList;
+  AutoDataList* mAutoDataList;
+  TimeSeriesView* mTimeSeriesView;
 
   ExtremesView* mExtremesView;
 };

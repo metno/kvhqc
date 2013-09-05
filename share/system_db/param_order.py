@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
-def update(con, cur):
+def update(sdb):
+    cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS param_order")
     cur.execute("DROP TABLE IF EXISTS param_group_labels")
     cur.execute("DROP TABLE IF EXISTS param_groups")

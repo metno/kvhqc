@@ -80,12 +80,16 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     if (eq_SensorTime()(mSensorTime, st))
         return;
 
+    const bool changedSensor = (not eq_Sensor()(mSensorTime.sensor, st.sensor));
+
     mSensorTime = st;
     METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
-    mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CONTROLINFO);
-    mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::ORIGINAL);
-    mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CORRECTED);
+    if (changedSensor) {
+      mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CONTROLINFO);
+      mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::ORIGINAL);
+      mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CORRECTED);
+    }
 
     update();
 }

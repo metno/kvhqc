@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
-def update(con, cur):
+def update(sdb):
+    cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS check_explain")
 
     cur.execute("""CREATE TABLE check_explain (

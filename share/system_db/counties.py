@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
-def update(con, cur):
+def update(sdb):
+    cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS station_county_labels")
     cur.execute("DROP TABLE IF EXISTS station_counties")
     cur.execute("DROP TABLE IF EXISTS station_region_labels")

@@ -25,6 +25,7 @@
 
 #include <sstream>
 
+#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.Helpers"
 #include "HqcLogging.hh"
 
@@ -455,81 +456,45 @@ float numericalValue(int paramId, float codeValue)
   return codeValue;
 }
 
-namespace /* anonymous */ {
-const char* stationParamNames[][7] = {
-  { "RR_24", "V4", "V5", "V6", "SD", "SA", 0 },
-  { "TA", "TAN", "TAX", 0 },
-  { "UU", "TD", 0 },
-  { "PR", "PP", "PO", "PON", "POX", 0 },
-  { "DA",    "FA",    0 },
-  { "DD",    "FF",    0 },
-  { "DD_01", "FF_01", 0 },
-  { "DD_02", "FF_02", 0 },
-  { "DDM",   "FM",    0 },
-  { "DG",    "FG",    0 },
-  { "DG_010","FG_010",0 },
-  { "DG_1",  "FG_1",  0 },
-  { "DG_6",  "FG_6",  0 },
-  { "DG_12", "FG_12", 0 },
-  { "DN",    "FN",    0 },
-  { "DG_02", "FN_02", 0 },
-  { "DW1",   "HW1",   0 },
-  { "DW2",   "HW2",   0 },
-  { "DX",    "FX",    0 },
-  { "DX_010","FX_010",0 },
-  { "DX_1",  "FX_1",  0 },
-  { "DX_3",  "FX_6",  0 },
-  { "DX_6",  "FX_6",  0 },
-  { "DX_12", "FX_12", 0 },
-  { "CC1",   "HS1", "NS1", 0 },
-  { "CC2",   "HS2", "NS2", 0 },
-  { "CC3",   "HS3", "NS3", 0 },
-  { "CC4",   "HS4", "NS4", 0 },
-  { 0 }
-};
-const size_t NRELATED = sizeof(stationParamNames)/sizeof(stationParamNames[0]);
-
-typedef std::vector< std::vector<int> > RelatedParams_t;
-RelatedParams_t sRelatedForStation;
-
-} // namespace anonymous
-
 typedef std::vector<Sensor> Sensors_t;
-Sensors_t relatedSensors(const SensorTime& st)
+Sensors_t relatedSensors(const SensorTime& st, const std::string& viewType)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   const Sensor& s = st.sensor;
 
-  if (sRelatedForStation.empty()) {
-    for (size_t i=0; i<NRELATED; ++i) {
-      std::vector<int> stationPar;
-      for (const char** rpn = stationParamNames[i]; *rpn; ++rpn) {
-        const int pid = parameterIdByName(*rpn);
-        if (pid > 0)
-          stationPar.push_back(pid);
-      }
-      sRelatedForStation.push_back(stationPar);
-    }
-  }
-    
   std::vector<int> stationPar, neighborPar;
   int nNeighbors = 8;
 
-  for (size_t i=0; i<sRelatedForStation.size(); ++i) {
-    if (std::find(sRelatedForStation[i].begin(), sRelatedForStation[i].end(), s.paramId) == sRelatedForStation[i].end())
-      continue;
-    stationPar = sRelatedForStation[i];
+  if (hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.prepare("SELECT pr1.paramid FROM param_related AS pr1"
+        " WHERE pr1.groupid = (SELECT pr2.groupid FROM param_related AS pr2 WHERE pr2.paramid = :pid)"
+        "   AND (pr1.view_types_excluded IS NULL OR pr1.view_types_excluded NOT LIKE :vt)"
+        " ORDER BY pr1.sortkey");
+
+    query.bindValue(":pid", s.paramId);
+    query.bindValue(":vt",  "%" + QString::fromStdString(viewType) + "%");
+    query.exec();
+    while (query.next())
+      stationPar.push_back(query.value(0).toInt());
   }
+#if 1
+  METLIBS_LOG_DEBUG("found " << stationPar.size() << " station pars for " << LOGVAL(st) << LOGVAL(viewType));
+  BOOST_FOREACH(int pid, stationPar) {
+    METLIBS_LOG_DEBUG(LOGVAL(pid));
+  }
+#endif
+
   if (stationPar.empty())
     stationPar.push_back(s.paramId);
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
   Sensors_t sensors;
+  Sensor s2(s);
   BOOST_FOREACH(int par, stationPar) {
-    Sensor st(s);
-    st.paramId = par;
-    sensors.push_back(st);
+    s2.paramId = par;
+    sensors.push_back(s2);
   }
   BOOST_FOREACH(int par, neighborPar) {
     Sensor sn(s);
@@ -538,7 +503,7 @@ Sensors_t relatedSensors(const SensorTime& st)
     sensors.insert(sensors.end(), neighbors.begin(), neighbors.end());
   }
 #if 0
-  METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors");
+  METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
   BOOST_FOREACH(const Sensor& ds, sensors) {
     METLIBS_LOG_DEBUG(LOGVAL(ds));
   }

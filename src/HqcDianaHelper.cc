@@ -16,6 +16,7 @@
 
 #include <sstream>
 
+#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.HqcDianaHelper"
 #include "HqcLogging.hh"
 
@@ -249,18 +250,18 @@ void HqcDianaHelper::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
 
 void HqcDianaHelper::navigateTo(const SensorTime& st)
 {
-    METLIBS_LOG_SCOPE();
-
-    if (eq_SensorTime()(mDianaSensorTime, st))
-        return;
-
-    mDianaSensorTime = st;
-    METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
-
-    sendTime();
-    sendObservations();
-    sendStation();
-    sendSelectedParam();
+  METLIBS_LOG_TIME();
+  
+  if (eq_SensorTime()(mDianaSensorTime, st))
+    return;
+  
+  mDianaSensorTime = st;
+  METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
+  
+  sendTime();
+  sendObservations();
+  sendStation();
+  sendSelectedParam();
 }
 
 void HqcDianaHelper::setEnabled(bool enabled)

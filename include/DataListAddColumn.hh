@@ -2,11 +2,12 @@
 #ifndef DataListAddColumn_hh
 #define DataListAddColumn_hh 1
 
-#include "DataList.hh"
-#include "Sensor.hh"
+#include "AutoDataList.hh"
 
 #include <QtGui/QDialog>
 
+class Sensor;
+class SensorTime;
 namespace Ui {
 class DataListAddColumn;
 }
@@ -20,7 +21,7 @@ public:
   void init(const SensorTime& st);
 
   Sensor selectedSensor() const;
-  DataList::ColumnType selectedColumnType() const;
+  AutoDataList::ColumnType selectedColumnType() const;
   int selectedTimeOffset() const;
 
 private Q_SLOTS:

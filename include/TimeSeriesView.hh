@@ -2,7 +2,7 @@
 #ifndef TimeSeriesView_hh
 #define TimeSeriesView_hh 1
 
-#include "ChangeableDataView.hh"
+#include "DataView.hh"
 
 #include <qTimeseries/PlotOptions.h>
 
@@ -19,26 +19,22 @@ namespace Ui {
 class TimeSeriesView;
 }
 
-class TimeSeriesView : public QWidget, public ChangeableDataView
+class TimeSeriesView : public QWidget, public DataView
 { Q_OBJECT
 public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
                         
-  virtual void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
-  virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
-
-  virtual std::string changes();
-  virtual void replay(const std::string& changes);
-  virtual std::string type() const;
-  virtual std::string id() const;
-
 public Q_SLOTS:
   void navigateTo(const SensorTime&);
 
 private:
   void updateSensors();
   void updatePlot();
+
+  std::string changes();
+  void replay(const std::string& changes);
+  void storeChanges();
 
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
 
@@ -62,6 +58,7 @@ private:
   QAction* mColumnRemove;
   QAction* mColumnReset;
 
+  SensorTime mSensorTime;
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Sensors_t mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;

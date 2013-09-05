@@ -16,7 +16,8 @@ def add_code(cur, paramids, code_value, short_texts, long_texts):
 def add_code_long_en(cur, paramids, code_value, long_texts):
     add_code(cur, paramids, code_value, {}, {'en': long_texts})
 
-def update(con, cur):
+def update(sdb):
+    cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS param_decimals")
     cur.execute("""CREATE TABLE IF NOT EXISTS param_decimals (
            paramid INTEGER NOT NULL UNIQUE,

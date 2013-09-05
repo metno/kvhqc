@@ -1,6 +1,7 @@
 
 SET(hqc_HEADERS
   ErrorListTableModel.hh
+  ../include/AutoDataList.hh
   ../include/ChecksTableModel.hh
   ../include/DataList.hh
   ../include/DataListAddColumn.hh
@@ -16,6 +17,7 @@ SET(hqc_HEADERS
   ../include/rejectdialog.h
   ../include/rejecttable.h
   ../include/SimpleCorrections.hh
+  ../include/StaticDataList.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
   ../include/TimeSeriesView.hh
@@ -24,7 +26,7 @@ SET(hqc_HEADERS
 
 SET(hqc_SOURCES
   AnalyseErrors.cc
-  AutoColumnView.cc
+  AutoDataList.cc
   ChecksTableModel.cc
   DataList.cc
   DataListAddColumn.cc
@@ -48,6 +50,7 @@ SET(hqc_SOURCES
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
+  StaticDataList.cc
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
   SimpleCorrections.cc
@@ -55,6 +58,7 @@ SET(hqc_SOURCES
   textdatatable.cc
   TimeSeriesAdd.cc
   TimeSeriesView.cc
+  ViewChanges.cc
 )
 
 INCLUDE_DIRECTORIES(

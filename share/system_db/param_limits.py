@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*- 
 
-def update(con, cur):
+def update(sdb):
+    cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS slimits")
 
     cur.execute("""CREATE TABLE slimits (

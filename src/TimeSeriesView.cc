@@ -6,6 +6,7 @@
 #include "ModelData.hh"
 #include "TimeRangeControl.hh"
 #include "TimeSeriesAdd.hh"
+#include "ViewChanges.hh"
 
 #include <QtGui/QMenu>
 #include <QtGui/QStringListModel>
@@ -13,11 +14,19 @@
 
 #include <boost/foreach.hpp>
 
+#include <algorithm>
+
 #include "ui_timeseriesview.h"
 #include "ui_ts_remove.h"
 
+#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.TimeSeriesView"
 #include "HqcLogging.hh"
+
+namespace {
+const std::string VIEW_TYPE = "DataList";
+const std::string ID = "1";
+}
 
 // ########################################################################
 
@@ -74,27 +83,13 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
 TimeSeriesView::~TimeSeriesView()
 {
+  storeChanges();
 }
                         
-void TimeSeriesView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
+void TimeSeriesView::storeChanges()
 {
-  ChangeableDataView::setDataAccess(eda, mda);
-}
-
-void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
-{
-  METLIBS_LOG_SCOPE();
-  ChangeableDataView::setSensorsAndTimes(sensors, limits);
-  mSensors = mOriginalSensors = sensors;
-  mTimeLimits = mOriginalTimeLimits = limits;
-
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
-
-  mColumnAdd->setEnabled(true);
-  mColumnRemove->setEnabled(true);
-  mColumnReset->setEnabled(false);
-  updateSensors();
+  if (mSensorTime.valid())
+    ViewChanges::store(mSensorTime.sensor, VIEW_TYPE, ID, changes());
 }
 
 void TimeSeriesView::updateSensors()
@@ -167,8 +162,52 @@ void TimeSeriesView::updateSensors()
 
 void TimeSeriesView::navigateTo(const SensorTime& st)
 {
+  METLIBS_LOG_TIME();
+  if (not st.valid() or eq_SensorTime()(mSensorTime, st))
+    return;
+
+  bool changedTime = false, changedSensors = false;
+
+  if (not mTimeLimits.contains(mSensorTime.time)) {
+    mTimeLimits = ViewChanges::defaultTimeLimits(st);
+    mOriginalTimeLimits = mTimeLimits;
+    changedTime = true;
+  }
+
+  const bool sensorShown = (std::find_if(mSensors.begin(), mSensors.end(), std::bind1st(eq_Sensor(), st.sensor)) != mSensors.end());
+  METLIBS_LOG_DEBUG(LOGVAL(sensorShown));
+  if (not mSensorTime.valid() or not sensorShown) {
+    // need to update related parameters and neighbor list
+    storeChanges();
+
+    // set original columns
+    mSensorTime = st;
+    mSensors = Sensors_t(1, mSensorTime.sensor);
+    const std::vector<Sensor> neighbors = Helpers::findNeighbors(mSensorTime.sensor, mTimeLimits, MAX_LINES*2);
+    mSensors.insert(mSensors.end(), neighbors.begin(), neighbors.end());
+    mOriginalSensors = mSensors;
+
+    replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
+    changedSensors = true;
+  }
+
+  if (changedSensors or changedTime)
+    DataView::setSensorsAndTimes(mSensors, mTimeLimits);
+
   ui->plot->clearTimemarks();
   ui->plot->setTimemark(timeutil::make_miTime(st.time), "here");
+
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+
+  mColumnAdd->setEnabled(true);
+  mColumnRemove->setEnabled(true);
+  mColumnReset->setEnabled(false);
+
+  if (changedSensors)
+    updateSensors();
+  else if (changedTime)
+    updatePlot();
 }
 
 namespace /* anonymous */ {
@@ -296,16 +335,6 @@ void TimeSeriesView::replay(const std::string& changesText)
   updateSensors();
 }
 
-std::string TimeSeriesView::type() const
-{
-  return "TimeSeries";
-}
-
-std::string TimeSeriesView::id() const
-{
-  return "1";
-}
-
 void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
 {
   updatePlot();
@@ -373,7 +402,7 @@ void TimeSeriesView::onDateFromChanged(const QDateTime&)
   const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
   mTimeLimits = TimeRange(stime, etime);
 
-  ChangeableDataView::setSensorsAndTimes(mSensors, mTimeLimits);
+  DataView::setSensorsAndTimes(mSensors, mTimeLimits);
   updatePlot();
 }
 

@@ -98,7 +98,7 @@ private:
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
-std::vector<Sensor> relatedSensors(const SensorTime& st);
+std::vector<Sensor> relatedSensors(const SensorTime& st, const std::string& viewType);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)

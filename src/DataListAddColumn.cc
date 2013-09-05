@@ -76,15 +76,15 @@ int DataListAddColumn::getTypeId() const
   return tim->typeIds().at(idx);
 }
 
-DataList::ColumnType DataListAddColumn::selectedColumnType() const
+AutoDataList::ColumnType DataListAddColumn::selectedColumnType() const
 {
-  DataList::ColumnType ct = DataList::CORRECTED;
+  AutoDataList::ColumnType ct = AutoDataList::CORRECTED;
   if (ui->radioOriginal->isChecked())
-    ct = DataList::ORIGINAL;
+    ct = AutoDataList::ORIGINAL;
   else if (ui->radioFlags->isChecked())
-    ct = DataList::FLAGS;
+    ct = AutoDataList::FLAGS;
   if (ui->radioModel->isChecked())
-    ct = DataList::MODEL;
+    ct = AutoDataList::MODEL;
   return ct;
 }
 
