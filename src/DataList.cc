@@ -17,6 +17,8 @@
 
 #include <boost/foreach.hpp>
 
+#include <set>
+
 #include "ui_datalist.h"
 #include "ui_dl_addcolumn.h"
 
@@ -487,19 +489,51 @@ void DataList::onButtonSaveAs()
    QFile file(fileName);
    file.open(QIODevice::WriteOnly | QIODevice::Text);
 
+   int r0, r1, c0, c1;
+
+   std::set<int> selectedRows, selectedColumns;
+   std::set< std::pair<int,int> > selectedCells;
+   const QModelIndexList selected = ui->table->selectionModel()->selectedIndexes();
+   if (not selected.isEmpty()) {
+     for (int i=0; i<selected.count(); i++) {
+       const int r = selected.at(i).row(), c = selected.at(i).column();
+       selectedRows.insert(r);
+       selectedColumns.insert(c);
+       selectedCells.insert(std::make_pair(r, c));
+     }
+     r0 = *selectedRows.begin();
+     r1 = *selectedRows.rbegin();
+     c0 = *selectedColumns.begin();
+     c1 = *selectedColumns.rbegin();
+   } else {
+     r0 = 0;
+     r1 = mTableModel->rowCount(QModelIndex())-1;
+     c0 = 0;
+     c1 = mTableModel->columnCount(QModelIndex())-1;
+   }
+
    QTextStream out(&file);
-   const int nRows = mTableModel->rowCount(QModelIndex()), nCols = mTableModel->columnCount(QModelIndex());
 
    out << "\"\"";
-   for (int c=0; c<nCols; ++c)
-     out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
+   for (int c=c0; c<=c1; ++c) {
+     if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end())
+       out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
+   }
    out << "\n";
 
-   for (int r=0; r<nRows; ++r) {
-     out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
-     for (int c=0; c<nCols; ++c)
-       out << "\t\"" << protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole)) << '\"';
-     out << "\n";
+   for (int r=r0; r<=r1; ++r) {
+     if (selectedRows.empty() or selectedRows.find(r) != selectedRows.end()) {
+       out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
+       for (int c=c0; c<=c1; ++c) {
+         if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end()) {
+           QString cell;
+           if (selectedCells.empty() or selectedCells.find(std::make_pair(r, c)) != selectedCells.end())
+             cell = protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole));
+           out << "\t\"" << cell << '\"';
+         }
+       }
+       out << "\n";
+     }
    }
  
    file.close(); 
