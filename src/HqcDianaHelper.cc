@@ -248,7 +248,7 @@ void HqcDianaHelper::navigateTo(const SensorTime& st)
     mDianaSensorTime = st;
     LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
 
-    sendTime(st.time);
+    sendTime();
     sendObservations(/*datalist, modeldatalist, mSelectedParameters*/);
     sendStation(st.sensor.stationId);
     sendSelectedParam(st.sensor.paramId);
@@ -387,7 +387,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     } else {
         LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
     }
-    if (stationId != 0 or stationId != mDianaSensorTime.sensor.stationId) {
+    if (stationId != 0 and stationId != mDianaSensorTime.sensor.stationId) {
         sendSignal = true;
         mDianaSensorTime.sensor = Sensor(stationId, 0, 0, 0, 0); // TODO how to identify the correct sensor?
     }
@@ -425,15 +425,6 @@ void HqcDianaHelper::sendStation(int stnr)
     mClientButton->sendMessage(m);
 }
 
-void HqcDianaHelper::sendTime(const timeutil::ptime& time)
-{
-    DBG(DBG1(time) << DBG1(mDianaSensorTime));
-    if (not mEnabled or not mDianaConnected or mDianaSensorTime.time == time or not isKnownTime(time))
-        return;
-    mDianaSensorTime.time = time;
-    sendTime();
-}
-    
 void HqcDianaHelper::sendTime()
 {
     LOG_SCOPE("HqcDianaHelper");

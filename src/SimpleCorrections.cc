@@ -172,22 +172,17 @@ void SimpleCorrections::update()
     LOG_SCOPE("SimpleCorrections");
 
     const Sensor& s = mSensorTime.sensor;
-    if (s.stationId > 0) {
+    ModelDataPtr mdl;
+    EditDataPtr obs;
+    if (s.valid()) {
         ui->textStation->setText(QString::number(s.stationId));
         ui->textParam->setText(Helpers::parameterName(s.paramId));
         ui->textType->setText(QString::number(s.typeId));
 
         ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
-        EditDataPtr obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
-        if (obs) {
-            ui->textFlags->setText(Helpers::getFlagText(obs->controlinfo()));
-            ui->textOriginal->setText(QString::number(obs->original()));
-            ui->textCorrected->setText(QString::number(obs->corrected()));
-        }
-        ModelDataPtr mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
-        if (mdl)
-            ui->textModel->setText(QString::number(mdl->value()));
+        obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
+        mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
     } else {
         ui->textStation->setText("--");
         ui->textParam->setText("--");
@@ -195,6 +190,11 @@ void SimpleCorrections::update()
 
         ui->textObstime->setText("");
     }
+    ui->textFlags->setText(obs ? Helpers::getFlagText(obs->controlinfo()) : "");
+    ui->textOriginal->setText(obs ? QString::number(obs->original()) : "");
+    ui->textCorrected->setText(obs ? QString::number(obs->corrected()) : "");
+    ui->textModel->setText(mdl ? QString::number(mdl->value()) : "");
+
     enableEditing();
 }
 
@@ -213,7 +213,7 @@ void SimpleCorrections::enableEditing()
     bool enable[N_BUTTONS];
     
     const Sensor& s = mSensorTime.sensor;
-    EditDataPtr obs = (mDA and s.stationId > 0 and s.paramId != 110) ? mDA->findE(mSensorTime) : EditDataPtr();
+    EditDataPtr obs = (mDA and s.valid() and s.paramId != 110) ? mDA->findE(mSensorTime) : EditDataPtr();
     std::fill(enable, enable+N_BUTTONS, obs);
 
     if (obs) {

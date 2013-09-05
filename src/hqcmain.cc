@@ -38,11 +38,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "accepttimeseriesdialog.h"
 #include "approvedialog.h"
-#include "AnalyseErrors.hh"
 #include "BusyIndicator.h"
 #include "config.h"
 #include "DataList.hh"
-#include "DataListModel.hh"
+#include "DataView.hh"
 #include "dianashowdialog.h"
 #include "discarddialog.h"
 #include "errorlist.h"
@@ -86,6 +85,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>
+#include <QtCore/QTextStream>
 #include <QtCore/qtimer.h>
 #include <QtCore/qurl.h>
 #include <QtGui/QDesktopServices>
@@ -94,7 +94,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPixmap>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
-#include <qdebug.h>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -361,7 +360,7 @@ void HqcMainWindow::ListOK()
     
     // All windows are shown later, in the tileHorizontal function
     
-    DataListModel::Sensors_t sensors;
+    DataView::Sensors_t sensors;
     BOOST_FOREACH(int stationId, selectedStations) {
         BOOST_FOREACH(int paramId, mSelectedParameters) {
             const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
@@ -374,7 +373,7 @@ void HqcMainWindow::ListOK()
             }
             if (sensor.typeId != 0) {
                 sensors.push_back(sensor);
-                LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(sensor.paramId) << DBG1(sensor.typeId));
+                LOG4SCOPE_DEBUG(DBG1(sensor));
             }
         }
     }

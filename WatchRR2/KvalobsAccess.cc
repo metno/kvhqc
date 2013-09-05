@@ -47,6 +47,7 @@ ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange
         LOG4SCOPE_ERROR("invalid sensor/time: " << sensor << DBG1(limits.t0()) << DBG1(limits.t1()));
         return ObsAccess::TimeSet();
     }
+    LOG4SCOPE_DEBUG("allTimes" << DBG1(sensor) << DBG1(limits.t0()) << DBG1(limits.t1()));
 
     Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
     if (f == mFetched.end()) {
@@ -56,8 +57,8 @@ ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange
         limits_set.insert(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
         boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
         FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
-        for(FetchedTimes_t::const_iterator it = to_fetch.begin(); it != to_fetch.end(); )
-            findRange(sensor, TimeRange(it->lower(), it->upper()));
+        BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch)
+            findRange(sensor, TimeRange(t.lower(), t.upper()));
     }
     return KvBufferedAccess::allTimes(sensor, limits);
 }
@@ -88,7 +89,7 @@ void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
         return;
     }
 
-    LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(limits.t0()) << DBG1(limits.t1()));
+    LOG4SCOPE_DEBUG(DBG1(sensor) << DBG1(limits.t0()) << DBG1(limits.t1()));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(sensor.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
@@ -113,7 +114,7 @@ void KvalobsAccess::addFetched(int stationId, const TimeRange& limits)
 {
     LOG_SCOPE("KvalobsAccess");
     mFetched[stationId] += boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1());
-    LOG4SCOPE_DEBUG(DBG1(mFetched[stationId]));
+    LOG4SCOPE_DEBUG(DBG1(stationId) << DBG1(mFetched[stationId]));
 }
 
 void KvalobsAccess::removeFetched(int stationId, const timeutil::ptime& t)

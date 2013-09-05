@@ -37,7 +37,7 @@ void DataList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& lim
 void DataList::navigateTo(const SensorTime& st)
 {
     LOG_SCOPE("DataList");
-    if (eq_SensorTime()(mSensorTime, st))
+    if (not st.valid() or eq_SensorTime()(mSensorTime, st))
         return;
 
     mSensorTime = st;
