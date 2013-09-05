@@ -112,12 +112,14 @@ void AutoDataList::navigateTo(const SensorTime& st)
       
       replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
     }
+    makeModel();
   }
   DataList::navigateTo(st);
 }
 
 void AutoDataList::generateColumns()
 {
+  METLIBS_LOG_SCOPE();
   mColumns = Columns_t();
   
   const std::vector<Sensor> sensors = Helpers::relatedSensors(mSensorTime, VIEW_TYPE);
@@ -131,14 +133,14 @@ void AutoDataList::generateColumns()
     }
     c.type = CORRECTED;
     mColumns.push_back(c);
+    METLIBS_LOG_DEBUG("gen " << s);
   }
   mOriginalColumns = mColumns;
-
-  makeModel();
 }
 
 void AutoDataList::makeModel()
 {
+  METLIBS_LOG_SCOPE();
   BusyIndicator busy;
   std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
   BOOST_FOREACH(const Column& c, mColumns) {
@@ -174,6 +176,7 @@ ObsColumnPtr AutoDataList::makeColumn(const Column& c)
 
 void AutoDataList::storeChanges()
 {
+  METLIBS_LOG_SCOPE();
   if (mSensorTime.valid())
     ViewChanges::store(mSensorTime.sensor, VIEW_TYPE, ID, changes());
 }
@@ -182,8 +185,10 @@ namespace /* anonymous */ {
 static const char C_ATTR_STATIONID[] = "stationid";
 static const char C_ATTR_PARAMID[]   = "paramid";
 static const char C_ATTR_TYPEID[]    = "typeid";
+static const char C_ATTR_SENSORNR[]  = "sensornr";
+static const char C_ATTR_LEVEL[]     = "level";
 static const char C_ATTR_CTYPE[]     = "ctype";
-static const char C_ATTR_TOSSFET[]   = "timeoffset";
+static const char C_ATTR_TOFFSET[]   = "timeoffset";
 
 static const char T_ATTR_START[] = "start";
 static const char T_ATTR_END[]   = "end";
@@ -200,6 +205,10 @@ void AutoDataList::Column::toText(QDomElement& ce) const
   ce.setAttribute(C_ATTR_STATIONID, sensor.stationId);
   ce.setAttribute(C_ATTR_PARAMID,   sensor.paramId);
   ce.setAttribute(C_ATTR_TYPEID,    sensor.typeId);
+  if (sensor.level != 0)
+    ce.setAttribute(C_ATTR_LEVEL, sensor.level);
+  if (sensor.sensor != 0)
+    ce.setAttribute(C_ATTR_SENSORNR, sensor.sensor);
   QString ctype;
   switch (type) {
   case CORRECTED: ctype = "CORRECTED"; break;
@@ -209,7 +218,7 @@ void AutoDataList::Column::toText(QDomElement& ce) const
   }
   ce.setAttribute(C_ATTR_CTYPE, ctype);
   if (timeOffset != 0)
-    ce.setAttribute(C_ATTR_TOSSFET, timeOffset);
+    ce.setAttribute(C_ATTR_TOFFSET, timeOffset);
 }
 
 void AutoDataList::Column::fromText(const QDomElement& ce)
@@ -217,13 +226,17 @@ void AutoDataList::Column::fromText(const QDomElement& ce)
   sensor.stationId = ce.attribute(C_ATTR_STATIONID).toInt();
   sensor.paramId   = ce.attribute(C_ATTR_PARAMID)  .toInt();
   sensor.typeId    = ce.attribute(C_ATTR_TYPEID)   .toInt();
+  if (ce.hasAttribute(C_ATTR_LEVEL))
+    sensor.level = ce.attribute(C_ATTR_LEVEL).toInt();
+  if (ce.hasAttribute(C_ATTR_SENSORNR))
+    sensor.sensor = ce.attribute(C_ATTR_SENSORNR).toInt();
   const QString ctype = ce.attribute(C_ATTR_CTYPE);
   if      (ctype == "CORRECTED") type = CORRECTED;
   else if (ctype == "ORIGINAL")  type = ORIGINAL;
   else if (ctype == "FLAGS")     type = FLAGS;
   else if (ctype == "MODEL")     type = MODEL;
-  if (ce.hasAttribute(C_ATTR_TOSSFET))
-    timeOffset = ce.attribute(C_ATTR_TOSSFET).toInt();
+  if (ce.hasAttribute(C_ATTR_TOFFSET))
+    timeOffset = ce.attribute(C_ATTR_TOFFSET).toInt();
   else
     timeOffset = 0;
 }
@@ -262,7 +275,7 @@ std::string AutoDataList::changes()
     doc_changes.appendChild(doc_timeshift);
   }
 
-  METLIBS_LOG_DEBUG("changes=" << doc.toString());
+  METLIBS_LOG_DEBUG("changes for " << mSensorTime << ": " << doc.toString());
   return doc.toString().toStdString();
 }
 
@@ -286,7 +299,7 @@ void AutoDataList::replay(const std::string& changesText)
       Column col;
       col.fromText(c);
       removed.push_back(col);
-      METLIBS_LOG_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+      METLIBS_LOG_DEBUG("removed " << col.sensor);
     }
   }
 
@@ -297,7 +310,7 @@ void AutoDataList::replay(const std::string& changesText)
       Column col;
       col.fromText(c);
       actual.push_back(col);
-      METLIBS_LOG_DEBUG("column " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+      METLIBS_LOG_DEBUG("column " << col.sensor);
     }
   }
   
@@ -443,7 +456,7 @@ void AutoDataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, in
   mColumns.erase(mColumns.begin() + from);
   mColumns.insert(mColumns.begin() + to, c);
 
-  mColumnReset->setEnabled(false);
+  mColumnReset->setEnabled(true);
 
   //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }

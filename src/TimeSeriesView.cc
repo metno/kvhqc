@@ -202,7 +202,6 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
 
   mColumnAdd->setEnabled(true);
   mColumnRemove->setEnabled(true);
-  mColumnReset->setEnabled(false);
 
   if (changedSensors)
     updateSensors();
@@ -214,8 +213,8 @@ namespace /* anonymous */ {
 static const char C_ATTR_STATIONID[] = "stationid";
 static const char C_ATTR_PARAMID[]   = "paramid";
 static const char C_ATTR_TYPEID[]    = "typeid";
-static const char C_ATTR_CTYPE[]     = "ctype";
-static const char C_ATTR_TOSSFET[]   = "timeoffset";
+static const char C_ATTR_SENSORNR[]  = "sensornr";
+static const char C_ATTR_LEVEL[]     = "level";
 
 static const char T_ATTR_START[] = "start";
 static const char T_ATTR_END[]   = "end";
@@ -231,6 +230,10 @@ void toText(const Sensor& sensor, QDomElement& ce)
   ce.setAttribute(C_ATTR_STATIONID, sensor.stationId);
   ce.setAttribute(C_ATTR_PARAMID,   sensor.paramId);
   ce.setAttribute(C_ATTR_TYPEID,    sensor.typeId);
+  if (sensor.level != 0)
+    ce.setAttribute(C_ATTR_LEVEL, sensor.level);
+  if (sensor.sensor != 0)
+    ce.setAttribute(C_ATTR_SENSORNR, sensor.sensor);
 }
 
 void fromText(const QDomElement& ce, Sensor& sensor)
@@ -238,6 +241,10 @@ void fromText(const QDomElement& ce, Sensor& sensor)
   sensor.stationId = ce.attribute(C_ATTR_STATIONID).toInt();
   sensor.paramId   = ce.attribute(C_ATTR_PARAMID)  .toInt();
   sensor.typeId    = ce.attribute(C_ATTR_TYPEID)   .toInt();
+  if (ce.hasAttribute(C_ATTR_LEVEL))
+    sensor.level = ce.attribute(C_ATTR_LEVEL).toInt();
+  if (ce.hasAttribute(C_ATTR_SENSORNR))
+    sensor.sensor = ce.attribute(C_ATTR_SENSORNR).toInt();
 }
 } // anonymous namespace
 
