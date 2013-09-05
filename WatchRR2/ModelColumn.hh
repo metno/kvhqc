@@ -26,7 +26,7 @@ public:
     virtual int type() const
       { return ObsColumn::MODEL; }
 
-    void setCodes(Code2TextPtr codes);
+    void setCodes(Code2TextCPtr codes);
 
 protected:
     ModelDataPtr getModel(const timeutil::ptime& time) const;
@@ -44,7 +44,7 @@ protected:
     bool mHeaderShowStation;
     boost::posix_time::time_duration mTimeOffset;
 
-    Code2TextPtr mCodes;
+    Code2TextCPtr mCodes;
 
     typedef std::map<timeutil::ptime, ModelDataPtr> ModelCache_t;
     mutable ModelCache_t mModelCache;

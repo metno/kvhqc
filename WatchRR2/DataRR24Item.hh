@@ -6,7 +6,7 @@
 
 class DataRR24Item : public DataCorrectedItem {
 public:
-    DataRR24Item(bool showNew, Code2TextPtr codes);
+    DataRR24Item(bool showNew, Code2TextCPtr codes);
 
     virtual Qt::ItemFlags flags(EditDataPtr obs) const;
     virtual QVariant data(EditDataPtr obs, int role) const;

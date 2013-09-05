@@ -12,7 +12,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataOriginalItem"
 #include "HqcLogging.hh"
 
-DataOriginalItem::DataOriginalItem(Code2TextPtr codes)
+DataOriginalItem::DataOriginalItem(Code2TextCPtr codes)
   : DataValueItem(ObsColumn::ORIGINAL)
   , mCodes(codes)
 {

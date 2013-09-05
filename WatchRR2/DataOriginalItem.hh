@@ -7,13 +7,13 @@
 
 class DataOriginalItem : public DataValueItem {
 public:
-  DataOriginalItem(Code2TextPtr codes);
+  DataOriginalItem(Code2TextCPtr codes);
   
   virtual QVariant data(EditDataPtr obs, int role) const;
   virtual QString description(bool mini) const;
 
 protected:
-  Code2TextPtr mCodes;
+  Code2TextCPtr mCodes;
 };
 
 typedef boost::shared_ptr<DataOriginalItem> DataOriginalItemPtr;

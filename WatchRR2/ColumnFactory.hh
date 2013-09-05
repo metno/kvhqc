@@ -11,7 +11,7 @@ typedef boost::shared_ptr<EditAccess> EditAccessPtr;
 
 namespace ColumnFactory {
 
-Code2TextPtr codesForParam(int paramId);
+Code2TextCPtr codesForParam(int paramId);
 
 DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Type displayType);
 

@@ -10,10 +10,10 @@ class Code2Text {
 public:
     Code2Text();
     virtual ~Code2Text();
-    virtual QString asTip(float value);
-    virtual QString asText(float value);
-    virtual bool isCode(float value);
-    virtual float fromText(const QString& text);
+    virtual QString asTip(float value) const;
+    virtual QString asText(float value) const;
+    virtual bool isCode(float value) const;
+    virtual float fromText(const QString& text) const;
 
     virtual void addCode(int value, const QStringList& shortText, const QString& explain);
     void setDecimals(int d)
@@ -34,5 +34,6 @@ private:
 
 };
 typedef boost::shared_ptr<Code2Text> Code2TextPtr;
+typedef boost::shared_ptr<const Code2Text> Code2TextCPtr;
 
 #endif // Code2Text_hh

@@ -9,7 +9,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataRR24Item"
 #include "HqcLogging.hh"
 
-DataRR24Item::DataRR24Item(bool showNew, Code2TextPtr codes)
+DataRR24Item::DataRR24Item(bool showNew, Code2TextCPtr codes)
     : DataCorrectedItem(showNew, codes)
 {
 }

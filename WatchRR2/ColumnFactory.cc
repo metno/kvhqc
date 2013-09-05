@@ -36,18 +36,27 @@ QString languageOrdering(QString languageColumn)
   return lo;
 }
 
+typedef std::map<int, Code2TextCPtr> Code2Text_t;
+Code2Text_t sCode2Text; // FIXME these are leaked
+
 } // namespace anonymous
 
 namespace ColumnFactory {
 
-Code2TextPtr codesForParam(int pid)
+Code2TextCPtr codesForParam(int pid)
 {
     METLIBS_LOG_SCOPE();
     if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6
         or pid == kvalobs::PARAMID_V4S or pid == kvalobs::PARAMID_V5S or pid == kvalobs::PARAMID_V6S)
       return Code2TextPtr();
 
+    const Code2Text_t::const_iterator c2t_it = sCode2Text.find(pid);
+    if (c2t_it != sCode2Text.end())
+      return c2t_it->second;
+
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
+    sCode2Text.insert(std::make_pair<int, Code2TextCPtr>(pid, c2t));
+
     int decimals = 1;
     try {
       const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
@@ -130,7 +139,7 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
       return boost::make_shared<DataControlinfoItem>(showNew);
     }
     
-    Code2TextPtr codes = codesForParam(pid);
+    Code2TextCPtr codes = codesForParam(pid);
     if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
       const bool showNew = displayType == ObsColumn::NEW_CORRECTED;
       if (pid == kvalobs::PARAMID_RR_24)

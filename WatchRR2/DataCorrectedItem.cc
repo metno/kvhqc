@@ -13,7 +13,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataCorrectedItem"
 #include "HqcLogging.hh"
 
-DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextPtr codes)
+DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextCPtr codes)
   : DataValueItem(showNew ? ObsColumn::NEW_CORRECTED : ObsColumn::OLD_CORRECTED)
   , mCodes(codes)
 {

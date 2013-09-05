@@ -20,7 +20,7 @@ Code2Text::~Code2Text()
 {
 }
 
-QString Code2Text::asTip(float value)
+QString Code2Text::asTip(float value) const
 {
     QMap<int,Code>::const_iterator it = mCodes.find(value);
     if (it == mCodes.end())
@@ -28,7 +28,7 @@ QString Code2Text::asTip(float value)
     return QString("%2 (%1)").arg((int)value).arg(it.value().explain);
 }
 
-QString Code2Text::asText(float value)
+QString Code2Text::asText(float value) const
 {
     QMap<int,Code>::const_iterator it = mCodes.find(value);
     if (it == mCodes.end() or it.value().shortText.isEmpty())
@@ -37,13 +37,13 @@ QString Code2Text::asText(float value)
     return it.value().shortText.front();
 }
 
-bool Code2Text::isCode(float value)
+bool Code2Text::isCode(float value) const
 {
     QMap<int,Code>::const_iterator it = mCodes.find(value);
     return (it != mCodes.end());
 }
 
-float Code2Text::fromText(const QString& text)
+float Code2Text::fromText(const QString& text) const
 {
     QMap<int, Code>::const_iterator it = mCodes.constBegin();
     ++it; ++it; // do not allow setting "mis" or "new"

@@ -31,7 +31,7 @@ public:
 private:
     Sensor mSensor;
     std::vector<float> mNewValues;
-    Code2TextPtr mRR24Codes;
+    Code2TextCPtr mRR24Codes;
 };
 
 #endif /* REDISTTABLEMODEL_HH */

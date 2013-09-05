@@ -33,7 +33,7 @@ private:
     Sensor mSensor;
     std::vector<float> mNewValues;
     std::vector<int> mAcceptReject;
-    Code2TextPtr mRR24Codes;
+    Code2TextCPtr mRR24Codes;
 };
 
 #endif /* EDITTABLEMODEL_HH */

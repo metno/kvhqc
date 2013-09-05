@@ -106,7 +106,7 @@ Sensor ModelColumn::sensor() const
     return mSensor;
 }
 
-void ModelColumn::setCodes(boost::shared_ptr<Code2Text> codes)
+void ModelColumn::setCodes(Code2TextCPtr codes)
 {
     mCodes = codes;
 }
