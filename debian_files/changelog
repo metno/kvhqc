@@ -1,3 +1,9 @@
+kvhqc (3.0.0~a7-1) unstable; urgency=low
+
+  * removed logos
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 25 Jun 2013 14:11:14 +0200
+
 kvhqc (3.0.0~a6-1) unstable; urgency=low
 
   * added button to add/remove/reset columns
