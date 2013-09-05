@@ -108,7 +108,7 @@ float DataValueItem::getValue(EditDataPtr obs) const
   if (mColumnType == ObsColumn::OLD_CORRECTED)
     return obs->oldCorrected();
   else if (mColumnType == ObsColumn::ORIGINAL)
-    return obs->oldCorrected();
+    return obs->original();
   else
     return obs->corrected();
 }
