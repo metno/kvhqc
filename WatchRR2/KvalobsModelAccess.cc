@@ -40,6 +40,7 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
         mFetched.insert(f);
         BOOST_FOREACH(const kvalobs::kvModelData& md, model)
             receive(md);
+      } else {
         METLIBS_LOG_ERROR("problem receiving model data");
       }
     } catch (std::exception& e) {
