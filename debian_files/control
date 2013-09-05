@@ -21,7 +21,7 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
-Depends: coserver4, libqt4-sql-psql,
+Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
 @metno_config_if ^lucid$
 @metno_config_else
  libkvcpp4 (>= 2.7.0~rc5),
