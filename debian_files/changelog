@@ -1,3 +1,10 @@
+kvhqc (3.0.0~a19-1) unstable; urgency=low
+
+  * show code explanation for original values
+  * disable "add column" for empty table
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 19 Jul 2013 16:55:05 +0200
+
 kvhqc (3.0.0~a18-1) unstable; urgency=low
 
   * added FG and FX to parameter list for extreme values

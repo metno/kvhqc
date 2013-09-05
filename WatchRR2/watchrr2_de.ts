@@ -98,75 +98,6 @@
     </message>
 </context>
 <context>
-    <name>Column_RR_24</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="55"/>
-        <source>dry</source>
-        <translation>trocken</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="56"/>
-        <source>d</source>
-        <translation>t</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="57"/>
-        <source>precipitation not reported</source>
-        <translation>keine Niederschlagsmenge angegeben</translation>
-    </message>
-</context>
-<context>
-    <name>Column_SA</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="61"/>
-        <source>pat</source>
-        <translation>flck</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="62"/>
-        <source>p</source>
-        <translation>f</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="63"/>
-        <source>patchy snow</source>
-        <translation>fleckenweise Schnee</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="66"/>
-        <source>no m.</source>
-        <translation>kne M.</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="67"/>
-        <source>n</source>
-        <translation>k</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="68"/>
-        <source>measurement impossible/inaccurate</source>
-        <translation>Messung nicht möglich/ungenau</translation>
-    </message>
-</context>
-<context>
-    <name>Column_SD</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="72"/>
-        <source>no m.</source>
-        <translation>kne M.</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="73"/>
-        <source>n</source>
-        <translation>k</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="74"/>
-        <source>snow cover not reported</source>
-        <translation>Schneedecke nicht gemeldet</translation>
-    </message>
-</context>
-<context>
     <name>DataColumn</name>
     <message>
         <location filename="DataControlinfoItem.cc" line="38"/>
@@ -179,22 +110,22 @@
         <translation>Kontrollflags</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="81"/>
+        <location filename="DataCorrectedItem.cc" line="84"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="83"/>
+        <location filename="DataCorrectedItem.cc" line="86"/>
         <source>corrected</source>
         <translation>korrigiert</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="40"/>
+        <location filename="DataOriginalItem.cc" line="52"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="42"/>
+        <location filename="DataOriginalItem.cc" line="54"/>
         <source>original</source>
         <translation>original</translation>
     </message>
@@ -202,21 +133,25 @@
 <context>
     <name>DataOriginalItem</name>
     <message>
+        <location filename="DataOriginalItem.cc" line="37"/>
         <location filename="DataValueItem.cc" line="91"/>
         <source>surely wrong</source>
         <translation>mit Sicherheit falsch</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="39"/>
         <location filename="DataValueItem.cc" line="93"/>
         <source>very suspicious (probably wrong)</source>
         <translation>sehr verdächtig (wahrscheinlich falsch)</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="41"/>
         <location filename="DataValueItem.cc" line="95"/>
         <source>suspicious (probably ok)</source>
         <translation>verdächtig (wahrscheinlich richtig)</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="43"/>
         <location filename="DataValueItem.cc" line="97"/>
         <source>no quality info available</source>
         <translation>keine Qualitätsinformation vorhanden</translation>
@@ -345,12 +280,12 @@
     <message utf8="true">
         <location filename="watchrr_main.ui" line="60"/>
         <source>&amp;Single values…</source>
-        <translation>&amp;Einzelwerte</translation>
+        <translation>&amp;Einzelwerte…</translation>
     </message>
     <message utf8="true">
         <location filename="watchrr_main.ui" line="73"/>
         <source>&amp;Redistribute…</source>
-        <translation>&amp;Verteilen</translation>
+        <translation>&amp;Verteilen…</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="86"/>

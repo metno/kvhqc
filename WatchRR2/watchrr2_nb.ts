@@ -98,85 +98,14 @@
     </message>
 </context>
 <context>
-    <name>Column_RR_24</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="55"/>
-        <source>dry</source>
-        <translation>tørt</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="56"/>
-        <source>d</source>
-        <translation>t</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="57"/>
-        <source>precipitation not reported</source>
-        <translation>nedbørmengde ikke meldt</translation>
-    </message>
-</context>
-<context>
-    <name>Column_SA</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="61"/>
-        <source>pat</source>
-        <translation>flk</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="62"/>
-        <source>p</source>
-        <translation>f</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="63"/>
-        <source>patchy snow</source>
-        <translation>flekkvis snø</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="66"/>
-        <source>no m.</source>
-        <translation>ing.m.</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="67"/>
-        <source>n</source>
-        <translation>i</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="68"/>
-        <source>measurement impossible/inaccurate</source>
-        <translation>måling umulig eller unøyaktig</translation>
-    </message>
-</context>
-<context>
-    <name>Column_SD</name>
-    <message>
-        <location filename="ColumnFactory.cc" line="72"/>
-        <source>no m.</source>
-        <oldsource>no r.</oldsource>
-        <translation>ing.m.</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="73"/>
-        <source>n</source>
-        <oldsource>b</oldsource>
-        <translation>i</translation>
-    </message>
-    <message>
-        <location filename="ColumnFactory.cc" line="74"/>
-        <source>snow cover not reported</source>
-        <translation>snødekke ikke meldt</translation>
-    </message>
-</context>
-<context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="42"/>
+        <location filename="DataOriginalItem.cc" line="54"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="83"/>
+        <location filename="DataCorrectedItem.cc" line="86"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -186,12 +115,12 @@
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="40"/>
+        <location filename="DataOriginalItem.cc" line="52"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="81"/>
+        <location filename="DataCorrectedItem.cc" line="84"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -204,21 +133,25 @@
 <context>
     <name>DataOriginalItem</name>
     <message>
+        <location filename="DataOriginalItem.cc" line="37"/>
         <location filename="DataValueItem.cc" line="91"/>
         <source>surely wrong</source>
         <translation>sikkert feilaktig</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="39"/>
         <location filename="DataValueItem.cc" line="93"/>
         <source>very suspicious (probably wrong)</source>
         <translation>svært mistenkelig (antagelig feilaktig)</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="41"/>
         <location filename="DataValueItem.cc" line="95"/>
         <source>suspicious (probably ok)</source>
         <translation>noe mistenkelig (antagelig korrekt)</translation>
     </message>
     <message>
+        <location filename="DataOriginalItem.cc" line="43"/>
         <location filename="DataValueItem.cc" line="97"/>
         <source>no quality info available</source>
         <translation>kvalitetsinformasjon ikke gitt</translation>
