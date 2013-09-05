@@ -24,6 +24,9 @@ public:
     virtual kvalobs::kvControlInfo controlinfo() const
         { return mControlinfo.back().second; }
 
+    virtual std::string cfailed() const
+        { return mData->cfailed(); }
+
     float oldCorrected() const
         { return mCorrected.front().second; }
 

@@ -17,6 +17,7 @@ public:
     virtual float original() const = 0;
     virtual float corrected() const = 0;
     virtual kvalobs::kvControlInfo controlinfo() const = 0;
+    virtual std::string cfailed() const = 0;
 };
 typedef boost::shared_ptr<ObsData> ObsDataPtr;
 

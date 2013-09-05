@@ -22,6 +22,8 @@ SET(auth_SOURCES
   KvMetaDataBuffer.hh
   KvMetaDataBuffer.cc
   MiDateTimeEdit.cc
+  Sensor.hh
+  Sensor.cc
   TimeRange.cc
   timeutil.cc
 )

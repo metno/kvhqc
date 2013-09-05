@@ -2,9 +2,16 @@
 #ifndef HQC_LOGGING_HH
 #define HQC_LOGGING_HH 1
 
+#include <Qt/qglobal.h>
 #include <string>
 
+QT_BEGIN_NAMESPACE;
 class QString;
+QT_END_NAMESPACE;
+
+class Sensor;
+class SensorTime;
+
 namespace log4cpp {
 class CategoryStream;
 }
@@ -16,6 +23,8 @@ public:
 };
 
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString& qs);
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const Sensor&  s);
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const SensorTime& st);
 
 #ifndef NO_LOG4CPP
 #include <log4cpp/Category.hh>

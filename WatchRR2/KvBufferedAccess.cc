@@ -16,7 +16,7 @@ ObsAccess::TimeSet KvBufferedAccess::allTimes(const Sensor& sensor, const TimeRa
     TimeSet times;
     BOOST_FOREACH(const Data_t::value_type& d, mData) {
         const SensorTime& dst = d.first;
-        if (eq_Sensor()(dst.sensor, sensor) and limits.contains(dst.time))
+        if (d.second and eq_Sensor()(dst.sensor, sensor) and limits.contains(dst.time))
             times.insert(dst.time);
     }
     return times;

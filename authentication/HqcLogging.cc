@@ -1,6 +1,8 @@
 
 #include "HqcLogging.hh"
 
+#include "Sensor.hh"
+
 #include <log4cpp/Category.hh>
 #include <log4cpp/CategoryStream.hh>
 #include <log4cpp/PropertyConfigurator.hh>
@@ -39,5 +41,21 @@ Log4CppConfig::~Log4CppConfig()
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString& qs)
 {
     out << qs.toStdString();
+    return out;
+}
+
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const Sensor& s)
+{
+    out << "(s:" << s.stationId
+        << ", p:" << s.paramId
+        << ", l:" << s.level
+        << ", s:" << s.sensor
+        << ", t:" << s.typeId << ')';
+    return out;
+}
+
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const SensorTime& st)
+{
+    out << st.sensor << '@' << timeutil::to_iso_extended_string(st.time);
     return out;
 }

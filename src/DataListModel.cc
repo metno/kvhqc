@@ -5,7 +5,7 @@
 
 #include <boost/foreach.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 DataListModel::DataListModel(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits)

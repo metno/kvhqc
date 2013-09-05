@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "accepttimeseriesdialog.h"
 #include "approvedialog.h"
+#include "AnalyseErrors.hh"
 #include "BusyIndicator.h"
 #include "config.h"
 #include "DataList.hh"
@@ -431,12 +432,17 @@ void HqcMainWindow::ListOK()
                 }
             }
         }
+        LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
+        const TimeRange timeLimits(stime, etime);
 
         EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
         DataList* dl = new DataList(this);
-        LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
-        dl->setSensorsAndTimes(eda, sensors, TimeRange(stime, etime));
+        dl->setSensorsAndTimes(eda, sensors, timeLimits);
         ui->ws->addSubWindow(dl);
+
+        // FIXME this is for testing only
+        if (lity == alLi or lity == alSa)
+            Errors::fillMemoryStore2(eda, sensors, timeLimits, (lity == erSa or lity == alSa));
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {

@@ -142,13 +142,24 @@ int ErrorFilter(const kvalobs::kvControlInfo& cInfo, const std::string& cfailed,
     return maxflg;
 }
 
-bool isErrorInMemstore1(const ErrorList::mem& mo)
+bool ErrorFilter(const kvalobs::kvControlInfo& controlinfo, const std::string& cfailed, int& flg, int& flTyp)
 {
-    const int fnum = mo.controlinfo.flag(kvalobs::flag::fnum), fw  = mo.controlinfo.flag(kvalobs::flag::fw);
-    const int fs   = mo.controlinfo.flag(kvalobs::flag::fs),   fcp = mo.controlinfo.flag(kvalobs::flag::fcp);
-    const int fr   = mo.controlinfo.flag(kvalobs::flag::fr),   fcc = mo.controlinfo.flag(kvalobs::flag::fcc);
-    if (mo.flTyp == kvalobs::flag::fr) {
-        if (KvMetaDataBuffer::instance()->isModelParam(mo.parNo)) {
+    // from ErrorList::makeErrorList
+    if (controlinfo.flag(kvalobs::flag::fr) == 6 && controlinfo.flag(kvalobs::flag::ftime) == 1)
+        return false;
+
+    flTyp = -1;
+    flg = ErrorFilter(controlinfo, cfailed, flTyp);
+    return not (flg <= 1 or flTyp < 0);
+}
+
+bool isErrorInMemstore1(const int flTyp, const int paramId, const kvalobs::kvControlInfo& controlinfo)
+{
+    const int fnum = controlinfo.flag(kvalobs::flag::fnum), fw  = controlinfo.flag(kvalobs::flag::fw);
+    const int fs   = controlinfo.flag(kvalobs::flag::fs),   fcp = controlinfo.flag(kvalobs::flag::fcp);
+    const int fr   = controlinfo.flag(kvalobs::flag::fr),   fcc = controlinfo.flag(kvalobs::flag::fcc);
+    if (flTyp == kvalobs::flag::fr) {
+        if (KvMetaDataBuffer::instance()->isModelParam(paramId)) {
             if ( fnum == 1 || (fnum > 1 && fw == 1) ) {
             } else if ( (fnum > 1 && fw > 1) || fw == 0 ) {
                 return true;
@@ -156,12 +167,12 @@ bool isErrorInMemstore1(const ErrorList::mem& mo)
         } else {
             for( int k = 2; k < 16; k++ ) {
                 //	  int iFlg = control.mid(k,1).toInt(0,16);
-                int iFlg = mo.controlinfo.flag(k);
+                int iFlg = controlinfo.flag(k);
                 if ( iFlg > 1 )
                     return true;
             }
         }
-    } else if (mo.flTyp == kvalobs::flag::fs) {
+    } else if (flTyp == kvalobs::flag::fs) {
         if ( fs == 2 && fcp > 1 )
             return true;
         else if ( fs == 2 && fcp <= 1 ) {
@@ -190,11 +201,11 @@ bool isErrorInMemstore1(const ErrorList::mem& mo)
       error.push_back(i);
       }
     */
-    else if (mo.flTyp == kvalobs::flag::fnum) {
-        if ( mo.parNo == 177 || mo.parNo == 178 ) {
+    else if (flTyp == kvalobs::flag::fnum) {
+        if (paramId == 177 || paramId == 178) {
             return true;
         }
-    } else if (mo.flTyp == kvalobs::flag::fw) {
+    } else if (flTyp == kvalobs::flag::fw) {
         if ( (fw == 2 || fw == 3) && ( fr > 1 || fcc > 1 || fs > 1 || fcp > 1) ) {
             return true;
         } else if ( (fw == 2 || fw == 3) && ( fr <= 1 && fcc <= 1 && fs <= 1 && fcp <= 1) ) {
@@ -202,6 +213,47 @@ bool isErrorInMemstore1(const ErrorList::mem& mo)
     } else {
     }
     return false;
+}
+
+
+bool isErrorInMemstore1(const ErrorList::mem& mo)
+{
+    return isErrorInMemstore1(mo.flTyp, mo.parNo, mo.controlinfo);
+}
+
+int whichMemStore(const int flg, const int flTyp, bool errorsForSalen)
+{
+    // insert data into appropriate memory stores
+    if (not errorsForSalen) {
+        if( ((flg == 2 || flg == 3) && flTyp == kvalobs::flag::fr ) ||
+            (flg == 2 && (flTyp == kvalobs::flag::fcc || flTyp == kvalobs::flag::fcp) ) ||
+            ((flg == 2 || flg == 3 ||flg == 4 || flg == 5) && flTyp == kvalobs::flag::fnum) ||
+            ((flg == 2 || flg == 4 || flg == 5 ) && flTyp == kvalobs::flag::fs ) )
+        {
+            return 1;
+        } else if (((flg == 4 || flg == 5 || flg == 6) && flTyp == kvalobs::flag::fr ) ||
+                   ((flg == 3 || flg == 4 || flg == 6 || flg == 7 || flg == 9 ||
+                     flg == 0xA || flg == 0xB || flg == 0xD ) && flTyp == kvalobs::flag::fcc ) ||
+                   ((flg == 3 || flg == 4 || flg == 6 || flg == 7 ||
+                     flg == 0xA || flg == 0xB ) && flTyp == kvalobs::flag::fcp ) ||
+                   ((flg == 3 || flg == 6 || flg == 8 || flg == 9)&& flTyp == kvalobs::flag::fs ) ||
+                   (flg == 6 && flTyp == kvalobs::flag::fnum) ||
+                   (( flg == 3 || flg == 4 || flg == 6) && flTyp == kvalobs::flag::fpos) ||
+                   ((flg == 2 || flg == 3) && flTyp == kvalobs::flag::ftime) ||
+                   ((flg == 2 || flg == 3 || flg == 0xA) && flTyp == kvalobs::flag::fw) ||
+                   (flg > 0 && flTyp == kvalobs::flag::fmis ) ||
+                   (flg == 7 && flTyp == kvalobs::flag::fd) )
+        {
+            return 2;
+        }
+    } else {
+        if( ((flg == 4 || flg == 5 || flg == 6) && flTyp == kvalobs::flag::fr )
+            || (flg == 2 && flTyp == kvalobs::flag::fs) )
+        {
+            return 2;
+        }
+    }
+    return 0;
 }
 
 void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char* DBGE(label))
@@ -221,6 +273,23 @@ void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char*
                         << std::setw(5) << mo.flTyp << "  " << mo.flg << "  "
                         << mo.controlinfo.flagstring() << "  " << mo.cfailed);
     }
+#endif
+}
+
+void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), int DBGE(flg), int DBGE(memStore))
+{
+#ifndef NDEBUG
+    const SensorTime& st = obs->sensorTime();
+    LOG4HQC_DEBUG("AnalyseErrors2",
+                  "ms " << memStore << ": "
+                  << std::setw(7)  << st.sensor.stationId << ' '
+                  << std::setw(21) << st.time
+                  << std::setw(5)  << st.sensor.paramId
+                  << std::setw(9)  << obs->original()
+                  << std::setw(9)  << obs->corrected()
+                  << std::setw(9)  << model << "  "
+                  << std::setw(5)  << flTyp << "  " << flg << "  "
+                  << obs->controlinfo().flagstring() << "  " << obs->cfailed());
 #endif
 }
 
@@ -266,15 +335,7 @@ std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedPar
             memObs.controlinfo = data.controlinfo(parameterID);
             memObs.cfailed     = data.cfailed(parameterID);
 
-            // from ErrorList::makeErrorList
-            if (memObs.controlinfo.flag(kvalobs::flag::fr) == 6 && memObs.controlinfo.flag(kvalobs::flag::ftime) == 1)
-                continue;
-
-            memObs.flTyp = -1;
-            memObs.flg = ErrorFilter(memObs.controlinfo,
-                                     memObs.cfailed,
-                                     memObs.flTyp);
-            if (memObs.flg <= 1 or memObs.flTyp < 0)
+            if (not ErrorFilter(memObs.controlinfo, memObs.cfailed, memObs.flg, memObs.flTyp))
                 continue;
 
             memObs.typeId      = data.typeId(parameterID);
@@ -333,6 +394,54 @@ std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedPar
 
     dumpMemstore(memStore1, "1");
     dumpMemstore(memStore2, "2");
+
+    return memStore2;
+}
+
+Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
+{
+    LOG_SCOPE("AnalyseErrors2");
+
+    Errors_t memStore2;
+    BOOST_FOREACH(const Sensor& s, sensors) {
+        LOG4SCOPE_DEBUG(DBG1(s));
+        const ObsAccess::TimeSet allTimes = eda->allTimes(s, limits);
+#ifndef NDEBUG
+        LOG4SCOPE_DEBUG(DBG1(allTimes.size()));
+        BOOST_FOREACH(const timeutil::ptime& t, allTimes)
+            LOG4SCOPE_DEBUG(timeutil::to_iso_extended_string(t));
+#endif
+
+        if (not ErrorParameterFilter(s.paramId))
+            continue;
+
+        BOOST_FOREACH(const timeutil::ptime& obstime, allTimes) {
+            // LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
+            if (not ErrorSpecialTimeFilter(s.paramId, obstime))
+                continue;
+            if (not IsTypeInObsPgm(s.stationId, s.paramId, s.typeId, obstime))
+                continue;
+
+            const SensorTime sensorTime(s, obstime);
+            EditDataPtr obs = eda->findE(sensorTime);
+            if (not obs) {
+                LOG4SCOPE_DEBUG("no obs for " << sensorTime);
+                continue;
+            }
+
+            int flg = -1, flTyp = -1;
+            if (not ErrorFilter(obs->controlinfo(), obs->cfailed(), flg, flTyp))
+                continue;
+
+            int memStore = whichMemStore(flg, flTyp, errorsForSalen);
+            if (memStore == 1 && isErrorInMemstore1(flTyp, s.paramId, obs->controlinfo()))
+                memStore = 2;
+            if (memStore == 2) {
+                memStore2.push_back(obs);
+            }
+            dumpObs(obs, -99999, flTyp, flg, memStore);
+        }
+    }
 
     return memStore2;
 }

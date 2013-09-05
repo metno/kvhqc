@@ -111,8 +111,6 @@ SET(watchrr2_SOURCES
   RedistDialog.cc
   RedistTableModel.hh
   RedistTableModel.cc
-  Sensor.hh
-  Sensor.cc
   SensorHeader.hh
   SensorHeader.cc
   StationDialog.hh

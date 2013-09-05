@@ -21,6 +21,9 @@ public:
     virtual kvalobs::kvControlInfo controlinfo() const
         { return mKvData.controlinfo(); }
 
+    virtual std::string cfailed() const
+        { return mKvData.cfailed(); }
+
     const kvalobs::kvData& data() const
         { return mKvData; }
 
