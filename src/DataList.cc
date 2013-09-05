@@ -56,7 +56,8 @@ DataList::DataList(QWidget* parent)
   ui->table->setItemDelegate(new ObsDelegate(this));
 
   QFont mono("Monospace");
-  ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  //ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->table->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
   ui->table->horizontalHeader()->setMovable(true);
   ui->table->verticalHeader()->setFont(mono);
   ui->table->verticalHeader()->setDefaultSectionSize(20);
@@ -107,7 +108,7 @@ void DataList::updateModel()
     mTableModel = newModel;
     ui->table->setModel(mTableModel.get());
 
-    ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 ObsColumnPtr DataList::makeColumn(const Column& c)
@@ -230,7 +231,7 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
 
         mColumns.insert(mColumns.begin() + column, c);
         mTableModel->insertColumn(column, makeColumn(c));
-        ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+        //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     } else if (chosen == actionDel) {
         mColumns.erase(mColumns.begin() + column);
         updateModel();
@@ -300,7 +301,7 @@ void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nV
     mColumns.erase(mColumns.begin() + from);
     mColumns.insert(mColumns.begin() + to, c);
 
-    ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 std::string DataList::changes()
