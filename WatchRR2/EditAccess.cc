@@ -80,14 +80,27 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
         return ObsDataPtr();
     }
 
-    Data_t::iterator it = mData.find(st);
-    if (it != mData.end())
-        return it->second;
-
-    ObsDataPtr obs = mBackend->find(st);
-    EditDataPtr ebs = obs ? boost::make_shared<EditData>(obs) : EditDataPtr();
-    mData[st] = ebs;
-    return ebs;
+    Data_t::iterator it = mData.lower_bound(st);
+    if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
+      assert(mData.find(st) == mData.end()); // PASSES
+      ObsDataPtr obs = mBackend->find(st);
+      EditDataPtr ebs = obs ? boost::make_shared<EditData>(obs) : EditDataPtr();
+#if 0
+      // FIXME onDataChanged signal is conceptually broken
+      assert(mData.find(st) == mData.end()); // FAILS!
+      // mBackend->find( emits a CREATED signal which inserts data by
+      // calling this same function from onBackendDataChanged; this
+      // second call already stores ebs into the map, so we cannot use
+      // insert here, because it does not replace
+      mData.insert(it, std::make_pair(st, ebs));
+#else
+      mData[st] = ebs;
+#endif
+      return ebs;
+    } else {
+      assert(mData.find(st) == it);
+      return it->second;
+    }
 }
 
 ObsDataPtr EditAccess::create(const SensorTime& st)
