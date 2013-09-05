@@ -1,3 +1,10 @@
+kvhqc (3.0.0~a18-1) unstable; urgency=low
+
+  * added FG and FX to parameter list for extreme values
+  * improved range checking so that values >= 5000 may be entered
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 19 Jul 2013 10:04:59 +0200
+
 kvhqc (3.0.0~a17-1) unstable; urgency=low
 
   * added splash
