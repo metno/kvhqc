@@ -1,3 +1,13 @@
+kvhqc (3.0.0~a13-1) unstable; urgency=low
+
+  * translations for WatchWeather
+  * explanations for some WMO codes
+  * WatchWeather non modal
+  * no decimals for code values
+  * updated check explanations
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 01 Jul 2013 14:37:07 +0200
+
 kvhqc (3.0.0~a12-1) unstable; urgency=low
 
   * save/restore splitter position for auto data list
