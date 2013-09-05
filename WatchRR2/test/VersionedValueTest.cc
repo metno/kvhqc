@@ -54,3 +54,19 @@ TEST(VersionedValueTest, BasicInt)
     EXPECT_TRUE(v.reset(V3));
     CHECK_STATE(1, 0, 0, V3);
 }
+
+TEST(VersionedValueTest, Reset)
+{
+    typedef VersionedValue<int> VVint;
+    const int V1 = 17, V2 = 12;
+
+    VVint v(V1);
+    EXPECT_FALSE(v.setVersion(1, true));
+    EXPECT_FALSE(v.reset(V1));
+
+    EXPECT_TRUE(v.reset(V2));
+
+    EXPECT_FALSE(v.setVersion(1, true));
+    EXPECT_TRUE(v.setValue(1, V1));
+    EXPECT_TRUE(v.reset(V2));
+}

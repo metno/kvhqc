@@ -14,7 +14,7 @@ public:
     const T& value() const
         { return mVersions[mCurrent].value; }
     bool modified() const
-        { return not E()(value(), mVersions[0].value); }
+        { return (mCurrent>0 and not E()(value(), mVersions[0].value)); }
     bool setVersion(int version, bool dropAbove);
     bool setValue(int version, const T& newValue);
 
@@ -38,18 +38,17 @@ private:
 template< typename T, class E>
 bool VersionedValue<T,E>::reset(const T& originalValue)
 {
-    const bool wasModified = modified();
-    const T old = value();
+    const bool changed = (not E()(originalValue, value())) or modified();
     mVersions = Versions_t(1, Version(0, originalValue));
     mCurrent = 0;
-    return wasModified or (not E()(old, value()));
+    return changed;
 }
 
 template< typename T, class E>
 bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
 {
     const bool wasModified = modified();
-    const T old = value();
+    const unsigned int oldCurrent = mCurrent;
     if (mVersions[mCurrent].version < version) {
         while(mCurrent+1 < mVersions.size() and mVersions[mCurrent+1].version <= version)
             mCurrent += 1;
@@ -57,16 +56,18 @@ bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
         while(mCurrent>0 and mVersions[mCurrent].version > version)
             mCurrent -= 1;
     }
+    const bool changedValue = (mCurrent != oldCurrent)
+        and (not E()(mVersions[oldCurrent].value, value()));
     if (dropAbove and mCurrent+1 < mVersions.size())
         mVersions.erase(mVersions.begin() + (mCurrent+1), mVersions.end());
-    return (modified() != wasModified) or (not E()(old, value()));
+    return changedValue or (modified() != wasModified);
 }
 
 template< typename T, class E>
 bool VersionedValue<T,E>::setValue(int version, const T& newValue)
 {
-    const bool wasModified = modified();
-    const T old = value();
+    const bool changedValue = (not E()(newValue, value())),
+        wasModified = modified();
     if (mCurrent+1 < mVersions.size()) {
         // drop all versions above, only needed if setVersion was not called
         mVersions.erase(mVersions.begin() + (mCurrent+1), mVersions.end());
@@ -77,7 +78,7 @@ bool VersionedValue<T,E>::setValue(int version, const T& newValue)
         mCurrent = mVersions.size();
         mVersions.push_back(Version(version, newValue));
     }
-    return (modified() != wasModified) or (not E()(old, value()));
+    return changedValue or (modified() != wasModified);
 }
 
 #endif // VERSIONEDVALUE_HH
