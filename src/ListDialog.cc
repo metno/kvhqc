@@ -124,6 +124,10 @@ bool StationSortFilterProxyModel::lessThan(const QModelIndex &left,
     const int stationL = sourceModel()->data(left) .toString().toInt();
     const int stationR = sourceModel()->data(right).toString().toInt();
     return stationL < stationR;
+  } else if (left.column() == 2 and right.column() == 2) {
+    const int altL = sourceModel()->data(left) .toString().toFloat();
+    const int altR = sourceModel()->data(right).toString().toFloat();
+    return altL < altR;
   } else {
     return QSortFilterProxyModel::lessThan(left, right);
   }
