@@ -56,8 +56,10 @@ QtKvService::~QtKvService()
   BOOST_FOREACH(Subscriptions_t::value_type& sub, mSubscriptions) {
     if (app())
       app()->unsubscribe(sub.first);
-    else
+    else {
+      using ::milogger::detail::Priority;
       METLIBS_LOG_WARN("no app, cannot unsubscribe '" << sub.first << "'");
+    }
     const Subscriber& s = sub.second;
     disconnect(this, s.emitted, s.receiver, s.member);
   }
@@ -70,6 +72,7 @@ QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const Subscribe
 {
     if ((not subscriberId.empty()) and receiver and member) {
         if (not connect(this, emitted, receiver, member)) {
+            using ::milogger::detail::Priority;
             METLIBS_LOG_ERROR("failed to connect signal, unsubscribing again");
 	    app()->unsubscribe(subscriberId);
 	    return "";
@@ -111,8 +114,10 @@ void QtKvService::unsubscribe(const SubscriberID& subscriberId)
   if (it != mSubscriptions.end()) {
     if (app())
       app()->unsubscribe(subscriberId);
-    else
+    else {
+      using ::milogger::detail::Priority;
       METLIBS_LOG_WARN("no app, cannot unsubscribe '" << subscriberId << "'");
+    }
       
     const Subscriber& s = it->second;
     disconnect(this, s.emitted, s.receiver, s.member);
@@ -165,6 +170,7 @@ void QtKvService::stop()
   METLIBS_LOG_SCOPE();
   mStop = true;
   mSignalQueue.signal();
+  using ::milogger::detail::Priority;
   METLIBS_LOG_INFO("Waiting for kvService CORBA connector ...");
 
   wait();
