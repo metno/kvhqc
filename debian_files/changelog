@@ -1,3 +1,10 @@
+kvhqc (3.0.0~a14-1) unstable; urgency=low
+
+  * bugfix: do not crash for code explanations
+  * added some parameters without decimals
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 02 Jul 2013 10:47:56 +0200
+
 kvhqc (3.0.0~a13-1) unstable; urgency=low
 
   * translations for WatchWeather
