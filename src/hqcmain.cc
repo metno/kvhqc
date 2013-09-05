@@ -1,37 +1,37 @@
 /*
-HQC - Free Software for Manual Quality Control of Meteorological Observations
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2013 met.no
+  Copyright (C) 2013 met.no
 
-Contact information:
-Norwegian Meteorological Institute
-Box 43 Blindern
-0313 OSLO
-NORWAY
-email: kvalobs-dev@met.no
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
 
-This file is part of HQC
+  This file is part of HQC
 
-HQC is free software; you can redistribute it and/or
-modify it under the terms of the GNU General Public License as
-published by the Free Software Foundation; either version 2
-of the License, or (at your option) any later version.
+  HQC is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
 
-HQC is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-General Public License for more details.
+  HQC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
 
-You should have received a copy of the GNU General Public License along
-with HQC; if not, write to the Free Software Foundation Inc.,
-51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+  You should have received a copy of the GNU General Public License along
+  with HQC; if not, write to the Free Software Foundation Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 /*! \file hqcmain.cc
  *  \brief Code for the HqcMainWindow class.
  *
  *  Displays the main window, the essence of the app.
  *
-*/
+ */
 
 #include "hqcmain.h"
 #include "ui_mainwindow.h"
@@ -127,235 +127,238 @@ HqcMainWindow::HqcMainWindow()
   , mAutoColumnView(new AutoColumnView)
   , mAutoDataList(new DataList(this))
 {
-    METLIBS_LOG_SCOPE();
-    ui->setupUi(this);
-    ui->treeErrors->setDataAccess(eda, kma);
-    ui->simpleCorrrections->setDataAccess(eda, kma);
-    ui->treeChanges->setModel(mEditVersions.get());
-    ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
-    ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
-    ui->toolButtonSave->setDefaultAction(ui->saveAction);
+  METLIBS_LOG_SCOPE();
+  ui->setupUi(this);
+  ui->treeErrors->setDataAccess(eda, kma);
+  ui->simpleCorrrections->setDataAccess(eda, kma);
+  ui->treeChanges->setModel(mEditVersions.get());
+  ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
+  ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
+  ui->toolButtonSave->setDefaultAction(ui->saveAction);
 
-    ui->actionRedo->setIcon(QIcon("icons:redo.svg"));
-    ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
-    ui->dockHistory->setVisible(false);
+  ui->actionRedo->setIcon(QIcon("icons:redo.svg"));
+  ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
+  ui->dockHistory->setVisible(false);
 
-    mExtremesView = new ExtremesView(ui->dockExtremes);
-    mExtremesView->setDataAccess(eda);
-    mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-    ui->dockExtremes->setWidget(mExtremesView);
-    tabifyDockWidget(ui->dockErrors, ui->dockExtremes);
-    ui->dockExtremes->setVisible(false);
+  mExtremesView = new ExtremesView(ui->dockExtremes);
+  mExtremesView->setDataAccess(eda);
+  mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  ui->dockExtremes->setWidget(mExtremesView);
+  tabifyDockWidget(ui->dockErrors, ui->dockExtremes);
+  ui->dockExtremes->setVisible(false);
 
-    connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
-    mVersionCheckTimer->setSingleShot(true);
+  connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
+  mVersionCheckTimer->setSingleShot(true);
 
-    connect(hqcApp, SIGNAL(kvalobsAvailable(bool)), this, SLOT(kvalobsAvailable(bool)));
+  connect(hqcApp, SIGNAL(kvalobsAvailable(bool)), this, SLOT(kvalobsAvailable(bool)));
 
-    pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
-    statusBar()->addPermanentWidget(pluginB, 0);
+  pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
+  statusBar()->addPermanentWidget(pluginB, 0);
 
-    mKvalobsAvailable = new QLabel(statusBar());
-    statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
-    kvalobsAvailable(hqcApp->isKvalobsAvailable());
+  mKvalobsAvailable = new QLabel(statusBar());
+  statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
+  kvalobsAvailable(hqcApp->isKvalobsAvailable());
 
-    // --- DEFINE DIALOGS --------------------------------------------
-    lstdlg = new ListDialog(this);
-    dshdlg = new DianaShowDialog(this);
-    txtdlg = new TextDataDialog(this);
-    rejdlg = new RejectDialog(this);
+  // --- DEFINE DIALOGS --------------------------------------------
+  lstdlg = new ListDialog(this);
+  dshdlg = new DianaShowDialog(this);
+  txtdlg = new TextDataDialog(this);
+  rejdlg = new RejectDialog(this);
     
-    // --- START -----------------------------------------------------
-    rejdlg->hide();
-    lstdlg->hide();
+  // --- START -----------------------------------------------------
+  rejdlg->hide();
+  lstdlg->hide();
 
-    mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
-    mDianaHelper->setDataAccess(eda, kma);
+  mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
+  mDianaHelper->setDataAccess(eda, kma);
 
-    mAutoDataList->setDataAccess(eda, kma);
-    mTimeSeriesView->setDataAccess(eda, kma);
+  mAutoDataList->setDataAccess(eda, kma);
+  mTimeSeriesView->setDataAccess(eda, kma);
 
-    mAutoColumnView->attachView(mAutoDataList);
-    mAutoColumnView->attachView(mTimeSeriesView);
+  mAutoColumnView->attachView(mAutoDataList);
+  mAutoColumnView->attachView(mTimeSeriesView);
 
-    connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
+  connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
-    dshdlg->hide();
-    connect(ui->actionDianaConfig, SIGNAL(triggered()), dshdlg, SLOT(show()));
-    connect(dshdlg, SIGNAL(dianaShowApply()), this, SLOT(dianaShowOK()));
+  dshdlg->hide();
+  connect(ui->actionDianaConfig, SIGNAL(triggered()), dshdlg, SLOT(show()));
+  connect(dshdlg, SIGNAL(dianaShowApply()), this, SLOT(dianaShowOK()));
 
-    connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
-    connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
+  connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
+  connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
 
-    connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
-    connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
+  connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
+  connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
-    mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-    ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
-    mAutoViewSplitter = new QSplitter(ui->tabs);
-    mAutoViewSplitter->addWidget(mAutoDataList);
-    mAutoViewSplitter->addWidget(mTimeSeriesView);
-    mAutoViewSplitter->setOpaqueResize(false);
-    ui->tabs->addTab(mAutoViewSplitter, tr("Auto List/Series"));
+  mAutoViewSplitter = new QSplitter(ui->tabs);
+  mAutoViewSplitter->addWidget(mAutoDataList);
+  mAutoViewSplitter->addWidget(mTimeSeriesView);
+  mAutoViewSplitter->setOpaqueResize(false);
+  ui->tabs->addTab(mAutoViewSplitter, tr("Auto List/Series"));
 
-    eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
-    ui->saveAction->setEnabled(false); // no changes yet
+  eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
+  ui->saveAction->setEnabled(false); // no changes yet
     
-    HelpDialog::Info info;
-    info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
+  HelpDialog::Info info;
+  info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
 
-    HelpDialog::Info::Source helpsource;
-    helpsource.source = "news.html";
-    helpsource.name = "Kvhqc News";
-    helpsource.defaultlink = "";
-    info.src.push_back(helpsource);
+  HelpDialog::Info::Source helpsource;
+  helpsource.source = "news.html";
+  helpsource.name = "Kvhqc News";
+  helpsource.defaultlink = "";
+  info.src.push_back(helpsource);
     
-    mHelpDialog = new HelpDialog(this, info);
-    mHelpDialog->hide();
+  mHelpDialog = new HelpDialog(this, info);
+  mHelpDialog->hide();
 }
 
 HqcMainWindow::~HqcMainWindow()
 {
-    mDianaHelper  ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-    ui->treeErrors->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mDianaHelper  ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  ui->treeErrors->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 }
 
 void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
 {
-    userName = u;
-    reinserter = r;
-    kda->setReinserter(reinserter);
+  userName = u;
+  reinserter = r;
+  kda->setReinserter(reinserter);
 }
 
 void HqcMainWindow::startup(const QString& captionSuffix)
 {
-    METLIBS_LOG_SCOPE();
-    setCaption("HQC " + captionSuffix);
+  METLIBS_LOG_SCOPE();
+  setCaption("HQC " + captionSuffix);
     
-    DisableGUI disableGUI(this);
-    listExist = false;
+  DisableGUI disableGUI(this);
+  listExist = false;
 
-    //-----------------------------------------------------------------
+  //-----------------------------------------------------------------
 
-    readSettings();
-    show();
-    checkVersionSettings();
-    qApp->processEvents();
-    if (not reinserter) {
-        mHints->addHint(tr("<h1>Authentication</h1>"
-                           "You are not registered as operator! "
-                           "You can see the data list, error log and error list, "
-                           "but you cannot make changes in the kvalobs database!"));
-    }
+  readSettings();
+  show();
+  checkVersionSettings();
+  qApp->processEvents();
+  if (not reinserter) {
+    mHints->addHint(tr("<h1>Authentication</h1>"
+            "You are not registered as operator! "
+            "You can see the data list, error log and error list, "
+            "but you cannot make changes in the kvalobs database!"));
+  }
 
-    statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
-    mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
+  statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
+  mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
 
 void HqcMainWindow::dianaShowOK()
 {
-    METLIBS_LOG_SCOPE();
-    mDianaHelper->updateDianaParameters();
-    if (listExist)
-        ListOK();
+  METLIBS_LOG_SCOPE();
+  mDianaHelper->updateDianaParameters();
+  if (listExist)
+    ListOK();
 }
 
 void HqcMainWindow::ListOK()
 {
-    METLIBS_LOG_SCOPE();
-    if (not mDianaHelper->isConnected()) {
-        mHints->addHint(tr("<h1>Diana-Connection</h1>"
-                           "No contact with diana! "
-                           "You should connect to the command server via the button in the lower right in the hqc window, "
-                           "and connect diana to the command server using the button in diana's window."));
-    }
-    // FIXME pack selectedStations, selectedTimes, ... in class, pass this to AnalyseErrors
-    const std::vector<int> selectedStations = lstdlg->getSelectedStations();
-    if (selectedStations.empty()) {
-        QMessageBox::warning(this,
-                             tr("Station Selection"),
-                             tr("No stations selected! At least one statione must be chosen."),
-                             QMessageBox::Ok,
-                             Qt::NoButton);
-        return;
-    }
+  METLIBS_LOG_SCOPE();
+  if (not mDianaHelper->isConnected()) {
+    mHints->addHint(tr("<h1>Diana-Connection</h1>"
+            "No contact with diana! "
+            "You should connect to the command server via the button in the lower right in the hqc window, "
+            "and connect diana to the command server using the button in diana's window."));
+  }
+  // FIXME pack selectedStations, selectedTimes, ... in class, pass this to AnalyseErrors
+  const std::vector<int> selectedStations = lstdlg->getSelectedStations();
+  if (selectedStations.empty()) {
+    QMessageBox::warning(this,
+        tr("Station Selection"),
+        tr("No stations selected! At least one statione must be chosen."),
+        QMessageBox::Ok,
+        Qt::NoButton);
+    return;
+  }
 
-    std::vector<int> mSelectedParameters;
-    mSelectedParameters = lstdlg->getSelectedParameters();
-    if (mSelectedParameters.empty()) {
-        QMessageBox::warning(this,
-                             tr("Weather Element"),
-                             tr("No weather element selected! At least one has to be chosen."),
-                             QMessageBox::Ok,
-                             Qt::NoButton);
-        return;
-    }
+  std::vector<int> mSelectedParameters;
+  mSelectedParameters = lstdlg->getSelectedParameters();
+  if (mSelectedParameters.empty()) {
+    QMessageBox::warning(this,
+        tr("Weather Element"),
+        tr("No weather element selected! At least one has to be chosen."),
+        QMessageBox::Ok,
+        Qt::NoButton);
+    return;
+  }
 
-    DisableGUI disableGUI(this);
-    BusyIndicator busyIndicator;
-    listExist = true;
+  DisableGUI disableGUI(this);
+  BusyIndicator busyIndicator;
+  listExist = true;
 
-    const TimeRange timeLimits = lstdlg->getTimeRange();
+  const TimeRange timeLimits = lstdlg->getTimeRange();
 
-    DataView::Sensors_t sensors;
+  DataView::Sensors_t sensors;
+  {
+    BusyStatus busySensors(this, tr("Building station list..."));
     BOOST_FOREACH(int stationId, selectedStations) {
-        BOOST_FOREACH(int paramId, mSelectedParameters) {
-            const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-            Sensor sensor(stationId, paramId, 0, 0, 0);
-            BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
-              if (timeLimits.intersection(TimeRange(op.fromtime(), op.totime())).undef())
-                continue;
-              const int p = op.paramID();
-              if (p == paramId) {
-                sensor.typeId = op.typeID();
-                sensors.push_back(sensor);
-              }
-              if (Helpers::aggregatedParameter(p, paramId)) {
-                sensor.typeId = -op.typeID();
-                sensors.push_back(sensor);
-              }
-            }
+      BOOST_FOREACH(int paramId, mSelectedParameters) {
+        const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+        Sensor sensor(stationId, paramId, 0, 0, 0);
+        BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
+          if (timeLimits.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+            continue;
+          const int p = op.paramID();
+          if (p == paramId) {
+            sensor.typeId = op.typeID();
+            sensors.push_back(sensor);
+          }
+          if (Helpers::aggregatedParameter(p, paramId)) {
+            sensor.typeId = -op.typeID();
+            sensors.push_back(sensor);
+          }
         }
-    }
-
-    if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
-        BusyStatus busyErrors(this, tr("Building error list..."));
-
-        ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
-        ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
-    }
-
-    if (lity == daLi or lity == alLi or lity == alSa) {
-        BusyStatus busyData(this, tr("Building data list..."));
-
-        DataList* dl = new DataList(this);
-        dl->setDataAccess(eda, kma);
-        dl->setSensorsAndTimes(sensors, timeLimits);
-        dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-        ui->tabs->addTab(dl, tr("Selected Data"));
-    }
-
-    std::vector<QString> stationList;
-    BOOST_FOREACH(int stnr, selectedStations) {
-      try {
-        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
-        const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
-        stationList.push_back(statId);
-      } catch (std::exception& e) {
-        METLIBS_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
       }
     }
-    /*emit*/ newStationList(stationList);
-    METLIBS_LOG_DEBUG("newStationList emitted");
+  }
 
-    //  send parameter names to ts dialog
-    /*emit*/ newParameterList(mSelectedParameters);
-    if (lity != erLi && lity != erSa) {
-        mDianaHelper->setSensorsAndTimes(sensors, timeLimits);
+  if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
+    BusyStatus busyErrors(this, tr("Building error list..."));
+
+    ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
+    ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
+  }
+
+  if (lity == daLi or lity == alLi or lity == alSa) {
+    BusyStatus busyData(this, tr("Building data list..."));
+
+    DataList* dl = new DataList(this);
+    dl->setDataAccess(eda, kma);
+    dl->setSensorsAndTimes(sensors, timeLimits);
+    dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+    ui->tabs->addTab(dl, tr("Selected Data"));
+  }
+
+  std::vector<QString> stationList;
+  BOOST_FOREACH(int stnr, selectedStations) {
+    try {
+      const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
+      const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
+      stationList.push_back(statId);
+    } catch (std::exception& e) {
+      METLIBS_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
     }
+  }
+  /*emit*/ newStationList(stationList);
+  METLIBS_LOG_DEBUG("newStationList emitted");
 
-    statusBar()->message("");
+  //  send parameter names to ts dialog
+  /*emit*/ newParameterList(mSelectedParameters);
+  if (lity != erLi && lity != erSa) {
+    mDianaHelper->setSensorsAndTimes(sensors, timeLimits);
+  }
+
+  statusBar()->message("");
 }
 
 inline QString dateStr_( const QDateTime & dt )
@@ -367,81 +370,81 @@ inline QString dateStr_( const QDateTime & dt )
 
 void HqcMainWindow::textDataOK()
 {
-    const timeutil::ptime dtto = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtto));
-    const timeutil::ptime dtfrom = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtfrom));
-    TextData::showTextData(txtdlg->stnr, TimeRange(dtfrom, dtto), this);
+  const timeutil::ptime dtto = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtto));
+  const timeutil::ptime dtfrom = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtfrom));
+  TextData::showTextData(txtdlg->stnr, TimeRange(dtfrom, dtto), this);
 }
 
 void HqcMainWindow::rejectedOK()
 {
-    METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE();
 
-    try {
-      std::list<kvalobs::kvRejectdecode> rejectList;
-      const TimeRange t(timeutil::from_QDateTime(rejdlg->dtfrom), timeutil::from_QDateTime(rejdlg->dtto));
-      if (KvServiceHelper::instance()->getKvRejectDecode(rejectList, t)) {
-        std::string decoder = "comobs";
-        std::vector<kvalobs::kvRejectdecode> rejList;
-        BOOST_FOREACH(const kvalobs::kvRejectdecode& reject, rejectList) {
-          if (reject.decoder().substr(0, decoder.size()) != decoder)
-            continue;
-          if (reject.comment() == "No decoder for SMS code <12>!")
-            continue;
+  try {
+    std::list<kvalobs::kvRejectdecode> rejectList;
+    const TimeRange t(timeutil::from_QDateTime(rejdlg->dtfrom), timeutil::from_QDateTime(rejdlg->dtto));
+    if (KvServiceHelper::instance()->getKvRejectDecode(rejectList, t)) {
+      std::string decoder = "comobs";
+      std::vector<kvalobs::kvRejectdecode> rejList;
+      BOOST_FOREACH(const kvalobs::kvRejectdecode& reject, rejectList) {
+        if (reject.decoder().substr(0, decoder.size()) != decoder)
+          continue;
+        if (reject.comment() == "No decoder for SMS code <12>!")
+          continue;
           
-          METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
-          rejList.push_back(reject);
-        }
-        new Rejects(rejList, this);
-        return;
+        METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+        rejList.push_back(reject);
       }
-    } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
+      new Rejects(rejList, this);
+      return;
     }
-    // reach here in case of error
-    QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
-        QMessageBox::Ok, QMessageBox::NoButton);
+  } catch (std::exception& e) {
+    METLIBS_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
+  }
+  // reach here in case of error
+  QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
+      QMessageBox::Ok, QMessageBox::NoButton);
 }
 
 void HqcMainWindow::showWatchRR()
 {
-    Sensor sensor(83880, 110 /*kvalobs::PARAMID_RR_24*/, 0, 0, 302);
-    const timeutil::ptime now = timeutil::now();
-    timeutil::ptime tMiddle = now;
+  Sensor sensor(83880, 110 /*kvalobs::PARAMID_RR_24*/, 0, 0, 302);
+  const timeutil::ptime now = timeutil::now();
+  timeutil::ptime tMiddle = now;
 
-    EditDataPtr obs = ui->treeErrors->getObs();
-    if (obs) {
-        const SensorTime& st = obs->sensorTime();
-        if (st.sensor.paramId == 110)
-            sensor = st.sensor;
-        tMiddle = timeutil::from_miTime(st.time);
+  EditDataPtr obs = ui->treeErrors->getObs();
+  if (obs) {
+    const SensorTime& st = obs->sensorTime();
+    if (st.sensor.paramId == 110)
+      sensor = st.sensor;
+    tMiddle = timeutil::from_miTime(st.time);
+  }
+
+  timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
+  timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
+  while (timeTo > now)
+    timeTo -= boost::gregorian::days(7);
+  TimeRange time(timeFrom, timeTo);
+
+  StationDialog sd(sensor, time);
+  if (not sd.exec())
+    return;
+  sensor = sd.selectedSensor();
+  time = sd.selectedTime();
+
+  mDianaHelper->setEnabled(false);
+  EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
+  MainDialog main(eda2, kma, sensor, time, this);
+  if (main.exec()) {
+    eda->newVersion();
+    if (not eda2->sendChangesToParent(false)) {
+      QMessageBox::critical(this,
+          tr("WatchRR"),
+          tr("Sorry, your changes could not be saved and are lost!"),
+          tr("OK"),
+          "");
     }
-
-    timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
-    timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
-    while (timeTo > now)
-      timeTo -= boost::gregorian::days(7);
-    TimeRange time(timeFrom, timeTo);
-
-    StationDialog sd(sensor, time);
-    if (not sd.exec())
-        return;
-    sensor = sd.selectedSensor();
-    time = sd.selectedTime();
-
-    mDianaHelper->setEnabled(false);
-    EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-    MainDialog main(eda2, kma, sensor, time, this);
-    if (main.exec()) {
-      eda->newVersion();
-      if (not eda2->sendChangesToParent(false)) {
-        QMessageBox::critical(this,
-            tr("WatchRR"),
-            tr("Sorry, your changes could not be saved and are lost!"),
-            tr("OK"),
-            "");
-      }
-    }
-    mDianaHelper->setEnabled(true);
+  }
+  mDianaHelper->setEnabled(true);
 }
 
 void HqcMainWindow::showWeather()
@@ -502,15 +505,15 @@ void HqcMainWindow::errLisaMenu()
 
 void HqcMainWindow::allListSalenMenu()
 {
-    listMenu(alSa);
+  listMenu(alSa);
 }
 
 void HqcMainWindow::listMenu(listType lt)
 {
-    METLIBS_LOG_SCOPE();
-    lity = lt;
+  METLIBS_LOG_SCOPE();
+  lity = lt;
 
-    lstdlg->show();
+  lstdlg->show();
 }
 
 void HqcMainWindow::startKro()
@@ -520,52 +523,52 @@ void HqcMainWindow::startKro()
 
 void HqcMainWindow::screenshot()
 {
-    QPixmap hqcPixmap = QPixmap();
-    hqcPixmap = QPixmap::grabWidget(this);
+  QPixmap hqcPixmap = QPixmap();
+  hqcPixmap = QPixmap::grabWidget(this);
     
-    QPrinter printer;
-    printer.setPaperSize(QPrinter::A4);
-    printer.setOrientation(QPrinter::Landscape);
+  QPrinter printer;
+  printer.setPaperSize(QPrinter::A4);
+  printer.setOrientation(QPrinter::Landscape);
 
-    QPrintDialog *dialog = new QPrintDialog(&printer, this);
-    dialog->setWindowTitle(tr("Print screenshot"));
-    if (dialog->exec() != QDialog::Accepted)
-        return;
+  QPrintDialog *dialog = new QPrintDialog(&printer, this);
+  dialog->setWindowTitle(tr("Print screenshot"));
+  if (dialog->exec() != QDialog::Accepted)
+    return;
 
-    QPainter painter(&printer);
-    QRect rect = painter.viewport();
-    QSize size = hqcPixmap.size();
-    size.scale(rect.size(), Qt::KeepAspectRatio);
-    painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
-    painter.setWindow(hqcPixmap.rect());
-    painter.drawImage(0,0,hqcPixmap);
+  QPainter painter(&printer);
+  QRect rect = painter.viewport();
+  QSize size = hqcPixmap.size();
+  size.scale(rect.size(), Qt::KeepAspectRatio);
+  painter.setViewport(rect.x(), rect.y(), size.width(), size.height());
+  painter.setWindow(hqcPixmap.rect());
+  painter.drawImage(0,0,hqcPixmap);
 }
 
 void HqcMainWindow::onVersionCheckTimeout()
 {
-    METLIBS_LOG_SCOPE();
-    QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
-    if (versionFile.open(QIODevice::ReadOnly)) {
-        QTextStream in(&versionFile);
-        if (not in.atEnd()) {
-            const long installedVersion = in.readLine().toLong();
-            const long runningVersion = PVERSION_NUMBER_MAJOR_MINOR_PATCH;
-            if( installedVersion > runningVersion ) {
-                QMessageBox::information(this,
-                                         tr("HQC - Update"),
-                                         tr("The hqc-application has been updated on your computer. "
-                                            "You should save any changes and start the hqc-application "
-                                            "again to use the new version."),
-                                         QMessageBox::Ok, Qt::NoButton);
-            } else {
-                //std::cout << "no update, now=" << runningVersion << " installed=" << installedVersion << std::endl;
-            }
-            mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
-            return;
-        }
+  METLIBS_LOG_SCOPE();
+  QFile versionFile(::hqc::getPath(::hqc::CONFDIR) + "/../hqc_current_version");
+  if (versionFile.open(QIODevice::ReadOnly)) {
+    QTextStream in(&versionFile);
+    if (not in.atEnd()) {
+      const long installedVersion = in.readLine().toLong();
+      const long runningVersion = PVERSION_NUMBER_MAJOR_MINOR_PATCH;
+      if( installedVersion > runningVersion ) {
+        QMessageBox::information(this,
+            tr("HQC - Update"),
+            tr("The hqc-application has been updated on your computer. "
+                "You should save any changes and start the hqc-application "
+                "again to use the new version."),
+            QMessageBox::Ok, Qt::NoButton);
+      } else {
+        //std::cout << "no update, now=" << runningVersion << " installed=" << installedVersion << std::endl;
+      }
+      mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
+      return;
     }
-    // something went wrong when reading the version info file
-    METLIBS_LOG_WARN("error reading hqc_current_version, not renewing timer");
+  }
+  // something went wrong when reading the version info file
+  METLIBS_LOG_WARN("error reading hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::onShowErrorList()
@@ -604,48 +607,48 @@ void HqcMainWindow::onTabCloseRequested(int index)
 }
 
 void HqcMainWindow::helpUse() {
-    QDesktopServices::openUrl(QUrl("https://dokit.met.no/klima/tools/qc/hqc-help"));
+  QDesktopServices::openUrl(QUrl("https://dokit.met.no/klima/tools/qc/hqc-help"));
 }
 
 void HqcMainWindow::helpFlag() {
-    QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg"));
+  QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-flagg"));
 }
 
 void HqcMainWindow::helpParam() {
-    QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-parametre_sortert_alfabetisk_etter_kode"));
+  QDesktopServices::openUrl(QUrl("https://kvalobs.wiki.met.no/doku.php?id=kvalobs:kvalobs-parametre_sortert_alfabetisk_etter_kode"));
 }
 
 void HqcMainWindow::about()
 {
-    QMessageBox::about( this, tr("About Hqc"),
-			tr("Hqc is a program for manual quality control of observations. "
-                           "The program consists of editable tables with observations including "
-                           "a time series diagram, and it can be connected to Diana."
-                           "\n\n"
-                           "The program is developed by "
-                           "Knut Johansen, "
-                           "Alexander Bürger, "
-                           "Lisbeth Bergholt, "
-                           "Vegard Bønes, "
-                           "Audun Christoffersen at MET Norway.\n\n"
-                           "You are using HQC version %1.").arg(PVERSION_FULL));
+  QMessageBox::about( this, tr("About Hqc"),
+      tr("Hqc is a program for manual quality control of observations. "
+          "The program consists of editable tables with observations including "
+          "a time series diagram, and it can be connected to Diana."
+          "\n\n"
+          "The program is developed by "
+          "Knut Johansen, "
+          "Alexander Bürger, "
+          "Lisbeth Bergholt, "
+          "Vegard Bønes, "
+          "Audun Christoffersen at MET Norway.\n\n"
+          "You are using HQC version %1.").arg(PVERSION_FULL));
 }
 
 void HqcMainWindow::aboutQt()
 {
-    QMessageBox::aboutQt(this);
+  QMessageBox::aboutQt(this);
 }
 
 void HqcMainWindow::onUndoChanges()
 {
-    if (eda->canUndo())
-        eda->undoVersion();
+  if (eda->canUndo())
+    eda->undoVersion();
 }
 
 void HqcMainWindow::onRedoChanges()
 {
-    if (eda->canRedo())
-        eda->redoVersion();
+  if (eda->canRedo())
+    eda->redoVersion();
 }
 
 void HqcMainWindow::onSaveChanges()
@@ -689,92 +692,92 @@ void HqcMainWindow::closeEvent(QCloseEvent* event)
 
 void HqcMainWindow::navigateTo(const SensorTime& st)
 {
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(st));
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(st));
 
-    BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
-        .arg(st.sensor.stationId)
-        .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
-    mDianaHelper->navigateTo(st);
-    ui->simpleCorrrections->navigateTo(st);
-    mAutoColumnView->navigateTo(st);
-    for(int idx = 0; idx < ui->tabs->count(); ++idx) {
-      QWidget* w = ui->tabs->widget(idx);
-      if (DataList* dl = dynamic_cast<DataList*>(w)) {
-        if (dl != mAutoDataList)
-          dl->navigateTo(st);
-      }
+  BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
+      .arg(st.sensor.stationId)
+      .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
+  mDianaHelper->navigateTo(st);
+  ui->simpleCorrrections->navigateTo(st);
+  mAutoColumnView->navigateTo(st);
+  for(int idx = 0; idx < ui->tabs->count(); ++idx) {
+    QWidget* w = ui->tabs->widget(idx);
+    if (DataList* dl = dynamic_cast<DataList*>(w)) {
+      if (dl != mAutoDataList)
+        dl->navigateTo(st);
     }
+  }
 }
 
 void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-    ui->saveAction->setEnabled(eda->countU() > 0);
-    ui->actionUndo->setEnabled(eda->canUndo());
-    ui->actionRedo->setEnabled(eda->canRedo());
+  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
+  ui->saveAction->setEnabled(eda->countU() > 0);
+  ui->actionUndo->setEnabled(eda->canUndo());
+  ui->actionRedo->setEnabled(eda->canRedo());
 
-    ui->treeChanges->expandToDepth(2);
+  ui->treeChanges->expandToDepth(2);
 }
 
 
 void HqcMainWindow::writeSettings()
 {
-    QSettings settings;
-    settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
-    settings.setValue(SETTING_HQC_AUTOVIEW_SPLITTER, mAutoViewSplitter->saveState());
+  QSettings settings;
+  settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
+  settings.setValue(SETTING_HQC_AUTOVIEW_SPLITTER, mAutoViewSplitter->saveState());
 
-    lstdlg->saveSettings(settings);
+  lstdlg->saveSettings(settings);
 }
 
 void HqcMainWindow::readSettings()
 {
-    METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE();
 
-    QSettings settings;
-    if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
-        METLIBS_LOG_WARN("cannot restore hqc main window geometry");
-    if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
-        METLIBS_LOG_WARN("cannot restore autoview splitter positions");
+  QSettings settings;
+  if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
+    METLIBS_LOG_WARN("cannot restore hqc main window geometry");
+  if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
+    METLIBS_LOG_WARN("cannot restore autoview splitter positions");
 
-    lstdlg->restoreSettings(settings);
+  lstdlg->restoreSettings(settings);
 }
 
 void HqcMainWindow::checkVersionSettings()
 {
-    QSettings settings;
+  QSettings settings;
 
-    QString savedVersionFull = settings.value(SETTING_VERSION_FULL, "??").toString();
-    if (savedVersionFull != PVERSION_FULL) {
-        settings.setValue(SETTING_VERSION_FULL, PVERSION_FULL);
-        helpNews();
-    }
+  QString savedVersionFull = settings.value(SETTING_VERSION_FULL, "??").toString();
+  if (savedVersionFull != PVERSION_FULL) {
+    settings.setValue(SETTING_VERSION_FULL, PVERSION_FULL);
+    helpNews();
+  }
 
-    QString savedVersion = settings.value(SETTING_VERSION, "??").toString();
-    if (savedVersion != PVERSION) {
-        settings.setValue(SETTING_VERSION, PVERSION);
-        QMessageBox::information(this,
-                                 tr("HQC - Version Change"),
-                                 tr("You are using a different version of HQC than before (now: %1, before: %2). "
-                                    "You have to check that all settings (chosen parameters, times, etc) are still correct.")
-                                 .arg(PVERSION).arg(savedVersion),
-                                 QMessageBox::Ok, QMessageBox::Ok);
-    }
+  QString savedVersion = settings.value(SETTING_VERSION, "??").toString();
+  if (savedVersion != PVERSION) {
+    settings.setValue(SETTING_VERSION, PVERSION);
+    QMessageBox::information(this,
+        tr("HQC - Version Change"),
+        tr("You are using a different version of HQC than before (now: %1, before: %2). "
+            "You have to check that all settings (chosen parameters, times, etc) are still correct.")
+        .arg(PVERSION).arg(savedVersion),
+        QMessageBox::Ok, QMessageBox::Ok);
+  }
 }
 
 void HqcMainWindow::helpNews()
 {
-    mHelpDialog->showdoc(0, PVERSION_FULL);
+  mHelpDialog->showdoc(0, PVERSION_FULL);
 }
 
 void HqcMainWindow::moveEvent(QMoveEvent* event)
 {
-    QMainWindow::moveEvent(event);
-    mHints->updatePosition();
+  QMainWindow::moveEvent(event);
+  mHints->updatePosition();
 }
 
 void HqcMainWindow::resizeEvent(QResizeEvent* event)
 {
-    QMainWindow::resizeEvent(event);
-    mHints->updatePosition();
+  QMainWindow::resizeEvent(event);
+  mHints->updatePosition();
 }

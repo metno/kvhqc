@@ -285,134 +285,134 @@ parametere</translation>
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="ErrorListTableModel.cc" line="23"/>
+        <location filename="ErrorListTableModel.cc" line="24"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="24"/>
+        <location filename="ErrorListTableModel.cc" line="25"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Navn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="25"/>
+        <location filename="ErrorListTableModel.cc" line="26"/>
         <source>WMO</source>
         <translation>WMO</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="26"/>
+        <location filename="ErrorListTableModel.cc" line="27"/>
         <source>Mt</source>
         <oldsource>  Mt</oldsource>
         <translation>Md</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListTableModel.cc" line="28"/>
         <source>Dy</source>
         <oldsource>  Dy</oldsource>
         <translation>Dg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListTableModel.cc" line="29"/>
         <source>Hr</source>
         <oldsource>  Hr</oldsource>
         <translation>Kl</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Mn</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="34"/>
+        <location filename="ErrorListTableModel.cc" line="35"/>
         <source>mod.v</source>
         <translation>mod.v</translation>
     </message>
     <message>
         <location filename="EditVersionModel.cc" line="26"/>
-        <location filename="ErrorListTableModel.cc" line="35"/>
-        <location filename="ErrorListTableModel.cc" line="51"/>
+        <location filename="ErrorListTableModel.cc" line="36"/>
+        <location filename="ErrorListTableModel.cc" line="52"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flagg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListTableModel.cc" line="40"/>
         <source>Station number</source>
         <translation>Stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListTableModel.cc" line="41"/>
         <source>Station name</source>
         <translation>Stasjonsnavn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="41"/>
+        <location filename="ErrorListTableModel.cc" line="42"/>
         <source>WMO station number</source>
         <translation>WMO stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="42"/>
+        <location filename="ErrorListTableModel.cc" line="43"/>
         <source>Obs month</source>
         <translation>Obs måned</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
+        <location filename="ErrorListTableModel.cc" line="44"/>
         <source>Obs day</source>
         <translation>Obs dag</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
+        <location filename="ErrorListTableModel.cc" line="45"/>
         <source>Obs hour</source>
         <translation>Obs time</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="45"/>
+        <location filename="ErrorListTableModel.cc" line="46"/>
         <source>Obs minute</source>
         <translation>Obs minutt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="46"/>
+        <location filename="ErrorListTableModel.cc" line="47"/>
         <source>Parameter name</source>
         <translation>Parameternavn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="47"/>
+        <location filename="ErrorListTableModel.cc" line="48"/>
         <source>Type ID</source>
         <translation>Type ID</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="48"/>
+        <location filename="ErrorListTableModel.cc" line="49"/>
         <source>Original value</source>
         <translation>Originalverdi</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="49"/>
+        <location filename="ErrorListTableModel.cc" line="50"/>
         <source>Corrected value</source>
         <translation>Korrigert verdi</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="50"/>
+        <location filename="ErrorListTableModel.cc" line="51"/>
         <source>Model value</source>
         <translation>Modellverdi</translation>
     </message>
@@ -947,12 +947,12 @@ parametere</translation>
         <translation>Ingen værelement er valgt! Minst en må velges.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="323"/>
+        <location filename="hqcmain.cc" line="333"/>
         <source>Building data list...</source>
         <translation>Bygger dataliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="333"/>
+        <location filename="hqcmain.cc" line="326"/>
         <source>Building error list...</source>
         <translation>Bygger feilliste...</translation>
     </message>
@@ -962,38 +962,43 @@ parametere</translation>
         <translation>Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="329"/>
+        <location filename="hqcmain.cc" line="303"/>
+        <source>Building station list...</source>
+        <translation>Bygger stasjonsliste…</translation>
+    </message>
+    <message>
+        <location filename="hqcmain.cc" line="339"/>
         <source>Selected Data</source>
         <translation>Valgte data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="401"/>
+        <location filename="hqcmain.cc" line="404"/>
         <source>No RejectDecode</source>
         <translation>Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="401"/>
+        <location filename="hqcmain.cc" line="404"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="438"/>
+        <location filename="hqcmain.cc" line="441"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="439"/>
+        <location filename="hqcmain.cc" line="442"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="440"/>
-        <location filename="hqcmain.cc" line="656"/>
+        <location filename="hqcmain.cc" line="443"/>
+        <location filename="hqcmain.cc" line="659"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="621"/>
+        <location filename="hqcmain.cc" line="624"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1004,67 +1009,67 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="654"/>
+        <location filename="hqcmain.cc" line="657"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="655"/>
+        <location filename="hqcmain.cc" line="658"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="659"/>
+        <location filename="hqcmain.cc" line="662"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="668"/>
+        <location filename="hqcmain.cc" line="671"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="671"/>
+        <location filename="hqcmain.cc" line="674"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="672"/>
+        <location filename="hqcmain.cc" line="675"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="695"/>
+        <location filename="hqcmain.cc" line="698"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Leser data for stasjon %1 for %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="531"/>
+        <location filename="hqcmain.cc" line="534"/>
         <source>Print screenshot</source>
         <translation>Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="555"/>
+        <location filename="hqcmain.cc" line="558"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="556"/>
+        <location filename="hqcmain.cc" line="559"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="620"/>
+        <location filename="hqcmain.cc" line="623"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="757"/>
+        <location filename="hqcmain.cc" line="760"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="758"/>
+        <location filename="hqcmain.cc" line="761"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
