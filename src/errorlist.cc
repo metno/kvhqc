@@ -99,7 +99,7 @@ void ErrorList::resizeHeaders()
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MINUTE,    30);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     50);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TYPEID,    40);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
