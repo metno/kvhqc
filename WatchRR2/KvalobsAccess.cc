@@ -242,6 +242,14 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         obsDataChanged(CREATED, obs);
     return true;
   } else {
+    std::ostringstream msg;
+    msg << "saving these failed: modified:";
+    BOOST_FOREACH(KvalobsDataPtr obs, modifiedObs)
+        msg << ' ' << obs->sensorTime();
+    msg << "; created:";
+    BOOST_FOREACH(KvalobsDataPtr obs, createdObs)
+        msg << ' ' << obs->sensorTime();
+    HQC_LOG_WARN(msg.str());
     return false;
   }
 }
