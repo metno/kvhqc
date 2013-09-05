@@ -63,8 +63,6 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/authentication
   ${CMAKE_BINARY_DIR}/authentication
-  ${CMAKE_SOURCE_DIR}/FailInfo/src
-  ${CMAKE_BINARY_DIR}/FailInfo
   ${CMAKE_SOURCE_DIR}/WatchRR2
   ${CMAKE_SOURCE_DIR}/Weather
   ${CMAKE_CURRENT_SOURCE_DIR}/src
@@ -104,7 +102,7 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}.bin")
 
 TARGET_LINK_LIBRARIES(hqc
-  hqc_common watchrr2 weather failinfo authentication
+  hqc_common watchrr2 weather authentication
   ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
   -lldap
 )
@@ -119,7 +117,7 @@ SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}-offline")
 
 TARGET_LINK_LIBRARIES(hqc_offline
-  hqc_common watchrr2 weather failinfo authentication watchrr2test
+  hqc_common watchrr2 weather authentication watchrr2test
   ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
 )
 

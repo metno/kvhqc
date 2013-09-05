@@ -75,8 +75,6 @@ private:
     int getSelectedRow() const;
                                     
 private Q_SLOTS:
-    void showFail(const QModelIndex& index);
-
     void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:

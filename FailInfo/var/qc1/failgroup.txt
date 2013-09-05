@@ -1,9 +1,0 @@
-0	Forhandskvalifisering
-1	Grenseverdikontroll (fr)
-2	Formell konsistenskontroll (fcc)
-3a	Sprangkontroll, step (fs)
-3b	Sprangkontroll, freeze (fs)
-4	Prognostisk romkontroll (fnum)
-5	Meldingskontroll (fpos)
-6	Klimatologisk konsistenskontroll (fcp)
-7	Identifisering av oppsamlet verdi (fd)

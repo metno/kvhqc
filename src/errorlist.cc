@@ -36,12 +36,12 @@
 #include "errorlist.h"
 #include "AnalyseErrors.hh"
 #include "ErrorListTableModel.hh"
-#include "FailDialog.h"
 #include "Functors.hh"
 #include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
 
 #include <QtGui/QCloseEvent>
+#include <QtGui/QHeaderView>
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QMessageBox>
 
@@ -70,8 +70,6 @@ ErrorList::ErrorList(QWidget* parent)
     setSortingEnabled(true);
     setModel(mSortProxy.get());
     resizeHeaders();
-    
-    connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
     
     connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -130,18 +128,6 @@ void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSe
     METLIBS_LOG_SCOPE();
     showSameStation();
     signalStationSelected();
-}
-
-void ErrorList::showFail(const QModelIndex& index)
-{
-    if (index.column() < 10 or index.column() > 12)
-        return;
-
-    METLIBS_LOG_DEBUG("sorry, FailDialog needs update");
-    //// FIXME re-enable FailInfo
-    // FailInfo::FailDialog fDlg;
-    // fDlg.failList->newData(getKvData(index.row()));
-    // fDlg.exec();
 }
 
 int ErrorList::getSelectedRow() const

@@ -65,8 +65,6 @@ FUNCTION(add_translated)
 ENDFUNCTION()
 
 ADD_SUBDIRECTORY(authentication)
-ADD_SUBDIRECTORY(FailInfo)
-ADD_SUBDIRECTORY(WatchRR)
 ADD_SUBDIRECTORY(WatchRR2)
 ADD_SUBDIRECTORY(Weather)
 ADD_SUBDIRECTORY(src)
@@ -83,9 +81,6 @@ INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
 
 CONFIGURE_FILE(share/hqc_current_version.in share/hqc_current_version)
 INSTALL(FILES
-  share/faildetail.txt
-  share/failgroup.txt
-  share/VxExplanations.txt
   share/hqc_system.db
   ${CMAKE_BINARY_DIR}/share/hqc_current_version
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
