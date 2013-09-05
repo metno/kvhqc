@@ -15,32 +15,65 @@ struct float_eq : public std::binary_function<float, float, bool>
     bool operator()(float a, float b) const;
 };
 
-struct station_by_id : public std::unary_function<bool, kvalobs::kvStation>
-{
-    station_by_id(int s) : stationid(s) { }
-    bool operator()(const kvalobs::kvStation& s) const
-        { return s.stationID() == stationid; }
-private:
-    int stationid;
+template<class kvX>
+struct extractKvId {
 };
 
-struct param_by_id : public std::unary_function<bool, kvalobs::kvParam>
-{
-    param_by_id(int p) : paramid(p) { }
-    bool operator()(const kvalobs::kvParam& p) const
-        { return p.paramID() == paramid; }
-private:
-    int paramid;
+template<>
+struct extractKvId<kvalobs::kvStation> {
+  int operator()(const kvalobs::kvStation& s) const
+    { return s.stationID(); }
 };
 
-struct type_by_id : public std::unary_function<bool, kvalobs::kvTypes>
-{
-    type_by_id(int t) : type(t) { }
-    bool operator()(const kvalobs::kvTypes& t) const
-        { return t.typeID() == type; }
-private:
-    int type;
+template<>
+struct extractKvId<kvalobs::kvParam> {
+  int operator()(const kvalobs::kvParam& p) const
+    { return p.paramID(); }
 };
+
+template<>
+struct extractKvId<kvalobs::kvTypes> {
+  int operator()(const kvalobs::kvTypes& t) const
+    { return t.typeID(); }
+};
+
+template<class kvX>
+struct kvX_lt : public std::binary_function<bool, kvX, kvX>
+{
+  bool operator()(const kvX& a, const kvX& b) const
+    { const extractKvId<kvX> idx; return idx(a) < idx(b); }
+};
+
+typedef kvX_lt<kvalobs::kvStation> kvStation_lt;
+typedef kvX_lt<kvalobs::kvParam>   kvParam_lt;
+typedef kvX_lt<kvalobs::kvTypes>   kvTypes_lt;
+
+template<class kvX>
+struct kvX_lt_id
+{
+  bool operator()(const kvX& a, int b) const
+    { const extractKvId<kvX> idx; return idx(a) < b; }
+  bool operator()(int a, const kvX& b) const
+    { const extractKvId<kvX> idx; return a < idx(b); }
+};
+
+typedef kvX_lt_id<kvalobs::kvStation> kvStation_lt_id;
+typedef kvX_lt_id<kvalobs::kvParam>   kvParam_lt_id;
+typedef kvX_lt_id<kvalobs::kvTypes>   kvTypes_lt_id;
+
+template<class kvX>
+struct kvX_eq_id
+{
+  kvX_eq_id(int i) : id(i) { }
+  bool operator()(const kvX& x) const
+    { const extractKvId<kvX> idx; return idx(x) == id; }
+private:
+  int id;
+};
+
+typedef kvX_eq_id<kvalobs::kvStation> kvStation_eq_id;
+typedef kvX_eq_id<kvalobs::kvParam>   kvParam_eq_id;
+typedef kvX_eq_id<kvalobs::kvTypes>   kvTypes_eq_id;
 
 } // namespace Helpers
 

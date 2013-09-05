@@ -123,13 +123,14 @@ void HqcApplication::installTranslations(const QString& lang, const QStringList&
   QTranslator* translator = new QTranslator(this);
   mTranslators.push_back(translator);
   
-  BOOST_FOREACH(const QString& p, paths)
-      if (translator->load(QLocale::system(), lang, "_", p)) {
-        METLIBS_LOG_INFO("loaded '" << lang << "' translations from " << p
-            << " for ui languages=" << QLocale::system().uiLanguages().join(","));
-            installTranslator(translator);
-            return;
-      }
+  BOOST_FOREACH(const QString& p, paths) {
+    if (translator->load(QLocale::system(), lang, "_", p)) {
+      METLIBS_LOG_INFO("loaded '" << lang << "' translations from " << p
+          << " for ui languages=" << QLocale::system().uiLanguages().join(","));
+      installTranslator(translator);
+      return;
+    }
+  }
   METLIBS_LOG_INFO("failed to load '" << lang << "' translations from ["
       << paths.join(",")
       << "] for ui languages=" << QLocale::system().uiLanguages().join(","));

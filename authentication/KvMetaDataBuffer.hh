@@ -59,16 +59,26 @@ private:
 
 private:
   bool mHaveStations;
-  std::list<kvalobs::kvStation> mStations;
+  typedef std::list<kvalobs::kvStation> stations_t;
+  typedef stations_t::const_iterator stations_cit;
+  typedef std::pair<stations_cit, stations_cit> stations_cit_p;
+  stations_t mStations;
 
   bool mHaveParams;
+  typedef std::list<kvalobs::kvParam> params_t;
+  typedef params_t::const_iterator params_cit;
+  typedef std::pair<params_cit, params_cit> params_cit_p;
   std::list<kvalobs::kvParam> mParams;
+
+  bool mHaveTypes;
+  typedef std::list<kvalobs::kvTypes> types_t;
+  typedef types_t::const_iterator types_cit;
+  typedef std::pair<types_cit, types_cit> types_cit_p;
+  std::list<kvalobs::kvTypes> mTypes;
+
   std::set<int> mCodeParams;
   typedef std::map<int, std::pair<float, float> > ParamLimits_t;
   ParamLimits_t mParamLimits;
-
-  bool mHaveTypes;
-  std::list<kvalobs::kvTypes> mTypes;
 
   typedef std::map<int, ObsPgmList> ObsPgms_t;
   ObsPgms_t mObsPgms;
