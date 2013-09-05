@@ -29,7 +29,7 @@ int possibilities(EditDataPtr obs)
   int possible = ALL;
   if (Helpers::is_rejected(obs))
     possible &= ~CAN_REJECT;
-  if (Helpers::is_orig_missing(obs))
+  if (fmis == 3)
     possible &= ~CAN_ACCEPT_ORIGINAL;
 
   if (fmis == 2)
@@ -56,8 +56,8 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
     METLIBS_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
     return;
   }
-  if (ci.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
-    METLIBS_LOG_ERROR("bad accept_original, would not set fhqc for " << sensorTime);
+  if (not (fmis == 0 or fmis == 1 or fmis == 2 or fmis == 4)) {
+    METLIBS_LOG_ERROR("bad accept_original, fmis != 0/1/2/4 for " << sensorTime);
     return;
   }
 
@@ -70,6 +70,8 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
     Helpers::set_flag(editor, kvalobs::flag::fd,   1);
   } else if (fmis == 1) {
     Helpers::set_flag(editor, kvalobs::flag::fmis, 3);
+  } else if (fmis == 4) {
+    Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
   }
   if (qc2ok)
     Helpers::set_fhqc(editor, 4);
@@ -95,7 +97,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
     Helpers::set_fhqc(editor, 1);
   } else if (fmis == 0) {
     Helpers::set_fhqc(editor, 7);
-  } else if (fmis == 1) {
+  } else if (fmis == 1 or fmis == 4) {
     Helpers::set_fhqc(editor, 5);
   } else {
     METLIBS_LOG_ERROR("bad accept_corrected for " << sensorTime);
