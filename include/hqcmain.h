@@ -131,6 +131,8 @@ private Q_SLOTS:
   void onShowChanges();
   void onShowSimpleCorrections();
 
+  void onTabCloseRequested(int index);
+
 private:
   void showExtremeValues(int paramid);
 
@@ -149,9 +151,6 @@ private:
     void checkVersionSettings();
 
     void readFromStation();
-
-    //! A primitive horizontal tiling of the errorhead and errorlist windows
-    void tileHorizontal();
 
 private:
     ListDialog* lstdlg;

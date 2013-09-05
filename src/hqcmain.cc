@@ -187,16 +187,10 @@ HqcMainWindow::HqcMainWindow()
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
     mAutoDataList->setDataAccess(eda, kma);
-    QNoCloseMdiSubWindow* adlsw = new QNoCloseMdiSubWindow(ui->ws);
-    adlsw->setWidget(mAutoDataList);
-    adlsw->setWindowTitle(tr("Automatic Data List"));
-    ui->ws->addSubWindow(adlsw);
+    ui->tabs->addTab(mAutoDataList, tr("Auto Data List"));
     mAutoColumnView->attachView(mAutoDataList);
 
-    QNoCloseMdiSubWindow* tssw = new QNoCloseMdiSubWindow(ui->ws);
-    tssw->setWidget(mTimeSeriesView);
-    tssw->setWindowTitle(tr("Time Series"));
-    ui->ws->addSubWindow(tssw);
+    ui->tabs->addTab(mTimeSeriesView, tr("Time Series"));
     mAutoColumnView->attachView(mTimeSeriesView);
 
     mExtremesView->setVisible(false);
@@ -216,8 +210,6 @@ HqcMainWindow::HqcMainWindow()
     
     mHelpDialog = new HelpDialog(this, info);
     mHelpDialog->hide();
-
-    tileHorizontal();
 }
 
 HqcMainWindow::~HqcMainWindow()
@@ -336,9 +328,7 @@ void HqcMainWindow::ListOK()
         dl->setDataAccess(eda, kma);
         dl->setSensorsAndTimes(sensors, timeLimits);
         dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-        QMdiSubWindow* adlsw = ui->ws->addSubWindow(dl);
-        adlsw->setWindowTitle(tr("Data List for Selected Stations/Parameters/Time"));
-        adlsw->setVisible(true);
+        ui->tabs->addTab(dl, tr("Selected Data"));
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
@@ -347,8 +337,6 @@ void HqcMainWindow::ListOK()
         ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
         ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
     }
-
-    tileHorizontal();
 
     std::vector<QString> stationList;
     BOOST_FOREACH(int stnr, selectedStations) {
@@ -682,41 +670,12 @@ void HqcMainWindow::findStationInfo(int stnr,
     }
 }
 
-void HqcMainWindow::tileHorizontal()
+void HqcMainWindow::onTabCloseRequested(int index)
 {
-#if 1
-  ui->ws->tileSubWindows();
-#else
-  QList<QMdiSubWindow *> allWindows = ui->ws->subWindowList();
-  QList<QMdiSubWindow *> windows;
-  BOOST_FOREACH(QMdiSubWindow* sw, allWindows) {
-    if (sw->isVisible())
-      windows << sw;
+  QWidget* w = ui->tabs->widget(index);
+  if (w != mTimeSeriesView and w != mAutoDataList) {
+    delete w;
   }
-
-  if (windows.empty())
-    return;
-
-  const int nWindows = windows.size();
-  if (windows.size() == 1) {
-    windows.front()->showMaximized();
-    return;
-  }
-
-  const int FRAME_HEIGHT = windows.front()->parentWidget()->baseSize().height(), height = ui->ws->height() / nWindows;
-  int y = 0;
-
-  BOOST_FOREACH(QMdiSubWindow* sw, allWindows) {
-    if (sw->windowState() == Qt::WindowMaximized)
-      // prevent flicker
-      sw->hide();
-
-    sw->showNormal();
-    const int h = std::max(height, sw->minimumHeight() + FRAME_HEIGHT);
-    sw->setGeometry(0, y, ui->ws->width(), h);
-    y += h;
-  }
-#endif
 }
 
 void HqcMainWindow::helpUse() {
@@ -743,7 +702,7 @@ void HqcMainWindow::about()
                            "Alexander Bürger, "
                            "Lisbeth Bergholt, "
                            "Vegard Bønes, "
-                           "Audun Christoffersen at met.no.\n\n"
+                           "Audun Christoffersen at MET Norway.\n\n"
                            "You are using HQC version %1.").arg(PVERSION_FULL));
 }
 
@@ -812,11 +771,12 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
     mDianaHelper->navigateTo(st);
     ui->simpleCorrrections->navigateTo(st);
     mAutoColumnView->navigateTo(st);
-    BOOST_FOREACH(QMdiSubWindow* sw, ui->ws->subWindowList()) {
-        if (DataList* dl = dynamic_cast<DataList*>(sw->widget())) {
-            if (dl != mAutoDataList)
-                dl->navigateTo(st);
-        }
+    for(int idx = 0; idx < ui->tabs->count(); ++idx) {
+      QWidget* w = ui->tabs->widget(idx);
+      if (DataList* dl = dynamic_cast<DataList*>(w)) {
+        if (dl != mAutoDataList)
+          dl->navigateTo(st);
+      }
     }
 }
 
