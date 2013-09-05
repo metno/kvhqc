@@ -3,6 +3,7 @@
 #define HintWidget_hh 1
 
 #include <QtCore/QStringList>
+#include <QtCore/QTime>
 #include <QtGui/QLabel>
 
 QT_BEGIN_NAMESPACE
@@ -22,7 +23,8 @@ public Q_SLOTS:
     void updatePosition();
 
 protected:
-    void paintEvent(QPaintEvent*);
+  virtual void paintEvent(QPaintEvent*);
+  virtual void changeEvent(QEvent* event);
 
 private:
     void updateText();
@@ -31,9 +33,10 @@ private Q_SLOTS:
     void hideHints();
 
 private:
-    QTextDocument* mText;
-    QTimer* mTimer;
-    QStringList mHints;
+  QTextDocument* mText;
+  QTimer* mTimer;
+  QTime mTime;
+  QStringList mHints;
 };
 
 #endif /* HintWidget_hh */

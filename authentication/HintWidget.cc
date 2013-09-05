@@ -18,7 +18,7 @@ const float readingSpeed = 1000/35.0f; // milliseconds per character
 }
 
 HintWidget::HintWidget(QWidget* parent)
-    : QWidget(parent, Qt::ToolTip)
+    : QWidget(parent)
     , mText(new QTextDocument(this))
     , mTimer(new QTimer(this))
 {
@@ -44,6 +44,7 @@ void HintWidget::addHint(const QString& hint)
     show();
     const int length = mText->toPlainText().size();
     const int timeout = (int) (length * readingSpeed);
+    mTime.start();
     mTimer->start(timeout);
     qApp->processEvents();
 }
@@ -57,7 +58,7 @@ void HintWidget::updateText()
 void HintWidget::updatePosition()
 {
     QWidget* parent = static_cast<QWidget*>(this->parent());
-    const QRect pr = parent->geometry();
+    const QRect pr = parent->rect(); //parent->geometry();
 
     const int m = 2*margin, w = std::min(300, pr.width() - 2*m);
     mText->setTextWidth(w - m);
@@ -95,4 +96,13 @@ void HintWidget::paintEvent(QPaintEvent*)
 
     QAbstractTextDocumentLayout::PaintContext context;
     mText->documentLayout()->draw(&p, context);
+}
+
+void HintWidget::changeEvent(QEvent* event)
+{
+  if (event->type() == QEvent::EnabledChange) {
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(mTime.elapsed()) << LOGVAL(isEnabled()));
+  }
+  QWidget::changeEvent(event);
 }
