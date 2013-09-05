@@ -3,11 +3,22 @@
 #define EditVersionModel_hh 1
 
 #include "EditAccess.hh"
+#include <QtCore/QAbstractItemModel>
 
-class EditVersionModel {
+class EditVersionModel : public QAbstractItemModel
+{
 public:
     EditVersionModel(EditAccessPtr eda);
     ~EditVersionModel();
+
+    virtual int columnCount(const QModelIndex& parent) const;
+    virtual int rowCount(const QModelIndex& parent) const;
+
+    virtual QVariant data(const QModelIndex& index, int role) const;
+
+    virtual bool hasChildren(const QModelIndex & parent) const;
+    virtual QModelIndex index(int row, int column, const QModelIndex & parent) const;
+    virtual QModelIndex parent(const QModelIndex& index) const;
 
 private:
     void onCurrentVersionChanged(int current, int highest);
@@ -16,6 +27,9 @@ private:
 
 private:
     EditAccessPtr mDA;
+
+    typedef std::vector<EditAccess::ChangedData_t> ChangeHistory_t;
+    ChangeHistory_t mHistory;
 };
 
 #endif // EditVersionModel_hh

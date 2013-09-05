@@ -197,9 +197,9 @@ void EditAccess::redoVersion()
     updateToCurrentVersion(false);
 }
 
-std::vector<EditDataPtr> EditAccess::versionChanges(int version) const
+EditAccess::ChangedData_t EditAccess::versionChanges(int version) const
 {
-    std::vector<EditDataPtr> haveVersion;
+    ChangedData_t haveVersion;
     BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
         if (ebs and ebs->hasVersion(version))
             haveVersion.push_back(ebs);

@@ -36,6 +36,7 @@ ADD_LIBRARY(watchrr2test
   TestHelpers.cc
   load_examples_201303.cc
   load_1650_20130130.cc
+  load_18210_20130410.cc
   load_31850_20121130.cc
   load_32780_20121207.cc
   load_52640_20121231.cc

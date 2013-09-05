@@ -52,7 +52,9 @@ public:
 
     const timeutil::ptime& versionTimestamp(int version) const
         { return mVersionTimestamps[version]; }
-    std::vector<EditDataPtr> versionChanges(int version) const;
+
+    typedef std::vector<EditDataPtr> ChangedData_t;
+    ChangedData_t versionChanges(int version) const;
 
     boost::signal2<void, int, int> currentVersionChanged;
 

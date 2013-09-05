@@ -156,6 +156,7 @@ HqcMainWindow::HqcMainWindow()
     ui->setupUi(this);
     ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
+    ui->treeChanges->setModel(mEditVersions.get());
 
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
@@ -935,6 +936,8 @@ void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
     ui->saveAction->setEnabled(eda->countU() > 0);
     ui->actionUndo->setEnabled(eda->canUndo());
     ui->actionRedo->setEnabled(eda->canRedo());
+
+    ui->treeChanges->expandToDepth(2);
 }
 
 
