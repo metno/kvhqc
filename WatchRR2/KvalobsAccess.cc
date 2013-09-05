@@ -10,6 +10,7 @@
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsAccess"
+#define M_TIME
 #include "HqcLogging.hh"
 
 namespace kvalobsdata_helpers {
@@ -136,7 +137,9 @@ void KvalobsAccess::removeFetched(int stationId, const timeutil::ptime& t)
 
 void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 {
+  METLIBS_LOG_TIME();
     BOOST_FOREACH(kvservice::KvObsData& od, dl) {
+      METLIBS_LOG_DEBUG(LOGVAL(od.dataList().size()));
         BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList())
             receive(kvd);
     }

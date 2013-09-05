@@ -6,6 +6,8 @@
 
 #include <map>
 
+class QTimer;
+
 class QtKvalobsAccess : public QObject, public KvalobsAccess
 { Q_OBJECT;
 public:
@@ -17,6 +19,7 @@ public:
 
 private Q_SLOTS:
     void onKvData(kvservice::KvObsDataListPtr data);
+    void doReSubscribe();
 
 private:
     void reSubscribe();
@@ -26,6 +29,8 @@ private:
 
   typedef std::map<int, int> SubscribedStations_t;
   SubscribedStations_t mSubscribedStations;
+
+  QTimer* mResubscribeTimer;
 };
 
 #endif // KvalobsAccess_hh

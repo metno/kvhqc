@@ -2,17 +2,23 @@
 #include "QtKvalobsAccess.hh"
 #include "QtKvService.hh"
 
+#include <QtCore/QTimer>
+
 #include <boost/foreach.hpp>
 #include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.QtKvalobsAccess"
+#define M_TIME
 #include "HqcLogging.hh"
 #ifndef NDEBUG
 #include "Helpers.hh"
 #endif
 
 QtKvalobsAccess::QtKvalobsAccess()
+  : mResubscribeTimer(new QTimer(this))
 {
+  mResubscribeTimer->setSingleShot(true);
+  connect(mResubscribeTimer, SIGNAL(timeout()), this, SLOT(doReSubscribe()));
 }
 
 QtKvalobsAccess::~QtKvalobsAccess()
@@ -81,16 +87,31 @@ void QtKvalobsAccess::removeSubscription(const ObsSubscription& s)
 
 void QtKvalobsAccess::reSubscribe()
 {
+  METLIBS_LOG_SCOPE();
+  mResubscribeTimer->start(500 /*ms*/);
+}
+
+void QtKvalobsAccess::doReSubscribe()
+{
   if (not mKvServiceSubscriberID.empty()) {
+    METLIBS_LOG_TIME();
+    METLIBS_LOG_DEBUG("old id=" << mKvServiceSubscriberID);
     qtKvService()->unsubscribe(mKvServiceSubscriberID);
     mKvServiceSubscriberID = "";
   }
   
   if (not mSubscribedStations.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
+    {
+    METLIBS_LOG_TIME();
+    METLIBS_LOG_DEBUG(LOGVAL(mSubscribedStations.size()));
     BOOST_FOREACH(int sid, boost::adaptors::keys(mSubscribedStations))
         dataSubscription.addStationId(sid);
+    }
+    {METLIBS_LOG_TIME();
     mKvServiceSubscriberID = qtKvService()
         ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+    METLIBS_LOG_DEBUG("new id=" << mKvServiceSubscriberID);
+    }
   }
 }

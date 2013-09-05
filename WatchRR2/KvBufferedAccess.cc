@@ -92,10 +92,10 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
     }
     
     KvalobsDataPtr obs;
-    Data_t::iterator it = mData.find(st);
-    if (it == mData.end()) {
+    Data_t::iterator it = mData.lower_bound(st);
+    if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
         obs = boost::make_shared<KvalobsData>(data, false);
-        mData[st] = obs;
+        mData.insert(it, std::make_pair(st, obs));
         obsDataChanged(CREATED, obs);
     } else {
         obs = it->second;
