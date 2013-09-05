@@ -38,6 +38,23 @@ timeutil::ptime DataListModel::timeAtRow(int row) const
     return mTimes.at(row);
 }
 
+QModelIndex DataListModel::findIndex(const SensorTime& st)
+{
+    // FIXME this does not take into account columns with time offset
+    const int row = rowAtTime(st.time);
+    if (row >= 0) {
+        const int nColumns = columnCount(QModelIndex());
+        for (int col=0; col<nColumns; ++col) {
+            DataColumnPtr dc = boost::static_pointer_cast<DataColumn>(getColumn(col));
+            if (!dc)
+                continue;
+            if (dc->matchSensor(st.sensor))
+                return index(row, col, QModelIndex());
+        }
+    }
+    return QModelIndex();
+}
+
 int DataListModel::rowAtTime(const timeutil::ptime& time) const
 {
     Times_t::const_iterator it = std::lower_bound(mTimes.begin(), mTimes.end(), time);

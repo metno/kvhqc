@@ -16,6 +16,9 @@ public:
 
     void setSensorsAndTimes(EditAccessPtr eda, const DataListModel::Sensors_t& sensors, const TimeRange& limits);
 
+public Q_SLOTS:
+    void navigateTo(const SensorTime&);
+
 private:
     std::auto_ptr<DataListModel> mTableModel;
 };

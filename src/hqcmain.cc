@@ -1311,7 +1311,13 @@ void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
         typeID = 0;
     /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), typeID);
 
-    ui->simpleCorrrections->navigateTo(Helpers::sensorTimeFromKvData(kd));
+    const SensorTime& stkd = Helpers::sensorTimeFromKvData(kd);
+    ui->simpleCorrrections->navigateTo(stkd);
+    BOOST_FOREACH(QMdiSubWindow* sw, ui->ws->subWindowList()) {
+        if (DataList* dl = dynamic_cast<DataList*>(sw->widget())) {
+            dl->navigateTo(stkd);
+        }
+    }
 }
 
 int HqcMainWindow::findTypeId(int tpId, int pos, int par, const timeutil::ptime& oTime)

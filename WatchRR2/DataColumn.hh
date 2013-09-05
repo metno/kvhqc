@@ -21,6 +21,7 @@ public:
 
     DataItemPtr getItem() const
         { return mItem; }
+    virtual bool matchSensor(const Sensor& sensorObs) const;
 
     virtual const boost::posix_time::time_duration& timeOffset() const
         { return mTimeOffset; }

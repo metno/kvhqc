@@ -15,6 +15,7 @@ public:
     ~DataListModel();
 
     virtual timeutil::ptime timeAtRow(int row) const;
+    QModelIndex findIndex(const SensorTime& st);
 
 protected:
     virtual int rowAtTime(const timeutil::ptime& time) const;
