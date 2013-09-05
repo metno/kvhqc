@@ -118,21 +118,21 @@ QSqlDatabase HqcApplication::kvalobsDB()
   return QSqlDatabase::database(DB_KVALOBS);
 }
 
-void HqcApplication::installTranslations(const QString& file, const QStringList& paths)
+void HqcApplication::installTranslations(const QString& lang, const QStringList& paths)
 {
-    QTranslator* translator = new QTranslator(this);
-    mTranslators.push_back(translator);
-    
-    BOOST_FOREACH(const QString& p, paths)
-        if (translator->load(QLocale::system(), file, "_", p)) {
-            METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p
-                         << " for ui languages=" << QLocale::system().uiLanguages().join(","));
+  QTranslator* translator = new QTranslator(this);
+  mTranslators.push_back(translator);
+  
+  BOOST_FOREACH(const QString& p, paths)
+      if (translator->load(QLocale::system(), lang, "_", p)) {
+        METLIBS_LOG_INFO("loaded '" << lang << "' translations from " << p
+            << " for ui languages=" << QLocale::system().uiLanguages().join(","));
             installTranslator(translator);
             return;
-        }
-    HQC_LOG_WARN("failed to load '" << file << "' translations from [" 
-                 << paths.join(",")
-                 << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
+      }
+  METLIBS_LOG_INFO("failed to load '" << lang << "' translations from ["
+      << paths.join(",")
+      << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
 }
 
 bool HqcApplication::notify(QObject* receiver, QEvent* e)
