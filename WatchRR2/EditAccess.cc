@@ -38,6 +38,11 @@ ObsAccess::TimeSet EditAccess::allTimes(const Sensor& sensor, const TimeRange& l
 
 ObsDataPtr EditAccess::find(const SensorTime& st)
 {
+    if (not st.valid()) {
+        LOG4HQC_ERROR("EditAccess", "invalid sensorTime: " << st);
+        return ObsDataPtr();
+    }
+
     Data_t::iterator it = mData.find(st);
     if (it != mData.end())
         return it->second;
@@ -50,6 +55,9 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
 
 ObsDataPtr EditAccess::create(const SensorTime& st)
 {
+    if (not st.valid())
+        LOG4HQC_ERROR("EditAccess", "invalid sensorTime: " << st);
+
     Data_t::iterator it = mData.find(st);
     if (it != mData.end() and it->second)
         return it->second;

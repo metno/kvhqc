@@ -2,8 +2,7 @@
 #ifndef SimpleCorrections_hh
 #define SimpleCorrections_hh 1
 
-#include "EditAccess.hh"
-#include "ModelAccess.hh"
+#include "DataView.hh"
 
 #include <QtGui/QWidget>
 #include <memory>
@@ -12,20 +11,21 @@ namespace Ui {
 class SimpleCorrections;
 }
 
-class SimpleCorrections : public QWidget
-{ Q_OBJECT
+class SimpleCorrections : public QWidget, public DataView
+{   Q_OBJECT;
 public:
     SimpleCorrections(QWidget* parent=0);
     ~SimpleCorrections();
                         
-    void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
+    virtual void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
+    virtual void navigateTo(const SensorTime&);
 
-public Q_SLOTS:
-    void navigateTo(const SensorTime&);
+protected:
+    virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
 
 private:
-    void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
     void enableEditing();
+    void update();
 
 private Q_SLOTS:
     void onAcceptOriginal();
@@ -40,8 +40,6 @@ private Q_SLOTS:
 
 private:
     std::auto_ptr<Ui::SimpleCorrections> ui;
-    EditAccessPtr mDA;
-    ModelAccessPtr mMA;
     SensorTime mSensorTime;
 };
 

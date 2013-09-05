@@ -1,8 +1,15 @@
+
 #include "textdatatable.h"
 
+#include "GetTextData.h"
 #include "KvMetaDataBuffer.hh"
 #include "TimeHeader.hh"
+
+#include <kvcpp/KvApp.h>
+#include <kvcpp/WhichDataHelper.h>
+
 #include <QtGui/QHeaderView>
+#include <QtGui/QMessageBox>
 #include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
 
@@ -84,3 +91,19 @@ TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
     topLayout->addWidget(tv);
     show();
 }
+
+void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent)
+{
+    kvservice::WhichDataHelper whichData;
+    whichData.addStation(stationId, timeLimits.t0(), timeLimits.t1());
+
+    GetTextData textDataReceiver;
+    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)) {
+        QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
+                              QMessageBox::Ok, QMessageBox::NoButton);
+        return;
+    }
+
+    new TextData(textDataReceiver.textData(), parent);
+}
+

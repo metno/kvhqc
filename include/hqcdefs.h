@@ -32,38 +32,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HQCDEFS_H
 #define HQCDEFS_H
 
-#include <decodeutility/DataReinserter.h>
-#include <kvcpp/KvApp.h>
-
 #include "timeutil.hh"
 #include <string>
-
-const int NOPARAM          = 1043;
-const int NOPARAMALL       = 210;
-
-enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
-enum messageType {Test,Synop,Metar,Autoobs,Kvalobs=5};
-
-struct modDatl {
-  modDatl()
-  {
-    std::fill(orig, orig + NOPARAM, -32767);
-  }
-
-  int stnr;
-  timeutil::ptime otime;
-  double orig[NOPARAM];
-};
-
-struct currentType {
-  int stnr;
-  int par;
-  timeutil::pdate fDate;
-  timeutil::pdate tDate;
-  int cSensor;
-  int cLevel;
-  int cTypeId;
-};
 
 struct TxtDat {
   int stationId;
@@ -73,7 +43,5 @@ struct TxtDat {
   timeutil::ptime tbtime;
   int typeId;
 };
-
-typedef kvalobs::DataReinserter<kvservice::KvApp> HqcReinserter;
 
 #endif

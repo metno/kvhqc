@@ -33,6 +33,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 #include "KvMetaDataBuffer.hh"
 #include "QtKvService.hh"
+#include "StInfoSysBuffer.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
@@ -40,32 +41,30 @@ using kvservice::corba::CorbaKvApp;
 
 int main( int argc, char* argv[] )
 {
-    HqcApplication hqc(argc, argv);
-    const QStringList args = hqc.arguments();
-
-    QString myconf = hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf";
-    QString log4cpp_properties = hqc::getPath(hqc::DATADIR) + "/log4cpp.properties";
-    for (int i = 1; i < args.size(); ++i) {
-        if (args.at(i) == "--config") {
-            if (i+1 >= args.size()) {
+    std::string myconf = (hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf").toStdString();
+    std::string log4cpp_properties = (hqc::getPath(hqc::DATADIR) + "/log4cpp.properties").toStdString();
+    for (int i = 1; i<argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--config") {
+            if (i+1 >= argc) {
                 std::cerr << "invalid --config without filename" << std::endl;
                 return 1;
             }
             i += 1;
-            myconf = args.at(i);
-        } else if (args.at(i) == "--log4cpp-properties") {
-            if (i+1 >= args.size()) {
+            myconf = argv[i];
+        } else if (arg == "--log4cpp-properties") {
+            if (i+1 >= argc) {
                 std::cerr << "invalid --log4cpp-properties without filename" << std::endl;
                 return 1;
             }
             i += 1;
-            log4cpp_properties = args.at(i);
+            log4cpp_properties = argv[i];
         }
     }
 
-    Log4CppConfig log4cpp(log4cpp_properties.toStdString());
+    Log4CppConfig log4cpp(log4cpp_properties);
 
-    miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf.toStdString());
+    miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
     if (not confSec) {
         LOG4HQC_FATAL("hqc", "cannot open configuration file '" << myconf << "'");
         return 1;
@@ -76,10 +75,12 @@ int main( int argc, char* argv[] )
     KvMetaDataBuffer kvmdbuf;
     StInfoSysBuffer stinfobuf(confSec);
 
+    HqcApplication hqc(argc, argv);
+
     QString userName = "?";
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
-    hqc.setReinserter(r, userName);
 
+    hqc.setReinserter(r, userName);
     hqc.startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
 
     return hqc.exec();

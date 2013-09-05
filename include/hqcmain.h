@@ -29,13 +29,11 @@
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
 
-#include "KvalobsData.h"
-#include "StInfoSysBuffer.hh"
-#include "hqcdefs.h"
+#include "HqcDataReinserter.h"
+#include "timeutil.hh"
 
-#include <QtCore/qset.h>
-#include <QtCore/qstring.h>
-#include <QtGui/qmainwindow.h>
+#include <QtCore/QString>
+#include <QtGui/QMainWindow>
 
 #include <memory>
 
@@ -65,9 +63,6 @@ class SensorTime;
 class TextDataDialog;
 class TimeseriesDialog;
 
-namespace model {
-class KvalobsDataModel;
-}
 namespace Ui {
 class HqcMainWindow;
 }
@@ -81,44 +76,22 @@ public:
 
     void startup();
 
-    void makeObsDataList(kvservice::KvObsDataList& dataList);
-
-    bool saveDataToKvalobs(std::list<kvalobs::kvData>& toSave);
-    bool saveDataToKvalobs(kvalobs::kvData& toSave1);
-
-    //! Extract the typeid from the obspgmlist for a given station, parameter and obstime
-    int findTypeId(int, int, int, const timeutil::ptime&);
-
-    const listStat_l& getStationDetails();
-
     HqcReinserter* getReinserter()
         { return reinserter; }
 
     void setReinserter(HqcReinserter* r, const QString& userName);
-
-public Q_SLOTS:
-    //! send all observation times to Diana
-    void sendTimes();
 
 protected:
     void moveEvent(QMoveEvent* event);
     void resizeEvent(QResizeEvent* event);
 
 Q_SIGNALS:
-    void statTimeReceived(int stationid, const timeutil::ptime& obstime, int typeID);
-    void timeReceived(const timeutil::ptime& obstime);
-
     void newStationList(std::vector<QString>&);
     void newParameterList(const std::vector<int>&);
     void saveData();
-    void windowClose();
     void printErrorList();
 
 private Q_SLOTS:
-    void navigateTo(const SensorTime& st);
-    void receivedStationFromDiana(int stationid);
-    void receivedTimeFromDiana(const timeutil::ptime& time);
-
     void errListMenu();
     void allListMenu();
     void errLogMenu();
@@ -142,8 +115,6 @@ private Q_SLOTS:
     void about();
     void aboutQt();
 
-    void closeWindow();
-
     //! bring up the WatchRR dialog
     void showWatchRR();
 
@@ -153,25 +124,14 @@ private Q_SLOTS:
     void onVersionCheckTimeout();
 
 private:
-    //! read data and model_data from kvalobs to datalist/modeldatalist
-    void readFromData(const timeutil::ptime&, const timeutil::ptime&, const std::vector<int>& stList);
+    void navigateTo(const SensorTime& st);
 
     //! Retrieves from stlist information about a given station
     void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
 
-    //! Retrieves from stlist the position and height of a given station
-    void findStationPos(int, double&, double&, double&);
-
-    void checkTypeId(int);
-    bool typeIdFilter(int, int, int, const timeutil::ptime&, int);
-
-    //! true if the given typeId and environment corresponds to a station type checked in the ListDialog
-    bool hqcTypeFilter(const QSet<QString>& selectedStationTypes, int typeId, int environment);
-
-    //! true if the hour given as input is checked in the ListDialog
-    bool timeFilter(int);
-
+    enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
     void listMenu(listType lt);
+
     void exitNoKvalobs();
     void closeEvent(QCloseEvent* event);
     void writeSettings();
@@ -180,46 +140,27 @@ private:
 
     void readFromStation();
 
-    /*! \brief Reads the parameter order from the file paramorder, then reaads the param
-     *        table in the kvalobs database and inserts the station information in parmap */
-    void readFromParam();
-
     //! A primitive horizontal tiling of the errorhead and errorlist windows
     void tileHorizontal();
-
-    bool keepDataInList(const kvalobs::kvData& kvd, int absTypeId, int env,
-                        const QSet<QString> selectedStationTypes,
-                        const bool allStationTypes, const bool showPrioritized);
-    void putToDataList(const kvalobs::kvData& kvd);
 
 private:
     ListDialog* lstdlg;
     DianaShowDialog* dshdlg;
     TextDataDialog* txtdlg;
     RejectDialog* rejdlg;
-    std::vector<kvalobs::kvRejectdecode> rejList;
     TimeseriesDialog* tsdlg;
     RejectTimeseriesDialog* rjtsdlg;
     AcceptTimeseriesDialog* actsdlg;
     HelpDialog* mHelpDialog;
 
-    model::KvalobsDataListPtr datalist;
-    std::vector<modDatl> modeldatalist;
-
     listType lity;
-    std::vector<currentType> currentTypeList;
-    HqcReinserter* reinserter;
 
-    model::KvalobsDataModel * dataModel;
-    int sLevel;
+    HqcReinserter* reinserter;
 
     /// True after first time ListOk() have been invoked with valid input
     bool listExist;
 
     QString userName;
-
-    std::vector<int> mSelectedParameters;
-    std::set<int> mSelectedTimes;
 
     std::auto_ptr<Ui::HqcMainWindow> ui;
     ClientButton* pluginB;
@@ -229,17 +170,6 @@ private:
     HintWidget* mHints;
 
     TSPlotDialog* tspdialog; // timeseries-plot
-
-    int parFind;
-
-    struct Param
-    {
-        bool item;
-        QString text;
-        bool mark;
-        bool noMark;
-        bool all;
-    };
 
     boost::shared_ptr<KvalobsAccess> kda;
     boost::shared_ptr<KvalobsModelAccess> kma;

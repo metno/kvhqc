@@ -42,6 +42,12 @@ KvalobsAccess::~KvalobsAccess()
 
 ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
+    LOG_SCOPE("KvalobsAccess");
+    if (not sensor.valid() or limits.undef()) {
+        LOG4SCOPE_ERROR("invalid sensor/time: " << sensor << DBG1(limits.t0()) << DBG1(limits.t1()));
+        return ObsAccess::TimeSet();
+    }
+
     Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
     if (f == mFetched.end()) {
         findRange(sensor, limits);
@@ -58,6 +64,11 @@ ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange
 
 ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 {
+    if (not st.valid()) {
+        LOG4HQC_ERROR("KvalobsAccess", "invalid sensorTime: " << st);
+        return ObsDataPtr();
+    }
+
     Data_t::iterator it = mData.find(st);
     if (it != mData.end())
         return it->second;
@@ -72,6 +83,11 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
 {
     LOG_SCOPE("KvalobsAccess");
+    if (not sensor.valid() or limits.undef()) {
+        LOG4SCOPE_ERROR("invalid sensor/time: " << sensor << DBG1(limits.t0()) << DBG1(limits.t1()));
+        return;
+    }
+
     LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(limits.t0()) << DBG1(limits.t1()));
     
     kvservice::WhichDataHelper whichData;

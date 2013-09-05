@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
 #include "QtKvService.hh"
+#include "StInfoSysBuffer.hh"
 
 #include "test/FakeKvApp.hh"
 #include "test/FakeReinserter.hh"

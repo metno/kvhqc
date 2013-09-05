@@ -2,6 +2,7 @@
 #ifndef HQC_LOGGING_HH
 #define HQC_LOGGING_HH 1
 
+#include "timeutil.hh"
 #include <Qt/qglobal.h>
 #include <string>
 
@@ -25,6 +26,7 @@ public:
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const QString& qs);
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const Sensor&  s);
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const SensorTime& st);
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const timeutil::ptime& t);
 
 #ifndef NO_LOG4CPP
 #include <log4cpp/Category.hh>

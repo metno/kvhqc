@@ -90,8 +90,14 @@ log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const Sensor& 
     return out;
 }
 
+log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const timeutil::ptime& t)
+{
+    out << timeutil::to_iso_extended_string(t);
+    return out;
+}
+
 log4cpp::CategoryStream& operator<<(log4cpp::CategoryStream& out, const SensorTime& st)
 {
-    out << st.sensor << '@' << timeutil::to_iso_extended_string(st.time);
+    out << st.sensor << '@' << st.time;
     return out;
 }

@@ -12,9 +12,6 @@ SET(hqc_HEADERS
   ../include/HqcDianaHelper.hh
   ../include/hqcmain.h
   ../include/ItemCheckBox.hh
-  ../include/KvalobsDataDelegate.h
-  ../include/KvalobsDataModel.h
-  ../include/KvalobsDataView.h
   ../include/ListDialog.hh
   ../include/rejectdialog.h
   ../include/rejecttable.h
@@ -24,12 +21,15 @@ SET(hqc_HEADERS
   ../include/textdatadialog.h
   ../include/textdatatable.h
   ../include/TimeseriesDialog.h
+  TimeSeriesView.hh
 )
 
 SET(hqc_SOURCES
   AnalyseErrors.cc
   DataList.cc
   DataListModel.cc
+  ../include/DataView.hh
+  DataView.cc
   ErrorListTableModel.cc
   ParamIdModel.cc
   ListDialog.cc
@@ -39,16 +39,11 @@ SET(hqc_SOURCES
   dianashowdialog.cc
   discarddialog.cc
   errorlist.cc
-  GetData.cc
   GetTextData.cc
   HqcApplication.cc
   HqcDianaHelper.cc
   hqcmain.cc
   ItemCheckBox.cc
-  KvalobsData.cc
-  KvalobsDataDelegate.cc
-  KvalobsDataModel.cc
-  KvalobsDataView.cc
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
@@ -59,6 +54,7 @@ SET(hqc_SOURCES
   textdatadialog.cc
   textdatatable.cc
   TimeseriesDialog.cc
+  TimeSeriesView.cc
 )
 
 INCLUDE_DIRECTORIES(

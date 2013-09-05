@@ -3,6 +3,7 @@
 
 #include "dianashowdialog.h"
 #include "KvMetaDataBuffer.hh"
+#include "ModelData.hh"
 
 #include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
@@ -11,18 +12,195 @@
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include <iostream>
 #include <sstream>
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
+
+namespace /* anonymous */ {
+
+/*
+  Convert to "Diana-value" of range check flag
+*/
+int numCode1(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib == 2 || nib == 3 )
+        code = 2;
+    else if ( nib == 4 || nib == 5 )
+        code = 3;
+    else if ( nib == 6 )
+        code = 9;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of consistency check flag
+*/
+int numCode2(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib >= 2 && nib <= 7 )
+        code = 8;
+    else if ( nib == 10 || nib == 11 )
+        code = 7;
+    else if ( nib == 13 )
+        code = 9;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of prognostic space control flag
+*/
+int numCode3(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib == 2 || nib == 3 )
+        code = 2;
+    else if ( nib == 4 || nib == 5 )
+        code = 3;
+    else if ( nib == 6 )
+        code = 5;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of step check flag
+*/
+int numCode4(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib == 2 || nib == 3 )
+        code = 2;
+    else if ( nib >= 4 && nib <= 7 )
+        code = 8;
+    else if ( nib == 9 || nib == 10 )
+        code = 7;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of timeseries adaption flag
+*/
+int numCode5(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 || nib == 2 )
+        code = 5;
+    else if ( nib == 3 )
+        code = 3;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of statistics control flag
+*/
+int numCode6(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib == 2 )
+        code = 3;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of climatology control flag
+*/
+int numCode7(int nib) {
+    int code = 9;
+    if ( nib == 0 )
+        code = 0;
+    else if ( nib == 1 )
+        code = 1;
+    else if ( nib == 2 )
+        code = 3;
+    else if ( nib == 3 )
+        code = 7;
+    return code;
+}
+
+/*
+  Convert to "Diana-value" of HQC flag
+*/
+int numCode8(int nib) {
+    int code = 9;
+    if ( nib <  10 )
+        code = nib;
+    else
+        code = 9;
+    return code;
+}
+
+// was: int KvalobsData::flag(std::size_t parameter)
+int flag4obs(ObsDataPtr obs)
+{
+    if (not obs)
+        return 0;
+    const kvalobs::kvControlInfo controlInfo = obs->controlinfo();
+
+    // Find flags from the different checks
+
+    int nib1  =controlInfo.flag(1);
+    int nib2  =controlInfo.flag(2);
+    int nib3  =controlInfo.flag(4);
+    int nib4  =controlInfo.flag(3);
+    int nib5  =controlInfo.flag(7);
+    int nib6  =controlInfo.flag(9);
+    int nib7  =controlInfo.flag(11);
+    int nib8  =controlInfo.flag(10);
+    int nib9  =controlInfo.flag(12);
+    int nib10 =controlInfo.flag(15);
+    // Decode flags
+
+    int nc1 = numCode1(nib1); // Range check
+    int nc2 = numCode2(nib2); // Formal Consistency check
+    int nc8 = numCode2(nib8); // Climatologic Consistency check
+    // Use the largest value from these checks
+    nc1 = nc1 > nc2 ? nc1 : nc2;
+    nc1 = nc1 > nc8 ? nc1 : nc8;
+    nc2 = numCode3(nib3); //Prognostic space control
+    int nc3 = numCode4(nib4); //Step check
+    int nc4 = numCode5(nib5); //Timeseries adaption
+    int nc5 = numCode6(nib6); //Statistics control
+    int nc6 = numCode7(nib7); //Climatology control
+    // Use the largest value from the three last checks
+    nc4 = nc4 > nc5 ? nc4 : nc5;
+    nc4 = nc4 > nc6 ? nc4 : nc6;
+    if ( nib9 > 1 )
+        nc4 = nc4 > 6 ? nc4 : 6;
+    nc5 = numCode8(nib10);
+
+    int nc = 10000*nc1 + 1000*nc2 + 100*nc3 + 10*nc4 + nc5;
+    return nc;
+}
+
+} // anonymous namespace
 
 HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
     : mDianaConfigDialog(dshdlg)
     , mClientButton(pluginB)
     , mDianaConnected(false)
     , mDianaNeedsHqcInit(true)
+    , mDianaSensorTime(Sensor(0,0,0,0,0), timeutil::ptime())
     , mCountSameTime(0)
     , mEnabled(true)
 {
@@ -38,6 +216,42 @@ HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
     connect(mClientButton, SIGNAL(connectionClosed()),   this, SLOT(handleConnectionClosed()));
 
     updateDianaParameters();
+}
+
+void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
+{
+    LOG_SCOPE("HqcDianaHelper");
+    DataView::setSensorsAndTimes(sensors, limits);
+
+    mDianaNeedsHqcInit = true;
+    mSensors = sensors;
+    mTimeLimits = limits;
+    mDianaSensorTime.sensor = mSensors.empty() ? Sensor(0,0,0,0,0) : mSensors.front();
+
+    ObsAccess::TimeSet allTimes;
+    BOOST_FOREACH(const Sensor& s, sensors) {
+        if (s.stationId > 0)
+            mDA->addAllTimes(allTimes, s, limits);
+        else
+            LOG4SCOPE_WARN("stationId = 0: " << s);
+    }
+    sendTimes(allTimes);
+}
+
+void HqcDianaHelper::navigateTo(const SensorTime& st)
+{
+    LOG_SCOPE("HqcDianaHelper");
+
+    if (eq_SensorTime()(mDianaSensorTime, st))
+        return;
+
+    mDianaSensorTime = st;
+    LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+
+    sendTime(st.time);
+    sendObservations(/*datalist, modeldatalist, mSelectedParameters*/);
+    sendStation(st.sensor.stationId);
+    sendSelectedParam(st.sensor.paramId);
 }
 
 void HqcDianaHelper::setEnabled(bool enabled)
@@ -82,15 +296,15 @@ void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
 
     mAllTimes = allTimes;
     sendTimes();
-    if (mEnabled and not isKnownTime(mDianaTime)) {
-        LOG4SCOPE_DEBUG(DBG1(mDianaTime));
+    if (mEnabled and not isKnownTime(mDianaSensorTime.time)) {
+        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
         if (not mAllTimes.empty()) {
-            mDianaTime = *mAllTimes.begin();
-            LOG4SCOPE_DEBUG(DBG1(mDianaTime));
+            mDianaSensorTime.time = *mAllTimes.begin();
+            LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
             sendTime();
         } else {
-            mDianaTime = timeutil::ptime();
-            LOG4SCOPE_DEBUG(DBG1(mDianaTime));
+            mDianaSensorTime.time = timeutil::ptime();
+            LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
         }
     }
 }
@@ -143,32 +357,44 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
                 std::cerr << "Unable to parse first element as stationid: '" << letter.common << "'" << std::endl;
                 return;
             }
-            /*emit*/ receivedStation(stationid);
-            handleDianaTime(name_time[1].toStdString());
+            handleDianaStationAndTime(stationid, name_time[1].toStdString());
         }
     } else if (letter.command == qmstrings::timechanged and mEnabled) {
-        handleDianaTime(letter.common);
+        handleDianaStationAndTime(0, letter.common);
     } else {
         LOG4HQC_INFO("HqcDianaHelper", "Diana sent a command that HQC does not understand:\n"
                      << "====================\n" << letter.content() << "====================");
     }
 }
 
-void HqcDianaHelper::handleDianaTime(const std::string& time_txt)
+void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string& time_txt)
 {
     if (not mEnabled)
         return;
+    LOG_SCOPE("HqcDianaHelper");
+
+    bool sendSignal = false;
+
     timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
     if (not isKnownTime(time)) {
-        std::cerr << "Invalid/unknown time from diana: '" << time_txt << "'" << std::endl;
+        LOG4SCOPE_INFO("Invalid/unknown time from diana: '" << time_txt << "'");
         sendTimes();
         sendTime();
-        /*emit*/ receivedTime(mDianaTime);
-    } else if (time != mDianaTime) {
-        mDianaTime = time;
-        /*emit*/ receivedTime(mDianaTime);
+    } else if (time != mDianaSensorTime.time) {
+        mDianaSensorTime.time = time;
+        sendObservations();
+        sendSignal = true;
     } else {
-        LOG4SCOPE_DEBUG(DBG1(mDianaTime));
+        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+    }
+    if (stationId != 0 or stationId != mDianaSensorTime.sensor.stationId) {
+        sendSignal = true;
+        mDianaSensorTime.sensor = Sensor(stationId, 0, 0, 0, 0); // TODO how to identify the correct sensor?
+    }
+
+    if (sendSignal) {
+        LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+        /*emit*/ signalNavigateTo(mDianaSensorTime);
     }
 }
 
@@ -201,23 +427,24 @@ void HqcDianaHelper::sendStation(int stnr)
 
 void HqcDianaHelper::sendTime(const timeutil::ptime& time)
 {
-    DBG(DBG1(time) << DBG1(mDianaTime));
-    if (not mEnabled or not mDianaConnected or mDianaTime == time or not isKnownTime(time))
+    DBG(DBG1(time) << DBG1(mDianaSensorTime));
+    if (not mEnabled or not mDianaConnected or mDianaSensorTime.time == time or not isKnownTime(time))
         return;
-    mDianaTime = time;
+    mDianaSensorTime.time = time;
     sendTime();
 }
     
 void HqcDianaHelper::sendTime()
 {
-    LOG4SCOPE_DEBUG(DBG1(mDianaTime));
-    if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaTime))
+    LOG_SCOPE("HqcDianaHelper");
+    LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
+    if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaSensorTime.time))
         return;
 
     miMessage m;
     m.command = qmstrings::settime;
     m.commondesc = "time";
-    m.common = timeutil::to_iso_extended_string(mDianaTime);
+    m.common = timeutil::to_iso_extended_string(mDianaSensorTime.time);
     LOG4SCOPE_DEBUG(DBG1(m.content()));
     mClientButton->sendMessage(m);
 }
@@ -227,113 +454,156 @@ bool HqcDianaHelper::isKnownTime(const timeutil::ptime& time) const
     return (not time.is_not_a_date_time() and mAllTimes.find(time) != mAllTimes.end());
 }
 
-void HqcDianaHelper::sendObservations(const model::KvalobsDataList& datalist,
-                                      const std::vector<modDatl>& modeldatalist,
-                                      const std::vector<int>& selectedParameters)
+std::string HqcDianaHelper::synopStart(int stationId)
+{
+    std::ostringstream synop;
+    try {
+        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
+        
+        synop << stationId << ',';
+                
+        const std::string stationType = hqcType(stationId, station.environmentid());
+        if (stationType == "AA" or stationType == "VM" or stationType == "none")
+            synop << "none";
+        else if (stationType.at(0) == 'P')
+            synop << 'P';
+        else
+            synop << stationType.at(1);
+        synop << ',';
+        
+        std::string isAuto = "x";
+        if (stationType.at(0) == 'A')
+            isAuto = "a";
+        else if (stationType.at(0) == 'N' || stationType.at(0) == 'P')
+            isAuto = "n";
+        synop << isAuto << ',';
+        
+        synop << (boost::format("%1$.4f,%2$.4f") % station.lon() % station.lat()).str();
+    } catch (std::runtime_error&) {
+        // ignore unknown station
+    }
+    return synop.str();
+}
+
+std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, bool& hasData)
+{
+    double corr = -32767;
+    
+    ObsDataPtr obs = mDA->find(st);
+    if (obs) {
+        corr = obs->corrected();
+        if (sp.what != SendPar::CORRECTED) {
+            ModelDataPtr mdl = mMA->find(st);
+            if (mdl) {
+                const double modelValue = mdl->value();
+                if (sp.what == SendPar::MODEL)
+                    corr = modelValue;
+                else if (sp.what == SendPar::DIFF)
+                    corr = corr - modelValue;
+                else if (sp.what == SendPar::PROPORTION)
+                    corr = (abs(modelValue) > 0.00001) ? corr/modelValue : -32767;
+            } else {
+                corr = -32767;
+            }
+        }
+    }
+    if (corr < -999)
+        return ",-32767";
+
+    double corrAA = -32767;
+    {
+        SensorTime stAA(st);
+        stAA.sensor.paramId = 1 /* AA */;
+        ObsDataPtr obsAA = mDA->find(stAA);
+        if (obsAA)
+            corrAA = obsAA->corrected();
+    }
+
+    corr = dianaValue(st.sensor.paramId, sp.what == SendPar::MODEL, corr, corrAA);
+    const int flag = flag4obs(obs);
+    const int shFl1 = flag/10000;
+    const int shFl2 = flag%10000/1000;
+    const int shFl3 = flag%1000/100;
+    const int shFl4 = flag%100/10;
+    const int shFl5 = flag%10;
+    int maxFlag = shFl1 >shFl2 ? shFl1 : shFl2;
+    maxFlag = shFl3 > maxFlag ? shFl3 : maxFlag;
+    maxFlag = shFl4 > maxFlag ? shFl4 : maxFlag;
+    const std::string flagstr = (boost::format("%1$05d") % flag).str();
+    std::string colorstr;
+    if (maxFlag == 0)
+        colorstr = ";0:0:0";
+    if (maxFlag == 1 or (shFl5 != 0 && shFl5 != 9))
+        colorstr = ";0:255:0";
+    else if (maxFlag >= 2 && maxFlag <= 5)
+        colorstr = ";255:175:0";
+    else if (maxFlag >= 6)
+        colorstr = ";255:0:0";
+    
+    hasData = true;
+    std::ostringstream synop;
+    synop << ',' << corr << ';' << flagstr << colorstr;
+    return synop.str();
+}
+
+void HqcDianaHelper::sendObservations()
 {
     LOG_SCOPE("HqcDianaHelper");
-    if (not mEnabled or not mDianaConnected or selectedParameters.empty() or mDianaTime.is_not_a_date_time())
+    const timeutil::ptime& t = mDianaSensorTime.time;
+    if (not mEnabled or not mDianaConnected or mSensors.empty() or t.is_not_a_date_time())
         return;
     
+    LOG4SCOPE_ERROR("FIXME need to reimplement sendObservations");
+
+    typedef std::map<int, Sensor> SensorByParam_t;
+    typedef std::map<int, SensorByParam_t> SensorByStationAndParam_t;
+    SensorByStationAndParam_t sendSensors;
+    BOOST_FOREACH(const Sensor& s, mSensors)
+        sendSensors[s.stationId].insert(std::make_pair(s.paramId, s)); // FIXME random results if more than one typeId/level/sensor
+
     std::ostringstream synopDescription;
     synopDescription << "id,St.type,auto,lon,lat";
-    BOOST_FOREACH(int pid, selectedParameters) {
-        SendPars_t::const_iterator it = mSendPars.find(pid);
-        if (it != mSendPars.end())
-            synopDescription << ',' << it->second.dianaName;
+    BOOST_FOREACH(const SendPars_t::value_type& p_sp, mSendPars) {
+        const SendPar& sp = p_sp.second;
+        synopDescription << ',' << sp.dianaName;
     }
-    
+
     std::vector<std::string> synopData;
-    
-    int prStnr = 0;
-    LOG4SCOPE_DEBUG(DBG1(mDianaNeedsHqcInit));
-    BOOST_FOREACH(const model::KvalobsData& d, datalist) {
-        if (d.otime() != mDianaTime or d.stnr() == prStnr)
+    BOOST_FOREACH(const SensorByStationAndParam_t::value_type& sps, sendSensors) {
+        const int stationId = sps.first;
+        const SensorByParam_t& sbp = sps.second;
+
+        const std::string start = synopStart(stationId);
+        if (start.empty())
             continue;
-        try {
-            const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(d.stnr());
 
-            std::ostringstream synop;
-            synop << d.stnr() << ',';
+        std::ostringstream synopStation;
+        synopStation << start;
 
-            const std::string stationType = hqcType(d.stnr(), station.environmentid());
-            if (stationType == "AA" or stationType == "VM" or stationType == "none")
-                synop << "none";
-            else if (stationType.at(0) == 'P')
-                synop << 'P';
-            else
-                synop << stationType.at(1);
-            synop << ',';
-
-            std::string isAuto = "x";
-            if (stationType.at(0) == 'A')
-                isAuto = "a";
-            else if (stationType.at(0) == 'N' || stationType.at(0) == 'P')
-                isAuto = "n";
-            synop << isAuto << ',';
-            
-            synop << (boost::format("%1$.4f,%2$.4f") % station.lon() % station.lat()).str();
-            BOOST_FOREACH(const int pid, selectedParameters) {
-                SendPars_t::const_iterator it = mSendPars.find(pid);
-                if (it == mSendPars.end())
-                    continue;
-                const SendPar& sp = it->second;
-
-                double corr = d.corr(pid);
-                if (sp.what != SendPar::CORRECTED) {
-                    BOOST_FOREACH(const modDatl& modelV, modeldatalist) {
-                        if (modelV.stnr == d.stnr() and modelV.otime == d.otime()) {
-                            const double modelValue = modelV.orig[pid];
-                            if (sp.what == SendPar::MODEL)
-                                corr = modelValue;
-                            else if (sp.what == SendPar::DIFF)
-                                corr = corr - modelValue;
-                            else if (sp.what == SendPar::PROPORTION)
-                                corr = (abs(modelValue) > 0.00001) ? corr/modelValue : -32767;
-                            break;
-                        }
-                    }
-                }
-                if(corr<-999){
-                    synop << ",-32767";
-                } else {
-                    corr = dianaValue(pid, sp.what == SendPar::MODEL, corr, d.corr(1/*AA*/));
-                    const int flag = d.flag(pid);
-                    const int shFl1 = flag/10000;
-                    const int shFl2 = flag%10000/1000;
-                    const int shFl3 = flag%1000/100;
-                    const int shFl4 = flag%100/10;
-                    const int shFl5 = flag%10;
-                    int maxFlag = shFl1 >shFl2 ? shFl1 : shFl2;
-                    maxFlag = shFl3 > maxFlag ? shFl3 : maxFlag;
-                    maxFlag = shFl4 > maxFlag ? shFl4 : maxFlag;
-                    const std::string flagstr = (boost::format("%1$05d") % flag).str();
-                    std::string colorstr;
-                    if (maxFlag == 0)
-                        colorstr = ";0:0:0";
-                    if (maxFlag == 1 or (shFl5 != 0 && shFl5 != 9))
-                        colorstr = ";0:255:0";
-                    else if (maxFlag >= 2 && maxFlag <= 5)
-                        colorstr = ";255:175:0";
-                    else if (maxFlag >= 6)
-                        colorstr = ";255:0:0";
-
-                    synop << ',' << corr << ';' << flagstr << colorstr;
-                }
+        bool hasData = false;
+        BOOST_FOREACH(const SendPars_t::value_type& p_sp, mSendPars) {
+            const int paramId = p_sp.first;
+            const SendPar& sp = p_sp.second;
+        
+            SensorByParam_t::const_iterator it = sbp.find(paramId);
+            if (it != sbp.end()) {
+                const Sensor& sensor = it->second;
+                const SensorTime st(sensor, t);
+                synopStation << synopValue(st, sp, hasData);
+            } else {
+                synopStation << ",-32767";
             }
-            synopData.push_back(synop.str());
-            prStnr = d.stnr();
-        } catch (std::runtime_error& e) {
-            // unknown station, ignore
-            LOG4SCOPE_DEBUG(DBG1(d.stnr()));
         }
+
+        if (hasData)
+            synopData.push_back(synopStation.str());
     }
 
     if (not synopData.empty()) {
         miMessage pLetter;
         pLetter.command = mDianaNeedsHqcInit ? qmstrings::init_HQC_params : qmstrings::update_HQC_params;
         pLetter.commondesc = "time,plottype";
-        pLetter.common = timeutil::to_iso_extended_string(mDianaTime) + ",synop";
+        pLetter.common = timeutil::to_iso_extended_string(mDianaSensorTime.time) + ",synop";
 
         pLetter.description = synopDescription.str();
 #ifdef METLIBS_BEFORE_4_9_5
@@ -358,7 +628,7 @@ void HqcDianaHelper::sendSelectedParam(int paramId)
         return;
     SendPars_t::const_iterator it = mSendPars.find(paramId);
     if (it == mSendPars.end()) {
-        std::cerr << "No such diana parameter: " << paramId << std::endl;
+        LOG4SCOPE_WARN("No such diana parameter: " << paramId);
         return;
     }
 
@@ -581,7 +851,7 @@ void HqcDianaHelper::updateDianaParameters()
         mSendPars.insert(std::make_pair(61/*DD*/, SendPar(item)));
 
     item = "ff";
-    if ( mDianaConfigDialog->ffmoType->isChecked())
+    if (mDianaConfigDialog->ffmoType->isChecked())
         mSendPars.insert(std::make_pair(81/*FF*/, SendPar(item, SendPar::MODEL)));
     else
         mSendPars.insert(std::make_pair(81/*FF*/, SendPar(item)));

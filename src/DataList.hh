@@ -2,25 +2,25 @@
 #ifndef DataList_hh
 #define DataList_hh 1
 
-#include "DataListModel.hh"
-#include "EditAccess.hh"
-#include "ModelAccess.hh"
+#include "DataView.hh"
 
 #include <QtGui/QTableView>
 
-class DataList : public QTableView
+class DataListModel;
+
+class DataList : public QTableView, public DataView
 {   Q_OBJECT;
 public:
     DataList(QWidget* parent=0);
     ~DataList();
 
-    void setSensorsAndTimes(EditAccessPtr eda, const DataListModel::Sensors_t& sensors, const TimeRange& limits);
+    void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
 
-public Q_SLOTS:
     void navigateTo(const SensorTime&);
 
 private:
     std::auto_ptr<DataListModel> mTableModel;
+    SensorTime mSensorTime;
 };
 
 #endif // DataList_hh

@@ -2,7 +2,7 @@
 #ifndef FakeReinserter_hh
 #define FakeReinserter_hh 1
 
-#include "hqcdefs.h"
+#include "HqcDataReinserter.h"
 
 class FakeReinserter : public HqcReinserter
 {

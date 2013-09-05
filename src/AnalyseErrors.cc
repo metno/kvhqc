@@ -26,25 +26,14 @@ bool ErrorSpecialTimeFilter(int paramId, const timeutil::ptime& otime)
 
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 {
-    // this is from HqcMainWindow::checkTypeId
-    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
-    std::vector<currentType> currentTypeList;
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
-        currentType crT;
-        crT.stnr    = stnr;
-        crT.par     = op.paramID();
-        crT.fDate   = timeutil::from_miTime(op.fromtime()).date();
-        crT.tDate   = timeutil::from_miTime(op.totime()).date();;
-        crT.cLevel  = op.level();
-        crT.cSensor = 0;
-        crT.cTypeId = op.typeID();
-        currentTypeList.push_back(crT);
-    }
-
-    // this is from ErrorList::typeFilter
     const timeutil::pdate otime_date = otime.date();
-    BOOST_FOREACH(const currentType& ct, currentTypeList) {
-        if (stnr == ct.stnr && abs(typeId) == ct.cTypeId && par == ct.par && otime_date >= ct.fDate && otime_date <= ct.tDate )
+
+    // this is from HqcMainWindow::checkTypeId combined with from ErrorList::typeFilter
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
+    BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
+        const timeutil::pdate tfrom = timeutil::from_miTime(op.fromtime()).date(),
+            tto = timeutil::from_miTime(op.totime()).date();
+        if (abs(typeId) == op.typeID() and par == op.paramID() && otime_date >= tfrom && otime_date <= tto )
             return true;
     }
     return false;
@@ -276,6 +265,7 @@ namespace Errors {
 
 Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
 {
+    // FIXME add timeFilter from ClockDialog
     LOG_SCOPE("AnalyseErrors2");
 
     Errors_t memStore2;

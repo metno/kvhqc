@@ -49,4 +49,5 @@ bool GetTextData::next(kvservice::KvObsDataList &textdatalist)
             txtList.push_back(txtd);
         }
     }
+    return true;
 }

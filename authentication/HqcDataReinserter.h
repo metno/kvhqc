@@ -52,4 +52,6 @@ private:
     CKvalObs::CDataSource::Result_var fail(const std::string& why) const;
 };
 
+typedef kvalobs::DataReinserter<kvservice::KvApp> HqcReinserter;
+
 #endif // __HqcDataReinserter_h__

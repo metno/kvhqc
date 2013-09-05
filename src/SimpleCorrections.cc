@@ -5,8 +5,6 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <boost/bind.hpp>
-
 #include "ui_simplecorrections.h"
 //#define NDEBUG
 #include "debug.hh"
@@ -134,7 +132,6 @@ void interpolate_or_correct(EditAccessPtr eda, const SensorTime& sensorTime, flo
 SimpleCorrections::SimpleCorrections(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SimpleCorrections)
-    , mSensorTime(Sensor(0, 0, 0, 0, 0), timeutil::ptime())
 {
     ui->setupUi(this);
 
@@ -145,30 +142,34 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 
     setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
 
-    navigateTo(mSensorTime);
+    update();
 }
 
 SimpleCorrections::~SimpleCorrections()
 {
-    if (mDA)
-        mDA->obsDataChanged.disconnect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
 }
 
 void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    if (mDA)
-        mDA->obsDataChanged.disconnect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
-    mDA = eda;
-    mMA = mda;
-    if (mDA)
-        mDA->obsDataChanged.connect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
-
-    navigateTo(mSensorTime);
+    DataView::setDataAccess(eda, mda);
+    update();
 }
 
 void SimpleCorrections::navigateTo(const SensorTime& st)
 {
+    LOG_SCOPE("SimpleCorrections");
+    if (eq_SensorTime()(mSensorTime, st))
+        return;
+
     mSensorTime = st;
+    LOG4SCOPE_DEBUG(DBG1(mSensorTime));
+
+    update();
+}
+
+void SimpleCorrections::update()
+{
+    LOG_SCOPE("SimpleCorrections");
 
     const Sensor& s = mSensorTime.sensor;
     if (s.stationId > 0) {
@@ -199,6 +200,8 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 
 void SimpleCorrections::enableEditing()
 {
+    LOG_SCOPE("SimpleCorrections");
+
     enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
            INTERPOLATED, CORRECTED, N_BUTTONS };
     QWidget* buttons[N_BUTTONS] = {
@@ -209,9 +212,9 @@ void SimpleCorrections::enableEditing()
     };
     bool enable[N_BUTTONS];
     
-    EditDataPtr obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
     const Sensor& s = mSensorTime.sensor;
-    std::fill(enable, enable+N_BUTTONS, (obs and s.stationId > 0 and s.paramId != 110));
+    EditDataPtr obs = (mDA and s.stationId > 0 and s.paramId != 110) ? mDA->findE(mSensorTime) : EditDataPtr();
+    std::fill(enable, enable+N_BUTTONS, obs);
 
     if (obs) {
         const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
@@ -234,7 +237,7 @@ void SimpleCorrections::enableEditing()
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
 {
     if (data and eq_SensorTime()(data->sensorTime(), mSensorTime))
-        navigateTo(mSensorTime);
+        update();
 }
 
 void SimpleCorrections::onAcceptOriginal()
@@ -269,9 +272,16 @@ void SimpleCorrections::onRejectQC2()
 
 void SimpleCorrections::onInterpolated()
 {
+    bool ok;
+    float newC = ui->textInterpolatedValue->text().toFloat(&ok);
+    if (ok)
+        interpolate_or_correct(mDA, mSensorTime, newC);
 }
 
 void SimpleCorrections::onCorrected()
 {
-    onInterpolated();
+    bool ok;
+    float newC = ui->textCorrectedValue->text().toFloat(&ok);
+    if (ok)
+        interpolate_or_correct(mDA, mSensorTime, newC);
 }

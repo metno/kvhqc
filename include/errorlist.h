@@ -31,18 +31,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define ERRORLIST_H
 
 #include "AnalyseErrors.hh"
-#include "KvalobsData.h"
-#include "ModelAccess.hh"
-#include "TimeRange.hh"
+#include "DataView.hh"
 
 #include <QtCore/QString>
 #include <QtGui/QTableView>
 
-#include <set>
 #include <vector>
 
 class ErrorListTableModel;
-class HqcMainWindow;
 QT_BEGIN_NAMESPACE;
 class QSortFilterProxyModel;
 class QWidget;
@@ -56,26 +52,27 @@ QT_END_NAMESPACE;
  * new values or approve or reject existing values.
  */
 
-class ErrorList : public QTableView
-{ Q_OBJECT;
+class ErrorList : public QTableView, public DataView
+{   Q_OBJECT;
 public:
     typedef std::vector<EditDataPtr> Errors_t;
-    typedef std::vector<Sensor> Sensors_t;
 
     ErrorList(QWidget* parent=0);
     ~ErrorList();
 
-    void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
-    void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen);
+    void setErrorsForSalen(bool errorsForSalen)
+        { mErrorsForSalen = errorsForSalen; }
+    virtual void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
+    virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+
+    void navigateTo(const SensorTime&) { }
 
     EditDataPtr getObs() const;
 
 Q_SIGNALS:
     void errorListClosed();
-    void signalNavigateTo(const SensorTime& st);
 
 private:
-    void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
     EditDataPtr getObs(int row) const;
     int getSelectedRow() const;
                                     
@@ -86,19 +83,12 @@ private Q_SLOTS:
 
 private:
     void resizeHeaders();
-    void unsubscribeAll();
     void showSameStation();
     void signalStationSelected();
 
 private:
-    HqcMainWindow* mainWindow;
     int mLastSelectedRow;
-
-    EditAccessPtr mDA;
-    ModelAccessPtr mMA;
-
-    typedef std::vector<ObsSubscription> Subscriptions_t;
-    Subscriptions_t mSubscriptions;
+    bool mErrorsForSalen;
 
     std::auto_ptr<QSortFilterProxyModel> mSortProxy;
     std::auto_ptr<ErrorListTableModel> mTableModel;

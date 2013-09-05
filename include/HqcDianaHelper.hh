@@ -2,45 +2,36 @@
 #ifndef HqcDianaHelper_hh
 #define HqcDianaHelper_hh 1
 
-#include "hqcdefs.h"
-#include "KvalobsData.h"
-#include "timeutil.hh"
+#include "DataView.hh"
 
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 
 #include <set>
 #include <map>
+#include <vector>
 
 class DianaShowDialog;
 class ClientButton;
 class miMessage;
 
-class HqcDianaHelper : public QObject
-{ Q_OBJECT;
+class HqcDianaHelper : public QObject, public DataView
+{   Q_OBJECT;
 public:
     HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB);
 
+    void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+
     bool isConnected() const
         { return mDianaConnected; }
-    const timeutil::ptime& dianaTime() const
-        { return mDianaTime; }
 
     void setEnabled(bool enabled);
 
-    void setFirstObs()
-        { mDianaNeedsHqcInit = true; }
-
     void applyQuickMenu();
-    void sendTimes(const std::set<timeutil::ptime>& allTimes);
-    void sendTime(const timeutil::ptime& time);
-    void sendStation(int stationID);
-    void sendObservations(const model::KvalobsDataList& datalist,
-                          const std::vector<modDatl>& modeldatalist,
-                          const std::vector<int>& selectedParameters);
-    void sendSelectedParam(int paramId);
 
     void updateDianaParameters();
+
+    void navigateTo(const SensorTime&);
 
 private Q_SLOTS:
     void handleAddressListChanged();
@@ -57,25 +48,6 @@ Q_SIGNALS:
     void receivedTime(const timeutil::ptime& time);
 
 private:
-    double dianaValue(int parNo, bool isModel, double qVal, double aa);
-    std::string hqcType(int typeId, int env);
-    void sendTimes();
-    void sendTime();
-    bool isKnownTime(const timeutil::ptime& time) const;
-    void handleDianaTime(const std::string& time_txt);
-
-private:
-    DianaShowDialog* mDianaConfigDialog;
-    ClientButton* mClientButton;
-
-    bool mDianaConnected;
-    bool mDianaNeedsHqcInit;
-    timeutil::ptime mDianaTime;
-    int mCountSameTime;
-    bool mEnabled;
-
-    std::set<timeutil::ptime> mAllTimes;
-
     struct SendPar {
         std::string dianaName;
         enum What { CORRECTED, MODEL, DIFF, PROPORTION };
@@ -84,6 +56,38 @@ private:
             : dianaName(dn), what(w) { }
     };
     typedef std::map<int, SendPar> SendPars_t;
+
+private:
+    void sendTimes(const std::set<timeutil::ptime>& allTimes);
+    void sendTime(const timeutil::ptime& time);
+    void sendStation(int stationID);
+    void sendObservations();
+    void sendSelectedParam(int paramId);
+
+    std::string synopStart(int stationId);
+    std::string synopValue(const SensorTime& st, const SendPar& sp, bool& hasData);
+    double dianaValue(int parNo, bool isModel, double qVal, double aa);
+    std::string hqcType(int typeId, int env);
+
+    void sendTimes();
+    void sendTime();
+    bool isKnownTime(const timeutil::ptime& time) const;
+    void handleDianaStationAndTime(int stationId, const std::string& time_txt);
+
+private:
+    DianaShowDialog* mDianaConfigDialog;
+    ClientButton* mClientButton;
+
+    bool mDianaConnected;
+    bool mDianaNeedsHqcInit;
+    SensorTime mDianaSensorTime;
+    int mCountSameTime;
+    bool mEnabled;
+
+    Sensors_t mSensors;
+    TimeRange mTimeLimits;
+    std::set<timeutil::ptime> mAllTimes;
+
     SendPars_t mSendPars;
 };
 

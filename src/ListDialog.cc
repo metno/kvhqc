@@ -896,7 +896,7 @@ std::set<int> ListDialog::getSelectedTimes()
 
 void ListDialog::prepareStationSelectionDialog()
 {
-    const listStat_l& listStat = static_cast<HqcMainWindow*>(parent())->getStationDetails();
+    const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
 
     removeAllStatFromListbox();
     statSelect.reset(new StationSelection(listStat,

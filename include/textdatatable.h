@@ -4,6 +4,7 @@
 #define TEXTDATATABLE_H
 
 #include "hqcdefs.h"
+#include "TimeRange.hh"
 
 #include <QtGui/QDialog>
 #include <QtCore/QAbstractTableModel>
@@ -26,6 +27,8 @@ class TextData : public QDialog
 { Q_OBJECT;
 public:
     TextData(const std::vector<TxtDat>&, QWidget* parent=0);
+
+    static void showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent);
 
 private:
     std::auto_ptr<TextDataTableModel> mTableModel;
