@@ -91,24 +91,18 @@ ErrorList::~ErrorList()
 {
 }
 
-void ErrorList::generateContents(const std::vector<int>& selectedParameters,
-                                 const TimeRange& timerange,
-                                 bool errorListSalen,
-                                 model::KvalobsDataListPtr dtl,
-                                 const std::vector<modDatl>& mdtl)
+void ErrorList::setErrors(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& memStore2)
 {
     LOG_SCOPE("ErrorList");
     mLastSelectedRow = -1;
 
-    const std::vector<mem> memStore2
-        = Errors::fillMemoryStore2(selectedParameters, timerange, errorListSalen, dtl, mdtl);
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(memStore2));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, memStore2));
     mSortProxy->setSourceModel(mTableModel.get());
 
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    50);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME,  80);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME,  160);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
@@ -119,8 +113,8 @@ void ErrorList::generateContents(const std::vector<int>& selectedParameters,
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MODEL,     60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_NAME, 50);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   15);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  30);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   20);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  50);
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -134,9 +128,12 @@ void ErrorList::showFail(const QModelIndex& index)
 {
     if (index.column() < 10 or index.column() > 12)
         return;
-    FailInfo::FailDialog fDlg;
-    fDlg.failList->newData(getKvData(index.row()));
-    fDlg.exec();
+
+    LOG4SCOPE_DEBUG("sorry, FailDialog needs update");
+    //// FIXME re-enable FailInfo
+    // FailInfo::FailDialog fDlg;
+    // fDlg.failList->newData(getKvData(index.row()));
+    // fDlg.exec();
 }
 
 int ErrorList::getSelectedRow() const
@@ -156,7 +153,9 @@ void ErrorList::showSameStation()
     LOG4SCOPE_DEBUG(DBG1(row));
     if (row < 0)
         return;
-    mTableModel->showSameStation(mTableModel->mem4Row(row).stnr);
+    EditDataPtr obs = mTableModel->mem4Row(row);
+    int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
+    mTableModel->showSameStation(stationId);
 }
 
 void ErrorList::signalStationSelected()
@@ -166,188 +165,16 @@ void ErrorList::signalStationSelected()
         return;
     mLastSelectedRow = row;
 
-    /*emit*/ signalNavigateTo(getKvData(row));
+    EditDataPtr obs = getObs(row);
+    /*emit*/ signalNavigateTo(obs->sensorTime());
 }
 
-const ErrorList::mem& ErrorList::getMem(int row) const
+EditDataPtr ErrorList::getObs(int row) const
 {
     return mTableModel->mem4Row(row);
 }
 
-kvData ErrorList::getKvData(const mem& m) const
+EditDataPtr ErrorList::getObs() const
 {
-    return kvData(m.stnr, timeutil::to_miTime(m.obstime), m.orig,
-                  m.parNo, timeutil::to_miTime(m.tbtime),
-                  m.typeId, m.sen, m.lev, m.corr, m.controlinfo,
-                  m.useinfo, m.cfailed);
-}
-
-kvalobs::kvData ErrorList::getKvData() const
-{
-    const int row = getSelectedRow();
-    if (row < 0)
-        return kvData(0, timeutil::ptime(), -32767,
-                      0, timeutil::ptime(), 0, 0, 0, -99999,
-                      std::string("FFFFFFFFFFFFFFFF"),
-                      std::string("FFFFFFFFFFFFFFFF"),
-                      "no-row-in-errorlist");
-    else
-        return getKvData(getMem(row));
-}
-
-namespace /* anonymous */ {
-
-bool set_no_accumulation(kvalobs::kvData& kd)
-{
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    if (ci.flag(kvalobs::flag::fd) != 3)
-        return false;
-    ci.set(kvalobs::flag::fd, 1);
-    kd.controlinfo(ci);
-    return true;
-}
-
-void set_fhqc(kvalobs::kvData& kd, int fhqc)
-{
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    ci.set(kvalobs::flag::fhqc, fhqc);
-    kd.controlinfo(ci);
-}
-
-void set_fmis(kvalobs::kvData& kd, int fmis)
-{
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    ci.set(kvalobs::flag::fmis, fmis);
-    kd.controlinfo(ci);
-}
-
-} // anonymous namespace
-
-void ErrorList::saveChanges()
-{
-    LOG_SCOPE("ErrorList");
-
-    typedef std::list<kvData> kvDataList;
-    kvDataList modData;
-    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
-        if (mo.change == NO_CHANGE)
-            continue;
-        kvalobs::kvData kd = getKvData(mo);
-        const kvalobs::kvControlInfo cif = kd.controlinfo();
-
-        const int fmis = cif.flag(kvalobs::flag::fmis);
-        const int fd   = cif.flag(kvalobs::flag::fd);
-        bool qc2ok = mo.changed_qc2allowed;
-
-        switch (mo.change) {
-        case NO_CHANGE:
-            continue;
-        case CORR_OK:
-            if (Helpers::float_eq()(kd.original(), kd.corrected())
-                and (not Helpers::is_accumulation(fd)) and fmis < 2)
-            {
-                kvalobs::hqc::hqc_accept(kd);
-                set_no_accumulation(kd);
-            } else if (fmis == 0) {
-                set_fhqc(kd, 7);
-            } else if (fmis == 1) {
-                set_fhqc(kd, 5);
-            } else {
-                LOG4SCOPE_ERROR("bad corr ok, would not set fhqc, kd=" << kd);
-                continue;
-            }
-            break;
-        case ORIG_OK:
-            if (fmis == 3) {
-                LOG4SCOPE_ERROR("fmis=3, orig ok not possible, should not have been here, kd=" << kd);
-                continue;
-            }
-            if (cif.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
-                LOG4SCOPE_ERROR("bad orig ok, would not set fhqc, kd=" << kd);
-                continue;
-            }
-            kd.corrected(kd.original());
-            kvalobs::hqc::hqc_accept(kd);
-            if (fmis == 0 or fmis == 2) {
-                set_fmis(kd, 0);
-                set_no_accumulation(kd);
-            } else if (fmis == 1) {
-                set_fmis(kd, 3);
-            }
-            break;
-        case CORRECTED:
-        case INTERPOLATED:
-            if (Helpers::is_accumulation(fd)) {
-                LOG4SCOPE_WARN("corr/interp for accumulation, should not have been here, kd=" << kd);
-                continue;
-            }
-            kvalobs::hqc::hqc_auto_correct(kd, mo.changed_value);
-            qc2ok = false;
-            break;
-        case REDISTRIBUTED:
-            LOG4SCOPE_ERROR("should not make redistributions in error list, kd=" << kd);
-            continue;
-        case REJECTED:
-            if (fmis == 1 or fmis == 3) {
-                LOG4SCOPE_ERROR("fmis=1/3, cannot reject, should not have been here, kd=" << kd);
-                continue;
-            }
-            kvalobs::hqc::hqc_reject(kd);
-            break;
-        }
-        if (qc2ok)
-            set_fhqc(kd, 4);
-
-        modData.push_back( kd );
-    }
-
-    LOG4SCOPE_DEBUG("modData =\n" << decodeutility::kvdataformatter::createString(modData));
-
-    if (modData.empty()) {
-        QMessageBox::information(this,
-                                 tr("No unsaved data"),
-                                 tr("There are no unsaved data."),
-                                 QMessageBox::Ok, Qt::NoButton);
-        return;
-    }
-
-    if (mainWindow->saveDataToKvalobs(modData)) {
-        QMessageBox::information(this,
-                                 tr("Data saved"),
-                                 tr("%1 rows have been saved to kvalobs. Warning: data shown in error "
-                                    "and data list might no longer be consistent with kvalobs.").arg(modData.size()),
-                                 QMessageBox::Ok, Qt::NoButton);
-    }
-}
-
-bool ErrorList::maybeSave()
-{
-    bool modified = false;
-    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
-        if (mo.change != NO_CHANGE) {
-            modified = true;
-            break;
-        }
-    }
-
-    bool ret = true;
-    if (modified) {
-        int result =
-            QMessageBox::warning( this, tr("HQC"),
-                                  tr("You have unsaved changes in the error list. Do you want to save them?"),
-                                  tr("&Yes"), tr("&No"), tr("&Cancel"),
-                                  0, 2 );
-        if ( ! result )
-            saveChanges();
-        ret = result != 2;
-    }
-    return ret;
-}
-
-void ErrorList::closeEvent(QCloseEvent* event)
-{
-    if (maybeSave())
-        QTableView::closeEvent(event);
-    else
-        event->ignore();
+    return getObs(getSelectedRow());
 }

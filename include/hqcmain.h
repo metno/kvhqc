@@ -55,13 +55,14 @@ class DataTable;
 class DianaShowDialog;
 class HintWidget;
 class HqcDianaHelper;
+class KvalobsAccess;
+class KvalobsModelAccess;
 class ListDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
+class SensorTime;
 class TextDataDialog;
 class TimeseriesDialog;
-class KvalobsAccess;
-class KvalobsModelAccess;
 
 namespace model {
 class KvalobsDataModel;
@@ -113,7 +114,7 @@ Q_SIGNALS:
     void printErrorList();
 
 private Q_SLOTS:
-    void navigateTo(const kvalobs::kvData& d);
+    void navigateTo(const SensorTime& st);
     void receivedStationFromDiana(int stationid);
     void receivedTimeFromDiana(const timeutil::ptime& time);
 

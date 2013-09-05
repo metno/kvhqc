@@ -8,7 +8,7 @@
 
 #include <boost/foreach.hpp>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace /* anonymous */ {
@@ -216,11 +216,6 @@ bool isErrorInMemstore1(const int flTyp, const int paramId, const kvalobs::kvCon
 }
 
 
-bool isErrorInMemstore1(const ErrorList::mem& mo)
-{
-    return isErrorInMemstore1(mo.flTyp, mo.parNo, mo.controlinfo);
-}
-
 int whichMemStore(const int flg, const int flTyp, bool errorsForSalen)
 {
     // insert data into appropriate memory stores
@@ -256,26 +251,6 @@ int whichMemStore(const int flg, const int flTyp, bool errorsForSalen)
     return 0;
 }
 
-void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char* DBGE(label))
-{
-#ifndef NDEBUG
-    LOG_SCOPE("AnalyseErrors");
-    LOG4SCOPE_DEBUG("memory store " << label << " size = " << memstore.size());
-    int i = -1;
-    BOOST_FOREACH(const ErrorList::mem& mo, memstore) {
-        LOG4SCOPE_DEBUG(std::setw(7) << (++i)
-                        << std::setw(7) << mo.stnr << ' '
-                        << std::setw(21) << mo.obstime
-                        << std::setw(5) << mo.parNo
-                        << std::setw(9) << mo.orig
-                        << std::setw(9) << mo.corr
-                        << std::setw(9) << mo.morig << "  "
-                        << std::setw(5) << mo.flTyp << "  " << mo.flg << "  "
-                        << mo.controlinfo.flagstring() << "  " << mo.cfailed);
-    }
-#endif
-}
-
 void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), int DBGE(flg), int DBGE(memStore))
 {
 #ifndef NDEBUG
@@ -298,105 +273,6 @@ void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), in
 // ************************************************************************
 
 namespace Errors {
-
-std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedParameters,
-                                             const TimeRange& timerange,
-                                             bool errorsForSalen,
-                                             model::KvalobsDataListPtr dtl,
-                                             const std::vector<modDatl>& mdtl)
-{
-    LOG_SCOPE("AnalyseErrors");
-    std::vector<ErrorList::mem> memStore1, memStore2;
-    BOOST_FOREACH(const model::KvalobsData& data, *dtl) {
-        if( data.stnr() > 99999 )
-            continue;
-#if 0
-#warning Is showTypeId correct here? (It was a bug before checking if a pointer was less than zero)
-        if( data.showTypeId() < 0 )
-            continue;
-#endif
-        if( data.otime() < timerange.t0() || data.otime() > timerange.t1() )
-            continue;
-        ErrorList::mem memObs;
-        memObs.obstime = data.otime();
-        memObs.tbtime = data.tbtime();
-        memObs.name = data.name();
-        memObs.stnr = data.stnr();
-
-        BOOST_FOREACH(const int parameterID, selectedParameters) {
-            // LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
-            if (not ErrorSpecialTimeFilter(parameterID, data.otime()))
-                continue;
-            if (not IsTypeInObsPgm(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
-                continue;
-            if (not ErrorParameterFilter(parameterID))
-                continue;
-
-            memObs.controlinfo = data.controlinfo(parameterID);
-            memObs.cfailed     = data.cfailed(parameterID);
-
-            if (not ErrorFilter(memObs.controlinfo, memObs.cfailed, memObs.flg, memObs.flTyp))
-                continue;
-
-            memObs.typeId      = data.typeId(parameterID);
-            memObs.orig        = data.orig(parameterID);
-            memObs.corr        = data.corr(parameterID);
-            memObs.sen         = data.sensor(parameterID);
-            memObs.lev         = data.level(parameterID);
-            memObs.useinfo     = data.useinfo(parameterID);
-            memObs.parNo       = parameterID;
-
-            memObs.morig = -32767.0;
-            if (KvMetaDataBuffer::instance()->isModelParam(memObs.parNo)) {
-                BOOST_FOREACH(const modDatl& md, mdtl) {
-                    if( md.stnr == memObs.stnr && md.otime == memObs.obstime ) {
-                        memObs.morig = md.orig[memObs.parNo];
-                    }
-                }
-            }
-
-            // insert data into appropriate memory stores
-            if (not errorsForSalen) {
-                if( ((memObs.flg == 2 || memObs.flg == 3) && memObs.flTyp == kvalobs::flag::fr ) ||
-                    (memObs.flg == 2 && (memObs.flTyp == kvalobs::flag::fcc || memObs.flTyp == kvalobs::flag::fcp) ) ||
-                    ((memObs.flg == 2 || memObs.flg == 3 ||memObs.flg == 4 || memObs.flg == 5) && memObs.flTyp == kvalobs::flag::fnum) ||
-                    ((memObs.flg == 2 || memObs.flg == 4 || memObs.flg == 5 ) && memObs.flTyp == kvalobs::flag::fs ) )
-                {
-                    if( isErrorInMemstore1(memObs) ) {
-                        memStore2.push_back(memObs);
-                    } else {
-                        memStore1.push_back(memObs);
-                    }
-                } else if (((memObs.flg == 4 || memObs.flg == 5 || memObs.flg == 6) && memObs.flTyp == kvalobs::flag::fr ) ||
-                           ((memObs.flg == 3 || memObs.flg == 4 || memObs.flg == 6 || memObs.flg == 7 || memObs.flg == 9 ||
-                             memObs.flg == 0xA || memObs.flg == 0xB || memObs.flg == 0xD ) && memObs.flTyp == kvalobs::flag::fcc ) ||
-                           ((memObs.flg == 3 || memObs.flg == 4 || memObs.flg == 6 || memObs.flg == 7 ||
-                             memObs.flg == 0xA || memObs.flg == 0xB ) && memObs.flTyp == kvalobs::flag::fcp ) ||
-                           ((memObs.flg == 3 || memObs.flg == 6 || memObs.flg == 8 || memObs.flg == 9)&& memObs.flTyp == kvalobs::flag::fs ) ||
-                           (memObs.flg == 6 && memObs.flTyp == kvalobs::flag::fnum) ||
-                           (( memObs.flg == 3 || memObs.flg == 4 || memObs.flg == 6) && memObs.flTyp == kvalobs::flag::fpos) ||
-                           ((memObs.flg == 2 || memObs.flg == 3) && memObs.flTyp == kvalobs::flag::ftime) ||
-                           ((memObs.flg == 2 || memObs.flg == 3 || memObs.flg == 0xA) && memObs.flTyp == kvalobs::flag::fw) ||
-                           (memObs.flg > 0 && memObs.flTyp == kvalobs::flag::fmis ) ||
-                           (memObs.flg == 7 && memObs.flTyp == kvalobs::flag::fd) )
-                {
-                    memStore2.push_back(memObs);
-                }
-            } else {
-                if( ((memObs.flg == 4 || memObs.flg == 5 || memObs.flg == 6) && memObs.flTyp == kvalobs::flag::fr )
-                    || (memObs.flg == 2 && memObs.flTyp == kvalobs::flag::fs) )
-                {
-                    memStore2.push_back(memObs);
-                }
-            }
-        }
-    }
-
-    dumpMemstore(memStore1, "1");
-    dumpMemstore(memStore2, "2");
-
-    return memStore2;
-}
 
 Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
 {

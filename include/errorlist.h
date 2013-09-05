@@ -30,11 +30,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
 
-#include "hqcdefs.h"
+#include "AnalyseErrors.hh"
 #include "KvalobsData.h"
+#include "ModelAccess.hh"
 #include "TimeRange.hh"
-
-#include <kvalobs/kvData.h>
 
 #include <QtCore/QString>
 #include <QtGui/QTableView>
@@ -63,60 +62,18 @@ public:
     ErrorList(QWidget* parent=0);
     virtual ~ErrorList();
 
-    void generateContents(const std::vector<int>& selectedParameters,
-                          const TimeRange& timerange,
-                          bool errorListSalen,
-                          model::KvalobsDataListPtr,
-                          const std::vector<modDatl>&);
+    typedef std::vector<EditDataPtr> Errors_t;
 
-    enum mem_change { NO_CHANGE, CORR_OK, ORIG_OK, INTERPOLATED, REDISTRIBUTED, CORRECTED, REJECTED };
-    struct mem {
-        double orig;
-        double corr;
-        double morig;
-        kvalobs::kvControlInfo controlinfo;
-        kvalobs::kvUseInfo useinfo;
-        std::string cfailed;
-        int flg;
-        int sen;
-        int lev;
-        int flTyp;
-        int parNo;
-        int stnr;
-        QString name;
-        timeutil::ptime obstime;
-        timeutil::ptime tbtime;
-        int typeId;
-        
-        mem_change change;
-        float changed_value;
-        bool changed_qc2allowed;
-        mem() : change(NO_CHANGE), changed_value(0), changed_qc2allowed(false) { }
-    };
+    void setErrors(EditAccessPtr eda, ModelAccessPtr mda, const Errors_t& memStore2);
 
-    kvalobs::kvData getKvData() const;
+    EditDataPtr getObs() const;
 
-    bool maybeSave();
-    
-public Q_SLOTS:
-    void saveChanges();
-
-protected:
-    void closeEvent ( QCloseEvent * event );
-    
 Q_SIGNALS:
     void errorListClosed();
-    void signalNavigateTo(const kvalobs::kvData&);
+    void signalNavigateTo(const SensorTime& st);
 
 private:
-    /*!
-     * \brief Constructs a kvData object from a memory store object
-     */
-    kvalobs::kvData getKvData(const mem &m) const;
-    kvalobs::kvData getKvData(int row) const
-        { return getKvData(getMem(row)); }
-    const mem& getMem(int row) const;
-
+    EditDataPtr getObs(int row) const;
     int getSelectedRow() const;
                                     
 private Q_SLOTS:

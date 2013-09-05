@@ -242,8 +242,8 @@ HqcMainWindow::HqcMainWindow()
             tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
 
     connect(ui->saveAction, SIGNAL(activated()), ui->treeErrors, SLOT(saveChanges()));
-    connect(ui->treeErrors, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
-            this, SLOT(navigateTo(const kvalobs::kvData&)));
+    connect(ui->treeErrors, SIGNAL(signalNavigateTo(const SensorTime&)),
+            this, SLOT(navigateTo(const SensorTime&)));
     
     // make the timeseries-plot-dialog
     tspdialog = new TSPlotDialog(this);
@@ -411,46 +411,43 @@ void HqcMainWindow::ListOK()
     
   // All windows are shown later, in the tileHorizontal function
     
+    DataListModel::Sensors_t sensors;
+    BOOST_FOREACH(int stationId, selectedStations) {
+        BOOST_FOREACH(int paramId, mSelectedParameters) {
+            const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+            Sensor sensor(stationId, paramId, 0, 0, 0);
+            BOOST_FOREACH(const kvalobs::kvObsPgm op, opl) {
+                if (op.paramID() == paramId) {
+                    sensor.typeId = op.typeID();
+                    break;
+                }
+            }
+            if (sensor.typeId != 0) {
+                sensors.push_back(sensor);
+                LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(sensor.paramId) << DBG1(sensor.typeId));
+            }
+        }
+    }
+    LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
+    const TimeRange timeLimits(stime, etime);
+
+    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
+
     if (lity == daLi or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building data list..."));
         qApp->processEvents();
 
-        DataListModel::Sensors_t sensors;
-        BOOST_FOREACH(int stationId, selectedStations) {
-            BOOST_FOREACH(int paramId, mSelectedParameters) {
-                const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-                Sensor sensor(stationId, paramId, 0, 0, 0);
-                BOOST_FOREACH(const kvalobs::kvObsPgm op, opl) {
-                    if (op.paramID() == paramId) {
-                        sensor.typeId = op.typeID();
-                        break;
-                    }
-                }
-                if (sensor.typeId != 0) {
-                    sensors.push_back(sensor);
-                    LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(sensor.paramId) << DBG1(sensor.typeId));
-                }
-            }
-        }
-        LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
-        const TimeRange timeLimits(stime, etime);
-
-        EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
         DataList* dl = new DataList(this);
         dl->setSensorsAndTimes(eda, sensors, timeLimits);
         ui->ws->addSubWindow(dl);
-
-        // FIXME this is for testing only
-        if (lity == alLi or lity == alSa)
-            Errors::fillMemoryStore2(eda, sensors, timeLimits, (lity == erSa or lity == alSa));
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building error list..."));
         qApp->processEvents();
-        ui->treeErrors->generateContents(mSelectedParameters, TimeRange(stime, etime),
-                                         (lity == erSa or lity == alSa),
-                                         datalist, modeldatalist);
+
+        Errors::Errors_t memStore2 = Errors::fillMemoryStore2(eda, sensors, timeLimits, (lity == erSa or lity == alSa));
+        ui->treeErrors->setErrors(eda, kma, memStore2);
     }
 
     tileHorizontal();
@@ -663,11 +660,12 @@ void HqcMainWindow::showWatchRR()
     const timeutil::ptime now = timeutil::now();
     timeutil::ptime tMiddle = now;
 
-    const kvalobs::kvData data = ui->treeErrors->getKvData();
-    if (data.paramID() == 110) {
-        sensor.stationId = data.stationID();
-        sensor.typeId = data.typeID();
-        tMiddle = timeutil::from_miTime(data.obstime());
+    EditDataPtr obs = ui->treeErrors->getObs();
+    if (obs) {
+        const SensorTime& st = obs->sensorTime();
+        if (st.sensor.paramId == 110)
+            sensor = st.sensor;
+        tMiddle = timeutil::from_miTime(st.time);
     }
 
     timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
@@ -707,12 +705,14 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-    const kvalobs::kvData data = ui->treeErrors->getKvData();
-
-    Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
-    if ( wtd ) {
-        wtd->setReinserter( reinserter );
-        wtd->show();
+    EditDataPtr obs = ui->treeErrors->getObs();
+    if (obs) {
+        LOG4HQC_DEBUG("HqcMainWindow", "sorry, no weather dialog for " << obs->sensorTime());
+//         Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
+//         if ( wtd ) {
+//             wtd->setReinserter( reinserter );
+//             wtd->show();
+//         }
     }
 }
 
@@ -1303,26 +1303,24 @@ void HqcMainWindow::aboutQt()
     QMessageBox::aboutQt(this);
 }
 
-void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
+void HqcMainWindow::navigateTo(const SensorTime& st)
 {
     LOG_SCOPE("HqcMainWindow");
-    DBGV(kd);
-    mDianaHelper->sendTime(kd.obstime());
+    LOG4SCOPE_DEBUG(DBG1(st));
+    mDianaHelper->sendTime(st.time);
     mDianaHelper->sendObservations(*datalist, modeldatalist, mSelectedParameters);
-    mDianaHelper->sendStation(kd.stationID());
-    mDianaHelper->sendSelectedParam(kd.paramID());
+    mDianaHelper->sendStation(st.sensor.stationId);
+    mDianaHelper->sendSelectedParam(st.sensor.paramId);
 
-    int typeID = kd.typeID();
+    int typeID = st.sensor.typeId;
     if (typeID == -32767)
         typeID = 0;
-    /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), typeID);
+    /*emit*/ statTimeReceived(st.sensor.stationId, st.time, typeID);
 
-    const SensorTime& stkd = Helpers::sensorTimeFromKvData(kd);
-    ui->simpleCorrrections->navigateTo(stkd);
+    ui->simpleCorrrections->navigateTo(st);
     BOOST_FOREACH(QMdiSubWindow* sw, ui->ws->subWindowList()) {
-        if (DataList* dl = dynamic_cast<DataList*>(sw->widget())) {
-            dl->navigateTo(stkd);
-        }
+        if (DataList* dl = dynamic_cast<DataList*>(sw->widget()))
+            dl->navigateTo(st);
     }
 }
 

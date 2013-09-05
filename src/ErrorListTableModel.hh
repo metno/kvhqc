@@ -3,15 +3,19 @@
 #ifndef ERRORLISTTABLE_H
 #define ERRORLISTTABLE_H
 
-#include "errorlist.h"
+#include "EditAccess.hh"
+#include "ModelAccess.hh"
 
 #include <QtCore/QAbstractTableModel>
-#include <map>
+
+#include <vector>
 
 class ErrorListTableModel : public QAbstractTableModel
-{ Q_OBJECT;
+{   Q_OBJECT;
 public:
-    ErrorListTableModel(const std::vector<ErrorList::mem>& errorList);
+    typedef std::vector<EditDataPtr> Errors_t;
+
+    ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors_t& errorList);
     ~ErrorListTableModel();
 
     enum EDIT_COLUMNS {
@@ -29,11 +33,6 @@ public:
         COL_OBS_FLAG_NAME,
         COL_OBS_FLAG_EQ,
         COL_OBS_FLAG_VAL,
-        COL_CORR_OK,
-        COL_ORIG_OK,
-        COL_INTERPOLATED,
-        COL_CORRECTED,
-        COL_REJECTED,
         NCOLUMNS
     };
 
@@ -41,18 +40,19 @@ public:
     virtual int columnCount(const QModelIndex&) const;
     Qt::ItemFlags flags(const QModelIndex& index) const;
     virtual QVariant data(const QModelIndex& index, int role) const;
-    bool setData(const QModelIndex& index, const QVariant& value, int role);
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
     void showSameStation(int stationID);
-    const ErrorList::mem& mem4Row(int row) const
-        { return mErrorList.at(row); }
+    EditDataPtr mem4Row(int row) const
+        { return (row>=0 and row<(int)mErrorList.size()) ? mErrorList.at(row) : EditDataPtr(); }
 
-    const std::vector<ErrorList::mem>& errorList() const
+    const Errors_t& errorList() const
         { return mErrorList; }
 
 private:
-    std::vector<ErrorList::mem> mErrorList;
+    EditAccessPtr mDA;
+    ModelAccessPtr mMA;
+    Errors_t mErrorList;
     int mShowStation;
 };
 
