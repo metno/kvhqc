@@ -469,6 +469,14 @@
     </message>
 </context>
 <context>
+    <name>Helpers</name>
+    <message>
+        <location filename="Helpers.cc" line="241"/>
+        <source>Unknown or invalid flag value</source>
+        <translation>Ukjent eller ugylig flagg-verdi</translation>
+    </message>
+</context>
+<context>
     <name>Main</name>
     <message>
         <location filename="main.cc" line="128"/>

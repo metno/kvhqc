@@ -26,11 +26,10 @@
 #include "HqcLogging.hh"
 
 namespace {
-// from WatchRR/src/ControlFlagCell.cc
 static const char* flagnames[16] = {
-    "fqclevel", "fr", "fcc", "fs", "fnum", 
+    "fagg", "fr", "fcc", "fs", "fnum", 
     "fpos", "fmis", "ftime", "fw", "fstat", 
-    "fcp", "fclim", "fd", "fpre", "", "fhqc" 
+    "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc" 
 };
 }
 
@@ -224,7 +223,7 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
     bool first = true;
 
     const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
-    for(int f=1; f<16; f++) {
+    for(int f=0; f<16; f++) {
 	const int flag = cInfo.flag(f);
         using namespace kvalobs::flag;
 	if (flag > showFlagAbove[f]) {
@@ -235,13 +234,13 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
               query->bindValue("fn", f);
               query->bindValue("fv", flag);
               query->exec();
-              std::string explanation;
+              QString explanation;
               if (query->next())
-                explanation = query->value(0).toString().toStdString();
+                explanation = query->value(0).toString();
               else
-                explanation = "Ugyldig flagg-verdi";
+                explanation = qApp->translate("Helpers", "Unknown or invalid flag value");
               query->finish();
-              ss << ": " << explanation;
+              ss << ": " << explanation.toStdString();
             }
             first = false;
 	}
