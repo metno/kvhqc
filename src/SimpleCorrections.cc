@@ -148,7 +148,7 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
     ui->setupUi(this);
     ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
     ui->comboCorrected->setModel(ttl);
-    ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
 
     // TODO move setting of minimum sizes to retranslateUi somehow
     QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
@@ -193,6 +193,8 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 {
     METLIBS_LOG_SCOPE();
     mChecksModel->navigateTo(st);
+    ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
     if (eq_SensorTime()(mSensorTime, st))
         return;
 

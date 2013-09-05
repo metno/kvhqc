@@ -395,7 +395,7 @@
       </sizepolicy>
      </property>
      <property name="tabPosition">
-      <enum>QTabWidget::West</enum>
+      <enum>QTabWidget::East</enum>
      </property>
      <property name="currentIndex">
       <number>0</number>
@@ -418,13 +418,13 @@
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <property name="leftMargin">
-        <number>2</number>
+        <number>0</number>
        </property>
        <property name="topMargin">
         <number>0</number>
        </property>
        <property name="rightMargin">
-        <number>0</number>
+        <number>2</number>
        </property>
        <property name="bottomMargin">
         <number>0</number>
