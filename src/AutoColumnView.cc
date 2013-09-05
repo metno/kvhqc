@@ -5,6 +5,7 @@
 #include "HqcApplication.hh"
 
 #include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
@@ -13,19 +14,22 @@
 #include "HqcLogging.hh"
 
 namespace {
-const char CHANGES_TABLE[] = "view_changes";
-const char CHANGES_TABLE_CREATE[] = "CREATE TABLE view_changes ("
+const char CHANGES_TABLE[] = "user_view_changes";
+const char CHANGES_TABLE_CREATE[] = "CREATE TABLE user_view_changes ("
     "stationid    INTEGER NOT NULL,"
     "paramid      INTEGER NOT NULL,"
     "view_type    TEXT    NOT NULL,"
     "view_id      TEXT    NOT NULL,"
     "view_changes TEXT    NOT NULL"
     ");";
-const char CHANGES_TABLE_INSERT[] = "INSERT INTO view_changes VALUES ("
-    ":stationid, :paramid, :view_type, :view_id, :view_changes"
-    ");";
-const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM view_changes"
-    " WHERE stationid = :stationid AND paramid = :paramid AND view_type = :view_type AND view_id = :view_id;";
+
+const char CHANGES_TABLE_UPDATE[] = "UPDATE user_view_changes SET view_changes = :vchanges"
+    " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
+const char CHANGES_TABLE_INSERT[] = "INSERT INTO user_view_changes VALUES"
+    " (:sid, :pid, :vtype, :vid, :vchanges)";
+
+const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM user_view_changes"
+    " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 }
 
 AutoColumnView::AutoColumnView()
@@ -55,18 +59,37 @@ void AutoColumnView::storeViewChanges()
     db.exec(CHANGES_TABLE_CREATE);
 
   if (mSensorTime.valid()) {
-    // record changes
     db.transaction();
-    QSqlQuery insert(db);
+    QSqlQuery insert(db), update(db);
     insert.prepare(CHANGES_TABLE_INSERT);
+    update.prepare(CHANGES_TABLE_UPDATE);
+
+    const Sensor& s = mSensorTime.sensor;
+    update.bindValue(":sid", s.stationId);
+    update.bindValue(":pid", s.paramId);
+    insert.bindValue(":sid", s.stationId);
+    insert.bindValue(":pid", s.paramId);
     BOOST_FOREACH(ViewInfo& vi, mViews) {
-      insert.bindValue("stationid", mSensorTime.sensor.stationId);
-      insert.bindValue("paramid",   mSensorTime.sensor.paramId);
-      insert.bindValue("view_type", QString::fromStdString(vi.view->type()));
-      insert.bindValue("view_id",   QString::fromStdString(vi.view->id()));
-      insert.bindValue("view_changes", QString::fromStdString(vi.view->changes()));
-      insert.exec();
-      insert.finish();
+      const std::string vtype = vi.view->type(), vid = vi.view->id(), vchanges = vi.view->changes();
+      METLIBS_LOG_DEBUG(LOGVAL(vtype) << LOGVAL(vid) << LOGVAL(vchanges));
+      const QString qtype = QString::fromStdString(vtype), qid = QString::fromStdString(vid), qchanges = QString::fromStdString(vchanges);
+
+      update.bindValue(":vtype",    qtype);
+      update.bindValue(":vid",      qid);
+      update.bindValue(":vchanges", qchanges);
+      if (not update.exec())
+        METLIBS_LOG_ERROR("error while updating: " << update.lastError().text());
+      const int nup = update.numRowsAffected();
+      update.finish();
+
+      if (nup == 0) {
+        insert.bindValue(":vtype",    qtype);
+        insert.bindValue(":vid",      qid);
+        insert.bindValue(":vchanges", qchanges);
+        if (not insert.exec())
+          METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
+        insert.finish();
+      }
     }
     db.commit();
   }
@@ -81,14 +104,14 @@ void AutoColumnView::replayViewChanges()
 
   QSqlQuery query(hqcApp->configDB());
   query.prepare(CHANGES_TABLE_SELECT);
-  query.bindValue("stationid", mSensorTime.sensor.stationId);
-  query.bindValue("paramid",   mSensorTime.sensor.paramId);
+  query.bindValue(":sid", mSensorTime.sensor.stationId);
+  query.bindValue(":pid", mSensorTime.sensor.paramId);
   BOOST_FOREACH(ViewInfo& vi, mViews) {
     vi.view->setSensorsAndTimes(defSens, defLimits);
 
     METLIBS_LOG_DEBUG(LOGVAL(vi.view->type()) << LOGVAL(vi.view->id()));
-    query.bindValue("view_type", QString::fromStdString(vi.view->type()));
-    query.bindValue("view_id",   QString::fromStdString(vi.view->id()));
+    query.bindValue(":vtype", QString::fromStdString(vi.view->type()));
+    query.bindValue(":vid",   QString::fromStdString(vi.view->id()));
     query.exec();
     if (query.next()) {
       const std::string vchanges = query.value(0).toString().toStdString();
