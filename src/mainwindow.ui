@@ -221,6 +221,9 @@
    </widget>
   </widget>
   <widget class="QDockWidget" name="dockExtremes">
+   <property name="features">
+    <set>QDockWidget::DockWidgetFeatureMask</set>
+   </property>
    <property name="windowTitle">
     <string>Extremes</string>
    </property>

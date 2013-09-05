@@ -23,7 +23,7 @@ ExtremesView::ExtremesView(QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
-  ui->tableExtremes->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+  ui->tableExtremes->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableExtremes->verticalHeader()->setDefaultSectionSize(20);
   ui->tableExtremes->verticalHeader()->hide();
   ui->tableExtremes->setSelectionBehavior(QTableView::SelectRows);
@@ -57,8 +57,10 @@ ExtremesView::~ExtremesView()
 
 void ExtremesView::setExtremes(const std::vector<SensorTime>& extremes)
 {
+  METLIBS_LOG_SCOPE();
   mExtremesModel.reset(new ExtremesTableModel(mEDA, extremes));
   ui->tableExtremes->setModel(mExtremesModel.get());
+  ui->tableExtremes->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
