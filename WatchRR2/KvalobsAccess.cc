@@ -90,10 +90,14 @@ void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
     whichData.addStation(sensor.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
     
     kvalobsdata_helpers::GetData get(*this);
-    if (kvservice::KvApp::kvApp->getKvData(get, whichData))
+    try {
+      if (kvservice::KvApp::kvApp->getKvData(get, whichData))
         addFetched(sensor.stationId, limits);
-    else
-        LOG4HQC_ERROR("KvalobsAccess", "problem receiving data");
+     else
+       LOG4HQC_ERROR("KvalobsAccess", "problem receiving data");
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("KvalobsAccess", "exception while retrieving data: " << e.what());
+    }
 }
 
 bool KvalobsAccess::isFetched(int stationId, const timeutil::ptime& t) const

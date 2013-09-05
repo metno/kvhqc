@@ -13,6 +13,9 @@
 #include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
 
+#define NDEBUG
+#include "HqcLogging.hh"
+
 namespace {
 const int NCOLUMNS = 7;
 const char* headers[NCOLUMNS] = {
@@ -98,10 +101,16 @@ void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget*
     whichData.addStation(stationId, timeLimits.t0(), timeLimits.t1());
 
     GetTextData textDataReceiver;
-    if(!kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData)) {
-        QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
-                              QMessageBox::Ok, QMessageBox::NoButton);
-        return;
+    bool ok = false;
+    try {
+      ok = kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData);
+    } catch (std::exception& e) {
+      LOG4HQC_ERROR("TextData", "exception while retrieving text data: " << e.what());
+    }
+    if (not ok) {
+      QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
+          QMessageBox::Ok, QMessageBox::NoButton);
+      return;
     }
 
     new TextData(textDataReceiver.textData(), parent);
