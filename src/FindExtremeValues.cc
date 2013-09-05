@@ -21,6 +21,7 @@ namespace Extremes {
 std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
 {
   METLIBS_LOG_SCOPE();
+
   const listStat_l& stationDetails = StationInfoBuffer::instance()->getStationDetails();
   std::ostringstream excluded_station_list;
   const char* sep = "";
@@ -32,7 +33,8 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       sep = ",";
     }
   }
-  METLIBS_LOG_DEBUG(LOGVAL(excluded_station_list.str()));
+  const std::string excludedIds = excluded_station_list.str();
+  METLIBS_LOG_DEBUG(LOGVAL(excludedIds));
 
   std::ostringstream paramids;
   bool findMaximum = true;
@@ -54,8 +56,10 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   std::ostringstream sql;
   sql << "SELECT stationid,paramid,level,sensor,typeid,obstime,original,corrected,controlinfo,cfailed FROM data,"
       "  (SELECT stationid AS s, " << function << "(corrected) AS c FROM data"
-      "   WHERE stationid BETWEEN 60 AND 100000 AND stationid NOT IN (" << excluded_station_list.str() << ")"
-      "   AND paramid IN (" << paramids.str() << ")"
+      "   WHERE stationid BETWEEN 60 AND 100000";
+  if (not excludedIds.empty())
+    sql << " AND stationid NOT IN (" << excludedIds << ")";
+  sql << "   AND paramid IN (" << paramids.str() << ")"
       "   AND (substr(useinfo,3,1) IN ('0','1','2')"
       "        OR substr(useinfo,3,1) = '3' AND original = corrected)"
       "   AND " << c_obstime.str() <<
