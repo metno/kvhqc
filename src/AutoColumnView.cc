@@ -80,9 +80,15 @@ AutoColumnView::Sensors_t AutoColumnView::defaultSensors()
     } else if (s.paramId == 211 or s.paramId == 213 or s.paramId == 215) {
         stationPar << 211 << 213 << 215;
         neighborPar << s.paramId;
+    } else if (s.paramId == 262 or s.paramId == 217) {
+      stationPar  << 262 << 217 << 211;
+      neighborPar << s.paramId;
+    } else if (s.paramId == 61 or s.paramId == 81) {
+      stationPar  << 61 << 81;
+      neighborPar << 61 << 81;
     } else {
-        stationPar << s.paramId;
-        neighborPar << s.paramId;
+      stationPar  << s.paramId;
+      neighborPar << s.paramId;
     }
     Sensors_t sensors;
     BOOST_FOREACH(int par, stationPar) {
