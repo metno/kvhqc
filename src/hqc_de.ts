@@ -569,43 +569,43 @@ Parameter</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="79"/>
+        <location filename="../authentication/HqcApplication.cc" line="80"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Systemdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="91"/>
+        <location filename="../authentication/HqcApplication.cc" line="92"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Umgebungsvariable $HOME leer; bitte überprüfen Sie die Einstellungen Ihres Computers</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="99"/>
+        <location filename="../authentication/HqcApplication.cc" line="100"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Konfigurationsdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="110"/>
+        <location filename="../authentication/HqcApplication.cc" line="111"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kann nicht auf kvalobs SQL Datenbank zugreifen; bitte prüfen Sie die HQC-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="155"/>
-        <location filename="../authentication/HqcApplication.cc" line="178"/>
+        <location filename="../authentication/HqcApplication.cc" line="156"/>
+        <location filename="../authentication/HqcApplication.cc" line="179"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="157"/>
+        <location filename="../authentication/HqcApplication.cc" line="158"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Ein schwerwiegender Fehler ist aufgetreten. Sie sollten HQC neu starten und den Fehler melden.</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="199"/>
+        <location filename="../authentication/HqcApplication.cc" line="200"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="200"/>
+        <location filename="../authentication/HqcApplication.cc" line="201"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Datenbank nicht benutzt werden kann.</translation>
     </message>
@@ -966,33 +966,33 @@ Parameter</translation>
         <translation>Ausgewählte Daten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="389"/>
+        <location filename="hqcmain.cc" line="400"/>
         <source>No RejectDecode</source>
         <translation>Kein RejectDecode</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="389"/>
+        <location filename="hqcmain.cc" line="400"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kann rejectdecode nicht lesen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="442"/>
+        <location filename="hqcmain.cc" line="437"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="443"/>
+        <location filename="hqcmain.cc" line="438"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Ihre Änderungen konnten nicht gespeichert werden und sind leider verloren!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="444"/>
-        <location filename="hqcmain.cc" line="660"/>
+        <location filename="hqcmain.cc" line="439"/>
+        <location filename="hqcmain.cc" line="655"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="625"/>
+        <location filename="hqcmain.cc" line="620"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1003,62 +1003,67 @@ You are using HQC version %1.</source>
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="658"/>
+        <location filename="hqcmain.cc" line="653"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Daten Speichern</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="659"/>
+        <location filename="hqcmain.cc" line="654"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="663"/>
+        <location filename="hqcmain.cc" line="658"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Daten gespeichert&lt;/h1&gt;Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="672"/>
+        <location filename="hqcmain.cc" line="667"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-Datenbank erreichbar</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="675"/>
+        <location filename="hqcmain.cc" line="670"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-Datenbank nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="696"/>
+        <location filename="hqcmain.cc" line="671"/>
+        <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
+        <translation>&lt;h1&gt;Kvalobs nicht erreichbar&lt;/h1&gt;Datenbank derzeit nicht erreichbar! Sie können warten und es später erneut versuchen, müssen aber damit rechnen, dass Änderungen verloren gehen.</translation>
+    </message>
+    <message>
+        <location filename="hqcmain.cc" line="694"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Lese Daten für Station %1 um %2, bitte warten…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="535"/>
+        <location filename="hqcmain.cc" line="530"/>
         <source>Print screenshot</source>
         <translation>Bildschirmfoto ausdrucken</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="559"/>
+        <location filename="hqcmain.cc" line="554"/>
         <source>HQC - Update</source>
         <translation>HQC - Aktualisierung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="560"/>
+        <location filename="hqcmain.cc" line="555"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="624"/>
+        <location filename="hqcmain.cc" line="619"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="758"/>
+        <location filename="hqcmain.cc" line="756"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="759"/>
+        <location filename="hqcmain.cc" line="757"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
@@ -1433,17 +1438,17 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>TextData</name>
     <message>
-        <location filename="textdatatable.cc" line="83"/>
+        <location filename="textdatatable.cc" line="84"/>
         <source>TextData</source>
         <translation>TextData</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="111"/>
+        <location filename="textdatatable.cc" line="113"/>
         <source>No Textdata</source>
         <translation>Keine Textdaten</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="111"/>
+        <location filename="textdatatable.cc" line="113"/>
         <source>Could not read text data.</source>
         <translation>Kann Textdaten nicht lesen.</translation>
     </message>
@@ -1495,37 +1500,37 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>TextDataTable</name>
     <message>
-        <location filename="textdatatable.cc" line="22"/>
+        <location filename="textdatatable.cc" line="23"/>
         <source>Stationid</source>
         <translation>Stationid</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="23"/>
+        <location filename="textdatatable.cc" line="24"/>
         <source>Obstime</source>
         <translation>Obstime</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="24"/>
+        <location filename="textdatatable.cc" line="25"/>
         <source>Original</source>
         <translation>Original</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="25"/>
+        <location filename="textdatatable.cc" line="26"/>
         <source>Paramid</source>
         <translation>Paramid</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="26"/>
+        <location filename="textdatatable.cc" line="27"/>
         <source>ParamName</source>
         <translation>ParamName</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="27"/>
+        <location filename="textdatatable.cc" line="28"/>
         <source>Tbtime</source>
         <translation>Tbtime</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="28"/>
+        <location filename="textdatatable.cc" line="29"/>
         <source>Typeid</source>
         <translation>Typeid</translation>
     </message>

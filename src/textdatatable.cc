@@ -2,10 +2,10 @@
 #include "textdatatable.h"
 
 #include "GetTextData.h"
+#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
 #include "TimeHeader.hh"
 
-#include <kvcpp/KvApp.h>
 #include <kvcpp/WhichDataHelper.h>
 
 #include <QtGui/QHeaderView>
@@ -101,18 +101,15 @@ void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget*
     whichData.addStation(stationId, timeLimits.t0(), timeLimits.t1());
 
     GetTextData textDataReceiver;
-    bool ok = false;
     try {
-      ok = kvservice::KvApp::kvApp->getKvData(textDataReceiver, whichData);
+      if (hqcApp->getKvData(textDataReceiver, whichData)) {
+        new TextData(textDataReceiver.textData(), parent);
+        return;
+      }
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving text data: " << e.what());
     }
-    if (not ok) {
-      QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
-          QMessageBox::Ok, QMessageBox::NoButton);
-      return;
-    }
-
-    new TextData(textDataReceiver.textData(), parent);
+    QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
+        QMessageBox::Ok, QMessageBox::NoButton);
 }
 

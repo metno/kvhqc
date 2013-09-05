@@ -3,6 +3,7 @@
 
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
+#include "TimeRange.hh"
 
 #include <kvalobs/kvStationParam.h>
 #include <kvcpp/KvApp.h>
@@ -28,7 +29,7 @@ const char DB_SYSTEM[] = "hqc_system_db";
 const char DB_CONFIG[] = "hqc_config_db";
 const char DB_KVALOBS[] = "kvalobs_db";
 
-const int AVAILABILITY_TIMEROUT = 30*1000; // milliseconds
+const int AVAILABILITY_TIMEROUT = 120*1000; // milliseconds = 2 minutes
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
@@ -208,8 +209,91 @@ void HqcApplication::exitNoKvalobs()
 void HqcApplication::checkKvalobsAvailability()
 {
   std::list<kvalobs::kvStationParam> stParam;
-  const bool oldAvailable = mKvalobsAvailable;
-  mKvalobsAvailable = kvservice::KvApp::kvApp->getKvStationParam(stParam, 345345, 345345, 0);
-  if (oldAvailable != mKvalobsAvailable)
+  updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvStationParam(stParam, 345345, 345345, 0));
+}
+
+bool HqcApplication::updateKvalobsAvailability(bool available)
+{
+  if (available != mKvalobsAvailable) {
+    mKvalobsAvailable = available;
     /*emit*/ kvalobsAvailable(mKvalobsAvailable);
+  }
+  return available;
+}
+
+#define TRY_KVALOBS(func, args)                                         \
+  try {                                                                 \
+    return updateKvalobsAvailability(kvservice::KvApp::kvApp->func args); \
+  } catch (std::exception& e) {                                         \
+    METLIBS_LOG_ERROR("kvalobs exception in '" #func "': " << e.what()); \
+    updateKvalobsAvailability(false);                                   \
+    throw e;                                                            \
+  } catch (...) {                                                       \
+    METLIBS_LOG_ERROR("kvalobs exception in '" #func "'");              \
+    updateKvalobsAvailability(false);                                   \
+    throw;                                                              \
+  }                                                                     \
+  
+bool HqcApplication::getKvData(kvservice::KvGetDataReceiver& dataReceiver, const kvservice::WhichDataHelper& wd)
+{
+  TRY_KVALOBS(getKvData, (dataReceiver, wd));
+}
+
+bool HqcApplication::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper& wd)
+{
+  TRY_KVALOBS(getKvModelData, (dataList, wd));
+}
+
+bool HqcApplication::getKvParams(std::list<kvalobs::kvParam>& paramList)
+{
+  TRY_KVALOBS(getKvParams, (paramList));
+}
+
+bool HqcApplication::getKvStations( std::list<kvalobs::kvStation>& stationList)
+{
+  TRY_KVALOBS(getKvStations, (stationList));
+}
+
+bool HqcApplication::getKvTypes(std::list<kvalobs::kvTypes>& typeList)
+{
+  TRY_KVALOBS(getKvTypes, (typeList));
+}
+
+bool HqcApplication::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const std::list<long>& stationList)
+{
+  TRY_KVALOBS(getKvObsPgm, (obsPgm, stationList, false));
+}
+
+bool HqcApplication::getKvOperator(std::list<kvalobs::kvOperator>& operatorList)
+{
+  TRY_KVALOBS(getKvOperator, (operatorList));
+}
+
+bool HqcApplication::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeRange& timeLimits)
+{
+  rejectList.clear();
+  
+  CKvalObs::CService::RejectDecodeInfo rdInfo;
+  rdInfo.fromTime = timeutil::to_iso_extended_string(timeLimits.t0()).c_str();
+  rdInfo.toTime   = timeutil::to_iso_extended_string(timeLimits.t1()).c_str();
+  
+  try {
+    kvservice::RejectDecodeIterator rdIt;
+    const bool ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
+    updateKvalobsAvailability(ok);
+    if (ok) {
+      kvalobs::kvRejectdecode reject;
+      while (rdIt.next(reject))
+        rejectList.push_back(reject);
+    }
+    return ok;
+  } catch (std::exception& e) {                                       
+    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode': " << e.what()); 
+    updateKvalobsAvailability(false);
+    throw e;
+  } catch (...) {
+    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode'");
+    updateKvalobsAvailability(false);
+    throw;
+  }                                                                     
 }

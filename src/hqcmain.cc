@@ -156,7 +156,7 @@ HqcMainWindow::HqcMainWindow()
 
     mKvalobsAvailable = new QLabel(statusBar());
     statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
-    kvalobsAvailable(true);
+    kvalobsAvailable(hqcApp->isKvalobsAvailable());
 
     // --- DEFINE DIALOGS --------------------------------------------
     lstdlg = new ListDialog(this);
@@ -374,36 +374,31 @@ void HqcMainWindow::textDataOK()
 void HqcMainWindow::rejectedOK()
 {
     METLIBS_LOG_SCOPE();
-    CKvalObs::CService::RejectDecodeInfo rdInfo;
-    rdInfo.fromTime = dateStr_( rejdlg->dtfrom );
-    rdInfo.toTime = dateStr_( rejdlg->dtto );
-    METLIBS_LOG_INFO(rdInfo.fromTime << " <-> " << rdInfo.toTime);
-    kvservice::RejectDecodeIterator rdIt;
-    bool ok = false;
+
     try {
-      ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
+      std::list<kvalobs::kvRejectdecode> rejectList;
+      const TimeRange t(timeutil::from_QDateTime(rejdlg->dtfrom), timeutil::from_QDateTime(rejdlg->dtto));
+      if (hqcApp->getKvRejectDecode(rejectList, t)) {
+        std::string decoder = "comobs";
+        std::vector<kvalobs::kvRejectdecode> rejList;
+        BOOST_FOREACH(const kvalobs::kvRejectdecode& reject, rejectList) {
+          if (reject.decoder().substr(0, decoder.size()) != decoder)
+            continue;
+          if (reject.comment() == "No decoder for SMS code <12>!")
+            continue;
+          
+          METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
+          rejList.push_back(reject);
+        }
+        new Rejects(rejList, this);
+        return;
+      }
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
     }
-    if (not ok) {
-      QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
-          QMessageBox::Ok, QMessageBox::NoButton);
-      return;
-    }
-
-    std::string decoder = "comobs";
-    kvalobs::kvRejectdecode reject;
-    std::vector<kvalobs::kvRejectdecode> rejList;
-    while (rdIt.next(reject)) {
-        if (reject.decoder().substr(0, decoder.size()) != decoder)
-            continue;
-        if (reject.comment() == "No decoder for SMS code <12>!")
-            continue;
-
-        METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
-        rejList.push_back(reject);
-    }
-    new Rejects(rejList, this);
+    // reach here in case of error
+    QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
+        QMessageBox::Ok, QMessageBox::NoButton);
 }
 
 void HqcMainWindow::showWatchRR()
@@ -673,6 +668,9 @@ void HqcMainWindow::kvalobsAvailable(bool available)
   } else {
     mKvalobsAvailable->setPixmap(QPixmap("icons:kv_error.svg"));
     mKvalobsAvailable->setToolTip(tr("Kvalobs seems not to be available"));
+    mHints->addHint(tr("<h1>Kvalobs unavailable</h1>"
+            "Database not accessible right now! "
+            "You may wait and try again, but you must expect any changes to be lost."));
   }
 }
 

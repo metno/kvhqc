@@ -8,6 +8,21 @@
 #include <QtGui/QApplication>
 #include <QtSql/QSqlDatabase>
 
+class TimeRange;
+namespace kvalobs {
+class kvModelData;
+class kvRejectdecode;
+class kvParam;
+class kvStation;
+class kvTypes;
+class kvObsPgm;
+class kvOperator;
+}
+namespace kvservice {
+class KvGetDataReceiver;
+class WhichDataHelper;
+}
+
 class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
@@ -25,6 +40,19 @@ public:
 
   void exitNoKvalobs();
 
+  /** Query last known availability of kvServiced. Does not re-check. */
+  bool isKvalobsAvailable() const
+    { return mKvalobsAvailable; }
+
+  bool getKvData(kvservice::KvGetDataReceiver& dataReceiver, const kvservice::WhichDataHelper& wd);
+  bool getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper& wd);
+  bool getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeRange& timeLimits);
+  bool getKvParams(std::list<kvalobs::kvParam>& paramList);
+  bool getKvStations( std::list<kvalobs::kvStation>& stationList);
+  bool getKvTypes(std::list<kvalobs::kvTypes>& typeList);
+  bool getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const std::list<long>& stationList);
+  bool getKvOperator(std::list<kvalobs::kvOperator>& operatorList );
+
 Q_SIGNALS:
   void kvalobsAvailable(bool);
 
@@ -38,6 +66,7 @@ private:
     void onException(const QString& message);
     void fatalError(const QString& message, const QString& info="");
   bool isGuiThread() const;
+  bool updateKvalobsAvailability(bool available);
 
 private:
   QList<QTranslator*> mTranslators;

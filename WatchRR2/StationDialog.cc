@@ -11,7 +11,6 @@
 #include "ui_watchrr_station.h"
 
 #include <kvalobs/kvObsPgm.h>
-#include <kvcpp/KvApp.h>
 
 #include <boost/foreach.hpp>
 

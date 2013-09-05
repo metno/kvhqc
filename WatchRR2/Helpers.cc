@@ -13,7 +13,6 @@
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvModelData.h>
 #include <kvalobs/kvObsPgm.h>
-#include <kvcpp/KvApp.h>
 
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
@@ -376,7 +375,7 @@ bool aggregatedParameter(int paramFrom, int paramTo)
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {
     std::vector<Sensor> neighbors;
-    if (not kvservice::KvApp::kvApp) {
+    if (not hqcApp) {
         std::cerr << "no KvApp, probably running a test program" << std::endl;
         return neighbors;
     }

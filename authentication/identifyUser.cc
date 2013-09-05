@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,56 +26,53 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+
 #include "identifyUser.h"
+
 #include "Authenticator.h"
+#include "HqcApplication.hh"
 #include "HqcDataReinserter.h"
+
 #include <kvalobs/kvOperator.h>
+
+#include <boost/foreach.hpp>
+
 #include <list>
 #include <cstring>
 
-#include <iostream>
-
-using namespace std;
-using namespace kvalobs;
-using namespace kvservice;
-
 namespace Authentication {
 
-  namespace {
-    typedef list<kvalobs::kvOperator> opList;
-    typedef opList::const_iterator opIter;
-  };
+namespace {
+typedef std::list<kvalobs::kvOperator> opList;
+typedef opList::const_iterator opIter;
+};
 
-DataReinserter<KvApp> *identifyUser(QWidget* widgetparent, KvApp *app, const char *ldap_server, QString& userName)
+kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
+    const char *ldap_server, QString& userName)
 {
-    return identifyUser(widgetparent, app, ldap_server, userName, DEFAULT_LDAP_PORT);
+  return identifyUser(widgetparent, app, ldap_server, userName, DEFAULT_LDAP_PORT);
 }
 
-DataReinserter<KvApp> *identifyUser(QWidget* widgetparent, KvApp *app, const char *ldap_server, QString& userName, int ldap_port)
+kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
+    const char *ldap_server, QString& userName, int ldap_port)
 {
-    // Authenticate user:
+  const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
+  if (user.isEmpty())
+    return 0; // Not authenticated
+  
+  // Get list of operators from database, and find our operator:
+  opList operators;
+  hqcApp->getKvOperator(operators);
 
-    QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
-    if ( user.isEmpty() )
-      return 0; // Not authenticated
-
-    // Get list of operators from database, and find our operator:
-    opList operators;
-
-    cerr << "KvApp is " << (app ? "not null" : "null") << endl;
-
-    app->getKvOperator(operators);  // FEIL SKJER HER!
-    for (opIter it = operators.begin(); it != operators.end(); it++) {
-      //cerr << it->username().cStr() << "  " << it->userID() << endl;
-      if ( strcmp(it->username().c_str(), user.ascii()) == 0 ) {
-	string uname = it->username();
-	userName = uname.c_str();
-	return new HqcDataReinserter( app, it->userID() );
-      }
+  BOOST_FOREACH(const kvalobs::kvOperator& op, operators) {
+    const QString uname = QString::fromStdString(op.username());
+    if (user == uname) {
+      userName = uname;
+      return new HqcDataReinserter(app, op.userID());
     }
+  }
 
-    // could not find user in database
-    return 0;
+  return 0;
 }
 
 } // namespace Authentication

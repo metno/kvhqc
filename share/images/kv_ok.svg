@@ -191,8 +191,8 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="18.793013"
-     inkscape:cx="28.256901"
-     inkscape:cy="23.438853"
+     inkscape:cx="19.689887"
+     inkscape:cy="17.053501"
      inkscape:current-layer="layer1"
      showgrid="true"
      inkscape:grid-bbox="true"
@@ -234,6 +234,17 @@
        sodipodi:ry="23.991123"
        d="m 49.901535,26.635273 a 23.991123,23.991123 0 1 1 -47.9822464,0 23.991123,23.991123 0 1 1 47.9822464,0 z"
        transform="matrix(0.39330727,0,0,0.39330727,1.9165278,25.41687)" />
+    <text
+       xml:space="preserve"
+       style="font-size:12.53362369999999970px;font-style:normal;font-weight:normal;line-height:125%;letter-spacing:0px;word-spacing:0px;fill:#ffffff;fill-opacity:1;stroke:none;font-family:Sans"
+       x="4.6010852"
+       y="40.5648"
+       id="text3069"
+       sodipodi:linespacing="125%"><tspan
+         sodipodi:role="line"
+         id="tspan3071"
+         x="4.6010852"
+         y="40.5648">kv</tspan></text>
   </g>
   <metadata
      id="metadata41">
