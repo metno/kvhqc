@@ -1,3 +1,12 @@
+kvhqc (3.0.0~a3-1) unstable; urgency=low
+
+  * improved extreme values list
+  * bugfix ListDialog: from and to QDateTimeEdit's were swapped
+  * show auto list and plot side-by side with splitter
+  * fixed partial/full check state in station selection tree
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 21 Jun 2013 14:02:32 +0200
+
 kvhqc (3.0.0~a2-1) unstable; urgency=low
 
   * station selection via tree region > county > station
