@@ -98,13 +98,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define MILOGGER_CATEGORY "kvhqc.HqcMainWindow"
 #include "HqcLogging.hh"
 
-#define SPLIT_AUTO_VIEW 1
-
 namespace {
 
 const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
 
 const char SETTING_HQC_GEOMETRY[] = "geometry";
+const char SETTING_HQC_AUTOVIEW_SPLITTER[] = "autoview_slider";
 const char SETTING_VERSION[] = "version";
 const char SETTING_VERSION_FULL[] = "version_full";
 
@@ -185,16 +184,11 @@ HqcMainWindow::HqcMainWindow()
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
-#ifndef SPLIT_AUTO_VIEW
-    ui->tabs->addTab(mAutoDataList, tr("Auto Data List"));
-    ui->tabs->addTab(mTimeSeriesView, tr("Time Series"));
-#else
-    QSplitter* splitter = new QSplitter(ui->tabs);
-    splitter->addWidget(mAutoDataList);
-    splitter->addWidget(mTimeSeriesView);
-    splitter->setOpaqueResize(false);
-    ui->tabs->addTab(splitter, tr("Auto List/Series"));
-#endif
+    mAutoViewSplitter = new QSplitter(ui->tabs);
+    mAutoViewSplitter->addWidget(mAutoDataList);
+    mAutoViewSplitter->addWidget(mTimeSeriesView);
+    mAutoViewSplitter->setOpaqueResize(false);
+    ui->tabs->addTab(mAutoViewSplitter, tr("Auto List/Series"));
 
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
     ui->saveAction->setEnabled(false); // no changes yet
@@ -659,18 +653,11 @@ void HqcMainWindow::findStationInfo(int stnr,
 
 void HqcMainWindow::onTabCloseRequested(int index)
 {
-#ifndef SPLIT_AUTO_VIEW
-  if (w != mTimeSeriesView and w != mAutoDataList) {
-    delete w;
-  }
-#else
-  // TODO improve this for list/series view
-  if (index > 0) {
+  QWidget* w = ui->tabs->widget(index);
+  if (w != mAutoViewSplitter) {
     BusyIndicator busy;
-    QWidget* w = ui->tabs->widget(index);
     delete w;
   }
-#endif
 }
 
 void HqcMainWindow::helpUse() {
@@ -790,6 +777,7 @@ void HqcMainWindow::writeSettings()
 {
     QSettings settings;
     settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
+    settings.setValue(SETTING_HQC_AUTOVIEW_SPLITTER, mAutoViewSplitter->saveState());
 
     lstdlg->saveSettings(settings);
 }
@@ -801,6 +789,8 @@ void HqcMainWindow::readSettings()
     QSettings settings;
     if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
         METLIBS_LOG_WARN("cannot restore hqc main window geometry");
+    if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
+        METLIBS_LOG_WARN("cannot restore autoview splitter positions");
 
     lstdlg->restoreSettings(settings);
 }

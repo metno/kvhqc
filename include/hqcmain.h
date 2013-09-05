@@ -44,6 +44,7 @@ QT_BEGIN_NAMESPACE
 class QAction;
 class QMdiArea;
 class QMdiSubWindow;
+class QSplitter;
 class QTimer;
 QT_END_NAMESPACE
 
@@ -164,6 +165,7 @@ private:
     QString userName;
 
     std::auto_ptr<Ui::HqcMainWindow> ui;
+    QSplitter* mAutoViewSplitter;
 
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;
