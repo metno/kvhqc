@@ -2,7 +2,7 @@
 #ifndef DataList_hh
 #define DataList_hh 1
 
-#include "DataView.hh"
+#include "ChangeableDataView.hh"
 #include "ObsColumn.hh"
 
 #include <QtGui/QTableView>
@@ -10,7 +10,7 @@
 class QDomElement;
 class DataListModel;
 
-class DataList : public QTableView, public DataView
+class DataList : public QTableView, public ChangeableDataView
 {   Q_OBJECT;
 public:
     DataList(QWidget* parent=0);
@@ -20,8 +20,8 @@ public:
 
     virtual void navigateTo(const SensorTime&);
 
-    std::string changes();
-    void replay(const std::string& changes);
+    virtual std::string changes();
+    virtual void replay(const std::string& changes);
 
 protected:
     virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous);

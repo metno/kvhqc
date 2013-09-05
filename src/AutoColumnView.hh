@@ -10,7 +10,7 @@ class AutoColumnViewModel;
 class AutoColumnView : public DataView
 {
 public:
-    typedef DataList* ViewP;
+    typedef ChangeableDataView* ViewP;
 
 public:
     AutoColumnView();

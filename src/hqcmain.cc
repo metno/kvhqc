@@ -206,7 +206,7 @@ HqcMainWindow::HqcMainWindow()
     connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
     connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
-    connect(ui->timeSeriesAction, SIGNAL(triggered()), mTimeSeriesView.get(), SLOT(show()));
+    connect(ui->timeSeriesAction, SIGNAL(triggered()), mTimeSeriesView, SLOT(show()));
     
     //connect(this, SIGNAL(newStationList(std::vector<QString>&)),
     //    tsdlg, SLOT(newStationList(std::vector<QString>&)));
@@ -237,8 +237,9 @@ HqcMainWindow::HqcMainWindow()
     adlsw->setWindowTitle(tr("Automatic Data List"));
     mAutoColumnView->attachView(mAutoDataList);
 
-    QMdiSubWindow* tssw = ui->ws->addSubWindow(mTimeSeriesView.get());
+    QMdiSubWindow* tssw = ui->ws->addSubWindow(mTimeSeriesView);
     tssw->setWindowTitle(tr("Time Series"));
+    mAutoColumnView->attachView(mTimeSeriesView);
 
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
     ui->saveAction->setEnabled(false); // no changes yet

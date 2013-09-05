@@ -2,24 +2,31 @@
 #ifndef TimeSeriesView_hh
 #define TimeSeriesView_hh 1
 
-#include "DataView.hh"
+#include "ChangeableDataView.hh"
+
+#include <qTimeseries/PlotOptions.h>
 
 #include <QtGui/QWidget>
+
 #include <memory>
+#include <vector>
 
 class TimeseriesDialog;
 namespace Ui {
 class TimeSeriesView;
 }
 
-class TimeSeriesView : public QWidget, public DataView
+class TimeSeriesView : public QWidget, public ChangeableDataView
 { Q_OBJECT
 public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
                         
-  void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
-  void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+  virtual void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
+  virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+
+  virtual std::string changes();
+  virtual void replay(const std::string& changes);
 
 public Q_SLOTS:
   void navigateTo(const SensorTime&);
@@ -27,6 +34,7 @@ public Q_SLOTS:
 private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   void updatePlot();
+  static void initalizePlotOptions();
 
 private Q_SLOTS:
   void onConfigButton();
@@ -37,6 +45,10 @@ private Q_SLOTS:
 private:
   std::auto_ptr<Ui::TimeSeriesView> ui;
   std::auto_ptr<TimeseriesDialog> tsdlg;
+
+  TimeRange mOriginalTimeLimits;
+  Sensors_t mSensors, mOriginalSensors;
+  std::vector<POptions::PlotOptions> mPlotOptions;
 };
 
 #endif // TimeSeriesView_hh

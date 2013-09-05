@@ -176,7 +176,7 @@ private:
 
     std::auto_ptr<EditVersionModel> mEditVersions;
 
-    std::auto_ptr<TimeSeriesView> mTimeSeriesView;
+    TimeSeriesView* mTimeSeriesView;
 
     ClientButton* pluginB;
     std::auto_ptr<HqcDianaHelper> mDianaHelper;
