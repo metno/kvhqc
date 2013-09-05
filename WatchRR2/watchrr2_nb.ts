@@ -2,26 +2,59 @@
 <!DOCTYPE TS>
 <TS version="2.0" language="nb_NO">
 <context>
+    <name>AcceptRejectButtons</name>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="54"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept  the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="57"/>
+        <source>Accept</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="58"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="61"/>
+        <source>Reject</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="62"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="AcceptRejectButtons.cc" line="65"/>
+        <source>QC2</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Auth</name>
     <message>
-        <location filename="main.cc" line="102"/>
+        <location filename="main.cc" line="104"/>
         <source>Authentication</source>
         <translation>Autentisering</translation>
     </message>
     <message>
-        <location filename="main.cc" line="103"/>
+        <location filename="main.cc" line="105"/>
         <source>You are not registered as operator, so you cannot save data!</source>
         <translation>Du er ikke registrert som operatør, så du kan ikke lagre data!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="104"/>
+        <location filename="main.cc" line="106"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
     <message>
-        <location filename="main.cc" line="105"/>
-        <location filename="main.cc" line="128"/>
-        <location filename="main.cc" line="134"/>
+        <location filename="main.cc" line="107"/>
+        <location filename="main.cc" line="130"/>
+        <location filename="main.cc" line="136"/>
         <source>Exit</source>
         <translation>Avslutt</translation>
     </message>
@@ -143,7 +176,7 @@
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="100"/>
+        <location filename="DataCorrectedItem.cc" line="116"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -158,7 +191,7 @@
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="98"/>
+        <location filename="DataCorrectedItem.cc" line="114"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -307,66 +340,66 @@
         <translation>WatchRR</translation>
     </message>
     <message utf8="true">
-        <location filename="watchrr_main.ui" line="58"/>
+        <location filename="watchrr_main.ui" line="73"/>
         <source>&amp;Redistribute…</source>
         <translation>Tilfo&amp;rdel…</translation>
     </message>
     <message utf8="true">
-        <location filename="watchrr_main.ui" line="45"/>
+        <location filename="watchrr_main.ui" line="60"/>
         <source>&amp;Single values…</source>
         <translation>&amp;Enkeltverdier…</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="34"/>
+        <location filename="watchrr_main.ui" line="40"/>
         <source>Precipitation Card</source>
         <translation>Nedbørkort</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="71"/>
+        <location filename="watchrr_main.ui" line="86"/>
         <source>Redistribute &amp;in QC2</source>
         <oldsource>Redistribute in QC2</oldsource>
         <translation>La QC2 t&amp;ilfordele</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="84"/>
+        <location filename="watchrr_main.ui" line="99"/>
         <source>&amp;Accept</source>
         <translation>&amp;Aksepter</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="127"/>
+        <location filename="watchrr_main.ui" line="142"/>
         <source>Neighbor Precipitation</source>
         <oldsource>Neighbor Stations</oldsource>
         <translation>Nedbør Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="144"/>
+        <location filename="watchrr_main.ui" line="165"/>
         <source>Neighbor Data</source>
         <translation>Kortdata Naboer</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="206"/>
+        <location filename="watchrr_main.ui" line="239"/>
         <source>U&amp;ndo</source>
         <oldsource>Undo</oldsource>
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="219"/>
+        <location filename="watchrr_main.ui" line="252"/>
         <source>Redo is not yet implemented, sorry.</source>
         <oldsource>redo is not yet implemented, sorry</oldsource>
         <translation>Beklager, gjenta er ikke ennå implementert.</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="222"/>
+        <location filename="watchrr_main.ui" line="255"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="251"/>
+        <location filename="watchrr_main.ui" line="284"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="261"/>
+        <location filename="watchrr_main.ui" line="294"/>
         <source>Close</source>
         <translation>Lukk</translation>
     </message>
@@ -436,74 +469,21 @@
     </message>
 </context>
 <context>
-    <name>Form</name>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="14"/>
-        <source>Form</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="20"/>
-        <source>Station:</source>
-        <translation type="unfinished">Stasjon:</translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="45"/>
-        <source>Time:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="70"/>
-        <source>Parameter:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="95"/>
-        <source>Type:</source>
-        <translation type="unfinished">Type:</translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="120"/>
-        <source>Original:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="148"/>
-        <source>Corrected:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="173"/>
-        <source>Flags:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="183"/>
-        <source>Checks:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="watchrr_obsdetails.ui" line="193"/>
-        <source>Tasks:</source>
-        <translation type="unfinished"></translation>
-    </message>
-</context>
-<context>
     <name>Main</name>
     <message>
-        <location filename="main.cc" line="126"/>
-        <location filename="main.cc" line="132"/>
+        <location filename="main.cc" line="128"/>
+        <location filename="main.cc" line="134"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="main.cc" line="127"/>
+        <location filename="main.cc" line="129"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <oldsource>Your changes could not be saved, sorry!</oldsource>
         <translation>Beklager, dine endringer ble ikke lagret or er mistet!</translation>
     </message>
     <message>
-        <location filename="main.cc" line="133"/>
+        <location filename="main.cc" line="135"/>
         <source>Your changes have been saved.</source>
         <translation>Dine endringer ble lagret.</translation>
     </message>
@@ -546,12 +526,12 @@
         <translation>Fortsette</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="330"/>
+        <location filename="MainDialog.cc" line="341"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="331"/>
+        <location filename="MainDialog.cc" line="342"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
@@ -655,47 +635,47 @@
 <context>
     <name>Tasks</name>
     <message>
-        <location filename="Tasks.cc" line="20"/>
+        <location filename="Tasks.cc" line="23"/>
         <source>missing observation</source>
         <translation>manglende observasjon</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="22"/>
+        <location filename="Tasks.cc" line="25"/>
         <source>HQC flags set before redistribution</source>
         <translation>HQC flagg sett før tilfordeling</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="24"/>
+        <location filename="Tasks.cc" line="27"/>
         <source>HQC flags set for automatic redistribution</source>
         <translation>HQC flagg sett for en automatisk tilfordeling</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="26"/>
+        <location filename="Tasks.cc" line="29"/>
         <source>endpoint without any days of accumulation</source>
         <translation>oppsamling uten mangelrader</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="28"/>
+        <location filename="Tasks.cc" line="31"/>
         <source>no endpoint for accumulation found</source>
         <translation>oppsamling uten oppsamlet verdi</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="30"/>
+        <location filename="Tasks.cc" line="33"/>
         <source>redistribution partially not done or done by QC2 or HQC</source>
         <translation>tilfordeling gjort delvis ikke eller av QC2 eller av HQC</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="32"/>
+        <location filename="Tasks.cc" line="35"/>
         <source>unusual observation, might be an accumulated value</source>
         <translation>unvanglig observasjon, kan være oppsamlet verdi</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="34"/>
+        <location filename="Tasks.cc" line="37"/>
         <source>previously part of an accumulation</source>
         <translation>tidligere del av en oppsamling</translation>
     </message>
     <message>
-        <location filename="Tasks.cc" line="36"/>
+        <location filename="Tasks.cc" line="39"/>
         <source>consistency error</source>
         <translation>konsistens-feil</translation>
     </message>

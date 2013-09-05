@@ -7,15 +7,6 @@ kvhqc (3.0.0~a1-1) unstable; urgency=low
 
  -- Alexander Bürger <alexander.buerger@met.no>  Thu, 20 Jun 2013 12:00:34 +0200
 
-kvhqc (3.0.0~a1-1) unstable; urgency=low
-
-  * major changes in code structure
-  * use data structures from WatchRR2 everywhere
-  * automatically show data list and time series for neighbors/related parameters
-  * simple extreme value list
-
- -- Alexander Bürger <alexander.buerger@met.no>  Thu, 20 Jun 2013 11:56:06 +0200
-
 kvhqc (2.18.4-1) unstable; urgency=low
 
   * enable Ctrl-M to show missing list

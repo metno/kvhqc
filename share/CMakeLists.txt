@@ -31,7 +31,7 @@ INSTALL(FILES
   doc/news.html
   DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
 
-FOREACH(df hqcdiana WatchRR WatchRR2 WatchWeather histhqcdiana histWatchRR histWatchWeather)
+FOREACH(df hqcdiana histhqcdiana)
   SET(dfi metno-${df}.desktop.in)
   SET(dfo metno-${df}-${PVERSION}.desktop)
   CONFIGURE_FILE(${dfi} ${dfo})

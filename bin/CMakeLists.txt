@@ -1,11 +1,6 @@
 SET(bin_files
   hqc
-  WatchRR
-  WatchRR2
-  WatchWeather
   histhqcdiana
-  histWatchRR
-  histWatchWeather
   hqcdiana
   testhqcdiana)
 
