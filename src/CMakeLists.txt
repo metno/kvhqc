@@ -1,6 +1,8 @@
 
 SET(hqc_HEADERS
   ErrorListTableModel.hh
+  DataList.hh
+  DataListModel.hh
   ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
@@ -25,6 +27,8 @@ SET(hqc_HEADERS
 
 SET(hqc_SOURCES
   AnalyseErrors.cc
+  DataList.cc
+  DataListModel.cc
   ErrorListTableModel.cc
   ParamIdModel.cc
   ListDialog.cc

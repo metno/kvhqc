@@ -22,7 +22,7 @@ public:
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
 
-    timeutil::ptime timeAtRow(int row) const;
+    virtual timeutil::ptime timeAtRow(int row) const;
 
     void setTimeInRows(bool tir)
         { mTimeInRows = tir; }
@@ -32,11 +32,11 @@ protected:
     ObsColumnPtr getColumn(int idx) const
         { return mColumns[idx]; }
 
-    int rowAtTime(const timeutil::ptime& time) const;
+    virtual int rowAtTime(const timeutil::ptime& time) const;
+    virtual int rowOrColumnCount(bool timeDirection) const;
 
 private:
     void onColumnChanged(const timeutil::ptime& time, ObsColumn* column);
-    int rowOrColumnCount(bool timeDirection) const;
     int timeIndex(const QModelIndex& index) const
         { return mTimeInRows ? index.row() : index.column(); }
     int columnIndex(const QModelIndex& index) const

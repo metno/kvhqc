@@ -12,6 +12,7 @@ public:
 
     typedef std::set<timeutil::ptime> TimeSet;
     virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits) = 0;
+    void addAllTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits);
 
     virtual ObsDataPtr find(const SensorTime& st) = 0;
     virtual ObsDataPtr create(const SensorTime& st) = 0;
