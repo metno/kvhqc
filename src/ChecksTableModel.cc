@@ -51,14 +51,14 @@ Qt::ItemFlags ChecksTableModel::flags(const QModelIndex& /*index*/) const
 
 QVariant ChecksTableModel::data(const QModelIndex& index, int role) const
 {
-  if (role == Qt::DisplayRole) {
-    const int row = index.row();
-    switch (index.column()) {
-    case COL_CHECK:
+  const int row = index.row();
+  switch (index.column()) {
+  case COL_CHECK:
+    if (role == Qt::DisplayRole)
       return mChecks.at(row);
-    case COL_EXPLAIN:
+  case COL_EXPLAIN:
+    if (role == Qt::DisplayRole or role == Qt::ToolTipRole or role == Qt::StatusTipRole)
       return mExplanations.at(row);
-    }
   }
   return QVariant();
 }
