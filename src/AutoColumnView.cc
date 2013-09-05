@@ -13,7 +13,8 @@
 #define MILOGGER_CATEGORY "kvhqc.AutoColumnView"
 #include "HqcLogging.hh"
 
-namespace {
+namespace /*anonymous*/ {
+
 const char CHANGES_TABLE[] = "user_view_changes";
 const char CHANGES_TABLE_CREATE[] = "CREATE TABLE user_view_changes ("
     "stationid    INTEGER NOT NULL,"
@@ -30,7 +31,8 @@ const char CHANGES_TABLE_INSERT[] = "INSERT INTO user_view_changes VALUES"
 
 const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM user_view_changes"
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
-}
+
+} // anonymous namespace
 
 AutoColumnView::AutoColumnView()
 {

@@ -13,8 +13,8 @@ struct listStat_t {
     int environment;     // listStatType
     std::string fylke;   // listStatFylke
     std::string kommune; // listStatKommune
-    std::string wmonr;   // listStatWeb
-    std::string pri;     // listStatPri
+    int wmonr;           // listStatWeb
+    int pri;             // listStatPri
     timeutil::ptime fromtime;
     timeutil::ptime totime;
     bool coast;
@@ -39,8 +39,6 @@ protected:
 
 private:
     bool readFromStationFile();
-
-    std::string localCacheFileName() const;
 
 protected:
     listStat_l listStat;

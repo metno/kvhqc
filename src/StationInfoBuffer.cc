@@ -1,38 +1,35 @@
 
 #include "StationInfoBuffer.hh"
 
-#include "Functors.hh"
+#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
 
-#include <miconfparser/confexception.h>
-#include <miconfparser/confsection.h>
-#include <miconfparser/valelement.h>
-#include <puTools/miString.h>
-
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QtCore/QVariant>
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
-#include <boost/range.hpp>
-
-#include <iomanip>
-#include <fstream>
-#include <set>
 
 #define MILOGGER_CATEGORY "kvhqc.StationInfoBuffer"
 #include "HqcLogging.hh"
 
 namespace /*anonymous*/ {
 
-struct countyInfo {
-    int stnr;
-    QString name;
-    QString county;
-    QString municip;
-    QString web;
-    QString pri;
-    QString ki;
-};
+const char STATIONINFO_CACHE[] = "stationinfo_cache";
+const char STATIONINFO_CACHE_CREATE[] = "CREATE TABLE stationinfo_cache ("
+    "stationid    INTEGER PRIMARY KEY,"
+    "county       TEXT    NOT NULL,"
+    "municipality TEXT    NOT NULL,"
+    "is_coastal   BOOLEAN NOT NULL,"
+    "priority     INTEGER DEFAULT 0"
+    ");";
+
+const char STATIONINFO_CACHE_DELETE[] = "DELETE FROM stationinfo_cache;";
+const char STATIONINFO_CACHE_INSERT[] = "INSERT INTO stationinfo_cache VALUES"
+    " (:sid, :county, :municip, :coast, :prio)";
+
+const char STATIONINFO_CACHE_SELECT_ALL[] = "SELECT stationid, county, municipality, is_coastal, priority FROM stationinfo_cache;";
 
 } // anonymous namespace
 
@@ -54,27 +51,33 @@ StationInfoBuffer::~StationInfoBuffer()
 */
 bool StationInfoBuffer::writeToStationFile()
 {
-    METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE();
 
-    const std::string path = localCacheFileName();
-    if (path.empty())
-        return false;
-    std::ofstream outf(path.c_str());
-    if (not outf.is_open())
-        return false;
+  QSqlDatabase db = hqcApp->configDB();
+  if (not db.tables().contains(STATIONINFO_CACHE))
+    db.exec(STATIONINFO_CACHE_CREATE);
 
-    BOOST_FOREACH(const listStat_t& ls, listStat) {
-        outf << std::setw(7)  << std::right << ls.stationid << " " << std::left
-             << std::setw(31) << ls.fylke
-             << std::setw(25) << ls.kommune
-             << std::setw(3)  << ls.wmonr
-             << std::setw(4)  << ls.pri
-             << std::setw(1)  << (ls.coast ? 'K' : 'I')
-             << std::endl;
-    }
-    outf.close();
-    METLIBS_LOG_INFO("station list written to local cache");
-    return true;
+  db.transaction();
+  QSqlQuery deleteall(db);
+  deleteall.prepare(STATIONINFO_CACHE_DELETE);
+  if (not deleteall.exec())
+    METLIBS_LOG_ERROR("error while deleting: " << deleteall.lastError().text());
+
+  QSqlQuery insert(db);
+  insert.prepare(STATIONINFO_CACHE_INSERT);
+  BOOST_FOREACH(const listStat_t& ls, listStat) {
+    const QString qcounty = QString::fromStdString(ls.fylke), qmunicip = QString::fromStdString(ls.kommune);
+    insert.bindValue(":sid",     ls.stationid);
+    insert.bindValue(":county",  qcounty);
+    insert.bindValue(":municip", qmunicip);
+    insert.bindValue(":prio",    ls.pri);
+    insert.bindValue(":coast",   ls.coast);
+    if (not insert.exec())
+      METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
+    insert.finish();
+  }
+  db.commit();
+  return true;
 }
 
 /*!
@@ -82,62 +85,45 @@ bool StationInfoBuffer::writeToStationFile()
 */
 bool StationInfoBuffer::readFromStationFile()
 {
-    METLIBS_LOG_SCOPE();
-    const std::string path = localCacheFileName();
-    if (path.empty())
-        return false;
+  METLIBS_LOG_SCOPE();
+  
+  QSqlDatabase db = hqcApp->configDB();
+  if (not db.tables().contains(STATIONINFO_CACHE))
+    return false;
 
-    QFile stations(QString::fromStdString(path));
-    if (not stations.open(QIODevice::ReadOnly)) {
-        METLIBS_LOG_INFO("cannot open '" << path << "' for reading");
-        return false;
+  QSqlQuery query(STATIONINFO_CACHE_SELECT_ALL, hqcApp->configDB());
+  while (query.next()) {
+    try {
+      const int stationId = query.value(0).toInt();
+      const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stationId);
+      
+      listStat_t ls;
+      ls.stationid   = stationId;
+
+      ls.name        = st.name();
+      ls.altitude    = st.height();
+      ls.environment = st.environmentid();
+      ls.wmonr       = st.wmonr();
+        
+      ls.fylke       = query.value(1).toString().toStdString();
+      ls.kommune     = query.value(2).toString().toStdString();
+      ls.coast       = query.value(3).toBool();
+      ls.pri         = query.value(4).toInt();
+
+      // FIXME fromtime and totime
+        
+      listStat.push_back(ls);
+    } catch (std::runtime_error& e) {
+      METLIBS_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
     }
-    QTextStream stationStream(&stations);
-    int prevStnr = 0;
-    while (not stationStream.atEnd()) {
-        QString statLine = stationStream.readLine();
-        int stnr = statLine.left(7).toInt();
-        if (stnr == prevStnr)
-            continue;
-
-        try {
-            const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stnr);
-            listStat_t ls;
-            ls.name        = st.name();
-            ls.stationid   = st.stationID();
-            ls.altitude    = st.height();
-            ls.environment = st.environmentid();
-            ls.wmonr       = st.wmonr();
-            ls.fylke       = statLine.mid(8,30).stripWhiteSpace().toStdString();
-            ls.kommune     = statLine.mid(39,24).stripWhiteSpace().toStdString();
-            ls.pri         = statLine.mid(67,4).stripWhiteSpace().toStdString();
-            ls.coast       = statLine.mid(71,1).stripWhiteSpace() == "K";
-            listStat.push_back(ls);
-        } catch (std::runtime_error& e) {
-            // unknown station
-        }
-        prevStnr = stnr;
-    }
-    return true;
-}
-
-std::string StationInfoBuffer::localCacheFileName() const
-{
-    std::string path = miutil::from_c_str(getenv("HOME"));
-    if (path.empty())
-        return path;
-
-    return path + "/.config/hqc_stations";
+  }
+  return true;
 }
 
 bool StationInfoBuffer::isConnected()
 {
-    const std::string path = localCacheFileName();
-    if (path.empty())
-        return false;
-
-    QFile stations(QString::fromStdString(path));
-    return stations.open(QIODevice::ReadOnly);
+  QSqlDatabase db = hqcApp->configDB();
+  return (db.tables().contains(STATIONINFO_CACHE));
 }
 
 const listStat_l& StationInfoBuffer::getStationDetails()

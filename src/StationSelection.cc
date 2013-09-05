@@ -41,8 +41,8 @@ void StationTable::setData(const listStat_l& listStat,
     { // pre-fetching obs_pgm is a faster than fetching one-by-one
       std::set<long> stationids;
       BOOST_FOREACH(const listStat_t& s, listStat) {
-        bool webStat = (s.wmonr != "    ");
-        bool priStat = (s.pri.substr(0, 3) == "PRI");
+        bool webStat = (s.wmonr != 0);
+        bool priStat = (s.pri > 0);
         if (not (counties.contains("ALL")
                  or counties.contains(QString::fromStdString(s.fylke))
                  or (webStat and web) or (priStat and pri)))
@@ -56,11 +56,9 @@ void StationTable::setData(const listStat_l& listStat,
     int stInd = 0;
     BOOST_FOREACH(const listStat_t& s, listStat) {
         METLIBS_LOG_DEBUG(LOGVAL(s.stationid) << LOGVAL(s.fylke) << LOGVAL(s.wmonr) << LOGVAL(s.pri));
-        bool webStat = (s.wmonr != "    ");
-        bool priStat = (s.pri.substr(0, 3) == "PRI");
-        QString prty;
-        if (s.pri.size() >= 4 )
-            prty = QString::fromStdString(s.pri.substr(3,1));
+        const bool webStat = (s.wmonr != 0);
+        const bool priStat = (s.pri > 0);
+        const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
 
         if (not (counties.contains("ALL")
                  or counties.contains(QString::fromStdString(s.fylke))
