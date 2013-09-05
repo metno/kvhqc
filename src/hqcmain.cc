@@ -427,8 +427,8 @@ void HqcMainWindow::showWatchRR()
 
     timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
     timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
-    if (timeTo > now)
-        timeTo = now;
+    while (timeTo > now)
+      timeTo -= boost::gregorian::days(7);
     TimeRange time(timeFrom, timeTo);
 
     StationDialog sd(sensor, time);
@@ -470,8 +470,8 @@ void HqcMainWindow::showWeather()
   
   timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
-  if (timeTo > now)
-    timeTo = now;
+  while (timeTo > now)
+    timeTo -= boost::gregorian::days(7);
   TimeRange time(timeFrom, timeTo);
   
   WeatherStationDialog sd(sensor, time);

@@ -3,21 +3,15 @@
 #define WEATHERTABLEMODEL_HH 1
 
 #include "ColumnFactory.hh"
-#include "ObsTableModel.hh"
+#include "DataListModel.hh"
 
-class WeatherTableModel : public ObsTableModel
+class WeatherTableModel : public DataListModel
 {
 public:
   WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t);
 
-  virtual timeutil::ptime timeAtRow(int row) const;
-
   static const int NPARAMETERS;
   static const int parameters[];
-
-protected:
-  virtual int rowAtTime(const timeutil::ptime& time) const;
-  virtual int rowOrColumnCount(bool timeDirection) const;
 };
 
 #endif /* WEATHERTABLEMODEL_HH */

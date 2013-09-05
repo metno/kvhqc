@@ -3,7 +3,7 @@ SET(hqc_HEADERS
   ErrorListTableModel.hh
   ../include/DataList.hh
   ../include/DataListAddColumn.hh
-  DataListModel.hh
+  ../include/DataListModel.hh
   ../include/dianashowdialog.h
   ../include/errorlist.h
   ../include/ExtremesView.hh
@@ -16,7 +16,6 @@ SET(hqc_HEADERS
   ../include/SimpleCorrections.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
-  ../include/TimeRangeControl.hh
   ../include/TimeseriesDialog.h
   TimeSeriesView.hh
 )
@@ -54,7 +53,6 @@ SET(hqc_SOURCES
   SimpleCorrections.cc
   textdatadialog.cc
   textdatatable.cc
-  TimeRangeControl.cc
   TimeseriesDialog.cc
   TimeSeriesView.cc
   TypeIdModel.cc

@@ -25,8 +25,6 @@ WeatherStationDialog::WeatherStationDialog(QDialog* parent)
 bool WeatherStationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
 {
   METLIBS_LOG_SCOPE();
-  if (not (op.kl06() or op.kl07() or op.collector()))
-    return false;
 
   const int *pb = WeatherTableModel::parameters, *pe = pb + WeatherTableModel::NPARAMETERS;
   if (std::find(pb, pe, op.paramID()) == pe) {

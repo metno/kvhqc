@@ -440,22 +440,22 @@
         <translation>Fra:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="60"/>
+        <location filename="watchrr_station.ui" line="57"/>
         <source>To:</source>
         <translation>Til:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="80"/>
+        <location filename="watchrr_station.ui" line="74"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="109"/>
+        <location filename="watchrr_station.ui" line="103"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="119"/>
+        <location filename="watchrr_station.ui" line="113"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -615,27 +615,32 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="76"/>
+        <location filename="StationDialog.cc" line="73"/>
         <source>invalid station or date range</source>
         <translation>ugyldig stasjon eller tidsrom</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="92"/>
+        <location filename="StationDialog.cc" line="89"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="107"/>
+        <location filename="StationDialog.cc" line="93"/>
+        <source>Invalid station number</source>
+        <translation>Ugyldig stasjonsnummer</translation>
+    </message>
+    <message>
+        <location filename="StationDialog.cc" line="100"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="132"/>
+        <location filename="StationDialog.cc" line="123"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="137"/>
+        <location filename="StationDialog.cc" line="128"/>
         <source>typeid different at start and end</source>
         <translation>forskjellige typeid ved start og slutt</translation>
     </message>

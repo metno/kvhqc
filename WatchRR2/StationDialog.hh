@@ -7,6 +7,7 @@
 #include <QtGui/QDialog>
 #include <memory>
 
+class TimeRangeControl;
 namespace kvalobs {
 class kvObsPgm;
 }
@@ -15,33 +16,32 @@ class DialogStation;
 }
 
 class StationDialog : public QDialog
-{   Q_OBJECT;
+{ Q_OBJECT;
 public:
-    StationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent=0);
-    StationDialog(QDialog* parent=0);
-    virtual ~StationDialog();
+  StationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent=0);
+  StationDialog(QDialog* parent=0);
+  virtual ~StationDialog();
                             
-    Sensor selectedSensor() const
-        { return mSensor; }
+  Sensor selectedSensor() const
+    { return mSensor; }
 
-    TimeRange selectedTime() const;
+  TimeRange selectedTime() const;
 
-    bool valid() const;
+  bool valid() const;
 
 protected:
   virtual bool acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
 
 protected Q_SLOTS:
-    void init();
-    void onButtonOk();
-    void onUpdateType();
-    bool check();
+  void init();
+  void onButtonOk();
+  void onUpdateType();
+  bool check();
 
 protected:
-    Sensor mSensor;
-    timeutil::ptime mTimeFrom, mTimeTo;
-    int mHour;
-    std::auto_ptr<Ui::DialogStation> ui;
+  Sensor mSensor;
+  std::auto_ptr<Ui::DialogStation> ui;
+  TimeRangeControl* mTimeControl;
 };
 
 #endif // STATIONDIALOG_HH

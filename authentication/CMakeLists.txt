@@ -5,6 +5,7 @@ SET(auth_HEADERS
   HintWidget.hh
   MiDateTimeEdit.hh
   HqcApplication.hh
+  TimeRangeControl.hh
 )
 
 SET(auth_SOURCES
@@ -26,6 +27,7 @@ SET(auth_SOURCES
   Sensor.hh
   Sensor.cc
   TimeRange.cc
+  TimeRangeControl.cc
   timeutil.cc
   ToolTipStringListModel.hh
   ToolTipStringListModel.cc
