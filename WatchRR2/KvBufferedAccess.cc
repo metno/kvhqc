@@ -47,7 +47,7 @@ ObsAccess::DataSet KvBufferedAccess::allData(const std::vector<Sensor>& sensors,
 ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 {
   if (not st.valid()) {
-    METLIBS_LOG_ERROR("invalid sensorTime: " << st);
+    HQC_LOG_ERROR("invalid sensorTime: " << st);
     return ObsDataPtr();
   }
 
@@ -61,7 +61,7 @@ ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
 {
   if (not st.valid())
-    METLIBS_LOG_ERROR("invalid sensorTime: " << st);
+    HQC_LOG_ERROR("invalid sensorTime: " << st);
   
   Data_t::iterator it = mData.find(st);
   if (it != mData.end() and it->second)
@@ -103,9 +103,11 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data, bool updat
       obsDataChanged(CREATED, obs);
   } else {
     obs = it->second;
+    const bool wasCreated = obs->isCreated();
+    obs->setCreated(false);
 
     // FIXME this might compare too many things ...
-    if (not kvalobs::compare::exactly_equal()(obs->data(), data)) {
+    if (wasCreated or not kvalobs::compare::exactly_equal()(obs->data(), data)) {
       obs->data() = data;
       obsDataChanged(MODIFIED, obs);
     }
@@ -194,7 +196,7 @@ void KvBufferedAccess::removeSubscription(const ObsSubscription& s)
         it->second = newSpan;
       }
     } else {
-      METLIBS_LOG_ERROR("subscribed station " << s.stationId() << " not in subscription list");
+      HQC_LOG_ERROR("subscribed station " << s.stationId() << " not in subscription list");
     }
   }
 }

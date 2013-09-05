@@ -284,7 +284,7 @@ int parameterIdByName(const std::string& paramName)
         return p.paramID();
     }
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("exception while fetching params: " << e.what());
+    HQC_LOG_ERROR("exception while fetching params: " << e.what());
   }
   return -1;
 }
@@ -386,7 +386,7 @@ void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
       while (query.next())
         paramTo.insert(query.value(0).toInt());
     } else {
-      METLIBS_LOG_WARN("error getting aggregated parameters for " << paramFrom
+      HQC_LOG_WARN("error getting aggregated parameters for " << paramFrom
           << ": " << query.lastError().text());
     }
   }

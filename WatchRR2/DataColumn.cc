@@ -50,7 +50,7 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
     METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
     return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
   } catch (std::exception& e) {
-    METLIBS_LOG_WARN(e.what());
+    HQC_LOG_WARN(e.what());
     return false;
   }
 }

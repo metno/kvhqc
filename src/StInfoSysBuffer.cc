@@ -53,7 +53,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   {
     QSqlQuery query(db);
     if (not query.exec("SELECT stationid, priority FROM stationinfo_priorities")) {
-      METLIBS_LOG_ERROR("cannot read priorities: " << query.lastError().text());
+      HQC_LOG_ERROR("cannot read priorities: " << query.lastError().text());
       return false;
     }
     while (query.next()) {
@@ -67,7 +67,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   {
     QSqlQuery query(db);
     if (not query.exec("SELECT stationid FROM stationinfo_coastal")) {
-      METLIBS_LOG_ERROR("cannot read coastal station list: " << query.lastError().text());
+      HQC_LOG_ERROR("cannot read coastal station list: " << query.lastError().text());
       return false;
     }
     while (query.next()) {
@@ -89,7 +89,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
 
   QSqlQuery query(QSqlDatabase::database(QSQLNAME_REMOTE));
   if (not query.exec(stinfosys_SQL)) {
-    METLIBS_LOG_ERROR("query to stinfosys failed: " << query.lastError().text());
+    HQC_LOG_ERROR("query to stinfosys failed: " << query.lastError().text());
     return false;
   }
   typedef std::map<int,countyInfo> cList_t;
@@ -111,7 +111,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
       cInfo.county  = "MARITIME";
     }
     if (cInfo.county.size() < 3)
-      METLIBS_LOG_WARN("empty county for station " << cInfo.stnr);
+      HQC_LOG_WARN("empty county for station " << cInfo.stnr);
   
     station2prio_t::const_iterator it = station2prio.find(cInfo.stnr);
     if (it != station2prio.end())
@@ -127,7 +127,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   {
     QSqlQuery query(db);
     if (not query.exec("SELECT stationid, county, municipality, is_coastal, priority FROM stationinfo_foreign")) {
-      METLIBS_LOG_ERROR("cannot read foreign stations: " << query.lastError().text());
+      HQC_LOG_ERROR("cannot read foreign stations: " << query.lastError().text());
       return false;
     }
     while (query.next()) {

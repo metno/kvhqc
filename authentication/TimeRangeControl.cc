@@ -19,7 +19,7 @@ void TimeRangeControl::setMinimumGap(int hours)
 {
   mMinimumGap = hours;
   if (mMinimumGap > 0 and mMaximumGap > 0 and mMinimumGap > mMaximumGap) {
-    METLIBS_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
+    HQC_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
     mMaximumGap = mMinimumGap;
   }
   if (mT0 and mT1)
@@ -30,7 +30,7 @@ void TimeRangeControl::setMaximumGap(int hours)
 {
   mMaximumGap = hours;
   if (mMinimumGap > 0 and mMaximumGap > 0 and mMinimumGap > mMaximumGap) {
-    METLIBS_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
+    HQC_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
     mMinimumGap = mMaximumGap;
   }
   if (mT0 and mT1)

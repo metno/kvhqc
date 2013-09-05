@@ -47,7 +47,7 @@ void updateUseAddCFailed(kvalobs::kvData &d)
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     const int fhqc = cinfo.flag(flag::fhqc);
     if (fhqc == 0)
-        METLIBS_LOG_ERROR("inserting data with fhqc==0: " << d);
+        HQC_LOG_ERROR("inserting data with fhqc==0: " << d);
     
     kvUseInfo ui = d.useinfo();
     ui.setUseFlags(cinfo);
@@ -87,7 +87,7 @@ const HqcDataReinserter::Result HqcDataReinserter::insert(std::list<kvalobs::kvD
 
 const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::serialize::KvalobsData& data) const
 {
-    METLIBS_LOG_WARN("inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
+    HQC_LOG_WARN("inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
     return DataReinserter<KvApp>::insert(data);
 }
 

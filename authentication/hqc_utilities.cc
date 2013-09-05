@@ -97,7 +97,7 @@ bool connect2postgres(const QString& qname, const QString& host, const QString& 
   db.setPort        (port);
 
   if (not db.open()) {
-    METLIBS_LOG_ERROR("cannot connect to PSQL database: " << db.lastError().text());
+    HQC_LOG_ERROR("cannot connect to PSQL database: " << db.lastError().text());
     return false;
   } else {
     return true;

@@ -86,7 +86,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
 {
   METLIBS_LOG_SCOPE();
   if (not limits.closed()) {
-    METLIBS_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
+    HQC_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
     return;
   }
 
@@ -95,7 +95,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
   bool empty = true;
   BOOST_FOREACH(const Sensor& s, sensors) {
     if (not s.valid()) {
-      METLIBS_LOG_ERROR("invalid sensor: " << s);
+      HQC_LOG_ERROR("invalid sensor: " << s);
       continue;
     }
     Fetched_t::const_iterator f = mFetched.find(s.stationId);
@@ -128,14 +128,14 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
           addFetched(s.stationId, limits);
       }
     } else {
-      METLIBS_LOG_ERROR("problem receiving data for sensors " << sensorString(sensors)
+      HQC_LOG_ERROR("problem receiving data for sensors " << sensorString(sensors)
           << " and time " << limits);
     }
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+    HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
         << " and time " << limits << ", message is: " << e.what());
   } catch (...) {
-    METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+    HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
         << " and time " << limits);
   }
 }
@@ -203,8 +203,11 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         
         kvalobs::kvData& d = obs->data();
         if (inserted and d.corrected() == kvalobs::NEW_ROW) {
-          METLIBS_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());
+          HQC_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());
           continue;
+        }
+        if (inserted and not d.cfailed().empty()) {
+          HQC_LOG_WARN("inserting row with non-empty cfailed: " << obs->sensorTime());
         }
 
         if (not Helpers::float_eq()(d.corrected(), ou.corrected))

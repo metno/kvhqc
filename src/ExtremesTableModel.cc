@@ -57,7 +57,7 @@ ExtremesTableModel::ExtremesTableModel(EditAccessPtr eda, const std::vector<Sens
       mExtremes.push_back(obs);
     } else {
       mDA->removeSubscription(sub);
-      METLIBS_LOG_ERROR("could not retrieve extreme value at " << st);
+      HQC_LOG_ERROR("could not retrieve extreme value at " << st);
     }
   }
 }

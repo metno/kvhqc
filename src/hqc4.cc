@@ -77,7 +77,7 @@ int main( int argc, char* argv[] )
 
     miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
     if (not confSec) {
-        METLIBS_LOG_ERROR("cannot open configuration file '" << myconf << "'");
+        HQC_LOG_ERROR("cannot open configuration file '" << myconf << "'");
         return 1;
     }
     

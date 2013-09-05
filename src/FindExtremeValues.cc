@@ -84,7 +84,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       METLIBS_LOG_DEBUG(LOGVAL(st));
     }
   } else {
-    METLIBS_LOG_ERROR("search for extreme values failed: " << query.lastError().text());
+    HQC_LOG_ERROR("search for extreme values failed: " << query.lastError().text());
   }
   return extremes;
 }

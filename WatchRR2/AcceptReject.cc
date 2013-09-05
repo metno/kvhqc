@@ -46,18 +46,18 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
 {
   EditDataPtr obs = eda->findE(sensorTime);
   if (not obs) {
-    METLIBS_LOG_ERROR("accept_original without obs for " << sensorTime);
+    HQC_LOG_ERROR("accept_original without obs for " << sensorTime);
     return;
   }
 
   const kvalobs::kvControlInfo ci = obs->controlinfo();
   const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3) {
-    METLIBS_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
+    HQC_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
     return;
   }
   if (not (fmis == 0 or fmis == 1 or fmis == 2 or fmis == 4)) {
-    METLIBS_LOG_ERROR("bad accept_original, fmis != 0/1/2/4 for " << sensorTime);
+    HQC_LOG_ERROR("bad accept_original, fmis != 0/1/2/4 for " << sensorTime);
     return;
   }
 
@@ -83,7 +83,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
 {
   EditDataPtr obs = eda->findE(sensorTime);
   if (not obs) {
-    METLIBS_LOG_ERROR("accept_corrected without obs for " << sensorTime);
+    HQC_LOG_ERROR("accept_corrected without obs for " << sensorTime);
     return;
   }
 
@@ -100,7 +100,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
   } else if (fmis == 1 or fmis == 4) {
     Helpers::set_fhqc(editor, 5);
   } else {
-    METLIBS_LOG_ERROR("bad accept_corrected for " << sensorTime);
+    HQC_LOG_ERROR("bad accept_corrected for " << sensorTime);
     return;
   }
   if (qc2ok)
@@ -113,13 +113,13 @@ void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
 {
   EditDataPtr obs = eda->findE(sensorTime);
   if (not obs) {
-    METLIBS_LOG_ERROR("reject without obs for " << sensorTime);
+    HQC_LOG_ERROR("reject without obs for " << sensorTime);
     return;
   }
 
   const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
   if (fmis == 1 or fmis == 3) {
-    METLIBS_LOG_ERROR("bad reject with fmis=1/3 for " << sensorTime);
+    HQC_LOG_ERROR("bad reject with fmis=1/3 for " << sensorTime);
     return;
   }
 

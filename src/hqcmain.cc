@@ -346,7 +346,7 @@ void HqcMainWindow::ListOK()
       const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
       stationList.push_back(statId);
     } catch (std::exception& e) {
-      METLIBS_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
+      HQC_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
     }
   }
   /*emit*/ newStationList(stationList);
@@ -398,7 +398,7 @@ void HqcMainWindow::rejectedOK()
       return;
     }
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
+    HQC_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
   }
   // reach here in case of error
   QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
@@ -568,7 +568,7 @@ void HqcMainWindow::onVersionCheckTimeout()
     }
   }
   // something went wrong when reading the version info file
-  METLIBS_LOG_WARN("error reading hqc_current_version, not renewing timer");
+  HQC_LOG_WARN("error reading hqc_current_version, not renewing timer");
 }
 
 void HqcMainWindow::onShowErrorList()
@@ -741,9 +741,9 @@ void HqcMainWindow::readSettings()
 
   QSettings settings;
   if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
-    METLIBS_LOG_WARN("cannot restore hqc main window geometry");
+    HQC_LOG_WARN("cannot restore hqc main window geometry");
   if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
-    METLIBS_LOG_WARN("cannot restore autoview splitter positions");
+    HQC_LOG_WARN("cannot restore autoview splitter positions");
 
   lstdlg->restoreSettings(settings);
 }

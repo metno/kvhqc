@@ -36,7 +36,7 @@ std::vector<int> findAllParameters(bool historic)
       params.push_back(paramId);
     }
   } else {
-    METLIBS_LOG_ERROR("failed to fetch parameter list from kvalobs SQL db -- using kvParam; error was: " << query.lastError().text());
+    HQC_LOG_ERROR("failed to fetch parameter list from kvalobs SQL db -- using kvParam; error was: " << query.lastError().text());
 
     const std::list<kvalobs::kvParam> allParam = KvMetaDataBuffer::instance()->allParams();
     BOOST_FOREACH(const kvalobs::kvParam& p, allParam)

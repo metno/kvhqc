@@ -73,7 +73,7 @@ void QtKvalobsAccess::removeSubscription(const ObsSubscription& s)
 
   SubscribedStations_t::iterator it = mSubscribedStations.find(s.stationId());
   if (it == mSubscribedStations.end()) {
-    METLIBS_LOG_ERROR("station " << s.stationId() << " has no subscribtions, cannot unsubscribe");
+    HQC_LOG_ERROR("station " << s.stationId() << " has no subscribtions, cannot unsubscribe");
     return;
   }
 

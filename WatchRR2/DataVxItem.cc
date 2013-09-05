@@ -141,7 +141,7 @@ QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) cons
 {
   const VxData* vxdata = vxData4SensorTime(st);
   if (not vxdata)
-    METLIBS_LOG_WARN("no Vx codes known for " << st);
+    HQC_LOG_WARN("no Vx codes known for " << st);
 
   if (role == ObsColumn::ValueTypeRole) {
     return ObsColumn::TextCode;
@@ -248,7 +248,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
   METLIBS_LOG_SCOPE();
   const VxData* vxdata = vxData4SensorTime(st);
   if (not vxdata) {
-    METLIBS_LOG_WARN("no Vx codes known for " << st);
+    HQC_LOG_WARN("no Vx codes known for " << st);
     return false;
   }
 

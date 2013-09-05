@@ -78,11 +78,11 @@ bool KvServiceHelper::getKvData(kvservice::KvGetDataReceiver& dataReceiver, cons
   try {
     return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvData(dataReceiver, wd));
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << "); message is: " << e.what());
+    HQC_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << "); message is: " << e.what());
     updateKvalobsAvailability(false);
     throw e;
   } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << ')');
+    HQC_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << ')');
     updateKvalobsAvailability(false);
     throw;
   }
@@ -94,11 +94,11 @@ bool KvServiceHelper::getKvModelData(std::list<kvalobs::kvModelData> &dataList, 
   try {
     return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvModelData(dataList, wd));
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << "); message is: " << e.what());
+    HQC_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << "); message is: " << e.what());
     updateKvalobsAvailability(false);
     throw e;
   } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << ')');
+    HQC_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << ')');
     updateKvalobsAvailability(false);
     throw;
   }
@@ -124,11 +124,11 @@ bool KvServiceHelper::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& reje
     }
     return ok;
   } catch (std::exception& e) {                                       
-    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits << ": " << e.what()); 
+    HQC_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits << ": " << e.what()); 
     updateKvalobsAvailability(false);
     throw e;
   } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits);
+    HQC_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits);
     updateKvalobsAvailability(false);
     throw;
   }                                                                     
@@ -141,11 +141,11 @@ bool KvServiceHelper::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const st
     return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvObsPgm(obsPgm, stationList, false));
   } catch (std::exception& e) {
 
-    METLIBS_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false); message is: " << e.what());
+    HQC_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false); message is: " << e.what());
     updateKvalobsAvailability(false);
     throw e;
   } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false)");
+    HQC_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false)");
     updateKvalobsAvailability(false);
     throw;
   }
@@ -156,11 +156,11 @@ bool KvServiceHelper::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const st
   try {                                                                 \
     return updateKvalobsAvailability(kvservice::KvApp::kvApp->func args); \
   } catch (std::exception& e) {                                         \
-    METLIBS_LOG_ERROR("kvalobs exception in '" #func "': " << e.what()); \
+    HQC_LOG_ERROR("kvalobs exception in '" #func "': " << e.what()); \
     updateKvalobsAvailability(false);                                   \
     throw e;                                                            \
   } catch (...) {                                                       \
-    METLIBS_LOG_ERROR("kvalobs exception in '" #func "'");              \
+    HQC_LOG_ERROR("kvalobs exception in '" #func "'");              \
     updateKvalobsAvailability(false);                                   \
     throw;                                                              \
   }                                                                     \

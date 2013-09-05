@@ -186,9 +186,9 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
       return Qt::AlignRight+Qt::AlignVCenter;
     }
   } catch (std::exception& e) {
-    METLIBS_LOG_WARN("exception: " << e.what());
+    HQC_LOG_WARN("exception: " << e.what());
   } catch (...) {
-    METLIBS_LOG_WARN("exception without message");
+    HQC_LOG_WARN("exception without message");
   }
   return QVariant();
 }

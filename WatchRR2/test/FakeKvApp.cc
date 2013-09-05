@@ -79,7 +79,7 @@ void FakeKvApp::insertDataFromFile(const std::string& filename)
         std::vector<std::string> columns;
         boost::split(columns, line, boost::is_any_of("\t"));
         if (columns.size() != 7 and columns.size() != 8) {
-            METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
+            HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
             continue;
         }
 
@@ -135,7 +135,7 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
             std::vector<std::string> columns;
             boost::split(columns, line, boost::is_any_of("\t"));
             if (columns.size() != 4) {
-                METLIBS_LOG_WARN("bad model line '" << line << "' cols=" << columns.size());
+                HQC_LOG_WARN("bad model line '" << line << "' cols=" << columns.size());
                 continue;
             }
 
@@ -147,7 +147,7 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
             
             insertModel(stationId, paramId, obstime, value);
         } catch (std::exception& e) {
-            METLIBS_LOG_WARN("error parsing model line '" << line << "' in file '" + filename + "'");
+            HQC_LOG_WARN("error parsing model line '" << line << "' in file '" + filename + "'");
         }
     }
 }
@@ -161,7 +161,7 @@ void FakeKvApp::addStation(const std::string& line)
         std::vector<std::string> columns;
         boost::split(columns, line, boost::is_any_of("\t;"));
         if (columns.size() != 7) {
-            METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
+            HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
             return;
         }
         
@@ -178,7 +178,7 @@ void FakeKvApp::addStation(const std::string& line)
         if (std::find_if(mKvStations.begin(), mKvStations.end(), Helpers::stations_by_id(station)) == mKvStations.end())
             mKvStations.push_back(kvalobs::kvStation(station, lat, lon, height, 0.0f, name, 0, 0, "?", "?", "?", env, true, from));
     } catch (std::exception& e) {
-        METLIBS_LOG_WARN("error parsing station line '" << line << "'");
+        HQC_LOG_WARN("error parsing station line '" << line << "'");
     }
 }
 
@@ -190,7 +190,7 @@ void FakeKvApp::addObsPgm(const std::string& line)
     std::vector<std::string> columns;
     boost::split(columns, line, boost::is_any_of("\t;"));
     if (columns.size() != 39) {
-        METLIBS_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
+        HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
         return;
     }
 

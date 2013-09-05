@@ -79,7 +79,7 @@ ObsAccess::DataSet EditAccess::allData(const std::vector<Sensor>& sensors, const
 ObsDataPtr EditAccess::find(const SensorTime& st)
 {
   if (not st.valid()) {
-    METLIBS_LOG_ERROR("invalid sensorTime: " << st);
+    HQC_LOG_ERROR("invalid sensorTime: " << st);
     return ObsDataPtr();
   }
   
@@ -100,7 +100,7 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
 ObsDataPtr EditAccess::create(const SensorTime& st)
 {
   if (not st.valid())
-    METLIBS_LOG_ERROR("invalid sensorTime: " << st);
+    HQC_LOG_ERROR("invalid sensorTime: " << st);
 
   Data_t::iterator it = mData.find(st);
   if (it != mData.end() and it->second)

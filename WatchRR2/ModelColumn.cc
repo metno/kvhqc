@@ -19,7 +19,7 @@ ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRang
     , mCodes(boost::make_shared<Code2Text>())
 {
     if (not ModelAccess::isModelSensor(mSensor)) {
-        METLIBS_LOG_WARN("not a model sensor: " << mSensor << ", adapting");
+        HQC_LOG_WARN("not a model sensor: " << mSensor << ", adapting");
         mSensor = ModelAccess::makeModelSensor(mSensor);
     }
     mMA->modelDataChanged.connect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));

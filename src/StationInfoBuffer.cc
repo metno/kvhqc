@@ -62,7 +62,7 @@ bool StationInfoBuffer::writeToStationFile()
   QSqlQuery deleteall(db);
   deleteall.prepare(STATIONINFO_CACHE_DELETE);
   if (not deleteall.exec())
-    METLIBS_LOG_ERROR("error while deleting: " << deleteall.lastError().text());
+    HQC_LOG_ERROR("error while deleting: " << deleteall.lastError().text());
 
   QSqlQuery insert(db);
   insert.prepare(STATIONINFO_CACHE_INSERT);
@@ -75,7 +75,7 @@ bool StationInfoBuffer::writeToStationFile()
     insert.bindValue(":prio",     ls.pri);
     insert.bindValue(":coast",    ls.coast);
     if (not insert.exec())
-      METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
+      HQC_LOG_ERROR("error while inserting: " << insert.lastError().text());
     insert.finish();
   }
   db.commit();
@@ -117,7 +117,7 @@ bool StationInfoBuffer::readFromStationFile()
         
       listStat.push_back(ls);
     } catch (std::exception& e) {
-      METLIBS_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
+      HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
     }
   }
   return true;

@@ -107,7 +107,7 @@ void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget*
         return;
       }
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving text data: " << e.what());
+      HQC_LOG_ERROR("exception while retrieving text data: " << e.what());
     }
     QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
         QMessageBox::Ok, QMessageBox::NoButton);

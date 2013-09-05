@@ -2,6 +2,7 @@
 #ifndef HQC_LOGGING_HH
 #define HQC_LOGGING_HH 1
 
+#include "HqcApplication.hh"
 #include <Qt/qglobal.h>
 #include <iosfwd>
 
@@ -27,5 +28,13 @@ std::ostream& operator<<(std::ostream& out, const SensorTime& st);
     << " corr=" << (obs)->corrected() << " ci='" << (obs)->controlinfo().flagstring() << "'"
 
 #include <miLogger/miLogging.h>
+
+#define HQC_LOG_WARN(x)                                 \
+  do { if (hqcApp) { hqcApp->setReturnCode(2); }        \
+    METLIBS_LOG_WARN(x); } while(0)
+
+#define HQC_LOG_ERROR(x)                                \
+  do { if (hqcApp) { hqcApp->setReturnCode(2); }        \
+    METLIBS_LOG_ERROR(x); } while(0)
 
 #endif // HQC_LOGGING_HH

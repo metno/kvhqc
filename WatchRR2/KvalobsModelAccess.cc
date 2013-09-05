@@ -67,13 +67,13 @@ ModelAccess::ModelDataSet KvalobsModelAccess::findMany(const std::vector<SensorT
           receive(md);
         }
       } else {
-        METLIBS_LOG_ERROR("problem receiving model data for sensors/times " << sensorTimeString(sensorTimes));
+        HQC_LOG_ERROR("problem receiving model data for sensors/times " << sensorTimeString(sensorTimes));
       }
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes)
+      HQC_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes)
           << ", exception is: " << e.what());
     } catch (...) {
-      METLIBS_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes));
+      HQC_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes));
     }
   }
   return KvModelAccess::findMany(sensorTimes);
@@ -106,7 +106,7 @@ ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>&
 {
   METLIBS_LOG_SCOPE();
   if (not limits.closed()) {
-    METLIBS_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
+    HQC_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
     return ModelDataSet();
   }
 
@@ -115,7 +115,7 @@ ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>&
   bool empty = true;
   BOOST_FOREACH(const Sensor& s, sensors) {
     if (not s.valid()) {
-      METLIBS_LOG_ERROR("invalid sensor: " << s);
+      HQC_LOG_ERROR("invalid sensor: " << s);
       continue;
     }
     Fetched_t::const_iterator f = mFetched.find(s.stationId);
@@ -145,14 +145,14 @@ ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>&
           receive(md);
         }
       } else {
-        METLIBS_LOG_ERROR("problem retrieving data for sensors " << sensorString(sensors)
+        HQC_LOG_ERROR("problem retrieving data for sensors " << sensorString(sensors)
             << " and time " << limits);
       }
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+      HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
           << " and time " << limits << ", message is: " << e.what());
     } catch (...) {
-      METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+      HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
           << " and time " << limits);
     }
   }

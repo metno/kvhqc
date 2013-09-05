@@ -53,7 +53,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     {
         QSettings settings;
         if (not restoreGeometry(settings.value(SETTING_WATCHRR_GEOMETRY).toByteArray()))
-            METLIBS_LOG_WARN("cannot restore WatchRR geometry");
+            HQC_LOG_WARN("cannot restore WatchRR geometry");
     }
 
     QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);

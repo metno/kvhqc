@@ -21,7 +21,7 @@ QVariant ParamIdModel::data(const QModelIndex& index, int role) const
     if (role == Qt::ToolTipRole)
       return QString::number(paramId) + ": " + QString::fromStdString(p.description());
   } catch (std::exception& e) {
-    METLIBS_LOG_WARN("paramId " << paramId << " not known");
+    HQC_LOG_WARN("paramId " << paramId << " not known");
   }
   if (role == Qt::DisplayRole)
     return QString("{%1}").arg(paramId);

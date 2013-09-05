@@ -21,7 +21,7 @@ QVariant TypeIdModel::data(const QModelIndex& index, int role) const
       const kvalobs::kvTypes& t = KvMetaDataBuffer::instance()->findType(typeId);
       return QString::fromStdString(t.format());
     } catch (std::exception& e) {
-      METLIBS_LOG_WARN("typeId " << typeId << " not known");
+      HQC_LOG_WARN("typeId " << typeId << " not known");
     }
   }
   return QVariant();

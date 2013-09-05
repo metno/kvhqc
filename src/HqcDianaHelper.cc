@@ -233,7 +233,7 @@ void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
         if (s.stationId > 0)
             mDA->addAllTimes(allTimes, s, limits);
         else
-            METLIBS_LOG_WARN("stationId = 0: " << s);
+            HQC_LOG_WARN("stationId = 0: " << s);
     }
     sendTimes(allTimes);
 }
@@ -555,7 +555,7 @@ void HqcDianaHelper::sendObservations()
     if (not mEnabled or not mDianaConnected or mSensors.empty() or t.is_not_a_date_time())
         return;
     
-    METLIBS_LOG_ERROR("FIXME need to reimplement sendObservations");
+    HQC_LOG_ERROR("FIXME need to reimplement sendObservations");
 
     typedef std::map<int, Sensor> SensorByParam_t;
     typedef std::map<int, SensorByParam_t> SensorByStationAndParam_t;
@@ -631,7 +631,7 @@ void HqcDianaHelper::sendSelectedParam()
     const int paramId = mDianaSensorTime.sensor.paramId;
     SendPars_t::const_iterator it = mSendPars.find(paramId);
     if (it == mSendPars.end()) {
-        METLIBS_LOG_WARN("No such diana parameter: " << paramId);
+        HQC_LOG_WARN("No such diana parameter: " << paramId);
         return;
     }
 

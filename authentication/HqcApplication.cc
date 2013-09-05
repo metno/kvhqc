@@ -39,6 +39,7 @@ HqcApplication* hqcApp = 0;
 HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
     : QApplication(argc, argv)
     , mConfig(conf)
+    , mReturnCode(0)
 {
     hqcApp = this;
 
@@ -129,7 +130,7 @@ void HqcApplication::installTranslations(const QString& file, const QStringList&
             installTranslator(translator);
             return;
         }
-    METLIBS_LOG_WARN("failed to load '" << file << "' translations from [" 
+    HQC_LOG_WARN("failed to load '" << file << "' translations from [" 
                  << paths.join(",")
                  << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
 }
@@ -140,10 +141,10 @@ bool HqcApplication::notify(QObject* receiver, QEvent* e)
   try {
     return QApplication::notify(receiver, e);
   } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("exception in Qt event handling: " << e.what());
+    HQC_LOG_ERROR("exception in Qt event handling: " << e.what());
     onException(QString::fromStdString(e.what()));
   } catch (...) {
-    METLIBS_LOG_ERROR("unknown exception in Qt event handling");
+    HQC_LOG_ERROR("unknown exception in Qt event handling");
     onException("");
   }
   return false;
@@ -165,7 +166,7 @@ void HqcApplication::onException(const QString& message)
     w.setDefaultButton(QMessageBox::Close);
     w.exec();
   } else {
-    METLIBS_LOG_WARN("exception in non-gui thread: '" << message << "'");
+    HQC_LOG_WARN("exception in non-gui thread: '" << message << "'");
   }
 }
 
@@ -189,7 +190,7 @@ void HqcApplication::fatalError(const QString& message, const QString& info)
     w.setDefaultButton(QMessageBox::Abort);
     w.exec();
   } else {
-    METLIBS_LOG_ERROR("fatal error in non-gui thread: '" << message << "' with info '" + info + "'");
+    HQC_LOG_ERROR("fatal error in non-gui thread: '" << message << "' with info '" + info + "'");
   }
   exit(-1);
 }
@@ -204,7 +205,7 @@ void HqcApplication::exitNoKvalobs()
     msg.setInformativeText(tr("HQC terminates because it cannot be used without the kvalobs database."));
     msg.exec();
   } else {
-    METLIBS_LOG_ERROR("kvalobs database not accessible in non-gui thread, exit");
+    HQC_LOG_ERROR("kvalobs database not accessible in non-gui thread, exit");
   }
   exit(-1);
 }
@@ -222,4 +223,12 @@ bool HqcApplication::isKvalobsAvailable() const
 void HqcApplication::changedKvalobsAvailability(bool available)
 {
   /* emit Qt signal */ kvalobsAvailable(available);
+}
+
+int HqcApplication::exec()
+{
+  int r = QApplication::exec();
+  if (r != 0)
+    return r;
+  return mReturnCode;
 }

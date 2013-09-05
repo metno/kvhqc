@@ -52,21 +52,21 @@ int main(int argc, char* argv[])
     for (int i = 1; i < args.size(); ++i) {
         if( args.at(i) == "--config" ) {
             if( i+1 >= args.size() ) {
-                METLIBS_LOG_ERROR("invalid --config without filename");
+                HQC_LOG_ERROR("invalid --config without filename");
                 exit(1);
             }
             i += 1;
             myconf = args.at(i);
         } else if( args.at(i) == "--station" ) {
             if( i+1 >= args.size() ) {
-                METLIBS_LOG_ERROR("invalid --station without station number");
+                HQC_LOG_ERROR("invalid --station without station number");
                 exit(1);
             }
             i += 1;
             sensor.stationId = args.at(i).toInt();
         } else if( args.at(i) == "--time" ) {
             if( i+2 >= args.size() ) {
-                METLIBS_LOG_ERROR("invalid --time without time-from time-to");
+                HQC_LOG_ERROR("invalid --time without time-from time-to");
                 exit(1);
             }
             i += 1;
@@ -75,7 +75,7 @@ int main(int argc, char* argv[])
             timeTo = timeutil::from_iso_extended_string(args.at(i).toStdString());
         } else if (args.at(i) == "--type") {
             if (i+1 >= args.size()) {
-                METLIBS_LOG_ERROR("invalid --type without typeid");
+                HQC_LOG_ERROR("invalid --type without typeid");
                 exit(1);
             }
             i += 1;
@@ -85,7 +85,7 @@ int main(int argc, char* argv[])
     
     miutil::conf::ConfSection *confSec = kvservice::corba::CorbaKvApp::readConf(myconf.toStdString());
     if(!confSec) {
-        METLIBS_LOG_ERROR("cannot open configuration file '" << myconf << "'");
+        HQC_LOG_ERROR("cannot open configuration file '" << myconf << "'");
         return 1;
     }
 

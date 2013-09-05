@@ -213,7 +213,7 @@ void ListDialog::setupStationTab()
     if (c_it != county2item.end()) {
       c_it->second->appendRow(s_items);
     } else {
-      METLIBS_LOG_WARN("no county '" << s.fylke << "' for station " << s.stationid);
+      HQC_LOG_WARN("no county '" << s.fylke << "' for station " << s.stationid);
     }
   }
 
@@ -280,7 +280,7 @@ void ListDialog::setupParameterTab()
       labels << labelAll;
       mParameterGroups.insert(std::make_pair(labelAll, Helpers::findAllParameters(true)));
     } catch (std::exception& ex) {
-      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.obs_pgm table");
+      HQC_LOG_WARN("failed to generate list of all parameters from kvalobs.obs_pgm table");
     }
 
     try {
@@ -292,7 +292,7 @@ void ListDialog::setupParameterTab()
       BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
           parameters.push_back(p.paramID());
      } catch (std::exception& ex) {
-      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
+      HQC_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
     }
 
     ui->comboParamGroup->addItems(labels);

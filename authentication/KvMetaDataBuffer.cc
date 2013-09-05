@@ -183,7 +183,7 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
         try {
           KvServiceHelper::instance()->getKvObsPgm(mObsPgms[stationid], stations);
         } catch (std::exception& e) {
-          METLIBS_LOG_ERROR("exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
+          HQC_LOG_ERROR("exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
         }
     }
     return mObsPgms[stationid];
@@ -225,7 +225,7 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
           i0 = i1;
         }
       } catch (std::exception& e) {
-        METLIBS_LOG_ERROR("exception retrieving obs_pgm for station list chunk");
+        HQC_LOG_ERROR("exception retrieving obs_pgm for station list chunk");
       }
     }
   }
@@ -239,9 +239,9 @@ void KvMetaDataBuffer::fetchStations()
     mStations.clear();
     try {
       if (not KvServiceHelper::instance()->getKvStations(mStations))
-        METLIBS_LOG_ERROR("could not fetch station list");
+        HQC_LOG_ERROR("could not fetch station list");
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving station list: " << e.what());
+      HQC_LOG_ERROR("exception while retrieving station list: " << e.what());
     }
 }
 
@@ -253,9 +253,9 @@ void KvMetaDataBuffer::fetchParams()
     mParams.clear();
     try {
       if (not KvServiceHelper::instance()->getKvParams(mParams))
-        METLIBS_LOG_ERROR("could not fetch param list");
+        HQC_LOG_ERROR("could not fetch param list");
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());
+      HQC_LOG_ERROR("exception while retrieving param list: " << e.what());
     }
     mCodeParams.clear();
     BOOST_FOREACH(const kvalobs::kvParam& p, mParams) {
@@ -273,9 +273,9 @@ void KvMetaDataBuffer::fetchTypes()
     mTypes.clear();
     try {
       if (not KvServiceHelper::instance()->getKvTypes(mTypes))
-        METLIBS_LOG_ERROR("could not fetch type list");
+        HQC_LOG_ERROR("could not fetch type list");
     } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());
+      HQC_LOG_ERROR("exception while retrieving param list: " << e.what());
     }
 }
 

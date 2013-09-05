@@ -61,7 +61,7 @@ void ViewChanges::store(const Sensor& s, const std::string& vtype, const std::st
   update.bindValue(":vchanges", qchanges);
 
   if (not update.exec())
-    METLIBS_LOG_ERROR("error while updating: " << update.lastError().text());
+    HQC_LOG_ERROR("error while updating: " << update.lastError().text());
   const int nup = update.numRowsAffected();
   update.finish();
   
@@ -74,7 +74,7 @@ void ViewChanges::store(const Sensor& s, const std::string& vtype, const std::st
     insert.bindValue(":vid",      qid);
     insert.bindValue(":vchanges", qchanges);
     if (not insert.exec())
-      METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
+      HQC_LOG_ERROR("error while inserting: " << insert.lastError().text());
     insert.finish();
   }
   db.commit();
@@ -93,7 +93,7 @@ std::string ViewChanges::fetch(const Sensor& s, const std::string& vtype, const 
     query.bindValue(":vtype", QString::fromStdString(vtype));
     query.bindValue(":vid",   QString::fromStdString(vid));
     if (not query.exec())
-      METLIBS_LOG_ERROR("error while querying: " << query.lastError().text());
+      HQC_LOG_ERROR("error while querying: " << query.lastError().text());
 
     if (query.next()) {
       const std::string vchanges = query.value(0).toString().toStdString();

@@ -69,7 +69,7 @@ Code2TextCPtr codesForParam(int pid)
           decimals = 0;
         }
       } catch (std::exception& ex) {
-        METLIBS_LOG_WARN("exception while retrieving kvParam for " << pid);
+        HQC_LOG_WARN("exception while retrieving kvParam for " << pid);
       }
     }
     if (not haveDecimals and hqcApp) {
@@ -116,7 +116,7 @@ Code2TextCPtr codesForParam(int pid)
               queryCodeShort.bindValue(0, code_id);
               queryCodeShort.bindValue(1, language);
               if (not queryCodeShort.exec())
-                METLIBS_LOG_WARN("error getting short text for parameter " << pid << ", code " << code_value
+                HQC_LOG_WARN("error getting short text for parameter " << pid << ", code " << code_value
                     << " and language '" << language << "' from system DB: " << queryCodeShort.lastError().text());
               while (queryCodeShort.next())
                 shortCodes << queryCodeShort.value(0).toString();
@@ -124,12 +124,12 @@ Code2TextCPtr codesForParam(int pid)
               c2t->addCode(code_value, shortCodes, long_text);
             }
           } else {
-            METLIBS_LOG_WARN("error getting long text text for parameter " << pid << ", code " << code_value
+            HQC_LOG_WARN("error getting long text text for parameter " << pid << ", code " << code_value
                 << " from system DB: " << queryCodeLong.lastError().text());
           }
         }
       } else {
-        METLIBS_LOG_ERROR("error getting code values for parameter " << pid
+        HQC_LOG_ERROR("error getting code values for parameter " << pid
             << " from system DB: " << queryCodes.lastError().text());
       }
     }

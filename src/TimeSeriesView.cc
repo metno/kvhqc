@@ -154,7 +154,7 @@ void TimeSeriesView::updateSensors()
         po.axisname= "";
       }
     } catch (std::exception& ex) {
-      METLIBS_LOG_WARN("exception while retrieving kvParam for " << s);
+      HQC_LOG_WARN("exception while retrieving kvParam for " << s);
     }
   }
   updatePlot();
@@ -440,7 +440,7 @@ void TimeSeriesView::updatePlot()
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
     if (idx >= (int)mPlotOptions.size()) {
-      METLIBS_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
+      HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
       break;
     }
 

@@ -28,6 +28,11 @@ public:
   /** Query last known availability of kvServiced. Does not re-check. */
   bool isKvalobsAvailable() const;
 
+  int exec();
+
+  void setReturnCode(int r)
+    { mReturnCode = r; }
+
 Q_SIGNALS:
   void kvalobsAvailable(bool);
 
@@ -48,6 +53,7 @@ private:
   QList<QTranslator*> mTranslators;
   miutil::conf::ConfSection *mConfig;
   bool mKvalobsAvailable;
+  int mReturnCode;
 };
 
 extern HqcApplication* hqcApp;

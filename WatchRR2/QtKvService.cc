@@ -61,7 +61,7 @@ QtKvService::~QtKvService()
       app()->unsubscribe(sub.first);
     else {
       using ::milogger::detail::Priority;
-      METLIBS_LOG_WARN("no app, cannot unsubscribe '" << sub.first << "'");
+      HQC_LOG_WARN("no app, cannot unsubscribe '" << sub.first << "'");
     }
     const Subscriber& s = sub.second;
     disconnect(this, s.emitted, s.receiver, s.member);
@@ -76,7 +76,7 @@ QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const Subscribe
     if ((not subscriberId.empty()) and receiver and member) {
         if (not connect(this, emitted, receiver, member)) {
             using ::milogger::detail::Priority;
-            METLIBS_LOG_ERROR("failed to connect signal, unsubscribing again");
+            HQC_LOG_ERROR("failed to connect signal, unsubscribing again");
 	    app()->unsubscribe(subscriberId);
 	    return "";
         }
@@ -119,7 +119,7 @@ void QtKvService::unsubscribe(const SubscriberID& subscriberId)
       app()->unsubscribe(subscriberId);
     else {
       using ::milogger::detail::Priority;
-      METLIBS_LOG_WARN("no app, cannot unsubscribe '" << subscriberId << "'");
+      HQC_LOG_WARN("no app, cannot unsubscribe '" << subscriberId << "'");
     }
       
     const Subscriber& s = it->second;

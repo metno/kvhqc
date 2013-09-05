@@ -136,7 +136,7 @@ QVariant DataListModel::columnHeader(int section, Qt::Orientation orientation, i
           return hdr.toString() + sep + distance;
         }
       } catch (std::exception& e) {
-        METLIBS_LOG_WARN("exception for neighbor header: " << e.what());
+        HQC_LOG_WARN("exception for neighbor header: " << e.what());
       }
     }
   }
