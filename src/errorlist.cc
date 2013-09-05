@@ -79,6 +79,7 @@ ErrorList::ErrorList(QWidget* parent)
     setSelectionMode(SingleSelection);
     setSortingEnabled(true);
     setModel(mSortProxy.get());
+    resizeHeaders();
     
     connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
@@ -91,14 +92,32 @@ ErrorList::~ErrorList()
 {
 }
 
-void ErrorList::setErrors(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& memStore2)
+void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    LOG_SCOPE("ErrorList");
-    mLastSelectedRow = -1;
+    unsubscribeAll();
+    if (mDA)
+        mDA->obsDataChanged.disconnect(boost::bind(&ErrorList::onDataChanged, this, _1, _2));
+    mDA = eda;
+    mMA = mda;
+    if (mDA)
+        mDA->obsDataChanged.connect(boost::bind(&ErrorList::onDataChanged, this, _1, _2));
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, memStore2));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, Errors_t()));
     mSortProxy->setSourceModel(mTableModel.get());
+    resizeHeaders();
+}
 
+void ErrorList::unsubscribeAll()
+{
+    if (mDA) {
+        BOOST_FOREACH(const ObsSubscription sub, mSubscriptions)
+            mDA->removeSubscription(sub);
+    }
+    mSubscriptions.clear();
+}
+
+void ErrorList::resizeHeaders()
+{
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
@@ -115,6 +134,35 @@ void ErrorList::setErrors(EditAccessPtr eda, ModelAccessPtr mda, const Errors::E
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_NAME, 50);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   20);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  50);
+}
+
+void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
+{
+    LOG_SCOPE("ErrorList");
+    mLastSelectedRow = -1;
+    if (not mDA)
+        return;
+
+    // do not unsubscribe before subscribing for the new time limits
+    Subscriptions_t newSubscriptions;
+    BOOST_FOREACH(const Sensor& s, sensors) {
+        ObsSubscription sub(s, limits);
+        mDA->addSubscription(sub);
+        newSubscriptions.push_back(sub);
+    }
+    unsubscribeAll();
+    mSubscriptions = newSubscriptions;
+
+    const Errors_t memStore2 = Errors::fillMemoryStore2(mDA, sensors, limits, errorsForSalen);
+
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, memStore2));
+    mSortProxy->setSourceModel(mTableModel.get());
+    resizeHeaders();
+}
+
+void ErrorList::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
+{
+    // TODO
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

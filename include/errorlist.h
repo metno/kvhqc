@@ -59,12 +59,14 @@ QT_END_NAMESPACE;
 class ErrorList : public QTableView
 { Q_OBJECT;
 public:
-    ErrorList(QWidget* parent=0);
-    virtual ~ErrorList();
-
     typedef std::vector<EditDataPtr> Errors_t;
+    typedef std::vector<Sensor> Sensors_t;
 
-    void setErrors(EditAccessPtr eda, ModelAccessPtr mda, const Errors_t& memStore2);
+    ErrorList(QWidget* parent=0);
+    ~ErrorList();
+
+    void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
+    void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen);
 
     EditDataPtr getObs() const;
 
@@ -73,6 +75,7 @@ Q_SIGNALS:
     void signalNavigateTo(const SensorTime& st);
 
 private:
+    void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
     EditDataPtr getObs(int row) const;
     int getSelectedRow() const;
                                     
@@ -82,12 +85,20 @@ private Q_SLOTS:
     void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
+    void resizeHeaders();
+    void unsubscribeAll();
     void showSameStation();
     void signalStationSelected();
 
 private:
     HqcMainWindow* mainWindow;
     int mLastSelectedRow;
+
+    EditAccessPtr mDA;
+    ModelAccessPtr mMA;
+
+    typedef std::vector<ObsSubscription> Subscriptions_t;
+    Subscriptions_t mSubscriptions;
 
     std::auto_ptr<QSortFilterProxyModel> mSortProxy;
     std::auto_ptr<ErrorListTableModel> mTableModel;

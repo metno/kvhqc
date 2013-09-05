@@ -153,6 +153,7 @@ HqcMainWindow::HqcMainWindow()
   , eda(boost::make_shared<EditAccess>(kda))
 {
     ui->setupUi(this);
+    ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
 
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
@@ -446,8 +447,8 @@ void HqcMainWindow::ListOK()
         statusBar()->message(tr("Building error list..."));
         qApp->processEvents();
 
-        Errors::Errors_t memStore2 = Errors::fillMemoryStore2(eda, sensors, timeLimits, (lity == erSa or lity == alSa));
-        ui->treeErrors->setErrors(eda, kma, memStore2);
+        const bool errorsForSalen = (lity == erSa or lity == alSa);
+        ui->treeErrors->setSensorsAndTimes(sensors, timeLimits, errorsForSalen);
     }
 
     tileHorizontal();

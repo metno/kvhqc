@@ -2,10 +2,13 @@
 #ifndef ObsSubscription_hh
 #define ObsSubscription_hh 1
 
+#include "Sensor.hh"
 #include "TimeRange.hh"
-//#include <boost/shared_ptr.hpp>
 
 struct ObsSubscription {
+    ObsSubscription(const Sensor& sensor, const TimeRange& time)
+        : mStationId(sensor.stationId), mTime(time) { }
+
     ObsSubscription(int stationId, const TimeRange& time)
         : mStationId(stationId), mTime(time) { }
 
