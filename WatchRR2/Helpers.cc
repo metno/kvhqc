@@ -5,6 +5,7 @@
 #include "EditData.hh"
 #include "EditDataEditor.hh"
 #include "FlagChange.hh"
+#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ModelAccess.hh"
 #include "timeutil.hh"
@@ -13,6 +14,9 @@
 #include <kvalobs/kvModelData.h>
 #include <kvalobs/kvObsPgm.h>
 #include <kvcpp/KvApp.h>
+
+#include <QtCore/QVariant>
+#include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
 
@@ -199,163 +203,6 @@ void auto_correct(EditDataEditorPtr editor, float newC)
 
 // ========================================================================
 
-static const char* flagExplanations[16][16] = {
-    { // fagg
-        "Kvalitetsinformasjon er ikke gitt",
-        "Grunnlagsdata er funnet i orden",
-        "Grunnlagsdata er litt mistenkelig",
-        "Grunnlagsdata er svært mistenkelig",
-        "Grunnlagsdata er manuelt korrigert",
-        "Grunnlagsdata er manuelt interpolert",
-        "Grunnlagsdata er automatisk korrigert",
-        "Grunnlagsdata er automatisk interpolert",
-        "Grunnlagsdata er manuelt tilfordelt fra akkumulert verdi",
-        "Grunnlagsdata er automatisk tilfordelt fra akkumulert verdi"
-        "",
-        "Grunnlagsdata er forkastet" },
-    { // frange
- 	"Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Observert verdi større enn høy testverdi",
-        "Kontrollert. Observert verdi mindre enn lav testverdi",
-        "Kontrollert. Observert verdi større enn høyeste testverdi",
-        "Kontrollert. Observert verdi mindre enn minste testverdi",
-        "Forkastet. Observert verdi utenfor fysikalske grenser",
-        "Kontrollert. Funnet å svare til spesialverdi som betyr manglende",
-        0,
-        0,
-        "Kontrollert. Observert verdi utenfor fysikalske grenser. Korrigert automatisk" },
-    { // fcc
-        "Ikke kontrollert.",
-        "Kontrollert. Funnet i orden.",
-        "Kontrollert. Formell inkonsistens, men neppe feil i aktuell parameter.",
-        "Kontrollert. Formell inkonsistens ved observasjonsterminen, men ikke mulig å avgjøre i hvilken parameter.",
-        "Kontrollert. Formell inkonsistens i forhold til tidligere/senere observasjonstermin, men ikke mulig å avgjøre i hvilken parameter.",
-        0,
-        "Kontrollert. Formell inkonsistens ved observasjonsterminen, antagelig feil i aktuell parameter.",
-        "Kontrollert. Formell inkonsistens i forhold til tidligere/senere observasjonstermin, antagelig feil i aktuell parameter.",
-        "Kontrollert. Formell inkonsistens ved observasjonsterminen. En av parametrene mangler.",
-        "Original verdi mangler. Interpolert fra andre parametere.",
-        "Kontrollert. Formell inkonsistens ved observasjonsterminen. Korrigert automatisk.",
-        "Kontrollert. Formell inkonsistens i forhold til tidligere/senere observasjonstermin. Korrigert automatisk.",
-        0,
-        "Forkastet. Formell inkonsistens." },
-    { // fs
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Observert endring høyere enn (minste) testverdi",
-        "Kontrollert. Ingen endring i måleverdi over x tidsskritt",
-        "Kontrollert. Mistanke om feil detektert i QC1-3, mistanken opphevet av dipptest i QC2d-1",
-        0,
-        0,
-        "Kontrollert. Observert drift i instrumentet",
-        "Observert endring høyere enn høyeste testverdi. Forkastet",
-        "Observert endring høyere enn testverdi. Korrigert automatisk",
-        "Ingen endring i måleverdi over x tidsskritt. Korrigert automatisk" },
-    { // fnum
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Observert verdis avvik fra modellverdien større enn høy testverdi",
-        "Kontrollert. Observert verdis avvik fra modellverdien mindre enn lav testverdi",
-        "Kontrollert. Observert verdis avvik fra modellverdien større enn høyeste testverdi",
-        "Kontrollert. Observert verdis avvik fra modellverdien mindre enn minste testverdi",
-        "Original verdi mangler eller er forkastet. Interpolert/korrigert med modellverdi." },
-    { // fpos
-        "Ikke kontrollert",
-        "Kontrollert funnet i orden",
-        0,
-        "Kontrollert. Mistenkelig melding. Ingen korreksjon.",
-        "Kontrollert. Mistenkelig melding. Korrigert automatisk.",
-        0,
-        "Meldingsverdi forkastet." },
-    { //  fmis
-        "Original verdi eksisterer, det er ikke grunnlag for å si at den er sikkert feilaktig (corrected=original)",
-        "Original verdi mangler. Korrigert verdi eksisterer",
-        "Korrigert verdi mangler. Original verdi eksisterer (original verdi er forkastet)",
-        "Original verdi og korrigert verdi mangler",
-        "Original og korrigert verdi eksisterer, men original er sikkert feilaktig" },
-    { // ftime
-        "Ikke kontrollert",
-        "Interpolert/korrigert med godt resultat",
-        "Interpolert/korrigert med usikkert resultat",
-        "Forsøkt interpolert/korrigert. Metode uegnet." },
-    { // fw
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Funnet litt mistenkelig",
-        "Kontrollert. Funnet svært mistenkelig",
-        0, 0, 0, 0, 0, 0,
-        "Forkastet" },
-    { // fstat
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Mistenkelig verdi. Ingen korreksjon." },
-    { // fcp
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Klimatologisk tvilsom, men neppe feil i aktuell parameter",
-        "Kontrollert. Klimatologisk tvilsom ved observasjonsterminen, men ikke mulig å avgjøre i hvilken parameter",
-        "Kontrollert. Klimatologisk tvilsom i forhold til tidligere/senere observasjonstermin, men ikke mulig å avgjøre i hvilken parameter",
-        0,
-        "Kontrollert. Klimatologisk tvilsom ved observasjonsterminen, antagelig feil i aktuell parameter",
-        "Kontrollert. Klimatologisk tvilsom i forhold til tidligere/senere observasjonstermin, antagelig feil i aktuell parameter",
-        0,
-        0,
-        "Kontrollert. Klimatologisk inkonsistens ved observasjonsterminen. Korrigert automatisk.",
-        "Kontrollert. Klimatologisk inkonsistens i forhold til tidligere/senere observasjonstermin. Korrigert automatisk." },
-    { // fclim
-        "Ikke kontrollert",
-        "Kontrollert. Funnet i orden",
-        "Kontrollert. Mistenkelig verdi. Ikke korrigert",
-        "Kontrollert. Mistenkelig verdi. Korrigert automatisk" },
-    { // fd
-        "Ikke vurdert som samleverdi",
-        "Normal observasjon, ikke oppsamlet verdi",
-        "Oppsamling pågår",
-        "Unormal observasjon. Original verdi kan være oppsamlet verdi",
-        "Oppsamlet verdi før tilfordeling",
-        0,
-        0,
-        "Korrigert verdi er et resultat av automatisk tilfordeling. Original verdi mangler eller er forkastet",
-        "Original verdi er oppsamling, korrigert verdi er tilfordelt automatisk",
-        "Korrigert verdi er et resultat av manuell tilfordeling. Original verdi mangler eller er forkastet",
-        "Original verdi er oppsamling, korrigert verdi er tilfordelt manuellt" },
-    { // fpre
-        "Ikke vurdert",
-        "Vurdert. Ikke forkastet",
-        0,
-        0,
-        "Korrigert automatisk",
-        0,
-        "Forkastet. Original verdi er kjent å være feil",
-        "Forkastet. Parameter utelatt fra ny innsendt melding" },
-    { // fcombi
-        "Ikke tolket",
-        "Tolket. Funnet iorden.",
-        "Utenfor høyeste grenseverdi, ikke påvist sprang, innenfor tolerert avvik fra modellverdi",
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
-        "Forkastet. Utenfor høyeste grenseverdi, ikke påvist sprang, utenfor tolerert avvik fra modellverdi",
-        "Forkastet. Utenfor høyeste grenseverdi, påvist sprang, innenfor tolerert avvik fra modellverdi",
-        "Forkastet. Utenfor høyeste grenseverdi, påvist sprang, utenfor tolerert avvik fra modellverdi" },
-    { // fhqc
-        "Ikke kontrollert i HQC",
-        "Kontrollert i HQC. Funnet i orden.",
-        "Ikke kvalifisert for feilliste. Sannsynligvis i orden.",
-        "Ikke ferdig HQC kontrollert. Mulig kvalifisert for feilliste. Ikke aktuell for kontroll i QC1 eller QC2.",
-        "Ikke ferdig HQC kontrollert. Mulig kvalifisert for feilliste. Aktuell for interpolering i QC2.",
-        "Interpolert manuelt",
-        "Tilfordelt manuelt",
-        "Korrigert manuelt",
-        0,
-        0,
-        "Forkastet manuelt" }
-};
-
 char int2char(int i)
 {
     if( i<10 )
@@ -366,6 +213,13 @@ char int2char(int i)
 
 static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
 {
+  METLIBS_LOG_TIME();
+  std::auto_ptr<QSqlQuery> query;
+  if (explain and hqcApp) {
+    query.reset(new QSqlQuery(hqcApp->systemDB()));
+    query->prepare("SELECT description FROM flag_explain WHERE flag = :fn AND flagvalue = :fv AND language = 'nb'");
+  }
+
     std::ostringstream ss;
     bool first = true;
     for(int f=1; f<16; f++) {
@@ -373,13 +227,19 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
         using namespace kvalobs::flag;
 	if( (f != fmis and f != ftime and flag > 1) or ((f == fmis or f == ftime) and flag > 0) ) {
             if( not first )
-                ss << (explain ? '\n' : ' ');
+                ss << (query.get() ? '\n' : ' ');
             ss << flagnames[f] << '=' << int2char(flag);
-            if( explain ) {
-                const char* e = flagExplanations[f][flag];
-                if (not e)
-                    e = "Ugyldig flagg-verdi";
-                ss << ": " << e;
+            if (query.get()) {
+              query->bindValue("fn", f);
+              query->bindValue("fv", flag);
+              query->exec();
+              std::string explanation;
+              if (query->next())
+                explanation = query->value(0).toString().toStdString();
+              else
+                explanation = "Ugyldig flagg-verdi";
+              query->finish();
+              ss << ": " << explanation;
             }
             first = false;
 	}

@@ -28,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcApplication.hh"
+#include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvMetaDataBuffer.hh"
@@ -84,8 +85,10 @@ int main( int argc, char* argv[] )
     QString userName = "?";
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
 
-    hqc.setReinserter(r, userName);
-    hqc.startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
+    std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
+    hqc.setMainWidget(mw.get());
+    mw->setReinserter(r, userName);
+    mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
 
     return hqc.exec();
 }

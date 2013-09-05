@@ -4,6 +4,7 @@ SET(auth_HEADERS
   HideApplyBox.hh
   HintWidget.hh
   MiDateTimeEdit.hh
+  HqcApplication.hh
 )
 
 SET(auth_SOURCES
@@ -13,6 +14,7 @@ SET(auth_SOURCES
   Functors.cc
   HideApplyBox.cc
   HintWidget.cc
+  HqcApplication.cc
   HqcDataReinserter.cc
   HqcLogging.cc
   hqc_paths.cc

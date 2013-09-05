@@ -28,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcApplication.hh"
+#include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
 #include "QtKvService.hh"
@@ -84,9 +85,11 @@ int main( int argc, char* argv[] )
 
     HqcApplication hqc(argc, argv);
     
-    hqc.setReinserter(fa.mFakeReinserter, "fake");
+    std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
+    hqc.setMainWidget(mw.get());
+    mw->setReinserter(fa.mFakeReinserter, "fake");
     fa.mFakeReinserter->setInsertSuccess(false);
-    hqc.startup("offline test");
+    mw->startup("offline test");
 
     return hqc.exec();
 }

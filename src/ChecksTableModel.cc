@@ -1,7 +1,10 @@
 
 #include "ChecksTableModel.hh"
 
-#include <QtCore/QCoreApplication>
+#include "HqcApplication.hh"
+
+#include <QtCore/QVariant>
+#include <QtSql/QSqlQuery>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -81,10 +84,17 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
   mSensorTime = st;
   if (mSensorTime.valid()) {
     if (ObsDataPtr obs = mDA->find(mSensorTime)) {
-      const QString cfailed = "QC1-4-211,QC1-9-211"; // TODO
-      mChecks = cfailed.split(",");
+      mChecks = QString::fromStdString(obs->cfailed()).split(",");
+      QSqlQuery query(hqcApp->systemDB());
+      query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
+
       BOOST_FOREACH(const QString& c, mChecks) {
-        mExplanations.push_back("ho i don't know what" + c + " means");
+        query.bindValue(0, c);
+        query.exec();
+        if (query.next())
+          mExplanations.push_back(query.value(0).toString());
+        else
+          mExplanations.push_back("?");
       }
     }
   }

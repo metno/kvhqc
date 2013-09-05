@@ -75,7 +75,7 @@ public:
     HqcMainWindow();
     ~HqcMainWindow();
 
-    void startup();
+    void startup(const QString& captionSuffix);
 
     HqcReinserter* getReinserter()
         { return reinserter; }
@@ -188,9 +188,5 @@ private:
     std::auto_ptr<AutoColumnView> mAutoColumnView;
     DataList* mAutoDataList;
 };
-
-//! Get o's owning HqcMainWindow, or NULL if there is none.
-HqcMainWindow * getHqcMainWindow(const QObject* o);
-HqcMainWindow * getHqcMainWindow(QObject* o);
 
 #endif

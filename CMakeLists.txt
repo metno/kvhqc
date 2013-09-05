@@ -86,6 +86,7 @@ INSTALL(FILES
   share/faildetail.txt
   share/failgroup.txt
   share/VxExplanations.txt
+  share/hqc_system.db
   ${CMAKE_BINARY_DIR}/share/hqc_current_version
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 

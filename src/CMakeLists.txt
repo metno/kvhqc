@@ -3,7 +3,6 @@ SET(hqc_HEADERS
   ErrorListTableModel.hh
   ../include/DataList.hh
   DataListModel.hh
-  HqcApplication.hh
   ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
@@ -44,7 +43,6 @@ SET(hqc_SOURCES
   discarddialog.cc
   errorlist.cc
   GetTextData.cc
-  HqcApplication.cc
   HqcDianaHelper.cc
   hqcmain.cc
   ItemCheckBox.cc

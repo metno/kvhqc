@@ -112,31 +112,6 @@ const char SETTING_VERSION_FULL[] = "version_full";
 
 } // anonymous namespace
 
-HqcMainWindow * getHqcMainWindow( const QObject * o )
-{
-  QObject * iterator = 0;
-  if ( o )
-    iterator = o->parent();
-
-  while ( iterator != 0 ) {
-    if ( iterator->isA( "HqcMainWindow" ) )
-      return dynamic_cast<HqcMainWindow *>( iterator );
-    iterator = iterator->parent();
-  }
-  return 0;
-}
-
-HqcMainWindow * getHqcMainWindow( QObject * o )
-{
-  if ( o->isA( "HqcMainWindow" ) )
-    return dynamic_cast<HqcMainWindow *>( o );
-  return getHqcMainWindow( const_cast<const QObject *>( o ) );
-}
-
-
-/**
- * Main Window Constructor.
- */
 HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, tr("HQC"))
   , reinserter(0)
@@ -281,8 +256,10 @@ void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
     kda->setReinserter(reinserter);
 }
 
-void HqcMainWindow::startup()
+void HqcMainWindow::startup(const QString& captionSuffix)
 {
+    setCaption("HQC " + captionSuffix);
+    
     DisableGUI disableGUI(this);
     listExist = false;
 
