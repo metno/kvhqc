@@ -31,12 +31,15 @@ ObsAccess::TimeSet EditAccess::allTimes(const Sensor& sensor, const TimeRange& l
 {
     TimeSet times = mBackend->allTimes(sensor, limits);
 
-    BOOST_FOREACH(const Data_t::value_type& d, mData) {
-        const SensorTime& dst = d.first;
-        if (d.second and eq_Sensor()(dst.sensor, sensor) and limits.contains(dst.time))
-            times.insert(dst.time);
+    for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0()));
+         it != mData.end(); ++it)
+    {
+      const SensorTime& dst = it->first;
+      if ((not eq_Sensor()(dst.sensor, sensor)) or (dst.time > limits.t1()))
+        break;
+      if (it->second)
+        times.insert(dst.time);
     }
-
     return times;
 }
 
