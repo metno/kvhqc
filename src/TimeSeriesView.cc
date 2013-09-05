@@ -50,7 +50,7 @@ TimeSeriesView::~TimeSeriesView()
                         
 void TimeSeriesView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-  DataView::setDataAccess(eda, mda);
+  ChangeableDataView::setDataAccess(eda, mda);
 }
 
 namespace /*anonymous*/ {
@@ -66,7 +66,7 @@ public:
 void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
   METLIBS_LOG_SCOPE();
-  DataView::setSensorsAndTimes(sensors, limits);
+  ChangeableDataView::setSensorsAndTimes(sensors, limits);
   mSensors = mOriginalSensors = sensors;
   mOriginalTimeLimits = limits;
 
@@ -160,58 +160,18 @@ void TimeSeriesView::onRadioPlot()
 
 void TimeSeriesView::onDateFromChanged(const QDateTime&)
 {
+  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
+  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
+  const TimeRange limits(stime, etime);
+
+  ChangeableDataView::setSensorsAndTimes(mSensors, limits);
   updatePlot();
 }
 
-void TimeSeriesView::onDateToChanged(const QDateTime&)
+void TimeSeriesView::onDateToChanged(const QDateTime& qdt)
 {
-  updatePlot();
+  onDateFromChanged(qdt);
 }
-
-#if 0
-void TimeSeriesView::updateSensors()
-{
-  METLIBS_LOG_SCOPE();
-
-  timeutil::ptime stime;
-  timeutil::ptime etime;
-  std::vector<std::string> parameter;
-  std::vector<POptions::PlotOptions> plotoptions;
-  std::vector<int> stationIndex;
-
-  tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
-  const std::list<kvalobs::kvParam>& plist = KvMetaDataBuffer::instance()->allParams();
-  for (unsigned int ip = 0; ip < parameter.size(); ip++) {
-    Sensor sensor(stationIndex[ip], 0, 0, 0, 0);
-
-    BOOST_FOREACH(const kvalobs::kvParam& p, plist) {
-      if (p.name() == parameter[ip]) {
-        sensor.paramId = p.paramID();
-        METLIBS_LOG_DEBUG(LOGVAL(sensor.paramId));
-        break;
-      }
-    }
-    
-    try {
-      const KvMetaDataBuffer::ObsPgmList opgm = KvMetaDataBuffer::instance()->findObsPgm(sensor.stationId);
-      BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
-        if (op.paramID() == sensor.paramId
-            and op.fromtime() <= stime
-            and (op.totime().is_not_a_date_time() or op.totime() >= etime))
-        {
-          sensor.typeId = op.typeID();
-          METLIBS_LOG_DEBUG(LOGVAL(sensor.typeId));
-          break;
-        }
-      }
-    } catch (std::exception& e) {
-      METLIBS_LOG_WARN("exception while reading obs_pgm for " << sensor);
-      continue;
-    }
-
-  updatePlot();
-}
-#endif
 
 void TimeSeriesView::updatePlot()
 {
@@ -254,11 +214,11 @@ void TimeSeriesView::updatePlot()
       if (mdl and ui->radioModel->isChecked()) {
         tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
       } else if (obs and ui->radioCorrected->isChecked()) {
-        const float corr = obs->corrected();
+        const float corr = Helpers::numericalValue(sensor, obs->corrected());
         if (corr > -32766.0)
           tseries.add(TimeSeriesData::Data(mtime, corr));
       } else if (obs and mdl and ui->radioDifference->isChecked()) {
-        const float corr = obs->corrected();
+        const float corr = Helpers::numericalValue(sensor, obs->corrected());
         if (corr > -32766.0)
 	  tseries.add(TimeSeriesData::Data(mtime, corr - mdl->value()));
       }

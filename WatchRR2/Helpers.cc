@@ -553,4 +553,11 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
     return neighbors;
 }
 
+float numericalValue(int paramId, float codeValue)
+{
+  if (paramId == kvalobs::PARAMID_RR_24 and codeValue == -1.0)
+    return 0.0;
+  return codeValue;
+}
+
 } // namespace Helpers

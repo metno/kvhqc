@@ -95,6 +95,12 @@ private:
 
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
 
+float numericalValue(int paramId, float codeValue);
+inline float numericalValue(const Sensor& sensor, float codeValue)
+{ return numericalValue(sensor.paramId, codeValue); }
+inline float numericalValue(const SensorTime& st, float codeValue)
+{ return numericalValue(st.sensor.paramId, codeValue); }
+
 } // namespace Helpers
 
 namespace kvalobs {
