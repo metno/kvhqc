@@ -1,3 +1,9 @@
+kvhqc (3.0.7-1) unstable; urgency=low
+
+  * error list salen: only old specification, no colors
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 28 Aug 2013 12:55:45 +0200
+
 kvhqc (3.0.6-1) unstable; urgency=low
 
   * bugfix: update everything in cache from kvServiced, not just subscribed
