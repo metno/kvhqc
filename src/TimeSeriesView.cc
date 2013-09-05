@@ -195,6 +195,7 @@ void TimeSeriesView::onConfigButton()
 
 void TimeSeriesView::onRadioPlot()
 {
+  METLIBS_LOG_SCOPE();
   updatePlot();
 }
 
@@ -222,7 +223,7 @@ void TimeSeriesView::updatePlot()
   const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
   const TimeRange limits(stime, etime);
 
-  METLIBS_LOG_DEBUG(LOGVAL(limits));
+  METLIBS_LOG_DEBUG(LOGVAL(limits) << LOGVAL(whatToPlot));
 
   TimeSeriesData::tsList tslist;
 
@@ -266,7 +267,7 @@ void TimeSeriesView::updatePlot()
     }
 
     if (tseries.dataOK())
-      tslist.push_back(tseries);
+      tslist.insert(tslist.begin(), tseries);
   }
   
   if (tslist.empty())
