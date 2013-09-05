@@ -46,53 +46,56 @@ void AutoColumnView::navigateTo(const SensorTime& st)
   if (eq_SensorTime()(mSensorTime, st))
     return;
 
-  storeViewChanges();
+  if (mSensorTime.valid())
+    storeViewChanges();
+
   mSensorTime = st;
-  replayViewChanges();
+
+  if (mSensorTime.valid())
+    replayViewChanges();
 }
 
 void AutoColumnView::storeViewChanges()
 {
   METLIBS_LOG_SCOPE();
+
   QSqlDatabase db = hqcApp->configDB();
   if (not db.tables().contains(CHANGES_TABLE))
     db.exec(CHANGES_TABLE_CREATE);
 
-  if (mSensorTime.valid()) {
-    db.transaction();
-    QSqlQuery insert(db), update(db);
-    insert.prepare(CHANGES_TABLE_INSERT);
-    update.prepare(CHANGES_TABLE_UPDATE);
+  db.transaction();
+  QSqlQuery insert(db), update(db);
+  insert.prepare(CHANGES_TABLE_INSERT);
+  update.prepare(CHANGES_TABLE_UPDATE);
 
-    const Sensor& s = mSensorTime.sensor;
-    update.bindValue(":sid", s.stationId);
-    update.bindValue(":pid", s.paramId);
-    insert.bindValue(":sid", s.stationId);
-    insert.bindValue(":pid", s.paramId);
-    BOOST_FOREACH(ViewInfo& vi, mViews) {
-      const std::string vtype = vi.view->type(), vid = vi.view->id(), vchanges = vi.view->changes();
-      METLIBS_LOG_DEBUG(LOGVAL(vtype) << LOGVAL(vid) << LOGVAL(vchanges));
-      const QString qtype = QString::fromStdString(vtype), qid = QString::fromStdString(vid), qchanges = QString::fromStdString(vchanges);
+  const Sensor& s = mSensorTime.sensor;
+  update.bindValue(":sid", s.stationId);
+  update.bindValue(":pid", s.paramId);
+  insert.bindValue(":sid", s.stationId);
+  insert.bindValue(":pid", s.paramId);
+  BOOST_FOREACH(ViewInfo& vi, mViews) {
+    const std::string vtype = vi.view->type(), vid = vi.view->id(), vchanges = vi.view->changes();
+    METLIBS_LOG_DEBUG(LOGVAL(vtype) << LOGVAL(vid) << LOGVAL(vchanges));
+    const QString qtype = QString::fromStdString(vtype), qid = QString::fromStdString(vid), qchanges = QString::fromStdString(vchanges);
 
-      update.bindValue(":vtype",    qtype);
-      update.bindValue(":vid",      qid);
-      update.bindValue(":vchanges", qchanges);
-      if (not update.exec())
-        METLIBS_LOG_ERROR("error while updating: " << update.lastError().text());
-      const int nup = update.numRowsAffected();
-      update.finish();
+    update.bindValue(":vtype",    qtype);
+    update.bindValue(":vid",      qid);
+    update.bindValue(":vchanges", qchanges);
+    if (not update.exec())
+      METLIBS_LOG_ERROR("error while updating: " << update.lastError().text());
+    const int nup = update.numRowsAffected();
+    update.finish();
 
-      if (nup == 0) {
-        insert.bindValue(":vtype",    qtype);
-        insert.bindValue(":vid",      qid);
-        insert.bindValue(":vchanges", qchanges);
-        if (not insert.exec())
-          METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
-        insert.finish();
-      }
+    if (nup == 0) {
+      insert.bindValue(":vtype",    qtype);
+      insert.bindValue(":vid",      qid);
+      insert.bindValue(":vchanges", qchanges);
+      if (not insert.exec())
+        METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
+      insert.finish();
     }
-    db.commit();
   }
+  db.commit();
 }
 
 void AutoColumnView::replayViewChanges()

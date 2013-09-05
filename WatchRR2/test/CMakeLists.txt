@@ -59,6 +59,7 @@ ADD_EXECUTABLE(watchRR2maintest
 ADD_EXECUTABLE(watchRR2test
   AnalyseFCCTest.cc
   AnalyseRR24Test.cc
+  ChangeReplayTest.cc
   EditAccessTest.cc
   EditTimeColumnTest.cc
   KvalobsAccessTest.cc

@@ -1,6 +1,7 @@
 
 #include "DataList.hh"
 
+#include "ChangeReplay.hh"
 #include "ColumnFactory.hh"
 #include "DataListAddColumn.hh"
 #include "DataListModel.hh"
@@ -26,11 +27,15 @@
 #define MILOGGER_CATEGORY "kvhqc.DataList"
 #include "HqcLogging.hh"
 
-struct DataList::eq_Column : public std::unary_function<Column, bool> {
-    const Column& a;
-    eq_Column(const Column& c) : a(c) { }
-    bool operator()(const Column& b) const
-    { return eq_Sensor()(a.sensor, b.sensor) and a.type == b.type and a.timeOffset == b.timeOffset;}
+struct DataList::lt_Column : public std::binary_function<Column, Column, bool> {
+    bool operator()(const Column& a, const Column& b) const
+    {
+      if (not eq_Sensor()(a.sensor, b.sensor))
+        return lt_Sensor()(a.sensor, b.sensor);
+      if (a.type != b.type)
+        return a.type < b.type;
+      return a.timeOffset < b.timeOffset;
+    }
 };
 
 DataList::DataList(QWidget* parent)
@@ -225,8 +230,8 @@ static const char C_ATTR_TOSSFET[]   = "timeoffset";
 static const char T_ATTR_START[] = "start";
 static const char T_ATTR_END[]   = "end";
 
-static const char E_TAG_ADDED[]   = "added";
-static const char E_TAG_MOVED[]   = "moved";
+static const char E_TAG_CHANGES[] = "changes";
+static const char E_TAG_COLUMNS[] = "columns";
 static const char E_TAG_REMOVED[] = "removed";
 static const char E_TAG_COLUMN[]  = "column";
 static const char E_TAG_TSHIFT[]  = "timeshift";
@@ -283,163 +288,92 @@ void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nV
 
 std::string DataList::changes()
 {
-    METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE();
+  QDomDocument doc("changes");
+  QDomElement doc_changes = doc.createElement(E_TAG_CHANGES);
+  doc.appendChild(doc_changes);
 
-    Columns_t reordered;
-    for(unsigned int visual=0; visual<mColumns.size(); ++visual) {
-        const int logical = ui->table->horizontalHeader()->logicalIndex(visual);
-        if (logical >= 0 and logical < (int)mColumns.size()) {
-            reordered.push_back(mColumns[logical]);
-        } else {
-            METLIBS_LOG_ERROR("column without logical index");
-        }
-    }
-
-    QDomDocument doc("changes");
-    QDomElement changes = doc.createElement("changes");
-    doc.appendChild(changes);
-    unsigned int rNoAdd = 0;
-    for(unsigned int r=0; r<reordered.size(); ++r) {
-        Columns_t::const_iterator oit = std::find_if(mOriginalColumns.begin(), mOriginalColumns.end(), eq_Column(reordered[r]));
-        if (oit == mOriginalColumns.end()) {
-            // not in list of original columns => added
-            QDomElement added = doc.createElement(E_TAG_ADDED);
-            added.setAttribute("at", r);
-            changes.appendChild(added);
-            QDomElement column = doc.createElement(E_TAG_COLUMN);
-            reordered[r].toText(column);
-            added.appendChild(column);
-        } else {
-            // found => moved by (new index - old index))
-            const int oidx = (oit - mOriginalColumns.begin());
-            int movedBy = rNoAdd - oidx;
-            if (movedBy < 0) {
-                QDomElement moved = doc.createElement(E_TAG_MOVED);
-                moved.setAttribute("by", movedBy);
-                changes.appendChild(moved);
-                QDomElement column = doc.createElement(E_TAG_COLUMN);
-                reordered[r].toText(column);
-                moved.appendChild(column);
-            }
-            rNoAdd += 1;
-        }
+  ChangeReplay<Column, lt_Column> cr;
+  const Columns_t removed = cr.removals(mOriginalColumns, mColumns);
+  if (not removed.empty()) {
+    QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
+    BOOST_FOREACH(const Column& r, removed) {
+      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+      r.toText(doc_column);
+      doc_removed.appendChild(doc_column);
     } 
+    doc_changes.appendChild(doc_removed);
+ }
 
-    QDomElement removed = doc.createElement(E_TAG_REMOVED);
-    BOOST_FOREACH(const Column& o, mOriginalColumns) {
-        Columns_t::const_iterator nit = std::find_if(mColumns.begin(), mColumns.end(), eq_Column(o));
-        if (nit == mColumns.end()) {
-            // not in list of present columns => removed
-            QDomElement column = doc.createElement(E_TAG_COLUMN);
-            o.toText(column);
-            removed.appendChild(column);
-        }
-    }
-    if (removed.hasChildNodes())
-        changes.appendChild(removed);
+  if (not removed.empty()) {
+    QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
+    BOOST_FOREACH(const Column& c, mColumns) {
+      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+      c.toText(doc_column);
+      doc_columns.appendChild(doc_column);
+    } 
+    doc_changes.appendChild(doc_columns);
+  }
 
-    if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
-        QDomElement timeshift = doc.createElement(E_TAG_TSHIFT);
-        timeshift.setAttribute(T_ATTR_START, (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours());
-        timeshift.setAttribute(T_ATTR_END,   (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours());
-        changes.appendChild(timeshift);
-    }
+  if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
+    QDomElement doc_timeshift = doc.createElement(E_TAG_TSHIFT);
+    doc_timeshift.setAttribute(T_ATTR_START, (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours());
+    doc_timeshift.setAttribute(T_ATTR_END,   (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours());
+    doc_changes.appendChild(doc_timeshift);
+  }
 
-    METLIBS_LOG_DEBUG("changes=" << doc.toString());
-    return doc.toString().toStdString();
+  METLIBS_LOG_DEBUG("changes=" << doc.toString());
+  return doc.toString().toStdString();
 }
 
 void DataList::replay(const std::string& changesText)
 {
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG("replaying " << changesText);
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG("replaying " << changesText);
 
-    QDomDocument doc;
-    doc.setContent(QString::fromStdString(changesText));
+  QDomDocument doc;
+  doc.setContent(QString::fromStdString(changesText));
 
-    Columns_t newColumns = mOriginalColumns;
-#ifndef NDEBUG
-    {
-        QDomDocument doc("orig_columns");
-        BOOST_FOREACH(const Column& n, newColumns) {
-            QDomElement c = doc.createElement(E_TAG_COLUMN);
-            n.toText(c);
-            doc.appendChild(c);
-        }
-        METLIBS_LOG_DEBUG(doc.toString().toStdString());
+  const QDomElement doc_changes = doc.documentElement();
+
+  Columns_t removed;
+  const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
+  if (not doc_removed.isNull()) {
+    for(QDomElement c = doc_removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Column col;
+      col.fromText(c);
+      removed.push_back(col);
+      METLIBS_LOG_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
     }
-#endif
+  }
 
-    const QDomElement changes = doc.documentElement();
-
-    const QDomElement removed = changes.firstChildElement(E_TAG_REMOVED);
-    if (not removed.isNull()) {
-        for(QDomElement c = removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
-            Column col;
-            col.fromText(c);
-            Columns_t::iterator it = std::find_if(newColumns.begin(), newColumns.end(), eq_Column(col));
-            if (it != newColumns.end()) {
-                newColumns.erase(it);
-                METLIBS_LOG_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
-            } else {
-                METLIBS_LOG_DEBUG("cannot remove " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
-            }
-        }
-    }            
-
-    for(QDomElement m = changes.firstChildElement(E_TAG_MOVED); not m.isNull(); m = m.nextSiblingElement(E_TAG_MOVED)) {
-        int by = m.attribute("by").toInt();
-        Column col;
-        const QDomElement c = m.firstChildElement(E_TAG_COLUMN);
-        col.fromText(c);
-
-        Columns_t::iterator oit = std::find_if(mOriginalColumns.begin(), mOriginalColumns.end(), eq_Column(col));
-        Columns_t::iterator nit = std::find_if(newColumns.begin(),       newColumns.end(),       eq_Column(col));
-        if (oit != mOriginalColumns.end() and nit != newColumns.end()) {
-            const int oIdx = (oit - mOriginalColumns.begin()), nIdx = oIdx + by;
-            newColumns.erase(nit);
-            newColumns.insert(newColumns.begin() + nIdx, col);
-            METLIBS_LOG_DEBUG("moved " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
-        } else {
-            METLIBS_LOG_DEBUG("cannot move " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
-        }
+  Columns_t actual;
+  const QDomElement doc_actual = doc_changes.firstChildElement(E_TAG_COLUMNS);
+  if (not doc_actual.isNull()) {
+    for(QDomElement c = doc_actual.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Column col;
+      col.fromText(c);
+      actual.push_back(col);
+      METLIBS_LOG_DEBUG("column " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
     }
+  }
+  
+  ChangeReplay<Column, lt_Column> cr;
+  mColumns = cr.replay(mOriginalColumns, actual, removed);
+  
+  TimeRange newTimeLimits(mOriginalTimeLimits);
+  const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
+  if (not doc_timeshift.isNull()) {
+    const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
+    const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
+    const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
+    const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
+    TimeRange newTimeLimits(t0, t1);
+    METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
+  }
+  mTimeLimits = newTimeLimits;
 
-    for(QDomElement a = changes.firstChildElement(E_TAG_ADDED); not a.isNull(); a = a.nextSiblingElement(E_TAG_ADDED)) {
-        int at = a.attribute("at").toInt();
-        Column col;
-        const QDomElement c = a.firstChildElement(E_TAG_COLUMN);
-        col.fromText(c);
-        newColumns.insert(newColumns.begin() + at, col);
-        METLIBS_LOG_DEBUG("added " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
-    }
-
-#ifndef NDEBUG
-    {
-        QDomDocument doc("new_columns");
-        BOOST_FOREACH(const Column& n, newColumns) {
-            QDomElement c = doc.createElement(E_TAG_COLUMN);
-            n.toText(c);
-            doc.appendChild(c);
-        }
-        METLIBS_LOG_DEBUG(doc.toString().toStdString());
-    }
-#endif
-
-    TimeRange newTimeLimits(mOriginalTimeLimits);
-    const QDomElement timeshift = changes.firstChildElement(E_TAG_TSHIFT);
-    if (not timeshift.isNull()) {
-        const int dT0 = timeshift.attribute(T_ATTR_START).toInt();
-        const int dT1 = timeshift.attribute(T_ATTR_END)  .toInt();
-        const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
-        const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
-        TimeRange newTimeLimits(t0, t1);
-        METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
-    }
-
-    mColumns = newColumns;
-    mTimeLimits = newTimeLimits;
-    updateModel();
+  updateModel();
 }
 
 std::string DataList::type() const
