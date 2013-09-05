@@ -45,7 +45,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   const std::string function = findMaximum ? "MAX"  : "MIN";
   const std::string ordering = findMaximum ? "DESC" : "ASC";
 
-  const int n_extremes = 10;
+  const int n_extremes = 20;
 
   std::ostringstream c_obstime;
   c_obstime << "obstime > '" << timeutil::to_iso_extended_string(tLimits.t0())
@@ -56,7 +56,8 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       "  (SELECT stationid AS s, " << function << "(corrected) AS c FROM data"
       "   WHERE stationid BETWEEN 60 AND 100000 AND stationid NOT IN (" << excluded_station_list.str() << ")"
       "   AND paramid IN (" << paramids.str() << ")"
-      "   AND substr(useinfo,3,1) in ('0','1','2')"
+      "   AND (substr(useinfo,3,1) IN ('0','1','2')"
+      "        OR substr(useinfo,3,1) = '3' AND original = corrected)"
       "   AND " << c_obstime.str() <<
       " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<
