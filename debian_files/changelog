@@ -1,3 +1,9 @@
+kvhqc (3.0.0~a16-1) unstable; urgency=low
+
+  * added RA to WatchWeather
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 11 Jul 2013 11:48:47 +0200
+
 kvhqc (3.0.0~a15-1) unstable; urgency=low
 
   * improved WatchRR / WatchWeather station dialog
