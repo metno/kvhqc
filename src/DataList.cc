@@ -50,6 +50,7 @@ DataList::DataList(QWidget* parent)
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
   mColumnRemove = mColumnMenu->addAction(QIcon("icons:dl_columns_remove.svg"), tr("Remove column"), this, SLOT(onActionRemoveColumn()));
   mColumnReset = mColumnMenu->addAction(QIcon("icons:dl_columns_reset.svg"), tr("Reset columns"), this, SLOT(onActionResetColumns()));
+  mColumnAdd->setEnabled(false);
   mColumnRemove->setEnabled(false);
   mColumnReset->setEnabled(false);
 
@@ -127,6 +128,7 @@ void DataList::updateModel()
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   
   ui->buttonsAcceptReject->updateModel(mDA, ui->table);
+  mColumnAdd->setEnabled(true);
 }
 
 ObsColumnPtr DataList::makeColumn(const Column& c)
@@ -173,7 +175,8 @@ void DataList::navigateTo(const SensorTime& st)
       ui->table->scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
       ui->table->scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
     }
-    ui->table->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    if (QItemSelectionModel* sm = ui->table->selectionModel())
+      sm->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
 void DataList::currentChanged(const QModelIndex& current)
@@ -219,12 +222,16 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
 
 void DataList::onActionAddColumn()
 {
-  int column;
-  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
-  if (sc.size() == 1)
-    column = sc.front().column();
-  else
-    column = mTableModel->columnCount(QModelIndex());
+  const QItemSelectionModel* sm = ui->table->selectionModel();
+  if (not sm)
+    return;
+
+  int column = mTableModel->columnCount(QModelIndex());
+  if (const QItemSelectionModel* sm = ui->table->selectionModel()) {
+    const QModelIndexList sc = sm->selectedColumns();
+    if (sc.size() == 1)
+      column = sc.front().column();
+  }
   addColumnBefore(column);
 }
 
@@ -263,8 +270,12 @@ void DataList::removeColumns(std::vector<int> columns)
 
 void DataList::onActionRemoveColumn()
 {
+  const QItemSelectionModel* sm = ui->table->selectionModel();
+  if (not sm)
+    return;
+
   std::vector<int> columns;
-  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
+  const QModelIndexList sc = sm->selectedColumns();
   Q_FOREACH(const QModelIndex& idx, sc)
       columns.push_back(idx.column());
   removeColumns(columns);
@@ -280,8 +291,10 @@ void DataList::onActionResetColumns()
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
-  mColumnRemove->setEnabled(not sc.isEmpty());
+  bool enabled = false;
+  if (const QItemSelectionModel* sm = ui->table->selectionModel())
+    enabled = not sm->selectedColumns().isEmpty();
+  mColumnRemove->setEnabled(enabled);
 }
 
 namespace /* anonymous */ {
@@ -479,7 +492,9 @@ void DataList::onButtonSaveAs()
 
    std::set<int> selectedRows, selectedColumns;
    std::set< std::pair<int,int> > selectedCells;
-   const QModelIndexList selected = ui->table->selectionModel()->selectedIndexes();
+   QModelIndexList selected;
+   if (QItemSelectionModel* sm = ui->table->selectionModel())
+     selected = sm->selectedIndexes();
    if (not selected.isEmpty()) {
      for (int i=0; i<selected.count(); i++) {
        const int r = selected.at(i).row(), c = selected.at(i).column();
@@ -493,9 +508,9 @@ void DataList::onButtonSaveAs()
      c1 = *selectedColumns.rbegin();
    } else {
      r0 = 0;
-     r1 = mTableModel->rowCount(QModelIndex())-1;
+     r1 = mTableModel->rowCount(QModelIndex())-1; // no problem if < 0
      c0 = 0;
-     c1 = mTableModel->columnCount(QModelIndex())-1;
+     c1 = mTableModel->columnCount(QModelIndex())-1; // no problem if < 0
    }
 
    QTextStream out(&file);

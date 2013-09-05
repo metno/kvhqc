@@ -47,7 +47,7 @@
         <string>Mofify table columns.</string>
        </property>
        <property name="text">
-        <string>Columns…</string>
+        <string>Columns</string>
        </property>
       </widget>
      </item>
