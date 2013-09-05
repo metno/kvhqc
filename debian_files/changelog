@@ -1,3 +1,12 @@
+kvhqc (3.0.0~a11-1) unstable; urgency=low
+
+  * use recent kvalobs libraries to get correct useinfo
+  * added some QC2 check explanations
+  * exclude fhqc != 0 from new error list
+  * show "fagg" in flag column
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 27 Jun 2013 10:09:10 +0200
+
 kvhqc (3.0.0~a10-1) unstable; urgency=low
 
   * bugfix: show original value, not old corrected value
