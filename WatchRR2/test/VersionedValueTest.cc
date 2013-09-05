@@ -99,3 +99,67 @@ TEST(VersionedValueTest, UndoRedo)
     EXPECT_TRUE(v.setValue(2, V3));
     EXPECT_EQ(V3, v.value());
 }
+
+TEST(VersionedValueTest, VersionAccess)
+{
+    typedef VersionedValue<int> VVint;
+    const int V0 = 8, V1 = 17, V3 = 22, V6 = 3;
+
+    VVint v(V0);
+    EXPECT_FALSE(v.setVersion(1, true));
+    EXPECT_TRUE(v.setValue(1, V1));
+    EXPECT_FALSE(v.setVersion(2, true));
+    EXPECT_FALSE(v.setVersion(3, true));
+    EXPECT_TRUE(v.setValue(3, V3));
+    EXPECT_FALSE(v.setVersion(4, true));
+    EXPECT_FALSE(v.setVersion(5, true));
+    EXPECT_EQ(V3, v.value());
+    EXPECT_FALSE(v.setVersion(6, true));
+    EXPECT_TRUE(v.setValue(6, V6));
+    EXPECT_EQ(V6, v.value());
+
+    EXPECT_EQ(V0, v.value(0));
+    EXPECT_EQ(V1, v.value(1));
+    EXPECT_EQ(V1, v.value(2));
+    EXPECT_EQ(V3, v.value(3));
+    EXPECT_EQ(V3, v.value(4));
+    EXPECT_EQ(V3, v.value(5));
+    EXPECT_EQ(V6, v.value(6));
+
+    EXPECT_TRUE(v.setVersion(2, true));
+    EXPECT_EQ(V0, v.value(0));
+    EXPECT_EQ(V1, v.value(1));
+    EXPECT_EQ(V1, v.value(2));
+    EXPECT_EQ(V1, v.value(3));
+}
+
+TEST(VersionedValueTest, HasVersion)
+{
+    typedef VersionedValue<int> VVint;
+    const int V0 = 8, V1 = 17, V3 = 22, V6 = 3;
+
+    VVint v(V0);
+    EXPECT_FALSE(v.setVersion(1, true));
+    EXPECT_TRUE(v.setValue(1, V1));
+    EXPECT_FALSE(v.setVersion(2, true));
+    EXPECT_FALSE(v.setVersion(3, true));
+    EXPECT_TRUE(v.setValue(3, V3));
+    EXPECT_FALSE(v.setVersion(4, true));
+    EXPECT_FALSE(v.setVersion(5, true));
+    EXPECT_EQ(V3, v.value());
+    EXPECT_FALSE(v.setVersion(6, true));
+    EXPECT_TRUE(v.setValue(6, V6));
+    EXPECT_EQ(V6, v.value());
+
+    EXPECT_TRUE (v.hasVersion(0));
+    EXPECT_TRUE (v.hasVersion(1));
+    EXPECT_FALSE(v.hasVersion(2));
+    EXPECT_TRUE (v.hasVersion(3));
+    EXPECT_FALSE(v.hasVersion(4));
+    EXPECT_FALSE(v.hasVersion(5));
+    EXPECT_TRUE (v.hasVersion(6));
+
+    EXPECT_TRUE(v.setVersion(2, true));
+    EXPECT_FALSE(v.hasVersion(2));
+    EXPECT_FALSE(v.hasVersion(3));
+}
