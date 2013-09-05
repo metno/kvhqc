@@ -46,7 +46,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 using namespace miutil;
 
-TimeseriesDialog::TimeseriesDialog() : QDialog(0, 0, FALSE) {
+TimeseriesDialog::TimeseriesDialog(QWidget* parent)
+    : QDialog(parent)
+{
 
   setCaption(tr("Time series HQC"));
 //Test

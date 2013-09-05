@@ -1,5 +1,6 @@
 
 #include "FakeKvApp.hh"
+#include "FakeReinserter.hh"
 
 #include "Helpers.hh"
 #include "KvalobsAccess.hh"
@@ -13,19 +14,6 @@
 
 #define NDEBUG
 #include "debug.hh"
-
-class FakeReinserter : public kvalobs::DataReinserter<kvservice::KvApp>
-{
-public:
-    FakeReinserter();
-    ~FakeReinserter();
-
-    virtual const CKvalObs::CDataSource::Result_var insert(kvalobs::kvData &d) const;
-    virtual const CKvalObs::CDataSource::Result_var insert(std::list<kvalobs::kvData> &dl) const;
-    virtual const CKvalObs::CDataSource::Result_var insert(const kvalobs::serialize::KvalobsData & data) const;
-};
-
-// ========================================================================
 
 FakeKvApp::FakeKvApp()
     : mFakeReinserter(new FakeReinserter)
@@ -289,6 +277,7 @@ bool FakeKvApp::getKvWorkstatistik(CKvalObs::CService::WorkstatistikTimeType tim
 
 static const CKvalObs::CDataSource::Result_var makeResult(CKvalObs::CDataSource::EResult what)
 {
+    // FIXME same as in FakeReinserter
     CKvalObs::CDataSource::Result_var ret(new CKvalObs::CDataSource::Result);
     ret->res = what;
     ret->message = "FakeKvApp response";
@@ -321,28 +310,4 @@ void FakeKvApp::unsubscribe(const kvservice::KvApp::SubscriberID &subscriberid)
 
 void FakeKvApp::unsubscribeAll()
 {
-}
-
-FakeReinserter::FakeReinserter()
-    : kvalobs::DataReinserter<kvservice::KvApp>(0, 123)
-{
-}
-
-FakeReinserter::~FakeReinserter()
-{
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(kvalobs::kvData&) const
-{
-    return makeResult(CKvalObs::CDataSource::OK);
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(std::list<kvalobs::kvData>&) const
-{
-    return makeResult(CKvalObs::CDataSource::OK);
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(const kvalobs::serialize::KvalobsData&) const
-{
-    return makeResult(CKvalObs::CDataSource::OK);
 }

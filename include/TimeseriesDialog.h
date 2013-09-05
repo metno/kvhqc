@@ -61,7 +61,7 @@ class QDateTimeEdit;
 class TimeseriesDialog : public QDialog {
   Q_OBJECT
 public:
-  TimeseriesDialog();
+  TimeseriesDialog(QWidget* parent=0);
 
   void getResults(std::vector<std::string>& parameter,
 		  timeutil::ptime& fromTime,

@@ -1,5 +1,6 @@
 INCLUDE_DIRECTORIES(
   "${CMAKE_CURRENT_SOURCE_DIR}/.."
+  "${CMAKE_SOURCE_DIR}/include"
 )
 
 FIND_PACKAGE(Boost COMPONENTS regex REQUIRED)
@@ -29,6 +30,8 @@ ADD_LIBRARY(watchrr2test
   FakeKvApp.cc
   FakeModelAccess.hh
   FakeModelAccess.cc
+  FakeReinserter.hh
+  FakeReinserter.cc
   TestHelpers.hh
   TestHelpers.cc
   load_1650_20130130.cc

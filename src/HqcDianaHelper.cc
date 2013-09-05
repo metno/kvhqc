@@ -6,6 +6,7 @@
 
 #include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
+#include <qUtilities/QLetterCommands.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>

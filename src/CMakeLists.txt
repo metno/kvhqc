@@ -3,6 +3,7 @@ SET(hqc_HEADERS
   ErrorListTableModel.hh
   DataList.hh
   DataListModel.hh
+  HqcApplication.hh
   ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
   ../include/dianashowdialog.h
@@ -40,7 +41,7 @@ SET(hqc_SOURCES
   errorlist.cc
   GetData.cc
   GetTextData.cc
-  hqc4.cc
+  HqcApplication.cc
   HqcDianaHelper.cc
   hqcmain.cc
   ItemCheckBox.cc
@@ -52,6 +53,7 @@ SET(hqc_SOURCES
   rejectdialog.cc
   rejecttable.cc
   rejecttimeseriesdialog.cc
+  StationInfoBuffer.cc
   StInfoSysBuffer.cc
   SimpleCorrections.cc
   textdatadialog.cc
@@ -72,6 +74,8 @@ INCLUDE_DIRECTORIES(
 
 SET(hqc_TRANS hqc_nb.ts hqc_de.ts)
 QT4_ADD_TRANSLATION(hqc_QM ${hqc_TRANS})
+INSTALL(FILES ${hqc_QM}
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
 
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
@@ -83,24 +87,38 @@ SET(hqc_UIS
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBSQT_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
-ADD_EXECUTABLE(hqc
+ADD_LIBRARY(hqc_common
   ${hqc_SOURCES}
   ${hqc_HEADERS_MOC}
   ${hqc_UIS_H}
   ${hqc_QM}
 )
 
+ADD_EXECUTABLE(hqc
+  hqc4.cc
+)
+
 SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}.bin")
 
 TARGET_LINK_LIBRARIES(hqc
-  watchrr2 weather failinfo authentication
+  hqc_common watchrr2 weather failinfo authentication
   ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
   -lldap
 )
 
 INSTALL(TARGETS hqc DESTINATION bin)
 
-INSTALL(FILES ${hqc_QM}
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
+ADD_EXECUTABLE(hqc_offline
+  hqc_offline.cc
+)
+
+SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
+  OUTPUT_NAME "hqc-${PVERSION}-offline")
+
+TARGET_LINK_LIBRARIES(hqc_offline
+  hqc_common watchrr2 weather failinfo authentication watchrr2test
+  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
+)
+
+INSTALL(TARGETS hqc_offline DESTINATION bin)

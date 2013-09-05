@@ -29,11 +29,9 @@
 #ifndef HQCMAIN_H
 #define HQCMAIN_H
 
+#include "KvalobsData.h"
 #include "StInfoSysBuffer.hh"
 #include "hqcdefs.h"
-
-#include <decodeutility/DataReinserter.h>
-#include <kvcpp/KvApp.h>
 
 #include <QtCore/qset.h>
 #include <QtCore/qstring.h>
@@ -91,8 +89,10 @@ public:
 
     const listStat_l& getStationDetails();
 
-    kvalobs::DataReinserter<kvservice::KvApp>* getReinserter()
+    HqcReinserter* getReinserter()
         { return reinserter; }
+
+    void setReinserter(HqcReinserter* r, const QString& userName);
 
 public Q_SLOTS:
     //! send all observation times to Diana
@@ -178,10 +178,6 @@ private:
 
     void readFromStation();
 
-    //! reads station info from stinfosys
-    bool readFromStInfoSys();
-    bool readFromStationFile();
-
     /*! \brief Reads the parameter order from the file paramorder, then reaads the param
      *        table in the kvalobs database and inserts the station information in parmap */
     void readFromParam();
@@ -210,7 +206,7 @@ private:
 
     listType lity;
     std::vector<currentType> currentTypeList;
-    kvalobs::DataReinserter<kvservice::KvApp> *reinserter;
+    HqcReinserter* reinserter;
 
     model::KvalobsDataModel * dataModel;
     int sLevel;

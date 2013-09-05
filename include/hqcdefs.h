@@ -32,27 +32,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef HQCDEFS_H
 #define HQCDEFS_H
 
-#include "KvalobsData.h"
+#include <decodeutility/DataReinserter.h>
+#include <kvcpp/KvApp.h>
 
-#include <kvalobs/kvData.h>
-#include <kvalobs/kvModelData.h>
-#include <kvalobs/kvObsPgm.h>
-#include <kvalobs/kvStation.h>
-
-#include <qUtilities/QLetterCommands.h>
-
-#include <list>
+#include "timeutil.hh"
 #include <string>
-
-typedef std::list<kvalobs::kvData>                              DataList;
-typedef std::list<kvalobs::kvData>::iterator                   IDataList;
-typedef std::list<kvalobs::kvData>::const_iterator            CIDataList;
-typedef std::list<kvalobs::kvModelData>                    ModelDataList;
-typedef std::list<kvalobs::kvModelData>::iterator         IModelDataList;
-typedef std::list<kvalobs::kvModelData>::const_iterator  CIModelDataList;
-
-typedef std::list<kvalobs::kvObsPgm>                          ObsPgmList;
-typedef std::list<kvalobs::kvObsPgm>::const_iterator        CIObsPgmList;
 
 const int NOPARAM          = 1043;
 const int NOPARAMALL       = 210;
@@ -70,9 +54,9 @@ struct modDatl {
   timeutil::ptime otime;
   double orig[NOPARAM];
 };
+
 struct currentType {
   int stnr;
-  //  QString status;
   int par;
   timeutil::pdate fDate;
   timeutil::pdate tDate;
@@ -89,5 +73,7 @@ struct TxtDat {
   timeutil::ptime tbtime;
   int typeId;
 };
+
+typedef kvalobs::DataReinserter<kvservice::KvApp> HqcReinserter;
 
 #endif

@@ -40,20 +40,19 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "approvedialog.h"
 #include "BusyIndicator.h"
 #include "config.h"
+#include "DataList.hh"
+#include "DataListModel.hh"
 #include "dianashowdialog.h"
 #include "discarddialog.h"
 #include "errorlist.h"
 #include "GetData.h"
 #include "GetTextData.h"
 #include "HintWidget.hh"
-#include "identifyUser.h"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 #include "HqcDianaHelper.hh"
 #include "HqcLogging.hh"
 #include "KvalobsModelAccess.hh"
-#include "KvalobsDataModel.h"
-#include "KvalobsDataView.h"
 #include "KvMetaDataBuffer.hh"
 #include "ListDialog.hh"
 #include "MiDateTimeEdit.hh"
@@ -160,6 +159,8 @@ HqcMainWindow::HqcMainWindow()
 
     mVersionCheckTimer->setSingleShot(true);
 
+    setIcon(QPixmap(hqc::getPath(hqc::IMAGEDIR)+"/hqc.png"));
+
     QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
     ui->dataListAction->setIcon(icon_listdlg);
 
@@ -263,16 +264,18 @@ HqcMainWindow::~HqcMainWindow()
 {
 }
 
+void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
+{
+    userName = u;
+    reinserter = r;
+    kda->setReinserter(reinserter);
+}
+
 void HqcMainWindow::startup()
 {
     DisableGUI disableGUI(this);
     listExist = false;
     sLevel = 0;
-
-    // --- CHECK USER IDENTITY ----------------------------------------
-
-    reinserter = Authentication::identifyUser(this, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
-    kda->setReinserter(reinserter);
 
     //-----------------------------------------------------------------
 
@@ -411,45 +414,25 @@ void HqcMainWindow::ListOK()
         statusBar()->message(tr("Building data list..."));
         qApp->processEvents();
 
-        model::KvalobsDataView * tableView = new model::KvalobsDataView(this);
-        dataModel = new model::KvalobsDataModel(mSelectedParameters, datalist,
-                                                modeldatalist, DBGE(true or) reinserter != 0);
-        dataModel->setParent(tableView);
-        dataModel->setShowStationName(ui->stID->isChecked());
-        dataModel->setShowPosition(ui->poID->isChecked());
-        dataModel->setShowHeight(ui->heID->isChecked());
-        dataModel->setShowTypeId(true /* lstdlg->isSelectAllStationTypes()*/); // always show typeid
-        
-        connect(dataModel, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex &)), this, SLOT(TimeseriesOK()));
-        
-        // Functionality for hiding/showing rows in data list
-        connect(ui->stID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowStationName(bool)));
-        connect(ui->poID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowPosition(bool)));
-        connect(ui->heID, SIGNAL(toggled(bool)), dataModel, SLOT(setShowHeight(bool)));
+        DataListModel::Sensors_t sensors;
+        BOOST_FOREACH(int stationId, selectedStations) {
+            BOOST_FOREACH(int paramId, mSelectedParameters) {
+                const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+                Sensor sensor(stationId, paramId, 0, 0, 0);
+                BOOST_FOREACH(const kvalobs::kvObsPgm op, opl) {
+                    if (op.paramID() == paramId) {
+                        sensor.typeId = op.typeID();
+                        break;
+                    }
+                }
+                sensors.push_back(sensor);
+            }
+        }
 
-        connect(this, SIGNAL(statTimeReceived(int, const timeutil::ptime&, int)), tableView, SLOT(selectStation(int, const timeutil::ptime&, int)));
-        connect(this, SIGNAL(timeReceived(const timeutil::ptime&)), tableView, SLOT(selectTime(const timeutil::ptime&)));
-        connect(tableView, SIGNAL(signalNavigateTo(const kvalobs::kvData&)), this, SLOT(navigateTo(const kvalobs::kvData&)));
-
-        connect(ui->flID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowFlags(bool)));
-        connect(ui->orID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowOriginal(bool)));
-        connect(ui->moID, SIGNAL(toggled(bool)), tableView, SLOT(toggleShowModelData(bool)));
-        tableView->setModel(dataModel);
-
-        // Smaller cells. This should probably be done dynamically, somehow
-        int columns = dataModel->columnCount();
-        for ( int i = 0; i < columns; ++ i )
-            tableView->setColumnWidth(i, 56);
-
-        int rows = dataModel->rowCount();
-        for ( int i = 0; i < rows; ++ i )
-            tableView->setRowHeight(i,24);
-
-        tableView->toggleShowFlags(ui->flID->isChecked());
-        tableView->toggleShowOriginal(ui->orID->isChecked());
-        tableView->toggleShowModelData(ui->moID->isChecked());
-
-        ui->ws->addSubWindow(tableView);
+        EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
+        DataList* dl = new DataList(this);
+        dl->setSensorsAndTimes(eda, sensors, TimeRange(stime, etime));
+        ui->ws->addSubWindow(dl);
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
@@ -592,7 +575,7 @@ void HqcMainWindow::TimeseriesOK() {
 const listStat_l& HqcMainWindow::getStationDetails()
 {
     BusyStatus busy(this, tr("Loading station info..."));
-    return StInfoSysBuffer::instance()->getStationDetails();
+    return StationInfoBuffer::instance()->getStationDetails();
 }
 
 inline QString dateStr_( const QDateTime & dt )
@@ -768,7 +751,9 @@ void HqcMainWindow::listMenu(listType lt)
     lstdlg->show();
 }
 
-void HqcMainWindow::acceptTimeseriesOK() {
+void HqcMainWindow::acceptTimeseriesOK()
+{
+#if 0
   QDateTime stime;
   QDateTime etime;
   QString parameter;
@@ -823,9 +808,12 @@ void HqcMainWindow::acceptTimeseriesOK() {
     }
     modData.clear();
   }
+#endif
 }
 
-void HqcMainWindow::rejectTimeseriesOK() {
+void HqcMainWindow::rejectTimeseriesOK()
+{
+#if 0
   QDateTime stime;
   QDateTime etime;
   QString parameter;
@@ -877,7 +865,7 @@ void HqcMainWindow::rejectTimeseriesOK() {
     }
     modData.clear();
   }
-  return;
+#endif
 }
 
 void HqcMainWindow::startKro() {
@@ -1086,6 +1074,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
 
   statusBar()->message(tr("Reading model data..."));
   qApp->processEvents();
+  typedef std::list<kvalobs::kvModelData> ModelDataList;
   ModelDataList mdlist;
   modeldatalist.reserve(131072);
   modeldatalist.clear();
@@ -1102,7 +1091,7 @@ void HqcMainWindow::readFromData(const timeutil::ptime& stime,
         QMessageBox::Ignore, QMessageBox::NoButton);
   }
   modDatl mtdl;
-  CIModelDataList it=mdlist.begin();
+  ModelDataList::const_iterator it=mdlist.begin();
   if (it != mdlist.end()) {
       timeutil::ptime protime = timeutil::from_miTime(it->obstime());
       int prstnr = it->stationID();

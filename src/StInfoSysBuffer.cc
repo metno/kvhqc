@@ -12,10 +12,8 @@
 #include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 #include <QtCore/QCoreApplication>
-#include <QtCore/QFile>
 #include <QtCore/QList>
 #include <QtCore/QString>
-#include <QtCore/QTextStream>
 #include <QtCore/QVariant>
 #include <QtGui/QMessageBox>
 
@@ -211,18 +209,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
         cList[cInfo.stnr] = cInfo;
     }
 
-    QString path = QString(getenv("HOME"));
-    QString statFile = path + "/.config/hqc_stations";
-    std::ofstream outf(statFile);
-    if (not outf.is_open()) {
-        LOG4HQC_ERROR("StInfoSysBuffer", "cannot open '" << statFile << "' for writing");
-        QMessageBox::critical(0, qApp->translate("StInfoSysBuffer", "StInfoSys Cache"),
-                              qApp->translate("StInfoSysBuffer", "An error occured when attempting to write the stinfosys cache."),
-                              QMessageBox::Abort, QMessageBox::NoButton);
-        exit(1);
-    }
     listStat.clear();
-
     const std::list<kvalobs::kvStation> slist = KvMetaDataBuffer::instance()->allStations();
     BOOST_FOREACH(const kvalobs::kvStation& st, slist) {
         cList_t::const_iterator cit = cList.find(st.stationID());
@@ -244,83 +231,20 @@ bool StInfoSysBuffer::readFromStInfoSys()
         ls.pri         = ci.pri.toStdString();
         ls.coast       = ci.ki == "K";
         listStat.push_back(ls);
-
-        std::ostringstream obuf;
-        obuf << std::setw(7) << std::right << ci.stnr << " "
-             << std::setw(31) << std::left << (ci.county).toStdString()
-             << std::setw(25) << (ci.municip).toStdString()
-             << std::setw(3) << (ci.web).toStdString()
-             << std::setw(4) << (ci.pri).toStdString()
-             << std::setw(1) << (ci.ki).toStdString();
-        outf << obuf.str() << std::endl;
     }
-    outf.close();
     LOG4HQC_INFO("StInfoSysBuffer", "stationliste hentet fra stinfosys");
+    writeToStationFile();
     return true;
 }
-
-/*!
-  Read the station file, this must be done after the station table in the database is read
-*/
-bool StInfoSysBuffer::readFromStationFile()
-{
-    LOG_SCOPE("StInfoSysBuffer");
-    QString path = QString(getenv("HOME"));
-    if (path.isEmpty()) {
-        LOG4HQC_ERROR("StInfoSysBuffer", "no $HOME environment -- have to exit");
-        QMessageBox::critical(0, qApp->translate("StInfoSysBuffer", "StInfoSys Cache"),
-                              qApp->translate("StInfoSysBuffer", "No $HOME environment, there is something severely wrong with your settings."),
-                              QMessageBox::Abort, QMessageBox::NoButton);
-        exit(1);
-    }
-    QString stationFile = path + "/.config/hqc_stations";
-    QFile stations(stationFile);
-    if (not stations.open(QIODevice::ReadOnly)) {
-        LOG4HQC_INFO("StInfoSysBuffer", "cannot open '" << stationFile << "' for reading");
-        return false;
-    }
-    QTextStream stationStream(&stations);
-    int prevStnr = 0;
-    while (not stationStream.atEnd()) {
-        QString statLine = stationStream.readLine();
-        int stnr = statLine.left(7).toInt();
-        if (stnr == prevStnr)
-            continue;
-
-        try {
-            const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stnr);
-            listStat_t ls;
-            ls.name        = st.name();
-            ls.stationid   = st.stationID();
-            ls.altitude    = st.height();
-            ls.environment = st.environmentid();
-            ls.wmonr       = st.wmonr();
-            ls.fylke       = statLine.mid(8,30).stripWhiteSpace().toStdString();
-            ls.kommune     = statLine.mid(39,24).stripWhiteSpace().toStdString();
-            ls.pri         = statLine.mid(67,4).stripWhiteSpace().toStdString();
-            ls.coast       = statLine.mid(71,1).stripWhiteSpace() == "K";
-            listStat.push_back(ls);
-        } catch (std::runtime_error& e) {
-            // unknown station
-        }
-        prevStnr = stnr;
-    }
-    return true;
-}
-
-StInfoSysBuffer* StInfoSysBuffer::sInstance = 0;
 
 StInfoSysBuffer::StInfoSysBuffer(miutil::conf::ConfSection *conf)
 {
-    assert(not sInstance);
-    sInstance = this;
     connect2stinfosys(conf);
 }
 
 StInfoSysBuffer::~StInfoSysBuffer()
 {
     QSqlDatabase::removeDatabase(QSQLNAME_REMOTE);
-    sInstance = 0;
 }
 
 bool StInfoSysBuffer::isConnected()
@@ -329,18 +253,8 @@ bool StInfoSysBuffer::isConnected()
     return db.isOpen();
 }
 
-const listStat_l& StInfoSysBuffer::getStationDetails()
+void StInfoSysBuffer::readStationInfo()
 {
-    LOG_SCOPE("StInfoSysBuffer");
-
-    const timeutil::ptime now = timeutil::now();
-    DBG(DBG1(now) << DBG1(mLastStationListUpdate));
-    if (mLastStationListUpdate.is_not_a_date_time()
-        or (now - mLastStationListUpdate).total_seconds() > 3600)
-    {
-        mLastStationListUpdate = now;
-        readFromStInfoSys()
-            or readFromStationFile();
-    }
-    return listStat;
+    if (not readFromStInfoSys())
+        StationInfoBuffer::readStationInfo();
 }
