@@ -59,13 +59,14 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   ui->buttonLinesMenu->setIcon(QIcon("icons:dl_columns.svg"));
   ui->buttonLinesMenu->setMenu(mColumnMenu);
 
+  mTimeControl->setMinimumGap(24);
+  mTimeControl->setMaximumGap(24*7*6); // maximum 6 weeks
+  mTimeControl->install(ui->timeFrom, ui->timeTo);
+
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
   ui->timeFrom->setDateTime(f);
   ui->timeTo->setDateTime(t);
-
-  mTimeControl->setMinimumGap(24);
-  mTimeControl->install(ui->timeFrom, ui->timeTo);
 
   // TODO improve plot options
   initalizePlotOptions();
@@ -422,23 +423,29 @@ void TimeSeriesView::updatePlot()
       ObsDataPtr obs;
       ModelDataPtr mdl;
 
-      if (whatToPlot == 0 or whatToPlot == 2)
+      float value = 0;
+      if (whatToPlot == 0 or whatToPlot == 2) {
         obs = mDA->find(st);
-      if (whatToPlot == 1 or whatToPlot == 2)
+        if (not obs)
+          continue;
+        value = obs->corrected();
+        if (value <= kvalobs::REJECTED)
+          continue;
+        value = Helpers::numericalValue(sensor, value);
+        if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(sensor.paramId, value))
+          continue;
+      }
+
+      if (whatToPlot == 1 or whatToPlot == 2) {
         mdl = mMA->find(st);
+        if (not mdl)
+          continue;
+        const float mv = mdl->value();
+        value = (whatToPlot == 1) ? mv : (value - mv);
+      }
       
       const miutil::miTime mtime = timeutil::make_miTime(time);
-      if (mdl and whatToPlot == 1) {
-        tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
-      } else if (obs and whatToPlot == 0) {
-        const float corr = Helpers::numericalValue(sensor, obs->corrected());
-        if (corr > -32766.0)
-          tseries.add(TimeSeriesData::Data(mtime, corr));
-      } else if (obs and mdl and whatToPlot == 2) {
-        const float corr = Helpers::numericalValue(sensor, obs->corrected());
-        if (corr > -32766.0)
-	  tseries.add(TimeSeriesData::Data(mtime, corr - mdl->value()));
-      }
+      tseries.add(TimeSeriesData::Data(mtime, value));
     }
 
     if (tseries.dataOK()) {
