@@ -31,13 +31,13 @@ public:
 protected:
   virtual bool acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
 
-private Q_SLOTS:
+protected Q_SLOTS:
     void init();
     void onButtonOk();
     void onUpdateType();
     bool check();
 
-private:
+protected:
     Sensor mSensor;
     timeutil::ptime mTimeFrom, mTimeTo;
     int mHour;

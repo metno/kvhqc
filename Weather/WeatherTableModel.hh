@@ -11,7 +11,10 @@ public:
   WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t);
 
   virtual timeutil::ptime timeAtRow(int row) const;
-  
+
+  static const int NPARAMETERS;
+  static const int parameters[];
+
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
   virtual int rowOrColumnCount(bool timeDirection) const;

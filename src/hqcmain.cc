@@ -61,6 +61,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "TimeSeriesView.hh"
 #include "timeutil.hh"
 #include "WeatherDialog.hh"
+#include "WeatherStationDialog.hh"
 
 #include "StationDialog.hh"
 #include "MainDialog.hh"
@@ -473,7 +474,7 @@ void HqcMainWindow::showWeather()
     timeTo = now;
   TimeRange time(timeFrom, timeTo);
   
-  StationDialog sd(sensor, time);
+  WeatherStationDialog sd(sensor, time);
   if (not sd.exec())
     return;
   sensor = sd.selectedSensor();
