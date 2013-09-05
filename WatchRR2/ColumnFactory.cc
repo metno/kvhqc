@@ -5,15 +5,20 @@
 #include "DataOriginalItem.hh"
 #include "DataRR24Item.hh"
 #include "DataVxItem.hh"
+#include "KvMetaDataBuffer.hh"
 #include "Sensor.hh"
 
 #include <QtCore/QCoreApplication>
 #include <boost/make_shared.hpp>
 
+#define MILOGGER_CATEGORY "kvhqc.ColumnFactory"
+#include "HqcLogging.hh"
+
 namespace ColumnFactory {
 
 Code2TextPtr codesForParam(int pid)
 {
+    METLIBS_LOG_SCOPE();
     if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
         return Code2TextPtr();
 
@@ -44,6 +49,14 @@ Code2TextPtr codesForParam(int pid)
                      qApp->translate("Column_SD", "snow cover not reported"));
         c2t->setRange(-1, 4);
         c2t->setDecimals(0);
+    } else {
+      try {
+        const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
+        if (param.unit().find("kode") != std::string::npos)
+          c2t->setDecimals(0);
+      } catch (std::exception& ex) {
+        METLIBS_LOG_WARN("exception while retrieving kvParam for " << pid);
+      }
     }
     return c2t;
 }

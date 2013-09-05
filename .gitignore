@@ -24,4 +24,3 @@ moc_*.cpp
 /etc/hqc_current_version
 /callgrind.out.*
 /core
-/share/hqc_system.db

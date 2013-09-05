@@ -350,6 +350,7 @@ float parseFloat(const QString& text, int nDecimals)
     }
     return num;
 }
+
 int extract_ui2(ObsDataPtr obs)
 {
     kvalobs::kvUseInfo ui;
