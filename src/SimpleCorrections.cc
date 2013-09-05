@@ -48,19 +48,13 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 
     setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
 
-#if 0
-#include "../src/icon_accept.xpm"
-#include "../src/icon_reject.xpm"
-    QIcon iconAccept, iconReject;
-    iconAccept.addPixmap(QPixmap(icon_accept));
-    iconReject.addPixmap(QPixmap(icon_reject));
+    QIcon iconAccept("icons:accept.svg"), iconReject("icons:reject.svg");
     ui->buttonAcceptCorrected   ->setIcon(iconAccept);
     ui->buttonAcceptCorrectedQC2->setIcon(iconAccept);
     ui->buttonAcceptOriginal    ->setIcon(iconAccept);
     ui->buttonAcceptOriginalQC2 ->setIcon(iconAccept);
     ui->buttonReject   ->setIcon(iconReject);
     ui->buttonRejectQC2->setIcon(iconReject);
-#endif
 
     update();
 }
@@ -202,38 +196,8 @@ void SimpleCorrections::enableEditing()
         return;
     }
     setEnabled(true);
-#if 0
-    enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
-           NEW_CORRECTED, N_BUTTONS };
-    QWidget* buttons[N_BUTTONS] = {
-        ui->buttonAcceptOriginal,  ui->buttonAcceptOriginalQC2,
-        ui->buttonAcceptCorrected, ui->buttonAcceptCorrectedQC2,
-        ui->buttonReject,          ui->buttonRejectQC2,
-        ui->comboCorrected
-    };
-    bool enable[N_BUTTONS];
-    
-    const Sensor& s = mSensorTime.sensor;
-    setEnabled(true);
-    std::fill(enable, enable+N_BUTTONS, true);
-
-    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
-    if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs)) {
-        // for accumulations, always use WatchRR
-        std::fill(enable, enable+N_BUTTONS, false);
-    } else if (fmis == 3) {
-        std::fill(enable, enable+N_BUTTONS, false);
-        enable[NEW_CORRECTED] = true;
-    } else if (fmis == 2) {
-        enable[CORR_OK] = enable[CORR_OK_QC2] = false;
-    } else if (fmis == 1) {
-        enable[REJECT] = enable[REJECT_QC2] = false;
-    }
-
-    for (int b=0; b<N_BUTTONS; ++b)
-        buttons[b]->setEnabled(enable[b]);
-#else
     const int p = AcceptReject::possibilities(obs);
+    METLIBS_LOG_DEBUG("possibilities = " << p);
 
     ui->buttonReject   ->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
     ui->buttonRejectQC2->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
@@ -245,7 +209,6 @@ void SimpleCorrections::enableEditing()
     ui->buttonAcceptCorrectedQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
 
     ui->comboCorrected->setEnabled((p & AcceptReject::CAN_CORRECT) != 0);
-#endif
 }
 
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)

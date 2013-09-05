@@ -171,12 +171,12 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="63"/>
+        <location filename="DataOriginalItem.cc" line="42"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="116"/>
+        <location filename="DataCorrectedItem.cc" line="83"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -186,12 +186,12 @@
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="61"/>
+        <location filename="DataOriginalItem.cc" line="40"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="114"/>
+        <location filename="DataCorrectedItem.cc" line="81"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -204,22 +204,22 @@
 <context>
     <name>DataOriginalItem</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="42"/>
+        <location filename="DataValueItem.cc" line="91"/>
         <source>surely wrong</source>
         <translation>sikkert feilaktig</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="44"/>
+        <location filename="DataValueItem.cc" line="93"/>
         <source>very suspicious (probably wrong)</source>
         <translation>svært mistenkelig (antagelig feilaktig)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="46"/>
+        <location filename="DataValueItem.cc" line="95"/>
         <source>suspicious (probably ok)</source>
         <translation>noe mistenkelig (antagelig korrekt)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="48"/>
+        <location filename="DataValueItem.cc" line="97"/>
         <source>no quality info available</source>
         <translation>kvalitetsinformasjon ikke gitt</translation>
     </message>
@@ -292,14 +292,14 @@
         <translation>snøfokk</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="78"/>
-        <location filename="DataVxItem.cc" line="104"/>
+        <location filename="DataVxItem.cc" line="65"/>
+        <location filename="DataVxItem.cc" line="110"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="80"/>
-        <location filename="DataVxItem.cc" line="106"/>
+        <location filename="DataVxItem.cc" line="67"/>
+        <location filename="DataVxItem.cc" line="112"/>
         <source>strong</source>
         <translation>sterkt</translation>
     </message>

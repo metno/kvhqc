@@ -500,22 +500,31 @@
          </item>
          <item row="1" column="1">
           <widget class="QPushButton" name="buttonAcceptCorrected">
+           <property name="toolTip">
+            <string>Accept corrected value without permitting QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Corrected</string>
+            <string>Corr.</string>
            </property>
           </widget>
          </item>
          <item row="1" column="2">
           <widget class="QPushButton" name="buttonAcceptOriginal">
+           <property name="toolTip">
+            <string>Accept original value without permitting QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Original</string>
+            <string>Orig.</string>
            </property>
           </widget>
          </item>
          <item row="1" column="3">
           <widget class="QPushButton" name="buttonReject">
+           <property name="toolTip">
+            <string>Reject without permitting QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Reject</string>
+            <string>Rej.</string>
            </property>
           </widget>
          </item>
@@ -528,22 +537,31 @@
          </item>
          <item row="2" column="1">
           <widget class="QPushButton" name="buttonAcceptCorrectedQC2">
+           <property name="toolTip">
+            <string>Accept corrected value and allow QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Corr.+QC2</string>
+            <string>Corr.</string>
            </property>
           </widget>
          </item>
          <item row="2" column="2">
           <widget class="QPushButton" name="buttonAcceptOriginalQC2">
+           <property name="toolTip">
+            <string>Accept original value and allow QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Orig.+QC2</string>
+            <string>Orig.</string>
            </property>
           </widget>
          </item>
          <item row="2" column="3">
           <widget class="QPushButton" name="buttonRejectQC2">
+           <property name="toolTip">
+            <string>Reject and allow QC2 to override.</string>
+           </property>
            <property name="text">
-            <string>Rej.+QC2</string>
+            <string>Rej.</string>
            </property>
           </widget>
          </item>
