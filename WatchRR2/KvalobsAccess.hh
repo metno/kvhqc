@@ -9,10 +9,14 @@
 #include <kvcpp/KvApp.h>
 #include <kvcpp/kvservicetypes.h>
 
+#include <boost/icl/interval_set.hpp>
+
 class KvalobsAccess : public KvBufferedAccess {
 public:
     KvalobsAccess();
     ~KvalobsAccess();
+
+    virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
 
     virtual ObsDataPtr find(const SensorTime& st);
     virtual bool update(const std::vector<ObsUpdate>& updates);
@@ -29,15 +33,15 @@ protected:
     virtual bool drop(const SensorTime& st);
 
 private:
-    struct Fetched {
-        int stationId;
-        timeutil::ptime time;
-        Fetched(int s, const timeutil::ptime& t)
-            : stationId(s), time(t) { }
-        bool operator<(const Fetched& other) const
-            { if (stationId != other.stationId) return stationId < other.stationId; else return time < other.time; }
-    };
-    typedef std::set<Fetched> Fetched_t;
+    bool isFetched(int stationid, const timeutil::ptime& t) const;
+    void addFetched(int stationid, const TimeRange& t);
+    void removeFetched(int stationid, const timeutil::ptime& t);
+
+    void findRange(const Sensor& sensor, const TimeRange& limits);
+    
+private:
+    typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
+    typedef std::map<int, FetchedTimes_t> Fetched_t;
     Fetched_t mFetched;
 
     Reinserter_t* mDataReinserter;

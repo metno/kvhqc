@@ -10,6 +10,8 @@ public:
     EditAccess(ObsAccessPtr backend);
     virtual ~EditAccess();
 
+    virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
+
     virtual ObsDataPtr find(const SensorTime& st);
     EditDataPtr findE(const SensorTime& st)
         { return boost::static_pointer_cast<EditData>(find(st)); }

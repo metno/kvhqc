@@ -23,6 +23,19 @@ EditAccess::~EditAccess()
     mBackend->obsDataChanged.disconnect(boost::bind(&EditAccess::onBackendDataChanged, this, _1, _2));
 }
 
+ObsAccess::TimeSet EditAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
+{
+    TimeSet times = mBackend->allTimes(sensor, limits);
+
+    BOOST_FOREACH(const Data_t::value_type& d, mData) {
+        const SensorTime& dst = d.first;
+        if (eq_Sensor()(dst.sensor, sensor) and limits.contains(dst.time))
+            times.insert(dst.time);
+    }
+
+    return times;
+}
+
 ObsDataPtr EditAccess::find(const SensorTime& st)
 {
     Data_t::iterator it = mData.find(st);

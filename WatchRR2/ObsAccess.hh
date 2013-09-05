@@ -9,6 +9,10 @@
 class ObsAccess : public boost::enable_shared_from_this<ObsAccess>, private boost::noncopyable {
 public:
     virtual ~ObsAccess();
+
+    typedef std::set<timeutil::ptime> TimeSet;
+    virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits) = 0;
+
     virtual ObsDataPtr find(const SensorTime& st) = 0;
     virtual ObsDataPtr create(const SensorTime& st) = 0;
     virtual bool update(const std::vector<ObsUpdate>& updates) = 0;

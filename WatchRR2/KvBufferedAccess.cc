@@ -11,6 +11,17 @@
 #define NDEBUG
 #include "w2debug.hh"
 
+ObsAccess::TimeSet KvBufferedAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
+{
+    TimeSet times;
+    BOOST_FOREACH(const Data_t::value_type& d, mData) {
+        const SensorTime& dst = d.first;
+        if (eq_Sensor()(dst.sensor, sensor) and limits.contains(dst.time))
+            times.insert(dst.time);
+    }
+    return times;
+}
+
 ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 {
     Data_t::iterator it = mData.find(st);
