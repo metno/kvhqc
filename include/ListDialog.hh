@@ -55,6 +55,7 @@ public:
     ~ListDialog();
     
     QDateTime getStart();
+    void setStart(const QDateTime& s);
     QDateTime getEnd();
     void setEnd(const QDateTime& e);
     

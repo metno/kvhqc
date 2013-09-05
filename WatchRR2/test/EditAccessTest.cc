@@ -29,6 +29,7 @@ TEST(EditAccessTest, SendToParent)
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
     eda->obsDataChanged.connect(boost::ref(cdcE));
 
+    eda->newVersion();
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
     ASSERT_TRUE(ebs1);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
@@ -76,6 +77,8 @@ TEST(EditAccessTest, Reset)
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
     eda->obsDataChanged.connect(boost::ref(cdcE));
 
+    eda->newVersion();
+
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
     ASSERT_TRUE(ebs1);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
@@ -114,6 +117,8 @@ TEST(EditAccessTest, ResetCreate)
     eda->obsDataChanged.connect(boost::ref(cdcE));
     eda->obsDataChanged.connect(boost::ref(cdcEdestroy));
 
+    eda->newVersion();
+
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
     ASSERT_TRUE(ebs1);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
@@ -148,6 +153,7 @@ TEST(EditAccessTest, OnlyTasks)
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
     eda->obsDataChanged.connect(boost::ref(cdcE));
 
+    eda->newVersion();
     FCC::analyse(eda, sensor, time);
 
     ASSERT_EQ(0, cdcF.count);
@@ -171,6 +177,7 @@ TEST(EditAccessTest, PopChange)
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
     eda->obsDataChanged.connect(boost::ref(cdcE));
 
+    eda->newVersion();
     TimeRange editableTime(time);
     RR24::analyse(eda, sensor, editableTime);
 

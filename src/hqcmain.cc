@@ -45,6 +45,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "DataView.hh"
 #include "dianashowdialog.h"
 #include "discarddialog.h"
+#include "EditVersionModel.hh"
 #include "errorlist.h"
 #include "HintWidget.hh"
 #include "hqc_paths.hh"
@@ -150,6 +151,7 @@ HqcMainWindow::HqcMainWindow()
   , kda(boost::make_shared<QtKvalobsAccess>())
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(kda))
+  , mEditVersions(new EditVersionModel(eda))
 {
     ui->setupUi(this);
     ui->treeErrors->setDataAccess(eda, kma);
@@ -885,7 +887,14 @@ void HqcMainWindow::aboutQt()
 
 void HqcMainWindow::onUndoChanges()
 {
-    eda->popUpdate();
+    if (eda->canUndo())
+        eda->undoVersion();
+}
+
+void HqcMainWindow::onRedoChanges()
+{
+    if (eda->canRedo())
+        eda->redoVersion();
 }
 
 void HqcMainWindow::onSaveChanges()
@@ -924,6 +933,8 @@ void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
     LOG4HQC_DEBUG("HqcMainWindow", DBG1(eda->countU()));
     ui->saveAction->setEnabled(eda->countU() > 0);
+    ui->actionUndo->setEnabled(eda->canUndo());
+    ui->actionRedo->setEnabled(eda->canRedo());
 }
 
 

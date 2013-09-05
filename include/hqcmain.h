@@ -53,6 +53,7 @@ class AcceptTimeseriesDialog;
 class AutoColumnView;
 class DataList;
 class DianaShowDialog;
+class EditVersionModel;
 class HintWidget;
 class HqcDianaHelper;
 class KvalobsAccess;
@@ -125,6 +126,7 @@ private Q_SLOTS:
     void onVersionCheckTimeout();
     void onSaveChanges();
     void onUndoChanges();
+    void onRedoChanges();
 
 private:
     void navigateTo(const SensorTime& st);
@@ -181,6 +183,8 @@ private:
     boost::shared_ptr<KvalobsAccess> kda;
     boost::shared_ptr<KvalobsModelAccess> kma;
     boost::shared_ptr<EditAccess> eda;
+
+    std::auto_ptr<EditVersionModel> mEditVersions;
 };
 
 //! Get o's owning HqcMainWindow, or NULL if there is none.

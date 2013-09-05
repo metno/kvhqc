@@ -41,6 +41,7 @@ TEST_F(AnalyseRR24Test, TaskPeriods)
     TimeRange editableTime(time);
 
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     RR24::analyse(eda, sensor, editableTime);
 
     ASSERT_EQ("2012-10-05 06:00:00", timeutil::to_iso_extended_string(editableTime.t0()));
@@ -78,6 +79,7 @@ TEST_F(AnalyseRR24Test, Gap)
 
     TimeRange editableTime(time);
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     RR24::analyse(eda, sensor, editableTime);
 
     EditDataPtr ebs = eda->findE(SensorTime(sensor, td0));
@@ -100,6 +102,7 @@ TEST_F(AnalyseRR24Test, Redistribute)
     {
         TimeRange editableTime(time);
         EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+        eda->newVersion();
         RR24::analyse(eda, sensor, editableTime);
 
         for(int i=0; times[i][0]; ++i) {
@@ -130,9 +133,11 @@ TEST_F(AnalyseRR24Test, RedistributePartialEnd)
     const TimeRange timeR(s2t("2012-10-22 06:00:00"), s2t("2012-10-25 06:00:00"));
     const float value = 4;
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     const std::vector<float> newCorrected(timeR.days()+1, value);
     {
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
+        edaR->newVersion();
         RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
         edaR->sendChangesToParent();
     }
@@ -157,9 +162,11 @@ TEST_F(AnalyseRR24Test, RedistributePartialMid)
     const TimeRange timeR(s2t("2012-10-21 06:00:00"), s2t("2012-10-24 06:00:00"));
     const float value = 3;
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     const std::vector<float> newCorrected(timeR.days()+1, value);
     {
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
+        edaR->newVersion();
         RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
         edaR->sendChangesToParent();
     }
@@ -193,6 +200,7 @@ TEST(AnalyseRR24Test_2, FD3_Dectect)
     TimeRange editableTime(time);
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     RR24::analyse(eda, sensor, editableTime);
 
     const char* times[] = {
@@ -229,6 +237,7 @@ TEST(AnalyseRR24Test_2, OnlyEndpointRow)
     const std::vector<float> newCorrected(timeR.days()+1, 4.0f);
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
     eda->sendChangesToParent();
 
@@ -259,6 +268,7 @@ TEST(AnalyseRR24Test_2, MinimalRedistribute)
     const std::vector<float> newCorrected(timeR.days()+1, 1.0f);
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
     eda->sendChangesToParent();
 
@@ -288,12 +298,14 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     const float newCorrectedR[3] = { 5, 2, 1.9 };
     const timeutil::ptime t0R(s2t("2012-11-24 06:00:00"));
     {
         const std::vector<float> newCorrected(newCorrectedR, boost::end(newCorrectedR));
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
+        edaR->newVersion();
         RR24::redistribute(edaR, sensor, t0R, time, newCorrected);
         eda->newVersion();
         edaR->sendChangesToParent();
@@ -313,6 +325,7 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
         const std::vector<float> newCorrected(newCorrectedS, boost::end(newCorrectedS));
         const std::vector<int> newAccept(3, RR24::AR_ACCEPT);
         EditAccessPtr edaS = boost::make_shared<EditAccess>(eda);
+        edaS->newVersion();
         RR24::singles(edaS, sensor, t0S, time, newCorrected, newAccept);
         eda->newVersion();
         edaS->sendChangesToParent();
@@ -355,6 +368,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     const float newC[6] = { 3.5, 1.4, 5.5, -1, -1, 2.9 };
     const int   newA[6] = { RR24::AR_ACCEPT, RR24::AR_ACCEPT, RR24::AR_ACCEPT, RR24::AR_NONE, RR24::AR_NONE, RR24::AR_ACCEPT };
@@ -408,6 +422,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles2)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     const int NN = 16, A = RR24::AR_ACCEPT, N = RR24::AR_NONE, R = RR24::AR_REJECT;
     const int   newA[NN] = { /*10-01*/ N, A, A, N, A,
@@ -453,6 +468,7 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     const timeutil::ptime t0S(s2t("2012-09-24 06:00:00"));
     const std::vector<float> nc(1, 13.0);
@@ -477,6 +493,7 @@ TEST(AnalyseRR24Test_2, RedistEndDryAsBefore)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     std::vector<float> nc(2);
     nc[0] = -1;
@@ -510,6 +527,7 @@ TEST(AnalyseRR24Test_2, RedistEndDryNew)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     std::vector<float> nc(2);
     nc[0] =  0;
@@ -545,6 +563,7 @@ TEST(AnalyseRR24Test_2, QC2_1)
     const TimeRange time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     ASSERT_FALSE(RR24::canRedistributeInQC2(eda, sensor, time));
 }
@@ -573,6 +592,7 @@ TEST(AnalyseRR24Test_2, Accept)
     const TimeRange time_all(s2t("2012-11-23 06:00:00"), s2t("2012-12-03 06:00:00"));
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time_all));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
 
     TimeRange editableTime(time_all);
     RR24::analyse(eda, sensor, editableTime);

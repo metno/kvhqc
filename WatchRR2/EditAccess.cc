@@ -7,6 +7,8 @@
 #include <boost/make_shared.hpp>
 #include <boost/range/adaptor/map.hpp>
 
+#include <stdexcept>
+
 #define NDEBUG
 #include "w2debug.hh"
 
@@ -97,7 +99,9 @@ bool EditAccess::sendChangesToParent()
     const bool success = mBackend->update(updates);
     LOG4SCOPE_DEBUG(DBG1(success));
     if (success) {
+        mVersionTimestamps = VersionTimestamps_t(1, timeutil::now());
         mCurrentVersion = mUpdated = mTasks = 0;
+        /* emit */ currentVersionChanged(currentVersion(), highestVersion());
         BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
             ebs->reset();
             LOG4SCOPE_DEBUG(DBG1(ebs->sensorTime()));
@@ -109,7 +113,11 @@ bool EditAccess::sendChangesToParent()
 void EditAccess::reset()
 {
     LOG_SCOPE("EditAccess");
+    if (mVersionTimestamps.size() > 1)
+        mVersionTimestamps.erase(mVersionTimestamps.begin() + 1, mVersionTimestamps.end());
     mCurrentVersion = mUpdated = mTasks = 0;
+    /* emit */ currentVersionChanged(currentVersion(), highestVersion());
+
     for(Data_t::iterator it = mData.begin(); it != mData.end();) {
         EditDataPtr ebs = it->second;
         Data_t::iterator oit = it++;
@@ -209,13 +217,14 @@ void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpd
 
 EditDataEditorPtr EditAccess::editor(EditDataPtr obs)
 {
-    if (mCurrentVersion == 0)
-        newVersion();
     return EditDataEditorPtr(new EditDataEditor(this, obs));
 }
 
 bool EditAccess::commit(EditDataEditor* editor)
 {
+    if (mCurrentVersion == 0)
+        throw std::logic_error("cannot commit editor for version 0");
+
     EditDataPtr obs = editor->mObs;
     const int wasModified = obs->modified()?1:0, hadTasks = obs->hasTasks()?1:0;
 

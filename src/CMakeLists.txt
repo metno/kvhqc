@@ -32,6 +32,8 @@ SET(hqc_SOURCES
   ../include/DataView.hh
   DataView.cc
   ErrorListTableModel.cc
+  EditVersionModel.hh
+  EditVersionModel.cc
   ParamIdModel.cc
   ListDialog.cc
   StationSelection.cc

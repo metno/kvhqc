@@ -15,6 +15,7 @@ TEST(AnalyseFCCTest, Basic)
 
     fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     FCC::analyse(eda, sensor, time);
 
     const timeutil::ptime tBad1 = s2t("2012-11-30 06:00:00"), tBad2 = s2t("2012-12-01 06:00:00");
@@ -41,6 +42,7 @@ TEST(AnalyseFCCTest, SameObs)
     load_31850_20121130(fa);
 
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    eda->newVersion();
     FCC::analyse(eda, sensor, time);
 
     const timeutil::ptime tBad = s2t("2012-11-21 06:00:00");

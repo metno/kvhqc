@@ -111,6 +111,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
    <addaction name="dataListAction"/>
    <addaction name="timeSeriesAction"/>
   </widget>
@@ -423,6 +424,17 @@
     <string>Ctrl+Z</string>
    </property>
   </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo a change.</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -729,6 +741,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionRedo</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onRedoChanges()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onSaveChanges()</slot>
@@ -773,5 +801,6 @@
   <slot>helpNews()</slot>
   <slot>allListSalenMenu()</slot>
   <slot>onUndoChanges()</slot>
+  <slot>onRedoChanges()</slot>
  </slots>
 </ui>

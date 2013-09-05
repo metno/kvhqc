@@ -521,6 +521,11 @@ QDateTime ListDialog::getStart()
     return ui->fromTime->dateTime();
 }
 
+void ListDialog::setStart(const QDateTime& s)
+{
+    ui->fromTime->setDateTime(s);
+}
+
 QDateTime ListDialog::getEnd()
 {
     return ui->toTime->dateTime();
