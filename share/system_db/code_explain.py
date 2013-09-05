@@ -221,9 +221,9 @@ def update(con, cur):
         add_code_long_en(cur, [14, 15, 16], cv, lt)
 
     add_code(cur, [110], -1,
-             { 'en' : (u'dry',     u'd'),
-               'nb' : (u'tørt',    u't'),
-               'de' : (u'trocken', u't') },
+             { 'en' : (u'dry',  u'd'),
+               'nb' : (u'tørt', u't'),
+               'de' : (u'trck', u't') },
              { 'en': u"precipitation not reported",
                'nb': u'nedbørmengde ikke meldt',
                'de': u'keine Niederschlagsmenge angegeben' })

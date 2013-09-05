@@ -83,7 +83,6 @@ QSqlDatabase HqcApplication::systemDB()
     db.setDatabaseName(dbPath);
     if ((not db.open()) or db.tables().empty()) {
       fatalError(tr("Cannot access hqc system database, please check the HQC installation"), dbPath);
-      // not reached
     }
   }
   return QSqlDatabase::database(DB_SYSTEM);
@@ -103,7 +102,6 @@ QSqlDatabase HqcApplication::configDB()
     db.setDatabaseName(dbPath);
     if (not db.open()) {
       fatalError(tr("Cannot access/create hqc config database, please check the HQC installation"), dbPath);
-      // not reached
     }
   }
   return QSqlDatabase::database(DB_CONFIG);
@@ -173,7 +171,8 @@ void HqcApplication::onException(const QString& message)
 
 bool HqcApplication::isGuiThread() const
 {
-  return (QThread::currentThread() == QCoreApplication::instance()->thread());
+  return (QCoreApplication::instance()
+      and QThread::currentThread() == QCoreApplication::instance()->thread());
 }
 
 void HqcApplication::fatalError(const QString& message, const QString& info)
