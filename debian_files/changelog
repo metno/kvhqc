@@ -1,10 +1,20 @@
-kvhqc (2.18.5-1) unstable; urgency=low
+kvhqc (3.0.0~a1-1) unstable; urgency=low
 
-  * check time range when searching typeid in WatchWeather station selection
-  * show WMO/synop number in error list
-  * removed limitation to 5 missing rows
+  * major changes in code structure
+  * use data structures from WatchRR2 everywhere
+  * automatically show data list and time series for neighbors/related parameters
+  * simple extreme value list
 
- -- Alexander Bürger <alexander.buerger@met.no>  Fri, 19 Apr 2013 15:03:47 +0200
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 20 Jun 2013 12:00:34 +0200
+
+kvhqc (3.0.0~a1-1) unstable; urgency=low
+
+  * major changes in code structure
+  * use data structures from WatchRR2 everywhere
+  * automatically show data list and time series for neighbors/related parameters
+  * simple extreme value list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 20 Jun 2013 11:56:06 +0200
 
 kvhqc (2.18.4-1) unstable; urgency=low
 
