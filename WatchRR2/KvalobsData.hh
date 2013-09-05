@@ -33,7 +33,7 @@ public:
   bool isCreated() const
     { return mCreated; }
 
-  bool setCreated(bool c)
+  void setCreated(bool c)
     { mCreated = c; }
 
 private:

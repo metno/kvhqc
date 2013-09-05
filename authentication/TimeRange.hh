@@ -53,9 +53,14 @@ public:
 
     TimeRange intersection(const TimeRange& t) const;
 
-    bool undef() const;
-    bool open() const;
-    bool closed() const;
+  /** @return true iff both t0 and t1 are undefined */
+  bool undef() const;
+
+  /** @return true iff exactly one of t0 and t1 is undefined */
+  bool open() const;
+
+  /** @return true iff none of t0 and t1 is undefined, and t0 <= t1 */
+  bool closed() const;
 
     int days() const;
     int hours() const;

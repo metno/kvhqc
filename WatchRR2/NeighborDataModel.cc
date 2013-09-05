@@ -49,21 +49,22 @@ NeighborDataModel::NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, co
     : mDA(da)
     , mTimeRange(timeRange)
     , mTime(mTimeRange.t0())
-    , mSensors(Helpers::findNeighbors(sensor, mTimeRange, 20))
+    , mSensors(1, sensor)
 {
-    mItems.reserve(N_COLUMNS);
-    mTimeOffsets.reserve(N_COLUMNS);
+  Helpers::addNeighbors(mSensors, sensor, mTimeRange, 20);
+  mItems.reserve(N_COLUMNS);
+  mTimeOffsets.reserve(N_COLUMNS);
 
-    for(int i=0; i<N_COLUMNS; ++i) {
-        const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
-        mItems.push_back(ColumnFactory::itemForSensor(da, s, columnTypes[i]));
-
-        mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
-    }
-
-    BOOST_FOREACH(const Sensor& s, mSensors)
-        mDA->addSubscription(ObsSubscription(s.stationId, mTimeRange));
-    mDA->obsDataChanged.connect(boost::bind(&NeighborDataModel::onDataChanged, this, _1, _2));
+  for(int i=0; i<N_COLUMNS; ++i) {
+    const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
+    mItems.push_back(ColumnFactory::itemForSensor(da, s, columnTypes[i]));
+    
+    mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
+  }
+  
+  BOOST_FOREACH(const Sensor& s, mSensors)
+      mDA->addSubscription(ObsSubscription(s.stationId, mTimeRange));
+  mDA->obsDataChanged.connect(boost::bind(&NeighborDataModel::onDataChanged, this, _1, _2));
 }
 
 NeighborDataModel::~NeighborDataModel()

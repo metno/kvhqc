@@ -95,7 +95,8 @@ private:
     int stationid;
 };
 
-std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeRange& time, int maxNeighbors);
+
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
 std::vector<Sensor> relatedSensors(const SensorTime& st, const std::string& viewType);

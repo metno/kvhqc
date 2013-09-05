@@ -183,8 +183,7 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
     // set original columns
     mSensorTime = st;
     mSensors = Sensors_t(1, mSensorTime.sensor);
-    const std::vector<Sensor> neighbors = Helpers::findNeighbors(mSensorTime.sensor, mTimeLimits, MAX_LINES*2);
-    mSensors.insert(mSensors.end(), neighbors.begin(), neighbors.end());
+    Helpers::addNeighbors(mSensors, mSensorTime.sensor, mTimeLimits, MAX_LINES*2);
     mOriginalSensors = mSensors;
 
     replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));

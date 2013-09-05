@@ -358,14 +358,14 @@ float parseFloat(const QString& text, int nDecimals)
 
 int extract_ui2(ObsDataPtr obs)
 {
-    kvalobs::kvUseInfo ui;
-    ui.setUseFlags(obs->controlinfo());
-    return ui.flag(2);
+  kvalobs::kvUseInfo ui;
+  ui.setUseFlags(obs->controlinfo());
+  return ui.flag(2);
 }
 
 QString stationName(const kvalobs::kvStation& s)
 {
-    return QString::fromLatin1(s.name().c_str());
+  return QString::fromLatin1(s.name().c_str());
 }
 
 bool aggregatedParameter(int paramFrom, int paramTo)
@@ -392,61 +392,59 @@ void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
   }
 }
 
-std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {
-    std::vector<Sensor> neighbors;
-    if (not hqcApp) {
-        std::cerr << "no KvApp, probably running a test program" << std::endl;
-        return neighbors;
+  METLIBS_LOG_SCOPE();
+
+  if (not hqcApp) {
+    METLIBS_LOG_INFO("no KvApp -- no neighbors, probably running a test program");
+    return;
+  }
+  
+  const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+  
+  std::vector<kvalobs::kvStation> stations;
+  try {
+    Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
+    
+    BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
+      const int sid = s.stationID();
+      if (sid < 60 or sid >= 100000 or sid == sensor.stationId)
+        continue;
+      if (ordering.distance(s) > 100 /*km*/)
+        continue;
+      stations.push_back(s);
+      METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
     }
-
-    const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
-
-    std::vector<kvalobs::kvStation> stations;
-    try {
-        Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
-
-        std::list<long int> stationIDs;
-        BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
-            const int sid = s.stationID();
-            if (sid < 60 or sid >= 100000 or sid == sensor.stationId)
-                continue;
-            if (ordering.distance(s) > 100 /*km*/)
-                continue;
-            stations.push_back(s);
-            stationIDs.push_back(s.stationID());
-            //METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
-        }
-        std::sort(stations.begin(), stations.end(), ordering);
-    } catch (std::exception&) {
-        return neighbors;
-    }
-
-    int count = 0;
-    BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-      const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
-      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
-        if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
-          continue;
-        // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
-
-        const bool eql = op.paramID() == sensor.paramId;
-        const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
-        if (eql or agg) {
-          const int typeId = eql ? op.typeID() : -op.typeID();
-          const Sensor n(s.stationID(), sensor.paramId, op.level(), 0, typeId);
-          const bool duplicate = (std::find_if(neighbors.begin(), neighbors.end(), std::bind1st(eq_Sensor(), n)) != neighbors.end());
-          METLIBS_LOG_DEBUG(LOGVAL(n) << LOGVAL(duplicate));
-          neighbors.push_back(n);
-          if (++count >= maxNeighbors)
-            break;
-        }
+    std::sort(stations.begin(), stations.end(), ordering);
+  } catch (std::exception& e) {
+    METLIBS_LOG_WARN("exception while searching neighbor stations: " << e.what());
+    return;
+  }
+  
+  int count = 0;
+  BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
+    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+      if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+        continue;
+      // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
+      
+      const bool eql = op.paramID() == sensor.paramId;
+      const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
+      if (eql or agg) {
+        const int typeId = eql ? op.typeID() : -op.typeID();
+        const Sensor n(s.stationID(), sensor.paramId, op.level(), 0, typeId);
+        const bool duplicate = (std::find_if(neighbors.begin(), neighbors.end(), std::bind1st(eq_Sensor(), n)) != neighbors.end());
+        METLIBS_LOG_DEBUG(LOGVAL(n) << LOGVAL(duplicate));
+        neighbors.push_back(n);
+        if (++count >= maxNeighbors)
+          break;
       }
-      if (count >= maxNeighbors)
-        break;
     }
-    return neighbors;
+    if (count >= maxNeighbors)
+      break;
+  }
 }
 
 float numericalValue(int paramId, float codeValue)
@@ -499,8 +497,7 @@ Sensors_t relatedSensors(const SensorTime& st, const std::string& viewType)
   BOOST_FOREACH(int par, neighborPar) {
     Sensor sn(s);
     sn.paramId = par;
-    const std::vector<Sensor> neighbors = Helpers::findNeighbors(sn, TimeRange(st.time, st.time), nNeighbors);
-    sensors.insert(sensors.end(), neighbors.begin(), neighbors.end());
+    addNeighbors(sensors, sn, TimeRange(st.time, st.time), nNeighbors);
   }
 #if 0
   METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
