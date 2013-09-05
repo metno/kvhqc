@@ -191,6 +191,12 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
     return;
   
   int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
+  const int columnCount = mTableModel->columnCount(QModelIndex());
+  if (column < 0 or column >= columnCount) {
+    // column might be out of range if clicking in header, but not on
+    // a column header
+    column = columnCount;
+  }
   if (chosen == actionAdd) {
     DataListAddColumn dac(this);
     if (dac.exec() != QDialog::Accepted)
