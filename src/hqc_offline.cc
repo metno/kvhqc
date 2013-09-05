@@ -86,7 +86,6 @@ int main( int argc, char* argv[] )
     HqcApplication hqc(argc, argv, 0);
     
     std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
-    hqc.setMainWidget(mw.get());
     mw->setReinserter(fa.mFakeReinserter, "fake");
     fa.mFakeReinserter->setInsertSuccess(false);
     mw->startup("offline test");

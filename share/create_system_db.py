@@ -9,13 +9,13 @@ cur = con.cursor()
 cur.execute("DROP TABLE IF EXISTS flag_explain")
 cur.execute("DROP TABLE IF EXISTS check_explain")
 
-cur.execute("""CREATE TABLE IF NOT EXISTS check_explain (
+cur.execute("""CREATE TABLE check_explain (
        qcx VARCHAR(16) UNIQUE,
        language CHAR(2) DEFAULT 'nb',
        description VARCHAR(1024)
 )""")
 
-cur.execute("""CREATE TABLE IF NOT EXISTS flag_explain (
+cur.execute("""CREATE TABLE flag_explain (
        flag INTEGER,
        flagvalue INTEGER,
        language CHAR(2) DEFAULT 'nb',
@@ -1275,6 +1275,125 @@ for ex in explain_Nx_en:
     cur.execute("INSERT INTO code_explain VALUES (14, ?, 'en', ?)", ex)
     cur.execute("INSERT INTO code_explain VALUES (15, ?, 'en', ?)", ex)
     cur.execute("INSERT INTO code_explain VALUES (16, ?, 'en', ?)", ex)
+
+
+cur.execute("DROP TABLE IF EXISTS param_order")
+cur.execute("DROP TABLE IF EXISTS param_group_labels")
+cur.execute("DROP TABLE IF EXISTS param_groups")
+
+cur.execute("""CREATE TABLE param_groups (
+       id INTEGER UNIQUE,
+       sortkey INTEGER
+)""")
+cur.execute("""CREATE TABLE param_group_labels (
+       group_id INTEGER NOT NULL REFERENCES param_groups(id),
+       language CHAR(2) DEFAULT 'nb',
+       label VARCHAR(32)
+)""")
+cur.execute("""CREATE TABLE param_order (
+       paramid INTEGER NOT NULL,
+       group_id INTEGER NOT NULL REFERENCES param_groups(id),
+       sortkey INTEGER
+)""")
+
+paramorder_data = [
+    # airpress
+    ((61, 81, 87, 90, 88, 91, 89, 92, 64, 85, 67, 86, 63, 83, 178, 173, 1, 177, 211, 175, 176, 174, 172), u'Lufttrykk'),
+
+    # temperature
+    ((211, 214, 216, 251, 252, 213, 215, 224, 242, 15, 14, 55, 41, 42, 43, 273, 262, 106,
+      212, 221, 222, 223, 225, 217, 264, 265, 263, 244, 245, 243, 217, 121, 122), u'Temperatur'),
+
+    # prec
+    ((105, 104, 123, 106, 108, 109, 110, 1021, 1022, 112, 18, 7, 41, 42, 43, 31, 32, 33, 34, 36, 38, 40, 35, 37,
+      39, 44, 45, 46, 262, 217, 211, 15, 55, 14, 23, 24, 22, 273, 121, 122), u'Nedbør og snøforhold'),
+
+    # visual
+    ((15, 55, 14, 23, 24, 22, 41, 42, 43, 44, 45, 46, 31, 32, 33, 34, 36, 38, 40,
+      35, 37, 39, 273, 211, 214, 216, 262, 108, 109, 110, 105, 106, 123, 124, 117, 122), u'Visuell'),
+
+    # wave
+    ((211, 242, 217, 262, 173, 178, 177, 1, 61, 81, 86, 83, 87, 90, 15, 14, 55, 273, 41, 42, 43, 49, 47, 48, 23, 24,
+      22, 131, 132, 133, 134, 151, 152, 153, 154, 65, 66, 21, 11, 401, 402, 403, 404, 9, 10), u'Maritime parametere'),
+
+    # synop
+    ((211, 214, 216, 213, 215, 262, 217, 242, 178, 1, 177, 61, 81, 86, 83, 19, 15, 14, 55,
+      106, 108, 109, 110, 112, 18, 7, 273, 41, 42, 43, 23, 24, 22, 403, 404, 131, 134, 151, 154), u'Synop'),
+    
+    # klstat
+    ((211, 213, 215, 214, 216, 253, 242, 217, 262, 266, 173, 178, 61, 81, 86, 87, 90, 15, 16, 14, 55, 273, 41,
+      42, 43, 31, 32, 33, 34, 36, 38, 40, 104, 109, 110, 112, 18, 7), u'Daglig rutine'),
+
+    # priority
+    ((211, 213, 215, 214, 216, 109, 110, 112, 7, 18, 15, 262, 173, 178, 41, 31, 32, 33, 42, 43, 34, 36,
+      38, 40, 42, 43, 15, 273, 55, 242, 217), u'Prioriterte parametere'),
+
+    # wind
+    ((61, 81, 86, 88), u'Vind'),
+
+    # plu
+    ((105, 106, 109, 110, 104, 211), u'Pluviometerkontroll')
+]
+
+for gid, (pids, label_nb) in enumerate(paramorder_data):
+    cur.execute("INSERT INTO param_groups VALUES (?, ?)", (gid, gid))
+    cur.execute("INSERT INTO param_group_labels (group_id, label) VALUES (?, ?)", (gid, label_nb))
+    for psort, pid in enumerate(pids):
+        cur.execute("INSERT INTO param_order VALUES (?, ?, ?)", (pid, gid, psort))
+
+cur.execute("DROP TABLE IF EXISTS station_county_labels")
+cur.execute("DROP TABLE IF EXISTS station_counties")
+cur.execute("DROP TABLE IF EXISTS station_region_labels")
+cur.execute("DROP TABLE IF EXISTS station_regions")
+
+cur.execute("""CREATE TABLE station_regions (
+       id INTEGER UNIQUE,
+       sortkey INTEGER
+)""")
+cur.execute("""CREATE TABLE station_region_labels (
+       region_id INTEGER NOT NULL REFERENCES station_regions(id),
+       language CHAR(2) DEFAULT 'nb',
+       label VARCHAR(32)
+)""")
+cur.execute("""CREATE TABLE station_counties (
+       id INTEGER UNIQUE,
+       region_id INTEGER REFERENCES station_regions(id),
+       db_name VARCHAR(32),
+       sortkey INTEGER
+)""")
+cur.execute("""CREATE TABLE station_county_labels (
+       county_id INTEGER NOT NULL REFERENCES station_counties(id),
+       language CHAR(2) DEFAULT 'nb',
+       label VARCHAR(32)
+)""")
+
+counties = (
+    u"Oslo", u"Akershus", u"Østfold", u"Hedmark", u"Oppland", u"Buskerud", u"Vestfold", u"Telemark", u"Aust-Agder",
+    u"Vest-Agder", u"Rogaland", u"Hordaland", u"Sogn og Fjordane",
+    u"Møre og Romsdal", u"Sør-Trøndelag", u"Nord-Trøndelag", u"Nordland",
+    u"Troms", u"Finnmark", u"Ishavet",
+    u"Maritime", u"Skip", u"Andre"
+)
+countiesU = (
+    u"OSLO", u"AKERSHUS", u"ØSTFOLD", u"HEDMARK", u"OPPLAND", u"BUSKERUD", u"VESTFOLD", u"TELEMARK", u"AUST-AGDER",
+    u"VEST-AGDER", u"ROGALAND", u"HORDALAND", u"SOGN OG FJORDANE",
+    u"MØRE OG ROMSDAL", u"SØR-TRØNDELAG", u"NORD-TRØNDELAG", u"NORDLAND",
+    u"TROMS", u"FINNMARK", u"ISHAVET",
+    u"MARITIME", u"SKIP", u"OTHER"
+)
+
+region_counties = ( 0, 9, 13, 16, 20, len(counties) )
+regions = (
+    u"Østlandet", u"Vestlandet", u"Midt-Norge", u"Nord-Norge", u"Andre"
+)
+
+for rid in range(len(regions)):
+    cur.execute("INSERT INTO station_regions VALUES (?, ?)", (rid, rid))
+    cur.execute("INSERT INTO station_region_labels (region_id, label) VALUES (?, ?)", (rid, regions[rid]))
+    for cid in range(region_counties[rid], region_counties[rid+1]):
+        cur.execute("INSERT INTO station_counties VALUES (?, ?, ?, ?)", (cid, rid, countiesU[cid], cid))
+        cur.execute("INSERT INTO station_county_labels (county_id, label) VALUES (?, ?)", (cid, counties[cid]))
+
 
 cur.close()
 con.commit()

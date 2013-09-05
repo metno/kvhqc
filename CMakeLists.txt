@@ -89,6 +89,5 @@ SET(etc_files
   etc/kvhqc/diana.setup
   etc/kvhqc/kvalobs.conf
   etc/kvhqc/kvhist.conf
-  etc/kvhqc/kvtest.conf
-  etc/kvhqc/paramorder)
+  etc/kvhqc/kvtest.conf)
 INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")

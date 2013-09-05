@@ -89,9 +89,9 @@ int main( int argc, char* argv[] )
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
 
     std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
-    hqc.setMainWidget(mw.get());
     mw->setReinserter(r, userName);
     mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
 
+    // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
     return hqc.exec();
 }

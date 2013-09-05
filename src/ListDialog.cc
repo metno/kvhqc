@@ -30,8 +30,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "BusyIndicator.h"
 #include "FindAllParameters.hh"
+#include "HqcApplication.hh"
 #include "hqcmain.h"
-#include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
 #include "StInfoSysBuffer.hh"
 #include "TimeRangeControl.hh"
@@ -44,6 +44,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
+#include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
 
@@ -54,29 +55,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace /* anonymous */ {
 
-// TODO build county list automatically -- but how to define regions?
-
-const int NCOUNTIES = 23;
-const char* counties[NCOUNTIES] =  {
-    "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark", "Aust-Agder",
-    "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane",
-    "Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag", "Nordland",
-    "Troms", "Finnmark", "Ishavet",
-    "Maritime", "Skip", "Andre"
-};
-const char* countiesU[NCOUNTIES] =  {
-    "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK", "AUST-AGDER",
-    "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE",
-    "MØRE OG ROMSDAL", "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND",
-    "TROMS", "FINNMARK", "ISHAVET",
-    "MARITIME", "SKIP", "OTHER"
-};
-
-const int NREGIONS = 5;
-const int REGION_COUNTIES[NREGIONS+1] = { 0, 9, 13, 16, 20, NCOUNTIES };
-const char* regions[NREGIONS] =  {
-  "Østlandet", "Vestlandet", "Midt-Norge", "Nord-Norge", "Andre"
-};
+enum { C_ITEM_COUNTY_DB = Qt::UserRole + 1 };
 
 const char QSETTINGS_GROUP[] = "lstdlg";
 
@@ -176,31 +155,42 @@ void ListDialog::setupStationTab()
       << tr("County") << tr("Commune") << tr("Pri"));
 
   typedef std::map<QString, QStandardItem*> county2item_t;
-  county2item_t county2region, county2county;
+  county2item_t county2item;
   
-  for (int i=0; i<NREGIONS; ++i) {
-    QStandardItem *r_item = new QStandardItem(regions[i]);
+  QSqlQuery queryRegions(hqcApp->systemDB());
+  queryRegions.prepare("SELECT sr.id, srl.label FROM station_regions AS sr, station_region_labels AS srl"
+        " WHERE sr.id = srl.region_id AND srl.language = 'nb' ORDER BY sr.sortkey");
+    
+  QSqlQuery queryCounties(hqcApp->systemDB());
+  queryCounties.prepare("SELECT sc.db_name, scl.label FROM station_county_labels AS scl, station_counties AS sc"
+      " WHERE sc.id = scl.county_id AND scl.language = 'nb' AND sc.region_id = ? ORDER BY sc.sortkey");
+    
+  queryRegions.exec();
+  while (queryRegions.next()) {
+    const int regionId = queryRegions.value(0).toInt();
+    const QString regionLabel = queryRegions.value(1).toString();
+
+    QStandardItem *r_item = new QStandardItem(regionLabel);
     r_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
     r_item->setCheckable(true);
     root->appendRow(r_item);
-    for (int j=REGION_COUNTIES[i]; j<REGION_COUNTIES[i+1]; ++j)
-      county2region.insert(std::make_pair(QString(countiesU[j]), r_item));
-  }
-  
-  for (int i=0; i<NCOUNTIES; ++i) {
-    QStandardItem *c_item = new QStandardItem(counties[i]);
-    c_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
-    c_item->setCheckable(true);
-    const QString cu(countiesU[i]);
-    county2item_t::iterator r_it = county2region.find(cu);
-    if (r_it != county2region.end()) {
-      r_it->second->appendRow(c_item);
-      county2county.insert(std::make_pair(cu, c_item));
-    } else {
-      METLIBS_LOG_WARN("no region for county '" << cu << "'");
+
+    queryCounties.bindValue(0, regionId);
+    queryCounties.exec();
+    while (queryCounties.next()) {
+      const QString countyDB = queryCounties.value(0).toString();
+      const QString countyLabel = queryCounties.value(1).toString();
+
+      QStandardItem *c_item = new QStandardItem(countyLabel);
+      c_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
+      c_item->setCheckable(true);
+      c_item->setData(countyDB, C_ITEM_COUNTY_DB);
+
+      r_item->appendRow(c_item);
+      county2item.insert(std::make_pair(countyDB, c_item));
     }
   }
-    
+  
   BOOST_FOREACH(const listStat_t& s, listStat) {
     const QString cu = QString::fromStdString(s.fylke);
     const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
@@ -219,8 +209,8 @@ void ListDialog::setupStationTab()
     }
     s_item->setCheckable(true);
 
-    county2item_t::iterator c_it = county2county.find(cu);
-    if (c_it != county2county.end()) {
+    county2item_t::iterator c_it = county2item.find(cu);
+    if (c_it != county2item.end()) {
       c_it->second->appendRow(s_items);
     } else {
       METLIBS_LOG_WARN("no county '" << s.fylke << "' for station " << s.stationid);
@@ -260,31 +250,29 @@ void ListDialog::setupParameterTab()
     connect(ui->buttonParamDeselectAll, SIGNAL(clicked()), this, SLOT(deselectAllParameters()));
     connect(ui->comboParamGroup, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(showParamGroup(const QString&)));
 
-    QSettings paramOrder(::hqc::getPath(::hqc::CONFDIR) + "/paramorder", QSettings::IniFormat);
-
-    const QStringList groups = paramOrder.value("paramgroups").toStringList();
-    if (groups.empty()) {
-        QMessageBox::critical(this,
-                              tr("Cannot read paramorder file"),
-                              tr("The paramorder file could not be opened. Please set HQC_CONFDIR correctly."),
-                              QMessageBox::Abort,
-                              Qt::NoButton);
-        ::exit(1);
-    }
-
     QStringList labels;
     mParameterGroups.clear();
-    BOOST_FOREACH(const QString& group, groups) {
-        paramOrder.beginGroup(group);
-        QString label = paramOrder.value("label").toString();
-        std::vector<int>& parameters = mParameterGroups[label];
 
-        labels << label;
+    QSqlQuery queryGroups(hqcApp->systemDB());
+    queryGroups.prepare("SELECT pg.id, pgl.label FROM param_groups AS pg, param_group_labels AS pgl"
+        " WHERE pg.id = pgl.group_id AND pgl.language = 'nb' ORDER BY pg.sortkey");
+    
+    QSqlQuery queryParams(hqcApp->systemDB());
+    queryParams.prepare("SELECT paramid FROM param_order WHERE group_id = ? ORDER BY sortkey");
+    
+    queryGroups.exec();
+    while (queryGroups.next()) {
+      const int groupId = queryGroups.value(0).toInt();
+      const QString groupLabel = queryGroups.value(1).toString();
+      METLIBS_LOG_DEBUG(LOGVAL(groupLabel));
 
-        const QStringList paramIds = paramOrder.value("parameters").toStringList();
-        BOOST_FOREACH(const QString& paramId, paramIds)
-            parameters.push_back(paramId.toInt());
-        paramOrder.endGroup();
+      labels << groupLabel;
+      std::vector<int>& parameters = mParameterGroups[groupLabel];
+            
+      queryParams.bindValue(0, groupId);
+      queryParams.exec();
+      while (queryParams.next())
+        parameters.push_back(queryParams.value(0).toInt());
     }
 
     try {
@@ -541,11 +529,6 @@ QStringList ListDialog::getSelectedCounties()
 
   QStringList t;
 
-  typedef std::map<QString, QString> county2county_t;
-  county2county_t county2county;
-  for (int i=0; i<NCOUNTIES; ++i)
-    county2county.insert(std::make_pair(QString::fromLatin1(counties[i]), QString::fromLatin1(countiesU[i])));
-
   QStandardItem* root = mStationModel->invisibleRootItem();
   const int nRegions = root->rowCount();
   for (int r=0; r<nRegions; ++r) {
@@ -554,13 +537,9 @@ QStringList ListDialog::getSelectedCounties()
     for (int c=0; c<nCounties; ++c) {
       QStandardItem* county = region->child(c, 0);
       if (county->checkState() != Qt::Unchecked) {
-        county2county_t::const_iterator cit = county2county.find(county->text());
-        if (cit != county2county.end()) {
-          METLIBS_LOG_DEBUG("county '" << county->text() << "' in region '" << region->text() << "' is selected");
-          t << cit->second;
-        } else {
-          METLIBS_LOG_WARN("county '" << county->text() << "' not known");
-        }
+        METLIBS_LOG_DEBUG("county '" << county->text() << "' in region '" << region->text() << "' is selected");
+        const QString countyDB = county->data(C_ITEM_COUNTY_DB).toString();
+        t << countyDB;
       }
     }
   }
@@ -572,11 +551,6 @@ void ListDialog::setSelectedCounties(const QStringList& selectedCounties)
 {
   METLIBS_LOG_SCOPE();
 
-  typedef std::map<QString, QString> county2county_t;
-  county2county_t county2county;
-  for (int i=0; i<NCOUNTIES; ++i)
-    county2county.insert(std::make_pair(QString::fromLatin1(counties[i]), QString::fromLatin1(countiesU[i])));
-
   QStandardItem* root = mStationModel->invisibleRootItem();
   const int nRegions = root->rowCount();
   for (int r=0; r<nRegions; ++r) {
@@ -584,13 +558,9 @@ void ListDialog::setSelectedCounties(const QStringList& selectedCounties)
     const int nCounties = region->rowCount();
     for (int c=0; c<nCounties; ++c) {
       QStandardItem* county = region->child(c, 0);
-      county2county_t::const_iterator cit = county2county.find(county->text());
-      if (cit != county2county.end()) {
-        METLIBS_LOG_DEBUG("(de)selecting county '" << county->text() << "' in region '" << region->text() << "'");
-        county->setCheckState(selectedCounties.contains(cit->second) ? Qt::Checked : Qt::Unchecked);
-      } else {
-        METLIBS_LOG_WARN("county '" << county->text() << "' not known");
-      }
+      METLIBS_LOG_DEBUG("(de)selecting county '" << county->text() << "' in region '" << region->text() << "'");
+      const QString countyDB = county->data(C_ITEM_COUNTY_DB).toString();
+      county->setCheckState(selectedCounties.contains(countyDB) ? Qt::Checked : Qt::Unchecked);
     }
   }
   enableButtons();

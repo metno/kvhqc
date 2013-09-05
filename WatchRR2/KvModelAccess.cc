@@ -36,7 +36,7 @@ KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
     Data_t::iterator it = mData.find(st);
     if (it == mData.end()) {
         mdl = boost::make_shared<KvalobsModelData>(data);
-        mData[st] = mdl;
+        mData.insert(std::make_pair(st, mdl));
         modelDataChanged(mdl);
         METLIBS_LOG_DEBUG("new model data");
     } else {
