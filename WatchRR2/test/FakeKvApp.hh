@@ -2,6 +2,7 @@
 #ifndef FAKEAPP_HH
 #define FAKEAPP_HH 1
 
+#include "KvalobsAccess.hh"
 #include "Sensor.hh"
 
 #include <decodeutility/DataReinserter.h>
@@ -11,9 +12,6 @@ namespace kvservice {
 class KvGetDataReceiver;
 class WhichDataHelper;
 }
-
-class KvalobsAccess;
-typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 
 class FakeKvApp : public kvservice::KvApp
 {

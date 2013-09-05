@@ -2,6 +2,7 @@
 #include "EditAccess.hh"
 #include "FakeKvApp.hh"
 #include "Helpers.hh"
+#include "HqcLogging.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
 #include "MainDialog.hh"
@@ -25,6 +26,8 @@
 int main(int argc, char* argv[])
 {
     QApplication a(argc, argv, true);
+
+    Log4CppConfig log4cpp("-.!!=-:");
 
     int stationId = 54420;
     QStringList args = a.arguments();

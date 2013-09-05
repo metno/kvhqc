@@ -16,7 +16,6 @@ public:
 
     virtual ObsDataPtr find(const SensorTime& st);
     virtual ObsDataPtr create(const SensorTime& st);
-    virtual bool update(const std::vector<ObsUpdate>& updates);
 
     virtual void addSubscription(const ObsSubscription& s);
     virtual void removeSubscription(const ObsSubscription& s);

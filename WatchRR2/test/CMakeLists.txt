@@ -23,8 +23,8 @@ FIND_LIBRARY(SQLITE3_LIBRARY sqlite3)
 ADD_DEFINITIONS(-DTEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 ADD_LIBRARY(watchrr2test
-  FakeDataAccess.hh
-  FakeDataAccess.cc
+  CountDataChanged.hh
+  CountDataChanged.cc
   FakeKvApp.hh
   FakeKvApp.cc
   FakeModelAccess.hh
@@ -45,7 +45,7 @@ LINK_LIBRARIES(
   authentication
   ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
   ${SQLITE3_LIBRARY}
-  ${GTEST_LIBRARY} ${GTEST_MAIN_LIBRARY})
+  ${GTEST_LIBRARY})
 
 ADD_EXECUTABLE(watchRR2maintest
   testMain.cc
@@ -54,12 +54,12 @@ ADD_EXECUTABLE(watchRR2maintest
 ADD_EXECUTABLE(watchRR2test
   AnalyseFCCTest.cc
   AnalyseRR24Test.cc
-  DataAccessTest.cc
+  EditAccessTest.cc
   EditTimeColumnTest.cc
-#  FakeDataAccessTest.cc
+  KvalobsAccessTest.cc
   HelpersTest.cc
   VxColumnTest.cc
-)
+  gtestMain.cc)
 
 ADD_TEST(NAME watchRR2test
   COMMAND watchRR2test --gtest_color=yes)

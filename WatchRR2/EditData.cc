@@ -8,15 +8,18 @@ EditData::EditData(ObsDataPtr data)
     , mCreated(false)
     , mOriginal(mData->original())
 {
-    const int FIRST_UPDATE = -1;
+    reset();
+}
 
+void EditData::reset()
+{
+    const int FIRST_UPDATE = -1;
     int bTasks = 0;
     if (EditDataPtr bebs = boost::dynamic_pointer_cast<EditData>(mData))
         bTasks = bebs->allTasks();
-    mTasks.push_back(std::make_pair(FIRST_UPDATE, bTasks));
-
-    mCorrected  .push_back(std::make_pair(FIRST_UPDATE, mData->corrected()));
-    mControlinfo.push_back(std::make_pair(FIRST_UPDATE, mData->controlinfo()));
+    mTasks       = Tasks_t      (1, std::make_pair(FIRST_UPDATE, bTasks));
+    mCorrected   = Corrected_t  (1, std::make_pair(FIRST_UPDATE, mData->corrected()));
+    mControlinfo = Controlinfo_t(1, std::make_pair(FIRST_UPDATE, mData->controlinfo()));
 }
 
 bool EditData::modified() const

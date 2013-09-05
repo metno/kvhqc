@@ -51,15 +51,22 @@ public:
     bool created() const
         { return mCreated; }
 
+private:
     bool updateFromBackend();
+    void reset();
 
 private:
     ObsDataPtr mData;
     bool mCreated;
     float mOriginal;
-    std::vector< std::pair<int,float> > mCorrected;
-    std::vector< std::pair<int,kvalobs::kvControlInfo> > mControlinfo;
-    std::vector< std::pair<int,int> > mTasks;
+
+    typedef std::vector< std::pair<int,float> >                  Corrected_t;
+    typedef std::vector< std::pair<int,kvalobs::kvControlInfo> > Controlinfo_t;
+    typedef std::vector< std::pair<int,int> >                    Tasks_t;
+
+    Corrected_t   mCorrected;
+    Controlinfo_t mControlinfo;
+    Tasks_t       mTasks;
 
     friend class EditAccess;
     friend class EditDataEditor;

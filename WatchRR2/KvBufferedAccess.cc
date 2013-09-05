@@ -56,33 +56,6 @@ bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
     return false;
 }
 
-bool KvBufferedAccess::update(const std::vector<ObsUpdate>& updates)
-{
-    // reject anything with tasks
-    if (updatesHaveTasks(updates))
-        return false;
-
-    BOOST_FOREACH(const ObsUpdate& ou, updates) {
-        const SensorTime st(ou.obs->sensorTime()); 
-        KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
-        if (not obs)
-            obs = boost::static_pointer_cast<KvalobsData>(create(st));
-        bool changed = false;
-        kvalobs::kvData& d = obs->data();
-        if (not Helpers::float_eq()(d.corrected(), ou.corrected)) {
-            changed = true;
-            d.corrected(ou.corrected);
-        }
-        if (d.controlinfo() != ou.controlinfo) {
-            changed = true;
-            d.controlinfo(ou.controlinfo);
-        }
-        if (changed)
-            obsDataChanged(MODIFIED, obs);
-    }
-    return true;
-}
-
 KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
 {
     const SensorTime st(Helpers::sensorTimeFromKvData(data));

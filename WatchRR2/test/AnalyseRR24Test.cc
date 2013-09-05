@@ -132,7 +132,6 @@ TEST_F(AnalyseRR24Test, RedistributePartialEnd)
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     const std::vector<float> newCorrected(timeR.days()+1, value);
     {
-        // FakeDataAccess does not have tasks, so we use a EditAccess on top
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
         RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
         edaR->sendChangesToParent();
@@ -160,7 +159,6 @@ TEST_F(AnalyseRR24Test, RedistributePartialMid)
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     const std::vector<float> newCorrected(timeR.days()+1, value);
     {
-        // FakeDataAccess does not have tasks, so we use a EditAccess on top
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
         RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
         edaR->sendChangesToParent();

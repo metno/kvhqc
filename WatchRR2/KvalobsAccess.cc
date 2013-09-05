@@ -129,12 +129,16 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         return false;
 
     std::list<kvalobs::kvData> store;
+    std::list<KvalobsDataPtr> modifiedObs, createdObs;
     const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
     BOOST_FOREACH(const ObsUpdate& ou, updates) {
         const SensorTime st(ou.obs->sensorTime());
         KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
-        if (not obs)
+        bool created = false;
+        if (not obs) {
             obs = boost::static_pointer_cast<KvalobsData>(create(st));
+            created = true;
+        }
         const bool inserted = obs->isCreated();
         
         kvalobs::kvData& d = obs->data();
@@ -154,6 +158,7 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
             Helpers::updateCfailed(d, "WatchRR2-m");
         }
         store.push_back(d);
+        (created ? createdObs : modifiedObs).push_back(obs);
         //DBG(DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
         //    << " ins=" << (inserted ? "y" : "n")
         //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
@@ -162,7 +167,10 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
 
     CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
     if (res->res == CKvalObs::CDataSource::OK) {
-        KvBufferedAccess::update(updates);
+        BOOST_FOREACH(KvalobsDataPtr obs, modifiedObs)
+            obsDataChanged(MODIFIED, obs);
+        BOOST_FOREACH(KvalobsDataPtr obs, createdObs)
+            obsDataChanged(CREATED, obs);
         return true;
     } else {
         return false;

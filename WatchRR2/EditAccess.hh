@@ -38,6 +38,7 @@ public:
     bool popUpdate();
 
     bool sendChangesToParent();
+    void reset();
 
     int countUpdates() const { return mUpdateCount; }
 

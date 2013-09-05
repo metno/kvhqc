@@ -80,9 +80,33 @@ bool EditAccess::sendChangesToParent()
         if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
             updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
             LOG4SCOPE_DEBUG(DBGO1(ebs));
+            ebs->reset();
         }
     }
     return mBackend->update(updates);
+}
+
+void EditAccess::reset()
+{
+    LOG_SCOPE("EditAccess");
+    mUpdateCount = mUpdated = mTasks = 0;
+    for(Data_t::iterator it = mData.begin(); it != mData.end();) {
+        EditDataPtr ebs = it->second;
+        Data_t::iterator oit = it++;
+        if (not ebs)
+            continue;
+
+        const bool changed = ebs->modified() or ebs->modifiedTasks();
+        ebs->reset();
+        if (ebs->created()) {
+            LOG4SCOPE_DEBUG(DBGOO1(ebs) << " des");
+            obsDataChanged(DESTROYED, ebs);
+            mData.erase(oit);
+        } else if (changed) {
+            LOG4SCOPE_DEBUG(DBGOO1(ebs) << " mod");
+            obsDataChanged(MODIFIED, ebs);
+        }
+    }
 }
 
 namespace /* anonymous */ {
