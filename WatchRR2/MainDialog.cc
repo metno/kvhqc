@@ -91,7 +91,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
     ui->tableRR->verticalHeader()->setFont(mono);
     ui->labelInfoRR->setText("");
     ui->buttonUndo->setEnabled(false);
-    ui->buttonRedo->setVisible(false);
+    ui->buttonRedo->setEnabled(false);
 
     ui->tableNeighborRR->setModel(mNeighborModel.get());
     ui->tableNeighborRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
@@ -137,13 +137,13 @@ MainDialog::~MainDialog()
 void MainDialog::initializeRR24Data()
 {
     mEditableTime = mTime;
+    mDA->newVersion();
     RR24::analyse(mDA, mSensor, mEditableTime);
         qApp->processEvents();
     FCC::analyse(mDA, mSensor, mEditableTime);
         qApp->processEvents();
     mRRModel->setRR24TimeRange(mEditableTime);
         qApp->processEvents();
-    mDA->newVersion();
 }
 
 void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
@@ -290,11 +290,20 @@ void MainDialog::onRedistributeQC2()
 
 void MainDialog::onUndo()
 {
-    if (mDA->currentVersion() > 0) {
+    if (mDA->canUndo() and (mDA->currentVersion() > 1)) {
         mDA->undoVersion();
         enableSave();
         clearSelection();
     }
+}
+
+void MainDialog::onRedo()
+{
+  if (mDA->canRedo()) {
+    mDA->redoVersion();
+    enableSave();
+    clearSelection();
+  }
 }
 
 void MainDialog::clearSelection()
@@ -313,7 +322,8 @@ void MainDialog::enableSave()
     int updates = mDA->countU(), tasks = mDA->countT();
 
     ui->buttonSave->setEnabled(tasks == 0 and updates > 0);
-    ui->buttonUndo->setEnabled((mDA->currentVersion() > 1) and (updates > 0));
+    ui->buttonUndo->setEnabled(mDA->canUndo() and mDA->currentVersion() > 1);
+    ui->buttonRedo->setEnabled(mDA->canRedo());
 }
 
 void MainDialog::onDataChanged(const QModelIndex&, const QModelIndex&)

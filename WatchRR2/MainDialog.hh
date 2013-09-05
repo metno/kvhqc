@@ -41,6 +41,7 @@ private Q_SLOTS:
     void onRedistribute();
     void onRedistributeQC2();
     void onUndo();
+    void onRedo();
     void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void onDataChanged(const QModelIndex&, const QModelIndex&);
     void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
