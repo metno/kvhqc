@@ -57,7 +57,7 @@ Sensor modelSensor(const Sensor& sensor);
 
 void updateUseInfo(kvalobs::kvData& data);
 
-QString appendText(QString& text, const QString& append, const QString& separator = ", ");
+QString& appendText(QString& text, const QString& append, const QString& separator = ", ");
 QString appendedText(const QString& text, const QString& append, const QString& separator = ", ");
 
 double distance(double lon1, double lat1, double lon2, double lat2);

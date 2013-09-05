@@ -28,11 +28,9 @@ QVariant SensorHeader::sensorHeader(DataItemPtr item, Qt::Orientation orientatio
                    .arg(mSensor.typeId));
         }
         if (mShowParam != NEVER) {
-            if (not header.isEmpty())
-                header += "\n";
-            header += qApp->translate("SensorHeader", "Parameter %1 %2")
+            Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1 %2")
                 .arg(Helpers::parameterName(mSensor.paramId))
-                .arg(item->description(false));
+                .arg(item->description(false)), "\n");
         }
     } else {
         header = displayHeader(orientation, item ? item->description(true) : "");
@@ -51,10 +49,8 @@ QVariant SensorHeader::modelHeader(Qt::Orientation orientation, int role) const
         if (mShowStation != NEVER)
             header = stationTooltip();
         if (mShowParam != NEVER) {
-            if (not header.isEmpty())
-                header += "\n";
-            header += qApp->translate("SensorHeader", "Parameter %1 model value")
-                .arg(Helpers::parameterName(mSensor.paramId));
+          Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1 model value")
+              .arg(Helpers::parameterName(mSensor.paramId)), "\n");
         }
     } else {
         header = displayHeader(orientation, qApp->translate("SensorHeader", "model"));
@@ -69,11 +65,8 @@ QString SensorHeader::displayHeader(Qt::Orientation orientation, const QString& 
         header = QString::number(mSensor.stationId);
     if (mShowParam == ALWAYS) {
         const QString sep = separator(orientation);
-        if (not header.isEmpty())
-            header += sep;
-        header += Helpers::parameterName(mSensor.paramId);
-        if (not description.isEmpty())
-            header += sep + description;
+        Helpers::appendText(header, Helpers::parameterName(mSensor.paramId), sep);
+        Helpers::appendText(header, description, sep);
     }
     return header;
 }

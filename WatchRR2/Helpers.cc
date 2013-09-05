@@ -294,7 +294,7 @@ void updateUseInfo(kvalobs::kvData& data)
     data.useinfo( ui );
 }
 
-QString appendText(QString& text, const QString& append, const QString& separator)
+QString& appendText(QString& text, const QString& append, const QString& separator)
 {
     if (append.isEmpty())
         return text;
@@ -307,7 +307,8 @@ QString appendText(QString& text, const QString& append, const QString& separato
 QString appendedText(const QString& text, const QString& append, const QString& separator)
 {
     QString t(text);
-    return appendText(t, append, separator);
+    appendText(t, append, separator);
+    return t;
 }
 
 double distance(double lon1, double lat1, double lon2, double lat2)
