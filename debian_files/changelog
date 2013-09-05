@@ -1,3 +1,11 @@
+kvhqc (3.0.2-1) unstable; urgency=low
+
+  * support more V4/V5/V6 code values -- preliminary
+  * do not allow adding columns for V4S, V5S, V6S
+  * only plot values inside physical limits
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 30 Jul 2013 17:50:50 +0200
+
 kvhqc (3.0.1-1) unstable; urgency=low
 
   * add/remove lines from time series
