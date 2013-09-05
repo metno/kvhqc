@@ -56,6 +56,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ListDialog.hh"
 #include "MiDateTimeEdit.hh"
 #include "QtKvalobsAccess.hh"
+#include "QNoCloseMdiSubWindow.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
 #include "rejecttimeseriesdialog.h"
@@ -217,12 +218,16 @@ HqcMainWindow::HqcMainWindow()
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
     mAutoDataList->setDataAccess(eda, kma);
-    QMdiSubWindow* adlsw = ui->ws->addSubWindow(mAutoDataList);
+    QNoCloseMdiSubWindow* adlsw = new QNoCloseMdiSubWindow(ui->ws);
+    adlsw->setWidget(mAutoDataList);
     adlsw->setWindowTitle(tr("Automatic Data List"));
+    ui->ws->addSubWindow(adlsw);
     mAutoColumnView->attachView(mAutoDataList);
 
-    QMdiSubWindow* tssw = ui->ws->addSubWindow(mTimeSeriesView);
+    QNoCloseMdiSubWindow* tssw = new QNoCloseMdiSubWindow(ui->ws);
+    tssw->setWidget(mTimeSeriesView);
     tssw->setWindowTitle(tr("Time Series"));
+    ui->ws->addSubWindow(tssw);
     mAutoColumnView->attachView(mTimeSeriesView);
 
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
