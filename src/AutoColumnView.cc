@@ -60,55 +60,9 @@ void AutoColumnView::detachView(ViewP v)
     METLIBS_LOG_WARN("cannot detach view");
 }
 
-namespace /* anonymous */ {
-template<typename T>
-std::vector<T>& operator<<(std::vector<T>& container, const T& t)
-{ container.push_back(t); return container; }
-} // anonymous namespace
-
 AutoColumnView::Sensors_t AutoColumnView::defaultSensors()
 {
-    METLIBS_LOG_SCOPE();
-    const Sensor& s = mSensorTime.sensor;
-
-    std::vector<int> stationPar, neighborPar;
-    int nNeighbors = 8;
-    if (s.paramId == kvalobs::PARAMID_RR_24) {
-        stationPar << 110 << 34 << 36 << 38 << 18 << 112;
-        neighborPar << 110;
-        nNeighbors = 4;
-    } else if (s.paramId == 211 or s.paramId == 213 or s.paramId == 215) {
-        stationPar << 211 << 213 << 215;
-        neighborPar << s.paramId;
-    } else if (s.paramId == 262 or s.paramId == 217) {
-      stationPar  << 262 << 217 << 211;
-      neighborPar << s.paramId;
-    } else if (s.paramId == 61 or s.paramId == 81) {
-      stationPar  << 61 << 81;
-      neighborPar << 61 << 81;
-    } else {
-      stationPar  << s.paramId;
-      neighborPar << s.paramId;
-    }
-    Sensors_t sensors;
-    BOOST_FOREACH(int par, stationPar) {
-        Sensor st(s);
-        st.paramId = par;
-        sensors << st;
-    }
-    BOOST_FOREACH(int par, neighborPar) {
-      Sensor sn(s);
-      sn.paramId = par;
-      const std::vector<Sensor> neighbors = Helpers::findNeighbors(sn, TimeRange(mSensorTime.time, mSensorTime.time), nNeighbors);
-      sensors.insert(sensors.end(), neighbors.begin(), neighbors.end());
-    }
-#if 0
-    METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors");
-    BOOST_FOREACH(const Sensor& ds, sensors) {
-      METLIBS_LOG_DEBUG(LOGVAL(ds));
-    }
-#endif
-    return sensors;
+  return Helpers::relatedSensors(mSensorTime);
 }
 
 TimeRange AutoColumnView::defaultTimeLimits()

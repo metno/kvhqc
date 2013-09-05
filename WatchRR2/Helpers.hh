@@ -94,6 +94,7 @@ private:
 };
 
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
+std::vector<Sensor> relatedSensors(const SensorTime& st);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)
@@ -110,13 +111,26 @@ enum {
     PARAMID_V4 = 34,
     PARAMID_V5 = 36,
     PARAMID_V6 = 38,
+    PARAMID_DD = 61,
+    PARAMID_FF = 81,
+    PARAMID_DD_02 = 62,
+    PARAMID_FF_02 = 82,
     PARAMID_RR_01 = 105,
     PARAMID_RR_1  = 106,
     PARAMID_RR_3  = 107,
     PARAMID_RR_6  = 108,
     PARAMID_RR_12 = 109,
     PARAMID_RR_24 = 110,
-    PARAMID_SA = 112
+    PARAMID_SA  = 112,
+    PARAMID_TA  = 211,
+    PARAMID_TAN = 213,
+    PARAMID_TAX = 215,
+    PARAMID_TD  = 217,
+    PARAMID_UU  = 262,
+    PARAMID_MLAT = 401,
+    PARAMID_MLON = 402,
+    PARAMID_DD_01 = 10061,
+    PARAMID_FF_01 = 10081
 };
 
 enum { REJECTED = -32766, MISSING = -32767, NEW_ROW = -32768 };

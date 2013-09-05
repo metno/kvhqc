@@ -410,6 +410,20 @@ QString parameterName(int paramId)
     return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
 }
 
+int parameterIdByName(const std::string& paramName)
+{
+  try {
+    const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
+    BOOST_FOREACH(const kvalobs::kvParam& p, allParams) {
+      if (p.name() == paramName)
+        return p.paramID();
+    }
+  } catch (std::exception& e) {
+    METLIBS_LOG_ERROR("exception while fetching params: " << e.what());
+  }
+  return -1;
+}
+
 void updateUseInfo(kvalobs::kvData& data)
 {
     kvalobs::kvUseInfo ui = data.useinfo();
@@ -558,6 +572,97 @@ float numericalValue(int paramId, float codeValue)
   if (paramId == kvalobs::PARAMID_RR_24 and codeValue == -1.0)
     return 0.0;
   return codeValue;
+}
+
+namespace /* anonymous */ {
+const char* stationParamNames[][7] = {
+  { "RR_24", "V4", "V5", "V6", "SD", "SA", 0 },
+  { "TA", "TAN", "TAX", 0 },
+  { "UU", "TD", 0 },
+  { "PR", "PP", "PO", "PON", "POX", 0 },
+  { "DA",    "FA",    0 },
+  { "DD",    "FF",    0 },
+  { "DD_01", "FF_01", 0 },
+  { "DD_02", "FF_02", 0 },
+  { "DDM",   "FM",    0 },
+  { "DG",    "FG",    0 },
+  { "DG_010","FG_010",0 },
+  { "DG_1",  "FG_1",  0 },
+  { "DG_6",  "FG_6",  0 },
+  { "DG_12", "FG_12", 0 },
+  { "DN",    "FN",    0 },
+  { "DG_02", "FN_02", 0 },
+  { "DW1",   "HW1",   0 },
+  { "DW2",   "HW2",   0 },
+  { "DX",    "FX",    0 },
+  { "DX_010","FX_010",0 },
+  { "DX_1",  "FX_1",  0 },
+  { "DX_3",  "FX_6",  0 },
+  { "DX_6",  "FX_6",  0 },
+  { "DX_12", "FX_12", 0 },
+  { "CC1",   "HS1", "NS1", 0 },
+  { "CC2",   "HS2", "NS2", 0 },
+  { "CC3",   "HS3", "NS3", 0 },
+  { "CC4",   "HS4", "NS4", 0 },
+  { 0 }
+};
+const size_t NRELATED = sizeof(stationParamNames)/sizeof(stationParamNames[0]);
+
+typedef std::vector< std::vector<int> > RelatedParams_t;
+RelatedParams_t sRelatedForStation;
+
+} // namespace anonymous
+
+typedef std::vector<Sensor> Sensors_t;
+Sensors_t relatedSensors(const SensorTime& st)
+{
+  METLIBS_LOG_SCOPE();
+  const Sensor& s = st.sensor;
+
+  if (sRelatedForStation.empty()) {
+    for (size_t i=0; i<NRELATED; ++i) {
+      std::vector<int> stationPar;
+      for (const char** rpn = stationParamNames[i]; *rpn; ++rpn) {
+        const int pid = parameterIdByName(*rpn);
+        if (pid > 0)
+          stationPar.push_back(pid);
+      }
+      sRelatedForStation.push_back(stationPar);
+    }
+  }
+    
+  std::vector<int> stationPar, neighborPar;
+  int nNeighbors = 8;
+
+  for (size_t i=0; i<sRelatedForStation.size(); ++i) {
+    if (std::find(sRelatedForStation[i].begin(), sRelatedForStation[i].end(), s.paramId) == sRelatedForStation[i].end())
+      continue;
+    stationPar = sRelatedForStation[i];
+  }
+  if (stationPar.empty())
+    stationPar.push_back(s.paramId);
+  if (neighborPar.empty())
+    neighborPar.push_back(s.paramId);
+
+  Sensors_t sensors;
+  BOOST_FOREACH(int par, stationPar) {
+    Sensor st(s);
+    st.paramId = par;
+    sensors.push_back(st);
+  }
+  BOOST_FOREACH(int par, neighborPar) {
+    Sensor sn(s);
+    sn.paramId = par;
+    const std::vector<Sensor> neighbors = Helpers::findNeighbors(sn, TimeRange(st.time, st.time), nNeighbors);
+    sensors.insert(sensors.end(), neighbors.begin(), neighbors.end());
+  }
+#if 0
+  METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors");
+  BOOST_FOREACH(const Sensor& ds, sensors) {
+    METLIBS_LOG_DEBUG(LOGVAL(ds));
+  }
+#endif
+  return sensors;
 }
 
 } // namespace Helpers
