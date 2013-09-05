@@ -461,7 +461,7 @@ void HqcMainWindow::showWatchRR()
     MainDialog main(eda2, kma, sensor, time, this);
     if (main.exec()) {
       eda->newVersion();
-      if (not eda2->sendChangesToParent()) {
+      if (not eda2->sendChangesToParent(false)) {
         QMessageBox::critical(this,
             tr("WatchRR"),
             tr("Sorry, your changes could not be saved and are lost!"),
@@ -492,7 +492,7 @@ void HqcMainWindow::showWeather()
   WeatherDialog wd(eda2, s, limits, this);
   if (wd.exec()) {
     eda->newVersion();
-    if (not eda2->sendChangesToParent()) {
+    if (not eda2->sendChangesToParent(false)) {
       QMessageBox::critical(this,
           tr("WatchWeather"),
           tr("Sorry, your changes could not be saved and are lost!"),

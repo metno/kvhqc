@@ -1,17 +1,13 @@
 
 #include "ModelColumn.hh"
 
-#include "FlagChange.hh"
-#include "Helpers.hh"
 #include "ModelData.hh"
 #include "SensorHeader.hh"
-#include "Tasks.hh"
 
 #include <kvalobs/kvDataOperations.h>
+
 #include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
-#include <QtGui/QApplication>
-#include <QtGui/QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "HqcLogging.hh"

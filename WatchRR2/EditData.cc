@@ -2,6 +2,7 @@
 #include "EditData.hh"
 
 #include "Helpers.hh"
+#include "Tasks.hh"
 
 namespace /* anonymous */ {
 int tasksFrom(ObsDataPtr obs)
@@ -21,6 +22,11 @@ EditData::EditData(ObsDataPtr data)
     , mControlinfo(mData->controlinfo())
     , mTasks(tasksFrom(mData))
 {
+}
+
+bool EditData::hasRequiredTasks() const
+{
+  return (allTasks() & tasks::REQUIRED_TASK_MASK) != 0;
 }
 
 void EditData::reset()

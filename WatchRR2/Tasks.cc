@@ -13,6 +13,9 @@ void append(QString& text, const QString& taskText)
 
 namespace tasks {
 
+extern const int REQUIRED_TASK_MASK = (1<<tasks::TASK_PREVIOUSLY_ACCUMULATION);
+
+
 QString asText(int tasks)
 {
     QString text;

@@ -120,31 +120,31 @@ bool EditAccess::update(const std::vector<ObsUpdate>& updates)
     return true;
 }
 
-bool EditAccess::sendChangesToParent()
+bool EditAccess::sendChangesToParent(bool alsoSendTasks)
 {
-    METLIBS_LOG_SCOPE();
-    std::vector<ObsUpdate> updates;
-    std::vector<EditDataPtr> obsToReset;
-    BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
-        if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
-            updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
-            METLIBS_LOG_DEBUG(LOGOBS(ebs));
-            obsToReset.push_back(ebs);
-        }
+  METLIBS_LOG_SCOPE();
+  std::vector<ObsUpdate> updates;
+  std::vector<EditDataPtr> obsToReset;
+  BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
+    if (ebs and (ebs->modified() or (alsoSendTasks and ebs->modifiedTasks()))) {
+      updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), alsoSendTasks ? ebs->allTasks() : 0));
+      METLIBS_LOG_DEBUG(LOGOBS(ebs));
+      obsToReset.push_back(ebs);
     }
+  }
 
-    const bool success = mBackend->update(updates);
-    METLIBS_LOG_DEBUG(LOGVAL(success));
-    if (success) {
-        mVersionTimestamps = VersionTimestamps_t(1, timeutil::now());
-        mCurrentVersion = mUpdated = mTasks = 0;
-        /* emit */ currentVersionChanged(currentVersion(), highestVersion());
-        BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
-            ebs->reset();
-            METLIBS_LOG_DEBUG(LOGVAL(ebs->sensorTime()));
-        }
+  const bool success = mBackend->update(updates);
+  METLIBS_LOG_DEBUG(LOGVAL(success));
+  if (success) {
+    mVersionTimestamps = VersionTimestamps_t(1, timeutil::now());
+    mCurrentVersion = mUpdated = mTasks = 0;
+    /* emit */ currentVersionChanged(currentVersion(), highestVersion());
+    BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
+      ebs->reset();
+      METLIBS_LOG_DEBUG(LOGVAL(ebs->sensorTime()));
     }
-    return success;
+  }
+  return success;
 }
 
 void EditAccess::reset()
@@ -200,13 +200,13 @@ void EditAccess::updateToCurrentVersion(bool drop)
     BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
         if (not ebs)
             continue;
-        const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
+        const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasRequiredTasks()?1:0;
         bool changed = ebs->mCorrected.setVersion(mCurrentVersion, drop);
         changed |= ebs->mControlinfo.setVersion(mCurrentVersion, drop);
         changed |= ebs->mTasks.setVersion(mCurrentVersion, drop);
 
         if (changed) {
-            const int isUpdated = (ebs->modified())?1:0, hasTasks = ebs->hasTasks()?1:0;
+            const int isUpdated = (ebs->modified())?1:0, hasTasks = ebs->hasRequiredTasks()?1:0;
             updates.push_back(PopUpdate(ebs, isUpdated - wasUpdated, hasTasks - hadTasks));
         }
     }
@@ -263,7 +263,7 @@ bool EditAccess::commit(EditDataEditor* editor)
         throw std::logic_error("cannot commit editor for version 0");
 
     EditDataPtr obs = editor->mObs;
-    const int wasModified = obs->modified()?1:0, hadTasks = obs->hasTasks()?1:0;
+    const int wasModified = obs->modified()?1:0, hadTasks = obs->hasRequiredTasks()?1:0;
 
     const int u = currentVersion();
     bool changed = false;
@@ -281,7 +281,7 @@ bool EditAccess::commit(EditDataEditor* editor)
     }
 
     if (changed) {
-        const int isModified = obs->modified()?1:0, hasTasks = obs->hasTasks()?1:0;
+        const int isModified = obs->modified()?1:0, hasTasks = obs->hasRequiredTasks()?1:0;
         sendObsDataChanged(EditAccess::MODIFIED, obs, isModified - wasModified, hasTasks - hadTasks);
     }
     return changed;
@@ -296,11 +296,11 @@ void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr 
     if (not ebs)
         return;
 
-    const int wasModified = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
+    const int wasModified = ebs->modified()?1:0, hadTasks = ebs->hasRequiredTasks()?1:0;
     const bool backendChanged = ebs->updateFromBackend();
     METLIBS_LOG_DEBUG(LOGVAL(backendChanged));
     if (backendChanged) {
-        const int isModified = ebs->modified()?1:0, hasTasks = ebs->hasTasks()?1:0;
+        const int isModified = ebs->modified()?1:0, hasTasks = ebs->hasRequiredTasks()?1:0;
         sendObsDataChanged(EditAccess::MODIFIED, ebs, isModified - wasModified, hasTasks - hadTasks);
         backendDataChanged(what, ebs);
     }

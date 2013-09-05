@@ -319,7 +319,8 @@ void MainDialog::clearSelection()
 void MainDialog::enableSave()
 {
     METLIBS_LOG_SCOPE();
-    int updates = mDA->countU(), tasks = mDA->countT();
+    const int updates = mDA->countU(), tasks = mDA->countT();
+    METLIBS_LOG_DEBUG(LOGVAL(updates) << LOGVAL(tasks));
 
     ui->buttonSave->setEnabled(tasks == 0 and updates > 0);
     ui->buttonUndo->setEnabled(mDA->canUndo() and mDA->currentVersion() > 1);

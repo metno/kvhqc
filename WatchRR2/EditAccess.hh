@@ -59,7 +59,7 @@ public:
 
     boost::signal2<void, int, int> currentVersionChanged;
 
-    bool sendChangesToParent();
+    bool sendChangesToParent(bool alsoSendTasks=true);
     void reset();
 
     boost::signal2<void, ObsDataChange, EditDataPtr> backendDataChanged;

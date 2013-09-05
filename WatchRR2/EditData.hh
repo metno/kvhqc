@@ -37,6 +37,8 @@ public:
     bool hasTasks() const
         { return allTasks() != 0; }
 
+  bool hasRequiredTasks() const;
+
     bool hasTask(int id) const
         { return (allTasks() & (1<<id)) != 0; }
 

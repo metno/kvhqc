@@ -37,8 +37,12 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
         return QVariant();
 
     if (role == Qt::BackgroundRole) {
-        if (mShowNew and obs->hasTasks())
-            return QBrush(Qt::red);
+      if (mShowNew) {
+        if (obs->hasRequiredTasks())
+          return QBrush(Qt::red);
+        else if (obs->hasTasks())
+          return QBrush(QColor(0xFF, 0x60, 0)); // red orange
+      }
     } else if (role == Qt::ForegroundRole) {
         if (((mShowNew and not obs->hasTasks()) or not mShowNew) and mCodes->isCode(getValue(obs)))
             return Qt::darkGray;

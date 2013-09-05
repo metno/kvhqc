@@ -19,6 +19,8 @@ enum { TASK_NONE,
        TASK_LAST
 };
 
+extern const int REQUIRED_TASK_MASK;
+
 QString asText(int tasks);
 
 } // namespace tasks
