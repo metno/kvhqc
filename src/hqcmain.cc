@@ -938,6 +938,9 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
     METLIBS_LOG_SCOPE();
     METLIBS_LOG_DEBUG(LOGVAL(st));
 
+    BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
+        .arg(st.sensor.stationId)
+        .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
     mDianaHelper->navigateTo(st);
     ui->simpleCorrrections->navigateTo(st);
     mAutoColumnView->navigateTo(st);

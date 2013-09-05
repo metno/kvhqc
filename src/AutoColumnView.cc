@@ -19,13 +19,15 @@ AutoColumnView::~AutoColumnView()
 void AutoColumnView::navigateTo(const SensorTime& st)
 {
     METLIBS_LOG_SCOPE();
+    if (eq_SensorTime()(mSensorTime, st))
+      return;
+
     if (mSensorTime.valid()) {
         // record changes
         BOOST_FOREACH(ViewInfo& vi, mViews) {
             vi.changes[mSensorTime.sensor] = vi.view->changes();
         }
     }
-
     mSensorTime = st;
 
     // navigate views to new SensorTime
@@ -36,6 +38,7 @@ void AutoColumnView::navigateTo(const SensorTime& st)
         Changes4ST_t::const_iterator it = vi.changes.find(mSensorTime.sensor);
         if (it != vi.changes.end())
             vi.view->replay(it->second);
+        vi.view->navigateTo(mSensorTime);
     }
 }
 
