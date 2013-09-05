@@ -93,6 +93,7 @@ void StationTable::setData(const listStat_l& listStat,
             if ((stationTypes.contains("VM") && (typeIDs.count(306) || typeIDs.count(308))) ) strEnv += "VM";
             if ((stationTypes.contains("FM") && (typeIDs.count(2))) ) strEnv += "FM";
         }
+        METLIBS_LOG_DEBUG(LOGVAL(strEnv) << LOGVAL(s.environment));
         if (not strEnv.isEmpty() ) {
             StTableItem* stNum = new StTableItem(this, Q3TableItem::Never, QString::number(s.stationid));
             setItem(stInd, 0, stNum);

@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
+#include "KvMetaDataBuffer.hh"
 #include "TimeRangeControl.hh"
 #include "timeutil.hh"
 
@@ -210,6 +211,19 @@ void ListDialog::setupParameterTab()
         BOOST_FOREACH(const QString& paramId, paramIds)
             parameters.push_back(paramId.toInt());
         paramOrder.endGroup();
+    }
+
+    try {
+      const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
+
+      const QString labelAll = tr("Alt");
+      labels << labelAll;
+      std::vector<int>& parameters = mParameterGroups[labelAll];
+
+      BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
+          parameters.push_back(p.paramID());
+    } catch (std::exception& ex) {
+      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
     }
 
     ui->comboParamGroup->addItems(labels);
