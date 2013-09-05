@@ -25,6 +25,8 @@ SET(auth_SOURCES
   Sensor.cc
   TimeRange.cc
   timeutil.cc
+  ToolTipStringListModel.hh
+  ToolTipStringListModel.cc
 )
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})

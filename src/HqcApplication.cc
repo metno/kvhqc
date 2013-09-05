@@ -5,7 +5,9 @@
 
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QLocale>
+#include <QtCore/QThread>
 #include <QtCore/QTranslator>
+#include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
 
@@ -57,4 +59,39 @@ void HqcApplication::installTranslations(const QString& file, const QStringList&
     METLIBS_LOG_WARN("failed to load '" << file << "' translations from [" 
                  << paths.join(",")
                  << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
+}
+
+bool HqcApplication::notify(QObject* receiver, QEvent* e)
+{
+  QString exception;
+  try {
+    return QApplication::notify(receiver, e);
+  } catch (std::exception& e) {
+    METLIBS_LOG_ERROR("exception in Qt event handling: " << e.what());
+    onException(QString::fromStdString(e.what()));
+  } catch (...) {
+    METLIBS_LOG_ERROR("unknown exception in Qt event handling");
+    onException("");
+  }
+  return false;
+}
+
+void HqcApplication::onException(const QString& message)
+{
+  const bool isGuiThread = 
+      QThread::currentThread() == QCoreApplication::instance()->thread();
+  if (isGuiThread) {
+    QMessageBox w;
+    w.setWindowTitle(tr("HQC"));
+    w.setIcon(QMessageBox::Critical);
+    w.setText(tr("A severe error has occurred. You should restart the application, and report the error."));
+    if (not message.isEmpty())
+      w.setInformativeText(message);
+
+    w.setStandardButtons(QMessageBox::Close);
+    w.setDefaultButton(QMessageBox::Close);
+    w.exec();
+  } else {
+    METLIBS_LOG_WARN("exception in non-gui thread: '" << message << "'");
+  }
 }

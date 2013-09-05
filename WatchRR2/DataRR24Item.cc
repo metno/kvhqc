@@ -29,6 +29,6 @@ QVariant DataRR24Item::data(EditDataPtr obs, int role) const
 
 bool DataRR24Item::setData(EditDataPtr, EditAccessPtr, const SensorTime&, const QVariant&, int)
 {
-    throw "cannot set RR24 value";
-    return false;
+  throw std::runtime_error("cannot set RR24 value");
+  return false;
 }

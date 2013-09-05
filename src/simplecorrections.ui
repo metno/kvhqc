@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>556</width>
-    <height>264</height>
+    <height>257</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -366,54 +366,6 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetMinimumSize</enum>
-       </property>
-       <item>
-        <widget class="QLabel" name="labelCorrected">
-         <property name="text">
-          <string>Corr:</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLineEdit" name="textCorrected">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="minimumSize">
-          <size>
-           <width>50</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="focusPolicy">
-          <enum>Qt::NoFocus</enum>
-         </property>
-         <property name="contextMenuPolicy">
-          <enum>Qt::NoContextMenu</enum>
-         </property>
-         <property name="acceptDrops">
-          <bool>false</bool>
-         </property>
-         <property name="frame">
-          <bool>false</bool>
-         </property>
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
       <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1">
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
@@ -469,6 +421,43 @@
       <enum>Qt::Horizontal</enum>
      </property>
     </widget>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="layoutCorrected" stretch="0,0,0">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
+     <item>
+      <widget class="QLabel" name="labelNewCorrectedValue">
+       <property name="text">
+        <string>Corrected:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboCorrected">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QGridLayout" name="gridAccRejButtons">
@@ -564,56 +553,6 @@
     </layout>
    </item>
    <item>
-    <widget class="Line" name="line_2">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" name="layoutCorrected" stretch="0,0,0">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetMinimumSize</enum>
-     </property>
-     <item>
-      <widget class="QLabel" name="labelNewCorrectedValue">
-       <property name="text">
-        <string>Correct:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="textNewCorrectedValue">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>25</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
     <spacer name="verticalSpacer">
      <property name="orientation">
       <enum>Qt::Vertical</enum>
@@ -637,8 +576,8 @@
    <slot>onAcceptCorrected()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>173</x>
-     <y>167</y>
+     <x>274</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
      <x>151</x>
@@ -653,8 +592,8 @@
    <slot>onAcceptOriginal()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>308</x>
-     <y>169</y>
+     <x>414</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
      <x>301</x>
@@ -669,8 +608,8 @@
    <slot>onReject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>481</x>
-     <y>173</y>
+     <x>554</x>
+     <y>218</y>
     </hint>
     <hint type="destinationlabel">
      <x>462</x>
@@ -685,8 +624,8 @@
    <slot>onAcceptCorrectedQC2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>204</x>
-     <y>212</y>
+     <x>274</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
      <x>191</x>
@@ -701,8 +640,8 @@
    <slot>onAcceptOriginalQC2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>376</x>
-     <y>208</y>
+     <x>414</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
      <x>359</x>
@@ -717,8 +656,8 @@
    <slot>onRejectQC2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>512</x>
-     <y>211</y>
+     <x>554</x>
+     <y>251</y>
     </hint>
     <hint type="destinationlabel">
      <x>499</x>
@@ -727,18 +666,18 @@
    </hints>
   </connection>
   <connection>
-   <sender>textNewCorrectedValue</sender>
-   <signal>returnPressed()</signal>
+   <sender>comboCorrected</sender>
+   <signal>activated(QString)</signal>
    <receiver>SimpleCorrections</receiver>
    <slot>onNewCorrected()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>268</x>
-     <y>244</y>
+     <x>301</x>
+     <y>164</y>
     </hint>
     <hint type="destinationlabel">
-     <x>287</x>
-     <y>261</y>
+     <x>321</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>

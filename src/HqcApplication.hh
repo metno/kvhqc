@@ -19,10 +19,13 @@ public:
     void setReinserter(HqcReinserter* r, const QString& username)
         { mw->setReinserter(r, username); }
 
+    virtual bool notify(QObject* receiver, QEvent* e);
+
 private:
     void installTranslations(const QString& file, const QStringList& paths);
     inline void installTranslations(const QString& file, const QString& path)
         { installTranslations(file, QStringList(path)); }
+    void onException(const QString& message);
 
 private:
     std::auto_ptr<HqcMainWindow> mw;

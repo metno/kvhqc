@@ -2,47 +2,14 @@
 #include "ObsDelegate.hh"
 
 #include "ObsColumn.hh"
+#include "ToolTipStringListModel.hh"
+
 #include <QtGui/QComboBox>
-#include <QtGui/QStringListModel>
 
 // based on http://qt-project.org/wiki/Combo_Boxes_in_Item_Views
 
 #define MILOGGER_CATEGORY "kvhqc.ObsDelegate"
 #include "HqcLogging.hh"
-
-class TooltipListStringListModel : public QStringListModel {
-public:
-    TooltipListStringListModel(QObject* parent=0)
-        : QStringListModel(parent) { }
-    void setToolTipList(const QStringList& ttl);
-    virtual QVariant data(const QModelIndex& index, int role) const;
-
-private:
-    QStringList mToolTips;
-};
-
-void TooltipListStringListModel::setToolTipList(const QStringList& ttl)
-{
-    mToolTips = ttl;
-    if (rowCount() != mToolTips.size()) {
-        METLIBS_LOG_ERROR("have " << rowCount() << " items but "
-                      << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
-    }
-}
-
-QVariant TooltipListStringListModel::data(const QModelIndex& index, int role) const
-{
-    if (role != Qt::ToolTipRole)
-        return QStringListModel::data(index, role);
-    if (index.row() >= mToolTips.size()) {
-        METLIBS_LOG_ERROR("tooltip for item " << index.row() << " requested, but only "
-                      << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
-        return QVariant();
-    }
-    return mToolTips.at(index.row());
-}
-
-// ########################################################################
 
 ObsDelegate::ObsDelegate(QObject *parent)
     : QStyledItemDelegate(parent)
@@ -60,7 +27,7 @@ QWidget* ObsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &
         return QStyledItemDelegate::createEditor(parent, option, index);
 
     QComboBox *cb = new QComboBox(parent);
-    TooltipListStringListModel* ttl = new TooltipListStringListModel(cb);
+    ToolTipStringListModel* ttl = new ToolTipStringListModel(cb);
     cb->setModel(ttl);
     return cb;
 }
@@ -68,7 +35,7 @@ QWidget* ObsDelegate::createEditor(QWidget *parent, const QStyleOptionViewItem &
 void ObsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
 {
     if (QComboBox *cb = qobject_cast<QComboBox*>(editor)) {
-        TooltipListStringListModel* ttl = static_cast<TooltipListStringListModel*>(cb->model());
+        ToolTipStringListModel* ttl = static_cast<ToolTipStringListModel*>(cb->model());
         ttl->setStringList(index.data(ObsColumn::TextCodesRole).toStringList());
         ttl->setToolTipList(index.data(ObsColumn::TextCodeExplanationsRole).toStringList());
 

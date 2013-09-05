@@ -159,7 +159,7 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
                 f.setBold(true);
                 return f;
             }
-        } else if (role == Qt::TextColorRole and column == COL_OBS_CORR) {
+        } else if (role == Qt::ForegroundRole and column == COL_OBS_CORR) {
             const kvalobs::kvControlInfo ci(obs->controlinfo());
             if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
                 if (ci.qc2dDone())

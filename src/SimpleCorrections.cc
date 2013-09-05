@@ -1,7 +1,9 @@
 
 #include "SimpleCorrections.hh"
 
+#include "ColumnFactory.hh"
 #include "ModelData.hh"
+#include "ToolTipStringListModel.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -142,6 +144,8 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
     , ui(new Ui::SimpleCorrections)
 {
     ui->setupUi(this);
+    ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
+    ui->comboCorrected->setModel(ttl);
 
     // TODO move setting of minimum sizes to retranslateUi somehow
     QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
@@ -173,8 +177,44 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mSensorTime = st;
     METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
+    mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CONTROLINFO);
+    mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::ORIGINAL);
+    mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CORRECTED);
     update();
 }
+
+namespace /* anonymous */
+{
+static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
+{
+  if (not (w and w->parentWidget()))
+    return;
+  
+  QPalette palette = w->parentWidget()->palette();
+  QFont font = w->parentWidget()->font();
+  QString toolTip;
+
+  if (item and obs) {
+    const QVariant vFont = item->data(obs, Qt::FontRole);
+    if (vFont.isValid())
+      font = vFont.value<QFont>();
+    
+    const QVariant vFG = item->data(obs, Qt::ForegroundRole);
+    if (vFG.isValid())
+      palette.setColor(w->foregroundRole(), vFG.value<QBrush>());
+
+    const QVariant vBG = item->data(obs, Qt::BackgroundRole);
+    if (vBG.isValid())
+      palette.setColor(w->backgroundRole(), vBG.value<QBrush>());
+
+    toolTip = item->data(obs, Qt::ToolTipRole).toString();
+  }
+  
+  w->setFont(font);
+  w->setPalette(palette);
+  w->setToolTip(toolTip);
+}
+} // namespace anonymous
 
 void SimpleCorrections::update()
 {
@@ -192,10 +232,6 @@ void SimpleCorrections::update()
 
         obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
         mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
-        if (not mMA)
-            METLIBS_LOG_DEBUG("no model access");
-        if (not mdl)
-            METLIBS_LOG_DEBUG("no model value for " << mSensorTime);
     } else {
         ui->textStation->setText("");
         ui->textParam->setText("");
@@ -203,13 +239,43 @@ void SimpleCorrections::update()
 
         ui->textObstime->setText("");
     }
-    ui->textFlags->setText(obs ? Helpers::getFlagText(obs->controlinfo()) : "");
-    ui->textOriginal->setText(obs ? QString::number(obs->original()) : "");
-    ui->textCorrected->setText(obs ? QString::number(obs->corrected()) : "");
+
+    ui->textFlags->setText((obs and mItemFlags) ? mItemFlags->data(obs, Qt::DisplayRole).toString() : "");
+    setFBF(ui->textFlags, mItemFlags, obs);
+
+    ui->textOriginal->setText((obs and mItemOriginal) ? mItemOriginal->data(obs, Qt::DisplayRole).toString() : "");
+    setFBF(ui->textOriginal, mItemOriginal, obs);
+
     ui->textModel->setText(mdl ? QString::number(mdl->value()) : "");
 
-    ui->textNewCorrectedValue->setText("");
-
+    { QComboBox*& c = ui->comboCorrected;
+      ToolTipStringListModel* ttl = static_cast<ToolTipStringListModel*>(c->model());
+      if (not mItemCorrected or not obs) {
+        ttl->setStringList(QStringList());
+        ttl->setToolTipList(QStringList());
+        c->setEditable(false);
+        c->setEnabled(false);
+        c->setCurrentText("");
+      } else {
+      // FIXME this is almost identical to ObsDelegate code
+        ttl->setStringList(mItemCorrected->data(obs, ObsColumn::TextCodesRole).toStringList());
+        ttl->setToolTipList(mItemCorrected->data(obs, ObsColumn::TextCodeExplanationsRole).toStringList());
+        
+        c->setEnabled((mItemCorrected->flags() & Qt::ItemIsEditable));
+        
+        const QVariant valueType = mItemCorrected->data(obs, ObsColumn::ValueTypeRole);
+        c->setEditable(valueType.toInt() != ObsColumn::TextCode);
+        
+        QString currentText = mItemCorrected->data(obs ,Qt::EditRole).toString();
+        const int idx = c->findText(currentText);
+        // if it is valid, adjust the combobox
+        if(idx >= 0)
+          c->setCurrentIndex(idx);
+        else
+          c->setCurrentText(currentText);
+      }
+      setFBF(c, mItemCorrected, obs);
+    }
     enableEditing();
 }
 
@@ -223,7 +289,7 @@ void SimpleCorrections::enableEditing()
         ui->buttonAcceptOriginal,  ui->buttonAcceptOriginalQC2,
         ui->buttonAcceptCorrected, ui->buttonAcceptCorrectedQC2,
         ui->buttonReject,          ui->buttonRejectQC2,
-        ui->textNewCorrectedValue
+        ui->comboCorrected
     };
     bool enable[N_BUTTONS];
     
@@ -293,8 +359,13 @@ void SimpleCorrections::onRejectQC2()
 
 void SimpleCorrections::onNewCorrected()
 {
-    bool ok;
-    float newC = ui->textNewCorrectedValue->text().toFloat(&ok);
-    if (ok)
-        interpolate_or_correct(mDA, mSensorTime, newC);
+  METLIBS_LOG_SCOPE();
+  if (not (mDA and mItemCorrected and mSensorTime.valid()))
+    return;
+  if (not (mItemCorrected->flags() & Qt::ItemIsEditable))
+    return;
+  
+  EditDataPtr obs = mDA->findE(mSensorTime);
+  if (obs)
+    mItemCorrected->setData(obs, mDA, mSensorTime, ui->comboCorrected->currentText(), Qt::EditRole);
 }

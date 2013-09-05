@@ -2,6 +2,7 @@
 #ifndef SimpleCorrections_hh
 #define SimpleCorrections_hh 1
 
+#include "DataItem.hh"
 #include "DataView.hh"
 
 #include <QtGui/QWidget>
@@ -38,8 +39,11 @@ private Q_SLOTS:
     void onNewCorrected();
 
 private:
-    std::auto_ptr<Ui::SimpleCorrections> ui;
-    SensorTime mSensorTime;
+  std::auto_ptr<Ui::SimpleCorrections> ui;
+  DataItemPtr mItemFlags;
+  DataItemPtr mItemOriginal;
+  DataItemPtr mItemCorrected;
+  SensorTime mSensorTime;
 };
 
 #endif // SimpleCorrections_hh
