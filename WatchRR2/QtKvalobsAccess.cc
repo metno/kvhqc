@@ -23,35 +23,35 @@ QtKvalobsAccess::QtKvalobsAccess()
 
 QtKvalobsAccess::~QtKvalobsAccess()
 {
-    if (not mKvServiceSubscriberID.empty())
-        qtKvService()->unsubscribe(mKvServiceSubscriberID);
+  if (not mKvServiceSubscriberID.empty())
+    qtKvService()->unsubscribe(mKvServiceSubscriberID);
 }
 
 void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
 {
 #ifndef NDEBUG
-    std::cout << "data notify:" << std::endl;
-    BOOST_FOREACH(kvservice::KvObsData& od, *data) {
-        BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
-            const bool sub = isSubscribed(Helpers::sensorTimeFromKvData(kvd));
-            if (sub)
-            std::cout << '[' << kvd.stationID() << ' ' << timeutil::to_iso_extended_string(timeutil::from_miTime(kvd.obstime()))
-                      << " p:" << std::setw(4) << kvd.paramID()
-                      << " l:" << kvd.level()
-                      << " s:" << (kvd.sensor() % '0')
-                      << " t:" << std::setw(3) << kvd.typeID()
-                      << " o:" << std::setw(8) << kvd.original()
-                      << " c:" << std::setw(8) << kvd.corrected()
-                      << " ci:" << kvd.controlinfo().flagstring()
-                      << " ui:" << kvd.useinfo().flagstring()
-                      << " cf:'" << kvd.cfailed() << "'"
-                      << " sub=" << (sub ? "y" : "n") << "]"
-                      << std::endl;
-        }
+  std::cout << "data notify:" << std::endl;
+  BOOST_FOREACH(kvservice::KvObsData& od, *data) {
+    BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
+      const bool sub = isSubscribed(Helpers::sensorTimeFromKvData(kvd));
+      if (sub)
+        std::cout << '[' << kvd.stationID() << ' ' << timeutil::to_iso_extended_string(timeutil::from_miTime(kvd.obstime()))
+                  << " p:" << std::setw(4) << kvd.paramID()
+                  << " l:" << kvd.level()
+                  << " s:" << (kvd.sensor() % '0')
+                  << " t:" << std::setw(4) << kvd.typeID()
+                  << " o:" << std::setw(8) << kvd.original()
+                  << " c:" << std::setw(8) << kvd.corrected()
+                  << " ci:" << kvd.controlinfo().flagstring()
+                  << " ui:" << kvd.useinfo().flagstring()
+                  << " cf:'" << kvd.cfailed() << "'"
+                  << " sub=" << (sub ? "y" : "n") << "]"
+                  << std::endl;
     }
+  }
 #endif
 
-    nextData(*data, true);
+  nextData(*data, true);
 }
 
 void QtKvalobsAccess::addSubscription(const ObsSubscription& s)
@@ -103,15 +103,16 @@ void QtKvalobsAccess::doReSubscribe()
   if (not mSubscribedStations.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
     {
-    METLIBS_LOG_TIME();
-    METLIBS_LOG_DEBUG(LOGVAL(mSubscribedStations.size()));
-    BOOST_FOREACH(int sid, boost::adaptors::keys(mSubscribedStations))
-        dataSubscription.addStationId(sid);
+      METLIBS_LOG_TIME();
+      METLIBS_LOG_DEBUG(LOGVAL(mSubscribedStations.size()));
+      BOOST_FOREACH(int sid, boost::adaptors::keys(mSubscribedStations))
+          dataSubscription.addStationId(sid);
     }
-    {METLIBS_LOG_TIME();
-    mKvServiceSubscriberID = qtKvService()
-        ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
-    METLIBS_LOG_DEBUG("new id=" << mKvServiceSubscriberID);
+    {
+      METLIBS_LOG_TIME();
+      mKvServiceSubscriberID = qtKvService()
+          ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+      METLIBS_LOG_DEBUG("new id=" << mKvServiceSubscriberID);
     }
   }
 }

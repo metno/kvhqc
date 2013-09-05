@@ -86,33 +86,29 @@ bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
   return false;
 }
 
-KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data, bool update)
+void KvBufferedAccess::receive(const kvalobs::kvData& data, bool update)
 {
   const SensorTime st(Helpers::sensorTimeFromKvData(data));
-  if (not isSubscribed(st)) {
-    METLIBS_LOG_DEBUG("no subscription for " << data);
-    return KvalobsDataPtr();
-  }
-    
-  KvalobsDataPtr obs;
   Data_t::iterator it = mData.lower_bound(st);
   if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
-    obs = boost::make_shared<KvalobsData>(data, false);
-    mData.insert(it, std::make_pair(st, obs));
-    if (update)
-      obsDataChanged(CREATED, obs);
+    if (isSubscribed(st)) {
+      KvalobsDataPtr obs = boost::make_shared<KvalobsData>(data, false);
+      mData.insert(it, std::make_pair(st, obs));
+      if (update)
+        obsDataChanged(CREATED, obs);
+    }
   } else {
-    obs = it->second;
-    const bool wasCreated = obs->isCreated();
+    KvalobsDataPtr obs = it->second;
+    const bool hadBeenCreated = obs->isCreated();
     obs->setCreated(false);
 
     // FIXME this might compare too many things ...
-    if (wasCreated or not kvalobs::compare::exactly_equal()(obs->data(), data)) {
+    const bool hasChanged = not kvalobs::compare::exactly_equal()(obs->data(), data);
+    if (hasChanged)
       obs->data() = data;
+    if (hadBeenCreated or hasChanged)
       obsDataChanged(MODIFIED, obs);
-    }
   }
-  return obs;
 }
 
 bool KvBufferedAccess::drop(const SensorTime& st)
