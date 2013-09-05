@@ -1,3 +1,9 @@
+kvhqc (3.0.8-1) unstable; urgency=low
+
+  * updated criteria for new error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 29 Aug 2013 15:23:52 +0200
+
 kvhqc (3.0.7-1) unstable; urgency=low
 
   * error list salen: only old specification, no colors
