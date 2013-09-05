@@ -35,8 +35,7 @@ private Q_SLOTS:
     void onReject();
     void onRejectQC2();
 
-    void onInterpolated();
-    void onCorrected();
+    void onNewCorrected();
 
 private:
     std::auto_ptr<Ui::SimpleCorrections> ui;

@@ -143,6 +143,7 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 {
     ui->setupUi(this);
 
+    // TODO move setting of minimum sizes to retranslateUi somehow
     QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
     setCommonMinWidth(labels1);
     QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
@@ -207,8 +208,7 @@ void SimpleCorrections::update()
     ui->textCorrected->setText(obs ? QString::number(obs->corrected()) : "");
     ui->textModel->setText(mdl ? QString::number(mdl->value()) : "");
 
-    ui->textCorrectedValue->setText("");
-    ui->textInterpolatedValue->setText("");
+    ui->textNewCorrectedValue->setText("");
 
     enableEditing();
 }
@@ -218,12 +218,12 @@ void SimpleCorrections::enableEditing()
     LOG_SCOPE("SimpleCorrections");
 
     enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
-           INTERPOLATED, CORRECTED, N_BUTTONS };
+           NEW_CORRECTED, N_BUTTONS };
     QWidget* buttons[N_BUTTONS] = {
         ui->buttonAcceptOriginal,  ui->buttonAcceptOriginalQC2,
         ui->buttonAcceptCorrected, ui->buttonAcceptCorrectedQC2,
         ui->buttonReject,          ui->buttonRejectQC2,
-        ui->textInterpolatedValue, ui->textCorrectedValue
+        ui->textNewCorrectedValue
     };
     bool enable[N_BUTTONS];
     
@@ -242,7 +242,7 @@ void SimpleCorrections::enableEditing()
         std::fill(enable, enable+N_BUTTONS, false);
     } else if (fmis == 3) {
         std::fill(enable, enable+N_BUTTONS, false);
-        enable[INTERPOLATED] = true;
+        enable[NEW_CORRECTED] = true;
     } else if (fmis == 2) {
         enable[CORR_OK] = enable[CORR_OK_QC2] = false;
     } else if (fmis == 1) {
@@ -291,18 +291,10 @@ void SimpleCorrections::onRejectQC2()
     reject(mDA, mSensorTime, true);
 }
 
-void SimpleCorrections::onInterpolated()
+void SimpleCorrections::onNewCorrected()
 {
     bool ok;
-    float newC = ui->textInterpolatedValue->text().toFloat(&ok);
-    if (ok)
-        interpolate_or_correct(mDA, mSensorTime, newC);
-}
-
-void SimpleCorrections::onCorrected()
-{
-    bool ok;
-    float newC = ui->textCorrectedValue->text().toFloat(&ok);
+    float newC = ui->textNewCorrectedValue->text().toFloat(&ok);
     if (ok)
         interpolate_or_correct(mDA, mSensorTime, newC);
 }

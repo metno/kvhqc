@@ -571,44 +571,21 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="layoutCorrected" stretch="0,0,0,0">
+    <layout class="QHBoxLayout" name="layoutCorrected" stretch="0,0,0">
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
-      <widget class="QLabel" name="labelInterpolateValue">
-       <property name="text">
-        <string>Interpolate:</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLineEdit" name="textInterpolatedValue">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
-         <horstretch>1</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="minimumSize">
-        <size>
-         <width>80</width>
-         <height>25</height>
-        </size>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelCorrectValue">
+      <widget class="QLabel" name="labelNewCorrectedValue">
        <property name="text">
         <string>Correct:</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="textCorrectedValue">
+      <widget class="QLineEdit" name="textNewCorrectedValue">
        <property name="sizePolicy">
-        <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>1</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
@@ -620,6 +597,19 @@
         </size>
        </property>
       </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
     </layout>
    </item>
@@ -737,10 +727,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>textInterpolatedValue</sender>
+   <sender>textNewCorrectedValue</sender>
    <signal>returnPressed()</signal>
    <receiver>SimpleCorrections</receiver>
-   <slot>onInterpolated()</slot>
+   <slot>onNewCorrected()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>268</x>
@@ -752,22 +742,6 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>textCorrectedValue</sender>
-   <signal>returnPressed()</signal>
-   <receiver>SimpleCorrections</receiver>
-   <slot>onCorrected()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>411</x>
-     <y>250</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>424</x>
-     <y>263</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
  <slots>
   <slot>onAcceptOriginal()</slot>
@@ -776,7 +750,6 @@
   <slot>onAcceptCorrectedQC2()</slot>
   <slot>onReject()</slot>
   <slot>onRejectQC2()</slot>
-  <slot>onInterpolated()</slot>
-  <slot>onCorrected()</slot>
+  <slot>onNewCorrected()</slot>
  </slots>
 </ui>
