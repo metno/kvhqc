@@ -56,12 +56,13 @@ private:
   typedef std::vector<Column> Columns_t;
 
 private Q_SLOTS:
-    void onEarlier();
-    void onLater();
-    void onHorizontalHeaderContextMenu(const QPoint& pos);
-    void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
-    void onButtonSaveAs();
-    void currentChanged(const QModelIndex& current);
+  void onEarlier();
+  void onLater();
+  void onHorizontalHeaderContextMenu(const QPoint& pos);
+  void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+  void onButtonSaveAs();
+  void onButtonResetColumns();
+  void currentChanged(const QModelIndex& current);
 
 private:
     void updateModel();

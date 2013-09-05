@@ -458,3 +458,10 @@ void DataList::onButtonSaveAs()
  
    file.close(); 
 }
+
+void DataList::onButtonResetColumns()
+{
+  mTimeLimits = mOriginalTimeLimits;
+  mColumns = mOriginalColumns;
+  updateModel();
+}

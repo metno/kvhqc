@@ -42,6 +42,16 @@
       </spacer>
      </item>
      <item>
+      <widget class="QPushButton" name="buttonResetColumns">
+       <property name="toolTip">
+        <string>Reset columns</string>
+       </property>
+       <property name="text">
+        <string>Reset</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="buttonSaveAs">
        <property name="text">
         <string>Save…</string>
@@ -77,12 +87,28 @@
    <slot>onButtonSaveAs()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>475</x>
-     <y>18</y>
+     <x>254</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
      <x>374</x>
      <y>15</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonResetColumns</sender>
+   <signal>clicked()</signal>
+   <receiver>DataList</receiver>
+   <slot>onButtonResetColumns()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>142</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>114</x>
+     <y>29</y>
     </hint>
    </hints>
   </connection>
@@ -93,5 +119,6 @@
   <slot>onAccept()</slot>
   <slot>onReject()</slot>
   <slot>onRejectQC2()</slot>
+  <slot>onButtonResetColumns()</slot>
  </slots>
 </ui>
