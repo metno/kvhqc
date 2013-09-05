@@ -33,7 +33,7 @@ QString Code2Text::asTip(float value)
 QString Code2Text::asText(float value)
 {
     QMap<int,Code>::const_iterator it = mCodes.find(value);
-    if (it == mCodes.end())
+    if (it == mCodes.end() or it.value().shortText.isEmpty())
         return QString::number(value, 'f', mDecimals);
 
     return it.value().shortText.front();

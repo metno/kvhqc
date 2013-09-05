@@ -5,10 +5,12 @@
 #include "DataOriginalItem.hh"
 #include "DataRR24Item.hh"
 #include "DataVxItem.hh"
+#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
 #include "Sensor.hh"
 
 #include <QtCore/QCoreApplication>
+#include <QtSql/QSqlQuery>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ColumnFactory"
@@ -52,8 +54,19 @@ Code2TextPtr codesForParam(int pid)
     } else {
       try {
         const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
-        if (param.unit().find("kode") != std::string::npos)
+        if (param.unit().find("kode") != std::string::npos) {
           c2t->setDecimals(0);
+
+          QSqlQuery query(hqcApp->systemDB());
+          query.prepare("SELECT code, description FROM code_explain WHERE paramid = ? AND language = 'en' ORDER BY code ASC");
+          query.bindValue(0, pid);
+          query.exec();
+          while (query.next()) {
+            const int code = query.value(0).toInt();
+            const QString desc = query.value(1).toString();
+            c2t->addCode(code, QStringList(), desc);
+          }
+        }
       } catch (std::exception& ex) {
         METLIBS_LOG_WARN("exception while retrieving kvParam for " << pid);
       }
