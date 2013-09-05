@@ -90,6 +90,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QPixmap>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
+#include <QtGui/QSplitter>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -97,6 +98,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #define MILOGGER_CATEGORY "kvhqc.HqcMainWindow"
 #include "HqcLogging.hh"
+
+#define SPLIT_AUTO_VIEW 1
 
 namespace {
 
@@ -172,7 +175,11 @@ HqcMainWindow::HqcMainWindow()
     mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
     mDianaHelper->setDataAccess(eda, kma);
 
+    mAutoDataList->setDataAccess(eda, kma);
     mTimeSeriesView->setDataAccess(eda, kma);
+
+    mAutoColumnView->attachView(mAutoDataList);
+    mAutoColumnView->attachView(mTimeSeriesView);
 
     connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
@@ -189,12 +196,16 @@ HqcMainWindow::HqcMainWindow()
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
-    mAutoDataList->setDataAccess(eda, kma);
+#ifndef SPLIT_AUTO_VIEW
     ui->tabs->addTab(mAutoDataList, tr("Auto Data List"));
-    mAutoColumnView->attachView(mAutoDataList);
-
     ui->tabs->addTab(mTimeSeriesView, tr("Time Series"));
-    mAutoColumnView->attachView(mTimeSeriesView);
+#else
+    QSplitter* splitter = new QSplitter(ui->tabs);
+    splitter->addWidget(mAutoDataList);
+    splitter->addWidget(mTimeSeriesView);
+    splitter->setOpaqueResize(false);
+    ui->tabs->addTab(splitter, tr("Auto List/Series"));
+#endif
 
     mExtremesView->setVisible(false);
     mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
@@ -675,10 +686,17 @@ void HqcMainWindow::findStationInfo(int stnr,
 
 void HqcMainWindow::onTabCloseRequested(int index)
 {
-  QWidget* w = ui->tabs->widget(index);
+#ifndef SPLIT_AUTO_VIEW
   if (w != mTimeSeriesView and w != mAutoDataList) {
     delete w;
   }
+#else
+  // TODO improve this for list/series view
+  if (index > 0) {
+    QWidget* w = ui->tabs->widget(index);
+    delete w;
+  }
+#endif
 }
 
 void HqcMainWindow::helpUse() {
