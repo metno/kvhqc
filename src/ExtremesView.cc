@@ -1,6 +1,7 @@
 
 #include "ExtremesView.hh"
 
+#include "BusyIndicator.h"
 #include "ExtremesTableModel.hh"
 #include "FindExtremeValues.hh"
 #include "ParamIdModel.hh"
@@ -84,8 +85,11 @@ void ExtremesView::onUpdateClicked()
   if (paramId <= 0)
     return;
 
-  const std::vector<SensorTime> extremes = Extremes::find(paramId, mTimeControl->timeRange());
-  setExtremes(extremes);
+  {
+    BusyIndicator busy;
+    const std::vector<SensorTime> extremes = Extremes::find(paramId, mTimeControl->timeRange());
+    setExtremes(extremes);
+  }
 }
 
 int ExtremesView::getSelectedRow() const
