@@ -49,6 +49,8 @@ ExtremesView::ExtremesView(QWidget* parent)
   params.push_back(kvalobs::PARAMID_TAX);
   params.push_back(kvalobs::PARAMID_RR_24);
   params.push_back(kvalobs::PARAMID_SA);
+  params.push_back(kvalobs::PARAMID_FG);
+  params.push_back(kvalobs::PARAMID_FX);
   ui->comboParam->setModel(new ParamIdModel(params));
   ui->comboParam->setCurrentIndex(0);
 }

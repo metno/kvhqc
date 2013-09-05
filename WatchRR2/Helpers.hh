@@ -121,6 +121,8 @@ enum {
     PARAMID_FF = 81,
     PARAMID_DD_02 = 62,
     PARAMID_FF_02 = 82,
+    PARAMID_FG = 83,
+    PARAMID_FX = 86,
     PARAMID_RR_01 = 105,
     PARAMID_RR_1  = 106,
     PARAMID_RR_3  = 107,
