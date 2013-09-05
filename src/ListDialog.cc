@@ -29,6 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ListDialog.hh"
 
 #include "BusyIndicator.h"
+#include "FindAllParameters.hh"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
@@ -214,16 +215,11 @@ void ListDialog::setupParameterTab()
     }
 
     try {
-      const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
-
-      const QString labelAll = tr("Alt");
+      const QString labelAll = tr("All");
       labels << labelAll;
-      std::vector<int>& parameters = mParameterGroups[labelAll];
-
-      BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
-          parameters.push_back(p.paramID());
+      mParameterGroups.insert(std::make_pair(labelAll, Helpers::findAllParameters(true)));
     } catch (std::exception& ex) {
-      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
+      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.obs_pgm table");
     }
 
     ui->comboParamGroup->addItems(labels);

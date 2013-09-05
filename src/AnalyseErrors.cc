@@ -43,7 +43,7 @@ bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 bool ErrorParameterFilter(int parNo)
 {
     // from ErrorList::priorityParameterFilter
-    const int  parNoControl[] = {
+    const int parNoControl[] = {
         2,    3,  4,  5,  6,  9, 10, 11, 12, 13,
         17,  20, 21, 22, 23, 24, 25, 26, 27, 28,
         44,  45, 46, 47, 48, 49, 50, 51, 52, 53,

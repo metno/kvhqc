@@ -36,6 +36,7 @@ SET(hqc_SOURCES
   EditVersionModel.cc
   ExtremesTableModel.cc
   ExtremesView.cc
+  FindAllParameters.cc
   FindExtremeValues.cc
   ParamIdModel.cc
   ListDialog.cc

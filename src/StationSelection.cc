@@ -127,50 +127,50 @@ void StationTable::setData(const listStat_l& listStat,
         hideColumn(6);
 }
 
-QString StationTable::getEnvironment(const int envID, const std::set<int>& typeIDs) {
-    QString env;
-    if (envID == 1 && typeIDs.count(311) )
-        env = "AF";
-    else if (envID == 2 && typeIDs.count(3) )
-        env = "AL";
-    else if (envID == 4 && typeIDs.count(11) )
-        env = "MM";
-    else if (envID == 5 && typeIDs.count(11) )
-        env = "MP";
-    else if (envID == 6 && typeIDs.count(11) )
-        env = "MS";
-    else if (envID == 7 && typeIDs.count(11) )
-        env = "MV";
-    else if ((envID == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342) )
-        env = "AA";
-    else if (envID == 9 && typeIDs.count(402) )
-        env = "ND";
-    else if (envID == 10 && typeIDs.count(402) )
-        env = "NO";
-    else if (typeIDs.count(302) )
-        env = "NS";
-    else if (typeIDs.count(410) )
-        env = "AO";
-    else if (typeIDs.count(4) || typeIDs.count(404) )
-        env = "P,PT";
-    else if (typeIDs.count(2) )
-        env = "FM";
-    else if (typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312) )
-        env = "VS";
-    else if (typeIDs.count(306) || typeIDs.count(308) )
-        env = "VM";
-    else if (envID == 11 )
-        env = "TURISTFORENING";
-    else if (envID == 12 && typeIDs.count(3) )
-        env = "AV";
-    else if (typeIDs.count(412) )
-        env = "VK";
-    //  else if (typeIDs.count(503) )
-    else if (typeIDs.count(502) || typeIDs.count(503) || typeIDs.count(504) || typeIDs.count(505) || typeIDs.count(506) || typeIDs.count(514) )
-        env = "X";
-    return env;
+QString StationTable::getEnvironment(const int envID, const std::set<int>& typeIDs)
+{
+  QString env;
+  if (envID == 1 && typeIDs.count(311) )
+    env = "AF";
+  else if (envID == 2 && typeIDs.count(3) )
+    env = "AL";
+  else if (envID == 4 && typeIDs.count(11) )
+    env = "MM";
+  else if (envID == 5 && typeIDs.count(11) )
+    env = "MP";
+  else if (envID == 6 && typeIDs.count(11) )
+    env = "MS";
+  else if (envID == 7 && typeIDs.count(11) )
+    env = "MV";
+  else if ((envID == 8 && (typeIDs.count(3)  || typeIDs.count(311))) || typeIDs.count(330) || typeIDs.count(342) )
+    env = "AA";
+  else if (envID == 9 && typeIDs.count(402) )
+    env = "ND";
+  else if (envID == 10 && typeIDs.count(402) )
+    env = "NO";
+  else if (typeIDs.count(302) )
+    env = "NS";
+  else if (typeIDs.count(410) )
+    env = "AO";
+  else if (typeIDs.count(4) || typeIDs.count(404) )
+    env = "P,PT";
+  else if (typeIDs.count(2) )
+    env = "FM";
+  else if (typeIDs.count(1) || typeIDs.count(6) || typeIDs.count(312) )
+    env = "VS";
+  else if (typeIDs.count(306) || typeIDs.count(308) )
+    env = "VM";
+  else if (envID == 11 )
+    env = "TURISTFORENING";
+  else if (envID == 12 && typeIDs.count(3) )
+    env = "AV";
+  else if (typeIDs.count(412) )
+    env = "VK";
+  //  else if (typeIDs.count(503) )
+  else if (typeIDs.count(502) || typeIDs.count(503) || typeIDs.count(504) || typeIDs.count(505) || typeIDs.count(506) || typeIDs.count(514) )
+    env = "X";
+  return env;
 }
-
 
 void StationTable::sortColumn( int col, bool ascending, bool /*wholeRows*/ ) {
     Q3Table::sortColumn( col, ascending, true );
