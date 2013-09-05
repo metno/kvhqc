@@ -88,7 +88,7 @@ void QtKvalobsAccess::removeSubscription(const ObsSubscription& s)
 void QtKvalobsAccess::reSubscribe()
 {
   METLIBS_LOG_SCOPE();
-  mResubscribeTimer->start(500 /*ms*/);
+  mResubscribeTimer->start(100 /*ms*/);
 }
 
 void QtKvalobsAccess::doReSubscribe()
