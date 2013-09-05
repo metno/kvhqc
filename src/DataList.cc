@@ -60,9 +60,7 @@ DataList::DataList(QWidget* parent)
     iconAccept.addPixmap(QPixmap(icon_accept));
     iconReject.addPixmap(QPixmap(icon_reject));
     ui->buttonAccept   ->setIcon(iconAccept);
-    ui->buttonAcceptQC2->setIcon(iconAccept);
     ui->buttonReject   ->setIcon(iconReject);
-    ui->buttonRejectQC2->setIcon(iconReject);
 #endif
 
   QFont mono("Monospace");
@@ -556,27 +554,13 @@ void DataList::onAccept()
 {
   METLIBS_LOG_SCOPE();
   if (not mSelectedObs.empty()) {
+    const bool qc2ok = ui->checkQC2->isChecked();
     mDA->newVersion();
     BOOST_FOREACH(SensorTime& st, mSelectedObs) {
       if (mSelectedColumnIsOriginal)
-        AcceptReject::accept_original(mDA, st, false);
+        AcceptReject::accept_original(mDA, st, qc2ok);
       else
-        AcceptReject::accept_corrected(mDA, st, false);
-    }
-  }
-  onSelectionChanged(QItemSelection(), QItemSelection());
-}
-
-void DataList::onAcceptQC2()
-{
-  METLIBS_LOG_SCOPE();
-  if (not mSelectedObs.empty()) {
-    mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      if (mSelectedColumnIsOriginal)
-        AcceptReject::accept_original(mDA, st, true);
-      else
-        AcceptReject::accept_corrected(mDA, st, true);
+        AcceptReject::accept_corrected(mDA, st, qc2ok);
     }
   }
   onSelectionChanged(QItemSelection(), QItemSelection());
@@ -586,21 +570,10 @@ void DataList::onReject()
 {
   METLIBS_LOG_SCOPE();
   if (not mSelectedObs.empty()) {
+    const bool qc2ok = ui->checkQC2->isChecked();
     mDA->newVersion();
     BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      AcceptReject::reject(mDA, st, false);
-    }
-  }
-  onSelectionChanged(QItemSelection(), QItemSelection());
-}
-
-void DataList::onRejectQC2()
-{
-  METLIBS_LOG_SCOPE();
-  if (not mSelectedObs.empty()) {
-    mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      AcceptReject::reject(mDA, st, true);
+      AcceptReject::reject(mDA, st, qc2ok);
     }
   }
   onSelectionChanged(QItemSelection(), QItemSelection());
@@ -651,8 +624,6 @@ void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
       }
     }
   }
-  ui->buttonAccept   ->setEnabled(enableAccept);
-  ui->buttonAcceptQC2->setEnabled(enableAccept);
-  ui->buttonReject   ->setEnabled(enableReject);
-  ui->buttonRejectQC2->setEnabled(enableReject);
+  ui->buttonAccept->setEnabled(enableAccept);
+  ui->buttonReject->setEnabled(enableReject);
 }

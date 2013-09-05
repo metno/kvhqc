@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>477</width>
+    <width>267</width>
     <height>223</height>
    </rect>
   </property>
@@ -26,9 +26,12 @@
       <number>2</number>
      </property>
      <item>
-      <widget class="QPushButton" name="buttonAccept">
+      <widget class="QToolButton" name="buttonAccept">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept  the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Accept</string>
@@ -36,19 +39,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonAcceptQC2">
+      <widget class="QToolButton" name="buttonReject">
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="text">
-        <string>Acc.+QC2</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonReject">
-       <property name="enabled">
-        <bool>false</bool>
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
         <string>Reject</string>
@@ -56,12 +52,12 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonRejectQC2">
-       <property name="enabled">
-        <bool>false</bool>
+      <widget class="QCheckBox" name="checkQC2">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot; font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="text">
-        <string>Rej.+QC2</string>
+        <string>QC2</string>
        </property>
       </widget>
      </item>
@@ -112,24 +108,8 @@
      <y>18</y>
     </hint>
     <hint type="destinationlabel">
-     <x>111</x>
-     <y>4</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonAcceptQC2</sender>
-   <signal>clicked()</signal>
-   <receiver>DataList</receiver>
-   <slot>onAcceptQC2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>103</x>
-     <y>6</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>131</x>
-     <y>29</y>
+     <x>374</x>
+     <y>15</y>
     </hint>
    </hints>
   </connection>
@@ -140,12 +120,12 @@
    <slot>onAccept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>11</x>
-     <y>20</y>
+     <x>30</x>
+     <y>18</y>
     </hint>
     <hint type="destinationlabel">
-     <x>39</x>
-     <y>30</y>
+     <x>18</x>
+     <y>29</y>
     </hint>
    </hints>
   </connection>
@@ -156,27 +136,11 @@
    <slot>onReject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>232</x>
-     <y>20</y>
+     <x>57</x>
+     <y>18</y>
     </hint>
     <hint type="destinationlabel">
-     <x>247</x>
-     <y>30</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonRejectQC2</sender>
-   <signal>clicked()</signal>
-   <receiver>DataList</receiver>
-   <slot>onRejectQC2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>321</x>
-     <y>10</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>336</x>
+     <x>47</x>
      <y>29</y>
     </hint>
    </hints>

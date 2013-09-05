@@ -55,9 +55,7 @@ private:
 
 private Q_SLOTS:
     void onAccept();
-    void onAcceptQC2();
     void onReject();
-    void onRejectQC2();
     void onEarlier();
     void onLater();
     void onHorizontalHeaderContextMenu(const QPoint& pos);
