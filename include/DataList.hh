@@ -55,6 +55,7 @@ private:
     void toText(QDomElement& ce) const;
     void fromText(const QDomElement& ce);
   };
+  struct eq_Column;
   struct lt_Column;
   typedef std::vector<Column> Columns_t;
 

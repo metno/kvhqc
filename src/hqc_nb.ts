@@ -73,7 +73,7 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="DataList.cc" line="52"/>
+        <location filename="DataList.cc" line="61"/>
         <source>Reset columns</source>
         <translation>Tilbakestill kolonnevalg</translation>
     </message>
@@ -100,32 +100,32 @@
         <translation>Lagre…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="61"/>
+        <location filename="DataList.cc" line="70"/>
         <source>Earlier</source>
         <translation>Tidligere</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="66"/>
+        <location filename="DataList.cc" line="75"/>
         <source>Later</source>
         <translation>Senere</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="50"/>
+        <location filename="DataList.cc" line="59"/>
         <source>Add column...</source>
         <translation>Ny kolonne…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="51"/>
+        <location filename="DataList.cc" line="60"/>
         <source>Remove column</source>
         <translation>Fjern kolonne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="486"/>
+        <location filename="DataList.cc" line="502"/>
         <source>Save Table</source>
         <translation>Lagre tabellen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="488"/>
+        <location filename="DataList.cc" line="504"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabell (*.csv)</translation>
     </message>
@@ -1646,39 +1646,52 @@ Du bruker HQC versjon %1.</translation>
         <source>Time Series</source>
         <translation>Tidsserie</translation>
     </message>
-    <message utf8="true">
-        <location filename="timeseriesview.ui" line="25"/>
-        <source>Add…</source>
-        <translation>Legg til…</translation>
-    </message>
-    <message utf8="true">
-        <location filename="timeseriesview.ui" line="32"/>
-        <source>Remove…</source>
-        <translation>Fjern linjer…</translation>
+    <message>
+        <location filename="timeseriesview.ui" line="28"/>
+        <source>Lines</source>
+        <translation>Linjer</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="43"/>
+        <location filename="TimeSeriesView.cc" line="46"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="44"/>
+        <location filename="TimeSeriesView.cc" line="47"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="45"/>
+        <location filename="TimeSeriesView.cc" line="48"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
-        <location filename="timeseriesview.ui" line="45"/>
-        <location filename="timeseriesview.ui" line="55"/>
+        <location filename="TimeSeriesView.cc" line="52"/>
+        <source>Add...</source>
+        <oldsource>Add line...</oldsource>
+        <translation>Ny…</translation>
+    </message>
+    <message>
+        <location filename="TimeSeriesView.cc" line="53"/>
+        <source>Remove...</source>
+        <oldsource>Remove lines...</oldsource>
+        <translation>Fjern…</translation>
+    </message>
+    <message>
+        <location filename="TimeSeriesView.cc" line="54"/>
+        <source>Reset</source>
+        <oldsource>Reset lines</oldsource>
+        <translation>Tilbakestill</translation>
+    </message>
+    <message>
+        <location filename="timeseriesview.ui" line="41"/>
+        <location filename="timeseriesview.ui" line="51"/>
         <source>yyyy-MM-dd hh:mm</source>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="115"/>
+        <location filename="TimeSeriesView.cc" line="132"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>

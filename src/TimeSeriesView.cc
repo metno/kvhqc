@@ -1,12 +1,15 @@
 
 #include "TimeSeriesView.hh"
 
+#include "ChangeReplay.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ModelData.hh"
 #include "TimeRangeControl.hh"
 #include "TimeSeriesAdd.hh"
 
+#include <QtGui/QMenu>
 #include <QtGui/QStringListModel>
+#include <QtXml/QDomElement>
 
 #include <boost/foreach.hpp>
 
@@ -27,7 +30,7 @@ public:
     { int r = i % available; i /= available; return r; }
 };
 
-const int MAX_LINES = 6;
+const size_t MAX_LINES = 8;
 } // namespace anonymous
 
 // ########################################################################
@@ -44,6 +47,17 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
       << tr("Model")
       << tr("Difference"));
   ui->comboWhatToPlot->setCurrentIndex(0);
+
+  mColumnMenu = new QMenu(this);
+  mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add..."), this, SLOT(onActionAddColumn()));
+  mColumnRemove = mColumnMenu->addAction(QIcon("icons:dl_columns_remove.svg"), tr("Remove..."), this, SLOT(onActionRemoveColumns()));
+  mColumnReset = mColumnMenu->addAction(QIcon("icons:dl_columns_reset.svg"), tr("Reset"), this, SLOT(onActionResetColumns()));
+  mColumnAdd->setEnabled(false);
+  mColumnRemove->setEnabled(false);
+  mColumnReset->setEnabled(false);
+
+  ui->buttonLinesMenu->setIcon(QIcon("icons:dl_columns.svg"));
+  ui->buttonLinesMenu->setMenu(mColumnMenu);
 
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
@@ -71,11 +85,14 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
   METLIBS_LOG_SCOPE();
   ChangeableDataView::setSensorsAndTimes(sensors, limits);
   mSensors = mOriginalSensors = sensors;
-  mOriginalTimeLimits = limits;
+  mTimeLimits = mOriginalTimeLimits = limits;
 
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(limits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(limits.t1()));
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
 
+  mColumnAdd->setEnabled(true);
+  mColumnRemove->setEnabled(true);
+  mColumnReset->setEnabled(false);
   updateSensors();
 }
 
@@ -153,13 +170,129 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
   ui->plot->setTimemark(timeutil::make_miTime(st.time), "here");
 }
 
-std::string TimeSeriesView::changes()
+namespace /* anonymous */ {
+static const char C_ATTR_STATIONID[] = "stationid";
+static const char C_ATTR_PARAMID[]   = "paramid";
+static const char C_ATTR_TYPEID[]    = "typeid";
+static const char C_ATTR_CTYPE[]     = "ctype";
+static const char C_ATTR_TOSSFET[]   = "timeoffset";
+
+static const char T_ATTR_START[] = "start";
+static const char T_ATTR_END[]   = "end";
+
+static const char E_TAG_CHANGES[] = "changes";
+static const char E_TAG_COLUMNS[] = "columns";
+static const char E_TAG_REMOVED[] = "removed";
+static const char E_TAG_COLUMN[]  = "column";
+static const char E_TAG_TSHIFT[]  = "timeshift";
+
+void toText(const Sensor& sensor, QDomElement& ce)
 {
-  return "";
+  ce.setAttribute(C_ATTR_STATIONID, sensor.stationId);
+  ce.setAttribute(C_ATTR_PARAMID,   sensor.paramId);
+  ce.setAttribute(C_ATTR_TYPEID,    sensor.typeId);
 }
 
-void TimeSeriesView::replay(const std::string& changes)
+void fromText(const QDomElement& ce, Sensor& sensor)
 {
+  sensor.stationId = ce.attribute(C_ATTR_STATIONID).toInt();
+  sensor.paramId   = ce.attribute(C_ATTR_PARAMID)  .toInt();
+  sensor.typeId    = ce.attribute(C_ATTR_TYPEID)   .toInt();
+}
+} // anonymous namespace
+
+std::string TimeSeriesView::changes()
+{
+  METLIBS_LOG_SCOPE();
+  QDomDocument doc("changes");
+  QDomElement doc_changes = doc.createElement(E_TAG_CHANGES);
+  doc.appendChild(doc_changes);
+
+  ChangeReplay<Sensor, lt_Sensor> cr;
+  const Sensors_t removed = cr.removals(mOriginalSensors, mSensors);
+  if (not removed.empty()) {
+    QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
+    BOOST_FOREACH(const Sensor& r, removed) {
+      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+      toText(r, doc_column);
+      doc_removed.appendChild(doc_column);
+    } 
+    doc_changes.appendChild(doc_removed);
+  }
+
+  QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
+  BOOST_FOREACH(const Sensor& s, mSensors) {
+    QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+    toText(s, doc_column);
+    doc_columns.appendChild(doc_column);
+  } 
+  doc_changes.appendChild(doc_columns);
+
+  if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
+    QDomElement doc_timeshift = doc.createElement(E_TAG_TSHIFT);
+    doc_timeshift.setAttribute(T_ATTR_START, (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours());
+    doc_timeshift.setAttribute(T_ATTR_END,   (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours());
+    doc_changes.appendChild(doc_timeshift);
+  }
+
+  METLIBS_LOG_DEBUG("changes=" << doc.toString());
+  return doc.toString().toStdString();
+}
+
+void TimeSeriesView::replay(const std::string& changesText)
+{
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG("replaying " << changesText);
+
+  QDomDocument doc;
+  doc.setContent(QString::fromStdString(changesText));
+
+  const QDomElement doc_changes = doc.documentElement();
+
+  Sensors_t removed;
+  const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
+  if (not doc_removed.isNull()) {
+    for(QDomElement c = doc_removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Sensor sensor;
+      fromText(c, sensor);
+      removed.push_back(sensor);
+      METLIBS_LOG_DEBUG("removed " << sensor.stationId << ';' << sensor.paramId << ';' << sensor.typeId);
+    }
+  }
+
+  Sensors_t actual;
+  const QDomElement doc_actual = doc_changes.firstChildElement(E_TAG_COLUMNS);
+  if (not doc_actual.isNull()) {
+    for(QDomElement c = doc_actual.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Sensor sensor;
+      fromText(c, sensor);
+      actual.push_back(sensor);
+      METLIBS_LOG_DEBUG("sensor " << sensor.stationId << ';' << sensor.paramId << ';' << sensor.typeId);
+    }
+  }
+  
+  ChangeReplay<Sensor, lt_Sensor> cr;
+  mSensors = cr.replay(mOriginalSensors, actual, removed);
+
+  TimeRange newTimeLimits(mOriginalTimeLimits);
+  const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
+  if (not doc_timeshift.isNull()) {
+    const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
+    const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
+    const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
+    const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
+    TimeRange newTimeLimits(t0, t1);
+    METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
+  }
+  mTimeLimits = newTimeLimits;
+
+  bool changed = (mSensors.size() != mOriginalSensors.size())
+      or mTimeLimits != mOriginalTimeLimits;
+  if (not changed)
+    changed = not std::equal(mSensors.begin(), mSensors.end(), mOriginalSensors.begin(), eq_Sensor());
+  mColumnReset->setEnabled(changed);
+  
+  updateSensors();
 }
 
 std::string TimeSeriesView::type() const
@@ -177,7 +310,7 @@ void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
   updatePlot();
 }
 
-void TimeSeriesView::onButtonAdd()
+void TimeSeriesView::onActionAddColumn()
 {
   METLIBS_LOG_SCOPE();
   TimeSeriesAdd ta(this);
@@ -188,10 +321,11 @@ void TimeSeriesView::onButtonAdd()
   mSensors.push_back(s);
   METLIBS_LOG_DEBUG(s);
   
+  mColumnReset->setEnabled(true);
   updateSensors();
 }
 
-void TimeSeriesView::onButtonRemove()
+void TimeSeriesView::onActionRemoveColumns()
 {
   METLIBS_LOG_SCOPE();
   QStringList lines;
@@ -214,6 +348,15 @@ void TimeSeriesView::onButtonRemove()
     mSensors.erase(it);
   }
   
+  mColumnReset->setEnabled(true);
+  updateSensors();
+}
+
+void TimeSeriesView::onActionResetColumns()
+{
+  mTimeLimits = mOriginalTimeLimits;
+  mSensors = mOriginalSensors;
+  mColumnReset->setEnabled(false);
   updateSensors();
 }
 
@@ -227,9 +370,9 @@ void TimeSeriesView::onDateFromChanged(const QDateTime&)
 {
   const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
   const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
-  const TimeRange limits(stime, etime);
+  mTimeLimits = TimeRange(stime, etime);
 
-  ChangeableDataView::setSensorsAndTimes(mSensors, limits);
+  ChangeableDataView::setSensorsAndTimes(mSensors, mTimeLimits);
   updatePlot();
 }
 
@@ -245,19 +388,16 @@ void TimeSeriesView::updatePlot()
     return;
 
   const int whatToPlot = ui->comboWhatToPlot->currentIndex();
-  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
-  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
-  const TimeRange limits(stime, etime);
 
-  METLIBS_LOG_DEBUG(LOGVAL(limits) << LOGVAL(whatToPlot));
+  METLIBS_LOG_DEBUG(LOGVAL(mTimeLimits) << LOGVAL(whatToPlot));
 
   TimeSeriesData::tsList tslist;
 
   // prefetch all data
   if (whatToPlot == 0 or whatToPlot == 2)
-    mDA->allData(mSensors, limits);
+    mDA->allData(mSensors, mTimeLimits);
   if ((whatToPlot == 1 or whatToPlot == 2) and mMA)
-    mMA->allData(mSensors, limits);
+    mMA->allData(mSensors, mTimeLimits);
 
   int idx = -1;
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
@@ -267,7 +407,7 @@ void TimeSeriesView::updatePlot()
       break;
     }
 
-    const ObsAccess::TimeSet times = mDA->allTimes(sensor, limits);
+    const ObsAccess::TimeSet times = mDA->allTimes(sensor, mTimeLimits);
     METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(times.size()));
     if (times.empty())
       continue;
@@ -308,6 +448,9 @@ void TimeSeriesView::updatePlot()
     }
   }
   
+  if (tslist.empty())
+    return; // FIXME otherwise segfault
+   
   // finally: one complete plot-structure
   TimeSeriesData::TSPlot tsplot;
   POptions::PlotOptions poptions;

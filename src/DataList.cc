@@ -27,6 +27,15 @@
 #define MILOGGER_CATEGORY "kvhqc.DataList"
 #include "HqcLogging.hh"
 
+struct DataList::eq_Column : public std::binary_function<Column, Column, bool> {
+  bool operator()(const Column& a, const Column& b) const
+    {
+      return eq_Sensor()(a.sensor, b.sensor)
+          and (a.type == b.type)
+          and (a.timeOffset == b.timeOffset);
+    }
+};
+
 struct DataList::lt_Column : public std::binary_function<Column, Column, bool> {
   bool operator()(const Column& a, const Column& b) const
     {
@@ -453,6 +462,13 @@ void DataList::replay(const std::string& changesText)
     METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
   }
   mTimeLimits = newTimeLimits;
+
+  bool changed = (mColumns.size() != mOriginalColumns.size())
+      or mTimeLimits != mOriginalTimeLimits;
+  if (not changed)
+    changed = not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
+  mColumnReset->setEnabled(changed);
+  
 
   updateModel();
 }

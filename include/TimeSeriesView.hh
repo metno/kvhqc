@@ -11,6 +11,8 @@
 #include <memory>
 #include <vector>
 
+class QAction;
+class QMenu;
 class TimeRangeControl;
 class TimeseriesDialog;
 namespace Ui {
@@ -43,8 +45,10 @@ private:
   static void initalizePlotOptions();
 
 private Q_SLOTS:
-  void onButtonAdd();
-  void onButtonRemove();
+  void onActionAddColumn();
+  void onActionRemoveColumns();
+  void onActionResetColumns();
+
   void onRadioPlot();
   void onDateFromChanged(const QDateTime&);
   void onDateToChanged(const QDateTime&);
@@ -53,7 +57,12 @@ private:
   std::auto_ptr<Ui::TimeSeriesView> ui;
   std::auto_ptr<TimeseriesDialog> tsdlg;
 
-  TimeRange mOriginalTimeLimits;
+  QMenu* mColumnMenu;
+  QAction* mColumnAdd;
+  QAction* mColumnRemove;
+  QAction* mColumnReset;
+
+  TimeRange mTimeLimits, mOriginalTimeLimits;
   Sensors_t mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
   TimeRangeControl* mTimeControl;

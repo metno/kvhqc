@@ -73,6 +73,9 @@ public:
   bool operator==(const TimeRange& other) const
     { return mT0 == other.mT0 and mT1 == other.mT1; }
 
+  bool operator!=(const TimeRange& other) const
+    { return mT0 != other.mT0 or mT1 != other.mT1; }
+
 private:
     timeutil::ptime mT0;
     timeutil::ptime mT1;
