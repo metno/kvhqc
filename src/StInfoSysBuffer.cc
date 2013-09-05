@@ -2,11 +2,8 @@
 #include "StInfoSysBuffer.hh"
 
 #include "HqcApplication.hh"
+#include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
-
-#include <miconfparser/confexception.h>
-#include <miconfparser/confsection.h>
-#include <miconfparser/valelement.h>
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
@@ -28,6 +25,7 @@ const char QSQLNAME_REMOTE[] = "stinfosys";
 
 struct countyInfo {
   int stnr;
+  int municipid;
   QString name;
   QString county;
   QString municip;
@@ -35,32 +33,6 @@ struct countyInfo {
   bool coast;
 };
 
-using namespace miutil::conf;
-
-bool connect2stinfosys(miutil::conf::ConfSection *conf)
-{
-  METLIBS_LOG_SCOPE();
-  const ValElementList valHost     = conf->getValue("stinfosys.host");
-  const ValElementList valDbname   = conf->getValue("stinfosys.dbname");
-  const ValElementList valUser     = conf->getValue("stinfosys.user");
-  const ValElementList valPassword = conf->getValue("stinfosys.password");
-  const ValElementList valPort     = conf->getValue("stinfosys.port");
-    
-  if (valHost.size() != 1 or valDbname.size() != 1 or valUser.size() != 1 or valPassword.size() != 1 or valPort.size() != 1)
-    return false;
-    
-  try {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL", QSQLNAME_REMOTE);
-    db.setHostName    (QString::fromStdString(valHost    .front().valAsString()));
-    db.setDatabaseName(QString::fromStdString(valDbname  .front().valAsString()));
-    db.setUserName    (QString::fromStdString(valUser    .front().valAsString()));
-    db.setPassword    (QString::fromStdString(valPassword.front().valAsString()));
-    db.setPort        (valPort.front().valAsInt());
-    return db.open();
-  } catch (miutil::conf::InvalidTypeEx& e) {
-    return false;
-  }
-}
 } // anonymous namespace
 
 /*!
@@ -105,7 +77,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   }
 
   const char stinfosys_SQL[] =
-      "SELECT DISTINCT s.stationid, m.name,"
+      "SELECT DISTINCT s.stationid, s.municipid, m.name,"
       "       (SELECT mm.name FROM municip mm"
       "        WHERE mm.municipid BETWEEN 1 AND 100"
       "              AND ((m.municipid NOT IN (2300,2800) AND mm.municipid = m.municipid / 100)"
@@ -124,9 +96,10 @@ bool StInfoSysBuffer::readFromStInfoSys()
   METLIBS_LOG_INFO("got " << query.size() << " station city/county names from stinfosys");
   while( query.next() ) {
     countyInfo cInfo;
-    cInfo.stnr    = query.value(0).toInt();
-    cInfo.municip = query.value(1).toString();
-    cInfo.county  = query.value(2).toString();
+    cInfo.stnr      = query.value(0).toInt();
+    cInfo.municipid = query.value(1).toInt();
+    cInfo.municip   = query.value(2).toString();
+    cInfo.county    = query.value(3).toString();
     
     if( cInfo.county == "SVALBARD" || cInfo.county == "JAN MAYEN" )
       cInfo.county = "ISHAVET";
@@ -150,6 +123,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
     while (query.next()) {
       countyInfo cInfo;
       cInfo.stnr    = query.value(0).toInt();
+      cInfo.municipid = -1;
       cInfo.county  = query.value(1).toString();
       cInfo.municip = query.value(2).toString();
       cInfo.pri     = query.value(3).toBool();
@@ -178,6 +152,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
     
     ls.fylke       = ci.county.toStdString();
     ls.kommune     = ci.municip.toStdString();
+    ls.municipid   = ci.municipid;
     ls.pri         = ci.pri;
     ls.coast       = ci.coast;
     
@@ -190,7 +165,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
 
 StInfoSysBuffer::StInfoSysBuffer(miutil::conf::ConfSection *conf)
 {
-  connect2stinfosys(conf);
+  Helpers::connect2postgres(QSQLNAME_REMOTE, conf, "stinfosys");
 }
 
 StInfoSysBuffer::~StInfoSysBuffer()

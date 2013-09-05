@@ -44,6 +44,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "dianashowdialog.h"
 #include "EditVersionModel.hh"
 #include "errorlist.h"
+#include "ExtremesTableModel.hh"
+#include "ExtremesView.hh"
+#include "FindExtremeValues.hh"
 #include "HintWidget.hh"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
@@ -122,6 +125,7 @@ HqcMainWindow::HqcMainWindow()
   , mTimeSeriesView(new TimeSeriesView(this))
   , mAutoColumnView(new AutoColumnView)
   , mAutoDataList(new DataList(this))
+  , mExtremesView(new ExtremesView())
 {
     ui->setupUi(this);
     ui->treeErrors->setDataAccess(eda, kma);
@@ -193,6 +197,9 @@ HqcMainWindow::HqcMainWindow()
     tssw->setWindowTitle(tr("Time Series"));
     ui->ws->addSubWindow(tssw);
     mAutoColumnView->attachView(mTimeSeriesView);
+
+    mExtremesView->setVisible(false);
+    mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
     ui->saveAction->setEnabled(false); // no changes yet
@@ -606,6 +613,39 @@ void HqcMainWindow::onShowErrorList()
 {
   METLIBS_LOG_SCOPE();
   ui->dockErrors->setVisible(true);
+}
+
+void HqcMainWindow::onShowExtremeTAN()
+{
+  showExtremeValues(kvalobs::PARAMID_TAN);
+}
+
+void HqcMainWindow::onShowExtremeTAX()
+{
+  showExtremeValues(kvalobs::PARAMID_TAX);
+}
+
+void HqcMainWindow::onShowExtremeRR_24()
+{
+  showExtremeValues(kvalobs::PARAMID_RR_24);
+}
+
+void HqcMainWindow::showExtremeValues(int paramid)
+{
+  METLIBS_LOG_SCOPE();
+
+  timeutil::ptime now = timeutil::now();
+  int hour = now.time_of_day().hours();
+  if (hour < 6)
+    now -= boost::gregorian::days(1);
+  
+  const timeutil::ptime t1 = timeutil::from_YMDhms(now.date().year(), now.date().month(), now.date().day(), 6, 0, 0);
+  const timeutil::ptime t0 = t1 - boost::gregorian::days(1);
+
+  const TimeRange t(t0, t1);
+  const std::vector<SensorTime> extremes = Extremes::find(paramid, t);
+  mExtremesView->setExtremes(eda, extremes);
+  mExtremesView->setVisible(true);
 }
 
 void HqcMainWindow::onShowChanges()

@@ -30,8 +30,17 @@
 #include "hqc_utilities.hh"
 
 #include "KvMetaDataBuffer.hh"
+
+#include <miconfparser/confexception.h>
+#include <miconfparser/valelement.h>
+
 #include <QtGui/QApplication>
+#include <QtSql/QSqlError>
+
 #include <boost/algorithm/string.hpp>
+
+#define MILOGGER_CATEGORY "kvhqc.Helpers" // same as WatchRR2/Helpers.cc!
+#include "HqcLogging.hh"
 
 namespace Helpers {
 
@@ -73,6 +82,53 @@ QString stationInfo(int stationID)
     } catch (std::runtime_error&) {
         return QString::number(stationID);
     }
+}
+
+bool connect2postgres(const QString& qname, const QString& host, const QString& dbname, const QString& user, const QString& password, int port)
+{
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(qname) << LOGVAL(host) << LOGVAL(dbname) << LOGVAL(user) << LOGVAL(password) << LOGVAL(port));
+
+  QSqlDatabase db = QSqlDatabase::addDatabase("QPSQL", qname);
+  db.setHostName    (host);
+  db.setDatabaseName(dbname);
+  db.setUserName    (user);
+  db.setPassword    (password);
+  db.setPort        (port);
+
+  if (not db.open()) {
+    METLIBS_LOG_ERROR("cannot connect to PSQL database: " << db.lastError().text());
+    return false;
+  } else {
+    return true;
+  }
+}
+
+bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, const std::string& prefix)
+{
+  METLIBS_LOG_SCOPE();
+  if (not conf)
+    return false;
+
+  using namespace miutil::conf;
+  const ValElementList valHost     = conf->getValue(prefix + ".host");
+  const ValElementList valDbname   = conf->getValue(prefix + ".dbname");
+  const ValElementList valUser     = conf->getValue(prefix + ".user");
+  const ValElementList valPassword = conf->getValue(prefix + ".password");
+  const ValElementList valPort     = conf->getValue(prefix + ".port");
+    
+  if (valHost.size() != 1 or valDbname.size() != 1 or valUser.size() != 1 or valPassword.size() != 1 or valPort.size() != 1)
+    return false;
+    
+  try {
+    return connect2postgres(qname, QString::fromStdString(valHost    .front().valAsString()),
+        QString::fromStdString(valDbname  .front().valAsString()),
+        QString::fromStdString(valUser    .front().valAsString()),
+        QString::fromStdString(valPassword.front().valAsString()),
+        valPort.front().valAsInt());
+  } catch (miutil::conf::InvalidTypeEx& e) {
+    return false;
+  }
 }
 
 } // namespace Helpers

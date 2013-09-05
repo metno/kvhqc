@@ -19,17 +19,18 @@ namespace /*anonymous*/ {
 const char STATIONINFO_CACHE[] = "stationinfo_cache";
 const char STATIONINFO_CACHE_CREATE[] = "CREATE TABLE stationinfo_cache ("
     "stationid    INTEGER PRIMARY KEY,"
+    "municip_id   INTEGER NOT NULL,"
     "county       TEXT    NOT NULL,"
-    "municipality TEXT    NOT NULL,"
+    "municip_name TEXT    NOT NULL,"
     "is_coastal   BOOLEAN NOT NULL,"
     "priority     INTEGER DEFAULT 0"
     ");";
 
 const char STATIONINFO_CACHE_DELETE[] = "DELETE FROM stationinfo_cache;";
 const char STATIONINFO_CACHE_INSERT[] = "INSERT INTO stationinfo_cache VALUES"
-    " (:sid, :county, :municip, :coast, :prio)";
+    " (:sid, :mun_id, :county, :mun_name, :coast, :prio)";
 
-const char STATIONINFO_CACHE_SELECT_ALL[] = "SELECT stationid, county, municipality, is_coastal, priority FROM stationinfo_cache;";
+const char STATIONINFO_CACHE_SELECT_ALL[] = "SELECT stationid, municip_id, county, municip_name, is_coastal, priority FROM stationinfo_cache;";
 
 } // anonymous namespace
 
@@ -67,11 +68,12 @@ bool StationInfoBuffer::writeToStationFile()
   insert.prepare(STATIONINFO_CACHE_INSERT);
   BOOST_FOREACH(const listStat_t& ls, listStat) {
     const QString qcounty = QString::fromStdString(ls.fylke), qmunicip = QString::fromStdString(ls.kommune);
-    insert.bindValue(":sid",     ls.stationid);
-    insert.bindValue(":county",  qcounty);
-    insert.bindValue(":municip", qmunicip);
-    insert.bindValue(":prio",    ls.pri);
-    insert.bindValue(":coast",   ls.coast);
+    insert.bindValue(":sid",      ls.stationid);
+    insert.bindValue(":mun_id",   ls.municipid);
+    insert.bindValue(":county",   qcounty);
+    insert.bindValue(":mun_name", qmunicip);
+    insert.bindValue(":prio",     ls.pri);
+    insert.bindValue(":coast",    ls.coast);
     if (not insert.exec())
       METLIBS_LOG_ERROR("error while inserting: " << insert.lastError().text());
     insert.finish();
@@ -105,10 +107,11 @@ bool StationInfoBuffer::readFromStationFile()
       ls.environment = st.environmentid();
       ls.wmonr       = st.wmonr();
         
-      ls.fylke       = query.value(1).toString().toStdString();
-      ls.kommune     = query.value(2).toString().toStdString();
-      ls.coast       = query.value(3).toBool();
-      ls.pri         = query.value(4).toInt();
+      ls.municipid   = query.value(1).toInt();
+      ls.fylke       = query.value(2).toString().toStdString();
+      ls.kommune     = query.value(3).toString().toStdString();
+      ls.coast       = query.value(4).toBool();
+      ls.pri         = query.value(5).toInt();
 
       // FIXME fromtime and totime
         

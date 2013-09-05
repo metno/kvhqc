@@ -31,7 +31,11 @@
 #define UTILITIES_HH_
 
 #include <kvalobs/kvData.h>
+#include <miconfparser/confsection.h>
+
 #include <QtCore/QString>
+#include <QtSql/QSqlDatabase>
+
 #include <string>
 
 namespace Helpers {
@@ -43,6 +47,9 @@ QString stationInfo(int stationID);
 
 inline bool is_accumulation(int fd)
 { return fd==2 or fd>=4; }
+
+bool connect2postgres(const QString& qname, const QString& host, const QString& dbname, const QString& user, const QString& password, int port);
+bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, const std::string& prefix);
 
 } // namespace Helpers
 

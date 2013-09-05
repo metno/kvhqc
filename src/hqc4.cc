@@ -80,7 +80,7 @@ int main( int argc, char* argv[] )
     KvMetaDataBuffer kvmdbuf;
     StInfoSysBuffer stinfobuf(confSec);
 
-    HqcApplication hqc(argc, argv);
+    HqcApplication hqc(argc, argv, confSec);
 
     QString userName = "?";
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);

@@ -2,6 +2,8 @@
 #ifndef HqcApplication_hh
 #define HqcApplication_hh 1
 
+#include <miconfparser/confsection.h>
+
 #include <QtCore/QList>
 #include <QtGui/QApplication>
 #include <QtSql/QSqlDatabase>
@@ -9,7 +11,7 @@
 class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
-    HqcApplication(int & argc, char ** argv);
+  HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection* conf);
     ~HqcApplication();
 
 //    void setReinserter(HqcReinserter* r, const QString& username)
@@ -19,6 +21,7 @@ public:
 
   QSqlDatabase systemDB();
   QSqlDatabase configDB();
+  QSqlDatabase kvalobsDB();
 
 private:
     void installTranslations(const QString& file, const QStringList& paths);
@@ -28,7 +31,8 @@ private:
     void fatalError(const QString& message, const QString& info="");
 
 private:
-    QList<QTranslator*> mTranslators;
+  QList<QTranslator*> mTranslators;
+  miutil::conf::ConfSection *mConfig;
 };
 
 extern HqcApplication* hqcApp;

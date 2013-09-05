@@ -83,7 +83,7 @@ int main( int argc, char* argv[] )
     StationInfoBuffer stinfobuf;
     // <<<<<
 
-    HqcApplication hqc(argc, argv);
+    HqcApplication hqc(argc, argv, 0);
     
     std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
     hqc.setMainWidget(mw.get());

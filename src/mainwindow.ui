@@ -51,6 +51,14 @@
     <property name="title">
      <string>&amp;List type</string>
     </property>
+    <widget class="QMenu" name="menuExtremeValues">
+     <property name="title">
+      <string>Extreme values</string>
+     </property>
+     <addaction name="actionExtremeTAN"/>
+     <addaction name="actionExtremeTAX"/>
+     <addaction name="actionExtremeRR_24"/>
+    </widget>
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorDataSalen"/>
     <addaction name="actionErrorList"/>
@@ -58,6 +66,7 @@
     <addaction name="dataListAction"/>
     <addaction name="actionErrorListSalen"/>
     <addaction name="separator"/>
+    <addaction name="menuExtremeValues"/>
     <addaction name="actionWatchRR"/>
     <addaction name="actionWatchWeather"/>
     <addaction name="separator"/>
@@ -368,6 +377,21 @@
   <action name="actionShowSimpleCorrections">
    <property name="text">
     <string>Show Simple Corrections</string>
+   </property>
+  </action>
+  <action name="actionExtremeTAN">
+   <property name="text">
+    <string>TAN</string>
+   </property>
+  </action>
+  <action name="actionExtremeTAX">
+   <property name="text">
+    <string>TAX</string>
+   </property>
+  </action>
+  <action name="actionExtremeRR_24">
+   <property name="text">
+    <string>RR_24</string>
    </property>
   </action>
  </widget>
@@ -740,6 +764,54 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionExtremeTAN</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowExtremeTAN()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExtremeTAX</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowExtremeTAX()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionExtremeRR_24</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowExtremeRR_24()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showFlags()</slot>
@@ -788,5 +860,8 @@
   <slot>onShowErrorList()</slot>
   <slot>onShowChanges()</slot>
   <slot>onShowSimpleCorrections()</slot>
+  <slot>onShowExtremeTAN()</slot>
+  <slot>onShowExtremeTAX()</slot>
+  <slot>onShowExtremeRR_24()</slot>
  </slots>
 </ui>

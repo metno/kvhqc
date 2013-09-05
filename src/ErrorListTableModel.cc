@@ -214,7 +214,7 @@ void ErrorListTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPt
         if (eq_SensorTime()(data->sensorTime(), ei.obs->sensorTime())) {
             if (what == ObsAccess::MODIFIED) {
                 Errors::recheck(ei, mErrorsForSalen);
-                const QModelIndex index0 = createIndex(row, COL_OBS_CORR);
+                const QModelIndex index0 = createIndex(row, COL_OBS_ORIG);
                 const QModelIndex index1 = createIndex(row, COL_OBS_FLAG_VAL);
                 /*emit*/ dataChanged(index0, index1);
             } else if (what == ObsAccess::DESTROYED) {

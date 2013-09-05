@@ -2,6 +2,7 @@
 #include "HqcApplication.hh"
 
 #include "hqc_paths.hh"
+#include "hqc_utilities.hh"
 
 #include <puTools/miString.h>
 
@@ -19,12 +20,14 @@
 namespace /* anonymous */ {
 const char DB_SYSTEM[] = "hqc_system_db";
 const char DB_CONFIG[] = "hqc_config_db";
+const char DB_KVALOBS[] = "kvalobs_db";
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
 
-HqcApplication::HqcApplication(int & argc, char ** argv)
+HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
     : QApplication(argc, argv)
+    , mConfig(conf)
 {
     hqcApp = this;
 
@@ -82,6 +85,17 @@ QSqlDatabase HqcApplication::configDB()
     }
   }
   return QSqlDatabase::database(DB_CONFIG);
+}
+
+QSqlDatabase HqcApplication::kvalobsDB()
+{
+  if (not QSqlDatabase::contains(DB_KVALOBS)) {
+    if (not Helpers::connect2postgres(DB_KVALOBS, mConfig, "kvalobsdb")) {
+      fatalError(tr("Cannot access kvalobs SQL database, please check the HQC configuration"));
+      // not reached
+    }
+  }
+  return QSqlDatabase::database(DB_KVALOBS);
 }
 
 void HqcApplication::installTranslations(const QString& file, const QStringList& paths)

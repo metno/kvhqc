@@ -6,6 +6,7 @@ SET(hqc_HEADERS
   DataListModel.hh
   ../include/dianashowdialog.h
   ../include/errorlist.h
+  ../include/ExtremesView.hh
   ../include/HqcDianaHelper.hh
   ../include/hqcmain.h
   ../include/ItemCheckBox.hh
@@ -32,6 +33,9 @@ SET(hqc_SOURCES
   ErrorListTableModel.cc
   EditVersionModel.hh
   EditVersionModel.cc
+  ExtremesTableModel.cc
+  ExtremesView.cc
+  FindExtremeValues.cc
   ParamIdModel.cc
   ListDialog.cc
   StationSelection.cc

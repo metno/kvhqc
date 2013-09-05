@@ -13,6 +13,7 @@ struct listStat_t {
     int environment;     // listStatType
     std::string fylke;   // listStatFylke
     std::string kommune; // listStatKommune
+    int municipid;
     int wmonr;           // listStatWeb
     int pri;             // listStatPri
     timeutil::ptime fromtime;

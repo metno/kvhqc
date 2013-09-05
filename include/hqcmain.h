@@ -51,6 +51,8 @@ class AutoColumnView;
 class DataList;
 class DianaShowDialog;
 class EditVersionModel;
+class ExtremesTableModel;
+class ExtremesView;
 class HintWidget;
 class HqcDianaHelper;
 class KvalobsAccess;
@@ -122,11 +124,16 @@ private Q_SLOTS:
     void onUndoChanges();
     void onRedoChanges();
 
+  void onShowExtremeTAN();
+  void onShowExtremeTAX();
+  void onShowExtremeRR_24();
   void onShowErrorList();
   void onShowChanges();
   void onShowSimpleCorrections();
 
 private:
+  void showExtremeValues(int paramid);
+
     void navigateTo(const SensorTime& st);
     void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
@@ -180,6 +187,8 @@ private:
 
     std::auto_ptr<AutoColumnView> mAutoColumnView;
     DataList* mAutoDataList;
+
+  std::auto_ptr<ExtremesView> mExtremesView;
 };
 
 #endif
