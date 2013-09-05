@@ -28,6 +28,7 @@ private Q_SLOTS:
   void onParameterSelected(int);
 
 private:
+  int getStationId() const;
   int getParamId() const;
   int getTypeId() const;
 

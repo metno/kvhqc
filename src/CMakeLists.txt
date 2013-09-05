@@ -44,6 +44,7 @@ SET(hqc_SOURCES
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
+  StationIdModel.cc
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
   SimpleCorrections.cc
