@@ -50,7 +50,8 @@ std::string to_iso_extended_string(const b_pt::ptime& pt)
 
 std::string to_iso_extended_string(const pdate& pd)
 {
-    return (boost::format("%1$04d-%2$02d-%3$02d") % pd.year() % pd.month() % pd.day()).str();
+    const int y = pd.year(), m = pd.month(), d = pd.day();
+    return (boost::format("%1$04d-%2$02d-%3$02d") % y % m % d).str();
 }
 
 b_pt::ptime from_iso_extended_string(const std::string& st)
