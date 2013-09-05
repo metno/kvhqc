@@ -1,3 +1,9 @@
+kvhqc (3.0.0~a10-1) unstable; urgency=low
+
+  * bugfix: show original value, not old corrected value
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 26 Jun 2013 14:03:01 +0200
+
 kvhqc (3.0.0~a9-1) unstable; urgency=low
 
   * test of new error list: yellow for old, rose for new
