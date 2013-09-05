@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>DialogExtremeValues</class>
- <widget class="QDialog" name="DialogExtremeValues">
+ <widget class="QWidget" name="DialogExtremeValues">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -26,26 +26,33 @@
       <number>2</number>
      </property>
      <item>
-      <widget class="QComboBox" name="comboParameter"/>
+      <widget class="QComboBox" name="comboParam"/>
      </item>
      <item>
-      <widget class="QDateTimeEdit" name="timeFrom">
+      <widget class="MiDateTimeEdit" name="timeFrom">
        <property name="displayFormat">
         <string notr="true">yyyy-MM-dd hh:mm</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QDateTimeEdit" name="timeTo">
-       <property name="displayFormat">
-        <string notr="true">yyyy-MM-dd hh:mm</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="buttonUpdate">
+      <widget class="QLabel" name="labelTo">
        <property name="text">
-        <string>Update</string>
+        <string> to:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MiDateTimeEdit" name="timeTo">
+       <property name="displayFormat">
+        <string notr="true">yyyy-MM-dd hh:mm</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonApply">
+       <property name="text">
+        <string>Apply</string>
        </property>
       </widget>
      </item>
@@ -69,6 +76,33 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MiDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonApply</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogExtremeValues</receiver>
+   <slot>onUpdateClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>430</x>
+     <y>10</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>13</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onUpdateClicked()</slot>
+ </slots>
 </ui>

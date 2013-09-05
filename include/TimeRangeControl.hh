@@ -12,6 +12,7 @@ class TimeRangeControl : public QObject
 public:
   TimeRangeControl(QObject* parent=0);
   void setMinimumGap(int hours);
+  void setMaximumGap(int hours);
   void install(MiDateTimeEdit* t0, MiDateTimeEdit* t1);
 
   TimeRange timeRange() const;
@@ -23,7 +24,6 @@ private Q_SLOTS:
   void onT1DateChanged(const QDate&);
 
 private:
-  QDateTime addGap(const QDateTime& t, int sign);
   void changedT0();
   void changedT1();
   
@@ -31,6 +31,7 @@ private:
   MiDateTimeEdit* mT0;
   MiDateTimeEdit* mT1;
   int mMinimumGap;
+  int mMaximumGap;
 };
 
 #endif // TimeRangeControl_hh

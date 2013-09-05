@@ -62,19 +62,12 @@
     <addaction name="actionShowErrorList"/>
     <addaction name="actionShowChanges"/>
     <addaction name="actionShowSimpleCorrections"/>
+    <addaction name="actionShowExtremeValues"/>
    </widget>
    <widget class="QMenu" name="menuListType">
     <property name="title">
      <string>&amp;Lists</string>
     </property>
-    <widget class="QMenu" name="menuExtremeValues">
-     <property name="title">
-      <string>Extreme values</string>
-     </property>
-     <addaction name="actionExtremeTAN"/>
-     <addaction name="actionExtremeTAX"/>
-     <addaction name="actionExtremeRR_24"/>
-    </widget>
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorDataSalen"/>
     <addaction name="actionErrorList"/>
@@ -82,7 +75,6 @@
     <addaction name="dataListAction"/>
     <addaction name="actionErrorListSalen"/>
     <addaction name="separator"/>
-    <addaction name="menuExtremeValues"/>
     <addaction name="actionWatchRR"/>
     <addaction name="actionWatchWeather"/>
     <addaction name="separator"/>
@@ -227,6 +219,15 @@
      </item>
     </layout>
    </widget>
+  </widget>
+  <widget class="QDockWidget" name="dockExtremes">
+   <property name="windowTitle">
+    <string>Extremes</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>8</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_3"/>
   </widget>
   <action name="saveAction">
    <property name="enabled">
@@ -442,19 +443,9 @@
     <string>Show Simple Corrections</string>
    </property>
   </action>
-  <action name="actionExtremeTAN">
+  <action name="actionShowExtremeValues">
    <property name="text">
-    <string>TAN</string>
-   </property>
-  </action>
-  <action name="actionExtremeTAX">
-   <property name="text">
-    <string>TAX</string>
-   </property>
-  </action>
-  <action name="actionExtremeRR_24">
-   <property name="text">
-    <string>RR_24</string>
+    <string>Show Extreme Values</string>
    </property>
   </action>
  </widget>
@@ -828,42 +819,10 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionExtremeTAN</sender>
+   <sender>actionShowExtremeValues</sender>
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
-   <slot>onShowExtremeTAN()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionExtremeTAX</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowExtremeTAX()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionExtremeRR_24</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowExtremeRR_24()</slot>
+   <slot>onShowExtremes()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -939,9 +898,7 @@
   <slot>onShowErrorList()</slot>
   <slot>onShowChanges()</slot>
   <slot>onShowSimpleCorrections()</slot>
-  <slot>onShowExtremeTAN()</slot>
-  <slot>onShowExtremeTAX()</slot>
-  <slot>onShowExtremeRR_24()</slot>
+  <slot>onShowExtremes()</slot>
   <slot>onTabCloseRequested(int)</slot>
  </slots>
 </ui>

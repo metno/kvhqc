@@ -3,17 +3,36 @@
 
 #include "MiDateTimeEdit.hh"
 
+#define MILOGGER_CATEGORY "kvhqc.TimeRangeControl"
+#include "HqcLogging.hh"
+
 TimeRangeControl::TimeRangeControl(QObject* parent)
   : QObject(parent)
   , mT0(0)
   , mT1(0)
   , mMinimumGap(24)
+  , mMaximumGap(0)
 {
 }
 
 void TimeRangeControl::setMinimumGap(int hours)
 {
   mMinimumGap = hours;
+  if (mMinimumGap > 0 and mMaximumGap > 0 and mMinimumGap > mMaximumGap) {
+    METLIBS_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
+    mMaximumGap = mMinimumGap;
+  }
+  if (mT0 and mT1)
+    changedT1();
+}
+
+void TimeRangeControl::setMaximumGap(int hours)
+{
+  mMaximumGap = hours;
+  if (mMinimumGap > 0 and mMaximumGap > 0 and mMinimumGap > mMaximumGap) {
+    METLIBS_LOG_WARN("minimum gap (" << mMinimumGap << ") > maximum gap (" << mMaximumGap << ")");
+    mMinimumGap = mMaximumGap;
+  }
   if (mT0 and mT1)
     changedT1();
 }
@@ -57,11 +76,6 @@ TimeRange TimeRangeControl::timeRange() const
   return TimeRange(t0, t1);
 }
 
-QDateTime TimeRangeControl::addGap(const QDateTime& t, int sign)
-{
-  return t.addSecs(((sign>=0) ? 1 : -1) * 3600 * mMinimumGap);
-}
-
 void TimeRangeControl::onT0DateChanged(const QDate&)
 {
   changedT0();
@@ -74,9 +88,16 @@ void TimeRangeControl::onT0TimeChanged(const QTime&)
 
 void TimeRangeControl::changedT0()
 {
-  const QDateTime t1min = addGap(mT0->dateTime(), 1);
-  if (t1min > mT1->dateTime() and t1min <= mT1->maximumDateTime())
-    mT1->setDateTime(t1min);
+  if (mMinimumGap > 0) {
+    const QDateTime t1min = mT0->dateTime().addSecs(3600*mMinimumGap);
+    if (t1min > mT1->dateTime() and t1min <= mT1->maximumDateTime())
+      mT1->setDateTime(t1min);
+  }
+  if (mMaximumGap > 0) {
+    const QDateTime t1max = mT0->dateTime().addSecs(3600*mMaximumGap);
+    if (t1max < mT1->dateTime() and t1max >= mT1->minimumDateTime())
+      mT1->setDateTime(t1max);
+  }
 }
 
 void TimeRangeControl::onT1DateChanged(const QDate&)
@@ -91,7 +112,14 @@ void TimeRangeControl::onT1TimeChanged(const QTime&)
 
 void TimeRangeControl::changedT1()
 {
-  const QDateTime t0max = addGap(mT1->dateTime(), -1);
-  if (mT0->dateTime() > t0max and t0max >= mT0->minimumDateTime())
-    mT0->setDateTime(t0max);
+  if (mMinimumGap > 0) {
+    const QDateTime t0max = mT1->dateTime().addSecs(-3600*mMinimumGap);
+    if (t0max < mT0->dateTime() and t0max >= mT0->minimumDateTime())
+      mT0->setDateTime(t0max);
+  }
+  if (mMaximumGap > 0) {
+    const QDateTime t0min = mT1->dateTime().addSecs(-3600*mMaximumGap);
+    if (t0min > mT0->dateTime() and t0min <= mT0->maximumDateTime())
+      mT0->setDateTime(t0min);
+  }
 }
