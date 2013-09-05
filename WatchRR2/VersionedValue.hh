@@ -143,9 +143,10 @@ bool VersionedValue<T,E>::reset(const T& originalValue)
 template< typename T, class E>
 bool VersionedValue<T,E>::changeOriginal(const T& originalValue)
 {
-    const bool wasModified = modified();
-    mVersions[0].value = originalValue;
-    return (modified() != wasModified);
+  const bool changed = (not E()(originalValue, value()));
+  const bool wasModified = modified();
+  mVersions[0].value = originalValue;
+  return changed or (modified() != wasModified);
 }
 
 template< typename T, class E>

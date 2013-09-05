@@ -16,6 +16,9 @@
 #include <kvcpp/KvApp.h>
 
 #include <QtCore/QVariant>
+#include <QtGui/QApplication>
+#include <QtGui/QMessageBox>
+#include <QtGui/QPushButton>
 #include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
@@ -523,6 +526,25 @@ Sensors_t relatedSensors(const SensorTime& st)
   }
 #endif
   return sensors;
+}
+
+bool askDiscardChanges(int nupdates, QWidget* parent)
+{
+  if (nupdates == 0)
+    return true;
+
+  QMessageBox w(parent);
+  w.setWindowTitle(parent->windowTitle());
+  w.setIcon(QMessageBox::Warning);
+  w.setText(qApp->translate("Helpers", "There are %1 unsaved data updates.").arg(nupdates));
+  w.setInformativeText(qApp->translate("Helpers", "Are you sure that you want to lose them?"));
+  QPushButton* discard = w.addButton(qApp->translate("Helpers", "Discard changes"), QMessageBox::ApplyRole);
+  QPushButton* cont = w.addButton(qApp->translate("Helpers", "Continue"), QMessageBox::RejectRole);
+  w.setDefaultButton(cont);
+  w.exec();
+  if (w.clickedButton() != discard)
+    return false;
+  return true;
 }
 
 } // namespace Helpers

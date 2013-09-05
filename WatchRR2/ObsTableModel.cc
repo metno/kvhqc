@@ -227,15 +227,16 @@ int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
 
 void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn* column)
 {
-    for(unsigned int col=0; col<mColumns.size(); ++col) {
-        if (mColumns.at(col) and column == mColumns.at(col).get()) {
-            const int row = rowAtTime(time);
-            if (row >= 0) {
-                const QModelIndex index = createIndex(row, col);
-                METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(col));
-                dataChanged(index, index);
-            }
-            break;
-        }
+  METLIBS_LOG_SCOPE();
+  for(unsigned int col=0; col<mColumns.size(); ++col) {
+    if (mColumns.at(col) and column == mColumns.at(col).get()) {
+      const int row = rowAtTime(time);
+      if (row >= 0) {
+        const QModelIndex index = createIndex(row, col);
+        METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(col));
+        dataChanged(index, index);
+      }
+      break;
     }
+  }
 }

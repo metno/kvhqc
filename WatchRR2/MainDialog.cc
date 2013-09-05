@@ -234,20 +234,7 @@ void MainDialog::onAcceptRow()
 
 void MainDialog::reject()
 {
-    int updates = mDA->countU();
-    if (updates > 0) {
-        QMessageBox w(this);
-        w.setWindowTitle(windowTitle());
-        w.setIcon(QMessageBox::Warning);
-        w.setText(tr("There are %1 unsaved data updates.").arg(updates));
-        w.setInformativeText(tr("Are you sure that you want to lose them?"));
-        QPushButton* discard = w.addButton(tr("Discard changes"), QMessageBox::ApplyRole);
-        QPushButton* cont = w.addButton(tr("Continue"), QMessageBox::RejectRole);
-        w.setDefaultButton(cont);
-        w.exec();
-        if (w.clickedButton() != discard)
-            return;
-    }
+  if (Helpers::askDiscardChanges(mDA->countU(), this))
     QDialog::reject();
 }
 

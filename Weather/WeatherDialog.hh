@@ -26,6 +26,10 @@ public:
   WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
   ~WeatherDialog();
 
+public Q_SLOTS:
+  virtual void accept();
+  virtual void reject();
+
 private Q_SLOTS:
   void onUndo();
   void onRedo();
@@ -39,7 +43,7 @@ private:
 
 private:
   std::auto_ptr<Ui::WeatherDialog> ui;
-  EditAccessPtr mDA;
+  EditAccessPtr mParentDA, mDA;
   Sensor mSensor;
   TimeRange mTime;
   std::auto_ptr<WeatherTableModel> mModelCorrected;

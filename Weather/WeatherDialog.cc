@@ -28,7 +28,8 @@ const char SETTING_WEATHER_GEOMETRY[] = "geometry_weather";
 WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, QWidget* parent)
     : QDialog(parent)
     , ui(new Ui::WeatherDialog)
-    , mDA(da)
+    , mParentDA(da)
+    , mDA(boost::make_shared<EditAccess>(mParentDA))
     , mSensor(sensor)
     , mTime(time)
     , mModelCorrected(new WeatherTableModel(mDA, mSensor, mTime, ObsColumn::NEW_CORRECTED))
@@ -92,8 +93,28 @@ WeatherDialog::~WeatherDialog()
     settings.setValue(SETTING_WEATHER_GEOMETRY, saveGeometry());
 }
 
+void WeatherDialog::reject()
+{
+  if (Helpers::askDiscardChanges(mDA->countU(), this))
+    QDialog::reject();
+}
+
+void WeatherDialog::accept()
+{
+  mParentDA->newVersion();
+  if (not mDA->sendChangesToParent(false)) {
+    QMessageBox::critical(this,
+        windowTitle(),
+        tr("Sorry, your changes could not be saved and are lost!"),
+        tr("OK"),
+        "");
+  }
+  QDialog::accept();
+}
+
 void WeatherDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr ebs)
 {
+  METLIBS_LOG_SCOPE();
     if (ebs->modified() or ebs->hasTasks()) {
         QMessageBox w(this);
         w.setWindowTitle(windowTitle());

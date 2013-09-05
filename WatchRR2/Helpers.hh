@@ -103,6 +103,8 @@ inline float numericalValue(const Sensor& sensor, float codeValue)
 inline float numericalValue(const SensorTime& st, float codeValue)
 { return numericalValue(st.sensor.paramId, codeValue); }
 
+bool askDiscardChanges(int nupdates, QWidget* parent);
+
 } // namespace Helpers
 
 namespace kvalobs {

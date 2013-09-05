@@ -4,6 +4,9 @@
 #include "Helpers.hh"
 #include "Tasks.hh"
 
+#define MILOGGER_CATEGORY "kvhqc.EditData"
+#include "HqcLogging.hh"
+
 namespace /* anonymous */ {
 int tasksFrom(ObsDataPtr obs)
 {
@@ -38,13 +41,17 @@ void EditData::reset()
 
 bool EditData::updateFromBackend()
 {
-    const float bOriginal = mData->original();
-    bool changed = (not Helpers::float_eq()(mOriginal, bOriginal));
-    mOriginal = bOriginal;
+  METLIBS_LOG_SCOPE();
+  
+  const float bOriginal = mData->original();
+  const bool changedO = (not Helpers::float_eq()(mOriginal, bOriginal));
+  mOriginal = bOriginal;
 
-    changed |= mCorrected.changeOriginal(mData->corrected());
-    changed |= mControlinfo.changeOriginal(mData->controlinfo());
-    changed |= mTasks.changeOriginal(tasksFrom(mData));
+  const bool changedC = mCorrected.changeOriginal(mData->corrected());
+  const bool changedI = mControlinfo.changeOriginal(mData->controlinfo());
+  const bool changedT = mTasks.changeOriginal(tasksFrom(mData));
 
-    return changed;
+  METLIBS_LOG_DEBUG("changed o=" << changedO << " c=" << changedC << " i=" << changedI << " t=" << changedT);
+
+  return (changedO or changedC or changedI or changedT);
 }

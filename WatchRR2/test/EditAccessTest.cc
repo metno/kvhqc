@@ -278,3 +278,43 @@ TEST(EditAccessTest, UndoRedoNewVersions)
     const std::vector<EditDataPtr> changed2 = eda->versionChanges(2);
     ASSERT_TRUE(changed2.empty());
 }
+
+TEST(EditAccessTest, ChangeInParent)
+{
+    FakeKvApp fa;
+
+    const Sensor s(31850, 18, 0, 0, 302);
+    const timeutil::ptime t0 = s2t("2012-11-09 06:00:00");
+    const SensorTime st(s, t0);
+
+    const float OCORR = 2, NCORR = 4;
+
+    fa.kda->addSubscription(ObsSubscription(s.stationId, TimeRange(t0, t0)));
+    fa.insertData(s.stationId, s.paramId, s.typeId, "2012-11-09 06:00:00", 2, OCORR);
+
+    EditAccessPtr parent = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr child  = boost::make_shared<EditAccess>(parent);
+
+    const FlagChange fc_ok("fhqc=1");
+
+    CountDataChanged cdcP, cdcC;
+    cdcP.filterParam = cdcC.filterParam = s.paramId;
+    parent->obsDataChanged.connect(boost::ref(cdcP));
+    child ->obsDataChanged.connect(boost::ref(cdcC));
+
+    parent->newVersion();
+    EditDataPtr ebsP = parent->findE(st);
+    ASSERT_TRUE(ebsP);
+    EXPECT_EQ(OCORR, ebsP->corrected());
+
+    EditDataPtr ebsC = child ->findE(st);
+    ASSERT_TRUE(ebsC);
+    EXPECT_EQ(OCORR, ebsC->corrected());
+  
+    parent->editor(ebsP)->setCorrected(NCORR).changeControlinfo(fc_ok).commit();
+
+    EXPECT_EQ(1, cdcP.count);
+    EXPECT_EQ(1, cdcC.count);
+    EXPECT_EQ(NCORR, ebsP->corrected());
+    EXPECT_EQ(NCORR, ebsC->corrected());
+}

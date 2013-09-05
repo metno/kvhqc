@@ -246,10 +246,11 @@ EditAccess::ChangedData_t EditAccess::versionChanges(int version) const
 
 void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks)
 {
-    METLIBS_LOG_DEBUG(LOGVAL(obs->sensorTime()) << LOGVAL(dUpdated) << LOGVAL(dTasks));
-    mUpdated += dUpdated;
-    mTasks += dTasks;
-    obsDataChanged(what, obs);
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(obs->sensorTime()) << LOGVAL(dUpdated) << LOGVAL(dTasks));
+  mUpdated += dUpdated;
+  mTasks += dTasks;
+  obsDataChanged(what, obs);
 }
 
 EditDataEditorPtr EditAccess::editor(EditDataPtr obs)

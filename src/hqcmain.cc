@@ -474,18 +474,8 @@ void HqcMainWindow::showWeather()
   sensor = sd.selectedSensor();
   time = sd.selectedTime();
 
-  EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-  WeatherDialog wd(eda2, sensor, time, this);
-  if (wd.exec()) {
-    eda->newVersion();
-    if (not eda2->sendChangesToParent(false)) {
-      QMessageBox::critical(this,
-          tr("WatchWeather"),
-          tr("Sorry, your changes could not be saved and are lost!"),
-          tr("OK"),
-          "");
-      }
-  }
+  WeatherDialog* wd = new WeatherDialog(eda, sensor, time, this);
+  wd->show();
 }
 
 void HqcMainWindow::errListMenu()
@@ -722,24 +712,12 @@ void HqcMainWindow::closeEvent(QCloseEvent* event)
 {
   METLIBS_LOG_SCOPE();
 
-  const int updates = eda->countU();
-  if (updates > 0) {
-    QMessageBox w(this);
-    w.setWindowTitle(windowTitle());
-    w.setIcon(QMessageBox::Warning);
-    w.setText(tr("There are %1 unsaved data updates.").arg(updates));
-    w.setInformativeText(tr("Are you sure that you want to lose them?"));
-    QPushButton* discard = w.addButton(tr("Discard changes"), QMessageBox::ApplyRole);
-    QPushButton* cont = w.addButton(tr("Continue"), QMessageBox::RejectRole);
-    w.setDefaultButton(cont);
-    w.exec();
-    if (w.clickedButton() != discard) {
-      event->ignore();
-      return;
-    }
+  if (Helpers::askDiscardChanges(eda->countU(), this)) {
+    writeSettings();
+    event->accept();
+  } else {
+    event->ignore();
   }
-  writeSettings();
-  event->accept();
 }
 
 void HqcMainWindow::navigateTo(const SensorTime& st)
