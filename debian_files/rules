@@ -9,7 +9,7 @@ include /usr/share/metno-devscripts/metno_rules.mk
 @metno_config_if ^lucid$
 DH_COMMAND = dh --with quilt
 @metno_config_else
-DH_COMMAND = dh --with quilt --with python2
+DH_COMMAND = dh --with quilt --with python2 --parallel
 @metno_config_endif
 
 do-configure:
