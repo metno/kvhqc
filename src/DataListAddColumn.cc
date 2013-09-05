@@ -107,6 +107,8 @@ void DataListAddColumn::onStationEdited()
     const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
+      if (p == kvalobs::PARAMID_V4S or p == kvalobs::PARAMID_V5S or p == kvalobs::PARAMID_V6S)
+        continue;
       stationParams.insert(p);
       Helpers::aggregatedParameters(p, stationParams);
     }
