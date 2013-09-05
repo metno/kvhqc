@@ -33,6 +33,28 @@ struct VxData {
     { 17, "RI", QT_TRANSLATE_NOOP("DataVxItem", "rime") },
     { 20, "TO", QT_TRANSLATE_NOOP("DataVxItem", "thunder") },
     { 28, "SF", QT_TRANSLATE_NOOP("DataVxItem", "snowflakes") },
+#if 0
+    // see http://metklim.met.no/nasjonale_koder
+    {  6, "KS", "Kornsnø" },
+    {  9, "SH", "Sprøhagl" },
+    { 11, "IH", "Ishagl" },
+    { 13, "TR", "Tåkerim" },
+    { 14, "IS", "Isslag" },
+    { 15, "IK", "Iskorn" },
+    { 16, "IN", "Isnåler" },		
+    { 18, "TA", "Tåke" },
+    { 19, "TD", "Tåkedis" },
+    { 21, "OO", "Ølrøyk" },		
+    { 22, "RL", "Ren luft" },
+    { 23, "HA", "Halo" },
+    { 24, "KR", "Krans" },
+    { 25, "SO", "Sol" },
+    { 26, "NL", "Nordlys" },
+    { 27, "RE", "Regnbue" },
+    { 29, "KM", "Kornmo" },
+    { 30, "RS", "Regn, snø, sludd" },
+    { 31, "AN", "Dugg, rim, tåke" },
+#endif
     { -1, 0, 0 }
 };
 } // namespace anonymous
