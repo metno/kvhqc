@@ -1,7 +1,6 @@
 
 #include "DataList.hh"
 
-#include "AcceptReject.hh"
 #include "ColumnFactory.hh"
 #include "DataListAddColumn.hh"
 #include "DataListModel.hh"
@@ -53,16 +52,6 @@ DataList::DataList(QWidget* parent)
   ui->table->setSelectionBehavior(QAbstractItemView::SelectItems);
   ui->table->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui->table->setItemDelegate(new ObsDelegate(this));
-
-#if 1
-#include "../src/icon_accept.xpm"
-#include "../src/icon_reject.xpm"
-    QIcon iconAccept, iconReject;
-    iconAccept.addPixmap(QPixmap(icon_accept));
-    iconReject.addPixmap(QPixmap(icon_reject));
-    ui->buttonAccept   ->setIcon(iconAccept);
-    ui->buttonReject   ->setIcon(iconReject);
-#endif
 
   QFont mono("Monospace");
   //ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
@@ -116,8 +105,7 @@ void DataList::updateModel()
 
     mTableModel = newModel;
     ui->table->setModel(mTableModel.get());
-    connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-        this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+    ui->buttonsAcceptReject->updateModel(mDA, ui->table);
 
     //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
@@ -521,82 +509,4 @@ void DataList::onButtonSaveAs()
    }
  
    file.close(); 
-}
-
-void DataList::onAccept()
-{
-  METLIBS_LOG_SCOPE();
-  if (not mSelectedObs.empty()) {
-    const bool qc2ok = ui->checkQC2->isChecked();
-    mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      if (mSelectedColumnIsOriginal)
-        AcceptReject::accept_original(mDA, st, qc2ok);
-      else
-        AcceptReject::accept_corrected(mDA, st, qc2ok);
-    }
-  }
-  onSelectionChanged(QItemSelection(), QItemSelection());
-}
-
-void DataList::onReject()
-{
-  METLIBS_LOG_SCOPE();
-  if (not mSelectedObs.empty()) {
-    const bool qc2ok = ui->checkQC2->isChecked();
-    mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      AcceptReject::reject(mDA, st, qc2ok);
-    }
-  }
-  onSelectionChanged(QItemSelection(), QItemSelection());
-}
-
-void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
-{
-  METLIBS_LOG_SCOPE();
-
-  QModelIndexList selected = ui->table->selectionModel()->selectedIndexes();
-  bool enableAccept = false, enableReject = false;
-  mSelectedObs.clear();
-  if (not selected.isEmpty()) {
-    int minRow = selected.at(0).row(), maxRow = minRow;
-    int minCol = selected.at(0).column(), maxCol = minCol;
-    for (int i=1; i<selected.count(); i++) {
-        const int r = selected.at(i).row(), c = selected.at(i).column();
-        if (r < minRow)
-          minRow = r;
-        if (maxRow < r)
-          maxRow = r;
-        if (c < minCol)
-          minCol = c;
-        if (maxCol < c)
-          maxCol = c;
-    }
-    if (minCol == maxCol and (maxRow - minRow + 1 == selected.size())) {
-      DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(mTableModel->getColumn(minCol));
-      if (dc and (dc->type() == ObsColumn::ORIGINAL or dc->type() == ObsColumn::NEW_CORRECTED)) {
-        int possible = AcceptReject::ALL;
-        for (int r=minRow; r<=maxRow; ++r) {
-          const SensorTime st = mTableModel->findSensorTime(mTableModel->index(r, minCol));
-          EditDataPtr obs = mDA->findE(st);
-          if (obs) {
-            possible &= AcceptReject::possibilities(obs);
-            mSelectedObs.push_back(st);
-          }
-          // TODO disable if missing but in obs_pgm
-        }
-        if (dc->type() == ObsColumn::ORIGINAL) {
-          enableAccept = (possible & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0;
-          mSelectedColumnIsOriginal = true;
-        } else if (dc->type() == ObsColumn::NEW_CORRECTED) {
-          enableAccept = (possible & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
-          mSelectedColumnIsOriginal = false;
-        }
-        enableReject = (possible & AcceptReject::CAN_REJECT) != 0;
-      }
-    }
-  }
-  ui->buttonAccept->setEnabled(enableAccept);
-  ui->buttonReject->setEnabled(enableReject);
 }

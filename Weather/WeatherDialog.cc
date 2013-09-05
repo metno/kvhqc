@@ -74,9 +74,14 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
     qApp->processEvents();
 
     ui->buttonUndo->setEnabled(false);
-    ui->buttonRedo->setVisible(false);
+    ui->buttonRedo->setEnabled(false);
 
     mDA->backendDataChanged.connect(boost::bind(&WeatherDialog::onBackendDataChanged, this, _1, _2));
+
+    connect(mModelCorrected.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+        this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
+
+    ui->buttonsAcceptReject->updateModel(mDA, ui->tableCorrected);
 }
 
 WeatherDialog::~WeatherDialog()
@@ -100,3 +105,56 @@ void WeatherDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditData
         QDialog::reject();
     }
 }
+
+void WeatherDialog::onUndo()
+{
+  if (mDA->canUndo()) {
+    mDA->undoVersion();
+    enableSave();
+    clearSelection();
+  }
+}
+
+void WeatherDialog::onRedo()
+{
+  if (mDA->canRedo()) {
+    mDA->redoVersion();
+    enableSave();
+    clearSelection();
+  }
+}
+
+// TODO this is a helper function
+void WeatherDialog::clearSelection(QTableView* tv)
+{
+  QAbstractItemModel* mdl = tv->model();
+  const QModelIndex tl = mdl->index(0, 0, QModelIndex());
+  const QModelIndex br = mdl->index(mdl->rowCount(QModelIndex())-1,
+      mdl->columnCount(QModelIndex())-1, QModelIndex());
+  QItemSelection s;
+  s.select(tl, br);
+  tv->selectionModel()->select(s, QItemSelectionModel::Clear);
+}
+
+void WeatherDialog::clearSelection()
+{
+  clearSelection(ui->tableCorrected);
+  clearSelection(ui->tableOriginal);
+  clearSelection(ui->tableFlags);
+}
+
+void WeatherDialog::enableSave()
+{
+    METLIBS_LOG_SCOPE();
+    int updates = mDA->countU(), tasks = mDA->countT();
+
+    ui->buttonSave->setEnabled(tasks == 0 and updates > 0);
+    ui->buttonUndo->setEnabled(mDA->canUndo());
+    ui->buttonRedo->setEnabled(mDA->canRedo());
+}
+
+void WeatherDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
+{
+    enableSave();
+}
+

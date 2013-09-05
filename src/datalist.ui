@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>267</width>
+    <width>256</width>
     <height>223</height>
    </rect>
   </property>
@@ -26,40 +26,7 @@
       <number>2</number>
      </property>
      <item>
-      <widget class="QToolButton" name="buttonAccept">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept  the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Accept</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QToolButton" name="buttonReject">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>Reject</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkQC2">
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot; font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="text">
-        <string>QC2</string>
-       </property>
-      </widget>
+      <widget class="AcceptRejectButtons" name="buttonsAcceptReject" native="true"/>
      </item>
      <item>
       <spacer name="horizontalSpacer">
@@ -94,6 +61,12 @@
    <extends>QTableWidget</extends>
    <header>DataList.hh</header>
   </customwidget>
+  <customwidget>
+   <class>AcceptRejectButtons</class>
+   <extends>QWidget</extends>
+   <header>AcceptRejectButtons.hh</header>
+   <container>1</container>
+  </customwidget>
  </customwidgets>
  <resources/>
  <connections>
@@ -110,38 +83,6 @@
     <hint type="destinationlabel">
      <x>374</x>
      <y>15</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonAccept</sender>
-   <signal>clicked()</signal>
-   <receiver>DataList</receiver>
-   <slot>onAccept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>30</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>18</x>
-     <y>29</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonReject</sender>
-   <signal>clicked()</signal>
-   <receiver>DataList</receiver>
-   <slot>onReject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>57</x>
-     <y>18</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>47</x>
-     <y>29</y>
     </hint>
    </hints>
   </connection>

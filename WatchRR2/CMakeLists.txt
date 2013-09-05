@@ -1,5 +1,6 @@
 
 SET(watchrr2_HEADERS
+  AcceptRejectButtons.hh
   DianaHelper.hh
   EditDialog.hh
   FrozenColumnTableView.hh
@@ -16,6 +17,7 @@ SET(watchrr2_HEADERS
 
 SET(watchrr2_SOURCES
   AcceptReject.cc
+  AcceptRejectButtons.cc
   AnalyseFCC.hh
   AnalyseFCC.cc
   AnalyseRR24.hh

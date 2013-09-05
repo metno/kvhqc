@@ -54,14 +54,11 @@ private:
   typedef std::vector<Column> Columns_t;
 
 private Q_SLOTS:
-    void onAccept();
-    void onReject();
     void onEarlier();
     void onLater();
     void onHorizontalHeaderContextMenu(const QPoint& pos);
     void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
     void onButtonSaveAs();
-    void onSelectionChanged(const QItemSelection&, const QItemSelection&);
     void currentChanged(const QModelIndex& current);
 
 private:
@@ -74,9 +71,6 @@ private:
   std::auto_ptr<Ui::DataList> ui;
   std::auto_ptr<DataListModel> mTableModel;
   SensorTime mSensorTime;
-
-  std::vector<SensorTime> mSelectedObs;
-  bool mSelectedColumnIsOriginal;
 
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
