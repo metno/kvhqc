@@ -431,7 +431,6 @@ void HqcMainWindow::showWatchRR()
     StationDialog sd(sensor, time);
     if (not sd.exec())
         return;
-
     sensor = sd.selectedSensor();
     time = sd.selectedTime();
 
@@ -453,22 +452,33 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-  Sensor s(10380, 211, 0, 0, 311);
+  Sensor sensor(10380, 211, 0, 0, 311);
   const timeutil::ptime now = timeutil::now();
   const timeutil::ptime roundedNow = timeutil::ptime(now.date(), boost::posix_time::time_duration(now.time_of_day().hours(),0,0))
       + boost::posix_time::hours(1);
-  timeutil::ptime t(roundedNow); //(boost::gregorian::day_clock::universal_day(),  boost::posix_time::time_duration(0,0,0)); 
+  timeutil::ptime tMiddle = now;
 
   EditDataPtr obs = ui->treeErrors->getObs();
   if (obs) {
     const SensorTime& st = obs->sensorTime();
-    s = st.sensor;
-    t = st.time;
+    sensor = st.sensor;
+    tMiddle = st.time;
   }
   
-  const TimeRange limits(t + boost::gregorian::days(-7), std::min(t + boost::gregorian::days(1), roundedNow));
+  timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
+  timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
+  if (timeTo > now)
+    timeTo = now;
+  TimeRange time(timeFrom, timeTo);
+  
+  StationDialog sd(sensor, time);
+  if (not sd.exec())
+    return;
+  sensor = sd.selectedSensor();
+  time = sd.selectedTime();
+
   EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-  WeatherDialog wd(eda2, s, limits, this);
+  WeatherDialog wd(eda2, sensor, time, this);
   if (wd.exec()) {
     eda->newVersion();
     if (not eda2->sendChangesToParent(false)) {

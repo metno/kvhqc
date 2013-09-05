@@ -465,9 +465,6 @@
    <header>errorlist.h</header>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="hqc_resources.qrc"/>
- </resources>
  <connections>
   <connection>
    <sender>actionDataAndErrorList</sender>

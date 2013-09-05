@@ -77,6 +77,13 @@ void StationDialog::onUpdateType()
     ui->labelTypeInfo->setText(typeText);
 }
 
+bool StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
+{
+  return (op.paramID() == kvalobs::PARAMID_RR_24
+      and (op.typeID() == 302 or op.typeID() == 402)
+      and (op.kl06() or op.kl07() or op.collector()));
+}
+
 bool StationDialog::check()
 {
     bool ok = false;
@@ -106,22 +113,19 @@ bool StationDialog::check()
     int typeFrom = -1, typeTo = -1;
     timeutil::ptime tFromEnd, tToStart;
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (op.paramID() == kvalobs::PARAMID_RR_24
-            and (op.typeID() == 302 or op.typeID() == 402)
-            and (op.kl06() or op.kl07() or op.collector()))
-        {
-            const timeutil::ptime oFrom = timeutil::from_miTime(op.fromtime()), oTo = timeutil::from_miTime(op.totime());
-            if (oFrom <= mTimeFrom and (oTo.is_not_a_date_time() or mTimeFrom <= oTo)) {
-                typeFrom = op.typeID();
-                tFromEnd = oTo;
-                mHour = op.kl07() ? 7 : 6;
-            }
-            if (oFrom <= mTimeTo and (oTo.is_not_a_date_time() or mTimeTo <= oTo)) {
-                typeTo = op.typeID();
-                tToStart = oFrom;
-                mHour = op.kl07() ? 7 : 6;
-            }
+      if (acceptThisObsPgm(op)) {
+        const timeutil::ptime oFrom = timeutil::from_miTime(op.fromtime()), oTo = timeutil::from_miTime(op.totime());
+        if (oFrom <= mTimeFrom and (oTo.is_not_a_date_time() or mTimeFrom <= oTo)) {
+          typeFrom = op.typeID();
+          tFromEnd = oTo;
+          mHour = op.kl07() ? 7 : 6;
         }
+        if (oFrom <= mTimeTo and (oTo.is_not_a_date_time() or mTimeTo <= oTo)) {
+          typeTo = op.typeID();
+          tToStart = oFrom;
+          mHour = op.kl07() ? 7 : 6;
+        }
+      }
     }
 
     if (typeFrom < 0 or typeTo < 0) {

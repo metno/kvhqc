@@ -7,6 +7,9 @@
 #include <QtGui/QDialog>
 #include <memory>
 
+namespace kvalobs {
+class kvObsPgm;
+}
 namespace Ui {
 class DialogStation;
 }
@@ -24,6 +27,9 @@ public:
     TimeRange selectedTime() const;
 
     bool valid() const;
+
+protected:
+  virtual bool acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
 
 private Q_SLOTS:
     void init();
