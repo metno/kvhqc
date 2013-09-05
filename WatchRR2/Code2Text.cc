@@ -77,22 +77,24 @@ void Code2Text::setRange(float mini, float maxi)
 
 QStringList Code2Text::allCodes() const
 {
-    QStringList all;
+  QStringList all;
 
-    QMap<int, Code>::const_iterator it = mCodes.constBegin();
-    ++it; ++it; // do not allow setting "mis" or "new"
-    for (; it != mCodes.constEnd(); ++it)
-        all << it.value().shortText.at(0);
-    return all;
+  QMap<int, Code>::const_iterator it = mCodes.constBegin();
+  ++it; ++it; // do not allow setting "mis" or "new"
+  for (; it != mCodes.constEnd(); ++it) {
+    if (not it.value().shortText.isEmpty())
+      all << it.value().shortText.at(0);
+  }
+  return all;
 }
 
 QStringList Code2Text::allExplanations() const
 {
-    QStringList all;
-
-    QMap<int, Code>::const_iterator it = mCodes.constBegin();
-    ++it; ++it; // do not allow setting "mis" or new
-    for (; it != mCodes.constEnd(); ++it)
-        all << QString("%2 (%1)").arg(it.key()).arg(it.value().explain);
-    return all;
+  QStringList all;
+  
+  QMap<int, Code>::const_iterator it = mCodes.constBegin();
+  ++it; ++it; // do not allow setting "mis" or new
+  for (; it != mCodes.constEnd(); ++it)
+    all << QString("%2 (%1)").arg(it.key()).arg(it.value().explain);
+  return all;
 }

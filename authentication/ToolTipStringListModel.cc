@@ -8,8 +8,9 @@ void ToolTipStringListModel::setToolTipList(const QStringList& ttl)
 {
     mToolTips = ttl;
     if (rowCount() != mToolTips.size()) {
-        METLIBS_LOG_ERROR("have " << rowCount() << " items but "
-                      << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
+// FIXME this gives lots of warnings for code parameters without short codes
+//        METLIBS_LOG_ERROR("have " << rowCount() << " items but "
+//                      << mToolTips.size() << " tooltips: [" << mToolTips.join(",") << "]");
     }
 }
 
