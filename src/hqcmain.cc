@@ -458,7 +458,7 @@ void HqcMainWindow::showWeather()
   const timeutil::ptime now = timeutil::now();
   const timeutil::ptime roundedNow = timeutil::ptime(now.date(), boost::posix_time::time_duration(now.time_of_day().hours(),0,0))
       + boost::posix_time::hours(1);
-  timeutil::ptime tMiddle = now;
+  timeutil::ptime tMiddle = roundedNow;
 
   EditDataPtr obs = ui->treeErrors->getObs();
   if (obs) {
@@ -665,6 +665,7 @@ void HqcMainWindow::onTabCloseRequested(int index)
 #else
   // TODO improve this for list/series view
   if (index > 0) {
+    BusyIndicator busy;
     QWidget* w = ui->tabs->widget(index);
     delete w;
   }

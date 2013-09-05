@@ -68,14 +68,19 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="datalist.ui" line="47"/>
+        <location filename="DataList.cc" line="52"/>
         <source>Reset columns</source>
         <translation>Spalten zurücksetzen</translation>
     </message>
     <message>
+        <location filename="datalist.ui" line="47"/>
+        <source>Mofify table columns.</source>
+        <translation>Spalten anpassen.</translation>
+    </message>
+    <message utf8="true">
         <location filename="datalist.ui" line="50"/>
-        <source>Reset</source>
-        <translation>Zurücksetzen</translation>
+        <source>Columns…</source>
+        <translation>Spalten…</translation>
     </message>
     <message>
         <location filename="datalist.ui" line="57"/>
@@ -89,32 +94,32 @@
         <translation>Speichern…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="50"/>
+        <location filename="DataList.cc" line="60"/>
         <source>Earlier</source>
         <translation>Früher</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="55"/>
+        <location filename="DataList.cc" line="65"/>
         <source>Later</source>
         <translation>Später</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="193"/>
+        <location filename="DataList.cc" line="50"/>
         <source>Add column...</source>
         <translation>Spalte hinzufügen…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="194"/>
+        <location filename="DataList.cc" line="51"/>
         <source>Remove column</source>
         <translation>Spalte entfernen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="405"/>
+        <location filename="DataList.cc" line="469"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="407"/>
+        <location filename="DataList.cc" line="471"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -167,17 +172,22 @@
         <translation>Zeitverschiebung:</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="122"/>
+        <location filename="dl_addcolumn.ui" line="119"/>
+        <source>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</source>
+        <translation>Zeitverschiebung der Spalte. Bei einer Zeitverschiebung um beispielsweise 1 Stunde werden Daten von 08:00 in der Zeile für 09:00 gezeigt.</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="125"/>
         <source>h</source>
         <translation>h</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="152"/>
+        <location filename="dl_addcolumn.ui" line="155"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="162"/>
+        <location filename="dl_addcolumn.ui" line="165"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
@@ -969,7 +979,7 @@ Parameter</translation>
     <message>
         <location filename="hqcmain.cc" line="448"/>
         <location filename="hqcmain.cc" line="490"/>
-        <location filename="hqcmain.cc" line="724"/>
+        <location filename="hqcmain.cc" line="725"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -979,7 +989,7 @@ Parameter</translation>
         <translation>WatchWeather</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="689"/>
+        <location filename="hqcmain.cc" line="690"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -990,42 +1000,42 @@ You are using HQC version %1.</source>
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="722"/>
+        <location filename="hqcmain.cc" line="723"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Daten Speichern</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="723"/>
+        <location filename="hqcmain.cc" line="724"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="727"/>
+        <location filename="hqcmain.cc" line="728"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Daten gespeichert&lt;/h1&gt;Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="741"/>
+        <location filename="hqcmain.cc" line="742"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Es gibt %1 ungespeicherte Änderungen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="742"/>
+        <location filename="hqcmain.cc" line="743"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Möchten Sie diese verwerfen?</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="743"/>
+        <location filename="hqcmain.cc" line="744"/>
         <source>Discard changes</source>
         <translation>Verwerfen</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="744"/>
+        <location filename="hqcmain.cc" line="745"/>
         <source>Continue</source>
         <translation>Fortsetzen</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="761"/>
+        <location filename="hqcmain.cc" line="762"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Lese Daten für Station %1 um %2, bitte warten…</translation>
     </message>
@@ -1055,17 +1065,17 @@ Sie benutzen HQC Version %1.</translation>
         <translation>HQC wird beendet, da es ohne kvalobs-Dataenbank nicht benutzt werden kann.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="688"/>
+        <location filename="hqcmain.cc" line="689"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="820"/>
+        <location filename="hqcmain.cc" line="821"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="821"/>
+        <location filename="hqcmain.cc" line="822"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>

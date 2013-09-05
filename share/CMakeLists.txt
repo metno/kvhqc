@@ -25,6 +25,9 @@ INSTALL(FILES
   images/redo.svg
   images/accept.svg
   images/reject.svg
+  images/dl_columns.svg
+  images/dl_columns_add.svg
+  images/dl_columns_remove.svg
   images/dl_columns_reset.svg
   images/dl_save_as.svg
 

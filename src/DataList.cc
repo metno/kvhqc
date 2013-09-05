@@ -1,6 +1,7 @@
 
 #include "DataList.hh"
 
+#include "BusyIndicator.h"
 #include "ChangeReplay.hh"
 #include "ColumnFactory.hh"
 #include "DataListAddColumn.hh"
@@ -43,8 +44,17 @@ DataList::DataList(QWidget* parent)
     , ui(new Ui::DataList)
 {
   ui->setupUi(this);
-  ui->buttonResetColumns->setIcon(QIcon("icons:dl_columns_reset.svg"));
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
+
+  mColumnMenu = new QMenu(this);
+  mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
+  mColumnRemove = mColumnMenu->addAction(QIcon("icons:dl_columns_remove.svg"), tr("Remove column"), this, SLOT(onActionRemoveColumn()));
+  mColumnReset = mColumnMenu->addAction(QIcon("icons:dl_columns_reset.svg"), tr("Reset columns"), this, SLOT(onActionResetColumns()));
+  mColumnRemove->setEnabled(false);
+  mColumnReset->setEnabled(false);
+
+  ui->buttonColumnMenu->setIcon(QIcon("icons:dl_columns.svg"));
+  ui->buttonColumnMenu->setMenu(mColumnMenu);
 
   QPushButton* buttonEarlier = new QPushButton("+", this);
   buttonEarlier->setToolTip(tr("Earlier"));
@@ -103,18 +113,20 @@ void DataList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& lim
 
 void DataList::updateModel()
 {
-    std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
-    BOOST_FOREACH(const Column& c, mColumns) {
-      ObsColumnPtr oc = makeColumn(c);
-      if (oc)
-        newModel->addColumn(oc);
-    }
-
-    mTableModel = newModel;
-    ui->table->setModel(mTableModel.get());
-    ui->buttonsAcceptReject->updateModel(mDA, ui->table);
-
-    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  BusyIndicator busy;
+  std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
+  BOOST_FOREACH(const Column& c, mColumns) {
+    ObsColumnPtr oc = makeColumn(c);
+    if (oc)
+      newModel->addColumn(oc);
+  }
+  
+  mTableModel = newModel;
+  ui->table->setModel(mTableModel.get());
+  connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  
+  ui->buttonsAcceptReject->updateModel(mDA, ui->table);
 }
 
 ObsColumnPtr DataList::makeColumn(const Column& c)
@@ -190,36 +202,86 @@ void DataList::onLater()
 void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
 {
   QMenu menu;
-  QAction* actionAdd = menu.addAction(tr("Add column..."));
-  QAction* actionDel = menu.addAction(tr("Remove column"));
+  QAction* actionAdd = menu.addAction(mColumnAdd->icon(), mColumnAdd->text());
+  QAction* actionDel = menu.addAction(mColumnRemove->icon(), mColumnRemove->text());
   
   QAction* chosen = menu.exec(mapToGlobal(pos));
   if (chosen == 0)
     return;
   
-  int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
-  const int columnCount = mTableModel->columnCount(QModelIndex());
-  if (column < 0 or column >= columnCount) {
-    // column might be out of range if clicking in header, but not on
-    // a column header
-    column = columnCount;
-  }
+  const int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
   if (chosen == actionAdd) {
-    DataListAddColumn dac(this);
-    if (dac.exec() != QDialog::Accepted)
-      return;
-    
-    Column c;
-    c.sensor = dac.selectedSensor();
-    c.type = dac.selectedColumnType();
-    c.timeOffset = dac.selectedTimeOffset();
-    mColumns.insert(mColumns.begin() + column, c);
-    mTableModel->insertColumn(column, makeColumn(c));
-    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    addColumnBefore(column);
   } else if (chosen == actionDel) {
-    mColumns.erase(mColumns.begin() + column);
-    updateModel();
+    removeColumns(std::vector<int>(1, column));
   }
+}
+
+void DataList::onActionAddColumn()
+{
+  int column;
+  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
+  if (sc.size() == 1)
+    column = sc.front().column();
+  else
+    column = mTableModel->columnCount(QModelIndex());
+  addColumnBefore(column);
+}
+
+void DataList::addColumnBefore(int column)
+{
+  const int columnCount = mTableModel->columnCount(QModelIndex());
+  if (column < 0 or column > columnCount)
+    column = columnCount;
+
+  DataListAddColumn dac(this);
+  if (dac.exec() != QDialog::Accepted)
+    return;
+
+  BusyIndicator busy;
+  Column c;
+  c.sensor = dac.selectedSensor();
+  c.type = dac.selectedColumnType();
+  c.timeOffset = dac.selectedTimeOffset();
+  mColumns.insert(mColumns.begin() + column, c);
+  mTableModel->insertColumn(column, makeColumn(c));
+  mColumnReset->setEnabled(true);
+}
+
+void DataList::removeColumns(std::vector<int> columns)
+{
+  if (columns.empty())
+    return;
+  std::sort(columns.begin(), columns.end(), std::greater<int>());
+  BOOST_FOREACH(int c, columns) {
+    if (c >= 0 and c < (int)mColumns.size())
+      mColumns.erase(mColumns.begin() + c);
+  }
+  updateModel();
+  mColumnReset->setEnabled(true);
+}
+
+void DataList::onActionRemoveColumn()
+{
+  std::vector<int> columns;
+  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
+  Q_FOREACH(const QModelIndex& idx, sc)
+      columns.push_back(idx.column());
+  removeColumns(columns);
+}
+
+void DataList::onActionResetColumns()
+{
+  mTimeLimits = mOriginalTimeLimits;
+  mColumns = mOriginalColumns;
+  updateModel();
+  mColumnReset->setEnabled(false);
+}
+
+void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
+{
+  const QModelIndexList sc = ui->table->selectionModel()->selectedColumns();
+  mColumnRemove->setEnabled(not sc.isEmpty());
 }
 
 namespace /* anonymous */ {
@@ -284,6 +346,8 @@ void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nV
     const Column c = mColumns[from];
     mColumns.erase(mColumns.begin() + from);
     mColumns.insert(mColumns.begin() + to, c);
+
+    mColumnReset->setEnabled(false);
 
     //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
@@ -459,11 +523,4 @@ void DataList::onButtonSaveAs()
    }
  
    file.close(); 
-}
-
-void DataList::onButtonResetColumns()
-{
-  mTimeLimits = mOriginalTimeLimits;
-  mColumns = mOriginalColumns;
-  updateModel();
 }

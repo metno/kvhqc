@@ -61,12 +61,17 @@ private Q_SLOTS:
   void onHorizontalHeaderContextMenu(const QPoint& pos);
   void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
   void onButtonSaveAs();
-  void onButtonResetColumns();
+  void onActionAddColumn();
+  void onActionRemoveColumn();
+  void onActionResetColumns();
   void currentChanged(const QModelIndex& current);
+  void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
-    void updateModel();
-    ObsColumnPtr makeColumn(const Column& c);
+  void addColumnBefore(int column);
+  void removeColumns(std::vector<int> columns);
+  void updateModel();
+  ObsColumnPtr makeColumn(const Column& c);
 
   friend class DataListTable;
 
@@ -74,6 +79,11 @@ private:
   std::auto_ptr<Ui::DataList> ui;
   std::auto_ptr<DataListModel> mTableModel;
   SensorTime mSensorTime;
+
+  QMenu* mColumnMenu;
+  QAction* mColumnAdd;
+  QAction* mColumnRemove;
+  QAction* mColumnReset;
 
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;

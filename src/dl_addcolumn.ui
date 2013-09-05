@@ -115,6 +115,9 @@
      </item>
      <item row="9" column="1">
       <widget class="QSpinBox" name="spinTimeOffset">
+       <property name="toolTip">
+        <string>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</string>
+       </property>
        <property name="alignment">
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>

@@ -42,12 +42,12 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonResetColumns">
+      <widget class="QPushButton" name="buttonColumnMenu">
        <property name="toolTip">
-        <string>Reset columns</string>
+        <string>Mofify table columns.</string>
        </property>
        <property name="text">
-        <string>Reset</string>
+        <string>Columns…</string>
        </property>
       </widget>
      </item>
@@ -96,22 +96,6 @@
     <hint type="destinationlabel">
      <x>374</x>
      <y>15</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonResetColumns</sender>
-   <signal>clicked()</signal>
-   <receiver>DataList</receiver>
-   <slot>onButtonResetColumns()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>142</x>
-     <y>16</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>114</x>
-     <y>29</y>
     </hint>
    </hints>
   </connection>
