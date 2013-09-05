@@ -236,7 +236,7 @@ std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedPar
                                              model::KvalobsDataListPtr dtl,
                                              const std::vector<modDatl>& mdtl)
 {
-    LOG_SCOPE("ErrorList");
+    LOG_SCOPE("AnalyseErrors");
     std::vector<ErrorList::mem> memStore1, memStore2;
     BOOST_FOREACH(const model::KvalobsData& data, *dtl) {
         if( data.stnr() > 99999 )
@@ -255,7 +255,7 @@ std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedPar
         memObs.stnr = data.stnr();
 
         BOOST_FOREACH(const int parameterID, selectedParameters) {
-            LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
+            // LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
             if (not ErrorSpecialTimeFilter(parameterID, data.otime()))
                 continue;
             if (not IsTypeInObsPgm(data.stnr(), parameterID, data.typeId(parameterID), data.otime()))
@@ -266,11 +266,15 @@ std::vector<ErrorList::mem> fillMemoryStore2(const std::vector<int>& selectedPar
             memObs.controlinfo = data.controlinfo(parameterID);
             memObs.cfailed     = data.cfailed(parameterID);
 
+            // from ErrorList::makeErrorList
+            if (memObs.controlinfo.flag(kvalobs::flag::fr) == 6 && memObs.controlinfo.flag(kvalobs::flag::ftime) == 1)
+                continue;
+
             memObs.flTyp = -1;
             memObs.flg = ErrorFilter(memObs.controlinfo,
                                      memObs.cfailed,
                                      memObs.flTyp);
-            if (memObs.flg < 1 or memObs.flTyp < 0)
+            if (memObs.flg <= 1 or memObs.flTyp < 0)
                 continue;
 
             memObs.typeId      = data.typeId(parameterID);

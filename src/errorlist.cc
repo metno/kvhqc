@@ -92,7 +92,10 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
     
-    makeErrorList(selectedParameters, stime, etime, lity, dtl, mdtl);
+    const std::vector<mem> memStore2
+        = Errors::fillMemoryStore2(selectedParameters, TimeRange(stime, etime),
+                                   (lity == erSa or lity == alSa), dtl, mdtl);
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(memStore2));
     sortProxy->setSourceModel(mTableModel.get());
 
     connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
@@ -118,41 +121,6 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
 
 ErrorList::~ErrorList()
 {
-}
-
-void ErrorList::fillMemoryStores(const std::vector<int>& selectedParameters,
-                                 const timeutil::ptime& stime,
-                                 const timeutil::ptime& etime,
-                                 int lity,
-                                 model::KvalobsDataListPtr dtl,
-                                 const std::vector<modDatl>& mdtl)
-{
-    LOG_SCOPE("ErrorList");
-    memStore2 = Errors::fillMemoryStore2(selectedParameters, TimeRange(stime, etime),
-                                         (lity == erSa or lity == alSa), dtl, mdtl);
-}
-
-void ErrorList::makeErrorList(const std::vector<int>& selectedParameters,
-                              const timeutil::ptime& stime,
-                              const timeutil::ptime& etime,
-                              int lity,
-                              model::KvalobsDataListPtr dtl,
-                              const std::vector<modDatl>& mdtl)
-{
-    LOG_SCOPE("ErrorList");
-    BusyIndicator busyIndicator;
-
-    fillMemoryStores(selectedParameters, stime, etime, lity, dtl, mdtl);
-
-    std::vector<mem> errorList;
-    BOOST_FOREACH(const mem& mo, memStore2) {
-        if (mo.flg <= 1 && mo.flg > -3)
-            continue;
-        if (mo.controlinfo.flag(kvalobs::flag::fr) == 6 && mo.controlinfo.flag(kvalobs::flag::ftime) == 1)
-            continue;
-        errorList.push_back(mo);
-    }
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(errorList));
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)

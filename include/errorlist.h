@@ -107,20 +107,6 @@ Q_SIGNALS:
     void signalNavigateTo(const kvalobs::kvData&);
 
 private:
-    void makeErrorList(const std::vector<int>& selectedParameters,
-                       const timeutil::ptime& stime,
-                       const timeutil::ptime& etime,
-                       int lity,
-                       model::KvalobsDataListPtr dtl,
-                       const std::vector<modDatl>& mdtl);
-
-    void fillMemoryStores(const std::vector<int>& selectedParameters,
-                          const timeutil::ptime& stime,
-                          const timeutil::ptime& etime,
-                          int lity,
-                          model::KvalobsDataListPtr dtl,
-                          const std::vector<modDatl>& mdtl);
-
     /*!
      * \brief Constructs a kvData object from a memory store object
      */
@@ -145,8 +131,6 @@ private:
     int mLastSelectedRow;
     
     std::auto_ptr<ErrorListTableModel> mTableModel;
-    
-    std::vector<mem> memStore2;
 };
 
 #endif
