@@ -3,6 +3,7 @@
 
 #include "AcceptReject.hh"
 #include "ColumnFactory.hh"
+#include "DataListAddColumn.hh"
 #include "DataListModel.hh"
 #include "ObsDelegate.hh"
 
@@ -193,59 +194,31 @@ void DataList::onLater()
 
 void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
 {
-    QMenu menu;
-    QAction* actionAdd = menu.addAction(tr("Add column..."));
-    QAction* actionDel = menu.addAction(tr("Remove column"));
-
-    QAction* chosen = menu.exec(mapToGlobal(pos));
-    if (chosen == 0)
-        return;
-
-    int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
-    if (chosen == actionAdd) {
-        QDialog d(this);
-        Ui::DataListAddColumn uia;
-        uia.setupUi(&d);
-        uia.textStation->setText("17980");
-        uia.radioCorrected->setChecked(true);
-        uia.textParam->setText("105");
-        uia.comboType->addItems(QStringList()  << "4" << "330"<< "504" << "514" << "-4" << "-514");
-        uia.comboType->setCurrentIndex(0);
-
-        if (d.exec() != QDialog::Accepted)
-            return;
-
-        bool ok;
-        int stationId = uia.textStation->text().toInt(&ok);
-        if (not ok)
-            return;
-
-        int paramId = uia.textParam->text().toInt(&ok);
-        if (not ok)
-            return;
-
-        int typeId = uia.comboType->currentText().toInt(&ok);
-        if (not ok)
-            return;
-
-        Column c;
-        c.sensor = Sensor(stationId, paramId, 0, 0, typeId);
-        c.type = CORRECTED;
-        if (uia.radioOriginal->isChecked())
-            c.type = ORIGINAL;
-        else if (uia.radioFlags->isChecked())
-            c.type = FLAGS;
-        if (uia.radioModel->isChecked())
-            c.type = MODEL;
-        c.timeOffset = uia.spinTimeOffset->value();
-
-        mColumns.insert(mColumns.begin() + column, c);
-        mTableModel->insertColumn(column, makeColumn(c));
-        //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    } else if (chosen == actionDel) {
-        mColumns.erase(mColumns.begin() + column);
-        updateModel();
-    }
+  QMenu menu;
+  QAction* actionAdd = menu.addAction(tr("Add column..."));
+  QAction* actionDel = menu.addAction(tr("Remove column"));
+  
+  QAction* chosen = menu.exec(mapToGlobal(pos));
+  if (chosen == 0)
+    return;
+  
+  int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
+  if (chosen == actionAdd) {
+    DataListAddColumn dac(this);
+    if (dac.exec() != QDialog::Accepted)
+      return;
+    
+    Column c;
+    c.sensor = dac.selectedSensor();
+    c.type = dac.selectedColumnType();
+    c.timeOffset = dac.selectedTimeOffset();
+    mColumns.insert(mColumns.begin() + column, c);
+    mTableModel->insertColumn(column, makeColumn(c));
+    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  } else if (chosen == actionDel) {
+    mColumns.erase(mColumns.begin() + column);
+    updateModel();
+  }
 }
 
 namespace /* anonymous */ {

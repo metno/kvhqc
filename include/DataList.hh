@@ -39,9 +39,9 @@ public:
   virtual void replay(const std::string& changes);
   
 public:
+  enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
   
 private:
-  enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
   struct Column {
     Sensor sensor;
     ColumnType type;

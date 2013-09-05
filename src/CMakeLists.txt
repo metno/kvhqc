@@ -2,6 +2,7 @@
 SET(hqc_HEADERS
   ErrorListTableModel.hh
   ../include/DataList.hh
+  ../include/DataListAddColumn.hh
   DataListModel.hh
   ../include/accepttimeseriesdialog.h
   ../include/approvedialog.h
@@ -28,6 +29,7 @@ SET(hqc_SOURCES
   AutoColumnView.cc
   ChecksTableModel.cc
   DataList.cc
+  DataListAddColumn.cc
   DataListModel.cc
   ../include/DataView.hh
   DataView.cc
@@ -57,6 +59,7 @@ SET(hqc_SOURCES
   textdatatable.cc
   TimeseriesDialog.cc
   TimeSeriesView.cc
+  TypeIdModel.cc
 )
 
 INCLUDE_DIRECTORIES(

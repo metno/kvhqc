@@ -6,16 +6,25 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>227</width>
-    <height>291</height>
+    <width>232</width>
+    <height>275</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Add column</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="margin">
+    <number>2</number>
+   </property>
    <item>
     <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
      <item row="0" column="0">
       <widget class="QLabel" name="labelStation">
        <property name="text">
@@ -26,6 +35,37 @@
      <item row="0" column="1">
       <widget class="QLineEdit" name="textStation"/>
      </item>
+     <item row="1" column="1">
+      <widget class="QRadioButton" name="radioCorrected">
+       <property name="text">
+        <string>Corrected Value</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QRadioButton" name="radioOriginal">
+       <property name="text">
+        <string>Original Value</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QRadioButton" name="radioFlags">
+       <property name="text">
+        <string>Flags</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
+      <widget class="QRadioButton" name="radioModel">
+       <property name="text">
+        <string>Model value</string>
+       </property>
+      </widget>
+     </item>
      <item row="7" column="0">
       <widget class="QLabel" name="labelParam">
        <property name="text">
@@ -34,7 +74,7 @@
       </widget>
      </item>
      <item row="7" column="1">
-      <widget class="QLineEdit" name="textParam"/>
+      <widget class="QComboBox" name="comboParam"/>
      </item>
      <item row="8" column="0">
       <widget class="QLabel" name="labelType">
@@ -69,84 +109,110 @@
        </property>
       </widget>
      </item>
-     <item row="5" column="1">
-      <widget class="QRadioButton" name="radioModel">
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonCancel">
        <property name="text">
-        <string>Model value</string>
+        <string>&amp;Cancel</string>
        </property>
       </widget>
      </item>
-     <item row="3" column="1">
-      <widget class="QRadioButton" name="radioOriginal">
+     <item>
+      <widget class="QPushButton" name="buttonOk">
        <property name="text">
-        <string>Original Value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="1" column="1">
-      <widget class="QRadioButton" name="radioCorrected">
-       <property name="text">
-        <string>Corrected Value</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QRadioButton" name="radioFlags">
-       <property name="text">
-        <string>Flags</string>
+        <string>&amp;OK</string>
        </property>
       </widget>
      </item>
     </layout>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttons">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
    </item>
   </layout>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>buttons</sender>
-   <signal>accepted()</signal>
+   <sender>textStation</sender>
+   <signal>editingFinished()</signal>
    <receiver>DataListAddColumn</receiver>
-   <slot>accept()</slot>
+   <slot>onStationEdited()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>106</x>
+     <y>23</y>
     </hint>
     <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
+     <x>26</x>
+     <y>39</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>buttons</sender>
-   <signal>rejected()</signal>
+   <sender>comboParam</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DataListAddColumn</receiver>
+   <slot>onParameterSelected(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>128</x>
+     <y>172</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>53</x>
+     <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonCancel</sender>
+   <signal>clicked()</signal>
    <receiver>DataListAddColumn</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>70</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
+     <x>20</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonOk</sender>
+   <signal>clicked()</signal>
+   <receiver>DataListAddColumn</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>160</x>
+     <y>256</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>38</x>
+     <y>260</y>
     </hint>
    </hints>
   </connection>
  </connections>
+ <slots>
+  <slot>onStationEdited()</slot>
+  <slot>onParameterSelected(int)</slot>
+ </slots>
 </ui>
