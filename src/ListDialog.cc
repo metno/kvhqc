@@ -216,11 +216,23 @@ void ListDialog::setupParameterTab()
     }
 
     try {
-      const QString labelAll = tr("All");
+      const QString labelAll = tr("All in obs pgm");
       labels << labelAll;
       mParameterGroups.insert(std::make_pair(labelAll, Helpers::findAllParameters(true)));
     } catch (std::exception& ex) {
       METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.obs_pgm table");
+    }
+
+    try {
+      const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
+      const QString labelAll = tr("All defined");
+      labels << labelAll;
+      std::vector<int>& parameters = mParameterGroups[labelAll];
+
+      BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
+          parameters.push_back(p.paramID());
+     } catch (std::exception& ex) {
+      METLIBS_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
     }
 
     ui->comboParamGroup->addItems(labels);
