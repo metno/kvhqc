@@ -169,13 +169,6 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         f.setBold(true);
         return f;
       }
-    } else if (role == Qt::BackgroundRole) {
-      if (not mErrorsForSalen) {
-        if (ei.badInList == Errors::ErrorInfo::BAD_IN_ERRORLIST2012)
-          return QColor(0xFF, 0xFF, 0xC0); // yellow
-        else if (ei.badInList == Errors::ErrorInfo::BAD_IN_ERRORLIST2013)
-          return QColor(0xFF, 0xE0, 0xE0); // rose
-      }
     } else if (role == Qt::ForegroundRole and column == COL_OBS_CORR) {
       const kvalobs::kvControlInfo ci(obs->controlinfo());
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
