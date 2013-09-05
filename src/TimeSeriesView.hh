@@ -11,6 +11,7 @@
 #include <memory>
 #include <vector>
 
+class TimeRangeControl;
 class TimeseriesDialog;
 namespace Ui {
 class TimeSeriesView;
@@ -51,6 +52,7 @@ private:
   TimeRange mOriginalTimeLimits;
   Sensors_t mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
+  TimeRangeControl* mTimeControl;
 };
 
 #endif // TimeSeriesView_hh

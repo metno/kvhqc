@@ -68,7 +68,7 @@ namespace Ui {
 class HqcMainWindow;
 }
 
-class HqcMainWindow: public QMainWindow
+class HqcMainWindow : public QMainWindow
 { Q_OBJECT;
 
 public:

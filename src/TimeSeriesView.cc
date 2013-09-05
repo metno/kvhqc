@@ -3,6 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "ModelData.hh"
+#include "TimeRangeControl.hh"
 #include "TimeseriesDialog.h"
 
 #include <boost/foreach.hpp>
@@ -30,6 +31,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::TimeSeriesView)
     , tsdlg(new TimeseriesDialog(this))
+    , mTimeControl(new TimeRangeControl(this))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -38,6 +40,9 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
   ui->timeFrom->setDateTime(f);
   ui->timeTo->setDateTime(t);
+
+  mTimeControl->setMinimumGap(24);
+  mTimeControl->install(ui->timeFrom, ui->timeTo);
 
 #if 0
   std::vector<QString> stations;

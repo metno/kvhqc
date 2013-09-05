@@ -75,7 +75,7 @@ void TimeRangeControl::onT0TimeChanged(const QTime&)
 void TimeRangeControl::changedT0()
 {
   const QDateTime t1min = addGap(mT0->dateTime(), 1);
-  if (t1min > mT1->dateTime())
+  if (t1min > mT1->dateTime() and t1min <= mT1->maximumDateTime())
     mT1->setDateTime(t1min);
 }
 
@@ -92,6 +92,6 @@ void TimeRangeControl::onT1TimeChanged(const QTime&)
 void TimeRangeControl::changedT1()
 {
   const QDateTime t0max = addGap(mT1->dateTime(), -1);
-  if (mT0->dateTime() > t0max)
+  if (mT0->dateTime() > t0max and t0max >= mT0->minimumDateTime())
     mT0->setDateTime(t0max);
 }
