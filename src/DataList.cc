@@ -14,7 +14,7 @@
 
 #include "ui_dl_addcolumn.h"
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 struct DataList::eq_Column : public std::unary_function<Column, bool> {
@@ -121,14 +121,6 @@ void DataList::navigateTo(const SensorTime& st)
     mSensorTime = st;
     LOG4SCOPE_DEBUG(DBG1(mSensorTime));
 
-#ifndef NDEBUG
-    {
-        const std::string ch = changes();
-        LOG4SCOPE_DEBUG(DBG1(ch));
-        replay(ch);
-    }
-#endif
-
     const QModelIndexList idxs = mTableModel->findIndexes(st);
 
     const QModelIndex& currentIdx = currentIndex();
@@ -190,7 +182,7 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
         ui.textStation->setText("17980");
         ui.radioCorrected->setChecked(true);
         ui.textParam->setText("105");
-        ui.comboType->addItems(QStringList()  << "4" << "330"<< "504");
+        ui.comboType->addItems(QStringList()  << "4" << "330"<< "504" << "514" << "-4" << "-514");
         ui.comboType->setCurrentIndex(0);
 
         if (d.exec() != QDialog::Accepted)
@@ -234,6 +226,8 @@ static const char C_ATTR_STATIONID[] = "stationid";
 static const char C_ATTR_PARAMID[]   = "paramid";
 static const char C_ATTR_TYPEID[]    = "typeid";
 static const char C_ATTR_CTYPE[]     = "ctype";
+static const char C_ATTR_TOSSFET[]   = "timeoffset";
+
 static const char T_ATTR_START[] = "start";
 static const char T_ATTR_END[]   = "end";
 
@@ -257,6 +251,8 @@ void DataList::Column::toText(QDomElement& ce) const
     case MODEL:     ctype = "MODEL";     break;
     }
     ce.setAttribute(C_ATTR_CTYPE, ctype);
+    if (timeOffset != 0)
+        ce.setAttribute(C_ATTR_TOSSFET, timeOffset);
 }
 
 void DataList::Column::fromText(const QDomElement& ce)
@@ -269,6 +265,10 @@ void DataList::Column::fromText(const QDomElement& ce)
     else if (ctype == "ORIGINAL")  type = ORIGINAL;
     else if (ctype == "FLAGS")     type = FLAGS;
     else if (ctype == "MODEL")     type = MODEL;
+    if (ce.hasAttribute(C_ATTR_TOSSFET))
+        timeOffset = ce.attribute(C_ATTR_TOSSFET).toInt();
+    else
+        timeOffset = 0;
 }
 
 void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nVis)
@@ -351,27 +351,31 @@ std::string DataList::changes()
         changes.appendChild(timeshift);
     }
 
+    LOG4SCOPE_DEBUG("changes=" << doc.toString());
     return doc.toString().toStdString();
 }
 
 void DataList::replay(const std::string& changesText)
 {
     LOG_SCOPE("DataList");
+    LOG4SCOPE_DEBUG("replaying " << changesText);
 
-    Columns_t reordered;
-    for(unsigned int visual=0; visual<mColumns.size(); ++visual) {
-        const int logical = horizontalHeader()->logicalIndex(visual);
-        if (logical >= 0 and logical < (int)mColumns.size()) {
-            reordered.push_back(mColumns[logical]);
-        } else {
-            LOG4SCOPE_ERROR("column without logical index");
-        }
-    }
-
-    QDomDocument doc("changes");
+    QDomDocument doc;
     doc.setContent(QString::fromStdString(changesText));
 
     Columns_t newColumns = mOriginalColumns;
+#ifndef NDEBUG
+    {
+        QDomDocument doc("orig_columns");
+        BOOST_FOREACH(const Column& n, newColumns) {
+            QDomElement c = doc.createElement(E_TAG_COLUMN);
+            n.toText(c);
+            doc.appendChild(c);
+        }
+        LOG4SCOPE_DEBUG(doc.toString().toStdString());
+    }
+#endif
+
     const QDomElement changes = doc.documentElement();
 
     const QDomElement removed = changes.firstChildElement(E_TAG_REMOVED);
@@ -380,8 +384,12 @@ void DataList::replay(const std::string& changesText)
             Column col;
             col.fromText(c);
             Columns_t::iterator it = std::find_if(newColumns.begin(), newColumns.end(), eq_Column(col));
-            if (it != newColumns.end())
+            if (it != newColumns.end()) {
                 newColumns.erase(it);
+                LOG4SCOPE_DEBUG("removed " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+            } else {
+                LOG4SCOPE_DEBUG("cannot remove " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+            }
         }
     }            
 
@@ -397,6 +405,9 @@ void DataList::replay(const std::string& changesText)
             const int oIdx = (oit - mOriginalColumns.begin()), nIdx = oIdx + by;
             newColumns.erase(nit);
             newColumns.insert(newColumns.begin() + nIdx, col);
+            LOG4SCOPE_DEBUG("moved " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
+        } else {
+            LOG4SCOPE_DEBUG("cannot move " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
         }
     }
 
@@ -406,11 +417,12 @@ void DataList::replay(const std::string& changesText)
         const QDomElement c = a.firstChildElement(E_TAG_COLUMN);
         col.fromText(c);
         newColumns.insert(newColumns.begin() + at, col);
+        LOG4SCOPE_DEBUG("added " << col.sensor.stationId << ';' << col.sensor.paramId << ';' << col.sensor.typeId);
     }
 
 #ifndef NDEBUG
     {
-        QDomDocument doc("replay");
+        QDomDocument doc("new_columns");
         BOOST_FOREACH(const Column& n, newColumns) {
             QDomElement c = doc.createElement(E_TAG_COLUMN);
             n.toText(c);
@@ -420,6 +432,7 @@ void DataList::replay(const std::string& changesText)
     }
 #endif
 
+    TimeRange newTimeLimits(mOriginalTimeLimits);
     const QDomElement timeshift = changes.firstChildElement(E_TAG_TSHIFT);
     if (not timeshift.isNull()) {
         const int dT0 = timeshift.attribute(T_ATTR_START).toInt();
@@ -429,4 +442,8 @@ void DataList::replay(const std::string& changesText)
         TimeRange newTimeLimits(t0, t1);
         LOG4SCOPE_DEBUG(DBG1(newTimeLimits));
     }
+
+    mColumns = newColumns;
+    mTimeLimits = newTimeLimits;
+    updateModel();
 }

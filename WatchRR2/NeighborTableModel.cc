@@ -1,16 +1,14 @@
 
 #include "NeighborTableModel.hh"
+
 #include "ColumnFactory.hh"
+#include "Helpers.hh"
 #include "NeighborHeader.hh"
 
 #include <boost/foreach.hpp>
 
 #define NDEBUG
 #include "w2debug.hh"
-
-namespace Helpers {
-std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
-}
 
 NeighborTableModel::NeighborTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)

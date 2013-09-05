@@ -26,6 +26,7 @@ SET(hqc_HEADERS
 
 SET(hqc_SOURCES
   AnalyseErrors.cc
+  AutoColumnView.cc
   DataList.cc
   DataListModel.cc
   ../include/DataView.hh

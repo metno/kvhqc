@@ -10,6 +10,7 @@
 class FlagChange;
 class ObsData;
 typedef boost::shared_ptr<ObsData> ObsDataPtr;
+class TimeRange;
 class EditDataEditor;
 typedef boost::shared_ptr<EditDataEditor> EditDataEditorPtr;
 namespace kvalobs {
@@ -91,6 +92,8 @@ struct stations_by_id : public std::unary_function<bool, kvalobs::kvStation> {
 private:
     int stationid;
 };
+
+std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
 
 } // namespace Helpers
 

@@ -20,6 +20,9 @@ public:
 
     virtual void navigateTo(const SensorTime&);
 
+    std::string changes();
+    void replay(const std::string& changes);
+
 protected:
     virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous);
 
@@ -29,6 +32,7 @@ private:
         Sensor sensor;
         ColumnType type;
         int timeOffset;
+        Column() : type(CORRECTED), timeOffset(0) { }
         void toText(QDomElement& ce) const;
         void fromText(const QDomElement& ce);
     };
@@ -44,8 +48,6 @@ private Q_SLOTS:
 private:
     void updateModel();
     ObsColumnPtr makeColumn(const Column& c);
-    std::string changes();
-    void replay(const std::string& changes);
 
 private:
     std::auto_ptr<DataListModel> mTableModel;

@@ -1,6 +1,8 @@
 
 #include "NeighborDataModel.hh"
+
 #include "ColumnFactory.hh"
+#include "Helpers.hh"
 #include "NeighborHeader.hh"
 #include "SensorHeader.hh"
 
@@ -9,10 +11,6 @@
 
 #define NDEBUG
 #include "w2debug.hh"
-
-namespace Helpers {
-std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
-}
 
 namespace /* anonymous */ {
 const int N_COLUMNS = 18;

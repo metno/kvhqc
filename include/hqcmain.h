@@ -50,7 +50,8 @@ class QTimer;
 QT_END_NAMESPACE
 
 class AcceptTimeseriesDialog;
-class DataTable;
+class AutoColumnView;
+class DataList;
 class DianaShowDialog;
 class HintWidget;
 class HqcDianaHelper;
@@ -168,6 +169,9 @@ private:
     std::auto_ptr<Ui::HqcMainWindow> ui;
     ClientButton* pluginB;
     std::auto_ptr<HqcDianaHelper> mDianaHelper;
+
+    std::auto_ptr<AutoColumnView> mAutoColumnView;
+    DataList* mAutoDataList;
 
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;

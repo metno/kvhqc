@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "accepttimeseriesdialog.h"
 #include "approvedialog.h"
+#include "AutoColumnView.hh"
 #include "BusyIndicator.h"
 #include "config.h"
 #include "DataList.hh"
@@ -142,6 +143,8 @@ HqcMainWindow::HqcMainWindow()
   , reinserter(0)
   , listExist(false)
   , ui(new Ui::HqcMainWindow)
+  , mAutoColumnView(new AutoColumnView)
+  , mAutoDataList(new DataList(this))
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
   , kda(boost::make_shared<QtKvalobsAccess>())
@@ -238,6 +241,11 @@ HqcMainWindow::HqcMainWindow()
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
+    mAutoDataList->setDataAccess(eda, kma);
+    QMdiSubWindow* adlsw = ui->ws->addSubWindow(mAutoDataList);
+    adlsw->setWindowTitle(tr("Automatic Data List"));
+    mAutoColumnView->attachView(mAutoDataList);
+
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
     ui->saveAction->setEnabled(false); // no changes yet
     
@@ -255,6 +263,8 @@ HqcMainWindow::HqcMainWindow()
     
     mHelpDialog = new HelpDialog(this, info);
     mHelpDialog->hide();
+
+    tileHorizontal();
 }
 
 HqcMainWindow::~HqcMainWindow()
@@ -386,7 +396,8 @@ void HqcMainWindow::ListOK()
         dl->setDataAccess(eda, kma);
         dl->setSensorsAndTimes(sensors, timeLimits);
         dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-        ui->ws->addSubWindow(dl);
+        QMdiSubWindow* adlsw = ui->ws->addSubWindow(dl);
+        adlsw->setWindowTitle(tr("Data List for Selected Stations/Parameters/Time"));
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
@@ -900,9 +911,12 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 
     mDianaHelper->navigateTo(st);
     ui->simpleCorrrections->navigateTo(st);
+    mAutoColumnView->navigateTo(st);
     BOOST_FOREACH(QMdiSubWindow* sw, ui->ws->subWindowList()) {
-        if (DataList* dl = dynamic_cast<DataList*>(sw->widget()))
-            dl->navigateTo(st);
+        if (DataList* dl = dynamic_cast<DataList*>(sw->widget())) {
+            if (dl != mAutoDataList)
+                dl->navigateTo(st);
+        }
     }
 }
 
