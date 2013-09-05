@@ -2,6 +2,7 @@
 #include "AnalyseErrors.hh"
 
 #include "hqcdefs.h" // for struct currentType
+#include "Helpers.hh"
 #include "KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -12,6 +13,22 @@
 #include "HqcLogging.hh"
 
 namespace /* anonymous */ {
+
+const int paramid_hour_6_18[] = {
+  76,  // DX_12
+  80,  // DG_12
+  89,  // FX_12
+  92,  // FG_12
+  109, // RR_12
+  214, // TAN_12
+  216, // TAX_12
+  224  // TGN_12
+};
+
+const int paramid_hour_6[] = {
+  kvalobs::PARAMID_RR_24,
+  kvalobs::PARAMID_SA
+};
 
 bool ErrorSpecialTimeFilter(int paramId, const timeutil::ptime& otime)
 {
@@ -271,25 +288,31 @@ bool checkError2013(const EditDataPtr obs)
   if (fhqc != 0)
     return false;
 
+  const Sensor& sensor = obs->sensorTime().sensor;
+  const int hour = obs->sensorTime().time.time_of_day().hours();
+
+  const int fpre = obs->controlinfo().flag(kvalobs::flag::fpre);
+  if (fpre == 4 or fpre == 6) {
+    const bool error_6_18 = (hour == 6 or hour == 18) and std::binary_search(paramid_hour_6_18, boost::end(paramid_hour_6_18), sensor.paramId);
+    const bool error_6 = hour == 6 and std::binary_search(paramid_hour_6, boost::end(paramid_hour_6), sensor.paramId);
+    return (error_6 or error_6_18);
+  }
+
+  const int ftime = obs->controlinfo().flag(kvalobs::flag::ftime);
+  if (ftime > 0)
+    return false;
+
+  const int fd = obs->controlinfo().flag(kvalobs::flag::fd);
+  if ((fd == 7 or fd == 8) and sensor.paramId == kvalobs::PARAMID_RR_24)
+    return false;
+
   const int ui_2 = Helpers::extract_ui2(obs);
-  if (ui_2 == 2 or ui_2 == 3 or ui_2 == 9)
+  if (ui_2 == 2 or ui_2 == 3)
     return true;
 
   const int fr = obs->controlinfo().flag(kvalobs::flag::fr);
   if (fr == 2 or fr == 3)
     return true;
-
-  const int fs = obs->controlinfo().flag(kvalobs::flag::fs);
-  if (fs == 2)
-    return true;
-
-  const int fw = obs->controlinfo().flag(kvalobs::flag::fr);
-  if (fw == 2) {
-    const int fcc = obs->controlinfo().flag(kvalobs::flag::fcc);
-    const int fcp = obs->controlinfo().flag(kvalobs::flag::fcp);
-    if (fcc == 2 or fcp == 2)
-      return true;
-  }
 
   return false;
 }
