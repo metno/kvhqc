@@ -1,3 +1,9 @@
+kvhqc (3.0.0~a8-1) unstable; urgency=low
+
+  * show original value and flags for Vx in WatchWeather
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 25 Jun 2013 16:54:49 +0200
+
 kvhqc (3.0.0~a7-1) unstable; urgency=low
 
   * removed logos
