@@ -620,12 +620,6 @@ void HqcMainWindow::onShowSimpleCorrections()
   ui->dockCorrections->setVisible(true);
 }
 
-void HqcMainWindow::closeEvent(QCloseEvent* event)
-{
-  writeSettings();
-  QWidget::closeEvent(event);
-}
-
 void HqcMainWindow::exitNoKvalobs()
 {
     QMessageBox msg(this);
@@ -754,18 +748,39 @@ void HqcMainWindow::onRedoChanges()
 
 void HqcMainWindow::onSaveChanges()
 {
-    if (not eda->sendChangesToParent()) {
-        QMessageBox::critical(this, tr("HQC - Saving data"),
-                              tr("Sorry, your changes could not be saved!"),
-                              tr("OK"),
-                              "");
-    } else {
-        QMessageBox::information(this,
-                                 tr("HQC - Saving data"),
-                                 tr("Your changes have been saved."),
-                                 tr("OK"),
-                                 "");
+  if (not eda->sendChangesToParent()) {
+    QMessageBox::critical(this, tr("HQC - Saving data"),
+        tr("Sorry, your changes could not be saved!"),
+        tr("OK"),
+        "");
+  } else {
+    mHints->addHint(tr("<h1>Data Saved</h1>"
+            "Your changes have been saved."));
+  }
+}
+
+void HqcMainWindow::closeEvent(QCloseEvent* event)
+{
+  METLIBS_LOG_SCOPE();
+
+  const int updates = eda->countU();
+  if (updates > 0) {
+    QMessageBox w(this);
+    w.setWindowTitle(windowTitle());
+    w.setIcon(QMessageBox::Warning);
+    w.setText(tr("There are %1 unsaved data updates.").arg(updates));
+    w.setInformativeText(tr("Are you sure that you want to lose them?"));
+    QPushButton* discard = w.addButton(tr("Discard changes"), QMessageBox::ApplyRole);
+    QPushButton* cont = w.addButton(tr("Continue"), QMessageBox::RejectRole);
+    w.setDefaultButton(cont);
+    w.exec();
+    if (w.clickedButton() != discard) {
+      event->ignore();
+      return;
     }
+  }
+  writeSettings();
+  event->accept();
 }
 
 void HqcMainWindow::navigateTo(const SensorTime& st)
