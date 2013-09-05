@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
-#include "KvMetaDataBuffer.hh"
 #include "mi_foreach.hh"
 #include "timeutil.hh"
 

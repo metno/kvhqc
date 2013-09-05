@@ -11,7 +11,7 @@ ParamIdModel::ParamIdModel(const std::vector<int>& paramIds)
 QVariant ParamIdModel::data(const QModelIndex& index, int role) const
 {
     if (role == Qt::DisplayRole)
-        return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(mParamIds[index.row()]).name());
+        return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(mParamIds[index.row()]));
     else
         return QVariant();
 }
