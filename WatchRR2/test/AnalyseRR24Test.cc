@@ -323,7 +323,7 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
     t += step;
     ASSERT_CORR_CONTROL(newCorrectedS[1], "0110004000001007", eda->findE(SensorTime(sensor, t))) << " t=" << t;
     t += step;
-    ASSERT_CORR_CONTROL(newCorrectedS[2], "0000001000001007", eda->findE(SensorTime(sensor, t))) << " t=" << t;
+    ASSERT_CORR_CONTROL(newCorrectedS[2], "0000001000001005", eda->findE(SensorTime(sensor, t))) << " t=" << t;
 
     t += step;
     EditDataPtr obs = eda->findE(SensorTime(sensor, t));

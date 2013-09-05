@@ -293,7 +293,7 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
 
             EditDataEditorPtr editor = da->editor(obs);
             if (ar == AR_ACCEPT)
-                Helpers::correct(editor, newCorrected.at(editRow));
+                Helpers::auto_correct(editor, newCorrected.at(editRow));
             else
                 Helpers::reject(editor);
             editor->changeControlinfo(fc_clear_fd).clearTasks(ALL_RR24_TASKS);

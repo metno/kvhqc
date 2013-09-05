@@ -180,7 +180,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
         pushed = true;
         if (not obs1)
             obs1 = mDA->createE(st);
-        Helpers::correct(mDA->editor(obs1), newCode1);
+        Helpers::auto_correct(mDA->editor(obs1), newCode1);
         LOG4SCOPE_DEBUG(DBG1(obs1->corrected()));
     }
     if (newCode2 != oldCodes.second) {
@@ -191,7 +191,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
             st2.sensor.paramId += 1;
             obs2 = mDA->createE(st2);
         }
-        Helpers::correct(mDA->editor(obs2), newCode2);
+        Helpers::auto_correct(mDA->editor(obs2), newCode2);
         LOG4SCOPE_DEBUG(DBG1(obs2->corrected()));
     }
     return true;
