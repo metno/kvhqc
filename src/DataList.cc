@@ -5,14 +5,19 @@
 #include "DataListModel.hh"
 #include "ObsDelegate.hh"
 
+#include <QtCore/QFile>
+#include <QtCore/QTextStream>
+#include <QtGui/QFileDialog>
 #include <QtGui/QFont>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
 #include <QtGui/QPushButton>
+
 #include <QtXml/QDomElement>
 
 #include <boost/foreach.hpp>
 
+#include "ui_datalist.h"
 #include "ui_dl_addcolumn.h"
 
 #define MILOGGER_CATEGORY "kvhqc.DataList"
@@ -26,36 +31,41 @@ struct DataList::eq_Column : public std::unary_function<Column, bool> {
 };
 
 DataList::DataList(QWidget* parent)
-    : QTableView(parent)
+    : QWidget(parent)
+    , ui(new Ui::DataList)
 {
-    QPushButton* buttonEarlier = new QPushButton("+", this);
-    buttonEarlier->setToolTip(tr("Earlier"));
-    connect(buttonEarlier, SIGNAL(clicked()), this, SLOT(onEarlier()));
-    addScrollBarWidget(buttonEarlier, Qt::AlignTop);
+  ui->setupUi(this);
 
-    QPushButton* buttonLater = new QPushButton("+", this);
-    buttonLater->setToolTip(tr("Later"));
-    connect(buttonLater, SIGNAL(clicked()), this, SLOT(onLater()));
-    addScrollBarWidget(buttonLater, Qt::AlignBottom);
+  QPushButton* buttonEarlier = new QPushButton("+", this);
+  buttonEarlier->setToolTip(tr("Earlier"));
+  connect(buttonEarlier, SIGNAL(clicked()), this, SLOT(onEarlier()));
+  ui->table->addScrollBarWidget(buttonEarlier, Qt::AlignTop);
 
-    setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+  QPushButton* buttonLater = new QPushButton("+", this);
+  buttonLater->setToolTip(tr("Later"));
+  connect(buttonLater, SIGNAL(clicked()), this, SLOT(onLater()));
+  ui->table->addScrollBarWidget(buttonLater, Qt::AlignBottom);
 
-    setSelectionBehavior(QAbstractItemView::SelectItems);
-    setSelectionMode(QAbstractItemView::ExtendedSelection);
+  ui->table->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+    
+  ui->table->setSelectionBehavior(QAbstractItemView::SelectItems);
+  ui->table->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    setItemDelegate(new ObsDelegate(this));
+  ui->table->setItemDelegate(new ObsDelegate(this));
 
-    QFont mono("Monospace");
-    horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    horizontalHeader()->setMovable(true);
-    verticalHeader()->setFont(mono);
-    verticalHeader()->setDefaultSectionSize(20);
+  QFont mono("Monospace");
+  ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->table->horizontalHeader()->setMovable(true);
+  ui->table->verticalHeader()->setFont(mono);
+  ui->table->verticalHeader()->setDefaultSectionSize(20);
 
-    horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
-    connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
-            this, SLOT(onHorizontalHeaderContextMenu(const QPoint&)));
-    connect(horizontalHeader(), SIGNAL(sectionMoved(int, int, int)),
-            this, SLOT(onHorizontalHeaderSectionMoved(int, int, int)));
+  ui->table->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->table->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
+      this, SLOT(onHorizontalHeaderContextMenu(const QPoint&)));
+  connect(ui->table->horizontalHeader(), SIGNAL(sectionMoved(int, int, int)),
+      this, SLOT(onHorizontalHeaderSectionMoved(int, int, int)));
+  connect(ui->table, SIGNAL(currentChanged(const QModelIndex&)),
+      this, SLOT(currentChanged(const QModelIndex&)));
 }
 
 DataList::~DataList()
@@ -93,9 +103,9 @@ void DataList::updateModel()
     }
 
     mTableModel = newModel;
-    setModel(mTableModel.get());
+    ui->table->setModel(mTableModel.get());
 
-    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 ObsColumnPtr DataList::makeColumn(const Column& c)
@@ -130,7 +140,7 @@ void DataList::navigateTo(const SensorTime& st)
 
     const QModelIndexList idxs = mTableModel->findIndexes(st);
 
-    const QModelIndex& currentIdx = currentIndex();
+    const QModelIndex& currentIdx = ui->table->currentIndex();
     QItemSelection selection;
     bool scroll = (not idxs.empty());
     BOOST_FOREACH(const QModelIndex idx, idxs) {
@@ -139,23 +149,20 @@ void DataList::navigateTo(const SensorTime& st)
             scroll = false;
     }
     if (scroll) {
-        scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
-        scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
+      ui->table->scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
+      ui->table->scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
     }
-    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    ui->table->selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
-void DataList::currentChanged(const QModelIndex& current, const QModelIndex& previous)
+void DataList::currentChanged(const QModelIndex& current)
 {
     METLIBS_LOG_SCOPE();
-    QTableView::currentChanged(current, previous);
-    if (current.isValid()) {
-        const SensorTime st = mTableModel->findSensorTime(current);
-        METLIBS_LOG_DEBUG(LOGVAL(st));
-        if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
-            mSensorTime = st;
-            /*emit*/ signalNavigateTo(st);
-        }
+    const SensorTime st = mTableModel->findSensorTime(current);
+    METLIBS_LOG_DEBUG(LOGVAL(st));
+    if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
+      mSensorTime = st;
+      /*emit*/ signalNavigateTo(st);
     }
 }
 
@@ -181,47 +188,47 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
     if (chosen == 0)
         return;
 
-    int column = horizontalHeader()->logicalIndexAt(pos);
+    int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
     if (chosen == actionAdd) {
         QDialog d(this);
-        Ui::DataListAddColumn ui;
-        ui.setupUi(&d);
-        ui.textStation->setText("17980");
-        ui.radioCorrected->setChecked(true);
-        ui.textParam->setText("105");
-        ui.comboType->addItems(QStringList()  << "4" << "330"<< "504" << "514" << "-4" << "-514");
-        ui.comboType->setCurrentIndex(0);
+        Ui::DataListAddColumn uia;
+        uia.setupUi(&d);
+        uia.textStation->setText("17980");
+        uia.radioCorrected->setChecked(true);
+        uia.textParam->setText("105");
+        uia.comboType->addItems(QStringList()  << "4" << "330"<< "504" << "514" << "-4" << "-514");
+        uia.comboType->setCurrentIndex(0);
 
         if (d.exec() != QDialog::Accepted)
             return;
 
         bool ok;
-        int stationId = ui.textStation->text().toInt(&ok);
+        int stationId = uia.textStation->text().toInt(&ok);
         if (not ok)
             return;
 
-        int paramId = ui.textParam->text().toInt(&ok);
+        int paramId = uia.textParam->text().toInt(&ok);
         if (not ok)
             return;
 
-        int typeId = ui.comboType->currentText().toInt(&ok);
+        int typeId = uia.comboType->currentText().toInt(&ok);
         if (not ok)
             return;
 
         Column c;
         c.sensor = Sensor(stationId, paramId, 0, 0, typeId);
         c.type = CORRECTED;
-        if (ui.radioOriginal->isChecked())
+        if (uia.radioOriginal->isChecked())
             c.type = ORIGINAL;
-        else if (ui.radioFlags->isChecked())
+        else if (uia.radioFlags->isChecked())
             c.type = FLAGS;
-        if (ui.radioModel->isChecked())
+        if (uia.radioModel->isChecked())
             c.type = MODEL;
-        c.timeOffset = ui.spinTimeOffset->value();
+        c.timeOffset = uia.spinTimeOffset->value();
 
         mColumns.insert(mColumns.begin() + column, c);
         mTableModel->insertColumn(column, makeColumn(c));
-        horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+        ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     } else if (chosen == actionDel) {
         mColumns.erase(mColumns.begin() + column);
         updateModel();
@@ -284,14 +291,14 @@ void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nV
         return;
 
     const int from = logicalIndex, to = nVis;
-    horizontalHeader()->moveSection(to, from);
+    ui->table->horizontalHeader()->moveSection(to, from);
     mTableModel->moveColumn(from, to); // move back and switch model columns instead
 
     const Column c = mColumns[from];
     mColumns.erase(mColumns.begin() + from);
     mColumns.insert(mColumns.begin() + to, c);
 
-    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 std::string DataList::changes()
@@ -300,7 +307,7 @@ std::string DataList::changes()
 
     Columns_t reordered;
     for(unsigned int visual=0; visual<mColumns.size(); ++visual) {
-        const int logical = horizontalHeader()->logicalIndex(visual);
+        const int logical = ui->table->horizontalHeader()->logicalIndex(visual);
         if (logical >= 0 and logical < (int)mColumns.size()) {
             reordered.push_back(mColumns[logical]);
         } else {
@@ -453,4 +460,47 @@ void DataList::replay(const std::string& changesText)
     mColumns = newColumns;
     mTimeLimits = newTimeLimits;
     updateModel();
+}
+
+namespace /* anonymous */ {
+QString protectForCSV(QString txt)
+{
+  txt.replace('\n', " ");
+  txt.replace('\"', "'");
+  txt.replace('\t', " ");
+  return txt;
+}
+QString protectForCSV(const QVariant& v)
+{
+  return protectForCSV(v.toString());
+}
+} // namespace anonymous
+
+void DataList::onButtonSaveAs()
+{
+  QString fileName = QFileDialog::getSaveFileName(this, tr("Save Table"),
+      "datalist.csv",
+      tr("CSV Table (*.csv)"));
+  if (fileName.isEmpty())
+    return;
+  
+   QFile file(fileName);
+   file.open(QIODevice::WriteOnly | QIODevice::Text);
+
+   QTextStream out(&file);
+   const int nRows = mTableModel->rowCount(QModelIndex()), nCols = mTableModel->columnCount(QModelIndex());
+
+   out << "\"\"";
+   for (int c=0; c<nCols; ++c)
+     out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
+   out << "\n";
+
+   for (int r=0; r<nRows; ++r) {
+     out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
+     for (int c=0; c<nCols; ++c)
+       out << "\t\"" << protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole)) << '\"';
+     out << "\n";
+   }
+ 
+   file.close(); 
 }

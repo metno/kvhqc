@@ -1,7 +1,7 @@
 
 SET(hqc_HEADERS
   ErrorListTableModel.hh
-  DataList.hh
+  ../include/DataList.hh
   DataListModel.hh
   HqcApplication.hh
   ../include/accepttimeseriesdialog.h
@@ -78,6 +78,7 @@ INSTALL(FILES ${hqc_QM}
 
 QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
+  datalist.ui
   dl_addcolumn.ui
   listdialog.ui
   mainwindow.ui
