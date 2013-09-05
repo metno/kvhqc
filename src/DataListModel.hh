@@ -14,7 +14,9 @@ public:
     DataListModel(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits);
     ~DataListModel();
 
+    virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual timeutil::ptime timeAtRow(int row) const;
+
     QModelIndexList findIndexes(const SensorTime& st);
 
 protected:

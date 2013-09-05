@@ -71,3 +71,13 @@ int DataListModel::rowOrColumnCount(bool timeDirection) const
     else
         return ObsTableModel::rowOrColumnCount(timeDirection);
 }
+
+QVariant DataListModel::headerData(int section, Qt::Orientation orientation, int role) const
+{
+    if ((mTimeInRows and orientation == Qt::Vertical) or ((not mTimeInRows) and orientation == Qt::Horizontal)) {
+        if (role == Qt::DisplayRole)
+            return QString::fromStdString(timeutil::to_iso_extended_string(timeAtRow(section)));
+    }
+    return ObsTableModel::headerData(section, orientation, role);
+}
+
