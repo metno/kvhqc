@@ -63,7 +63,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "textdatatable.h"
 #include "TimeseriesDialog.h"
 #include "timeutil.hh"
-#include "weatherdialog.h"
+#include "WeatherDialog.hh"
 
 #include "StationDialog.hh"
 #include "MainDialog.hh"
@@ -537,15 +537,22 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-    EditDataPtr obs = ui->treeErrors->getObs();
-    if (obs) {
-        METLIBS_LOG_DEBUG("sorry, no weather dialog for " << obs->sensorTime());
-//         Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
-//         if ( wtd ) {
-//             wtd->setReinserter( reinserter );
-//             wtd->show();
-//         }
-    }
+  Sensor s(10380, 211, 0, 0, 311);
+  const timeutil::ptime now = timeutil::now();
+  const timeutil::ptime roundedNow = timeutil::ptime(now.date(), boost::posix_time::time_duration(now.time_of_day().hours(),0,0))
+      + boost::posix_time::hours(1);
+  timeutil::ptime t(roundedNow); //(boost::gregorian::day_clock::universal_day(),  boost::posix_time::time_duration(0,0,0)); 
+
+  EditDataPtr obs = ui->treeErrors->getObs();
+  if (obs) {
+    const SensorTime& st = obs->sensorTime();
+    s = st.sensor;
+    t = st.time;
+  }
+  
+  const TimeRange limits(t + boost::gregorian::days(-7), std::min(t + boost::gregorian::days(1), roundedNow));
+  WeatherDialog wd(eda, s, limits, this);
+  wd.exec();
 }
 
 void HqcMainWindow::errListMenu()
