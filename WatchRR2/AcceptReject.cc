@@ -74,7 +74,7 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
     Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
   }
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4);
+    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
 
   editor->commit();
 }
@@ -104,7 +104,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
     return;
   }
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4);
+    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
 
   editor->commit();
 }
@@ -126,7 +126,7 @@ void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
   EditDataEditorPtr editor = eda->editor(obs);
   Helpers::reject(editor);
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4);
+    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
 
   editor->commit();
 }

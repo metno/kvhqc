@@ -193,7 +193,11 @@ void set_flag(EditDataEditorPtr editor, int flag, int value)
 
 void set_fhqc(EditDataEditorPtr editor, int fhqc)
 {
-    set_flag(editor, kvalobs::flag::fhqc, fhqc);
+  set_flag(editor, kvalobs::flag::fhqc, fhqc);
+
+  const int fmis = editor->controlinfo().flag(kvalobs::flag::fmis);
+  if (fmis == 0)
+    set_flag(editor, kvalobs::flag::fmis, 4);
 }
 
 void auto_correct(EditDataEditorPtr editor, float newC)
