@@ -43,7 +43,7 @@ void HintWidget::addHint(const QString& hint)
     updatePosition();
     show();
     const int length = mText->toPlainText().size();
-    const int timeout = (int) (length * readingSpeed);
+    const int timeout = std::min(2500, (int) (length * readingSpeed));
     mTime.start();
     mTimer->start(timeout);
     qApp->processEvents();
