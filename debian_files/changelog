@@ -1,3 +1,9 @@
+kvhqc (3.0.4-1) unstable; urgency=low
+
+  * bugfix: last version caused some problems in column/line memory
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 07 Aug 2013 17:57:25 +0200
+
 kvhqc (3.0.3-1) unstable; urgency=low
 
   * changed related parameter list
