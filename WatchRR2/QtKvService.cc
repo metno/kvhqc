@@ -1,13 +1,15 @@
 
 #include "QtKvService.hh"
 
-#include <kvcpp/corba/CorbaKvApp.h>
 #include <kvcpp/kvevents.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaType>
 
 #include <boost/foreach.hpp>
+
+#define MILOGGER_CATEGORY "kvhqc.QtKvService"
+#include "HqcLogging.hh"
 
 namespace /* anonymous */ {
 
@@ -46,16 +48,21 @@ QtKvService::QtKvService()
 
 QtKvService::~QtKvService()
 {
-    if (not mStopped)
-        stop();
+  METLIBS_LOG_SCOPE();
 
-    BOOST_FOREACH(Subscriptions_t::value_type& sub, mSubscriptions) {
-        app()->unsubscribe(sub.first);
-        const Subscriber& s = sub.second;
-        disconnect(this, s.emitted, s.receiver, s.member);
-    }
+  if (not mStopped)
+    stop();
 
-    qkvs = 0;
+  BOOST_FOREACH(Subscriptions_t::value_type& sub, mSubscriptions) {
+    if (app())
+      app()->unsubscribe(sub.first);
+    else
+      METLIBS_LOG_WARN("no app, cannot unsubscribe '" << sub.first << "'");
+    const Subscriber& s = sub.second;
+    disconnect(this, s.emitted, s.receiver, s.member);
+  }
+
+  qkvs = 0;
 }
 
 QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const SubscriberID& subscriberId,
@@ -63,7 +70,7 @@ QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const Subscribe
 {
     if ((not subscriberId.empty()) and receiver and member) {
         if (not connect(this, emitted, receiver, member)) {
-            std::cerr << " => failed to connect signal, unsubscribing again" << std::endl;
+            METLIBS_LOG_ERROR("failed to connect signal, unsubscribing again");
 	    app()->unsubscribe(subscriberId);
 	    return "";
         }
@@ -75,6 +82,7 @@ QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const Subscribe
 QtKvService::SubscriberID QtKvService::subscribeDataNotify(const kvservice::KvDataSubscribeInfoHelper &info,
                                                            const QObject *receiver, const char *member)
 {
+    METLIBS_LOG_SCOPE();
     return connectSubscriptionSignal(app()->subscribeDataNotify(info, mSignalQueue),
                                      SIGNAL(kvData(kvservice::KvWhatListPtr)),
                                      receiver, member);
@@ -83,6 +91,7 @@ QtKvService::SubscriberID QtKvService::subscribeDataNotify(const kvservice::KvDa
 QtKvService::SubscriberID QtKvService::subscribeData(const kvservice::KvDataSubscribeInfoHelper &info,
                                                      const QObject *receiver, const char* member)
 {
+    METLIBS_LOG_SCOPE();
     return connectSubscriptionSignal(app()->subscribeData(info, mSignalQueue),
                                      SIGNAL(kvData(kvservice::KvObsDataListPtr)),
                                      receiver, member);
@@ -90,19 +99,25 @@ QtKvService::SubscriberID QtKvService::subscribeData(const kvservice::KvDataSubs
 
 QtKvService::SubscriberID QtKvService::subscribeKvHint(const QObject *receiver, const char *member)
 {
+    METLIBS_LOG_SCOPE();
     return connectSubscriptionSignal(app()->subscribeKvHint(mSignalQueue),
                                      SIGNAL(kvHint(bool)), receiver, member);
 }
 
 void QtKvService::unsubscribe(const SubscriberID& subscriberId)
 {
-    Subscriptions_t::iterator it = mSubscriptions.find(subscriberId);
-    if (it != mSubscriptions.end()) {
-        app()->unsubscribe(subscriberId);
-        const Subscriber& s = it->second;
-        disconnect(this, s.emitted, s.receiver, s.member);
-        mSubscriptions.erase(it);
-    }
+  METLIBS_LOG_SCOPE();
+  Subscriptions_t::iterator it = mSubscriptions.find(subscriberId);
+  if (it != mSubscriptions.end()) {
+    if (app())
+      app()->unsubscribe(subscriberId);
+    else
+      METLIBS_LOG_WARN("no app, cannot unsubscribe '" << subscriberId << "'");
+      
+    const Subscriber& s = it->second;
+    disconnect(this, s.emitted, s.receiver, s.member);
+    mSubscriptions.erase(it);
+  }
 }
 
 void QtKvService::internalSendKvDataNotify(kvservice::KvWhatListPtr data)
@@ -125,36 +140,39 @@ void QtKvService::internalSendKvHint(bool c)
 
 void QtKvService::run()
 {
-    using namespace kvservice;
-    while (not mStop) {
-        if (KvApp::kvApp->shutdown())
-            break;
-        dnmi::thread::CommandBase* com = mSignalQueue.get(/*timeout=*/ 2 /*sec*/);
-        if (not com)
-            continue;
-
-        if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com)) {
-            /*emit*/ internalKvData(dataEvent->data());
-        } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com)) {
-            /*emit*/ internalKvDataNotify(dataNotifyEvent->what());
-        } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com)) {
-            /*emit*/ internalKvHint(hintEvent->upEvent());
-        }
-        delete com;
+  METLIBS_LOG_SCOPE();
+  using namespace kvservice;
+  while (not mStop) {
+    if (not app() or KvApp::kvApp->shutdown())
+      break;
+    dnmi::thread::CommandBase* com = mSignalQueue.get(/*timeout=*/ 2 /*sec*/);
+    if (not com)
+      continue;
+    
+    if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com)) {
+      /*emit*/ internalKvData(dataEvent->data());
+    } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com)) {
+      /*emit*/ internalKvDataNotify(dataNotifyEvent->what());
+    } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com)) {
+      /*emit*/ internalKvHint(hintEvent->upEvent());
     }
+    delete com;
+  }
 }
 
 void QtKvService::stop()
 {
-    mStop = true;
-    mSignalQueue.signal();
-    std::cout << "Waiting for kvService CORBA connector ..." << std::flush;
-    wait();
-    std::cout << " stopped" << std::endl;
-    mStopped = true;
+  METLIBS_LOG_SCOPE();
+  mStop = true;
+  mSignalQueue.signal();
+  METLIBS_LOG_INFO("Waiting for kvService CORBA connector ...");
+
+  wait();
+  METLIBS_LOG_INFO("kvService CORBA connector stopped");
+  mStopped = true;
 }
 
 QtKvService* qtKvService()
 {
-    return qkvs;
+  return qkvs;
 }
