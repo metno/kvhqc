@@ -174,6 +174,11 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         const bool inserted = obs->isCreated();
         
         kvalobs::kvData& d = obs->data();
+        if (inserted and d.corrected() == kvalobs::NEW_ROW) {
+          METLIBS_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());
+          continue;
+        }
+
         if (not Helpers::float_eq()(d.corrected(), ou.corrected))
             d.corrected(ou.corrected);
         if (d.controlinfo() != ou.controlinfo)
@@ -181,13 +186,13 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         Helpers::updateUseInfo(d);
 
         if (inserted) {
-            Helpers::updateCfailed(d, "WatchRR2-i");
+            Helpers::updateCfailed(d, "hqc-i");
             // specify tbtime
             d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
                                 d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.level(), d.sensor(),
                                 d.corrected(), d.controlinfo(), d.useinfo(), d.cfailed());
         } else {
-            Helpers::updateCfailed(d, "WatchRR2-m");
+            Helpers::updateCfailed(d, "hqc-m");
         }
         store.push_back(d);
         (created ? createdObs : modifiedObs).push_back(obs);

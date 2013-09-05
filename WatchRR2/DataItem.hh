@@ -9,7 +9,7 @@ class DataItem {
 public:
     virtual ~DataItem();
 
-    virtual Qt::ItemFlags flags() const;
+    virtual Qt::ItemFlags flags(EditDataPtr obs) const;
     virtual QVariant data(EditDataPtr obs, int role) const;
     virtual bool setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role);
     virtual QString description(bool mini) const = 0;

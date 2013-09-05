@@ -9,7 +9,7 @@ DataItem::~DataItem()
 {
 }
 
-Qt::ItemFlags DataItem::flags() const
+Qt::ItemFlags DataItem::flags(EditDataPtr) const
 {
     return Qt::ItemIsEnabled|Qt::ItemIsSelectable;
 }

@@ -44,20 +44,15 @@ namespace internal_
 
 void updateUseAddCFailed(kvalobs::kvData &d)
 {
-    const std::string& cf = d.cfailed();
-    const bool notWatchRRWeather = (std::string::npos == cf.find("watchweather") &&
-                                    std::string::npos == cf.find("atchRR"));
     const kvalobs::kvControlInfo cinfo = d.controlinfo();
     const int fhqc = cinfo.flag(flag::fhqc);
     if (fhqc == 0)
         METLIBS_LOG_ERROR("inserting data with fhqc==0: " << d);
-    if (notWatchRRWeather)
-        Helpers::updateCfailed(d, "hqc");
     
     kvUseInfo ui = d.useinfo();
     ui.setUseFlags(cinfo);
     ui.addToErrorCount();
-    d.useinfo( ui );
+    d.useinfo(ui);
 }
 
 } // namespace internal_

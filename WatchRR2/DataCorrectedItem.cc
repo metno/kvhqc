@@ -23,9 +23,9 @@ DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextPtr codes)
 {
 }
 
-Qt::ItemFlags DataCorrectedItem::flags() const
+Qt::ItemFlags DataCorrectedItem::flags(EditDataPtr obs) const
 {
-    Qt::ItemFlags f = DataItem::flags();
+    Qt::ItemFlags f = DataItem::flags(obs);
     if (mShowNew)
         f |= Qt::ItemIsEditable;
     return f;
@@ -103,8 +103,8 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
             Helpers::auto_correct(da->editor(obs), newC);
         return true;
     } catch (std::runtime_error& e) {
-        std::cerr << e.what() << std::endl;
-        return false;
+      METLIBS_LOG_ERROR("exception while editing data for obs " << obs->sensorTime() << ": " << e.what());
+      return false;
     }
 }
 

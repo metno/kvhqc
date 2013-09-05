@@ -174,7 +174,7 @@ void SimpleCorrections::update()
         ttl->setStringList(mItemCorrected->data(obs, ObsColumn::TextCodesRole).toStringList());
         ttl->setToolTipList(mItemCorrected->data(obs, ObsColumn::TextCodeExplanationsRole).toStringList());
         
-        c->setEnabled((mItemCorrected->flags() & Qt::ItemIsEditable));
+        c->setEnabled((mItemCorrected->flags(obs) & Qt::ItemIsEditable));
         
         const QVariant valueType = mItemCorrected->data(obs, ObsColumn::ValueTypeRole);
         c->setEditable(valueType.toInt() != ObsColumn::TextCode);
@@ -297,11 +297,11 @@ void SimpleCorrections::onNewCorrected()
   METLIBS_LOG_SCOPE();
   if (not (mDA and mItemCorrected and mSensorTime.valid()))
     return;
-  if (not (mItemCorrected->flags() & Qt::ItemIsEditable))
-    return;
   
   EditDataPtr obs = mDA->findE(mSensorTime);
   if (obs) {
+    if (not (mItemCorrected->flags(obs) & Qt::ItemIsEditable))
+      return;
     if (not mItemCorrected->setData(obs, mDA, mSensorTime, ui->comboCorrected->currentText(), Qt::EditRole)) {
       update();
     }

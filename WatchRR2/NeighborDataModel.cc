@@ -85,7 +85,7 @@ int NeighborDataModel::columnCount(const QModelIndex&) const
 
 Qt::ItemFlags NeighborDataModel::flags(const QModelIndex& index) const
 {
-    return getItem(index)->flags() & ~Qt::ItemIsEditable;
+    return getItem(index)->flags(getObs(index)) & ~Qt::ItemIsEditable;
 }
 
 QVariant NeighborDataModel::data(const QModelIndex& index, int role) const

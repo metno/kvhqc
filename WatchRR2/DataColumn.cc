@@ -32,9 +32,9 @@ DataColumn::~DataColumn()
     mDA->removeSubscription(ObsSubscription(mSensor.stationId, mTime));
 }
 
-Qt::ItemFlags DataColumn::flags(const timeutil::ptime&) const
+Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
 {
-    return mItem->flags();
+  return mItem->flags(getObs(time));
 }
 
 QVariant DataColumn::data(const timeutil::ptime& time, int role) const

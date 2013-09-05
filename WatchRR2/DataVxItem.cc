@@ -42,9 +42,9 @@ DataVxItem::DataVxItem(EditAccessPtr da)
 {
 }
 
-Qt::ItemFlags DataVxItem::flags() const
+Qt::ItemFlags DataVxItem::flags(EditDataPtr obs) const
 {
-    return DataItem::flags() | Qt::ItemIsEditable;
+    return DataItem::flags(obs) | Qt::ItemIsEditable;
 }
 
 QVariant DataVxItem::data(EditDataPtr obs1, int role) const
