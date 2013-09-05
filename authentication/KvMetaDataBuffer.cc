@@ -13,8 +13,10 @@
 
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
+#include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
+#define M_TIME
 #include "HqcLogging.hh"
 
 KvMetaDataBuffer* KvMetaDataBuffer::sInstance = 0;
@@ -192,6 +194,49 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
         }
     }
     return mObsPgms[stationid];
+}
+
+void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
+{
+  METLIBS_LOG_TIME();
+  const std::set<long> stationsLoaded(boost::adaptors::keys(mObsPgms).begin(), boost::adaptors::keys(mObsPgms).end());
+  std::vector<long> stationsToFetch;
+  std::set_difference(stationids.begin(), stationids.end(), stationsLoaded.begin(), stationsLoaded.end(),
+      std::back_inserter(stationsToFetch));
+
+  if (not stationsToFetch.empty()) {
+    try {
+      METLIBS_LOG_DEBUG(LOGVAL(stationids.size()) << LOGVAL(stationsToFetch.size()));
+
+      // obs_pgm is too large for a single CORBA reply, split in chunks of 100 stations
+      const size_t total = stationsToFetch.size(), chunk = 100;
+      size_t start = 0;
+      std::vector<long>::const_iterator f0 = stationsToFetch.begin(), f1 = f0;
+      while (f0 != stationsToFetch.end()) {
+        const size_t n = std::min(total-start, chunk);
+        start += n;
+        f1    += n;
+        const std::list<long> chunkIds(f0, f1);
+        f0 = f1;
+
+        ObsPgmList mixed;
+        kvservice::KvApp::kvApp->getKvObsPgm(mixed, chunkIds, false);
+
+        // the following assumes that ObsPgmList is sorted by stationid
+        ObsPgmList::const_iterator i0 = mixed.begin(), i1 = i0;
+        while (i0 != mixed.end()) {
+          const long s0 = i0->stationID();
+          while (i1 != mixed.end() and i1->stationID() == s0)
+            ++i1;
+          ObsPgmList& l0 = mObsPgms[s0];
+          l0.insert(l0.end(), i0, i1);
+          i0 = i1;
+        }
+      }
+    } catch (std::exception& e) {
+      METLIBS_LOG_ERROR("exception while retrieving obs_pgm for station list: " << e.what());
+    }
+  }
 }
 
 void KvMetaDataBuffer::fetchStations()

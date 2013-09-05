@@ -11,6 +11,7 @@
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.StationSelection"
+#define M_TIME 1
 #include "HqcLogging.hh"
 
 StationTable::StationTable(QWidget* parent)
@@ -33,9 +34,24 @@ void StationTable::setData(const listStat_l& listStat,
 			   bool web,
 			   bool pri)
 {
-    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_TIME();
     BusyIndicator busy;
     setNumRows(listStat.size());
+
+    { // pre-fetching obs_pgm is a faster than fetching one-by-one
+      std::set<long> stationids;
+      BOOST_FOREACH(const listStat_t& s, listStat) {
+        bool webStat = (s.wmonr != "    ");
+        bool priStat = (s.pri.substr(0, 3) == "PRI");
+        if (not (counties.contains("ALL")
+                 or counties.contains(QString::fromStdString(s.fylke))
+                 or (webStat and web) or (priStat and pri)))
+            continue;
+
+        stationids.insert(s.stationid);
+      }
+      KvMetaDataBuffer::instance()->findObsPgm(stationids);
+    }
 
     int stInd = 0;
     BOOST_FOREACH(const listStat_t& s, listStat) {

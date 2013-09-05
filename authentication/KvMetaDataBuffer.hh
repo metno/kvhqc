@@ -45,6 +45,7 @@ public:
   const ObsPgmList& findObsPgm(int stationId);
   const ObsPgmList& findObsPgm(const Sensor& sensor)
     { return findObsPgm(sensor.stationId); }
+  void findObsPgm(const std::set<long>& stationids);
 
   void reload();
 
