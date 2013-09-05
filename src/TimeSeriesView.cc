@@ -12,6 +12,20 @@
 #define MILOGGER_CATEGORY "kvhqc.TimeSeriesView"
 #include "HqcLogging.hh"
 
+// ########################################################################
+
+namespace /*anonymous*/ {
+class IdxHelper {
+  int i;
+public:
+  IdxHelper(int ii) : i(ii) { }
+  int next(int available)
+    { int r = i % available; i /= available; return r; }
+};
+} // namespace anonymous
+
+// ########################################################################
+
 TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::TimeSeriesView)
@@ -41,6 +55,8 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
   tsdlg->setFromTimeSlot(f);
   tsdlg->setToTimeSlot(t);
+#else
+  ui->buttonConfig->setEnabled(false);
 #endif
 }
 
@@ -52,16 +68,6 @@ void TimeSeriesView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
   ChangeableDataView::setDataAccess(eda, mda);
 }
-
-namespace /*anonymous*/ {
-class IdxHelper {
-  int i;
-public:
-  IdxHelper(int ii) : i(ii) { }
-  int next(int available)
-    { int r = i % available; i /= available; return r; }
-};
-} // namespace anonymous
 
 void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
@@ -107,7 +113,7 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
     POptions::PlotOptions& po = mPlotOptions[++idx];
 
     po.name = (tr("Station:") + QString::number(s.stationId)).toStdString();
-    po.label= KvMetaDataBuffer::instance()->findParamName(s.paramId)
+    po.label = KvMetaDataBuffer::instance()->findParamName(s)
         + " (" + miutil::from_number(s.stationId)
         + "/" + miutil::from_number(s.typeId) + ")";
 
@@ -120,10 +126,22 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
     po.fillcolour = po.linecolour; // sets marker colour
     po.linetype   = linetypes[li];
 
-    po.linewidth = (s.stationId == mSensors.front().stationId) ? 2 : 1; // if we come here, mSensors is not empty
+    po.linewidth = (s.stationId == mSensors.front().stationId) ? 3 : 1; // if we come here, mSensors is not empty
     po.axis = axes[0];
-  }  
 
+    try {
+      const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(s);
+      if (param.unit().find("grader") != std::string::npos) {
+        po.plottype = POptions::type_vector;
+        po.linewidth= 1;
+      } else if (param.description().find("Nedb") != std::string::npos and param.description().find("tilvekst") != std::string::npos) {
+        po.plottype = POptions::type_histogram;
+        po.axisname= "";
+      }
+    } catch (std::exception& ex) {
+      METLIBS_LOG_WARN("exception while retrieving kvParam for " << s);
+    }
+  }
   updatePlot();
 }
 
