@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>TimeSeriesView</class>
+ <widget class="QWidget" name="TimeSeriesView">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>646</width>
+    <height>253</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Time Series</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QPushButton" name="buttonConfig">
+       <property name="text">
+        <string>Config…</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioObservations">
+       <property name="text">
+        <string>Obs.</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioModel">
+       <property name="text">
+        <string>Model</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioDifference">
+       <property name="text">
+        <string>Diff</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MiDateTimeEdit" name="timeFrom">
+       <property name="currentSection">
+        <enum>QDateTimeEdit::YearSection</enum>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy-MM-dd hh:mm</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="MiDateTimeEdit" name="timeTo">
+       <property name="currentSection">
+        <enum>QDateTimeEdit::YearSection</enum>
+       </property>
+       <property name="displayFormat">
+        <string>yyyy-MM-dd hh:mm</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="TSglwidget" name="plot" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>200</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MiDateTimeEdit</class>
+   <extends>QDateTimeEdit</extends>
+   <header>MiDateTimeEdit.hh</header>
+  </customwidget>
+  <customwidget>
+   <class>TSglwidget</class>
+   <extends>QWidget</extends>
+   <header>qTimeseries/TSglwidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonConfig</sender>
+   <signal>clicked()</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onConfigButton()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>102</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>43</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioObservations</sender>
+   <signal>clicked()</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onRadioPlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>157</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>143</x>
+     <y>6</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioModel</sender>
+   <signal>clicked()</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onRadioPlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>253</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>238</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>radioDifference</sender>
+   <signal>clicked()</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onRadioPlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>369</x>
+     <y>22</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>351</x>
+     <y>7</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeFrom</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onDateFromChanged(QDateTime)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>517</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>465</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>timeTo</sender>
+   <signal>dateTimeChanged(QDateTime)</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onDateToChanged(QDateTime)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>643</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>615</x>
+     <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onConfigButton()</slot>
+  <slot>onRadioPlot()</slot>
+  <slot>onDateFromChanged(QDateTime)</slot>
+  <slot>onDateToChanged(QDateTime)</slot>
+ </slots>
+</ui>
