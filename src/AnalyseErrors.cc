@@ -305,7 +305,7 @@ bool recheck(ErrorInfo& ei, bool errorsForSalen)
     const bool oldBad = ei.badInList;
     if (whichMemStore(ei.obs, errorsForSalen) == 2)
       ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2012;
-    if (checkError2013(ei.obs))
+    if (not errorsForSalen and checkError2013(ei.obs))
       ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2013;
     return (ei.badInList != oldBad);
 }
