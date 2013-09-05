@@ -1,3 +1,9 @@
+kvhqc (3.0.5-1) unstable; urgency=low
+
+  * bugfix: do not swap kvData sensor and level for inserted data
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 19 Aug 2013 14:09:01 +0200
+
 kvhqc (3.0.4-1) unstable; urgency=low
 
   * bugfix: last version caused some problems in column/line memory
