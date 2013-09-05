@@ -8,7 +8,7 @@ class DataControlinfoItem : public DataItem {
 public:
     DataControlinfoItem(bool showNew);
 
-    virtual QVariant data(EditDataPtr obs, int role) const;
+    virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
     virtual QString description(bool mini) const;
     virtual int type() const
       { return mShowNew ? ObsColumn::NEW_CONTROLINFO : ObsColumn::OLD_CONTROLINFO; }

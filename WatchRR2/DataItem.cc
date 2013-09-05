@@ -14,7 +14,7 @@ Qt::ItemFlags DataItem::flags(EditDataPtr) const
     return Qt::ItemIsEnabled|Qt::ItemIsSelectable;
 }
 
-QVariant DataItem::data(EditDataPtr, int role) const
+QVariant DataItem::data(EditDataPtr, const SensorTime&, int role) const
 {
     if (role == ObsColumn::ValueTypeRole)
         return ObsColumn::Numerical;

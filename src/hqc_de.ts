@@ -781,7 +781,7 @@ Parameter</translation>
     <message>
         <location filename="mainwindow.ui" line="428"/>
         <source>Redo a change.</source>
-        <translation>Änderung wiederherstellen</translation>
+        <translation>Änderung wiederherstellen.</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="431"/>
@@ -1692,7 +1692,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="132"/>
+        <location filename="TimeSeriesView.cc" line="133"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>

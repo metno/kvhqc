@@ -63,6 +63,7 @@
     <name>Code2Text</name>
     <message>
         <location filename="Code2Text.cc" line="11"/>
+        <location filename="DataVxItem.cc" line="195"/>
         <source>new</source>
         <translation>neu</translation>
     </message>
@@ -73,6 +74,7 @@
     </message>
     <message>
         <location filename="Code2Text.cc" line="13"/>
+        <location filename="DataVxItem.cc" line="197"/>
         <source>mis</source>
         <translation>fhlt</translation>
     </message>
@@ -83,6 +85,7 @@
     </message>
     <message>
         <location filename="Code2Text.cc" line="15"/>
+        <location filename="DataVxItem.cc" line="199"/>
         <source>rej</source>
         <translation>verw</translation>
     </message>
@@ -111,21 +114,25 @@
     </message>
     <message>
         <location filename="DataCorrectedItem.cc" line="84"/>
+        <location filename="DataVxItem.cc" line="334"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
         <location filename="DataCorrectedItem.cc" line="86"/>
+        <location filename="DataVxItem.cc" line="337"/>
         <source>corrected</source>
         <translation>korrigiert</translation>
     </message>
     <message>
         <location filename="DataOriginalItem.cc" line="52"/>
+        <location filename="DataVxItem.cc" line="333"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
         <location filename="DataOriginalItem.cc" line="54"/>
+        <location filename="DataVxItem.cc" line="336"/>
         <source>original</source>
         <translation>original</translation>
     </message>
@@ -160,81 +167,294 @@
 <context>
     <name>DataVxItem</name>
     <message>
-        <location filename="DataVxItem.cc" line="23"/>
+        <location filename="DataVxItem.cc" line="26"/>
+        <location filename="DataVxItem.cc" line="62"/>
+        <location filename="DataVxItem.cc" line="79"/>
         <source>no data</source>
         <translation>keine Daten</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="24"/>
+        <location filename="DataVxItem.cc" line="27"/>
+        <location filename="DataVxItem.cc" line="63"/>
+        <location filename="DataVxItem.cc" line="82"/>
         <source>rain</source>
         <translation>Regen</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="25"/>
+        <location filename="DataVxItem.cc" line="28"/>
+        <location filename="DataVxItem.cc" line="64"/>
+        <location filename="DataVxItem.cc" line="86"/>
         <source>rain shower</source>
         <translation>Regenschauer</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="26"/>
+        <location filename="DataVxItem.cc" line="29"/>
+        <location filename="DataVxItem.cc" line="65"/>
+        <location filename="DataVxItem.cc" line="90"/>
         <source>snow</source>
         <translation>Schnee</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="27"/>
+        <location filename="DataVxItem.cc" line="30"/>
+        <location filename="DataVxItem.cc" line="66"/>
+        <location filename="DataVxItem.cc" line="94"/>
         <source>snow shower</source>
         <translation>Schneeschauer</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="28"/>
+        <location filename="DataVxItem.cc" line="31"/>
+        <location filename="DataVxItem.cc" line="67"/>
+        <location filename="DataVxItem.cc" line="98"/>
         <source>sleet</source>
         <translation>Graupeln</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="29"/>
+        <location filename="DataVxItem.cc" line="32"/>
+        <location filename="DataVxItem.cc" line="68"/>
+        <location filename="DataVxItem.cc" line="102"/>
         <source>sleet shower</source>
         <translation>Graupelschauer</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="30"/>
+        <location filename="DataVxItem.cc" line="33"/>
+        <location filename="DataVxItem.cc" line="69"/>
+        <location filename="DataVxItem.cc" line="105"/>
         <source>drizzle</source>
         <translation>Nieselregen</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="31"/>
+        <location filename="DataVxItem.cc" line="34"/>
+        <location filename="DataVxItem.cc" line="70"/>
+        <location filename="DataVxItem.cc" line="106"/>
         <source>hail</source>
         <translation>Hagel</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="32"/>
+        <location filename="DataVxItem.cc" line="35"/>
+        <location filename="DataVxItem.cc" line="71"/>
+        <location filename="DataVxItem.cc" line="107"/>
         <source>dew</source>
         <translation>Tau</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="33"/>
+        <location filename="DataVxItem.cc" line="36"/>
+        <location filename="DataVxItem.cc" line="72"/>
+        <location filename="DataVxItem.cc" line="108"/>
         <source>rime</source>
         <translation>Reif</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="34"/>
+        <location filename="DataVxItem.cc" line="37"/>
+        <location filename="DataVxItem.cc" line="73"/>
+        <location filename="DataVxItem.cc" line="109"/>
         <source>thunder</source>
         <translation>Donner</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="35"/>
+        <location filename="DataVxItem.cc" line="38"/>
+        <location filename="DataVxItem.cc" line="74"/>
+        <location filename="DataVxItem.cc" line="110"/>
         <source>snowflakes</source>
         <translation>Schneeflocken</translation>
     </message>
     <message>
+        <location filename="DataVxItem.cc" line="39"/>
+        <source>Kornsnoe</source>
+        <oldsource>KornsnÃ¸</oldsource>
+        <translation>Kornschnee</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="40"/>
+        <source>Sproehagl</source>
+        <oldsource>SprÃ¸hagl</oldsource>
+        <translation>spröder Hagel</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="41"/>
+        <source>ice hail</source>
+        <oldsource>hagl</oldsource>
+        <translation>Eishagel</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="42"/>
+        <source>fog rime</source>
+        <oldsource>fog rime</oldsource>
+        <translation>Nebelreif</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="43"/>
+        <source>Isslag</source>
+        <translation>Eisschlag</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="44"/>
+        <source>ice grains</source>
+        <translation>Eiskörner</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="45"/>
+        <source>ice needles</source>
+        <oldsource>IsnÃ¥ler</oldsource>
+        <translation>Eisnadeln</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="46"/>
+        <source>fog</source>
+        <oldsource>TÃ¥ke</oldsource>
+        <translation>Nebel</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="47"/>
+        <source>fog mist</source>
+        <oldsource>TÃ¥kedis</oldsource>
+        <translation>Nebeldunst</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="48"/>
+        <source>oil smoke</source>
+        <oldsource>ÃlrÃ¸yk</oldsource>
+        <translation>Ölrauch</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="49"/>
+        <source>clear air</source>
+        <translation>klare Luft</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="50"/>
+        <source>halo</source>
+        <translation>Halo</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="51"/>
+        <source>Krans</source>
+        <translation>Krans</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="52"/>
+        <source>sun</source>
+        <translation>Sonne</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="53"/>
+        <source>northern light</source>
+        <translation>Nordlicht</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="54"/>
+        <source>rainbow</source>
+        <translation>Regenbogen</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="55"/>
+        <source>sheet lightning</source>
+        <translation>Wetterleuchten</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="56"/>
+        <source>rain, snow, sleet</source>
+        <oldsource>Regn, snÃ¸, sludd</oldsource>
+        <translation>Regen, Schnee, Schneeregen</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="57"/>
+        <source>dew, rime, fog</source>
+        <oldsource>Dugg, rim, tÃ¥ke</oldsource>
+        <translation>Tau, Reif, Nebel</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="81"/>
+        <source>rain weak</source>
+        <oldsource>rain 0</oldsource>
+        <translation>schwacher Regen</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="83"/>
+        <source>rain strong</source>
+        <oldsource>rain 2</oldsource>
+        <translation>starker Regen</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="85"/>
+        <source>rain shower weak</source>
+        <oldsource>rain shower 0</oldsource>
+        <translation>leichter Regenschauer</translation>
+    </message>
+    <message>
         <location filename="DataVxItem.cc" line="87"/>
-        <location filename="DataVxItem.cc" line="132"/>
+        <source>rain shower strong</source>
+        <oldsource>rain shower 2</oldsource>
+        <translation>starker Regenschauer</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="89"/>
+        <source>snow weak</source>
+        <oldsource>snow 0</oldsource>
+        <translation>schwacher Schnee</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="91"/>
+        <source>snow strong</source>
+        <oldsource>snow 2</oldsource>
+        <translation>starker Schnee</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="93"/>
+        <source>snow shower weak</source>
+        <oldsource>snow shower 0</oldsource>
+        <translation>leichter Schneeschauer</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="95"/>
+        <source>snow shower strong</source>
+        <oldsource>snow shower 2</oldsource>
+        <translation>starker Schneeschauer</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="97"/>
+        <source>sleet weak</source>
+        <oldsource>sleet 0</oldsource>
+        <translation>schwache Graupeln</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="99"/>
+        <source>sleet strong</source>
+        <oldsource>sleet 2</oldsource>
+        <translation>starke Graupeln</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="101"/>
+        <source>sleet shower weak</source>
+        <oldsource>sleet shower 0</oldsource>
+        <translation>leichter Graupelschauer</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="103"/>
+        <source>sleet shower strong</source>
+        <oldsource>sleet shower 2</oldsource>
+        <translation>starker Graupelschauer</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="163"/>
+        <location filename="DataVxItem.cc" line="230"/>
         <source>weak</source>
         <translation>wenig</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="89"/>
-        <location filename="DataVxItem.cc" line="134"/>
+        <location filename="DataVxItem.cc" line="165"/>
+        <location filename="DataVxItem.cc" line="232"/>
         <source>strong</source>
         <translation>viel</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="219"/>
+        <source>unknown code %1</source>
+        <translation>unbekannter Code %1</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="222"/>
+        <source>unknown code %1 (strength %2)</source>
+        <translation>unbekannter Code %1 (Stärke %2)</translation>
     </message>
 </context>
 <context>
@@ -436,7 +656,7 @@
     <message>
         <location filename="main.cc" line="129"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
-        <translation>Leider konnten Ihre Änderungen nicht gespeichert werden, sie sind verloren gegangen.</translation>
+        <translation>Leider konnten Ihre Änderungen nicht gespeichert werden, sie sind verloren gegangen!</translation>
     </message>
     <message>
         <location filename="main.cc" line="135"/>

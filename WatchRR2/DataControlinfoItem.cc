@@ -14,7 +14,7 @@ DataControlinfoItem::DataControlinfoItem(bool showNew)
 {
 }
 
-QVariant DataControlinfoItem::data(EditDataPtr obs, int role) const
+QVariant DataControlinfoItem::data(EditDataPtr obs, const SensorTime& st, int role) const
 {
     if (not obs)
         return QVariant();
@@ -29,7 +29,7 @@ QVariant DataControlinfoItem::data(EditDataPtr obs, int role) const
     } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
         return Helpers::getFlagText(getControlinfo(obs));
     }
-    return DataItem::data(obs, role);
+    return DataItem::data(obs, st, role);
 }
 
 QString DataControlinfoItem::description(bool mini) const

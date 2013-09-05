@@ -35,7 +35,7 @@ Qt::ItemFlags DataValueItem::flags(EditDataPtr obs) const
     return f;
 }
 
-QVariant DataValueItem::data(EditDataPtr obs, int role) const
+QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) const
 {
   if (not obs)
     return QVariant();
@@ -60,7 +60,7 @@ QVariant DataValueItem::data(EditDataPtr obs, int role) const
     }
   } else if (role == Qt::ForegroundRole) {
     // FIXME this is a hack, but the idea of having all non-numbers in dark gray is also mysterious
-    const QVariant d = data(obs, Qt::DisplayRole);
+    const QVariant d = data(obs, st, Qt::DisplayRole);
     if (d.type() == QVariant::String) {
       bool ok = false;
       d.toFloat(&ok);
@@ -98,7 +98,7 @@ QVariant DataValueItem::data(EditDataPtr obs, int role) const
       return tip;
     }
   }
-  return DataItem::data(obs, role);
+  return DataItem::data(obs, st, role);
 }
 
 float DataValueItem::getValue(EditDataPtr obs) const

@@ -39,59 +39,60 @@ Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
 
 QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 {
-    return mItem->data(getObs(time), role);
+  const SensorTime st = getSensorTime(time);
+  return mItem->data(getObs(time), st, role);
 }
 
 bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int role)
 {
-    METLIBS_LOG_SCOPE();
-    try {
-        METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
-        return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
-    } catch (std::exception& e) {
-        METLIBS_LOG_WARN(e.what());
-        return false;
-    }
+  METLIBS_LOG_SCOPE();
+  try {
+    METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
+    return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
+  } catch (std::exception& e) {
+    METLIBS_LOG_WARN(e.what());
+    return false;
+  }
 }
 
 QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
 {
-    SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
-                    SensorHeader::ALWAYS, mTimeOffset.hours());
-    return sh.sensorHeader(mItem, orientation, role);
+  SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
+      SensorHeader::ALWAYS, mTimeOffset.hours());
+  return sh.sensorHeader(mItem, orientation, role);
 }
 
 bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 {
-    METLIBS_LOG_SCOPE();
-    const SensorTime st(obs->sensorTime());
-    if (not mItem->matchSensor(mSensor, st.sensor))
-        return false;
-
-    METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
-    const timeutil::ptime timeo = st.time - mTimeOffset;
-    ObsCache_t::iterator it = mObsCache.find(timeo);
-    if (it == mObsCache.end()) {
-        METLIBS_LOG_DEBUG("not in cache");
-        return false;
-    }
-    
-    mObsCache.erase(it);
-    columnChanged(timeo, this);
-    return true;
+  METLIBS_LOG_SCOPE();
+  const SensorTime st(obs->sensorTime());
+  if (not mItem->matchSensor(mSensor, st.sensor))
+    return false;
+  
+  METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
+  const timeutil::ptime timeo = st.time - mTimeOffset;
+  ObsCache_t::iterator it = mObsCache.find(timeo);
+  if (it == mObsCache.end()) {
+    METLIBS_LOG_DEBUG("not in cache");
+    return false;
+  }
+  
+  mObsCache.erase(it);
+  columnChanged(timeo, this);
+  return true;
 }
 
 EditDataPtr DataColumn::getObs(const timeutil::ptime& time) const
 {
-    ObsCache_t::iterator it = mObsCache.find(time);
-    EditDataPtr obs;
-    if (it == mObsCache.end()) {
-        obs = mDA->findE(getSensorTime(time));
-        mObsCache[time] = obs;
-    } else {
-        obs = it->second;
-    }
-    return obs;
+  ObsCache_t::iterator it = mObsCache.find(time);
+  EditDataPtr obs;
+  if (it == mObsCache.end()) {
+    obs = mDA->findE(getSensorTime(time));
+    mObsCache[time] = obs;
+  } else {
+    obs = it->second;
+  }
+  return obs;
 }
 
 void DataColumn::setTimeRange(const TimeRange& tr)

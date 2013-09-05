@@ -90,7 +90,9 @@ Qt::ItemFlags NeighborDataModel::flags(const QModelIndex& index) const
 
 QVariant NeighborDataModel::data(const QModelIndex& index, int role) const
 {
-    return getItem(index)->data(getObs(index), role);
+  const SensorTime st(getSensorTime(index));
+  const EditDataPtr obs = mDA->findE(st);
+  return getItem(index)->data(obs, st, role);
 }
 
 void NeighborDataModel::setTime(const timeutil::ptime& time)
@@ -122,9 +124,14 @@ QVariant NeighborDataModel::headerData(int section, Qt::Orientation orientation,
 
 EditDataPtr NeighborDataModel::getObs(const QModelIndex& index) const
 {
-    Sensor sensor = mSensors[index.row()];
-    sensor.paramId = columnPars[index.column()];
-    return mDA->findE(SensorTime(sensor, getTime(index)));
+  return mDA->findE(getSensorTime(index));
+}
+
+SensorTime NeighborDataModel::getSensorTime(const QModelIndex& index) const
+{
+  Sensor sensor = mSensors[index.row()];
+  sensor.paramId = columnPars[index.column()];
+  return SensorTime(sensor, getTime(index));
 }
 
 void NeighborDataModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)

@@ -19,7 +19,10 @@ struct VxData {
     int code;
     const char* metCode;
     const char* explain;
-} vxdata[] = {
+};
+
+// see http://metklim.met.no/nasjonale_koder
+const VxData vxdata_312[] = {
     {  0, "",   QT_TRANSLATE_NOOP("DataVxItem", "no data") },
     {  3, "RR", QT_TRANSLATE_NOOP("DataVxItem", "rain") },
     {  7, "RB", QT_TRANSLATE_NOOP("DataVxItem", "rain shower") },
@@ -33,30 +36,99 @@ struct VxData {
     { 17, "RI", QT_TRANSLATE_NOOP("DataVxItem", "rime") },
     { 20, "TO", QT_TRANSLATE_NOOP("DataVxItem", "thunder") },
     { 28, "SF", QT_TRANSLATE_NOOP("DataVxItem", "snowflakes") },
-#if 0
-    // see http://metklim.met.no/nasjonale_koder
-    {  6, "KS", "Kornsnø" },
-    {  9, "SH", "Sprøhagl" },
-    { 11, "IH", "Ishagl" },
-    { 13, "TR", "Tåkerim" },
-    { 14, "IS", "Isslag" },
-    { 15, "IK", "Iskorn" },
-    { 16, "IN", "Isnåler" },		
-    { 18, "TA", "Tåke" },
-    { 19, "TD", "Tåkedis" },
-    { 21, "OO", "Ølrøyk" },		
-    { 22, "RL", "Ren luft" },
-    { 23, "HA", "Halo" },
-    { 24, "KR", "Krans" },
-    { 25, "SO", "Sol" },
-    { 26, "NL", "Nordlys" },
-    { 27, "RE", "Regnbue" },
-    { 29, "KM", "Kornmo" },
-    { 30, "RS", "Regn, snø, sludd" },
-    { 31, "AN", "Dugg, rim, tåke" },
-#endif
+    {  6, "KS", QT_TRANSLATE_NOOP("DataVxItem", "Kornsnoe") },
+    {  9, "SH", QT_TRANSLATE_NOOP("DataVxItem", "Sproehagl") },
+    { 11, "IH", QT_TRANSLATE_NOOP("DataVxItem", "ice hail") },
+    { 13, "TR", QT_TRANSLATE_NOOP("DataVxItem", "fog rime") },
+    { 14, "IS", QT_TRANSLATE_NOOP("DataVxItem", "Isslag") },
+    { 15, "IK", QT_TRANSLATE_NOOP("DataVxItem", "ice grains") },
+    { 16, "IN", QT_TRANSLATE_NOOP("DataVxItem", "ice needles") },		
+    { 18, "TA", QT_TRANSLATE_NOOP("DataVxItem", "fog") },
+    { 19, "TD", QT_TRANSLATE_NOOP("DataVxItem", "fog mist") },
+    { 21, "OO", QT_TRANSLATE_NOOP("DataVxItem", "oil smoke") },		
+    { 22, "RL", QT_TRANSLATE_NOOP("DataVxItem", "clear air") },
+    { 23, "HA", QT_TRANSLATE_NOOP("DataVxItem", "halo") },
+    { 24, "KR", QT_TRANSLATE_NOOP("DataVxItem", "Krans") },
+    { 25, "SO", QT_TRANSLATE_NOOP("DataVxItem", "sun") },
+    { 26, "NL", QT_TRANSLATE_NOOP("DataVxItem", "northern light") },
+    { 27, "RE", QT_TRANSLATE_NOOP("DataVxItem", "rainbow") },
+    { 29, "KM", QT_TRANSLATE_NOOP("DataVxItem", "sheet lightning") },
+    { 30, "RS", QT_TRANSLATE_NOOP("DataVxItem", "rain, snow, sleet") },
+    { 31, "AN", QT_TRANSLATE_NOOP("DataVxItem", "dew, rime, fog") },
     { -1, 0, 0 }
 };
+
+const VxData vxdata_302_before2006[] = {
+    {  0, "",   QT_TRANSLATE_NOOP("DataVxItem", "no data") },
+    { 10, "RR", QT_TRANSLATE_NOOP("DataVxItem", "rain") },
+    { 14, "RB", QT_TRANSLATE_NOOP("DataVxItem", "rain shower") },
+    { 11, "SS", QT_TRANSLATE_NOOP("DataVxItem", "snow") },
+    { 15, "SB", QT_TRANSLATE_NOOP("DataVxItem", "snow shower") },
+    { 12, "SL", QT_TRANSLATE_NOOP("DataVxItem", "sleet") },
+    { 16, "LB", QT_TRANSLATE_NOOP("DataVxItem", "sleet shower") },
+    { 13, "YR", QT_TRANSLATE_NOOP("DataVxItem", "drizzle") },
+    { 17, "HG", QT_TRANSLATE_NOOP("DataVxItem", "hail") },
+    { 18, "DU", QT_TRANSLATE_NOOP("DataVxItem", "dew") },
+    { 19, "RI", QT_TRANSLATE_NOOP("DataVxItem", "rime") },
+    { 20, "TO", QT_TRANSLATE_NOOP("DataVxItem", "thunder") },
+    { 22, "SF", QT_TRANSLATE_NOOP("DataVxItem", "snowflakes") },
+    { -1, 0, 0 }
+};
+
+const VxData vxdata_302_after2006[] = {
+    {  0, "",   QT_TRANSLATE_NOOP("DataVxItem", "no data") },
+
+    { 10, "RR", QT_TRANSLATE_NOOP("DataVxItem", "rain weak") },
+    { 11, "RR", QT_TRANSLATE_NOOP("DataVxItem", "rain") },
+    { 12, "RR", QT_TRANSLATE_NOOP("DataVxItem", "rain strong") },
+
+    { 40, "RB", QT_TRANSLATE_NOOP("DataVxItem", "rain shower weak") },
+    { 41, "RB", QT_TRANSLATE_NOOP("DataVxItem", "rain shower") },
+    { 42, "RB", QT_TRANSLATE_NOOP("DataVxItem", "rain shower strong") },
+
+    { 20, "SS", QT_TRANSLATE_NOOP("DataVxItem", "snow weak") },
+    { 21, "SS", QT_TRANSLATE_NOOP("DataVxItem", "snow") },
+    { 22, "SS", QT_TRANSLATE_NOOP("DataVxItem", "snow strong") },
+
+    { 50, "SB", QT_TRANSLATE_NOOP("DataVxItem", "snow shower weak") },
+    { 51, "SB", QT_TRANSLATE_NOOP("DataVxItem", "snow shower") },
+    { 52, "SB", QT_TRANSLATE_NOOP("DataVxItem", "snow shower strong") },
+
+    { 30, "SL", QT_TRANSLATE_NOOP("DataVxItem", "sleet weak") },
+    { 31, "SL", QT_TRANSLATE_NOOP("DataVxItem", "sleet") },
+    { 32, "SL", QT_TRANSLATE_NOOP("DataVxItem", "sleet strong") },
+
+    { 60, "LB", QT_TRANSLATE_NOOP("DataVxItem", "sleet shower weak") },
+    { 61, "LB", QT_TRANSLATE_NOOP("DataVxItem", "sleet shower") },
+    { 62, "LB", QT_TRANSLATE_NOOP("DataVxItem", "sleet shower strong") },
+
+    { 73, "YR", QT_TRANSLATE_NOOP("DataVxItem", "drizzle") },
+    { 74, "HG", QT_TRANSLATE_NOOP("DataVxItem", "hail") },
+    { 85, "DU", QT_TRANSLATE_NOOP("DataVxItem", "dew") },
+    { 86, "RI", QT_TRANSLATE_NOOP("DataVxItem", "rime") },
+    { 97, "TO", QT_TRANSLATE_NOOP("DataVxItem", "thunder") },
+    { 98, "SF", QT_TRANSLATE_NOOP("DataVxItem", "snowflakes") },
+    { -1, 0, 0 }
+};
+
+const timeutil::ptime LIMIT_302(boost::gregorian::date(2006, 1, 9), boost::posix_time::time_duration(0, 0, 0));
+
+const VxData* vxData4SensorTime(const SensorTime& st)
+{
+#if 1
+  return vxdata_312;
+#else
+  if (st.sensor.typeId == 312)
+    return vxdata_312;
+  else if (st.sensor.typeId != 302)
+    return 0;
+  if (st.time >= LIMIT_302)
+    return vxdata_302_after2006;
+  else
+    return vxdata_302_before2006;
+#endif
+}
+
 } // namespace anonymous
 
 DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccessPtr da)
@@ -65,18 +137,22 @@ DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccessPtr da)
 {
 }
 
-QVariant DataVxItem::data(EditDataPtr obs1, int role) const
+QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) const
 {
+  const VxData* vxdata = vxData4SensorTime(st);
+  if (not vxdata)
+    METLIBS_LOG_WARN("no Vx codes known for " << st);
+
   if (role == ObsColumn::ValueTypeRole) {
     return ObsColumn::TextCode;
   } else if (role == ObsColumn::TextCodesRole or role == ObsColumn::TextCodeExplanationsRole) {
     QStringList codes;
-    for(int i=0; vxdata[i].code >= 0; ++i) {
+    for(int i=0; vxdata and vxdata[i].code >= 0; ++i) {
       if (role == ObsColumn::TextCodesRole) {
         QString mc = vxdata[i].metCode;
         if (vxdata[i].code != 0) {
           codes << (mc + QChar( 0xB0 ))
-                << (mc + " ")
+                << mc
                 << (mc + QChar( 0xB2 ));
         } else {
           codes << "";
@@ -97,7 +173,6 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
 
   if (not obs1)
     return QVariant();
-
   EditDataPtr obs2 = getObs2(obs1);
 
   if (role == Qt::FontRole) {
@@ -107,15 +182,29 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
     return f;
   }
 
-  Codes_t codes = getCodes(obs1, obs2);
   int i=0;
-  for(; vxdata[i].code >= 0; ++i)
-    if (codes.first == vxdata[i].code)
-      break;
-  if (vxdata[i].code < 0)
-    return QVariant();
-    
+  Codes_t codes = getCodes(obs1, obs2);
+  if (codes.first >= 0) {
+    for(; vxdata and vxdata[i].code >= 0; ++i)
+      if (codes.first == vxdata[i].code)
+        break;
+  }
+
   if (role == Qt::DisplayRole or role == Qt::EditRole) {
+    if (codes.first == kvalobs::NEW_ROW)
+      return qApp->translate("Code2Text", "new");
+    else if (codes.first == kvalobs::MISSING)
+      return qApp->translate("Code2Text", "mis");
+    else if (codes.first == kvalobs::REJECTED)
+      return qApp->translate("Code2Text", "rej");
+
+    if (not vxdata or vxdata[i].code < 0) {
+      if (codes.second == -1)
+        return QString("%1?").arg(codes.first);
+      else
+        return QString("%1/%2?").arg(codes.first).arg(codes.second);
+    }
+
     QString display = vxdata[i].metCode;
     if (codes.first != 0) {
       if (codes.second == 0)
@@ -125,6 +214,15 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
     }
     return display;
   } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+    if (not vxdata or vxdata[i].code < 0) {
+      if (codes.second == -1)
+        return qApp->translate("DataVxItem", "unknown code %1")
+            .arg(codes.first);
+      else
+        return qApp->translate("DataVxItem", "unknown code %1 (strength %2)")
+            .arg(codes.first).arg(codes.second);
+    }
+
     QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
     if (codes.first != 0 and (codes.second == 0 or codes.second == 2)) {
       tooltip += " -- ";
@@ -133,9 +231,13 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
       else
         tooltip += qApp->translate("DataVxItem", "strong");
     }
-    return Helpers::appendText(tooltip, DataValueItem::data(obs1, role).toString());
+    QString codeNumber = QString::number(codes.first);
+    if (codes.second >= 0)
+      codeNumber += "/" + QString::number(codes.second);
+    Helpers::appendText(tooltip, "(" + codeNumber + ")", " ");
+    return Helpers::appendText(tooltip, DataValueItem::data(obs1, st, role).toString());
   }
-  return DataValueItem::data(obs1, role);
+  return DataValueItem::data(obs1, st, role);
 }
 
 bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, const QVariant& value, int role)
@@ -144,6 +246,12 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     return false;
 
   METLIBS_LOG_SCOPE();
+  const VxData* vxdata = vxData4SensorTime(st);
+  if (not vxdata) {
+    METLIBS_LOG_WARN("no Vx codes known for " << st);
+    return false;
+  }
+
   EditDataPtr obs2 = getObs2(obs1);
   const Codes_t oldCodes = getCodes(obs1, obs2);
   
@@ -166,7 +274,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
   if (v.length() != 3 and v.length() != 2)
     return false;
   const QString mc = v.left(2), level = v.mid(2);
-  
+
   int i=1; // start at 1, skipping "no data"
   for(; vxdata[i].code >= 0; ++i) {
     if (mc == vxdata[i].metCode)
@@ -216,12 +324,18 @@ bool DataVxItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs
 {
   return (eq_Sensor()(sensorColumn, sensorObs)
       or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
-  return true;
 }
 
 QString DataVxItem::description(bool mini) const
 {
-  return ""; // FIXME handle empty names in DataColumn::headerData
+  const bool orig = (mColumnType == ObsColumn::ORIGINAL);
+  if (mini) {
+    return orig ? qApp->translate("DataColumn", "orig")
+        : qApp->translate("DataColumn", "corr");
+  } else {
+    return orig ? qApp->translate("DataColumn", "original")
+        : qApp->translate("DataColumn", "corrected");
+  }
 }
 
 DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) const

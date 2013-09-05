@@ -102,19 +102,20 @@ static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
   QString toolTip;
 
   if (item and obs) {
-    const QVariant vFont = item->data(obs, Qt::FontRole);
+    const SensorTime& st = obs->sensorTime();
+    const QVariant vFont = item->data(obs, st, Qt::FontRole);
     if (vFont.isValid())
       font = vFont.value<QFont>();
     
-    const QVariant vFG = item->data(obs, Qt::ForegroundRole);
+    const QVariant vFG = item->data(obs, st, Qt::ForegroundRole);
     if (vFG.isValid())
       palette.setColor(w->foregroundRole(), vFG.value<QBrush>());
 
-    const QVariant vBG = item->data(obs, Qt::BackgroundRole);
+    const QVariant vBG = item->data(obs, st, Qt::BackgroundRole);
     if (vBG.isValid())
       palette.setColor(w->backgroundRole(), vBG.value<QBrush>());
 
-    toolTip = item->data(obs, Qt::ToolTipRole).toString();
+    toolTip = item->data(obs, st, Qt::ToolTipRole).toString();
   }
   
   w->setFont(font);
@@ -147,10 +148,10 @@ void SimpleCorrections::update()
         ui->textObstime->setText("");
     }
 
-    ui->textFlags->setText((obs and mItemFlags) ? mItemFlags->data(obs, Qt::DisplayRole).toString() : "");
+    ui->textFlags->setText((obs and mItemFlags) ? mItemFlags->data(obs, mSensorTime, Qt::DisplayRole).toString() : "");
     setFBF(ui->textFlags, mItemFlags, obs);
 
-    ui->textOriginal->setText((obs and mItemOriginal) ? mItemOriginal->data(obs, Qt::DisplayRole).toString() : "");
+    ui->textOriginal->setText((obs and mItemOriginal) ? mItemOriginal->data(obs, mSensorTime, Qt::DisplayRole).toString() : "");
     setFBF(ui->textOriginal, mItemOriginal, obs);
 
     ui->textModel->setText(mdl ? QString::number(mdl->value()) : "");
@@ -165,21 +166,22 @@ void SimpleCorrections::update()
         c->setCurrentText("");
       } else {
       // FIXME this is almost identical to ObsDelegate code
-        ttl->setStringList(mItemCorrected->data(obs, ObsColumn::TextCodesRole).toStringList());
-        ttl->setToolTipList(mItemCorrected->data(obs, ObsColumn::TextCodeExplanationsRole).toStringList());
+        ttl->setStringList(mItemCorrected->data(obs, mSensorTime, ObsColumn::TextCodesRole).toStringList());
+        ttl->setToolTipList(mItemCorrected->data(obs, mSensorTime, ObsColumn::TextCodeExplanationsRole).toStringList());
         
         c->setEnabled((mItemCorrected->flags(obs) & Qt::ItemIsEditable));
         
-        const QVariant valueType = mItemCorrected->data(obs, ObsColumn::ValueTypeRole);
+        const QVariant valueType = mItemCorrected->data(obs, mSensorTime, ObsColumn::ValueTypeRole);
         c->setEditable(valueType.toInt() != ObsColumn::TextCode);
         
-        QString currentText = mItemCorrected->data(obs ,Qt::EditRole).toString();
-        const int idx = c->findText(currentText);
+        const Qt::ItemDataRole role = Qt::DisplayRole;
+        QVariant currentText = mItemCorrected->data(obs, mSensorTime, role).toString();
+        const int idx = c->findData(currentText, role);
         // if it is valid, adjust the combobox
         if(idx >= 0)
           c->setCurrentIndex(idx);
         else
-          c->setCurrentText(currentText);
+          c->setCurrentText(currentText.toString());
       }
       setFBF(c, mItemCorrected, obs);
     }

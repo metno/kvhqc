@@ -25,9 +25,9 @@ Qt::ItemFlags DataRR24Item::flags(EditDataPtr obs) const
   return f;
 }
 
-QVariant DataRR24Item::data(EditDataPtr obs, int role) const
+QVariant DataRR24Item::data(EditDataPtr obs, const SensorTime& st, int role) const
 {
-  const QVariant d = DataCorrectedItem::data(obs, role);
+  const QVariant d = DataCorrectedItem::data(obs, st, role);
   if (role == Qt::BackgroundRole and mColumnType == ObsColumn::NEW_CORRECTED
       and not d.isValid() and obs and Helpers::is_accumulation(obs))
   {

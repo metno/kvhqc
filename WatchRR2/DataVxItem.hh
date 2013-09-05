@@ -8,7 +8,7 @@ class DataVxItem : public DataValueItem {
 public:
   DataVxItem(ObsColumn::Type columnType, EditAccessPtr da);
 
-  virtual QVariant data(EditDataPtr obs, int role) const;
+  virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
   virtual bool setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role);
   virtual QString description(bool mini) const;
   virtual bool matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const;

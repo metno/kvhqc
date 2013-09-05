@@ -18,7 +18,7 @@ DataOriginalItem::DataOriginalItem(Code2TextCPtr codes)
 {
 }
 
-QVariant DataOriginalItem::data(EditDataPtr obs, int role) const
+QVariant DataOriginalItem::data(EditDataPtr obs, const SensorTime& st, int role) const
 {
   if (not obs)
     return QVariant();
@@ -43,7 +43,7 @@ QVariant DataOriginalItem::data(EditDataPtr obs, int role) const
       Helpers::appendText(tip, qApp->translate("DataOriginalItem", "no quality info available"));
     return tip;
   }
-  return DataValueItem::data(obs, role);
+  return DataValueItem::data(obs, st, role);
 }
 
 QString DataOriginalItem::description(bool mini) const

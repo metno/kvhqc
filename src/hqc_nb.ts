@@ -781,7 +781,7 @@ parametere</translation>
     <message>
         <location filename="mainwindow.ui" line="428"/>
         <source>Redo a change.</source>
-        <translation>Gjenta endring</translation>
+        <translation>Gjenta endring.</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="431"/>
@@ -1691,7 +1691,7 @@ Du bruker HQC versjon %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="132"/>
+        <location filename="TimeSeriesView.cc" line="133"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>

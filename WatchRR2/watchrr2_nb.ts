@@ -63,6 +63,7 @@
     <name>Code2Text</name>
     <message>
         <location filename="Code2Text.cc" line="11"/>
+        <location filename="DataVxItem.cc" line="195"/>
         <source>new</source>
         <translation>ny</translation>
     </message>
@@ -73,6 +74,7 @@
     </message>
     <message>
         <location filename="Code2Text.cc" line="13"/>
+        <location filename="DataVxItem.cc" line="197"/>
         <source>mis</source>
         <translation>mis</translation>
     </message>
@@ -83,6 +85,7 @@
     </message>
     <message>
         <location filename="Code2Text.cc" line="15"/>
+        <location filename="DataVxItem.cc" line="199"/>
         <source>rej</source>
         <translation>rej</translation>
     </message>
@@ -101,11 +104,13 @@
     <name>DataColumn</name>
     <message>
         <location filename="DataOriginalItem.cc" line="54"/>
+        <location filename="DataVxItem.cc" line="336"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
         <location filename="DataCorrectedItem.cc" line="86"/>
+        <location filename="DataVxItem.cc" line="337"/>
         <source>corrected</source>
         <translation>korrigert</translation>
     </message>
@@ -116,11 +121,13 @@
     </message>
     <message>
         <location filename="DataOriginalItem.cc" line="52"/>
+        <location filename="DataVxItem.cc" line="333"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
         <location filename="DataCorrectedItem.cc" line="84"/>
+        <location filename="DataVxItem.cc" line="334"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
@@ -160,81 +167,294 @@
 <context>
     <name>DataVxItem</name>
     <message>
-        <location filename="DataVxItem.cc" line="23"/>
+        <location filename="DataVxItem.cc" line="26"/>
+        <location filename="DataVxItem.cc" line="62"/>
+        <location filename="DataVxItem.cc" line="79"/>
         <source>no data</source>
         <translation>ingen data</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="24"/>
+        <location filename="DataVxItem.cc" line="27"/>
+        <location filename="DataVxItem.cc" line="63"/>
+        <location filename="DataVxItem.cc" line="82"/>
         <source>rain</source>
         <translation>regn</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="25"/>
+        <location filename="DataVxItem.cc" line="28"/>
+        <location filename="DataVxItem.cc" line="64"/>
+        <location filename="DataVxItem.cc" line="86"/>
         <source>rain shower</source>
         <translation>regnbyge</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="26"/>
+        <location filename="DataVxItem.cc" line="29"/>
+        <location filename="DataVxItem.cc" line="65"/>
+        <location filename="DataVxItem.cc" line="90"/>
         <source>snow</source>
         <translation>snø</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="27"/>
+        <location filename="DataVxItem.cc" line="30"/>
+        <location filename="DataVxItem.cc" line="66"/>
+        <location filename="DataVxItem.cc" line="94"/>
         <source>snow shower</source>
         <translation>snøbyge</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="28"/>
+        <location filename="DataVxItem.cc" line="31"/>
+        <location filename="DataVxItem.cc" line="67"/>
+        <location filename="DataVxItem.cc" line="98"/>
         <source>sleet</source>
         <translation>sludd</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="29"/>
+        <location filename="DataVxItem.cc" line="32"/>
+        <location filename="DataVxItem.cc" line="68"/>
+        <location filename="DataVxItem.cc" line="102"/>
         <source>sleet shower</source>
         <translation>sluddbyge</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="30"/>
+        <location filename="DataVxItem.cc" line="33"/>
+        <location filename="DataVxItem.cc" line="69"/>
+        <location filename="DataVxItem.cc" line="105"/>
         <source>drizzle</source>
         <translation>yr</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="31"/>
+        <location filename="DataVxItem.cc" line="34"/>
+        <location filename="DataVxItem.cc" line="70"/>
+        <location filename="DataVxItem.cc" line="106"/>
         <source>hail</source>
         <translation>hagl</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="32"/>
+        <location filename="DataVxItem.cc" line="35"/>
+        <location filename="DataVxItem.cc" line="71"/>
+        <location filename="DataVxItem.cc" line="107"/>
         <source>dew</source>
         <translation>dugg</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="33"/>
+        <location filename="DataVxItem.cc" line="36"/>
+        <location filename="DataVxItem.cc" line="72"/>
+        <location filename="DataVxItem.cc" line="108"/>
         <source>rime</source>
         <translation>rim</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="34"/>
+        <location filename="DataVxItem.cc" line="37"/>
+        <location filename="DataVxItem.cc" line="73"/>
+        <location filename="DataVxItem.cc" line="109"/>
         <source>thunder</source>
         <translation>torden</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="35"/>
+        <location filename="DataVxItem.cc" line="38"/>
+        <location filename="DataVxItem.cc" line="74"/>
+        <location filename="DataVxItem.cc" line="110"/>
         <source>snowflakes</source>
         <translation>snøfokk</translation>
     </message>
     <message>
+        <location filename="DataVxItem.cc" line="39"/>
+        <source>Kornsnoe</source>
+        <oldsource>KornsnÃ¸</oldsource>
+        <translation>kornsnø</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="40"/>
+        <source>Sproehagl</source>
+        <oldsource>SprÃ¸hagl</oldsource>
+        <translation>sprøhagl</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="41"/>
+        <source>ice hail</source>
+        <oldsource>hagl</oldsource>
+        <translation>ishagl</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="42"/>
+        <source>fog rime</source>
+        <oldsource>fog rime</oldsource>
+        <translation>tåkerim</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="43"/>
+        <source>Isslag</source>
+        <translation>isslag</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="44"/>
+        <source>ice grains</source>
+        <translation>iskorn</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="45"/>
+        <source>ice needles</source>
+        <oldsource>IsnÃ¥ler</oldsource>
+        <translation>isnåler</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="46"/>
+        <source>fog</source>
+        <oldsource>TÃ¥ke</oldsource>
+        <translation>tåke</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="47"/>
+        <source>fog mist</source>
+        <oldsource>TÃ¥kedis</oldsource>
+        <translation>tåkedis</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="48"/>
+        <source>oil smoke</source>
+        <oldsource>ÃlrÃ¸yk</oldsource>
+        <translation>ølrøyk</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="49"/>
+        <source>clear air</source>
+        <translation>ren luft</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="50"/>
+        <source>halo</source>
+        <translation>halo</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="51"/>
+        <source>Krans</source>
+        <translation>krans</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="52"/>
+        <source>sun</source>
+        <translation>sol</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="53"/>
+        <source>northern light</source>
+        <translation>nordlys</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="54"/>
+        <source>rainbow</source>
+        <translation>regnbue</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="55"/>
+        <source>sheet lightning</source>
+        <translation>kornmo</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="56"/>
+        <source>rain, snow, sleet</source>
+        <oldsource>Regn, snÃ¸, sludd</oldsource>
+        <translation>regn, snø, sludd</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="57"/>
+        <source>dew, rime, fog</source>
+        <oldsource>Dugg, rim, tÃ¥ke</oldsource>
+        <translation>dugg, rim, tåke</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="81"/>
+        <source>rain weak</source>
+        <oldsource>rain 0</oldsource>
+        <translation>svakt regn</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="83"/>
+        <source>rain strong</source>
+        <oldsource>rain 2</oldsource>
+        <translation>kraftig regn</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="85"/>
+        <source>rain shower weak</source>
+        <oldsource>rain shower 0</oldsource>
+        <translation>svakt regnbyge</translation>
+    </message>
+    <message>
         <location filename="DataVxItem.cc" line="87"/>
-        <location filename="DataVxItem.cc" line="132"/>
+        <source>rain shower strong</source>
+        <oldsource>rain shower 2</oldsource>
+        <translation>kraftig regnbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="89"/>
+        <source>snow weak</source>
+        <oldsource>snow 0</oldsource>
+        <translation>svakt snø</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="91"/>
+        <source>snow strong</source>
+        <oldsource>snow 2</oldsource>
+        <translation>kraftig snø</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="93"/>
+        <source>snow shower weak</source>
+        <oldsource>snow shower 0</oldsource>
+        <translation>svakt snøbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="95"/>
+        <source>snow shower strong</source>
+        <oldsource>snow shower 2</oldsource>
+        <translation>kraftig snøbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="97"/>
+        <source>sleet weak</source>
+        <oldsource>sleet 0</oldsource>
+        <translation>svakt sludd</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="99"/>
+        <source>sleet strong</source>
+        <oldsource>sleet 2</oldsource>
+        <translation>kraftig sludd</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="101"/>
+        <source>sleet shower weak</source>
+        <oldsource>sleet shower 0</oldsource>
+        <translation>svakt sluddbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="103"/>
+        <source>sleet shower strong</source>
+        <oldsource>sleet shower 2</oldsource>
+        <translation>kraftig sluddbyge</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="163"/>
+        <location filename="DataVxItem.cc" line="230"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="89"/>
-        <location filename="DataVxItem.cc" line="134"/>
+        <location filename="DataVxItem.cc" line="165"/>
+        <location filename="DataVxItem.cc" line="232"/>
         <source>strong</source>
-        <translation>sterkt</translation>
+        <translation>kraftig</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="219"/>
+        <source>unknown code %1</source>
+        <translation>ukjent kode %1</translation>
+    </message>
+    <message>
+        <location filename="DataVxItem.cc" line="222"/>
+        <source>unknown code %1 (strength %2)</source>
+        <translation>ukjent kode %1 (styrke %2)</translation>
     </message>
 </context>
 <context>

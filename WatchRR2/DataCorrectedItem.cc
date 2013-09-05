@@ -19,7 +19,7 @@ DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextCPtr codes)
 {
 }
 
-QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
+QVariant DataCorrectedItem::data(EditDataPtr obs, const SensorTime& st, int role) const
 {
   if (role == ObsColumn::ValueTypeRole or role == ObsColumn::TextCodesRole) {
     const QStringList allCodes = mCodes->allCodes();
@@ -41,13 +41,13 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
     if (mColumnType == ObsColumn::NEW_CORRECTED)
       tip = tasks::asText(obs->allTasks());
     Helpers::appendText(tip, mCodes->asTip(getValue(obs)));
-    return Helpers::appendText(tip, DataValueItem::data(obs, role).toString());
+    return Helpers::appendText(tip, DataValueItem::data(obs, st, role).toString());
   } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
     return mCodes->asText(getValue(obs), role == Qt::EditRole);
   } else if (role == Qt::TextAlignmentRole) {
     return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
   }
-  return DataValueItem::data(obs, role);
+  return DataValueItem::data(obs, st, role);
 }
 
 bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role)
