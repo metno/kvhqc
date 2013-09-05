@@ -62,6 +62,7 @@ ADD_EXECUTABLE(watchRR2test
   EditTimeColumnTest.cc
   KvalobsAccessTest.cc
   HelpersTest.cc
+  VersionedValueTest.cc
   VxColumnTest.cc
   gtestMain.cc)
 

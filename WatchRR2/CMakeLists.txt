@@ -119,6 +119,8 @@ SET(watchrr2_SOURCES
   Tasks.cc
   TimeHeader.hh
   TimeHeader.cc
+  ValueChange.hh
+  VersionedValue.hh
 )
 
 SET(watchrr2_TRANS watchrr2_nb.ts)
