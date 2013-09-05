@@ -107,6 +107,9 @@ const char SETTING_HQC_GEOMETRY[] = "geometry";
 const char SETTING_VERSION[] = "version";
 const char SETTING_VERSION_FULL[] = "version_full";
 
+#include "../src/icon_redo.xpm"
+#include "../src/icon_undo.xpm"
+
 } // anonymous namespace
 
 HqcMainWindow * getHqcMainWindow( const QObject * o )
@@ -153,6 +156,12 @@ HqcMainWindow::HqcMainWindow()
     ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
     ui->treeChanges->setModel(mEditVersions.get());
+
+    QIcon iconRedo, iconUndo;
+    iconRedo.addPixmap(QPixmap(icon_redo));
+    iconUndo.addPixmap(QPixmap(icon_undo));
+    ui->actionRedo->setIcon(iconRedo);
+    ui->actionUndo->setIcon(iconUndo);
 
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));

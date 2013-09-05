@@ -1,0 +1,33 @@
+/* XPM */
+static const char *icon_undo[] = {
+/* columns rows colors chars-per-pixel */
+"24 24 3 1 ",
+"  c #29297A7ACCCC",
+". c #33339999FFFF",
+"X c None",
+/* pixels */
+"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXX.XXXXXXXXXXXXXX",
+"XXXXXXXX.. XXXXXXXXXXXXX",
+"XXXXXXX... XXXXXXXXXXXXX",
+"XXXXXX.... XXXXXXXXXXXXX",
+"XXXXX.............XXXXXX",
+"XXXX...............XXXXX",
+"XXX.................XXXX",
+"XXX..................XXX",
+"XXXX................. XX",
+"XXXXX................ XX",
+"XXXXXX....     ...... XX",
+"XXXXXXX... XXXXX..... XX",
+"XXXXXXXX.. XXXX.....  XX",
+"XXXXXXXXX. XX......  XXX",
+"XXXXXXXXXX X......  XXXX",
+"XXXXXXXXXXXX.....  XXXXX",
+"XXXXXXXXXXXX....  XXXXXX",
+"XXXXXXXXXXXXX    XXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX"
+};
