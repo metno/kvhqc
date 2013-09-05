@@ -85,7 +85,7 @@ void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
     DataView::setDataAccess(eda, mda);
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, Errors_t()));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, Errors::Errors_t(), mErrorsForSalen));
     mSortProxy->setSourceModel(mTableModel.get());
     resizeHeaders();
 }
@@ -116,11 +116,11 @@ void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& li
     DataView::setSensorsAndTimes(sensors, limits);
 
     mLastSelectedRow = -1;
-    Errors_t memStore2;
+    Errors::Errors_t memStore2;
     if (mDA)
         memStore2 = Errors::fillMemoryStore2(mDA, sensors, limits, mErrorsForSalen);
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, memStore2));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, memStore2, mErrorsForSalen));
     mSortProxy->setSourceModel(mTableModel.get());
     resizeHeaders();
 }

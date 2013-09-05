@@ -49,6 +49,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 int main( int argc, char* argv[] )
 {
+    Log4CppConfig log4cpp("!§%$!§%§");
+
     // >>>>> move to HqcApplication somehow
     FakeKvApp fa;
     load_examples_201303(fa);
@@ -65,7 +67,6 @@ int main( int argc, char* argv[] )
     // <<<<<
 
     HqcApplication hqc(argc, argv);
-    Log4CppConfig log4cpp("!§%$!§%§");
     
     hqc.setReinserter(new FakeReinserter, "fake");
     hqc.startup("offline test");

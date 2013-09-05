@@ -639,5 +639,144 @@
   </layout>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonAcceptCorrected</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onAcceptCorrected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>173</x>
+     <y>167</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>151</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAcceptOriginal</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onAcceptOriginal()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>308</x>
+     <y>169</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>301</x>
+     <y>129</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonReject</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onReject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>481</x>
+     <y>173</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>462</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAcceptCorrectedQC2</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onAcceptCorrectedQC2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>204</x>
+     <y>212</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>191</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAcceptOriginalQC2</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onAcceptOriginalQC2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>376</x>
+     <y>208</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonRejectQC2</sender>
+   <signal>clicked()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onRejectQC2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>512</x>
+     <y>211</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>224</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>textInterpolatedValue</sender>
+   <signal>returnPressed()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onInterpolated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>268</x>
+     <y>244</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>287</x>
+     <y>261</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>textCorrectedValue</sender>
+   <signal>returnPressed()</signal>
+   <receiver>SimpleCorrections</receiver>
+   <slot>onCorrected()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>411</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>424</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onAcceptOriginal()</slot>
+  <slot>onAcceptOriginalQC2()</slot>
+  <slot>onAcceptCorrected()</slot>
+  <slot>onAcceptCorrectedQC2()</slot>
+  <slot>onReject()</slot>
+  <slot>onRejectQC2()</slot>
+  <slot>onInterpolated()</slot>
+  <slot>onCorrected()</slot>
+ </slots>
 </ui>

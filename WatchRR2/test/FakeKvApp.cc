@@ -142,9 +142,9 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
             const int stationId = boost::lexical_cast<int>(columns[c++]);
             const int paramId   = boost::lexical_cast<int>(columns[c++]);
             const std::string obstime = columns[c++];
-            const float original  = boost::lexical_cast<float>(columns[c++]);
+            const float value  = boost::lexical_cast<float>(columns[c++]);
             
-            insertModel(stationId, paramId, obstime, original);
+            insertModel(stationId, paramId, obstime, value);
         } catch (std::exception& e) {
             LOG4HQC_WARN("FakeKvApp", "error parsing model line '" << line << "' in file '" + filename + "'");
         }
@@ -252,6 +252,7 @@ bool FakeKvApp::getKvStations(std::list<kvalobs::kvStation> &stationList)
 
 bool FakeKvApp::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper &wd )
 {
+    LOG_SCOPE("FakeKvApp");
     dataList.clear();
 
     const int BIG = 999999;
@@ -268,10 +269,13 @@ bool FakeKvApp::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const 
         for (ModelData_t::iterator it = low; it != high; ++it) {
             const kvalobs::kvModelData& data = it->second;
             const timeutil::ptime ot = timeutil::from_miTime(data.obstime());
-            if (fromTime <= ot and ((not hasToTime) or (ot <= toTime)))
+            if (fromTime <= ot and ((not hasToTime) or (ot <= toTime))) {
+                LOG4SCOPE_DEBUG(DBG1(data));
                 dataList.push_back(data);
+            }
         }
     }
+    LOG4SCOPE_DEBUG(DBG1(dataList.size()));
     return true;
 }
 
@@ -323,6 +327,7 @@ bool FakeKvApp::getKvObsPgm(std::list<kvalobs::kvObsPgm> &obsPgm, const std::lis
 
 bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::WhichDataHelper &wd)
 {
+    LOG_SCOPE("FakeKvApp");
     dataList.clear();
 
     const CKvalObs::CService::WhichDataList& whichData = *wd.whichData();
@@ -331,7 +336,7 @@ bool FakeKvApp::getKvData(kvservice::KvObsDataList &dataList, const kvservice::W
         const timeutil::ptime fromTime = timeutil::from_iso_extended_string(std::string(whichData[wi].fromObsTime));
         const timeutil::ptime toTime   = timeutil::from_iso_extended_string(std::string(whichData[wi].toObsTime));
         const bool hasToTime = (not toTime.is_not_a_date_time());
-        DBG(DBG1(sid) << DBG1(fromTime) << DBG1(toTime) << DBG1(hasToTime));
+        LOG4SCOPE_DEBUG(DBG1(sid) << DBG1(fromTime) << DBG1(toTime) << DBG1(hasToTime));
 
         kvservice::KvObsData od;
         BOOST_FOREACH(const Data_t::value_type& v, mData) {

@@ -6,7 +6,8 @@
 #include <kvalobs/kvDataOperations.h>
 
 #include "ui_simplecorrections.h"
-//#define NDEBUG
+
+#define NDEBUG
 #include "debug.hh"
 
 namespace /* anonymous */ {
@@ -183,10 +184,14 @@ void SimpleCorrections::update()
 
         obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
         mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
+        if (not mMA)
+            LOG4SCOPE_DEBUG("no model access");
+        if (not mdl)
+            LOG4SCOPE_DEBUG("no model value for " << mSensorTime);
     } else {
-        ui->textStation->setText("--");
-        ui->textParam->setText("--");
-        ui->textType->setText("--");
+        ui->textStation->setText("");
+        ui->textParam->setText("");
+        ui->textType->setText("");
 
         ui->textObstime->setText("");
     }
@@ -194,6 +199,9 @@ void SimpleCorrections::update()
     ui->textOriginal->setText(obs ? QString::number(obs->original()) : "");
     ui->textCorrected->setText(obs ? QString::number(obs->corrected()) : "");
     ui->textModel->setText(mdl ? QString::number(mdl->value()) : "");
+
+    ui->textCorrectedValue->setText("");
+    ui->textInterpolatedValue->setText("");
 
     enableEditing();
 }
@@ -213,21 +221,25 @@ void SimpleCorrections::enableEditing()
     bool enable[N_BUTTONS];
     
     const Sensor& s = mSensorTime.sensor;
-    EditDataPtr obs = (mDA and s.valid() and s.paramId != 110) ? mDA->findE(mSensorTime) : EditDataPtr();
-    std::fill(enable, enable+N_BUTTONS, obs);
+    EditDataPtr obs = (mDA and s.valid()) ? mDA->findE(mSensorTime) : EditDataPtr();
+    if (not obs) {
+        setEnabled(false);
+        return;
+    }
+    setEnabled(true);
+    std::fill(enable, enable+N_BUTTONS, true);
 
-    if (obs) {
-        const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
-        if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs)) {
-            // for accumulations, always use WatchRR
-            std::fill(enable, enable+N_BUTTONS, false);
-        } else if (fmis == 3) {
-            enable[INTERPOLATED] &= true;
-        } else if (fmis == 2) {
-            enable[CORR_OK] = enable[CORR_OK_QC2] = false;
-        } else if (fmis == 1) {
-            enable[REJECT] = enable[REJECT_QC2] = false;
-        }
+    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+    if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs)) {
+        // for accumulations, always use WatchRR
+        std::fill(enable, enable+N_BUTTONS, false);
+    } else if (fmis == 3) {
+        std::fill(enable, enable+N_BUTTONS, false);
+        enable[INTERPOLATED] = true;
+    } else if (fmis == 2) {
+        enable[CORR_OK] = enable[CORR_OK_QC2] = false;
+    } else if (fmis == 1) {
+        enable[REJECT] = enable[REJECT_QC2] = false;
     }
 
     for (int b=0; b<N_BUTTONS; ++b)
@@ -236,6 +248,8 @@ void SimpleCorrections::enableEditing()
 
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
 {
+    LOG_SCOPE("SimpleCorrections");
+    LOG4SCOPE_DEBUG(DBG1(data->sensorTime()) << DBG1(mSensorTime));
     if (data and eq_SensorTime()(data->sensorTime(), mSensorTime))
         update();
 }

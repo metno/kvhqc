@@ -3,6 +3,7 @@
 #ifndef ERRORLISTTABLE_H
 #define ERRORLISTTABLE_H
 
+#include "AnalyseErrors.hh"
 #include "EditAccess.hh"
 #include "ModelAccess.hh"
 
@@ -13,9 +14,7 @@
 class ErrorListTableModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-    typedef std::vector<EditDataPtr> Errors_t;
-
-    ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors_t& errorList);
+    ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& errorList, bool errorsForSalen);
     ~ErrorListTableModel();
 
     enum EDIT_COLUMNS {
@@ -44,15 +43,19 @@ public:
 
     void showSameStation(int stationID);
     EditDataPtr mem4Row(int row) const
-        { return (row>=0 and row<(int)mErrorList.size()) ? mErrorList.at(row) : EditDataPtr(); }
+        { return (row>=0 and row<(int)mErrorList.size()) ? mErrorList.at(row).obs : EditDataPtr(); }
 
-    const Errors_t& errorList() const
+    const Errors::Errors_t& errorList() const
         { return mErrorList; }
+
+private:
+    void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
 
 private:
     EditAccessPtr mDA;
     ModelAccessPtr mMA;
-    Errors_t mErrorList;
+    Errors::Errors_t mErrorList;
+    bool mErrorsForSalen;
     int mShowStation;
 };
 

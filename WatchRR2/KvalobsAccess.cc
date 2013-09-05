@@ -65,14 +65,9 @@ ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange
 
 ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 {
-    if (not st.valid()) {
-        LOG4HQC_ERROR("KvalobsAccess", "invalid sensorTime: " << st);
-        return ObsDataPtr();
-    }
-
-    Data_t::iterator it = mData.find(st);
-    if (it != mData.end())
-        return it->second;
+    ObsDataPtr obs = KvBufferedAccess::find(st);
+    if (obs)
+        return obs;
 
     if (isFetched(st.sensor.stationId, st.time))
         return KvalobsDataPtr();

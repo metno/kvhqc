@@ -29,6 +29,8 @@ void DataView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
             mDA->obsDataChanged.connect(boost::bind(&DataView::onDataChanged, this, _1, _2));
     }
     mMA = mda;
+    if (not mMA)
+        LOG4SCOPE_DEBUG("no model access");
 }
 
 void DataView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)

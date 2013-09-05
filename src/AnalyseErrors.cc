@@ -205,7 +205,7 @@ bool isErrorInMemstore1(const int flTyp, const int paramId, const kvalobs::kvCon
 }
 
 
-int whichMemStore(const int flg, const int flTyp, bool errorsForSalen)
+int whichMemoryStore(const int flg, const int flTyp, bool errorsForSalen)
 {
     // insert data into appropriate memory stores
     if (not errorsForSalen) {
@@ -240,11 +240,51 @@ int whichMemStore(const int flg, const int flTyp, bool errorsForSalen)
     return 0;
 }
 
+bool filterForMemStore(EditDataPtr obs, int& flg, int& flTyp)
+{
+    flg = flTyp = -1;
+    if (not obs)
+        return false;
+
+    const SensorTime& st = obs->sensorTime();
+    const Sensor& s = st.sensor;
+
+    // IMPORTANT: if this should be removed from fillMemoryStore2, it must also be removed here
+    if (not ErrorParameterFilter(s.paramId))
+        return false;
+
+    if (not ErrorSpecialTimeFilter(s.paramId, st.time))
+        return false;
+    if (not IsTypeInObsPgm(s.stationId, s.paramId, s.typeId, st.time))
+        return false;
+
+    if (not ErrorFilter(obs->controlinfo(), obs->cfailed(), flg, flTyp))
+        return false;
+
+    return true;
+}
+
+int whichMemStore(EditDataPtr obs, bool errorsForSalen, int& flg, int& flTyp)
+{
+    if (not filterForMemStore(obs, flg, flTyp))
+        return 0;
+    int memStore = whichMemoryStore(flg, flTyp, errorsForSalen);
+    if (memStore == 1 && isErrorInMemstore1(flTyp, obs->sensorTime().sensor.paramId, obs->controlinfo()))
+        memStore = 2;
+    return memStore;
+}
+
+bool isMemStore2(EditDataPtr obs, bool errorsForSalen)
+{
+    int flg = -1, flTyp = -1;
+    return whichMemStore(obs, errorsForSalen, flg, flTyp) == 2;
+}
+
 void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), int DBGE(flg), int DBGE(memStore))
 {
 #ifndef NDEBUG
     const SensorTime& st = obs->sensorTime();
-    LOG4HQC_DEBUG("AnalyseErrors2",
+    LOG4HQC_DEBUG("AnalyseErrors",
                   "ms " << memStore << ": "
                   << std::setw(7)  << st.sensor.stationId << ' '
                   << std::setw(21) << st.time
@@ -263,10 +303,18 @@ void dumpObs(const EditDataPtr DBGE(obs), float DBGE(model), int DBGE(flTyp), in
 
 namespace Errors {
 
+bool recheck(ErrorInfo& ei, bool errorsForSalen)
+{
+    const int oldFlg = ei.flg, oldTyp = ei.flTyp;
+    const bool oldFixed = ei.fixed;
+    ei.fixed = (whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp) != 2);
+    return (ei.flg != oldFlg or ei.flTyp != oldTyp or ei.fixed != oldFixed);
+}
+
 Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
 {
     // FIXME add timeFilter from ClockDialog
-    LOG_SCOPE("AnalyseErrors2");
+    LOG_SCOPE("AnalyseErrors");
 
     Errors_t memStore2;
     BOOST_FOREACH(const Sensor& s, sensors) {
@@ -278,34 +326,23 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
             LOG4SCOPE_DEBUG(timeutil::to_iso_extended_string(t));
 #endif
 
+        // IMPORTANT: if this should be removed from isMemoryStore2, it must also be removed here
         if (not ErrorParameterFilter(s.paramId))
             continue;
 
         BOOST_FOREACH(const timeutil::ptime& obstime, allTimes) {
-            // LOG4SCOPE_DEBUG(DBG1(memObs.obstime) << DBG1(memObs.stnr) << DBG1(parameterID));
-            if (not ErrorSpecialTimeFilter(s.paramId, obstime))
-                continue;
-            if (not IsTypeInObsPgm(s.stationId, s.paramId, s.typeId, obstime))
-                continue;
-
             const SensorTime sensorTime(s, obstime);
-            EditDataPtr obs = eda->findE(sensorTime);
-            if (not obs) {
-                LOG4SCOPE_DEBUG("no obs for " << sensorTime);
+            ErrorInfo ei(eda->findE(sensorTime));
+            if (not ei.obs) {
+                LOG4HQC_DEBUG("AnalyseErrors", "no obs for " << sensorTime);
                 continue;
             }
-
-            int flg = -1, flTyp = -1;
-            if (not ErrorFilter(obs->controlinfo(), obs->cfailed(), flg, flTyp))
+            int memstore = whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp);
+            if (memstore == 0)
                 continue;
-
-            int memStore = whichMemStore(flg, flTyp, errorsForSalen);
-            if (memStore == 1 && isErrorInMemstore1(flTyp, s.paramId, obs->controlinfo()))
-                memStore = 2;
-            if (memStore == 2) {
-                memStore2.push_back(obs);
-            }
-            dumpObs(obs, -99999, flTyp, flg, memStore);
+            if (memstore == 2)
+                memStore2.push_back(ei);
+            dumpObs(ei.obs, -99999, ei.flTyp, ei.flg, memstore);
         }
     }
 

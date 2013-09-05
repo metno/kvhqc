@@ -11,6 +11,8 @@
 #include <QtCore/QCoreApplication>
 #include <QtGui/QFont>
 
+#include <boost/bind.hpp>
+
 #define NDEBUG
 #include "debug.hh"
 
@@ -52,16 +54,19 @@ const char* tooltips[ErrorListTableModel::NCOLUMNS] = {
 
 }
 
-ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors_t& errorList)
+ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& errorList, bool errorsForSalen)
     : mDA(eda)
     , mMA(mda)
     , mErrorList(errorList)
+    , mErrorsForSalen(errorsForSalen)
     , mShowStation(-1)
 {
+    mDA->obsDataChanged.connect(boost::bind(&ErrorListTableModel::onDataChanged, this, _1, _2));
 }
 
 ErrorListTableModel::~ErrorListTableModel()
 {
+    mDA->obsDataChanged.disconnect(boost::bind(&ErrorListTableModel::onDataChanged, this, _1, _2));
 }
 
 int ErrorListTableModel::rowCount(const QModelIndex&) const
@@ -74,7 +79,7 @@ int ErrorListTableModel::columnCount(const QModelIndex&) const
     return NCOLUMNS;
 }
 
-Qt::ItemFlags ErrorListTableModel::flags(const QModelIndex& index) const
+Qt::ItemFlags ErrorListTableModel::flags(const QModelIndex& /*index*/) const
 {
     return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
 }
@@ -87,7 +92,8 @@ static QString twoDigits(int number)
 QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
 {
     try {
-        const EditDataPtr obs = mErrorList[index.row()];
+        const Errors::ErrorInfo& ei = mErrorList.at(index.row());
+        const EditDataPtr& obs = ei.obs;
         if (not obs)
             return QVariant();
 
@@ -95,10 +101,10 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         const int column = index.column();
         const bool isTT = (role == Qt::ToolTipRole);
         if (role == Qt::DisplayRole or isTT) {
-            if (isTT and column <= 6)
+            if (isTT and column <= COL_OBS_MINUTE)
                 return Helpers::stationInfo(st.sensor.stationId) + " "
                     + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
-            if (isTT and column <= 12)
+            if (isTT)
                 return QVariant();
             switch (column) {
             case COL_STATION_ID:
@@ -132,20 +138,23 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
                     value = md->value();
                 }
                 if (value == -32767 or value == -32766)
-                    return (int)value;
+                    return QString("-");
                 const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(st.sensor.paramId);
                 const int nDigits = isCodeParam ? 0 : 1;
                 return QString::number(value ,'f', nDigits);
             }
             case COL_OBS_FLAG_NAME:
-                return "??"; //Helpers::getFlagName(mo.flTyp);
+                return (not ei.fixed) ? Helpers::getFlagName(ei.flTyp) : QString("ok");
             case COL_OBS_FLAG_EQ:
-                return "=";
+                return (not ei.fixed) ? QVariant("=") : QVariant();
             case COL_OBS_FLAG_VAL:
-                return "flg"; // mo.flg;
+                return (not ei.fixed) ? QVariant(ei.flg) : QVariant();
             } // end of switch
-        } else if (role == Qt::FontRole and (column == 0 or column == 1)) {
-            if (st.sensor.stationId == mShowStation) {
+        } else if (role == Qt::FontRole) {
+            if ((column <= 1 and st.sensor.stationId == mShowStation)
+                or (column == COL_OBS_CORR and obs->modifiedCorrected())
+                or (column >= COL_OBS_FLAG_NAME and column <= COL_OBS_FLAG_VAL and obs->modifiedControlinfo()))
+            {
                 QFont f;
                 f.setBold(true);
                 return f;
@@ -159,7 +168,7 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
                     return Qt::red;
             }
         } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR or column==COL_OBS_MODEL)) {
-            return Qt::AlignRight;
+            return Qt::AlignRight+Qt::AlignVCenter;
         }
     } catch (std::runtime_error&) {
     }
@@ -191,4 +200,29 @@ void ErrorListTableModel::showSameStation(int stationID)
     QModelIndex index1 = createIndex(0, 0);
     QModelIndex index2 = createIndex(mErrorList.size()-1, 0);
     /*emit*/ dataChanged(index1, index2);
+}
+
+void ErrorListTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
+{
+    LOG_SCOPE("ErrorListTableModel");
+    LOG4SCOPE_DEBUG(DBG1(data->sensorTime()) << DBG1(mSensorTime) << DBG1(what));
+    if (what == ObsAccess::CREATED)
+        return; // ignore for now
+
+    for(unsigned int row=0; row<mErrorList.size(); ++row) {
+        Errors::ErrorInfo& ei = mErrorList[row];
+        if (eq_SensorTime()(data->sensorTime(), ei.obs->sensorTime())) {
+            if (what == ObsAccess::MODIFIED) {
+                Errors::recheck(ei, mErrorsForSalen);
+                const QModelIndex index0 = createIndex(row, COL_OBS_CORR);
+                const QModelIndex index1 = createIndex(row, COL_OBS_FLAG_VAL);
+                /*emit*/ dataChanged(index0, index1);
+            } else if (what == ObsAccess::DESTROYED) {
+                beginRemoveRows(QModelIndex(), row, row);
+                mErrorList.erase(mErrorList.begin() + row);
+                row -= 1;
+                endRemoveRows();
+            }
+        }
+    }
 }

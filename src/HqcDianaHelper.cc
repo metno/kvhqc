@@ -17,7 +17,7 @@
 #include <iostream>
 #include <sstream>
 
-//#define NDEBUG
+#define NDEBUG
 #include "debug.hh"
 
 namespace /* anonymous */ {
@@ -238,6 +238,16 @@ void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
     sendTimes(allTimes);
 }
 
+void HqcDianaHelper::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
+{
+    LOG_SCOPE("HqcDianaHelper");
+
+    if (not data or not eq_SensorTime()(mDianaSensorTime, data->sensorTime()))
+        return;
+
+    sendObservations();
+}
+
 void HqcDianaHelper::navigateTo(const SensorTime& st)
 {
     LOG_SCOPE("HqcDianaHelper");
@@ -249,7 +259,7 @@ void HqcDianaHelper::navigateTo(const SensorTime& st)
     LOG4SCOPE_DEBUG(DBG1(mDianaSensorTime));
 
     sendTime();
-    sendObservations(/*datalist, modeldatalist, mSelectedParameters*/);
+    sendObservations();
     sendStation(st.sensor.stationId);
     sendSelectedParam(st.sensor.paramId);
 }

@@ -10,16 +10,27 @@
 
 ModelDataPtr KvModelAccess::find(const SensorTime& st)
 {
-    Data_t::iterator it = mData.find(st);
+    LOG_SCOPE("KvModelAccess");
+    LOG4SCOPE_DEBUG(DBG1(st));
+
+    Data_t::iterator it;
+    if (isModelSensorTime(st)) {
+        it = mData.find(st);
+    } else {
+        it = mData.find(makeModelSensorTime(st));
+    }
     if (it != mData.end())
         return it->second;
 
+    LOG4SCOPE_DEBUG("no model data found");
     return KvalobsModelDataPtr();
 }
 
 KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
 {
+    LOG_SCOPE("KvModelAccess");
     const SensorTime st(Helpers::sensorTimeFromKvModelData(data)); 
+    LOG4SCOPE_DEBUG(DBG1(st) << DBG1(data));
 
     KvalobsModelDataPtr mdl;
     Data_t::iterator it = mData.find(st);
@@ -27,6 +38,7 @@ KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
         mdl = boost::make_shared<KvalobsModelData>(data);
         mData[st] = mdl;
         modelDataChanged(mdl);
+        LOG4SCOPE_DEBUG("new model data");
     } else {
         mdl = it->second;
 

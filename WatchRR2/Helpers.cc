@@ -6,6 +6,7 @@
 #include "EditDataEditor.hh"
 #include "FlagChange.hh"
 #include "KvMetaDataBuffer.hh"
+#include "ModelAccess.hh"
 #include "timeutil.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -54,17 +55,12 @@ SensorTime sensorTimeFromKvData(const kvalobs::kvData& d)
 
 Sensor sensorFromKvModelData(const kvalobs::kvModelData& d)
 {
-    return Sensor(d.stationID(), d.paramID(), d.level(), 0, 0);
+    return Sensor(d.stationID(), d.paramID(), d.level(), ModelAccess::MODEL_SENSOR, ModelAccess::MODEL_TYPEID);
 }
 
 SensorTime sensorTimeFromKvModelData(const kvalobs::kvModelData& d)
 {
     return SensorTime(sensorFromKvModelData(d), timeutil::from_miTime(d.obstime()));
-}
-
-Sensor modelSensor(const Sensor& s)
-{
-    return Sensor(s.stationId, s.paramId, s.level, 0, 0);
 }
 
 // ------------------------------------------------------------------------
@@ -404,6 +400,8 @@ QString getFlagExplanation(const kvalobs::kvControlInfo & cInfo)
 
 QString getFlagName(int flagNumber)
 {
+    if (flagNumber < 0 or flagNumber >= 16)
+        return "";
     return flagnames[flagNumber];
 }
 

@@ -80,7 +80,7 @@ DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const Time
 ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
 {
     const int pid = sensor.paramId;
-    const Sensor ms = Helpers::modelSensor(sensor);
+    const Sensor ms = ModelAccess::makeModelSensor(sensor);
 
     ModelColumnPtr mc = boost::make_shared<ModelColumn>(ma, ms, time);
     mc->setCodes(codesForParam(pid));

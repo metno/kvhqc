@@ -20,16 +20,16 @@ KvalobsModelAccess::~KvalobsModelAccess()
 
 ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
 {
-    Data_t::iterator it = mData.find(st);
-    if (it != mData.end())
-        return it->second;
+    ModelDataPtr mdl = KvModelAccess::find(st);
+    if (mdl)
+        return mdl;
 
     const Fetched f(st.sensor.stationId, st.time);
     if (mFetched.find(f) != mFetched.end())
         return KvalobsModelDataPtr();
 
-    LOG_SCOPE();
-    DBG(DBG1(st.sensor.stationId) << DBG1(st.time));
+    LOG_SCOPE("KvalobsModelAccess");
+    LOG4SCOPE_DEBUG(DBG1(st));
     
     kvservice::WhichDataHelper whichData;
     whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
@@ -40,11 +40,8 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
         mFetched.insert(f);
         BOOST_FOREACH(const kvalobs::kvModelData& md, model)
             receive(md);
-      } else {
-        LOG4HQC_ERROR("KvalobsModelAccess", "problem receiving model data");
-      }
-    } catch (std::exception& e) {
-      LOG4HQC_ERROR("KvalobsModelAccess", "exception while retrieving model data: " << e.what());
+    } else {
+        LOG4SCOPE_DEBUG("problem receiving model data");
     }
     return KvModelAccess::find(st);
 }

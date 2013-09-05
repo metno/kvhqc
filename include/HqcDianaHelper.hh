@@ -47,6 +47,9 @@ Q_SIGNALS:
     void receivedStation(int stationid);
     void receivedTime(const timeutil::ptime& time);
 
+protected:
+    virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+
 private:
     struct SendPar {
         std::string dianaName;

@@ -7,6 +7,7 @@
 
 #include <boost/foreach.hpp>
 
+#define NDEBUG
 #include "debug.hh"
 
 DataList::DataList(QWidget* parent)

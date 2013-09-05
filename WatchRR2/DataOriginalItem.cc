@@ -50,7 +50,7 @@ QVariant DataOriginalItem::data(EditDataPtr obs, int role) const
     } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
         return mCodes->asText(getValue(obs));
     } else if (role == Qt::TextAlignmentRole) {
-        return mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight;
+        return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
     }
     return DataItem::data(obs, role);
 }

@@ -55,8 +55,6 @@ QT_END_NAMESPACE;
 class ErrorList : public QTableView, public DataView
 {   Q_OBJECT;
 public:
-    typedef std::vector<EditDataPtr> Errors_t;
-
     ErrorList(QWidget* parent=0);
     ~ErrorList();
 
