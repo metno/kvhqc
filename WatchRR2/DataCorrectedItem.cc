@@ -37,7 +37,10 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
     return QVariant();
   
   if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-    QString tip = mCodes->asTip(getValue(obs));
+    QString tip;
+    if (mColumnType == ObsColumn::NEW_CORRECTED)
+      tip = tasks::asText(obs->allTasks());
+    Helpers::appendText(tip, mCodes->asTip(getValue(obs)));
     return Helpers::appendText(tip, DataValueItem::data(obs, role).toString());
   } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
     return mCodes->asText(getValue(obs));
