@@ -1,10 +1,10 @@
 
 #include "KvMetaDataBuffer.hh"
 
-#include "HqcApplication.hh"
-#include "hqc_paths.hh"
 #include "BusyIndicator.h"
 #include "Functors.hh"
+#include "HqcApplication.hh"
+#include "KvServiceHelper.hh"
 
 #include <puTools/miStringBuilder.h>
 
@@ -181,7 +181,7 @@ const KvMetaDataBuffer::ObsPgmList& KvMetaDataBuffer::findObsPgm(int stationid)
     if (it == mObsPgms.end()) {
         std::list<long> stations(1, stationid);
         try {
-          hqcApp->getKvObsPgm(mObsPgms[stationid], stations);
+          KvServiceHelper::instance()->getKvObsPgm(mObsPgms[stationid], stations);
         } catch (std::exception& e) {
           METLIBS_LOG_ERROR("exception while retrieving obs_pgm for station " << stationid << ": " << e.what());
         }
@@ -213,7 +213,7 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
 
       try {
         ObsPgmList mixed;
-        hqcApp->getKvObsPgm(mixed, chunkIds);
+        KvServiceHelper::instance()->getKvObsPgm(mixed, chunkIds);
           
         ObsPgmList::const_iterator i0 = mixed.begin(), i1 = i0;
         while (i0 != mixed.end()) {
@@ -238,7 +238,7 @@ void KvMetaDataBuffer::fetchStations()
     mHaveStations = true;
     mStations.clear();
     try {
-      if (not hqcApp->getKvStations(mStations))
+      if (not KvServiceHelper::instance()->getKvStations(mStations))
         METLIBS_LOG_ERROR("could not fetch station list");
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving station list: " << e.what());
@@ -252,7 +252,7 @@ void KvMetaDataBuffer::fetchParams()
     mHaveParams = true;
     mParams.clear();
     try {
-      if (not hqcApp->getKvParams(mParams))
+      if (not KvServiceHelper::instance()->getKvParams(mParams))
         METLIBS_LOG_ERROR("could not fetch param list");
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());
@@ -272,7 +272,7 @@ void KvMetaDataBuffer::fetchTypes()
     mHaveTypes = true;
     mTypes.clear();
     try {
-      if (not hqcApp->getKvTypes(mTypes))
+      if (not KvServiceHelper::instance()->getKvTypes(mTypes))
         METLIBS_LOG_ERROR("could not fetch type list");
     } catch (std::exception& e) {
       METLIBS_LOG_ERROR("exception while retrieving param list: " << e.what());

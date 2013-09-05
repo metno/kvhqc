@@ -52,6 +52,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HqcDianaHelper.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
+#include "KvServiceHelper.hh"
 #include "ListDialog.hh"
 #include "QtKvalobsAccess.hh"
 #include "QNoCloseMdiSubWindow.hh"
@@ -378,7 +379,7 @@ void HqcMainWindow::rejectedOK()
     try {
       std::list<kvalobs::kvRejectdecode> rejectList;
       const TimeRange t(timeutil::from_QDateTime(rejdlg->dtfrom), timeutil::from_QDateTime(rejdlg->dtto));
-      if (hqcApp->getKvRejectDecode(rejectList, t)) {
+      if (KvServiceHelper::instance()->getKvRejectDecode(rejectList, t)) {
         std::string decoder = "comobs";
         std::vector<kvalobs::kvRejectdecode> rejList;
         BOOST_FOREACH(const kvalobs::kvRejectdecode& reject, rejectList) {

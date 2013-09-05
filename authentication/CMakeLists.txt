@@ -3,8 +3,8 @@ SET(auth_HEADERS
   Authenticator.h
   HideApplyBox.hh
   HintWidget.hh
-  MiDateTimeEdit.hh
   HqcApplication.hh
+  MiDateTimeEdit.hh
   TimeRangeControl.hh
 )
 
@@ -23,6 +23,7 @@ SET(auth_SOURCES
   identifyUser.cc
   KvMetaDataBuffer.hh
   KvMetaDataBuffer.cc
+  KvServiceHelper.cc
   MiDateTimeEdit.cc
   Sensor.hh
   Sensor.cc

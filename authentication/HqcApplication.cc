@@ -3,6 +3,7 @@
 
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
+#include "KvServiceHelper.hh"
 #include "TimeRange.hh"
 
 #include <kvalobs/kvStationParam.h>
@@ -19,6 +20,7 @@
 #include <QtGui/QIcon>
 #include <QtGui/QMessageBox>
 
+#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcApplication"
@@ -37,7 +39,6 @@ HqcApplication* hqcApp = 0;
 HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
     : QApplication(argc, argv)
     , mConfig(conf)
-    , mKvalobsAvailable(true) // be optimistic!
 {
     hqcApp = this;
 
@@ -60,10 +61,14 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     QTimer* availabilityTimer = new QTimer(this);
     connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
     availabilityTimer->start(AVAILABILITY_TIMEROUT);
+
+    KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
 }
 
 HqcApplication::~HqcApplication()
 {
+  KvServiceHelper::instance()->kvalobsAvailable.disconnect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
+
   QSqlDatabase::removeDatabase(DB_SYSTEM);
   QSqlDatabase::removeDatabase(DB_CONFIG);
 
@@ -109,7 +114,6 @@ QSqlDatabase HqcApplication::kvalobsDB()
   if (not QSqlDatabase::contains(DB_KVALOBS)) {
     if (not Helpers::connect2postgres(DB_KVALOBS, mConfig, "kvalobsdb")) {
       fatalError(tr("Cannot access kvalobs SQL database, please check the HQC configuration"));
-      // not reached
     }
   }
   return QSqlDatabase::database(DB_KVALOBS);
@@ -208,150 +212,15 @@ void HqcApplication::exitNoKvalobs()
 
 void HqcApplication::checkKvalobsAvailability()
 {
-  std::list<kvalobs::kvStationParam> stParam;
-  updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvStationParam(stParam, 345345, 345345, 0));
+  KvServiceHelper::instance()->checkKvalobsAvailability();
 }
 
-bool HqcApplication::updateKvalobsAvailability(bool available)
+bool HqcApplication::isKvalobsAvailable() const
 {
-  if (available != mKvalobsAvailable) {
-    mKvalobsAvailable = available;
-    /*emit*/ kvalobsAvailable(mKvalobsAvailable);
-  }
-  return available;
+  return KvServiceHelper::instance()->isKvalobsAvailable();
 }
 
-namespace /* anonymous */ {
-
-std::string whichDataString(const kvservice::WhichDataHelper& wd)
+void HqcApplication::changedKvalobsAvailability(bool available)
 {
-  std::ostringstream msg;
-  const CKvalObs::CService::WhichDataList& wdl = *wd.whichData();
-  for(unsigned long i = 0; i<wdl.length(); ++i) {
-    const CKvalObs::CService::WhichData& wdi = wdl[i];
-    msg << '[' << wdi.stationid << ':' << wdi.fromObsTime << '-' << wdi.toObsTime << ']';
-  }
-  return msg.str();
-}
-
-std::string stationListString(const std::list<long>& stationids)
-{
-  std::ostringstream msg;
-  std::copy(stationids.begin(), stationids.end(), std::ostream_iterator<long>(msg, ", "));
-  return msg.str();
-}
-
-} // namespace anonymous
-
-bool HqcApplication::getKvData(kvservice::KvGetDataReceiver& dataReceiver, const kvservice::WhichDataHelper& wd)
-{
-  METLIBS_LOG_SCOPE();
-  try {
-    return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvData(dataReceiver, wd));
-  } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << "); message is: " << e.what());
-    updateKvalobsAvailability(false);
-    throw e;
-  } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvData(..," << whichDataString(wd) << ')');
-    updateKvalobsAvailability(false);
-    throw;
-  }
-}
-
-bool HqcApplication::getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper& wd)
-{
-  METLIBS_LOG_SCOPE();
-  try {
-    return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvModelData(dataList, wd));
-  } catch (std::exception& e) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << "); message is: " << e.what());
-    updateKvalobsAvailability(false);
-    throw e;
-  } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvModelData(..," << whichDataString(wd) << ')');
-    updateKvalobsAvailability(false);
-    throw;
-  }
-}
-
-bool HqcApplication::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeRange& timeLimits)
-{
-  METLIBS_LOG_SCOPE();
-  rejectList.clear();
-  
-  CKvalObs::CService::RejectDecodeInfo rdInfo;
-  rdInfo.fromTime = timeutil::to_iso_extended_string(timeLimits.t0()).c_str();
-  rdInfo.toTime   = timeutil::to_iso_extended_string(timeLimits.t1()).c_str();
-  
-  try {
-    kvservice::RejectDecodeIterator rdIt;
-    const bool ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
-    updateKvalobsAvailability(ok);
-    if (ok) {
-      kvalobs::kvRejectdecode reject;
-      while (rdIt.next(reject))
-        rejectList.push_back(reject);
-    }
-    return ok;
-  } catch (std::exception& e) {                                       
-    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits << ": " << e.what()); 
-    updateKvalobsAvailability(false);
-    throw e;
-  } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits);
-    updateKvalobsAvailability(false);
-    throw;
-  }                                                                     
-}
-
-bool HqcApplication::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const std::list<long>& stationList)
-{
-  METLIBS_LOG_SCOPE();
-  try {
-    return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvObsPgm(obsPgm, stationList, false));
-  } catch (std::exception& e) {
-
-    METLIBS_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false); message is: " << e.what());
-    updateKvalobsAvailability(false);
-    throw e;
-  } catch (...) {
-    METLIBS_LOG_ERROR("kvalobs exception in getKvObsPgm(..," << stationListString(stationList) << ", false)");
-    updateKvalobsAvailability(false);
-    throw;
-  }
-}
-
-#define TRY_KVALOBS(func, args)                                         \
-  METLIBS_LOG_SCOPE();                                                  \
-  try {                                                                 \
-    return updateKvalobsAvailability(kvservice::KvApp::kvApp->func args); \
-  } catch (std::exception& e) {                                         \
-    METLIBS_LOG_ERROR("kvalobs exception in '" #func "': " << e.what()); \
-    updateKvalobsAvailability(false);                                   \
-    throw e;                                                            \
-  } catch (...) {                                                       \
-    METLIBS_LOG_ERROR("kvalobs exception in '" #func "'");              \
-    updateKvalobsAvailability(false);                                   \
-    throw;                                                              \
-  }                                                                     \
-  
-bool HqcApplication::getKvParams(std::list<kvalobs::kvParam>& paramList)
-{
-  TRY_KVALOBS(getKvParams, (paramList));
-}
-
-bool HqcApplication::getKvStations( std::list<kvalobs::kvStation>& stationList)
-{
-  TRY_KVALOBS(getKvStations, (stationList));
-}
-
-bool HqcApplication::getKvTypes(std::list<kvalobs::kvTypes>& typeList)
-{
-  TRY_KVALOBS(getKvTypes, (typeList));
-}
-
-bool HqcApplication::getKvOperator(std::list<kvalobs::kvOperator>& operatorList)
-{
-  TRY_KVALOBS(getKvOperator, (operatorList));
+  /* emit Qt signal */ kvalobsAvailable(available);
 }

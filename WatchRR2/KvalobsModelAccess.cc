@@ -1,7 +1,7 @@
 
 #include "KvalobsModelAccess.hh"
 
-#include "HqcApplication.hh"
+#include "KvServiceHelper.hh"
 
 #include <kvcpp/KvGetDataReceiver.h>
 #include <kvcpp/WhichDataHelper.h>
@@ -37,7 +37,7 @@ ModelDataPtr KvalobsModelAccess::find(const SensorTime& st)
 
     std::list<kvalobs::kvModelData> model;
     try {
-      if (hqcApp->getKvModelData(model, whichData)) {
+      if (KvServiceHelper::instance()->getKvModelData(model, whichData)) {
         mFetched.insert(f);
         BOOST_FOREACH(const kvalobs::kvModelData& md, model)
             receive(md);

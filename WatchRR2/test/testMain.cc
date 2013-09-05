@@ -3,6 +3,7 @@
 #include "FakeKvApp.hh"
 #include "Helpers.hh"
 #include "KvalobsModelAccess.hh"
+#include "KvServiceHelper.hh"
 #include "KvMetaDataBuffer.hh"
 #include "MainDialog.hh"
 #include "QtKvalobsAccess.hh"
@@ -36,6 +37,7 @@ int main(int argc, char* argv[])
         stationId = args[1].toInt();
 
     FakeKvApp fakeApp;
+    KvServiceHelper kvsh;
     QtKvService qkvs;
     KvMetaDataBuffer kvsb;
 

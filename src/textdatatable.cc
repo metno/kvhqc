@@ -2,8 +2,8 @@
 #include "textdatatable.h"
 
 #include "GetTextData.h"
-#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
+#include "KvServiceHelper.hh"
 #include "TimeHeader.hh"
 
 #include <kvcpp/WhichDataHelper.h>
@@ -102,7 +102,7 @@ void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget*
 
     GetTextData textDataReceiver;
     try {
-      if (hqcApp->getKvData(textDataReceiver, whichData)) {
+      if (KvServiceHelper::instance()->getKvData(textDataReceiver, whichData)) {
         new TextData(textDataReceiver.textData(), parent);
         return;
       }

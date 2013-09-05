@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqc_paths.hh"
 #include "identifyUser.h"
 #include "KvMetaDataBuffer.hh"
+#include "KvServiceHelper.hh"
 #include "QtKvService.hh"
 #include "StInfoSysBuffer.hh"
 
@@ -81,6 +82,7 @@ int main( int argc, char* argv[] )
     }
     
     CorbaKvApp kvapp(argc, argv, confSec);
+    KvServiceHelper kvsh;
     QtKvService qkvs;
     KvMetaDataBuffer kvmdbuf;
     StInfoSysBuffer stinfobuf(confSec);

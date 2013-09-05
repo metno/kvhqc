@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
+#include "KvServiceHelper.hh"
 #include "QtKvService.hh"
 #include "StInfoSysBuffer.hh"
 
@@ -79,6 +80,7 @@ int main( int argc, char* argv[] )
     load_54420_20121130(fa);
     load_84070_20120930(fa);
     QtKvService qkvs;
+    KvServiceHelper kvsh;
     KvMetaDataBuffer kvmdbuf;
     StationInfoBuffer stinfobuf;
     // <<<<<

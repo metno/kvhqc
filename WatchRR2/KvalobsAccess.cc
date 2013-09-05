@@ -1,9 +1,9 @@
 
 #include "KvalobsAccess.hh"
 #include "Helpers.hh"
-#include "HqcApplication.hh"
 #include "hqc_utilities.hh"
 #include "KvalobsData.hh"
+#include "KvServiceHelper.hh"
 
 #include <kvcpp/KvGetDataReceiver.h>
 #include <kvcpp/WhichDataHelper.h>
@@ -104,7 +104,7 @@ void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
     
     kvalobsdata_helpers::GetData get(*this);
     try {
-      if (hqcApp->getKvData(get, whichData))
+      if (KvServiceHelper::instance()->getKvData(get, whichData))
         addFetched(sensor.stationId, limits);
       else
         METLIBS_LOG_ERROR("problem receiving data for sensor " << sensor << " and time " << limits);

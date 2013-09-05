@@ -30,8 +30,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 
 #include "Authenticator.h"
-#include "HqcApplication.hh"
 #include "HqcDataReinserter.h"
+#include "KvServiceHelper.hh"
 
 #include <kvalobs/kvOperator.h>
 
@@ -62,7 +62,7 @@ kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, k
   
   // Get list of operators from database, and find our operator:
   opList operators;
-  hqcApp->getKvOperator(operators);
+  KvServiceHelper::instance()->getKvOperator(operators);
 
   BOOST_FOREACH(const kvalobs::kvOperator& op, operators) {
     const QString uname = QString::fromStdString(op.username());
