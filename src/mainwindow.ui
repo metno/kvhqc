@@ -127,7 +127,7 @@
     <set>QDockWidget::DockWidgetFeatureMask</set>
    </property>
    <property name="windowTitle">
-    <string>Errors</string>
+    <string>Error List</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -225,7 +225,7 @@
     <set>QDockWidget::DockWidgetFeatureMask</set>
    </property>
    <property name="windowTitle">
-    <string>Extremes</string>
+    <string>Extreme Values</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>

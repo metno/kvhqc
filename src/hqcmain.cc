@@ -107,9 +107,6 @@ const char SETTING_HQC_GEOMETRY[] = "geometry";
 const char SETTING_VERSION[] = "version";
 const char SETTING_VERSION_FULL[] = "version_full";
 
-#include "../src/icon_redo.xpm"
-#include "../src/icon_undo.xpm"
-
 } // anonymous namespace
 
 HqcMainWindow::HqcMainWindow()
@@ -135,11 +132,8 @@ HqcMainWindow::HqcMainWindow()
     ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
     ui->toolButtonSave->setDefaultAction(ui->saveAction);
 
-    QIcon iconRedo, iconUndo;
-    iconRedo.addPixmap(QPixmap(icon_redo));
-    iconUndo.addPixmap(QPixmap(icon_undo));
-    ui->actionRedo->setIcon(iconRedo);
-    ui->actionUndo->setIcon(iconUndo);
+    ui->actionRedo->setIcon(QIcon("icons:redo.svg"));
+    ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
     ui->dockHistory->setVisible(false);
 
     mExtremesView = new ExtremesView(ui->dockExtremes);
@@ -153,24 +147,14 @@ HqcMainWindow::HqcMainWindow()
 
     mVersionCheckTimer->setSingleShot(true);
 
-    setIcon(QPixmap(hqc::getPath(hqc::IMAGEDIR)+"/hqc.png"));
-
-    QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
-    ui->dataListAction->setIcon(icon_listdlg);
-
     pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
     statusBar()->addPermanentWidget(pluginB, 0);
 
     // --- DEFINE DIALOGS --------------------------------------------
-    const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
     lstdlg = new ListDialog(this);
-    lstdlg->setIcon( QPixmap(hqc_icon_path) );
     dshdlg = new DianaShowDialog(this);
-    dshdlg->setIcon( QPixmap(hqc_icon_path) );
     txtdlg = new TextDataDialog(this);
-    txtdlg->setIcon( QPixmap(hqc_icon_path) );
     rejdlg = new RejectDialog(this);
-    rejdlg->setIcon( QPixmap(hqc_icon_path) );
     
     // --- START -----------------------------------------------------
     rejdlg->hide();

@@ -6,10 +6,12 @@
 
 #include <puTools/miString.h>
 
+#include <QtCore/QDir>
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QLocale>
 #include <QtCore/QThread>
 #include <QtCore/QTranslator>
+#include <QtGui/QIcon>
 #include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
@@ -41,6 +43,9 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
     installTranslations("watchrr2", langDir);
     installTranslations("hqc",      langDir);
+
+    QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
+    setWindowIcon(QIcon("icons:hqc_logo.svg"));
 
     connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
 }

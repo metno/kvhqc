@@ -4,34 +4,34 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="54"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept  the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <location filename="AcceptRejectButtons.cc" line="48"/>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="57"/>
+        <location filename="AcceptRejectButtons.cc" line="51"/>
         <source>Accept</source>
-        <translation type="unfinished"></translation>
+        <translation>Aksepter</translation>
     </message>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="58"/>
+        <location filename="AcceptRejectButtons.cc" line="52"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="61"/>
+        <location filename="AcceptRejectButtons.cc" line="55"/>
         <source>Reject</source>
-        <translation type="unfinished"></translation>
+        <translation>Forkast</translation>
     </message>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="62"/>
+        <location filename="AcceptRejectButtons.cc" line="56"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="AcceptRejectButtons.cc" line="65"/>
+        <location filename="AcceptRejectButtons.cc" line="59"/>
         <source>QC2</source>
-        <translation type="unfinished"></translation>
+        <translation>QC2</translation>
     </message>
 </context>
 <context>

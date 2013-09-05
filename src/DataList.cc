@@ -43,6 +43,8 @@ DataList::DataList(QWidget* parent)
     , ui(new Ui::DataList)
 {
   ui->setupUi(this);
+  ui->buttonResetColumns->setIcon(QIcon("icons:dl_columns_reset.svg"));
+  ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
 
   QPushButton* buttonEarlier = new QPushButton("+", this);
   buttonEarlier->setToolTip(tr("Earlier"));

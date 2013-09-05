@@ -53,6 +53,9 @@
      </item>
      <item>
       <widget class="QPushButton" name="buttonSaveAs">
+       <property name="toolTip">
+        <string>Save selected (or all) data to a spreadsheet file in CSV format.</string>
+       </property>
        <property name="text">
         <string>Save…</string>
        </property>

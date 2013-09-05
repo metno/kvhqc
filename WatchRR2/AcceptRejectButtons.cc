@@ -24,20 +24,14 @@ AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
   hLayout->setSpacing(2);
   hLayout->setContentsMargins(0, 0, 0, 0);
 
-#include "../src/icon_accept.xpm"
-#include "../src/icon_reject.xpm"
-
   mButtonAccept = new QToolButton(this);
   mButtonAccept->setEnabled(false);
-  QIcon iconAccept, iconReject;
-  iconAccept.addPixmap(QPixmap(icon_accept));
-  mButtonAccept->setIcon(iconAccept);
+  mButtonAccept->setIcon(QIcon("icons:accept.svg"));
   hLayout->addWidget(mButtonAccept);
 
   mButtonReject = new QToolButton(this);
   mButtonReject->setEnabled(false);
-  iconReject.addPixmap(QPixmap(icon_reject));
-  mButtonReject->setIcon(iconReject);
+  mButtonReject->setIcon(QIcon("icons:reject.svg"));
   hLayout->addWidget(mButtonReject);
 
   mCheckQC2 = new QCheckBox(this);
@@ -51,7 +45,7 @@ AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
 
 void AcceptRejectButtons::retranslateUi()
 {
-  mButtonAccept->setToolTip(tr("<html><head/><body><p>Accept  the original or corrected value"
+  mButtonAccept->setToolTip(tr("<html><head/><body><p>Accept the original or corrected value"
           " (depending on the selected column).</p><p>QC2 is allowed to override if "
           "<span style=\" font-style:italic;\">QC2</span> is checked.</p></body></html>"));
   mButtonAccept->setText(tr("Accept"));

@@ -17,14 +17,17 @@ INSTALL(FILES
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 
 INSTALL(FILES
-  images/hqc.png
-  images/kmplot.png
-  images/sorttime.png
-  images/table.png
-  images/watchrr.png
-  images/watchweather.png
   images/diana_icon_hqc.png
   images/diana_img_hqc.png
+
+  images/hqc_logo.svg
+  images/undo.svg
+  images/redo.svg
+  images/accept.svg
+  images/reject.svg
+  images/dl_columns_reset.svg
+  images/dl_save_as.svg
+
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 
 INSTALL(FILES
