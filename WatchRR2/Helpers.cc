@@ -334,6 +334,11 @@ QString getFlagExplanation(const kvalobs::kvControlInfo & cInfo)
     return formatFlag(cInfo, true);
 }
 
+QString getFlagName(int flagNumber)
+{
+    return flagnames[flagNumber];
+}
+
 QString parameterName(int paramId)
 {
     return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));

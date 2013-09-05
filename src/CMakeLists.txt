@@ -23,6 +23,7 @@ SET(hqc_HEADERS
 )
 
 SET(hqc_SOURCES
+  AnalyseErrors.cc
   ErrorListTableModel.cc
   ParamIdModel.cc
   ListDialog.cc

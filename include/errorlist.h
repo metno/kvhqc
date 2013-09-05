@@ -44,8 +44,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 class ErrorListTableModel;
 class HqcMainWindow;
 class miMessage;
-class QMouseEvent;
-class QPainter;
 class QWidget;
 
 /**
@@ -74,13 +72,13 @@ public:
         double orig;
         double corr;
         double morig;
-        std::string controlinfo;
-        std::string useinfo;
+        kvalobs::kvControlInfo controlinfo;
+        kvalobs::kvUseInfo useinfo;
         std::string cfailed;
         int flg;
         int sen;
         int lev;
-        QString flTyp;
+        int flTyp;
         int parNo;
         int stnr;
         QString name;
@@ -94,17 +92,7 @@ public:
         mem() : change(NO_CHANGE), changed_value(0), changed_qc2allowed(false) { }
     };
 
-    struct missObs {
-        timeutil::ptime oTime;
-        int parno;
-        int statno;
-        int missNo;
-    };
-    
     kvalobs::kvData getKvData() const;
-
-    std::vector<missObs> mList;
-    std::vector<mem> missList;
 
     bool maybeSave();
     
@@ -133,51 +121,6 @@ private:
                           model::KvalobsDataListPtr dtl,
                           const std::vector<modDatl>& mdtl);
 
-    /**
-     * \brief Decide if an observation is going to the error list or not
-     * \return The largest flag value from the automatic control, negative
-     *         if no HQC control is indicated
-     */
-    int errorFilter(int, std::string, std::string, QString&);
-
-    /**
-     * \brief Decide if given parameter is to be controlled in HQC
-     * \return TRUE if the parameter is to be controlled.
-     */
-    bool priorityParameterFilter(int);
-
-    /**
-     * \brief Decide if the given control is to be checked in HQC
-     * \return 0 if only one control flag is set, and this is not
-     *         to be checked in HQC
-     */
-    int priorityControlFilter(QString);
-
-    /**
-     * \brief Checks if given parameter can be stored at given time.
-     */
-    bool specialTimeFilter(int, const timeutil::ptime&);
-    bool typeFilter(int, int, int, const timeutil::ptime&);
-
-    /**
-     * \brief Find which observations shall be moved from memory store 1 to error list
-     */
-    bool isErrorInMemstore1(const mem& m);
-
-    /**
-     * \brief Checks if a parameter has model values.
-     *
-     * \return TRUE if given parameter has model values
-     */
-    bool paramHasModel(int);
-
-    /**
-     * \brief Checks if a parameter is code.
-     *
-     * \return 0 if given parameter is code, 1 otherwise.
-     */
-    bool paramIsCode(int);
-    
     /*!
      * \brief Constructs a kvData object from a memory store object
      */
@@ -203,7 +146,6 @@ private:
     
     std::auto_ptr<ErrorListTableModel> mTableModel;
     
-    std::vector<mem> memStore1;
     std::vector<mem> memStore2;
 };
 

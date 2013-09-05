@@ -90,8 +90,6 @@ public:
     int findTypeId(int, int, int, const timeutil::ptime&);
 
     const listStat_l& getStationDetails();
-    const std::vector<currentType>& getCurrentTypeList() const
-        { return currentTypeList; }
 
     kvalobs::DataReinserter<kvservice::KvApp>* getReinserter()
         { return reinserter; }

@@ -35,6 +35,7 @@ char int2char(int i);
 
 QString getFlagText(const kvalobs::kvControlInfo& cInfo);
 QString getFlagExplanation(const kvalobs::kvControlInfo& cInfo);
+QString getFlagName(int flagNumber);
 
 QString parameterName(int paramId);
 

@@ -3,6 +3,7 @@
 
 #include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
+#include "Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -173,7 +174,7 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
             return QString::number(value ,'f', nDigits);
         }
         case COL_OBS_FLAG_NAME:
-            return mo.flTyp;
+            return Helpers::getFlagName(mo.flTyp);
         case COL_OBS_FLAG_EQ:
             return "=";
         case COL_OBS_FLAG_VAL:
