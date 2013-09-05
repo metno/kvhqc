@@ -400,27 +400,27 @@
 <context>
     <name>Helpers</name>
     <message>
-        <location filename="Helpers.cc" line="243"/>
+        <location filename="Helpers.cc" line="244"/>
         <source>Unknown or invalid flag value</source>
         <translation>Unbekannter oder ungültiger Flag-Wert</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="539"/>
+        <location filename="Helpers.cc" line="557"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Es gibt %1 ungespeicherte Änderungen.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="540"/>
+        <location filename="Helpers.cc" line="558"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Sind Sie sicher, dass Die diese verwerfen möchten?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="541"/>
+        <location filename="Helpers.cc" line="559"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="542"/>
+        <location filename="Helpers.cc" line="560"/>
         <source>Continue</source>
         <translation>Weiter</translation>
     </message>

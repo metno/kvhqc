@@ -404,27 +404,27 @@
 <context>
     <name>Helpers</name>
     <message>
-        <location filename="Helpers.cc" line="243"/>
+        <location filename="Helpers.cc" line="244"/>
         <source>Unknown or invalid flag value</source>
         <translation>Ukjent eller ugylig flagg-verdi</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="539"/>
+        <location filename="Helpers.cc" line="557"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="540"/>
+        <location filename="Helpers.cc" line="558"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="541"/>
+        <location filename="Helpers.cc" line="559"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="542"/>
+        <location filename="Helpers.cc" line="560"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>

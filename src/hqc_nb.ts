@@ -73,7 +73,7 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="DataList.cc" line="53"/>
+        <location filename="DataList.cc" line="52"/>
         <source>Reset columns</source>
         <translation>Tilbakestill kolonnevalg</translation>
     </message>
@@ -100,32 +100,32 @@
         <translation>Lagre…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="62"/>
+        <location filename="DataList.cc" line="61"/>
         <source>Earlier</source>
         <translation>Tidligere</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="67"/>
+        <location filename="DataList.cc" line="66"/>
         <source>Later</source>
         <translation>Senere</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="51"/>
+        <location filename="DataList.cc" line="50"/>
         <source>Add column...</source>
         <translation>Ny kolonne…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="52"/>
+        <location filename="DataList.cc" line="51"/>
         <source>Remove column</source>
         <translation>Fjern kolonne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="487"/>
+        <location filename="DataList.cc" line="486"/>
         <source>Save Table</source>
         <translation>Lagre tabellen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="489"/>
+        <location filename="DataList.cc" line="488"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabell (*.csv)</translation>
     </message>
@@ -201,7 +201,7 @@
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="DataListModel.cc" line="126"/>
+        <location filename="DataListModel.cc" line="135"/>
         <source>Distance: %1km</source>
         <translation>Avstand: %1km</translation>
     </message>
@@ -920,93 +920,93 @@ parametere</translation>
         <translation>&amp;Skjermbilde</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="247"/>
+        <location filename="hqcmain.cc" line="248"/>
         <source>&lt;h1&gt;Authentication&lt;/h1&gt;You are not registered as operator! You can see the data list, error log and error list, but you cannot make changes in the kvalobs database!</source>
         <translation>&lt;h1&gt;Autentisering&lt;/h1&gt;Du er ikke registrert som operatør! Du kan se dataliste, feillog og feilliste, men ikke gjøre endringer i Kvalobsdatabasen!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="253"/>
+        <location filename="hqcmain.cc" line="254"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Velkommen til kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="269"/>
+        <location filename="hqcmain.cc" line="270"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
         <translation>&lt;h1&gt;Dianaforbindelse&lt;/h1&gt;Har ikke kontakt med diana! Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, og kople diana til tjeneren via knappen i diana sin vindu.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="279"/>
+        <location filename="hqcmain.cc" line="280"/>
         <source>No stations selected! At least one statione must be chosen.</source>
         <translation>Ingen stasjoner er valgt! Minst en stasjon må velges.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="289"/>
+        <location filename="hqcmain.cc" line="290"/>
         <source>Weather Element</source>
         <translation>Værelement</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="278"/>
+        <location filename="hqcmain.cc" line="279"/>
         <source>Station Selection</source>
         <translation>Stasjonsvalg</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="290"/>
+        <location filename="hqcmain.cc" line="291"/>
         <source>No weather element selected! At least one has to be chosen.</source>
         <translation>Ingen værelement er valgt! Minst en må velges.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="334"/>
+        <location filename="hqcmain.cc" line="335"/>
         <source>Building data list...</source>
         <translation>Bygger dataliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="327"/>
+        <location filename="hqcmain.cc" line="328"/>
         <source>Building error list...</source>
         <translation>Bygger feilliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="201"/>
+        <location filename="hqcmain.cc" line="202"/>
         <source>Auto List/Series</source>
         <translation>Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="304"/>
+        <location filename="hqcmain.cc" line="305"/>
         <source>Building station list...</source>
         <translation>Bygger stasjonsliste…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="340"/>
+        <location filename="hqcmain.cc" line="341"/>
         <source>Selected Data</source>
         <translation>Valgte data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="405"/>
+        <location filename="hqcmain.cc" line="406"/>
         <source>No RejectDecode</source>
         <translation>Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="405"/>
+        <location filename="hqcmain.cc" line="406"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="442"/>
+        <location filename="hqcmain.cc" line="443"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="443"/>
+        <location filename="hqcmain.cc" line="444"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="444"/>
-        <location filename="hqcmain.cc" line="660"/>
+        <location filename="hqcmain.cc" line="445"/>
+        <location filename="hqcmain.cc" line="661"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="625"/>
+        <location filename="hqcmain.cc" line="626"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1017,67 +1017,67 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="658"/>
+        <location filename="hqcmain.cc" line="659"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="659"/>
+        <location filename="hqcmain.cc" line="660"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="663"/>
+        <location filename="hqcmain.cc" line="664"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="672"/>
+        <location filename="hqcmain.cc" line="673"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="675"/>
+        <location filename="hqcmain.cc" line="676"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="676"/>
+        <location filename="hqcmain.cc" line="677"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="699"/>
+        <location filename="hqcmain.cc" line="700"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Leser data for stasjon %1 for %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="535"/>
+        <location filename="hqcmain.cc" line="536"/>
         <source>Print screenshot</source>
         <translation>Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="559"/>
+        <location filename="hqcmain.cc" line="560"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="560"/>
+        <location filename="hqcmain.cc" line="561"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="624"/>
+        <location filename="hqcmain.cc" line="625"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="761"/>
+        <location filename="hqcmain.cc" line="762"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="762"/>
+        <location filename="hqcmain.cc" line="763"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
@@ -1549,6 +1549,97 @@ Du bruker HQC versjon %1.</translation>
     </message>
 </context>
 <context>
+    <name>TimeSeriesAdd</name>
+    <message>
+        <location filename="ts_add.ui" line="14"/>
+        <source>Add Line</source>
+        <oldsource>Add line</oldsource>
+        <translation>Ny Linje</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="37"/>
+        <source>Station:</source>
+        <translation>Stasjon:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="47"/>
+        <source>Parameter:</source>
+        <translation>Parameter:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="61"/>
+        <source>Type:</source>
+        <translation>Type:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="92"/>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Avbryt</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="102"/>
+        <source>&amp;OK</source>
+        <translation>&amp;OK</translation>
+    </message>
+</context>
+<context>
+    <name>TimeSeriesEdit</name>
+    <message>
+        <location filename="ts_edit.ui" line="14"/>
+        <source>Edit Lines</source>
+        <translation>Endre Linjer</translation>
+    </message>
+    <message utf8="true">
+        <location filename="ts_edit.ui" line="28"/>
+        <source>Add…</source>
+        <translation>Ny…</translation>
+    </message>
+    <message>
+        <location filename="ts_edit.ui" line="35"/>
+        <source>Up</source>
+        <translation>Opp</translation>
+    </message>
+    <message>
+        <location filename="ts_edit.ui" line="42"/>
+        <source>Down</source>
+        <translation>Nde</translation>
+    </message>
+    <message>
+        <location filename="ts_edit.ui" line="49"/>
+        <source>Remove</source>
+        <translation>Fjern</translation>
+    </message>
+    <message>
+        <location filename="ts_edit.ui" line="76"/>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Avbryt</translation>
+    </message>
+    <message>
+        <location filename="ts_edit.ui" line="86"/>
+        <source>&amp;OK</source>
+        <translation>&amp;OK</translation>
+    </message>
+</context>
+<context>
+    <name>TimeSeriesRemove</name>
+    <message>
+        <location filename="ts_remove.ui" line="14"/>
+        <source>Remove Lines</source>
+        <oldsource>Remove lines</oldsource>
+        <translation>Fjern Linjer</translation>
+    </message>
+    <message>
+        <location filename="ts_remove.ui" line="51"/>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Avbryt</translation>
+    </message>
+    <message>
+        <location filename="ts_remove.ui" line="58"/>
+        <source>&amp;OK</source>
+        <translation>&amp;OK</translation>
+    </message>
+</context>
+<context>
     <name>TimeSeriesView</name>
     <message>
         <location filename="timeseriesview.ui" line="14"/>
@@ -1557,32 +1648,37 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message utf8="true">
         <location filename="timeseriesview.ui" line="25"/>
-        <source>Config…</source>
-        <translation>Konfigurasjon…</translation>
+        <source>Add…</source>
+        <translation>Legg til…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="timeseriesview.ui" line="32"/>
+        <source>Remove…</source>
+        <translation>Fjern linjer…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="39"/>
+        <location filename="TimeSeriesView.cc" line="43"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="40"/>
+        <location filename="TimeSeriesView.cc" line="44"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="41"/>
+        <location filename="TimeSeriesView.cc" line="45"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
-        <location filename="timeseriesview.ui" line="38"/>
-        <location filename="timeseriesview.ui" line="48"/>
+        <location filename="timeseriesview.ui" line="45"/>
+        <location filename="timeseriesview.ui" line="55"/>
         <source>yyyy-MM-dd hh:mm</source>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="125"/>
+        <location filename="TimeSeriesView.cc" line="115"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>

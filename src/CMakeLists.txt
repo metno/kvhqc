@@ -18,8 +18,8 @@ SET(hqc_HEADERS
   ../include/SimpleCorrections.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
-  ../include/TimeseriesDialog.h
-  TimeSeriesView.hh
+  ../include/TimeSeriesView.hh
+  ../include/TimeSeriesAdd.hh
 )
 
 SET(hqc_SOURCES
@@ -53,7 +53,7 @@ SET(hqc_SOURCES
   SimpleCorrections.cc
   textdatadialog.cc
   textdatatable.cc
-  TimeseriesDialog.cc
+  TimeSeriesAdd.cc
   TimeSeriesView.cc
 )
 
@@ -80,6 +80,8 @@ SET(hqc_UIS
   mainwindow.ui
   simplecorrections.ui
   timeseriesview.ui
+  ts_add.ui
+  ts_remove.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

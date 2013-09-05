@@ -35,12 +35,16 @@ public Q_SLOTS:
   void navigateTo(const SensorTime&);
 
 private:
-  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  void updateSensors();
   void updatePlot();
+
+  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+
   static void initalizePlotOptions();
 
 private Q_SLOTS:
-  void onConfigButton();
+  void onButtonAdd();
+  void onButtonRemove();
   void onRadioPlot();
   void onDateFromChanged(const QDateTime&);
   void onDateToChanged(const QDateTime&);

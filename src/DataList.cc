@@ -23,7 +23,6 @@
 #include <set>
 
 #include "ui_datalist.h"
-#include "ui_dl_addcolumn.h"
 
 #define MILOGGER_CATEGORY "kvhqc.DataList"
 #include "HqcLogging.hh"

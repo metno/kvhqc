@@ -20,9 +20,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="buttonConfig">
+      <widget class="QPushButton" name="buttonAdd">
        <property name="text">
-        <string>Config…</string>
+        <string>Add…</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonRemove">
+       <property name="text">
+        <string>Remove…</string>
        </property>
       </widget>
      </item>
@@ -98,10 +105,10 @@
  <resources/>
  <connections>
   <connection>
-   <sender>buttonConfig</sender>
+   <sender>buttonAdd</sender>
    <signal>clicked()</signal>
    <receiver>TimeSeriesView</receiver>
-   <slot>onConfigButton()</slot>
+   <slot>onButtonAdd()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>85</x>
@@ -152,8 +159,8 @@
    <slot>onRadioPlot()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>146</x>
-     <y>18</y>
+     <x>260</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
      <x>92</x>
@@ -161,11 +168,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonRemove</sender>
+   <signal>clicked()</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onButtonRemove()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>159</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>180</x>
+     <y>-3</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onConfigButton()</slot>
   <slot>onRadioPlot()</slot>
   <slot>onDateFromChanged(QDateTime)</slot>
   <slot>onDateToChanged(QDateTime)</slot>
+  <slot>onButtonAdd()</slot>
+  <slot>onButtonRemove()</slot>
  </slots>
 </ui>

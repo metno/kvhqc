@@ -4,11 +4,14 @@
 #include "KvMetaDataBuffer.hh"
 #include "ModelData.hh"
 #include "TimeRangeControl.hh"
-#include "TimeseriesDialog.h"
+#include "TimeSeriesAdd.hh"
+
+#include <QtGui/QStringListModel>
 
 #include <boost/foreach.hpp>
 
 #include "ui_timeseriesview.h"
+#include "ui_ts_remove.h"
 
 #define MILOGGER_CATEGORY "kvhqc.TimeSeriesView"
 #include "HqcLogging.hh"
@@ -23,6 +26,8 @@ public:
   int next(int available)
     { int r = i % available; i /= available; return r; }
 };
+
+const int MAX_LINES = 6;
 } // namespace anonymous
 
 // ########################################################################
@@ -30,7 +35,6 @@ public:
 TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::TimeSeriesView)
-    , tsdlg(new TimeseriesDialog(this))
     , mTimeControl(new TimeRangeControl(this))
 {
   METLIBS_LOG_SCOPE();
@@ -49,25 +53,8 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   mTimeControl->setMinimumGap(24);
   mTimeControl->install(ui->timeFrom, ui->timeTo);
 
-#if 0
-  std::vector<QString> stations;
-  stations.push_back("10380");
-  stations.push_back("17980");
-  stations.push_back("18700");
-  tsdlg->newStationList(stations);
-
-  std::vector<int> params;
-  params.push_back(211);
-  params.push_back(213);
-  params.push_back(215);
-  params.push_back(105);
-  tsdlg->newParameterList(params);
-
-  tsdlg->setFromTimeSlot(f);
-  tsdlg->setToTimeSlot(t);
-#else
-  ui->buttonConfig->setEnabled(false);
-#endif
+  // TODO improve plot options
+  initalizePlotOptions();
 }
 
 TimeSeriesView::~TimeSeriesView()
@@ -89,9 +76,12 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
   ui->timeFrom->setDateTime(timeutil::to_QDateTime(limits.t0()));
   ui->timeTo  ->setDateTime(timeutil::to_QDateTime(limits.t1()));
 
-  // TODO improve plot options
-  initalizePlotOptions();
+  updateSensors();
+}
 
+void TimeSeriesView::updateSensors()
+{
+  METLIBS_LOG_SCOPE();
   std::vector<POptions::Colour> colours;
   POptions::Colour::definedColours(colours);
 
@@ -187,10 +177,44 @@ void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
   updatePlot();
 }
 
-void TimeSeriesView::onConfigButton()
+void TimeSeriesView::onButtonAdd()
 {
-  tsdlg->exec();
-  updatePlot();
+  METLIBS_LOG_SCOPE();
+  TimeSeriesAdd ta(this);
+  if (ta.exec() != QDialog::Accepted)
+    return;
+
+  const Sensor s = ta.selectedSensor();
+  mSensors.push_back(s);
+  METLIBS_LOG_DEBUG(s);
+  
+  updateSensors();
+}
+
+void TimeSeriesView::onButtonRemove()
+{
+  METLIBS_LOG_SCOPE();
+  QStringList lines;
+  BOOST_FOREACH(const Sensor& s, mSensors)
+    lines << QString("%1 %2 %3").arg(s.stationId).arg(s.paramId).arg(s.typeId);
+
+  QDialog tr(this);
+  Ui::TimeSeriesRemove tr_ui;
+  tr_ui.setupUi(&tr);
+  tr_ui.tableLines->setModel(new QStringListModel(lines, &tr));
+
+  if (tr.exec() != QDialog::Accepted)
+    return;
+
+  const QModelIndexList selected = tr_ui.tableLines->selectionModel()->selectedRows();
+  METLIBS_LOG_DEBUG(LOGVAL(selected.size()));
+  BOOST_REVERSE_FOREACH(const QModelIndex& s, selected) {
+    Sensors_t::iterator it = mSensors.begin() + s.row();
+    METLIBS_LOG_DEBUG(LOGVAL(*it));
+    mSensors.erase(it);
+  }
+  
+  updateSensors();
 }
 
 void TimeSeriesView::onRadioPlot()
@@ -217,7 +241,7 @@ void TimeSeriesView::onDateToChanged(const QDateTime& qdt)
 void TimeSeriesView::updatePlot()
 {
   METLIBS_LOG_SCOPE();
-  if (not mDA)
+  if (not mDA or mPlotOptions.empty())
     return;
 
   const int whatToPlot = ui->comboWhatToPlot->currentIndex();
@@ -232,21 +256,19 @@ void TimeSeriesView::updatePlot()
   // prefetch all data
   if (whatToPlot == 0 or whatToPlot == 2)
     mDA->allData(mSensors, limits);
-  if (whatToPlot == 1 or whatToPlot == 2)
+  if ((whatToPlot == 1 or whatToPlot == 2) and mMA)
     mMA->allData(mSensors, limits);
 
   int idx = -1;
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
-    if (idx >= 6)
-      break;
-    if (idx >= mPlotOptions.size()) {
+    if (idx >= (int)mPlotOptions.size()) {
       METLIBS_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
       break;
     }
 
     const ObsAccess::TimeSet times = mDA->allTimes(sensor, limits);
-    METLIBS_LOG_DEBUG(LOGVAL(times.size()));
+    METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(times.size()));
     if (times.empty())
       continue;
 
@@ -279,13 +301,13 @@ void TimeSeriesView::updatePlot()
       }
     }
 
-    if (tseries.dataOK())
+    if (tseries.dataOK()) {
       tslist.insert(tslist.begin(), tseries);
+      if (tslist.size() >= MAX_LINES)
+        break;
+    }
   }
   
-  if (tslist.empty())
-    return;
-
   // finally: one complete plot-structure
   TimeSeriesData::TSPlot tsplot;
   POptions::PlotOptions poptions;
