@@ -110,6 +110,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionUndo"/>
    <addaction name="dataListAction"/>
    <addaction name="timeSeriesAction"/>
   </widget>
@@ -411,6 +412,17 @@
     <string>Ctrl+Shift+L</string>
    </property>
   </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo the last change. &lt;span style=&quot; font-weight:600;&quot;&gt;WARNING:&lt;/span&gt; This may be many changes at once if you edited in WatchRR or WatchWeather or accepted / rejected a time series.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -425,7 +437,9 @@
    <header>errorlist.h</header>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="hqc_resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>actionDataAndErrorList</sender>
@@ -683,10 +697,41 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>saveAction</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onSaveChanges()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionUndo</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onUndoChanges()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <signal>saveData()</signal>
-  <signal>printErrorList()</signal>
+  <slot>onSaveChanges()</slot>
   <slot>showFlags()</slot>
   <slot>showOrigs()</slot>
   <slot>showMod()</slot>
@@ -727,5 +772,6 @@
   <slot>aboutQt()</slot>
   <slot>helpNews()</slot>
   <slot>allListSalenMenu()</slot>
+  <slot>onUndoChanges()</slot>
  </slots>
 </ui>

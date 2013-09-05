@@ -68,7 +68,8 @@ int main( int argc, char* argv[] )
 
     HqcApplication hqc(argc, argv);
     
-    hqc.setReinserter(new FakeReinserter, "fake");
+    hqc.setReinserter(fa.mFakeReinserter, "fake");
+    fa.mFakeReinserter->setInsertSuccess(false);
     hqc.startup("offline test");
 
     return hqc.exec();

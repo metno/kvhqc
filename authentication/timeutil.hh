@@ -74,6 +74,8 @@ ptime now();
 int hourDiff(const ptime& t0, const ptime& t1);
 
 void clearMinutesAndSeconds(QDateTime& dt);
+inline QDateTime clearedMinutesAndSeconds(const QDateTime& dt)
+{ QDateTime dt0(dt); clearedMinutesAndSeconds(dt0); return dt0; }
 
 QDateTime nowWithMinutes0Seconds0();
 

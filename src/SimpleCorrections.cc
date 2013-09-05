@@ -58,6 +58,7 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
     if (qc2ok)
         Helpers::set_fhqc(editor, 4);
 
+    eda->pushUpdate();
     editor->commit();
 }
 
@@ -87,6 +88,8 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
     }
     if (qc2ok)
         Helpers::set_fhqc(editor, 4);
+
+    eda->pushUpdate();
     editor->commit();
 }
 
@@ -108,6 +111,8 @@ void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
     Helpers::reject(editor);
     if (qc2ok)
         Helpers::set_fhqc(editor, 4);
+
+    eda->pushUpdate();
     editor->commit();
 }
 
@@ -125,6 +130,8 @@ void interpolate_or_correct(EditAccessPtr eda, const SensorTime& sensorTime, flo
 
     EditDataEditorPtr editor = eda->editor(obs);
     Helpers::auto_correct(editor, newC);
+
+    eda->pushUpdate();
     editor->commit();
 }
 

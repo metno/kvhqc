@@ -83,15 +83,27 @@ bool EditAccess::sendChangesToParent()
 {
     LOG_SCOPE("EditAccess");
     std::vector<ObsUpdate> updates;
-    for(Data_t::iterator it = mData.begin(); it != mData.end(); ++it) {
-        EditDataPtr ebs = it->second;
+    std::vector<EditDataPtr> obsToReset;
+    BOOST_FOREACH(Data_t::value_type& d, mData) {
+        EditDataPtr ebs = d.second;
         if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
             updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
             LOG4SCOPE_DEBUG(DBGO1(ebs));
-            ebs->reset();
+            obsToReset.push_back(ebs);
         }
     }
-    return mBackend->update(updates);
+
+    const bool success = mBackend->update(updates);
+    LOG4SCOPE_DEBUG(DBG1(success));
+    if (success) {
+        mUpdateCount = mUpdated = mTasks = 0;
+        BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
+            ebs->reset();
+            LOG4SCOPE_DEBUG(DBG1(ebs->sensorTime()));
+            obsDataChanged(MODIFIED, ebs);
+        }
+    }
+    return success;
 }
 
 void EditAccess::reset()
@@ -186,6 +198,7 @@ bool EditAccess::popUpdate()
 
 void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks)
 {
+    DBGE(LOG4HQC_DEBUG("EditAccess", DBG1(obs->sensorTime()) << DBG1(dUpdated) << DBG1(dTasks)));
     mUpdated += dUpdated;
     mTasks += dTasks;
     obsDataChanged(what, obs);
@@ -207,6 +220,7 @@ void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr 
 
     const int wasModified = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
     const bool backendChanged = ebs->updateFromBackend();
+    LOG4SCOPE_DEBUG(DBG1(backendChanged));
     if (backendChanged) {
         const int isModified = ebs->modified()?1:0, hasTasks = ebs->hasTasks()?1:0;
         sendObsDataChanged(EditAccess::MODIFIED, ebs, isModified - wasModified, hasTasks - hadTasks);

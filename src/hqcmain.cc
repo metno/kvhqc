@@ -152,8 +152,6 @@ HqcMainWindow::HqcMainWindow()
     ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
 
-    connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
-    connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
 
@@ -237,10 +235,11 @@ HqcMainWindow::HqcMainWindow()
     connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
             tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
 
-    connect(ui->saveAction, SIGNAL(activated()), ui->treeErrors, SLOT(saveChanges()));
-
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+
+    eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
+    ui->saveAction->setEnabled(false); // no changes yet
     
     // make the timeseries-plot-dialog
     tspdialog = new TSPlotDialog(this);
@@ -435,13 +434,8 @@ inline QString dateStr_( const QDateTime & dt )
 
 void HqcMainWindow::textDataOK()
 {
-    QDate todt = (txtdlg->dtto).date();
-    QTime toti = (txtdlg->dtto).time();
-    timeutil::ptime dtto = timeutil::from_YMDhms(todt.year(), todt.month(), todt.day(), toti.hour(), 0, 0);
-    QDate fromdt = (txtdlg->dtfrom).date();
-    QTime fromti = (txtdlg->dtfrom).time();
-    timeutil::ptime dtfrom = timeutil::from_YMDhms(fromdt.year(), fromdt.month(), fromdt.day(), fromti.hour(), 0, 0);
-
+    const timeutil::ptime dtto = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtto));
+    const timeutil::ptime dtfrom = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtfrom));
     TextData::showTextData(txtdlg->stnr, TimeRange(dtfrom, dtto), this);
 }
 
@@ -878,6 +872,27 @@ void HqcMainWindow::aboutQt()
     QMessageBox::aboutQt(this);
 }
 
+void HqcMainWindow::onUndoChanges()
+{
+    eda->popUpdate();
+}
+
+void HqcMainWindow::onSaveChanges()
+{
+    if (not eda->sendChangesToParent()) {
+        QMessageBox::critical(this, tr("HQC - Saving data"),
+                              tr("Sorry, your changes could not be saved!"),
+                              tr("OK"),
+                              "");
+    } else {
+        QMessageBox::information(this,
+                                 tr("HQC - Saving data"),
+                                 tr("Your changes have been saved."),
+                                 tr("OK"),
+                                 "");
+    }
+}
+
 void HqcMainWindow::navigateTo(const SensorTime& st)
 {
     LOG_SCOPE("HqcMainWindow");
@@ -890,6 +905,13 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
             dl->navigateTo(st);
     }
 }
+
+void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
+{
+    LOG4HQC_DEBUG("HqcMainWindow", DBG1(eda->countU()));
+    ui->saveAction->setEnabled(eda->countU() > 0);
+}
+
 
 void HqcMainWindow::writeSettings()
 {

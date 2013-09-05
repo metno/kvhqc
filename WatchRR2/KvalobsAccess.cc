@@ -130,8 +130,10 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl)
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
 {
     LOG_SCOPE("KvalobsAccess");
-    if (not mDataReinserter)
+    if (not hasReinserter()) {
+        LOG4SCOPE_DEBUG("not authorized");
         return false;
+    }
 
     LOG4SCOPE_DEBUG(updates.size() << " updates");
     if (updates.empty())
@@ -171,8 +173,9 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
         }
         store.push_back(d);
         (created ? createdObs : modifiedObs).push_back(obs);
-        //DBG(DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
-        //    << " ins=" << (inserted ? "y" : "n")
+        LOG4SCOPE_DEBUG(DBG1(st) << DBG1(d) << DBG1(d.tbtime()) << DBG1(d.cfailed())
+                        << " ins=" << (inserted ? "y" : "n")
+                        << " create=" << (created ? "y" : "n"));
         //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
     }
     LOG4SCOPE_DEBUG(store.size() << " to store");

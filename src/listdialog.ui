@@ -50,14 +50,14 @@
               <item>
                <widget class="QCheckBox" name="prcType">
                 <property name="text">
-                 <string>&amp;Precipitation,snow</string>
+                 <string>P&amp;recipitation, snow</string>
                 </property>
                </widget>
               </item>
               <item>
                <widget class="QCheckBox" name="aprType">
                 <property name="text">
-                 <string>&amp;Air pressure</string>
+                 <string>Air &amp;pressure</string>
                 </property>
                </widget>
               </item>
@@ -313,21 +313,21 @@
             <item>
              <widget class="QCheckBox" name="priReg">
               <property name="text">
-               <string>&amp;Prioritised</string>
+               <string>Prioritis&amp;ed</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="stationSelect">
               <property name="text">
-               <string>Choose &amp;stations…</string>
+               <string>&amp;Choose stations…</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="stationSelectAll">
               <property name="text">
-               <string>&amp;All matching</string>
+               <string>All matchin&amp;g</string>
               </property>
              </widget>
             </item>
@@ -366,7 +366,7 @@
             <item row="0" column="0">
              <widget class="QRadioButton" name="priTypes">
               <property name="text">
-               <string>Prioritised types</string>
+               <string>Prioritis&amp;ed types</string>
               </property>
               <property name="checked">
                <bool>true</bool>
@@ -376,7 +376,7 @@
             <item row="0" column="1">
              <widget class="QRadioButton" name="allTypes">
               <property name="text">
-               <string>All types</string>
+               <string>A&amp;ll types</string>
               </property>
              </widget>
             </item>
@@ -392,10 +392,13 @@
             <item row="0" column="0">
              <widget class="QLabel" name="labelFrom">
               <property name="text">
-               <string>From</string>
+               <string>&amp;From</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>fromTime</cstring>
               </property>
              </widget>
             </item>
@@ -409,10 +412,13 @@
             <item row="1" column="0">
              <widget class="QLabel" name="labelTo">
               <property name="text">
-               <string>To</string>
+               <string>&amp;To</string>
               </property>
               <property name="alignment">
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy">
+               <cstring>toTime</cstring>
               </property>
              </widget>
             </item>
@@ -453,7 +459,10 @@
             <item>
              <widget class="QLabel" name="label">
               <property name="text">
-               <string>Show only:</string>
+               <string>Sho&amp;w only:</string>
+              </property>
+              <property name="buddy">
+               <cstring>comboParamGroup</cstring>
               </property>
              </widget>
             </item>
@@ -486,10 +495,12 @@
             <string>add to chosen values</string>
            </property>
            <property name="text">
-            <string notr="true">Add</string>
+            <string notr="true">&amp;Add</string>
            </property>
            <property name="icon">
-            <iconset theme="add"/>
+            <iconset theme="add">
+             <normaloff/>
+            </iconset>
            </property>
           </widget>
          </item>
@@ -499,20 +510,24 @@
             <string>remove from chosen values</string>
            </property>
            <property name="text">
-            <string notr="true">Remove</string>
+            <string notr="true">&amp;Remove</string>
            </property>
            <property name="icon">
-            <iconset theme="remove"/>
+            <iconset theme="remove">
+             <normaloff/>
+            </iconset>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="buttonParamSelectAll">
            <property name="text">
-            <string>&amp;All</string>
+            <string>A&amp;ll</string>
            </property>
            <property name="icon">
-            <iconset theme="add"/>
+            <iconset theme="add">
+             <normaloff/>
+            </iconset>
            </property>
           </widget>
          </item>
@@ -599,7 +614,10 @@
          <item row="0" column="2">
           <widget class="QLabel" name="labelClockAll">
            <property name="text">
-            <string>All times</string>
+            <string>&amp;All times</string>
+           </property>
+           <property name="buddy">
+            <cstring>buttonClockAddAll</cstring>
            </property>
           </widget>
          </item>
@@ -636,7 +654,10 @@
          <item row="1" column="2">
           <widget class="QLabel" name="labelClockStandard">
            <property name="text">
-            <string>Standard times</string>
+            <string>Standard &amp;times</string>
+           </property>
+           <property name="buddy">
+            <cstring>buttonClockAddStandard</cstring>
            </property>
           </widget>
          </item>
@@ -688,14 +709,14 @@
      <item>
       <widget class="QPushButton" name="buttonRestore">
        <property name="text">
-        <string>Load…</string>
+        <string>L&amp;oad…</string>
        </property>
       </widget>
      </item>
      <item>
       <widget class="QPushButton" name="buttonSave">
        <property name="text">
-        <string>Save…</string>
+        <string>&amp;Save…</string>
        </property>
       </widget>
      </item>

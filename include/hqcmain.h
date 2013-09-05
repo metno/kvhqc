@@ -30,6 +30,7 @@
 #define HQCMAIN_H
 
 #include "HqcDataReinserter.h"
+#include "ObsAccess.hh"
 #include "timeutil.hh"
 
 #include <QtCore/QString>
@@ -88,7 +89,6 @@ protected:
 Q_SIGNALS:
     void newStationList(std::vector<QString>&);
     void newParameterList(const std::vector<int>&);
-    void saveData();
     void printErrorList();
 
 private Q_SLOTS:
@@ -122,9 +122,12 @@ private Q_SLOTS:
     void showWeather();
 
     void onVersionCheckTimeout();
+    void onSaveChanges();
+    void onUndoChanges();
 
 private:
     void navigateTo(const SensorTime& st);
+    void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
     //! Retrieves from stlist information about a given station
     void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
