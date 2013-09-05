@@ -4,10 +4,7 @@ SET(hqc_HEADERS
   ../include/DataList.hh
   ../include/DataListAddColumn.hh
   DataListModel.hh
-  ../include/accepttimeseriesdialog.h
-  ../include/approvedialog.h
   ../include/dianashowdialog.h
-  ../include/discarddialog.h
   ../include/errorlist.h
   ../include/HqcDianaHelper.hh
   ../include/hqcmain.h
@@ -15,7 +12,6 @@ SET(hqc_HEADERS
   ../include/ListDialog.hh
   ../include/rejectdialog.h
   ../include/rejecttable.h
-  ../include/rejecttimeseriesdialog.h
   ../include/SimpleCorrections.hh
   ../include/StationSelection.hh
   ../include/textdatadialog.h
@@ -39,10 +35,7 @@ SET(hqc_SOURCES
   ParamIdModel.cc
   ListDialog.cc
   StationSelection.cc
-  accepttimeseriesdialog.cc
-  approvedialog.cc
   dianashowdialog.cc
-  discarddialog.cc
   errorlist.cc
   GetTextData.cc
   HqcDianaHelper.cc
@@ -51,7 +44,6 @@ SET(hqc_SOURCES
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
-  rejecttimeseriesdialog.cc
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
   SimpleCorrections.cc

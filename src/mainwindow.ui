@@ -38,20 +38,11 @@
     </property>
     <addaction name="saveAction"/>
     <addaction name="printAction"/>
-    <addaction name="closeAction"/>
-    <addaction name="exitAction"/>
    </widget>
    <widget class="QMenu" name="menuValg">
     <property name="title">
-     <string>&amp;Options</string>
+     <string>&amp;View</string>
     </property>
-    <addaction name="flID"/>
-    <addaction name="orID"/>
-    <addaction name="moID"/>
-    <addaction name="stID"/>
-    <addaction name="heID"/>
-    <addaction name="poID"/>
-    <addaction name="separator"/>
     <addaction name="actionShowErrorList"/>
     <addaction name="actionShowChanges"/>
     <addaction name="actionShowSimpleCorrections"/>
@@ -70,8 +61,6 @@
     <addaction name="actionWatchRR"/>
     <addaction name="actionWatchWeather"/>
     <addaction name="separator"/>
-    <addaction name="timeSeriesAction"/>
-    <addaction name="separator"/>
     <addaction name="actionTextDataList"/>
     <addaction name="actionRejectDecode"/>
    </widget>
@@ -79,8 +68,6 @@
     <property name="title">
      <string>&amp;Other</string>
     </property>
-    <addaction name="actionRejectSeries"/>
-    <addaction name="actionAcceptSeries"/>
     <addaction name="actionDianaConfig"/>
     <addaction name="actionStartKro"/>
     <addaction name="actionScreenshot"/>
@@ -98,9 +85,9 @@
     <addaction name="actionAboutQt"/>
    </widget>
    <addaction name="menuFile"/>
-   <addaction name="menuValg"/>
    <addaction name="menuListType"/>
    <addaction name="menuOther"/>
+   <addaction name="menuValg"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -117,7 +104,6 @@
    <addaction name="actionUndo"/>
    <addaction name="actionRedo"/>
    <addaction name="dataListAction"/>
-   <addaction name="timeSeriesAction"/>
   </widget>
   <widget class="QDockWidget" name="dockErrors">
    <property name="sizePolicy">
@@ -201,79 +187,6 @@
     <string>Ctrl+P</string>
    </property>
   </action>
-  <action name="closeAction">
-   <property name="text">
-    <string>Close</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+W</string>
-   </property>
-  </action>
-  <action name="exitAction">
-   <property name="text">
-    <string>Exit</string>
-   </property>
-  </action>
-  <action name="flID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;flags</string>
-   </property>
-  </action>
-  <action name="orID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;original</string>
-   </property>
-  </action>
-  <action name="moID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;model data</string>
-   </property>
-  </action>
-  <action name="stID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;station name</string>
-   </property>
-  </action>
-  <action name="heID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show s&amp;tation altitude</string>
-   </property>
-  </action>
-  <action name="poID">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;position</string>
-   </property>
-  </action>
   <action name="actionDataAndErrorList">
    <property name="text">
     <string>Data &amp;list and Error list</string>
@@ -330,11 +243,6 @@
     <string>Ctrl+V</string>
    </property>
   </action>
-  <action name="timeSeriesAction">
-   <property name="text">
-    <string>&amp;Time series</string>
-   </property>
-  </action>
   <action name="actionTextDataList">
    <property name="text">
     <string>Te&amp;xt data</string>
@@ -349,16 +257,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+J</string>
-   </property>
-  </action>
-  <action name="actionRejectSeries">
-   <property name="text">
-    <string>&amp;Reject time series</string>
-   </property>
-  </action>
-  <action name="actionAcceptSeries">
-   <property name="text">
-    <string>&amp;Accept time series</string>
    </property>
   </action>
   <action name="actionDianaConfig">

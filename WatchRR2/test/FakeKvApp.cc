@@ -55,8 +55,9 @@ FakeKvApp::~FakeKvApp()
 void FakeKvApp::insertData(int stationId, int paramId, int typeId, const std::string& obstime, float orig, float corr,
                            const std::string& controlinfo, const std::string& cfailed)
 {
+    const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
     const kvalobs::kvData data(stationId, timeutil::to_miTime(timeutil::from_iso_extended_string(obstime)), orig,
-                               paramId, timeutil::to_miTime(timeutil::ptime()), typeId, 0, 0, corr,
+                               paramId, timeutil::to_miTime(tbtime), typeId, 0, 0, corr,
                                controlinfo, kvalobs::kvUseInfo(), cfailed);
     const SensorTime st(Helpers::sensorFromKvData(data), timeutil::from_iso_extended_string(obstime));
     const Data_t::iterator it = mData.find(st);

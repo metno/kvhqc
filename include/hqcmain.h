@@ -47,7 +47,6 @@ class QMdiSubWindow;
 class QTimer;
 QT_END_NAMESPACE
 
-class AcceptTimeseriesDialog;
 class AutoColumnView;
 class DataList;
 class DianaShowDialog;
@@ -59,7 +58,6 @@ class KvalobsModelAccess;
 class EditAccess;
 class ListDialog;
 class RejectDialog;
-class RejectTimeseriesDialog;
 class SensorTime;
 class TimeSeriesView;
 class TextDataDialog;
@@ -85,6 +83,7 @@ public:
 protected:
     void moveEvent(QMoveEvent* event);
     void resizeEvent(QResizeEvent* event);
+    void closeEvent(QCloseEvent* event);
 
 Q_SIGNALS:
     void newStationList(std::vector<QString>&);
@@ -102,9 +101,6 @@ private Q_SLOTS:
     void rejectedOK();
     void textDataOK();
     void dianaShowOK();
-    void TimeseriesOK();
-    void rejectTimeseriesOK();
-    void acceptTimeseriesOK();
 
     void startKro();
     void screenshot();
@@ -141,7 +137,6 @@ private:
     void listMenu(listType lt);
 
     void exitNoKvalobs();
-    void closeEvent(QCloseEvent* event);
     void writeSettings();
     void readSettings();
     void checkVersionSettings();
@@ -156,8 +151,6 @@ private:
     DianaShowDialog* dshdlg;
     TextDataDialog* txtdlg;
     RejectDialog* rejdlg;
-    RejectTimeseriesDialog* rjtsdlg;
-    AcceptTimeseriesDialog* actsdlg;
     HelpDialog* mHelpDialog;
 
     listType lity;

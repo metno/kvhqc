@@ -36,15 +36,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include "ui_mainwindow.h"
 
-#include "accepttimeseriesdialog.h"
-#include "approvedialog.h"
 #include "AutoColumnView.hh"
 #include "BusyIndicator.h"
 #include "config.h"
 #include "DataList.hh"
 #include "DataView.hh"
 #include "dianashowdialog.h"
-#include "discarddialog.h"
 #include "EditVersionModel.hh"
 #include "errorlist.h"
 #include "HintWidget.hh"
@@ -54,12 +51,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ListDialog.hh"
-#include "MiDateTimeEdit.hh"
 #include "QtKvalobsAccess.hh"
 #include "QNoCloseMdiSubWindow.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
-#include "rejecttimeseriesdialog.h"
 #include "textdatadialog.h"
 #include "textdatatable.h"
 #include "TimeSeriesView.hh"
@@ -139,7 +134,6 @@ HqcMainWindow::HqcMainWindow()
     ui->actionRedo->setIcon(iconRedo);
     ui->actionUndo->setIcon(iconUndo);
 
-    connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
 
     mVersionCheckTimer->setSingleShot(true);
@@ -148,9 +142,6 @@ HqcMainWindow::HqcMainWindow()
 
     QPixmap icon_listdlg( ::hqc::getPath(::hqc::IMAGEDIR) + "/table.png");
     ui->dataListAction->setIcon(icon_listdlg);
-
-    QPixmap icon_ts( ::hqc::getPath(::hqc::IMAGEDIR) + "/kmplot.png");
-    ui->timeSeriesAction->setIcon(icon_ts);
 
     pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
     statusBar()->addPermanentWidget(pluginB, 0);
@@ -165,10 +156,6 @@ HqcMainWindow::HqcMainWindow()
     txtdlg->setIcon( QPixmap(hqc_icon_path) );
     rejdlg = new RejectDialog(this);
     rejdlg->setIcon( QPixmap(hqc_icon_path) );
-    actsdlg = new AcceptTimeseriesDialog();
-    actsdlg->hide();
-    rjtsdlg = new RejectTimeseriesDialog();
-    rjtsdlg->hide();
     
     // --- START -----------------------------------------------------
     rejdlg->hide();
@@ -191,29 +178,6 @@ HqcMainWindow::HqcMainWindow()
     connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
     connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
-    connect(ui->timeSeriesAction, SIGNAL(triggered()), mTimeSeriesView, SLOT(show()));
-    
-    //connect(this, SIGNAL(newStationList(std::vector<QString>&)),
-    //    tsdlg, SLOT(newStationList(std::vector<QString>&)));
-    //connect(this, SIGNAL(newParameterList(const std::vector<int>&)),
-    //    tsdlg, SLOT(newParameterList(const std::vector<int>&)));
-    
-    connect(ui->actionRejectSeries, SIGNAL(triggered()), rjtsdlg, SLOT(show()));
-    connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
-
-    connect(ui->actionAcceptSeries, SIGNAL(triggered()), actsdlg, SLOT(show()));
-    connect(actsdlg, SIGNAL(tsAcceptApply()), SLOT(acceptTimeseriesOK()));
-    
-    connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
-            rjtsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this,  SIGNAL(newParameterList(const std::vector<int>&)),
-            rjtsdlg, SLOT(newParameterList(const std::vector<int>&)));
-    
-    connect(this,  SIGNAL(newStationList(std::vector<QString>&)),
-            actsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this,  SIGNAL(newParameterList(const std::vector<int>&)),
-            actsdlg, SLOT(newParameterList(const std::vector<int>&)));
-    
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
@@ -416,11 +380,6 @@ void HqcMainWindow::ListOK()
     statusBar()->message("");
 }
 
-void HqcMainWindow::TimeseriesOK()
-{
-  mTimeSeriesView->setVisible(true);
-}
-
 inline QString dateStr_( const QDateTime & dt )
 {
   QString ret = dt.toString( Qt::ISODate );
@@ -588,125 +547,9 @@ void HqcMainWindow::listMenu(listType lt)
     lstdlg->show();
 }
 
-void HqcMainWindow::acceptTimeseriesOK()
+void HqcMainWindow::startKro()
 {
-#if 0
-  QDateTime stime;
-  QDateTime etime;
-  QString parameter;
-  int stationIndex;
-  bool maybeQC2;
-  bool result = actsdlg->getResults(parameter,stime,etime,stationIndex, maybeQC2);
-  if ( !result )
-      return;
-  long int stnr = stationIndex;
-  const boost::posix_time::ptime ft = timeutil::from_QDateTime(stime);
-  const boost::posix_time::ptime tt = timeutil::from_QDateTime(etime);
-  checkTypeId(stnr);
-  int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
-  int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
-  int column   = dataModel->dataColumn(parameter);
-
-  QString ch;
-  std::vector<QString> chList;
-  std::vector<double> newCorr;
-  for ( int irow = firstRow; irow <= lastRow; irow++) {
-    QModelIndex index = dataModel->index(irow, column);
-    const kvalobs::kvData & dt = dataModel->getKvData_(index);
-    //    if ( dt.corrected() < -32760 )
-    //      continue;
-    QString ori;
-    ori = ori.setNum(dt.original(), 'f', 1);
-    QString stnr, parName = "???";
-    stnr = stnr.setNum(dt.stationID());
-    try {
-        parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(dt.paramID()).name());
-    } catch(std::runtime_error&) {
-    }
-    ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
-        + ": " + parName + ": " + ori;
-    chList.push_back(ch);
-    newCorr.push_back(dt.original());
-  }
-  ApproveDialog* approveDialog = new ApproveDialog(chList);
-  approveDialog->setWindowTitle(tr("%1 - Accepting Data").arg(QApplication::applicationName()));
-  int res = approveDialog->exec();
-  if ( res == QDialog::Accepted )
-  for ( int irow = firstRow; irow <= lastRow; irow++) {
-    QModelIndex index = dataModel->index(irow, column);
-    dataModel->setAcceptedData(index, newCorr[irow-firstRow], maybeQC2);
-    const kvalobs::kvData & dt = dataModel->getKvData_(index);
-    std::list<kvalobs::kvData> modData;
-    modData.push_back( dt );
-    CKvalObs::CDataSource::Result_var result;
-    {
-      //      BusyIndicator busyIndicator;
-      result = reinserter->insert( modData );
-    }
-    modData.clear();
-  }
-#endif
-}
-
-void HqcMainWindow::rejectTimeseriesOK()
-{
-#if 0
-  QDateTime stime;
-  QDateTime etime;
-  QString parameter;
-  int stationIndex;
-  bool result = rjtsdlg->getResults(parameter,stime,etime,stationIndex);
-  if ( !result )
-      return;
-  long int stnr = stationIndex;
-  boost::posix_time::ptime ft = timeutil::from_iso_extended_string(stime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
-  boost::posix_time::ptime tt = timeutil::from_iso_extended_string(etime.toString("yyyy-MM-dd hh:mm:ss").toStdString());
-  checkTypeId(stnr);
-  int firstRow = dataModel->dataRow(stnr, ft, model::KvalobsDataModel::OBSTIME_AFTER );
-  int lastRow  = dataModel->dataRow(stnr, tt, model::KvalobsDataModel::OBSTIME_BEFORE);
-  int column   = dataModel->dataColumn(parameter);
-
-  QString ch;
-  std::vector<QString> chList;
-  for ( int irow = firstRow; irow <= lastRow; irow++) {
-    QModelIndex index = dataModel->index(irow, column);
-    const kvalobs::kvData & dt = dataModel->getKvData_(index);
-    if ( dt.corrected() < -32760 )
-      continue;
-    QString cr;
-    cr = cr.setNum(dt.corrected(), 'f', 1);
-    QString stnr, parName = "???";
-    stnr = stnr.setNum(dt.stationID());
-    try {
-        parName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(dt.paramID()).name());
-    } catch(std::runtime_error&) {
-    }
-    ch = stnr + " " + QString::fromStdString(timeutil::to_iso_extended_string(timeutil::from_miTime(dt.obstime())))
-        + ": " + parName + ": " + cr;
-    chList.push_back(ch);
-  }
-  DiscardDialog* discardDialog = new DiscardDialog(chList);
-  discardDialog->setWindowTitle(tr("%1 - Rejecting Data").arg(QApplication::applicationName()));
-  int res = discardDialog->exec();
-  if ( res == QDialog::Accepted )
-  for ( int irow = firstRow; irow <= lastRow; irow++) {
-    QModelIndex index = dataModel->index(irow, column);
-    dataModel->setDiscardedData(index, -32766);
-    const kvalobs::kvData & dt = dataModel->getKvData_(index);
-    std::list<kvalobs::kvData> modData;
-    modData.push_back( dt );
-    CKvalObs::CDataSource::Result_var result;
-    {
-      //      BusyIndicator busyIndicator;
-      result = reinserter->insert( modData );
-    }
-    modData.clear();
-  }
-#endif
-}
-
-void HqcMainWindow::startKro() {
-    QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
+  QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
 }
 
 void HqcMainWindow::screenshot()
