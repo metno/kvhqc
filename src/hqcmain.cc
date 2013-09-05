@@ -388,9 +388,9 @@ void HqcMainWindow::ListOK()
         dl->setDataAccess(eda, kma);
         dl->setSensorsAndTimes(sensors, timeLimits);
         dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-        dl->setVisible(true);
         QMdiSubWindow* adlsw = ui->ws->addSubWindow(dl);
         adlsw->setWindowTitle(tr("Data List for Selected Stations/Parameters/Time"));
+        adlsw->setVisible(true);
     }
 
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
@@ -761,6 +761,24 @@ void HqcMainWindow::onVersionCheckTimeout()
     }
     // something went wrong when reading the version info file
     METLIBS_LOG_WARN("error reading hqc_current_version, not renewing timer");
+}
+
+void HqcMainWindow::onShowErrorList()
+{
+  METLIBS_LOG_SCOPE();
+  ui->dockErrors->setVisible(true);
+}
+
+void HqcMainWindow::onShowChanges()
+{
+  METLIBS_LOG_SCOPE();
+  ui->dockHistory->setVisible(true);
+}
+
+void HqcMainWindow::onShowSimpleCorrections()
+{
+  METLIBS_LOG_SCOPE();
+  ui->dockCorrections->setVisible(true);
 }
 
 void HqcMainWindow::closeEvent(QCloseEvent* event)

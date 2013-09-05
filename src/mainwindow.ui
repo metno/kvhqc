@@ -51,6 +51,10 @@
     <addaction name="stID"/>
     <addaction name="heID"/>
     <addaction name="poID"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowErrorList"/>
+    <addaction name="actionShowChanges"/>
+    <addaction name="actionShowSimpleCorrections"/>
    </widget>
    <widget class="QMenu" name="menuListType">
     <property name="title">
@@ -123,10 +127,10 @@
     </sizepolicy>
    </property>
    <property name="features">
-    <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
+    <set>QDockWidget::DockWidgetFeatureMask</set>
    </property>
    <property name="windowTitle">
-    <string>Error List</string>
+    <string>Errors</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -145,9 +149,9 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QDockWidget" name="dockSimpleCorr">
+  <widget class="QDockWidget" name="dockCorrections">
    <property name="windowTitle">
-    <string>Simple Corrections</string>
+    <string>Corrections</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -156,7 +160,7 @@
   </widget>
   <widget class="QDockWidget" name="dockHistory">
    <property name="windowTitle">
-    <string>Changes</string>
+    <string>Change History</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>2</number>
@@ -451,6 +455,21 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+Z</string>
+   </property>
+  </action>
+  <action name="actionShowErrorList">
+   <property name="text">
+    <string>Show Error List</string>
+   </property>
+  </action>
+  <action name="actionShowChanges">
+   <property name="text">
+    <string>Show Changes</string>
+   </property>
+  </action>
+  <action name="actionShowSimpleCorrections">
+   <property name="text">
+    <string>Show Simple Corrections</string>
    </property>
   </action>
  </widget>
@@ -775,9 +794,56 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionShowErrorList</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowErrorList()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShowChanges</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowChanges()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionShowSimpleCorrections</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onShowSimpleCorrections()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
-  <slot>onSaveChanges()</slot>
   <slot>showFlags()</slot>
   <slot>showOrigs()</slot>
   <slot>showMod()</slot>
@@ -820,5 +886,9 @@
   <slot>allListSalenMenu()</slot>
   <slot>onUndoChanges()</slot>
   <slot>onRedoChanges()</slot>
+  <slot>onSaveChanges()</slot>
+  <slot>onShowErrorList()</slot>
+  <slot>onShowChanges()</slot>
+  <slot>onShowSimpleCorrections()</slot>
  </slots>
 </ui>

@@ -126,6 +126,10 @@ private Q_SLOTS:
     void onUndoChanges();
     void onRedoChanges();
 
+  void onShowErrorList();
+  void onShowChanges();
+  void onShowSimpleCorrections();
+
 private:
     void navigateTo(const SensorTime& st);
     void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
