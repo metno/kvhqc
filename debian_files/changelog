@@ -1,3 +1,11 @@
+kvhqc (3.0.0~a5-1) unstable; urgency=low
+
+  * match chosen time range with obs_pgm entries for error list
+  * ask for station and time before showing WatchWeather
+  * fixed infinite recursion in timeutil::clearedMinutesAndSeconds
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 24 Jun 2013 17:28:03 +0200
+
 kvhqc (3.0.0~a4-1) unstable; urgency=low
 
   * improved icons, labels, tooltips
