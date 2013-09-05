@@ -64,6 +64,9 @@ int main( int argc, char* argv[] )
             }
             i += 1;
             log4cpp_properties = argv[i];
+        } else if (arg == "--version") {
+          std::cout << PVERSION_FULL << std::endl;
+          ::exit(0);
         }
     }
 
