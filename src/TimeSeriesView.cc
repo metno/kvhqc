@@ -131,7 +131,9 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
 
     try {
       const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(s);
-      if (param.unit().find("grader") != std::string::npos) {
+      if (param.unit().find("grader") != std::string::npos
+          and s.paramId != kvalobs::PARAMID_MLON and s.paramId != kvalobs::PARAMID_MLAT)
+      {
         po.plottype = POptions::type_vector;
         po.linewidth= 1;
       } else if (param.description().find("Nedb") != std::string::npos and param.description().find("tilvekst") != std::string::npos) {
