@@ -9,6 +9,10 @@ struct Sensor {
     int stationId, paramId, level, sensor, typeId;
     Sensor(int s, int p, int l, int sensor, int t)
         : stationId(s), paramId(p), level(l), sensor(sensor), typeId(t) { }
+    Sensor()
+        : stationId(0), paramId(0), level(0), sensor(0), typeId(0) { }
+    bool valid() const
+        { return stationId>0 && paramId>0 && level>=0 && sensor>=0 && typeId!=0; }
 };
 
 struct lt_Sensor : public std::binary_function<Sensor, Sensor, bool> {
@@ -26,6 +30,9 @@ struct SensorTime {
     timeutil::ptime time;
     SensorTime(const Sensor& s, const timeutil::ptime& t)
         : sensor(s), time(t) { }
+    SensorTime() { }
+    bool valid() const
+        { return sensor.valid() and not time.is_not_a_date_time(); }
 };
 
 struct lt_SensorTime : public std::binary_function<SensorTime, SensorTime, bool> {
