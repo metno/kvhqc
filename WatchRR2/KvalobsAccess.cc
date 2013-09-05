@@ -217,7 +217,7 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
             Helpers::updateCfailed(d, "hqc-i");
             // specify tbtime
             d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
-                                d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.level(), d.sensor(),
+                                d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.sensor(), d.level(),
                                 d.corrected(), d.controlinfo(), d.useinfo(), d.cfailed());
         } else {
             Helpers::updateCfailed(d, "hqc-m");
