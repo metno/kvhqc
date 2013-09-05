@@ -533,24 +533,19 @@
         <translation>&amp;Rückgängig</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="252"/>
-        <source>Redo is not yet implemented, sorry.</source>
-        <translation></translation>
+        <location filename="watchrr_main.ui" line="281"/>
+        <source>&amp;Done</source>
+        <translation>&amp;Fertig</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="255"/>
+        <location filename="watchrr_main.ui" line="291"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="252"/>
         <source>Redo</source>
         <translation>Wiederherstellen</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="284"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Speichern</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="294"/>
-        <source>Close</source>
-        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -771,12 +766,12 @@
         <translation>Ungültige Stationsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="135"/>
+        <location filename="StationDialog.cc" line="139"/>
         <source>problem loading obs_pgm</source>
         <translation>Problem beim Lesen von obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="145"/>
+        <location filename="StationDialog.cc" line="150"/>
         <source>could not find typeid</source>
         <translation>Konnte typeid nicht finden</translation>
     </message>

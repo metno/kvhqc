@@ -29,24 +29,19 @@
         <translation>&amp;Angre</translation>
     </message>
     <message>
-        <location filename="weatherdialog.ui" line="176"/>
-        <source>Redo is not yet implemented, sorry.</source>
-        <translation type="unfinished"></translation>
+        <location filename="weatherdialog.ui" line="205"/>
+        <source>&amp;Done</source>
+        <translation>&amp;Ferdig</translation>
     </message>
     <message>
-        <location filename="weatherdialog.ui" line="179"/>
+        <location filename="weatherdialog.ui" line="215"/>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <location filename="weatherdialog.ui" line="176"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
-    </message>
-    <message>
-        <location filename="weatherdialog.ui" line="208"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Lagre</translation>
-    </message>
-    <message>
-        <location filename="weatherdialog.ui" line="218"/>
-        <source>Close</source>
-        <translation>Lukk</translation>
     </message>
     <message>
         <location filename="WeatherDialog.cc" line="46"/>

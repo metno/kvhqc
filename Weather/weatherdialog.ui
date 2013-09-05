@@ -172,9 +172,6 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
-       <property name="toolTip">
-        <string>Redo is not yet implemented, sorry.</string>
-       </property>
        <property name="text">
         <string>Redo</string>
        </property>
@@ -205,7 +202,7 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;Save</string>
+        <string>&amp;Done</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>
@@ -215,7 +212,7 @@
      <item>
       <widget class="QPushButton" name="buttonClose">
        <property name="text">
-        <string>Close</string>
+        <string>Cancel</string>
        </property>
        <property name="autoDefault">
         <bool>false</bool>

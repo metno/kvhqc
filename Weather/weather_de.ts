@@ -29,24 +29,19 @@
         <translation>&amp;Rückgängig</translation>
     </message>
     <message>
-        <location filename="weatherdialog.ui" line="176"/>
-        <source>Redo is not yet implemented, sorry.</source>
-        <translation type="unfinished"></translation>
+        <location filename="weatherdialog.ui" line="205"/>
+        <source>&amp;Done</source>
+        <translation>&amp;Fertig</translation>
     </message>
     <message>
-        <location filename="weatherdialog.ui" line="179"/>
+        <location filename="weatherdialog.ui" line="215"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="weatherdialog.ui" line="176"/>
         <source>Redo</source>
         <translation>Wiederherstellen</translation>
-    </message>
-    <message>
-        <location filename="weatherdialog.ui" line="208"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Speichern</translation>
-    </message>
-    <message>
-        <location filename="weatherdialog.ui" line="218"/>
-        <source>Close</source>
-        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="WeatherDialog.cc" line="46"/>

@@ -536,25 +536,19 @@
         <translation>A&amp;ngre</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="252"/>
-        <source>Redo is not yet implemented, sorry.</source>
-        <oldsource>redo is not yet implemented, sorry</oldsource>
-        <translation>Beklager, gjenta er ikke ennå implementert.</translation>
+        <location filename="watchrr_main.ui" line="281"/>
+        <source>&amp;Done</source>
+        <translation>&amp;Ferdig</translation>
     </message>
     <message>
-        <location filename="watchrr_main.ui" line="255"/>
+        <location filename="watchrr_main.ui" line="291"/>
+        <source>Cancel</source>
+        <translation>Avbryt</translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="252"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="284"/>
-        <source>&amp;Save</source>
-        <translation>&amp;Lagre</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="294"/>
-        <source>Close</source>
-        <translation>Lukk</translation>
     </message>
 </context>
 <context>
@@ -778,12 +772,12 @@
         <translation>Ugyldig stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="135"/>
+        <location filename="StationDialog.cc" line="139"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="145"/>
+        <location filename="StationDialog.cc" line="150"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
     </message>
