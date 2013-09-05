@@ -1,10 +1,12 @@
 
 SET(hqc_HEADERS
   ErrorListTableModel.hh
+  ../include/ChecksTableModel.hh
   ../include/DataList.hh
   ../include/DataListAddColumn.hh
   ../include/DataListModel.hh
   ../include/dianashowdialog.h
+  ../include/EditVersionModel.hh
   ../include/errorlist.h
   ../include/ExtremesView.hh
   ../include/HqcDianaHelper.hh
@@ -30,7 +32,6 @@ SET(hqc_SOURCES
   ../include/DataView.hh
   DataView.cc
   ErrorListTableModel.cc
-  EditVersionModel.hh
   EditVersionModel.cc
   ExtremesTableModel.cc
   ExtremesView.cc

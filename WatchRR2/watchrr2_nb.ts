@@ -100,17 +100,17 @@
 <context>
     <name>Column_RR_24</name>
     <message>
-        <location filename="ColumnFactory.cc" line="30"/>
+        <location filename="ColumnFactory.cc" line="54"/>
         <source>dry</source>
         <translation>tørt</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="31"/>
+        <location filename="ColumnFactory.cc" line="55"/>
         <source>d</source>
         <translation>t</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="32"/>
+        <location filename="ColumnFactory.cc" line="56"/>
         <source>precipitation not reported</source>
         <translation>nedbørmengde ikke meldt</translation>
     </message>
@@ -118,32 +118,32 @@
 <context>
     <name>Column_SA</name>
     <message>
-        <location filename="ColumnFactory.cc" line="37"/>
+        <location filename="ColumnFactory.cc" line="61"/>
         <source>pat</source>
         <translation>flk</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="38"/>
+        <location filename="ColumnFactory.cc" line="62"/>
         <source>p</source>
         <translation>f</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="39"/>
+        <location filename="ColumnFactory.cc" line="63"/>
         <source>patchy snow</source>
         <translation>flekkvis snø</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="42"/>
+        <location filename="ColumnFactory.cc" line="66"/>
         <source>no m.</source>
         <translation>ing.m.</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="43"/>
+        <location filename="ColumnFactory.cc" line="67"/>
         <source>n</source>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="44"/>
+        <location filename="ColumnFactory.cc" line="68"/>
         <source>measurement impossible/inaccurate</source>
         <translation>måling umulig eller unøyaktig</translation>
     </message>
@@ -151,19 +151,19 @@
 <context>
     <name>Column_SD</name>
     <message>
-        <location filename="ColumnFactory.cc" line="49"/>
+        <location filename="ColumnFactory.cc" line="73"/>
         <source>no m.</source>
         <oldsource>no r.</oldsource>
         <translation>ing.m.</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="50"/>
+        <location filename="ColumnFactory.cc" line="74"/>
         <source>n</source>
         <oldsource>b</oldsource>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="51"/>
+        <location filename="ColumnFactory.cc" line="75"/>
         <source>snow cover not reported</source>
         <translation>snødekke ikke meldt</translation>
     </message>
@@ -292,14 +292,14 @@
         <translation>snøfokk</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="65"/>
-        <location filename="DataVxItem.cc" line="110"/>
+        <location filename="DataVxItem.cc" line="87"/>
+        <location filename="DataVxItem.cc" line="132"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="67"/>
-        <location filename="DataVxItem.cc" line="112"/>
+        <location filename="DataVxItem.cc" line="89"/>
+        <location filename="DataVxItem.cc" line="134"/>
         <source>strong</source>
         <translation>sterkt</translation>
     </message>

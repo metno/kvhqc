@@ -53,7 +53,7 @@
     </message>
 </context>
 <context>
-    <name>ChecksTable</name>
+    <name>ChecksTableModel</name>
     <message>
         <location filename="ChecksTableModel.cc" line="20"/>
         <source>Check</source>
@@ -63,6 +63,11 @@
         <location filename="ChecksTableModel.cc" line="21"/>
         <source>Description</source>
         <translation>Beskrivelse</translation>
+    </message>
+    <message>
+        <location filename="ChecksTableModel.cc" line="97"/>
+        <source>neighbors: </source>
+        <translation>Naboer: </translation>
     </message>
 </context>
 <context>
@@ -564,33 +569,33 @@ parametere</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="67"/>
+        <location filename="../authentication/HqcApplication.cc" line="68"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC systemdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="79"/>
+        <location filename="../authentication/HqcApplication.cc" line="80"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Variablen $HOME er tom; vennligst sjekk instillingene på datamaskinen</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="87"/>
+        <location filename="../authentication/HqcApplication.cc" line="88"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC konfigurasjonsdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="98"/>
+        <location filename="../authentication/HqcApplication.cc" line="99"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kan ikke lese kvalobs SQL databasen; vennligst sjekk HQC-konfigurasjonen</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="143"/>
-        <location filename="../authentication/HqcApplication.cc" line="163"/>
+        <location filename="../authentication/HqcApplication.cc" line="144"/>
+        <location filename="../authentication/HqcApplication.cc" line="164"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="145"/>
+        <location filename="../authentication/HqcApplication.cc" line="146"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Alvorlig feil oppsto. Prøv å starte HQC på nytt, og gi beskjed om feilen.</translation>
     </message>

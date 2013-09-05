@@ -12,7 +12,7 @@
 #include <vector>
 
 class ChecksTableModel : public QAbstractTableModel
-{
+{ Q_OBJECT;
 public:
   ChecksTableModel(ObsAccessPtr da);
   ~ChecksTableModel();

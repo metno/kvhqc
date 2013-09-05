@@ -6,7 +6,7 @@
 #include <QtCore/QAbstractItemModel>
 
 class EditVersionModel : public QAbstractItemModel
-{
+{ Q_OBJECT;
 public:
     EditVersionModel(EditAccessPtr eda);
     ~EditVersionModel();

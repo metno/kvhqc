@@ -17,8 +17,8 @@ namespace {
 enum { COL_CHECK, COL_EXPLAIN, NCOLUMNS };
 
 const char* headers[NCOLUMNS] = {
-    QT_TRANSLATE_NOOP("ChecksTable", "Check"),
-    QT_TRANSLATE_NOOP("ChecksTable", "Description")
+    QT_TRANSLATE_NOOP("ChecksTableModel", "Check"),
+    QT_TRANSLATE_NOOP("ChecksTableModel", "Description")
 };
 
 }
@@ -67,7 +67,7 @@ QVariant ChecksTableModel::headerData(int section, Qt::Orientation orientation, 
 {
     if (orientation == Qt::Horizontal) {
         if (role == Qt::DisplayRole)
-          return qApp->translate("ChecksTable", headers[section]);
+          return tr(headers[section]);
     }
     return QVariant();
 }
@@ -90,7 +90,16 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
         QSqlQuery query(hqcApp->systemDB());
         query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
         
-        BOOST_FOREACH(const QString& c, mChecks) {
+        BOOST_FOREACH(QString& c, mChecks) {
+          if (c.startsWith("QC2N_")) {
+            QString n = c.mid(5);
+            n.replace("_", ", ");
+            n.prepend(tr("neighbors: "));
+            c = "QC2-redist-N";
+            mExplanations.push_back(n);
+            continue;
+          }
+            
           query.bindValue(0, c);
           query.exec();
           if (query.next())

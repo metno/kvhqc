@@ -53,7 +53,7 @@
     </message>
 </context>
 <context>
-    <name>ChecksTable</name>
+    <name>ChecksTableModel</name>
     <message>
         <location filename="ChecksTableModel.cc" line="20"/>
         <source>Check</source>
@@ -63,6 +63,11 @@
         <location filename="ChecksTableModel.cc" line="21"/>
         <source>Description</source>
         <translation>Beschreibung</translation>
+    </message>
+    <message>
+        <location filename="ChecksTableModel.cc" line="97"/>
+        <source>neighbors: </source>
+        <translation>Nachbarn: </translation>
     </message>
 </context>
 <context>
@@ -564,33 +569,33 @@ Parameter</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="67"/>
+        <location filename="../authentication/HqcApplication.cc" line="68"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Systemdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="79"/>
+        <location filename="../authentication/HqcApplication.cc" line="80"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Umgebungsvariable $HOME leer; bitte überprüfen Sie die Einstellungen Ihres Computers</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="87"/>
+        <location filename="../authentication/HqcApplication.cc" line="88"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Konfigurationsdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="98"/>
+        <location filename="../authentication/HqcApplication.cc" line="99"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kann nicht auf kvalobs SQL Datenbank zugreifen; bitte prüfen Sie die HQC-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="143"/>
-        <location filename="../authentication/HqcApplication.cc" line="163"/>
+        <location filename="../authentication/HqcApplication.cc" line="144"/>
+        <location filename="../authentication/HqcApplication.cc" line="164"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../authentication/HqcApplication.cc" line="145"/>
+        <location filename="../authentication/HqcApplication.cc" line="146"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Ein schwerwiegender Fehler ist aufgetreten. Sie sollten HQC neu starten und den Fehler melden.</translation>
     </message>
