@@ -1,3 +1,11 @@
+kvhqc (3.0.0-1) unstable; urgency=low
+
+  * show neighbor distances in auto data list
+  * no decimals for degree angles
+  * use more FG_* and FX_* parameters for extreme value lists
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 23 Jul 2013 17:46:20 +0200
+
 kvhqc (3.0.0~a21-1) unstable; urgency=low
 
   * start with empty field when editing missing values
