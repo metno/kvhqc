@@ -267,6 +267,10 @@ void dumpObs(const EditDataPtr obs, float model, int flTyp, int flg, int memStor
 
 bool checkError2013(const EditDataPtr obs)
 {
+  const int fhqc = obs->controlinfo().flag(kvalobs::flag::fhqc);
+  if (fhqc != 0)
+    return false;
+
   const int ui_2 = Helpers::extract_ui2(obs);
   if (ui_2 == 2 or ui_2 == 3 or ui_2 == 9)
     return true;
