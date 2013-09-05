@@ -14,7 +14,7 @@ namespace ColumnFactory {
 
 Code2TextPtr codesForParam(int pid)
 {
-    if( pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6 )
+    if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
         return Code2TextPtr();
 
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
@@ -53,7 +53,8 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, DisplayType di
     const int pid = sensor.paramId;
 
     DataItemPtr item;
-    if( pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6 ) {
+    if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6) {
+      if (displayType == NEW_CORRECTED)
         item = boost::make_shared<DataVxItem>(da);
     } else if (displayType == OLD_CONTROLINFO or displayType == NEW_CONTROLINFO) {
         item = boost::make_shared<DataControlinfoItem>(displayType == NEW_CONTROLINFO);
@@ -74,7 +75,10 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, DisplayType di
 
 DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType)
 {
-    return boost::make_shared<DataColumn>(da, sensor, time, itemForSensor(da, sensor, displayType));
+  DataItemPtr item = itemForSensor(da, sensor, displayType);
+  if (item)
+    return boost::make_shared<DataColumn>(da, sensor, time, item);
+  return DataColumnPtr();
 }
 
 ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)

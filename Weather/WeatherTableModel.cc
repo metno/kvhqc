@@ -19,8 +19,10 @@ WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, con
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
     DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, t);
-    oc->setHeaderShowStation(false);
-    addColumn(oc);
+    if (oc) {
+      oc->setHeaderShowStation(false);
+      addColumn(oc);
+    }
   }
 }
 

@@ -86,8 +86,11 @@ void DataList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& lim
 void DataList::updateModel()
 {
     std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
-    BOOST_FOREACH(const Column& c, mColumns)
-        newModel->addColumn(makeColumn(c));
+    BOOST_FOREACH(const Column& c, mColumns) {
+      ObsColumnPtr oc = makeColumn(c);
+      if (oc)
+        newModel->addColumn(oc);
+    }
 
     mTableModel = newModel;
     setModel(mTableModel.get());
@@ -110,7 +113,8 @@ ObsColumnPtr DataList::makeColumn(const Column& c)
         else if (c.type == FLAGS)
             cdt = ColumnFactory::NEW_CONTROLINFO;
         DataColumnPtr dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
-        dc->setTimeOffset(toff);
+        if (dc)
+          dc->setTimeOffset(toff);
         return dc;
     }
 }
