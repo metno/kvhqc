@@ -42,6 +42,14 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
     } else if (role == Qt::ForegroundRole) {
         if (((mShowNew and not obs->hasTasks()) or not mShowNew) and mCodes->isCode(getValue(obs)))
             return Qt::darkGray;
+
+        const kvalobs::kvControlInfo ci(obs->controlinfo());
+        if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
+          if (ci.qc2dDone())
+            return Qt::darkMagenta;
+          else if (ci.flag(kvalobs::flag::fnum) >= 6)
+            return Qt::red;
+        }
     } else if (role == Qt::FontRole) {
         QFont f;
         if (mShowNew and obs->modifiedCorrected())
