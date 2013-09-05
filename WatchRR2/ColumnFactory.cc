@@ -11,10 +11,34 @@
 
 #include <QtCore/QCoreApplication>
 #include <QtSql/QSqlQuery>
+
 #include <boost/make_shared.hpp>
+#include <boost/range/end.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ColumnFactory"
 #include "HqcLogging.hh"
+
+namespace {
+
+const int PID_NO_DECIMALS[] = {
+  54 , // HH
+  55 , // HL
+  271, // VMOR
+  272, // VR
+  273, // VV
+  274, // VZ
+  275, // VX
+  301, // HS1
+  302, // HS2
+  303, // HS3
+  304, // HS4
+  311, // HT1
+  312, // HT2
+  313, // HT3
+  314, // HT4
+};
+
+}
 
 namespace ColumnFactory {
 
@@ -51,6 +75,8 @@ Code2TextPtr codesForParam(int pid)
                      qApp->translate("Column_SD", "snow cover not reported"));
         c2t->setRange(-1, 4);
         c2t->setDecimals(0);
+    } else if (std::binary_search(PID_NO_DECIMALS, boost::end(PID_NO_DECIMALS), pid)) {
+      c2t->setDecimals(0);
     } else {
       try {
         const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
