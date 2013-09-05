@@ -2,6 +2,7 @@
 #include "DataCorrectedItem.hh"
 
 #include "Helpers.hh"
+#include "KvMetaDataBuffer.hh"
 #include "ObsColumn.hh"
 #include "Tasks.hh"
 
@@ -77,6 +78,9 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
         const bool reject = (newC == kvalobs::REJECTED);
         if (reject and not obs)
             return false;
+        if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(st.sensor.paramId, newC))
+            return false;
+
         da->pushUpdate();
         if (not obs)
             obs = da->createE(st);
