@@ -18,6 +18,7 @@
 #include <QtGui/QApplication>
 #include <QtGui/QMessageBox>
 #include <QtGui/QPushButton>
+#include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
@@ -368,9 +369,26 @@ QString stationName(const kvalobs::kvStation& s)
 
 bool aggregatedParameter(int paramFrom, int paramTo)
 {
-  return (paramFrom >= kvalobs::PARAMID_RR_01 and paramFrom < kvalobs::PARAMID_RR_24)
-      and (paramTo > kvalobs::PARAMID_RR_01 and paramTo <= kvalobs::PARAMID_RR_24)
-      and paramTo > paramFrom;
+  std::set<int> pTo;
+  aggregatedParameters(paramFrom, pTo);
+  return pTo.find(paramTo) != pTo.end();
+}
+
+void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
+{
+  METLIBS_LOG_SCOPE();
+  if (hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.prepare("SELECT paramid_to FROM param_aggregated WHERE paramid_from = ?");
+    query.bindValue(0, paramFrom);
+    if (query.exec()) {
+      while (query.next())
+        paramTo.insert(query.value(0).toInt());
+    } else {
+      METLIBS_LOG_WARN("error getting aggregated parameters for " << paramFrom
+          << ": " << query.lastError().text());
+    }
+  }
 }
 
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)

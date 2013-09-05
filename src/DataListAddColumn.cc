@@ -105,16 +105,10 @@ void DataListAddColumn::onStationEdited()
 
   if (goodStation) {
     const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-    bool haveRRacc = false;
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
       stationParams.insert(p);
-      if (p >= kvalobs::PARAMID_RR_01 and p < kvalobs::PARAMID_RR_24)
-        haveRRacc = true;
-    }
-    if (haveRRacc) {
-      for (int p=kvalobs::PARAMID_RR_01; p<=kvalobs::PARAMID_RR_24; ++p)
-        stationParams.insert(p);
+      Helpers::aggregatedParameters(p, stationParams);
     }
     goodStation &= (not stationParams.empty());
   }

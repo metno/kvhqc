@@ -7,6 +7,8 @@
 #include <kvalobs/kvStation.h>
 #include <QtCore/QString>
 
+#include <set>
+
 class FlagChange;
 class ObsData;
 typedef boost::shared_ptr<ObsData> ObsDataPtr;
@@ -95,6 +97,7 @@ private:
 
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors);
 bool aggregatedParameter(int paramFrom, int paramTo);
+void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
 std::vector<Sensor> relatedSensors(const SensorTime& st);
 
 float numericalValue(int paramId, float codeValue);
