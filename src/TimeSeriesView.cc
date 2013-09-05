@@ -253,7 +253,7 @@ void TimeSeriesView::updatePlot()
       const miutil::miTime mtime = timeutil::make_miTime(time);
       if (mdl and ui->radioModel->isChecked()) {
         tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
-      } else if (obs and ui->radioObservations->isChecked()) {
+      } else if (obs and ui->radioCorrected->isChecked()) {
         const float corr = obs->corrected();
         if (corr > -32766.0)
           tseries.add(TimeSeriesData::Data(mtime, corr));

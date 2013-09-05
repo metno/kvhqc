@@ -27,9 +27,9 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioObservations">
+      <widget class="QRadioButton" name="radioCorrected">
        <property name="text">
-        <string>Obs.</string>
+        <string>Corr.</string>
        </property>
        <property name="checked">
         <bool>true</bool>
@@ -46,7 +46,7 @@
      <item>
       <widget class="QRadioButton" name="radioDifference">
        <property name="text">
-        <string>Diff</string>
+        <string>Diff.</string>
        </property>
       </widget>
      </item>
@@ -135,7 +135,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>radioObservations</sender>
+   <sender>radioCorrected</sender>
    <signal>clicked()</signal>
    <receiver>TimeSeriesView</receiver>
    <slot>onRadioPlot()</slot>

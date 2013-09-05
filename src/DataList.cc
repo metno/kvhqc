@@ -3,6 +3,7 @@
 
 #include "ColumnFactory.hh"
 #include "DataListModel.hh"
+#include "ObsDelegate.hh"
 
 #include <QtGui/QFont>
 #include <QtGui/QHeaderView>
@@ -41,6 +42,8 @@ DataList::DataList(QWidget* parent)
 
     setSelectionBehavior(QAbstractItemView::SelectItems);
     setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+    setItemDelegate(new ObsDelegate(this));
 
     QFont mono("Monospace");
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
