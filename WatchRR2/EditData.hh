@@ -55,6 +55,18 @@ public:
     bool modifiedTasks() const
         { return mTasks.modified(); }
 
+    bool hasVersion(int version)
+        { return mCorrected.hasVersion(version) or mControlinfo.hasVersion(version) or mTasks.hasVersion(version); }
+
+    float corrected(int version) const
+        { return mCorrected.value(version); }
+
+    const kvalobs::kvControlInfo& controlinfo(int version) const
+        { return mControlinfo.value(version); }
+
+    int allTasks(int version) const
+        { return mTasks.value(version); }
+
     bool created() const
         { return mCreated; }
 

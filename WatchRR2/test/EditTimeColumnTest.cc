@@ -55,7 +55,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
     EditDataPtr obs = eda->findE(SensorTime(sensor, t));
     ASSERT_TRUE(obs);
 
-    eda->pushUpdate();
+    eda->newVersion();
     eda->editor(obs)->setCorrected(5.5f).commit();
     ASSERT_EQ(1, cccD .count);
     ASSERT_EQ(1, cccET.count);
@@ -64,7 +64,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
     ASSERT_TRUE(v.isValid());
     ASSERT_EQ("5.5", v.toString().toStdString());
 
-    eda->popUpdate();
+    eda->undoVersion();
     ASSERT_EQ(2, cccD .count);
     ASSERT_EQ(2, cccET.count);
 

@@ -74,10 +74,10 @@ public:
      * Set a new current version.
      *
      * \param version the new current version
-     * \param dropAbove whether to drop all newer versions
+     * \param drop whether to drop all versions including and above version
      * \return true iff modified() or value() have changed
      */
-    bool setVersion(int version, bool dropAbove);
+    bool setVersion(int version, bool drop);
 
     /**
      * Set a new value for the current version.
@@ -157,7 +157,7 @@ const T& VersionedValue<T,E>::value(int version) const
 }
 
 template< typename T, class E>
-bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
+bool VersionedValue<T,E>::setVersion(int version, bool drop)
 {
     const bool wasModified = modified();
     const unsigned int oldCurrent = mCurrent;
@@ -168,9 +168,11 @@ bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
         while(mCurrent>0 and mVersions[mCurrent].version > version)
             mCurrent -= 1;
     }
+    if (drop and mCurrent>0 and mVersions[mCurrent].version == version)
+        mCurrent -= 1;
     const bool changedValue = (mCurrent != oldCurrent)
         and (not E()(mVersions[oldCurrent].value, value()));
-    if (dropAbove and mCurrent+1 < mVersions.size())
+    if (drop and mCurrent+1 < mVersions.size())
         mVersions.erase(mVersions.begin() + (mCurrent+1), mVersions.end());
     return changedValue or (modified() != wasModified);
 }

@@ -12,7 +12,8 @@
 
 EditAccess::EditAccess(ObsAccessPtr backend)
     : mBackend(backend)
-    , mUpdateCount(0)
+    , mVersionTimestamps(1, timeutil::now())
+    , mCurrentVersion(0)
     , mUpdated(0)
     , mTasks(0)
 {
@@ -96,7 +97,7 @@ bool EditAccess::sendChangesToParent()
     const bool success = mBackend->update(updates);
     LOG4SCOPE_DEBUG(DBG1(success));
     if (success) {
-        mUpdateCount = mUpdated = mTasks = 0;
+        mCurrentVersion = mUpdated = mTasks = 0;
         BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
             ebs->reset();
             LOG4SCOPE_DEBUG(DBG1(ebs->sensorTime()));
@@ -108,7 +109,7 @@ bool EditAccess::sendChangesToParent()
 void EditAccess::reset()
 {
     LOG_SCOPE("EditAccess");
-    mUpdateCount = mUpdated = mTasks = 0;
+    mCurrentVersion = mUpdated = mTasks = 0;
     for(Data_t::iterator it = mData.begin(); it != mData.end();) {
         EditDataPtr ebs = it->second;
         Data_t::iterator oit = it++;
@@ -137,39 +138,65 @@ struct PopUpdate {
 };
 } // namespace anonymous
 
-void EditAccess::pushUpdate()
+void EditAccess::newVersion()
 {
     LOG_SCOPE("EditAccess");
-    mUpdateCount += 1;
+    mCurrentVersion += 1;
+    if ((int)mVersionTimestamps.size() >= mCurrentVersion)
+        mVersionTimestamps.erase(mVersionTimestamps.begin() + mCurrentVersion, mVersionTimestamps.end());
+    mVersionTimestamps.push_back(timeutil::now());
+
+    updateToCurrentVersion(true);
 }
 
-bool EditAccess::popUpdate()
+void EditAccess::updateToCurrentVersion(bool drop)
 {
-    LOG_SCOPE("EditAccess");
-    if (mUpdateCount>0)
-        mUpdateCount -= 1;
-
-    std::list<PopUpdate> send;
-    for(Data_t::iterator it = mData.begin(); it != mData.end(); ++it) {
-        EditDataPtr ebs = it->second;
+    std::vector<PopUpdate> updates;
+    BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
         if (not ebs)
             continue;
-
         const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
-        bool changed = ebs->mCorrected.setVersion(mUpdateCount, false);
-        changed |= ebs->mControlinfo.setVersion(mUpdateCount, false);
-        changed |= ebs->mTasks.setVersion(mUpdateCount, false);
+        bool changed = ebs->mCorrected.setVersion(mCurrentVersion, drop);
+        changed |= ebs->mControlinfo.setVersion(mCurrentVersion, drop);
+        changed |= ebs->mTasks.setVersion(mCurrentVersion, drop);
 
         if (changed) {
             const int isUpdated = (ebs->modified())?1:0, hasTasks = ebs->hasTasks()?1:0;
-            send.push_back(PopUpdate(ebs, isUpdated - wasUpdated, hasTasks - hadTasks));
+            updates.push_back(PopUpdate(ebs, isUpdated - wasUpdated, hasTasks - hadTasks));
         }
     }
-    if (send.empty())
-        return false;
-    BOOST_FOREACH(const PopUpdate& p, send)
+
+    /* emit */ currentVersionChanged(currentVersion(), highestVersion());
+    BOOST_FOREACH(const PopUpdate& p, updates)
         sendObsDataChanged(MODIFIED, p.ebs, p.dU, p.dT);
-    return true;
+}
+
+void EditAccess::undoVersion()
+{
+    LOG_SCOPE("EditAccess");
+    if (mCurrentVersion == 0)
+        return;
+    mCurrentVersion -= 1;
+    updateToCurrentVersion(false);
+}
+
+void EditAccess::redoVersion()
+{
+    LOG_SCOPE("EditAccess");
+    if (mCurrentVersion >= highestVersion())
+        return;
+    mCurrentVersion += 1;
+    updateToCurrentVersion(false);
+}
+
+std::vector<EditDataPtr> EditAccess::versionChanges(int version) const
+{
+    std::vector<EditDataPtr> haveVersion;
+    BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
+        if (ebs and ebs->hasVersion(version))
+            haveVersion.push_back(ebs);
+    }
+    return haveVersion;
 }
 
 void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks)
@@ -182,9 +209,36 @@ void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpd
 
 EditDataEditorPtr EditAccess::editor(EditDataPtr obs)
 {
-    if (mUpdateCount == 0)
-        pushUpdate();
+    if (mCurrentVersion == 0)
+        newVersion();
     return EditDataEditorPtr(new EditDataEditor(this, obs));
+}
+
+bool EditAccess::commit(EditDataEditor* editor)
+{
+    EditDataPtr obs = editor->mObs;
+    const int wasModified = obs->modified()?1:0, hadTasks = obs->hasTasks()?1:0;
+
+    const int u = currentVersion();
+    bool changed = false;
+    if (editor->mCorrected.commit()) {
+        obs->mCorrected.setValue(u, editor->mCorrected.get());
+        changed = true;
+    }
+    if (editor->mControlinfo.commit()) {
+        obs->mControlinfo.setValue(u, editor->mControlinfo.get());
+        changed = true;
+    }
+    if (editor->mTasks.commit()) {
+        obs->mTasks.setValue(u, editor->mTasks.get());
+        changed = true;
+    }
+
+    if (changed) {
+        const int isModified = obs->modified()?1:0, hasTasks = obs->hasTasks()?1:0;
+        sendObsDataChanged(EditAccess::MODIFIED, obs, isModified - wasModified, hasTasks - hadTasks);
+    }
+    return changed;
 }
 
 void EditAccess::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)

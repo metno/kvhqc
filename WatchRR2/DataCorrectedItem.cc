@@ -81,7 +81,7 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
         if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(st.sensor.paramId, newC))
             return false;
 
-        da->pushUpdate();
+        da->newVersion();
         if (not obs)
             obs = da->createE(st);
 

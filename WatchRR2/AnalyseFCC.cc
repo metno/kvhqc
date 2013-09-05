@@ -80,7 +80,7 @@ void acceptRow(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& ti
     const std::vector<Sensor> sensors = makeSensors(sensor);
     const FlagChange accept_fcc("fhqc=[0234]->fhqc=1"); // FIXME OkCheckTableItem has fmis=0 -- strange; and not fhqc=[34]
 
-    da->pushUpdate();
+    da->newVersion();
     for(int i=0; i<N_COLUMNS; ++i) {
         EditDataPtr obs = da->findE(SensorTime(sensors[i], timeWithOffset(time, i)));
         if (obs)

@@ -32,31 +32,48 @@ public:
         { mBackend->removeSubscription(s); }
 
     EditDataEditorPtr editor(EditDataPtr obs);
-    int currentUpdate() const
-        { return mUpdateCount; }
-    void pushUpdate();
-    bool popUpdate();
+    bool commit(EditDataEditor* editor);
+
+    void newVersion();
+    void undoVersion();
+    void redoVersion();
+    bool canUndo() const
+        { return mCurrentVersion > 0; }
+    bool canRedo() const
+        { return mCurrentVersion < highestVersion(); }
+    int highestVersion() const
+        { return mVersionTimestamps.size() - 1; }
+    int currentVersion() const
+        { return mCurrentVersion; }
+    int countU() const
+        { return mUpdated; }
+    int countT() const
+        { return mTasks; }
+
+    const timeutil::ptime& versionTimestamp(int version) const
+        { return mVersionTimestamps[version]; }
+    std::vector<EditDataPtr> versionChanges(int version) const;
+
+    boost::signal2<void, int, int> currentVersionChanged;
 
     bool sendChangesToParent();
     void reset();
 
-    int countUpdates() const { return mUpdateCount; }
-
-    int countU() const { return mUpdated; }
-    int countT() const { return mTasks; }
-
-    void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);
-
     boost::signal2<void, ObsDataChange, EditDataPtr> backendDataChanged;
 
 private:
+    void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);
     void onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+    void updateToCurrentVersion(bool drop);
 
 private:
     ObsAccessPtr mBackend;
     typedef std::map<SensorTime, EditDataPtr, lt_SensorTime> Data_t;
     Data_t mData;
-    int mUpdateCount, mUpdated, mTasks;
+
+    typedef std::vector<timeutil::ptime> VersionTimestamps_t;
+    VersionTimestamps_t mVersionTimestamps;
+    int mCurrentVersion, mUpdated, mTasks;
 };
 typedef boost::shared_ptr<EditAccess> EditAccessPtr;
 

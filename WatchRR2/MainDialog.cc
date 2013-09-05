@@ -143,7 +143,7 @@ void MainDialog::initializeRR24Data()
         qApp->processEvents();
     mRRModel->setRR24TimeRange(mEditableTime);
         qApp->processEvents();
-    mDA->pushUpdate();
+    mDA->newVersion();
 }
 
 void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
@@ -257,7 +257,7 @@ void MainDialog::onEdit()
     EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
     EditDialog edit(this, eda, mSensor, sel.selTime, mEditableTime);
     if (edit.exec()) {
-        mDA->pushUpdate();
+        mDA->newVersion();
         eda->sendChangesToParent();
         ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
         enableSave();
@@ -271,7 +271,7 @@ void MainDialog::onRedistribute()
     EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
     RedistDialog redist(this, eda, mSensor, sel.selTime, mEditableTime);
     if (redist.exec()) {
-        mDA->pushUpdate();
+        mDA->newVersion();
         eda->sendChangesToParent();
         ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
         enableSave();
@@ -290,8 +290,8 @@ void MainDialog::onRedistributeQC2()
 
 void MainDialog::onUndo()
 {
-    if (mDA->countUpdates() > 0) {
-        mDA->popUpdate();
+    if (mDA->currentVersion() > 0) {
+        mDA->undoVersion();
         enableSave();
         clearSelection();
     }
@@ -313,7 +313,7 @@ void MainDialog::enableSave()
     int updates = mDA->countU(), tasks = mDA->countT();
 
     ui->buttonSave->setEnabled(tasks == 0 and updates > 0);
-    ui->buttonUndo->setEnabled((mDA->countUpdates() > 1) and (updates > 0));
+    ui->buttonUndo->setEnabled((mDA->currentVersion() > 1) and (updates > 0));
 }
 
 void MainDialog::onDataChanged(const QModelIndex&, const QModelIndex&)

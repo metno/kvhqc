@@ -22,32 +22,7 @@ EditDataEditor::~EditDataEditor()
 
 bool EditDataEditor::commit()
 {
-    const int wasModified = mObs->modified()?1:0, hadTasks = mObs->hasTasks()?1:0;
-    const bool changed = applyChanges();
-    if (changed) {
-        const int isModified = mObs->modified()?1:0, hasTasks = mObs->hasTasks()?1:0;
-        mEA->sendObsDataChanged(EditAccess::MODIFIED, mObs, isModified - wasModified, hasTasks - hadTasks);
-    }
-    return changed;
-}
-
-bool EditDataEditor::applyChanges()
-{
-    const int u = mEA->currentUpdate();
-    bool changed = false;
-    if (mCorrected.commit()) {
-        mObs->mCorrected.setValue(u, mCorrected.get());
-        changed = true;
-    }
-    if (mControlinfo.commit()) {
-        mObs->mControlinfo.setValue(u, mControlinfo.get());
-        changed = true;
-    }
-    if (mTasks.commit()) {
-        mObs->mTasks.setValue(u, mTasks.get());
-        changed = true;
-    }
-    return changed;
+    return mEA->commit(this);
 }
 
 EditDataEditor& EditDataEditor::setCorrected(float nc)

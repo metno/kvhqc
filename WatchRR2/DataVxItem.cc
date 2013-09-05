@@ -136,7 +136,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     const QString v = value.toString();
     LOG4SCOPE_DEBUG(DBG1(v));
     if (v == "") {
-        mDA->pushUpdate();
+        mDA->newVersion();
         bool changed = false;
         if (obs1) {
             mDA->editor(obs1)->setCorrected(0);
@@ -176,7 +176,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     LOG4SCOPE_DEBUG(DBG1(oldCodes.first) << DBG1(newCode1) << DBG1(oldCodes.second) << DBG1(newCode2));
     bool pushed = false;
     if (newCode1 != oldCodes.first) {
-        mDA->pushUpdate();
+        mDA->newVersion();
         pushed = true;
         if (not obs1)
             obs1 = mDA->createE(st);
@@ -185,7 +185,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     }
     if (newCode2 != oldCodes.second) {
         if (not pushed)
-            mDA->pushUpdate();
+            mDA->newVersion();
         if (not obs2) {
             SensorTime st2(st);
             st2.sensor.paramId += 1;

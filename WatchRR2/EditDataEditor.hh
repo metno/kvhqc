@@ -32,9 +32,6 @@ public:
     EditDataPtr obs() const
         { return mObs; }
 
-protected:
-    virtual bool applyChanges();
-
 private:
     EditAccess* mEA;
     EditDataPtr mObs;

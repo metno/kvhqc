@@ -295,7 +295,7 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
         const std::vector<float> newCorrected(newCorrectedR, boost::end(newCorrectedR));
         EditAccessPtr edaR = boost::make_shared<EditAccess>(eda);
         RR24::redistribute(edaR, sensor, t0R, time, newCorrected);
-        eda->pushUpdate();
+        eda->newVersion();
         edaR->sendChangesToParent();
     }
 
@@ -314,7 +314,7 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
         const std::vector<int> newAccept(3, RR24::AR_ACCEPT);
         EditAccessPtr edaS = boost::make_shared<EditAccess>(eda);
         RR24::singles(edaS, sensor, t0S, time, newCorrected, newAccept);
-        eda->pushUpdate();
+        eda->newVersion();
         edaS->sendChangesToParent();
     }
 

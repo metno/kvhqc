@@ -188,14 +188,86 @@ TEST(EditAccessTest, PopChange)
     ASSERT_EQ(7, cdcE2.count);
     ASSERT_EQ(0, cdcE .count);
 
-    eda->pushUpdate();
+    eda->newVersion();
     eda2->sendChangesToParent();
     ASSERT_EQ(7, cdcE.count);
     cdcE.count = 0;
 
-    eda->popUpdate();
+    eda->undoVersion();
     ASSERT_EQ(7, cdcE.count); // pop 7 days with changes
 
     eda->sendChangesToParent();
     ASSERT_EQ(0, cdcF.count); // only tasks from RR24::analyse remain, but fda does not keep tasks
+}
+
+TEST(EditAccessTest, UndoRedoNewVersions)
+{
+    using boost::gregorian::days;
+
+    const Sensor sensor(32780, 211, 0, 0, 302);
+    const TimeRange time(s2t("2012-12-01 06:00:00"), s2t("2012-12-06 06:00:00"));
+    FakeKvApp fa;
+    fa.insertStation = sensor.stationId;
+    fa.insertParam   = sensor.paramId;
+    fa.insertType    = sensor.typeId;
+    fa.insertData("2012-12-01 06:00:00", 6.0, 6.0, "0110000000001000", "");
+    fa.insertData("2012-12-02 06:00:00", 1.0, 1.0, "0110000000001000", "");
+    fa.insertData("2012-12-03 06:00:00", 1.0, 1.0, "0110000000001000", "");
+    fa.insertData("2012-12-04 06:00:00", 1.0, 1.0, "0110000000001000", "");
+    fa.insertData("2012-12-05 06:00:00", 4.0, 4.0, "0110000000001000", "");
+    fa.insertData("2012-12-06 06:00:00", 8.0, 8.0, "0110000000001000", "");
+
+    const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
+    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
+    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+
+    EditDataPtr obs1 = eda->findE(SensorTime(sensor, s2t("2012-12-03 06:00:00")));
+    EditDataPtr obs2 = eda->findE(SensorTime(sensor, s2t("2012-12-04 06:00:00")));
+    EditDataPtr obs3 = eda->findE(SensorTime(sensor, s2t("2012-12-05 06:00:00")));
+    ASSERT_TRUE(obs1);
+    ASSERT_TRUE(obs2);
+    ASSERT_TRUE(obs3);
+
+    eda->newVersion();
+    eda->editor(obs1)->setCorrected(2);
+    EXPECT_TRUE(obs1->hasVersion(1));
+    EXPECT_EQ(2, obs1->corrected());
+
+    eda->newVersion();
+    eda->editor(obs1)->setCorrected(7);
+    EXPECT_TRUE(obs1->hasVersion(1));
+    EXPECT_TRUE(obs1->hasVersion(2));
+    EXPECT_EQ(2, obs1->corrected(1));
+    EXPECT_EQ(7, obs1->corrected());
+    eda->editor(obs2)->setCorrected(3);
+    EXPECT_TRUE(obs2->hasVersion(2));
+    EXPECT_EQ(3, obs2->corrected());
+
+    eda->undoVersion();
+    EXPECT_EQ(2, obs1->corrected());
+    EXPECT_EQ(1, obs2->corrected());
+    EXPECT_TRUE(eda->canRedo());
+    EXPECT_TRUE(eda->canUndo());
+
+    eda->redoVersion();
+    EXPECT_EQ(7, obs1->corrected());
+    EXPECT_EQ(3, obs2->corrected());
+    EXPECT_FALSE(eda->canRedo());
+    EXPECT_TRUE(eda->canUndo());
+
+    eda->undoVersion();
+    EXPECT_EQ(1, eda->currentVersion());
+    eda->newVersion();
+    EXPECT_EQ(2, eda->currentVersion());
+    EXPECT_EQ(2, obs1->corrected());
+    EXPECT_EQ(1, obs2->corrected());
+    EXPECT_FALSE(eda->canRedo());
+    EXPECT_TRUE(eda->canUndo());
+
+    const std::vector<EditDataPtr> changed1 = eda->versionChanges(1);
+    ASSERT_EQ(1, changed1.size());
+    EXPECT_EQ(2, changed1.at(0)->corrected(1));
+
+    const std::vector<EditDataPtr> changed2 = eda->versionChanges(2);
+    ASSERT_TRUE(changed2.empty());
 }

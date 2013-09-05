@@ -173,7 +173,7 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
     const FlagChange fc_miss("fd=9;fhqc=6;fmis=3->fmis=1"),
         fc_end("fd=A;fhqc=6"), fc_dryEnd("fmis=4->fmis=0"), fc_wetEnd("fmis=0->fmis=4");
 
-    da->pushUpdate();
+    da->newVersion();
     redistRow = 0;
     t = t0;
     for (; redistRow < newCorr.size(); t += step, redistRow += 1) {
@@ -212,7 +212,7 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
     if (not canRedistributeInQC2(da, sensor, time))
         throw std::runtime_error("cannot redistribute this in QC2");
 
-    da->pushUpdate();
+    da->newVersion();
     timeutil::ptime t = time.t0();
     for (; t < time.t1(); t += step) {
         EditDataPtr obs = da->findOrCreateE(SensorTime(sensor, t));
@@ -272,7 +272,7 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
     const FlagChange fc_clear_fd("fd=1");
 
-    da->pushUpdate();
+    da->newVersion();
     bool previousWasSingle = false, previousWasAcc = false;
     unsigned int editRow = 0;
     timeutil::ptime t = t0, tMarkStart = editableTime.t0();
@@ -378,7 +378,7 @@ void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
     const FlagChange fc_accept("fhqc=[0234]->fhqc=1");
-    da->pushUpdate();
+    da->newVersion();
     for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
         EditDataPtr obs = da->findE(SensorTime(sensor, t));
         if (not obs)

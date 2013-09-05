@@ -83,7 +83,9 @@ TEST(VersionedValueTest, UndoRedo)
     EXPECT_TRUE(v.setVersion(0, false));
     EXPECT_EQ(V0, v.value());
 
-    EXPECT_TRUE(v.setVersion(1, true));
+    EXPECT_FALSE(v.setVersion(1, true));
+    EXPECT_EQ(V0, v.value());
+    EXPECT_TRUE(v.setValue(1, V1));
     EXPECT_EQ(V1, v.value());
 
     EXPECT_FALSE(v.setVersion(2, true));
@@ -92,9 +94,9 @@ TEST(VersionedValueTest, UndoRedo)
     EXPECT_TRUE(v.setVersion(1, false));
     EXPECT_EQ(V1, v.value());
 
-    EXPECT_TRUE(v.setVersion(2, true));
-    EXPECT_EQ(V2, v.value());
-    EXPECT_FALSE(v.setValue(2, V2));
+    EXPECT_FALSE(v.setVersion(2, true));
+    EXPECT_EQ(V1, v.value());
+    EXPECT_TRUE(v.setValue(2, V2));
     EXPECT_EQ(V2, v.value());
     EXPECT_TRUE(v.setValue(2, V3));
     EXPECT_EQ(V3, v.value());
