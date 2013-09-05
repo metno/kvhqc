@@ -3,6 +3,7 @@
 #include "QtKvService.hh"
 
 #include <boost/foreach.hpp>
+#include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.QtKvalobsAccess"
 #include "HqcLogging.hh"
@@ -47,30 +48,49 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
     nextData(*data);
 }
 
-void QtKvalobsAccess::updateSubscribedTimes()
+void QtKvalobsAccess::addSubscription(const ObsSubscription& s)
 {
-    std::set<int> oldSubscribedStations;
-    BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
-        oldSubscribedStations.insert(st.first);
+  KvalobsAccess::addSubscription(s);
 
-    KvalobsAccess::updateSubscribedTimes();
+  SubscribedStations_t::iterator it = mSubscribedStations.find(s.stationId());
+  if (it == mSubscribedStations.end()) {
+    mSubscribedStations.insert(std::make_pair(s.stationId(), 1));
+    reSubscribe();
+  } else {
+    it->second += 1;
+  }
+}
 
-    std::set<int> newSubscribedStations;
-    BOOST_FOREACH(SubscribedTimes_t::value_type& st, mSubscribedTimes)
-        newSubscribedStations.insert(st.first);
+void QtKvalobsAccess::removeSubscription(const ObsSubscription& s)
+{
+  KvalobsAccess::removeSubscription(s);
 
-    if (oldSubscribedStations != newSubscribedStations) {
-        if (not mKvServiceSubscriberID.empty()) {
-            qtKvService()->unsubscribe(mKvServiceSubscriberID);
-            mKvServiceSubscriberID = "";
-        }
+  SubscribedStations_t::iterator it = mSubscribedStations.find(s.stationId());
+  if (it == mSubscribedStations.end()) {
+    METLIBS_LOG_ERROR("station " << s.stationId() << " has no subscribtions, cannot unsubscribe");
+    return;
+  }
 
-        if (not mSubscribedTimes.empty()) {
-            kvservice::KvDataSubscribeInfoHelper dataSubscription;
-            BOOST_FOREACH(int sid, newSubscribedStations)
-                dataSubscription.addStationId(sid);
-            mKvServiceSubscriberID = qtKvService()
-                ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
-        }
-    }
+  int& count = it->second;
+  count -= 1;
+  if (count == 0) {
+    mSubscribedStations.erase(it);
+    reSubscribe();
+  }
+}
+
+void QtKvalobsAccess::reSubscribe()
+{
+  if (not mKvServiceSubscriberID.empty()) {
+    qtKvService()->unsubscribe(mKvServiceSubscriberID);
+    mKvServiceSubscriberID = "";
+  }
+  
+  if (not mSubscribedStations.empty()) {
+    kvservice::KvDataSubscribeInfoHelper dataSubscription;
+    BOOST_FOREACH(int sid, boost::adaptors::keys(mSubscribedStations))
+        dataSubscription.addStationId(sid);
+    mKvServiceSubscriberID = qtKvService()
+        ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
+  }
 }

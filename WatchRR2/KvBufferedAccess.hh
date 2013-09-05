@@ -24,18 +24,17 @@ protected:
     virtual KvalobsDataPtr receive(const kvalobs::kvData& data);
     virtual bool drop(const SensorTime& st);
     bool updatesHaveTasks(const std::vector<ObsUpdate>& updates);
-    virtual void updateSubscribedTimes();
     virtual bool isSubscribed(const SensorTime& st);
     
-protected:
-    typedef std::map<SensorTime, KvalobsDataPtr, lt_SensorTime> Data_t;
-    Data_t mData;
-
+private:
     typedef std::vector<ObsSubscription> Subscriptions_t;
     Subscriptions_t mSubscriptions;
 
     typedef std::map<int, TimeRange> SubscribedTimes_t;
     SubscribedTimes_t mSubscribedTimes;
+
+    typedef std::map<SensorTime, KvalobsDataPtr, lt_SensorTime> Data_t;
+    Data_t mData;
 };
 typedef boost::shared_ptr<KvBufferedAccess> KvBufferedAccessPtr;
 

@@ -107,7 +107,15 @@ void KvBufferedAccess::addSubscription(const ObsSubscription& s)
     if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
         return;
     mSubscriptions.push_back(s);
-    updateSubscribedTimes();
+
+    SubscribedTimes_t::iterator it = mSubscribedTimes.find(s.stationId());
+    if (it != mSubscribedTimes.end()) {
+      // FIXME merge only overlapping time spans
+      TimeRange r(std::min(s.time().t0(), it->second.t0()), std::max(s.time().t1(), it->second.t1()));
+      it->second = r;
+    } else {
+      mSubscribedTimes.insert(SubscribedTimes_t::value_type(s.stationId(), s.time()));
+    }
 }
 
 namespace {
@@ -134,46 +142,45 @@ struct eq_ObsSubscription : public std::unary_function<bool, ObsSubscription> {
 
 void KvBufferedAccess::removeSubscription(const ObsSubscription& s)
 {
-    if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
-        return;
-    Subscriptions_t::iterator it = std::find_if(mSubscriptions.begin(), mSubscriptions.end(), eq_ObsSubscription(s));
-    //Subscriptions_t::iterator it = std::find(mSubscriptions.begin(), mSubscriptions.end(), s);
-    if (it != mSubscriptions.end()) {
-        mSubscriptions.erase(it);
-        updateSubscribedTimes();
-    }
-}
-
-void KvBufferedAccess::updateSubscribedTimes()
-{
-    mSubscribedTimes.clear();
-    BOOST_FOREACH(const ObsSubscription& sub, mSubscriptions) {
-        SubscribedTimes_t::iterator it = mSubscribedTimes.find(sub.stationId());
-        if (it != mSubscribedTimes.end()) {
-            // FIXME merge only overlapping time spans
-            TimeRange r(std::min(sub.time().t0(), it->second.t0()), std::max(sub.time().t1(), it->second.t1()));
-            it->second = r;
-        } else {
-            mSubscribedTimes.insert(SubscribedTimes_t::value_type(sub.stationId(), sub.time()));
+  if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
+    return;
+  
+  Subscriptions_t::iterator it = std::find_if(mSubscriptions.begin(), mSubscriptions.end(), eq_ObsSubscription(s));
+  //Subscriptions_t::iterator it = std::find(mSubscriptions.begin(), mSubscriptions.end(), s);
+  if (it != mSubscriptions.end()) {
+    mSubscriptions.erase(it);
+      
+    // FIXME this relies on using a simplified (ie without gaps) time list for each station
+    SubscribedTimes_t::iterator it = mSubscribedTimes.find(s.stationId());
+    if (it != mSubscribedTimes.end()) {
+      if (s.time().t0() == it->second.t0() or s.time().t1() == it->second.t1()) {
+        // at start/end, need to scan all subscriptions for this station
+          
+        TimeRange newSpan;
+        BOOST_FOREACH(const ObsSubscription& sub, mSubscriptions) {
+          if (sub.stationId() != s.stationId())
+            continue;
+            
+          if (newSpan.undef()) {
+            // FIXME this does not merge across gaps
+            newSpan = TimeRange(std::min(sub.time().t0(), newSpan.t0()), std::max(sub.time().t1(), newSpan.t1()));
+          } else {
+            newSpan = sub.time();
+          }
         }
+        it->second = newSpan;
+      }
+    } else {
+      METLIBS_LOG_ERROR("subscribed station " << s.stationId() << " not in subscription list");
     }
-
-    std::list<SensorTime> noLongerSubscribed;
-    BOOST_FOREACH(const Data_t::value_type d, mData) {
-        const SensorTime& dst = d.first;
-        if (not isSubscribed(dst))
-            noLongerSubscribed.push_back(dst);
-    }
-    BOOST_FOREACH(const SensorTime& st, noLongerSubscribed) {
-        drop(st);
-    }
+  }
 }
 
 bool KvBufferedAccess::isSubscribed(const SensorTime& st)
 {
-    SubscribedTimes_t::iterator it = mSubscribedTimes.find(st.sensor.stationId);
-    if (it == mSubscribedTimes.end())
-        return false;
-    else
-        return it->second.contains(st.time);
+  SubscribedTimes_t::iterator it = mSubscribedTimes.find(st.sensor.stationId);
+  if (it == mSubscribedTimes.end())
+    return false;
+  // FIXME this is not exact, it returns true also for times in a "gap" between two subscriptions
+  return it->second.contains(st.time);
 }
