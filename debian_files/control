@@ -12,8 +12,8 @@ Build-Depends: debhelper (>= 7.0.50), quilt, g++,
  metlibs-qtimeseries-dev (=4.4.1~svn3810-1lucid1),
  metlibs-qutilities-dev (=4.4.1~svn3810-1lucid1)
 @metno_config_else
- libkvcpp-dev (>= 2.7.0~rc5),
- metlibs-dev (>= 4.9.6-1)
+ libkvcpp-dev (>= 2.7.1-2),
+ metlibs-dev (>= 4.11.0-1)
 @metno_config_endif
 Standards-Version: 3.8.4
 Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
