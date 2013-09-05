@@ -45,26 +45,32 @@ void DataList::navigateTo(const SensorTime& st)
     LOG4SCOPE_DEBUG(DBG1(mSensorTime));
 
     const QModelIndexList idxs = mTableModel->findIndexes(st);
+
+    const QModelIndex& currentIdx = currentIndex();
     QItemSelection selection;
-    BOOST_FOREACH(const QModelIndex idx, idxs)
+    bool scroll = (not idxs.empty());
+    BOOST_FOREACH(const QModelIndex idx, idxs) {
         selection.select(idx, idx);
-    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
-    if (not idxs.empty()) {
-        scrollTo(idxs.front());
-        scrollTo(idxs.back());
+        if (idx == currentIdx)
+            scroll = false;
     }
+    if (scroll) {
+        scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
+        scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
+    }
+    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
 void DataList::currentChanged(const QModelIndex& current, const QModelIndex& previous)
 {
     LOG_SCOPE("DataList");
     QTableView::currentChanged(current, previous);
-
-    if (not current.isValid())
-        return;
-
-    const SensorTime st = mTableModel->findSensorTime(current);
-    LOG4SCOPE_DEBUG(DBG1(st));
-    if (st.valid())
-        /*emit*/ signalNavigateTo(st);
+    if (current.isValid()) {
+        const SensorTime st = mTableModel->findSensorTime(current);
+        LOG4SCOPE_DEBUG(DBG1(st));
+        if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
+            mSensorTime = st;
+            /*emit*/ signalNavigateTo(st);
+        }
+    }
 }
