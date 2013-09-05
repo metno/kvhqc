@@ -12,6 +12,11 @@ public:
     enum ValueType { Numerical=1, TextCode=2, Text=4 };
     enum { ValueTypeRole = Qt::UserRole, TextCodesRole, TextCodeExplanationsRole };
 
+    enum Type { ORIGINAL,
+                OLD_CORRECTED, NEW_CORRECTED,
+                OLD_CONTROLINFO, NEW_CONTROLINFO,
+                MODEL, N_DISPLAYTYPES };
+
     ObsColumn() { }
     virtual ~ObsColumn() { }
 
@@ -22,6 +27,7 @@ public:
 
     virtual const boost::posix_time::time_duration& timeOffset() const = 0;
     virtual Sensor sensor() const;
+    virtual int type() const = 0;
 
     boost::signal2<void, timeutil::ptime, ObsColumn*> columnChanged;
 

@@ -46,8 +46,8 @@ EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const Tim
         }
     }
 
-    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::ORIGINAL));
-    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ColumnFactory::NEW_CORRECTED));
+    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::ORIGINAL));
+    addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::NEW_CORRECTED));
     addColumn(ObsColumnPtr());
     addColumn(ObsColumnPtr());
 }

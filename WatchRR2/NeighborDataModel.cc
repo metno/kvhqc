@@ -27,13 +27,13 @@ const int uniqueColumnPars[N_UNIQUE_PARS] = {
     kvalobs::PARAMID_V4, kvalobs::PARAMID_V5, kvalobs::PARAMID_V6,
     kvalobs::PARAMID_RR_24, kvalobs::PARAMID_SA, kvalobs::PARAMID_SD
 };
-const ColumnFactory::DisplayType columnTypes[N_COLUMNS] = {
-    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
-    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
-    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
-    ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,   ColumnFactory::NEW_CORRECTED,
-    ColumnFactory::ORIGINAL,        ColumnFactory::ORIGINAL,        ColumnFactory::ORIGINAL,
-    ColumnFactory::NEW_CONTROLINFO, ColumnFactory::NEW_CONTROLINFO, ColumnFactory::NEW_CONTROLINFO
+const ObsColumn::Type columnTypes[N_COLUMNS] = {
+    ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,
+    ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,
+    ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,
+    ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,   ObsColumn::NEW_CORRECTED,
+    ObsColumn::ORIGINAL,        ObsColumn::ORIGINAL,        ObsColumn::ORIGINAL,
+    ObsColumn::NEW_CONTROLINFO, ObsColumn::NEW_CONTROLINFO, ObsColumn::NEW_CONTROLINFO
 };
 const int columnTimeOffsets[N_COLUMNS] = {
     -18, -18, -18,

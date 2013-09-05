@@ -39,7 +39,7 @@ TEST(EditTimeColumnTest, UpdateSignal)
     const Sensor sensor(31850, kvalobs::PARAMID_RR_24, 0, 0, 302);
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     const TimeRange time(s2t("2012-11-20 06:00:00"), s2t("2012-11-27 06:00:00"));
-    DataColumnPtr dc = ColumnFactory::columnForSensor(eda, sensor, time, ColumnFactory::NEW_CORRECTED);
+    DataColumnPtr dc = ColumnFactory::columnForSensor(eda, sensor, time, ObsColumn::NEW_CORRECTED);
     boost::shared_ptr<EditTimeColumn> etc = boost::make_shared<EditTimeColumn>(dc);
     etc->setEditableTime(TimeRange(s2t("2012-11-21 06:00:00"), s2t("2012-11-27 06:00:00")));
 

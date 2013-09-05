@@ -13,6 +13,8 @@ public:
     virtual QVariant data(EditDataPtr obs, int role) const;
     virtual bool setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role);
     virtual QString description(bool mini) const;
+    virtual int type() const
+    { return mShowNew ? ObsColumn::NEW_CORRECTED : ObsColumn::OLD_CORRECTED; }
 
 protected:
     float getValue(EditDataPtr obs) const;

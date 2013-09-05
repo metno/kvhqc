@@ -13,7 +13,7 @@ const int columnPars[] = {
 const int N_COLUMNS = sizeof(columnPars)/sizeof(columnPars[0]);
 } // namespace anonymous
 
-WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ColumnFactory::DisplayType t)
+WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t)
   : ObsTableModel(da, time)
 {
   for(int i=0; i<N_COLUMNS; ++i) {

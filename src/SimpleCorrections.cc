@@ -1,12 +1,11 @@
 
 #include "SimpleCorrections.hh"
 
+#include "AcceptReject.hh"
 #include "ChecksTableModel.hh"
 #include "ColumnFactory.hh"
 #include "ModelData.hh"
 #include "ToolTipStringListModel.hh"
-
-#include <kvalobs/kvDataOperations.h>
 
 #include "ui_simplecorrections.h"
 
@@ -25,117 +24,6 @@ void setCommonMinWidth(QWidget* w[])
         mw = std::max(mw, preferredWidth(w[i]));
     for (int i=0; w[i]; ++i)
         w[i]->setMinimumSize(mw, w[i]->minimumSize().height());
-}
-
-// ----------------------------------------
-
-void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
-{
-    EditDataPtr obs = eda->findE(sensorTime);
-    if (not obs) {
-        METLIBS_LOG_ERROR("accept_original without obs for " << sensorTime);
-        return;
-    }
-
-    const kvalobs::kvControlInfo ci = obs->controlinfo();
-    const int fmis = ci.flag(kvalobs::flag::fmis);
-    if (fmis == 3) {
-        METLIBS_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
-        return;
-    }
-    if (ci.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
-        METLIBS_LOG_ERROR("bad accept_original, would not set fhqc for " << sensorTime);
-        return;
-    }
-
-    EditDataEditorPtr editor = eda->editor(obs);
-    editor->setCorrected(obs->original());
-
-    Helpers::set_fhqc(editor, 1);
-    if (fmis == 0 or fmis == 2) {
-        Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
-        Helpers::set_flag(editor, kvalobs::flag::fd,   1);
-    } else if (fmis == 1) {
-        Helpers::set_flag(editor, kvalobs::flag::fmis, 3);
-    }
-    if (qc2ok)
-        Helpers::set_fhqc(editor, 4);
-
-    eda->newVersion();
-    editor->commit();
-}
-
-void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
-{
-    EditDataPtr obs = eda->findE(sensorTime);
-    if (not obs) {
-        METLIBS_LOG_ERROR("accept_corrected without obs for " << sensorTime);
-        return;
-    }
-
-    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
-    EditDataEditorPtr editor = eda->editor(obs);
-
-    if (Helpers::float_eq()(obs->original(), editor->corrected())
-        and (not Helpers::is_accumulation(editor)) and fmis < 2)
-    {
-        Helpers::set_flag(editor, kvalobs::flag::fd, 1);
-        Helpers::set_fhqc(editor, 1);
-    } else if (fmis == 0) {
-        Helpers::set_fhqc(editor, 7);
-    } else if (fmis == 1) {
-        Helpers::set_fhqc(editor, 5);
-    } else {
-        METLIBS_LOG_ERROR("bad accept_corrected for " << sensorTime);
-        return;
-    }
-    if (qc2ok)
-        Helpers::set_fhqc(editor, 4);
-
-    eda->newVersion();
-    editor->commit();
-}
-
-void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
-{
-    EditDataPtr obs = eda->findE(sensorTime);
-    if (not obs) {
-        METLIBS_LOG_ERROR("reject without obs for " << sensorTime);
-        return;
-    }
-
-    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
-    if (fmis == 1 or fmis == 3) {
-        METLIBS_LOG_ERROR("bad reject with fmis=1/3 for " << sensorTime);
-        return;
-    }
-
-    EditDataEditorPtr editor = eda->editor(obs);
-    Helpers::reject(editor);
-    if (qc2ok)
-        Helpers::set_fhqc(editor, 4);
-
-    eda->newVersion();
-    editor->commit();
-}
-
-void interpolate_or_correct(EditAccessPtr eda, const SensorTime& sensorTime, float newC)
-{
-    EditDataPtr obs = eda->findE(sensorTime);
-    if (not obs) {
-        METLIBS_LOG_ERROR("interpolate_or_correct without obs for " << sensorTime);
-        return;
-    }
-    if (Helpers::is_accumulation(obs)) {
-        METLIBS_LOG_ERROR("accept_corrected for accumulation for " << sensorTime);
-        return;
-    }
-
-    EditDataEditorPtr editor = eda->editor(obs);
-    Helpers::auto_correct(editor, newC);
-
-    eda->newVersion();
-    editor->commit();
 }
 
 } // anonymous namespace
@@ -201,9 +89,9 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mSensorTime = st;
     METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
-    mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CONTROLINFO);
-    mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::ORIGINAL);
-    mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ColumnFactory::NEW_CORRECTED);
+    mItemFlags     = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CONTROLINFO);
+    mItemOriginal  = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::ORIGINAL);
+    mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CORRECTED);
 
     update();
 }
@@ -308,6 +196,13 @@ void SimpleCorrections::enableEditing()
 {
     METLIBS_LOG_SCOPE();
 
+    EditDataPtr obs = (mDA and mSensorTime.sensor.valid()) ? mDA->findE(mSensorTime) : EditDataPtr();
+    if (not obs) {
+        setEnabled(false);
+        return;
+    }
+    setEnabled(true);
+#if 0
     enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
            NEW_CORRECTED, N_BUTTONS };
     QWidget* buttons[N_BUTTONS] = {
@@ -319,11 +214,6 @@ void SimpleCorrections::enableEditing()
     bool enable[N_BUTTONS];
     
     const Sensor& s = mSensorTime.sensor;
-    EditDataPtr obs = (mDA and s.valid()) ? mDA->findE(mSensorTime) : EditDataPtr();
-    if (not obs) {
-        setEnabled(false);
-        return;
-    }
     setEnabled(true);
     std::fill(enable, enable+N_BUTTONS, true);
 
@@ -342,6 +232,20 @@ void SimpleCorrections::enableEditing()
 
     for (int b=0; b<N_BUTTONS; ++b)
         buttons[b]->setEnabled(enable[b]);
+#else
+    const int p = AcceptReject::possibilities(obs);
+
+    ui->buttonReject   ->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
+    ui->buttonRejectQC2->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
+
+    ui->buttonAcceptOriginal   ->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
+    ui->buttonAcceptOriginalQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
+
+    ui->buttonAcceptCorrected   ->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
+    ui->buttonAcceptCorrectedQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
+
+    ui->comboCorrected->setEnabled((p & AcceptReject::CAN_CORRECT) != 0);
+#endif
 }
 
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
@@ -354,32 +258,38 @@ void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
 
 void SimpleCorrections::onAcceptOriginal()
 {
-    accept_original(mDA, mSensorTime, false);
+  mDA->newVersion();
+  AcceptReject::accept_original(mDA, mSensorTime, false);
 }
 
 void SimpleCorrections::onAcceptOriginalQC2()
 {
-    accept_original(mDA, mSensorTime, true);
+  mDA->newVersion();
+  AcceptReject::accept_original(mDA, mSensorTime, true);
 }
 
 void SimpleCorrections::onAcceptCorrected()
 {
-    accept_corrected(mDA, mSensorTime, false);
+  mDA->newVersion();
+  AcceptReject::accept_corrected(mDA, mSensorTime, false);
 }
 
 void SimpleCorrections::onAcceptCorrectedQC2()
 {
-    accept_corrected(mDA, mSensorTime, true);
+  mDA->newVersion();
+  AcceptReject::accept_corrected(mDA, mSensorTime, true);
 }
 
 void SimpleCorrections::onReject()
 {
-    reject(mDA, mSensorTime, false);
+  mDA->newVersion();
+  AcceptReject::reject(mDA, mSensorTime, false);
 }
 
 void SimpleCorrections::onRejectQC2()
 {
-    reject(mDA, mSensorTime, true);
+  mDA->newVersion();
+  AcceptReject::reject(mDA, mSensorTime, true);
 }
 
 void SimpleCorrections::onNewCorrected()

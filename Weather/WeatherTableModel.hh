@@ -8,7 +8,7 @@
 class WeatherTableModel : public ObsTableModel
 {
 public:
-  WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ColumnFactory::DisplayType t);
+  WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t);
 
   virtual timeutil::ptime timeAtRow(int row) const;
   

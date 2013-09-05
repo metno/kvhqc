@@ -23,6 +23,8 @@ public:
         { return mTimeOffset; }
     void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
     virtual Sensor sensor() const;
+    virtual int type() const
+      { return ObsColumn::MODEL; }
 
     void setCodes(Code2TextPtr codes);
 

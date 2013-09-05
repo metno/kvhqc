@@ -30,6 +30,8 @@ public:
     void setTimeRange(const TimeRange& tr);
 
     virtual Sensor sensor() const;
+    virtual int type() const
+      { return mItem->type(); }
 
 protected:
     EditDataPtr getObs(const timeutil::ptime& time) const;

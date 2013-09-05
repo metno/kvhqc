@@ -16,11 +16,11 @@
 #include "HqcLogging.hh"
 
 DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& t, DataItemPtr item)
-    : mDA(da)
-    , mSensor(sensor)
-    , mTime(t)
-    , mItem(item)
-    , mHeaderShowStation(true)
+  : mDA(da)
+  , mSensor(sensor)
+  , mTime(t)
+  , mItem(item)
+  , mHeaderShowStation(true)
 {
     mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
     mDA->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));

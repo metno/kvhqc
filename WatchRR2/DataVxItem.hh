@@ -13,6 +13,8 @@ public:
     virtual bool setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role);
     virtual QString description(bool mini) const;
     virtual bool matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const;
+    virtual int type() const
+    { return ObsColumn::NEW_CORRECTED; }
 
 private:
     typedef std::pair<int,int> Codes_t;

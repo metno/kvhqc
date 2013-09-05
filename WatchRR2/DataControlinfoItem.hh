@@ -10,6 +10,8 @@ public:
 
     virtual QVariant data(EditDataPtr obs, int role) const;
     virtual QString description(bool mini) const;
+    virtual int type() const
+      { return mShowNew ? ObsColumn::NEW_CONTROLINFO : ObsColumn::OLD_CONTROLINFO; }
 
 protected:
     kvalobs::kvControlInfo getControlinfo(EditDataPtr obs) const;

@@ -31,9 +31,9 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
     , mDA(da)
     , mSensor(sensor)
     , mTime(time)
-    , mModelCorrected(new WeatherTableModel(mDA, mSensor, mTime, ColumnFactory::NEW_CORRECTED))
-    , mModelOriginal(new WeatherTableModel(mDA, mSensor, mTime, ColumnFactory::ORIGINAL))
-    , mModelFlags(new WeatherTableModel(mDA, mSensor, mTime, ColumnFactory::NEW_CONTROLINFO))
+    , mModelCorrected(new WeatherTableModel(mDA, mSensor, mTime, ObsColumn::NEW_CORRECTED))
+    , mModelOriginal(new WeatherTableModel(mDA, mSensor, mTime, ObsColumn::ORIGINAL))
+    , mModelFlags(new WeatherTableModel(mDA, mSensor, mTime, ObsColumn::NEW_CONTROLINFO))
 {
     ui->setupUi(this);
     {

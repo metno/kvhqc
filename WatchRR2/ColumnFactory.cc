@@ -48,32 +48,32 @@ Code2TextPtr codesForParam(int pid)
     return c2t;
 }
 
-DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, DisplayType displayType)
+DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Type displayType)
 {
     const int pid = sensor.paramId;
 
     DataItemPtr item;
     if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6) {
-      if (displayType == NEW_CORRECTED)
+      if (displayType == ObsColumn::NEW_CORRECTED)
         item = boost::make_shared<DataVxItem>(da);
-    } else if (displayType == OLD_CONTROLINFO or displayType == NEW_CONTROLINFO) {
-        item = boost::make_shared<DataControlinfoItem>(displayType == NEW_CONTROLINFO);
+    } else if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
+        item = boost::make_shared<DataControlinfoItem>(displayType == ObsColumn::NEW_CONTROLINFO);
     } else {
         Code2TextPtr codes = codesForParam(pid);
-        if (displayType == OLD_CORRECTED or displayType == NEW_CORRECTED) {
-            const bool showNew = displayType == NEW_CORRECTED;
+        if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
+            const bool showNew = displayType == ObsColumn::NEW_CORRECTED;
             if (pid == kvalobs::PARAMID_RR_24)
                 item = boost::make_shared<DataRR24Item>(showNew, codes);
             else
                 item = boost::make_shared<DataCorrectedItem>(showNew, codes);
-        } else if (displayType == ORIGINAL) {
+        } else if (displayType == ObsColumn::ORIGINAL) {
             item = boost::make_shared<DataOriginalItem>(codes);
         }
     }
     return item;
 }
 
-DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DisplayType displayType)
+DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType)
 {
   DataItemPtr item = itemForSensor(da, sensor, displayType);
   if (item)

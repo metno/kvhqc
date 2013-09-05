@@ -11,6 +11,8 @@ public:
 
     virtual QVariant data(EditDataPtr obs, int role) const;
     virtual QString description(bool mini) const;
+    virtual int type() const
+    { return ObsColumn::ORIGINAL; }
 
 protected:
     float getValue(EditDataPtr obs) const;

@@ -18,7 +18,7 @@ TEST(VxColumnTest, Basic)
     const Sensor sensor1(31850, kvalobs::PARAMID_V6,   0, 0, 302);
     const Sensor sensor2(31850, kvalobs::PARAMID_V6+1, 0, 0, 302);
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
-    DataColumnPtr dc = ColumnFactory::columnForSensor(eda, sensor1, t_31850_20121130(), ColumnFactory::NEW_CORRECTED);
+    DataColumnPtr dc = ColumnFactory::columnForSensor(eda, sensor1, t_31850_20121130(), ObsColumn::NEW_CORRECTED);
     const boost::posix_time::time_duration offset = boost::posix_time::hours(-18);
     dc->setTimeOffset(offset);
 

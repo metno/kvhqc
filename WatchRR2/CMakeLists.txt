@@ -15,6 +15,7 @@ SET(watchrr2_HEADERS
 )
 
 SET(watchrr2_SOURCES
+  AcceptReject.cc
   AnalyseFCC.hh
   AnalyseFCC.cc
   AnalyseRR24.hh

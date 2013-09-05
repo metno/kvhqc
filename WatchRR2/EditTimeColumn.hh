@@ -17,6 +17,8 @@ public:
 
     void setEditableTime(const TimeRange& et);
     const boost::posix_time::time_duration& timeOffset() const;
+    virtual int type() const
+      { return mDC->type(); }
 
 private:
     void onColumnChanged(const timeutil::ptime& time, ObsColumn* c);
