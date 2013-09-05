@@ -131,6 +131,9 @@ HqcMainWindow::HqcMainWindow()
     ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
     ui->treeChanges->setModel(mEditVersions.get());
+    ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
+    ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
+    ui->toolButtonSave->setDefaultAction(ui->saveAction);
 
     QIcon iconRedo, iconUndo;
     iconRedo.addPixmap(QPixmap(icon_redo));
