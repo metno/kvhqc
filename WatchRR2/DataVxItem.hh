@@ -6,7 +6,7 @@
 
 class DataVxItem : public DataItem {
 public:
-    DataVxItem(EditAccessPtr da);
+  DataVxItem(EditAccessPtr da, bool showCorrected);
 
     virtual Qt::ItemFlags flags(EditDataPtr obs) const;
     virtual QVariant data(EditDataPtr obs, int role) const;
@@ -24,6 +24,7 @@ private:
 
 private:
     EditAccessPtr mDA;
+    bool mShowCorrected;
 };
 
 #endif // DATAVXITEM_HH

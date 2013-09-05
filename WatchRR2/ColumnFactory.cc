@@ -53,25 +53,27 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
     const int pid = sensor.paramId;
 
     DataItemPtr item;
-    if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6) {
-      if (displayType == ObsColumn::NEW_CORRECTED)
-        item = boost::make_shared<DataVxItem>(da);
-    } else if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
-      const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
-        item = boost::make_shared<DataControlinfoItem>(showNew);
-    } else {
-        Code2TextPtr codes = codesForParam(pid);
-        if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
-            const bool showNew = displayType == ObsColumn::NEW_CORRECTED;
-            if (pid == kvalobs::PARAMID_RR_24)
-                item = boost::make_shared<DataRR24Item>(showNew, codes);
-            else
-                item = boost::make_shared<DataCorrectedItem>(showNew, codes);
-        } else if (displayType == ObsColumn::ORIGINAL) {
-            item = boost::make_shared<DataOriginalItem>(codes);
-        }
+    if ((pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
+        and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::ORIGINAL))
+    {
+      return boost::make_shared<DataVxItem>(da, displayType == ObsColumn::NEW_CORRECTED);
     }
-    return item;
+    if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
+      const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
+      return boost::make_shared<DataControlinfoItem>(showNew);
+    }
+    
+    Code2TextPtr codes = codesForParam(pid);
+    if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
+      const bool showNew = displayType == ObsColumn::NEW_CORRECTED;
+      if (pid == kvalobs::PARAMID_RR_24)
+        return boost::make_shared<DataRR24Item>(showNew, codes);
+      else
+        return boost::make_shared<DataCorrectedItem>(showNew, codes);
+    } else if (displayType == ObsColumn::ORIGINAL) {
+      return boost::make_shared<DataOriginalItem>(codes);
+    }
+    return DataItemPtr();
 }
 
 DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType)

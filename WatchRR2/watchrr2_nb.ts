@@ -221,7 +221,7 @@
     <message>
         <location filename="DataOriginalItem.cc" line="48"/>
         <source>no quality info available</source>
-        <translation>kvalitetsinformasjon ikke git</translation>
+        <translation>kvalitetsinformasjon ikke gitt</translation>
     </message>
 </context>
 <context>

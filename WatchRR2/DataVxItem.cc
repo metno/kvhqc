@@ -37,14 +37,18 @@ struct VxData {
 };
 } // namespace anonymous
 
-DataVxItem::DataVxItem(EditAccessPtr da)
+DataVxItem::DataVxItem(EditAccessPtr da, bool showCorrected)
     : mDA(da)
+    , mShowCorrected(showCorrected)
 {
 }
 
 Qt::ItemFlags DataVxItem::flags(EditDataPtr obs) const
 {
-    return DataItem::flags(obs) | Qt::ItemIsEditable;
+  Qt::ItemFlags f = DataItem::flags(obs);
+  if (mShowCorrected)
+    f |= Qt::ItemIsEditable;
+  return f;
 }
 
 QVariant DataVxItem::data(EditDataPtr obs1, int role) const
@@ -126,7 +130,7 @@ QVariant DataVxItem::data(EditDataPtr obs1, int role) const
 
 bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, const QVariant& value, int role)
 {
-    if (role != Qt::EditRole)
+    if (role != Qt::EditRole or not mShowCorrected)
         return false;
 
     METLIBS_LOG_SCOPE();
@@ -212,8 +216,19 @@ QString DataVxItem::description(bool mini) const
 
 DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) const
 {
-    return std::make_pair(obs1 ? static_cast<int>(obs1->corrected()) :  0,
-                          obs2 ? static_cast<int>(obs2->corrected()) : -1);
+  int v1 = 0, v2 = -1;
+  if (mShowCorrected) {
+    if (obs1)
+      v1 = static_cast<int>(obs1->corrected());
+    if (obs2)
+      v2 = static_cast<int>(obs2->corrected());
+  } else {
+    if (obs1)
+      v1 = static_cast<int>(obs1->original());
+    if (obs2)
+      v2 = static_cast<int>(obs2->original());
+  }
+  return std::make_pair(v1, v2);
 }
 
 EditDataPtr DataVxItem::getObs2(EditDataPtr obs1) const
