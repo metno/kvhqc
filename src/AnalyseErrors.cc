@@ -39,29 +39,6 @@ bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
     return false;
 }
 
-/*! \return true if the parameter should be checked */
-bool ErrorParameterFilter(int parNo)
-{
-    // from ErrorList::priorityParameterFilter
-    const int parNoControl[] = {
-        2,    3,  4,  5,  6,  9, 10, 11, 12, 13,
-        17,  20, 21, 22, 23, 24, 25, 26, 27, 28,
-        44,  45, 46, 47, 48, 49, 50, 51, 52, 53,
-        54,  55, 56, 57,101,102,103,115,116,124,
-        138,191,192,193,194,195,196,197,198,199,
-        202,226,227,229,230,231,232,233,234,235,
-        236,237,238,239,240,241,247,261,271,272,
-        274,275,276,277,278,279,280,281,282,283,
-        284,285,286,287,288,289,290,291,292,293,
-        294,295,296,297,298,299,300,301,302,303,
-        304,305,306,307,308
-    };
-
-    if (std::binary_search(parNoControl, boost::end(parNoControl), parNo))
-        return false;
-    return (parNo < 1000);
-}
-
 /*!
  * \return  0 if only check is in controlNoControl,
  *         -1 if first check in controlNoControl but more checks done,
@@ -249,10 +226,6 @@ bool filterForMemStore(EditDataPtr obs, int& flg, int& flTyp)
     const SensorTime& st = obs->sensorTime();
     const Sensor& s = st.sensor;
 
-    // IMPORTANT: if this should be removed from fillMemoryStore2, it must also be removed here
-    if (not ErrorParameterFilter(s.paramId))
-        return false;
-
     if (not ErrorSpecialTimeFilter(s.paramId, st.time))
         return false;
     if (not IsTypeInObsPgm(s.stationId, s.paramId, s.typeId, st.time))
@@ -313,9 +286,6 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
     Errors_t memStore2;
     BOOST_FOREACH(const Sensor& s, sensors) {
         METLIBS_LOG_DEBUG(LOGVAL(s));
-        // IMPORTANT: if this should be removed from isMemoryStore2, it must also be removed here
-        if (not ErrorParameterFilter(s.paramId))
-            continue;
 
         const ObsAccess::DataSet allData = eda->allData(s, limits);
 #ifndef NDEBUG
