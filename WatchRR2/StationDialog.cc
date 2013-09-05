@@ -5,6 +5,8 @@
 #include "KvMetaDataBuffer.hh"
 #include "RedistTableModel.hh"
 #include "TimeRangeControl.hh"
+#include "StationIdCompletion.hh"
+#include "TypeIdModel.hh"
 
 #include "ui_watchrr_station.h"
 
@@ -28,7 +30,7 @@ StationDialog::StationDialog(const Sensor& sensor, const TimeRange& time, QDialo
   ui->dateFrom->setDateTime(timeutil::to_QDateTime(time.t0()));
   ui->dateTo  ->setDateTime(timeutil::to_QDateTime(time.t1()));
 
-  onUpdateType();
+  onEditStation();
 }
 
 StationDialog::StationDialog(QDialog* parent)
@@ -36,7 +38,8 @@ StationDialog::StationDialog(QDialog* parent)
   , mSensor(-1, kvalobs::PARAMID_RR_24, 0, 0, -1)
 {
   init();
-  onUpdateType();
+
+  onEditStation();
 }
 
 void StationDialog::init()
@@ -54,6 +57,8 @@ void StationDialog::init()
   mTimeControl = new TimeRangeControl(this);
   mTimeControl->setMinimumGap(4*24);
   mTimeControl->install(ui->dateFrom, ui->dateTo);
+
+  Helpers::installStationIdCompleter(this, ui->editStation);
 }
 
 StationDialog::~StationDialog()
@@ -61,17 +66,58 @@ StationDialog::~StationDialog()
   METLIBS_LOG_SCOPE();
 }
 
-void StationDialog::onUpdateType()
+void StationDialog::onEditStation()
 {
-  const bool ok = check();
-  ui->buttonOK->setEnabled(ok);
+  checkStation();
+  updateTypeList();
+  enableOk();
+}
 
-  QString typeText;
-  if (mSensor.typeId >= 0)
-    typeText = QString::number(mSensor.typeId);
-  else
-    typeText = tr("invalid station or date range");
-  ui->labelTypeInfo->setText(typeText);
+void StationDialog::onEditTime()
+{
+  updateTypeList();
+  enableOk();
+}
+
+void StationDialog::onSelectType(int)
+{
+  checkType();
+  enableOk();
+}
+
+bool StationDialog::checkStation()
+{
+  bool numberOk = false;
+  const int stationId = ui->editStation->text().toInt(&numberOk);
+  if (not numberOk) {
+    ui->labelStationInfo->setText(tr("Cannot read station number"));
+  } else if (stationId < 60 or stationId > 100000) {
+    ui->labelStationInfo->setText(tr("Invalid station number"));
+  } else {
+    mSensor.stationId = stationId;
+    QString name = "?";
+    try {
+        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
+        name = QString::fromStdString(station.name());
+    } catch (std::runtime_error& e) {
+        METLIBS_LOG_WARN("Error in station lookup: " << e.what());
+    }
+    ui->labelStationInfo->setText(name);
+    return true;
+  } 
+  mSensor.stationId = 0;
+  return false;
+}
+
+bool StationDialog::checkType()
+{
+  mSensor.typeId = 0;
+  if (mTypesModel.get()) {
+    const int idx = ui->comboType->currentIndex();
+    if (idx >= 0 and idx < (int)mTypesModel->typeIds().size())
+      mSensor.typeId = mTypesModel->typeIds().at(idx);
+  }
+  return mSensor.typeId > 0;
 }
 
 bool StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
@@ -81,70 +127,48 @@ bool StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
       and (op.kl06() or op.kl07() or op.collector()));
 }
 
-bool StationDialog::check()
+void StationDialog::updateTypeList()
 {
-  bool ok = false;
-  const int stationId = ui->editStation->text().toInt(&ok);
-  if (not ok) {
-    ui->labelStationInfo->setText(tr("Cannot read station number"));
-    return false;
-  }
-  if (stationId < 60 or stationId > 100000) {
-    ui->labelStationInfo->setText(tr("Invalid station number"));
-    return false;
-  }
-
-  mSensor.stationId = stationId;
-  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(mSensor.stationId);
-  if (obs_pgm.empty()) {
-    ui->labelStationInfo->setText(tr("problem loading obs_pgm"));
-    return false;
-  }
-
-  const timeutil::ptime tFrom = timeutil::from_QDateTime(QDateTime(ui->dateFrom->dateTime()));
-  const timeutil::ptime tTo   = timeutil::from_QDateTime(QDateTime(ui->dateTo  ->dateTime()));
-  int typeFrom = -1, typeTo = -1;
-  timeutil::ptime tFromEnd, tToStart;
-  BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-    if (acceptThisObsPgm(op)) {
-      const timeutil::ptime oFrom = timeutil::from_miTime(op.fromtime()), oTo = timeutil::from_miTime(op.totime());
-      if (oFrom <= tFrom and (oTo.is_not_a_date_time() or tFrom <= oTo)) {
-        typeFrom = op.typeID();
-        tFromEnd = oTo;
+  std::set<int> typeIdSet;
+  if (mSensor.stationId > 0) {
+    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(mSensor.stationId);
+    if (obs_pgm.empty()) {
+      ui->labelStationInfo->setText(tr("problem loading obs_pgm"));
+    } else {
+      const TimeRange st = selectedTime();
+      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+        if (st.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+          continue;
+        if (acceptThisObsPgm(op))
+          typeIdSet.insert(op.typeID());
       }
-      if (oFrom <= tTo and (oTo.is_not_a_date_time() or tTo <= oTo)) {
-        typeTo = op.typeID();
-        tToStart = oFrom;
-      }
+      if (typeIdSet.empty())
+        ui->labelStationInfo->setText(tr("could not find typeid"));
     }
   }
-
-  if (typeFrom < 0 or typeTo < 0) {
-    ui->labelStationInfo->setText(tr("could not find typeid"));
-    return false;
+  const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());
+  
+  if (not mTypesModel.get() or newTypeIds != mTypesModel->typeIds()) {
+    mTypesModel.reset(new TypeIdModel(newTypeIds));
+    ui->comboType->setModel(mTypesModel.get());
+    if (not typeIdSet.empty()) {
+      ui->comboType->setCurrentIndex(0);
+      mSensor.typeId = mTypesModel->typeIds().front();
+    } else {
+      mSensor.typeId = 0;
+    }
   }
-
-  if (typeFrom != typeTo) {
-    ui->labelStationInfo->setText(tr("typeid different at start and end"));
-    return false;
-  } else {
-    mSensor.typeId = typeFrom; // same as typeTo
-  }
-  ui->labelStationInfo->setText("");
-  return true;
 }
 
 bool StationDialog::valid() const
 {
-  return mSensor.stationId >= 60 and mSensor.stationId <= 99999
-      and mSensor.typeId >= 1;
+  return mSensor.stationId >= 60 and mSensor.stationId < 100000
+      and mSensor.typeId > 0 and selectedTime().closed();
 }
 
-void StationDialog::onButtonOk()
+void StationDialog::enableOk()
 {
-  METLIBS_LOG_SCOPE();
-  if (valid())
-    accept();
+  ui->buttonOK->setEnabled(valid());
 }
 
 TimeRange StationDialog::selectedTime() const

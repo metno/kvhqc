@@ -3,7 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "ParamIdModel.hh"
-#include "StationIdModel.hh"
+#include "StationIdCompletion.hh"
 #include "TypeIdModel.hh"
 
 #include <QtGui/QStringListModel>
@@ -23,25 +23,7 @@ DataListAddColumn::DataListAddColumn(QWidget* parent)
 {
   ui->setupUi(this);
 
-  QCompleter *completer = new QCompleter(this);
-
-  QTableView* completionPopup = new QTableView(this);
-  completionPopup->horizontalHeader()->setVisible(false);
-  completionPopup->verticalHeader()->setVisible(false);
-  completionPopup->verticalHeader()->setDefaultSectionSize(20);
-  completionPopup->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-  completer->setPopup(completionPopup);
-
-  StationIdModel* cmodel = new StationIdModel(completer);
-  completer->setModel(cmodel);
-
-  completer->setCompletionColumn(0);
-  completer->setModelSorting(QCompleter::CaseInsensitivelySortedModel);
-  completer->setCaseSensitivity(Qt::CaseInsensitive);
-  ui->textStation->setCompleter(completer);
-
-  QValidator *validator = new QIntValidator(cmodel->minStationId(), cmodel->maxStationId(), this);
-  ui->textStation->setValidator(validator);
+  Helpers::installStationIdCompleter(this, ui->textStation);
 
   std::vector<int> empty;
   ui->comboParam->setModel(new ParamIdModel(empty));

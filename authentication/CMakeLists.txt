@@ -26,11 +26,17 @@ SET(auth_SOURCES
   MiDateTimeEdit.cc
   Sensor.hh
   Sensor.cc
+  StationIdCompletion.hh
+  StationIdCompletion.cc
+  StationIdModel.hh
+  StationIdModel.cc
   TimeRange.cc
   TimeRangeControl.cc
   timeutil.cc
   ToolTipStringListModel.hh
   ToolTipStringListModel.cc
+  TypeIdModel.hh
+  TypeIdModel.cc
 )
 
 QT4_WRAP_CPP(auth_HEADERS_MOC ${auth_HEADERS})

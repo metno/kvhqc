@@ -630,7 +630,7 @@ void HqcMainWindow::findStationInfo(int stnr,
 {
     try {
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
-        name = QString(station.name().c_str());
+        name = QString::fromStdString(station.name());
         lat  = (station.lat());
         lon  = (station.lon());
         hoh  = (station.height());

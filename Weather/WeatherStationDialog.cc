@@ -12,14 +12,14 @@ WeatherStationDialog::WeatherStationDialog(const Sensor& sensor, const TimeRange
   : StationDialog(sensor, time, parent)
 {
   setWindowTitle(tr("WatchWeather -- Station"));
-  onUpdateType();
+  onEditStation();
 }
 
 WeatherStationDialog::WeatherStationDialog(QDialog* parent)
   : StationDialog(parent)
 {
   setWindowTitle(tr("WatchWeather -- Station"));
-  onUpdateType();
+  onEditStation();
 }
 
 bool WeatherStationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const

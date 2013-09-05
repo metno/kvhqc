@@ -48,7 +48,6 @@ SET(hqc_SOURCES
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
-  StationIdModel.cc
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
   SimpleCorrections.cc
@@ -56,7 +55,6 @@ SET(hqc_SOURCES
   textdatatable.cc
   TimeseriesDialog.cc
   TimeSeriesView.cc
-  TypeIdModel.cc
 )
 
 INCLUDE_DIRECTORIES(
