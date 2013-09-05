@@ -27,28 +27,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioCorrected">
-       <property name="text">
-        <string>Corr.</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="radioModel">
-       <property name="text">
-        <string>Model</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QRadioButton" name="radioDifference">
-       <property name="text">
-        <string>Diff.</string>
-       </property>
-      </widget>
+      <widget class="QComboBox" name="comboWhatToPlot"/>
      </item>
      <item>
       <widget class="MiDateTimeEdit" name="timeFrom">
@@ -125,60 +104,12 @@
    <slot>onConfigButton()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>102</x>
-     <y>25</y>
+     <x>85</x>
+     <y>26</y>
     </hint>
     <hint type="destinationlabel">
      <x>43</x>
      <y>4</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioCorrected</sender>
-   <signal>clicked()</signal>
-   <receiver>TimeSeriesView</receiver>
-   <slot>onRadioPlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>157</x>
-     <y>21</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>143</x>
-     <y>6</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioModel</sender>
-   <signal>clicked()</signal>
-   <receiver>TimeSeriesView</receiver>
-   <slot>onRadioPlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>253</x>
-     <y>24</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>238</x>
-     <y>7</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>radioDifference</sender>
-   <signal>clicked()</signal>
-   <receiver>TimeSeriesView</receiver>
-   <slot>onRadioPlot()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>369</x>
-     <y>22</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>351</x>
-     <y>7</y>
     </hint>
    </hints>
   </connection>
@@ -189,8 +120,8 @@
    <slot>onDateFromChanged(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>517</x>
-     <y>17</y>
+     <x>319</x>
+     <y>19</y>
     </hint>
     <hint type="destinationlabel">
      <x>465</x>
@@ -205,12 +136,28 @@
    <slot>onDateToChanged(QDateTime)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>643</x>
-     <y>15</y>
+     <x>469</x>
+     <y>17</y>
     </hint>
     <hint type="destinationlabel">
      <x>615</x>
      <y>4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboWhatToPlot</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>TimeSeriesView</receiver>
+   <slot>onRadioPlot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>146</x>
+     <y>18</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>92</x>
+     <y>31</y>
     </hint>
    </hints>
   </connection>

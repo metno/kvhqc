@@ -35,6 +35,11 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
+  ui->comboWhatToPlot->addItems(QStringList()
+      << tr("Corrected")
+      << tr("Model")
+      << tr("Difference"));
+  ui->comboWhatToPlot->setCurrentIndex(0);
 
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
@@ -212,6 +217,7 @@ void TimeSeriesView::updatePlot()
 {
   METLIBS_LOG_SCOPE();
 
+  const int whatToPlot = ui->comboWhatToPlot->currentIndex();
   const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
   const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
   const TimeRange limits(stime, etime);
@@ -246,13 +252,13 @@ void TimeSeriesView::updatePlot()
       ModelDataPtr mdl = mMA->find(st);
       
       const miutil::miTime mtime = timeutil::make_miTime(time);
-      if (mdl and ui->radioModel->isChecked()) {
+      if (mdl and whatToPlot == 1) {
         tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
-      } else if (obs and ui->radioCorrected->isChecked()) {
+      } else if (obs and whatToPlot == 0) {
         const float corr = Helpers::numericalValue(sensor, obs->corrected());
         if (corr > -32766.0)
           tseries.add(TimeSeriesData::Data(mtime, corr));
-      } else if (obs and mdl and ui->radioDifference->isChecked()) {
+      } else if (obs and mdl and whatToPlot == 2) {
         const float corr = Helpers::numericalValue(sensor, obs->corrected());
         if (corr > -32766.0)
 	  tseries.add(TimeSeriesData::Data(mtime, corr - mdl->value()));
