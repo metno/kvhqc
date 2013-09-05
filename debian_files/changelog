@@ -1,3 +1,11 @@
+kvhqc (3.0.0~a20-1) unstable; urgency=low
+
+  * extreme value list: bugfix if no excluded stations
+  * fixed config files for kvhist and kvtest
+  * fewer requests to kvServiced
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 22 Jul 2013 15:16:07 +0200
+
 kvhqc (3.0.0~a19-1) unstable; urgency=low
 
   * show code explanation for original values
