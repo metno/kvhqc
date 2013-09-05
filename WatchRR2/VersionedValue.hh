@@ -4,6 +4,7 @@
 
 #include <algorithm>
 #include <functional>
+#include <stdexcept> // std::invalid_argument
 #include <vector>
 
 /**
@@ -45,6 +46,14 @@ public:
         { return mVersions[mCurrent].value; }
 
     /**
+     * Access the original value.
+     *
+     * \return the original value
+     */
+    const T& original() const
+        { return mVersions[0].value; }
+
+    /**
      * Access the value for a specific version.
      *
      * This function has to search for the version.
@@ -78,6 +87,7 @@ public:
      * \param version the current version
      * \param newValue the new value for 
      * \return true iff modified() or value() have changed
+     * \throw 
      */
     bool setValue(int version, const T& newValue);
 
@@ -168,6 +178,9 @@ bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
 template< typename T, class E>
 bool VersionedValue<T,E>::setValue(int version, const T& newValue)
 {
+    if (version < 1)
+        throw std::invalid_argument("attempt to modify version 0");
+
     const bool changedValue = (not E()(newValue, value())),
         wasModified = modified();
     if (mCurrent+1 < mVersions.size()) {

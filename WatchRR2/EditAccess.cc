@@ -5,6 +5,7 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
+#include <boost/range/adaptor/map.hpp>
 
 #define NDEBUG
 #include "w2debug.hh"
@@ -84,8 +85,7 @@ bool EditAccess::sendChangesToParent()
     LOG_SCOPE("EditAccess");
     std::vector<ObsUpdate> updates;
     std::vector<EditDataPtr> obsToReset;
-    BOOST_FOREACH(Data_t::value_type& d, mData) {
-        EditDataPtr ebs = d.second;
+    BOOST_FOREACH(EditDataPtr ebs, mData | boost::adaptors::map_values) {
         if (ebs and (ebs->modified() or ebs->modifiedTasks())) {
             updates.push_back(ObsUpdate(ebs, ebs->corrected(), ebs->controlinfo(), ebs->allTasks()));
             LOG4SCOPE_DEBUG(DBGO1(ebs));
@@ -100,7 +100,6 @@ bool EditAccess::sendChangesToParent()
         BOOST_FOREACH(EditDataPtr ebs, obsToReset) {
             ebs->reset();
             LOG4SCOPE_DEBUG(DBG1(ebs->sensorTime()));
-            obsDataChanged(MODIFIED, ebs);
         }
     }
     return success;
@@ -130,29 +129,11 @@ void EditAccess::reset()
 }
 
 namespace /* anonymous */ {
-template< typename T, class E>
-bool popUpdates(std::vector< std::pair<int, T> >& vNew, int currentUpdate)
-{
-    if (vNew.empty())
-        return false;
-    const T& old = vNew.back().second;
-    while (not vNew.empty() and vNew.back().first >= currentUpdate)
-        vNew.pop_back();
-    return (vNew.empty() or not E()(vNew.back().second, old));
-}
-
-template< typename T>
-bool popUpdates(std::vector< std::pair<int, T> >& vNew, int currentUpdate)
-{
-    return popUpdates< T, std::equal_to<T> >(vNew, currentUpdate);
-}
-
 struct PopUpdate {
     EditDataPtr ebs;
-    bool destroyed;
     int dU, dT;
-    PopUpdate(EditDataPtr e, bool d, int du, int dt)
-        : ebs(e), destroyed(d), dU(du), dT(dt) { }
+    PopUpdate(EditDataPtr e, int du, int dt)
+        : ebs(e), dU(du), dT(dt) { }
 };
 } // namespace anonymous
 
@@ -165,34 +146,29 @@ void EditAccess::pushUpdate()
 bool EditAccess::popUpdate()
 {
     LOG_SCOPE("EditAccess");
-    std::list<PopUpdate> send;
-    for(Data_t::iterator it = mData.begin(); it != mData.end();) {
-        EditDataPtr ebs = it->second;
-        if (not ebs) {
-            ++it;
-            continue;
-        }
-
-        const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
-        bool changed = popUpdates<float, Helpers::float_eq>(ebs->mCorrected, mUpdateCount);
-        changed |= popUpdates(ebs->mControlinfo, mUpdateCount);
-        changed |= popUpdates(ebs->mTasks, mUpdateCount);
-        const bool destroyed = (ebs->created() and ebs->mCorrected.empty() and ebs->mControlinfo.empty() and not ebs->hasTasks());
-        const int isUpdated = (not destroyed and ebs->modified())?1:0, hasTasks = ebs->hasTasks()?1:0;
-
-        if (changed or destroyed)
-            send.push_back(PopUpdate(ebs, destroyed, isUpdated - wasUpdated, hasTasks - hadTasks));
-        
-        Data_t::iterator eit = it++;
-        if (destroyed)
-            mData.erase(eit);
-    }
     if (mUpdateCount>0)
         mUpdateCount -= 1;
+
+    std::list<PopUpdate> send;
+    for(Data_t::iterator it = mData.begin(); it != mData.end(); ++it) {
+        EditDataPtr ebs = it->second;
+        if (not ebs)
+            continue;
+
+        const int wasUpdated = ebs->modified()?1:0, hadTasks = ebs->hasTasks()?1:0;
+        bool changed = ebs->mCorrected.setVersion(mUpdateCount, false);
+        changed |= ebs->mControlinfo.setVersion(mUpdateCount, false);
+        changed |= ebs->mTasks.setVersion(mUpdateCount, false);
+
+        if (changed) {
+            const int isUpdated = (ebs->modified())?1:0, hasTasks = ebs->hasTasks()?1:0;
+            send.push_back(PopUpdate(ebs, isUpdated - wasUpdated, hasTasks - hadTasks));
+        }
+    }
     if (send.empty())
         return false;
     BOOST_FOREACH(const PopUpdate& p, send)
-        sendObsDataChanged(p.destroyed ? DESTROYED : MODIFIED, p.ebs, p.dU, p.dT);
+        sendObsDataChanged(MODIFIED, p.ebs, p.dU, p.dT);
     return true;
 }
 
@@ -206,6 +182,8 @@ void EditAccess::sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpd
 
 EditDataEditorPtr EditAccess::editor(EditDataPtr obs)
 {
+    if (mUpdateCount == 0)
+        pushUpdate();
     return EditDataEditorPtr(new EditDataEditor(this, obs));
 }
 
