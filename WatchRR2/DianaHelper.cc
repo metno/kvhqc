@@ -169,17 +169,18 @@ void DianaHelper::sendStations(const std::vector<int>& stations)
         m2.command     = qmstrings::positions;
         m2.commondesc  = "dataset:image:icon:annotation:normal:selected";
         m2.common      =  annotation + ":" + std::string(IMG_STD_HQC) + ":" + std::string(IMG_ICON_HQC) + ":" + annotation + ":true:true";
-        m2.description = "name:lat:lon";
+        m2.description = "name:id:lat:lon";
 
         BOOST_FOREACH(int sid, stations) {
             try {
                 const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(sid);
                 std::ostringstream o;
-                o << s.name() << ':' << s.lat() << ':' << s.lon();
+                o << s.name() << ':' << sid << ':' << s.lat() << ':' << s.lon();
                 m2.data.push_back(o.str());
             } catch(std::runtime_error&) {
             }
         }
+        METLIBS_LOG_DEBUG(m2.content());
         mDianaButton->sendMessage(m2);
 
         miMessage m1;

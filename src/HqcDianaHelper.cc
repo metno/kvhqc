@@ -14,7 +14,6 @@
 #include <boost/format.hpp>
 #include <boost/lexical_cast.hpp>
 
-#include <iostream>
 #include <sstream>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcDianaHelper"
@@ -260,8 +259,8 @@ void HqcDianaHelper::navigateTo(const SensorTime& st)
 
     sendTime();
     sendObservations();
-    sendStation(st.sensor.stationId);
-    sendSelectedParam(st.sensor.paramId);
+    sendStation();
+    sendSelectedParam();
 }
 
 void HqcDianaHelper::setEnabled(bool enabled)
@@ -346,7 +345,7 @@ void HqcDianaHelper::processLetterOld(miMessage& letter)
 void HqcDianaHelper::processLetter(const miMessage& letter)
 {
     METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(letter.command));
+    METLIBS_LOG_DEBUG(LOGVAL(letter.content()));
     if (letter.command == qmstrings::newclient) {
         std::vector<std::string> desc, valu;
         const std::string cd(letter.commondesc), co(letter.common);
@@ -364,8 +363,8 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
             bool ok = false;
             const int stationid = name_time[0].toInt(&ok);
             if (not ok) {
-                std::cerr << "Unable to parse first element as stationid: '" << letter.common << "'" << std::endl;
-                return;
+              METLIBS_LOG_INFO("Unable to parse first element as stationid: '" << letter.common << "'");
+              return;
             }
             handleDianaStationAndTime(stationid, name_time[1].toStdString());
         }
@@ -388,6 +387,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
     if (not isKnownTime(time)) {
         METLIBS_LOG_INFO("Invalid/unknown time from diana: '" << time_txt << "'");
+        mDianaNeedsHqcInit = true;
         sendTimes();
         sendTime();
     } else if (time != mDianaSensorTime.time) {
@@ -423,14 +423,14 @@ void HqcDianaHelper::applyQuickMenu()
 #endif
 }
 
-void HqcDianaHelper::sendStation(int stnr)
+void HqcDianaHelper::sendStation()
 {
     METLIBS_LOG_SCOPE();
     if (not mEnabled or not mDianaConnected)
         return;
     miMessage m;
     m.command = qmstrings::station;
-    m.common  = boost::lexical_cast<std::string>(stnr);
+    m.common  = "S" + boost::lexical_cast<std::string>(mDianaSensorTime.sensor.stationId);
     METLIBS_LOG_DEBUG(LOGVAL(m.content()));
     mClientButton->sendMessage(m);
 }
@@ -461,8 +461,8 @@ std::string HqcDianaHelper::synopStart(int stationId)
     try {
         const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
         
-        synop << stationId << ',';
-                
+        synop << "S" << stationId << ',';
+        
         const std::string stationType = hqcType(stationId, station.environmentid());
         if (stationType == "AA" or stationType == "VM" or stationType == "none")
             synop << "none";
@@ -621,12 +621,13 @@ void HqcDianaHelper::sendObservations()
     }
 }
 
-void HqcDianaHelper::sendSelectedParam(int paramId)
+void HqcDianaHelper::sendSelectedParam()
 {
     METLIBS_LOG_SCOPE();
-
     if (not mEnabled or not mDianaConnected)
         return;
+
+    const int paramId = mDianaSensorTime.sensor.paramId;
     SendPars_t::const_iterator it = mSendPars.find(paramId);
     if (it == mSendPars.end()) {
         METLIBS_LOG_WARN("No such diana parameter: " << paramId);

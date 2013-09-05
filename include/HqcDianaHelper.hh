@@ -62,9 +62,9 @@ private:
 
 private:
     void sendTimes(const std::set<timeutil::ptime>& allTimes);
-    void sendStation(int stationID);
+    void sendStation();
     void sendObservations();
-    void sendSelectedParam(int paramId);
+    void sendSelectedParam();
 
     std::string synopStart(int stationId);
     std::string synopValue(const SensorTime& st, const SendPar& sp, bool& hasData);
