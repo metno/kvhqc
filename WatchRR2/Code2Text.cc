@@ -6,9 +6,7 @@
 #include <boost/foreach.hpp>
 
 Code2Text::Code2Text()
-    : mMinValue(-100)
-    , mMaxValue(5000)
-    , mDecimals(1)
+    : mDecimals(1)
 {
     addCode(kvalobs::NEW_ROW,  (QStringList() << qApp->translate("Code2Text", "new")),
             qApp->translate("Code2Text", "row not in database"));
@@ -59,20 +57,12 @@ float Code2Text::fromText(const QString& text)
     it = mCodes.find(num);
     if (it != mCodes.end())
         return num;
-    if (num < mMinValue or num > mMaxValue)
-        throw std::runtime_error("value out of range");
     return num;
 }
 
 void Code2Text::addCode(int value, const QStringList& shortText, const QString& explain)
 {
     mCodes.insert(value, Code(shortText, explain));
-}
-
-void Code2Text::setRange(float mini, float maxi)
-{
-    mMinValue = mini;
-    mMaxValue = maxi;
 }
 
 QStringList Code2Text::allCodes() const

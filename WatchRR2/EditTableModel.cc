@@ -4,6 +4,7 @@
 #include "AnalyseRR24.hh"
 #include "ColumnFactory.hh"
 #include "Helpers.hh"
+#include "KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -100,6 +101,8 @@ bool EditTableModel::setData(const QModelIndex& index, const QVariant& value, in
     if( column == RR_24_new ) {
         try {
             const float rrNew = mRR24Codes->fromText(value.toString());
+            if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(kvalobs::PARAMID_RR_24, rrNew))
+              return false;
 
             const float rrOld = mNewValues.at(row);
             if( fabs(rrNew - rrOld) < 0.05 )

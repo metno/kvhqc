@@ -4,6 +4,7 @@
 #include "AnalyseRR24.hh"
 #include "ColumnFactory.hh"
 #include "Helpers.hh"
+#include "KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -69,6 +70,8 @@ bool RedistTableModel::setData(const QModelIndex& index, const QVariant& value, 
 
     try {
         const float rrNew = mRR24Codes->fromText(value.toString());
+        if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(kvalobs::PARAMID_RR_24, rrNew))
+          return false;
 
         const int row = index.row();
         const float rrOld = mNewValues.at(row);

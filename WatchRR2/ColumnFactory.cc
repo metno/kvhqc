@@ -45,8 +45,9 @@ namespace ColumnFactory {
 Code2TextPtr codesForParam(int pid)
 {
     METLIBS_LOG_SCOPE();
-    if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
-        return Code2TextPtr();
+    if (pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6
+        or pid == kvalobs::PARAMID_V4S or pid == kvalobs::PARAMID_V5S or pid == kvalobs::PARAMID_V6S)
+      return Code2TextPtr();
 
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
     if( pid == kvalobs::PARAMID_RR_24 ) {
@@ -54,7 +55,6 @@ Code2TextPtr codesForParam(int pid)
                           << qApp->translate("Column_RR_24", "dry")
                           << qApp->translate("Column_RR_24", "d")),
                      qApp->translate("Column_RR_24", "precipitation not reported"));
-        c2t->setRange(0, 1500);
     } else if( pid == kvalobs::PARAMID_SA ) {
 #if 0 // removed on request by POK on 2013-01-14
         c2t->addCode(-1, (QStringList()
@@ -66,14 +66,12 @@ Code2TextPtr codesForParam(int pid)
                           << qApp->translate("Column_SA", "no m.")
                           << qApp->translate("Column_SA", "n")),
                      qApp->translate("Column_SA", "measurement impossible/inaccurate"));
-        c2t->setRange(-1, 5000);
         c2t->setDecimals(0);
     } else if( pid == kvalobs::PARAMID_SD ) {
         c2t->addCode(-1, (QStringList()
                           << qApp->translate("Column_SD", "no m.")
                           << qApp->translate("Column_SD", "n")),
                      qApp->translate("Column_SD", "snow cover not reported"));
-        c2t->setRange(-1, 4);
         c2t->setDecimals(0);
     } else if (std::binary_search(PID_NO_DECIMALS, boost::end(PID_NO_DECIMALS), pid)) {
       c2t->setDecimals(0);
