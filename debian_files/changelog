@@ -1,3 +1,11 @@
+kvhqc (3.0.0~a4-1) unstable; urgency=low
+
+  * improved icons, labels, tooltips
+  * busy cursor while fetching extreme values
+  * sort altitude by value in station selection
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 24 Jun 2013 12:47:03 +0200
+
 kvhqc (3.0.0~a3-1) unstable; urgency=low
 
   * improved extreme values list
