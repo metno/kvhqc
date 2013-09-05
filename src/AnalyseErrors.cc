@@ -237,14 +237,15 @@ bool filterForMemStore(EditDataPtr obs, int& flg, int& flTyp)
     return true;
 }
 
-int whichMemStore(EditDataPtr obs, bool errorsForSalen, int& flg, int& flTyp)
+int whichMemStore(EditDataPtr obs, bool errorsForSalen)
 {
-    if (not filterForMemStore(obs, flg, flTyp))
-        return 0;
-    int memStore = whichMemoryStore(flg, flTyp, errorsForSalen);
-    if (memStore == 1 && isErrorInMemstore1(flTyp, obs->sensorTime().sensor.paramId, obs->controlinfo()))
-        memStore = 2;
-    return memStore;
+  int flg = -1, flTyp = -1;
+  if (not filterForMemStore(obs, flg, flTyp))
+    return 0;
+  int memStore = whichMemoryStore(flg, flTyp, errorsForSalen);
+  if (memStore == 1 && isErrorInMemstore1(flTyp, obs->sensorTime().sensor.paramId, obs->controlinfo()))
+    memStore = 2;
+  return memStore;
 }
 
 //#define DUMPOBS 1
@@ -264,6 +265,31 @@ void dumpObs(const EditDataPtr obs, float model, int flTyp, int flg, int memStor
 }
 #endif
 
+bool checkError2013(const EditDataPtr obs)
+{
+  const int ui_2 = Helpers::extract_ui2(obs);
+  if (ui_2 == 2 or ui_2 == 3 or ui_2 == 9)
+    return true;
+
+  const int fr = obs->controlinfo().flag(kvalobs::flag::fr);
+  if (fr == 2 or fr == 3)
+    return true;
+
+  const int fs = obs->controlinfo().flag(kvalobs::flag::fs);
+  if (fs == 2)
+    return true;
+
+  const int fw = obs->controlinfo().flag(kvalobs::flag::fr);
+  if (fw == 2) {
+    const int fcc = obs->controlinfo().flag(kvalobs::flag::fcc);
+    const int fcp = obs->controlinfo().flag(kvalobs::flag::fcp);
+    if (fcc == 2 or fcp == 2)
+      return true;
+  }
+
+  return false;
+}
+
 } // namespace anonymous
 
 // ************************************************************************
@@ -272,10 +298,12 @@ namespace Errors {
 
 bool recheck(ErrorInfo& ei, bool errorsForSalen)
 {
-    const int oldFlg = ei.flg, oldTyp = ei.flTyp;
-    const bool oldFixed = ei.fixed;
-    ei.fixed = (whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp) != 2);
-    return (ei.flg != oldFlg or ei.flTyp != oldTyp or ei.fixed != oldFixed);
+    const bool oldBad = ei.badInList;
+    if (whichMemStore(ei.obs, errorsForSalen) == 2)
+      ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2012;
+    if (checkError2013(ei.obs))
+      ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2013;
+    return (ei.badInList != oldBad);
 }
 
 Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
@@ -296,14 +324,9 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
         BOOST_FOREACH(const ObsDataPtr& obs, allData) {
           EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
           ErrorInfo ei(ebs);
-          int memstore = whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp);
-          if (memstore == 0)
-            continue;
-          if (memstore == 2)
-            memStore2.push_back(ei);
-#ifdef DUMPOBS
-          dumpObs(ei.obs, -99999, ei.flTyp, ei.flg, memstore);
-#endif
+          recheck(ei, errorsForSalen);
+          if (ei.badInList != 0)
+              memStore2.push_back(ei);
         }
     }
 

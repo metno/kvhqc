@@ -9,6 +9,7 @@
 #include <kvalobs/kvDataOperations.h>
 
 #include <QtCore/QCoreApplication>
+#include <QtGui/QColor>
 #include <QtGui/QFont>
 
 #include <boost/bind.hpp>
@@ -142,7 +143,7 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         return QString::number(value ,'f', nDigits);
       }
       case COL_OBS_FLAGS:
-        return (not ei.fixed) ? Helpers::getFlagText(ei.obs->controlinfo()) : QString("ok");
+        return (ei.badInList != 0) ? Helpers::getFlagText(ei.obs->controlinfo()) : QString("ok");
       } // end of switch
     } else if (role == Qt::FontRole) {
       if ((column <= 1 and st.sensor.stationId == mShowStation)
@@ -153,6 +154,11 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         f.setBold(true);
         return f;
       }
+    } else if (role == Qt::BackgroundRole) {
+      if (ei.badInList == Errors::ErrorInfo::BAD_IN_ERRORLIST2012)
+        return QColor(0xFF, 0xFF, 0xC0); // yellow
+      else if (ei.badInList == Errors::ErrorInfo::BAD_IN_ERRORLIST2013)
+        return QColor(0xFF, 0xE0, 0xE0); // rose
     } else if (role == Qt::ForegroundRole and column == COL_OBS_CORR) {
       const kvalobs::kvControlInfo ci(obs->controlinfo());
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched

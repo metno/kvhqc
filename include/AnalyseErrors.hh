@@ -8,10 +8,10 @@
 namespace Errors {
 
 struct ErrorInfo {
-    EditDataPtr obs;
-    int flg, flTyp;
-    bool fixed;
-    ErrorInfo(EditDataPtr o = EditDataPtr()) : obs(o), flg(-1), flTyp(-1), fixed(false) { }
+  enum { OK = 0, BAD_IN_ERRORLIST2012 = 1, BAD_IN_ERRORLIST2013 = 2 };
+  EditDataPtr obs;
+  int badInList;
+  ErrorInfo(EditDataPtr o = EditDataPtr()) : obs(o), badInList(0) { }
 };
 
 typedef std::vector<Sensor> Sensors_t;
