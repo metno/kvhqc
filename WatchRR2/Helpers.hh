@@ -83,6 +83,15 @@ private:
     const kvalobs::kvStation& center;
 };
 
+struct stations_by_id : public std::unary_function<bool, kvalobs::kvStation> {
+    stations_by_id(int s) : stationid(s) { }
+    bool operator()(const kvalobs::kvStation& a) const {
+        return (a.stationID() == stationid);
+    }
+private:
+    int stationid;
+};
+
 } // namespace Helpers
 
 namespace kvalobs {

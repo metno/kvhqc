@@ -46,9 +46,10 @@ public:
     void insertModel(const std::string& obstime, float value)
         { insertModel(insertStation, insertParam, obstime, value); }
 
-    bool eraseModel(const SensorTime& st);
+    void addStation(const std::string& line);
+    void addObsPgm(const std::string& line);
 
-    void registerStation(int id, float lon, float lat, const std::string& name);
+    bool eraseModel(const SensorTime& st);
 
 #ifndef KVALOBS_USE_BOOST_DATE_TIME
     typedef miutil::miTime kvtime_t;

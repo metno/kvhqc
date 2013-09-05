@@ -34,6 +34,7 @@ ADD_LIBRARY(watchrr2test
   FakeReinserter.cc
   TestHelpers.hh
   TestHelpers.cc
+  load_examples_201303.cc
   load_1650_20130130.cc
   load_31850_20121130.cc
   load_32780_20121207.cc

@@ -38,6 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "test/FakeReinserter.hh"
 
 #define LOAD_DECL_ONLY
+#include "test/load_examples_201303.cc"
 #include "test/load_1650_20130130.cc"
 #include "test/load_31850_20121130.cc"
 #include "test/load_32780_20121207.cc"
@@ -50,6 +51,7 @@ int main( int argc, char* argv[] )
 {
     // >>>>> move to HqcApplication somehow
     FakeKvApp fa;
+    load_examples_201303(fa);
     load_1650_20130130(fa);
     load_31850_20121130(fa);
     load_32780_20121207(fa);

@@ -67,6 +67,7 @@ void FakeKvApp::insertData(int stationId, int paramId, int typeId, const std::st
 
 void FakeKvApp::insertDataFromFile(const std::string& filename)
 {
+    LOG4HQC_INFO("FakeKvApp", "loading data from file '" << filename << "'");
     std::ifstream f(filename.c_str());
     std::string line;
 
@@ -77,7 +78,7 @@ void FakeKvApp::insertDataFromFile(const std::string& filename)
         std::vector<std::string> columns;
         boost::split(columns, line, boost::is_any_of("\t"));
         if (columns.size() != 7 and columns.size() != 8) {
-            std::cerr << "bad line '" << line << "'" << std::endl;
+            LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
             continue;
         }
 
@@ -120,6 +121,8 @@ void FakeKvApp::insertModel(int stationId, int paramId, const std::string& obsti
 
 void FakeKvApp::insertModelFromFile(const std::string& filename)
 {
+    LOG4HQC_INFO("FakeKvApp", "loading model data from file '" << filename << "'");
+
     std::ifstream f(filename.c_str());
     std::string line;
 
@@ -127,21 +130,85 @@ void FakeKvApp::insertModelFromFile(const std::string& filename)
         if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
             continue;
 
-        std::vector<std::string> columns;
-        boost::split(columns, line, boost::is_any_of("\t"));
-        if (columns.size() != 4) {
-            std::cerr << "bad line '" << line << "'" << std::endl;
-            continue;
+        try {
+            std::vector<std::string> columns;
+            boost::split(columns, line, boost::is_any_of("\t"));
+            if (columns.size() != 4) {
+                LOG4HQC_WARN("FakeKvApp", "bad model line '" << line << "' cols=" << columns.size());
+                continue;
+            }
+
+            unsigned int c = 0;
+            const int stationId = boost::lexical_cast<int>(columns[c++]);
+            const int paramId   = boost::lexical_cast<int>(columns[c++]);
+            const std::string obstime = columns[c++];
+            const float original  = boost::lexical_cast<float>(columns[c++]);
+            
+            insertModel(stationId, paramId, obstime, original);
+        } catch (std::exception& e) {
+            LOG4HQC_WARN("FakeKvApp", "error parsing model line '" << line << "' in file '" + filename + "'");
         }
-
-        unsigned int c = 0;
-        const int stationId = boost::lexical_cast<int>(columns[c++]);
-        const int paramId   = boost::lexical_cast<int>(columns[c++]);
-        const std::string obstime = columns[c++];
-        const float original  = boost::lexical_cast<float>(columns[c++]);
-
-        insertModel(stationId, paramId, obstime, original);
     }
+}
+
+void FakeKvApp::addStation(const std::string& line)
+{
+    if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+        return;
+    
+    try {
+        std::vector<std::string> columns;
+        boost::split(columns, line, boost::is_any_of("\t;"));
+        if (columns.size() != 7) {
+            LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
+            return;
+        }
+        
+        unsigned int c = 0;
+        const int station = boost::lexical_cast<int>(columns[c++]);
+        const float lon   = boost::lexical_cast<float>(columns[c++]);
+        const float lat   = boost::lexical_cast<float>(columns[c++]);
+        const int height  = boost::lexical_cast<float>(columns[c++]);
+        const std::string name = columns[c++];
+        const int env = boost::lexical_cast<int>(columns[c++]);
+        const timeutil::ptime from = timeutil::from_iso_extended_string(columns[c++]);
+        
+        // TODO check if station already exists
+        if (std::find_if(mKvStations.begin(), mKvStations.end(), Helpers::stations_by_id(station)) == mKvStations.end())
+            mKvStations.push_back(kvalobs::kvStation(station, lat, lon, height, 0.0f, name, 0, 0, "?", "?", "?", env, true, from));
+    } catch (std::exception& e) {
+        LOG4HQC_WARN("FakeKvApp", "error parsing station line '" << line << "'");
+    }
+}
+
+void FakeKvApp::addObsPgm(const std::string& line)
+{
+    if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+        return;
+    
+    std::vector<std::string> columns;
+    boost::split(columns, line, boost::is_any_of("\t;"));
+    if (columns.size() != 39) {
+        LOG4HQC_WARN("FakeKvApp", "bad line '" << line << "' cols=" << columns.size());
+        return;
+    }
+
+    int numbers[37];
+    for (int c=0; c<37; c++)
+        numbers[c] = boost::lexical_cast<int>(columns[c]);
+    timeutil::ptime from, to;
+    if (columns[37].size() == 19)
+        from = timeutil::from_iso_extended_string(columns[37]);
+    if (columns[38].size() == 19)
+        from = timeutil::from_iso_extended_string(columns[38]);
+
+    mObsPgm.push_back(kvalobs::kvObsPgm(numbers[ 0], numbers[ 1], numbers[ 2], numbers[ 3], numbers[ 4], numbers[ 5],
+                                        numbers[ 6], numbers[ 7], numbers[ 8], numbers[ 9], numbers[10], numbers[11],
+                                        numbers[12], numbers[13], numbers[14], numbers[15], numbers[16], numbers[17],
+                                        numbers[18], numbers[19], numbers[20], numbers[21], numbers[22], numbers[23],
+                                        numbers[24], numbers[25], numbers[26], numbers[27], numbers[28], numbers[29],
+                                        numbers[30], numbers[31], numbers[32], numbers[33], numbers[34], numbers[35], numbers[36],
+                                        from, to));
 }
 
 bool FakeKvApp::eraseModel(const SensorTime& st)
@@ -153,13 +220,6 @@ bool FakeKvApp::eraseModel(const SensorTime& st)
     } else {
         return false;
     }
-}
-
-void FakeKvApp::registerStation(int id, float lon, float lat, const std::string& name)
-{
-    const timeutil::ptime t = timeutil::from_iso_extended_string("1700-01-01 00:00:00");
-    mKvStations.push_back(kvalobs::kvStation(id, lon, lat, 0.0f, 0.0f, name, 0, 0, "?", "?", "?", 0, true,
-                                             timeutil::to_miTime(t)));
 }
 
 bool FakeKvApp::getKvData(kvservice::KvGetDataReceiver &dataReceiver, const kvservice::WhichDataHelper &wd)
