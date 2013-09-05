@@ -7,13 +7,31 @@
 //#define NDEBUG
 #include "debug.hh"
 
+static int preferredWidth(QWidget* w)
+{ return w->sizeHint().width(); }
+
+static void setCommonMinWidth(QWidget* w[])
+{
+    int mw = preferredWidth(w[0]);
+    for (int i=1; w[i]; ++i)
+        mw = std::max(mw, preferredWidth(w[i]));
+    for (int i=0; w[i]; ++i)
+        w[i]->setMinimumSize(mw, w[i]->minimumSize().height());
+}
+
 SimpleCorrections::SimpleCorrections(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::SimpleCorrections)
     , mSensorTime(Sensor(0, 0, 0, 0, 0), timeutil::ptime())
 {
     ui->setupUi(this);
-    LOG4HQC_DEBUG("SimpleCorrections", DBG1(ui->gridInfo->minimumSize().width()));
+
+    QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
+    setCommonMinWidth(labels1);
+    QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
+    setCommonMinWidth(labels2);
+
+    setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
 }
 
 SimpleCorrections::~SimpleCorrections()
