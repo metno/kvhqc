@@ -49,8 +49,10 @@ void DataList::navigateTo(const SensorTime& st)
     BOOST_FOREACH(const QModelIndex idx, idxs)
         selection.select(idx, idx);
     selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
-    if (not idxs.empty())
-        scrollTo(idxs.at(0));
+    if (not idxs.empty()) {
+        scrollTo(idxs.front());
+        scrollTo(idxs.back());
+    }
 }
 
 void DataList::currentChanged(const QModelIndex& current, const QModelIndex& previous)
