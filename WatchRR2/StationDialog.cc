@@ -51,10 +51,10 @@ void StationDialog::init()
     ui->labelStationInfo->setText("");
 
     QDate today = QDate::currentDate();
-    ui->dateFrom->setMinimumDate(today.addDays(-MAX_DAYS));
-    ui->dateFrom->setMaximumDate(today.addDays(365-MIN_DAYS));
-    ui->dateTo->setMinimumDate(today.addDays(-MAX_DAYS+MIN_DAYS));
-    ui->dateTo->setMaximumDate(today.addDays(365));
+    //ui->dateFrom->setMinimumDate(today.addDays(-MAX_DAYS));
+    //ui->dateFrom->setMaximumDate(today.addDays(365-MIN_DAYS));
+    //ui->dateTo->setMinimumDate(today.addDays(-MAX_DAYS+MIN_DAYS));
+    //ui->dateTo->setMaximumDate(today.addDays(365));
     ui->dateFrom->setDate(today.addDays(-4*MIN_DAYS));
     ui->dateTo->setDate(today);
 }
