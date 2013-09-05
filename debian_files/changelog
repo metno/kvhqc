@@ -1,3 +1,9 @@
+kvhqc (3.0.0~a21-1) unstable; urgency=low
+
+  * start with empty field when editing missing values
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 23 Jul 2013 12:07:03 +0200
+
 kvhqc (3.0.0~a20-1) unstable; urgency=low
 
   * extreme value list: bugfix if no excluded stations
