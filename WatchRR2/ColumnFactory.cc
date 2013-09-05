@@ -62,7 +62,9 @@ Code2TextCPtr codesForParam(int pid)
     if (KvMetaDataBuffer::instance()) {
       try {
         const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
-        if (param.unit().find("kode") != std::string::npos) {
+        if (param.unit().find("kode") != std::string::npos or 
+            (param.unit().find("grader") != std::string::npos and pid != kvalobs::PARAMID_MLON and pid != kvalobs::PARAMID_MLAT))
+        {
           haveDecimals = true;
           decimals = 0;
         }
