@@ -57,7 +57,8 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
       if (displayType == ObsColumn::NEW_CORRECTED)
         item = boost::make_shared<DataVxItem>(da);
     } else if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
-        item = boost::make_shared<DataControlinfoItem>(displayType == ObsColumn::NEW_CONTROLINFO);
+      const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
+        item = boost::make_shared<DataControlinfoItem>(showNew);
     } else {
         Code2TextPtr codes = codesForParam(pid);
         if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
