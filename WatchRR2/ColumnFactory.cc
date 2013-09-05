@@ -10,35 +10,33 @@
 #include "Sensor.hh"
 
 #include <QtCore/QCoreApplication>
+#include <QtCore/QLocale>
+#include <QtSql/QSqlError>
 #include <QtSql/QSqlQuery>
 
 #include <boost/make_shared.hpp>
-#include <boost/range/end.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ColumnFactory"
 #include "HqcLogging.hh"
 
-namespace {
+namespace /* anonymous */ {
 
-const int PID_NO_DECIMALS[] = {
-  54 , // HH
-  55 , // HL
-  271, // VMOR
-  272, // VR
-  273, // VV
-  274, // VZ
-  275, // VX
-  301, // HS1
-  302, // HS2
-  303, // HS3
-  304, // HS4
-  311, // HT1
-  312, // HT2
-  313, // HT3
-  314, // HT4
-};
+QString languageOrdering(QString languageColumn)
+{
+  METLIBS_LOG_SCOPE();
+  QStringList uil = QLocale::system().uiLanguages();
+  if (uil.isEmpty())
+    uil << "C";
 
+  QString lo = "(CASE " + languageColumn;
+  for (int i=0; i<uil.size(); ++i)
+    lo += QString(" WHEN '%1' THEN %2").arg(uil.at(i)).arg(i);
+  lo += QString(" ELSE %1 END) ASC").arg(uil.size());
+  METLIBS_LOG_DEBUG(LOGVAL(lo));
+  return lo;
 }
+
+} // namespace anonymous
 
 namespace ColumnFactory {
 
@@ -50,51 +48,70 @@ Code2TextPtr codesForParam(int pid)
       return Code2TextPtr();
 
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
-    if( pid == kvalobs::PARAMID_RR_24 ) {
-        c2t->addCode(-1, (QStringList()
-                          << qApp->translate("Column_RR_24", "dry")
-                          << qApp->translate("Column_RR_24", "d")),
-                     qApp->translate("Column_RR_24", "precipitation not reported"));
-    } else if( pid == kvalobs::PARAMID_SA ) {
-#if 0 // removed on request by POK on 2013-01-14
-        c2t->addCode(-1, (QStringList()
-                          << qApp->translate("Column_SA", "pat")
-                          << qApp->translate("Column_SA", "p")),
-                     qApp->translate("Column_SA", "patchy snow"));
-#endif
-        c2t->addCode(-3, (QStringList()
-                          << qApp->translate("Column_SA", "no m.")
-                          << qApp->translate("Column_SA", "n")),
-                     qApp->translate("Column_SA", "measurement impossible/inaccurate"));
-        c2t->setDecimals(0);
-    } else if( pid == kvalobs::PARAMID_SD ) {
-        c2t->addCode(-1, (QStringList()
-                          << qApp->translate("Column_SD", "no m.")
-                          << qApp->translate("Column_SD", "n")),
-                     qApp->translate("Column_SD", "snow cover not reported"));
-        c2t->setDecimals(0);
-    } else if (std::binary_search(PID_NO_DECIMALS, boost::end(PID_NO_DECIMALS), pid)) {
-      c2t->setDecimals(0);
-    } else {
-      try {
-        const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
-        if (param.unit().find("kode") != std::string::npos) {
-          c2t->setDecimals(0);
-
-          QSqlQuery query(hqcApp->systemDB());
-          query.prepare("SELECT code, description FROM code_explain WHERE paramid = ? AND language = 'en' ORDER BY code ASC");
-          query.bindValue(0, pid);
-          query.exec();
-          while (query.next()) {
-            const int code = query.value(0).toInt();
-            const QString desc = query.value(1).toString();
-            c2t->addCode(code, QStringList(), desc);
-          }
-        }
-      } catch (std::exception& ex) {
-        METLIBS_LOG_WARN("exception while retrieving kvParam for " << pid);
+    int decimals = 1;
+    try {
+      const kvalobs::kvParam& param = KvMetaDataBuffer::instance()->findParam(pid);
+      if (param.unit().find("kode") != std::string::npos) {
+        decimals = 0;
+      } else {
+        QSqlQuery queryDecimals(hqcApp->systemDB());
+        queryDecimals.prepare("SELECT decimals FROM param_decimals WHERE paramid = ?");
+        queryDecimals.exec();
+        if (queryDecimals.next())
+          decimals = queryDecimals.value(0).toInt();
       }
+    } catch (std::exception& ex) {
+      METLIBS_LOG_WARN("exception while retrieving kvParam for " << pid);
     }
+    c2t->setDecimals(decimals);
+
+    const QString langOrder = languageOrdering("language");
+
+    QSqlQuery queryCodes(hqcApp->systemDB());
+    queryCodes.prepare("SELECT id, code_value FROM param_codes"
+        " WHERE paramid = ? ORDER BY code_value ASC");
+
+    QSqlQuery queryCodeLong(hqcApp->systemDB());
+    queryCodeLong.prepare("SELECT long_text, language FROM param_code_long"
+        " WHERE code_id = ? ORDER BY " + langOrder + " LIMIT 1");
+
+    QSqlQuery queryCodeShort(hqcApp->systemDB());
+    queryCodeShort.prepare("SELECT short_text FROM param_code_short"
+        " WHERE code_id = ? AND language = ? ORDER BY sortkey ASC");
+
+    queryCodes.bindValue(0, pid);
+    if (queryCodes.exec()) {
+      while (queryCodes.next()) {
+        const int code_id = queryCodes.value(0).toInt();
+        const int code_value = queryCodes.value(1).toInt();
+
+        queryCodeLong.bindValue(0, code_id);
+        if (queryCodeLong.exec()) {
+          if (queryCodeLong.next()) {
+            const QString long_text = queryCodeLong.value(0).toString();
+            const QString language = queryCodeLong.value(1).toString();
+            
+            QStringList shortCodes;
+            queryCodeShort.bindValue(0, code_id);
+            queryCodeShort.bindValue(1, language);
+            if (not queryCodeShort.exec())
+              METLIBS_LOG_WARN("error getting short text for parameter " << pid << ", code " << code_value
+                  << " and language '" << language << "' from system DB: " << queryCodeShort.lastError().text());
+            while (queryCodeShort.next())
+              shortCodes << queryCodeShort.value(0).toString();
+
+            c2t->addCode(code_value, shortCodes, long_text);
+          }
+        } else {
+          METLIBS_LOG_WARN("error getting long text text for parameter " << pid << ", code " << code_value
+              << " from system DB: " << queryCodeLong.lastError().text());
+        }
+      }
+    } else {
+      METLIBS_LOG_ERROR("error getting code values for parameter " << pid
+          << " from system DB: " << queryCodes.lastError().text());
+    }
+
     return c2t;
 }
 

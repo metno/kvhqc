@@ -1,20 +1,48 @@
 # -*- coding: utf-8 -*- 
 
+code_id = 0
+
+def add_code(cur, paramids, code_value, short_texts, long_texts):
+    global code_id
+    code_id += 1
+    for p in paramids:
+        cur.execute("INSERT INTO param_codes VALUES (?, ?, ?)", (code_id, p, code_value))
+    for lang, lt in long_texts.iteritems():
+        cur.execute("INSERT INTO param_code_long VALUES (?, ?, ?)", (code_id, lang, lt))
+    for lang, sts in short_texts.iteritems():
+        for sortkey, st in enumerate(sts):
+            cur.execute("INSERT INTO param_code_short VALUES (?, ?, ?, ?)", (code_id, lang, st, sortkey))
+
+def add_code_long_en(cur, paramids, code_value, long_texts):
+    add_code(cur, paramids, code_value, {}, {'en': long_texts})
+
 def update(con, cur):
-    cur.execute("DROP TABLE IF EXISTS code_short")
-    cur.execute("""CREATE TABLE IF NOT EXISTS code_short (
-           paramid INTEGER NOT NULL,
-           code INTEGER NOT NULL,
-           language CHAR(2) NOT NULL,
-           description VARCHAR(16)
+    cur.execute("DROP TABLE IF EXISTS param_decimals")
+    cur.execute("""CREATE TABLE IF NOT EXISTS param_decimals (
+           paramid INTEGER NOT NULL UNIQUE,
+           decimals INTEGER NOT NULL
     )""")
 
-    cur.execute("DROP TABLE IF EXISTS code_explain")
-    cur.execute("""CREATE TABLE IF NOT EXISTS code_explain (
+    cur.execute("DROP TABLE IF EXISTS param_codes")
+    cur.execute("""CREATE TABLE IF NOT EXISTS param_codes (
+           id INTEGER,
            paramid INTEGER NOT NULL,
-           code INTEGER NOT NULL,
+           code_value INTEGER NOT NULL
+    )""")
+
+    cur.execute("DROP TABLE IF EXISTS param_code_long")
+    cur.execute("""CREATE TABLE IF NOT EXISTS param_code_long (
+           code_id INTEGER REFERENCES param_codes(id),
            language CHAR(2) NOT NULL,
-           description VARCHAR(1024)
+           long_text VARCHAR(1024) NOT NULL
+    )""")
+
+    cur.execute("DROP TABLE IF EXISTS param_code_short")
+    cur.execute("""CREATE TABLE IF NOT EXISTS param_code_short (
+           code_id INTEGER REFERENCES param_codes(id),
+           language CHAR(2) NOT NULL,
+           short_text VARCHAR(16) NOT NULL,
+           sortkey INTEGER NOT NULL
     )""")
 
     # explanations for WW = WMO code 4677
@@ -132,8 +160,6 @@ def update(con, cur):
         [ 98, u"Thunderstorm combined with dust/sandstorm at time of observation" ],
         [ 99, u"Thunderstorm, heavy with hail at time of observation" ]
     ]
-    for ex in explain_WW_en:
-        cur.execute("INSERT INTO code_explain VALUES (41, ?, 'en', ?)", ex)
 
     explain_Wx_en = [
         (0, u"cloud covering half or less of the sky throughout the period"),
@@ -147,9 +173,6 @@ def update(con, cur):
         (8, u"shower(s)"),
         (9, u"thunderstorm(s) with or without precipitation")
     ]
-    for ex in explain_Wx_en:
-        cur.execute("INSERT INTO code_explain VALUES (42, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (43, ?, 'en', ?)", ex)
 
     explain_RS_en = [
         [ 0, "Ice not building up" ],
@@ -158,8 +181,6 @@ def update(con, cur):
         [ 3, "Ice melting or breaking up slowly" ],
         [ 4, "Ice melting or breaking up rapidly" ]
     ]
-    for ex in explain_RS_en:
-        cur.execute("INSERT INTO code_explain VALUES (17, ?, 'en', ?)", ex)
 
     explain_CCx_en = [
         (0, u"cirrus  (CI)"),
@@ -173,11 +194,6 @@ def update(con, cur):
         (8, u"cumulus (CU)"),
         (9, u"cumulonimbus (CB)")
     ]
-    for ex in explain_CCx_en:
-        cur.execute("INSERT INTO code_explain VALUES (305, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (306, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (307, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (308, ?, 'en', ?)", ex)
 
     explain_Nx_en = [
         (-1, u"cloud is indiscernible for reasons other than fog or other meteorological phenomena, or observation is not made"),
@@ -192,7 +208,50 @@ def update(con, cur):
         (8, u"8 oktas : 10/10"),
         (9, u"sky obscured by fog or other meteorological phenomena")
     ]
-    for ex in explain_Nx_en:
-        cur.execute("INSERT INTO code_explain VALUES (14, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (15, ?, 'en', ?)", ex)
-        cur.execute("INSERT INTO code_explain VALUES (16, ?, 'en', ?)", ex)
+
+    for cv, lt in explain_WW_en:
+        add_code_long_en(cur, [41], cv, lt)
+    for cv, lt in explain_Wx_en:
+        add_code_long_en(cur, [42, 43], cv, lt)
+    for cv, lt in explain_RS_en:
+        add_code_long_en(cur, [17], cv, lt)
+    for cv, lt in explain_CCx_en:
+        add_code_long_en(cur, [305, 306, 307, 308], cv, lt)
+    for cv, lt in explain_Nx_en:
+        add_code_long_en(cur, [14, 15, 16], cv, lt)
+
+    add_code(cur, [110], -1,
+             { 'en' : (u'dry',     u'd'),
+               'nb' : (u'tørt',    u't'),
+               'de' : (u'trocken', u't') },
+             { 'en': u"precipitation not reported",
+               'nb': u'nedbørmengde ikke meldt',
+               'de': u'keine Niederschlagsmenge angegeben' })
+
+    ## removed on request by POK on 2013-01-14
+    #add_code(cur, [112], -1,
+    #         { 'en' : (u'pat',  u'p'),
+    #           'nb' : (u'flck', u'f'),
+    #           'de' : (u'flk',  u'f') },
+    #         { 'en': u'patchy snow',
+    #           'nb': u'flekkvis snø',
+    #           'de': u'fleckenweise Schnee' })
+    add_code(cur, [112], -3,
+             { 'en' : (u'no m.',  u'n'),
+               'nb' : (u'ing.m.', u'i'),
+               'de' : (u'kne M.', u'k') },
+             { 'en': u'measurement impossible/inaccurate',
+               'nb': u'måling umulig eller unøyaktig',
+               'de': u'Messung nicht möglich/ungenau' })
+
+    add_code(cur, [18], -1,
+             { 'en' : (u'no m.',  u'n'),
+               'nb' : (u'ing.m.', u'i'),
+               'de' : (u'kne M.', u'k') },
+             { 'en': u'snow cover not reported',
+               'nb': u'snødekke ikke meldt',
+               'de': u'Schneedecke nicht gemeldet' })
+
+    par_no_decimals = (18, 54, 55, 112, 271, 272, 273, 274, 275, 301, 302, 303, 304, 311, 312, 313, 314)
+    for pid in par_no_decimals:
+        cur.execute("INSERT INTO param_decimals VALUES (?, 0)", (pid,))
