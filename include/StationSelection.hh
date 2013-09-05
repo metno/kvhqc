@@ -18,7 +18,7 @@ class StationTable : public Q3Table
 { Q_OBJECT;
 public:
     StationTable(QWidget* parent=0);
-    void setData(const listStat_l& listStat, const QStringList& stationTypes, const QStringList& counties, bool web, bool pri);
+    void setData(const listStat_l& listStat, const QStringList& counties);
     void sortColumn( int col, bool ascending, bool wholeRows );
 private:
     QString getEnvironment(const int envID, const std::set<int>& typeIDs);
@@ -28,10 +28,7 @@ class StationSelection : public QDialog
 { Q_OBJECT;
 public:
     StationSelection(const listStat_l& listStat,
-                     const QStringList& stationTypes,
                      const QStringList& counties,
-                     bool,
-                     bool,
                      QWidget* parent);
 
     std::vector<int> getSelectedStations();

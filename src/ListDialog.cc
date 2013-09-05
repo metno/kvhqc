@@ -50,49 +50,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HqcLogging.hh"
 
 namespace /* anonymous */ {
-struct stationtype_t {
-    const char* name;
-    int gridX, gridY;
-};
-const int NSTATIONTYPES = 19;
-const stationtype_t stationTypes[NSTATIONTYPES] = {
-  { "AA", 0, 0 },
-  { "AF", 1, 0 },
-  { "AL", 2, 0 },
-  { "AV", 3, 0 },
-  { "AO", 4, 0 },
-  { "AE", 5, 0 },
-  { "MV", 0, 1 },
-  { "MP", 1, 1 },
-  { "MM", 2, 1 },
-  { "MS", 3, 1 },
-  { "FM", 4, 3 },
-  { "NS", 0, 2 },
-  { "ND", 1, 2 },
-  { "NO", 2, 2 },
-  { "P",  4, 2 },
-  { "PT", 5, 2 },
-  { "VS", 0, 3 },
-  { "VK", 1, 3 },
-  { "VM", 2, 3 }
-};
-
-const int NCOUNTIES = 20;
+const int NCOUNTIES = 22;
 const char* counties[NCOUNTIES] =  {
     "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark", "Aust-Agder",
     "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane",
     "Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag", "Nordland",
-    "Troms", "Finnmark", "Ishavet"
+    "Troms", "Finnmark", "Ishavet",
+    "Maritime", "Other"
 };
 const char* countiesU[NCOUNTIES] =  {
     "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK",
     "AUST-AGDER", "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE", "MØRE OG ROMSDAL",
-    "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET"
+    "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET",
+    "MARITIME", "OTHER"
 };
 const int REG_EAST[2]  = { 0, 9 };
 const int REG_WEST[2]  = { 9, 13 };
 const int REG_MID[2]   = { 13, 16 };
-const int REG_NORTH[2] = { 16, NCOUNTIES };
+const int REG_NORTH[2] = { 16, 20 };
 
 const char QSETTINGS_GROUP[] = "lstdlg";
 } // anonymous namespace
@@ -126,35 +101,26 @@ ListDialog::~ListDialog()
 {
 }
 
+ItemCheckBox* ListDialog::addCountyCheckbox(const QString& c, const char* cu, int& x, int& y)
+{
+  ItemCheckBox* countyCB = new ItemCheckBox(c, cu, ui->stCounty);
+  connect(countyCB, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
+  ui->statCountyLayout->addWidget(countyCB, x, y);
+  y += 1; if (y >= 3 ) { y = 0; x += 1; }
+  return countyCB;
+}
+
 void ListDialog::setupStationTab()
 {
-    connect(ui->twiType, SIGNAL(clicked()), this, SLOT(twiCheck()));
-    connect(ui->prcType, SIGNAL(clicked()), this, SLOT(prcCheck()));
-    connect(ui->aprType, SIGNAL(clicked()), this, SLOT(aprCheck()));
-    connect(ui->winType, SIGNAL(clicked()), this, SLOT(winCheck()));
-    connect(ui->visType, SIGNAL(clicked()), this, SLOT(visCheck()));
-    connect(ui->marType, SIGNAL(clicked()), this, SLOT(marCheck()));
-    
-    for (int i=0; i<NSTATIONTYPES; ++i) {
-        const stationtype_t& s = stationTypes[i];
-        ItemCheckBox* cb = new ItemCheckBox(s.name, s.name, ui->stTyp);
-        ui->statSelLayout->addWidget(cb, s.gridX, s.gridY);
-        mStationTypes.push_back(cb);
-    }
-    allType = new QCheckBox( tr("All"), ui->stTyp);
-    ui->statSelLayout->addWidget(allType, 5, 3);
-
     // insert checkbuttons for station location selection
     int x=0, y=0;
     for(int i=0; i<NCOUNTIES; ++i) {
-        ItemCheckBox* countyCB = new ItemCheckBox(counties[i], countiesU[i], ui->stCounty);
-        connect(countyCB, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
-        ui->statCountyLayout->addWidget(countyCB, x, y);
-        mCounties.push_back(countyCB);
-        y += 1; if (y >= 3 ) { y = 0; x += 1; }
+      ItemCheckBox* countyCB = addCountyCheckbox(counties[i], countiesU[i], x, y);
+      mCounties.push_back(countyCB);
     }
-    allCoun = new ItemCheckBox(tr("All"), "ALL", ui->stCounty);
-    ui->statCountyLayout->addWidget(allCoun, x, y);
+
+    mCountyAll = addCountyCheckbox(tr("All"), "ALL", x, y);
+    disconnect(mCountyAll, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
     
     connect(ui->regionEastAdd,     SIGNAL(clicked()), this, SLOT(regionEastAdd()));
     connect(ui->regionEastRemove,  SIGNAL(clicked()), this, SLOT(regionEastRemove()));
@@ -164,9 +130,7 @@ void ListDialog::setupStationTab()
     connect(ui->regionMidRemove,   SIGNAL(clicked()), this, SLOT(regionMidRemove()));
     connect(ui->regionNorthAdd,    SIGNAL(clicked()), this, SLOT(regionNorthAdd()));
     connect(ui->regionNorthRemove, SIGNAL(clicked()), this, SLOT(regionNorthRemove()));
-    connect(ui->webReg, SIGNAL(clicked()), this, SLOT(webCheck()));
-    connect(ui->priReg, SIGNAL(clicked()), this, SLOT(priCheck()));
-    connect(allCoun,    SIGNAL(clicked()), this, SLOT(allCounCheck()));
+    connect(mCountyAll,    SIGNAL(clicked()), this, SLOT(allCounCheck()));
     
     connect(ui->stationSelect,    SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
     connect(ui->stationSelectAll, SIGNAL(clicked()), this, SLOT(selectAllStations()));
@@ -263,9 +227,6 @@ void ListDialog::doSaveSettings(QSettings& settings)
         settings.setValue("selected_parameters", parameters);
     }
 
-    const QStringList stationTypes = getSelectedStationTypes();
-    settings.setValue("stationTypes", stationTypes);
-    
     const QStringList counties = getSelectedCounties();
     settings.setValue("counties", counties);
 
@@ -287,11 +248,6 @@ void ListDialog::doRestoreSettings(QSettings& settings)
         showParamGroup(ui->comboParamGroup->currentText());
     }
 
-    QStringList stationTypesDefault;
-    stationTypesDefault << "ALL";
-    QStringList stationTypes = settings.value("stationTypes", stationTypesDefault).toStringList();
-    setSelectedStationTypes(stationTypes);
-    
     QStringList countiesDefault;
     countiesDefault << "ALL";
     QStringList counties = settings.value("counties", countiesDefault).toStringList();
@@ -486,9 +442,7 @@ void ListDialog::removeStatFromListbox(QString station)
 
 void ListDialog::enableButtons()
 {
-    const bool allowSelectStation =
-        (not getSelectedStationTypes().empty()
-         and not getSelectedCounties().empty());
+    const bool allowSelectStation = not getSelectedCounties().empty();
     const bool haveStations = (ui->stationNames->count() > 0);
 
     const bool haveParameters = not getSelectedParameters().empty();
@@ -510,107 +464,6 @@ void ListDialog::removeAllStatFromListbox()
     enableButtons();
 }
 
-void ListDialog::uncheckTypes()
-{
-    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes)
-        cb->setChecked(false);
-    allType->setChecked(false);
-}
-
-void ListDialog::checkTypes(const char* these[])
-{
-    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes) {
-        const QString item = cb->getItem();
-        for(int i=0; these[i]; ++i) {
-            if (item == these[i]) {
-                cb->setChecked(true);
-                break;
-            }
-        }
-    }
-}
-
-void ListDialog::twiCheck()
-{
-    uncheckTypes();
-    if (ui->twiType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-        const char* doCheck[] = { "AA", "AF", "AL", "AV", "AO", "AE", "MV", "MP",
-                                  "MM", "MS", "NS", "FM", "PT", "VS", "VK", "VM", 0 };
-        checkTypes(doCheck);
-    }
-}
-
-void ListDialog::prcCheck()
-{
-    uncheckTypes();
-    if (ui->prcType->isChecked()) {
-        ui->twiType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-        const char* doCheck[] = { "AA", "AL", "AO", "NS", "ND", "NO", "P", "VS", "VK", "VM", 0 };
-        checkTypes(doCheck);
-    }
-}
-
-void ListDialog::aprCheck()
-{
-    uncheckTypes();
-    if (ui->aprType->isChecked() or ui->winType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->visType->setChecked(false);
-        ui->marType->setChecked(false);
-    }
-    if (ui->aprType->isChecked()) {
-        const char* doCheck[] = { "AA", "AF", "AE", "MV", "MP", "MM", "MS", "VS", 0 };
-        checkTypes(doCheck);
-    }
-    if (ui->winType->isChecked()) {
-        const char* doCheck[] = { "AA", "AF", "AL", "AV", "AO", "AE", "MV", "MP", "MM", "MS", "FM", "VS", "VK", 0 };
-        checkTypes(doCheck);
-    }
-}
-
-void ListDialog::winCheck()
-{
-    aprCheck(); // TODO this does not seem right
-}
-
-void ListDialog::visCheck()
-{
-    uncheckTypes();
-    if (ui->visType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->marType->setChecked(false);
-        const char* doCheck[] = { "MV", "MP", "MM", "MS", "FM", "NS", "ND", "NO", "VS", "VK", "VM", 0 };
-        checkTypes(doCheck);
-    }
-}
-
-void ListDialog::marCheck()
-{
-    uncheckTypes();
-    if (ui->marType->isChecked()) {
-        ui->prcType->setChecked(false);
-        ui->aprType->setChecked(false);
-        ui->winType->setChecked(false);
-        ui->twiType->setChecked(false);
-        ui->visType->setChecked(false);
-        const char* doCheck[] = { "MV", "MP", "MM", "MS", 0 };
-        checkTypes(doCheck);
-    }
-}
-
 void ListDialog::regionEastAdd()
 {
     regionEastToggle(true);
@@ -625,8 +478,6 @@ void ListDialog::regionEastToggle(bool on)
 {
     for(int i=REG_EAST[0]; i<REG_EAST[1]; ++i)
         mCounties[i]->setChecked(on);
-    ui->webReg->setChecked(false);
-    ui->priReg->setChecked(false);
     allCounUnCheck();
 }
 
@@ -644,8 +495,6 @@ void ListDialog::regionWestToggle(bool on)
 {
     for(int i=REG_WEST[0]; i<REG_WEST[1]; ++i)
         mCounties[i]->setChecked(on);
-    ui->webReg->setChecked(false);
-    ui->priReg->setChecked(false);
     allCounUnCheck();
 }
 
@@ -663,8 +512,6 @@ void ListDialog::regionMidToggle(bool on)
 {
     for(int i=REG_MID[0]; i<REG_MID[1]; ++i)
         mCounties[i]->setChecked(on);
-    ui->webReg->setChecked(false);
-    ui->priReg->setChecked(false);
     allCounUnCheck();
 }
 
@@ -682,39 +529,14 @@ void ListDialog::regionNorthToggle(bool on)
 {
     for(int i=REG_NORTH[0]; i<REG_NORTH[1]; ++i)
         mCounties[i]->setChecked(on);
-    ui->webReg->setChecked(false);
-    ui->priReg->setChecked(false);
     allCounUnCheck();
-}
-
-void ListDialog::webCheck()
-{
-    if (ui->webReg->isChecked()) {
-        allType->setChecked(true);
-    }
-    for(int i=0; i<NCOUNTIES; ++i)
-        mCounties[i]->setChecked(false);
-    allCoun->setChecked(false);
-    enableButtons();
-}
-
-void ListDialog::priCheck()
-{
-    if (ui->priReg->isChecked()) {
-        allType->setChecked(true);
-    }
-    for(int i=0; i<NCOUNTIES; ++i)
-        mCounties[i]->setChecked(false);
-    allCoun->setChecked(false);
-    enableButtons();
 }
 
 void ListDialog::allCounCheck()
 {
-    if (allCoun->isChecked()) {
+    if (mCountyAll->isChecked()) {
         for(int i=0; i<NCOUNTIES; ++i)
             mCounties[i]->setChecked(false);
-        ui->priReg->setChecked(false);
     }
     enableButtons();
 }
@@ -725,78 +547,33 @@ void ListDialog::allCounUnCheck()
     for(int i=0; not anyCountyIsChecked and i<NCOUNTIES; ++i)
         anyCountyIsChecked |= mCounties[i]->isChecked();
     if (anyCountyIsChecked)
-        allCoun->setChecked(false);
-    enableButtons();
-}
-
-QStringList ListDialog::getSelectedStationTypes()
-{
-    QStringList t;
-    if (isSelectAllStationTypes())
-        t << "ALL";
-    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes) {
-        if (cb->isChecked())
-            t << cb->getItem();
-    }
-    return t;
-}
-
-bool ListDialog::isSelectAllStationTypes() const
-{
-    return allType->isChecked();
-}
-
-void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
-{
-    allType->setChecked(stationTypes.contains("ALL"));
-    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes)
-        cb->setChecked(stationTypes.contains(cb->getItem()));
+        mCountyAll->setChecked(false);
     enableButtons();
 }
 
 QStringList ListDialog::getSelectedCounties()
 {
-    QStringList t;
-
-    const int NBOXES = 3;
-    QCheckBox* boxes[NBOXES] = { allCoun, ui->webReg, ui->priReg };
-    QString    keys[NBOXES]  = { "ALL",   "ST_SYNOP", "ST_PRIO" };
-    for(int i=0; i<NBOXES; ++i) {
-        if (boxes[i]->isChecked())
-            t << keys[i];
-    }
-
-    for(int i=0; i<NCOUNTIES; ++i) {
-        ItemCheckBox* cb = mCounties[i];
-        if (cb->isChecked())
-            t << cb->getItem();
-    }
-    return t;
+  QStringList t;
+  if (mCountyAll->isChecked())
+    t << "ALL";
+  
+  for(int i=0; i<NCOUNTIES; ++i) {
+    ItemCheckBox* cb = mCounties[i];
+    if (cb->isChecked())
+      t << cb->getItem();
+  }
+  return t;
 }
 
 void ListDialog::setSelectedCounties(const QStringList& c)
 {
-    const int NBOXES = 3;
-    QCheckBox* boxes[NBOXES] = { allCoun, ui->webReg, ui->priReg };
-    QString    keys[NBOXES]  = { "ALL",   "ST_SYNOP", "ST_PRIO" };
-    for(int i=0; i<NBOXES; ++i)
-        boxes[i]->setChecked(c.contains(keys[i]));
-
-    for(int i=0; i<NCOUNTIES; ++i) {
-        ItemCheckBox* cb = mCounties[i];
-        cb->setChecked(c.contains(cb->getItem()));
-    }
-    enableButtons();
-}
-
-bool ListDialog::showSynop() const
-{
-    return ui->webReg->isChecked();
-}
-
-bool ListDialog::showPrioritized() const
-{
-    return ui->priReg->isChecked();
+  mCountyAll->setChecked(c.contains("ALL"));
+  
+  for(int i=0; i<NCOUNTIES; ++i) {
+    ItemCheckBox* cb = mCounties[i];
+    cb->setChecked(c.contains(cb->getItem()));
+  }
+  enableButtons();
 }
 
 std::vector<int> ListDialog::getSelectedStations()
@@ -818,10 +595,7 @@ void ListDialog::prepareStationSelectionDialog()
 
     removeAllStatFromListbox();
     statSelect.reset(new StationSelection(listStat,
-                                          getSelectedStationTypes(),
                                           getSelectedCounties(),
-                                          showSynop(),
-                                          showPrioritized(),
                                           this));
     connect(statSelect.get(), SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
     connect(statSelect.get(), SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));

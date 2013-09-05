@@ -58,14 +58,9 @@ public:
     
     TimeRange getTimeRange() const;
     
-    QStringList getSelectedStationTypes();
     std::vector<int> getSelectedStations();
     std::vector<int> getSelectedParameters();
-    bool isSelectAllStationTypes() const;
     
-    bool showSynop() const;
-    bool showPrioritized() const;
-                                
     void saveSettings(QSettings& settings);
     void restoreSettings(QSettings& settings);
 
@@ -73,13 +68,6 @@ private Q_SLOTS:
     void appendStatInListbox(QString);
     void removeStatFromListbox(QString);
     void removeAllStatFromListbox();
-
-    void twiCheck();
-    void prcCheck();
-    void aprCheck();
-    void winCheck();
-    void visCheck();
-    void marCheck();
 
     void regionEastAdd();
     void regionEastRemove();
@@ -90,8 +78,6 @@ private Q_SLOTS:
     void regionNorthAdd();
     void regionNorthRemove();
 
-    void webCheck();
-    void priCheck();
     void allCounCheck();
     void allCounUnCheck();
 
@@ -115,8 +101,6 @@ Q_SIGNALS:
     void ListApply();
 
 private:
-    void uncheckTypes();
-    void checkTypes(const char* these[]);
     void regionEastToggle(bool);
     void regionWestToggle(bool);
     void regionMidToggle(bool);
@@ -124,6 +108,8 @@ private:
     void enableButtons();
 
     void setupStationTab();
+    ItemCheckBox* addCountyCheckbox(const QString& c, const char* cu, int& x, int& y);
+
     void setupParameterTab();
 
     void setSelectedStationTypes(const QStringList& stationTypes);
@@ -141,7 +127,7 @@ private:
     QCheckBox* allType;
 
     std::vector<ItemCheckBox*> mCounties;
-    ItemCheckBox* allCoun;
+    ItemCheckBox* mCountyAll;
 
     std::map<QString, std::vector<int> > mParameterGroups;
     std::auto_ptr<ParamIdModel> mParamAvailableModel;

@@ -77,15 +77,16 @@ bool StInfoSysBuffer::readFromStInfoSys()
   }
 
   const char stinfosys_SQL[] =
-      "SELECT DISTINCT s.stationid, s.municipid, m.name,"
-      "       (SELECT mm.name FROM municip mm"
-      "        WHERE mm.municipid BETWEEN 1 AND 100"
-      "              AND ((m.municipid NOT IN (2300,2800) AND mm.municipid = m.municipid / 100)"
-      "                   OR (m.municipid IN (2300,2800) AND mm.municipid = m.municipid)))"
-      " FROM station s, municip m"
-      " WHERE s.stationid BETWEEN 60 AND 99999"
-      "   AND s.municipid = m.municipid"
-      " ORDER by s.stationid";
+      "SELECT DISTINCT s.stationid, s.municipid,"
+      "      CASE WHEN (s.municipid IS NOT NULL) THEN (SELECT mm.name FROM municip mm"
+      "       WHERE s.municipid = mm.municipid) ELSE 'OTHER' END,"
+      "      CASE WHEN (s.municipid IS NOT NULL) THEN (SELECT mm.name FROM municip mm"
+      "       WHERE ((s.municipid NOT IN (2300,2800) AND mm.municipid = s.municipid / 100)"
+      "           OR (s.municipid     IN (2300,2800) AND mm.municipid = s.municipid))) ELSE 'OTHER' END"
+      " FROM station s"
+      " WHERE s.stationid IN (SELECT o.stationid FROM obs_pgm AS o)"
+      " ORDER by s.stationid;";
+
   QSqlQuery query(QSqlDatabase::database(QSQLNAME_REMOTE));
   if (not query.exec(stinfosys_SQL)) {
     METLIBS_LOG_ERROR("query to stinfosys failed: " << query.lastError().text());
@@ -94,15 +95,20 @@ bool StInfoSysBuffer::readFromStInfoSys()
   typedef std::map<int,countyInfo> cList_t;
   cList_t cList;
   METLIBS_LOG_INFO("got " << query.size() << " station city/county names from stinfosys");
-  while( query.next() ) {
+  while (query.next()) {
     countyInfo cInfo;
     cInfo.stnr      = query.value(0).toInt();
     cInfo.municipid = query.value(1).toInt();
     cInfo.municip   = query.value(2).toString();
     cInfo.county    = query.value(3).toString();
     
-    if( cInfo.county == "SVALBARD" || cInfo.county == "JAN MAYEN" )
+    if (cInfo.municipid == 0) {
+      cInfo.county  = "OTHER";
+    } else if (cInfo.municipid >= 2100 and cInfo.municipid < 2300) {
       cInfo.county = "ISHAVET";
+    } else if (cInfo.municipid >= 2300 and cInfo.municipid < 2800) {
+      cInfo.county  = "MARITIME";
+    }
   
     station2prio_t::const_iterator it = station2prio.find(cInfo.stnr);
     if (it != station2prio.end())
@@ -111,6 +117,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
       cInfo.pri = 0;
     cInfo.coast = (station2coast.find(cInfo.stnr) != station2coast.end());
     
+    METLIBS_LOG_DEBUG(LOGVAL(cInfo.stnr) << LOGVAL(cInfo.municip) << LOGVAL(cInfo.county));
     cList[cInfo.stnr] = cInfo;
   }
 
