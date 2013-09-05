@@ -89,7 +89,7 @@
               </widget>
              </item>
              <item>
-              <widget class="MiDateTimeEdit" name="toTime">
+              <widget class="MiDateTimeEdit" name="fromTime">
                <property name="displayFormat">
                 <string>yyyy-MM-dd hh:mm</string>
                </property>
@@ -109,7 +109,7 @@
               </widget>
              </item>
              <item>
-              <widget class="MiDateTimeEdit" name="fromTime">
+              <widget class="MiDateTimeEdit" name="toTime">
                <property name="displayFormat">
                 <string>yyyy-MM-dd hh:mm</string>
                </property>
