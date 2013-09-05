@@ -4,12 +4,16 @@
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
 
+#include <kvalobs/kvStationParam.h>
+#include <kvcpp/KvApp.h>
+
 #include <puTools/miString.h>
 
 #include <QtCore/QDir>
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QLocale>
 #include <QtCore/QThread>
+#include <QtCore/QTimer>
 #include <QtCore/QTranslator>
 #include <QtGui/QIcon>
 #include <QtGui/QMessageBox>
@@ -23,6 +27,8 @@ namespace /* anonymous */ {
 const char DB_SYSTEM[] = "hqc_system_db";
 const char DB_CONFIG[] = "hqc_config_db";
 const char DB_KVALOBS[] = "kvalobs_db";
+
+const int AVAILABILITY_TIMEROUT = 30*1000; // milliseconds
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
@@ -30,6 +36,7 @@ HqcApplication* hqcApp = 0;
 HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
     : QApplication(argc, argv)
     , mConfig(conf)
+    , mKvalobsAvailable(true) // be optimistic!
 {
     hqcApp = this;
 
@@ -48,6 +55,10 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
 
     connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
+
+    QTimer* availabilityTimer = new QTimer(this);
+    connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
+    availabilityTimer->start(AVAILABILITY_TIMEROUT);
 }
 
 HqcApplication::~HqcApplication()
@@ -155,11 +166,14 @@ void HqcApplication::onException(const QString& message)
   }
 }
 
+bool HqcApplication::isGuiThread() const
+{
+  return (QThread::currentThread() == QCoreApplication::instance()->thread());
+}
+
 void HqcApplication::fatalError(const QString& message, const QString& info)
 {
-  const bool isGuiThread = 
-      QThread::currentThread() == QCoreApplication::instance()->thread();
-  if (isGuiThread) {
+  if (isGuiThread()) {
     QMessageBox w;
     w.setWindowTitle(tr("HQC"));
     w.setIcon(QMessageBox::Critical);
@@ -174,4 +188,28 @@ void HqcApplication::fatalError(const QString& message, const QString& info)
     METLIBS_LOG_ERROR("fatal error in non-gui thread: '" << message << "' with info '" + info + "'");
   }
   exit(-1);
+}
+
+void HqcApplication::exitNoKvalobs()
+{
+  METLIBS_LOG_SCOPE();
+  if (isGuiThread()) {
+    QMessageBox msg;
+    msg.setIcon(QMessageBox::Critical);
+    msg.setText(tr("The kvalobs database is not accessible."));
+    msg.setInformativeText(tr("HQC terminates because it cannot be used without the kvalobs database."));
+    msg.exec();
+  } else {
+    METLIBS_LOG_ERROR("kvalobs database not accessible in non-gui thread, exit");
+  }
+  exit(-1);
+}
+
+void HqcApplication::checkKvalobsAvailability()
+{
+  std::list<kvalobs::kvStationParam> stParam;
+  const bool oldAvailable = mKvalobsAvailable;
+  mKvalobsAvailable = kvservice::KvApp::kvApp->getKvStationParam(stParam, 345345, 345345, 0);
+  if (oldAvailable != mKvalobsAvailable)
+    /*emit*/ kvalobsAvailable(mKvalobsAvailable);
 }

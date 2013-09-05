@@ -48,6 +48,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HintWidget.hh"
 #include "hqc_paths.hh"
 #include "hqc_utilities.hh"
+#include "HqcApplication.hh"
 #include "HqcDianaHelper.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
@@ -83,6 +84,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtCore/qtimer.h>
 #include <QtCore/qurl.h>
 #include <QtGui/QDesktopServices>
+#include <QtGui/QLabel>
 #include <QtGui/QMdiSubWindow>
 #include <QtGui/QMessageBox>
 #include <QtGui/QPainter>
@@ -124,6 +126,7 @@ HqcMainWindow::HqcMainWindow()
   , mAutoColumnView(new AutoColumnView)
   , mAutoDataList(new DataList(this))
 {
+    METLIBS_LOG_SCOPE();
     ui->setupUi(this);
     ui->treeErrors->setDataAccess(eda, kma);
     ui->simpleCorrrections->setDataAccess(eda, kma);
@@ -144,11 +147,16 @@ HqcMainWindow::HqcMainWindow()
     ui->dockExtremes->setVisible(false);
 
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
-
     mVersionCheckTimer->setSingleShot(true);
+
+    connect(hqcApp, SIGNAL(kvalobsAvailable(bool)), this, SLOT(kvalobsAvailable(bool)));
 
     pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
     statusBar()->addPermanentWidget(pluginB, 0);
+
+    mKvalobsAvailable = new QLabel(statusBar());
+    statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
+    kvalobsAvailable(true);
 
     // --- DEFINE DIALOGS --------------------------------------------
     lstdlg = new ListDialog(this);
@@ -221,6 +229,7 @@ void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
 
 void HqcMainWindow::startup(const QString& captionSuffix)
 {
+    METLIBS_LOG_SCOPE();
     setCaption("HQC " + captionSuffix);
     
     DisableGUI disableGUI(this);
@@ -237,14 +246,6 @@ void HqcMainWindow::startup(const QString& captionSuffix)
                            "You are not registered as operator! "
                            "You can see the data list, error log and error list, "
                            "but you cannot make changes in the kvalobs database!"));
-    }
-
-    // --- READ STATION INFO ----------------------------------------
-    {
-        BusyIndicator busy;
-        statusBar()->message(tr("Reading station list..."));
-        qApp->processEvents();
-        readFromStation();
     }
 
     statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
@@ -336,13 +337,13 @@ void HqcMainWindow::ListOK()
 
     std::vector<QString> stationList;
     BOOST_FOREACH(int stnr, selectedStations) {
-        QString name;
-        double lat,lon,hoh;
-        int env;
-        int snr;
-        findStationInfo(stnr,name,lat,lon,hoh,snr,env);
-        const QString statId = QString::number(stnr) + " " + name;
+      try {
+        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
+        const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
         stationList.push_back(statId);
+      } catch (std::runtime_error& e) {
+        METLIBS_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
+      }
     }
     /*emit*/ newStationList(stationList);
     METLIBS_LOG_DEBUG("newStationList emitted");
@@ -597,50 +598,6 @@ void HqcMainWindow::onShowSimpleCorrections()
   ui->dockCorrections->setVisible(true);
 }
 
-void HqcMainWindow::exitNoKvalobs()
-{
-    QMessageBox msg(this);
-    msg.setIcon(QMessageBox::Critical);
-    msg.setText(tr("The kvalobs databasen is not accessible."));
-    msg.setInformativeText(tr("HQC terminates because it cannot be used without the kvalobs database."));
-    msg.exec();
-    exit(1);
-}
-
-/*!
- Read the station table in the kvalobs database
-*/
-void HqcMainWindow::readFromStation()
-{
-    if (KvMetaDataBuffer::instance()->allStations().empty())
-        exitNoKvalobs();
-}
-
-/*!
- Find the name and position of a station from
- a list extracted from the station table
-*/
-void HqcMainWindow::findStationInfo(int stnr,
-				    QString& name,
-				    double& lat,
-				    double& lon,
-				    double& hoh,
-				    int& snr,
-				    int& env)
-{
-    try {
-        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
-        name = QString::fromStdString(station.name());
-        lat  = (station.lat());
-        lon  = (station.lon());
-        hoh  = (station.height());
-        snr  = (station.wmonr());
-        env  = (station.environmentid());
-    } catch (std::runtime_error& e) {
-        METLIBS_LOG_WARN("Error in station lookup: " << e.what());
-    }
-}
-
 void HqcMainWindow::onTabCloseRequested(int index)
 {
   QWidget* w = ui->tabs->widget(index);
@@ -705,6 +662,17 @@ void HqcMainWindow::onSaveChanges()
   } else {
     mHints->addHint(tr("<h1>Data Saved</h1>"
             "Your changes have been saved."));
+  }
+}
+
+void HqcMainWindow::kvalobsAvailable(bool available)
+{
+  if (available) {
+    mKvalobsAvailable->setPixmap(QPixmap("icons:kv_ok.svg"));
+    mKvalobsAvailable->setToolTip(tr("Kvalobs seems to be available"));
+  } else {
+    mKvalobsAvailable->setPixmap(QPixmap("icons:kv_error.svg"));
+    mKvalobsAvailable->setToolTip(tr("Kvalobs seems not to be available"));
   }
 }
 

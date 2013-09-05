@@ -29,6 +29,9 @@ INSTALL(FILES
   images/dl_columns_remove.svg
   images/dl_columns_reset.svg
   images/dl_save_as.svg
+  images/hqc_splash.svg
+  images/kv_error.svg
+  images/kv_ok.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

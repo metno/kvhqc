@@ -42,6 +42,9 @@ QtKvService::QtKvService()
     connect(this, SIGNAL(internalKvHint(bool)),
             this, SLOT(internalSendKvHint(bool)),
             Qt::QueuedConnection);
+    connect(this, SIGNAL(internalShutdown()),
+            this, SLOT(internalSendShutdown()),
+            Qt::QueuedConnection);
 
     start();
 }
@@ -143,26 +146,30 @@ void QtKvService::internalSendKvHint(bool c)
     /*emit*/ kvHint(c);
 }
 
+void QtKvService::internalSendShutdown()
+{
+    // this function is run in the GUI thread
+    /*emit*/ shutdown();
+}
+
 void QtKvService::run()
 {
   METLIBS_LOG_SCOPE();
   using namespace kvservice;
-  while (not mStop) {
-    if (not app() or KvApp::kvApp->shutdown())
-      break;
-    dnmi::thread::CommandBase* com = mSignalQueue.get(/*timeout=*/ 2 /*sec*/);
-    if (not com)
+  while (not mStop and app() and not app()->shutdown()) {
+    const std::auto_ptr<dnmi::thread::CommandBase> com(mSignalQueue.get(/*timeout=*/ 2 /*sec*/));
+    if (not com.get())
       continue;
     
-    if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com)) {
+    if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com.get())) {
       /*emit*/ internalKvData(dataEvent->data());
-    } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com)) {
+    } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com.get())) {
       /*emit*/ internalKvDataNotify(dataNotifyEvent->what());
-    } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com)) {
+    } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com.get())) {
       /*emit*/ internalKvHint(hintEvent->upEvent());
     }
-    delete com;
   }
+  /*emit*/ internalShutdown();
 }
 
 void QtKvService::stop()

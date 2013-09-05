@@ -23,16 +23,26 @@ public:
   QSqlDatabase configDB();
   QSqlDatabase kvalobsDB();
 
+  void exitNoKvalobs();
+
+Q_SIGNALS:
+  void kvalobsAvailable(bool);
+
+private Q_SLOTS:
+  void checkKvalobsAvailability();
+
 private:
     void installTranslations(const QString& file, const QStringList& paths);
     inline void installTranslations(const QString& file, const QString& path)
         { installTranslations(file, QStringList(path)); }
     void onException(const QString& message);
     void fatalError(const QString& message, const QString& info="");
+  bool isGuiThread() const;
 
 private:
   QList<QTranslator*> mTranslators;
   miutil::conf::ConfSection *mConfig;
+  bool mKvalobsAvailable;
 };
 
 extern HqcApplication* hqcApp;

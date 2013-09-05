@@ -42,6 +42,7 @@ class ClientButton;
 class HelpDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
+class QLabel;
 class QMdiArea;
 class QMdiSubWindow;
 class QSplitter;
@@ -113,6 +114,8 @@ private Q_SLOTS:
     void about();
     void aboutQt();
 
+  void kvalobsAvailable(bool);
+
     //! bring up the WatchRR dialog
     void showWatchRR();
 
@@ -135,18 +138,12 @@ private:
     void navigateTo(const SensorTime& st);
     void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
-    //! Retrieves from stlist information about a given station
-    void findStationInfo(int, QString&, double&, double&, double&, int&, int&);
-
     enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
     void listMenu(listType lt);
 
-    void exitNoKvalobs();
     void writeSettings();
     void readSettings();
     void checkVersionSettings();
-
-    void readFromStation();
 
 private:
     ListDialog* lstdlg;
@@ -180,6 +177,8 @@ private:
 
     ClientButton* pluginB;
     std::auto_ptr<HqcDianaHelper> mDianaHelper;
+
+  QLabel* mKvalobsAvailable;
 
     std::auto_ptr<AutoColumnView> mAutoColumnView;
     DataList* mAutoDataList;

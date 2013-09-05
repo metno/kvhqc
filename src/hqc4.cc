@@ -37,6 +37,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
+#include <QtGui/QSplashScreen>
+
 #include <iostream>
 
 #define MILOGGER_CATEGORY "kvhqc.main"
@@ -66,7 +68,7 @@ int main( int argc, char* argv[] )
             log4cpp_properties = argv[i];
         } else if (arg == "--version") {
           std::cout << PVERSION_FULL << std::endl;
-          ::exit(0);
+          return 0;
         }
     }
 
@@ -84,13 +86,21 @@ int main( int argc, char* argv[] )
     StInfoSysBuffer stinfobuf(confSec);
 
     HqcApplication hqc(argc, argv, confSec);
+    QObject::connect(&qkvs, SIGNAL(shutdown()), &hqc, SLOT(quit()));
 
     QString userName = "?";
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
 
+    QPixmap pixmap("icons:hqc_splash.svg");
+    QSplashScreen splash(pixmap);
+    splash.show();
+    hqc.processEvents();
+
     std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
     mw->setReinserter(r, userName);
     mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
+
+    splash.finish(mw.get());
 
     // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
     return hqc.exec();
