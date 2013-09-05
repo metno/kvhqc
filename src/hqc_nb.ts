@@ -972,24 +972,17 @@ parametere</translation>
     </message>
     <message>
         <location filename="hqcmain.cc" line="442"/>
-        <location filename="hqcmain.cc" line="484"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
         <location filename="hqcmain.cc" line="443"/>
-        <location filename="hqcmain.cc" line="485"/>
-        <location filename="hqcmain.cc" line="713"/>
+        <location filename="hqcmain.cc" line="703"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="483"/>
-        <source>WatchWeather</source>
-        <translation>WatchWeather</translation>
-    </message>
-    <message>
-        <location filename="hqcmain.cc" line="678"/>
+        <location filename="hqcmain.cc" line="668"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1000,82 +993,62 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="711"/>
+        <location filename="hqcmain.cc" line="701"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="712"/>
+        <location filename="hqcmain.cc" line="702"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="716"/>
+        <location filename="hqcmain.cc" line="706"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="730"/>
-        <source>There are %1 unsaved data updates.</source>
-        <translation>Det fins %1 ulagrete endringer.</translation>
-    </message>
-    <message>
-        <location filename="hqcmain.cc" line="731"/>
-        <source>Are you sure that you want to lose them?</source>
-        <translation>Vil du forkaste endringene?</translation>
-    </message>
-    <message>
-        <location filename="hqcmain.cc" line="732"/>
-        <source>Discard changes</source>
-        <translation>Forkast</translation>
-    </message>
-    <message>
-        <location filename="hqcmain.cc" line="733"/>
-        <source>Continue</source>
-        <translation>Fortsett</translation>
-    </message>
-    <message>
-        <location filename="hqcmain.cc" line="750"/>
+        <location filename="hqcmain.cc" line="728"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Leser data for stasjon %1 for %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="544"/>
+        <location filename="hqcmain.cc" line="534"/>
         <source>Print screenshot</source>
         <translation>Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="568"/>
+        <location filename="hqcmain.cc" line="558"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="569"/>
+        <location filename="hqcmain.cc" line="559"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="614"/>
+        <location filename="hqcmain.cc" line="604"/>
         <source>The kvalobs databasen is not accessible.</source>
         <translation>Kvalobsdatabasen er dessverre ikke tilgjengelig.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="615"/>
+        <location filename="hqcmain.cc" line="605"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="677"/>
+        <location filename="hqcmain.cc" line="667"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="812"/>
+        <location filename="hqcmain.cc" line="790"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="813"/>
+        <location filename="hqcmain.cc" line="791"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>

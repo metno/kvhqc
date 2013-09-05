@@ -128,7 +128,7 @@ SET(watchrr2_SOURCES
   VersionedValue.hh
 )
 
-SET(watchrr2_TRANS watchrr2_nb.ts)
+SET(watchrr2_TRANS watchrr2_nb.ts watchrr2_de.ts)
 QT4_ADD_TRANSLATION(watchrr2_QM ${watchrr2_TRANS})
 
 INCLUDE_DIRECTORIES(

@@ -11,6 +11,9 @@ SET(weather_SOURCES
   WeatherTableModel.cc
 )
 
+SET(weather_TRANS weather_nb.ts weather_de.ts)
+QT4_ADD_TRANSLATION(weather_QM ${weather_TRANS})
+
 INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/include
   ${CMAKE_SOURCE_DIR}/authentication
@@ -32,16 +35,5 @@ ADD_LIBRARY(weather STATIC
   ${weather_QM}
 )
 
-#LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBSQT_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
-#ADD_EXECUTABLE(Weather
-#  src/main.cc)
-
-#TARGET_LINK_LIBRARIES(Weather
-#  weather authentication 
-#  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES}
-#  -lldap)
-
-#SET_TARGET_PROPERTIES(Weather PROPERTIES
-#  OUTPUT_NAME "WatchWeather-${PVERSION}.bin")
-
-#INSTALL(TARGETS Weather DESTINATION bin)
+INSTALL(FILES ${weather_QM}
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")

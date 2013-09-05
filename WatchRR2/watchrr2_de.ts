@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="nb_NO">
+<TS version="2.0" language="de_DE">
 <context>
     <name>AcceptRejectButtons</name>
     <message>
         <location filename="AcceptRejectButtons.cc" line="48"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Originalwert oder korrigierten Wert akzeptieren (abhängig von der gewählten Spalte).&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="AcceptRejectButtons.cc" line="51"/>
         <source>Accept</source>
-        <translation>Aksepter</translation>
+        <translation>Akzeptieren</translation>
     </message>
     <message>
         <location filename="AcceptRejectButtons.cc" line="52"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert verwerfen.&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="AcceptRejectButtons.cc" line="55"/>
         <source>Reject</source>
-        <translation>Forkast</translation>
+        <translation>Verwerfen</translation>
     </message>
     <message>
         <location filename="AcceptRejectButtons.cc" line="56"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestimmt, ob QC2 bei &lt;span style=&quot; font-style:italic;&quot;&gt;Akzeptieren&lt;/span&gt; und &lt;span style=&quot;font-style:italic;&quot;&gt;Verwerfen&lt;/span&gt; überschreiben darf.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="AcceptRejectButtons.cc" line="59"/>
@@ -39,24 +39,24 @@
     <message>
         <location filename="main.cc" line="104"/>
         <source>Authentication</source>
-        <translation>Autentisering</translation>
+        <translation>Authentisierung</translation>
     </message>
     <message>
         <location filename="main.cc" line="105"/>
         <source>You are not registered as operator, so you cannot save data!</source>
-        <translation>Du er ikke registrert som operatør, så du kan ikke lagre data!</translation>
+        <translation>Sie sind nicht als Operateur registriert, sie können daher keine Daten speichern!</translation>
     </message>
     <message>
         <location filename="main.cc" line="106"/>
         <source>Continue</source>
-        <translation>Fortsett</translation>
+        <translation>Weiter</translation>
     </message>
     <message>
         <location filename="main.cc" line="107"/>
         <location filename="main.cc" line="130"/>
         <location filename="main.cc" line="136"/>
         <source>Exit</source>
-        <translation>Avslutt</translation>
+        <translation>Beenden</translation>
     </message>
 </context>
 <context>
@@ -64,37 +64,37 @@
     <message>
         <location filename="Code2Text.cc" line="13"/>
         <source>new</source>
-        <translation>ny</translation>
+        <translation>neu</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="14"/>
         <source>row not in database</source>
-        <translation>ikke i databasen</translation>
+        <translation>nicht in Datenbank</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="15"/>
         <source>mis</source>
-        <translation>mis</translation>
+        <translation>fhlt</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="16"/>
         <source>value is missing</source>
-        <translation>verdien mangler</translation>
+        <translation>fehlender Wert</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="17"/>
         <source>rej</source>
-        <translation>rej</translation>
+        <translation>verw</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="17"/>
         <source>r</source>
-        <translation>r</translation>
+        <translation>v</translation>
     </message>
     <message>
         <location filename="Code2Text.cc" line="18"/>
         <source>value is rejected</source>
-        <translation>forkastet</translation>
+        <translation>Wert is verworfen</translation>
     </message>
 </context>
 <context>
@@ -102,7 +102,7 @@
     <message>
         <location filename="ColumnFactory.cc" line="30"/>
         <source>dry</source>
-        <translation>tørt</translation>
+        <translation>trocken</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="31"/>
@@ -112,7 +112,7 @@
     <message>
         <location filename="ColumnFactory.cc" line="32"/>
         <source>precipitation not reported</source>
-        <translation>nedbørmengde ikke meldt</translation>
+        <translation>keine Niederschlagsmenge angegeben</translation>
     </message>
 </context>
 <context>
@@ -120,7 +120,7 @@
     <message>
         <location filename="ColumnFactory.cc" line="37"/>
         <source>pat</source>
-        <translation>flk</translation>
+        <translation>flck</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="38"/>
@@ -130,22 +130,22 @@
     <message>
         <location filename="ColumnFactory.cc" line="39"/>
         <source>patchy snow</source>
-        <translation>flekkvis snø</translation>
+        <translation>fleckenweise Schnee</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="42"/>
         <source>no m.</source>
-        <translation>ing.m.</translation>
+        <translation>kne M.</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="43"/>
         <source>n</source>
-        <translation>i</translation>
+        <translation>k</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="44"/>
         <source>measurement impossible/inaccurate</source>
-        <translation>måling umulig eller unøyaktig</translation>
+        <translation>Messung nicht möglich/ungenau</translation>
     </message>
 </context>
 <context>
@@ -153,42 +153,30 @@
     <message>
         <location filename="ColumnFactory.cc" line="49"/>
         <source>no m.</source>
-        <oldsource>no r.</oldsource>
-        <translation>ing.m.</translation>
+        <translation>kne M.</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="50"/>
         <source>n</source>
-        <oldsource>b</oldsource>
-        <translation>i</translation>
+        <translation>k</translation>
     </message>
     <message>
         <location filename="ColumnFactory.cc" line="51"/>
         <source>snow cover not reported</source>
-        <translation>snødekke ikke meldt</translation>
+        <translation>Schneedecke nicht gemeldet</translation>
     </message>
 </context>
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="42"/>
-        <source>original</source>
-        <translation>original</translation>
-    </message>
-    <message>
-        <location filename="DataCorrectedItem.cc" line="83"/>
-        <source>corrected</source>
-        <translation>korrigert</translation>
+        <location filename="DataControlinfoItem.cc" line="38"/>
+        <source>flags</source>
+        <translation>Flags</translation>
     </message>
     <message>
         <location filename="DataControlinfoItem.cc" line="40"/>
         <source>controlflags</source>
-        <translation>kontrollflagg</translation>
-    </message>
-    <message>
-        <location filename="DataOriginalItem.cc" line="40"/>
-        <source>orig</source>
-        <translation>orig</translation>
+        <translation>Kontrollflags</translation>
     </message>
     <message>
         <location filename="DataCorrectedItem.cc" line="81"/>
@@ -196,9 +184,19 @@
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataControlinfoItem.cc" line="38"/>
-        <source>flags</source>
-        <translation>flagg</translation>
+        <location filename="DataCorrectedItem.cc" line="83"/>
+        <source>corrected</source>
+        <translation>korrigiert</translation>
+    </message>
+    <message>
+        <location filename="DataOriginalItem.cc" line="40"/>
+        <source>orig</source>
+        <translation>orig</translation>
+    </message>
+    <message>
+        <location filename="DataOriginalItem.cc" line="42"/>
+        <source>original</source>
+        <translation>original</translation>
     </message>
 </context>
 <context>
@@ -206,22 +204,22 @@
     <message>
         <location filename="DataValueItem.cc" line="91"/>
         <source>surely wrong</source>
-        <translation>sikkert feilaktig</translation>
+        <translation>mit Sicherheit falsch</translation>
     </message>
     <message>
         <location filename="DataValueItem.cc" line="93"/>
         <source>very suspicious (probably wrong)</source>
-        <translation>svært mistenkelig (antagelig feilaktig)</translation>
+        <translation>sehr verdächtig (wahrscheinlich falsch)</translation>
     </message>
     <message>
         <location filename="DataValueItem.cc" line="95"/>
         <source>suspicious (probably ok)</source>
-        <translation>noe mistenkelig (antagelig korrekt)</translation>
+        <translation>verdächtig (wahrscheinlich richtig)</translation>
     </message>
     <message>
         <location filename="DataValueItem.cc" line="97"/>
         <source>no quality info available</source>
-        <translation>kvalitetsinformasjon ikke gitt</translation>
+        <translation>keine Qualitätsinformation vorhanden</translation>
     </message>
 </context>
 <context>
@@ -229,79 +227,79 @@
     <message>
         <location filename="DataVxItem.cc" line="23"/>
         <source>no data</source>
-        <translation>ingen data</translation>
+        <translation>keine Daten</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="24"/>
         <source>rain</source>
-        <translation>regn</translation>
+        <translation>Regen</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="25"/>
         <source>rain shower</source>
-        <translation>regnbyge</translation>
+        <translation>Regenschauer</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="26"/>
         <source>snow</source>
-        <translation>snø</translation>
+        <translation>Schnee</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="27"/>
         <source>snow shower</source>
-        <translation>snøbyge</translation>
+        <translation>Schneeschauer</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="28"/>
         <source>sleet</source>
-        <translation>sludd</translation>
+        <translation>Graupeln</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="29"/>
         <source>sleet shower</source>
-        <translation>sluddbyge</translation>
+        <translation>Graupelschauer</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="30"/>
         <source>drizzle</source>
-        <translation>yr</translation>
+        <translation>Nieselregen</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="31"/>
         <source>hail</source>
-        <translation>hagl</translation>
+        <translation>Hagel</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="32"/>
         <source>dew</source>
-        <translation>dugg</translation>
+        <translation>Tau</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="33"/>
         <source>rime</source>
-        <translation>rim</translation>
+        <translation>Reif</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="34"/>
         <source>thunder</source>
-        <translation>torden</translation>
+        <translation>Donner</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="35"/>
         <source>snowflakes</source>
-        <translation>snøfokk</translation>
+        <translation>Schneeflocken</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="65"/>
         <location filename="DataVxItem.cc" line="110"/>
         <source>weak</source>
-        <translation>svakt</translation>
+        <translation>wenig</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="67"/>
         <location filename="DataVxItem.cc" line="112"/>
         <source>strong</source>
-        <translation>sterkt</translation>
+        <translation>viel</translation>
     </message>
 </context>
 <context>
@@ -309,17 +307,17 @@
     <message>
         <location filename="watchrr_edit.ui" line="17"/>
         <source>WatchRR - Single Values</source>
-        <translation>WatchRR - Enkeltverdier</translation>
+        <translation>WatchRR - Einzelwerte</translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="38"/>
         <source>&amp;Accept all</source>
-        <translation>&amp;Aksepter alt</translation>
+        <translation>Alle &amp;akzeptieren</translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="48"/>
         <source>&amp;Reject all</source>
-        <translation>Fo&amp;rkast alt</translation>
+        <translation>Alle &amp;verwerfen</translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="74"/>
@@ -329,7 +327,7 @@
     <message>
         <location filename="watchrr_edit.ui" line="84"/>
         <source>Cancel</source>
-        <translation>Avbryt</translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -339,69 +337,65 @@
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
-    <message utf8="true">
-        <location filename="watchrr_main.ui" line="73"/>
-        <source>&amp;Redistribute…</source>
-        <translation>Tilfo&amp;rdel…</translation>
+    <message>
+        <location filename="watchrr_main.ui" line="40"/>
+        <source>Precipitation Card</source>
+        <translation>Niederschlagskarte</translation>
     </message>
     <message utf8="true">
         <location filename="watchrr_main.ui" line="60"/>
         <source>&amp;Single values…</source>
-        <translation>&amp;Enkeltverdier…</translation>
+        <translation>&amp;Einzelwerte</translation>
     </message>
-    <message>
-        <location filename="watchrr_main.ui" line="40"/>
-        <source>Precipitation Card</source>
-        <translation>Nedbørkort</translation>
+    <message utf8="true">
+        <location filename="watchrr_main.ui" line="73"/>
+        <source>&amp;Redistribute…</source>
+        <translation>&amp;Verteilen</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="86"/>
         <source>Redistribute &amp;in QC2</source>
-        <oldsource>Redistribute in QC2</oldsource>
-        <translation>La QC2 t&amp;ilfordele</translation>
+        <translation>Verteilen &amp;in QC2</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="99"/>
         <source>&amp;Accept</source>
-        <translation>&amp;Aksepter</translation>
+        <translation>&amp;Akzeptieren</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="142"/>
         <source>Neighbor Precipitation</source>
-        <oldsource>Neighbor Stations</oldsource>
-        <translation>Nedbør Naboer</translation>
+        <translation>Niederschlag Nachbarn</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="165"/>
         <source>Neighbor Data</source>
-        <translation>Kortdata Naboer</translation>
+        <translation>Daten Nachbarn</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="239"/>
         <source>U&amp;ndo</source>
-        <oldsource>Undo</oldsource>
-        <translation>A&amp;ngre</translation>
+        <translation>&amp;Rückgängig</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="252"/>
         <source>Redo is not yet implemented, sorry.</source>
-        <oldsource>redo is not yet implemented, sorry</oldsource>
-        <translation>Beklager, gjenta er ikke ennå implementert.</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="255"/>
         <source>Redo</source>
-        <translation>Gjenta</translation>
+        <translation>Wiederherstellen</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="284"/>
         <source>&amp;Save</source>
-        <translation>&amp;Lagre</translation>
+        <translation>&amp;Speichern</translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="294"/>
         <source>Close</source>
-        <translation>Lukk</translation>
+        <translation>Schließen</translation>
     </message>
 </context>
 <context>
@@ -409,7 +403,7 @@
     <message>
         <location filename="watchrr_redist.ui" line="17"/>
         <source>WatchRR - Redistribution</source>
-        <translation>WatchRR - Tilfordeling</translation>
+        <translation>WatchRR - Verteilung</translation>
     </message>
     <message>
         <location filename="watchrr_redist.ui" line="91"/>
@@ -419,7 +413,7 @@
     <message>
         <location filename="watchrr_redist.ui" line="101"/>
         <source>Cancel</source>
-        <translation>Abvryt</translation>
+        <translation>Abbrechen</translation>
     </message>
 </context>
 <context>
@@ -427,22 +421,22 @@
     <message>
         <location filename="watchrr_station.ui" line="17"/>
         <source>WatchRR -- Station</source>
-        <translation>WatchRR -- Stasjon</translation>
+        <translation>WatchRR -- Station</translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="23"/>
         <source>Station:</source>
-        <translation>Stasjon:</translation>
+        <translation>Station:</translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="40"/>
         <source>From:</source>
-        <translation>Fra:</translation>
+        <translation>Von:</translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="57"/>
         <source>To:</source>
-        <translation>Til:</translation>
+        <translation>Bis:</translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="74"/>
@@ -452,12 +446,12 @@
     <message>
         <location filename="watchrr_station.ui" line="103"/>
         <source>Cancel</source>
-        <translation>Avbryt</translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="113"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -465,7 +459,7 @@
     <message>
         <location filename="EditDialog.cc" line="23"/>
         <source>Station %1 [%2]</source>
-        <translation>Stasjon %1 [%2]</translation>
+        <translation>Station %1 [%2]</translation>
     </message>
 </context>
 <context>
@@ -473,27 +467,27 @@
     <message>
         <location filename="Helpers.cc" line="244"/>
         <source>Unknown or invalid flag value</source>
-        <translation>Ukjent eller ugylig flagg-verdi</translation>
+        <translation>Unbekannter oder ungültiger Flag-Wert</translation>
     </message>
     <message>
         <location filename="Helpers.cc" line="539"/>
         <source>There are %1 unsaved data updates.</source>
-        <translation>Det er %1 ulagrede endringer.</translation>
+        <translation>Es gibt %1 ungespeicherte Änderungen.</translation>
     </message>
     <message>
         <location filename="Helpers.cc" line="540"/>
         <source>Are you sure that you want to lose them?</source>
-        <translation>Er du sikker at du vil miste dem?</translation>
+        <translation>Sind Sie sicher, dass Die diese verwerfen möchten?</translation>
     </message>
     <message>
         <location filename="Helpers.cc" line="541"/>
         <source>Discard changes</source>
-        <translation>Miste endringer</translation>
+        <translation>Änderungen verwerfen</translation>
     </message>
     <message>
         <location filename="Helpers.cc" line="542"/>
         <source>Continue</source>
-        <translation>Fortsett</translation>
+        <translation>Weiter</translation>
     </message>
 </context>
 <context>
@@ -507,13 +501,12 @@
     <message>
         <location filename="main.cc" line="129"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
-        <oldsource>Your changes could not be saved, sorry!</oldsource>
-        <translation>Beklager, dine endringer ble ikke lagret or er mistet!</translation>
+        <translation>Leider konnten Ihre Änderungen nicht gespeichert werden, sie sind verloren gegangen.</translation>
     </message>
     <message>
         <location filename="main.cc" line="135"/>
         <source>Your changes have been saved.</source>
-        <translation>Dine endringer ble lagret.</translation>
+        <translation>Ihre Änderungen wurden gespeichert.</translation>
     </message>
 </context>
 <context>
@@ -521,27 +514,27 @@
     <message>
         <location filename="MainDialog.cc" line="59"/>
         <source>Station %1 [%2]</source>
-        <translation>Stasjon %1 [%2]</translation>
+        <translation>Station %1 [%2]</translation>
     </message>
     <message>
         <location filename="MainDialog.cc" line="78"/>
         <source>[not daily]</source>
-        <translation>[ikke daglig]</translation>
+        <translation>[nicht täglich]</translation>
     </message>
     <message>
         <location filename="MainDialog.cc" line="171"/>
         <source>Sum: %1mm</source>
-        <translation>Sum: %1mm</translation>
+        <translation>Summe: %1mm</translation>
     </message>
     <message>
         <location filename="MainDialog.cc" line="328"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
-        <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
+        <translation>Kvalobs-Daten, die Sie bearbeiten, wurden geändert. Sie müssen von vorne beginnen. Sorry!</translation>
     </message>
     <message>
         <location filename="MainDialog.cc" line="329"/>
         <source>Quit and Discard changes</source>
-        <translation>Avslutt og forkast endringer</translation>
+        <translation>Beenden und Änderungen verlieren</translation>
     </message>
 </context>
 <context>
@@ -549,67 +542,65 @@
     <message>
         <location filename="RedistDialog.cc" line="27"/>
         <source>Station %1 [%2]</source>
-        <translation>Stasjon %1 [%2]</translation>
+        <translation>Station %1 [%2]</translation>
     </message>
     <message>
         <location filename="RedistDialog.cc" line="40"/>
         <source>Sum: %1mm</source>
-        <translation>Sum: %1mm</translation>
+        <translation>Summe: %1mm</translation>
     </message>
     <message>
         <location filename="RedistDialog.cc" line="44"/>
         <source>Difference %1mm to original sum %2mm!</source>
-        <oldsource>Difference %2mm to original sum %3mm!</oldsource>
-        <translation>%1mm differanse til original oppsamling %2mm!</translation>
+        <translation>Differenz %1mm zur Original-Summe %2mm!</translation>
     </message>
 </context>
 <context>
     <name>SensorHeader</name>
-    <message>
-        <location filename="SensorHeader.cc" line="33"/>
-        <source>Parameter %1 %2</source>
-        <translation>Parameter %1 %2</translation>
-    </message>
     <message>
         <location filename="SensorHeader.cc" line="26"/>
         <source>Sensor %1 Type %2</source>
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
+        <location filename="SensorHeader.cc" line="33"/>
+        <source>Parameter %1 %2</source>
+        <translation>Parameter %1 %2</translation>
+    </message>
+    <message>
         <location filename="SensorHeader.cc" line="56"/>
         <source>Parameter %1 model value</source>
-        <oldsource>Parameter %3 model value</oldsource>
-        <translation>Parameter %1 modellverdi</translation>
+        <translation>Parameter %1 Modellwert</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="60"/>
         <source>model</source>
-        <translation>modell</translation>
+        <translation>Modell</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="89"/>
         <source>+%1h</source>
-        <translation>+%1t</translation>
+        <translation>+%1h</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="90"/>
         <source>time offset +%1 hour(s)</source>
-        <translation>tidsskift +%1 time(r)</translation>
+        <translation>Zeitverschiebung +%1 Stunde(n)</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="93"/>
         <source>-%1h</source>
-        <translation>-%1t</translation>
+        <translation>-%1h</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="94"/>
         <source>time offset -%1 hour(s)</source>
-        <translation>tidsskift -%1 time(r)</translation>
+        <translation>Zeitverschiebung -%1 Stunde(n)</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="108"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
-        <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
+        <translation>Station %1 [%2, %3müNN] Niveau %4</translation>
     </message>
 </context>
 <context>
@@ -617,32 +608,32 @@
     <message>
         <location filename="StationDialog.cc" line="73"/>
         <source>invalid station or date range</source>
-        <translation>ugyldig stasjon eller tidsrom</translation>
+        <translation>ungültige Station oder ungültiger Zeitraum</translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="89"/>
         <source>Cannot read station number</source>
-        <translation>Kan ikke lese stasjonsnummeret</translation>
+        <translation>Kann Stationsnummer nicht lesen</translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="93"/>
         <source>Invalid station number</source>
-        <translation>Ugyldig stasjonsnummer</translation>
+        <translation>Ungültige Stationsnummer</translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="100"/>
         <source>problem loading obs_pgm</source>
-        <translation>Kan ikke lese obs_pgm</translation>
+        <translation>Problem beim Lesen von obs_pgm</translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="123"/>
         <source>could not find typeid</source>
-        <translation>kan ikke finne typeid</translation>
+        <translation>Konnte typeid nicht finden</translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="128"/>
         <source>typeid different at start and end</source>
-        <translation>forskjellige typeid ved start og slutt</translation>
+        <translation>Verschiedene typeid bei Anfang und Ende</translation>
     </message>
 </context>
 <context>
@@ -650,85 +641,85 @@
     <message>
         <location filename="Tasks.cc" line="23"/>
         <source>missing observation</source>
-        <translation>manglende observasjon</translation>
+        <translation>manglende Observation</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="25"/>
         <source>HQC flags set before redistribution</source>
-        <translation>HQC flagg sett før tilfordeling</translation>
+        <translation>HQC Flags vor Verteilung gesetzt</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="27"/>
         <source>HQC flags set for automatic redistribution</source>
-        <translation>HQC flagg sett for en automatisk tilfordeling</translation>
+        <translation>HQC Flags gesetzt für automatische Verteilung</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="29"/>
         <source>endpoint without any days of accumulation</source>
-        <translation>oppsamling uten mangelrader</translation>
+        <translation>Endpunkt ohne Aufsammlungs-Tage</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="31"/>
         <source>no endpoint for accumulation found</source>
-        <translation>oppsamling uten oppsamlet verdi</translation>
+        <translation>Kein Endpunkt für Aufsammlung</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="33"/>
         <source>redistribution partially not done or done by QC2 or HQC</source>
-        <translation>tilfordeling gjort delvis ikke eller av QC2 eller av HQC</translation>
+        <translation>Verteilung unvollständig oder teilweise durch QC2 oder HQC</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="35"/>
         <source>unusual observation, might be an accumulated value</source>
-        <translation>unvanglig observasjon, kan være oppsamlet verdi</translation>
+        <translation>ungewöhnliche Observation, könnte ein Sammelwert sein</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="37"/>
         <source>previously part of an accumulation</source>
-        <translation>tidligere del av en oppsamling</translation>
+        <translation>früher Teil einer Sammelperiode</translation>
     </message>
     <message>
         <location filename="Tasks.cc" line="39"/>
         <source>consistency error</source>
-        <translation>konsistens-feil</translation>
+        <translation>Konsistenzfehler</translation>
     </message>
 </context>
 <context>
     <name>TimeHeader</name>
     <message>
+        <location filename="TimeHeader.cc" line="8"/>
+        <source>Sun</source>
+        <translation>So</translation>
+    </message>
+    <message>
         <location filename="TimeHeader.cc" line="9"/>
         <source>Mon</source>
-        <translation>Man</translation>
+        <translation>Mo</translation>
     </message>
     <message>
         <location filename="TimeHeader.cc" line="10"/>
         <source>Tue</source>
-        <translation>Tir</translation>
+        <translation>Di</translation>
     </message>
     <message>
         <location filename="TimeHeader.cc" line="11"/>
         <source>Wed</source>
-        <translation>Ons</translation>
+        <translation>Mi</translation>
     </message>
     <message>
         <location filename="TimeHeader.cc" line="12"/>
         <source>Thu</source>
-        <translation>Tor</translation>
+        <translation>Do</translation>
     </message>
     <message>
         <location filename="TimeHeader.cc" line="13"/>
         <source>Fri</source>
-        <translation>Fre</translation>
+        <translation>Fr</translation>
     </message>
     <message>
         <location filename="TimeHeader.cc" line="14"/>
         <source>Sat</source>
-        <translation>Lør</translation>
-    </message>
-    <message>
-        <location filename="TimeHeader.cc" line="8"/>
-        <source>Sun</source>
-        <translation>Søn</translation>
+        <translation>Sa</translation>
     </message>
 </context>
 </TS>
