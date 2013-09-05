@@ -75,6 +75,7 @@ Code2TextCPtr codesForParam(int pid)
     if (not haveDecimals and hqcApp) {
       QSqlQuery queryDecimals(hqcApp->systemDB());
       queryDecimals.prepare("SELECT decimals FROM param_decimals WHERE paramid = ?");
+      queryDecimals.bindValue(0, pid);
       queryDecimals.exec();
       if (queryDecimals.next()) {
         haveDecimals = true;
