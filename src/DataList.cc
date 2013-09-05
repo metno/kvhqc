@@ -29,7 +29,7 @@
 #include "HqcLogging.hh"
 
 struct DataList::lt_Column : public std::binary_function<Column, Column, bool> {
-    bool operator()(const Column& a, const Column& b) const
+  bool operator()(const Column& a, const Column& b) const
     {
       if (not eq_Sensor()(a.sensor, b.sensor))
         return lt_Sensor()(a.sensor, b.sensor);
@@ -40,8 +40,9 @@ struct DataList::lt_Column : public std::binary_function<Column, Column, bool> {
 };
 
 DataList::DataList(QWidget* parent)
-    : QWidget(parent)
-    , ui(new Ui::DataList)
+  : QWidget(parent)
+  , ui(new Ui::DataList)
+  , mShowDistances(false)
 {
   ui->setupUi(this);
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
@@ -93,23 +94,23 @@ DataList::~DataList()
 
 void DataList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    DataView::setSensorsAndTimes(sensors, limits);
-    mOriginalTimeLimits = limits;
-    mTimeLimits = limits;
+  DataView::setSensorsAndTimes(sensors, limits);
+  mOriginalTimeLimits = limits;
+  mTimeLimits = limits;
 
-    mColumns = Columns_t();
-    BOOST_FOREACH(const Sensor& s, sensors) {
-        Column c;
-        c.sensor = s;
-        c.type = ORIGINAL;
-        c.timeOffset = 0;
-        mColumns.push_back(c);
-        c.type = CORRECTED;
-        mColumns.push_back(c);
-    }
-    mOriginalColumns = mColumns;
+  mColumns = Columns_t();
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    Column c;
+    c.sensor = s;
+    c.type = ORIGINAL;
+    c.timeOffset = 0;
+    mColumns.push_back(c);
+    c.type = CORRECTED;
+    mColumns.push_back(c);
+  }
+  mOriginalColumns = mColumns;
 
-    updateModel();
+  updateModel();
 }
 
 void DataList::updateModel()
@@ -121,6 +122,10 @@ void DataList::updateModel()
     if (oc)
       newModel->addColumn(oc);
   }
+  if (mShowDistances and not mColumns.empty())
+    newModel->setCenter(mColumns[0].sensor.stationId);
+  else
+    newModel->setCenter(0);
   
   mTableModel = newModel;
   ui->table->setModel(mTableModel.get());
@@ -133,73 +138,73 @@ void DataList::updateModel()
 
 ObsColumnPtr DataList::makeColumn(const Column& c)
 {
-    boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
+  boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
 
-    if (c.type == MODEL) {
-        ModelColumnPtr mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
-        mc->setTimeOffset(toff);
-        return mc;
-    } else {
-        ObsColumn::Type cdt = ObsColumn::NEW_CORRECTED;
-        if (c.type == ORIGINAL)
-            cdt = ObsColumn::ORIGINAL;
-        else if (c.type == FLAGS)
-            cdt = ObsColumn::NEW_CONTROLINFO;
-        DataColumnPtr dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
-        if (dc)
-          dc->setTimeOffset(toff);
-        return dc;
-    }
+  if (c.type == MODEL) {
+    ModelColumnPtr mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
+    mc->setTimeOffset(toff);
+    return mc;
+  } else {
+    ObsColumn::Type cdt = ObsColumn::NEW_CORRECTED;
+    if (c.type == ORIGINAL)
+      cdt = ObsColumn::ORIGINAL;
+    else if (c.type == FLAGS)
+      cdt = ObsColumn::NEW_CONTROLINFO;
+    DataColumnPtr dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
+    if (dc)
+      dc->setTimeOffset(toff);
+    return dc;
+  }
 }
 
 void DataList::navigateTo(const SensorTime& st)
 {
-    METLIBS_LOG_SCOPE();
-    if (not st.valid() or eq_SensorTime()(mSensorTime, st))
-        return;
+  METLIBS_LOG_SCOPE();
+  if (not st.valid() or eq_SensorTime()(mSensorTime, st))
+    return;
 
-    mSensorTime = st;
-    METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
+  mSensorTime = st;
+  METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
 
-    const QModelIndexList idxs = mTableModel->findIndexes(st);
+  const QModelIndexList idxs = mTableModel->findIndexes(st);
 
-    const QModelIndex& currentIdx = ui->table->currentIndex();
-    QItemSelection selection;
-    bool scroll = (not idxs.empty());
-    BOOST_FOREACH(const QModelIndex idx, idxs) {
-        selection.select(idx, idx);
-        if (idx == currentIdx)
-            scroll = false;
-    }
-    if (scroll) {
-      ui->table->scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
-      ui->table->scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
-    }
-    if (QItemSelectionModel* sm = ui->table->selectionModel())
-      sm->select(selection, QItemSelectionModel::ClearAndSelect);
+  const QModelIndex& currentIdx = ui->table->currentIndex();
+  QItemSelection selection;
+  bool scroll = (not idxs.empty());
+  BOOST_FOREACH(const QModelIndex idx, idxs) {
+    selection.select(idx, idx);
+    if (idx == currentIdx)
+      scroll = false;
+  }
+  if (scroll) {
+    ui->table->scrollTo(idxs.front(), QAbstractItemView::PositionAtCenter);
+    ui->table->scrollTo(idxs.back(), QAbstractItemView::PositionAtCenter);
+  }
+  if (QItemSelectionModel* sm = ui->table->selectionModel())
+    sm->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
 void DataList::currentChanged(const QModelIndex& current)
 {
-    METLIBS_LOG_SCOPE();
-    const SensorTime st = mTableModel->findSensorTime(current);
-    METLIBS_LOG_DEBUG(LOGVAL(st));
-    if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
-      mSensorTime = st;
-      /*emit*/ signalNavigateTo(st);
-    }
+  METLIBS_LOG_SCOPE();
+  const SensorTime st = mTableModel->findSensorTime(current);
+  METLIBS_LOG_DEBUG(LOGVAL(st));
+  if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
+    mSensorTime = st;
+    /*emit*/ signalNavigateTo(st);
+  }
 }
 
 void DataList::onEarlier()
 {
-    mTimeLimits = TimeRange(mTimeLimits.t0() - boost::posix_time::hours(24), mTimeLimits.t1());
-    updateModel();
+  mTimeLimits = TimeRange(mTimeLimits.t0() - boost::posix_time::hours(24), mTimeLimits.t1());
+  updateModel();
 }
 
 void DataList::onLater()
 {
-    mTimeLimits = TimeRange(mTimeLimits.t0(), mTimeLimits.t1() + boost::posix_time::hours(24));
-    updateModel();
+  mTimeLimits = TimeRange(mTimeLimits.t0(), mTimeLimits.t1() + boost::posix_time::hours(24));
+  updateModel();
 }
 
 void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
@@ -316,53 +321,53 @@ static const char E_TAG_TSHIFT[]  = "timeshift";
 
 void DataList::Column::toText(QDomElement& ce) const
 {
-    ce.setAttribute(C_ATTR_STATIONID, sensor.stationId);
-    ce.setAttribute(C_ATTR_PARAMID,   sensor.paramId);
-    ce.setAttribute(C_ATTR_TYPEID,    sensor.typeId);
-    QString ctype;
-    switch (type) {
-    case CORRECTED: ctype = "CORRECTED"; break;
-    case ORIGINAL:  ctype = "ORIGINAL";  break;
-    case FLAGS:     ctype = "FLAGS";     break;
-    case MODEL:     ctype = "MODEL";     break;
-    }
-    ce.setAttribute(C_ATTR_CTYPE, ctype);
-    if (timeOffset != 0)
-        ce.setAttribute(C_ATTR_TOSSFET, timeOffset);
+  ce.setAttribute(C_ATTR_STATIONID, sensor.stationId);
+  ce.setAttribute(C_ATTR_PARAMID,   sensor.paramId);
+  ce.setAttribute(C_ATTR_TYPEID,    sensor.typeId);
+  QString ctype;
+  switch (type) {
+  case CORRECTED: ctype = "CORRECTED"; break;
+  case ORIGINAL:  ctype = "ORIGINAL";  break;
+  case FLAGS:     ctype = "FLAGS";     break;
+  case MODEL:     ctype = "MODEL";     break;
+  }
+  ce.setAttribute(C_ATTR_CTYPE, ctype);
+  if (timeOffset != 0)
+    ce.setAttribute(C_ATTR_TOSSFET, timeOffset);
 }
 
 void DataList::Column::fromText(const QDomElement& ce)
 {
-    sensor.stationId = ce.attribute(C_ATTR_STATIONID).toInt();
-    sensor.paramId   = ce.attribute(C_ATTR_PARAMID)  .toInt();
-    sensor.typeId    = ce.attribute(C_ATTR_TYPEID)   .toInt();
-    const QString ctype = ce.attribute(C_ATTR_CTYPE);
-    if      (ctype == "CORRECTED") type = CORRECTED;
-    else if (ctype == "ORIGINAL")  type = ORIGINAL;
-    else if (ctype == "FLAGS")     type = FLAGS;
-    else if (ctype == "MODEL")     type = MODEL;
-    if (ce.hasAttribute(C_ATTR_TOSSFET))
-        timeOffset = ce.attribute(C_ATTR_TOSSFET).toInt();
-    else
-        timeOffset = 0;
+  sensor.stationId = ce.attribute(C_ATTR_STATIONID).toInt();
+  sensor.paramId   = ce.attribute(C_ATTR_PARAMID)  .toInt();
+  sensor.typeId    = ce.attribute(C_ATTR_TYPEID)   .toInt();
+  const QString ctype = ce.attribute(C_ATTR_CTYPE);
+  if      (ctype == "CORRECTED") type = CORRECTED;
+  else if (ctype == "ORIGINAL")  type = ORIGINAL;
+  else if (ctype == "FLAGS")     type = FLAGS;
+  else if (ctype == "MODEL")     type = MODEL;
+  if (ce.hasAttribute(C_ATTR_TOSSFET))
+    timeOffset = ce.attribute(C_ATTR_TOSSFET).toInt();
+  else
+    timeOffset = 0;
 }
 
 void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nVis)
 {
-    if (logicalIndex != oVis)
-        return;
+  if (logicalIndex != oVis)
+    return;
 
-    const int from = logicalIndex, to = nVis;
-    ui->table->horizontalHeader()->moveSection(to, from);
-    mTableModel->moveColumn(from, to); // move back and switch model columns instead
+  const int from = logicalIndex, to = nVis;
+  ui->table->horizontalHeader()->moveSection(to, from);
+  mTableModel->moveColumn(from, to); // move back and switch model columns instead
 
-    const Column c = mColumns[from];
-    mColumns.erase(mColumns.begin() + from);
-    mColumns.insert(mColumns.begin() + to, c);
+  const Column c = mColumns[from];
+  mColumns.erase(mColumns.begin() + from);
+  mColumns.insert(mColumns.begin() + to, c);
 
-    mColumnReset->setEnabled(false);
+  mColumnReset->setEnabled(false);
 
-    //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 std::string DataList::changes()
@@ -485,57 +490,57 @@ void DataList::onButtonSaveAs()
   if (fileName.isEmpty())
     return;
   
-   QFile file(fileName);
-   file.open(QIODevice::WriteOnly | QIODevice::Text);
+  QFile file(fileName);
+  file.open(QIODevice::WriteOnly | QIODevice::Text);
 
-   int r0, r1, c0, c1;
+  int r0, r1, c0, c1;
 
-   std::set<int> selectedRows, selectedColumns;
-   std::set< std::pair<int,int> > selectedCells;
-   QModelIndexList selected;
-   if (QItemSelectionModel* sm = ui->table->selectionModel())
-     selected = sm->selectedIndexes();
-   if (not selected.isEmpty()) {
-     for (int i=0; i<selected.count(); i++) {
-       const int r = selected.at(i).row(), c = selected.at(i).column();
-       selectedRows.insert(r);
-       selectedColumns.insert(c);
-       selectedCells.insert(std::make_pair(r, c));
-     }
-     r0 = *selectedRows.begin();
-     r1 = *selectedRows.rbegin();
-     c0 = *selectedColumns.begin();
-     c1 = *selectedColumns.rbegin();
-   } else {
-     r0 = 0;
-     r1 = mTableModel->rowCount(QModelIndex())-1; // no problem if < 0
-     c0 = 0;
-     c1 = mTableModel->columnCount(QModelIndex())-1; // no problem if < 0
-   }
+  std::set<int> selectedRows, selectedColumns;
+  std::set< std::pair<int,int> > selectedCells;
+  QModelIndexList selected;
+  if (QItemSelectionModel* sm = ui->table->selectionModel())
+    selected = sm->selectedIndexes();
+  if (not selected.isEmpty()) {
+    for (int i=0; i<selected.count(); i++) {
+      const int r = selected.at(i).row(), c = selected.at(i).column();
+      selectedRows.insert(r);
+      selectedColumns.insert(c);
+      selectedCells.insert(std::make_pair(r, c));
+    }
+    r0 = *selectedRows.begin();
+    r1 = *selectedRows.rbegin();
+    c0 = *selectedColumns.begin();
+    c1 = *selectedColumns.rbegin();
+  } else {
+    r0 = 0;
+    r1 = mTableModel->rowCount(QModelIndex())-1; // no problem if < 0
+    c0 = 0;
+    c1 = mTableModel->columnCount(QModelIndex())-1; // no problem if < 0
+  }
 
-   QTextStream out(&file);
+  QTextStream out(&file);
 
-   out << "\"\"";
-   for (int c=c0; c<=c1; ++c) {
-     if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end())
-       out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
-   }
-   out << "\n";
+  out << "\"\"";
+  for (int c=c0; c<=c1; ++c) {
+    if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end())
+      out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
+  }
+  out << "\n";
 
-   for (int r=r0; r<=r1; ++r) {
-     if (selectedRows.empty() or selectedRows.find(r) != selectedRows.end()) {
-       out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
-       for (int c=c0; c<=c1; ++c) {
-         if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end()) {
-           QString cell;
-           if (selectedCells.empty() or selectedCells.find(std::make_pair(r, c)) != selectedCells.end())
-             cell = protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole));
-           out << "\t\"" << cell << '\"';
-         }
-       }
-       out << "\n";
-     }
-   }
+  for (int r=r0; r<=r1; ++r) {
+    if (selectedRows.empty() or selectedRows.find(r) != selectedRows.end()) {
+      out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
+      for (int c=c0; c<=c1; ++c) {
+        if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end()) {
+          QString cell;
+          if (selectedCells.empty() or selectedCells.find(std::make_pair(r, c)) != selectedCells.end())
+            cell = protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole));
+          out << "\t\"" << cell << '\"';
+        }
+      }
+      out << "\n";
+    }
+  }
  
-   file.close(); 
+  file.close(); 
 }

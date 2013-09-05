@@ -405,22 +405,22 @@
         <translation>Unbekannter oder ungültiger Flag-Wert</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="538"/>
+        <location filename="Helpers.cc" line="539"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Es gibt %1 ungespeicherte Änderungen.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="539"/>
+        <location filename="Helpers.cc" line="540"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Sind Sie sicher, dass Die diese verwerfen möchten?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="540"/>
+        <location filename="Helpers.cc" line="541"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="541"/>
+        <location filename="Helpers.cc" line="542"/>
         <source>Continue</source>
         <translation>Weiter</translation>
     </message>
@@ -498,42 +498,42 @@
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="33"/>
+        <location filename="SensorHeader.cc" line="31"/>
         <source>Parameter %1 %2</source>
         <translation>Parameter %1 %2</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="56"/>
+        <location filename="SensorHeader.cc" line="52"/>
         <source>Parameter %1 model value</source>
         <translation>Parameter %1 Modellwert</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="60"/>
+        <location filename="SensorHeader.cc" line="56"/>
         <source>model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="89"/>
+        <location filename="SensorHeader.cc" line="82"/>
         <source>+%1h</source>
         <translation>+%1h</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="90"/>
+        <location filename="SensorHeader.cc" line="83"/>
         <source>time offset +%1 hour(s)</source>
         <translation>Zeitverschiebung +%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="93"/>
+        <location filename="SensorHeader.cc" line="86"/>
         <source>-%1h</source>
         <translation>-%1h</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="94"/>
+        <location filename="SensorHeader.cc" line="87"/>
         <source>time offset -%1 hour(s)</source>
         <translation>Zeitverschiebung -%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="108"/>
+        <location filename="SensorHeader.cc" line="101"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Station %1 [%2, %3müNN] Niveau %4</translation>
     </message>

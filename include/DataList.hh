@@ -39,6 +39,9 @@ public:
   virtual void replay(const std::string& changes);
   virtual std::string type() const;
   virtual std::string id() const;
+
+  void setShowDistances(bool showDistances)
+    { mShowDistances = showDistances; }
   
 public:
   enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
@@ -87,6 +90,8 @@ private:
 
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
+
+  bool mShowDistances;
 };
 
 #endif // DataList_hh

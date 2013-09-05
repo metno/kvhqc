@@ -172,7 +172,9 @@ HqcMainWindow::HqcMainWindow()
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
 
+  mAutoDataList->setShowDistances(true);
   mAutoDataList->setDataAccess(eda, kma);
+
   mTimeSeriesView->setDataAccess(eda, kma);
 
   mAutoColumnView->attachView(mAutoDataList);

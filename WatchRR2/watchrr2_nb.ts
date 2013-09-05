@@ -409,22 +409,22 @@
         <translation>Ukjent eller ugylig flagg-verdi</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="538"/>
+        <location filename="Helpers.cc" line="539"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="539"/>
+        <location filename="Helpers.cc" line="540"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="540"/>
+        <location filename="Helpers.cc" line="541"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="541"/>
+        <location filename="Helpers.cc" line="542"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
@@ -499,7 +499,7 @@
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="SensorHeader.cc" line="33"/>
+        <location filename="SensorHeader.cc" line="31"/>
         <source>Parameter %1 %2</source>
         <translation>Parameter %1 %2</translation>
     </message>
@@ -509,38 +509,38 @@
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="56"/>
+        <location filename="SensorHeader.cc" line="52"/>
         <source>Parameter %1 model value</source>
         <oldsource>Parameter %3 model value</oldsource>
         <translation>Parameter %1 modellverdi</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="60"/>
+        <location filename="SensorHeader.cc" line="56"/>
         <source>model</source>
         <translation>modell</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="89"/>
+        <location filename="SensorHeader.cc" line="82"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="90"/>
+        <location filename="SensorHeader.cc" line="83"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="93"/>
+        <location filename="SensorHeader.cc" line="86"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="94"/>
+        <location filename="SensorHeader.cc" line="87"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="SensorHeader.cc" line="108"/>
+        <location filename="SensorHeader.cc" line="101"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
     </message>

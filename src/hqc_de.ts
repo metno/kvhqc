@@ -73,7 +73,7 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="DataList.cc" line="52"/>
+        <location filename="DataList.cc" line="53"/>
         <source>Reset columns</source>
         <translation>Spalten zurücksetzen</translation>
     </message>
@@ -100,32 +100,32 @@
         <translation>Speichern…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="61"/>
+        <location filename="DataList.cc" line="62"/>
         <source>Earlier</source>
         <translation>Früher</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="66"/>
+        <location filename="DataList.cc" line="67"/>
         <source>Later</source>
         <translation>Später</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="50"/>
+        <location filename="DataList.cc" line="51"/>
         <source>Add column...</source>
         <translation>Spalte hinzufügen…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="51"/>
+        <location filename="DataList.cc" line="52"/>
         <source>Remove column</source>
         <translation>Spalte entfernen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="482"/>
+        <location filename="DataList.cc" line="487"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="484"/>
+        <location filename="DataList.cc" line="489"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -196,6 +196,14 @@
         <location filename="dl_addcolumn.ui" line="165"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
+    </message>
+</context>
+<context>
+    <name>DataListModel</name>
+    <message>
+        <location filename="DataListModel.cc" line="126"/>
+        <source>Distance: %1km</source>
+        <translation>Abstand: %1km</translation>
     </message>
 </context>
 <context>
@@ -912,93 +920,93 @@ Parameter</translation>
         <translation>&amp;Bildschirmfoto</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="246"/>
+        <location filename="hqcmain.cc" line="247"/>
         <source>&lt;h1&gt;Authentication&lt;/h1&gt;You are not registered as operator! You can see the data list, error log and error list, but you cannot make changes in the kvalobs database!</source>
         <translation>&lt;h1&gt;Authentifizierung&lt;/h1&gt;Sie sind nicht als Operateur registriert! Sie können die Daten- und Fehlerlisten sehen, aber keine Änderungen in kvalobs speichern!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="252"/>
+        <location filename="hqcmain.cc" line="253"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Willkommen zu kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="268"/>
+        <location filename="hqcmain.cc" line="269"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
         <translation>&lt;h1&gt;Diana-Verbindung&lt;/h1&gt;Kein Kontakt mit diana! Sie sollten hqc und diana mit dem Kommando-server verbinden, indem Sie den Knopf unten rechts drücken.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="278"/>
+        <location filename="hqcmain.cc" line="279"/>
         <source>No stations selected! At least one statione must be chosen.</source>
         <translation>Keine Stationen ausgwählt. Mindestens eine Station muss gewählt werden.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="288"/>
+        <location filename="hqcmain.cc" line="289"/>
         <source>Weather Element</source>
         <translation>Wetter-Element</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="277"/>
+        <location filename="hqcmain.cc" line="278"/>
         <source>Station Selection</source>
         <translation>Stastionswahl</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="289"/>
+        <location filename="hqcmain.cc" line="290"/>
         <source>No weather element selected! At least one has to be chosen.</source>
         <translation>Kein Wetter-Element ausgewählt. Mindestens eins muss ausgewählt werden.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="333"/>
+        <location filename="hqcmain.cc" line="334"/>
         <source>Building data list...</source>
         <translation>Baue Datenliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="326"/>
+        <location filename="hqcmain.cc" line="327"/>
         <source>Building error list...</source>
         <translation>Baue Fehlerliste...</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="200"/>
+        <location filename="hqcmain.cc" line="201"/>
         <source>Auto List/Series</source>
         <translation>Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="303"/>
+        <location filename="hqcmain.cc" line="304"/>
         <source>Building station list...</source>
         <translation>Baue Stationsliste…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="339"/>
+        <location filename="hqcmain.cc" line="340"/>
         <source>Selected Data</source>
         <translation>Ausgewählte Daten</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="404"/>
+        <location filename="hqcmain.cc" line="405"/>
         <source>No RejectDecode</source>
         <translation>Kein RejectDecode</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="404"/>
+        <location filename="hqcmain.cc" line="405"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kann rejectdecode nicht lesen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="441"/>
+        <location filename="hqcmain.cc" line="442"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="442"/>
+        <location filename="hqcmain.cc" line="443"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Ihre Änderungen konnten nicht gespeichert werden und sind leider verloren!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="443"/>
-        <location filename="hqcmain.cc" line="659"/>
+        <location filename="hqcmain.cc" line="444"/>
+        <location filename="hqcmain.cc" line="660"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="624"/>
+        <location filename="hqcmain.cc" line="625"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1009,67 +1017,67 @@ You are using HQC version %1.</source>
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="657"/>
+        <location filename="hqcmain.cc" line="658"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Daten Speichern</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="658"/>
+        <location filename="hqcmain.cc" line="659"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="662"/>
+        <location filename="hqcmain.cc" line="663"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Daten gespeichert&lt;/h1&gt;Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="671"/>
+        <location filename="hqcmain.cc" line="672"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-Datenbank erreichbar</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="674"/>
+        <location filename="hqcmain.cc" line="675"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-Datenbank nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="675"/>
+        <location filename="hqcmain.cc" line="676"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs nicht erreichbar&lt;/h1&gt;Datenbank derzeit nicht erreichbar! Sie können warten und es später erneut versuchen, müssen aber damit rechnen, dass Änderungen verloren gehen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="698"/>
+        <location filename="hqcmain.cc" line="699"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Lese Daten für Station %1 um %2, bitte warten…</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="534"/>
+        <location filename="hqcmain.cc" line="535"/>
         <source>Print screenshot</source>
         <translation>Bildschirmfoto ausdrucken</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="558"/>
+        <location filename="hqcmain.cc" line="559"/>
         <source>HQC - Update</source>
         <translation>HQC - Aktualisierung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="559"/>
+        <location filename="hqcmain.cc" line="560"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="623"/>
+        <location filename="hqcmain.cc" line="624"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="760"/>
+        <location filename="hqcmain.cc" line="761"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="hqcmain.cc" line="761"/>
+        <location filename="hqcmain.cc" line="762"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
