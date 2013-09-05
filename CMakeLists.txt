@@ -69,6 +69,7 @@ ADD_SUBDIRECTORY(WatchRR2)
 ADD_SUBDIRECTORY(Weather)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(bin)
+ADD_SUBDIRECTORY(share)
 
 SET(etc_files
   etc/kvhqc/diana.setup
@@ -77,31 +78,3 @@ SET(etc_files
   etc/kvhqc/kvtest.conf
   etc/kvhqc/paramorder)
 INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
-
-CONFIGURE_FILE(share/hqc_current_version.in share/hqc_current_version)
-INSTALL(FILES
-  share/hqc_system.db
-  ${CMAKE_BINARY_DIR}/share/hqc_current_version
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
-
-INSTALL(FILES
-  share/images/hqc.png
-  share/images/kmplot.png
-  share/images/sorttime.png
-  share/images/table.png
-  share/images/watchrr.png
-  share/images/watchweather.png
-  share/images/diana_icon_hqc.png
-  share/images/diana_img_hqc.png
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
-
-INSTALL(FILES
-  share/doc/news.html
-  DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
-
-FOREACH(df hqcdiana WatchRR WatchRR2 WatchWeather histhqcdiana histWatchRR histWatchWeather)
-  SET(dfi share/metno-${df}.desktop.in)
-  SET(dfo share/metno-${df}-${PVERSION}.desktop)
-  CONFIGURE_FILE(${dfi} ${dfo})
-  INSTALL(FILES ${CMAKE_BINARY_DIR}/${dfo} DESTINATION "share/applications")
-ENDFOREACH()
