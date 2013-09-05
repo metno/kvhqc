@@ -285,7 +285,7 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
 
     Errors_t memStore2;
     BOOST_FOREACH(const Sensor& s, sensors) {
-        METLIBS_LOG_DEBUG(LOGVAL(s));
+        METLIBS_LOG_DEBUG("next sensor: " << s);
 
         const ObsAccess::DataSet allData = eda->allData(s, limits);
 #ifndef NDEBUG

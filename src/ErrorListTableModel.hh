@@ -29,9 +29,7 @@ public:
         COL_OBS_ORIG,
         COL_OBS_CORR,
         COL_OBS_MODEL,
-        COL_OBS_FLAG_NAME,
-        COL_OBS_FLAG_EQ,
-        COL_OBS_FLAG_VAL,
+        COL_OBS_FLAGS,
         NCOLUMNS
     };
 

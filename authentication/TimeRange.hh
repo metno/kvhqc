@@ -51,7 +51,11 @@ public:
         { return (mT0.is_not_a_date_time() or mT0 <= t)
                 and (mT1.is_not_a_date_time() or t <= mT1); }
 
+    TimeRange intersection(const TimeRange& t) const;
+
     bool undef() const;
+    bool open() const;
+    bool closed() const;
 
     int days() const;
     int hours() const;
@@ -65,6 +69,9 @@ public:
         { TimeRange t(*this); t.shift(s); return t; }
 
     void shift(const boost::posix_time::time_duration& s);
+
+  bool operator==(const TimeRange& other) const
+    { return mT0 == other.mT0 and mT1 == other.mT1; }
 
 private:
     timeutil::ptime mT0;

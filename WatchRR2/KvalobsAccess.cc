@@ -59,7 +59,7 @@ void KvalobsAccess::fetchData(const Sensor& sensor, const TimeRange& limits)
 ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
     METLIBS_LOG_SCOPE();
-    if (not sensor.valid() or limits.undef()) {
+    if (not sensor.valid() or not limits.closed()) {
         METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
         return ObsAccess::TimeSet();
     }
@@ -91,7 +91,7 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
 {
     METLIBS_LOG_SCOPE();
-    if (not sensor.valid() or limits.undef()) {
+    if (not sensor.valid() or not limits.closed()) {
         METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
         return;
     }

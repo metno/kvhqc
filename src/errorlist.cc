@@ -93,7 +93,7 @@ void ErrorList::resizeHeaders()
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME,  160);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME, 160);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
@@ -103,9 +103,7 @@ void ErrorList::resizeHeaders()
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MODEL,     60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_NAME, 50);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   20);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  50);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAGS,    120);
 }
 
 void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)

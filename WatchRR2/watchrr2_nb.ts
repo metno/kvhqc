@@ -612,22 +612,22 @@
         <translation>ugyldig stasjon eller tidsrom</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="85"/>
+        <location filename="StationDialog.cc" line="92"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="100"/>
+        <location filename="StationDialog.cc" line="107"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="128"/>
+        <location filename="StationDialog.cc" line="132"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="133"/>
+        <location filename="StationDialog.cc" line="137"/>
         <source>typeid different at start and end</source>
         <translation>forskjellige typeid ved start og slutt</translation>
     </message>

@@ -43,3 +43,5 @@ ADD_LIBRARY(authentication STATIC
   ${auth_SOURCES}
   ${auth_HEADERS_MOC}
   ${auth_UIS_H})
+
+ADD_SUBDIRECTORY(test)

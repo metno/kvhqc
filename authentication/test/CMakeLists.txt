@@ -1,0 +1,18 @@
+INCLUDE_DIRECTORIES(
+  "${CMAKE_CURRENT_SOURCE_DIR}/.."
+  "${CMAKE_SOURCE_DIR}/include"
+)
+
+ADD_DEFINITIONS(-DTEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+
+LINK_LIBRARIES(
+  authentication
+  ${PC_METLIBSQT_LIBRARIES}
+  ${GTEST_LIBRARY})
+
+ADD_EXECUTABLE(auth_test
+  TimeRangeTest.cc
+  gtestMain.cc)
+
+ADD_TEST(NAME auth_test
+  COMMAND auth_test --gtest_color=yes)
