@@ -303,17 +303,15 @@ std::string DataList::changes()
       doc_removed.appendChild(doc_column);
     } 
     doc_changes.appendChild(doc_removed);
- }
-
-  if (not removed.empty()) {
-    QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
-    BOOST_FOREACH(const Column& c, mColumns) {
-      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
-      c.toText(doc_column);
-      doc_columns.appendChild(doc_column);
-    } 
-    doc_changes.appendChild(doc_columns);
   }
+
+  QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
+  BOOST_FOREACH(const Column& c, mColumns) {
+    QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+    c.toText(doc_column);
+    doc_columns.appendChild(doc_column);
+  } 
+  doc_changes.appendChild(doc_columns);
 
   if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
     QDomElement doc_timeshift = doc.createElement(E_TAG_TSHIFT);
