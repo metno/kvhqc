@@ -35,30 +35,25 @@ void DataListModel::insertColumn(int before, ObsColumnPtr c)
             while (aE < aS && mTimes[t] > addedTimes[aE])
                 aE += 1;
 
-            if (mTimeInRows)
-                beginInsertRows(index(t, 0), t, t+aE-a);
-            else
-                beginInsertColumns(index(0, t), t, t+aE-a);
+            beginInsertR(t, t+aE-a-1);
             mTimes.insert(mTimes.begin() + t, addedTimes.begin() + a, addedTimes.begin() + aE);
-            if (mTimeInRows)
-                endInsertRows();
-            else
-                endInsertColumns();
+            endInsertR();
             a = aE;
         }
         if (a < addedTimes.size()) {
             const unsigned int tS = mTimes.size();
-            if (mTimeInRows)
-                beginInsertRows(index(tS, 0), tS, tS+aS-a);
-            else
-                beginInsertColumns(index(0, tS), tS, tS+aS-a);
+            beginInsertR(tS, tS+aS-a-1);
             mTimes.insert(mTimes.end(), addedTimes.begin() + a, addedTimes.end());
-            if (mTimeInRows)
-                endInsertRows();
-            else
-                endInsertColumns();
+            endInsertR();
         }
     }
+}
+
+void DataListModel::removeColumn(int at)
+{
+    ObsTableModel::removeColumn(at);
+
+    // TODO update mTimes
 }
 
 timeutil::ptime DataListModel::timeAtRow(int row) const

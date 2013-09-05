@@ -15,6 +15,7 @@ public:
     ~DataListModel();
 
     virtual void insertColumn(int before, ObsColumnPtr c);
+    virtual void removeColumn(int at);
 
     virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
     virtual timeutil::ptime timeAtRow(int row) const;

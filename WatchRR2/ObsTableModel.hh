@@ -28,15 +28,32 @@ public:
     void setTimeInRows(bool tir)
         { mTimeInRows = tir; }
 
-    virtual void insertColumn(int before, ObsColumnPtr c);
-    void addColumn(ObsColumnPtr c)
-        { insertColumn(mColumns.size(), c); }
     virtual ObsColumnPtr getColumn(int idx) const
         { return mColumns[idx]; }
+    virtual void insertColumn(int before, ObsColumnPtr c);
+    virtual void removeColumn(int at);
+    virtual void moveColumn(int from, int to);
+
+    void addColumn(ObsColumnPtr c)
+        { insertColumn(mColumns.size(), c); }
+
 
 protected:
     virtual int rowAtTime(const timeutil::ptime& time) const;
     virtual int rowOrColumnCount(bool timeDirection) const;
+
+    virtual void beginInsertR(int first, int last);
+    virtual void beginInsertC(int first, int last);
+    virtual void endInsertR();
+    virtual void endInsertC();
+
+    virtual void beginRemoveR(int first, int last);
+    virtual void beginRemoveC(int first, int last);
+    virtual void endRemoveR();
+    virtual void endRemoveC();
+
+private:
+    typedef std::vector<ObsColumnPtr> ObsColumns_t;
 
 private:
     void onColumnChanged(const timeutil::ptime& time, ObsColumn* column);
@@ -51,7 +68,7 @@ protected:
     bool mTimeInRows;
 
 private:
-    std::vector<ObsColumnPtr> mColumns;
+    ObsColumns_t mColumns;
 };
 
 #endif /* OBSTABLEMODEL_HH */

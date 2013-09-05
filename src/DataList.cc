@@ -13,8 +13,15 @@
 
 #include "ui_dl_addcolumn.h"
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
+
+struct DataList::eq_Column : public std::unary_function<Column, bool> {
+    const Column& a;
+    eq_Column(const Column& c) : a(c) { }
+    bool operator()(const Column& b) const
+    { return eq_Sensor()(a.sensor, b.sensor) and a.type == b.type and a.timeOffset == b.timeOffset;}
+};
 
 DataList::DataList(QWidget* parent)
     : QTableView(parent)
@@ -43,6 +50,8 @@ DataList::DataList(QWidget* parent)
     horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
     connect(horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
             this, SLOT(onHorizontalHeaderContextMenu(const QPoint&)));
+    connect(horizontalHeader(), SIGNAL(sectionMoved(int, int, int)),
+            this, SLOT(onHorizontalHeaderSectionMoved(int, int, int)));
 }
 
 DataList::~DataList()
@@ -66,14 +75,13 @@ void DataList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& lim
         mColumns.push_back(c);
     }
     mOriginalColumns = mColumns;
+    mColumnWasMoved = std::vector<bool>(mOriginalColumns.size(), false);
 
     updateModel();
 }
 
 void DataList::updateModel()
 {
-    LOG_SCOPE("DataList");
-
     std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
     BOOST_FOREACH(const Column& c, mColumns)
         newModel->addColumn(makeColumn(c));
@@ -112,6 +120,8 @@ void DataList::navigateTo(const SensorTime& st)
 
     mSensorTime = st;
     LOG4SCOPE_DEBUG(DBG1(mSensorTime));
+
+    LOG4SCOPE_DEBUG(DBG1(changes()));
 
     const QModelIndexList idxs = mTableModel->findIndexes(st);
 
@@ -166,15 +176,15 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
     if (chosen == 0)
         return;
 
-    int logicalColumn = horizontalHeader()->logicalIndexAt(pos);
+    int column = horizontalHeader()->logicalIndexAt(pos);
     if (chosen == actionAdd) {
         QDialog d(this);
         Ui::DataListAddColumn ui;
         ui.setupUi(&d);
-        ui.textStation->setText("18700");
+        ui.textStation->setText("17980");
         ui.radioCorrected->setChecked(true);
-        ui.textParam->setText("211");
-        ui.comboType->addItems(QStringList() << "330" << "4" << "504");
+        ui.textParam->setText("105");
+        ui.comboType->addItems(QStringList()  << "4" << "330"<< "504");
         ui.comboType->setCurrentIndex(0);
 
         if (d.exec() != QDialog::Accepted)
@@ -204,11 +214,112 @@ void DataList::onHorizontalHeaderContextMenu(const QPoint& pos)
             c.type = MODEL;
         c.timeOffset = ui.spinTimeOffset->value();
 
-        mColumns.insert(mColumns.begin() + logicalColumn, c);
-        mTableModel->insertColumn(logicalColumn, makeColumn(c));
+        mColumns.insert(mColumns.begin() + column, c);
+        mTableModel->insertColumn(column, makeColumn(c));
         horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
+        const Columns_t::iterator it = std::find_if(mOriginalColumns.begin(), mOriginalColumns.end(), eq_Column(c));
+        if (it != mOriginalColumns.end()) {
+            const int oldIdx = (it - mOriginalColumns.begin());
+            mColumnWasMoved[oldIdx] = true;
+        }
     } else if (chosen == actionDel) {
-        mColumns.erase(mColumns.begin() + logicalColumn);
+        mColumns.erase(mColumns.begin() + column);
         updateModel();
     }
+}
+
+std::string DataList::Column::toText() const
+{
+    std::ostringstream os;
+    os << "stationid=\""  << sensor.stationId
+       << "\" paramid=\"" << sensor.paramId
+       << "\" typeid=\""  << sensor.typeId
+       << "\" column=\"";
+    switch (type) {
+    case CORRECTED: os << "CORRECTED"; break;
+    case ORIGINAL:  os << "ORIGINAL";  break;
+    case FLAGS:     os << "FLAGS";     break;
+    case MODEL:     os << "MODEL";     break;
+    }
+    os << "\" timeOffset=\"" << timeOffset << '"';
+    return os.str();
+}
+
+void DataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nVis)
+{
+    if (logicalIndex != oVis)
+        return;
+
+    const int from = logicalIndex, to = nVis;
+    horizontalHeader()->moveSection(to, from);
+    mTableModel->moveColumn(from, to); // move back and switch model columns instead
+
+    const Column c = mColumns[from];
+    mColumns.erase(mColumns.begin() + from);
+    mColumns.insert(mColumns.begin() + to, c);
+
+    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
+    const Columns_t::iterator it = std::find_if(mOriginalColumns.begin(), mOriginalColumns.end(), eq_Column(c));
+    if (it != mOriginalColumns.end()) {
+        const int oldIdx = (it - mOriginalColumns.begin());
+        mColumnWasMoved[oldIdx] = true;
+    }
+}
+
+std::string DataList::changes()
+{
+    LOG_SCOPE("DataList");
+    std::ostringstream os;
+
+    Columns_t reordered;
+    for(unsigned int visual=0; visual<mColumns.size(); ++visual) {
+        const int logical = horizontalHeader()->logicalIndex(visual);
+        if (logical >= 0 and logical < (int)mColumns.size()) {
+            reordered.push_back(mColumns[logical]);
+        } else {
+            LOG4SCOPE_ERROR("column without logical index");
+        }
+    }
+
+#ifndef NDEBUG
+    os << "original:" << mOriginalColumns.size() << std::endl;
+    for(unsigned int c=0; c<mOriginalColumns.size(); ++c)
+        os << mOriginalColumns[c].toText() << std::endl;
+    os << std::endl;
+    os << "now:" << reordered.size() << std::endl;
+    for(unsigned int c=0; c<reordered.size(); ++c)
+        os << reordered[c].toText() << std::endl;
+    os << std::endl;
+#endif
+
+    for(unsigned int r=0; r<reordered.size(); ++r) {
+        Columns_t::const_iterator oit = std::find_if(mOriginalColumns.begin(), mOriginalColumns.end(), eq_Column(reordered[r]));
+        if (oit == mOriginalColumns.end()) {
+            // not in list of original columns => added
+            os << "added " << reordered[r].toText() << std::endl;
+        } else {
+            // found => moved by (new index - old index))
+            const int oidx = (oit - mOriginalColumns.begin());
+            int movedBy = r - oidx;
+            if (mColumnWasMoved[oidx] and movedBy != 0)
+                os << "moved by=\"" << movedBy << "\" " << reordered[r].toText() << std::endl;
+        }
+    } 
+
+    BOOST_FOREACH(const Column& o, mOriginalColumns) {
+        Columns_t::const_iterator nit = std::find_if(mColumns.begin(), mColumns.end(), eq_Column(o));
+        if (nit == mColumns.end()) {
+            // not in list of present columns => removed
+            os << "removed " << o.toText() << std::endl;
+        }
+    }
+
+    if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
+        os << "timeshift start=\"" << (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours()
+           << "\" end=\"" << (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours() << "\"" << std::endl;
+    }
+
+    return os.str();
 }

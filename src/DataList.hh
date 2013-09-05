@@ -28,17 +28,21 @@ private:
         Sensor sensor;
         ColumnType type;
         int timeOffset;
+        std::string toText() const;
     };
+    struct eq_Column;
     typedef std::vector<Column> Columns_t;
-
-private:
-    void updateModel();
-    ObsColumnPtr makeColumn(const Column& c);
 
 private Q_SLOTS:
     void onEarlier();
     void onLater();
     void onHorizontalHeaderContextMenu(const QPoint& pos);
+    void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
+
+private:
+    void updateModel();
+    ObsColumnPtr makeColumn(const Column& c);
+    std::string changes();
 
 private:
     std::auto_ptr<DataListModel> mTableModel;
@@ -46,6 +50,7 @@ private:
 
     TimeRange mTimeLimits, mOriginalTimeLimits;
     Columns_t mColumns,    mOriginalColumns;
+    std::vector<bool> mColumnWasMoved;
 };
 
 #endif // DataList_hh

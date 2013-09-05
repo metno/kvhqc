@@ -30,24 +30,45 @@ ObsTableModel::~ObsTableModel()
 
 void ObsTableModel::insertColumn(int before, ObsColumnPtr c)
 {
-    QModelIndex parent;
-    if (mTimeInRows) {
-        parent = index(0, before, QModelIndex());
-        beginInsertColumns(parent, before, before);
-    } else {
-        parent = index(before, 0, QModelIndex());
-        beginInsertRows(parent, before, before);
-    }    
+    beginInsertC(before, before);
 
     mColumns.insert(mColumns.begin() + before, c);
     if (c)
         c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
 
-    if (mTimeInRows) {
-        endInsertColumns();
-    } else {
-        endInsertRows();
-    }    
+    endInsertC();
+}
+
+void ObsTableModel::moveColumn(int from, int to)
+{
+    const int cS = mColumns.size();
+    if (from == to or (from < 0) or (to < 0) or (from >= cS) or (to >= cS))
+        return;
+
+    // do not do remove-insert as this may trigger recalculation of times (usually rows)
+
+    ObsColumnPtr c = getColumn(from);
+
+    beginRemoveC(from, from);
+    mColumns.erase(mColumns.begin() + from);
+    endRemoveC();
+
+    beginInsertC(to, to);
+    mColumns.insert(mColumns.begin() + to, c);
+    endInsertC();
+}
+
+void ObsTableModel::removeColumn(int at)
+{
+    beginRemoveC(at, at);
+
+    const ObsColumns_t::iterator it = mColumns.begin() + at;
+    ObsColumnPtr c = *it;
+    if (c)
+        c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+    mColumns.erase(it);
+
+    endRemoveC();
 }
 
 int ObsTableModel::rowCount(const QModelIndex&) const
@@ -66,6 +87,70 @@ int ObsTableModel::rowOrColumnCount(bool timeDirection) const
         return mTime.days() + 1;
     else
         return mColumns.size();
+}
+
+void ObsTableModel::beginInsertR(int first, int last)
+{
+    if (mTimeInRows)
+        beginInsertRows(QModelIndex(), first, last);
+    else
+        beginInsertColumns(QModelIndex(), first, last);
+}
+
+void ObsTableModel::beginInsertC(int first, int last)
+{
+    if (mTimeInRows)
+        beginInsertColumns(QModelIndex(), first, last);
+    else
+        beginInsertRows(QModelIndex(), first, last);
+}
+
+void ObsTableModel::endInsertR()
+{
+    if (mTimeInRows)
+        endInsertRows();
+    else
+        endInsertColumns();
+}
+
+void ObsTableModel::endInsertC()
+{
+    if (mTimeInRows)
+        endInsertColumns();
+    else
+        endInsertRows();
+}
+
+void ObsTableModel::beginRemoveR(int first, int last)
+{
+    if (mTimeInRows)
+        beginRemoveRows(QModelIndex(), first, last);
+    else
+        beginRemoveColumns(QModelIndex(), first, last);
+}
+
+void ObsTableModel::beginRemoveC(int first, int last)
+{
+    if (mTimeInRows)
+        beginRemoveColumns(QModelIndex(), first, last);
+    else
+        beginRemoveRows(QModelIndex(), first, last);
+}
+
+void ObsTableModel::endRemoveR()
+{
+    if (mTimeInRows)
+        endRemoveRows();
+    else
+        endRemoveColumns();
+}
+
+void ObsTableModel::endRemoveC()
+{
+    if (mTimeInRows)
+        endRemoveColumns();
+    else
+        endRemoveRows();
 }
 
 Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
