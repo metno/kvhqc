@@ -41,6 +41,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
+#include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QStandardItem>
 #include <QtGui/QStandardItemModel>
 
@@ -102,6 +103,27 @@ void checkChildren(QStandardItem* parent)
       : ((nChecked == 0) ? Qt::Unchecked : Qt::PartiallyChecked);
   if (pcs != pcs_new)
     parent->setCheckState(pcs_new);
+}
+
+class StationSortFilterProxyModel : public QSortFilterProxyModel
+{
+public:
+  StationSortFilterProxyModel(QObject* parent=0)
+    : QSortFilterProxyModel(parent) { }
+
+  bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+};
+
+bool StationSortFilterProxyModel::lessThan(const QModelIndex &left,
+    const QModelIndex &right) const
+{
+  if (left.column() == 0 and right.column() == 0) {
+    const int stationL = sourceModel()->data(left) .toString().toInt();
+    const int stationR = sourceModel()->data(right).toString().toInt();
+    return stationL < stationR;
+  } else {
+    return QSortFilterProxyModel::lessThan(left, right);
+  }
 }
 } // anonymous namespace
 
@@ -198,14 +220,18 @@ void ListDialog::setupStationTab()
     }
   }
 
-  ui->treeStations->setModel(mStationModel.get());
+  StationSortFilterProxyModel *proxyModel = new StationSortFilterProxyModel(this);
+  proxyModel->setSourceModel(mStationModel.get());
+  ui->treeStations->setModel(proxyModel);
+  ui->treeStations->setSortingEnabled(true);
+  ui->treeStations->sortByColumn(0, Qt::AscendingOrder);
 
   ui->treeStations->expandAll();
   ui->treeStations->header()->resizeSections(QHeaderView::ResizeToContents);
   ui->treeStations->header()->setResizeMode(QHeaderView::Interactive);
   ui->treeStations->collapseAll();
 
-  ui->treeStations->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  ui->treeStations->setSelectionMode(QAbstractItemView::NoSelection);
 
   connect(mStationModel.get(), SIGNAL(itemChanged(QStandardItem*)),
       this, SLOT(onItemChanged(QStandardItem*)));
