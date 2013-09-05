@@ -52,7 +52,19 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 int main( int argc, char* argv[] )
 {
-    milogger::LoggingConfig log4cpp("!§%$!§%§");
+    std::string log4cpp_properties = "!§%$!§%§";
+    for (int i = 1; i<argc; ++i) {
+        const std::string arg = argv[i];
+        if (arg == "--log4cpp-properties") {
+            if (i+1 >= argc) {
+                std::cerr << "invalid --log4cpp-properties without filename" << std::endl;
+                return 1;
+            }
+            i += 1;
+            log4cpp_properties = argv[i];
+        }
+    }
+    milogger::LoggingConfig log4cpp(log4cpp_properties);
 
     // >>>>> move to HqcApplication somehow
     FakeKvApp fa;
