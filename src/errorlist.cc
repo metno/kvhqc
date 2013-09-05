@@ -94,6 +94,7 @@ void ErrorList::resizeHeaders()
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME, 160);
+    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_WMO,   45);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);

@@ -20,6 +20,7 @@ public:
     enum EDIT_COLUMNS {
         COL_STATION_ID = 0,
         COL_STATION_NAME,
+        COL_STATION_WMO,
         COL_OBS_MONTH,
         COL_OBS_DAY,
         COL_OBS_HOUR,

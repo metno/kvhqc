@@ -291,112 +291,122 @@ Parameter</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="25"/>
+        <source>WMO</source>
+        <translation>WMO</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="26"/>
         <source>Mt</source>
         <oldsource>  Mt</oldsource>
         <translation>Mt</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="26"/>
+        <location filename="ErrorListTableModel.cc" line="27"/>
         <source>Dy</source>
         <oldsource>  Dy</oldsource>
         <translation>Tg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListTableModel.cc" line="28"/>
         <source>Hr</source>
         <oldsource>  Hr</oldsource>
         <translation>H</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListTableModel.cc" line="29"/>
         <source>Mn</source>
         <translation>Min</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
         <source>mod.v</source>
         <translation>Mod.w</translation>
     </message>
     <message>
         <location filename="EditVersionModel.cc" line="26"/>
-        <location filename="ErrorListTableModel.cc" line="34"/>
-        <location filename="ErrorListTableModel.cc" line="49"/>
+        <location filename="ErrorListTableModel.cc" line="35"/>
+        <location filename="ErrorListTableModel.cc" line="51"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flags</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="38"/>
+        <location filename="ErrorListTableModel.cc" line="39"/>
         <source>Station number</source>
         <translation>Stationsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListTableModel.cc" line="40"/>
         <source>Station name</source>
         <translation>Stationsname</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListTableModel.cc" line="41"/>
+        <source>WMO station number</source>
+        <translation>WMO Stationsnummer</translation>
+    </message>
+    <message>
+        <location filename="ErrorListTableModel.cc" line="42"/>
         <source>Obs month</source>
         <translation>Obs Monat</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="41"/>
+        <location filename="ErrorListTableModel.cc" line="43"/>
         <source>Obs day</source>
         <translation>Obs Tag</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="42"/>
+        <location filename="ErrorListTableModel.cc" line="44"/>
         <source>Obs hour</source>
         <translation>Obs Stunde</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
+        <location filename="ErrorListTableModel.cc" line="45"/>
         <source>Obs minute</source>
         <translation>Obs Minute</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
+        <location filename="ErrorListTableModel.cc" line="46"/>
         <source>Parameter name</source>
         <translation>Parameter-Name</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="45"/>
+        <location filename="ErrorListTableModel.cc" line="47"/>
         <source>Type ID</source>
         <translation>Type ID</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="46"/>
+        <location filename="ErrorListTableModel.cc" line="48"/>
         <source>Original value</source>
         <translation>Originalwert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="47"/>
+        <location filename="ErrorListTableModel.cc" line="49"/>
         <source>Corrected value</source>
         <translation>Korrigierter Wert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="48"/>
+        <location filename="ErrorListTableModel.cc" line="50"/>
         <source>Model value</source>
         <translation>Modell-Wert</translation>
     </message>

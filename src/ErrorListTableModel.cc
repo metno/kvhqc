@@ -22,6 +22,7 @@ namespace {
 const char* headers[ErrorListTableModel::NCOLUMNS] = {
     QT_TRANSLATE_NOOP("ErrorList", "Stnr"),
     QT_TRANSLATE_NOOP("ErrorList", "Name"),
+    QT_TRANSLATE_NOOP("ErrorList", "WMO"),
     QT_TRANSLATE_NOOP("ErrorList", "Mt"),
     QT_TRANSLATE_NOOP("ErrorList", "Dy"),
     QT_TRANSLATE_NOOP("ErrorList", "Hr"),
@@ -37,6 +38,7 @@ const char* headers[ErrorListTableModel::NCOLUMNS] = {
 const char* tooltips[ErrorListTableModel::NCOLUMNS] = {
     QT_TRANSLATE_NOOP("ErrorList", "Station number"),
     QT_TRANSLATE_NOOP("ErrorList", "Station name"),
+    QT_TRANSLATE_NOOP("ErrorList", "WMO station number"),
     QT_TRANSLATE_NOOP("ErrorList", "Obs month"),
     QT_TRANSLATE_NOOP("ErrorList", "Obs day"),
     QT_TRANSLATE_NOOP("ErrorList", "Obs hour"),
@@ -110,6 +112,10 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         return st.sensor.stationId;
       case COL_STATION_NAME:
         return QString::fromStdString(KvMetaDataBuffer::instance()->findStation(st.sensor.stationId).name());
+      case COL_STATION_WMO: {
+        const int wmonr = KvMetaDataBuffer::instance()->findStation(st.sensor.stationId).wmonr();
+        return (wmonr > 0) ? QVariant(wmonr) : QVariant();
+      }
       case COL_OBS_MONTH:
         return twoDigits(st.time.date().month());
       case COL_OBS_DAY:

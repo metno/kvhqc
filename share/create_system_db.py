@@ -324,7 +324,7 @@ check_explanations = [
     ('QC2d-2-I', 'Interpolasjon i QC2, basert på nabostasjoner'),
     ('QC2h-1-interruptedrain', 'Pause i regnbyge'),
     ('QC2h-1-highstart', 'Intenst start av en regnbyge'),
-    ('QC2h-1-highsingle', 'Høy og ensig nedbør-måling'),
+    ('QC2h-1-highsingle', 'Enslig og høy nedbør-observasjon'),
     ('QC2h-1-neighbors', 'Pluviometer er tørt mens flere nabostasjoner måler nedbør, eller omvendt')
 ]
 for ce in check_explanations:
