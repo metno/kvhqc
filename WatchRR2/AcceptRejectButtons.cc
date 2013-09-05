@@ -96,6 +96,9 @@ void AcceptRejectButtons::onReject()
 
 void AcceptRejectButtons::updateModel(EditAccessPtr da, QTableView* table)
 {
+  QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(enableButtons()));
+
   mDA = da;
   mTableView = table;
   QObject::connect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),

@@ -104,6 +104,7 @@ void WeatherDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditData
         w.exec();
         QDialog::reject();
     }
+    // ui->buttonsAcceptReject->enableButtons(); // necessary?
 }
 
 void WeatherDialog::onUndo()
