@@ -5,13 +5,6 @@
 #include <functional>
 #include <vector>
 
-#ifdef VERSIONEDVALUE_TEST
-#include <iostream>
-#define DBGV(x) do { std::cout << __LINE__ << ": '" << #x << "'='" << x << "'" << std::endl; } while (0)
-#else
-#define DBGV(x) do { } while (0)
-#endif
-
 template< typename T, class E=std::equal_to<T> >
 class VersionedValue {
 public:
@@ -46,43 +39,37 @@ template< typename T, class E>
 bool VersionedValue<T,E>::reset(const T& originalValue)
 {
     const bool wasModified = modified();
+    const T old = value();
     mVersions = Versions_t(1, Version(0, originalValue));
     mCurrent = 0;
-    return wasModified;
+    return wasModified or (not E()(old, value()));
 }
 
 template< typename T, class E>
 bool VersionedValue<T,E>::setVersion(int version, bool dropAbove)
 {
+    const bool wasModified = modified();
     const T old = value();
     if (mVersions[mCurrent].version < version) {
-        DBGV(mCurrent);
-        while(mCurrent+1 < mVersions.size() and mVersions[mCurrent+1].version <= version) {
+        while(mCurrent+1 < mVersions.size() and mVersions[mCurrent+1].version <= version)
             mCurrent += 1;
-            DBGV(mCurrent);
-        }
-    } else if (mVersions[mCurrent].version > version) {
-        DBGV(mCurrent);
-        while(mCurrent>0 and mVersions[mCurrent].version > version) {
+    } else {
+        while(mCurrent>0 and mVersions[mCurrent].version > version)
             mCurrent -= 1;
-            DBGV(mCurrent);
-        }
     }
-    DBGV(mCurrent);
-    if (dropAbove and mCurrent+1 < mVersions.size()) {
+    if (dropAbove and mCurrent+1 < mVersions.size())
         mVersions.erase(mVersions.begin() + (mCurrent+1), mVersions.end());
-        DBGV(mVersions.size());
-    }
-    return not E()(old, value());
+    return (modified() != wasModified) or (not E()(old, value()));
 }
 
 template< typename T, class E>
 bool VersionedValue<T,E>::setValue(int version, const T& newValue)
 {
+    const bool wasModified = modified();
     const T old = value();
-    if (mVersions[mCurrent].version > version) {
-        // drop all versions > currentVersion? only needed if somehow not dropped in setVersion
-        mVersions.erase(mVersions.begin() + mCurrent, mVersions.end());
+    if (mCurrent+1 < mVersions.size()) {
+        // drop all versions above, only needed if setVersion was not called
+        mVersions.erase(mVersions.begin() + (mCurrent+1), mVersions.end());
     }
     if (mVersions[mCurrent].version == version) {
         mVersions[mCurrent].value = newValue;
@@ -90,7 +77,7 @@ bool VersionedValue<T,E>::setValue(int version, const T& newValue)
         mCurrent = mVersions.size();
         mVersions.push_back(Version(version, newValue));
     }
-    return not E()(old, value());
+    return (modified() != wasModified) or (not E()(old, value()));
 }
 
 #endif // VERSIONEDVALUE_HH
