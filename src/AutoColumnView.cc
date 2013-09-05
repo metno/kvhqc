@@ -18,6 +18,7 @@ AutoColumnView::~AutoColumnView()
 
 void AutoColumnView::navigateTo(const SensorTime& st)
 {
+    METLIBS_LOG_SCOPE();
     if (mSensorTime.valid()) {
         // record changes
         BOOST_FOREACH(ViewInfo& vi, mViews) {
@@ -28,8 +29,10 @@ void AutoColumnView::navigateTo(const SensorTime& st)
     mSensorTime = st;
 
     // navigate views to new SensorTime
+    const Sensors_t defSens = defaultSensors();
+    const TimeRange defLimits = defaultTimeLimits();
     BOOST_FOREACH(const ViewInfo& vi, mViews) {
-        vi.view->setSensorsAndTimes(defaultSensors(), defaultTimeLimits());
+        vi.view->setSensorsAndTimes(defSens, defLimits);
         Changes4ST_t::const_iterator it = vi.changes.find(mSensorTime.sensor);
         if (it != vi.changes.end())
             vi.view->replay(it->second);
@@ -55,13 +58,14 @@ void AutoColumnView::detachView(ViewP v)
 }
 
 namespace /* anonymous */ {
-template<typename T, typename C>
-C& operator<<(C& container, const T& t)
+template<typename T>
+std::vector<T>& operator<<(std::vector<T>& container, const T& t)
 { container.push_back(t); return container; }
 } // anonymous namespace
 
 AutoColumnView::Sensors_t AutoColumnView::defaultSensors()
 {
+    METLIBS_LOG_SCOPE();
     const Sensor& s = mSensorTime.sensor;
 
     std::vector<int> stationPar, neighborPar;
@@ -83,14 +87,18 @@ AutoColumnView::Sensors_t AutoColumnView::defaultSensors()
         st.paramId = par;
         sensors << st;
     }
-    const std::vector<Sensor> neighbors = Helpers::findNeighbors(s, TimeRange(mSensorTime.time, mSensorTime.time), nNeighbors);
-    BOOST_FOREACH(const Sensor& n, neighbors) {
-        BOOST_FOREACH(int par, neighborPar) {
-            Sensor sn(n);
-            sn.paramId = par;
-            sensors << sn;
-        }
+    BOOST_FOREACH(int par, neighborPar) {
+      Sensor sn(s);
+      sn.paramId = par;
+      const std::vector<Sensor> neighbors = Helpers::findNeighbors(sn, TimeRange(mSensorTime.time, mSensorTime.time), nNeighbors);
+      sensors.insert(sensors.end(), neighbors.begin(), neighbors.end());
     }
+#if 0
+    METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors");
+    BOOST_FOREACH(const Sensor& ds, sensors) {
+      METLIBS_LOG_DEBUG(LOGVAL(ds));
+    }
+#endif
     return sensors;
 }
 

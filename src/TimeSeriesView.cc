@@ -107,7 +107,9 @@ void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
     POptions::PlotOptions& po = mPlotOptions[++idx];
 
     po.name = (tr("Station:") + QString::number(s.stationId)).toStdString();
-    po.label= KvMetaDataBuffer::instance()->findParamName(s.paramId) + " (" + miutil::from_number(s.stationId) + ")";
+    po.label= KvMetaDataBuffer::instance()->findParamName(s.paramId)
+        + " (" + miutil::from_number(s.stationId)
+        + "/" + miutil::from_number(s.typeId) + ")";
 
     IdxHelper poi(idx);
     const int ci = poi.next(colours.size()), mi = poi.next(markers.size()), li = poi.next(linetypes.size());
@@ -226,6 +228,8 @@ void TimeSeriesView::updatePlot()
   int idx = -1;
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
+    if (idx >= 6)
+      continue;
     if (idx >= mPlotOptions.size()) {
       METLIBS_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
       break;
@@ -245,14 +249,12 @@ void TimeSeriesView::updatePlot()
       const SensorTime st(sensor, time);
       ObsDataPtr obs = mDA->find(st);
       ModelDataPtr mdl = mMA->find(st);
-      METLIBS_LOG_DEBUG(st << " have obs=" << (obs ? "yes" : "no") << " mdl=" << (mdl ? "yes" : "no"));
       
       const miutil::miTime mtime = timeutil::make_miTime(time);
       if (mdl and ui->radioModel->isChecked()) {
         tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
       } else if (obs and ui->radioObservations->isChecked()) {
         const float corr = obs->corrected();
-        METLIBS_LOG_DEBUG(LOGVAL(corr));
         if (corr > -32766.0)
           tseries.add(TimeSeriesData::Data(mtime, corr));
       } else if (obs and mdl and ui->radioDifference->isChecked()) {
