@@ -11,7 +11,7 @@ public:
   WeatherStationDialog(QDialog* parent=0);
 
 protected:
-  virtual bool acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
+  virtual int acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
 };
 
 #endif // WEATHERSTATIONDIALOG_HH

@@ -31,7 +31,7 @@ public:
   virtual bool valid() const;
 
 protected:
-  virtual bool acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
+  virtual int acceptThisObsPgm(const kvalobs::kvObsPgm& op) const;
 
 protected Q_SLOTS:
   virtual void onEditStation();

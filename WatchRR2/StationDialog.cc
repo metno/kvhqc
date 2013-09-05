@@ -116,14 +116,18 @@ bool StationDialog::checkType()
     if (idx >= 0 and idx < (int)mTypesModel->typeIds().size())
       mSensor.typeId = mTypesModel->typeIds().at(idx);
   }
-  return mSensor.typeId > 0;
+  return mSensor.typeId != 0;
 }
 
-bool StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
+int StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
 {
-  return (op.paramID() == kvalobs::PARAMID_RR_24
-      and (op.typeID() == 302 or op.typeID() == 402)
-      and (op.kl06() or op.kl07() or op.collector()));
+  if (not (op.kl06() or op.kl07() or op.collector()))
+    return 0;
+  if (op.paramID() == kvalobs::PARAMID_RR_24)
+    return op.typeID();
+  if (Helpers::aggregatedParameter(op.paramID(), kvalobs::PARAMID_RR_24))
+    return -op.typeID();
+  return 0;
 }
 
 void StationDialog::updateTypeList()
@@ -138,8 +142,9 @@ void StationDialog::updateTypeList()
       BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
         if (st.intersection(TimeRange(op.fromtime(), op.totime())).undef())
           continue;
-        if (acceptThisObsPgm(op))
-          typeIdSet.insert(op.typeID());
+        const int t = acceptThisObsPgm(op);
+        if (t != 0)
+          typeIdSet.insert(t);
       }
       if (typeIdSet.empty())
         ui->labelStationInfo->setText(tr("could not find typeid"));
@@ -162,7 +167,7 @@ void StationDialog::updateTypeList()
 bool StationDialog::valid() const
 {
   return mSensor.stationId >= 60 and mSensor.stationId < 100000
-      and mSensor.typeId > 0 and selectedTime().closed();
+      and mSensor.typeId != 0 and selectedTime().closed();
 }
 
 void StationDialog::enableOk()

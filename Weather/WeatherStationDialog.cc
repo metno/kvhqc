@@ -22,15 +22,19 @@ WeatherStationDialog::WeatherStationDialog(QDialog* parent)
   onEditStation();
 }
 
-bool WeatherStationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
+int WeatherStationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
 {
   METLIBS_LOG_SCOPE();
 
+  const int pid = op.paramID(), tid = op.typeID();
   const int *pb = WeatherTableModel::parameters, *pe = pb + WeatherTableModel::NPARAMETERS;
-  if (std::find(pb, pe, op.paramID()) == pe) {
-    METLIBS_LOG_DEBUG("parameter " << op.paramID() << " not in weather table");
-    return false;
+  for (const int* p=pb; p!=pe; ++p) {
+    if (*p == pid)
+      return tid;
   }
-
-  return true;
+  for (const int* p=pb; p!=pe; ++p) {
+    if (Helpers::aggregatedParameter(pid, *p))
+      return -tid;
+  }
+  return 0;
 }
