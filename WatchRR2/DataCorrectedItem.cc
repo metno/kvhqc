@@ -43,7 +43,7 @@ QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
     Helpers::appendText(tip, mCodes->asTip(getValue(obs)));
     return Helpers::appendText(tip, DataValueItem::data(obs, role).toString());
   } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
-    return mCodes->asText(getValue(obs));
+    return mCodes->asText(getValue(obs), role == Qt::EditRole);
   } else if (role == Qt::TextAlignmentRole) {
     return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
   }

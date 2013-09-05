@@ -8,29 +8,29 @@
 
 class Code2Text {
 public:
-    Code2Text();
-    virtual ~Code2Text();
-    virtual QString asTip(float value) const;
-    virtual QString asText(float value) const;
-    virtual bool isCode(float value) const;
-    virtual float fromText(const QString& text) const;
+  Code2Text();
+  virtual ~Code2Text();
+  virtual QString asTip(float value) const;
+  virtual QString asText(float value, bool editing=false) const;
+  virtual bool isCode(float value) const;
+  virtual float fromText(const QString& text) const;
 
-    virtual void addCode(int value, const QStringList& shortText, const QString& explain);
-    void setDecimals(int d)
-        { mDecimals = d; }
-    QStringList allCodes() const;
-    QStringList allExplanations() const;
+  virtual void addCode(int value, const QStringList& shortText, const QString& explain);
+  void setDecimals(int d)
+    { mDecimals = d; }
+  QStringList allCodes() const;
+  QStringList allExplanations() const;
 
 private:
-    float mDecimals;
+  float mDecimals;
 
-    struct Code {
-        QStringList shortText;
-        QString explain;
-        Code(const QStringList& st, const QString& e)
-            : shortText(st), explain(e) { }
-    };
-    QMap<int,Code> mCodes;
+  struct Code {
+    QStringList shortText;
+    QString explain;
+    Code(const QStringList& st, const QString& e)
+      : shortText(st), explain(e) { }
+  };
+  QMap<int,Code> mCodes;
 
 };
 typedef boost::shared_ptr<Code2Text> Code2TextPtr;
