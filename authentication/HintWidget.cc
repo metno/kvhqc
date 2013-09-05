@@ -63,7 +63,8 @@ void HintWidget::updatePosition()
     mText->setTextWidth(w - m);
     mText->adjustSize();
     const QSize s = mText->size().toSize() + QSize(m, m);
-    setGeometry(QRect(pr.bottomRight(), s).translated(-s.width()-m, -s.height()-m));
+    //setGeometry(QRect(pr.bottomRight(), s).translated(-s.width()-m, -s.height()-m));
+    setGeometry(QRect(pr.topRight(), s).translated(-s.width()-m, m));
     raise();
 }
 
