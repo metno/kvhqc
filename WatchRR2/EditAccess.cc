@@ -27,20 +27,50 @@ EditAccess::~EditAccess()
     mBackend->obsDataChanged.disconnect(boost::bind(&EditAccess::onBackendDataChanged, this, _1, _2));
 }
 
+void EditAccess::addEditTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits)
+{
+  for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0())); it != mData.end(); ++it) {
+    const SensorTime& dst = it->first;
+    if ((not eq_Sensor()(dst.sensor, sensor)) or (dst.time > limits.t1()))
+      break;
+    if (it->second)
+      times.insert(dst.time);
+  }
+}
+
 ObsAccess::TimeSet EditAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
     TimeSet times = mBackend->allTimes(sensor, limits);
-
-    for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0()));
-         it != mData.end(); ++it)
-    {
-      const SensorTime& dst = it->first;
-      if ((not eq_Sensor()(dst.sensor, sensor)) or (dst.time > limits.t1()))
-        break;
-      if (it->second)
-        times.insert(dst.time);
-    }
+    addEditTimes(times, sensor, limits);
     return times;
+}
+
+ObsAccess::DataSet EditAccess::allData(const Sensor& sensor, const TimeRange& limits)
+{
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(limits));
+  DataSet data;
+  for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0())); it != mData.end(); ++it) {
+    const SensorTime& dst = it->first;
+    if ((not eq_Sensor()(dst.sensor, sensor)) or (dst.time > limits.t1()))
+      break;
+    if (it->second)
+      data.insert(it->second);
+  }
+
+  std::vector<ObsDataPtr> onlyBackend;
+  const DataSet dataBackend = mBackend->allData(sensor, limits);
+  std::set_difference(dataBackend.begin(), dataBackend.end(), data.begin(), data.end(),
+      std::back_inserter(onlyBackend), lt_ObsDataPtr());
+  METLIBS_LOG_DEBUG(LOGVAL(data.size()) << LOGVAL(dataBackend.size()) << LOGVAL(onlyBackend.size()));
+
+  BOOST_FOREACH(const ObsDataPtr& obs, onlyBackend) {
+    EditDataPtr ebs = boost::make_shared<EditData>(obs);
+    mData[ebs->sensorTime()] = ebs;
+    data.insert(ebs);
+  }
+
+  return data;
 }
 
 ObsDataPtr EditAccess::find(const SensorTime& st)

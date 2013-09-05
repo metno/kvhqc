@@ -14,6 +14,13 @@ public:
     virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits) = 0;
     void addAllTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits);
 
+  struct lt_ObsDataPtr  : public std::binary_function<ObsDataPtr, ObsDataPtr, bool> {
+    bool operator()(const ObsDataPtr& a, const ObsDataPtr& b) const
+      { return lt_SensorTime()(a->sensorTime(), b->sensorTime()); }
+  };
+  typedef std::set<ObsDataPtr, lt_ObsDataPtr> DataSet;
+  virtual DataSet allData(const Sensor& sensor, const TimeRange& limits) = 0;
+
     virtual ObsDataPtr find(const SensorTime& st) = 0;
     virtual ObsDataPtr create(const SensorTime& st) = 0;
     virtual bool update(const std::vector<ObsUpdate>& updates) = 0;

@@ -40,6 +40,21 @@ KvalobsAccess::~KvalobsAccess()
 {
 }
 
+void KvalobsAccess::fetchData(const Sensor& sensor, const TimeRange& limits)
+{
+  Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
+  if (f == mFetched.end()) {
+    findRange(sensor, limits);
+  } else {
+    FetchedTimes_t limits_set, fetched_in_limits;
+    limits_set.insert(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
+    boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
+    FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
+    BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch)
+        findRange(sensor, TimeRange(t.lower(), t.upper()));
+  }
+}
+
 ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
 {
     METLIBS_LOG_SCOPE();
@@ -49,18 +64,14 @@ ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange
     }
     METLIBS_LOG_DEBUG("allTimes" << LOGVAL(sensor) << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
 
-    Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
-    if (f == mFetched.end()) {
-        findRange(sensor, limits);
-    } else {
-        FetchedTimes_t limits_set, fetched_in_limits;
-        limits_set.insert(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
-        boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
-        FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
-        BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch)
-            findRange(sensor, TimeRange(t.lower(), t.upper()));
-    }
+    fetchData(sensor, limits);
     return KvBufferedAccess::allTimes(sensor, limits);
+}
+
+ObsAccess::DataSet KvalobsAccess::allData(const Sensor& sensor, const TimeRange& limits)
+{
+  fetchData(sensor, limits);
+  return KvBufferedAccess::allData(sensor, limits);
 }
 
 ObsDataPtr KvalobsAccess::find(const SensorTime& st)

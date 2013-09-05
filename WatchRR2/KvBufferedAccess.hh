@@ -13,6 +13,7 @@ typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
 class KvBufferedAccess : public ObsAccess {
 public:
     virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
+    virtual DataSet allData(const Sensor& sensor, const TimeRange& limits);
 
     virtual ObsDataPtr find(const SensorTime& st);
     virtual ObsDataPtr create(const SensorTime& st);

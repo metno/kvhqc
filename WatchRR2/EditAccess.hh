@@ -11,6 +11,7 @@ public:
     virtual ~EditAccess();
 
     virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
+    virtual DataSet allData(const Sensor& sensor, const TimeRange& limits);
 
     virtual ObsDataPtr find(const SensorTime& st);
     EditDataPtr findE(const SensorTime& st)
@@ -67,6 +68,7 @@ private:
     void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);
     void onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
     void updateToCurrentVersion(bool drop);
+    void addEditTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits);
 
 private:
     ObsAccessPtr mBackend;

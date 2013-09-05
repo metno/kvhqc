@@ -17,6 +17,7 @@ public:
     ~KvalobsAccess();
 
     virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
+    virtual DataSet allData(const Sensor& sensor, const TimeRange& limits);
 
     virtual ObsDataPtr find(const SensorTime& st);
     virtual bool update(const std::vector<ObsUpdate>& updates);
@@ -33,6 +34,7 @@ protected:
     virtual bool drop(const SensorTime& st);
 
 private:
+    void fetchData(const Sensor& sensor, const TimeRange& limits);
     bool isFetched(int stationid, const timeutil::ptime& t) const;
     void addFetched(int stationid, const TimeRange& t);
     void removeFetched(int stationid, const timeutil::ptime& t);

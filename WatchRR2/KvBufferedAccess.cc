@@ -27,6 +27,20 @@ ObsAccess::TimeSet KvBufferedAccess::allTimes(const Sensor& sensor, const TimeRa
     return times;
 }
 
+ObsAccess::DataSet KvBufferedAccess::allData(const Sensor& sensor, const TimeRange& limits)
+{
+  DataSet data;
+
+  for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0())); it != mData.end(); ++it) {
+    const SensorTime& dst = it->first;
+    if ((not eq_Sensor()(dst.sensor, sensor)) or (dst.time > limits.t1()))
+      break;
+    if (it->second)
+      data.insert(it->second);
+  }
+  return data;
+}
+
 ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
 {
     if (not st.valid()) {

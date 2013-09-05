@@ -319,31 +319,26 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
     Errors_t memStore2;
     BOOST_FOREACH(const Sensor& s, sensors) {
         METLIBS_LOG_DEBUG(LOGVAL(s));
-        const ObsAccess::TimeSet allTimes = eda->allTimes(s, limits);
-#ifndef NDEBUG
-        METLIBS_LOG_DEBUG(LOGVAL(allTimes.size()));
-        BOOST_FOREACH(const timeutil::ptime& t, allTimes)
-            METLIBS_LOG_DEBUG(timeutil::to_iso_extended_string(t));
-#endif
-
         // IMPORTANT: if this should be removed from isMemoryStore2, it must also be removed here
         if (not ErrorParameterFilter(s.paramId))
             continue;
 
-        BOOST_FOREACH(const timeutil::ptime& obstime, allTimes) {
-            const SensorTime sensorTime(s, obstime);
-            ErrorInfo ei(eda->findE(sensorTime));
-            if (not ei.obs) {
-                METLIBS_LOG_DEBUG("no obs for " << sensorTime);
-                continue;
-            }
-            int memstore = whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp);
-            if (memstore == 0)
-                continue;
-            if (memstore == 2)
-                memStore2.push_back(ei);
+        const ObsAccess::DataSet allData = eda->allData(s, limits);
+#ifndef NDEBUG
+        METLIBS_LOG_DEBUG(LOGVAL(allData.size()));
+        BOOST_FOREACH(const ObsDataPtr& obs, allData)
+            METLIBS_LOG_DEBUG(obs->sensorTime());
+#endif
+        BOOST_FOREACH(const ObsDataPtr& obs, allData) {
+          EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
+          ErrorInfo ei(ebs);
+          int memstore = whichMemStore(ei.obs, errorsForSalen, ei.flg, ei.flTyp);
+          if (memstore == 0)
+            continue;
+          if (memstore == 2)
+            memStore2.push_back(ei);
 #ifdef DUMPOBS
-            dumpObs(ei.obs, -99999, ei.flTyp, ei.flg, memstore);
+          dumpObs(ei.obs, -99999, ei.flTyp, ei.flg, memstore);
 #endif
         }
     }
