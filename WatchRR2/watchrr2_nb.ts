@@ -62,37 +62,37 @@
 <context>
     <name>Code2Text</name>
     <message>
-        <location filename="Code2Text.cc" line="13"/>
+        <location filename="Code2Text.cc" line="11"/>
         <source>new</source>
         <translation>ny</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="14"/>
+        <location filename="Code2Text.cc" line="12"/>
         <source>row not in database</source>
         <translation>ikke i databasen</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="15"/>
+        <location filename="Code2Text.cc" line="13"/>
         <source>mis</source>
         <translation>mis</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="16"/>
+        <location filename="Code2Text.cc" line="14"/>
         <source>value is missing</source>
         <translation>verdien mangler</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="17"/>
+        <location filename="Code2Text.cc" line="15"/>
         <source>rej</source>
         <translation>rej</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="17"/>
+        <location filename="Code2Text.cc" line="15"/>
         <source>r</source>
         <translation>r</translation>
     </message>
     <message>
-        <location filename="Code2Text.cc" line="18"/>
+        <location filename="Code2Text.cc" line="16"/>
         <source>value is rejected</source>
         <translation>forkastet</translation>
     </message>
@@ -100,17 +100,17 @@
 <context>
     <name>Column_RR_24</name>
     <message>
-        <location filename="ColumnFactory.cc" line="54"/>
+        <location filename="ColumnFactory.cc" line="55"/>
         <source>dry</source>
         <translation>tørt</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="55"/>
+        <location filename="ColumnFactory.cc" line="56"/>
         <source>d</source>
         <translation>t</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="56"/>
+        <location filename="ColumnFactory.cc" line="57"/>
         <source>precipitation not reported</source>
         <translation>nedbørmengde ikke meldt</translation>
     </message>
@@ -151,19 +151,19 @@
 <context>
     <name>Column_SD</name>
     <message>
-        <location filename="ColumnFactory.cc" line="73"/>
+        <location filename="ColumnFactory.cc" line="72"/>
         <source>no m.</source>
         <oldsource>no r.</oldsource>
         <translation>ing.m.</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="74"/>
+        <location filename="ColumnFactory.cc" line="73"/>
         <source>n</source>
         <oldsource>b</oldsource>
         <translation>i</translation>
     </message>
     <message>
-        <location filename="ColumnFactory.cc" line="75"/>
+        <location filename="ColumnFactory.cc" line="74"/>
         <source>snow cover not reported</source>
         <translation>snødekke ikke meldt</translation>
     </message>
@@ -471,27 +471,27 @@
 <context>
     <name>Helpers</name>
     <message>
-        <location filename="Helpers.cc" line="244"/>
+        <location filename="Helpers.cc" line="243"/>
         <source>Unknown or invalid flag value</source>
         <translation>Ukjent eller ugylig flagg-verdi</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="539"/>
+        <location filename="Helpers.cc" line="538"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="540"/>
+        <location filename="Helpers.cc" line="539"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="541"/>
+        <location filename="Helpers.cc" line="540"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="542"/>
+        <location filename="Helpers.cc" line="541"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
@@ -615,22 +615,22 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="93"/>
+        <location filename="StationDialog.cc" line="92"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="95"/>
+        <location filename="StationDialog.cc" line="94"/>
         <source>Invalid station number</source>
         <translation>Ugyldig stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="136"/>
+        <location filename="StationDialog.cc" line="135"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="146"/>
+        <location filename="StationDialog.cc" line="145"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
     </message>

@@ -1,11 +1,11 @@
 
 SET(weather_HEADERS
   WeatherDialog.hh
+  WeatherStationDialog.hh
 )
 
 SET(weather_SOURCES
   WeatherDialog.cc
-  WeatherStationDialog.hh
   WeatherStationDialog.cc
   WeatherTableModel.hh
   WeatherTableModel.cc

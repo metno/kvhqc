@@ -1437,17 +1437,17 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TextData</name>
     <message>
-        <location filename="textdatatable.cc" line="84"/>
+        <location filename="textdatatable.cc" line="83"/>
         <source>TextData</source>
         <translation>TextData</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="113"/>
+        <location filename="textdatatable.cc" line="112"/>
         <source>No Textdata</source>
         <translation>Ingen Textdata</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="113"/>
+        <location filename="textdatatable.cc" line="112"/>
         <source>Could not read text data.</source>
         <translation>Kunne ikke lese textdata.</translation>
     </message>
@@ -1499,37 +1499,37 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TextDataTable</name>
     <message>
-        <location filename="textdatatable.cc" line="23"/>
+        <location filename="textdatatable.cc" line="22"/>
         <source>Stationid</source>
         <translation>Stationid</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="24"/>
+        <location filename="textdatatable.cc" line="23"/>
         <source>Obstime</source>
         <translation>Obstime</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="25"/>
+        <location filename="textdatatable.cc" line="24"/>
         <source>Original</source>
         <translation>Original</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="26"/>
+        <location filename="textdatatable.cc" line="25"/>
         <source>Paramid</source>
         <translation>Paramid</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="27"/>
+        <location filename="textdatatable.cc" line="26"/>
         <source>ParamName</source>
         <translation>ParamName</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="28"/>
+        <location filename="textdatatable.cc" line="27"/>
         <source>Tbtime</source>
         <translation>Tbtime</translation>
     </message>
     <message>
-        <location filename="textdatatable.cc" line="29"/>
+        <location filename="textdatatable.cc" line="28"/>
         <source>Typeid</source>
         <translation>Typeid</translation>
     </message>
