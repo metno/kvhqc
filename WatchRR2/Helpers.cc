@@ -487,6 +487,15 @@ QString stationName(const kvalobs::kvStation& s)
     return QString::fromLatin1(s.name().c_str());
 }
 
+namespace /* anonymous */ {
+bool aggregatedParameter(int paramFrom, int paramTo)
+{
+  return (paramFrom >= kvalobs::PARAMID_RR_01 and paramFrom < kvalobs::PARAMID_RR_24)
+      and (paramTo > kvalobs::PARAMID_RR_01 and paramTo <= kvalobs::PARAMID_RR_24)
+      and paramTo > paramFrom;
+}
+} // namespace anonymous
+
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {
     std::vector<Sensor> neighbors;
@@ -504,13 +513,13 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
         std::list<long int> stationIDs;
         BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
             const int sid = s.stationID();
-            if (sid < 60 or sid >= 100000)
+            if (sid < 60 or sid >= 100000 or sid == sensor.stationId)
                 continue;
             if (ordering.distance(s) > 100 /*km*/)
                 continue;
             stations.push_back(s);
             stationIDs.push_back(s.stationID());
-            METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
+            //METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
         }
         std::sort(stations.begin(), stations.end(), ordering);
     } catch(std::runtime_error&) {
@@ -519,32 +528,27 @@ std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, i
 
     int count = 0;
     BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-        const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
-        bool haveRR24 = false, haveRRaggregated = false;
-        BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-            const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
-            if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
-                continue;
-            // FIXME this is not correct if there is more than one
-            // klXX or collector or typeid or ...
-            if (not haveRR24 and op.paramID() == kvalobs::PARAMID_RR_24) {
-                neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, op.typeID()));
-                METLIBS_LOG_DEBUG(LOGVAL(s.stationID()) << LOGVAL(op.typeID()));
-                if (++count >= maxNeighbors)
-                    break;
-                haveRR24 = true;
-            }
-            if (not haveRRaggregated and op.paramID() >= kvalobs::PARAMID_RR_01 and op.paramID() <= kvalobs::PARAMID_RR_12) {
-                const int typeID = -op.typeID();
-                neighbors.push_back(Sensor(s.stationID(), kvalobs::PARAMID_RR_24, op.level(), 0, typeID));
-                METLIBS_LOG_DEBUG(LOGVAL(s.stationID()) << LOGVAL(typeID));
-                if (++count >= maxNeighbors)
-                    break;
-                haveRRaggregated = true;
-            }
-        }
-        if (count >= maxNeighbors)
+      const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
+      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+        const timeutil::ptime ofrom = timeutil::from_miTime(op.fromtime()), oto = timeutil::from_miTime(op.totime());
+        if (not (ofrom <= time.t0() and (oto.is_not_a_date_time() or time.t1() <= oto)))
+          continue;
+        // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
+
+        const bool eql = op.paramID() == sensor.paramId;
+        const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
+        if (eql or agg) {
+          const int typeId = eql ? op.typeID() : -op.typeID();
+          const Sensor n(s.stationID(), sensor.paramId, op.level(), 0, typeId);
+          const bool duplicate = (std::find_if(neighbors.begin(), neighbors.end(), std::bind1st(eq_Sensor(), n)) != neighbors.end());
+          METLIBS_LOG_DEBUG(LOGVAL(n) << LOGVAL(duplicate));
+          neighbors.push_back(n);
+          if (++count >= maxNeighbors)
             break;
+        }
+      }
+      if (count >= maxNeighbors)
+        break;
     }
     return neighbors;
 }
