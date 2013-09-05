@@ -41,6 +41,10 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   if (paramid == kvalobs::PARAMID_TAN or paramid == kvalobs::PARAMID_TAX) {
     paramids << kvalobs::PARAMID_TA << ',' << paramid;
     findMaximum = (paramid == kvalobs::PARAMID_TAX);
+  } else if (paramid == kvalobs::PARAMID_FG) {
+    paramids << "83,84,90,91,92,94";
+  } else if (paramid == kvalobs::PARAMID_FX) {
+    paramids << "86,87,88,89,93,95";
   } else {
     paramids << paramid;
   }
@@ -61,7 +65,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
     sql << " AND stationid NOT IN (" << excludedIds << ")";
   sql << "   AND paramid IN (" << paramids.str() << ")"
       "   AND (substr(useinfo,3,1) IN ('0','1','2')"
-      "        OR substr(useinfo,3,1) = '3' AND original = corrected)"
+      "        OR (substr(useinfo,3,1) = '3' AND original = corrected))"
       "   AND " << c_obstime.str() <<
       " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<
