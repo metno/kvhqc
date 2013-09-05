@@ -54,7 +54,8 @@ check_explanations = [
     ('QC1-0-87', u'Forhands-forkasting av FX_1'),
     ('QC1-0-90', u'Forhands-forkasting av FG_1'),
     ('QC1-0-autosnow', u'Forhands-forkasting av SA (automatisk snødybdemåling)'),
-    ('QC1-0-geonor', u'Forhands-forkasting av automatisk nedbørmåling (Geonor)'),
+    ('QC1-0-geonor', u'TA<-25; bøtteverdiene fra Geonor nedbørmåler er ugyldige i kulde (kaldere enn -25°C)'),
+
     ('QC1-1-1', u'Grenseverdi-sjekk av AA'),
     ('QC1-1-10', u'Grenseverdi-sjekk av IX'),
     ('QC1-1-101', u'Grenseverdi-sjekk av ES'),
@@ -553,8 +554,12 @@ check_explanations = [
     ('QC1-3c-264', u'Dip- og Peak-sjekk. Dip eller peak av UN større enn testverdi'),
     ('QC1-3c-265', u'Dip- og Peak-sjekk. Dip eller peak av UX større enn testverdi'),
 
+    ('QC1-4-109', u'Observasjon avviker merkbart fra modellverdi for parameter RR_12'),
+    ('QC1-4-178', u'Observasjon avviker merkbart fra modellverdi for parameter PR'),
+    ('QC1-4-211', u'Observasjon avviker merkbart fra modellverdi for parameter TA'),
     ('QC1-4-213', u"TAN's avvik fra TA's laveste modellverdi fra forrige obs større enn testverdi"),
     ('QC1-4-215', u"TAX's avvik fra TA's hoyeste modellverdi fra forrige obs større enn testverdi"),
+    ('QC1-4-262', u'Observasjon avviker merkbart fra modellverdi for parameter UU'),
 
     ('QC1-6-111', u'Forholdet mellom snøfokk og vindhastighet'),
     ('QC1-6-112', u'Forholdet mellom snøfokk og vindhastighet'),
