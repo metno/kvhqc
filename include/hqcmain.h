@@ -57,6 +57,7 @@ class HintWidget;
 class HqcDianaHelper;
 class KvalobsAccess;
 class KvalobsModelAccess;
+class EditAccess;
 class ListDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
@@ -242,6 +243,7 @@ private:
 
     boost::shared_ptr<KvalobsAccess> kda;
     boost::shared_ptr<KvalobsModelAccess> kma;
+    boost::shared_ptr<EditAccess> eda;
 };
 
 //! Get o's owning HqcMainWindow, or NULL if there is none.

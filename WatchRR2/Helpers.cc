@@ -67,10 +67,12 @@ Sensor modelSensor(const Sensor& s)
     return Sensor(s.stationId, s.paramId, s.level, 0, 0);
 }
 
-int is_accumulation(ObsDataPtr obs)
+// ------------------------------------------------------------------------
+
+int is_accumulation(const kvalobs::kvControlInfo& ci)
 {
     using namespace kvalobs::flag;
-    const int f_fd = obs->controlinfo().flag(fd);
+    const int f_fd = ci.flag(fd);
     if( f_fd == 2 or f_fd == 4 )
         return BEFORE_REDIST;
     if( f_fd == 7 or f_fd == 8 )
@@ -79,10 +81,19 @@ int is_accumulation(ObsDataPtr obs)
         return HQC_REDIST;
     return NO;
 }
-int is_endpoint(ObsDataPtr obs)
+
+int is_accumulation(ObsDataPtr obs)
+{ return is_accumulation(obs->controlinfo()); }
+
+int is_accumulation(EditDataEditorPtr editor)
+{ return is_accumulation(editor->controlinfo()); }
+
+// ------------------------------------------------------------------------
+
+int is_endpoint(const kvalobs::kvControlInfo& ci)
 {
     using namespace kvalobs::flag;
-    const int f_fd = obs->controlinfo().flag(fd);
+    const int f_fd = ci.flag(fd);
     if( f_fd == 4 )
         return BEFORE_REDIST;
     if( f_fd == 8 )
@@ -92,45 +103,72 @@ int is_endpoint(ObsDataPtr obs)
     return NO;
 }
 
-bool is_rejected(ObsDataPtr obs)
+int is_endpoint(ObsDataPtr obs)
+{ return is_endpoint(obs->controlinfo()); }
+
+int is_endpoint(EditDataEditorPtr editor)
+{ return is_endpoint(editor->controlinfo()); }
+
+// ------------------------------------------------------------------------
+
+bool is_rejected(const kvalobs::kvControlInfo& ci, float corr)
 {
-    return (obs->controlinfo().flag(kvalobs::flag::fmis) == 2) // same as kvDataOperations.cc
-        or (obs->corrected() == kvalobs::REJECTED);
+    return (ci.flag(kvalobs::flag::fmis) == 2) // same as kvDataOperations.cc
+        or (corr == kvalobs::REJECTED);
+}
+
+bool is_rejected(ObsDataPtr obs)
+{ return is_rejected(obs->controlinfo(), obs->corrected()); }
+
+bool is_rejected(EditDataEditorPtr editor)
+{ return is_rejected(editor->controlinfo(), editor->corrected()); }
+
+// ------------------------------------------------------------------------
+
+bool is_missing(const kvalobs::kvControlInfo& ci, float corr)
+{
+    return (ci.flag(kvalobs::flag::fmis) == 3) // same as kvDataOperations.cc
+        or (corr == kvalobs::MISSING);
 }
 
 bool is_missing(ObsDataPtr obs)
+{ return is_missing(obs->controlinfo(), obs->corrected()); }
+
+bool is_missing(EditDataEditorPtr editor)
+{ return is_missing(editor->controlinfo(), editor->corrected()); }
+
+// ------------------------------------------------------------------------
+
+bool is_orig_missing(const kvalobs::kvControlInfo& ci, float orig)
 {
-    return (obs->controlinfo().flag(kvalobs::flag::fmis) == 3) // same as kvDataOperations.cc
-        or (obs->corrected() == kvalobs::MISSING);
+    return (ci.flag(kvalobs::flag::fmis) & 1) // same as kvDataOperations.cc
+        or (orig == kvalobs::MISSING);
 }
 
 bool is_orig_missing(ObsDataPtr obs)
-{
-    return (obs->controlinfo().flag(kvalobs::flag::fmis) & 1) // same as kvDataOperations.cc
-        or (obs->original() == kvalobs::MISSING);
-}
+{ return is_missing(obs->controlinfo(), obs->original()); }
 
-char int2char(int i)
-{
-    if( i<10 )
-        return ('0' + i);
-    else
-        return ('A' + (i-10));
-}
+bool is_orig_missing(EditDataEditorPtr editor)
+{ return is_orig_missing(editor->controlinfo(), editor->obs()->original()); }
+
+// ------------------------------------------------------------------------
 
 bool is_valid(ObsDataPtr obs) // same as kvDataOperations.cc
-{
-    return not is_missing(obs) and not is_rejected(obs);
-}
+{ return not is_missing(obs) and not is_rejected(obs); }
+
+bool is_valid(EditDataEditorPtr editor) // same as kvDataOperations.cc
+{ return not is_missing(editor) and not is_rejected(editor); }
+
+// ------------------------------------------------------------------------
 
 void reject(EditDataEditorPtr editor) // same as kvDataOperations.cc
 {
-    if (not is_valid(editor->obs()))
+    if (not is_valid(editor))
         return;
     
     const FlagChange fc_reject("fmis=[04]->fmis=2;fmis=1->fmis=3;fhqc=A");
     editor->changeControlinfo(fc_reject);
-    if (is_orig_missing(editor->obs()))
+    if (is_orig_missing(editor))
         editor->setCorrected(kvalobs::MISSING);
     else
         editor->setCorrected(kvalobs::REJECTED);
@@ -142,6 +180,28 @@ void correct(EditDataEditorPtr editor, float newC)
     editor->changeControlinfo(fc_diff);
     editor->setCorrected(newC);
 }
+
+void set_flag(EditDataEditorPtr editor, int flag, int value)
+{
+    kvalobs::kvControlInfo ci = editor->controlinfo();
+    ci.set(flag, value);
+    editor->setControlinfo(ci);
+}
+
+void set_fhqc(EditDataEditorPtr editor, int fhqc)
+{
+    set_flag(editor, kvalobs::flag::fhqc, fhqc);
+}
+
+void auto_correct(EditDataEditorPtr editor, float newC)
+{
+    const bool interpolation = is_orig_missing(editor);
+    correct(editor, newC);
+    if (interpolation)
+        set_fhqc(editor, 5);
+}
+
+// ========================================================================
 
 static const char* flagExplanations[16][16] = {
     { // fagg
@@ -299,6 +359,14 @@ static const char* flagExplanations[16][16] = {
         0,
         "Forkastet manuelt" }
 };
+
+char int2char(int i)
+{
+    if( i<10 )
+        return ('0' + i);
+    else
+        return ('A' + (i-10));
+}
 
 static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
 {

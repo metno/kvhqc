@@ -1,16 +1,22 @@
 
 #include "SimpleCorrections.hh"
 
+#include "ModelData.hh"
+
+#include <kvalobs/kvDataOperations.h>
+
 #include <boost/bind.hpp>
 
 #include "ui_simplecorrections.h"
 //#define NDEBUG
 #include "debug.hh"
 
-static int preferredWidth(QWidget* w)
+namespace /* anonymous */ {
+
+int preferredWidth(QWidget* w)
 { return w->sizeHint().width(); }
 
-static void setCommonMinWidth(QWidget* w[])
+void setCommonMinWidth(QWidget* w[])
 {
     int mw = preferredWidth(w[0]);
     for (int i=1; w[i]; ++i)
@@ -18,6 +24,112 @@ static void setCommonMinWidth(QWidget* w[])
     for (int i=0; w[i]; ++i)
         w[i]->setMinimumSize(mw, w[i]->minimumSize().height());
 }
+
+// ----------------------------------------
+
+void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+{
+    EditDataPtr obs = eda->findE(sensorTime);
+    if (not obs) {
+        LOG4HQC_ERROR("SimpleCorrections", "accept_original without obs for " << sensorTime);
+        return;
+    }
+
+    const kvalobs::kvControlInfo ci = obs->controlinfo();
+    const int fmis = ci.flag(kvalobs::flag::fmis);
+    if (fmis == 3) {
+        LOG4HQC_ERROR("SimpleCorrections", "fmis=3, accept_original not possible for " << sensorTime);
+        return;
+    }
+    if (ci.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
+        LOG4HQC_ERROR("SimpleCorrections", "bad accept_original, would not set fhqc for " << sensorTime);
+        return;
+    }
+
+    EditDataEditorPtr editor = eda->editor(obs);
+    editor->setCorrected(obs->original());
+
+    Helpers::set_fhqc(editor, 1);
+    if (fmis == 0 or fmis == 2) {
+        Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
+        Helpers::set_flag(editor, kvalobs::flag::fd,   1);
+    } else if (fmis == 1) {
+        Helpers::set_flag(editor, kvalobs::flag::fmis, 3);
+    }
+    if (qc2ok)
+        Helpers::set_fhqc(editor, 4);
+
+    editor->commit();
+}
+
+void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+{
+    EditDataPtr obs = eda->findE(sensorTime);
+    if (not obs) {
+        LOG4HQC_ERROR("SimpleCorrections", "accept_corrected without obs for " << sensorTime);
+        return;
+    }
+
+    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+    EditDataEditorPtr editor = eda->editor(obs);
+
+    if (Helpers::float_eq()(obs->original(), editor->corrected())
+        and (not Helpers::is_accumulation(editor)) and fmis < 2)
+    {
+        Helpers::set_flag(editor, kvalobs::flag::fd, 1);
+        Helpers::set_fhqc(editor, 1);
+    } else if (fmis == 0) {
+        Helpers::set_fhqc(editor, 7);
+    } else if (fmis == 1) {
+        Helpers::set_fhqc(editor, 5);
+    } else {
+        LOG4HQC_ERROR("SimpleCorrections", "bad accept_corrected for " << sensorTime);
+        return;
+    }
+    if (qc2ok)
+        Helpers::set_fhqc(editor, 4);
+    editor->commit();
+}
+
+void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+{
+    EditDataPtr obs = eda->findE(sensorTime);
+    if (not obs) {
+        LOG4HQC_ERROR("SimpleCorrections", "reject without obs for " << sensorTime);
+        return;
+    }
+
+    const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+    if (fmis == 1 or fmis == 3) {
+        LOG4HQC_ERROR("SimpleCorrections", "bad reject with fmis=1/3 for " << sensorTime);
+        return;
+    }
+
+    EditDataEditorPtr editor = eda->editor(obs);
+    Helpers::reject(editor);
+    if (qc2ok)
+        Helpers::set_fhqc(editor, 4);
+    editor->commit();
+}
+
+void interpolate_or_correct(EditAccessPtr eda, const SensorTime& sensorTime, float newC)
+{
+    EditDataPtr obs = eda->findE(sensorTime);
+    if (not obs) {
+        LOG4HQC_ERROR("SimpleCorrections", "interpolate_or_correct without obs for " << sensorTime);
+        return;
+    }
+    if (Helpers::is_accumulation(obs)) {
+        LOG4HQC_ERROR("SimpleCorrections", "accept_corrected for accumulation for " << sensorTime);
+        return;
+    }
+
+    EditDataEditorPtr editor = eda->editor(obs);
+    Helpers::auto_correct(editor, newC);
+    editor->commit();
+}
+
+} // anonymous namespace
 
 SimpleCorrections::SimpleCorrections(QWidget* parent)
     : QWidget(parent)
@@ -32,6 +144,8 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
     setCommonMinWidth(labels2);
 
     setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
+
+    navigateTo(mSensorTime);
 }
 
 SimpleCorrections::~SimpleCorrections()
@@ -40,11 +154,12 @@ SimpleCorrections::~SimpleCorrections()
         mDA->obsDataChanged.disconnect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
 }
 
-void SimpleCorrections::setDataAccess(EditAccessPtr eda)
+void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
     if (mDA)
         mDA->obsDataChanged.disconnect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
     mDA = eda;
+    mMA = mda;
     if (mDA)
         mDA->obsDataChanged.connect(boost::bind(&SimpleCorrections::onDataChanged, this, _1, _2));
 
@@ -58,10 +173,20 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     const Sensor& s = mSensorTime.sensor;
     if (s.stationId > 0) {
         ui->textStation->setText(QString::number(s.stationId));
-        ui->textParam->setText(QString::number(s.paramId));
+        ui->textParam->setText(Helpers::parameterName(s.paramId));
         ui->textType->setText(QString::number(s.typeId));
 
         ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
+
+        EditDataPtr obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
+        if (obs) {
+            ui->textFlags->setText(Helpers::getFlagText(obs->controlinfo()));
+            ui->textOriginal->setText(QString::number(obs->original()));
+            ui->textCorrected->setText(QString::number(obs->corrected()));
+        }
+        ModelDataPtr mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
+        if (mdl)
+            ui->textModel->setText(QString::number(mdl->value()));
     } else {
         ui->textStation->setText("--");
         ui->textParam->setText("--");
@@ -69,6 +194,41 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 
         ui->textObstime->setText("");
     }
+    enableEditing();
+}
+
+void SimpleCorrections::enableEditing()
+{
+    enum { ORIG_OK, ORIG_OK_QC2, CORR_OK, CORR_OK_QC2, REJECT, REJECT_QC2,
+           INTERPOLATED, CORRECTED, N_BUTTONS };
+    QWidget* buttons[N_BUTTONS] = {
+        ui->buttonAcceptOriginal,  ui->buttonAcceptOriginalQC2,
+        ui->buttonAcceptCorrected, ui->buttonAcceptCorrectedQC2,
+        ui->buttonReject,          ui->buttonRejectQC2,
+        ui->textInterpolatedValue, ui->textCorrectedValue
+    };
+    bool enable[N_BUTTONS];
+    
+    EditDataPtr obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
+    const Sensor& s = mSensorTime.sensor;
+    std::fill(enable, enable+N_BUTTONS, (obs and s.stationId > 0 and s.paramId != 110));
+
+    if (obs) {
+        const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+        if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs)) {
+            // for accumulations, always use WatchRR
+            std::fill(enable, enable+N_BUTTONS, false);
+        } else if (fmis == 3) {
+            enable[INTERPOLATED] &= true;
+        } else if (fmis == 2) {
+            enable[CORR_OK] = enable[CORR_OK_QC2] = false;
+        } else if (fmis == 1) {
+            enable[REJECT] = enable[REJECT_QC2] = false;
+        }
+    }
+
+    for (int b=0; b<N_BUTTONS; ++b)
+        buttons[b]->setEnabled(enable[b]);
 }
 
 void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
@@ -77,291 +237,41 @@ void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
         navigateTo(mSensorTime);
 }
 
-#if 0
-enum mem_change { NO_CHANGE, CORR_OK, ORIG_OK, INTERPOLATED, REDISTRIBUTED, CORRECTED, REJECTED };
-struct change {
-    mem_change change;
-    float changed_value;
-    bool changed_qc2allowed;
-    change() : change(NO_CHANGE), changed_value(0), changed_qc2allowed(false) { }
-};
-typedef std::map<SensorTime, change> Changes_t;
-
-// from ErrorList::flags
-if (c>=COL_CORR_OK and c<NCOLUMNS) {
-    const kvalobs::kvControlInfo cif(mo.controlinfo);
-    const int fd = cif.flag(kvalobs::flag::fd);
-    const int fmis = cif.flag(kvalobs::flag::fmis);
-    if (Helpers::is_accumulation(fd)) {
-        // for accumulations, always use WatchRR (or data list, for now)
-        flags &= ~Qt::ItemIsEnabled;
-    } else if (fmis == 3) {
-        if (c==COL_INTERPOLATED)
-            flags |= Qt::ItemIsEditable;
-        else
-            flags &= ~Qt::ItemIsEnabled;
-    } else if ((c==COL_CORR_OK and fmis == 2) or (c==COL_REJECTED and fmis == 1)) {
-        flags &= ~Qt::ItemIsEnabled;
-    } else {
-        flags |= Qt::ItemIsEditable;
-        if (c==COL_CORR_OK or c==COL_ORIG_OK or c==COL_REJECTED)
-            flags |= Qt::ItemIsUserCheckable;
-    }
-}
-return flags;
-
-// from ErrorList::data
-case COL_CORR_OK:
-case COL_ORIG_OK:
-case COL_REJECTED: {
-    const kvalobs::kvControlInfo cif(mo.controlinfo);
-    const int fd = cif.flag(kvalobs::flag::fd);
-    const int fmis = cif.flag(kvalobs::flag::fmis);
-    if (fd == 2 or fd >= 4)
-        return isTT ? tr("Accumulation. Use WatchRR to modify.") : "WatchRR!";
-    if (column == COL_CORR_OK and fmis == 2) {
-        return isTT ? tr("Corrected is missing. Use field 'Original OK' or 'Recjected'.") : "Orig OK/Rej!";
-    } else if ((column==COL_CORR_OK or column==COL_ORIG_OK) and fmis == 3) {
-        return isTT ? tr("Both original and corrected are missing. Use field 'Interpolated'.") : "Interp!";
-    } else if (column==COL_REJECTED and fmis == 1) {
-        return isTT ? tr("Cannot reject. Use field 'Original OK'.") : "Orig OK!";
-    } else if (column==COL_REJECTED and fmis == 3) {
-        return isTT ? tr("Cannot reject. Use field 'Interpolated'.") : "Interp!";
-    }
-    if (mo.change == change4column(column)) {
-        if (mo.changed_qc2allowed)
-            return isTT ? tr("QC2 may override") : tr("QC2 ok");
-        else
-            return isTT ? tr("QC2 may not override") : tr("no QC2");
-    }
-    break;
-}
-case COL_INTERPOLATED:
-case COL_CORRECTED: {
-    const kvalobs::kvControlInfo cif(mo.controlinfo);
-    const int fd = cif.flag(kvalobs::flag::fd);
-    const int fmis = cif.flag(kvalobs::flag::fmis);
-    if (fd == 2 or fd >= 4)
-        return isTT ? tr("Accumulation. Use WatchRR to modify.") : "WatchRR!";
-    if (column==COL_CORRECTED and fmis == 3)
-        return isTT ? tr("Both original and corrected are missing. Use field 'Interpolated'.") : "Interp!";
-    if (not isTT) {
-        if (column==COL_CORRECTED and mo.change == ErrorList::ORIG_OK and fmis == 1)
-            return -32767;
-        if ((column==COL_INTERPOLATED and mo.change != ErrorList::INTERPOLATED)
-            or (column==COL_CORRECTED and mo.change != ErrorList::CORRECTED))
-        {
-            return QVariant();
-        }
-        
-        const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(mo.parNo);
-        const int nDigits = isCodeParam ? 0 : 1;
-        return QString::number(mo.changed_value, 'f', nDigits);
-    }
-    break;
-}
-
-if (role == Qt::CheckStateRole and (column==COL_CORR_OK or column==COL_ORIG_OK or column==COL_REJECTED)) {
-    const ErrorList::mem& mo = mErrorList[index.row()];
-    return (mo.change == change4column(column)) ? Qt::Checked : Qt::Unchecked;
-}
-
-// from ErrorList::setData
-bool ErrorListTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
+void SimpleCorrections::onAcceptOriginal()
 {
-    LOG_SCOPE("ErrorListTableModel");
-    const int column = index.column();
-    LOG4SCOPE_DEBUG(DBG1(column));
-    if ((column==COL_CORR_OK or column==COL_ORIG_OK or column==COL_REJECTED) and role == Qt::CheckStateRole) {
-        ErrorList::mem& mo = mErrorList[index.row()];
-        const ErrorList::mem_change mc = change4column(column);
-        if (mo.change != mc) {
-            mo.change = mc;
-            mo.changed_qc2allowed = true;
-        } else if (not mo.changed_qc2allowed) {
-            mo.change = ErrorList::NO_CHANGE;
-        } else {
-            mo.changed_qc2allowed = false;
-        }
-        LOG4SCOPE_DEBUG("cb change " << DBG1(mo.change) << DBG1(mo.changed_qc2allowed));
-    } else if ((column==COL_INTERPOLATED or column==COL_CORRECTED) and role == Qt::EditRole) {
-        bool ok = false;
-        const float fValue = value.toFloat(&ok);
-        if (not ok) {
-            LOG4SCOPE_DEBUG("bad float " << value.toString());
-            return false;
-        }
-
-        ErrorList::mem& mo = mErrorList[index.row()];
-        if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(mo.parNo, fValue)) {
-            LOG4SCOPE_DEBUG("value " << fValue << " outside physical range");
-            return false;
-        }
-
-        const ErrorList::mem_change mc = (column==COL_INTERPOLATED) ? ErrorList::INTERPOLATED: ErrorList::CORRECTED;
-        mo.change = mc;
-        mo.changed_qc2allowed = false;
-        mo.changed_value = fValue;
-        LOG4SCOPE_DEBUG(DBG1(mo.changed_value) << DBG1(mo.change));
-    } else {
-        LOG4SCOPE_DEBUG(DBG1(role));
-        return false;
-    } catch (std::runtime_error&) {
-    }
-    QModelIndex index1 = createIndex(index.row(), COL_CORR_OK);
-    QModelIndex index2 = createIndex(index.row(), NCOLUMNS-1);
-    /*emit*/ dataChanged(index1, index2);
-    return true;
-    return QVariant();
+    accept_original(mDA, mSensorTime, false);
 }
 
-// from errorlist.cc
-namespace /* anonymous */ {
-
-bool set_no_accumulation(kvalobs::kvData& kd)
+void SimpleCorrections::onAcceptOriginalQC2()
 {
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    if (ci.flag(kvalobs::flag::fd) != 3)
-        return false;
-    ci.set(kvalobs::flag::fd, 1);
-    kd.controlinfo(ci);
-    return true;
+    accept_original(mDA, mSensorTime, true);
 }
 
-void set_fhqc(kvalobs::kvData& kd, int fhqc)
+void SimpleCorrections::onAcceptCorrected()
 {
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    ci.set(kvalobs::flag::fhqc, fhqc);
-    kd.controlinfo(ci);
+    accept_corrected(mDA, mSensorTime, false);
 }
 
-void set_fmis(kvalobs::kvData& kd, int fmis)
+void SimpleCorrections::onAcceptCorrectedQC2()
 {
-    kvalobs::kvControlInfo ci = kd.controlinfo();
-    ci.set(kvalobs::flag::fmis, fmis);
-    kd.controlinfo(ci);
+    accept_corrected(mDA, mSensorTime, true);
 }
 
-} // anonymous namespace
-
-void ErrorList::saveChanges()
+void SimpleCorrections::onReject()
 {
-    LOG_SCOPE("ErrorList");
-
-    typedef std::list<kvData> kvDataList;
-    kvDataList modData;
-    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
-        if (mo.change == NO_CHANGE)
-            continue;
-        kvalobs::kvData kd = getKvData(mo);
-        const kvalobs::kvControlInfo cif = kd.controlinfo();
-
-        const int fmis = cif.flag(kvalobs::flag::fmis);
-        const int fd   = cif.flag(kvalobs::flag::fd);
-        bool qc2ok = mo.changed_qc2allowed;
-
-        switch (mo.change) {
-        case NO_CHANGE:
-            continue;
-        case CORR_OK:
-            if (Helpers::float_eq()(kd.original(), kd.corrected())
-                and (not Helpers::is_accumulation(fd)) and fmis < 2)
-            {
-                kvalobs::hqc::hqc_accept(kd);
-                set_no_accumulation(kd);
-            } else if (fmis == 0) {
-                set_fhqc(kd, 7);
-            } else if (fmis == 1) {
-                set_fhqc(kd, 5);
-            } else {
-                LOG4SCOPE_ERROR("bad corr ok, would not set fhqc, kd=" << kd);
-                continue;
-            }
-            break;
-        case ORIG_OK:
-            if (fmis == 3) {
-                LOG4SCOPE_ERROR("fmis=3, orig ok not possible, should not have been here, kd=" << kd);
-                continue;
-            }
-            if (cif.flag(kvalobs::flag::fnum) == 0 and not (fmis == 0 or fmis == 1 or fmis == 2)) {
-                LOG4SCOPE_ERROR("bad orig ok, would not set fhqc, kd=" << kd);
-                continue;
-            }
-            kd.corrected(kd.original());
-            kvalobs::hqc::hqc_accept(kd);
-            if (fmis == 0 or fmis == 2) {
-                set_fmis(kd, 0);
-                set_no_accumulation(kd);
-            } else if (fmis == 1) {
-                set_fmis(kd, 3);
-            }
-            break;
-        case CORRECTED:
-        case INTERPOLATED:
-            if (Helpers::is_accumulation(fd)) {
-                LOG4SCOPE_WARN("corr/interp for accumulation, should not have been here, kd=" << kd);
-                continue;
-            }
-            kvalobs::hqc::hqc_auto_correct(kd, mo.changed_value);
-            qc2ok = false;
-            break;
-        case REDISTRIBUTED:
-            LOG4SCOPE_ERROR("should not make redistributions in error list, kd=" << kd);
-            continue;
-        case REJECTED:
-            if (fmis == 1 or fmis == 3) {
-                LOG4SCOPE_ERROR("fmis=1/3, cannot reject, should not have been here, kd=" << kd);
-                continue;
-            }
-            kvalobs::hqc::hqc_reject(kd);
-            break;
-        }
-        if (qc2ok)
-            set_fhqc(kd, 4);
-
-        modData.push_back( kd );
-    }
-
-    LOG4SCOPE_DEBUG("modData =\n" << decodeutility::kvdataformatter::createString(modData));
-
-    if (modData.empty()) {
-        QMessageBox::information(this,
-                                 tr("No unsaved data"),
-                                 tr("There are no unsaved data."),
-                                 QMessageBox::Ok, Qt::NoButton);
-        return;
-    }
-
-    if (mainWindow->saveDataToKvalobs(modData)) {
-        QMessageBox::information(this,
-                                 tr("Data saved"),
-                                 tr("%1 rows have been saved to kvalobs. Warning: data shown in error "
-                                    "and data list might no longer be consistent with kvalobs.").arg(modData.size()),
-                                 QMessageBox::Ok, Qt::NoButton);
-    }
+    reject(mDA, mSensorTime, false);
 }
 
-bool ErrorList::maybeSave()
+void SimpleCorrections::onRejectQC2()
 {
-    bool modified = false;
-    BOOST_FOREACH(const mem& mo, mTableModel->errorList()) {
-        if (mo.change != NO_CHANGE) {
-            modified = true;
-            break;
-        }
-    }
-
-    bool ret = true;
-    if (modified) {
-        int result =
-            QMessageBox::warning( this, tr("HQC"),
-                                  tr("You have unsaved changes in the error list. Do you want to save them?"),
-                                  tr("&Yes"), tr("&No"), tr("&Cancel"),
-                                  0, 2 );
-        if ( ! result )
-            saveChanges();
-        ret = result != 2;
-    }
-    return ret;
+    reject(mDA, mSensorTime, true);
 }
-#endif
+
+void SimpleCorrections::onInterpolated()
+{
+}
+
+void SimpleCorrections::onCorrected()
+{
+    onInterpolated();
+}

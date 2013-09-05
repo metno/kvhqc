@@ -14,6 +14,12 @@ private:
     EditDataEditor(EditAccess* ea, EditDataPtr obs);
 public:
     ~EditDataEditor();
+
+    float corrected() const
+        { return mCorrected.get(); }
+    const kvalobs::kvControlInfo controlinfo() const
+        { return mControlinfo.get(); }
+
     EditDataEditor& setCorrected(float nc);
     EditDataEditor& setControlinfo(const kvalobs::kvControlInfo& nci);
     EditDataEditor& changeControlinfo(const FlagChange& fc);

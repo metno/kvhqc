@@ -150,8 +150,10 @@ HqcMainWindow::HqcMainWindow()
   , mHints(new HintWidget(this))
   , kda(boost::make_shared<QtKvalobsAccess>())
   , kma(boost::make_shared<KvalobsModelAccess>())
+  , eda(boost::make_shared<EditAccess>(kda))
 {
     ui->setupUi(this);
+    ui->simpleCorrrections->setDataAccess(eda, kma);
 
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
     connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
@@ -430,8 +432,6 @@ void HqcMainWindow::ListOK()
     }
     LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
     const TimeRange timeLimits(stime, etime);
-
-    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
 
     if (lity == daLi or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building data list..."));
