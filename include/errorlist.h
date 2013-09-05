@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "hqcdefs.h"
 #include "KvalobsData.h"
+#include "TimeRange.hh"
 
 #include <kvalobs/kvData.h>
 
@@ -43,8 +44,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 class ErrorListTableModel;
 class HqcMainWindow;
-class miMessage;
+QT_BEGIN_NAMESPACE;
+class QSortFilterProxyModel;
 class QWidget;
+QT_END_NAMESPACE;
 
 /**
  * \brief The error list. i.e. list of observations with error flags.
@@ -57,15 +60,14 @@ class QWidget;
 class ErrorList : public QTableView
 { Q_OBJECT;
 public:
-    ErrorList(const std::vector<int>& selectedParameters,
-              const timeutil::ptime&,
-              const timeutil::ptime&,
-              QWidget*,
-              int,
-              model::KvalobsDataListPtr,
-              const std::vector<modDatl>&);
+    ErrorList(QWidget* parent=0);
     virtual ~ErrorList();
 
+    void generateContents(const std::vector<int>& selectedParameters,
+                          const TimeRange& timerange,
+                          bool errorListSalen,
+                          model::KvalobsDataListPtr,
+                          const std::vector<modDatl>&);
 
     enum mem_change { NO_CHANGE, CORR_OK, ORIG_OK, INTERPOLATED, REDISTRIBUTED, CORRECTED, REJECTED };
     struct mem {
@@ -129,7 +131,8 @@ private:
 private:
     HqcMainWindow* mainWindow;
     int mLastSelectedRow;
-    
+
+    std::auto_ptr<QSortFilterProxyModel> mSortProxy;
     std::auto_ptr<ErrorListTableModel> mTableModel;
 };
 

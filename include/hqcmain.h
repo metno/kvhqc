@@ -148,8 +148,6 @@ private Q_SLOTS:
     //! bring up the WatchWeather dialog
     void showWeather();
 
-    void updateSaveFunction(QMdiSubWindow * w);
-
     void onVersionCheckTimeout();
 
 private:

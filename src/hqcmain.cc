@@ -237,6 +237,10 @@ HqcMainWindow::HqcMainWindow()
     
     connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
             tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
+
+    connect(ui->saveAction, SIGNAL(activated()), ui->treeErrors, SLOT(saveChanges()));
+    connect(ui->treeErrors, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
+            this, SLOT(navigateTo(const kvalobs::kvData&)));
     
     // make the timeseries-plot-dialog
     tspdialog = new TSPlotDialog(this);
@@ -450,17 +454,9 @@ void HqcMainWindow::ListOK()
     if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
         statusBar()->message(tr("Building error list..."));
         qApp->processEvents();
-        ErrorList * erl = new ErrorList(mSelectedParameters,
-                                        stime,
-                                        etime,
-                                        this,
-                                        lity,
-                                        datalist,
-                                        modeldatalist);
-        connect(ui->saveAction, SIGNAL( activated() ), erl, SLOT( saveChanges() ) );
-        connect(erl, SIGNAL(signalNavigateTo(const kvalobs::kvData&)),
-                this, SLOT(navigateTo(const kvalobs::kvData&)));
-        ui->ws->addSubWindow(erl);
+        ui->treeErrors->generateContents(mSelectedParameters, TimeRange(stime, etime),
+                                         (lity == erSa or lity == alSa),
+                                         datalist, modeldatalist);
     }
 
     tileHorizontal();
@@ -673,15 +669,11 @@ void HqcMainWindow::showWatchRR()
     const timeutil::ptime now = timeutil::now();
     timeutil::ptime tMiddle = now;
 
-    QMdiSubWindow* subWindow = ui->ws->activeSubWindow();
-    if( subWindow ) {
-        ErrorList* errorList = dynamic_cast<ErrorList*>(subWindow->widget());
-        if (errorList) {
-            const kvalobs::kvData data = errorList->getKvData();
-            sensor.stationId = data.stationID();
-            sensor.typeId = data.typeID();
-            tMiddle = timeutil::from_miTime(data.obstime());
-        }
+    const kvalobs::kvData data = ui->treeErrors->getKvData();
+    if (data.paramID() == 110) {
+        sensor.stationId = data.stationID();
+        sensor.typeId = data.typeID();
+        tMiddle = timeutil::from_miTime(data.obstime());
     }
 
     timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
@@ -721,14 +713,7 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-    kvalobs::kvData data;
-    
-    QMdiSubWindow * subWindow = ui->ws->activeSubWindow();
-    if ( subWindow ) {
-        ErrorList * errorList = dynamic_cast<ErrorList *>(subWindow->widget());
-        if( errorList )
-            data = errorList->getKvData();
-    }
+    const kvalobs::kvData data = ui->treeErrors->getKvData();
 
     Weather::WeatherDialog * wtd = Weather::WeatherDialog::getWeatherDialog(data, this, Qt::Window);
     if ( wtd ) {
@@ -1331,16 +1316,6 @@ void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
     if (typeID == -32767)
         typeID = 0;
     /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), typeID);
-}
-
-void HqcMainWindow::updateSaveFunction( QMdiSubWindow * w )
-{
-  if ( ! w )
-    return;
-
-  ErrorList *win = dynamic_cast<ErrorList*>(w->widget());
-  bool enabled = win;
-  ui->saveAction->setEnabled(enabled);
 }
 
 int HqcMainWindow::findTypeId(int tpId, int pos, int par, const timeutil::ptime& oTime)

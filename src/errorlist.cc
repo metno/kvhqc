@@ -65,41 +65,45 @@ using namespace kvalobs;
 /*!
  * \brief Constructs the error list
  */
-ErrorList::ErrorList(const std::vector<int>& selectedParameters,
-		     const timeutil::ptime& stime,
-		     const timeutil::ptime& etime,
-		     QWidget* parent,
-		     int lity,
-		     model::KvalobsDataListPtr dtl,
-		     const std::vector<modDatl>& mdtl)
+ErrorList::ErrorList(QWidget* parent)
     : QTableView(parent)
-    , mainWindow( getHqcMainWindow( parent ) )
+    , mainWindow(getHqcMainWindow(parent))
     , mLastSelectedRow(-1)
+    , mSortProxy(new QSortFilterProxyModel(this))
 {
     LOG_SCOPE("ErrorList");
-
-    setCaption(tr("HQC - Error List"));
-    setIcon( QPixmap( ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png" ) );
 
     verticalHeader()->setDefaultSectionSize(20);
     verticalHeader()->hide();
     setSelectionBehavior(SelectRows);
     setSelectionMode(SingleSelection);
     setSortingEnabled(true);
-    QSortFilterProxyModel* sortProxy = new QSortFilterProxyModel(this);
-    setModel(sortProxy);
+    setModel(mSortProxy.get());
     
     connect(mainWindow, SIGNAL(windowClose()), this, SIGNAL(errorListClosed()));
     connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(showFail(const QModelIndex&)));
     
-    const std::vector<mem> memStore2
-        = Errors::fillMemoryStore2(selectedParameters, TimeRange(stime, etime),
-                                   (lity == erSa or lity == alSa), dtl, mdtl);
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(memStore2));
-    sortProxy->setSourceModel(mTableModel.get());
-
     connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
             this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+}
+
+ErrorList::~ErrorList()
+{
+}
+
+void ErrorList::generateContents(const std::vector<int>& selectedParameters,
+                                 const TimeRange& timerange,
+                                 bool errorListSalen,
+                                 model::KvalobsDataListPtr dtl,
+                                 const std::vector<modDatl>& mdtl)
+{
+    LOG_SCOPE("ErrorList");
+    mLastSelectedRow = -1;
+
+    const std::vector<mem> memStore2
+        = Errors::fillMemoryStore2(selectedParameters, timerange, errorListSalen, dtl, mdtl);
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(memStore2));
+    mSortProxy->setSourceModel(mTableModel.get());
 
     horizontalHeader()->setResizeMode(QHeaderView::Interactive);
     horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
@@ -117,10 +121,6 @@ ErrorList::ErrorList(const std::vector<int>& selectedParameters,
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_NAME, 50);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_EQ,   15);
     horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAG_VAL,  30);
-}
-
-ErrorList::~ErrorList()
-{
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
