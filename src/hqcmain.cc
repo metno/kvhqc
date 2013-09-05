@@ -152,6 +152,7 @@ HqcMainWindow::HqcMainWindow()
   , kma(boost::make_shared<KvalobsModelAccess>())
 {
     ui->setupUi(this);
+
     connect(ui->saveAction,  SIGNAL(triggered()), this, SIGNAL(saveData()));
     connect(ui->printAction, SIGNAL(triggered()), this, SIGNAL(printErrorList()));
     connect(ui->exitAction,  SIGNAL(triggered()), qApp, SLOT(closeAllWindows()));
@@ -1316,6 +1317,8 @@ void HqcMainWindow::navigateTo(const kvalobs::kvData& kd)
     if (typeID == -32767)
         typeID = 0;
     /*emit*/ statTimeReceived(kd.stationID(), kd.obstime(), typeID);
+
+    ui->simpleCorrrections->navigateTo(Helpers::sensorTimeFromKvData(kd));
 }
 
 int HqcMainWindow::findTypeId(int tpId, int pos, int par, const timeutil::ptime& oTime)

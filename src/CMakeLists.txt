@@ -16,6 +16,7 @@ SET(hqc_HEADERS
   ../include/rejectdialog.h
   ../include/rejecttable.h
   ../include/rejecttimeseriesdialog.h
+  ../include/SimpleCorrections.hh
   ../include/StationSelection.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
@@ -48,6 +49,7 @@ SET(hqc_SOURCES
   rejecttable.cc
   rejecttimeseriesdialog.cc
   StInfoSysBuffer.cc
+  SimpleCorrections.cc
   textdatadialog.cc
   textdatatable.cc
   TimeseriesDialog.cc
@@ -71,6 +73,7 @@ QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
   listdialog.ui
   mainwindow.ui
+  simplecorrections.ui
   stationselection.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
