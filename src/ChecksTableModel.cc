@@ -84,17 +84,20 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
   mSensorTime = st;
   if (mSensorTime.valid()) {
     if (ObsDataPtr obs = mDA->find(mSensorTime)) {
-      mChecks = QString::fromStdString(obs->cfailed()).split(",");
-      QSqlQuery query(hqcApp->systemDB());
-      query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
-
-      BOOST_FOREACH(const QString& c, mChecks) {
-        query.bindValue(0, c);
-        query.exec();
-        if (query.next())
-          mExplanations.push_back(query.value(0).toString());
-        else
-          mExplanations.push_back("?");
+      const std::string& cfailed = obs->cfailed();
+      if (not cfailed.empty()) {
+        mChecks = QString::fromStdString(cfailed).split(",");
+        QSqlQuery query(hqcApp->systemDB());
+        query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
+        
+        BOOST_FOREACH(const QString& c, mChecks) {
+          query.bindValue(0, c);
+          query.exec();
+          if (query.next())
+            mExplanations.push_back(query.value(0).toString());
+          else
+            mExplanations.push_back("?");
+        }
       }
     }
   }
