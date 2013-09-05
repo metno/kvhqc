@@ -20,7 +20,6 @@ INSTALL(FILES
   images/diana_icon_hqc.png
   images/diana_img_hqc.png
 
-  images/hqc_logo.svg
   images/undo.svg
   images/redo.svg
   images/accept.svg
