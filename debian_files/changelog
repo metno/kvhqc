@@ -1,3 +1,11 @@
+kvhqc (3.0.6-1) unstable; urgency=low
+
+  * bugfix: update everything in cache from kvServiced, not just subscribed
+  * bugfix: do not show tasks twice in tooltips
+  * bugfix: show center station in WatchRR "neighbor" tabs
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 21 Aug 2013 12:49:17 +0200
+
 kvhqc (3.0.5-1) unstable; urgency=low
 
   * bugfix: do not swap kvData sensor and level for inserted data
