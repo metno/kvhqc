@@ -92,15 +92,18 @@ void setChildren(QStandardItem* parent, bool on)
 void checkChildren(QStandardItem* parent)
 {
   const int cc = parent->rowCount();
-  int nChecked = 0;
+  int nChecked = 0, nPartial = 0;
   for (int c=0; c<cc; ++c) {
     QStandardItem* child = parent->child(c, 0);
-    if (child->checkState() != Qt::Unchecked)
+    const Qt::CheckState ccs = child->checkState();
+    if (ccs == Qt::Checked)
       nChecked += 1;
+    else if (ccs == Qt::PartiallyChecked)
+      nPartial += 1;
   }
   const Qt::CheckState pcs = parent->checkState();
   const Qt::CheckState pcs_new = (nChecked == cc) ? Qt::Checked
-      : ((nChecked == 0) ? Qt::Unchecked : Qt::PartiallyChecked);
+      : (((nChecked + nPartial) > 0) ? Qt::PartiallyChecked : Qt::Unchecked);
   if (pcs != pcs_new)
     parent->setCheckState(pcs_new);
 }
