@@ -7,6 +7,7 @@
 
 #include <QtGui/QTableView>
 
+class QDomElement;
 class DataListModel;
 
 class DataList : public QTableView, public DataView
@@ -28,7 +29,8 @@ private:
         Sensor sensor;
         ColumnType type;
         int timeOffset;
-        std::string toText() const;
+        void toText(QDomElement& ce) const;
+        void fromText(const QDomElement& ce);
     };
     struct eq_Column;
     typedef std::vector<Column> Columns_t;
@@ -43,6 +45,7 @@ private:
     void updateModel();
     ObsColumnPtr makeColumn(const Column& c);
     std::string changes();
+    void replay(const std::string& changes);
 
 private:
     std::auto_ptr<DataListModel> mTableModel;
@@ -50,7 +53,6 @@ private:
 
     TimeRange mTimeLimits, mOriginalTimeLimits;
     Columns_t mColumns,    mOriginalColumns;
-    std::vector<bool> mColumnWasMoved;
 };
 
 #endif // DataList_hh
