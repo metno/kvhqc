@@ -38,9 +38,10 @@ timeutil::ptime DataListModel::timeAtRow(int row) const
     return mTimes.at(row);
 }
 
-QModelIndex DataListModel::findIndex(const SensorTime& st)
+QModelIndexList DataListModel::findIndexes(const SensorTime& st)
 {
     // FIXME this does not take into account columns with time offset
+    QModelIndexList idxs;
     const int row = rowAtTime(st.time);
     if (row >= 0) {
         const int nColumns = columnCount(QModelIndex());
@@ -49,10 +50,10 @@ QModelIndex DataListModel::findIndex(const SensorTime& st)
             if (!dc)
                 continue;
             if (dc->matchSensor(st.sensor))
-                return index(row, col, QModelIndex());
+                idxs << index(row, col, QModelIndex());
         }
     }
-    return QModelIndex();
+    return idxs;
 }
 
 int DataListModel::rowAtTime(const timeutil::ptime& time) const

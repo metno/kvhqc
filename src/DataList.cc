@@ -5,6 +5,8 @@
 #include <QtGui/QFont>
 #include <QtGui/QHeaderView>
 
+#include <boost/foreach.hpp>
+
 DataList::DataList(QWidget* parent)
     : QTableView(parent)
 {
@@ -31,11 +33,11 @@ void DataList::setSensorsAndTimes(EditAccessPtr eda, const DataListModel::Sensor
 
 void DataList::navigateTo(const SensorTime& st)
 {
-    const QModelIndex idx = mTableModel->findIndex(st);
-    if (idx.isValid()) {
-        scrollTo(idx);
-        QItemSelection selection;
+    const QModelIndexList idxs = mTableModel->findIndexes(st);
+    QItemSelection selection;
+    BOOST_FOREACH(const QModelIndex idx, idxs)
         selection.select(idx, idx);
-        selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
-    }
+    selectionModel()->select(selection, QItemSelectionModel::ClearAndSelect);
+    if (not idxs.empty())
+        scrollTo(idxs.at(0));
 }
