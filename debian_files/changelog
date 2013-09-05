@@ -1,3 +1,11 @@
+kvhqc (3.0.0~a12-1) unstable; urgency=low
+
+  * save/restore splitter position for auto data list
+  * WatchWeather shows all observations in given time
+  * show WMO station number in error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 27 Jun 2013 12:53:15 +0200
+
 kvhqc (3.0.0~a11-1) unstable; urgency=low
 
   * use recent kvalobs libraries to get correct useinfo
