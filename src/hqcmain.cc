@@ -358,14 +358,15 @@ void HqcMainWindow::ListOK()
             const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
             Sensor sensor(stationId, paramId, 0, 0, 0);
             BOOST_FOREACH(const kvalobs::kvObsPgm op, opl) {
-                if (op.paramID() == paramId) {
-                    sensor.typeId = op.typeID(); // FIXME choose the correct typeId here; what about negative typeId's?
-                    break;
-                }
-            }
-            if (sensor.typeId != 0) {
+              const int p = op.paramID();
+              if (p == paramId) {
+                sensor.typeId = op.typeID();
                 sensors.push_back(sensor);
-                METLIBS_LOG_DEBUG(LOGVAL(sensor));
+              }
+              if (Helpers::aggregatedParameter(p, paramId)) {
+                sensor.typeId = -op.typeID();
+                sensors.push_back(sensor);
+              }
             }
         }
     }

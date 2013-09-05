@@ -363,14 +363,12 @@ QString stationName(const kvalobs::kvStation& s)
     return QString::fromLatin1(s.name().c_str());
 }
 
-namespace /* anonymous */ {
 bool aggregatedParameter(int paramFrom, int paramTo)
 {
   return (paramFrom >= kvalobs::PARAMID_RR_01 and paramFrom < kvalobs::PARAMID_RR_24)
       and (paramTo > kvalobs::PARAMID_RR_01 and paramTo <= kvalobs::PARAMID_RR_24)
       and paramTo > paramFrom;
 }
-} // namespace anonymous
 
 std::vector<Sensor> findNeighbors(const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {

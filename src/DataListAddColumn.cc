@@ -60,6 +60,7 @@ int DataListAddColumn::selectedTimeOffset() const
 
 void DataListAddColumn::onStationEdited()
 {
+  METLIBS_LOG_SCOPE();
   std::set<int> stationParams;
 
   bool ok = true;
@@ -109,6 +110,7 @@ int DataListAddColumn::getTypeId() const
 
 void DataListAddColumn::onParameterSelected(int)
 {
+  METLIBS_LOG_SCOPE();
   const int stationId = ui->textStation->text().toInt();
   const int paramId = getParamId();
   
@@ -117,18 +119,17 @@ void DataListAddColumn::onParameterSelected(int)
     const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
-      if (p == paramId) {
+      if (p == paramId)
         stationTypes.insert(op.typeID());
-        if (p > kvalobs::PARAMID_RR_01 and p <= kvalobs::PARAMID_RR_24)
-          stationTypes.insert(-op.typeID());
-      }
+      if (Helpers::aggregatedParameter(p, paramId))
+        stationTypes.insert(-op.typeID());
     }
   }
 
   const std::vector<int> typeIds(stationTypes.begin(), stationTypes.end());
   delete ui->comboType->model();
   ui->comboType->setModel(new TypeIdModel(typeIds));
-    ui->comboType->setCurrentIndex(0);
+  ui->comboType->setCurrentIndex(0);
 
   const bool enable = (not stationTypes.empty());
   ui->comboType->setEnabled(enable);
