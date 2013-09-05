@@ -506,23 +506,17 @@ void HqcMainWindow::showWatchRR()
     time = sd.selectedTime();
 
     mDianaHelper->setEnabled(false);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
-
-    MainDialog main(eda, kma, sensor, time, this);
+    EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
+    MainDialog main(eda2, kma, sensor, time, this);
     if (main.exec()) {
-        if (not eda->sendChangesToParent()) {
-            QMessageBox::critical(this,
-                                  tr("WatchRR"),
-                                  tr("Sorry, your changes could not be saved and are lost!"),
-                                  tr("OK"),
-                                  "");
-        } else {
-            QMessageBox::information(this,
-                                     tr("WatchRR"),
-                                     tr("Your changes have been saved."),
-                                     tr("OK"),
-                                     "");
-        }
+      eda->newVersion();
+      if (not eda2->sendChangesToParent()) {
+        QMessageBox::critical(this,
+            tr("WatchRR"),
+            tr("Sorry, your changes could not be saved and are lost!"),
+            tr("OK"),
+            "");
+      }
     }
     mDianaHelper->setEnabled(true);
 }
@@ -543,8 +537,18 @@ void HqcMainWindow::showWeather()
   }
   
   const TimeRange limits(t + boost::gregorian::days(-7), std::min(t + boost::gregorian::days(1), roundedNow));
-  WeatherDialog wd(eda, s, limits, this);
-  wd.exec();
+  EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
+  WeatherDialog wd(eda2, s, limits, this);
+  if (wd.exec()) {
+    eda->newVersion();
+    if (not eda2->sendChangesToParent()) {
+      QMessageBox::critical(this,
+          tr("WatchWeather"),
+          tr("Sorry, your changes could not be saved and are lost!"),
+          tr("OK"),
+          "");
+      }
+  }
 }
 
 void HqcMainWindow::errListMenu()
