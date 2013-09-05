@@ -61,7 +61,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "rejecttimeseriesdialog.h"
 #include "textdatadialog.h"
 #include "textdatatable.h"
-#include "TimeseriesDialog.h"
+#include "TimeSeriesView.hh"
 #include "timeutil.hh"
 #include "WeatherDialog.hh"
 
@@ -73,15 +73,11 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef slots
 #define slots
 #include <qUtilities/qtHelpDialog.h>
-#include <qTimeseries/TSPlotDialog.h>
 #undef slots
 #else
 #include <qUtilities/qtHelpDialog.h>
-#include <qTimeseries/TSPlotDialog.h>
 #endif
-#include <qTimeseries/TSPlot.h>
 #include <qUtilities/ClientButton.h>
-#include <glText/glTextQtTexture.h>
 
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>
@@ -91,6 +87,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QDesktopServices>
 #include <QtGui/QMdiSubWindow>
 #include <QtGui/QMessageBox>
+#include <QtGui/QPainter>
 #include <QtGui/QPixmap>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
@@ -142,14 +139,15 @@ HqcMainWindow::HqcMainWindow()
   , reinserter(0)
   , listExist(false)
   , ui(new Ui::HqcMainWindow)
-  , mAutoColumnView(new AutoColumnView)
-  , mAutoDataList(new DataList(this))
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
   , kda(boost::make_shared<QtKvalobsAccess>())
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(kda))
   , mEditVersions(new EditVersionModel(eda))
+  , mTimeSeriesView(new TimeSeriesView(this))
+  , mAutoColumnView(new AutoColumnView)
+  , mAutoDataList(new DataList(this))
 {
     ui->setupUi(this);
     ui->treeErrors->setDataAccess(eda, kma);
@@ -171,7 +169,6 @@ HqcMainWindow::HqcMainWindow()
 
     pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
     statusBar()->addPermanentWidget(pluginB, 0);
-
 
     // --- DEFINE DIALOGS --------------------------------------------
     const QString hqc_icon_path = ::hqc::getPath(::hqc::IMAGEDIR) + "/hqc.png";
@@ -195,6 +192,8 @@ HqcMainWindow::HqcMainWindow()
     mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
     mDianaHelper->setDataAccess(eda, kma);
 
+    mTimeSeriesView->setDataAccess(eda, kma);
+
     connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
 
     dshdlg->hide();
@@ -207,15 +206,12 @@ HqcMainWindow::HqcMainWindow()
     connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
     connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
-    tsdlg = new TimeseriesDialog();
-    tsdlg->hide();
-    connect(ui->timeSeriesAction, SIGNAL(triggered()), tsdlg, SLOT(show()));
-    connect(tsdlg, SIGNAL(TimeseriesApply()), SLOT(TimeseriesOK()));
+    connect(ui->timeSeriesAction, SIGNAL(triggered()), mTimeSeriesView.get(), SLOT(show()));
     
-    connect(this, SIGNAL(newStationList(std::vector<QString>&)),
-            tsdlg, SLOT(newStationList(std::vector<QString>&)));
-    connect(this, SIGNAL(newParameterList(const std::vector<int>&)),
-            tsdlg, SLOT(newParameterList(const std::vector<int>&)));
+    //connect(this, SIGNAL(newStationList(std::vector<QString>&)),
+    //    tsdlg, SLOT(newStationList(std::vector<QString>&)));
+    //connect(this, SIGNAL(newParameterList(const std::vector<int>&)),
+    //    tsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
     connect(ui->actionRejectSeries, SIGNAL(triggered()), rjtsdlg, SLOT(show()));
     connect(rjtsdlg, SIGNAL(tsRejectApply()), SLOT(rejectTimeseriesOK()));
@@ -233,12 +229,6 @@ HqcMainWindow::HqcMainWindow()
     connect(this,  SIGNAL(newParameterList(const std::vector<int>&)),
             actsdlg, SLOT(newParameterList(const std::vector<int>&)));
     
-    connect(lstdlg, SIGNAL(fromTimeChanged(const QDateTime&)),
-            tsdlg, SLOT(setFromTimeSlot(const QDateTime&)));
-    
-    connect(lstdlg, SIGNAL(toTimeChanged(const QDateTime&)),
-            tsdlg, SLOT(setToTimeSlot(const QDateTime&)));
-
     mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
@@ -247,12 +237,12 @@ HqcMainWindow::HqcMainWindow()
     adlsw->setWindowTitle(tr("Automatic Data List"));
     mAutoColumnView->attachView(mAutoDataList);
 
+    QMdiSubWindow* tssw = ui->ws->addSubWindow(mTimeSeriesView.get());
+    tssw->setWindowTitle(tr("Time Series"));
+
     eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
     ui->saveAction->setEnabled(false); // no changes yet
     
-    // make the timeseries-plot-dialog
-    tspdialog = new TSPlotDialog(this);
-
     HelpDialog::Info info;
     info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
 
@@ -434,7 +424,7 @@ void HqcMainWindow::ListOK()
 
 void HqcMainWindow::TimeseriesOK()
 {
-    METLIBS_LOG_ERROR("FIXME implement this in TimeSeriesView");
+  mTimeSeriesView->setVisible(true);
 }
 
 inline QString dateStr_( const QDateTime & dt )
@@ -821,41 +811,41 @@ void HqcMainWindow::findStationInfo(int stnr,
     }
 }
 
-void HqcMainWindow::tileHorizontal() {
+void HqcMainWindow::tileHorizontal()
+{
+#if 1
+  ui->ws->tileSubWindows();
+#else
+  QList<QMdiSubWindow *> allWindows = ui->ws->subWindowList();
+  QList<QMdiSubWindow *> windows;
+  BOOST_FOREACH(QMdiSubWindow* sw, allWindows) {
+    if (sw->isVisible())
+      windows << sw;
+  }
 
-//  ws->tileSubWindows();
-
-  // primitive horizontal tiling
-  QList<QMdiSubWindow *> windows = ui->ws->subWindowList();
-  if ( windows.empty() )
+  if (windows.empty())
     return;
 
+  const int nWindows = windows.size();
+  if (windows.size() == 1) {
+    windows.front()->showMaximized();
+    return;
+  }
+
+  const int FRAME_HEIGHT = windows.front()->parentWidget()->baseSize().height(), height = ui->ws->height() / nWindows;
   int y = 0;
-  if ( windows.count() == 1 ) {
-    QWidget *window = windows.at(0);
-    window->showMaximized();
-    //window->parentWidget()->setGeometry( 0, y, ws->width(), ws->height() );
-    return;
+
+  BOOST_FOREACH(QMdiSubWindow* sw, allWindows) {
+    if (sw->windowState() == Qt::WindowMaximized)
+      // prevent flicker
+      sw->hide();
+
+    sw->showNormal();
+    const int h = std::max(height, sw->minimumHeight() + FRAME_HEIGHT);
+    sw->setGeometry(0, y, ui->ws->width(), h);
+    y += h;
   }
-  else {
-    int height[] = {0, 28 + ui->ws->height() / 2, (ui->ws->height() / 2) - 28} ;
-
-    for ( int i = windows.count() -2; i < windows.count(); ++ i ) {
-    //for ( int i = int(windows.count()) - 1; i > int(windows.count()) -2; --i ) {
-      QWidget *window = windows.at(i);
-
-      if ( window->windowState() == Qt::WindowMaximized ) {
-	// prevent flicker
-	window->hide();
-      }
-      window->showNormal();
-      int preferredHeight = window->minimumHeight()+window->parentWidget()->baseSize().height();
-      int actHeight = QMAX(height[i -int(windows.count()) + 3], preferredHeight);
-
-      window->setGeometry( 0, y, ui->ws->width(), actHeight );
-      y += actHeight;
-    }
-  }
+#endif
 }
 
 void HqcMainWindow::helpUse() {

@@ -1,9 +1,44 @@
 
 #include "TimeSeriesView.hh"
 
+#include "KvMetaDataBuffer.hh"
+#include "ModelData.hh"
+#include "TimeseriesDialog.h"
+
+#include <boost/foreach.hpp>
+
+#include "ui_timeseriesview.h"
+
+#define MILOGGER_CATEGORY "kvhqc.TimeSeriesView"
+#include "HqcLogging.hh"
+
 TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
+    , ui(new Ui::TimeSeriesView)
+    , tsdlg(new TimeseriesDialog(this))
 {
+  METLIBS_LOG_SCOPE();
+  ui->setupUi(this);
+
+  std::vector<QString> stations;
+  stations.push_back("10380");
+  stations.push_back("17980");
+  stations.push_back("18700");
+  tsdlg->newStationList(stations);
+
+  std::vector<int> params;
+  params.push_back(211);
+  params.push_back(213);
+  params.push_back(215);
+  params.push_back(105);
+  tsdlg->newParameterList(params);
+
+  QDateTime t = timeutil::nowWithMinutes0Seconds0();
+  QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+  ui->timeFrom->setDateTime(f);
+  ui->timeTo->setDateTime(t);
+  tsdlg->setFromTimeSlot(f);
+  tsdlg->setToTimeSlot(t);
 }
 
 TimeSeriesView::~TimeSeriesView()
@@ -12,12 +47,17 @@ TimeSeriesView::~TimeSeriesView()
                         
 void TimeSeriesView::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    DataView::setDataAccess(eda, mda);
+  DataView::setDataAccess(eda, mda);
+
+  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
+  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
+  const TimeRange limits(stime, etime);
+  mDA->addSubscription(ObsSubscription(18700, limits));
 }
 
 void TimeSeriesView::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    DataView::setSensorsAndTimes(sensors, limits);
+  DataView::setSensorsAndTimes(sensors, limits);
 }
 
 void TimeSeriesView::navigateTo(const SensorTime&)
@@ -28,87 +68,114 @@ void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
 {
 }
 
-void TimeSeriesView::show()
+void TimeSeriesView::onConfigButton()
 {
-#if 0
+  tsdlg->exec();
+  updatePlot();
+}
+
+void TimeSeriesView::onRadioPlot()
+{
+  updatePlot();
+}
+
+void TimeSeriesView::onDateFromChanged(const QDateTime&)
+{
+  updatePlot();
+}
+
+void TimeSeriesView::onDateToChanged(const QDateTime&)
+{
+  updatePlot();
+}
+
+void TimeSeriesView::updatePlot()
+{
+  METLIBS_LOG_SCOPE();
+
   timeutil::ptime stime;
   timeutil::ptime etime;
   std::vector<std::string> parameter;
   std::vector<POptions::PlotOptions> plotoptions;
-  std::vector<int> parameterIndex;
   std::vector<int> stationIndex;
 
   tsdlg->getResults(parameter,stime,etime,stationIndex,plotoptions);
 
-  // make timeseries
+  stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
+  etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
+  const TimeRange limits(stime, etime);
+
+  METLIBS_LOG_DEBUG(LOGVAL(parameter.size()) << LOGVAL(limits));
+
   TimeSeriesData::tsList tslist;
 
-  int nTypes = tsdlg->obsCheckBox->isChecked() + tsdlg->modCheckBox->isChecked();
+  const std::list<kvalobs::kvParam>& plist = KvMetaDataBuffer::instance()->allParams();
+  for (unsigned int ip = 0; ip < parameter.size(); ip++) {
+    Sensor sensor(stationIndex[ip], 0, 0, 0, 0);
 
-  for ( unsigned int ip = 0; ip < parameter.size(); ip++ ) {
-      const std::list<kvalobs::kvParam>& plist = KvMetaDataBuffer::instance()->allParams();
-      std::list<kvalobs::kvParam>::const_iterator it=plist.begin();
-      BOOST_FOREACH(const kvalobs::kvParam& p, plist) {
-          if (p.name() == parameter[ip]) {
-              parameterIndex.push_back(it->paramID());
-              break;
-          }
+    BOOST_FOREACH(const kvalobs::kvParam& p, plist) {
+      if (p.name() == parameter[ip]) {
+        sensor.paramId = p.paramID();
+        METLIBS_LOG_DEBUG(LOGVAL(sensor.paramId));
+        break;
       }
+    }
+    
+    try {
+      const KvMetaDataBuffer::ObsPgmList opgm = KvMetaDataBuffer::instance()->findObsPgm(sensor.stationId);
+      BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+        if (op.paramID() == sensor.paramId
+            and op.fromtime() <= stime
+            and (op.totime().is_not_a_date_time() or op.totime() >= etime))
+        {
+          sensor.typeId = op.typeID();
+          METLIBS_LOG_DEBUG(LOGVAL(sensor.typeId));
+          break;
+        }
+      }
+    } catch (std::exception& e) {
+      METLIBS_LOG_WARN("exception while reading obs_pgm for " << sensor);
+      continue;
+    }
+    
+    const ObsAccess::TimeSet times = mDA->allTimes(sensor, limits);
+    METLIBS_LOG_DEBUG(LOGVAL(times.size()));
+    if (times.empty())
+      continue;
+
 
     TimeSeriesData::TimeSeries tseries;
-    tseries.stationid(stationIndex[ip]);  // set stationid
-    tseries.paramid(parameterIndex[ip]);     // set parameter-number
+    tseries.stationid(sensor.stationId);
+    tseries.paramid(sensor.paramId);
+    tseries.plotoptions(plotoptions[ip]);
 
-    tseries.plotoptions(plotoptions[ip]); // set plotoptions for this curve
-    if (tsdlg->modCheckBox->isChecked() && ( nTypes == 1 || ip%nTypes != 0) ) {
-      for ( unsigned int i = 0; i < modeldatalist.size(); i++) { // fill data
-	if ( modeldatalist[i].stnr == stationIndex[ip] &&
-	     modeldatalist[i].otime >= stime &&
-	     modeldatalist[i].otime <= etime ){
-	  tseries.add(TimeSeriesData::Data(timeutil::make_miTime(modeldatalist[i].otime),
-					   modeldatalist[i].orig[parameterIndex[ip]]));
-	}
-      }
-      if(tseries.dataOK()) {
-	tslist.push_back(tseries);
-      }
-    }
-    if ( tsdlg->obsCheckBox->isChecked() && (nTypes == 1 || ip%nTypes == 0) ) {
-      for ( unsigned int i = 0; i < datalist->size(); i++) { // fill data
-          const timeutil::ptime& otime = (*datalist)[i].otime();
-          if ( (*datalist)[i].stnr() == stationIndex[ip] &&
-	     otime >= stime &&
-             otime <= etime &&
-	     otime.time_of_day().minutes() == 0 ) {
-	  if ( (*datalist)[i].corr(parameterIndex[ip]) > -32766.0 )
-	    tseries.add(TimeSeriesData::Data(timeutil::make_miTime(otime),
-					     (*datalist)[i].corr(parameterIndex[ip])));
-	}
-      }
-      if(tseries.dataOK()) {
-	tslist.push_back(tseries);
+    BOOST_FOREACH(const timeutil::ptime& time, times) {
+      const SensorTime st(sensor, time);
+      ObsDataPtr obs = mDA->find(st);
+      ModelDataPtr mdl = mMA->find(st);
+      METLIBS_LOG_DEBUG(st << " have obs=" << (obs ? "yes" : "no") << " mdl=" << (mdl ? "yes" : "no"));
+      
+      const miutil::miTime mtime = timeutil::make_miTime(time);
+      if (mdl and ui->radioModel->isChecked()) {
+        tseries.add(TimeSeriesData::Data(mtime, mdl->value()));
+      } else if (obs and ui->radioObservations->isChecked()) {
+        const float corr = obs->corrected();
+        METLIBS_LOG_DEBUG(LOGVAL(corr));
+        if (corr > -32766.0)
+          tseries.add(TimeSeriesData::Data(mtime, corr));
+      } else if (obs and mdl and ui->radioDifference->isChecked()) {
+        const float corr = obs->corrected();
+        if (corr > -32766.0)
+	  tseries.add(TimeSeriesData::Data(mtime, corr - mdl->value()));
       }
     }
-    else if (tsdlg->modCheckBox->isChecked() && tsdlg->obsCheckBox->isChecked() ) {
-      for ( unsigned int i = 0; i < modeldatalist.size(); i++) { // fill data
-	if ( modeldatalist[i].stnr == stationIndex[ip] &&
-	     modeldatalist[i].otime >= stime &&
-	     modeldatalist[i].otime <= etime ){
-	  tseries.add(TimeSeriesData::Data(timeutil::make_miTime(modeldatalist[i].otime),
-					  (*datalist)[i].corr(parameterIndex[ip])
-					  - modeldatalist[i].orig[parameterIndex[ip]]));
-	}
-      }
-      if(tseries.dataOK()) {
-	tslist.push_back(tseries);
-      }
-    }
+
+    if (tseries.dataOK())
+      tslist.push_back(tseries);
   }
-
-  if(tslist.size() == 0){
-    tspdialog->hide();
+  
+  if (tslist.empty())
     return;
-  }
 
   // finally: one complete plot-structure
   TimeSeriesData::TSPlot tsplot;
@@ -125,8 +192,6 @@ void TimeSeriesView::show()
 
   tsplot.tserieslist(tslist);      // set list of timeseries
 
-  tspdialog->prepare(tsplot);
-  tspdialog->show();
-#endif
+  ui->plot->prepare(tsplot);
 }
 

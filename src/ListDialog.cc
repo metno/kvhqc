@@ -173,15 +173,11 @@ void ListDialog::setupStationTab()
             this, SLOT(setMinDate(const QDate&)));
     connect(ui->fromTime, SIGNAL(timeChanged(const QTime&)),
             this, SLOT(setMinTime(const QTime&)));
-    connect(ui->fromTime, SIGNAL(dateTimeChanged(const QDateTime&)),
-            this, SIGNAL(fromTimeChanged(const QDateTime&)));
 
     connect(ui->toTime, SIGNAL(dateChanged(const QDate&)),
             this,SLOT(setMaxDate(const QDate&) ));
     connect(ui->toTime, SIGNAL(timeChanged(const QTime&)),
 	   this, SLOT( setMaxTime(const QTime&)));
-    connect(ui->toTime, SIGNAL(dateTimeChanged(const QDateTime&)),
-            this, SIGNAL(toTimeChanged(const QDateTime&)));
 }
 
 void ListDialog::setupParameterTab()

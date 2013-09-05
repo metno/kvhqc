@@ -123,8 +123,6 @@ private Q_SLOTS:
 Q_SIGNALS:
     void ListHide();
     void ListApply();
-    void fromTimeChanged(const QDateTime&);
-    void toTimeChanged(const QDateTime&);
 
 private:
     void uncheckTypes();

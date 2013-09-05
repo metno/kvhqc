@@ -83,6 +83,7 @@ SET(hqc_UIS
   mainwindow.ui
   simplecorrections.ui
   stationselection.ui
+  timeseriesview.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

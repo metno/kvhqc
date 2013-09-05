@@ -40,8 +40,6 @@
 
 class ClientButton;
 class HelpDialog;
-class miMessage;
-class TSPlotDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
 class QMdiArea;
@@ -63,8 +61,8 @@ class ListDialog;
 class RejectDialog;
 class RejectTimeseriesDialog;
 class SensorTime;
+class TimeSeriesView;
 class TextDataDialog;
-class TimeseriesDialog;
 
 namespace Ui {
 class HqcMainWindow;
@@ -154,7 +152,6 @@ private:
     DianaShowDialog* dshdlg;
     TextDataDialog* txtdlg;
     RejectDialog* rejdlg;
-    TimeseriesDialog* tsdlg;
     RejectTimeseriesDialog* rjtsdlg;
     AcceptTimeseriesDialog* actsdlg;
     HelpDialog* mHelpDialog;
@@ -169,22 +166,23 @@ private:
     QString userName;
 
     std::auto_ptr<Ui::HqcMainWindow> ui;
-    ClientButton* pluginB;
-    std::auto_ptr<HqcDianaHelper> mDianaHelper;
-
-    std::auto_ptr<AutoColumnView> mAutoColumnView;
-    DataList* mAutoDataList;
 
     QTimer* mVersionCheckTimer;
     HintWidget* mHints;
-
-    TSPlotDialog* tspdialog; // timeseries-plot
 
     boost::shared_ptr<KvalobsAccess> kda;
     boost::shared_ptr<KvalobsModelAccess> kma;
     boost::shared_ptr<EditAccess> eda;
 
     std::auto_ptr<EditVersionModel> mEditVersions;
+
+    std::auto_ptr<TimeSeriesView> mTimeSeriesView;
+
+    ClientButton* pluginB;
+    std::auto_ptr<HqcDianaHelper> mDianaHelper;
+
+    std::auto_ptr<AutoColumnView> mAutoColumnView;
+    DataList* mAutoDataList;
 };
 
 //! Get o's owning HqcMainWindow, or NULL if there is none.
