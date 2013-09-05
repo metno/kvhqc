@@ -81,22 +81,6 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
     if (mColumnType == ObsColumn::NEW_CORRECTED and obs->modifiedCorrected())
       f.setBold(true);
     return f;
-  } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-    if (isNC) {
-      return tasks::asText(obs->allTasks());
-    } else if (mColumnType == ObsColumn::ORIGINAL) {
-      QString tip;
-      const int ui_2 = Helpers::extract_ui2(obs);
-      if (ui_2 == 3)
-        Helpers::appendText(tip, qApp->translate("DataOriginalItem", "surely wrong"));
-      else if (ui_2 == 2)
-        Helpers::appendText(tip, qApp->translate("DataOriginalItem", "very suspicious (probably wrong)"));
-      else if (ui_2 == 1)
-        Helpers::appendText(tip, qApp->translate("DataOriginalItem", "suspicious (probably ok)"));
-      else if (ui_2 == 9)
-        Helpers::appendText(tip, qApp->translate("DataOriginalItem", "no quality info available"));
-      return tip;
-    }
   }
   return DataItem::data(obs, st, role);
 }

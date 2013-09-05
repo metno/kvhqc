@@ -214,28 +214,28 @@ QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) cons
     }
     return display;
   } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+    QString tooltip;
     if (not vxdata or vxdata[i].code < 0) {
       if (codes.second == -1)
-        return qApp->translate("DataVxItem", "unknown code %1")
-            .arg(codes.first);
+        tooltip = qApp->translate("DataVxItem", "unknown code %1").arg(codes.first);
       else
-        return qApp->translate("DataVxItem", "unknown code %1 (strength %2)")
-            .arg(codes.first).arg(codes.second);
+        tooltip = qApp->translate("DataVxItem", "unknown code %1 (strength %2)").arg(codes.first).arg(codes.second);
+    } else {
+      tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
+      if (codes.first != 0 and (codes.second == 0 or codes.second == 2)) {
+        tooltip += " -- ";
+        if (codes.second == 0)
+          tooltip += qApp->translate("DataVxItem", "weak");
+        else
+          tooltip += qApp->translate("DataVxItem", "strong");
+      }
+      QString codeNumber = QString::number(codes.first);
+      if (codes.second >= 0)
+        codeNumber += "/" + QString::number(codes.second);
+      Helpers::appendText(tooltip, "(" + codeNumber + ")", " ");
     }
-
-    QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
-    if (codes.first != 0 and (codes.second == 0 or codes.second == 2)) {
-      tooltip += " -- ";
-      if (codes.second == 0)
-        tooltip += qApp->translate("DataVxItem", "weak");
-      else
-        tooltip += qApp->translate("DataVxItem", "strong");
-    }
-    QString codeNumber = QString::number(codes.first);
-    if (codes.second >= 0)
-      codeNumber += "/" + QString::number(codes.second);
-    Helpers::appendText(tooltip, "(" + codeNumber + ")", " ");
-    return Helpers::appendText(tooltip, DataValueItem::data(obs1, st, role).toString());
+    Helpers::appendText(tooltip, tasks::asText(obs1->allTasks()));
+    return tooltip;
   }
   return DataValueItem::data(obs1, st, role);
 }

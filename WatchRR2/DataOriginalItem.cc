@@ -13,8 +13,7 @@
 #include "HqcLogging.hh"
 
 DataOriginalItem::DataOriginalItem(Code2TextCPtr codes)
-  : DataValueItem(ObsColumn::ORIGINAL)
-  , mCodes(codes)
+  : DataCodeItem(ObsColumn::ORIGINAL, codes)
 {
 }
 
@@ -23,27 +22,20 @@ QVariant DataOriginalItem::data(EditDataPtr obs, const SensorTime& st, int role)
   if (not obs)
     return QVariant();
   
-  if (role == Qt::ForegroundRole) {
-    if (mCodes->isCode(getValue(obs)))
-      return Qt::darkGray;
-  } else if (role == Qt::DisplayRole) {
-    return mCodes->asText(getValue(obs));
-  } else if (role == Qt::TextAlignmentRole) {
-    return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
-  } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-    QString tip = mCodes->asTip(getValue(obs));
+  if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+    QString tip;
     const int ui_2 = Helpers::extract_ui2(obs);
     if (ui_2 == 3)
-      Helpers::appendText(tip, qApp->translate("DataOriginalItem", "surely wrong"));
+      tip = qApp->translate("DataOriginalItem", "surely wrong");
     else if (ui_2 == 2)
-      Helpers::appendText(tip, qApp->translate("DataOriginalItem", "very suspicious (probably wrong)"));
+      tip = qApp->translate("DataOriginalItem", "very suspicious (probably wrong)");
     else if (ui_2 == 1)
-      Helpers::appendText(tip, qApp->translate("DataOriginalItem", "suspicious (probably ok)"));
+      tip = qApp->translate("DataOriginalItem", "suspicious (probably ok)");
     else if (ui_2 == 9)
-      Helpers::appendText(tip, qApp->translate("DataOriginalItem", "no quality info available"));
-    return tip;
+      tip = qApp->translate("DataOriginalItem", "no quality info available");
+    return Helpers::appendedText(tip, DataCodeItem::data(obs, st, role).toString());
   }
-  return DataValueItem::data(obs, st, role);
+  return DataCodeItem::data(obs, st, role);
 }
 
 QString DataOriginalItem::description(bool mini) const

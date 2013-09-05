@@ -26,6 +26,8 @@ SET(watchrr2_SOURCES
   Code2Text.cc
   ColumnFactory.hh
   ColumnFactory.cc
+  DataCodeItem.cc
+  DataCodeItem.hh
   DataColumn.hh
   DataColumn.cc
   DataControlinfoItem.cc
