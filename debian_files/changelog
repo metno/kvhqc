@@ -1,3 +1,14 @@
+kvhqc (3.0.0~a9-1) unstable; urgency=low
+
+  * test of new error list: yellow for old, rose for new
+  * change flag conditions for accept/reject
+  * WatchWeather: accept all types as long as one param is in obs_pgm
+  * TimeSeriesView: reverse plotting order
+  * in extreme values, include useinfo(2)=3 if original==corrected
+  * added option for SA maximum to extreme values
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 26 Jun 2013 13:33:40 +0200
+
 kvhqc (3.0.0~a8-1) unstable; urgency=low
 
   * show original value and flags for Vx in WatchWeather
