@@ -6,6 +6,7 @@
 #include "TimeRange.hh"
 
 #include <kvcpp/kvservicetypes.h>
+#include <boost/icl/interval_set.hpp>
 
 class KvalobsModelAccess : public KvModelAccess {
 public:
@@ -13,20 +14,19 @@ public:
   ~KvalobsModelAccess();
 
   virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes);
+  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits);
 
 private:
-  struct Fetched {
-    int stationId;
-    timeutil::ptime time;
-    Fetched(int s, const timeutil::ptime& t)
-      : stationId(s), time(t) { }
-    bool operator<(const Fetched& other) const
-      { if (stationId != other.stationId) return stationId < other.stationId; else return time < other.time; }
-  };
-  typedef std::set<Fetched> Fetched_t;
-  Fetched_t mFetched;
+  bool isFetched(int stationid, const timeutil::ptime& t) const;
+  void addFetched(int stationid, const TimeRange& t);
+  void removeFetched(int stationid, const timeutil::ptime& t);
 
+private:
+  typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
+  typedef std::map<int, FetchedTimes_t> Fetched_t;
+  Fetched_t mFetched;
 };
+
 typedef boost::shared_ptr<KvalobsModelAccess> KvalobsModelAccessPtr;
 
 #endif // KvalobsModelAccess_hh

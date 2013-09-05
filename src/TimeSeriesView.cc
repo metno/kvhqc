@@ -229,7 +229,11 @@ void TimeSeriesView::updatePlot()
 
   TimeSeriesData::tsList tslist;
 
-  mDA->allTimes(mSensors, limits); // prefetch all data
+  // prefetch all data
+  if (whatToPlot == 0 or whatToPlot == 2)
+    mDA->allData(mSensors, limits);
+  if (whatToPlot == 1 or whatToPlot == 2)
+    mMA->allData(mSensors, limits);
 
   int idx = -1;
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
@@ -253,8 +257,13 @@ void TimeSeriesView::updatePlot()
 
     BOOST_FOREACH(const timeutil::ptime& time, times) {
       const SensorTime st(sensor, time);
-      ObsDataPtr obs = mDA->find(st);
-      ModelDataPtr mdl = mMA->find(st);
+      ObsDataPtr obs;
+      ModelDataPtr mdl;
+
+      if (whatToPlot == 0 or whatToPlot == 2)
+        obs = mDA->find(st);
+      if (whatToPlot == 1 or whatToPlot == 2)
+        mdl = mMA->find(st);
       
       const miutil::miTime mtime = timeutil::make_miTime(time);
       if (mdl and whatToPlot == 1) {

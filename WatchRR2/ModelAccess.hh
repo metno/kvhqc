@@ -4,7 +4,10 @@
 
 #include "ModelData.hh"
 #include "Sensor.hh"
+#include "TimeRange.hh"
+
 #include <boost/signals.hpp>
+
 #include <set>
 #include <vector>
 
@@ -21,6 +24,7 @@ public:
   };
   typedef std::set<ModelDataPtr, lt_ModelDataPtr> ModelDataSet;
   virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes) = 0;
+  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits) = 0;
 
   static bool isModelSensor(const Sensor& s)
     { return s.sensor == MODEL_SENSOR and s.typeId == MODEL_TYPEID; }

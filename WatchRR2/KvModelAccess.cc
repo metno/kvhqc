@@ -38,6 +38,25 @@ ModelAccess::ModelDataSet KvModelAccess::findMany(const std::vector<SensorTime>&
   return data;
 }
 
+ModelAccess::ModelDataSet KvModelAccess::allData(const std::vector<Sensor>& sensors, const TimeRange& limits)
+{
+  METLIBS_LOG_SCOPE();
+
+  ModelDataSet data;
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    const Sensor ms = makeModelSensor(s);
+    for (Data_t::const_iterator it = mData.lower_bound(SensorTime(ms, limits.t0())); it != mData.end(); ++it) {
+      const SensorTime& dst = it->first;
+      if ((not eq_Sensor()(dst.sensor, ms)) or (dst.time > limits.t1()))
+        break;
+      if (it->second)
+        data.insert(it->second);
+    }
+  }
+  
+  return data;
+}
+
 KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
 {
   METLIBS_LOG_SCOPE();
