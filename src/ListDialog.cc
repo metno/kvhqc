@@ -31,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
+#include "TimeRangeControl.hh"
 #include "timeutil.hh"
 
 #include "ui_listdialog.h"
@@ -99,18 +100,21 @@ ListDialog::ListDialog(HqcMainWindow* parent)
     : QDialog(parent)
     , ui(new Ui::ListDialog)
     , statSelect(0)
+    , mTimeControl(new TimeRangeControl(this))
 {
     ui->setupUi(this);
 
     setupStationTab();
     setupParameterTab();
-    setupClockTab();
 
     connect(ui->buttonSave,    SIGNAL(clicked()), this, SLOT(onSaveSettings()));
     connect(ui->buttonRestore, SIGNAL(clicked()), this, SLOT(onRestoreSettings()));
     
     connect(ui->hab, SIGNAL(hide()), this, SLOT(hide()));
     connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
+
+    mTimeControl->setMinimumGap(24);
+    mTimeControl->install(ui->fromTime, ui->toTime);
     
     enableButtons();
 }
@@ -164,20 +168,7 @@ void ListDialog::setupStationTab()
     connect(ui->stationSelect,    SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
     connect(ui->stationSelectAll, SIGNAL(clicked()), this, SLOT(selectAllStations()));
 
-    QDateTime t = timeutil::nowWithMinutes0Seconds0();
-    QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
-    ui->fromTime->setDateTime(f);
-    ui->toTime->setDateTime(t);
-    
-    connect(ui->fromTime, SIGNAL(dateChanged(const QDate&)),
-            this, SLOT(setMinDate(const QDate&)));
-    connect(ui->fromTime, SIGNAL(timeChanged(const QTime&)),
-            this, SLOT(setMinTime(const QTime&)));
-
-    connect(ui->toTime, SIGNAL(dateChanged(const QDate&)),
-            this,SLOT(setMaxDate(const QDate&) ));
-    connect(ui->toTime, SIGNAL(timeChanged(const QTime&)),
-	   this, SLOT( setMaxTime(const QTime&)));
+    onSetRecentTimes();
 }
 
 void ListDialog::setupParameterTab()
@@ -225,27 +216,6 @@ void ListDialog::setupParameterTab()
     ui->comboParamGroup->setCurrentIndex(0);
 }
 
-void ListDialog::setupClockTab()
-{
-    for (int i = 0; i < 24; i++) {
-        QString time;
-        time.sprintf("%02d", i);
-        mClockCheckBoxes[i] = new QCheckBox(time, ui->groupClockByHour);
-    }
-
-    QGridLayout* clockLayout = new QGridLayout;
-    ui->groupClockByHour->setLayout(clockLayout);
-    for (int i = 0; i < 8; i++) {
-        for (int j = 0; j < 3; j++)
-            clockLayout->addWidget(mClockCheckBoxes[3*i+j],i,j);
-    }
-    
-    connect(ui->buttonClockAddAll,    SIGNAL(clicked()), this, SLOT(selectAllTimes()));
-    connect(ui->buttonClockRemoveAll, SIGNAL(clicked()), this, SLOT(deselectAllTimes()));
-    connect(ui->buttonClockAddStandard,    SIGNAL(clicked()), this, SLOT(selectStandardTimes()));
-    connect(ui->buttonClockRemoveStandard, SIGNAL(clicked()), this, SLOT(deselectStandardTimes()));
-}
-
 void ListDialog::saveSettings(QSettings& settings)
 {
     settings.beginGroup(QSETTINGS_GROUP);
@@ -263,13 +233,6 @@ void ListDialog::restoreSettings(QSettings& settings)
 void ListDialog::doSaveSettings(QSettings& settings)
 {
     {
-        QStringList times;
-        for (int i = 0; i < 24; i++)
-            times << (mClockCheckBoxes[i]->isChecked() ? "1" : "0");
-        settings.setValue("selected_times", times);
-    }
-
-    {
         QStringList parameters;
         const std::vector<int> params = getSelectedParameters();
         BOOST_FOREACH(int pid, params)
@@ -282,18 +245,14 @@ void ListDialog::doSaveSettings(QSettings& settings)
     
     const QStringList counties = getSelectedCounties();
     settings.setValue("counties", counties);
+
+    settings.setValue("time_remember", ui->checkRememberTimes->isChecked());
+    settings.setValue("time_from", ui->fromTime->dateTime());
+    settings.setValue("time_to",   ui->toTime  ->dateTime());
 }
 
 void ListDialog::doRestoreSettings(QSettings& settings)
 {
-    {
-        QStringList times = settings.value("selected_times").toStringList();
-        if (times.size() == 24) {
-            for (int i = 0; i < 24; i++)
-                mClockCheckBoxes[i]->setChecked(times.at(i) != "0");
-        }
-    }
-    
     {
         const QStringList parameters = settings.value("selected_parameters").toStringList();
         std::vector<int> params;
@@ -316,6 +275,12 @@ void ListDialog::doRestoreSettings(QSettings& settings)
     setSelectedCounties(counties);
 
     removeAllStatFromListbox();
+
+    ui->checkRememberTimes->setChecked(settings.value("time_remember", false).toBool());
+    if (ui->checkRememberTimes->isChecked()) {
+      ui->fromTime->setDateTime(settings.value("time_from").toDateTime());
+      ui->toTime  ->setDateTime(settings.value("time_to"  ).toDateTime());
+    }
 }
 
 void ListDialog::onSaveSettings()
@@ -383,6 +348,16 @@ void ListDialog::onRestoreSettings()
             }
         }
     }
+}
+
+void ListDialog::onSetRecentTimes()
+{
+  if (not ui->checkRememberTimes->isChecked()) {
+    QDateTime t = timeutil::nowWithMinutes0Seconds0();
+    QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+    ui->fromTime->setDateTime(f);
+    ui->toTime->setDateTime(t);
+  }
 }
 
 void ListDialog::showParamGroup(const QString& paramGroup)
@@ -462,72 +437,9 @@ void ListDialog::deselectAllParameters()
     showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::selectAllTimes()
+TimeRange ListDialog::getTimeRange() const
 {
-    for (int i = 0; i < 24; i++)
-        mClockCheckBoxes[i]->setChecked(true);
-    enableButtons();
-}
-
-void ListDialog::deselectAllTimes()
-{
-    for (int i = 0; i < 24; i++)
-        mClockCheckBoxes[i]->setChecked(false);
-    enableButtons();
-}
-
-void ListDialog::selectStandardTimes()
-{
-    for (int i = 0; i < 24; i+=3)
-        mClockCheckBoxes[i]->setChecked(true);
-    enableButtons();
-}
-
-void ListDialog::deselectStandardTimes()
-{
-    for (int i = 0; i < 24; i+=3)
-        mClockCheckBoxes[i]->setChecked(false);
-    enableButtons();
-}
-
-void ListDialog::setMaxTime(const QTime& maxTime)
-{
-    ui->fromTime->setMaximumTime(maxTime);
-}
-
-void ListDialog::setMinTime(const QTime& minTime)
-{
-    ui->toTime->setMinimumTime(minTime);
-}
-
-void ListDialog::setMaxDate(const QDate& maxDate)
-{
-    ui->fromTime->setMaximumDate(maxDate);
-}
-
-void ListDialog::setMinDate(const QDate& minDate)
-{
-    ui->toTime->setMinimumDate(minDate);
-}
-
-QDateTime ListDialog::getStart()
-{
-    return ui->fromTime->dateTime();
-}
-
-void ListDialog::setStart(const QDateTime& s)
-{
-    ui->fromTime->setDateTime(s);
-}
-
-QDateTime ListDialog::getEnd()
-{
-    return ui->toTime->dateTime();
-}
-
-void ListDialog::setEnd(const QDateTime& e)
-{
-    ui->toTime->setDateTime(e);
+  return mTimeControl->timeRange();
 }
 
 void ListDialog::appendStatInListbox(QString station)
@@ -556,16 +468,10 @@ void ListDialog::enableButtons()
          and not getSelectedCounties().empty());
     const bool haveStations = (ui->stationNames->count() > 0);
 
-    bool haveTimes = false;
-    for (int i = 0; !haveTimes and i<24; i++)
-        if (mClockCheckBoxes[i]->isChecked())
-            haveTimes = true;
-
     const bool haveParameters = not getSelectedParameters().empty();
 
-
     const bool allowApply = haveStations and allowSelectStation
-        and haveTimes and haveParameters;
+        and haveParameters;
 
     ui->stationSelect   ->setEnabled(allowSelectStation);
     ui->stationSelectAll->setEnabled(allowSelectStation);
@@ -882,15 +788,6 @@ std::vector<int> ListDialog::getSelectedParameters()
 {
     return mParamSelectedModel->parameterIds();
 }
-
-std::set<int> ListDialog::getSelectedTimes()
-{
-    std::set<int> hours;
-    for (int i = 0; i < 24; i++)
-        if (mClockCheckBoxes[i]->isChecked())
-            hours.insert(i);
-    return hours;
-}    
 
 void ListDialog::prepareStationSelectionDialog()
 {

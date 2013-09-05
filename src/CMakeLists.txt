@@ -17,6 +17,7 @@ SET(hqc_HEADERS
   ../include/StationSelection.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
+  ../include/TimeRangeControl.hh
   ../include/TimeseriesDialog.h
   TimeSeriesView.hh
 )
@@ -54,6 +55,7 @@ SET(hqc_SOURCES
   SimpleCorrections.cc
   textdatadialog.cc
   textdatatable.cc
+  TimeRangeControl.cc
   TimeseriesDialog.cc
   TimeSeriesView.cc
   TypeIdModel.cc

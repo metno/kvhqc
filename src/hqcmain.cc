@@ -293,17 +293,6 @@ void HqcMainWindow::ListOK()
     }
 
     std::vector<int> mSelectedParameters;
-    std::set<int> mSelectedTimes;
-    mSelectedTimes = lstdlg->getSelectedTimes();
-    if (mSelectedTimes.empty()) {
-        QMessageBox::warning(this,
-                             tr("Time Selection"),
-                             tr("No times selected! At least one time must be selected."),
-                             QMessageBox::Ok,
-                             Qt::NoButton);
-        return;
-    }
-
     mSelectedParameters = lstdlg->getSelectedParameters();
     if (mSelectedParameters.empty()) {
         QMessageBox::warning(this,
@@ -317,12 +306,9 @@ void HqcMainWindow::ListOK()
     DisableGUI disableGUI(this);
     BusyIndicator busyIndicator;
     listExist = true;
-    
-    timeutil::ptime stime = timeutil::from_QDateTime(lstdlg->getStart());
-    timeutil::ptime etime = timeutil::from_QDateTime(lstdlg->getEnd());
-    
-    // All windows are shown later, in the tileHorizontal function
-    
+
+    const TimeRange timeLimits = lstdlg->getTimeRange();
+
     DataView::Sensors_t sensors;
     BOOST_FOREACH(int stationId, selectedStations) {
         BOOST_FOREACH(int paramId, mSelectedParameters) {
@@ -341,8 +327,6 @@ void HqcMainWindow::ListOK()
             }
         }
     }
-    METLIBS_LOG_DEBUG(LOGVAL(stime) << LOGVAL(etime));
-    const TimeRange timeLimits(stime, etime);
 
     if (lity == daLi or lity == alLi or lity == alSa) {
         BusyStatus busyData(this, tr("Building data list..."));
@@ -544,13 +528,6 @@ void HqcMainWindow::listMenu(listType lt)
     METLIBS_LOG_SCOPE();
     lity = lt;
 
-    QDateTime mx = QDateTime::currentDateTime();
-    int noDays = lstdlg->getStart().daysTo(lstdlg->getEnd());
-    if ( noDays < 27 ) {
-        mx = mx.addSecs(-60*mx.time().minute());
-        mx = mx.addSecs(3600);
-        lstdlg->setEnd(mx);
-    }
     lstdlg->show();
 }
 

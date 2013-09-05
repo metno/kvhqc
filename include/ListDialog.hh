@@ -32,6 +32,7 @@
 
 #include "ItemCheckBox.hh"
 #include "ParamIdModel.hh"
+#include "TimeRange.hh"
 
 #include <QtCore/QSettings>
 #include <QtGui/QDialog>
@@ -43,6 +44,7 @@
 
 class HqcMainWindow;
 class StationSelection;
+class TimeRangeControl;
 
 namespace Ui {
 class ListDialog;
@@ -54,15 +56,11 @@ public:
     ListDialog(HqcMainWindow* parent);
     ~ListDialog();
     
-    QDateTime getStart();
-    void setStart(const QDateTime& s);
-    QDateTime getEnd();
-    void setEnd(const QDateTime& e);
+    TimeRange getTimeRange() const;
     
     QStringList getSelectedStationTypes();
     std::vector<int> getSelectedStations();
     std::vector<int> getSelectedParameters();
-    std::set<int> getSelectedTimes();
     bool isSelectAllStationTypes() const;
     
     bool showSynop() const;
@@ -97,10 +95,7 @@ private Q_SLOTS:
     void allCounCheck();
     void allCounUnCheck();
 
-    void setMaxDate(const QDate&);
-    void setMinDate(const QDate&);
-    void setMaxTime(const QTime&);
-    void setMinTime(const QTime&);
+    void onSetRecentTimes();
 
     void prepareStationSelectionDialog();
     void showStationSelectionDialog();
@@ -111,11 +106,6 @@ private Q_SLOTS:
     void deselectParameters();
     void selectAllParameters();
     void deselectAllParameters();
-
-    void selectAllTimes();
-    void deselectAllTimes();
-    void selectStandardTimes();
-    void deselectStandardTimes();
 
     void onSaveSettings();
     void onRestoreSettings();
@@ -135,7 +125,6 @@ private:
 
     void setupStationTab();
     void setupParameterTab();
-    void setupClockTab();
 
     void setSelectedStationTypes(const QStringList& stationTypes);
     QStringList getSelectedCounties();
@@ -154,11 +143,11 @@ private:
     std::vector<ItemCheckBox*> mCounties;
     ItemCheckBox* allCoun;
 
-    QCheckBox* mClockCheckBoxes[24];
-
     std::map<QString, std::vector<int> > mParameterGroups;
     std::auto_ptr<ParamIdModel> mParamAvailableModel;
     std::auto_ptr<ParamIdModel> mParamSelectedModel;
+
+  TimeRangeControl* mTimeControl;
 };
 
 #endif // LISTDIALOG2_HH
