@@ -28,11 +28,13 @@ public:
     void setTimeInRows(bool tir)
         { mTimeInRows = tir; }
 
-protected:
-    void addColumn(ObsColumnPtr c);
-    ObsColumnPtr getColumn(int idx) const
+    virtual void insertColumn(int before, ObsColumnPtr c);
+    void addColumn(ObsColumnPtr c)
+        { insertColumn(mColumns.size(), c); }
+    virtual ObsColumnPtr getColumn(int idx) const
         { return mColumns[idx]; }
 
+protected:
     virtual int rowAtTime(const timeutil::ptime& time) const;
     virtual int rowOrColumnCount(bool timeDirection) const;
 

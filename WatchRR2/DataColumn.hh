@@ -26,6 +26,9 @@ public:
     virtual const boost::posix_time::time_duration& timeOffset() const
         { return mTimeOffset; }
     void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
+
+    void setTimeRange(const TimeRange& tr);
+
     virtual Sensor sensor() const;
 
 protected:

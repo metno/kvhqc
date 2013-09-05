@@ -28,11 +28,26 @@ ObsTableModel::~ObsTableModel()
     }
 }
 
-void ObsTableModel::addColumn(ObsColumnPtr c)
+void ObsTableModel::insertColumn(int before, ObsColumnPtr c)
 {
-    mColumns.push_back(c);
+    QModelIndex parent;
+    if (mTimeInRows) {
+        parent = index(0, before, QModelIndex());
+        beginInsertColumns(parent, before, before);
+    } else {
+        parent = index(before, 0, QModelIndex());
+        beginInsertRows(parent, before, before);
+    }    
+
+    mColumns.insert(mColumns.begin() + before, c);
     if (c)
         c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+
+    if (mTimeInRows) {
+        endInsertColumns();
+    } else {
+        endInsertRows();
+    }    
 }
 
 int ObsTableModel::rowCount(const QModelIndex&) const

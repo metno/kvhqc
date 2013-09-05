@@ -94,6 +94,15 @@ EditDataPtr DataColumn::getObs(const timeutil::ptime& time) const
     return obs;
 }
 
+void DataColumn::setTimeRange(const TimeRange& tr)
+{
+    const TimeRange oldTime = mTime;
+    mTime = tr.shifted(mTimeOffset);
+
+    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
+    mDA->removeSubscription(ObsSubscription(mSensor.stationId, oldTime));
+}
+
 void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
 {
     const TimeRange oldTime = mTime;
