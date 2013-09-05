@@ -68,11 +68,6 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="datalist.ui" line="14"/>
-        <source>DataList</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="datalist.ui" line="47"/>
         <source>Reset columns</source>
         <translation>Spalten zurücksetzen</translation>
@@ -190,8 +185,8 @@
     </message>
     <message>
         <location filename="extremevalues.ui" line="48"/>
-        <source>PushButton</source>
-        <translation type="unfinished"></translation>
+        <source>Update</source>
+        <translation>Übernehmen</translation>
     </message>
 </context>
 <context>
@@ -1094,253 +1089,182 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="listdialog.ui" line="30"/>
-        <location filename="listdialog.ui" line="293"/>
+        <location filename="listdialog.ui" line="51"/>
         <source>Stations</source>
         <translation>Stationen</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="59"/>
-        <source>Region</source>
-        <translation>Region</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="74"/>
-        <source>Select all counties in Østlandet</source>
-        <translation>Alle Provinzen in Østlandet auswählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="77"/>
-        <location filename="listdialog.ui" line="114"/>
-        <location filename="listdialog.ui" line="151"/>
-        <location filename="listdialog.ui" line="188"/>
-        <source>+</source>
-        <translation>+</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="89"/>
-        <source>Deselect all counties in Østlandet</source>
-        <translation>Alle Provinzen in Østlandet abwählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="92"/>
-        <location filename="listdialog.ui" line="129"/>
-        <location filename="listdialog.ui" line="166"/>
-        <location filename="listdialog.ui" line="203"/>
-        <source>-</source>
-        <translation>-</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="104"/>
-        <source>Østlandet</source>
-        <translation>Østlandet</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="111"/>
-        <source>Select all counties in Vestlandet</source>
-        <translation>Alle Provinzen in Vestlandet auswählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="126"/>
-        <source>Deselect all counties in Vestlandet</source>
-        <translation>Alle Provinzen in Vestlandet abwählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="141"/>
-        <source>Vestlandet</source>
-        <translation>Vestlandet</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="148"/>
-        <source>Select all counties in Trøndelag</source>
-        <translation>Alle Provinzen in Trøndelag auswählen</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="163"/>
-        <source>Deselect all counties in Trøndelag</source>
-        <translation>Alle Provinzen in Trøndelag abwählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="178"/>
-        <source>Midt-Norge</source>
-        <translation>Norwegen Mitte</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="316"/>
-        <source>&amp;Choose stations…</source>
-        <translation>&amp;Stationen auswählen…</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="323"/>
-        <source>All matchin&amp;g</source>
-        <translation>Alle passende&amp;n</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="372"/>
+        <location filename="listdialog.ui" line="81"/>
         <source>&amp;From</source>
         <translation>&amp;Von</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="392"/>
+        <location filename="listdialog.ui" line="131"/>
         <source>Remember the chosen time span.</source>
         <translation>Ausgewählten Zeitraum merken.</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="395"/>
+        <location filename="listdialog.ui" line="134"/>
         <source>Remember</source>
         <translation>Merken</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="402"/>
+        <location filename="listdialog.ui" line="101"/>
         <source>&amp;To</source>
         <translation>&amp;Bis</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="422"/>
+        <location filename="listdialog.ui" line="121"/>
         <source>Sets the time range to cover approximately the last 2 days.</source>
         <translation>Wählt ungefähr die letzten 2 Tage aus.</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="425"/>
+        <location filename="listdialog.ui" line="124"/>
         <source>Recent</source>
         <translation>Neue</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="514"/>
+        <location filename="listdialog.ui" line="224"/>
         <source>Sho&amp;w only:</source>
         <translation>Zeige n&amp;ur:</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="613"/>
+        <location filename="listdialog.ui" line="323"/>
         <source>A&amp;ll</source>
-        <translation type="unfinished">A&amp;lle</translation>
+        <translation>A&amp;lle</translation>
     </message>
     <message utf8="true">
-        <location filename="listdialog.ui" line="705"/>
+        <location filename="listdialog.ui" line="415"/>
         <source>L&amp;oad…</source>
         <translation>L&amp;esen…</translation>
     </message>
     <message utf8="true">
-        <location filename="listdialog.ui" line="712"/>
+        <location filename="listdialog.ui" line="422"/>
         <source>&amp;Save…</source>
         <translation>&amp;Speichern…</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="185"/>
-        <source>Select all counties in Nord-Norge</source>
-        <translation>Alle Provinzen in Nord-Norge auswählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="200"/>
-        <source>Deselect all counties in Nord-Norge</source>
-        <translation>Alle Provinzen in Nord-Norge abwählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="215"/>
-        <source>Nord-Norge</source>
-        <translation>Nord-Norge</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="257"/>
+        <location filename="ListDialog.cc" line="169"/>
         <source>County</source>
         <translation>Provinz</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="360"/>
+        <location filename="listdialog.ui" line="69"/>
         <source>Time range</source>
         <oldsource>Message types</oldsource>
         <translation>Zeitraum</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="385"/>
-        <location filename="listdialog.ui" line="415"/>
+        <location filename="listdialog.ui" line="94"/>
+        <location filename="listdialog.ui" line="114"/>
         <source>yyyy-MM-dd hh:mm</source>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="451"/>
+        <location filename="listdialog.ui" line="161"/>
         <source>Weather element</source>
         <translation>Wetter-Element</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="472"/>
+        <location filename="listdialog.ui" line="182"/>
         <source>Available</source>
         <translation>Verfügbar</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="571"/>
+        <location filename="listdialog.ui" line="281"/>
         <source>add to chosen values</source>
         <translation>zu den ausgewählten Parametern hinzufügen</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="592"/>
+        <location filename="listdialog.ui" line="302"/>
         <source>remove from chosen values</source>
         <translation>Parameter abwählen</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="631"/>
+        <location filename="listdialog.ui" line="341"/>
         <source>&amp;None</source>
         <translation>&amp;Keine</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="659"/>
+        <location filename="listdialog.ui" line="369"/>
         <source>Chosen</source>
         <translation>Ausgewählt</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="122"/>
-        <source>All</source>
-        <translation>Alle</translation>
+        <location filename="ListDialog.cc" line="168"/>
+        <source>Station/Region</source>
+        <translation>Station/Region</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="160"/>
+        <location filename="ListDialog.cc" line="168"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="ListDialog.cc" line="168"/>
+        <source>HOH</source>
+        <translation>HüM</translation>
+    </message>
+    <message>
+        <location filename="ListDialog.cc" line="169"/>
+        <source>Commune</source>
+        <translation>Commune</translation>
+    </message>
+    <message>
+        <location filename="ListDialog.cc" line="169"/>
+        <source>Pri</source>
+        <translation>Pri</translation>
+    </message>
+    <message>
+        <location filename="ListDialog.cc" line="261"/>
         <source>Cannot read paramorder file</source>
         <translation>Kanm Datei paramorder nicht lesen</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="161"/>
+        <location filename="ListDialog.cc" line="262"/>
         <source>The paramorder file could not be opened. Please set HQC_CONFDIR correctly.</source>
         <translation>Die Datei paramorder konnte nicht gelesen werden. Bitte stellen Sie sicher, dass HQC_CONFDIR richtig eingestellt ist.</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="183"/>
+        <location filename="ListDialog.cc" line="284"/>
         <source>All in obs pgm</source>
         <translation>Alle in obs pgm</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="192"/>
+        <location filename="ListDialog.cc" line="293"/>
         <source>All defined</source>
         <translation>Alle definierten</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="270"/>
-        <location filename="ListDialog.cc" line="280"/>
+        <location filename="ListDialog.cc" line="368"/>
+        <location filename="ListDialog.cc" line="378"/>
         <source>Save data selection</source>
         <translation>Datenauswahl Speichern</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="271"/>
-        <location filename="ListDialog.cc" line="318"/>
+        <location filename="ListDialog.cc" line="369"/>
+        <location filename="ListDialog.cc" line="416"/>
         <source>Name:</source>
         <translation>Name:</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="281"/>
+        <location filename="ListDialog.cc" line="379"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
         <translation>Datenauswahl mit dem Namen &apos;%1&apos; existiert.</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="282"/>
+        <location filename="ListDialog.cc" line="380"/>
         <source>Do you want to overwrite it?</source>
         <translation>Möchten Sie speichern und überschreiben?</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="310"/>
-        <location filename="ListDialog.cc" line="317"/>
+        <location filename="ListDialog.cc" line="408"/>
+        <location filename="ListDialog.cc" line="415"/>
         <source>Load data selection</source>
         <translation>Datenauswahl laden</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="311"/>
+        <location filename="ListDialog.cc" line="409"/>
         <source>No saved data selections found.</source>
         <translation>Keine gespeicherten Einstellungen vorhanden.</translation>
     </message>
@@ -1487,7 +1411,7 @@ Sie benutzen HQC Version %1.</translation>
     <message>
         <location filename="simplecorrections.ui" line="525"/>
         <source>QC2 ok:</source>
-        <translation>QC2 erlaubt</translation>
+        <translation>QC2 erlaubt:</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="532"/>
@@ -1508,57 +1432,6 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="simplecorrections.ui" line="585"/>
         <source>Checks</source>
         <translation>Checks</translation>
-    </message>
-</context>
-<context>
-    <name>StationSelectionDialog</name>
-    <message>
-        <location filename="stationselection.ui" line="14"/>
-        <source>Station Selection</source>
-        <translation>Stationswahl</translation>
-    </message>
-    <message>
-        <location filename="stationselection.ui" line="24"/>
-        <source>Close</source>
-        <translation>Schließen</translation>
-    </message>
-    <message>
-        <location filename="stationselection.ui" line="34"/>
-        <source>Choose &amp;all stations</source>
-        <translation>&amp;Alle Stationen auswählen</translation>
-    </message>
-</context>
-<context>
-    <name>StationTable</name>
-    <message>
-        <location filename="StationSelection.cc" line="22"/>
-        <source>Stnr</source>
-        <translation>Stnr</translation>
-    </message>
-    <message>
-        <location filename="StationSelection.cc" line="23"/>
-        <source>Name</source>
-        <translation>Name</translation>
-    </message>
-    <message>
-        <location filename="StationSelection.cc" line="24"/>
-        <source>HOH</source>
-        <translation>HüM</translation>
-    </message>
-    <message>
-        <location filename="StationSelection.cc" line="25"/>
-        <source>County</source>
-        <translation>Provinz</translation>
-    </message>
-    <message>
-        <location filename="StationSelection.cc" line="26"/>
-        <source>Commune</source>
-        <translation>Commune</translation>
-    </message>
-    <message>
-        <location filename="StationSelection.cc" line="27"/>
-        <source>Pri</source>
-        <translation>Pri</translation>
     </message>
 </context>
 <context>

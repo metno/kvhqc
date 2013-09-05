@@ -14,7 +14,6 @@ SET(hqc_HEADERS
   ../include/rejectdialog.h
   ../include/rejecttable.h
   ../include/SimpleCorrections.hh
-  ../include/StationSelection.hh
   ../include/textdatadialog.h
   ../include/textdatatable.h
   ../include/TimeRangeControl.hh
@@ -40,7 +39,6 @@ SET(hqc_SOURCES
   FindExtremeValues.cc
   ParamIdModel.cc
   ListDialog.cc
-  StationSelection.cc
   dianashowdialog.cc
   errorlist.cc
   GetTextData.cc
@@ -84,7 +82,6 @@ SET(hqc_UIS
   listdialog.ui
   mainwindow.ui
   simplecorrections.ui
-  stationselection.ui
   timeseriesview.ui
 )
 QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})

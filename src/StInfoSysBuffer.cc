@@ -103,12 +103,15 @@ bool StInfoSysBuffer::readFromStInfoSys()
     cInfo.county    = query.value(3).toString();
     
     if (cInfo.municipid == 0) {
-      cInfo.county  = "OTHER";
+      cInfo.county   = "OTHER";
+      cInfo.municip  = "OTHER";
     } else if (cInfo.municipid >= 2100 and cInfo.municipid < 2300) {
       cInfo.county = "ISHAVET";
     } else if (cInfo.municipid >= 2300 and cInfo.municipid < 2800) {
       cInfo.county  = "MARITIME";
     }
+    if (cInfo.county.size() < 3)
+      METLIBS_LOG_WARN("empty county for station " << cInfo.stnr);
   
     station2prio_t::const_iterator it = station2prio.find(cInfo.stnr);
     if (it != station2prio.end())
@@ -128,14 +131,18 @@ bool StInfoSysBuffer::readFromStInfoSys()
       return false;
     }
     while (query.next()) {
-      countyInfo cInfo;
-      cInfo.stnr    = query.value(0).toInt();
-      cInfo.municipid = -1;
-      cInfo.county  = query.value(1).toString();
-      cInfo.municip = query.value(2).toString();
-      cInfo.pri     = query.value(3).toBool();
-      cInfo.coast   = query.value(4).toInt();
-      cList[cInfo.stnr] = cInfo;
+      const int stnr = query.value(0).toInt();
+
+      cList_t::iterator cit = cList.find(stnr);
+      if (cit == cList.end())
+        continue;
+
+      countyInfo& ci = cit->second;
+      ci.municipid = -1;
+      ci.county  = query.value(1).toString();
+      ci.municip = query.value(2).toString();
+      ci.pri     = query.value(3).toBool();
+      ci.coast   = query.value(4).toInt();
     }
   }
 
@@ -144,8 +151,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   BOOST_FOREACH(const kvalobs::kvStation& st, slist) {
     cList_t::const_iterator cit = cList.find(st.stationID());
     if (cit == cList.end()) {
-      if (st.stationID() < 100000)
-        METLIBS_LOG_ERROR("station " << st.stationID() << " from kvalobs' station table not found in stinfosys");
+      METLIBS_LOG_DEBUG("no county info for station " << st.stationID() << "; might be not in stinfosys.obs_pgm");
       continue;
     }
     const countyInfo& ci = cit->second;

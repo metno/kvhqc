@@ -690,10 +690,10 @@ coast_ids = [
         99970 ]
 
 foreignId = [
-        99986, 99990, 202000, 203600, 208000, 210400, 211000,
+        202000, 203600, 208000, 210400, 211000,
         220600, 222200, 230800, 241800, 250000, 280700 ]
 foreignName = [
-        " ", " ", "NORDLAND", "NORDLAND", "FINNMARK", "NORDLAND", "NORDLAND",
+        "NORDLAND", "NORDLAND", "FINNMARK", "NORDLAND", "NORDLAND",
         "NORD-TRØNDELAG", "NORD-TRØNDELAG", "SØR-TRØNDELAG", "ØSTFOLD",
         "ØSTFOLD", "FINNMARK" ]
     
@@ -710,7 +710,7 @@ for sid in coast_ids:
     cur.execute("INSERT INTO stationinfo_coastal VALUES (%d)" % sid)
 
 for sid,county in zip(foreignId, foreignName):
-    cur.execute("INSERT INTO stationinfo_foreign VALUES (%d, '%s', '', 0, 0)" % (sid, county))
+    cur.execute("INSERT INTO stationinfo_foreign VALUES (%d, '%s', 'UTLANDET', 0, 0)" % (sid, county))
 
 cur.close()
 con.commit()

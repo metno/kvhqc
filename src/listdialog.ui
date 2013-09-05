@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>652</width>
-    <height>568</height>
+    <width>750</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -29,7 +29,7 @@
       <attribute name="title">
        <string>Stations</string>
       </attribute>
-      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,1,0">
+      <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
        <property name="spacing">
         <number>2</number>
        </property>
@@ -39,248 +39,6 @@
        <property name="margin">
         <number>2</number>
        </property>
-       <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="sizeConstraint">
-          <enum>QLayout::SetMinimumSize</enum>
-         </property>
-         <item>
-          <widget class="QGroupBox" name="stRegion">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>Region</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMinimumSize</enum>
-            </property>
-            <property name="margin">
-             <number>2</number>
-            </property>
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <item row="0" column="0">
-             <widget class="QToolButton" name="regionEastAdd">
-              <property name="toolTip">
-               <string>Select all counties in Østlandet</string>
-              </property>
-              <property name="text">
-               <string>+</string>
-              </property>
-              <property name="icon">
-               <iconset theme="add">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1">
-             <widget class="QToolButton" name="regionEastRemove">
-              <property name="toolTip">
-               <string>Deselect all counties in Østlandet</string>
-              </property>
-              <property name="text">
-               <string>-</string>
-              </property>
-              <property name="icon">
-               <iconset theme="remove">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2">
-             <widget class="QLabel" name="regionEastLabel">
-              <property name="text">
-               <string>Østlandet</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <widget class="QToolButton" name="regionWestAdd">
-              <property name="toolTip">
-               <string>Select all counties in Vestlandet</string>
-              </property>
-              <property name="text">
-               <string>+</string>
-              </property>
-              <property name="icon">
-               <iconset theme="add">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1">
-             <widget class="QToolButton" name="regionWestRemove">
-              <property name="toolTip">
-               <string>Deselect all counties in Vestlandet</string>
-              </property>
-              <property name="text">
-               <string>-</string>
-              </property>
-              <property name="icon">
-               <iconset theme="remove">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="2">
-             <widget class="QLabel" name="regionWestLabel">
-              <property name="text">
-               <string>Vestlandet</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0">
-             <widget class="QToolButton" name="regionMidAdd">
-              <property name="toolTip">
-               <string>Select all counties in Trøndelag</string>
-              </property>
-              <property name="text">
-               <string>+</string>
-              </property>
-              <property name="icon">
-               <iconset theme="add">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1">
-             <widget class="QToolButton" name="regionMidRemove">
-              <property name="toolTip">
-               <string>Deselect all counties in Trøndelag</string>
-              </property>
-              <property name="text">
-               <string>-</string>
-              </property>
-              <property name="icon">
-               <iconset theme="remove">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2">
-             <widget class="QLabel" name="regionMidLabel">
-              <property name="text">
-               <string>Midt-Norge</string>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0">
-             <widget class="QToolButton" name="regionNorthAdd">
-              <property name="toolTip">
-               <string>Select all counties in Nord-Norge</string>
-              </property>
-              <property name="text">
-               <string>+</string>
-              </property>
-              <property name="icon">
-               <iconset theme="add">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1">
-             <widget class="QToolButton" name="regionNorthRemove">
-              <property name="toolTip">
-               <string>Deselect all counties in Nord-Norge</string>
-              </property>
-              <property name="text">
-               <string>-</string>
-              </property>
-              <property name="icon">
-               <iconset theme="remove">
-                <normaloff/>
-               </iconset>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="2">
-             <widget class="QLabel" name="regionNorthLabel">
-              <property name="text">
-               <string>Nord-Norge</string>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0">
-             <spacer name="verticalSpacer">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>10</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item>
-          <spacer name="horizontalSpacer_4">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>2</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QGroupBox" name="stCounty">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="title">
-            <string>County</string>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_3">
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMinimumSize</enum>
-            </property>
-            <property name="margin">
-             <number>2</number>
-            </property>
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <item row="0" column="0">
-             <layout class="QGridLayout" name="statCountyLayout">
-              <property name="sizeConstraint">
-               <enum>QLayout::SetMinimumSize</enum>
-              </property>
-              <property name="spacing">
-               <number>2</number>
-              </property>
-             </layout>
-            </item>
-           </layout>
-          </widget>
-         </item>
-        </layout>
-       </item>
        <item>
         <widget class="QGroupBox" name="stationGroup">
          <property name="sizePolicy">
@@ -292,7 +50,7 @@
          <property name="title">
           <string>Stations</string>
          </property>
-         <layout class="QVBoxLayout" name="verticalLayout" stretch="0,1">
+         <layout class="QVBoxLayout" name="verticalLayout" stretch="0">
           <property name="spacing">
            <number>2</number>
           </property>
@@ -303,51 +61,7 @@
            <number>2</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,0,1">
-            <property name="spacing">
-             <number>2</number>
-            </property>
-            <property name="sizeConstraint">
-             <enum>QLayout::SetMinimumSize</enum>
-            </property>
-            <item>
-             <widget class="QPushButton" name="stationSelect">
-              <property name="text">
-               <string>&amp;Choose stations…</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="stationSelectAll">
-              <property name="text">
-               <string>All matchin&amp;g</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer name="horizontalSpacer_3">
-              <property name="orientation">
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>0</width>
-                <height>24</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <widget class="Q3ListBox" name="stationNames">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="MinimumExpanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
+           <widget class="QTreeView" name="treeStations"/>
           </item>
          </layout>
         </widget>
@@ -741,17 +455,6 @@
   </layout>
  </widget>
  <customwidgets>
-  <customwidget>
-   <class>Q3Frame</class>
-   <extends>QFrame</extends>
-   <header>Qt3Support/Q3Frame</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>Q3ListBox</class>
-   <extends>Q3Frame</extends>
-   <header>q3listbox.h</header>
-  </customwidget>
   <customwidget>
    <class>HideApplyBox</class>
    <extends>QWidget</extends>

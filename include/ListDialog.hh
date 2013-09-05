@@ -42,6 +42,9 @@
 #include <set>
 #include <vector>
 
+class QStandardItem;
+class QStandardItemModel;
+
 class HqcMainWindow;
 class StationSelection;
 class TimeRangeControl;
@@ -65,27 +68,7 @@ public:
     void restoreSettings(QSettings& settings);
 
 private Q_SLOTS:
-    void appendStatInListbox(QString);
-    void removeStatFromListbox(QString);
-    void removeAllStatFromListbox();
-
-    void regionEastAdd();
-    void regionEastRemove();
-    void regionWestAdd();
-    void regionWestRemove();
-    void regionMidAdd();
-    void regionMidRemove();
-    void regionNorthAdd();
-    void regionNorthRemove();
-
-    void allCounCheck();
-    void allCounUnCheck();
-
     void onSetRecentTimes();
-
-    void prepareStationSelectionDialog();
-    void showStationSelectionDialog();
-    void selectAllStations();
 
     void showParamGroup(const QString& paramGroup);
     void selectParameters();
@@ -96,23 +79,18 @@ private Q_SLOTS:
     void onSaveSettings();
     void onRestoreSettings();
 
+  void onItemChanged(QStandardItem* item);
+
 Q_SIGNALS:
     void ListHide();
     void ListApply();
 
 private:
-    void regionEastToggle(bool);
-    void regionWestToggle(bool);
-    void regionMidToggle(bool);
-    void regionNorthToggle(bool);
     void enableButtons();
 
     void setupStationTab();
-    ItemCheckBox* addCountyCheckbox(const QString& c, const char* cu, int& x, int& y);
-
     void setupParameterTab();
 
-    void setSelectedStationTypes(const QStringList& stationTypes);
     QStringList getSelectedCounties();
     void setSelectedCounties(const QStringList& c);
 
@@ -121,19 +99,15 @@ private:
 
 private:
     std::auto_ptr<Ui::ListDialog> ui;
-    std::auto_ptr<StationSelection> statSelect;
-
-    std::vector<ItemCheckBox*> mStationTypes;
-    QCheckBox* allType;
-
-    std::vector<ItemCheckBox*> mCounties;
-    ItemCheckBox* mCountyAll;
+    std::auto_ptr<QStandardItemModel> mStationModel;
 
     std::map<QString, std::vector<int> > mParameterGroups;
     std::auto_ptr<ParamIdModel> mParamAvailableModel;
     std::auto_ptr<ParamIdModel> mParamSelectedModel;
 
-  TimeRangeControl* mTimeControl;
+    TimeRangeControl* mTimeControl;
+
+  bool mIsInToggle;
 };
 
 #endif // LISTDIALOG2_HH

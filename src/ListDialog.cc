@@ -33,14 +33,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "hqcmain.h"
 #include "hqc_paths.hh"
 #include "KvMetaDataBuffer.hh"
+#include "StInfoSysBuffer.hh"
 #include "TimeRangeControl.hh"
 #include "timeutil.hh"
 
 #include "ui_listdialog.h"
-#include "ui_stationselection.h"
 
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
+#include <QtGui/QStandardItem>
+#include <QtGui/QStandardItemModel>
 
 #include <boost/foreach.hpp>
 
@@ -50,26 +52,57 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HqcLogging.hh"
 
 namespace /* anonymous */ {
-const int NCOUNTIES = 22;
+
+// TODO build county list automatically -- but how to define regions?
+
+const int NCOUNTIES = 23;
 const char* counties[NCOUNTIES] =  {
     "Oslo", "Akershus", "Østfold", "Hedmark", "Oppland", "Buskerud", "Vestfold", "Telemark", "Aust-Agder",
     "Vest-Agder", "Rogaland", "Hordaland", "Sogn og Fjordane",
     "Møre og Romsdal", "Sør-Trøndelag", "Nord-Trøndelag", "Nordland",
     "Troms", "Finnmark", "Ishavet",
-    "Maritime", "Other"
+    "Maritime", "Skip", "Andre"
 };
 const char* countiesU[NCOUNTIES] =  {
-    "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK",
-    "AUST-AGDER", "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE", "MØRE OG ROMSDAL",
-    "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND", "TROMS", "FINNMARK", "ISHAVET",
-    "MARITIME", "OTHER"
+    "OSLO", "AKERSHUS", "ØSTFOLD", "HEDMARK", "OPPLAND", "BUSKERUD", "VESTFOLD", "TELEMARK", "AUST-AGDER",
+    "VEST-AGDER", "ROGALAND", "HORDALAND", "SOGN OG FJORDANE",
+    "MØRE OG ROMSDAL", "SØR-TRØNDELAG", "NORD-TRØNDELAG", "NORDLAND",
+    "TROMS", "FINNMARK", "ISHAVET",
+    "MARITIME", "SKIP", "OTHER"
 };
-const int REG_EAST[2]  = { 0, 9 };
-const int REG_WEST[2]  = { 9, 13 };
-const int REG_MID[2]   = { 13, 16 };
-const int REG_NORTH[2] = { 16, 20 };
+
+const int NREGIONS = 5;
+const int REGION_COUNTIES[NREGIONS+1] = { 0, 9, 13, 16, 20, NCOUNTIES };
+const char* regions[NREGIONS] =  {
+  "Østlandet", "Vestlandet", "Midt-Norge", "Nord-Norge", "Andre"
+};
 
 const char QSETTINGS_GROUP[] = "lstdlg";
+
+void setChildren(QStandardItem* parent, bool on)
+{
+  const int cc = parent->rowCount();
+  for (int c=0; c<cc; ++c) {
+    QStandardItem* child = parent->child(c, 0);
+    child->setCheckState(on ? Qt::Checked : Qt::Unchecked);
+    setChildren(child, on);
+  }
+}
+void checkChildren(QStandardItem* parent)
+{
+  const int cc = parent->rowCount();
+  int nChecked = 0;
+  for (int c=0; c<cc; ++c) {
+    QStandardItem* child = parent->child(c, 0);
+    if (child->checkState() != Qt::Unchecked)
+      nChecked += 1;
+  }
+  const Qt::CheckState pcs = parent->checkState();
+  const Qt::CheckState pcs_new = (nChecked == cc) ? Qt::Checked
+      : ((nChecked == 0) ? Qt::Unchecked : Qt::PartiallyChecked);
+  if (pcs != pcs_new)
+    parent->setCheckState(pcs_new);
+}
 } // anonymous namespace
 
 // ========================================================================
@@ -77,8 +110,8 @@ const char QSETTINGS_GROUP[] = "lstdlg";
 ListDialog::ListDialog(HqcMainWindow* parent)
     : QDialog(parent)
     , ui(new Ui::ListDialog)
-    , statSelect(0)
     , mTimeControl(new TimeRangeControl(this))
+    , mIsInToggle(false)
 {
     ui->setupUi(this);
 
@@ -101,41 +134,83 @@ ListDialog::~ListDialog()
 {
 }
 
-ItemCheckBox* ListDialog::addCountyCheckbox(const QString& c, const char* cu, int& x, int& y)
-{
-  ItemCheckBox* countyCB = new ItemCheckBox(c, cu, ui->stCounty);
-  connect(countyCB, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
-  ui->statCountyLayout->addWidget(countyCB, x, y);
-  y += 1; if (y >= 3 ) { y = 0; x += 1; }
-  return countyCB;
-}
-
 void ListDialog::setupStationTab()
 {
-    // insert checkbuttons for station location selection
-    int x=0, y=0;
-    for(int i=0; i<NCOUNTIES; ++i) {
-      ItemCheckBox* countyCB = addCountyCheckbox(counties[i], countiesU[i], x, y);
-      mCounties.push_back(countyCB);
+  METLIBS_LOG_SCOPE();
+  const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
+    
+  mStationModel.reset(new QStandardItemModel(this));
+  QStandardItem *root = mStationModel->invisibleRootItem();
+
+  mStationModel->setHorizontalHeaderLabels(QStringList()
+      << tr("Station/Region") << tr("Name") << tr("HOH")
+      << tr("County") << tr("Commune") << tr("Pri"));
+
+  typedef std::map<QString, QStandardItem*> county2item_t;
+  county2item_t county2region, county2county;
+  
+  for (int i=0; i<NREGIONS; ++i) {
+    QStandardItem *r_item = new QStandardItem(regions[i]);
+    r_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
+    r_item->setCheckable(true);
+    root->appendRow(r_item);
+    for (int j=REGION_COUNTIES[i]; j<REGION_COUNTIES[i+1]; ++j)
+      county2region.insert(std::make_pair(QString(countiesU[j]), r_item));
+  }
+  
+  for (int i=0; i<NCOUNTIES; ++i) {
+    QStandardItem *c_item = new QStandardItem(counties[i]);
+    c_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
+    c_item->setCheckable(true);
+    const QString cu(countiesU[i]);
+    county2item_t::iterator r_it = county2region.find(cu);
+    if (r_it != county2region.end()) {
+      r_it->second->appendRow(c_item);
+      county2county.insert(std::make_pair(cu, c_item));
+    } else {
+      METLIBS_LOG_WARN("no region for county '" << cu << "'");
     }
-
-    mCountyAll = addCountyCheckbox(tr("All"), "ALL", x, y);
-    disconnect(mCountyAll, SIGNAL(clicked()), this, SLOT(allCounUnCheck()));
+  }
     
-    connect(ui->regionEastAdd,     SIGNAL(clicked()), this, SLOT(regionEastAdd()));
-    connect(ui->regionEastRemove,  SIGNAL(clicked()), this, SLOT(regionEastRemove()));
-    connect(ui->regionWestAdd,     SIGNAL(clicked()), this, SLOT(regionWestAdd()));
-    connect(ui->regionWestRemove,  SIGNAL(clicked()), this, SLOT(regionWestRemove()));
-    connect(ui->regionMidAdd,      SIGNAL(clicked()), this, SLOT(regionMidAdd()));
-    connect(ui->regionMidRemove,   SIGNAL(clicked()), this, SLOT(regionMidRemove()));
-    connect(ui->regionNorthAdd,    SIGNAL(clicked()), this, SLOT(regionNorthAdd()));
-    connect(ui->regionNorthRemove, SIGNAL(clicked()), this, SLOT(regionNorthRemove()));
-    connect(mCountyAll,    SIGNAL(clicked()), this, SLOT(allCounCheck()));
-    
-    connect(ui->stationSelect,    SIGNAL(clicked()), this, SLOT(showStationSelectionDialog()));
-    connect(ui->stationSelectAll, SIGNAL(clicked()), this, SLOT(selectAllStations()));
+  BOOST_FOREACH(const listStat_t& s, listStat) {
+    const QString cu = QString::fromStdString(s.fylke);
+    const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
 
-    onSetRecentTimes();
+    QStandardItem *s_item = new QStandardItem(QString::number(s.stationid));
+
+    QList<QStandardItem*> s_items;
+    s_items << s_item
+            << new QStandardItem(QString::fromStdString(s.name))
+            << new QStandardItem(QString::number(s.altitude, 'f', 0))
+            << new QStandardItem(cu)
+            << new QStandardItem(QString::fromStdString(s.kommune))
+            << new QStandardItem(prty);
+    Q_FOREACH(QStandardItem* i, s_items) {
+      i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
+    }
+    s_item->setCheckable(true);
+
+    county2item_t::iterator c_it = county2county.find(cu);
+    if (c_it != county2county.end()) {
+      c_it->second->appendRow(s_items);
+    } else {
+      METLIBS_LOG_WARN("no county '" << s.fylke << "' for station " << s.stationid);
+    }
+  }
+
+  ui->treeStations->setModel(mStationModel.get());
+
+  ui->treeStations->expandAll();
+  ui->treeStations->header()->resizeSections(QHeaderView::ResizeToContents);
+  ui->treeStations->header()->setResizeMode(QHeaderView::Interactive);
+  ui->treeStations->collapseAll();
+
+  ui->treeStations->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  connect(mStationModel.get(), SIGNAL(itemChanged(QStandardItem*)),
+      this, SLOT(onItemChanged(QStandardItem*)));
+  
+  onSetRecentTimes();
 }
 
 void ListDialog::setupParameterTab()
@@ -249,11 +324,8 @@ void ListDialog::doRestoreSettings(QSettings& settings)
     }
 
     QStringList countiesDefault;
-    countiesDefault << "ALL";
     QStringList counties = settings.value("counties", countiesDefault).toStringList();
     setSelectedCounties(counties);
-
-    removeAllStatFromListbox();
 
     ui->checkRememberTimes->setChecked(settings.value("time_remember", false).toBool());
     if (ui->checkRememberTimes->isChecked()) {
@@ -421,194 +493,128 @@ TimeRange ListDialog::getTimeRange() const
   return mTimeControl->timeRange();
 }
 
-void ListDialog::appendStatInListbox(QString station)
-{
-    ui->stationNames->insertItem(station);
-    enableButtons();
-}
-
-void ListDialog::removeStatFromListbox(QString station)
-{
-    int rind = -1;
-    for (int ind = 0; ind < ui->stationNames->numRows(); ind++) {
-        if (ui->stationNames->text(ind) == station) {
-            rind = ind;
-        }
-    }
-    if (rind >= 0 )
-        ui->stationNames->removeItem(rind);
-    enableButtons();
-}
-
 void ListDialog::enableButtons()
 {
-    const bool allowSelectStation = not getSelectedCounties().empty();
-    const bool haveStations = (ui->stationNames->count() > 0);
-
+    const bool haveStations   = not getSelectedStations()  .empty();
     const bool haveParameters = not getSelectedParameters().empty();
 
-    const bool allowApply = haveStations and allowSelectStation
-        and haveParameters;
-
-    ui->stationSelect   ->setEnabled(allowSelectStation);
-    ui->stationSelectAll->setEnabled(allowSelectStation);
-
+    const bool allowApply = haveStations and haveParameters;
     ui->hab->setCanApply(allowApply);
-}
-
-void ListDialog::removeAllStatFromListbox()
-{
-    int nuRo = ui->stationNames->count();
-    for (int ind = 0; ind < nuRo; ind++)
-        ui->stationNames->removeItem(0);
-    enableButtons();
-}
-
-void ListDialog::regionEastAdd()
-{
-    regionEastToggle(true);
-}
-
-void ListDialog::regionEastRemove()
-{
-    regionEastToggle(false);
-}
-
-void ListDialog::regionEastToggle(bool on)
-{
-    for(int i=REG_EAST[0]; i<REG_EAST[1]; ++i)
-        mCounties[i]->setChecked(on);
-    allCounUnCheck();
-}
-
-void ListDialog::regionWestAdd()
-{
-    regionWestToggle(true);
-}
-
-void ListDialog::regionWestRemove()
-{
-    regionWestToggle(false);
-}
-
-void ListDialog::regionWestToggle(bool on)
-{
-    for(int i=REG_WEST[0]; i<REG_WEST[1]; ++i)
-        mCounties[i]->setChecked(on);
-    allCounUnCheck();
-}
-
-void ListDialog::regionMidAdd()
-{
-    regionMidToggle(true);
-}
-
-void ListDialog::regionMidRemove()
-{
-    regionMidToggle(false);
-}
-
-void ListDialog::regionMidToggle(bool on)
-{
-    for(int i=REG_MID[0]; i<REG_MID[1]; ++i)
-        mCounties[i]->setChecked(on);
-    allCounUnCheck();
-}
-
-void ListDialog::regionNorthAdd()
-{
-    regionNorthToggle(true);
-}
-
-void ListDialog::regionNorthRemove()
-{
-    regionNorthToggle(false);
-}
-
-void ListDialog::regionNorthToggle(bool on)
-{
-    for(int i=REG_NORTH[0]; i<REG_NORTH[1]; ++i)
-        mCounties[i]->setChecked(on);
-    allCounUnCheck();
-}
-
-void ListDialog::allCounCheck()
-{
-    if (mCountyAll->isChecked()) {
-        for(int i=0; i<NCOUNTIES; ++i)
-            mCounties[i]->setChecked(false);
-    }
-    enableButtons();
-}
-
-void ListDialog::allCounUnCheck()
-{
-    bool anyCountyIsChecked = false;
-    for(int i=0; not anyCountyIsChecked and i<NCOUNTIES; ++i)
-        anyCountyIsChecked |= mCounties[i]->isChecked();
-    if (anyCountyIsChecked)
-        mCountyAll->setChecked(false);
-    enableButtons();
 }
 
 QStringList ListDialog::getSelectedCounties()
 {
+  METLIBS_LOG_SCOPE();
+
   QStringList t;
-  if (mCountyAll->isChecked())
-    t << "ALL";
-  
-  for(int i=0; i<NCOUNTIES; ++i) {
-    ItemCheckBox* cb = mCounties[i];
-    if (cb->isChecked())
-      t << cb->getItem();
+
+  typedef std::map<QString, QString> county2county_t;
+  county2county_t county2county;
+  for (int i=0; i<NCOUNTIES; ++i)
+    county2county.insert(std::make_pair(QString::fromLatin1(counties[i]), QString::fromLatin1(countiesU[i])));
+
+  QStandardItem* root = mStationModel->invisibleRootItem();
+  const int nRegions = root->rowCount();
+  for (int r=0; r<nRegions; ++r) {
+    QStandardItem* region = root->child(r, 0);
+    const int nCounties = region->rowCount();
+    for (int c=0; c<nCounties; ++c) {
+      QStandardItem* county = region->child(c, 0);
+      if (county->checkState() != Qt::Unchecked) {
+        county2county_t::const_iterator cit = county2county.find(county->text());
+        if (cit != county2county.end()) {
+          METLIBS_LOG_DEBUG("county '" << county->text() << "' in region '" << region->text() << "' is selected");
+          t << cit->second;
+        } else {
+          METLIBS_LOG_WARN("county '" << county->text() << "' not known");
+        }
+      }
+    }
   }
+  
   return t;
 }
 
-void ListDialog::setSelectedCounties(const QStringList& c)
+void ListDialog::setSelectedCounties(const QStringList& selectedCounties)
 {
-  mCountyAll->setChecked(c.contains("ALL"));
-  
-  for(int i=0; i<NCOUNTIES; ++i) {
-    ItemCheckBox* cb = mCounties[i];
-    cb->setChecked(c.contains(cb->getItem()));
+  METLIBS_LOG_SCOPE();
+
+  typedef std::map<QString, QString> county2county_t;
+  county2county_t county2county;
+  for (int i=0; i<NCOUNTIES; ++i)
+    county2county.insert(std::make_pair(QString::fromLatin1(counties[i]), QString::fromLatin1(countiesU[i])));
+
+  QStandardItem* root = mStationModel->invisibleRootItem();
+  const int nRegions = root->rowCount();
+  for (int r=0; r<nRegions; ++r) {
+    QStandardItem* region = root->child(r, 0);
+    const int nCounties = region->rowCount();
+    for (int c=0; c<nCounties; ++c) {
+      QStandardItem* county = region->child(c, 0);
+      county2county_t::const_iterator cit = county2county.find(county->text());
+      if (cit != county2county.end()) {
+        METLIBS_LOG_DEBUG("(de)selecting county '" << county->text() << "' in region '" << region->text() << "'");
+        county->setCheckState(selectedCounties.contains(cit->second) ? Qt::Checked : Qt::Unchecked);
+      } else {
+        METLIBS_LOG_WARN("county '" << county->text() << "' not known");
+      }
+    }
   }
   enableButtons();
 }
 
 std::vector<int> ListDialog::getSelectedStations()
 {
-    if (not statSelect.get())
-        return std::vector<int>();
+  std::vector<int> stations;
 
-    return statSelect->getSelectedStations();
+  QStandardItem* root = mStationModel->invisibleRootItem();
+  const int nRegions = root->rowCount();
+  for (int r=0; r<nRegions; ++r) {
+    QStandardItem* region = root->child(r, 0);
+    const int nCounties = region->rowCount();
+    for (int c=0; c<nCounties; ++c) {
+      QStandardItem* county = region->child(c, 0);
+      const int nStations = county->rowCount();
+      for (int s=0; s<nStations; ++s) {
+        QStandardItem* station = county->child(s, 0);
+        if (station->checkState() != Qt::Unchecked)
+          stations.push_back(station->text().toInt());
+      }
+    }
+  }
+  
+  return stations;
 }
 
 std::vector<int> ListDialog::getSelectedParameters()
 {
-    return mParamSelectedModel->parameterIds();
+  return mParamSelectedModel->parameterIds();
 }
 
-void ListDialog::prepareStationSelectionDialog()
+void ListDialog::onItemChanged(QStandardItem* item)
 {
-    const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
+  if (mIsInToggle)
+    return;
 
-    removeAllStatFromListbox();
-    statSelect.reset(new StationSelection(listStat,
-                                          getSelectedCounties(),
-                                          this));
-    connect(statSelect.get(), SIGNAL(stationAppended(QString)), this, SLOT(appendStatInListbox(QString)));
-    connect(statSelect.get(), SIGNAL(stationRemoved(QString)),  this, SLOT(removeStatFromListbox(QString)));
-}
+  METLIBS_LOG_SCOPE();
+  mIsInToggle = true;
 
-void ListDialog::showStationSelectionDialog()
-{
-    prepareStationSelectionDialog();
-    statSelect->show();
-}
-
-void ListDialog::selectAllStations()
-{
-    prepareStationSelectionDialog();
-    statSelect->doSelectAllStations();
+  QStandardItem* parent = item->parent();
+  if (not parent) {
+    METLIBS_LOG_DEBUG("region '" << item->text() << "' toggled");
+    setChildren(item, item->checkState() != Qt::Unchecked);
+  } else {
+    QStandardItem* grandparent = parent->parent();
+    if (not grandparent) {
+      METLIBS_LOG_DEBUG("county '" << item->text() << "' toggled");
+      setChildren(item, item->checkState() != Qt::Unchecked);
+      checkChildren(parent);
+    } else {
+      METLIBS_LOG_DEBUG("station '" << item->text() << "' toggled");
+      checkChildren(parent);
+      checkChildren(grandparent);
+    }
+  }
+  mIsInToggle = false;
+  enableButtons();
 }
