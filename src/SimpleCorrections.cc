@@ -301,6 +301,9 @@ void SimpleCorrections::onNewCorrected()
     return;
   
   EditDataPtr obs = mDA->findE(mSensorTime);
-  if (obs)
-    mItemCorrected->setData(obs, mDA, mSensorTime, ui->comboCorrected->currentText(), Qt::EditRole);
+  if (obs) {
+    if (not mItemCorrected->setData(obs, mDA, mSensorTime, ui->comboCorrected->currentText(), Qt::EditRole)) {
+      update();
+    }
+  }
 }
