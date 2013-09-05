@@ -64,7 +64,7 @@ DataList::~DataList()
 void DataList::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();
-  if (not mTableModel.get() or not st.valid() or eq_SensorTime()(mSensorTime, st))
+  if (mEmittingNavigateTo or not mTableModel.get() or not st.valid() or eq_SensorTime()(mSensorTime, st))
     return;
 
   mSensorTime = st;
