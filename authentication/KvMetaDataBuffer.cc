@@ -1,5 +1,7 @@
 
 #include "KvMetaDataBuffer.hh"
+
+#include "HqcApplication.hh"
 #include "hqc_paths.hh"
 #include "BusyIndicator.h"
 #include "Functors.hh"
@@ -7,9 +9,9 @@
 #include <kvcpp/KvApp.h>
 
 #include <QtCore/QCoreApplication>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
+#include <QtCore/QVariant>
 #include <QtGui/QMessageBox>
+#include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
 #include <boost/format.hpp>
@@ -25,25 +27,8 @@ KvMetaDataBuffer::KvMetaDataBuffer()
     : mHaveStations(false)
     , mHaveParams(false)
 {
-    assert(not sInstance);
-    sInstance = this;
-
-    QString limitsFile = ::hqc::getPath(::hqc::CONFDIR) + "/slimits";
-    QFile limits(limitsFile);
-    if (not limits.open(QIODevice::ReadOnly)) {
-        QMessageBox::critical(0, qApp->translate("ErrorList", "Cannot open file"),
-                              qApp->translate("ErrorList", "Could not open file '%1' for reading. Have to exit kvhqc.").arg(limitsFile),
-                              QMessageBox::Ok, QMessageBox::NoButton);
-        exit(1);
-    }
-    
-    QTextStream limitStream(&limits);
-    while (not limitStream.atEnd()) {
-        int par, dum;
-        float low, high;
-        limitStream >> par >> dum >> low >> high;
-        mParamLimits[par] = std::make_pair(low, high);
-    }
+  assert(not sInstance);
+  sInstance = this;
 }
 
 KvMetaDataBuffer::~KvMetaDataBuffer()
@@ -142,15 +127,23 @@ bool KvMetaDataBuffer::isModelParam(int paramid)
 
 bool KvMetaDataBuffer::checkPhysicalLimits(int paramid, float value)
 {
-    if (value == -32767 or value == -32766)
-        return true;
+  if (value == -32767 or value == -32766)
+    return true;
 
-    ParamLimits_t::const_iterator it = mParamLimits.find(paramid);
-    if (it == mParamLimits.end()) {
-        METLIBS_LOG_DEBUG("no limits for paramid " << paramid);
-        return true;
+  if (hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
+    query.bindValue(0, paramid);
+    query.exec();
+    if (query.next()) {
+      const float low = query.value(0).toFloat(), high = query.value(1).toFloat();
+      METLIBS_LOG_DEBUG(LOGVAL(paramid) << LOGVAL(low) << LOGVAL(value) << LOGVAL(high));
+      return (low <= value and high >= value);
     }
-    return (it->second.first <= value and it->second.second >= value);
+  }
+
+  METLIBS_LOG_DEBUG("no limits for paramid " << paramid);
+  return true;
 }
 
 bool KvMetaDataBuffer::isKnownType(int id)

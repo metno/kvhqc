@@ -75,8 +75,7 @@ SET(etc_files
   etc/kvhqc/kvalobs.conf
   etc/kvhqc/kvhist.conf
   etc/kvhqc/kvtest.conf
-  etc/kvhqc/paramorder
-  etc/kvhqc/slimits)
+  etc/kvhqc/paramorder)
 INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
 
 CONFIGURE_FILE(share/hqc_current_version.in share/hqc_current_version)
