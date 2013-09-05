@@ -219,7 +219,7 @@ void TimeSeriesView::updatePlot()
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
     if (idx >= 6)
-      continue;
+      break;
     if (idx >= mPlotOptions.size()) {
       METLIBS_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
       break;
@@ -268,7 +268,7 @@ void TimeSeriesView::updatePlot()
   poptions.time_types.push_back(POptions::T_DAY);
   poptions.time_types.push_back(POptions::T_HOUR);
 
-  poptions.name = tr("HQC Time Series").toStdString();
+  poptions.name = "";
   poptions.fillcolour= POptions::Colour("white");
   poptions.linecolour= POptions::Colour("black");
   poptions.linewidth= 1;
