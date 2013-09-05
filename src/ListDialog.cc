@@ -31,7 +31,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "BusyIndicator.h"
 #include "hqcmain.h"
 #include "hqc_paths.hh"
-#include "mi_foreach.hh"
 #include "timeutil.hh"
 
 #include "ui_listdialog.h"
@@ -588,14 +587,14 @@ void ListDialog::removeAllStatFromListbox()
 
 void ListDialog::uncheckTypes()
 {
-    mi_foreach(ItemCheckBox* cb, mStationTypes)
+    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes)
         cb->setChecked(false);
     allType->setChecked(false);
 }
 
 void ListDialog::checkTypes(const char* these[])
 {
-    mi_foreach(ItemCheckBox* cb, mStationTypes) {
+    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes) {
         const QString item = cb->getItem();
         for(int i=0; these[i]; ++i) {
             if (item == these[i]) {
@@ -810,7 +809,7 @@ QStringList ListDialog::getSelectedStationTypes()
     QStringList t;
     if (isSelectAllStationTypes())
         t << "ALL";
-    mi_foreach(ItemCheckBox* cb, mStationTypes) {
+    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes) {
         if (cb->isChecked())
             t << cb->getItem();
     }
@@ -825,7 +824,7 @@ bool ListDialog::isSelectAllStationTypes() const
 void ListDialog::setSelectedStationTypes(const QStringList& stationTypes)
 {
     allType->setChecked(stationTypes.contains("ALL"));
-    mi_foreach(ItemCheckBox* cb, mStationTypes)
+    BOOST_FOREACH(ItemCheckBox* cb, mStationTypes)
         cb->setChecked(stationTypes.contains(cb->getItem()));
     enableButtons();
 }

@@ -32,9 +32,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "cFailedParam.h"
 #include "explainQC.h"
-#include "mi_foreach.hh"
 
 #include <Qt3Support/Q3ListView>
+
+#include <boost/foreach.hpp>
 
 #include <map>
 #include <set>
@@ -80,20 +81,20 @@ void FailList::newData( const kvalobs::kvData & data )
         return;
 
     Fails fails;
-    mi_foreach(const QC::cFailedParam& cf, fail) {
+    BOOST_FOREACH(const QC::cFailedParam& cf, fail) {
         fails
             [ QString::fromStdString(cf.getPart( QC::cFailedParam::QcClass ))   ]
             [ QString::fromStdString(cf.getPart( QC::cFailedParam::Group )) ]
             .insert( cf );
     }
-    mi_foreach(Fails::value_type f, fails) {
+    BOOST_FOREACH(Fails::value_type f, fails) {
         Q3ListViewItem *topItem =
             new Q3ListViewItem( cfailedList, f.first, "" );
         topItem->setOpen(true);
         METLIBS_LOG_DEBUG(LOGVAL(f.first));
         QC::FailGroupList &failGroupList = QC::failExpl[ f.first.toStdString() ];
         
-        mi_foreach(const SubElem::value_type& sub, f.second) {
+        BOOST_FOREACH(const SubElem::value_type& sub, f.second) {
             QC::FailGroup &failGroup = failGroupList[sub.first.ascii()];
             METLIBS_LOG_DEBUG(LOGVAL(sub.first));
             Q3ListViewItem *subItem =
@@ -101,7 +102,7 @@ void FailList::newData( const kvalobs::kvData & data )
                                     QString::fromStdString(failGroup.explanation) );
             subItem->setOpen(true);
             
-            mi_foreach( const QC::cFailedParam& subsub, sub.second) {
+            BOOST_FOREACH( const QC::cFailedParam& subsub, sub.second) {
                 METLIBS_LOG_DEBUG("subsub detail='" << subsub.getPart( QC::cFailedParam::Detail ));
                 new Q3ListViewItem( subItem,
                                     QString::fromStdString(subsub.getPart( QC::cFailedParam::Detail )),

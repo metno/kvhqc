@@ -40,7 +40,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "ControlFlagCell.h"
 #include "BusyIndicator.h"
 #include "hqc_utilities.hh"
-#include "mi_foreach.hh"
 
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvDataOperations.h>
@@ -50,6 +49,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/qstatusbar.h>
 
 #include <boost/assign/std/vector.hpp>
+#include <boost/foreach.hpp>
 
 #include <algorithm>
 #include <cassert>
@@ -407,7 +407,7 @@ namespace WatchRR
     }
 
     std::list<kvalobs::kvData> dl( mod.begin(), mod.end() );
-    mi_foreach(kvData& data, dl)
+    BOOST_FOREACH(kvData& data, dl)
         Helpers::updateCfailed(data, "watchRR");
 
     cerr << "Lagrer:" << endl

@@ -33,7 +33,6 @@
 #include "hqcmain.h"
 #include "hqc_utilities.hh"
 #include "KvMetaDataBuffer.hh"
-#include "mi_foreach.hh"
 #include "timeutil.hh"
 
 #include <kvalobs/flag/kvControlInfo.h>
@@ -68,7 +67,7 @@ KvalobsDataModel::KvalobsDataModel(const std::vector<int>& parameters, KvalobsDa
       mCorrectedValuesAreEditable(editable)
 {
     METLIBS_LOG_SCOPE();
-    mi_foreach(const int param, parameters) {
+    BOOST_FOREACH(const int param, parameters) {
         QString paramName = "unknown";
         try {
             paramName = QString::fromStdString(KvMetaDataBuffer::instance()->findParam(param).name());
@@ -78,7 +77,7 @@ KvalobsDataModel::KvalobsDataModel(const std::vector<int>& parameters, KvalobsDa
     }
 #ifndef NDEBUG
     METLIBS_LOG_DEBUG("#parameters: " << parametersToShow_.size() << "; statistics:");
-    mi_foreach(const Parameter& p, parametersToShow_)
+    BOOST_FOREACH(const Parameter& p, parametersToShow_)
         METLIBS_LOG_DEBUG(p.paramid << ":\t" << p.parameterName);
 #endif
 }
@@ -503,7 +502,7 @@ QVariant KvalobsDataModel::textColorRoleData(const QModelIndex & index) const
 int KvalobsDataModel::dataColumn(QString parameter) const
 {
     int index = 2;
-    mi_foreach(const Parameter& p, parametersToShow_) {
+    BOOST_FOREACH(const Parameter& p, parametersToShow_) {
         if (parameter == p.parameterName) {
             break;
         }

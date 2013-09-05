@@ -32,7 +32,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "weatherdialog.h"
 
 #include "KvMetaDataBuffer.hh"
-#include "mi_foreach.hh"
 #include "StationSelection.h"
 
 #include <kvcpp/KvApp.h>
@@ -52,6 +51,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <Qt3Support/q3datetimeedit.h>
 #include <Qt3Support/Q3HBoxLayout>
 #include <Qt3Support/Q3VBoxLayout>
+
+#include <boost/foreach.hpp>
 
 using namespace kvservice;
 using namespace kvalobs;
@@ -209,7 +210,7 @@ void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
 {
     OpgmList opgtl;
     const std::list<kvalobs::kvObsPgm>& obsPgmList = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-    mi_foreach(const kvalobs::kvObsPgm& op, obsPgmList) {
+    BOOST_FOREACH(const kvalobs::kvObsPgm& op, obsPgmList) {
         cerr << op.stationID() << " "
              << setw(3) << op.paramID() << " "
              << setw(3) << op.typeID() <<  " "
@@ -269,7 +270,7 @@ void WeatherDialog::initData(const timeutil::ptime& clock, int type, int sensor)
         IDataList dit = it->dataList().begin();
         timeutil::ptime otime = timeutil::from_miTime(dit->obstime()), nexttime = otime;
         int nuOtimes = 0;
-        mi_foreach(const int opg_hour, opgtl) {
+        BOOST_FOREACH(const int opg_hour, opgtl) {
             if( opg_hour == otime.time_of_day().hours() ) {
                 ohour = opg_hour;
                 break;

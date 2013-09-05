@@ -4,10 +4,10 @@
 #include "AnalyseRR24.hh"
 #include "ColumnFactory.hh"
 #include "Helpers.hh"
-#include "mi_foreach.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.RedistTableModel"
@@ -91,7 +91,7 @@ float RedistTableModel::originalSum() const
 float RedistTableModel::currentSum() const
 {
     float sum = 0;
-    mi_foreach(float v, mNewValues)
+    BOOST_FOREACH(float v, mNewValues)
         if (v >= 0)
             sum += v;
     return sum;

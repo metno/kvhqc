@@ -55,7 +55,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "KvMetaDataBuffer.hh"
 #include "ListDialog.hh"
 #include "MiDateTimeEdit.hh"
-#include "mi_foreach.hh"
 #include "QtKvalobsAccess.hh"
 #include "rejectdialog.h"
 #include "rejecttable.h"
