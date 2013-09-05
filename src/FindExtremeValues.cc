@@ -56,7 +56,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       "  (SELECT stationid AS s, " << function << "(corrected) AS c FROM data"
       "   WHERE stationid BETWEEN 60 AND 100000 AND stationid NOT IN (" << excluded_station_list.str() << ")"
       "   AND paramid IN (" << paramids.str() << ")"
-      "   AND substr(useinfo,3,1) in ('0','1')"
+      "   AND substr(useinfo,3,1) in ('0','1','2')"
       "   AND " << c_obstime.str() <<
       " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<

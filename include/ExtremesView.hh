@@ -5,16 +5,19 @@
 #include "EditAccess.hh"
 #include "Sensor.hh"
 
-#include <QtGui/QTableView>
+#include <QtGui/QDialog>
 
 #include <vector>
 
 class ExtremesTableModel;
 QT_BEGIN_NAMESPACE;
-class QWidget;
+class QItemSelection;
 QT_END_NAMESPACE;
+namespace Ui {
+class DialogExtremeValues;
+}
 
-class ExtremesView : public QTableView
+class ExtremesView : public QDialog
 { Q_OBJECT;
 public:
   ExtremesView(QWidget* parent=0);
@@ -33,8 +36,9 @@ private:
   int getSelectedRow() const;
 
 private:
-  int mLastSelectedRow;
+  std::auto_ptr<Ui::DialogExtremeValues> ui;
   std::auto_ptr<ExtremesTableModel> mExtremesModel;
+  int mLastSelectedRow;
 };
 
 #endif

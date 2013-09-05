@@ -79,6 +79,7 @@ QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
 SET(hqc_UIS
   datalist.ui
   dl_addcolumn.ui
+  extremevalues.ui
   listdialog.ui
   mainwindow.ui
   simplecorrections.ui
