@@ -24,7 +24,7 @@
 #include "HqcLogging.hh"
 
 namespace {
-const std::string VIEW_TYPE = "DataList";
+const std::string VIEW_TYPE = "TimeSeries";
 const std::string ID = "1";
 }
 
