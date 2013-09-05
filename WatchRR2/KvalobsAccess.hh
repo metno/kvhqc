@@ -13,33 +13,36 @@
 
 class KvalobsAccess : public KvBufferedAccess {
 public:
-    KvalobsAccess();
-    ~KvalobsAccess();
+  KvalobsAccess();
+  ~KvalobsAccess();
 
-    virtual TimeSet allTimes(const Sensor& sensor, const TimeRange& limits);
-    virtual DataSet allData(const Sensor& sensor, const TimeRange& limits);
-
-    virtual ObsDataPtr find(const SensorTime& st);
-    virtual bool update(const std::vector<ObsUpdate>& updates);
-
+  virtual TimeSet allTimes(const std::vector<Sensor>& sensors, const TimeRange& limits);
+  virtual DataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits);
+  using KvBufferedAccess::allTimes;
+  using KvBufferedAccess::allData;
+  
+  virtual ObsDataPtr find(const SensorTime& st);
+  virtual bool update(const std::vector<ObsUpdate>& updates);
+  
   void nextData(kvservice::KvObsDataList &dl, bool update);
 
-    typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
-    void setReinserter(Reinserter_t* reinserter)
-        { mDataReinserter = reinserter; }
-    bool hasReinserter() const
-        { return (mDataReinserter != 0); }
-
+  typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
+  void setReinserter(Reinserter_t* reinserter)
+    { mDataReinserter = reinserter; }
+  bool hasReinserter() const
+    { return (mDataReinserter != 0); }
+  
 protected:
-    virtual bool drop(const SensorTime& st);
+  virtual bool drop(const SensorTime& st);
 
 private:
-    void fetchData(const Sensor& sensor, const TimeRange& limits);
-    bool isFetched(int stationid, const timeutil::ptime& t) const;
-    void addFetched(int stationid, const TimeRange& t);
-    void removeFetched(int stationid, const timeutil::ptime& t);
-
-    void findRange(const Sensor& sensor, const TimeRange& limits);
+  bool isFetched(int stationid, const timeutil::ptime& t) const;
+  void addFetched(int stationid, const TimeRange& t);
+  void removeFetched(int stationid, const timeutil::ptime& t);
+  
+  void findRange(const Sensor& sensor, const TimeRange& limits)
+    { findRange(std::vector<Sensor>(1, sensor), limits); }
+  void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
     
 private:
     typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;

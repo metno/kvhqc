@@ -217,6 +217,8 @@ void TimeSeriesView::onDateToChanged(const QDateTime& qdt)
 void TimeSeriesView::updatePlot()
 {
   METLIBS_LOG_SCOPE();
+  if (not mDA)
+    return;
 
   const int whatToPlot = ui->comboWhatToPlot->currentIndex();
   const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
@@ -226,6 +228,8 @@ void TimeSeriesView::updatePlot()
   METLIBS_LOG_DEBUG(LOGVAL(limits) << LOGVAL(whatToPlot));
 
   TimeSeriesData::tsList tslist;
+
+  mDA->allTimes(mSensors, limits); // prefetch all data
 
   int idx = -1;
   BOOST_FOREACH(const Sensor& sensor, mSensors) {

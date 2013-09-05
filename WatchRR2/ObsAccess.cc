@@ -5,8 +5,8 @@ ObsAccess::~ObsAccess()
 {
 }
 
-void ObsAccess::addAllTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits)
+void ObsAccess::addAllTimes(TimeSet& times, const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-    const TimeSet t = allTimes(sensor, limits);
+    const TimeSet t = allTimes(sensors, limits);
     times.insert(t.begin(), t.end());
 }

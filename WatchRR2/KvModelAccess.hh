@@ -7,15 +7,16 @@
 
 class KvModelAccess : public ModelAccess {
 public:
-    virtual ModelDataPtr find(const SensorTime& st);
+  virtual ModelDataPtr find(const SensorTime& st);
+  virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes);
 
 protected:
-    KvalobsModelDataPtr receive(const kvalobs::kvModelData& data);
-    bool drop(const SensorTime& st);
+  KvalobsModelDataPtr receive(const kvalobs::kvModelData& data);
+  bool drop(const SensorTime& st);
 
 protected:
-    typedef std::map<SensorTime, KvalobsModelDataPtr, lt_SensorTime> Data_t;
-    Data_t mData;
+  typedef std::map<SensorTime, KvalobsModelDataPtr, lt_SensorTime> Data_t;
+  Data_t mData;
 };
 typedef boost::shared_ptr<KvModelAccess> KvModelAccessPtr;
 

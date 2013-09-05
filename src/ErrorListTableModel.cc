@@ -13,6 +13,7 @@
 #include <QtGui/QFont>
 
 #include <boost/bind.hpp>
+#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ErrorListTableModel"
 #include "HqcLogging.hh"
@@ -61,6 +62,13 @@ ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, 
     , mShowStation(-1)
 {
     mDA->obsDataChanged.connect(boost::bind(&ErrorListTableModel::onDataChanged, this, _1, _2));
+
+    // prefetch model data
+    std::vector<SensorTime> sensorTimes;
+    BOOST_FOREACH(const Errors::ErrorInfo& ei, errorList) {
+      sensorTimes.push_back(ei.obs->sensorTime());
+    }
+    mMA->findMany(sensorTimes);
 }
 
 ErrorListTableModel::~ErrorListTableModel()

@@ -270,7 +270,7 @@ void HqcMainWindow::ListOK()
                            "You should connect to the command server via the button in the lower right in the hqc window, "
                            "and connect diana to the command server using the button in diana's window."));
     }
-    // FIXME pack selectedStations, selectedTimes, ... in class, psas this to AnalyseErrors
+    // FIXME pack selectedStations, selectedTimes, ... in class, pass this to AnalyseErrors
     const std::vector<int> selectedStations = lstdlg->getSelectedStations();
     if (selectedStations.empty()) {
         QMessageBox::warning(this,
@@ -319,6 +319,13 @@ void HqcMainWindow::ListOK()
         }
     }
 
+    if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
+        BusyStatus busyErrors(this, tr("Building error list..."));
+
+        ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
+        ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
+    }
+
     if (lity == daLi or lity == alLi or lity == alSa) {
         BusyStatus busyData(this, tr("Building data list..."));
 
@@ -327,13 +334,6 @@ void HqcMainWindow::ListOK()
         dl->setSensorsAndTimes(sensors, timeLimits);
         dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
         ui->tabs->addTab(dl, tr("Selected Data"));
-    }
-
-    if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
-        BusyStatus busyErrors(this, tr("Building error list..."));
-
-        ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
-        ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
     }
 
     std::vector<QString> stationList;

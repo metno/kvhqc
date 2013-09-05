@@ -316,22 +316,13 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
     METLIBS_LOG_SCOPE();
 
     Errors_t memStore2;
-    BOOST_FOREACH(const Sensor& s, sensors) {
-        METLIBS_LOG_DEBUG("next sensor: " << s);
-
-        const ObsAccess::DataSet allData = eda->allData(s, limits);
-#ifndef NDEBUG
-        METLIBS_LOG_DEBUG(LOGVAL(allData.size()));
-        BOOST_FOREACH(const ObsDataPtr& obs, allData)
-            METLIBS_LOG_DEBUG(obs->sensorTime());
-#endif
-        BOOST_FOREACH(const ObsDataPtr& obs, allData) {
-          EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
-          ErrorInfo ei(ebs);
-          recheck(ei, errorsForSalen);
-          if (ei.badInList != 0)
-              memStore2.push_back(ei);
-        }
+    const ObsAccess::DataSet allData = eda->allData(sensors, limits);
+    BOOST_FOREACH(const ObsDataPtr& obs, allData) {
+      EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
+      ErrorInfo ei(ebs);
+      recheck(ei, errorsForSalen);
+      if (ei.badInList != 0)
+        memStore2.push_back(ei);
     }
 
     return memStore2;

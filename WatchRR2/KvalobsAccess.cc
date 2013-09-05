@@ -42,38 +42,18 @@ KvalobsAccess::~KvalobsAccess()
 {
 }
 
-void KvalobsAccess::fetchData(const Sensor& sensor, const TimeRange& limits)
+ObsAccess::TimeSet KvalobsAccess::allTimes(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-  Fetched_t::const_iterator f = mFetched.find(sensor.stationId);
-  if (f == mFetched.end()) {
-    findRange(sensor, limits);
-  } else {
-    FetchedTimes_t limits_set, fetched_in_limits;
-    limits_set.insert(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
-    boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
-    FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
-    BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch)
-        findRange(sensor, TimeRange(t.lower(), t.upper()));
-  }
+  METLIBS_LOG_TIME();
+  findRange(sensors, limits);
+  return KvBufferedAccess::allTimes(sensors, limits);
 }
 
-ObsAccess::TimeSet KvalobsAccess::allTimes(const Sensor& sensor, const TimeRange& limits)
+ObsAccess::DataSet KvalobsAccess::allData(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-    METLIBS_LOG_SCOPE();
-    if (not sensor.valid() or not limits.closed()) {
-        METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
-        return ObsAccess::TimeSet();
-    }
-    METLIBS_LOG_DEBUG("allTimes" << LOGVAL(sensor) << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
-
-    fetchData(sensor, limits);
-    return KvBufferedAccess::allTimes(sensor, limits);
-}
-
-ObsAccess::DataSet KvalobsAccess::allData(const Sensor& sensor, const TimeRange& limits)
-{
-  fetchData(sensor, limits);
-  return KvBufferedAccess::allData(sensor, limits);
+  METLIBS_LOG_TIME();
+  findRange(sensors, limits);
+  return KvBufferedAccess::allData(sensors, limits);
 }
 
 ObsDataPtr KvalobsAccess::find(const SensorTime& st)
@@ -89,30 +69,75 @@ ObsDataPtr KvalobsAccess::find(const SensorTime& st)
     return KvBufferedAccess::find(st);
 }
 
-void KvalobsAccess::findRange(const Sensor& sensor, const TimeRange& limits)
+namespace /* anonymous */ {
+struct sensorString {
+  const std::vector<Sensor>& mSensors;
+  sensorString(const std::vector<Sensor>& sensors) : mSensors(sensors) { }
+};
+std::ostream& operator<<(std::ostream& out, const sensorString& sst)
 {
-    METLIBS_LOG_SCOPE();
-    if (not sensor.valid() or not limits.closed()) {
-        METLIBS_LOG_ERROR("invalid sensor/time: " << sensor << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
-        return;
-    }
+  BOOST_FOREACH(const Sensor& s, sst.mSensors)
+      out << s;
+  return out;
+}
+} // namespace anonymous
 
-    METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
-    
-    kvservice::WhichDataHelper whichData;
-    whichData.addStation(sensor.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
-    
-    kvalobsdata_helpers::GetData get(*this);
-    try {
-      if (KvServiceHelper::instance()->getKvData(get, whichData))
-        addFetched(sensor.stationId, limits);
-      else
-        METLIBS_LOG_ERROR("problem receiving data for sensor " << sensor << " and time " << limits);
-    } catch (std::exception& e) {
-      METLIBS_LOG_ERROR("exception while retrieving data for sensor " << sensor << " and time " << limits << ", message is: " << e.what());
-    } catch (...) {
-      METLIBS_LOG_ERROR("exception while retrieving data for sensor " << sensor << " and time " << limits);
+void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRange& limits)
+{
+  METLIBS_LOG_SCOPE();
+  if (not limits.closed()) {
+    METLIBS_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
+    return;
+  }
+
+  kvservice::WhichDataHelper whichData;
+  const FetchedTimes_t limits_set(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
+  bool empty = true;
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    if (not s.valid()) {
+      METLIBS_LOG_ERROR("invalid sensor: " << s);
+      continue;
     }
+    Fetched_t::const_iterator f = mFetched.find(s.stationId);
+    if (f == mFetched.end()) {
+      METLIBS_LOG_DEBUG("request for station " << s.stationId << " time " << limits);
+      whichData.addStation(s.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
+      empty = false;
+    } else {
+      FetchedTimes_t fetched_in_limits;
+      boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
+      const FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
+      BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
+        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeRange(t.lower(), t.upper()));
+        whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
+        empty = false;
+      }
+    }
+  }
+  if (empty) {
+    METLIBS_LOG_DEBUG("empty for sensors " << sensorString(sensors)
+        << " and time " << limits);
+    return;
+  }
+
+  kvalobsdata_helpers::GetData get(*this);
+  try {
+    if (KvServiceHelper::instance()->getKvData(get, whichData)) {
+      BOOST_FOREACH(const Sensor& s, sensors) {
+        if (s.valid())
+          addFetched(s.stationId, limits);
+      }
+    } else {
+      METLIBS_LOG_ERROR("problem receiving data for sensors " << sensorString(sensors)
+          << " and time " << limits);
+    }
+  } catch (std::exception& e) {
+    METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+        << " and time " << limits << ", message is: " << e.what());
+  } catch (...) {
+    METLIBS_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
+        << " and time " << limits);
+  }
 }
 
 bool KvalobsAccess::isFetched(int stationId, const timeutil::ptime& t) const
