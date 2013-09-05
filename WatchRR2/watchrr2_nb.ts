@@ -450,12 +450,12 @@
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="103"/>
+        <location filename="watchrr_station.ui" line="96"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="113"/>
+        <location filename="watchrr_station.ui" line="106"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -615,34 +615,24 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="73"/>
-        <source>invalid station or date range</source>
-        <translation>ugyldig stasjon eller tidsrom</translation>
-    </message>
-    <message>
-        <location filename="StationDialog.cc" line="89"/>
+        <location filename="StationDialog.cc" line="93"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="93"/>
+        <location filename="StationDialog.cc" line="95"/>
         <source>Invalid station number</source>
         <translation>Ugyldig stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="100"/>
+        <location filename="StationDialog.cc" line="136"/>
         <source>problem loading obs_pgm</source>
         <translation>Kan ikke lese obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="123"/>
+        <location filename="StationDialog.cc" line="146"/>
         <source>could not find typeid</source>
         <translation>kan ikke finne typeid</translation>
-    </message>
-    <message>
-        <location filename="StationDialog.cc" line="128"/>
-        <source>typeid different at start and end</source>
-        <translation>forskjellige typeid ved start og slutt</translation>
     </message>
 </context>
 <context>

@@ -1,3 +1,12 @@
+kvhqc (3.0.0~a15-1) unstable; urgency=low
+
+  * improved WatchRR / WatchWeather station dialog
+  * explain QC2-redist neighbors in checks table
+  * show check explanation also as tooltip
+  * updated some check explanations
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 11 Jul 2013 10:00:23 +0200
+
 kvhqc (3.0.0~a14-1) unstable; urgency=low
 
   * bugfix: do not crash for code explanations

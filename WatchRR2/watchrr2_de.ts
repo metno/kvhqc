@@ -444,12 +444,12 @@
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="103"/>
+        <location filename="watchrr_station.ui" line="96"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="113"/>
+        <location filename="watchrr_station.ui" line="106"/>
         <source>OK</source>
         <translation></translation>
     </message>
@@ -606,34 +606,24 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="73"/>
-        <source>invalid station or date range</source>
-        <translation>ungültige Station oder ungültiger Zeitraum</translation>
-    </message>
-    <message>
-        <location filename="StationDialog.cc" line="89"/>
+        <location filename="StationDialog.cc" line="93"/>
         <source>Cannot read station number</source>
         <translation>Kann Stationsnummer nicht lesen</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="93"/>
+        <location filename="StationDialog.cc" line="95"/>
         <source>Invalid station number</source>
         <translation>Ungültige Stationsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="100"/>
+        <location filename="StationDialog.cc" line="136"/>
         <source>problem loading obs_pgm</source>
         <translation>Problem beim Lesen von obs_pgm</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="123"/>
+        <location filename="StationDialog.cc" line="146"/>
         <source>could not find typeid</source>
         <translation>Konnte typeid nicht finden</translation>
-    </message>
-    <message>
-        <location filename="StationDialog.cc" line="128"/>
-        <source>typeid different at start and end</source>
-        <translation>Verschiedene typeid bei Anfang und Ende</translation>
     </message>
 </context>
 <context>
