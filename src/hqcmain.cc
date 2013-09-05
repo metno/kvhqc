@@ -137,6 +137,7 @@ HqcMainWindow::HqcMainWindow()
     iconUndo.addPixmap(QPixmap(icon_undo));
     ui->actionRedo->setIcon(iconRedo);
     ui->actionUndo->setIcon(iconUndo);
+    ui->dockHistory->setVisible(false);
 
     connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
 
