@@ -314,7 +314,18 @@ check_explanations = [
     ('QC1-6-326', 'NH=0 og nedbør (værkode)'),
     ('QC1-6-327', 'C?9 og tordenvær (værkode)'),
     ('QC1-6-328', 'Forholdet mellom værkode (W2) og totalt skydekke'),
-    ('QC1-6-329', 'Forholdet mellom værkode (W2) og totalt skydekke')
+    ('QC1-6-329', 'Forholdet mellom værkode (W2) og totalt skydekke'),
+
+    ('QC2-redist', 'Nedbør tilfordelt i QC2, ikke oppsamlingstidspunkt'),
+    ('QC2-redist-endpoint', 'Nedbør fra oppsamlingstidspunkt tilfordelt i QC2'),
+    ('QC2-redist-bonedry', 'Tørt periode tilfordelt i QC2'),
+    ('QC2d-1', 'Diptest i QC2'),
+    ('QC2d-2', 'Lineær interpolasjon i QC2'),
+    ('QC2d-2-I', 'Interpolasjon i QC2, basert på nabostasjoner'),
+    ('QC2h-1-interruptedrain', 'Pause i regnbyge'),
+    ('QC2h-1-highstart', 'Intenst start av en regnbyge'),
+    ('QC2h-1-highsingle', 'Høy og ensig nedbør-måling'),
+    ('QC2h-1-neighbors', 'Pluviometer er tørt mens flere nabostasjoner måler nedbør, eller omvendt')
 ]
 for ce in check_explanations:
     cur.execute("INSERT INTO check_explain (qcx , description) VALUES ('%s', '%s')" % ce)
