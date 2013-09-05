@@ -22,7 +22,7 @@ public:
     virtual ObsDataPtr find(const SensorTime& st);
     virtual bool update(const std::vector<ObsUpdate>& updates);
 
-    void nextData(kvservice::KvObsDataList &dl);
+  void nextData(kvservice::KvObsDataList &dl, bool update);
 
     typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
     void setReinserter(Reinserter_t* reinserter)

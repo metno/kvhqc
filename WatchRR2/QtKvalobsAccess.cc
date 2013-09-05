@@ -51,7 +51,7 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
     }
 #endif
 
-    nextData(*data);
+    nextData(*data, true);
 }
 
 void QtKvalobsAccess::addSubscription(const ObsSubscription& s)

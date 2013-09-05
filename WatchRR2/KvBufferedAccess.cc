@@ -83,7 +83,7 @@ bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
     return false;
 }
 
-KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
+KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data, bool update)
 {
     const SensorTime st(Helpers::sensorTimeFromKvData(data));
     if (not isSubscribed(st)) {
@@ -96,7 +96,8 @@ KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
     if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
         obs = boost::make_shared<KvalobsData>(data, false);
         mData.insert(it, std::make_pair(st, obs));
-        obsDataChanged(CREATED, obs);
+        if (update)
+          obsDataChanged(CREATED, obs);
     } else {
         obs = it->second;
 

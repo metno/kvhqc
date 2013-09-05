@@ -22,7 +22,7 @@ public:
     virtual void removeSubscription(const ObsSubscription& s);
 
 protected:
-    virtual KvalobsDataPtr receive(const kvalobs::kvData& data);
+    virtual KvalobsDataPtr receive(const kvalobs::kvData& data, bool update);
     virtual bool drop(const SensorTime& st);
     bool updatesHaveTasks(const std::vector<ObsUpdate>& updates);
     virtual bool isSubscribed(const SensorTime& st);
