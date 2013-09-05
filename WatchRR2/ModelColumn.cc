@@ -101,6 +101,11 @@ void ModelColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffs
     mTimeOffset = timeOffset;
 }
 
+Sensor ModelColumn::sensor() const
+{
+    return mSensor;
+}
+
 void ModelColumn::setCodes(boost::shared_ptr<Code2Text> codes)
 {
     mCodes = codes;

@@ -21,6 +21,7 @@ public:
     virtual QVariant headerData(Qt::Orientation orientation, int role) const = 0;
 
     virtual const boost::posix_time::time_duration& timeOffset() const = 0;
+    virtual Sensor sensor() const;
 
     boost::signal2<void, timeutil::ptime, ObsColumn*> columnChanged;
 

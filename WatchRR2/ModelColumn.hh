@@ -22,6 +22,7 @@ public:
     virtual const boost::posix_time::time_duration& timeOffset() const
         { return mTimeOffset; }
     void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
+    virtual Sensor sensor() const;
 
     void setCodes(Code2TextPtr codes);
 

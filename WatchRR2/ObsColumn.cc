@@ -10,3 +10,8 @@ bool ObsColumn::setData(const timeutil::ptime& /*time*/, const QVariant& /*value
 {
     return false;
 }
+
+Sensor ObsColumn::sensor() const
+{
+    return Sensor(); // invalid sensor
+}

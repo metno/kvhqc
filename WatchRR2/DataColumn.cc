@@ -105,6 +105,11 @@ void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffse
     mDA->removeSubscription(ObsSubscription(mSensor.stationId, oldTime));
 }
 
+Sensor DataColumn::sensor() const
+{
+    return mSensor;
+}
+
 bool DataColumn::matchSensor(const Sensor& sensorObs) const
 {
     return mItem->matchSensor(mSensor, sensorObs);

@@ -51,3 +51,17 @@ void DataList::navigateTo(const SensorTime& st)
     if (not idxs.empty())
         scrollTo(idxs.at(0));
 }
+
+void DataList::currentChanged(const QModelIndex& current, const QModelIndex& previous)
+{
+    LOG_SCOPE("DataList");
+    QTableView::currentChanged(current, previous);
+
+    if (not current.isValid())
+        return;
+
+    const SensorTime st = mTableModel->findSensorTime(current);
+    LOG4SCOPE_DEBUG(DBG1(st));
+    if (st.valid())
+        /*emit*/ signalNavigateTo(st);
+}

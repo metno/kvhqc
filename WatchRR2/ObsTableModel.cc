@@ -104,6 +104,18 @@ timeutil::ptime ObsTableModel::timeAtRow(int row) const
     return mTime.t0() + boost::gregorian::days(row);
 }
 
+SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
+{
+    SensorTime st;
+    st.time = timeAtRow(mTimeInRows ? idx.row() : idx.column());
+
+    ObsColumnPtr column = getColumn(mTimeInRows ? idx.column() : idx.row());
+    if (column)
+        st.sensor = column->sensor();
+
+    return st;
+}
+
 int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
 {
     const int r = (time - mTime.t0()).hours() / 24;

@@ -23,6 +23,7 @@ public:
     virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
 
     virtual timeutil::ptime timeAtRow(int row) const;
+    virtual SensorTime findSensorTime(const QModelIndex& idx) const;
 
     void setTimeInRows(bool tir)
         { mTimeInRows = tir; }

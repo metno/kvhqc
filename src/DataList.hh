@@ -18,6 +18,9 @@ public:
 
     void navigateTo(const SensorTime&);
 
+protected:
+    virtual void currentChanged(const QModelIndex& current, const QModelIndex& previous);
+
 private:
     std::auto_ptr<DataListModel> mTableModel;
     SensorTime mSensorTime;

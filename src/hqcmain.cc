@@ -386,6 +386,7 @@ void HqcMainWindow::ListOK()
         DataList* dl = new DataList(this);
         dl->setDataAccess(eda, kma);
         dl->setSensorsAndTimes(sensors, timeLimits);
+        dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
         ui->ws->addSubWindow(dl);
     }
 
