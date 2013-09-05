@@ -28,7 +28,10 @@ Qt::ItemFlags DataRR24Item::flags(EditDataPtr obs) const
 QVariant DataRR24Item::data(EditDataPtr obs, int role) const
 {
   const QVariant d = DataCorrectedItem::data(obs, role);
-  if (role == Qt::BackgroundRole and mShowNew and not d.isValid() and obs and Helpers::is_accumulation(obs))
+  if (role == Qt::BackgroundRole and mColumnType == ObsColumn::NEW_CORRECTED
+      and not d.isValid() and obs and Helpers::is_accumulation(obs))
+  {
     return QBrush(Helpers::is_endpoint(obs) ? QColor(0xC0, 0xFF, 0xC0) : QColor(0xE0, 0xFF, 0xE0));
+  }
   return d;
 }

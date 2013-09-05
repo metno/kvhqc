@@ -37,187 +37,175 @@ struct VxData {
 };
 } // namespace anonymous
 
-DataVxItem::DataVxItem(EditAccessPtr da, bool showCorrected)
-    : mDA(da)
-    , mShowCorrected(showCorrected)
+DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccessPtr da)
+  : DataValueItem(columnType)
+  , mDA(da)
 {
-}
-
-Qt::ItemFlags DataVxItem::flags(EditDataPtr obs) const
-{
-  Qt::ItemFlags f = DataItem::flags(obs);
-  if (mShowCorrected)
-    f |= Qt::ItemIsEditable;
-  return f;
 }
 
 QVariant DataVxItem::data(EditDataPtr obs1, int role) const
 {
-    if (obs1 and (role == Qt::DisplayRole or role == Qt::EditRole or role == Qt::ToolTipRole or role == Qt::StatusTipRole))
-    {
-        EditDataPtr obs2 = getObs2(obs1);
-
-        Codes_t codes = getCodes(obs1, obs2);
-        int i=0;
-        for(; vxdata[i].code >= 0; ++i)
-            if (codes.first == vxdata[i].code)
-                break;
-        if (vxdata[i].code < 0)
-            return QVariant();
-
-        if (role == Qt::DisplayRole or role == Qt::EditRole) {
-            QString display = vxdata[i].metCode;
-            if (codes.first != 0) {
-                if (codes.second == 0)
-                    display += QChar( 0xB0 );
-                else if (codes.second == 2)
-                    display += QChar( 0xB2 );
-            }
-            return display;
+  if (role == ObsColumn::ValueTypeRole) {
+    return ObsColumn::TextCode;
+  } else if (role == ObsColumn::TextCodesRole or role == ObsColumn::TextCodeExplanationsRole) {
+    QStringList codes;
+    for(int i=0; vxdata[i].code >= 0; ++i) {
+      if (role == ObsColumn::TextCodesRole) {
+        QString mc = vxdata[i].metCode;
+        if (vxdata[i].code != 0) {
+          codes << (mc + QChar( 0xB0 ))
+                << (mc + " ")
+                << (mc + QChar( 0xB2 ));
         } else {
-            QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
-            if (codes.first != 0 and (codes.second == 0 or codes.second == 2)) {
-                tooltip += " -- ";
-                if (codes.second == 0)
-                    tooltip += qApp->translate("DataVxItem", "weak");
-                else
-                    tooltip += qApp->translate("DataVxItem", "strong");
-            }
-            if (obs1->hasTasks())
-                tooltip += "; " + tasks::asText(obs1->allTasks());
-            return tooltip;
+          codes << "";
         }
-        return QVariant();
-    } else if (role == ObsColumn::ValueTypeRole) {
-        return ObsColumn::TextCode;
-    } else if (role == ObsColumn::TextCodesRole or role == ObsColumn::TextCodeExplanationsRole) {
-        QStringList codes;
-        for(int i=0; vxdata[i].code >= 0; ++i) {
-            if (role == ObsColumn::TextCodesRole) {
-                QString mc = vxdata[i].metCode;
-                if (vxdata[i].code != 0) {
-                    codes << (mc + QChar( 0xB0 ))
-                          << (mc + " ")
-                          << (mc + QChar( 0xB2 ));
-                } else {
-                    codes << "";
-                }
-            } else {
-                QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
-                if (vxdata[i].code != 0) {
-                    codes << (tooltip + " -- " + qApp->translate("DataVxItem", "weak"))
-                          << tooltip
-                          << (tooltip + " -- " + qApp->translate("DataVxItem", "strong"));
-                } else {
-                    codes << tooltip;
-                }
-            }
+      } else {
+        QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
+        if (vxdata[i].code != 0) {
+          codes << (tooltip + " -- " + qApp->translate("DataVxItem", "weak"))
+                << tooltip
+                << (tooltip + " -- " + qApp->translate("DataVxItem", "strong"));
+        } else {
+          codes << tooltip;
         }
-        return codes;
-    } else if (role == Qt::FontRole) {
-        bool modified = (obs1 and obs1->modified());
-        if (not modified) {
-            EditDataPtr obs2 = getObs2(obs1);
-            modified = (obs2 and obs2->modified());
-        }
-        QFont f;
-        f.setBold(modified);
-        return f;
-    } else {
-        return DataItem::data(obs1, role);
+      }
     }
+    return codes;
+  }
+
+  if (not obs1)
+    return QVariant();
+
+  EditDataPtr obs2 = getObs2(obs1);
+
+  if (role == Qt::FontRole) {
+    QFont f;
+    if ((obs1 and obs1->modified()) or (obs2 and obs2->modified()))
+      f.setBold(true);
+    return f;
+  }
+
+  Codes_t codes = getCodes(obs1, obs2);
+  int i=0;
+  for(; vxdata[i].code >= 0; ++i)
+    if (codes.first == vxdata[i].code)
+      break;
+  if (vxdata[i].code < 0)
+    return QVariant();
+    
+  if (role == Qt::DisplayRole or role == Qt::EditRole) {
+    QString display = vxdata[i].metCode;
+    if (codes.first != 0) {
+      if (codes.second == 0)
+        display += QChar( 0xB0 );
+      else if (codes.second == 2)
+        display += QChar( 0xB2 );
+    }
+    return display;
+  } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+    QString tooltip = qApp->translate("DataVxItem", vxdata[i].explain);
+    if (codes.first != 0 and (codes.second == 0 or codes.second == 2)) {
+      tooltip += " -- ";
+      if (codes.second == 0)
+        tooltip += qApp->translate("DataVxItem", "weak");
+      else
+        tooltip += qApp->translate("DataVxItem", "strong");
+    }
+    return Helpers::appendText(tooltip, DataValueItem::data(obs1, role).toString());
+  }
+  return DataValueItem::data(obs1, role);
 }
 
 bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, const QVariant& value, int role)
 {
-    if (role != Qt::EditRole or not mShowCorrected)
-        return false;
+  if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
+    return false;
 
-    METLIBS_LOG_SCOPE();
-    EditDataPtr obs2 = getObs2(obs1);
-    const Codes_t oldCodes = getCodes(obs1, obs2);
-
-    const QString v = value.toString();
-    METLIBS_LOG_DEBUG(LOGVAL(v));
-    if (v == "") {
-        mDA->newVersion();
-        bool changed = false;
-        if (obs1) {
-            mDA->editor(obs1)->setCorrected(0);
-            changed = true;
-        }
-        if (obs2 and oldCodes.second != 1) {
-            mDA->editor(obs2)->setCorrected(1);
-            changed = true;
-        }
-        return changed;
+  METLIBS_LOG_SCOPE();
+  EditDataPtr obs2 = getObs2(obs1);
+  const Codes_t oldCodes = getCodes(obs1, obs2);
+  
+  const QString v = value.toString();
+  METLIBS_LOG_DEBUG(LOGVAL(v));
+  if (v == "") {
+    mDA->newVersion();
+    bool changed = false;
+    if (obs1) {
+      mDA->editor(obs1)->setCorrected(0);
+      changed = true;
     }
-
-    if (v.length() != 3 and v.length() != 2)
-        return false;
-    const QString mc = v.left(2), level = v.mid(2);
-
-    int i=1; // start at 1, skipping "no data"
-    for(; vxdata[i].code >= 0; ++i) {
-        if (mc == vxdata[i].metCode)
-            break;
+    if (obs2 and oldCodes.second != 1) {
+      mDA->editor(obs2)->setCorrected(1);
+      changed = true;
     }
-    METLIBS_LOG_DEBUG(LOGVAL(vxdata[i].code));
-    if (vxdata[i].code < 0)
-        return false;
-    const int newCode1 = vxdata[i].code;
+    return changed;
+  }
+  
+  if (v.length() != 3 and v.length() != 2)
+    return false;
+  const QString mc = v.left(2), level = v.mid(2);
+  
+  int i=1; // start at 1, skipping "no data"
+  for(; vxdata[i].code >= 0; ++i) {
+    if (mc == vxdata[i].metCode)
+      break;
+  }
+  METLIBS_LOG_DEBUG(LOGVAL(vxdata[i].code));
+  if (vxdata[i].code < 0)
+    return false;
+  const int newCode1 = vxdata[i].code;
 
-    int newCode2;
-    if (level == "" or level == " " or level == "1")
-        newCode2 = 1;
-    else if (level == QChar(0xB0) or level == "0")
-        newCode2 = 0;
-    else if (level == QChar(0xB2) or level == "2")
-        newCode2 = 2;
-    else
-        return false;
+  int newCode2;
+  if (level == "" or level == " " or level == "1")
+    newCode2 = 1;
+  else if (level == QChar(0xB0) or level == "0")
+    newCode2 = 0;
+  else if (level == QChar(0xB2) or level == "2")
+    newCode2 = 2;
+  else
+    return false;
 
-    METLIBS_LOG_DEBUG(LOGVAL(oldCodes.first) << LOGVAL(newCode1) << LOGVAL(oldCodes.second) << LOGVAL(newCode2));
-    bool pushed = false;
-    if (newCode1 != oldCodes.first) {
-        mDA->newVersion();
-        pushed = true;
-        if (not obs1)
-            obs1 = mDA->createE(st);
-        Helpers::auto_correct(mDA->editor(obs1), newCode1);
-        METLIBS_LOG_DEBUG(LOGVAL(obs1->corrected()));
+  METLIBS_LOG_DEBUG(LOGVAL(oldCodes.first) << LOGVAL(newCode1) << LOGVAL(oldCodes.second) << LOGVAL(newCode2));
+  bool pushed = false;
+  if (newCode1 != oldCodes.first) {
+    mDA->newVersion();
+    pushed = true;
+    if (not obs1)
+      obs1 = mDA->createE(st);
+    Helpers::auto_correct(mDA->editor(obs1), newCode1);
+    METLIBS_LOG_DEBUG(LOGVAL(obs1->corrected()));
+  }
+  if (newCode2 != oldCodes.second) {
+    if (not pushed)
+      mDA->newVersion();
+    if (not obs2) {
+      SensorTime st2(st);
+      st2.sensor.paramId += 1;
+      obs2 = mDA->createE(st2);
     }
-    if (newCode2 != oldCodes.second) {
-        if (not pushed)
-            mDA->newVersion();
-        if (not obs2) {
-            SensorTime st2(st);
-            st2.sensor.paramId += 1;
-            obs2 = mDA->createE(st2);
-        }
-        Helpers::auto_correct(mDA->editor(obs2), newCode2);
-        METLIBS_LOG_DEBUG(LOGVAL(obs2->corrected()));
-    }
-    return true;
+    Helpers::auto_correct(mDA->editor(obs2), newCode2);
+    METLIBS_LOG_DEBUG(LOGVAL(obs2->corrected()));
+  }
+  return true;
 }
 
 
 bool DataVxItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const
 {
-    return (eq_Sensor()(sensorColumn, sensorObs)
-            or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
-    return true;
+  return (eq_Sensor()(sensorColumn, sensorObs)
+      or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
+  return true;
 }
 
 QString DataVxItem::description(bool mini) const
 {
-    return ""; // FIXME handle empty names in DataColumn::headerData
+  return ""; // FIXME handle empty names in DataColumn::headerData
 }
 
 DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) const
 {
   int v1 = 0, v2 = -1;
-  if (mShowCorrected) {
+  if (mColumnType != ObsColumn::ORIGINAL) {
     if (obs1)
       v1 = static_cast<int>(obs1->corrected());
     if (obs2)
@@ -233,16 +221,16 @@ DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) con
 
 EditDataPtr DataVxItem::getObs2(EditDataPtr obs1) const
 {
-    if (not obs1)
-        return EditDataPtr();
-    SensorTime st2(obs1->sensorTime());
-    st2.sensor.paramId += 1;
-    return mDA->findE(st2);
+  if (not obs1)
+    return EditDataPtr();
+  SensorTime st2(obs1->sensorTime());
+  st2.sensor.paramId += 1;
+  return mDA->findE(st2);
 }
 
 Sensor DataVxItem::getSensor2(const Sensor& sensor1) const
 {
-    Sensor sensor2(sensor1);
-    sensor2.paramId += 1;
-    return sensor2;
+  Sensor sensor2(sensor1);
+  sensor2.paramId += 1;
+  return sensor2;
 }

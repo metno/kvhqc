@@ -38,6 +38,8 @@ SET(watchrr2_SOURCES
   DataOriginalItem.hh
   DataRR24Item.cc
   DataRR24Item.hh
+  DataValueItem.cc
+  DataValueItem.hh
   DataVxItem.cc
   DataVxItem.hh
   DianaHelper.hh

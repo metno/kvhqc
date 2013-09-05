@@ -6,10 +6,6 @@
 #include "ObsColumn.hh"
 #include "Tasks.hh"
 
-#include <kvalobs/kvDataOperations.h>
-#include <boost/bind.hpp>
-#include <boost/make_shared.hpp>
-
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
@@ -18,109 +14,71 @@
 #include "HqcLogging.hh"
 
 DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextPtr codes)
-    : mCodes(codes)
-    , mShowNew(showNew)
+  : DataValueItem(showNew ? ObsColumn::NEW_CORRECTED : ObsColumn::OLD_CORRECTED)
+  , mCodes(codes)
 {
-}
-
-Qt::ItemFlags DataCorrectedItem::flags(EditDataPtr obs) const
-{
-    Qt::ItemFlags f = DataItem::flags(obs);
-    if (mShowNew)
-        f |= Qt::ItemIsEditable;
-    return f;
 }
 
 QVariant DataCorrectedItem::data(EditDataPtr obs, int role) const
 {
-    if (not obs)
-        return QVariant();
+  if (role == ObsColumn::ValueTypeRole or role == ObsColumn::TextCodesRole) {
+    const QStringList allCodes = mCodes->allCodes();
+    if (role == ObsColumn::TextCodesRole)
+      return allCodes;
+    int valueTypes = ObsColumn::Numerical;
+    if (not allCodes.empty())
+      valueTypes |= ObsColumn::TextCode;
+    return valueTypes;
+  } else if (role ==  ObsColumn::TextCodeExplanationsRole) {
+    return mCodes->allExplanations();
+  }
 
-    if (role == Qt::BackgroundRole) {
-      if (mShowNew) {
-        if (obs->hasRequiredTasks())
-          return QBrush(Qt::red);
-        else if (obs->hasTasks())
-          return QBrush(QColor(0xFF, 0x60, 0)); // red orange
-      }
-    } else if (role == Qt::ForegroundRole) {
-        if (((mShowNew and not obs->hasTasks()) or not mShowNew) and mCodes->isCode(getValue(obs)))
-            return Qt::darkGray;
-
-        const kvalobs::kvControlInfo ci(obs->controlinfo());
-        if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
-          if (ci.qc2dDone())
-            return Qt::darkMagenta;
-          else if (ci.flag(kvalobs::flag::fnum) >= 6)
-            return Qt::red;
-        }
-    } else if (role == Qt::FontRole) {
-        QFont f;
-        if (mShowNew and obs->modifiedCorrected())
-            f.setBold(true);
-        return f;
-    } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-        QString tip = mCodes->asTip(getValue(obs));
-        return Helpers::appendText(tip, tasks::asText(obs->allTasks()));
-    } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
-        return mCodes->asText(getValue(obs));
-    } else if (role == Qt::TextAlignmentRole) {
-        return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
-    } else if (role == ObsColumn::ValueTypeRole or role == ObsColumn::TextCodesRole) {
-        const QStringList allCodes = mCodes->allCodes();
-        if (role == ObsColumn::TextCodesRole)
-            return allCodes;
-        int valueTypes = ObsColumn::Numerical;
-        if (not allCodes.empty())
-            valueTypes |= ObsColumn::TextCode;
-        return valueTypes;
-    } else if (role ==  ObsColumn::TextCodeExplanationsRole) {
-        return mCodes->allExplanations();
-    }
-    return DataItem::data(obs, role);
+  if (not obs)
+    return QVariant();
+  
+  if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
+    QString tip = mCodes->asTip(getValue(obs));
+    return Helpers::appendText(tip, DataValueItem::data(obs, role).toString());
+  } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
+    return mCodes->asText(getValue(obs));
+  } else if (role == Qt::TextAlignmentRole) {
+    return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
+  }
+  return DataValueItem::data(obs, role);
 }
 
 bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role)
 {
-    if (role != Qt::EditRole or not mShowNew)
-        return false;
+  if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
+    return false;
 
-    try {
-        const float newC = mCodes->fromText(value.toString());
-        const bool reject = (newC == kvalobs::REJECTED);
-        if (reject and not obs)
-            return false;
-        if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(st.sensor.paramId, newC))
-            return false;
-
-        da->newVersion();
-        if (not obs)
-            obs = da->createE(st);
-
-        if (reject)
-            Helpers::reject(da->editor(obs));
-        else
-            Helpers::auto_correct(da->editor(obs), newC);
-        return true;
-    } catch (std::runtime_error& e) {
-      METLIBS_LOG_ERROR("exception while editing data for obs " << obs->sensorTime() << ": " << e.what());
+  try {
+    const float newC = mCodes->fromText(value.toString());
+    const bool reject = (newC == kvalobs::REJECTED);
+    if (reject and not obs)
       return false;
-    }
+    if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(st.sensor.paramId, newC))
+      return false;
+    
+    da->newVersion();
+    if (not obs)
+      obs = da->createE(st);
+    
+    if (reject)
+      Helpers::reject(da->editor(obs));
+    else
+      Helpers::auto_correct(da->editor(obs), newC);
+    return true;
+  } catch (std::runtime_error& e) {
+    METLIBS_LOG_ERROR("exception while editing data for obs " << obs->sensorTime() << ": " << e.what());
+    return false;
+  }
 }
 
 QString DataCorrectedItem::description(bool mini) const
 {
-    if (mini)
-        return qApp->translate("DataColumn", "corr");
-    else
-        return qApp->translate("DataColumn", "corrected");
-}
-
-float DataCorrectedItem::getValue(EditDataPtr obs) const
-{
-    if (not obs)
-        return kvalobs::MISSING;
-    if (not mShowNew)
-        return obs->oldCorrected();
-    return obs->corrected();
+  if (mini)
+    return qApp->translate("DataColumn", "corr");
+  else
+    return qApp->translate("DataColumn", "corrected");
 }

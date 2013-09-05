@@ -54,9 +54,9 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
 
     DataItemPtr item;
     if ((pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
-        and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::ORIGINAL))
+        and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::ORIGINAL))
     {
-      return boost::make_shared<DataVxItem>(da, displayType == ObsColumn::NEW_CORRECTED);
+      return boost::make_shared<DataVxItem>(displayType, da);
     }
     if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
       const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
