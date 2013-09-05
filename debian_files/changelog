@@ -1,3 +1,12 @@
+kvhqc (3.1.0-1) unstable; urgency=low
+
+  * removed old error list
+  * host "stinfosys" temporarily replaced by "stinfosys-precise"
+  * when setting fhqc=4, also change fmis=0->4
+  * bugfix: TimeSeriesView  uses its own view id for user_view_changes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 02 Sep 2013 16:29:48 +0200
+
 kvhqc (3.0.8-1) unstable; urgency=low
 
   * updated criteria for new error list
