@@ -274,12 +274,6 @@ int whichMemStore(EditDataPtr obs, bool errorsForSalen, int& flg, int& flTyp)
     return memStore;
 }
 
-bool isMemStore2(EditDataPtr obs, bool errorsForSalen)
-{
-    int flg = -1, flTyp = -1;
-    return whichMemStore(obs, errorsForSalen, flg, flTyp) == 2;
-}
-
 //#define DUMPOBS 1
 #ifdef DUMPOBS
 void dumpObs(const EditDataPtr obs, float model, int flTyp, int flg, int memStore)
