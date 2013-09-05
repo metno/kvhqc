@@ -59,8 +59,10 @@ bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
 KvalobsDataPtr KvBufferedAccess::receive(const kvalobs::kvData& data)
 {
     const SensorTime st(Helpers::sensorTimeFromKvData(data));
-    if (not isSubscribed(st))
+    if (not isSubscribed(st)) {
+        LOG4HQC_DEBUG("KvBufferedAccess", "no subscription for " << data);
         return KvalobsDataPtr();
+    }
     
     KvalobsDataPtr obs;
     Data_t::iterator it = mData.find(st);

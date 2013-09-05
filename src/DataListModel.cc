@@ -5,18 +5,28 @@
 
 #include <boost/foreach.hpp>
 
+//#define NDEBUG
+#include "debug.hh"
+
 DataListModel::DataListModel(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits)
     : ObsTableModel(eda, limits)
 {
+    LOG_SCOPE("DataListModel");
+    BOOST_FOREACH(const Sensor& s, sensors) {
+        addColumn(ColumnFactory::columnForSensor(eda, s, limits, ColumnFactory::ORIGINAL));
+        addColumn(ColumnFactory::columnForSensor(eda, s, limits, ColumnFactory::NEW_CORRECTED));
+    }
+
     ObsAccess::TimeSet allTimes;
     BOOST_FOREACH(const Sensor& s, sensors)
         eda->addAllTimes(allTimes, s, limits);
     mTimes = Times_t(allTimes.begin(), allTimes.end());
 
-    BOOST_FOREACH(const Sensor& s, sensors) {
-        addColumn(ColumnFactory::columnForSensor(eda, s, limits, ColumnFactory::ORIGINAL));
-        addColumn(ColumnFactory::columnForSensor(eda, s, limits, ColumnFactory::NEW_CORRECTED));
-    }
+#ifndef NDEBUG
+    LOG4SCOPE_DEBUG(DBG1(mTimes.size()));
+    BOOST_FOREACH(const timeutil::ptime& t, mTimes)
+        LOG4SCOPE_DEBUG(timeutil::to_iso_extended_string(t));
+#endif
 }
 
 DataListModel::~DataListModel()

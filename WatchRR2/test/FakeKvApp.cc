@@ -21,6 +21,29 @@ FakeKvApp::FakeKvApp()
     kvservice::KvApp::kvApp = this;
     kda = boost::make_shared<KvalobsAccess>();
     kda->setReinserter(mFakeReinserter);
+
+    mKvParams.push_back(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(34, "V4", "Været siden forrige hovedobservasjon, første tegn", "nasjonal kode to siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(35, "V4S", "Værkodens styrke. Tilhører V4", "nasjonal kode ett siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(36, "V5", "Været siden forrige hovedobservasjon, andre tegn", "nasjonal kode to siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(37, "V5S", "Værkodens styrke. Tilhører V5", "nasjonal kode ett siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(38, "V6", "Været siden forrige hovedobservasjon, tredje tegn", "nasjonal kode to siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(39, "V6S", "Værkodens styrke. Tilhører V6", "nasjonal kode ett siffer", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(105, "RR_01", "Nedbør, tilvekst siste minutt", "mm", 0, "1 min akkumulert"));
+    mKvParams.push_back(kvalobs::kvParam(106, "RR_1", "Nedbør, tilvekst siste time", "mm", 0, "Verdien -1 angir at nedbørmengde ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(107, "RR_3", "Nedbør, tilvekst siste 3 timer", "mm", 0, "Verdien -1 angir at nedbørmengde ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(108, "RR_6", "Nedbør, tilvekst siste 6 timer", "mm", 0, "Verdien -1 angir at nedbørmengde ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(109, "RR_12", "Nedbør, tilvekst siste 12 timer", "mm", 0, "Verdien -1 angir at nedbørmengde ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(110, "RR_24", "Nedbør, tilvekst siste 24 timer", "mm", 0, "Verdien -1 angir at nedbørmengde ikke er meldt"));
+    mKvParams.push_back(kvalobs::kvParam(173, "PO", "Trykk QFE", "hPa", 0, "Trykket i stasjonsnivå, ett minutt nåverdi"));
+    mKvParams.push_back(kvalobs::kvParam(178, "PR", "Trykk QFF", "hPa", 0, "Trykket redusert til havets nivå m/lufttemperatur nå, nåverdi. Inngår i SYNOP"));
+    mKvParams.push_back(kvalobs::kvParam(211, "TA", "Temperatur", "°C", 0, "Nåverdi"));
+    mKvParams.push_back(kvalobs::kvParam(212, "TAM", "Temperatur timemiddel", "°C", 0, "None"));
+    mKvParams.push_back(kvalobs::kvParam(213, "TAN", "Temperatur minimum i timen", "°C", 0, "minimum minuttverdi i timen"));
+    mKvParams.push_back(kvalobs::kvParam(214, "TAN_12", "Temperatur minimum siste 12 timer", "°C", 0, "minimum minuttverdi siste 12 timer"));
+    mKvParams.push_back(kvalobs::kvParam(215, "TAX", "Temperatur maksimum i timen", "°C", 0, "maksimum minuttverdi i timen"));
+    mKvParams.push_back(kvalobs::kvParam(216, "TAX_12", "Temperatur maksimum siste 12 timer", "°C", 0, "maksimum minuttverdi siste 12 timer"));
+    mKvParams.push_back(kvalobs::kvParam(262, "UU", "Relativ luftfuktighet", "%", 0, "Nåverdi"));
 }
 
 FakeKvApp::~FakeKvApp()
@@ -157,7 +180,7 @@ bool FakeKvApp::getKvRejectDecode(const CKvalObs::CService::RejectDecodeInfo &de
 
 bool FakeKvApp::getKvParams(std::list<kvalobs::kvParam> &paramList)
 {
-    paramList.clear();
+    paramList = mKvParams;
     return true;
 }
 

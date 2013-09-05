@@ -99,7 +99,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define NDEBUG
+//#define NDEBUG
 #include "debug.hh"
 
 namespace {
@@ -425,12 +425,16 @@ void HqcMainWindow::ListOK()
                         break;
                     }
                 }
-                sensors.push_back(sensor);
+                if (sensor.typeId != 0) {
+                    sensors.push_back(sensor);
+                    LOG4SCOPE_DEBUG(DBG1(sensor.stationId) << DBG1(sensor.paramId) << DBG1(sensor.typeId));
+                }
             }
         }
 
         EditAccessPtr eda = boost::make_shared<EditAccess>(kda);
         DataList* dl = new DataList(this);
+        LOG4SCOPE_DEBUG(DBG1(stime) << DBG1(etime));
         dl->setSensorsAndTimes(eda, sensors, TimeRange(stime, etime));
         ui->ws->addSubWindow(dl);
     }

@@ -88,6 +88,7 @@ public:
     virtual void run() { }
 
 public:
+    std::list<kvalobs::kvParam>  mKvParams;
     std::list<kvalobs::kvStation> mKvStations;
     std::list<kvalobs::kvObsPgm> mObsPgm;
     kvalobs::DataReinserter<kvservice::KvApp>* mFakeReinserter;

@@ -47,6 +47,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 int main( int argc, char* argv[] )
 {
+    // >>>>> move to HqcApplication somehow
     FakeKvApp fa;
     load_1650_20130130(fa);
     load_31850_20121130(fa);
@@ -55,10 +56,10 @@ int main( int argc, char* argv[] )
     load_52640_20121231(fa);
     load_54420_20121130(fa);
     load_84070_20120930(fa);
-
     QtKvService qkvs;
     KvMetaDataBuffer kvmdbuf;
     StationInfoBuffer stinfobuf;
+    // <<<<<
 
     HqcApplication hqc(argc, argv);
     Log4CppConfig log4cpp("!§%$!§%§");

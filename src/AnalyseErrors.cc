@@ -207,7 +207,7 @@ bool isErrorInMemstore1(const ErrorList::mem& mo)
 void dumpMemstore(const std::vector<ErrorList::mem>& DBGE(memstore), const char* DBGE(label))
 {
 #ifndef NDEBUG
-    LOG_SCOPE("ErrorList");
+    LOG_SCOPE("AnalyseErrors");
     LOG4SCOPE_DEBUG("memory store " << label << " size = " << memstore.size());
     int i = -1;
     BOOST_FOREACH(const ErrorList::mem& mo, memstore) {
