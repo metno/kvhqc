@@ -32,8 +32,10 @@ private:
     typedef std::vector<ViewInfo> Views_t;
 
 private:
-    Sensors_t defaultSensors();
-    TimeRange defaultTimeLimits();
+  Sensors_t defaultSensors();
+  TimeRange defaultTimeLimits();
+  void storeViewChanges();
+  void replayViewChanges();
 
 private:
     Views_t mViews;

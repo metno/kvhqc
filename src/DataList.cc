@@ -436,6 +436,16 @@ void DataList::replay(const std::string& changesText)
     updateModel();
 }
 
+std::string DataList::type() const
+{
+  return "DataList";
+}
+
+std::string DataList::id() const
+{
+  return "1";
+}
+
 namespace /* anonymous */ {
 QString protectForCSV(QString txt)
 {

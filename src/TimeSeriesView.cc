@@ -162,6 +162,16 @@ void TimeSeriesView::replay(const std::string& changes)
 {
 }
 
+std::string TimeSeriesView::type() const
+{
+  return "TimeSeries";
+}
+
+std::string TimeSeriesView::id() const
+{
+  return "1";
+}
+
 void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
 {
   updatePlot();

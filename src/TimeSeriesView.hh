@@ -27,6 +27,8 @@ public:
 
   virtual std::string changes();
   virtual void replay(const std::string& changes);
+  virtual std::string type() const;
+  virtual std::string id() const;
 
 public Q_SLOTS:
   void navigateTo(const SensorTime&);

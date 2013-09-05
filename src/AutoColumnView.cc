@@ -2,11 +2,31 @@
 #include "AutoColumnView.hh"
 
 #include "Helpers.hh"
+#include "HqcApplication.hh"
+
+#include <QtSql/QSqlDatabase>
+#include <QtSql/QSqlQuery>
 
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.AutoColumnView"
 #include "HqcLogging.hh"
+
+namespace {
+const char CHANGES_TABLE[] = "view_changes";
+const char CHANGES_TABLE_CREATE[] = "CREATE TABLE view_changes ("
+    "stationid    INTEGER NOT NULL,"
+    "paramid      INTEGER NOT NULL,"
+    "view_type    TEXT    NOT NULL,"
+    "view_id      TEXT    NOT NULL,"
+    "view_changes TEXT    NOT NULL"
+    ");";
+const char CHANGES_TABLE_INSERT[] = "INSERT INTO view_changes VALUES ("
+    ":stationid, :paramid, :view_type, :view_id, :view_changes"
+    ");";
+const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM view_changes"
+    " WHERE stationid = :stationid AND paramid = :paramid AND view_type = :view_type AND view_id = :view_id;";
+}
 
 AutoColumnView::AutoColumnView()
 {
@@ -18,28 +38,67 @@ AutoColumnView::~AutoColumnView()
 
 void AutoColumnView::navigateTo(const SensorTime& st)
 {
-    METLIBS_LOG_SCOPE();
-    if (eq_SensorTime()(mSensorTime, st))
-      return;
+  METLIBS_LOG_SCOPE();
+  if (eq_SensorTime()(mSensorTime, st))
+    return;
 
-    if (mSensorTime.valid()) {
-        // record changes
-        BOOST_FOREACH(ViewInfo& vi, mViews) {
-            vi.changes[mSensorTime.sensor] = vi.view->changes();
-        }
-    }
-    mSensorTime = st;
+  storeViewChanges();
+  mSensorTime = st;
+  replayViewChanges();
+}
 
-    // navigate views to new SensorTime
-    const Sensors_t defSens = defaultSensors();
-    const TimeRange defLimits = defaultTimeLimits();
-    BOOST_FOREACH(const ViewInfo& vi, mViews) {
-        vi.view->setSensorsAndTimes(defSens, defLimits);
-        Changes4ST_t::const_iterator it = vi.changes.find(mSensorTime.sensor);
-        if (it != vi.changes.end())
-            vi.view->replay(it->second);
-        vi.view->navigateTo(mSensorTime);
+void AutoColumnView::storeViewChanges()
+{
+  METLIBS_LOG_SCOPE();
+  QSqlDatabase db = hqcApp->configDB();
+  if (not db.tables().contains(CHANGES_TABLE))
+    db.exec(CHANGES_TABLE_CREATE);
+
+  if (mSensorTime.valid()) {
+    // record changes
+    db.transaction();
+    QSqlQuery insert(db);
+    insert.prepare(CHANGES_TABLE_INSERT);
+    BOOST_FOREACH(ViewInfo& vi, mViews) {
+      insert.bindValue("stationid", mSensorTime.sensor.stationId);
+      insert.bindValue("paramid",   mSensorTime.sensor.paramId);
+      insert.bindValue("view_type", QString::fromStdString(vi.view->type()));
+      insert.bindValue("view_id",   QString::fromStdString(vi.view->id()));
+      insert.bindValue("view_changes", QString::fromStdString(vi.view->changes()));
+      insert.exec();
+      insert.finish();
     }
+    db.commit();
+  }
+}
+
+void AutoColumnView::replayViewChanges()
+{
+  METLIBS_LOG_SCOPE();
+
+  const Sensors_t defSens = defaultSensors();
+  const TimeRange defLimits = defaultTimeLimits();
+
+  QSqlQuery query(hqcApp->configDB());
+  query.prepare(CHANGES_TABLE_SELECT);
+  query.bindValue("stationid", mSensorTime.sensor.stationId);
+  query.bindValue("paramid",   mSensorTime.sensor.paramId);
+  BOOST_FOREACH(ViewInfo& vi, mViews) {
+    vi.view->setSensorsAndTimes(defSens, defLimits);
+
+    METLIBS_LOG_DEBUG(LOGVAL(vi.view->type()) << LOGVAL(vi.view->id()));
+    query.bindValue("view_type", QString::fromStdString(vi.view->type()));
+    query.bindValue("view_id",   QString::fromStdString(vi.view->id()));
+    query.exec();
+    if (query.next()) {
+      const std::string vchanges = query.value(0).toString().toStdString();
+      METLIBS_LOG_DEBUG(LOGVAL(vchanges));
+      vi.view->replay(vchanges);
+    }
+    query.finish();
+
+    vi.view->navigateTo(mSensorTime);
+  }
 }
 
 void AutoColumnView::attachView(ViewP v)
