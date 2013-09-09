@@ -3,12 +3,12 @@
 set -e
 
 MASTER=hqc
-for s in hqcdiana histhqcdiana testhqcdiana WatchRR WatchRR2 histWatchRR WatchWeather histWatchWeather
+for s in hqcdiana histhqcdiana testhqcdiana
 do
     SLAVES="$SLAVES --slave /usr/bin/$s $s /usr/bin/$s-@METNO_VERSION@"
 done
 
-for s in hqc WatchRR WatchRR2 WatchWeather
+for s in hqc
 do
     SLAVES="$SLAVES --slave /usr/bin/$s.bin $s.bin /usr/bin/$s-@METNO_VERSION@.bin"
 done
