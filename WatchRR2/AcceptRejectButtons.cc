@@ -139,14 +139,17 @@ void AcceptRejectButtons::enableButtons()
           }
           // TODO disable if missing but in obs_pgm
         }
+        enableReject = (possible & AcceptReject::CAN_REJECT) != 0;
         if (dc->type() == ObsColumn::ORIGINAL) {
           enableAccept = (possible & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0;
           mSelectedColumnIsOriginal = true;
         } else if (dc->type() == ObsColumn::NEW_CORRECTED) {
           enableAccept = (possible & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
           mSelectedColumnIsOriginal = false;
+        } else {
+          // nothing allowed if not CORRECTED or ORIGINAL column (e.g. FLAGS or MODEL)
+          enableAccept = enableReject = false;
         }
-        enableReject = (possible & AcceptReject::CAN_REJECT) != 0;
       }
     }
   }
