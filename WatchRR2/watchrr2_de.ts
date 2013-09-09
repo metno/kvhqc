@@ -113,25 +113,25 @@
         <translation>Kontrollflags</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="84"/>
+        <location filename="DataCorrectedItem.cc" line="63"/>
         <location filename="DataVxItem.cc" line="334"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="86"/>
+        <location filename="DataCorrectedItem.cc" line="65"/>
         <location filename="DataVxItem.cc" line="337"/>
         <source>corrected</source>
         <translation>korrigiert</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="52"/>
+        <location filename="DataOriginalItem.cc" line="44"/>
         <location filename="DataVxItem.cc" line="333"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="54"/>
+        <location filename="DataOriginalItem.cc" line="46"/>
         <location filename="DataVxItem.cc" line="336"/>
         <source>original</source>
         <translation>original</translation>
@@ -140,26 +140,22 @@
 <context>
     <name>DataOriginalItem</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="37"/>
-        <location filename="DataValueItem.cc" line="91"/>
+        <location filename="DataOriginalItem.cc" line="29"/>
         <source>surely wrong</source>
         <translation>mit Sicherheit falsch</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="39"/>
-        <location filename="DataValueItem.cc" line="93"/>
+        <location filename="DataOriginalItem.cc" line="31"/>
         <source>very suspicious (probably wrong)</source>
         <translation>sehr verdächtig (wahrscheinlich falsch)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="41"/>
-        <location filename="DataValueItem.cc" line="95"/>
+        <location filename="DataOriginalItem.cc" line="33"/>
         <source>suspicious (probably ok)</source>
         <translation>verdächtig (wahrscheinlich richtig)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="43"/>
-        <location filename="DataValueItem.cc" line="97"/>
+        <location filename="DataOriginalItem.cc" line="35"/>
         <source>no quality info available</source>
         <translation>keine Qualitätsinformation vorhanden</translation>
     </message>
@@ -436,18 +432,18 @@
     </message>
     <message>
         <location filename="DataVxItem.cc" line="163"/>
-        <location filename="DataVxItem.cc" line="230"/>
+        <location filename="DataVxItem.cc" line="228"/>
         <source>weak</source>
         <translation>wenig</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="165"/>
-        <location filename="DataVxItem.cc" line="232"/>
+        <location filename="DataVxItem.cc" line="230"/>
         <source>strong</source>
         <translation>viel</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="219"/>
+        <location filename="DataVxItem.cc" line="220"/>
         <source>unknown code %1</source>
         <translation>unbekannter Code %1</translation>
     </message>
@@ -615,27 +611,27 @@
 <context>
     <name>Helpers</name>
     <message>
-        <location filename="Helpers.cc" line="245"/>
+        <location filename="Helpers.cc" line="249"/>
         <source>Unknown or invalid flag value</source>
         <translation>Unbekannter oder ungültiger Flag-Wert</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="522"/>
+        <location filename="Helpers.cc" line="523"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Es gibt %1 ungespeicherte Änderungen.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="523"/>
+        <location filename="Helpers.cc" line="524"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Sind Sie sicher, dass Die diese verwerfen möchten?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="524"/>
+        <location filename="Helpers.cc" line="525"/>
         <source>Discard changes</source>
         <translation>Änderungen verwerfen</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="525"/>
+        <location filename="Helpers.cc" line="526"/>
         <source>Continue</source>
         <translation>Weiter</translation>
     </message>

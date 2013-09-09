@@ -49,6 +49,7 @@
 #include "hqc_utilities.hh"
 #include "HqcApplication.hh"
 #include "HqcDianaHelper.hh"
+#include "JumpToObservation.hh"
 #include "KvalobsModelAccess.hh"
 #include "KvMetaDataBuffer.hh"
 #include "KvServiceHelper.hh"
@@ -140,6 +141,8 @@ HqcMainWindow::HqcMainWindow()
   ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
   ui->dockHistory->setVisible(false);
 
+  mJumpToObservation = new JumpToObservation(kda, this);
+
   mExtremesView = new ExtremesView(ui->dockExtremes);
   mExtremesView->setDataAccess(eda);
   ui->dockExtremes->setWidget(mExtremesView);
@@ -186,10 +189,11 @@ HqcMainWindow::HqcMainWindow()
   connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
   connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
 
-  mAutoDataList ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mExtremesView ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mDianaHelper  ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  ui->treeErrors->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mExtremesView     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mDianaHelper      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  ui->treeErrors    ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
@@ -215,10 +219,11 @@ HqcMainWindow::HqcMainWindow()
 
 HqcMainWindow::~HqcMainWindow()
 {
-  mAutoDataList ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mExtremesView ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mDianaHelper  ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  ui->treeErrors->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mExtremesView     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mDianaHelper      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 }
 
 void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
@@ -595,6 +600,12 @@ void HqcMainWindow::onShowSimpleCorrections()
 {
   METLIBS_LOG_SCOPE();
   ui->dockCorrections->setVisible(true);
+}
+
+void HqcMainWindow::onJumpToObservation()
+{
+  METLIBS_LOG_SCOPE();
+  mJumpToObservation->exec();
 }
 
 void HqcMainWindow::onTabCloseRequested(int index)

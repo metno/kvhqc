@@ -56,6 +56,7 @@ class EditVersionModel;
 class ExtremesView;
 class HintWidget;
 class HqcDianaHelper;
+class JumpToObservation;
 class KvalobsAccess;
 class KvalobsModelAccess;
 class ListDialog;
@@ -131,6 +132,8 @@ private Q_SLOTS:
   void onShowChanges();
   void onShowSimpleCorrections();
 
+  void onJumpToObservation();
+
   void onTabCloseRequested(int index);
 
 private:
@@ -150,6 +153,7 @@ private:
   TextDataDialog* txtdlg;
   RejectDialog* rejdlg;
   HelpDialog* mHelpDialog;
+  JumpToObservation* mJumpToObservation;
 
   listType lity;
 

@@ -103,13 +103,13 @@
 <context>
     <name>DataColumn</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="54"/>
+        <location filename="DataOriginalItem.cc" line="46"/>
         <location filename="DataVxItem.cc" line="336"/>
         <source>original</source>
         <translation>original</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="86"/>
+        <location filename="DataCorrectedItem.cc" line="65"/>
         <location filename="DataVxItem.cc" line="337"/>
         <source>corrected</source>
         <translation>korrigert</translation>
@@ -120,13 +120,13 @@
         <translation>kontrollflagg</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="52"/>
+        <location filename="DataOriginalItem.cc" line="44"/>
         <location filename="DataVxItem.cc" line="333"/>
         <source>orig</source>
         <translation>orig</translation>
     </message>
     <message>
-        <location filename="DataCorrectedItem.cc" line="84"/>
+        <location filename="DataCorrectedItem.cc" line="63"/>
         <location filename="DataVxItem.cc" line="334"/>
         <source>corr</source>
         <translation>korr</translation>
@@ -140,26 +140,22 @@
 <context>
     <name>DataOriginalItem</name>
     <message>
-        <location filename="DataOriginalItem.cc" line="37"/>
-        <location filename="DataValueItem.cc" line="91"/>
+        <location filename="DataOriginalItem.cc" line="29"/>
         <source>surely wrong</source>
         <translation>sikkert feilaktig</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="39"/>
-        <location filename="DataValueItem.cc" line="93"/>
+        <location filename="DataOriginalItem.cc" line="31"/>
         <source>very suspicious (probably wrong)</source>
         <translation>svært mistenkelig (antagelig feilaktig)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="41"/>
-        <location filename="DataValueItem.cc" line="95"/>
+        <location filename="DataOriginalItem.cc" line="33"/>
         <source>suspicious (probably ok)</source>
         <translation>noe mistenkelig (antagelig korrekt)</translation>
     </message>
     <message>
-        <location filename="DataOriginalItem.cc" line="43"/>
-        <location filename="DataValueItem.cc" line="97"/>
+        <location filename="DataOriginalItem.cc" line="35"/>
         <source>no quality info available</source>
         <translation>kvalitetsinformasjon ikke gitt</translation>
     </message>
@@ -436,18 +432,18 @@
     </message>
     <message>
         <location filename="DataVxItem.cc" line="163"/>
-        <location filename="DataVxItem.cc" line="230"/>
+        <location filename="DataVxItem.cc" line="228"/>
         <source>weak</source>
         <translation>svakt</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="165"/>
-        <location filename="DataVxItem.cc" line="232"/>
+        <location filename="DataVxItem.cc" line="230"/>
         <source>strong</source>
         <translation>kraftig</translation>
     </message>
     <message>
-        <location filename="DataVxItem.cc" line="219"/>
+        <location filename="DataVxItem.cc" line="220"/>
         <source>unknown code %1</source>
         <translation>ukjent kode %1</translation>
     </message>
@@ -618,27 +614,27 @@
 <context>
     <name>Helpers</name>
     <message>
-        <location filename="Helpers.cc" line="245"/>
+        <location filename="Helpers.cc" line="249"/>
         <source>Unknown or invalid flag value</source>
         <translation>Ukjent eller ugylig flagg-verdi</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="522"/>
+        <location filename="Helpers.cc" line="523"/>
         <source>There are %1 unsaved data updates.</source>
         <translation>Det er %1 ulagrede endringer.</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="523"/>
+        <location filename="Helpers.cc" line="524"/>
         <source>Are you sure that you want to lose them?</source>
         <translation>Er du sikker at du vil miste dem?</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="524"/>
+        <location filename="Helpers.cc" line="525"/>
         <source>Discard changes</source>
         <translation>Miste endringer</translation>
     </message>
     <message>
-        <location filename="Helpers.cc" line="525"/>
+        <location filename="Helpers.cc" line="526"/>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>

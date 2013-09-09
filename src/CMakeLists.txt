@@ -13,6 +13,7 @@ SET(hqc_HEADERS
   ../include/HqcDianaHelper.hh
   ../include/hqcmain.h
   ../include/ItemCheckBox.hh
+  ../include/JumpToObservation.hh
   ../include/ListDialog.hh
   ../include/rejectdialog.h
   ../include/rejecttable.h
@@ -47,6 +48,7 @@ SET(hqc_SOURCES
   HqcDianaHelper.cc
   hqcmain.cc
   ItemCheckBox.cc
+  JumpToObservation.cc
   qtQTUtil.cc
   rejectdialog.cc
   rejecttable.cc
@@ -80,6 +82,7 @@ SET(hqc_UIS
   datalist.ui
   dl_addcolumn.ui
   extremevalues.ui
+  jumptoobservation.ui
   listdialog.ui
   mainwindow.ui
   simplecorrections.ui

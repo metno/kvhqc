@@ -88,6 +88,7 @@
     <addaction name="actionDianaConfig"/>
     <addaction name="actionStartKro"/>
     <addaction name="actionScreenshot"/>
+    <addaction name="actionJumpToObservation"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -451,6 +452,11 @@
     <string>Show Extreme Values</string>
    </property>
   </action>
+  <action name="actionJumpToObservation">
+   <property name="text">
+    <string>Jump to Observation…</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -465,6 +471,7 @@
    <header>errorlist.h</header>
   </customwidget>
  </customwidgets>
+ <resources/>
  <connections>
   <connection>
    <sender>actionDataAndErrorList</sender>
@@ -833,6 +840,12 @@
      <y>299</y>
     </hint>
    </hints>
+  </connection>
+  <connection>
+   <sender>actionJumpToObservation</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onJumpToObservation()</slot>
   </connection>
   <connection>
    <sender>tabs</sender>

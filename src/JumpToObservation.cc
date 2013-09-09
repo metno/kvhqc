@@ -1,25 +1,28 @@
 
-#include "DataListAddColumn.hh"
+#include "JumpToObservation.hh"
 
+#include "Helpers.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ParamIdModel.hh"
 #include "StationIdCompletion.hh"
 #include "TypeIdModel.hh"
 
+#include <QtGui/qmessagebox.h>
 #include <QtGui/QStringListModel>
 #include <QtGui/QCompleter>
 #include <QtGui/QValidator>
 
 #include <boost/foreach.hpp>
 
-#include "ui_dl_addcolumn.h"
+#include "ui_jumptoobservation.h"
 
-#define MILOGGER_CATEGORY "kvhqc.DataListAddColumn"
+#define MILOGGER_CATEGORY "kvhqc.JumpToObservation"
 #include "HqcLogging.hh"
 
-DataListAddColumn::DataListAddColumn(QWidget* parent)
+JumpToObservation::JumpToObservation(ObsAccessPtr da, QWidget* parent)
   : QDialog(parent)
-  , ui(new Ui::DataListAddColumn)
+  , ui(new Ui::JumpToObservation)
+  , mDA(da)
 {
   ui->setupUi(this);
 
@@ -28,28 +31,55 @@ DataListAddColumn::DataListAddColumn(QWidget* parent)
   std::vector<int> empty;
   ui->comboParam->setModel(new ParamIdModel(empty));
   ui->comboType ->setModel(new TypeIdModel(empty));
+  
+  ui->editObsTime->setDateTime(timeutil::nowWithMinutes0Seconds0());
 }
 
-DataListAddColumn::~DataListAddColumn()
+JumpToObservation::~JumpToObservation()
 {
   delete ui->comboParam->model();
   delete ui->comboType->model();
 }
 
-Sensor DataListAddColumn::selectedSensor() const
+void JumpToObservation::accept()
+{
+  METLIBS_LOG_SCOPE();
+  if (mDA) {
+    const SensorTime st(selectedSensorTime());
+    METLIBS_LOG_DEBUG(LOGVAL(st));
+    const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
+    mDA->addSubscription(sub);
+    if (mDA->find(st)) {
+      QDialog::accept();
+      /*emit*/ signalNavigateTo(st);
+    } else {
+      QMessageBox msg;
+      msg.setWindowTitle(windowTitle());
+      msg.setText(tr("No such observation found."));
+      msg.setStandardButtons(QMessageBox::Retry);
+      msg.setDefaultButton(QMessageBox::Retry);
+      msg.exec();
+    }
+    mDA->removeSubscription(sub);
+  }
+}
+
+SensorTime JumpToObservation::selectedSensorTime() const
 {
   Sensor s;
   s.stationId = getStationId();
-  s.paramId = getParamId();
-  s.typeId = getTypeId();
+  s.paramId  = getParamId();
+  s.typeId   = getTypeId();
+  s.level    = getLevel();
+  s.sensor   = getSensorNr();
 
   if (s.stationId == -1 or s.paramId == -1 or s.typeId == -1)
-    return Sensor(); // invalid sensor
+    return SensorTime(); // invalid
 
-  return s;
+  return SensorTime(s, timeutil::from_QDateTime(ui->editObsTime->dateTime()));
 }
 
-int DataListAddColumn::getStationId() const
+int JumpToObservation::getStationId() const
 {
   bool ok;
   const int stationId = ui->textStation->text().toInt(&ok);
@@ -58,7 +88,17 @@ int DataListAddColumn::getStationId() const
   return stationId;
 }
 
-int DataListAddColumn::getParamId() const
+int JumpToObservation::getSensorNr() const
+{
+  return ui->spinSensor->value();
+}
+
+int JumpToObservation::getLevel() const
+{
+  return ui->spinLevel->value();
+}
+
+int JumpToObservation::getParamId() const
 {
   const int idx = ui->comboParam->currentIndex();
   if (idx < 0)
@@ -67,7 +107,7 @@ int DataListAddColumn::getParamId() const
   return pim->parameterIds().at(idx);
 }
 
-int DataListAddColumn::getTypeId() const
+int JumpToObservation::getTypeId() const
 {
   const int idx = ui->comboType->currentIndex();
   if (idx < 0)
@@ -76,24 +116,7 @@ int DataListAddColumn::getTypeId() const
   return tim->typeIds().at(idx);
 }
 
-AutoDataList::ColumnType DataListAddColumn::selectedColumnType() const
-{
-  AutoDataList::ColumnType ct = AutoDataList::CORRECTED;
-  if (ui->radioOriginal->isChecked())
-    ct = AutoDataList::ORIGINAL;
-  else if (ui->radioFlags->isChecked())
-    ct = AutoDataList::FLAGS;
-  if (ui->radioModel->isChecked())
-    ct = AutoDataList::MODEL;
-  return ct;
-}
-
-int DataListAddColumn::selectedTimeOffset() const
-{
-  return ui->spinTimeOffset->value();
-}
-
-void DataListAddColumn::onStationEdited()
+void JumpToObservation::onStationEdited()
 {
   METLIBS_LOG_SCOPE();
   std::set<int> stationParams;
@@ -115,11 +138,7 @@ void DataListAddColumn::onStationEdited()
     goodStation &= (not stationParams.empty());
   }
 
-  ui->radioCorrected->setEnabled(goodStation);
-  ui->radioOriginal ->setEnabled(goodStation);
-  ui->radioFlags    ->setEnabled(goodStation);
-  ui->radioModel    ->setEnabled(goodStation);
-  ui->comboParam    ->setEnabled(goodStation);
+  ui->comboParam->setEnabled(goodStation);
 
   delete ui->comboParam->model();
   ui->comboParam->setModel(new ParamIdModel(std::vector<int>(stationParams.begin(), stationParams.end())));
@@ -128,7 +147,7 @@ void DataListAddColumn::onStationEdited()
   onParameterSelected(0);
 }
 
-void DataListAddColumn::onParameterSelected(int)
+void JumpToObservation::onParameterSelected(int)
 {
   METLIBS_LOG_SCOPE();
   const int stationId = getStationId();
@@ -154,5 +173,5 @@ void DataListAddColumn::onParameterSelected(int)
     ui->comboType->setCurrentIndex(0);
 
   ui->comboType->setEnabled(goodParam);
-  ui->buttonOk->setEnabled(goodParam);
+  ui->buttonJump->setEnabled(goodParam);
 }
