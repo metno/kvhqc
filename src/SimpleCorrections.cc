@@ -61,24 +61,44 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 
 SimpleCorrections::~SimpleCorrections()
 {
+  if (mDA and mSensorTime.valid())
+    mDA->removeSubscription(ObsSubscription(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time)));
 }
 
 void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    DataView::setDataAccess(eda, mda);
-    mChecksModel.reset(new ChecksTableModel(eda));
-    ui->tableChecks->setModel(mChecksModel.get());
-    update();
+  if (mSensorTime.valid() and eda != mDA) {
+    const ObsSubscription sub(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time));
+    if (eda)
+      eda->addSubscription(sub);
+    if (mDA)
+      mDA->removeSubscription(sub);
+  }
+
+  DataView::setDataAccess(eda, mda);
+
+  mChecksModel.reset(new ChecksTableModel(eda));
+  ui->tableChecks->setModel(mChecksModel.get());
+  update();
 }
 
 void SimpleCorrections::navigateTo(const SensorTime& st)
 {
     METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(LOGVAL(st));
+    
     mChecksModel->navigateTo(st);
     ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
     if (eq_SensorTime()(mSensorTime, st))
         return;
+
+    if (mDA) {
+      if (st.valid())
+        mDA->addSubscription(ObsSubscription(st.sensor.stationId, TimeRange(st.time, st.time)));
+      if (mSensorTime.valid())
+        mDA->removeSubscription(ObsSubscription(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time)));
+    }
 
     const bool changedSensor = (not eq_Sensor()(mSensorTime.sensor, st.sensor));
 
@@ -143,6 +163,7 @@ void SimpleCorrections::update()
         ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
         obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
+        if (mDA and not obs) METLIBS_LOG_DEBUG("mDA but no obs at " << mSensorTime);
         mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
     } else {
         ui->textStation->setText("");

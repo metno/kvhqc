@@ -4,9 +4,9 @@
 inline TimeRange t_18210_20130410()
     { return TimeRange(s2t("2013-04-01 00:00:00"), s2t("2013-04-10 10:00:00")); }
 #ifdef LOAD_DECL_ONLY
-void load_18210_20130410(FakeKvApp& fa);
+void load_18210_20130410(FakeKvApp& fa, bool subscribe=true);
 #else // LOAD_DECL_ONLY
-void load_18210_20130410(FakeKvApp& fa)
+void load_18210_20130410(FakeKvApp& fa, bool subscribe=true)
 {
     fa.insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
 
@@ -22,7 +22,7 @@ void load_18210_20130410(FakeKvApp& fa)
     fa.addObsPgm("18210;105;0;1;4;0;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1;1999-01-15 00:00:00;null");
     fa.addObsPgm("18210;105;0;1;504;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;2011-06-29 00:00:00;null");
 
-    {
+    if (subscribe) {
         const TimeRange t = t_18210_20130410();
         fa.kda->addSubscription(ObsSubscription(18210, t));
     }

@@ -125,14 +125,20 @@ bool KvBufferedAccess::drop(const SensorTime& st)
 
 void KvBufferedAccess::addSubscription(const ObsSubscription& s)
 {
-  if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(s.stationId()) << LOGVAL(s.time()));
+
+  if (not s.time().closed()) {
+    HQC_LOG_WARN("trying to subscribe for non-closed time span " << s.time());
     return;
+  }
   mSubscriptions.push_back(s);
 
   SubscribedTimes_t::iterator it = mSubscribedTimes.find(s.stationId());
   if (it != mSubscribedTimes.end()) {
     // FIXME merge only overlapping time spans
     TimeRange r(std::min(s.time().t0(), it->second.t0()), std::max(s.time().t1(), it->second.t1()));
+    METLIBS_LOG_DEBUG(LOGVAL(it->second) << LOGVAL(r));
     it->second = r;
   } else {
     mSubscribedTimes.insert(SubscribedTimes_t::value_type(s.stationId(), s.time()));
@@ -140,60 +146,60 @@ void KvBufferedAccess::addSubscription(const ObsSubscription& s)
 }
 
 namespace {
-bool operator==(const ObsSubscription& a, const ObsSubscription& b)
-{
-  return a.stationId() == b.stationId()
-      and a.time().t0() == b.time().t0()
-      and a.time().t1() == b.time().t1();
-}
-bool operator!=(const ObsSubscription& a, const ObsSubscription& b)
-{
-  return a.stationId() != b.stationId()
-      or a.time().t0() != b.time().t0()
-      or a.time().t1() != b.time().t1();
-}
-
 struct eq_ObsSubscription : public std::unary_function<bool, ObsSubscription> {
   const ObsSubscription& b;
   eq_ObsSubscription(const ObsSubscription& os) : b(os) { }
   bool operator()(const ObsSubscription& a) const
-    { return a == b; }
+    {
+      return a.stationId() == b.stationId()
+          and a.time().t0() == b.time().t0()
+          and a.time().t1() == b.time().t1();
+    }
 };
 }
 
 void KvBufferedAccess::removeSubscription(const ObsSubscription& s)
 {
-  if (s.time().t0().is_not_a_date_time() or s.time().t1().is_not_a_date_time())
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(s.stationId()) << LOGVAL(s.time()));
+
+  if (not s.time().closed()) {
+    HQC_LOG_WARN("trying to unsubscribe for non-closed time span " << s.time());
     return;
+  }
   
-  Subscriptions_t::iterator it = std::find_if(mSubscriptions.begin(), mSubscriptions.end(), eq_ObsSubscription(s));
-  //Subscriptions_t::iterator it = std::find(mSubscriptions.begin(), mSubscriptions.end(), s);
-  if (it != mSubscriptions.end()) {
-    mSubscriptions.erase(it);
+  Subscriptions_t::iterator it_sub = std::find_if(mSubscriptions.begin(), mSubscriptions.end(), eq_ObsSubscription(s));
+  if (it_sub == mSubscriptions.end()) {
+    HQC_LOG_ERROR("subscribed station " << s.stationId() << " not in subscription list");
+    return;
+  }
+  mSubscriptions.erase(it_sub);
       
-    // FIXME this relies on using a simplified (ie without gaps) time list for each station
-    SubscribedTimes_t::iterator it = mSubscribedTimes.find(s.stationId());
-    if (it != mSubscribedTimes.end()) {
-      if (s.time().t0() == it->second.t0() or s.time().t1() == it->second.t1()) {
-        // at start/end, need to scan all subscriptions for this station
-          
-        TimeRange newSpan;
-        BOOST_FOREACH(const ObsSubscription& sub, mSubscriptions) {
-          if (sub.stationId() != s.stationId())
-            continue;
-            
-          if (newSpan.undef()) {
-            // FIXME this does not merge across gaps
-            newSpan = TimeRange(std::min(sub.time().t0(), newSpan.t0()), std::max(sub.time().t1(), newSpan.t1()));
-          } else {
-            newSpan = sub.time();
-          }
-        }
-        it->second = newSpan;
+  // FIXME this relies on using a simplified (ie without gaps) time list for each station
+  SubscribedTimes_t::iterator it = mSubscribedTimes.find(s.stationId());
+  assert(it != mSubscribedTimes.end());
+  METLIBS_LOG_DEBUG(LOGVAL(it->second));
+  
+  if (s.time().t0() == it->second.t0() or s.time().t1() == it->second.t1()) {
+    // at start/end, need to scan all subscriptions for this station
+      
+    TimeRange newSpan;
+    BOOST_FOREACH(const ObsSubscription& sub, mSubscriptions) {
+      if (sub.stationId() != s.stationId())
+        continue;
+      
+      if (newSpan.closed()) {
+        // FIXME this merges across gaps
+        newSpan = TimeRange(std::min(sub.time().t0(), newSpan.t0()), std::max(sub.time().t1(), newSpan.t1()));
+      } else {
+        newSpan = sub.time();
       }
-    } else {
-      HQC_LOG_ERROR("subscribed station " << s.stationId() << " not in subscription list");
     }
+    METLIBS_LOG_DEBUG(LOGVAL(newSpan));
+    if (newSpan.closed())
+      it->second = newSpan;
+    else
+      mSubscribedTimes.erase(it);
   }
 }
 

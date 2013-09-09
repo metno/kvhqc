@@ -58,15 +58,23 @@ ObsAccess::DataSet KvalobsAccess::allData(const std::vector<Sensor>& sensors, co
 
 ObsDataPtr KvalobsAccess::find(const SensorTime& st)
 {
+  METLIBS_LOG_SCOPE();
   ObsDataPtr obs = KvBufferedAccess::find(st);
-  if (obs)
+  if (obs) {
+    METLIBS_LOG_DEBUG("found " << st << " in buffer");
     return obs;
+  }
 
-  if (isFetched(st.sensor.stationId, st.time))
+  if (isFetched(st.sensor.stationId, st.time)) {
+    METLIBS_LOG_DEBUG("fetched " << st << " but not in buffer");
     return KvalobsDataPtr();
+  }
 
   findRange(st.sensor, TimeRange(st.time, st.time));
-  return KvBufferedAccess::find(st);
+  obs = KvBufferedAccess::find(st);
+  if (not obs)
+    METLIBS_LOG_DEBUG("fetch did not put " << st << " in buffer");
+  return obs;
 }
 
 namespace /* anonymous */ {
