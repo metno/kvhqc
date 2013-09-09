@@ -1,3 +1,10 @@
+kvhqc (3.1.1-1) unstable; urgency=low
+
+  * added an icon again
+  * added JumpToObservation
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 09 Sep 2013 10:14:02 +0200
+
 kvhqc (3.1.0-1) unstable; urgency=low
 
   * removed old error list
