@@ -203,7 +203,7 @@ HqcMainWindow::HqcMainWindow()
 
   eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
   ui->saveAction->setEnabled(false); // no changes yet
-    
+
   HelpDialog::Info info;
   info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
 

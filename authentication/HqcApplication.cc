@@ -56,6 +56,7 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     installTranslations("hqc",      langDir);
 
     QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
+    setWindowIcon(QIcon("icons:hqc_logo.svg"));
 
     connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
 
