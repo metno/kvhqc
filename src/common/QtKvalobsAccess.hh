@@ -1,6 +1,6 @@
 
-#ifndef QtKvalobsAccess_hh
-#define QtKvalobsAccess_hh 1
+#ifndef COMMON_QTKVALOBSACCESS_HH
+#define COMMON_QTKVALOBSACCESS_HH 1
 
 #include "KvalobsAccess.hh"
 
@@ -8,21 +8,24 @@
 
 class QTimer;
 
+/*! Access to kvalobs data, with update listener.
+ * Uses QtKvService to listen for updates in kvalobs database.
+ */
 class QtKvalobsAccess : public QObject, public KvalobsAccess
 { Q_OBJECT;
 public:
-    QtKvalobsAccess();
-    ~QtKvalobsAccess();
+  QtKvalobsAccess();
+  ~QtKvalobsAccess();
 
-    virtual void addSubscription(const ObsSubscription& s);
-    virtual void removeSubscription(const ObsSubscription& s);
+  virtual void addSubscription(const ObsSubscription& s);
+  virtual void removeSubscription(const ObsSubscription& s);
 
 private Q_SLOTS:
-    void onKvData(kvservice::KvObsDataListPtr data);
-    void doReSubscribe();
+  void onKvData(kvservice::KvObsDataListPtr data);
+  void doReSubscribe();
 
 private:
-    void reSubscribe();
+  void reSubscribe();
 
 private:
   std::string mKvServiceSubscriberID;
@@ -33,4 +36,4 @@ private:
   QTimer* mResubscribeTimer;
 };
 
-#endif // KvalobsAccess_hh
+#endif // COMMON_QTKVALOBSACCESS_HH

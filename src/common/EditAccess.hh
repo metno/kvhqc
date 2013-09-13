@@ -5,8 +5,11 @@
 #include "EditDataEditor.hh"
 #include "ObsAccess.hh"
 
+/*! Access to editable data. Supports undo and redo.
+ */
 class EditAccess : public ObsAccess {
 public:
+  /*! Edit data from \c backend */
   EditAccess(ObsAccessPtr backend);
   virtual ~EditAccess();
 
@@ -16,13 +19,18 @@ public:
   using ObsAccess::allData;
 
   virtual ObsDataPtr find(const SensorTime& st);
+
+  /*! Same as find, only difference is return type. */
   EditDataPtr findE(const SensorTime& st)
     { return boost::static_pointer_cast<EditData>(find(st)); }
 
   virtual ObsDataPtr create(const SensorTime& st);
+
+  /*! Same as create, only difference is return type. */
   EditDataPtr createE(const SensorTime& st)
     { return boost::static_pointer_cast<EditData>(create(st)); }
 
+  /*! Calls find, and if 0-pointer is returned, calls create. */
   EditDataPtr findOrCreateE(const SensorTime& st)
     { ObsDataPtr obs = find(st); if (not obs) obs = create(st); return boost::static_pointer_cast<EditData>(obs); }
 
@@ -34,7 +42,12 @@ public:
   virtual void removeSubscription(const ObsSubscription& s)
     { mBackend->removeSubscription(s); }
 
+  /*! Obtain an editor for the given observation data.
+  * \param obs observation data, must belong to this EditAccess object
+  */
   EditDataEditorPtr editor(EditDataPtr obs);
+
+  /*! Commit changes made in the editor. */
   bool commit(EditDataEditor* editor);
 
   void newVersion();

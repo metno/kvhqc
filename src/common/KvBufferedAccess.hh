@@ -1,6 +1,6 @@
 
-#ifndef KvBufferedAccess_hh
-#define KvBufferedAccess_hh 1
+#ifndef COMMON_KVBUFFEREDACCESS_HH
+#define COMMON_KVBUFFEREDACCESS_HH 1
 
 #include "ObsAccess.hh"
 
@@ -10,6 +10,9 @@ class kvData;
 class KvalobsData;
 typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
 
+/*! Buffered ObsAccess for KvalobsData.
+ * Has no methods to actually fetch and store data from a kvalobs database.
+ */
 class KvBufferedAccess : public ObsAccess {
 public:
   virtual TimeSet allTimes(const std::vector<Sensor>& sensors, const TimeRange& limits);
@@ -24,9 +27,15 @@ public:
   virtual void removeSubscription(const ObsSubscription& s);
 
 protected:
+  /*! Receive data. Adds to buffer only if subscribed.
+   * \param update true if this is an external update
+   */
   virtual void receive(const kvalobs::kvData& data, bool update);
+
   virtual bool drop(const SensorTime& st);
+
   bool updatesHaveTasks(const std::vector<ObsUpdate>& updates);
+
   virtual bool isSubscribed(const SensorTime& st);
     
 private:
@@ -41,4 +50,4 @@ private:
 };
 typedef boost::shared_ptr<KvBufferedAccess> KvBufferedAccessPtr;
 
-#endif // KvBufferedAccess_hh
+#endif // COMMON_KVBUFFEREDACCESS_HH

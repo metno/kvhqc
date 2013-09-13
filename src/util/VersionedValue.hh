@@ -87,7 +87,6 @@ public:
      * \param version the current version
      * \param newValue the new value for 
      * \return true iff modified() or value() have changed
-     * \throw 
      */
     bool setValue(int version, const T& newValue);
 

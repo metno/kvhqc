@@ -1,6 +1,6 @@
 
-#ifndef KvalobsAccess_hh
-#define KvalobsAccess_hh 1
+#ifndef COMMON_KVALOBSACCESS_HH
+#define COMMON_KVALOBSACCESS_HH 1
 
 #include "KvBufferedAccess.hh"
 #include "TimeRange.hh"
@@ -11,6 +11,9 @@
 
 #include <boost/icl/interval_set.hpp>
 
+/*! Access to data from a kvalobs database.
+ * No listening for external updates.
+ */
 class KvalobsAccess : public KvBufferedAccess {
 public:
   KvalobsAccess();
@@ -45,12 +48,12 @@ private:
   void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
     
 private:
-    typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
-    typedef std::map<int, FetchedTimes_t> Fetched_t;
-    Fetched_t mFetched;
-
-    Reinserter_t* mDataReinserter;
+  typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
+  typedef std::map<int, FetchedTimes_t> Fetched_t;
+  Fetched_t mFetched;
+  
+  Reinserter_t* mDataReinserter;
 };
 typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 
-#endif // KvalobsAccess_hh
+#endif // COMMON_KVALOBSACCESS_HH
