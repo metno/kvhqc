@@ -88,11 +88,12 @@ float parseFloat(const QString& text, int nDecimals)
   if (not numOk)
     throw std::runtime_error("cannot parse number");
   const float factor = std::pow(10, nDecimals),
-      rounded = Helpers::round(num, factor);
-  if (std::fabs(num - rounded) > 0.1/factor) {
+      numf = num * factor,
+      roundedf = Helpers::round(numf, 1);
+  if (std::fabs(numf - roundedf) >= 1e-8) {
     std::ostringstream w;
     w << "text '" << text.toStdString() << "' converted to value " << num
-      << " has unsupported precision (rounded value is " << rounded << ")";
+      << " has unsupported precision (rounded value is " << roundedf/factor << ")";
     throw std::runtime_error(w.str());
   }
   return num;

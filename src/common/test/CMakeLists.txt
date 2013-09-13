@@ -47,6 +47,7 @@ ADD_EXECUTABLE(common_test
   EditAccessTest.cc
   EditTimeColumnTest.cc
   KvalobsAccessTest.cc
+  KvHelpersTest.cc
   TimeRangeTest.cc
   VxColumnTest.cc
   gtestMain.cc
