@@ -37,46 +37,44 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 BusyIndicator::BusyIndicator(bool wait)
 {
-    qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
-    qApp->processEvents();
+  qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
+  qApp->processEvents();
 }
 
 BusyIndicator::~BusyIndicator()
 {
-    qApp->restoreOverrideCursor();
+  qApp->restoreOverrideCursor();
+  qApp->processEvents();
 }
 
 // ========================================================================
 
 DisableGUI::DisableGUI(QWidget* widget)
-    : mWidget(widget)
-    , mWasEnabled(mWidget->isEnabled())
+  : mWidget(widget)
+  , mWasEnabled(mWidget->isEnabled())
 {
-    if (mWasEnabled) {
-        mWidget->setEnabled(false);
-        qApp->processEvents();
-    }
+  if (mWasEnabled)
+    mWidget->setEnabled(false);
+  qApp->processEvents();
 }
 DisableGUI::~DisableGUI()
 {
-    if (mWasEnabled) {
-        mWidget->setEnabled(true);
-        qApp->processEvents();
-    }
+  if (mWasEnabled)
+    mWidget->setEnabled(true);
+  qApp->processEvents();
 }
 
 // ========================================================================
 
 BusyStatus::BusyStatus(QMainWindow* mw, const QString& message, bool wait)
-    : DisableGUI(mw)
-    , BusyIndicator(wait)
+  : DisableGUI(mw)
+  , BusyIndicator(wait)
 {
-    mw->statusBar()->showMessage(message);
-    qApp->processEvents();
+  mw->statusBar()->showMessage(message);
+  qApp->processEvents();
 }
 
 BusyStatus::~BusyStatus()
 {
-    static_cast<QMainWindow*>(mWidget)->statusBar()->clearMessage();
-    qApp->processEvents();
+  static_cast<QMainWindow*>(mWidget)->statusBar()->clearMessage();
 }
