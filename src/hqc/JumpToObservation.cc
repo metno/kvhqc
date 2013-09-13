@@ -44,24 +44,28 @@ JumpToObservation::~JumpToObservation()
 void JumpToObservation::accept()
 {
   METLIBS_LOG_SCOPE();
-  if (mDA) {
-    const SensorTime st(selectedSensorTime());
-    METLIBS_LOG_DEBUG(LOGVAL(st));
-    const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
-    mDA->addSubscription(sub);
-    if (mDA->find(st)) {
-      QDialog::accept();
-      /*emit*/ signalNavigateTo(st);
-    } else {
-      QMessageBox msg;
-      msg.setWindowTitle(windowTitle());
-      msg.setText(tr("No such observation found."));
-      msg.setStandardButtons(QMessageBox::Retry);
-      msg.setDefaultButton(QMessageBox::Retry);
-      msg.exec();
-    }
-    mDA->removeSubscription(sub);
+  if (not mDA)
+    return;
+
+  const SensorTime st(selectedSensorTime());
+  METLIBS_LOG_DEBUG(LOGVAL(st));
+  if (not st.valid())
+    return;
+
+  const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
+  mDA->addSubscription(sub);
+  if (mDA->find(st)) {
+    QDialog::accept();
+    /*emit*/ signalNavigateTo(st);
+  } else {
+    QMessageBox msg;
+    msg.setWindowTitle(windowTitle());
+    msg.setText(tr("No such observation found."));
+    msg.setStandardButtons(QMessageBox::Retry);
+    msg.setDefaultButton(QMessageBox::Retry);
+    msg.exec();
   }
+  mDA->removeSubscription(sub);
 }
 
 SensorTime JumpToObservation::selectedSensorTime() const
