@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>DataList</class>
+ <widget class="QWidget" name="DataList">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>256</width>
+    <height>223</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string notr="true">DataList</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" name="layoutButtons">
+     <property name="spacing">
+      <number>2</number>
+     </property>
+     <item>
+      <widget class="AcceptRejectButtons" name="buttonsAcceptReject" native="true"/>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="buttonSaveAs">
+       <property name="toolTip">
+        <string>Save selected (or all) data to a spreadsheet file in CSV format.</string>
+       </property>
+       <property name="text">
+        <string>Save…</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <widget class="DataListTable" name="table"/>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DataListTable</class>
+   <extends>QTableWidget</extends>
+   <header>hqc/DataList.hh</header>
+  </customwidget>
+  <customwidget>
+   <class>AcceptRejectButtons</class>
+   <extends>QWidget</extends>
+   <header>common/gui/AcceptRejectButtons.hh</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonSaveAs</sender>
+   <signal>clicked()</signal>
+   <receiver>DataList</receiver>
+   <slot>onButtonSaveAs()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>254</x>
+     <y>19</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>374</x>
+     <y>15</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onButtonSaveAs()</slot>
+  <slot>onAcceptQC2()</slot>
+  <slot>onAccept()</slot>
+  <slot>onReject()</slot>
+  <slot>onRejectQC2()</slot>
+  <slot>onButtonResetColumns()</slot>
+ </slots>
+</ui>

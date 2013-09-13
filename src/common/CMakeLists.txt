@@ -1,0 +1,77 @@
+
+SET(common_SOURCES
+  AcceptReject.cc
+  AnalyseErrors.cc
+  AnalyseFCC.cc
+  AnalyseRR24.cc
+  Code2Text.cc
+  ColumnFactory.cc
+  DataCodeItem.cc
+  DataColumn.cc
+  DataControlinfoItem.cc
+  DataCorrectedItem.cc
+  DataItem.cc
+  DataListModel.cc
+  DataOriginalItem.cc
+  DataRR24Item.cc
+  DataValueItem.cc
+  DataView.cc
+  DataVxItem.cc
+  DianaHelper.cc
+  EditAccess.cc
+  EditData.cc
+  EditDataEditor.cc
+  EditTimeColumn.cc
+  FindAllParameters.cc
+  FindExtremeValues.cc
+  FlagChange.cc
+  FlagPattern.cc
+  FlagPatterns.cc
+  FlagUpdate.cc
+  Functors.cc
+  HqcDataReinserter.cc
+  identifyUser.cc
+  KvalobsAccess.cc
+  KvalobsData.cc
+  KvalobsModelAccess.cc
+  KvalobsModelData.cc
+  KvBufferedAccess.cc
+  KvHelpers.cc
+  KvMetaDataBuffer.cc
+  KvModelAccess.cc
+  KvServiceHelper.cc
+  ModelAccess.cc
+  ModelColumn.cc
+  ObsAccess.cc
+  ObsColumn.cc
+  ObsHelpers.cc
+  ObsLogging.cc
+  ObsTableModel.cc
+  ParamIdModel.cc
+  QtKvalobsAccess.cc
+  QtKvService.cc
+  Sensor.cc
+  StationIdCompletion.cc
+  StationIdModel.cc
+  StationInfoBuffer.cc
+  StInfoSysBuffer.cc
+  Tasks.cc
+  TimeRange.cc
+  TypeIdModel.cc
+)
+
+QT4_WRAP_CPP(common_MOC
+  DataListModel.hh
+  DianaHelper.hh
+  ObsTableModel.hh
+  QtKvalobsAccess.hh
+  QtKvService.hh
+)
+
+ADD_LIBRARY(common STATIC
+  ${common_SOURCES}
+  ${common_MOC}
+)
+
+ADD_SUBDIRECTORY(gui)
+ADD_SUBDIRECTORY(test)

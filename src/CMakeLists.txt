@@ -1,131 +1,95 @@
 
-SET(hqc_HEADERS
-  ErrorListTableModel.hh
-  ../include/AutoDataList.hh
-  ../include/ChecksTableModel.hh
-  ../include/DataList.hh
-  ../include/DataListAddColumn.hh
-  ../include/DataListModel.hh
-  ../include/dianashowdialog.h
-  ../include/EditVersionModel.hh
-  ../include/errorlist.h
-  ../include/ExtremesView.hh
-  ../include/HqcDianaHelper.hh
-  ../include/hqcmain.h
-  ../include/ItemCheckBox.hh
-  ../include/JumpToObservation.hh
-  ../include/ListDialog.hh
-  ../include/rejectdialog.h
-  ../include/rejecttable.h
-  ../include/SimpleCorrections.hh
-  ../include/StaticDataList.hh
-  ../include/textdatadialog.h
-  ../include/textdatatable.h
-  ../include/TimeSeriesView.hh
-  ../include/TimeSeriesAdd.hh
-)
+#########################################################################
+# Qt
 
-SET(hqc_SOURCES
-  AnalyseErrors.cc
-  AutoDataList.cc
-  ChecksTableModel.cc
-  DataList.cc
-  DataListAddColumn.cc
-  DataListModel.cc
-  ../include/DataView.hh
-  DataView.cc
-  ErrorListTableModel.cc
-  EditVersionModel.cc
-  ExtremesTableModel.cc
-  ExtremesView.cc
-  FindAllParameters.cc
-  FindExtremeValues.cc
-  ParamIdModel.cc
-  ListDialog.cc
-  dianashowdialog.cc
-  errorlist.cc
-  GetTextData.cc
-  HqcDianaHelper.cc
-  hqcmain.cc
-  ItemCheckBox.cc
-  JumpToObservation.cc
-  qtQTUtil.cc
-  rejectdialog.cc
-  rejecttable.cc
-  StaticDataList.cc
-  StationInfoBuffer.cc
-  StInfoSysBuffer.cc
-  SimpleCorrections.cc
-  textdatadialog.cc
-  textdatatable.cc
-  TimeSeriesAdd.cc
-  TimeSeriesView.cc
-  ViewChanges.cc
-)
+SET(QT_USE_QTOPENGL TRUE)
+SET(QT_USE_QTSQL TRUE)
+SET(QT_USE_QTNETWORK TRUE)
+SET(QT_USE_QT3SUPPORT TRUE)
+SET(QT_USE_QTXML TRUE)
+FIND_PACKAGE(Qt4 REQUIRED)
 
-INCLUDE_DIRECTORIES(
-  ${CMAKE_SOURCE_DIR}/include
-  ${CMAKE_SOURCE_DIR}/authentication
-  ${CMAKE_BINARY_DIR}/authentication
-  ${CMAKE_SOURCE_DIR}/WatchRR2
-  ${CMAKE_SOURCE_DIR}/Weather
-  ${CMAKE_CURRENT_SOURCE_DIR}/src
-)
+INCLUDE(${QT_USE_FILE})
+ADD_DEFINITIONS(${QT_DEFINITIONS} -DQT_NO_KEYWORDS)
+LINK_LIBRARIES(${QT_LIBRARIES})
 
-SET(hqc_TRANS hqc_nb.ts hqc_de.ts)
-QT4_ADD_TRANSLATION(hqc_QM ${hqc_TRANS})
-INSTALL(FILES ${hqc_QM}
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
+#########################################################################
+#########################################################################
+# kvalobs
 
-QT4_WRAP_CPP(hqc_HEADERS_MOC ${hqc_HEADERS})
-SET(hqc_UIS
-  datalist.ui
-  dl_addcolumn.ui
-  extremevalues.ui
-  jumptoobservation.ui
-  listdialog.ui
-  mainwindow.ui
-  simplecorrections.ui
-  timeseriesview.ui
-  ts_add.ui
-  ts_remove.ui
-)
-QT4_WRAP_UI(hqc_UIS_H ${hqc_UIS})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.0~rc1 libkvalobs_decodeutility)
+IF(NOT PC_KVCPP_FOUND)
+  PKG_CHECK_MODULES(PC_KVCPP2 libkvcpp2>=2.5.3 puTools libpqxx)
+  IF(NOT PC_KVCPP2_FOUND)
+    ERROR("could not find required kvcpp libs")
+  ENDIF()
+  MESSAGE(WARNING "using old kvcpp with static metlibs; this might cause conflicts or crashes")
+  SET(PC_KVCPP_LIBRARIES ${PC_KVCPP2_LIBRARIES} kvalobs2_kvalobs kvalobs2_decodeutility kvalobs2_dnmithread CACHE INTERNAL "")
+  SET(PC_KVCPP_INCLUDE_DIRS ${PC_KVCPP2_INCLUDE_DIRS} CACHE INTERNAL "")
+  SET(PC_KVCPP_CFLAGS_OTHER ${PC_KVCPP2_CFLAGS_OTHER})
+ENDIF()
 
-ADD_LIBRARY(hqc_common
-  ${hqc_SOURCES}
-  ${hqc_HEADERS_MOC}
-  ${hqc_UIS_H}
-  ${hqc_QM}
-)
+#########################################################################
+# metlibs
 
+PKG_CHECK_MODULES(PC_METLIBSQT REQUIRED qTimeseries qUtilities)
+SET(PC_METLIBSQT_LIBRARIES ${PC_METLIBSQT_LIBRARIES} -lGL)
+IF("${PC_METLIBSQT_qUtilities_VERSION}" VERSION_LESS "4.9.4")
+  ADD_DEFINITIONS(-DMETLIBS_BEFORE_4_9_5)
+ENDIF()
+
+#########################################################################
+# log4cpp
+
+PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
+
+#########################################################################
+# boost
+
+FIND_PACKAGE(Boost COMPONENTS date_time signals thread REQUIRED)
+LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_THREAD_LIBRARY})
+
+#########################################################################
+# includes/defines for all pkg-config libs
+
+INCLUDE_DIRECTORIES(${PC_KVCPP_INCLUDE_DIRS} ${PC_METLIBSQT_INCLUDE_DIRS})
+ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBSQT_CFLAGS_OTHER} ${PC_LOG4CPP_CFLAGS_OTHER})
 LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBSQT_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
-ADD_EXECUTABLE(hqc
-  hqc4.cc
-)
 
-SET_TARGET_PROPERTIES(hqc PROPERTIES
-  OUTPUT_NAME "hqc-${PVERSION}.bin")
+#########################################################################
+#########################################################################
+# google-test
 
-TARGET_LINK_LIBRARIES(hqc
-  hqc_common watchrr2 weather authentication
-  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
-  -lldap
-)
+FIND_PACKAGE(GTest QUIET)
+IF(NOT GTEST_FOUND)
+  MESSAGE("apparently no compiled GTest library, trying to build it")
+  FIND_FILE(GTEST_DIR src/gtest-all.cc /usr/src/gtest /usr/local/src/gtest)
+  IF(NOT GTEST_DIR)
+    MESSAGE(FATAL_ERROR "could not find gtest-all.cc")
+  ENDIF()
+  GET_FILENAME_COMPONENT(GTEST_DIR ${GTEST_DIR} PATH)
+  GET_FILENAME_COMPONENT(GTEST_DIR ${GTEST_DIR} PATH)
+  ADD_SUBDIRECTORY(${GTEST_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
+  SET(GTEST_LIBRARY gtest)
+  SET(GTEST_MAIN_LIBRARY gtest_main)
+ENDIF()
 
-INSTALL(TARGETS hqc DESTINATION bin)
+# ########################################################################
 
-ADD_EXECUTABLE(hqc_offline
-  hqc_offline.cc
-)
+CONFIGURE_FILE(common/config.h.in config.h)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
-SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
-  OUTPUT_NAME "hqc-${PVERSION}-offline")
+SET(FILES_TO_TRANSLATE)
+FUNCTION(add_translated)
+  FOREACH(a ${ARGN})
+    SET(FTT ${FTT} "${CMAKE_CURRENT_SOURCE_DIR}/${a}")
+  ENDFOREACH()
+  SET(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE} ${FTT} PARENT_SCOPE)
+ENDFUNCTION()
 
-TARGET_LINK_LIBRARIES(hqc_offline
-  hqc_common watchrr2 weather authentication watchrr2test
-  ${PC_KVCPP_LIBRARIES} ${PC_METLIBSQT_LIBRARIES} ${PC_LOG4CPP_LIBRARIES}
-)
 
-INSTALL(TARGETS hqc_offline DESTINATION bin)
+ADD_SUBDIRECTORY(util)
+ADD_SUBDIRECTORY(common)
+ADD_SUBDIRECTORY(watchrr)
+ADD_SUBDIRECTORY(weather)
+ADD_SUBDIRECTORY(hqc)
