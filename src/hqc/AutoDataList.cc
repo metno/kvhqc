@@ -6,7 +6,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
 #include "util/ChangeReplay.hh"
-#include "util/gui/BusyIndicator.h"
+#include "util/gui/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>

@@ -5,7 +5,7 @@
 #include "common/FindExtremeValues.hh"
 #include "common/ParamIdModel.hh"
 #include "common/gui/TimeRangeControl.hh"
-#include "util/gui/BusyIndicator.h"
+#include "util/gui/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 

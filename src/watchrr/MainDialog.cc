@@ -12,7 +12,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/gui/ObsDelegate.hh"
 #include "util/Helpers.hh"
-#include "util/gui/BusyIndicator.h"
+#include "util/gui/BusyIndicator.hh"
 
 #include "ui_watchrr_main.h"
 #include "ui_watchrr_redist.h"
