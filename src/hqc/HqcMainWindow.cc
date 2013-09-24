@@ -52,6 +52,7 @@
 #include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
 #include "common/DataView.hh"
+#include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
@@ -118,7 +119,6 @@ const char SETTING_VERSION_FULL[] = "version_full";
 
 HqcMainWindow::HqcMainWindow()
   : QMainWindow( 0, tr("HQC"))
-  , reinserter(0)
   , listExist(false)
   , ui(new Ui::HqcMainWindow)
   , mVersionCheckTimer(new QTimer(this))
@@ -238,11 +238,9 @@ HqcMainWindow::~HqcMainWindow()
   ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 }
 
-void HqcMainWindow::setReinserter(HqcReinserter* r, const QString& u)
+void HqcMainWindow::setReinserter(HqcReinserter* r)
 {
-  userName = u;
-  reinserter = r;
-  kda->setReinserter(reinserter);
+  kda->setReinserter(r);
 }
 
 void HqcMainWindow::startup(const QString& captionSuffix)
@@ -259,12 +257,6 @@ void HqcMainWindow::startup(const QString& captionSuffix)
   show();
   checkVersionSettings();
   qApp->processEvents();
-  if (not reinserter) {
-    mHints->addHint(tr("<h1>Authentication</h1>"
-            "You are not registered as operator! "
-            "You can see the data list, error log and error list, "
-            "but you cannot make changes in the kvalobs database!"));
-  }
 
   statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
   mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
@@ -685,6 +677,11 @@ void HqcMainWindow::onRedoChanges()
 
 void HqcMainWindow::onSaveChanges()
 {
+  if (not kda->hasReinserter()) {
+    QString userName = "?";
+    HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
+    kda->setReinserter(r);
+  }
   if (not eda->sendChangesToParent()) {
     QMessageBox::critical(this, tr("HQC - Saving data"),
         tr("Sorry, your changes could not be saved!"),

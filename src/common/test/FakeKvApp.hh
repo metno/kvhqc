@@ -12,7 +12,6 @@ namespace kvservice {
 class KvGetDataReceiver;
 class WhichDataHelper;
 }
-class FakeReinserter;
 
 class FakeKvApp : public kvservice::KvApp
 {
@@ -93,7 +92,6 @@ public:
     std::list<kvalobs::kvParam>  mKvParams;
     std::list<kvalobs::kvStation> mKvStations;
     std::list<kvalobs::kvObsPgm> mObsPgm;
-    FakeReinserter* mFakeReinserter;
     KvalobsAccessPtr kda;
 
 private:

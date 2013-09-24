@@ -80,10 +80,7 @@ public:
 
   void startup(const QString& captionSuffix);
 
-  HqcReinserter* getReinserter()
-    { return reinserter; }
-
-  void setReinserter(HqcReinserter* r, const QString& userName);
+  void setReinserter(HqcReinserter* r);
 
 protected:
   void moveEvent(QMoveEvent* event);
@@ -160,12 +157,8 @@ private:
 
   listType lity;
 
-  HqcReinserter* reinserter;
-
   /// True after first time ListOk() have been invoked with valid input
   bool listExist;
-
-  QString userName;
 
   std::auto_ptr<Ui::HqcMainWindow> ui;
   QSplitter* mAutoViewSplitter;

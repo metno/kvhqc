@@ -31,9 +31,9 @@ public:
 
   typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
   void setReinserter(Reinserter_t* reinserter)
-    { mDataReinserter = reinserter; }
+    { mDataReinserter.reset(reinserter); }
   bool hasReinserter() const
-    { return (mDataReinserter != 0); }
+    { return (mDataReinserter.get() != 0); }
 
   /*! Emitted when fetching data. The first parameter is number of
    *  stations to fetch data for, where fetching has finished. The
@@ -57,7 +57,7 @@ private:
   typedef std::map<int, FetchedTimes_t> Fetched_t;
   Fetched_t mFetched;
   
-  Reinserter_t* mDataReinserter;
+  std::auto_ptr<Reinserter_t> mDataReinserter;
 
   int mCountStationsToFetch;
   int mCountFetchedStations;
