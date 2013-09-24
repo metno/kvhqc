@@ -46,6 +46,7 @@ class QAction;
 class QLabel;
 class QMdiArea;
 class QMdiSubWindow;
+class QProgressDialog;
 class QSplitter;
 class QTimer;
 QT_END_NAMESPACE
@@ -147,6 +148,8 @@ private:
   void readSettings();
   void checkVersionSettings();
 
+  void onKvalobsFetchingData(int total, int ready);
+
 private:
   ListDialog* lstdlg;
   DianaShowDialog* dshdlg;
@@ -181,6 +184,8 @@ private:
   std::auto_ptr<HqcDianaHelper> mDianaHelper;
 
   QLabel* mKvalobsAvailable;
+
+  QProgressDialog* mProgressDialog;
 
   AutoDataList* mAutoDataList;
   TimeSeriesView* mTimeSeriesView;

@@ -36,6 +36,7 @@ private:
 
 KvalobsAccess::KvalobsAccess()
   : mDataReinserter(0)
+  , mLastFetchedStationId(-1)
 {
 }
 
@@ -101,7 +102,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
 
   kvservice::WhichDataHelper whichData;
   const FetchedTimes_t limits_set(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
-  bool empty = true;
+  std::set<int> stationids;
   BOOST_FOREACH(const Sensor& s, sensors) {
     if (not s.valid()) {
       HQC_LOG_ERROR("invalid sensor: " << s);
@@ -111,7 +112,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
     if (f == mFetched.end()) {
       METLIBS_LOG_DEBUG("request for station " << s.stationId << " time " << limits);
       whichData.addStation(s.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
-      empty = false;
+      stationids.insert(s.stationId);
     } else {
       FetchedTimes_t fetched_in_limits;
       boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
@@ -119,15 +120,20 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
       BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
         METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeRange(t.lower(), t.upper()));
         whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
-        empty = false;
+        stationids.insert(s.stationId);
       }
     }
   }
-  if (empty) {
+  if (stationids.empty()) {
     METLIBS_LOG_DEBUG("empty for sensors " << sensorString(sensors)
         << " and time " << limits);
     return;
   }
+
+  mLastFetchedStationId = -1;
+  mCountStationsToFetch = stationids.size();
+  mCountFetchedStations = 0;
+  /*emit*/ signalFetchingData(mCountStationsToFetch, 0);
 
   kvalobsdata_helpers::GetData get(*this);
   try {
@@ -147,6 +153,8 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
     HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
         << " and time " << limits);
   }
+
+  /*emit*/ signalFetchingData(0, 0);
 }
 
 bool KvalobsAccess::isFetched(int stationId, const timeutil::ptime& t) const
@@ -177,8 +185,17 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
   METLIBS_LOG_TIME();
   BOOST_FOREACH(kvservice::KvObsData& od, dl) {
     METLIBS_LOG_DEBUG(LOGVAL(od.dataList().size()));
-    BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList())
-        receive(kvd, update);
+    BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
+      receive(kvd, update);
+
+      if (mCountStationsToFetch > 0 and kvd.stationID() != mLastFetchedStationId) {
+        mLastFetchedStationId = kvd.stationID();
+        mCountFetchedStations += 1;
+        if (mCountFetchedStations > mCountStationsToFetch)
+          mCountStationsToFetch = mCountFetchedStations;
+        /*emit*/ signalFetchingData(mCountStationsToFetch, mCountFetchedStations);
+      }
+    }
   }
 }
 

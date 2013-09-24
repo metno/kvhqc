@@ -34,6 +34,11 @@ public:
     { mDataReinserter = reinserter; }
   bool hasReinserter() const
     { return (mDataReinserter != 0); }
+
+  /*! Emitted when fetching data. The first parameter is number of
+   *  stations to fetch data for, where fetching has finished. The
+   *  second parameter is the number of stations finished so far. */
+  boost::signal2<void, int, int> signalFetchingData;
   
 protected:
   virtual bool drop(const SensorTime& st);
@@ -53,6 +58,10 @@ private:
   Fetched_t mFetched;
   
   Reinserter_t* mDataReinserter;
+
+  int mCountStationsToFetch;
+  int mCountFetchedStations;
+  int mLastFetchedStationId;
 };
 typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 

@@ -92,6 +92,7 @@
 #include <QtGui/QPixmap>
 #include <QtGui/QPrinter>
 #include <QtGui/QPrintDialog>
+#include <QtGui/QProgressDialog>
 #include <QtGui/QSplitter>
 
 #include <boost/bind.hpp>
@@ -126,6 +127,7 @@ HqcMainWindow::HqcMainWindow()
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(kda))
   , mEditVersions(new EditVersionModel(eda))
+  , mProgressDialog(new QProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))
   , mTimeSeriesView(new TimeSeriesView(this))
 {
@@ -216,10 +218,19 @@ HqcMainWindow::HqcMainWindow()
     
   mHelpDialog = new HelpDialog(this, info);
   mHelpDialog->hide();
+
+  mProgressDialog->setWindowModality(Qt::ApplicationModal);
+  mProgressDialog->setWindowTitle(tr("HQC"));
+  mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
+  mProgressDialog->setCancelButton(0); // cancel is not possible yet
+  mProgressDialog->setMinimumDuration(200);
+  kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 }
 
 HqcMainWindow::~HqcMainWindow()
 {
+  kda->signalFetchingData.disconnect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
+
   mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mExtremesView     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
@@ -570,6 +581,19 @@ void HqcMainWindow::onVersionCheckTimeout()
   }
   // something went wrong when reading the version info file
   HQC_LOG_WARN("error reading hqc_current_version, not renewing timer");
+}
+
+void HqcMainWindow::onKvalobsFetchingData(int total, int ready)
+{
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(total) << LOGVAL(ready));
+  if (total > 0) {
+    mProgressDialog->setMinimum(0);
+    mProgressDialog->setMaximum(total);
+    mProgressDialog->setValue(ready);
+  } else {
+    mProgressDialog->reset();
+  }
 }
 
 void HqcMainWindow::onShowErrorList()
