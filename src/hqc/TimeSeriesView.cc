@@ -170,13 +170,7 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
 
   bool changedTime = false, changedSensors = false;
 
-  if (not mTimeLimits.contains(mSensorTime.time)) {
-    mTimeLimits = ViewChanges::defaultTimeLimits(st);
-    mOriginalTimeLimits = mTimeLimits;
-    changedTime = true;
-  }
-
-  const bool sensorShown = (std::find_if(mSensors.begin(), mSensors.end(), std::bind1st(eq_Sensor(), st.sensor)) != mSensors.end());
+  const bool sensorShown = eq_Sensor()(mSensorTime.sensor, st.sensor);
   METLIBS_LOG_DEBUG(LOGVAL(sensorShown));
   if (not mSensorTime.valid() or not sensorShown) {
     // need to update related parameters and neighbor list
@@ -184,12 +178,20 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
 
     // set original columns
     mSensorTime = st;
+
     mSensors = Sensors_t(1, mSensorTime.sensor);
     Helpers::addNeighbors(mSensors, mSensorTime.sensor, mTimeLimits, MAX_LINES*2);
     mOriginalSensors = mSensors;
 
-    replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
     changedSensors = true;
+  }
+  if (changedSensors or not mTimeLimits.contains(st.time)) {
+    mTimeLimits = ViewChanges::defaultTimeLimits(st);
+    mOriginalTimeLimits = mTimeLimits;
+    changedTime = true;
+  }
+  if (changedSensors) {
+    replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
   }
 
   if (changedSensors or changedTime)
