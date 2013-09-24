@@ -102,6 +102,10 @@ bool checkErrorHQC2013(const EditDataPtr obs)
   if (fr == 2 or fr == 3)
     return true;
 
+  const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+  if (fmis == 3)
+    return true;
+
   return false;
 }
 
