@@ -489,11 +489,6 @@ void HqcMainWindow::errListMenu()
   listMenu(erLi);
 }
 
-void HqcMainWindow::errLogMenu()
-{
-  listMenu(erLo);
-}
-
 void HqcMainWindow::allListMenu()
 {
   listMenu(alLi);

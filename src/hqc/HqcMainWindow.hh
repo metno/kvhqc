@@ -97,7 +97,6 @@ Q_SIGNALS:
 private Q_SLOTS:
   void errListMenu();
   void allListMenu();
-  void errLogMenu();
   void dataListMenu();
   void errLisaMenu();
   void allListSalenMenu();
@@ -141,7 +140,7 @@ private:
   void navigateTo(const SensorTime& st);
   void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
-  enum listType {erLi, erLo, daLi, erSa, alLi, alSa, dumLi};
+  enum listType {erLi, daLi, erSa, alLi, alSa, dumLi};
   void listMenu(listType lt);
 
   void writeSettings();

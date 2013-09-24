@@ -71,7 +71,6 @@
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorDataSalen"/>
     <addaction name="actionErrorList"/>
-    <addaction name="actionErrorLog"/>
     <addaction name="dataListAction"/>
     <addaction name="actionErrorListSalen"/>
     <addaction name="separator"/>
@@ -275,14 +274,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+F</string>
-   </property>
-  </action>
-  <action name="actionErrorLog">
-   <property name="text">
-    <string>E&amp;rror log</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="dataListAction">
@@ -510,22 +501,6 @@
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>errListMenu()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionErrorLog</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>errLogMenu()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -873,7 +848,6 @@
   <slot>showPos()</slot>
   <slot>allListMenu()</slot>
   <slot>errListMenu()</slot>
-  <slot>errLogMenu()</slot>
   <slot>dataListMenu()</slot>
   <slot>errLisaMenu()</slot>
   <slot>showWatchRR()</slot>
