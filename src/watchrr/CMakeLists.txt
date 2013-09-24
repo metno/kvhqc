@@ -33,9 +33,6 @@ QT4_WRAP_UI(watchrr_UIH
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-add_translated(${watchrr_SOURCES})
-SET(FILES_TO_TRANSLATE ${FILES_TO_TRANSLATE} "${watchrr_UIS_H}" PARENT_SCOPE)
-
 ADD_LIBRARY(watchrr
   ${watchrr_SOURCES} 
   ${watchrr_MOC}

@@ -50,9 +50,9 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     installTranslations("qUtilities", "/usr/share/metlibs/translations");
     
     const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
-    installTranslations("watchrr2", langDir);
-    installTranslations("weather",  langDir);
-    installTranslations("hqc",      langDir);
+    installTranslations("watchrr", langDir);
+    installTranslations("weather", langDir);
+    installTranslations("hqc",     langDir);
 
     QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
     setWindowIcon(QIcon("icons:hqc_logo.svg"));

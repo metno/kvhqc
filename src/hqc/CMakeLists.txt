@@ -31,8 +31,6 @@ QT4_ADD_TRANSLATION(hqc_QM
   hqc_nb.ts
   hqc_de.ts
 )
-INSTALL(FILES ${hqc_QM}
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
 
 QT4_WRAP_CPP(hqc_MOC
   AutoDataList.hh
@@ -121,3 +119,6 @@ TARGET_LINK_LIBRARIES(hqc_offline
   test_common
   ${HQC_COMMON_LIBS}
 )
+
+INSTALL(FILES ${hqc_QM}
+  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
