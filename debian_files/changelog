@@ -1,3 +1,10 @@
+kvhqc (3.1.4-1) unstable; urgency=low
+
+  * fixed WatchRR translations
+  * removed ObsSubscription
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 24 Sep 2013 17:58:13 +0200
+
 kvhqc (3.1.3-1) unstable; urgency=low
 
   * some small improvements in TimeSeriesView
