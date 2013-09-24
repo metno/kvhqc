@@ -52,8 +52,6 @@ void JumpToObservation::accept()
   if (not st.valid())
     return;
 
-  const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
-  mDA->addSubscription(sub);
   if (mDA->find(st)) {
     QDialog::accept();
     /*emit*/ signalNavigateTo(st);
@@ -65,7 +63,6 @@ void JumpToObservation::accept()
     msg.setDefaultButton(QMessageBox::Retry);
     msg.exec();
   }
-  mDA->removeSubscription(sub);
 }
 
 SensorTime JumpToObservation::selectedSensorTime() const

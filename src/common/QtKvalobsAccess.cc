@@ -30,35 +30,9 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
   nextData(*data, true);
 }
 
-void QtKvalobsAccess::addSubscription(const ObsSubscription& s)
+void QtKvalobsAccess::newStationWithData(int)
 {
-  KvalobsAccess::addSubscription(s);
-
-  SubscribedStations_t::iterator it = mSubscribedStations.find(s.stationId());
-  if (it == mSubscribedStations.end()) {
-    mSubscribedStations.insert(std::make_pair(s.stationId(), 1));
-    reSubscribe();
-  } else {
-    it->second += 1;
-  }
-}
-
-void QtKvalobsAccess::removeSubscription(const ObsSubscription& s)
-{
-  KvalobsAccess::removeSubscription(s);
-
-  SubscribedStations_t::iterator it = mSubscribedStations.find(s.stationId());
-  if (it == mSubscribedStations.end()) {
-    HQC_LOG_ERROR("station " << s.stationId() << " has no subscribtions, cannot unsubscribe");
-    return;
-  }
-
-  int& count = it->second;
-  count -= 1;
-  if (count == 0) {
-    mSubscribedStations.erase(it);
-    reSubscribe();
-  }
+  reSubscribe();
 }
 
 void QtKvalobsAccess::reSubscribe()
@@ -76,13 +50,14 @@ void QtKvalobsAccess::doReSubscribe()
     mKvServiceSubscriberID = "";
   }
   
-  if (not mSubscribedStations.empty()) {
+  if (not mStationsWithData.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
     {
       METLIBS_LOG_TIME();
-      METLIBS_LOG_DEBUG(LOGVAL(mSubscribedStations.size()));
-      BOOST_FOREACH(int sid, boost::adaptors::keys(mSubscribedStations))
-          dataSubscription.addStationId(sid);
+      METLIBS_LOG_DEBUG(LOGVAL(mStationsWithData.size()));
+      BOOST_FOREACH(int sid, mStationsWithData) {
+        dataSubscription.addStationId(sid);
+      }
     }
     {
       METLIBS_LOG_TIME();

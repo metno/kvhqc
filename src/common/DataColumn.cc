@@ -22,14 +22,12 @@ DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& 
   , mItem(item)
   , mHeaderShowStation(true)
 {
-    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
-    mDA->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
+  mDA->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
 }
 
 DataColumn::~DataColumn()
 {
-    mDA->obsDataChanged.disconnect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
-    mDA->removeSubscription(ObsSubscription(mSensor.stationId, mTime));
+  mDA->obsDataChanged.disconnect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
@@ -97,30 +95,22 @@ EditDataPtr DataColumn::getObs(const timeutil::ptime& time) const
 
 void DataColumn::setTimeRange(const TimeRange& tr)
 {
-    const TimeRange oldTime = mTime;
-    mTime = tr.shifted(mTimeOffset);
-
-    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
-    mDA->removeSubscription(ObsSubscription(mSensor.stationId, oldTime));
+  mTime = tr.shifted(mTimeOffset);
 }
 
 void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
 {
-    const TimeRange oldTime = mTime;
-    mTime.shift(-mTimeOffset);
-    mTimeOffset = timeOffset;
-    mTime.shift(mTimeOffset);
-
-    mDA->addSubscription(ObsSubscription(mSensor.stationId, mTime));
-    mDA->removeSubscription(ObsSubscription(mSensor.stationId, oldTime));
+  mTime.shift(-mTimeOffset);
+  mTimeOffset = timeOffset;
+  mTime.shift(mTimeOffset);
 }
 
 Sensor DataColumn::sensor() const
 {
-    return mSensor;
+  return mSensor;
 }
 
 bool DataColumn::matchSensor(const Sensor& sensorObs) const
 {
-    return mItem->matchSensor(mSensor, sensorObs);
+  return mItem->matchSensor(mSensor, sensorObs);
 }

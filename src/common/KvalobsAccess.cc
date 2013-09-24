@@ -99,11 +99,13 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
     HQC_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
     return;
   }
+  METLIBS_LOG_DEBUG(LOGVAL(limits));
 
   kvservice::WhichDataHelper whichData;
   const FetchedTimes_t limits_set(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
   std::set<int> stationids;
   BOOST_FOREACH(const Sensor& s, sensors) {
+    METLIBS_LOG_DEBUG(LOGVAL(s));
     if (not s.valid()) {
       HQC_LOG_ERROR("invalid sensor: " << s);
       continue;
@@ -117,6 +119,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
       FetchedTimes_t fetched_in_limits;
       boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
       const FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
+      if (to_fetch.empty()) METLIBS_LOG_DEBUG("already have all data for station " << s.stationId);
       BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
         METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeRange(t.lower(), t.upper()));
         whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
@@ -154,6 +157,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
         << " and time " << limits);
   }
 
+  mCountStationsToFetch = 0;
   /*emit*/ signalFetchingData(0, 0);
 }
 
@@ -186,10 +190,20 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
   BOOST_FOREACH(kvservice::KvObsData& od, dl) {
     METLIBS_LOG_DEBUG(LOGVAL(od.dataList().size()));
     BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
+      METLIBS_LOG_DEBUG(LOGVAL(kvd));
+      const int stationId = kvd.stationID();
+      const bool differentStation = (stationId != mLastFetchedStationId);
+
+      if (differentStation) {
+        const std::pair<stations_with_data_t::iterator, bool> ins = mStationsWithData.insert(stationId);
+        if (ins.second)
+          newStationWithData(stationId);
+        mLastFetchedStationId = stationId;
+      }
+
       receive(kvd, update);
 
-      if (mCountStationsToFetch > 0 and kvd.stationID() != mLastFetchedStationId) {
-        mLastFetchedStationId = kvd.stationID();
+      if (differentStation and mCountStationsToFetch > 0) {
         mCountFetchedStations += 1;
         if (mCountFetchedStations > mCountStationsToFetch)
           mCountStationsToFetch = mCountFetchedStations;
@@ -197,6 +211,10 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
       }
     }
   }
+}
+
+void KvalobsAccess::newStationWithData(int)
+{
 }
 
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)

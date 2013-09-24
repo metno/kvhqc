@@ -49,13 +49,10 @@ ExtremesTableModel::ExtremesTableModel(EditAccessPtr eda, const std::vector<Sens
   METLIBS_LOG_SCOPE();
   mDA->obsDataChanged.connect(boost::bind(&ExtremesTableModel::onDataChanged, this, _1, _2));
   BOOST_FOREACH(const SensorTime& st, extremes) {
-    const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
-    mDA->addSubscription(sub);
     EditDataPtr obs = mDA->findE(st);
     if (obs) {
       mExtremes.push_back(obs);
     } else {
-      mDA->removeSubscription(sub);
       HQC_LOG_ERROR("could not retrieve extreme value at " << st);
     }
   }
@@ -63,11 +60,6 @@ ExtremesTableModel::ExtremesTableModel(EditAccessPtr eda, const std::vector<Sens
 
 ExtremesTableModel::~ExtremesTableModel()
 {
-  BOOST_FOREACH(EditDataPtr& obs, mExtremes) {
-    const SensorTime& st = obs->sensorTime();
-    const ObsSubscription sub(st.sensor.stationId, TimeRange(st.time, st.time));
-    mDA->removeSubscription(sub);
-  }
   mDA->obsDataChanged.disconnect(boost::bind(&ExtremesTableModel::onDataChanged, this, _1, _2));
 }
 

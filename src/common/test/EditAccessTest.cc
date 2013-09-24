@@ -225,7 +225,6 @@ TEST(EditAccessTest, UndoRedoNewVersions)
     fa.insertData("2012-12-06 06:00:00", 8.0, 8.0, "0110000000001000", "");
 
     const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
 
     EditDataPtr obs1 = eda->findE(SensorTime(sensor, s2t("2012-12-03 06:00:00")));
@@ -289,7 +288,6 @@ TEST(EditAccessTest, ChangeInParent)
 
     const float OCORR = 2, NCORR = 4;
 
-    fa.kda->addSubscription(ObsSubscription(s.stationId, TimeRange(t0, t0)));
     fa.insertData(s.stationId, s.paramId, s.typeId, "2012-11-09 06:00:00", 2, OCORR);
 
     EditAccessPtr parent = boost::make_shared<EditAccess>(fa.kda);

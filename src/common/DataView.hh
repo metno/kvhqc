@@ -26,15 +26,10 @@ public:
 
 protected:
   virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
-  virtual void subscribeAll(const Sensors_t& sensors, const TimeRange& limits);
-  virtual void unsubscribeAll();
 
 protected:
   EditAccessPtr  mDA;
   ModelAccessPtr mMA;
-
-  typedef std::vector<ObsSubscription> Subscriptions_t;
-  Subscriptions_t mSubscriptions;
 };
 
 #endif // DataView_hh

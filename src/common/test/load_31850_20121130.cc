@@ -58,15 +58,5 @@ void load_31850_20121130(FakeKvApp& fa)
                                            1, 1, 1, 1, 1, 1, 1,
                                            timeutil::to_miTime(timeutil::from_iso_extended_string("2009-02-07 00:00:00")),
                                            timeutil::to_miTime(timeutil::ptime())));
-
-    {
-        const TimeRange t = t_31850_20121130();
-        fa.kda->addSubscription(ObsSubscription(31850, t));
-        fa.kda->addSubscription(ObsSubscription(31900, t));
-        fa.kda->addSubscription(ObsSubscription(32350, t));
-        fa.kda->addSubscription(ObsSubscription(32200, t));
-        fa.kda->addSubscription(ObsSubscription(32850, t));
-        fa.kda->addSubscription(ObsSubscription(31410, t));
-    }
 }
 #endif // !LOAD_DECL_ONLY

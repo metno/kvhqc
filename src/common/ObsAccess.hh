@@ -2,17 +2,14 @@
 #ifndef COMMON_OBSACCESS_HH
 #define COMMON_OBSACCESS_HH 1
 
-#include "ObsSubscription.hh"
 #include "ObsUpdate.hh"
+#include "TimeRange.hh"
 #include <boost/signals.hpp>
 #include <set>
 #include <vector>
 
 /*! Access to observations.
  * This interface allows retrieving, creating, and storing observations.
- *
- * Subscriptions decide which data are actually interesting. Access to
- * non-subscribed data may result in strange behaviour.
  */
 class ObsAccess : public boost::enable_shared_from_this<ObsAccess>, private boost::noncopyable {
 public:
@@ -21,7 +18,6 @@ public:
   typedef std::set<timeutil::ptime> TimeSet;
 
   /*! Make a list of observation times for which observations exist for the given sensors and time limits.
-   * \b IMPORTANT: there must be a subscription for all sensors and times, otherwise behaviour is undefined
    * \param sensors the sensors to look at
    * \param limits the time limits
    * \param a set of times for which observations exist for at least one of the sensors
@@ -50,7 +46,6 @@ public:
   typedef std::set<ObsDataPtr, lt_ObsDataPtr> DataSet;
 
   /*! Fetch all data for the given sensors within the time limits.
-   * \b IMPORTANT: there must be a subscription for all sensors and times, otherwise behaviour is undefined
    */
   virtual DataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits) = 0;
 
@@ -59,16 +54,12 @@ public:
     { return allData(std::vector<Sensor>(1, sensor), limits); }
 
   /*! Find an observation.
-   * \b IMPORTANT: there must be a subscription for this sensor and time, otherwise behaviour is undefined
-   * \sa addSubscription
    * \param st sensor and time to look at
    * \return an observation, or a 0-pointer if no observation is found
    */
   virtual ObsDataPtr find(const SensorTime& st) = 0;
 
   /*! Create an observation.
-   * \b IMPORTANT: there must be a subscription for this sensor and time, otherwise behaviour is undefined
-   * \sa addSubscription
    * \param st sensor and time to look at
    * \return the new observation
    */
@@ -77,12 +68,6 @@ public:
   /*! Apply updates.
    */
   virtual bool update(const std::vector<ObsUpdate>& updates) = 0;
-
-  /*! Add a subscription. It is very important that \c find etc only access subscribed data. */
-  virtual void addSubscription(const ObsSubscription& s) = 0;
-
-  /*! Remove a subscription. */
-  virtual void removeSubscription(const ObsSubscription& s) = 0;
 
 public:
   /*! Different types of observation updates. */

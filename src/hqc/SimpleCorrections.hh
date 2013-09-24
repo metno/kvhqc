@@ -14,7 +14,7 @@ class SimpleCorrections;
 }
 
 class SimpleCorrections : public QWidget, public DataView
-{   Q_OBJECT;
+{ Q_OBJECT;
 public:
   SimpleCorrections(QWidget* parent=0);
   ~SimpleCorrections();

@@ -23,9 +23,6 @@ public:
   virtual ObsDataPtr find(const SensorTime& st);
   virtual ObsDataPtr create(const SensorTime& st);
 
-  virtual void addSubscription(const ObsSubscription& s);
-  virtual void removeSubscription(const ObsSubscription& s);
-
 protected:
   /*! Receive data. Adds to buffer only if subscribed.
    * \param update true if this is an external update
@@ -36,15 +33,7 @@ protected:
 
   bool updatesHaveTasks(const std::vector<ObsUpdate>& updates);
 
-  virtual bool isSubscribed(const SensorTime& st);
-    
 private:
-  typedef std::vector<ObsSubscription> Subscriptions_t;
-  Subscriptions_t mSubscriptions;
-
-  typedef std::map<int, TimeRange> SubscribedTimes_t;
-  SubscribedTimes_t mSubscribedTimes;
-
   typedef std::map<SensorTime, KvalobsDataPtr, lt_SensorTime> Data_t;
   Data_t mData;
 };

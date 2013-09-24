@@ -198,7 +198,6 @@ TEST(AnalyseRR24Test_2, FD3_Dectect)
     load_32780_20121207(fa);
 
     TimeRange editableTime(time);
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     RR24::analyse(eda, sensor, editableTime);
@@ -235,7 +234,6 @@ TEST(AnalyseRR24Test_2, OnlyEndpointRow)
 
     const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
     const std::vector<float> newCorrected(timeR.days()+1, 4.0f);
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
@@ -266,7 +264,6 @@ TEST(AnalyseRR24Test_2, MinimalRedistribute)
 
     const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
     const std::vector<float> newCorrected(timeR.days()+1, 1.0f);
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
@@ -296,7 +293,6 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
     fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
     fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -366,7 +362,6 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles)
     fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
     fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -420,7 +415,6 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles2)
     fa.insertData("2012-10-16 06:00:00",  -32767.0,       1.0, "0000001000007000"); // A->_
     fa.insertData("2012-10-17 06:00:00",       1.0,       1.0, "0110004000008000"); // _->P
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -466,7 +460,6 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
     fa.insertData("2012-09-24 06:00:00",      13.0,      11.1, "0110004000007006", "QC...");
     fa.insertData("2012-09-25 06:00:00",       0.2,       0.2, "0110000000001000", "");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -491,7 +484,6 @@ TEST(AnalyseRR24Test_2, RedistEndDryAsBefore)
     fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
     fa.insertData("2012-09-23 06:00:00",      -1.0,      -1.0, "0000004000004000", "QC...");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -525,7 +517,6 @@ TEST(AnalyseRR24Test_2, RedistEndDryNew)
     fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
     fa.insertData("2012-09-23 06:00:00",       0.0,       0.0, "0000004000004000", "QC...");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -561,7 +552,6 @@ TEST(AnalyseRR24Test_2, QC2_1)
     fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
     const TimeRange time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -590,7 +580,6 @@ TEST(AnalyseRR24Test_2, Accept)
     fa.insertData("2012-12-03 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
     const TimeRange time_all(s2t("2012-11-23 06:00:00"), s2t("2012-12-03 06:00:00"));
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time_all));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
 
@@ -638,7 +627,6 @@ TEST(AnalyseRR24Test_2, CalculateSum)
     fa.insertData("2012-12-05 06:00:00",       -1.0,     -1.0, "0000004000004000", "");
     fa.insertData("2012-12-06 06:00:00",       2.0,       2.0, "0110000000001000", "");
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
 
     const TimeRange timeS1(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));

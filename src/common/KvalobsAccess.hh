@@ -43,6 +43,8 @@ public:
 protected:
   virtual bool drop(const SensorTime& st);
 
+  virtual void newStationWithData(int stationId);
+
 private:
   bool isFetched(int stationid, const timeutil::ptime& t) const;
   void addFetched(int stationid, const TimeRange& t);
@@ -51,7 +53,11 @@ private:
   void findRange(const Sensor& sensor, const TimeRange& limits)
     { findRange(std::vector<Sensor>(1, sensor), limits); }
   void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
-    
+  
+protected:
+  typedef std::set<int> stations_with_data_t;
+  stations_with_data_t mStationsWithData;
+
 private:
   typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
   typedef std::map<int, FetchedTimes_t> Fetched_t;

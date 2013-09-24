@@ -5,51 +5,52 @@
 #include "DataItem.hh"
 #include "EditAccess.hh"
 #include "ObsColumn.hh"
+#include "TimeRange.hh"
 
 class DataColumn : public ObsColumn {
 public:
-    DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataItemPtr item);
-    ~DataColumn();
+  DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataItemPtr item);
+  ~DataColumn();
 
-    void setHeaderShowStation(bool show)
-        { mHeaderShowStation = show; }
+  void setHeaderShowStation(bool show)
+    { mHeaderShowStation = show; }
 
-    virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
-    virtual QVariant data(const timeutil::ptime& time, int role) const;
-    virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
-    virtual QVariant headerData(Qt::Orientation orientation, int role) const;
+  virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
+  virtual QVariant data(const timeutil::ptime& time, int role) const;
+  virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
+  virtual QVariant headerData(Qt::Orientation orientation, int role) const;
 
-    DataItemPtr getItem() const
-        { return mItem; }
-    virtual bool matchSensor(const Sensor& sensorObs) const;
+  DataItemPtr getItem() const
+    { return mItem; }
+  virtual bool matchSensor(const Sensor& sensorObs) const;
 
-    virtual const boost::posix_time::time_duration& timeOffset() const
-        { return mTimeOffset; }
-    void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
+  virtual const boost::posix_time::time_duration& timeOffset() const
+    { return mTimeOffset; }
+  void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
 
-    void setTimeRange(const TimeRange& tr);
+  void setTimeRange(const TimeRange& tr);
 
-    virtual Sensor sensor() const;
-    virtual int type() const
-      { return mItem->type(); }
-
-protected:
-    EditDataPtr getObs(const timeutil::ptime& time) const;
-    SensorTime getSensorTime(const timeutil::ptime& time) const
-        { return SensorTime(mSensor, time + mTimeOffset); }
-
-    virtual bool onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+  virtual Sensor sensor() const;
+  virtual int type() const
+    { return mItem->type(); }
 
 protected:
-    EditAccessPtr mDA;
-    Sensor mSensor;
-    TimeRange mTime;
-    DataItemPtr mItem;
-    bool mHeaderShowStation;
-    boost::posix_time::time_duration mTimeOffset;
+  EditDataPtr getObs(const timeutil::ptime& time) const;
+  SensorTime getSensorTime(const timeutil::ptime& time) const
+    { return SensorTime(mSensor, time + mTimeOffset); }
 
-    typedef std::map<timeutil::ptime, EditDataPtr> ObsCache_t;
-    mutable ObsCache_t mObsCache;
+  virtual bool onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+
+protected:
+  EditAccessPtr mDA;
+  Sensor mSensor;
+  TimeRange mTime;
+  DataItemPtr mItem;
+  bool mHeaderShowStation;
+  boost::posix_time::time_duration mTimeOffset;
+
+  typedef std::map<timeutil::ptime, EditDataPtr> ObsCache_t;
+  mutable ObsCache_t mObsCache;
 };
 
 typedef boost::shared_ptr<DataColumn> DataColumnPtr;

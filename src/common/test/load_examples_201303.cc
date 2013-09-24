@@ -142,28 +142,6 @@ void load_examples_201303(FakeKvApp& fa)
     fa.addObsPgm("1650;39;0;1;402;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1883-01-01 12:00:00;null");
     fa.addObsPgm("1650;37;0;1;402;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1883-01-01 12:00:00;null");
     fa.addObsPgm("1650;110;0;1;402;0;0;0;0;0;0;0;1;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;0;1;1;1;1;1;1;1;1883-01-01 06:00:00;null");
-
-    {
-        const TimeRange t = t_examples_201303();
-        fa.kda->addSubscription(ObsSubscription(18700, t));
-        fa.kda->addSubscription(ObsSubscription(18210, t));
-        fa.kda->addSubscription(ObsSubscription(17980, t));
-        fa.kda->addSubscription(ObsSubscription(13640, t));
-        fa.kda->addSubscription(ObsSubscription(13700, t));
-        fa.kda->addSubscription(ObsSubscription(52640, t));
-        fa.kda->addSubscription(ObsSubscription(1650, t));
-        fa.kda->addSubscription(ObsSubscription(76930, t));
-        fa.kda->addSubscription(ObsSubscription(98360, t));
-        fa.kda->addSubscription(ObsSubscription(99720, t));
-        fa.kda->addSubscription(ObsSubscription(90510, t));
-        fa.kda->addSubscription(ObsSubscription(91130, t));
-        fa.kda->addSubscription(ObsSubscription(7950, t));
-        fa.kda->addSubscription(ObsSubscription(59610, t));
-        fa.kda->addSubscription(ObsSubscription(13150, t));
-        fa.kda->addSubscription(ObsSubscription(14200, t));
-        fa.kda->addSubscription(ObsSubscription(23550, t));
-        fa.kda->addSubscription(ObsSubscription(15730, t));
-    }
 }
 #endif // !LOAD_DECL_ONLY
 

@@ -17,8 +17,8 @@ public:
   QtKvalobsAccess();
   ~QtKvalobsAccess();
 
-  virtual void addSubscription(const ObsSubscription& s);
-  virtual void removeSubscription(const ObsSubscription& s);
+protected:
+  virtual void newStationWithData(int stationId);
 
 private Q_SLOTS:
   void onKvData(kvservice::KvObsDataListPtr data);
@@ -29,9 +29,6 @@ private:
 
 private:
   std::string mKvServiceSubscriberID;
-
-  typedef std::map<int, int> SubscribedStations_t;
-  SubscribedStations_t mSubscribedStations;
 
   QTimer* mResubscribeTimer;
 };

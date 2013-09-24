@@ -36,12 +36,6 @@ public:
 
   virtual bool update(const std::vector<ObsUpdate>& updates);
 
-  virtual void addSubscription(const ObsSubscription& s)
-    { mBackend->addSubscription(s); }
-
-  virtual void removeSubscription(const ObsSubscription& s)
-    { mBackend->removeSubscription(s); }
-
   /*! Obtain an editor for the given observation data.
   * \param obs observation data, must belong to this EditAccess object
   */

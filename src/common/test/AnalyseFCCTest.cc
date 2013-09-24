@@ -13,7 +13,6 @@ TEST(AnalyseFCCTest, Basic)
     const TimeRange time(t_44160_20121207());
     load_44160_20121207(fa);
 
-    fa.kda->addSubscription(ObsSubscription(sensor.stationId, time));
     EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     FCC::analyse(eda, sensor, time);

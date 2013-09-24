@@ -61,20 +61,10 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 
 SimpleCorrections::~SimpleCorrections()
 {
-  if (mDA and mSensorTime.valid())
-    mDA->removeSubscription(ObsSubscription(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time)));
 }
 
 void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-  if (mSensorTime.valid() and eda != mDA) {
-    const ObsSubscription sub(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time));
-    if (eda)
-      eda->addSubscription(sub);
-    if (mDA)
-      mDA->removeSubscription(sub);
-  }
-
   DataView::setDataAccess(eda, mda);
 
   mChecksModel.reset(new ChecksTableModel(eda));
@@ -92,13 +82,6 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 
   if (eq_SensorTime()(mSensorTime, st))
     return;
-
-  if (mDA) {
-    if (st.valid())
-      mDA->addSubscription(ObsSubscription(st.sensor.stationId, TimeRange(st.time, st.time)));
-    if (mSensorTime.valid())
-      mDA->removeSubscription(ObsSubscription(mSensorTime.sensor.stationId, TimeRange(mSensorTime.time, mSensorTime.time)));
-  }
 
   const bool changedSensor = (not eq_Sensor()(mSensorTime.sensor, st.sensor));
 
