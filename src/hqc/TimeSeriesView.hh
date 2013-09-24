@@ -37,6 +37,7 @@ private:
   void storeChanges();
 
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  void setTimeRange(const TimeRange& t);
 
   static void initalizePlotOptions();
 

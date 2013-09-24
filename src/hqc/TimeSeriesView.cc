@@ -76,6 +76,8 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
   ui->timeFrom->setDateTime(f);
   ui->timeTo->setDateTime(t);
+  ui->timeFrom->setCurrentSection(QDateTimeEdit::HourSection);
+  ui->timeTo  ->setCurrentSection(QDateTimeEdit::HourSection);
 
   // TODO improve plot options
   initalizePlotOptions();
@@ -331,6 +333,8 @@ void TimeSeriesView::replay(const std::string& changesText)
     METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
   }
   mTimeLimits = newTimeLimits;
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
 
   bool changed = (mSensors.size() != mOriginalSensors.size())
       or mTimeLimits != mOriginalTimeLimits;
@@ -393,6 +397,8 @@ void TimeSeriesView::onActionResetColumns()
   mTimeLimits = mOriginalTimeLimits;
   mSensors = mOriginalSensors;
   mColumnReset->setEnabled(false);
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
   updateSensors();
 }
 
@@ -402,19 +408,34 @@ void TimeSeriesView::onRadioPlot()
   updatePlot();
 }
 
-void TimeSeriesView::onDateFromChanged(const QDateTime&)
+void TimeSeriesView::setTimeRange(const TimeRange& t)
 {
-  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
-  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
-  mTimeLimits = TimeRange(stime, etime);
+  if (t == mTimeLimits)
+    return;
 
+  mTimeLimits = t;
   DataView::setSensorsAndTimes(mSensors, mTimeLimits);
   updatePlot();
 }
 
-void TimeSeriesView::onDateToChanged(const QDateTime& qdt)
+void TimeSeriesView::onDateFromChanged(const QDateTime&)
 {
-  onDateFromChanged(qdt);
+  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
+  if (stime == mTimeLimits.t0())
+    return;
+
+  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
+  setTimeRange(TimeRange(stime, etime));
+}
+
+void TimeSeriesView::onDateToChanged(const QDateTime&)
+{
+  const timeutil::ptime etime = timeutil::from_QDateTime(ui->timeTo  ->dateTime());
+  if (etime == mTimeLimits.t1())
+    return;
+
+  const timeutil::ptime stime = timeutil::from_QDateTime(ui->timeFrom->dateTime());
+  setTimeRange(TimeRange(stime, etime));
 }
 
 void TimeSeriesView::updatePlot()
