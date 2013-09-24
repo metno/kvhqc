@@ -1,3 +1,11 @@
+kvhqc (3.1.2-1) unstable; urgency=low
+
+  * progress dialog while fetching data from kvalobs/kvServiced
+  * removed defunct "error log" option
+  * added fmis=3 to error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 24 Sep 2013 10:34:30 +0200
+
 kvhqc (3.1.1-1) unstable; urgency=low
 
   * added an icon again
