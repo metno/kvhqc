@@ -81,8 +81,15 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       "   AND " << exists_in_obspgm("dd") <<
       "   AND (substr(dd.useinfo,3,1) IN ('0','1','2')"
       "        OR (substr(dd.useinfo,3,1) = '3' AND dd.original = dd.corrected))"
-      "   AND " << c_obstime.str() <<
-      " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
+      "   AND " << c_obstime.str();
+
+  // exclude some special values (no measurement, no snow, no rain, ...)
+  if (paramid == kvalobs::PARAMID_RR_24)
+    sql << "   AND dd.corrected != -1";
+  else if (paramid == kvalobs::PARAMID_SA)
+    sql << "   AND dd.corrected != -3 AND dd.corrected != -1 AND dd.corrected != 0";
+
+  sql << " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<
       "   AND " << exists_in_obspgm("d") <<
       " ORDER BY corrected " << ordering << ", stationid, obstime";
