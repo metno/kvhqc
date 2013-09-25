@@ -16,6 +16,20 @@
 #define MILOGGER_CATEGORY "kvhqc.FindExtremeValues"
 #include "common/ObsLogging.hh"
 
+namespace /*anonymous*/ {
+std::string exists_in_obspgm(const std::string& data_alias, const std::string& obs_pgm_alias = "o")
+{
+  const std::string &d = data_alias, &o = obs_pgm_alias;
+  std::ostringstream out;
+  out << "EXISTS (SELECT * FROM obs_pgm AS " << o << " WHERE " << o << ".stationid = " << d << ".stationid"
+      " AND " << o << ".paramid = " << d << ".paramid"
+      " AND " << o << ".typeid  = " << d << ".typeid"
+      " AND " << o << ".fromtime <= " << d << ".obstime"
+      " AND (" << o << ".totime IS NULL OR " << o << ".totime >= " << d << ".obstime))";
+  return out.str();
+}
+} // namespace anonymous
+
 namespace Extremes {
 
 std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
@@ -58,17 +72,19 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
             << "' AND obstime <= '" << timeutil::to_iso_extended_string(tLimits.t1()) << "'";
 
   std::ostringstream sql;
-  sql << "SELECT stationid,paramid,level,sensor,typeid,obstime,original,corrected,controlinfo,cfailed FROM data,"
-      "  (SELECT stationid AS s, " << function << "(corrected) AS c FROM data"
-      "   WHERE stationid BETWEEN 60 AND 100000";
+  sql << "SELECT stationid,paramid,level,sensor,typeid,obstime,original,corrected,controlinfo,cfailed FROM data AS d,"
+      "  (SELECT dd.stationid AS s, " << function << "(dd.corrected) AS c FROM data AS dd"
+      "   WHERE dd.stationid BETWEEN 60 AND 100000";
   if (not excludedIds.empty())
-    sql << " AND stationid NOT IN (" << excludedIds << ")";
-  sql << "   AND paramid IN (" << paramids.str() << ")"
-      "   AND (substr(useinfo,3,1) IN ('0','1','2')"
-      "        OR (substr(useinfo,3,1) = '3' AND original = corrected))"
+    sql << " AND dd.stationid NOT IN (" << excludedIds << ")";
+  sql << "   AND dd.paramid IN (" << paramids.str() << ")"
+      "   AND " << exists_in_obspgm("dd") <<
+      "   AND (substr(dd.useinfo,3,1) IN ('0','1','2')"
+      "        OR (substr(dd.useinfo,3,1) = '3' AND dd.original = dd.corrected))"
       "   AND " << c_obstime.str() <<
       " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<
+      "   AND " << exists_in_obspgm("d") <<
       " ORDER BY corrected " << ordering << ", stationid, obstime";
   METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
