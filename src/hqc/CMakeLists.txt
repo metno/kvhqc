@@ -10,6 +10,7 @@ SET(hqc_SOURCES
   ErrorListTableModel.cc
   ExtremesTableModel.cc
   ExtremesView.cc
+  MissingView.cc
   GetTextData.cc
   HqcDianaHelper.cc
   HqcMainWindow.cc
@@ -42,6 +43,7 @@ QT4_WRAP_CPP(hqc_MOC
   ErrorList.hh
   ErrorListTableModel.hh
   ExtremesView.hh
+  MissingView.hh
   HqcDianaHelper.hh
   HqcMainWindow.hh
   JumpToObservation.hh
