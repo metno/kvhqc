@@ -65,9 +65,10 @@ private:
   
   std::auto_ptr<Reinserter_t> mDataReinserter;
 
-  int mCountStationsToFetch;
-  int mCountFetchedStations;
+  int mCountHoursToFetch;
+  int mCountFetchedHours;
   int mLastFetchedStationId;
+  int mLastFetchedObsHour;
 };
 typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 

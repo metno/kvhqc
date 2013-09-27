@@ -37,6 +37,7 @@ private:
 KvalobsAccess::KvalobsAccess()
   : mDataReinserter(0)
   , mLastFetchedStationId(-1)
+  , mLastFetchedObsHour(-1)
 {
 }
 
@@ -101,6 +102,8 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
   }
   METLIBS_LOG_DEBUG(LOGVAL(limits));
 
+  mCountHoursToFetch = 0;
+  mCountFetchedHours = 0;
   kvservice::WhichDataHelper whichData;
   const FetchedTimes_t limits_set(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
   std::set<int> stationids;
@@ -115,15 +118,18 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
       METLIBS_LOG_DEBUG("request for station " << s.stationId << " time " << limits);
       whichData.addStation(s.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
       stationids.insert(s.stationId);
+      mCountHoursToFetch += limits.hours();
     } else {
       FetchedTimes_t fetched_in_limits;
       boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
       const FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
       if (to_fetch.empty()) METLIBS_LOG_DEBUG("already have all data for station " << s.stationId);
       BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
-        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeRange(t.lower(), t.upper()));
-        whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
+        const TimeRange interval(t.lower(), t.upper());
+        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << interval);
+        whichData.addStation(s.stationId, timeutil::to_miTime(interval.t0()), timeutil::to_miTime(interval.t1()));
         stationids.insert(s.stationId);
+        mCountHoursToFetch += interval.hours();
       }
     }
   }
@@ -134,9 +140,8 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
   }
 
   mLastFetchedStationId = -1;
-  mCountStationsToFetch = stationids.size();
-  mCountFetchedStations = 0;
-  /*emit*/ signalFetchingData(mCountStationsToFetch, 0);
+  mLastFetchedObsHour = -1;
+  /*emit*/ signalFetchingData(mCountHoursToFetch, 0);
 
   kvalobsdata_helpers::GetData get(*this);
   try {
@@ -157,7 +162,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
         << " and time " << limits);
   }
 
-  mCountStationsToFetch = 0;
+  mCountHoursToFetch = 0;
   /*emit*/ signalFetchingData(0, 0);
 }
 
@@ -191,23 +196,25 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
     METLIBS_LOG_DEBUG(LOGVAL(od.dataList().size()));
     BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
       METLIBS_LOG_DEBUG(LOGVAL(kvd));
-      const int stationId = kvd.stationID();
-      const bool differentStation = (stationId != mLastFetchedStationId);
+      const int stationId = kvd.stationID(), hour = kvd.obstime().time_of_day().hours();
+      const bool differentS = (stationId != mLastFetchedStationId), differentH =(hour != mLastFetchedObsHour);
 
-      if (differentStation) {
+      if (differentS) {
         const std::pair<stations_with_data_t::iterator, bool> ins = mStationsWithData.insert(stationId);
         if (ins.second)
           newStationWithData(stationId);
         mLastFetchedStationId = stationId;
       }
+      if (differentH)
+        mLastFetchedObsHour = hour;
 
       receive(kvd, update);
 
-      if (differentStation and mCountStationsToFetch > 0) {
-        mCountFetchedStations += 1;
-        if (mCountFetchedStations > mCountStationsToFetch)
-          mCountStationsToFetch = mCountFetchedStations;
-        /*emit*/ signalFetchingData(mCountStationsToFetch, mCountFetchedStations);
+      if ((differentS or differentH) and mCountHoursToFetch > 0) {
+        mCountFetchedHours += 1;
+        if (mCountFetchedHours > mCountHoursToFetch)
+          mCountHoursToFetch = mCountFetchedHours+1;
+        /*emit*/ signalFetchingData(mCountHoursToFetch, mCountFetchedHours);
       }
     }
   }
