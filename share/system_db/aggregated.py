@@ -25,6 +25,10 @@ def update(sdb):
     add_agg(sdb, "RR_1", "RR_12");
     add_agg(sdb, "RR_1", "RR_24");
     add_agg(sdb, "RR_12", "RR_24");
+    # bucket contents converted to precipitation
+    add_agg(sdb, "RA", "RR_1");
+    add_agg(sdb, "RA", "RR_12");
+    add_agg(sdb, "RA", "RR_24");
 
     ## aggregared sunshine time
     add_agg(sdb, "OT_1", "OT_24");
