@@ -246,12 +246,12 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
     const bool inserted = obs->isCreated();
         
     kvalobs::kvData& d = obs->data();
-    if (inserted and d.corrected() == kvalobs::NEW_ROW) {
+    if (inserted and (ou.corrected == kvalobs::NEW_ROW or d.corrected() != kvalobs::NEW_ROW)) {
       HQC_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());
       continue;
     }
     if (inserted and not d.cfailed().empty()) {
-      HQC_LOG_WARN("inserting row with non-empty cfailed: " << obs->sensorTime());
+      HQC_LOG_WARN("inserting new row with non-empty cfailed: " << obs->sensorTime());
     }
 
     if (not Helpers::float_eq()(d.corrected(), ou.corrected))
