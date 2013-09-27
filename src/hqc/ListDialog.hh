@@ -55,56 +55,58 @@ class ListDialog;
 class ListDialog : public QDialog
 { Q_OBJECT;
 public:
-    ListDialog(HqcMainWindow* parent);
-    ~ListDialog();
+  ListDialog(HqcMainWindow* parent);
+  ~ListDialog();
     
-    TimeRange getTimeRange() const;
+  TimeRange getTimeRange() const;
     
-    std::vector<int> getSelectedStations();
-    std::vector<int> getSelectedParameters();
+  std::vector<int> getSelectedStations();
+  std::vector<int> getSelectedParameters();
     
-    void saveSettings(QSettings& settings);
-    void restoreSettings(QSettings& settings);
+  void saveSettings(QSettings& settings);
+  void restoreSettings(QSettings& settings);
 
 private Q_SLOTS:
-    void onSetRecentTimes();
+  void onSetRecentTimes();
 
-    void showParamGroup(const QString& paramGroup);
-    void selectParameters();
-    void deselectParameters();
-    void selectAllParameters();
-    void deselectAllParameters();
+  void showParamGroup(const QString& paramGroup);
+  void selectParameters();
+  void deselectParameters();
+  void selectAllParameters();
+  void deselectAllParameters();
+  void addParameter2Click(const QModelIndex& index);
+  void delParameter2Click(const QModelIndex& index);
 
-    void onSaveSettings();
-    void onRestoreSettings();
+  void onSaveSettings();
+  void onRestoreSettings();
 
   void onItemChanged(QStandardItem* item);
 
 Q_SIGNALS:
-    void ListHide();
-    void ListApply();
+  void ListHide();
+  void ListApply();
 
 private:
-    void enableButtons();
+  void enableButtons();
 
-    void setupStationTab();
-    void setupParameterTab();
+  void setupStationTab();
+  void setupParameterTab();
 
-    QStringList getSelectedCounties();
-    void setSelectedCounties(const QStringList& c);
+  QStringList getSelectedCounties();
+  void setSelectedCounties(const QStringList& c);
 
-    void doSaveSettings(QSettings& settings);
-    void doRestoreSettings(QSettings& settings);
+  void doSaveSettings(QSettings& settings);
+  void doRestoreSettings(QSettings& settings);
 
 private:
-    std::auto_ptr<Ui::ListDialog> ui;
-    std::auto_ptr<QStandardItemModel> mStationModel;
+  std::auto_ptr<Ui::ListDialog> ui;
+  std::auto_ptr<QStandardItemModel> mStationModel;
 
-    std::map<QString, std::vector<int> > mParameterGroups;
-    std::auto_ptr<ParamIdModel> mParamAvailableModel;
-    std::auto_ptr<ParamIdModel> mParamSelectedModel;
+  std::map<QString, std::vector<int> > mParameterGroups;
+  std::auto_ptr<ParamIdModel> mParamAvailableModel;
+  std::auto_ptr<ParamIdModel> mParamSelectedModel;
 
-    TimeRangeControl* mTimeControl;
+  TimeRangeControl* mTimeControl;
 
   bool mIsInToggle;
 };
