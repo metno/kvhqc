@@ -24,7 +24,7 @@ Architecture: any
 Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
 @metno_config_if ^lucid$
 @metno_config_else
- libkvcpp4 (>= 2.7.0~rc5),
+ libkvcpp4 (>= 2.7.1-2),
 @metno_config_endif
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: diana, dianaconfig, catchcrash,
