@@ -53,6 +53,11 @@ DataList::DataList(QWidget* parent)
   ui->table->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui->table->setItemDelegate(new ObsDelegate(this));
 
+  ui->comboTimeStep->addItem(tr("none"), QVariant(       0));
+  ui->comboTimeStep->addItem(tr("1 h"),  QVariant(   60*60));
+  ui->comboTimeStep->addItem(tr("12 h"), QVariant(12*60*60));
+  ui->comboTimeStep->addItem(tr("24 h"), QVariant(24*60*60));
+
   connect(ui->table, SIGNAL(currentChanged(const QModelIndex&)),
       this, SLOT(currentChanged(const QModelIndex&)));
 }
@@ -104,6 +109,7 @@ void DataList::currentChanged(const QModelIndex& current)
 void DataList::updateModel(DataListModel* newModel)
 {
   mTableModel.reset(newModel);
+  onTimeStepChanged(ui->comboTimeStep->currentIndex());
   ui->table->setModel(mTableModel.get());
   connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -113,6 +119,18 @@ void DataList::updateModel(DataListModel* newModel)
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
+}
+
+void DataList::onTimeStepChanged(int index)
+{
+  if (mTableModel.get()) {
+    int step;
+    if (index < 0)
+      step = 0;
+    else
+      step = ui->comboTimeStep->itemData(index).toInt();
+    mTableModel->setTimeStep(step);
+  }
 }
 
 void DataList::onButtonSaveAs()

@@ -11,7 +11,7 @@
 #include "util/HqcLogging.hh"
 
 DataListModel::DataListModel(EditAccessPtr eda, const TimeRange& limits)
-  : ObsTableModel(eda, limits)
+  : ObsTableModel(eda, limits, 0)
   , mCenter(0)
 {
 }
@@ -63,6 +63,8 @@ void DataListModel::removeColumn(int at)
 
 timeutil::ptime DataListModel::timeAtRow(int row) const
 {
+  if (getTimeStep() > 0)
+    return ObsTableModel::timeAtRow(row);
   return mTimes.at(row);
 }
 
@@ -86,6 +88,9 @@ QModelIndexList DataListModel::findIndexes(const SensorTime& st)
 
 int DataListModel::rowAtTime(const timeutil::ptime& time) const
 {
+  if (getTimeStep() > 0)
+    return ObsTableModel::rowAtTime(time);
+
   Times_t::const_iterator it = std::lower_bound(mTimes.begin(), mTimes.end(), time);
   if (it == mTimes.end() or *it != time)
     return -1;
@@ -94,10 +99,9 @@ int DataListModel::rowAtTime(const timeutil::ptime& time) const
 
 int DataListModel::rowOrColumnCount(bool timeDirection) const
 {
-  if (timeDirection == mTimeInRows)
+  if (timeDirection == mTimeInRows and getTimeStep() <= 0)
     return mTimes.size();
-  else
-    return ObsTableModel::rowOrColumnCount(timeDirection);
+  return ObsTableModel::rowOrColumnCount(timeDirection);
 }
 
 QVariant DataListModel::headerData(int section, Qt::Orientation orientation, int role) const

@@ -64,3 +64,18 @@ TEST(TimeRangeTest, Undef)
   EXPECT_TRUE(TimeRange().undef());
 }
 
+TEST(TimeRangeTest, Duration)
+{
+  EXPECT_EQ(61, t1.days());
+
+  const TimeRange t_90m(s2t("2012-10-01 00:00:00"), s2t("2012-10-01 01:30:00"));
+  EXPECT_EQ(0,  t_90m.days());
+  EXPECT_EQ(1,  t_90m.hours());
+  EXPECT_EQ(90, t_90m.minutes());
+
+  const TimeRange t_150s(s2t("2012-10-01 00:00:00"), s2t("2012-10-01 00:02:30"));
+  EXPECT_EQ(0,   t_150s.days());
+  EXPECT_EQ(0,   t_150s.hours());
+  EXPECT_EQ(2,   t_150s.minutes());
+  EXPECT_EQ(150, t_150s.seconds());
+}

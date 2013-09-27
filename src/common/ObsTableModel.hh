@@ -11,7 +11,7 @@
 class ObsTableModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  ObsTableModel(EditAccessPtr kda, const TimeRange& time);
+  ObsTableModel(EditAccessPtr kda, const TimeRange& time, int step = (24*60*60));
   virtual ~ObsTableModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -37,6 +37,16 @@ public:
   void addColumn(ObsColumnPtr c)
     { insertColumn(mColumns.size(), c); }
 
+  /*! Set time difference between rows.
+   * \param step time step in seconds
+   */
+  void setTimeStep(int step);
+
+  /*! Get time difference between rows.
+   * \return time step in seconds
+   */
+  int getTimeStep() const
+    { return mTimeStep; }
 
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
@@ -67,6 +77,7 @@ protected:
   EditAccessPtr mDA;
   TimeRange mTime;
   bool mTimeInRows;
+  int mTimeStep; //! time step between rows, in seconds
 
 private:
   ObsColumns_t mColumns;

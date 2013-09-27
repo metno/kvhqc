@@ -13,10 +13,11 @@
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
 #include "util/HqcLogging.hh"
 
-ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time)
+ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time, int step)
   : mDA(da)
   , mTime(time)
   , mTimeInRows(true)
+  , mTimeStep(step)
 {
 }
 
@@ -71,6 +72,16 @@ void ObsTableModel::removeColumn(int at)
   endRemoveC();
 }
 
+void ObsTableModel::setTimeStep(int step)
+{
+  if (mTimeStep == step)
+    return;
+
+  beginResetModel();
+  mTimeStep = step;
+  endResetModel();
+}
+
 int ObsTableModel::rowCount(const QModelIndex&) const
 {
   return rowOrColumnCount(true);
@@ -83,10 +94,13 @@ int ObsTableModel::columnCount(const QModelIndex&) const
 
 int ObsTableModel::rowOrColumnCount(bool timeDirection) const
 {
-  if (timeDirection == mTimeInRows)
-    return mTime.days() + 1;
-  else
+  if (timeDirection == mTimeInRows) {
+    if (mTimeInRows <= 0)
+      return 0;
+    return mTime.seconds() / mTimeStep; // integer division
+  } else {
     return mColumns.size();
+  }
 }
 
 bool ObsTableModel::isTimeOrientation(Qt::Orientation orientation) const
@@ -210,9 +224,24 @@ QVariant ObsTableModel::columnHeader(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
+namespace {
+
+timeutil::ptime findT0(const timeutil::ptime& t0, int timeStep)
+{
+  if (timeStep <= 0)
+    return t0;
+  
+  const timeutil::ptime t = t0 - boost::posix_time::hours(6);
+  const int s = t.time_of_day().total_seconds();
+  const int r = s % timeStep;
+  return t0 - boost::posix_time::seconds(r);
+}
+
+} // namespace anonymous
+
 timeutil::ptime ObsTableModel::timeAtRow(int row) const
 {
-  return mTime.t0() + boost::gregorian::days(row);
+  return findT0(mTime.t0(), mTimeStep) + boost::posix_time::seconds(row * mTimeStep);
 }
 
 SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
@@ -229,7 +258,9 @@ SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
 
 int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
 {
-  const int r = (time - mTime.t0()).hours() / 24;
+  if (mTimeStep <= 0)
+    return -1;
+  const int r = (time - findT0(mTime.t0(), mTimeStep)).seconds() / mTimeStep;
   if (timeAtRow(r) != time)
     return -1;
   else

@@ -218,22 +218,50 @@
     <name>DataList</name>
     <message>
         <location filename="datalist.ui" line="47"/>
+        <source>Time step for times to be shown in the data list.</source>
+        <translation>Tidsskritt for tider i datalisten.</translation>
+    </message>
+    <message>
+        <location filename="datalist.ui" line="67"/>
         <source>Save selected (or all) data to a spreadsheet file in CSV format.</source>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Lagre valgte (eller alle) data som tabell i CSV-format.</translation>
     </message>
     <message utf8="true">
-        <location filename="datalist.ui" line="50"/>
+        <location filename="datalist.ui" line="70"/>
         <source>Save…</source>
         <translation>Lagre…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="120"/>
+        <location filename="DataList.cc" line="56"/>
+        <source>none</source>
+        <translation>uten</translation>
+    </message>
+    <message>
+        <location filename="DataList.cc" line="57"/>
+        <source>1 h</source>
+        <oldsource>1 hour</oldsource>
+        <translation>1 t</translation>
+    </message>
+    <message>
+        <location filename="DataList.cc" line="58"/>
+        <source>12 h</source>
+        <oldsource>12 hours</oldsource>
+        <translation>12 t</translation>
+    </message>
+    <message>
+        <location filename="DataList.cc" line="59"/>
+        <source>24 h</source>
+        <oldsource>24 hours</oldsource>
+        <translation>24 t</translation>
+    </message>
+    <message>
+        <location filename="DataList.cc" line="138"/>
         <source>Save Table</source>
         <translation>Lagre tabellen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="122"/>
+        <location filename="DataList.cc" line="140"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabell (*.csv)</translation>
     </message>
@@ -309,7 +337,7 @@
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="../common/DataListModel.cc" line="136"/>
+        <location filename="../common/DataListModel.cc" line="140"/>
         <source>Distance: %1km</source>
         <translation>Avstand: %1km</translation>
     </message>
@@ -1694,45 +1722,45 @@ Du bruker HQC versjon %1.</translation>
         <translation>Pri</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="279"/>
+        <location filename="ListDialog.cc" line="282"/>
         <source>All in obs pgm</source>
         <translation>Alle i obs pgm</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="288"/>
+        <location filename="ListDialog.cc" line="291"/>
         <source>All defined</source>
         <translation>Alle definerte</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="363"/>
-        <location filename="ListDialog.cc" line="373"/>
+        <location filename="ListDialog.cc" line="366"/>
+        <location filename="ListDialog.cc" line="376"/>
         <source>Save data selection</source>
         <translation>Lagre datavalg</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="364"/>
-        <location filename="ListDialog.cc" line="411"/>
+        <location filename="ListDialog.cc" line="367"/>
+        <location filename="ListDialog.cc" line="414"/>
         <source>Name:</source>
         <translation>Navn:</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="374"/>
+        <location filename="ListDialog.cc" line="377"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
         <translation>Datavalg med navn &apos;%1&apos; finnes.</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="375"/>
+        <location filename="ListDialog.cc" line="378"/>
         <source>Do you want to overwrite it?</source>
         <translation>Ønsker du å lagre og overskrive den?</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="403"/>
-        <location filename="ListDialog.cc" line="410"/>
+        <location filename="ListDialog.cc" line="406"/>
+        <location filename="ListDialog.cc" line="413"/>
         <source>Load data selection</source>
         <translation>Tilbakekalle datavalg</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="404"/>
+        <location filename="ListDialog.cc" line="407"/>
         <source>No saved data selections found.</source>
         <translation>Det finnes ingen lagrete valg.</translation>
     </message>

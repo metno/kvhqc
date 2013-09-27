@@ -33,6 +33,7 @@ public:
   
 private Q_SLOTS:
   void onButtonSaveAs();
+  void onTimeStepChanged(int index);
   virtual void currentChanged(const QModelIndex& current);
   virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 

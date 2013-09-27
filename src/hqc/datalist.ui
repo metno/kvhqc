@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>256</width>
+    <width>373</width>
     <height>223</height>
    </rect>
   </property>
@@ -30,6 +30,26 @@
      </item>
      <item>
       <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QComboBox" name="comboTimeStep">
+       <property name="toolTip">
+        <string>Time step for times to be shown in the data list.</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
        </property>
@@ -80,12 +100,28 @@
    <slot>onButtonSaveAs()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>254</x>
-     <y>19</y>
+     <x>371</x>
+     <y>20</y>
     </hint>
     <hint type="destinationlabel">
-     <x>374</x>
+     <x>372</x>
      <y>15</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboTimeStep</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DataList</receiver>
+   <slot>onTimeStepChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>155</x>
+     <y>9</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>189</x>
+     <y>30</y>
     </hint>
    </hints>
   </connection>
@@ -97,5 +133,6 @@
   <slot>onReject()</slot>
   <slot>onRejectQC2()</slot>
   <slot>onButtonResetColumns()</slot>
+  <slot>onTimeStepChanged(int)</slot>
  </slots>
 </ui>
