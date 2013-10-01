@@ -41,8 +41,16 @@ const int columnTimeOffsets[N_COLUMNS] = {
 MainTableModel::MainTableModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
   : ObsTableModel(da, time)
 {
+  std::vector<Sensor> allSensors;
+  allSensors.reserve(N_COLUMNS);
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
+    allSensors.push_back(s);
+  }
+  da->allData(allSensors, time);
+
+  for(int i=0; i<N_COLUMNS; ++i) {
+    const Sensor& s = allSensors[i];
     DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
     oc->setHeaderShowStation(false);
     if (columnTimeOffsets[i] != 0)

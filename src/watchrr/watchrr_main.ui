@@ -330,8 +330,8 @@
    <slot>onRedistribute()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>239</x>
-     <y>95</y>
+     <x>223</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>171</x>
@@ -346,8 +346,8 @@
    <slot>onEdit()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>130</x>
-     <y>95</y>
+     <x>118</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>149</x>
@@ -362,8 +362,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>898</x>
-     <y>539</y>
+     <x>448</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
      <x>498</x>
@@ -378,8 +378,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>989</x>
-     <y>539</y>
+     <x>535</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
      <x>519</x>
@@ -394,8 +394,8 @@
    <slot>onUndo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>670</x>
-     <y>539</y>
+     <x>232</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
      <x>136</x>
@@ -410,8 +410,8 @@
    <slot>onRedistributeQC2()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>380</x>
-     <y>95</y>
+     <x>360</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>277</x>
@@ -426,8 +426,8 @@
    <slot>onAcceptRow()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>471</x>
-     <y>95</y>
+     <x>447</x>
+     <y>81</y>
     </hint>
     <hint type="destinationlabel">
      <x>348</x>
@@ -458,12 +458,28 @@
    <slot>onRedo()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>719</x>
-     <y>528</y>
+     <x>319</x>
+     <y>305</y>
     </hint>
     <hint type="destinationlabel">
      <x>555</x>
      <y>542</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>tabWidget</sender>
+   <signal>currentChanged(int)</signal>
+   <receiver>DialogMain</receiver>
+   <slot>onCurrentTabChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>422</x>
+     <y>34</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>50</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -477,5 +493,6 @@
   <slot>onShowNeighbors()</slot>
   <slot>onNeighborDataDateChanged(QDate)</slot>
   <slot>onRedo()</slot>
+  <slot>onCurrentTabChanged(int)</slot>
  </slots>
 </ui>

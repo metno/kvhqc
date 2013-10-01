@@ -14,6 +14,7 @@ NeighborTableModel::NeighborTableModel(EditAccessPtr da, const Sensor& sensor, c
     , mNeighbors(1, sensor)
 {
   Helpers::addNeighbors(mNeighbors, sensor, time, 20);
+  da->allData(mNeighbors, time);
   BOOST_FOREACH(const Sensor& s, mNeighbors) {
     DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, ObsColumn::ORIGINAL);
     if (oc)
