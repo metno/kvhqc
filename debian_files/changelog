@@ -1,3 +1,13 @@
+kvhqc (3.1.7-1) unstable; urgency=low
+
+  * filter related parameters by obs_pgm
+  * WatchRR: fetch neighbor when neighbor tab is shown
+  * start editing with empty text
+  * bugfix: show all rows in time range
+  * build-depend on python, depend on libkvcpp4 >= 2.7.1-2
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 01 Oct 2013 15:11:08 +0200
+
 kvhqc (3.1.6-1) unstable; urgency=low
 
   * bugfix: allow inserting data in hqc
