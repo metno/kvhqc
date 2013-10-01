@@ -27,6 +27,7 @@
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcApplication"
+#define M_TIME
 #include "util/HqcLogging.hh"
 
 namespace /* anonymous */ {
@@ -130,16 +131,15 @@ std::string HqcApplication::kvalobsColumnsSensorTime(const std::string& data_ali
           << d << "level,"
           << d << "sensor,"
           << d << "typeid,"
-          << d << "obstime,"
-          << d << "original,"
-          << d << "corrected,"
-          << d << "controlinfo,"
-          << d << "cfailed";
+          << d << "obstime";
   return columns.str();
 }
 
 std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string& sql)
 {
+  METLIBS_LOG_TIME();
+  METLIBS_LOG_DEBUG(sql);
+
   QSqlQuery query(hqcApp->kvalobsDB());
   std::vector<SensorTime> results;
   if (query.exec(QString::fromStdString(sql))) {
