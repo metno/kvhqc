@@ -72,7 +72,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const Ti
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
-std::vector<Sensor> relatedSensors(const SensorTime& st, const std::string& viewType);
+std::vector<Sensor> relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)

@@ -122,7 +122,7 @@ void AutoDataList::generateColumns()
   METLIBS_LOG_SCOPE();
   mColumns = Columns_t();
   
-  const std::vector<Sensor> sensors = Helpers::relatedSensors(mSensorTime, VIEW_TYPE);
+  const std::vector<Sensor> sensors = Helpers::relatedSensors(mSensorTime.sensor, mTimeLimits, VIEW_TYPE);
   BOOST_FOREACH(const Sensor& s, sensors) {
     Column c;
     c.sensor = s;

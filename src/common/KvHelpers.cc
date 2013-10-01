@@ -258,10 +258,9 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
 }
 
 typedef std::vector<Sensor> Sensors_t;
-Sensors_t relatedSensors(const SensorTime& st, const std::string& viewType)
+Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType)
 {
   METLIBS_LOG_TIME();
-  const Sensor& s = st.sensor;
 
   std::vector<int> stationPar, neighborPar;
   int nNeighbors = 8;
@@ -280,7 +279,7 @@ Sensors_t relatedSensors(const SensorTime& st, const std::string& viewType)
       stationPar.push_back(query.value(0).toInt());
   }
 #if 1
-  METLIBS_LOG_DEBUG("found " << stationPar.size() << " station pars for " << LOGVAL(st) << LOGVAL(viewType));
+  METLIBS_LOG_DEBUG("found " << stationPar.size() << " station pars for " << LOGVAL(s) << LOGVAL(time) << LOGVAL(viewType));
   BOOST_FOREACH(int pid, stationPar) {
     METLIBS_LOG_DEBUG(LOGVAL(pid));
   }
@@ -291,16 +290,29 @@ Sensors_t relatedSensors(const SensorTime& st, const std::string& viewType)
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
+  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   Sensors_t sensors;
   Sensor s2(s);
   BOOST_FOREACH(int par, stationPar) {
-    s2.paramId = par;
-    sensors.push_back(s2);
+    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+      if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+        continue;
+      
+      const bool eql = op.paramID() == par;
+      const bool agg = aggregatedParameter(op.paramID(), par);
+      if (eql or agg) {
+        s2.paramId = par;
+        s2.typeId = eql ? op.typeID() : -op.typeID();
+        sensors.push_back(s2);
+        break;
+      }
+    }
   }
+    
   BOOST_FOREACH(int par, neighborPar) {
     Sensor sn(s);
     sn.paramId = par;
-    addNeighbors(sensors, sn, TimeRange(st.time, st.time), nNeighbors);
+    addNeighbors(sensors, sn, time, nNeighbors);
   }
 #if 0
   METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
