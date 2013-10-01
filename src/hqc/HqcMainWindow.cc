@@ -62,8 +62,9 @@
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
 #include "util/gui/BusyIndicator.hh"
-#include "util/gui/QNoCloseMdiSubWindow.hh"
+#include "util/gui/EtaProgressBar.hh"
 #include "util/gui/HintWidget.hh"
+#include "util/gui/QNoCloseMdiSubWindow.hh"
 #include "watchrr/StationDialog.hh"
 #include "watchrr/MainDialog.hh"
 #include "weather/WeatherDialog.hh"
@@ -224,6 +225,7 @@ HqcMainWindow::HqcMainWindow()
   mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
   mProgressDialog->setCancelButton(0); // cancel is not possible yet
   mProgressDialog->setMinimumDuration(4000);
+  mProgressDialog->setBar(new EtaProgressBar(mProgressDialog));
   kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 }
 

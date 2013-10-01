@@ -891,6 +891,14 @@ parametere</translation>
     </message>
 </context>
 <context>
+    <name>EtaProgressBar</name>
+    <message>
+        <location filename="../util/gui/EtaProgressBar.cc" line="28"/>
+        <source>ETA %1:%2</source>
+        <translation>ca. %1:%2 igjen</translation>
+    </message>
+</context>
+<context>
     <name>Extremes</name>
     <message>
         <location filename="ExtremesTableModel.cc" line="23"/>
@@ -1033,43 +1041,43 @@ parametere</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="86"/>
+        <location filename="../common/gui/HqcApplication.cc" line="89"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC systemdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="97"/>
+        <location filename="../common/gui/HqcApplication.cc" line="100"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Variablen $HOME er tom; vennligst sjekk instillingene på datamaskinen</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="105"/>
+        <location filename="../common/gui/HqcApplication.cc" line="108"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC konfigurasjonsdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="115"/>
+        <location filename="../common/gui/HqcApplication.cc" line="118"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kan ikke lese kvalobs SQL databasen; vennligst sjekk HQC-konfigurasjonen</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="160"/>
-        <location filename="../common/gui/HqcApplication.cc" line="185"/>
+        <location filename="../common/gui/HqcApplication.cc" line="198"/>
+        <location filename="../common/gui/HqcApplication.cc" line="223"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="162"/>
+        <location filename="../common/gui/HqcApplication.cc" line="200"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Alvorlig feil oppsto. Prøv å starte HQC på nytt, og gi beskjed om feilen.</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="206"/>
+        <location filename="../common/gui/HqcApplication.cc" line="244"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Kvalobsdatabasen er dessverre ikke tilgjengelig.</translation>
     </message>
     <message>
-        <location filename="../common/gui/HqcApplication.cc" line="207"/>
+        <location filename="../common/gui/HqcApplication.cc" line="245"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen.</translation>
     </message>
@@ -1078,8 +1086,8 @@ parametere</translation>
     <name>HqcMainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="14"/>
-        <location filename="HqcMainWindow.cc" line="121"/>
-        <location filename="HqcMainWindow.cc" line="223"/>
+        <location filename="HqcMainWindow.cc" line="122"/>
+        <location filename="HqcMainWindow.cc" line="224"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
@@ -1371,93 +1379,93 @@ parametere</translation>
         <translation>&amp;Skjermbilde</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="261"/>
+        <location filename="HqcMainWindow.cc" line="263"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Velkommen til kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="277"/>
+        <location filename="HqcMainWindow.cc" line="279"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
         <translation>&lt;h1&gt;Dianaforbindelse&lt;/h1&gt;Har ikke kontakt med diana! Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, og kople diana til tjeneren via knappen i diana sin vindu.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="287"/>
+        <location filename="HqcMainWindow.cc" line="289"/>
         <source>No stations selected! At least one statione must be chosen.</source>
         <translation>Ingen stasjoner er valgt! Minst en stasjon må velges.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="297"/>
+        <location filename="HqcMainWindow.cc" line="299"/>
         <source>Weather Element</source>
         <translation>Værelement</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="286"/>
+        <location filename="HqcMainWindow.cc" line="288"/>
         <source>Station Selection</source>
         <translation>Stasjonsvalg</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="298"/>
+        <location filename="HqcMainWindow.cc" line="300"/>
         <source>No weather element selected! At least one has to be chosen.</source>
         <translation>Ingen værelement er valgt! Minst en må velges.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="342"/>
+        <location filename="HqcMainWindow.cc" line="344"/>
         <source>Building data list...</source>
         <translation>Bygger dataliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="335"/>
+        <location filename="HqcMainWindow.cc" line="337"/>
         <source>Building error list...</source>
         <translation>Bygger feilliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="205"/>
+        <location filename="HqcMainWindow.cc" line="206"/>
         <source>Auto List/Series</source>
         <translation>Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="224"/>
+        <location filename="HqcMainWindow.cc" line="225"/>
         <source>Fetching data, please wait ...</source>
         <translation>Henter data, vennligst vent ...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="312"/>
+        <location filename="HqcMainWindow.cc" line="314"/>
         <source>Building station list...</source>
         <translation>Bygger stasjonsliste…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="348"/>
+        <location filename="HqcMainWindow.cc" line="350"/>
         <source>Selected Data</source>
         <translation>Valgte data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="413"/>
+        <location filename="HqcMainWindow.cc" line="415"/>
         <source>No RejectDecode</source>
         <translation>Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="413"/>
+        <location filename="HqcMainWindow.cc" line="415"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="450"/>
+        <location filename="HqcMainWindow.cc" line="452"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="451"/>
+        <location filename="HqcMainWindow.cc" line="453"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="452"/>
-        <location filename="HqcMainWindow.cc" line="688"/>
+        <location filename="HqcMainWindow.cc" line="454"/>
+        <location filename="HqcMainWindow.cc" line="690"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="648"/>
+        <location filename="HqcMainWindow.cc" line="650"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1468,67 +1476,67 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="686"/>
+        <location filename="HqcMainWindow.cc" line="688"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="687"/>
+        <location filename="HqcMainWindow.cc" line="689"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="691"/>
+        <location filename="HqcMainWindow.cc" line="693"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="700"/>
+        <location filename="HqcMainWindow.cc" line="702"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="703"/>
+        <location filename="HqcMainWindow.cc" line="705"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="704"/>
+        <location filename="HqcMainWindow.cc" line="706"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="538"/>
+        <location filename="HqcMainWindow.cc" line="540"/>
         <source>Print screenshot</source>
         <translation>Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="562"/>
+        <location filename="HqcMainWindow.cc" line="564"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="563"/>
+        <location filename="HqcMainWindow.cc" line="565"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="647"/>
+        <location filename="HqcMainWindow.cc" line="649"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="731"/>
+        <location filename="HqcMainWindow.cc" line="733"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="794"/>
+        <location filename="HqcMainWindow.cc" line="796"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="795"/>
+        <location filename="HqcMainWindow.cc" line="797"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>

@@ -5,6 +5,7 @@ INCLUDE_DIRECTORIES(
 
 SET(util_gui_SOURCES
   BusyIndicator.cc
+  EtaProgressBar.cc
   FrozenColumnTableView.cc
   FrozenRowTableView.cc
   HideApplyBox.cc
@@ -16,6 +17,7 @@ SET(util_gui_SOURCES
 )
 
 QT4_WRAP_CPP(util_gui_MOC
+  EtaProgressBar.hh
   FrozenColumnTableView.hh
   FrozenRowTableView.hh
   HideApplyBox.hh
