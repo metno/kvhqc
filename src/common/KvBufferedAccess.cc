@@ -90,14 +90,17 @@ bool KvBufferedAccess::updatesHaveTasks(const std::vector<ObsUpdate>& updates)
 void KvBufferedAccess::receive(const kvalobs::kvData& data, bool update)
 {
   const SensorTime st(Helpers::sensorTimeFromKvData(data));
-  Data_t::iterator it = mData.lower_bound(st);
-  if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
+  // try inserting a null pointer
+  const std::pair<Data_t::iterator, bool> ins = mData.insert(std::make_pair(st, KvalobsDataPtr()));
+  if (ins.second) {
+    // actually inserted -> replace null with data
     KvalobsDataPtr obs = boost::make_shared<KvalobsData>(data, false);
-    mData.insert(it, std::make_pair(st, obs));
+    ins.first->second = obs;
     if (update)
       obsDataChanged(CREATED, obs);
   } else {
-    KvalobsDataPtr obs = it->second;
+    // already present -> check for change
+    KvalobsDataPtr obs = ins.first->second;
     const bool hadBeenCreated = obs->isCreated();
     obs->setCreated(false);
 
