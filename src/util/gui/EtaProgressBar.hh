@@ -1,6 +1,6 @@
 
-#ifndef UTIL_ETAPROGRESSBAR_HH
-#define UTIL_ETAPROGRESSBAR_HH 1
+#ifndef UTIL_GUI_ETAPROGRESSBAR_HH
+#define UTIL_GUI_ETAPROGRESSBAR_HH 1
 
 #include <QtGui/QProgressBar>
 
@@ -12,8 +12,10 @@ public:
 
   virtual QString text() const;
 
+  void start();
+
 private:
   mutable qint64 mStart;
 };
 
-#endif // UTIL_ETAPROGRESSBAR_HH
+#endif // UTIL_GUI_ETAPROGRESSBAR_HH

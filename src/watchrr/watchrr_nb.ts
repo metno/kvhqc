@@ -162,27 +162,27 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="59"/>
+        <location filename="MainDialog.cc" line="58"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="78"/>
+        <location filename="MainDialog.cc" line="77"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="171"/>
+        <location filename="MainDialog.cc" line="169"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="328"/>
+        <location filename="MainDialog.cc" line="326"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="329"/>
+        <location filename="MainDialog.cc" line="327"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>

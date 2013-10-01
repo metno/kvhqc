@@ -6,6 +6,7 @@ INCLUDE_DIRECTORIES(
 SET(util_gui_SOURCES
   BusyIndicator.cc
   EtaProgressBar.cc
+  EtaProgressDialog.cc
   FrozenColumnTableView.cc
   FrozenRowTableView.cc
   HideApplyBox.cc

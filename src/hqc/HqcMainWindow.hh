@@ -46,7 +46,6 @@ class QAction;
 class QLabel;
 class QMdiArea;
 class QMdiSubWindow;
-class QProgressDialog;
 class QSplitter;
 class QTimer;
 QT_END_NAMESPACE
@@ -55,6 +54,7 @@ class AutoDataList;
 class DianaShowDialog;
 class EditAccess;
 class EditVersionModel;
+class EtaProgressDialog;
 class ExtremesView;
 class HintWidget;
 class HqcDianaHelper;
@@ -178,7 +178,7 @@ private:
 
   QLabel* mKvalobsAvailable;
 
-  QProgressDialog* mProgressDialog;
+  EtaProgressDialog* mProgressDialog;
 
   AutoDataList* mAutoDataList;
   TimeSeriesView* mTimeSeriesView;

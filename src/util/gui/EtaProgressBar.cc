@@ -6,18 +6,18 @@
 #define MILOGGER_CATEGORY "kvhqc.EtaProgressBar"
 #include "util/HqcLogging.hh"
 
+void EtaProgressBar::start()
+{
+  mStart = QDateTime::currentMSecsSinceEpoch();
+}
+
 QString EtaProgressBar::text() const
 {
   const int v = value(), mi = minimum(), ma = maximum();
-  if (mi >= ma or v <= mi or v >= ma)
+  if (mi >= ma or v <= mi or v >= ma or v<=1)
     return "";
 
-  qint64 now = QDateTime::currentMSecsSinceEpoch();
-  if (v <= 1) {
-    mStart = now;
-    return "";
-  }
-  
+  const qint64 now = QDateTime::currentMSecsSinceEpoch();
   const qint64 elapsed = (now - mStart);
   if (elapsed <= 5000)
     return "...";

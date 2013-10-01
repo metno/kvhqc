@@ -62,7 +62,7 @@
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
 #include "util/gui/BusyIndicator.hh"
-#include "util/gui/EtaProgressBar.hh"
+#include "util/gui/EtaProgressDialog.hh"
 #include "util/gui/HintWidget.hh"
 #include "util/gui/QNoCloseMdiSubWindow.hh"
 #include "watchrr/StationDialog.hh"
@@ -128,7 +128,7 @@ HqcMainWindow::HqcMainWindow()
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(kda))
   , mEditVersions(new EditVersionModel(eda))
-  , mProgressDialog(new QProgressDialog(this))
+  , mProgressDialog(new EtaProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))
   , mTimeSeriesView(new TimeSeriesView(this))
 {
@@ -225,7 +225,6 @@ HqcMainWindow::HqcMainWindow()
   mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
   mProgressDialog->setCancelButton(0); // cancel is not possible yet
   mProgressDialog->setMinimumDuration(4000);
-  mProgressDialog->setBar(new EtaProgressBar(mProgressDialog));
   kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 }
 
