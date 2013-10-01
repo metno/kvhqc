@@ -30,9 +30,17 @@ void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
   nextData(*data, true);
 }
 
-void QtKvalobsAccess::newStationWithData(int)
+void QtKvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-  reSubscribe();
+  bool addedStation = false;
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    const std::pair<stations_with_data_t::iterator, bool> ins = mStationsWithData.insert(s.stationId);
+    addedStation |= ins.second;
+  }
+  if (addedStation)
+    reSubscribe();
+
+  KvalobsAccess::findRange(sensors, limits);
 }
 
 void QtKvalobsAccess::reSubscribe()

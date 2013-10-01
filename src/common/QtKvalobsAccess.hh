@@ -18,7 +18,7 @@ public:
   ~QtKvalobsAccess();
 
 protected:
-  virtual void newStationWithData(int stationId);
+  virtual void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
 
 private Q_SLOTS:
   void onKvData(kvservice::KvObsDataListPtr data);
@@ -29,8 +29,10 @@ private:
 
 private:
   std::string mKvServiceSubscriberID;
-
   QTimer* mResubscribeTimer;
+
+  typedef std::set<int> stations_with_data_t;
+  stations_with_data_t mStationsWithData;
 };
 
 #endif // COMMON_QTKVALOBSACCESS_HH

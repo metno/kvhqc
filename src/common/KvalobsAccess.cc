@@ -95,7 +95,7 @@ std::ostream& operator<<(std::ostream& out, const sensorString& sst)
 
 void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   if (not limits.closed()) {
     HQC_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
     return;
@@ -196,20 +196,12 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
     METLIBS_LOG_DEBUG(LOGVAL(od.dataList().size()));
     BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
       METLIBS_LOG_DEBUG(LOGVAL(kvd));
-      const int stationId = kvd.stationID(), hour = kvd.obstime().time_of_day().hours();
-      const bool differentS = (stationId != mLastFetchedStationId), differentH =(hour != mLastFetchedObsHour);
-
-      if (differentS) {
-        const std::pair<stations_with_data_t::iterator, bool> ins = mStationsWithData.insert(stationId);
-        if (ins.second)
-          newStationWithData(stationId);
-        mLastFetchedStationId = stationId;
-      }
-      if (differentH)
-        mLastFetchedObsHour = hour;
-
       receive(kvd, update);
 
+      const int stationId = kvd.stationID(), hour = kvd.obstime().time_of_day().hours();
+      const bool differentS = (stationId != mLastFetchedStationId), differentH = (hour != mLastFetchedObsHour);
+      mLastFetchedStationId = stationId;
+      mLastFetchedObsHour = hour;
       if ((differentS or differentH) and mCountHoursToFetch > 0) {
         mCountFetchedHours += 1;
         if (mCountFetchedHours > mCountHoursToFetch)
@@ -218,10 +210,6 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
       }
     }
   }
-}
-
-void KvalobsAccess::newStationWithData(int)
-{
 }
 
 bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
