@@ -223,7 +223,7 @@ HqcMainWindow::HqcMainWindow()
   mProgressDialog->setWindowTitle(tr("HQC"));
   mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
   mProgressDialog->setCancelButton(0); // cancel is not possible yet
-  mProgressDialog->setMinimumDuration(200);
+  mProgressDialog->setMinimumDuration(4000);
   kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 }
 
@@ -580,8 +580,8 @@ void HqcMainWindow::onKvalobsFetchingData(int total, int ready)
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(total) << LOGVAL(ready));
   if (total > 0) {
-    mProgressDialog->setMinimum(0);
-    mProgressDialog->setMaximum(total);
+    if (mProgressDialog->maximum() != total)
+      mProgressDialog->setMaximum(total);
     mProgressDialog->setValue(ready);
   } else {
     mProgressDialog->reset();
