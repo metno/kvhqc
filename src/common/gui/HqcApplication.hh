@@ -2,6 +2,8 @@
 #ifndef HqcApplication_hh
 #define HqcApplication_hh 1
 
+#include "common/Sensor.hh"
+
 #include <miconfparser/confsection.h>
 
 #include <QtCore/QList>
@@ -22,6 +24,8 @@ public:
   QSqlDatabase systemDB();
   QSqlDatabase configDB();
   QSqlDatabase kvalobsDB();
+  std::string kvalobsColumnsSensorTime(const std::string& data_alias="");
+  std::vector<SensorTime> kvalobsQuerySensorTime(const std::string& constraint);
 
   void exitNoKvalobs();
 

@@ -17,8 +17,11 @@
 #include <QtCore/QThread>
 #include <QtCore/QTimer>
 #include <QtCore/QTranslator>
+#include <QtCore/QVariant>
 #include <QtGui/QIcon>
 #include <QtGui/QMessageBox>
+#include <QtSql/QSqlError>
+#include <QtSql/QSqlQuery>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -116,6 +119,41 @@ QSqlDatabase HqcApplication::kvalobsDB()
     }
   }
   return QSqlDatabase::database(DB_KVALOBS);
+}
+
+std::string HqcApplication::kvalobsColumnsSensorTime(const std::string& data_alias)
+{
+  std::stringstream columns;
+  const std::string d = data_alias.empty() ? "" : (data_alias + ".");
+  columns << d << "stationid,"
+          << d << "paramid,"
+          << d << "level,"
+          << d << "sensor,"
+          << d << "typeid,"
+          << d << "obstime,"
+          << d << "original,"
+          << d << "corrected,"
+          << d << "controlinfo,"
+          << d << "cfailed";
+  return columns.str();
+}
+
+std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string& sql)
+{
+  QSqlQuery query(hqcApp->kvalobsDB());
+  std::vector<SensorTime> results;
+  if (query.exec(QString::fromStdString(sql))) {
+    while (query.next()) {
+      const Sensor s(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(),
+          query.value(3).toInt(), query.value(4).toInt());
+      const timeutil::ptime t = timeutil::from_iso_extended_string(query.value(5).toString().toStdString());
+      const SensorTime st(s, t);
+      results.push_back(st);
+    }
+  } else {
+    HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
+  }
+  return results;
 }
 
 void HqcApplication::installTranslations(const QString& lang, const QStringList& paths)

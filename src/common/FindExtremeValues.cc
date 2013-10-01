@@ -5,10 +5,6 @@
 #include "StationInfoBuffer.hh"
 #include "common/gui/HqcApplication.hh"
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
-
 #include <boost/foreach.hpp>
 
 #include <sstream>
@@ -72,7 +68,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
             << "' AND obstime <= '" << timeutil::to_iso_extended_string(tLimits.t1()) << "'";
 
   std::ostringstream sql;
-  sql << "SELECT stationid,paramid,level,sensor,typeid,obstime,original,corrected,controlinfo,cfailed FROM data AS d,"
+  sql << "SELECT " << hqcApp->kvalobsColumnsSensorTime("d") << " FROM data AS d,"
       "  (SELECT dd.stationid AS s, " << function << "(dd.corrected) AS c FROM data AS dd"
       "   WHERE dd.stationid BETWEEN 60 AND 100000";
   if (not excludedIds.empty())
@@ -95,21 +91,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
       " ORDER BY corrected " << ordering << ", stationid, obstime";
   METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
-  QSqlQuery query(hqcApp->kvalobsDB());
-  std::vector<SensorTime> extremes;
-  if (query.exec(QString::fromStdString(sql.str()))) {
-    while (query.next()) {
-      const Sensor s(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(),
-          query.value(3).toInt(), query.value(4).toInt());
-      const timeutil::ptime t = timeutil::from_iso_extended_string(query.value(5).toString().toStdString());
-      const SensorTime st(s, t);
-      extremes.push_back(st);
-      METLIBS_LOG_DEBUG(LOGVAL(st));
-    }
-  } else {
-    HQC_LOG_ERROR("search for extreme values failed: " << query.lastError().text());
-  }
-  return extremes;
+  return hqcApp->kvalobsQuerySensorTime(sql.str());
 }
 
 } // namespace Extremes
