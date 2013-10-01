@@ -67,17 +67,20 @@ private:
   typedef std::vector<ObsColumnPtr> ObsColumns_t;
 
 private:
-  void onColumnChanged(const timeutil::ptime& time, ObsColumn* column);
+  void onColumnChanged(const timeutil::ptime& time, ObsColumnPtr column);
   int timeIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.row() : index.column(); }
   int columnIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.column() : index.row(); }
+  void updateRoundedTimes();
 
 protected:
   EditAccessPtr mDA;
-  TimeRange mTime;
   bool mTimeInRows;
+  TimeRange mTime;
   int mTimeStep; //! time step between rows, in seconds
+  timeutil::ptime mTime0; //! start time rounded to timeStep
+  int mRowCount; //! number of rows after rounding
 
 private:
   ObsColumns_t mColumns;

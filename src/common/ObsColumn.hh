@@ -6,8 +6,12 @@
 #include "ObsAccess.hh"
 #include "util/timeutil.hh"
 #include <QtCore/QAbstractTableModel>
+#include <boost/shared_ptr.hpp>
 
-class ObsColumn {
+class ObsColumn;
+typedef boost::shared_ptr<ObsColumn> ObsColumnPtr;
+
+class ObsColumn : public boost::enable_shared_from_this<ObsColumn> {
 public:
     enum ValueType { Numerical=1, TextCode=2, Text=4 };
     enum { ValueTypeRole = Qt::UserRole, TextCodesRole, TextCodeExplanationsRole };
@@ -29,12 +33,10 @@ public:
     virtual Sensor sensor() const;
     virtual int type() const = 0;
 
-    boost::signal2<void, timeutil::ptime, ObsColumn*> columnChanged;
+    boost::signal2<void, timeutil::ptime, ObsColumnPtr> columnChanged;
 
 protected:
     boost::posix_time::time_duration mTimeOffset;
 };
-
-typedef boost::shared_ptr<ObsColumn> ObsColumnPtr;
 
 #endif // OBSCOLUMN_HH

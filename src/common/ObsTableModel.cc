@@ -15,10 +15,13 @@
 
 ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time, int step)
   : mDA(da)
-  , mTime(time)
   , mTimeInRows(true)
+  , mTime(time)
   , mTimeStep(step)
 {
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(mTime) << LOGVAL(mTimeStep));
+  updateRoundedTimes();
 }
 
 ObsTableModel::~ObsTableModel()
@@ -79,7 +82,29 @@ void ObsTableModel::setTimeStep(int step)
 
   beginResetModel();
   mTimeStep = step;
+  updateRoundedTimes();
   endResetModel();
+}
+
+void ObsTableModel::updateRoundedTimes()
+{
+  METLIBS_LOG_SCOPE();
+
+  mTime0 = mTime.t0();
+  if (mTimeStep > 0) {
+    const timeutil::ptime tt = mTime0 - boost::posix_time::hours(6);
+    const int s = tt.time_of_day().total_seconds();
+    const int r = s % mTimeStep;
+    mTime0 -= boost::posix_time::seconds(r);
+
+    mRowCount = 1 + (mTime.seconds() / mTimeStep); // integer division
+    if (r != 0)
+      mRowCount += 1;
+
+    METLIBS_LOG_DEBUG(LOGVAL(mTime0) << LOGVAL(mRowCount) << LOGVAL(mTimeStep) << LOGVAL(r));
+  } else {
+    mRowCount = 0;
+  }
 }
 
 int ObsTableModel::rowCount(const QModelIndex&) const
@@ -95,9 +120,7 @@ int ObsTableModel::columnCount(const QModelIndex&) const
 int ObsTableModel::rowOrColumnCount(bool timeDirection) const
 {
   if (timeDirection == mTimeInRows) {
-    if (mTimeInRows <= 0)
-      return 0;
-    return mTime.seconds() / mTimeStep; // integer division
+    return mRowCount;
   } else {
     return mColumns.size();
   }
@@ -224,24 +247,9 @@ QVariant ObsTableModel::columnHeader(int section, Qt::Orientation orientation, i
     return QVariant();
 }
 
-namespace {
-
-timeutil::ptime findT0(const timeutil::ptime& t0, int timeStep)
-{
-  if (timeStep <= 0)
-    return t0;
-  
-  const timeutil::ptime t = t0 - boost::posix_time::hours(6);
-  const int s = t.time_of_day().total_seconds();
-  const int r = s % timeStep;
-  return t0 - boost::posix_time::seconds(r);
-}
-
-} // namespace anonymous
-
 timeutil::ptime ObsTableModel::timeAtRow(int row) const
 {
-  return findT0(mTime.t0(), mTimeStep) + boost::posix_time::seconds(row * mTimeStep);
+  return mTime0 + boost::posix_time::seconds(row * mTimeStep);
 }
 
 SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
@@ -258,27 +266,30 @@ SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
 
 int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
 {
+  METLIBS_LOG_SCOPE();
   if (mTimeStep <= 0)
     return -1;
-  const int r = (time - findT0(mTime.t0(), mTimeStep)).seconds() / mTimeStep;
-  if (timeAtRow(r) != time)
+  const int r = (time - mTime0).total_seconds() / mTimeStep;
+  const timeutil::ptime t = timeAtRow(r);
+  METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(t) << LOGVAL(r));
+  if (t != time)
     return -1;
   else
     return r;
 }
 
-void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn* column)
+void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumnPtr column)
 {
   METLIBS_LOG_SCOPE();
-  for(unsigned int col=0; col<mColumns.size(); ++col) {
-    if (mColumns.at(col) and column == mColumns.at(col).get()) {
-      const int row = rowAtTime(time);
-      if (row >= 0) {
-        const QModelIndex index = createIndex(row, col);
-        METLIBS_LOG_DEBUG(LOGVAL(time) << LOGVAL(col));
-        dataChanged(index, index);
-      }
-      break;
-    }
-  }
+
+  const ObsColumns_t::const_iterator it = std::find(mColumns.begin(), mColumns.end(), column);
+  if (it == mColumns.end())
+    return;
+
+  const int row = rowAtTime(time);
+  if (row < 0)
+    return;
+  
+  const QModelIndex index = createIndex(row, (it - mColumns.begin()));
+  dataChanged(index, index);
 }

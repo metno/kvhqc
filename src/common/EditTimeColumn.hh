@@ -21,7 +21,7 @@ public:
       { return mDC->type(); }
 
 private:
-    void onColumnChanged(const timeutil::ptime& time, ObsColumn* c);
+    void onColumnChanged(const timeutil::ptime& time, ObsColumnPtr c);
 
 private:
     DataColumnPtr mDC;

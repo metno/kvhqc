@@ -76,7 +76,7 @@ bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
   }
   
   mObsCache.erase(it);
-  columnChanged(timeo, this);
+  columnChanged(timeo, shared_from_this());
   return true;
 }
 

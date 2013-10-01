@@ -17,7 +17,7 @@ struct CountColumnChanged : private boost::noncopyable
 {
   int count;
   CountColumnChanged() : count(0) { }
-  void operator()(const timeutil::ptime& /*time*/, ObsColumn* /*column*/)
+  void operator()(const timeutil::ptime& /*time*/, ObsColumnPtr /*column*/)
     { count += 1; }
 };
 

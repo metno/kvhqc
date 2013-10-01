@@ -74,7 +74,7 @@ bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)
     return false;
     
   mModelCache.erase(it);
-  columnChanged(timeo, this);
+  columnChanged(timeo, shared_from_this());
   return true;
 }
 
