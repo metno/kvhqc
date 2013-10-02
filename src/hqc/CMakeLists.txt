@@ -10,7 +10,6 @@ SET(hqc_SOURCES
   ErrorListTableModel.cc
   ExtremesTableModel.cc
   ExtremesView.cc
-  MissingView.cc
   GetTextData.cc
   HqcDianaHelper.cc
   HqcMainWindow.cc
@@ -26,6 +25,13 @@ SET(hqc_SOURCES
   TimeseriesDialog.cc
   TimeSeriesView.cc
   ViewChanges.cc
+  missing/MissingView.cc
+  missing/MissingSelectorWidget.cc
+  missing/MissingObservationWidget.cc
+  missing/missingdatamodel.cc
+  missing/internal/MissingList.cc
+  missing/internal/findMissingStations.cc
+  missing/internal/MissingDataReceiver.cc
 )
 
 QT4_ADD_TRANSLATION(hqc_QM
@@ -43,7 +49,6 @@ QT4_WRAP_CPP(hqc_MOC
   ErrorList.hh
   ErrorListTableModel.hh
   ExtremesView.hh
-  MissingView.hh
   HqcDianaHelper.hh
   HqcMainWindow.hh
   JumpToObservation.hh
@@ -58,6 +63,10 @@ QT4_WRAP_CPP(hqc_MOC
   TimeseriesDialog.h
   TimeSeriesView.hh
   ViewChanges.hh
+  missing/MissingView.hh
+  missing/MissingSelectorWidget.hh
+  missing/MissingObservationWidget.hh
+  missing/missingdatamodel.hh
 )
 
 QT4_WRAP_UI(hqc_UIH

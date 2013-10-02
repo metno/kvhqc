@@ -51,6 +51,7 @@
 #include "TextdataDialog.hh"
 #include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
+#include "missing/MissingObservationWidget.hh"
 #include "common/DataView.hh"
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
@@ -173,6 +174,16 @@ HqcMainWindow::HqcMainWindow()
   // --- START -----------------------------------------------------
   rejdlg->hide();
   lstdlg->hide();
+
+
+  // Dock for missing observations
+  MissingObservationWidget * missingWidget = new MissingObservationWidget(this);
+  QDockWidget * missingDock = new QDockWidget(tr("&Missing observations"), this);
+  missingDock->setWidget(missingWidget);
+  addDockWidget(Qt::RightDockWidgetArea, missingDock);
+  missingDock->setVisible(false);
+  ui->menuValg->addAction(missingDock->toggleViewAction());
+
 
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
