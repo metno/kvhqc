@@ -12,7 +12,7 @@
 #include "internal/MissingList.hh"
 
 
-class QTreeView;
+class  QAbstractItemView;
 
 
 class MissingView : public QWidget
@@ -24,10 +24,10 @@ public:
   virtual ~MissingView();
 
 
-  QTreeView * getView() { return view; }
+   QAbstractItemView * getView() { return view; }
 
 private:
-  QTreeView * view;
+  QAbstractItemView * view;
 };
 
 #endif /* MISSINGLIST_HH_ */

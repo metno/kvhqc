@@ -4,6 +4,7 @@
 #include "MissingSelectorWidget.hh"
 #include "MissingView.hh"
 #include "missingdatamodel.hh"
+#include "StationOrderedMissingDataModel.hh"
 #include "internal/findMissingStations.hh"
 #include "internal/MissingList.hh"
 #include "internal/TaskSpecification.hh"
@@ -46,7 +47,8 @@ void MissingObservationWidget::findMissing(const QDate & from, const QDate & to,
 
     bool stop = false;
     findMissingStations( missing, spec, stop );
+    qDebug() << "Got data";
 
-    MissingDataModel * model = new MissingDataModel(missing, this);
+    StationOrderedMissingDataModel * model = new StationOrderedMissingDataModel(missing, this);
     view->getView()->setModel(model);
 }

@@ -81,18 +81,16 @@ MissingSelectorWidget::MissingSelectorWidget(QWidget * parent) :
   connect(ok, SIGNAL(clicked()), SIGNAL(findMissingRequested()));
 
 
-  QVBoxLayout * mainLayout = new QVBoxLayout(this);
-  QGridLayout * inputLayout = new QGridLayout(mainLayout);
-  inputLayout->addWidget(fromLabel, 0,0);
-  inputLayout->addWidget(fromDateEdit, 0,1);
-  inputLayout->addWidget(toLabel, 1,0);
-  inputLayout->addWidget(toDateEdit, 1,1);
-  inputLayout->addWidget(typeLabel, 2,0);
-  inputLayout->addWidget(typeID, 2,1);
-
-  QHBoxLayout * buttonLayout = new QHBoxLayout(mainLayout);
-  buttonLayout->addStretch();
-  buttonLayout->addWidget(ok);
+  QHBoxLayout * mainLayout = new QHBoxLayout(this);
+  mainLayout->addWidget(fromLabel);
+  mainLayout->addWidget(fromDateEdit);
+  mainLayout->addWidget(toLabel);
+  mainLayout->addWidget(toDateEdit);
+  mainLayout->addWidget(typeLabel);
+  mainLayout->addWidget(typeID);
+  mainLayout->addStretch();
+  mainLayout->addWidget(ok);
+  mainLayout->addStretch(10);
 }
 
 MissingSelectorWidget::~MissingSelectorWidget()

@@ -29,6 +29,7 @@ SET(hqc_SOURCES
   missing/MissingSelectorWidget.cc
   missing/MissingObservationWidget.cc
   missing/missingdatamodel.cc
+  missing/StationOrderedMissingDataModel.cc
   missing/internal/MissingList.cc
   missing/internal/findMissingStations.cc
   missing/internal/MissingDataReceiver.cc
@@ -67,6 +68,7 @@ QT4_WRAP_CPP(hqc_MOC
   missing/MissingSelectorWidget.hh
   missing/MissingObservationWidget.hh
   missing/missingdatamodel.hh
+  missing/StationOrderedMissingDataModel.hh
 )
 
 QT4_WRAP_UI(hqc_UIH

@@ -178,12 +178,14 @@ HqcMainWindow::HqcMainWindow()
 
   // Dock for missing observations
   MissingObservationWidget * missingWidget = new MissingObservationWidget(this);
-  QDockWidget * missingDock = new QDockWidget(tr("&Missing observations"), this);
+  QDockWidget * missingDock = new QDockWidget(tr("Missing observations"), this);
+  missingDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetVerticalTitleBar);
   missingDock->setWidget(missingWidget);
-  addDockWidget(Qt::RightDockWidgetArea, missingDock);
+  addDockWidget(Qt::BottomDockWidgetArea, missingDock);
   missingDock->setVisible(false);
-  ui->menuValg->addAction(missingDock->toggleViewAction());
-
+  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(show()));
+  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(raise()));
+  tabifyDockWidget(ui->dockErrors, missingDock);
 
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
