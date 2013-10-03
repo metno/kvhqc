@@ -1,6 +1,5 @@
 #include "getObsPgm.hh"
 #include <common/KvMetaDataBuffer.hh>
-#include <kvcpp/KvApp.h>
 #include <boost/foreach.hpp>
 #include <stdexcept>
 #include <list>

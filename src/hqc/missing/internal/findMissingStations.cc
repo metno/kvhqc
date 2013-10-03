@@ -34,6 +34,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "getStations.hh"
 //#include "functors.h"
 #include "MissingDataReceiver.hh"
+#include <common/KvServiceHelper.hh>
+#include <kvalobs/kvcpp/WhichDataHelper.h>
 #include <milog/milog.h>
 #include <boost/date_time.hpp>
 
@@ -147,7 +149,7 @@ void findMissingStations( MissingList & ml, const TaskSpecification & ts, const 
     ExStationList collected;
 
     MissingDataReceiver mdr( & missing, & collected, ts, & stop );
-    kvservice::KvApp::kvApp->getKvData( mdr, wdh );
+    KvServiceHelper::instance()->getKvData(mdr, wdh );
 
     markCollections( collected, ml, ts );
   }
@@ -167,7 +169,7 @@ void findMissingStations( MissingList & ml, const TaskSpecification & ts, const 
     ExStationList collected;
 
     MissingDataReceiver mdr( 0, & collected, ts, & stop );
-    kvservice::KvApp::kvApp->getKvData( mdr, wdh );
+    KvServiceHelper::instance()->getKvData(mdr, wdh );
 
     markCollections( collected, ml, ts );
   }

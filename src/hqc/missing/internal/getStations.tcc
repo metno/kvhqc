@@ -1,7 +1,6 @@
 #include "getStations.hh"
-#include <kvcpp/KvApp.h>
+#include <common/KvMetaDataBuffer.hh>
 
-//#include <iostream>
 
 namespace kvalobs
 {
@@ -10,12 +9,8 @@ inline const StationList & getStations()
 {
 	static StationList stations;
 	if ( stations.empty() ) {
-		assert( kvservice::KvApp::kvApp );
 		typedef std::list<kvalobs::kvStation> StList;
-		StList st_list;
-		bool result = kvservice::KvApp::kvApp->getKvStations( st_list );
-		if ( ! result )
-			throw std::runtime_error( "Cannot get stations from kvalobs" );
+        const StList & st_list = KvMetaDataBuffer::instance()->allStations();
 		for ( StList::const_iterator it = st_list.begin(); it != st_list.end(); ++ it )
 			stations.insert( * it );
 	}
