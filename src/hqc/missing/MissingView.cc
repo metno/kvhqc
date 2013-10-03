@@ -14,6 +14,8 @@ MissingView::MissingView(QWidget* parent) :
 {
   view = new QTreeView(this);
 
+  view->setSortingEnabled(true);
+
   QHBoxLayout * mainLayout = new QHBoxLayout(this);
   mainLayout->addWidget(view);
 }
@@ -22,4 +24,8 @@ MissingView::~MissingView()
 {
 }
 
+void MissingView::setModel(QAbstractItemModel * model)
+{
+    view->setModel(model);
+}
 

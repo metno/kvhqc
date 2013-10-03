@@ -50,5 +50,5 @@ void MissingObservationWidget::findMissing(const QDate & from, const QDate & to,
     qDebug() << "Got data";
 
     StationOrderedMissingDataModel * model = new StationOrderedMissingDataModel(missing, this);
-    view->getView()->setModel(model);
+    view->setModel(model);
 }
