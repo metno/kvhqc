@@ -28,7 +28,6 @@ SET(hqc_SOURCES
   missing/MissingView.cc
   missing/MissingSelectorWidget.cc
   missing/MissingObservationWidget.cc
-  missing/missingdatamodel.cc
   missing/StationOrderedMissingDataModel.cc
   missing/internal/MissingList.cc
   missing/internal/findMissingStations.cc
@@ -67,7 +66,6 @@ QT4_WRAP_CPP(hqc_MOC
   missing/MissingView.hh
   missing/MissingSelectorWidget.hh
   missing/MissingObservationWidget.hh
-  missing/missingdatamodel.hh
   missing/StationOrderedMissingDataModel.hh
 )
 

@@ -3,7 +3,6 @@
 #include "MissingObservationWidget.hh"
 #include "MissingSelectorWidget.hh"
 #include "MissingView.hh"
-#include "missingdatamodel.hh"
 #include "StationOrderedMissingDataModel.hh"
 #include "internal/findMissingStations.hh"
 #include "internal/MissingList.hh"
