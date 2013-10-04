@@ -62,6 +62,7 @@ ExtremesView::~ExtremesView()
 void ExtremesView::setExtremes(const std::vector<SensorTime>& extremes)
 {
   METLIBS_LOG_SCOPE();
+  mLastSelectedRow = -1;
   mExtremesModel.reset(new ExtremesTableModel(mEDA, extremes));
   ui->tableExtremes->setModel(mExtremesModel.get());
   ui->tableExtremes->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
