@@ -34,6 +34,10 @@ private:
   struct lt_Column;
   typedef std::vector<Column> Columns_t;
 
+protected:
+  virtual void showEvent(QShowEvent* showEvent);
+  virtual void hideEvent(QHideEvent* hideEvent);
+
 private Q_SLOTS:
   void onEarlier();
   void onLater();
@@ -45,6 +49,7 @@ private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
+  void doNavigateTo(const SensorTime& st);
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
   void makeModel();
@@ -65,6 +70,9 @@ private:
 
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
+
+  bool mVisible;
+  SensorTime mPendingSensorTime;
 };
 
 #endif // AutoDataList_hh

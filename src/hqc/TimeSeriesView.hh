@@ -28,7 +28,21 @@ public:
 public Q_SLOTS:
   void navigateTo(const SensorTime&);
 
+protected:
+  virtual void showEvent(QShowEvent* showEvent);
+  virtual void hideEvent(QHideEvent* hideEvent);
+
+private Q_SLOTS:
+  void onActionAddColumn();
+  void onActionRemoveColumns();
+  void onActionResetColumns();
+
+  void onRadioPlot();
+  void onDateFromChanged(const QDateTime&);
+  void onDateToChanged(const QDateTime&);
+
 private:
+  void doNavigateTo(const SensorTime& st);
   void updateSensors();
   void updatePlot();
 
@@ -40,15 +54,6 @@ private:
   void setTimeRange(const TimeRange& t);
 
   static void initalizePlotOptions();
-
-private Q_SLOTS:
-  void onActionAddColumn();
-  void onActionRemoveColumns();
-  void onActionResetColumns();
-
-  void onRadioPlot();
-  void onDateFromChanged(const QDateTime&);
-  void onDateToChanged(const QDateTime&);
 
 private:
   std::auto_ptr<Ui::TimeSeriesView> ui;
@@ -64,6 +69,9 @@ private:
   Sensors_t mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
   TimeRangeControl* mTimeControl;
+
+  bool mVisible;
+  SensorTime mPendingSensorTime;
 };
 
 #endif // TimeSeriesView_hh

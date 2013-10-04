@@ -48,6 +48,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::TimeSeriesView)
     , mTimeControl(new TimeRangeControl(this))
+    , mVisible(false)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -162,7 +163,34 @@ void TimeSeriesView::updateSensors()
   updatePlot();
 }
 
+void TimeSeriesView::showEvent(QShowEvent* se)
+{
+  METLIBS_LOG_SCOPE();
+  QWidget::showEvent(se);
+
+  mVisible = true;
+  if (not eq_SensorTime()(mPendingSensorTime, mSensorTime))
+    doNavigateTo(mPendingSensorTime);
+}
+
+void TimeSeriesView::hideEvent(QHideEvent* he)
+{
+  METLIBS_LOG_SCOPE();
+  QWidget::hideEvent(he);
+
+  mVisible = false;
+}
+
 void TimeSeriesView::navigateTo(const SensorTime& st)
+{
+  METLIBS_LOG_TIME();
+  if (mVisible)
+    doNavigateTo(st);
+  else if (st.valid() and not eq_SensorTime()(mPendingSensorTime, st))
+    mPendingSensorTime = st;
+}
+
+void TimeSeriesView::doNavigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();
   if (not st.valid() or eq_SensorTime()(mSensorTime, st))
