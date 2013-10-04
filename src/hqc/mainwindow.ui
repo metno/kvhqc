@@ -45,7 +45,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>23</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -63,6 +63,7 @@
     <addaction name="actionShowChanges"/>
     <addaction name="actionShowSimpleCorrections"/>
     <addaction name="actionShowExtremeValues"/>
+    <addaction name="actionShowMissingObservations"/>
    </widget>
    <widget class="QMenu" name="menuListType">
     <property name="title">
@@ -448,6 +449,11 @@
     <string>Jump to Observation…</string>
    </property>
   </action>
+  <action name="actionShowMissingObservations">
+   <property name="text">
+    <string>Show Missing Observations</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -821,6 +827,16 @@
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>onJumpToObservation()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
   </connection>
   <connection>
    <sender>tabs</sender>

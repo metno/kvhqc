@@ -51,6 +51,7 @@
 #include "TextdataDialog.hh"
 #include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
+#include "missing/MissingObservationWidget.hh"
 #include "common/DataView.hh"
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
@@ -175,6 +176,18 @@ HqcMainWindow::HqcMainWindow()
   rejdlg->hide();
   lstdlg->hide();
 
+
+  // Dock for missing observations
+  MissingObservationWidget * missingWidget = new MissingObservationWidget(this);
+  QDockWidget * missingDock = new QDockWidget(tr("Missing observations"), this);
+  missingDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetVerticalTitleBar);
+  missingDock->setWidget(missingWidget);
+  addDockWidget(Qt::BottomDockWidgetArea, missingDock);
+  missingDock->setVisible(false);
+  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(show()));
+  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(raise()));
+  tabifyDockWidget(ui->dockErrors, missingDock);
+
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
 
@@ -198,6 +211,7 @@ HqcMainWindow::HqcMainWindow()
   mExtremesView     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors    ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  missingWidget     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
