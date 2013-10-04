@@ -88,8 +88,9 @@ inline bool same_sensor(int sensor1, int sensor2)
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
 
-QString typeInfo(int typeID);
-QString stationInfo(int stationID);
+QString paramInfo(int paramId);
+QString typeInfo(int typeId);
+QString stationInfo(int stationId);
 
 } // namespace Helpers
 

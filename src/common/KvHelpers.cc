@@ -21,9 +21,9 @@
 
 namespace /* anonymous */ {
 const char* flagnames[16] = {
-    "fagg", "fr", "fcc", "fs", "fnum", 
-    "fpos", "fmis", "ftime", "fw", "fstat", 
-    "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc" 
+  "fagg", "fr", "fcc", "fs", "fnum", 
+  "fpos", "fmis", "ftime", "fw", "fstat", 
+  "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc" 
 };
 } // namespace anonymous
 
@@ -56,54 +56,54 @@ bool stations_by_id::operator()(const kvalobs::kvStation& a) const
 
 int is_accumulation(const kvalobs::kvControlInfo& ci)
 {
-    using namespace kvalobs::flag;
-    const int f_fd = ci.flag(fd);
-    if( f_fd == 2 or f_fd == 4 )
-        return BEFORE_REDIST;
-    if( f_fd == 7 or f_fd == 8 )
-        return QC2_REDIST;
-    if( f_fd == 9 or f_fd == 0xA )
-        return HQC_REDIST;
-    return NO;
+  using namespace kvalobs::flag;
+  const int f_fd = ci.flag(fd);
+  if( f_fd == 2 or f_fd == 4 )
+    return BEFORE_REDIST;
+  if( f_fd == 7 or f_fd == 8 )
+    return QC2_REDIST;
+  if( f_fd == 9 or f_fd == 0xA )
+    return HQC_REDIST;
+  return NO;
 }
 
 // ------------------------------------------------------------------------
 
 int is_endpoint(const kvalobs::kvControlInfo& ci)
 {
-    using namespace kvalobs::flag;
-    const int f_fd = ci.flag(fd);
-    if( f_fd == 4 )
-        return BEFORE_REDIST;
-    if( f_fd == 8 )
-        return QC2_REDIST;
-    if( f_fd == 0xA )
-        return HQC_REDIST;
-    return NO;
+  using namespace kvalobs::flag;
+  const int f_fd = ci.flag(fd);
+  if( f_fd == 4 )
+    return BEFORE_REDIST;
+  if( f_fd == 8 )
+    return QC2_REDIST;
+  if( f_fd == 0xA )
+    return HQC_REDIST;
+  return NO;
 }
 
 // ------------------------------------------------------------------------
 
 bool is_rejected(const kvalobs::kvControlInfo& ci, float corr)
 {
-    return (ci.flag(kvalobs::flag::fmis) == 2) // same as kvDataOperations.cc
-        or (corr == kvalobs::REJECTED);
+  return (ci.flag(kvalobs::flag::fmis) == 2) // same as kvDataOperations.cc
+      or (corr == kvalobs::REJECTED);
 }
 
 // ------------------------------------------------------------------------
 
 bool is_missing(const kvalobs::kvControlInfo& ci, float corr)
 {
-    return (ci.flag(kvalobs::flag::fmis) == 3) // same as kvDataOperations.cc
-        or (corr == kvalobs::MISSING);
+  return (ci.flag(kvalobs::flag::fmis) == 3) // same as kvDataOperations.cc
+      or (corr == kvalobs::MISSING);
 }
 
 // ------------------------------------------------------------------------
 
 bool is_orig_missing(const kvalobs::kvControlInfo& ci, float orig)
 {
-    return (ci.flag(kvalobs::flag::fmis) & 1) // same as kvDataOperations.cc
-        or (orig == kvalobs::MISSING);
+  return (ci.flag(kvalobs::flag::fmis) & 1) // same as kvDataOperations.cc
+      or (orig == kvalobs::MISSING);
 }
 
 // ------------------------------------------------------------------------
@@ -117,56 +117,56 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
     query->prepare("SELECT description FROM flag_explain WHERE flag = :fn AND flagvalue = :fv AND language = 'nb'");
   }
 
-    std::ostringstream ss;
-    bool first = true;
+  std::ostringstream ss;
+  bool first = true;
 
-    const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
-    for(int f=0; f<16; f++) {
-	const int flag = cInfo.flag(f);
-        using namespace kvalobs::flag;
-	if (flag > showFlagAbove[f]) {
-            if( not first )
-                ss << (query.get() ? '\n' : ' ');
-            ss << flagnames[f] << '=' << int2char(flag);
-            if (query.get()) {
-              query->bindValue("fn", f);
-              query->bindValue("fv", flag);
-              query->exec();
-              QString explanation;
-              if (query->next())
-                explanation = query->value(0).toString();
-              else
-                explanation = qApp->translate("Helpers", "Unknown or invalid flag value");
-              query->finish();
-              ss << ": " << explanation.toStdString();
-            }
-            first = false;
-	}
+  const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
+  for(int f=0; f<16; f++) {
+    const int flag = cInfo.flag(f);
+    using namespace kvalobs::flag;
+    if (flag > showFlagAbove[f]) {
+      if( not first )
+        ss << (query.get() ? '\n' : ' ');
+      ss << flagnames[f] << '=' << int2char(flag);
+      if (query.get()) {
+        query->bindValue("fn", f);
+        query->bindValue("fv", flag);
+        query->exec();
+        QString explanation;
+        if (query->next())
+          explanation = query->value(0).toString();
+        else
+          explanation = qApp->translate("Helpers", "Unknown or invalid flag value");
+        query->finish();
+        ss << ": " << explanation.toStdString();
+      }
+      first = false;
     }
-    return QString::fromStdString(ss.str());
+  }
+  return QString::fromStdString(ss.str());
 }
 
 
 QString getFlagText(const kvalobs::kvControlInfo & cInfo)
 {
-    return formatFlag(cInfo, false);
+  return formatFlag(cInfo, false);
 }
 
 QString getFlagExplanation(const kvalobs::kvControlInfo & cInfo)
 {
-    return formatFlag(cInfo, true);
+  return formatFlag(cInfo, true);
 }
 
 QString getFlagName(int flagNumber)
 {
-    if (flagNumber < 0 or flagNumber >= 16)
-        return "";
-    return flagnames[flagNumber];
+  if (flagNumber < 0 or flagNumber >= 16)
+    return "";
+  return flagnames[flagNumber];
 }
 
 QString parameterName(int paramId)
 {
-    return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
+  return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
 }
 
 int parameterIdByName(const std::string& paramName)
@@ -185,9 +185,9 @@ int parameterIdByName(const std::string& paramName)
 
 void updateUseInfo(kvalobs::kvData& data)
 {
-    kvalobs::kvUseInfo ui = data.useinfo();
-    ui.setUseFlags( data.controlinfo() );
-    data.useinfo( ui );
+  kvalobs::kvUseInfo ui = data.useinfo();
+  ui.setUseFlags( data.controlinfo() );
+  data.useinfo( ui );
 }
 
 QString stationName(const kvalobs::kvStation& s)
@@ -354,42 +354,48 @@ void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add)
 {
-    std::string new_cfailed = data.cfailed();
-    if( new_cfailed.length() > 0 )
-        new_cfailed += ",";
-    new_cfailed += add;
-    data.cfailed(new_cfailed);
+  std::string new_cfailed = data.cfailed();
+  if( new_cfailed.length() > 0 )
+    new_cfailed += ",";
+  new_cfailed += add;
+  data.cfailed(new_cfailed);
 }
 
-QString typeInfo(int typeID)
+QString paramInfo(int paramId)
 {
-    try {
-        const kvalobs::kvTypes& t = KvMetaDataBuffer::instance()->findType(abs(typeID));
-
-        std::vector<std::string> formats;
-        boost::split(formats, t.format(), boost::is_any_of(" ,"));
-        if (formats.empty())
-            return QString::number(typeID);
-
-        QString info = qApp->translate("Helpers", "%1-station").arg(QString::fromStdString(formats[0]));
-        if (typeID < 0)
-            info += qApp->translate("Helpers", " generated by kvalobs");
-
-        return info;
-    } catch (std::exception&) {
-        return QString::number(typeID);
-    }
+  QString info = QString::number(paramId) + ": ";
+  try {
+    const kvalobs::kvParam& p = KvMetaDataBuffer::instance()->findParam(paramId);
+    info += QString::fromStdString(p.description());
+  } catch (std::exception& e) {
+    info += "?";
+  }
+  return info;
 }
 
-QString stationInfo(int stationID)
+QString typeInfo(int typeId)
 {
-    try {
-        const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationID);
-        return QString(qApp->translate("Helpers", "%1 %2 %3masl."))
-            .arg(stationID).arg(QString::fromStdString(s.name())).arg(s.height());
-    } catch (std::exception& e) {
-        return QString::number(stationID);
-    }
+  QString info = QString::number(typeId) + ": ";
+  try {
+    const kvalobs::kvTypes& t = KvMetaDataBuffer::instance()->findType(typeId);
+    info += QString::fromStdString(t.format());
+  } catch (std::exception& e) {
+    info += "?";
+  }
+  if (typeId < 0)
+    info += qApp->translate("Helpers", " generated by kvalobs");
+  return info;
+}
+
+QString stationInfo(int stationId)
+{
+  try {
+    const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationId);
+    return QString(qApp->translate("Helpers", "%1 %2 %3masl."))
+        .arg(stationId).arg(QString::fromStdString(s.name())).arg(s.height());
+  } catch (std::exception& e) {
+    return QString::number(stationId);
+  }
 }
 
 } // namespace Helpers

@@ -140,8 +140,13 @@ void SimpleCorrections::update()
   EditDataPtr obs;
   if (s.valid()) {
     ui->textStation->setText(QString::number(s.stationId));
+    ui->textStation->setToolTip(Helpers::stationInfo(s.stationId));
+
     ui->textParam->setText(Helpers::parameterName(s.paramId));
+    ui->textParam->setToolTip(Helpers::paramInfo(s.paramId));
+
     ui->textType->setText(QString::number(s.typeId));
+    ui->textType->setToolTip(Helpers::typeInfo(s.typeId));
 
     ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
@@ -151,8 +156,11 @@ void SimpleCorrections::update()
       mdl = mMA->find(mSensorTime);
   } else {
     ui->textStation->setText("");
+    ui->textStation->setToolTip("");
     ui->textParam->setText("");
+    ui->textParam->setToolTip("");
     ui->textType->setText("");
+    ui->textType->setToolTip("");
 
     ui->textObstime->setText("");
   }
