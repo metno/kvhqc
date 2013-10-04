@@ -21,6 +21,7 @@ MissingObservationWidget::MissingObservationWidget(QWidget *parent) :
     selector = new MissingSelectorWidget(this);
     view = new MissingView(this);
 
+    connect(view, SIGNAL(selected(SensorTime)), this, SLOT(signalNavigate(SensorTime)));
     connect(selector, SIGNAL(findMissingRequested()), SLOT(findMissing()));
 
     QVBoxLayout * mainLayout = new QVBoxLayout(this);
@@ -50,4 +51,12 @@ void MissingObservationWidget::findMissing(const QDate & from, const QDate & to,
 
     StationOrderedMissingDataModel * model = new StationOrderedMissingDataModel(missing, this);
     view->setModel(model);
+}
+
+void MissingObservationWidget::signalNavigate(const SensorTime & st)
+{
+    const Sensor & s = st.sensor;
+    qDebug() << s.stationId <<", "<< s.paramId <<", "<< s.level <<", "<< s.sensor <<", "<< s.typeId;
+
+    signalNavigateTo(st);
 }

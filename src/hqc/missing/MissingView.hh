@@ -14,6 +14,8 @@
 
 class  QTreeView;
 class QAbstractItemModel;
+class QModelIndex;
+class SensorTime;
 
 
 class MissingView : public QWidget
@@ -24,8 +26,14 @@ public:
 
   virtual ~MissingView();
 
+Q_SIGNALS:
+  void selected(const SensorTime & sensor);
+
 public Q_SLOTS:
   void setModel(QAbstractItemModel * model);
+
+private Q_SLOTS:
+  void signalSelected(const QModelIndex & index);
 
 private:
   QTreeView * view;

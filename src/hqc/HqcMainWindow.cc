@@ -210,6 +210,7 @@ HqcMainWindow::HqcMainWindow()
   mExtremesView     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors    ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  missingWidget     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);

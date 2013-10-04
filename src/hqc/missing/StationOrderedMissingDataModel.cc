@@ -2,6 +2,7 @@
 #include <QStandardItem>
 #include <QList>
 #include <QDebug>
+#include <QDate>
 #include <boost/foreach.hpp>
 #include <boost/date_time.hpp>
 #include <string>
@@ -50,7 +51,8 @@ public:
     StationIdStandardItem(int value) :
         QStandardItem(QString::number(value)),
         value_(value)
-    {}
+    {
+    }
 
     virtual bool operator < (const QStandardItem & other) const
     {
@@ -92,7 +94,12 @@ StationOrderedMissingDataModel::StationOrderedMissingDataModel(const MissingList
         QList<QStandardItem *> row;
         row.push_back(new StationIdStandardItem(station.stationID()));
         row.push_back(new QStandardItem(QString(station.name().c_str())));
-        row.push_back(new QStandardItem(QString::fromStdString(dateList(dates))));
+
+        QString dateText = QString::fromStdString(dateList(dates));
+        QStandardItem * dateItem = new QStandardItem(dateText);
+        const boost::gregorian::date & date = dates.back();
+        dateItem->setData(QDate(date.year(), date.month(), date.day()));
+        row.push_back(dateItem);
 
         appendRow(row);
     }
