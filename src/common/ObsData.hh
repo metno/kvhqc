@@ -29,6 +29,9 @@ public:
 
   /*! KVALOBS current list of performed checks / modifications. */
   virtual std::string cfailed() const = 0;
+
+  /*! KVALOBS tbtime. */
+  virtual timeutil::ptime tbtime() const = 0;
 };
 typedef boost::shared_ptr<ObsData> ObsDataPtr;
 

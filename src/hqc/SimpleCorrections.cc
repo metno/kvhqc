@@ -145,9 +145,10 @@ void SimpleCorrections::update()
 
     ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
-    obs = mDA ? mDA->findE(mSensorTime) : EditDataPtr();
-    if (mDA and not obs) METLIBS_LOG_DEBUG("mDA but no obs at " << mSensorTime);
-    mdl = mMA ? mMA->find(mSensorTime) : ModelDataPtr();
+    if (mDA)
+      obs = mDA->findE(mSensorTime);
+    if (mMA)
+      mdl = mMA->find(mSensorTime);
   } else {
     ui->textStation->setText("");
     ui->textParam->setText("");
@@ -155,6 +156,8 @@ void SimpleCorrections::update()
 
     ui->textObstime->setText("");
   }
+
+  ui->textObstime->setToolTip(obs ? tr("tbtime: %1").arg(QString::fromStdString(timeutil::to_iso_extended_string(obs->tbtime()))) : "");
 
   ui->textFlags->setText((obs and mItemFlags) ? mItemFlags->data(obs, mSensorTime, Qt::DisplayRole).toString() : "");
   setFBF(ui->textFlags, mItemFlags, obs);

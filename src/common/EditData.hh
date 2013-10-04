@@ -11,86 +11,89 @@ typedef boost::shared_ptr<EditData> EditDataPtr;
 
 class EditData : public ObsData {
 public:
-    EditData(ObsDataPtr data);
+  EditData(ObsDataPtr data);
 
-    virtual SensorTime sensorTime() const
-        { return mData->sensorTime(); }
+  virtual SensorTime sensorTime() const
+    { return mData->sensorTime(); }
 
-    virtual float original() const
-        { return mOriginal; }
+  virtual float original() const
+    { return mOriginal; }
 
-    virtual float corrected() const
-        { return mCorrected.value(); }
+  virtual float corrected() const
+    { return mCorrected.value(); }
 
-    virtual kvalobs::kvControlInfo controlinfo() const
-        { return mControlinfo.value(); }
+  virtual kvalobs::kvControlInfo controlinfo() const
+    { return mControlinfo.value(); }
 
-    virtual std::string cfailed() const
-        { return mData->cfailed(); }
+  virtual std::string cfailed() const
+    { return mData->cfailed(); }
 
-    float oldCorrected() const
-        { return mCorrected.original();; }
+  virtual timeutil::ptime tbtime() const
+    { return mData->tbtime(); }
 
-    const kvalobs::kvControlInfo& oldControlinfo() const
-        { return mControlinfo.original(); }
+  float oldCorrected() const
+    { return mCorrected.original();; }
 
-    bool hasTasks() const
-        { return allTasks() != 0; }
+  const kvalobs::kvControlInfo& oldControlinfo() const
+    { return mControlinfo.original(); }
+
+  bool hasTasks() const
+    { return allTasks() != 0; }
 
   bool hasRequiredTasks() const;
 
-    bool hasTask(int id) const
-        { return (allTasks() & (1<<id)) != 0; }
+  bool hasTask(int id) const
+    { return (allTasks() & (1<<id)) != 0; }
 
-    int allTasks() const
-        { return mTasks.value(); }
+  int allTasks() const
+    { return mTasks.value(); }
 
-    bool modified() const
-        { return (modifiedCorrected() or modifiedControlinfo()); }
+  bool modified() const
+    { return (modifiedCorrected() or modifiedControlinfo()); }
 
-    bool modifiedCorrected() const
-        { return mCreated or mCorrected.modified(); }
+  bool modifiedCorrected() const
+    { return mCreated or mCorrected.modified(); }
 
-    bool modifiedControlinfo() const
-        { return mCreated or mControlinfo.modified(); }
+  bool modifiedControlinfo() const
+    { return mCreated or mControlinfo.modified(); }
 
-    bool modifiedTasks() const
-        { return mTasks.modified(); }
+  bool modifiedTasks() const
+    { return mTasks.modified(); }
 
-    bool hasVersion(int version)
-        { return mCorrected.hasVersion(version) or mControlinfo.hasVersion(version) or mTasks.hasVersion(version); }
+  bool hasVersion(int version)
+    { return mCorrected.hasVersion(version) or mControlinfo.hasVersion(version) or mTasks.hasVersion(version); }
 
-    float corrected(int version) const
-        { return mCorrected.value(version); }
+  float corrected(int version) const
+    { return mCorrected.value(version); }
 
-    const kvalobs::kvControlInfo& controlinfo(int version) const
-        { return mControlinfo.value(version); }
+  const kvalobs::kvControlInfo& controlinfo(int version) const
+    { return mControlinfo.value(version); }
 
-    int allTasks(int version) const
-        { return mTasks.value(version); }
+  int allTasks(int version) const
+    { return mTasks.value(version); }
 
-    bool created() const
-        { return mCreated; }
-
-private:
-    bool updateFromBackend();
-    void reset();
+  bool created() const
+    { return mCreated; }
 
 private:
-    ObsDataPtr mData;
-    bool mCreated;
-    float mOriginal;
+  bool updateFromBackend();
+  void reset();
 
-    typedef VersionedValue<float, Helpers::float_eq> Corrected_t;
-    typedef VersionedValue<kvalobs::kvControlInfo>   Controlinfo_t;
-    typedef VersionedValue<int>                      Tasks_t;
+private:
+  ObsDataPtr mData;
+  bool mCreated;
+  float mOriginal;
 
-    Corrected_t   mCorrected;
-    Controlinfo_t mControlinfo;
-    Tasks_t       mTasks;
+  typedef VersionedValue<float, Helpers::float_eq> Corrected_t;
+  typedef VersionedValue<kvalobs::kvControlInfo>   Controlinfo_t;
+  typedef VersionedValue<int>                      Tasks_t;
 
-    friend class EditAccess;
-    friend class EditDataEditor;
+  Corrected_t   mCorrected;
+  Controlinfo_t mControlinfo;
+  Tasks_t       mTasks;
+
+  friend class EditAccess;
+  friend class EditDataEditor;
 };
 
 #endif // EditData_hh

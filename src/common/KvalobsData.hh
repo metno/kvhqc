@@ -24,6 +24,9 @@ public:
   virtual std::string cfailed() const
     { return mKvData.cfailed(); }
 
+  virtual timeutil::ptime tbtime() const
+    { return mKvData.tbtime(); }
+
   const kvalobs::kvData& data() const
     { return mKvData; }
 
