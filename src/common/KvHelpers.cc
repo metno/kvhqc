@@ -292,21 +292,26 @@ Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::stri
 
   const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   Sensors_t sensors;
-  Sensor s2(s);
   BOOST_FOREACH(int par, stationPar) {
-    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-      if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
-        continue;
-      
-      const bool eql = op.paramID() == par;
-      const bool agg = aggregatedParameter(op.paramID(), par);
-      if (eql or agg) {
-        s2.paramId = par;
-        s2.typeId = eql ? op.typeID() : -op.typeID();
-        sensors.push_back(s2);
-        break;
+    Sensor s2(s);
+    s2.paramId = par;
+    bool accept = (par == s.paramId);
+    if (not accept) {
+      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+        if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+          continue;
+        
+        const bool eql = op.paramID() == par;
+        const bool agg = aggregatedParameter(op.paramID(), par);
+        if (eql or agg) {
+          accept = true;
+          s2.typeId = eql ? op.typeID() : -op.typeID();
+          break;
+        }
       }
     }
+    if (accept)
+      sensors.push_back(s2);
   }
     
   BOOST_FOREACH(int par, neighborPar) {
