@@ -1,3 +1,9 @@
+kvhqc (3.1.9-1) unstable; urgency=low
+
+  * auto lists update only when visible
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 04 Oct 2013 15:40:09 +0200
+
 kvhqc (3.1.8-1) unstable; urgency=low
 
   * show more tooltips in corrections area (including tbtime)
