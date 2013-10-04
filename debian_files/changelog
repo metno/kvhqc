@@ -1,3 +1,10 @@
+kvhqc (3.1.8-1) unstable; urgency=low
+
+  * show more tooltips in corrections area (including tbtime)
+  * auto data list includes obs even if not in obs_pgm
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 03 Oct 2013 16:03:46 +0200
+
 kvhqc (3.1.7-1) unstable; urgency=low
 
   * filter related parameters by obs_pgm
