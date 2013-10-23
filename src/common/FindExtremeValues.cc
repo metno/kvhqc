@@ -48,12 +48,18 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
 
   std::ostringstream paramids;
   bool findMaximum = true;
-  if (paramid == kvalobs::PARAMID_TAN or paramid == kvalobs::PARAMID_TAX) {
-    paramids << kvalobs::PARAMID_TA << ',' << paramid;
-    findMaximum = (paramid == kvalobs::PARAMID_TAX);
+  if (paramid == kvalobs::PARAMID_TAN) {
+    // TA, TAN, TAN_12
+    paramids << "211,213,214";
+    findMaximum = false;
+  } else if (paramid == kvalobs::PARAMID_TAX) {
+    // TA, TAX, TAX_12
+    paramids << "211,215,216";
   } else if (paramid == kvalobs::PARAMID_FG) {
+    // FG, FG_010, FG_1, FG_6, FG_12, FG_X
     paramids << "83,84,90,91,92,94";
   } else if (paramid == kvalobs::PARAMID_FX) {
+    // FX, FX_1, FX_6, FX_12, FX_X, FX_3
     paramids << "86,87,88,89,93,95";
   } else {
     paramids << paramid;

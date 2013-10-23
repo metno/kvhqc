@@ -47,6 +47,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   std::vector<int> params;
   params.push_back(kvalobs::PARAMID_TAN);
   params.push_back(kvalobs::PARAMID_TAX);
+  params.push_back(kvalobs::PARAMID_RR_12);
   params.push_back(kvalobs::PARAMID_RR_24);
   params.push_back(kvalobs::PARAMID_SA);
   params.push_back(kvalobs::PARAMID_FG);
