@@ -51,7 +51,7 @@
 #include "TextdataDialog.hh"
 #include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
-#include "missing/MissingObservationWidget.hh"
+#include "MissingView.hh"
 #include "common/DataView.hh"
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
@@ -177,16 +177,12 @@ HqcMainWindow::HqcMainWindow()
   lstdlg->hide();
 
 
-  // Dock for missing observations
-  MissingObservationWidget * missingWidget = new MissingObservationWidget(this);
-  QDockWidget * missingDock = new QDockWidget(tr("Missing observations"), this);
-  missingDock->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable | QDockWidget::DockWidgetVerticalTitleBar);
-  missingDock->setWidget(missingWidget);
-  addDockWidget(Qt::BottomDockWidgetArea, missingDock);
-  missingDock->setVisible(false);
-  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(show()));
-  connect(ui->actionShowMissingObservations, SIGNAL(triggered()), missingDock, SLOT(raise()));
-  tabifyDockWidget(ui->dockErrors, missingDock);
+  // dock for missing observations
+  mMissingView = new MissingView(ui->dockMissing);
+  mMissingView->setDataAccess(eda);
+  ui->dockMissing->setWidget(mMissingView);
+  tabifyDockWidget(ui->dockErrors, ui->dockMissing);
+  ui->dockMissing->setVisible(false);
 
   mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
   mDianaHelper->setDataAccess(eda, kma);
@@ -209,9 +205,9 @@ HqcMainWindow::HqcMainWindow()
   mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mExtremesView     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mMissingView      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors    ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  missingWidget     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
@@ -248,6 +244,7 @@ HqcMainWindow::~HqcMainWindow()
 
   mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mMissingView      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mExtremesView     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
@@ -619,6 +616,13 @@ void HqcMainWindow::onShowExtremes()
   METLIBS_LOG_SCOPE();
   ui->dockExtremes->setVisible(true);
   ui->dockExtremes->raise();
+}
+
+void HqcMainWindow::onShowMissing()
+{
+  METLIBS_LOG_SCOPE();
+  ui->dockMissing->setVisible(true);
+  ui->dockMissing->raise();
 }
 
 void HqcMainWindow::onShowChanges()

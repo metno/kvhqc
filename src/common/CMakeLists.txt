@@ -24,6 +24,7 @@ SET(common_SOURCES
   EditTimeColumn.cc
   FindAllParameters.cc
   FindExtremeValues.cc
+  FindMissingValues.cc
   FlagChange.cc
   FlagPattern.cc
   FlagPatterns.cc

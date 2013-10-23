@@ -62,6 +62,7 @@ class JumpToObservation;
 class KvalobsAccess;
 class KvalobsModelAccess;
 class ListDialog;
+class MissingView;
 class RejectedObsDialog;
 class SensorTime;
 class TimeSeriesView;
@@ -126,6 +127,7 @@ private Q_SLOTS:
   void onRedoChanges();
 
   void onShowExtremes();
+  void onShowMissing();
   void onShowErrorList();
   void onShowChanges();
   void onShowSimpleCorrections();
@@ -184,6 +186,7 @@ private:
   TimeSeriesView* mTimeSeriesView;
 
   ExtremesView* mExtremesView;
+  MissingView* mMissingView;
 };
 
 #endif // HQC_HQCMAINWINDOW_H

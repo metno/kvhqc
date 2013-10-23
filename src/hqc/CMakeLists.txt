@@ -25,13 +25,15 @@ SET(hqc_SOURCES
   TimeseriesDialog.cc
   TimeSeriesView.cc
   ViewChanges.cc
-  missing/MissingView.cc
-  missing/MissingSelectorWidget.cc
-  missing/MissingObservationWidget.cc
-  missing/StationOrderedMissingDataModel.cc
-  missing/internal/MissingList.cc
-  missing/internal/findMissingStations.cc
-  missing/internal/MissingDataReceiver.cc
+  MissingView.cc
+  MissingTableModel.cc
+#  missing/MissingView.cc
+#  missing/MissingSelectorWidget.cc
+#  missing/MissingObservationWidget.cc
+#  missing/StationOrderedMissingDataModel.cc
+#  missing/internal/MissingList.cc
+#  missing/internal/findMissingStations.cc
+#  missing/internal/MissingDataReceiver.cc
 )
 
 QT4_ADD_TRANSLATION(hqc_QM
@@ -53,6 +55,7 @@ QT4_WRAP_CPP(hqc_MOC
   HqcMainWindow.hh
   JumpToObservation.hh
   ListDialog.hh
+  MissingView.hh
   RejectedObs.hh
   RejectedObsDialog.hh
   SimpleCorrections.hh
@@ -76,6 +79,7 @@ QT4_WRAP_UI(hqc_UIH
   jumptoobservation.ui
   listdialog.ui
   mainwindow.ui
+  missingvalues.ui
   simplecorrections.ui
   timeseriesview.ui
   ts_add.ui
