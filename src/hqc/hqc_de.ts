@@ -1781,32 +1781,32 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>MissingSelectorWidget</name>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="62"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="63"/>
         <source>&amp;From:</source>
         <translation>&amp;Von:</translation>
     </message>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="67"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="68"/>
         <source>&amp;To:</source>
         <translation>&amp;Bis:</translation>
     </message>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="76"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="77"/>
         <source>&amp;Type:</source>
         <translation>&amp;Type:</translation>
     </message>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="80"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="81"/>
         <source>&amp;Apply</source>
         <translation>&amp;Anwenden</translation>
     </message>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="118"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="119"/>
         <source>Error</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="118"/>
+        <location filename="missing/MissingSelectorWidget.cc" line="119"/>
         <source>Unable to understand %1!</source>
         <translation>Verstehe %1 nicht!</translation>
     </message>

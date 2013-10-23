@@ -1,4 +1,3 @@
-#include "getObsPgm.hh"
 #include <common/KvMetaDataBuffer.hh>
 #include <boost/foreach.hpp>
 #include <stdexcept>

@@ -43,7 +43,8 @@ namespace
                 ( dagbok,        412 );
 
     const std::vector<QString> orderedTypeID = boost::assign::list_of
-        (all)(sms2)(sms8)(sms12)(ukekort);
+        //(all)(sms2)(sms8)(sms12)(ukekort);
+        (sms2);
 
 void addEntries(QComboBox * out)
 {
