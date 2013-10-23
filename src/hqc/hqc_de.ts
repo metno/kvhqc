@@ -238,22 +238,10 @@
         <translation>ohne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="57"/>
-        <source>1 h</source>
-        <oldsource>1 hour</oldsource>
-        <translation>1 h</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="58"/>
-        <source>12 h</source>
-        <oldsource>12 hours</oldsource>
-        <translation>12 h</translation>
-    </message>
-    <message>
         <location filename="DataList.cc" line="59"/>
-        <source>24 h</source>
-        <oldsource>24 hours</oldsource>
-        <translation>24 h</translation>
+        <source>%1 h</source>
+        <oldsource>6 h</oldsource>
+        <translation>%1 h</translation>
     </message>
     <message>
         <location filename="DataList.cc" line="138"/>

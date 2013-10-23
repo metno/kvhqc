@@ -53,10 +53,10 @@ DataList::DataList(QWidget* parent)
   ui->table->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui->table->setItemDelegate(new ObsDelegate(this));
 
-  ui->comboTimeStep->addItem(tr("none"), QVariant(       0));
-  ui->comboTimeStep->addItem(tr("1 h"),  QVariant(   60*60));
-  ui->comboTimeStep->addItem(tr("12 h"), QVariant(12*60*60));
-  ui->comboTimeStep->addItem(tr("24 h"), QVariant(24*60*60));
+  ui->comboTimeStep->addItem(tr("none"), QVariant(0));
+  const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
+  for (int i=0; i<NHOURS; ++i)
+    ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]),  QVariant(HOURS[i]*60*60));
 
   connect(ui->table, SIGNAL(currentChanged(const QModelIndex&)),
       this, SLOT(currentChanged(const QModelIndex&)));
