@@ -6,7 +6,7 @@
  */
 
 #include "MissingSelectorWidget.hh"
-#include <QDateEdit>
+#include "util/gui/MiDateTimeEdit.hh"
 #include <QDate>
 #include <QComboBox>
 #include <QPushButton>
@@ -23,7 +23,8 @@
 
 namespace
 {
-    const QString all = "All";
+    // TODO wrap with QT_TRANSLATE_NOOP("MissingSelectorWidget", ...) and update use of "typeids_"
+    const QString all = "Alle";
     const QString autoobs = "Autoobs";
     const QString sms2 = "SMS - type 2";
     const QString sms8 = "SMS - type 8";
@@ -56,14 +57,14 @@ MissingSelectorWidget::MissingSelectorWidget(QWidget * parent) :
 {
   QDate today = QDate::currentDate();
 
-  fromDateEdit = new QDateEdit(today.addDays(-3), this);
+  fromDateEdit = new MiDateTimeEdit(today.addDays(-3), this);
   fromDateEdit->setDisplayFormat("dd/MM yyyy");
-  QLabel * fromLabel = new QLabel("&From:", this);
+  QLabel * fromLabel = new QLabel(tr("&From:"), this);
   fromLabel->setBuddy(fromDateEdit);
 
-  toDateEdit = new QDateEdit(today, this);
+  toDateEdit = new MiDateTimeEdit(today, this);
   toDateEdit->setDisplayFormat("dd/MM yyyy");
-  QLabel * toLabel = new QLabel("&To:", this);
+  QLabel * toLabel = new QLabel(tr("&To:"), this);
   toLabel->setBuddy(toDateEdit);
 
   QObject::connect(fromDateEdit, SIGNAL(dateChanged(QDate)), this, SLOT(dateCheck()));
@@ -72,7 +73,7 @@ MissingSelectorWidget::MissingSelectorWidget(QWidget * parent) :
 
   typeID = new QComboBox(this);
   addEntries(typeID);
-  QLabel * typeLabel = new QLabel("&Type:", this);
+  QLabel * typeLabel = new QLabel(tr("&Type:"), this);
   typeLabel->setBuddy(typeID);
 
 
@@ -82,6 +83,8 @@ MissingSelectorWidget::MissingSelectorWidget(QWidget * parent) :
 
 
   QHBoxLayout * mainLayout = new QHBoxLayout(this);
+  mainLayout->setSpacing(2);
+  mainLayout->setContentsMargins(2, 2, 2, 2);
   mainLayout->addWidget(fromLabel);
   mainLayout->addWidget(fromDateEdit);
   mainLayout->addWidget(toLabel);
@@ -112,15 +115,14 @@ int MissingSelectorWidget::type() const
     const QString & type = typeID->currentText();
     TypeIDMap::const_iterator find = typeids_.find(type);
     if ( find == typeids_.end() ) {
-        QMessageBox::warning(0, "Error", "Unable to understand " + typeID->currentText());
+      QMessageBox::warning(0, tr("Error"), tr("Unable to understand %1!").arg(typeID->currentText()));
         return -1;
     }
     return find->second;
 }
 
 
-void
-MissingSelectorWidget::dateCheck()
+void MissingSelectorWidget::dateCheck()
 {
   struct SignalBlocker
   {

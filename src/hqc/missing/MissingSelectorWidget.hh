@@ -11,7 +11,7 @@
 #include <QWidget>
 #include <QDate>
 
-class QDateEdit;
+class MiDateTimeEdit;
 class QComboBox;
 
 
@@ -34,8 +34,8 @@ private Q_SLOTS:
   void dateCheck();
 
 private:
-  QDateEdit * fromDateEdit;
-  QDateEdit * toDateEdit;
+  MiDateTimeEdit * fromDateEdit;
+  MiDateTimeEdit * toDateEdit;
   QComboBox * typeID;
 };
 

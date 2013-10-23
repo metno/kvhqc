@@ -7,13 +7,14 @@
 #include "internal/findMissingStations.hh"
 #include "internal/MissingList.hh"
 #include "internal/TaskSpecification.hh"
-#include <common/KvMetaDataBuffer.hh>
+#include "common/KvMetaDataBuffer.hh"
+#include "util/gui/BusyIndicator.hh"
 #include <QBoxLayout>
 #include <QTreeView>
-#include <QDebug>
 #include <boost/date_time/gregorian_calendar.hpp>
-#include <algorithm>
 
+#define MILOGGER_CATEGORY "kvhqc.missing.MissingObservationWidget"
+#include "common/ObsLogging.hh"
 
 MissingObservationWidget::MissingObservationWidget(QWidget *parent) :
     QWidget(parent)
@@ -25,18 +26,22 @@ MissingObservationWidget::MissingObservationWidget(QWidget *parent) :
     connect(selector, SIGNAL(findMissingRequested()), SLOT(findMissing()));
 
     QVBoxLayout * mainLayout = new QVBoxLayout(this);
+    mainLayout->setSpacing(2);
+    mainLayout->setContentsMargins(2, 2, 2, 2);
     mainLayout->addWidget(selector);
     mainLayout->addWidget(view);
 }
 
 void MissingObservationWidget::findMissing()
 {
+    BusyIndicator busy;
     findMissing(selector->from(), selector->to(), selector->type());
 }
 
 
 void MissingObservationWidget::findMissing(const QDate & from, const QDate & to, int type)
 {
+    METLIBS_LOG_SCOPE();
     MissingList missing;
 
     using boost::gregorian::date;
@@ -47,7 +52,7 @@ void MissingObservationWidget::findMissing(const QDate & from, const QDate & to,
 
     bool stop = false;
     findMissingStations( missing, spec, stop );
-    qDebug() << "Got data";
+    METLIBS_LOG_DEBUG("Got data");
 
     StationOrderedMissingDataModel * model = new StationOrderedMissingDataModel(missing, this);
     view->setModel(model);
@@ -55,8 +60,7 @@ void MissingObservationWidget::findMissing(const QDate & from, const QDate & to,
 
 void MissingObservationWidget::signalNavigate(const SensorTime & st)
 {
-    const Sensor & s = st.sensor;
-    qDebug() << s.stationId <<", "<< s.paramId <<", "<< s.level <<", "<< s.sensor <<", "<< s.typeId;
-
+    METLIBS_LOG_SCOPE();
+    METLIBS_LOG_DEBUG(st);
     signalNavigateTo(st);
 }

@@ -24,6 +24,8 @@ MissingView::MissingView(QWidget* parent) :
   connect(view, SIGNAL(activated(QModelIndex)), SLOT(signalSelected(QModelIndex)));
 
   QHBoxLayout * mainLayout = new QHBoxLayout(this);
+  mainLayout->setSpacing(2);
+  mainLayout->setContentsMargins(2, 2, 2, 2);
   mainLayout->addWidget(view);
 }
 
