@@ -457,8 +457,12 @@ void HqcMainWindow::showWatchRR()
 
   mDianaHelper->setEnabled(false);
   EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-  MainDialog main(eda2, kma, sensor, time, this);
-  if (main.exec()) {
+  bool ok;
+  {
+    MainDialog main(eda2, kma, sensor, time, this);
+    ok = main.exec();
+  } // FIXME this is a hack to avoid MainDialog complaining about data changes in parent
+  if (ok) {
     eda->newVersion();
     if (not eda2->sendChangesToParent(false)) {
       QMessageBox::critical(this,
