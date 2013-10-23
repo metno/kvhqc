@@ -332,8 +332,7 @@ void HqcDianaHelper::sendTimes()
   m.description= "time";
   BOOST_FOREACH(const timeutil::ptime& t, mAllTimes)
       m.data.push_back(timeutil::to_iso_extended_string(t));
-  METLIBS_LOG_DEBUG(LOGVAL(m.content()));
-  mClientButton->sendMessage(m);
+  sendMessage(m);
 }
 
 #ifdef METLIBS_BEFORE_4_9_5
@@ -362,7 +361,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
     if (letter.commondesc == "name,time") {
       QStringList name_time = QString::fromStdString(letter.common).split(',');
       bool ok = false;
-      const int stationid = name_time[0].toInt(&ok);
+      const int stationid = name_time[0].mid(1).toInt(&ok);
       if (not ok) {
         METLIBS_LOG_INFO("Unable to parse first element as stationid: '" << letter.common << "'");
         return;
@@ -385,7 +384,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
 
   bool sendSignal = false;
 
-  timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
+  const timeutil::ptime time = timeutil::from_iso_extended_string(time_txt);
   if (not isKnownTime(time)) {
     METLIBS_LOG_INFO("Invalid/unknown time from diana: '" << time_txt << "'");
     mDianaNeedsHqcInit = true;
@@ -399,8 +398,14 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
   }
   if (stationId != 0 and stationId != mDianaSensorTime.sensor.stationId) {
-    sendSignal = true;
-    mDianaSensorTime.sensor = Sensor(stationId, 0, 0, 0, 0); // TODO how to identify the correct sensor?
+    BOOST_FOREACH(const Sensor& s, mSensors) {
+      // TODO how to identify the correct sensor?
+      if (s.stationId == stationId and s.paramId == mDianaSensorTime.sensor.paramId) {
+        sendSignal = true;
+        mDianaSensorTime.sensor = s;
+        break;
+      }
+    }
   }
 
   if (sendSignal) {
@@ -419,8 +424,7 @@ void HqcDianaHelper::applyQuickMenu()
   m.command = qmstrings::apply_quickmenu;
   m.data.push_back("hqc_qmenu");
   m.data.push_back("hqc_obs_...");
-  METLIBS_LOG_DEBUG(LOGVAL(m.content()));
-  mClientButton->sendMessage(m);
+  sendMessage(m);
 #endif
 }
 
@@ -432,14 +436,12 @@ void HqcDianaHelper::sendStation()
   miMessage m;
   m.command = qmstrings::station;
   m.common  = "S" + boost::lexical_cast<std::string>(mDianaSensorTime.sensor.stationId);
-  METLIBS_LOG_DEBUG(LOGVAL(m.content()));
-  mClientButton->sendMessage(m);
+  sendMessage(m);
 }
 
 void HqcDianaHelper::sendTime()
 {
   METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
   if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaSensorTime.time))
     return;
 
@@ -447,13 +449,13 @@ void HqcDianaHelper::sendTime()
   m.command = qmstrings::settime;
   m.commondesc = "time";
   m.common = timeutil::to_iso_extended_string(mDianaSensorTime.time);
-  METLIBS_LOG_DEBUG(LOGVAL(m.content()));
-  mClientButton->sendMessage(m);
+  sendMessage(m);
 }
 
 bool HqcDianaHelper::isKnownTime(const timeutil::ptime& time) const
 {
-  return (not time.is_not_a_date_time() and mAllTimes.find(time) != mAllTimes.end());
+  return (not time.is_not_a_date_time())
+      and (mAllTimes.find(time) != mAllTimes.end());
 }
 
 std::string HqcDianaHelper::synopStart(int stationId)
@@ -613,8 +615,7 @@ void HqcDianaHelper::sendObservations()
 #else
     pLetter.data = synopData;
 #endif
-    METLIBS_LOG_DEBUG(LOGVAL(pLetter.content()));
-    mClientButton->sendMessage(pLetter);
+    sendMessage(pLetter);
 
     if (mDianaNeedsHqcInit)
       sendTimes();
@@ -639,6 +640,11 @@ void HqcDianaHelper::sendSelectedParam()
   m.command = qmstrings::select_HQC_param;
   m.commondesc = "diParam";
   m.common     = it->second.dianaName;
+  sendMessage(m);
+}
+
+void HqcDianaHelper::sendMessage(miMessage& m)
+{
   METLIBS_LOG_DEBUG(LOGVAL(m.content()));
   mClientButton->sendMessage(m);
 }

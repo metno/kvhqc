@@ -65,6 +65,7 @@ private:
   void sendStation();
   void sendObservations();
   void sendSelectedParam();
+  void sendMessage(miMessage& message);
 
   std::string synopStart(int stationId);
   std::string synopValue(const SensorTime& st, const SendPar& sp, bool& hasData);
