@@ -1,3 +1,12 @@
+kvhqc (3.2.0~b2-1) unstable; urgency=low
+
+  * WatchRR: avoid warning when done
+  * more parameters for extreme values
+  * fixed some problems with diana communication
+  * DataList: added 3 and 6 hour timesteps
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 22 Oct 2013 15:35:40 +0200
+
 kvhqc (3.2.0~b1-1) unstable; urgency=low
 
   * added missinglist
