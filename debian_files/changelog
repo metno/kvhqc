@@ -1,3 +1,9 @@
+kvhqc (3.2.0~b1-1) unstable; urgency=low
+
+  * added missinglist
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 04 Oct 2013 16:40:31 +0200
+
 kvhqc (3.1.9-1) unstable; urgency=low
 
   * auto lists update only when visible
