@@ -62,6 +62,13 @@ MissingView::~MissingView()
 {
 }
 
+void MissingView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    ui->retranslateUi(this);
+  QWidget::changeEvent(event);
+}
+
 void MissingView::setMissing(const std::vector<SensorTime>& missing)
 {
   METLIBS_LOG_SCOPE();

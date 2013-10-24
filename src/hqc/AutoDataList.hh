@@ -5,7 +5,7 @@
 #include "DataList.hh"
 #include "common/ObsColumn.hh"
 
-class QAbstractButton;
+class QPushButton;
 class QDomElement;
 
 // ------------------------------------------------------------------------
@@ -37,6 +37,7 @@ private:
 protected:
   virtual void showEvent(QShowEvent* showEvent);
   virtual void hideEvent(QHideEvent* hideEvent);
+  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
   void onEarlier();
@@ -66,7 +67,9 @@ private:
   QAction* mColumnAdd;
   QAction* mColumnRemove;
   QAction* mColumnReset;
-  //QAbstractButton* mButtonJump;
+  QPushButton* mButtonColumns;
+  QPushButton* mButtonEarlier;
+  QPushButton* mButtonLater;
 
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;

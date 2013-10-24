@@ -5,6 +5,7 @@
 #include "common/DataColumn.hh"
 #include "common/ObsTableModel.hh"
 
+#include <QtCore/QEvent>
 #include <QtGui/QCheckBox>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QItemSelection>
@@ -41,6 +42,13 @@ AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
 
   QObject::connect(mButtonAccept, SIGNAL(clicked()), this, SLOT(onAccept()));
   QObject::connect(mButtonReject, SIGNAL(clicked()), this, SLOT(onReject()));
+}
+
+void AcceptRejectButtons::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+  QWidget::changeEvent(event);
 }
 
 void AcceptRejectButtons::retranslateUi()

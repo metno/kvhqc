@@ -84,10 +84,11 @@ public:
   void setReinserter(HqcReinserter* r);
 
 protected:
-  void moveEvent(QMoveEvent* event);
-  void resizeEvent(QResizeEvent* event);
-  void closeEvent(QCloseEvent* event);
-
+  virtual void moveEvent(QMoveEvent* event);
+  virtual void resizeEvent(QResizeEvent* event);
+  virtual void closeEvent(QCloseEvent* event);
+  virtual void changeEvent(QEvent *event);
+ 
 Q_SIGNALS:
   void newStationList(std::vector<QString>&);
   void newParameterList(const std::vector<int>&);

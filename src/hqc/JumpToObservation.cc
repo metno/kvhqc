@@ -41,6 +41,13 @@ JumpToObservation::~JumpToObservation()
   delete ui->comboType->model();
 }
 
+void JumpToObservation::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    ui->retranslateUi(this);
+  QWidget::changeEvent(event);
+}
+
 void JumpToObservation::accept()
 {
   METLIBS_LOG_SCOPE();

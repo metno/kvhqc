@@ -14,12 +14,9 @@ class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
   HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection* conf);
-    ~HqcApplication();
+  ~HqcApplication();
 
-//    void setReinserter(HqcReinserter* r, const QString& username)
-//        { mw->setReinserter(r, username); }
-
-    virtual bool notify(QObject* receiver, QEvent* e);
+  virtual bool notify(QObject* receiver, QEvent* e);
 
   QSqlDatabase systemDB();
   QSqlDatabase configDB();
@@ -45,9 +42,11 @@ private Q_SLOTS:
   void checkKvalobsAvailability();
 
 private:
-  void installTranslations(const QString& file, const QStringList& paths);
-  inline void installTranslations(const QString& file, const QString& path)
-    { installTranslations(file, QStringList(path)); }
+  void installTranslations();
+  void installTranslations(const QLocale& locale, const QString& file, const QStringList& paths);
+  inline void installTranslations(const QLocale& locale, const QString& file, const QString& path)
+    { installTranslations(locale, file, QStringList(path)); }
+
   void onException(const QString& message);
   void fatalError(const QString& message, const QString& info="");
   bool isGuiThread() const;

@@ -288,6 +288,23 @@ void HqcMainWindow::slotLanguageChanged(QAction* action)
   hqcApp->saveLanguage(l);
 }
 
+void HqcMainWindow::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+
+    ui->tabs->setTabText(0, tr("Auto List/Series"));
+    for (int i=1; i<ui->tabs->count(); ++i)
+      ui->tabs->setTabText(i, tr("Selected Data"));
+
+    mProgressDialog->setWindowTitle(tr("HQC"));
+    mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
+
+    kvalobsAvailable(hqcApp->isKvalobsAvailable());
+  }
+  QMainWindow::changeEvent(event);
+}
+
 void HqcMainWindow::setReinserter(HqcReinserter* r)
 {
   kda->setReinserter(r);

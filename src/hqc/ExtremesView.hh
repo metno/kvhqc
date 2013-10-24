@@ -29,6 +29,9 @@ public:
 
   boost::signal1<void, SensorTime> signalNavigateTo;
 
+protected:
+  virtual void changeEvent(QEvent *event);
+
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onUpdateClicked();

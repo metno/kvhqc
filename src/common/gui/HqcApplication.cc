@@ -44,37 +44,30 @@ const char SETTING_HQC_LANGUAGE[] = "language";
 HqcApplication* hqcApp = 0;
 
 HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
-    : QApplication(argc, argv)
-    , mConfig(conf)
+  : QApplication(argc, argv)
+  , mConfig(conf)
 {
-    hqcApp = this;
-
-    QCoreApplication::setOrganizationName("Meteorologisk Institutt");
-    QCoreApplication::setOrganizationDomain("met.no");
-    QCoreApplication::setApplicationName("Hqc");
-
-    QString language = savedLanguage();
-    if (not language.isEmpty())
-      QLocale::setDefault(QLocale(language));
-
-    installTranslations("qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-    installTranslations("qUtilities", "/usr/share/metlibs/translations");
-    
-    const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
-    installTranslations("watchrr", langDir);
-    installTranslations("weather", langDir);
-    installTranslations("hqc",     langDir);
-
-    QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
-    setWindowIcon(QIcon("icons:hqc_logo.svg"));
-
-    connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
-
-    QTimer* availabilityTimer = new QTimer(this);
-    connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
-    availabilityTimer->start(AVAILABILITY_TIMEROUT);
-
-    KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
+  hqcApp = this;
+  
+  QCoreApplication::setOrganizationName("Meteorologisk Institutt");
+  QCoreApplication::setOrganizationDomain("met.no");
+  QCoreApplication::setApplicationName("Hqc");
+  
+  QString language = savedLanguage();
+  if (not language.isEmpty())
+    QLocale::setDefault(QLocale(language));
+  installTranslations();
+  
+  QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
+  setWindowIcon(QIcon("icons:hqc_logo.svg"));
+  
+  connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
+  
+  QTimer* availabilityTimer = new QTimer(this);
+  connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
+  availabilityTimer->start(AVAILABILITY_TIMEROUT);
+  
+  KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
 }
 
 HqcApplication::~HqcApplication()
@@ -166,7 +159,10 @@ std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string
 void HqcApplication::saveLanguage(const QString& language)
 {
   QSettings settings;
-  settings.setValue(SETTING_HQC_LANGUAGE, language);
+  if (settings.value(SETTING_HQC_LANGUAGE).toString() != language) {
+    settings.setValue(SETTING_HQC_LANGUAGE, language);
+    installTranslations();
+  }
 }
 
 QString HqcApplication::savedLanguage() const
@@ -177,7 +173,7 @@ QString HqcApplication::savedLanguage() const
 
 QStringList HqcApplication::availableLanguages() const
 {
-  QStringList available;
+  QStringList available("en");
 
   QDir langDir(::hqc::getPath(::hqc::DATADIR) + "/lang");
   QStringList fileNames = langDir.entryList(QStringList("hqc_*.qm"));
@@ -191,13 +187,35 @@ QStringList HqcApplication::availableLanguages() const
   return available;
 }
 
-void HqcApplication::installTranslations(const QString& file, const QStringList& paths)
+void HqcApplication::installTranslations()
+{
+  BOOST_FOREACH(QTranslator* t, mTranslators) {
+    removeTranslator(t);
+    delete t;
+  }
+  mTranslators.clear();
+
+  QLocale locale = QLocale::system();
+  QString sl = savedLanguage();
+  if (not sl.isEmpty())
+    locale = QLocale(sl);
+
+  const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
+  // translators are searched in reverse order of installation
+  installTranslations(locale, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+  installTranslations(locale, "qUtilities", "/usr/share/metlibs/translations");
+  installTranslations(locale, "watchrr", langDir);
+  installTranslations(locale, "weather", langDir);
+  installTranslations(locale, "hqc",     langDir);
+}
+
+void HqcApplication::installTranslations(const QLocale& locale, const QString& file, const QStringList& paths)
 {
   QTranslator* translator = new QTranslator(this);
   mTranslators.push_back(translator);
   
   BOOST_FOREACH(const QString& p, paths) {
-    if (translator->load(QLocale(), file, "_", p)) {
+    if (translator->load(locale, file, "_", p)) {
       METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p
           << " for ui languages=" << QLocale::system().uiLanguages().join(","));
       installTranslator(translator);

@@ -66,6 +66,9 @@ public:
   void saveSettings(QSettings& settings);
   void restoreSettings(QSettings& settings);
 
+protected:
+  virtual void changeEvent(QEvent *event);
+
 private Q_SLOTS:
   void onSetRecentTimes();
 

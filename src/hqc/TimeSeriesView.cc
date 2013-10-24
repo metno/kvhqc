@@ -181,6 +181,24 @@ void TimeSeriesView::hideEvent(QHideEvent* he)
   mVisible = false;
 }
 
+void TimeSeriesView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+
+    ui->comboWhatToPlot->setItemText(0, tr("Corrected"));
+    ui->comboWhatToPlot->setItemText(1, tr("Model"));
+    ui->comboWhatToPlot->setItemText(2, tr("Difference"));
+
+    mColumnAdd->setText(tr("Add..."));
+    mColumnRemove->setText(tr("Remove..."));
+    mColumnReset->setText(tr("Reset"));
+    
+    updateSensors(); // language-specific legend
+  }
+  QWidget::changeEvent(event);
+}
+
 void TimeSeriesView::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();

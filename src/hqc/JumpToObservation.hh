@@ -24,6 +24,9 @@ public:
   
   boost::signal1<void, SensorTime> signalNavigateTo;
                                                    
+protected:
+  virtual void changeEvent(QEvent *event);
+
 public Q_SLOTS:
   virtual void accept();
 

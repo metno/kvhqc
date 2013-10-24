@@ -24,6 +24,9 @@ public:
 public Q_SLOTS:
   void enableButtons();
                                                            
+protected:
+  virtual void changeEvent(QEvent *event);
+
 private Q_SLOTS:
   void onAccept();
   void onReject();

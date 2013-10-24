@@ -37,16 +37,7 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
   ui->comboCorrected->setModel(ttl);
   ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-
-  // TODO move setting of minimum sizes to retranslateUi somehow
-  QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
-  setCommonMinWidth(labels1);
-  QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
-  setCommonMinWidth(labels2);
-
-  METLIBS_LOG_DEBUG(LOGVAL(minimumSize().height()) << LOGVAL(ui->tableChecks->minimumSize().height()));
-
-  setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
+  adjustSizes();
 
   QIcon iconAccept("icons:accept.svg"), iconReject("icons:reject.svg");
   ui->buttonAcceptCorrected   ->setIcon(iconAccept);
@@ -57,6 +48,25 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ui->buttonRejectQC2->setIcon(iconReject);
 
   update();
+}
+
+void SimpleCorrections::adjustSizes()
+{
+  QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
+  setCommonMinWidth(labels1);
+  QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
+  setCommonMinWidth(labels2);
+  METLIBS_LOG_DEBUG(LOGVAL(minimumSize().height()) << LOGVAL(ui->tableChecks->minimumSize().height()));
+  setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
+}
+
+void SimpleCorrections::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+    adjustSizes();
+  }
+  QWidget::changeEvent(event);
 }
 
 SimpleCorrections::~SimpleCorrections()

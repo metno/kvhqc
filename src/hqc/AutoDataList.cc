@@ -59,27 +59,20 @@ AutoDataList::AutoDataList(QWidget* parent)
   mColumnRemove->setEnabled(false);
   mColumnReset->setEnabled(false);
 
-  QPushButton* buttonColumns = new QPushButton(tr("Columns"), this);
-  buttonColumns->setIcon(QIcon("icons:dl_columns.svg"));
-  buttonColumns->setMenu(mColumnMenu);
-  ui->layoutButtons->addWidget(buttonColumns);
+  mButtonColumns = new QPushButton(tr("Columns"), this);
+  mButtonColumns->setIcon(QIcon("icons:dl_columns.svg"));
+  mButtonColumns->setMenu(mColumnMenu);
+  ui->layoutButtons->addWidget(mButtonColumns);
 
-  // mButtonJump = new QPushButton(tr("Follow"), this);
-  // //buttonJump->setIcon(QIcon("icons:dl_columns.svg"));
-  // //buttonJump->setMenu(mColumnMenu);
-  // mButtonJump->setCheckable(true);
-  // mButtonJump->setChecked(false);
-  // ui->layoutButtons->addWidget(mButtonJump);
+  mButtonEarlier = new QPushButton("+", this);
+  mButtonEarlier->setToolTip(tr("Earlier"));
+  connect(mButtonEarlier, SIGNAL(clicked()), this, SLOT(onEarlier()));
+  ui->table->addScrollBarWidget(mButtonEarlier, Qt::AlignTop);
 
-  QPushButton* buttonEarlier = new QPushButton("+", this);
-  buttonEarlier->setToolTip(tr("Earlier"));
-  connect(buttonEarlier, SIGNAL(clicked()), this, SLOT(onEarlier()));
-  ui->table->addScrollBarWidget(buttonEarlier, Qt::AlignTop);
-
-  QPushButton* buttonLater = new QPushButton("+", this);
-  buttonLater->setToolTip(tr("Later"));
-  connect(buttonLater, SIGNAL(clicked()), this, SLOT(onLater()));
-  ui->table->addScrollBarWidget(buttonLater, Qt::AlignBottom);
+  mButtonLater = new QPushButton("+", this);
+  mButtonLater->setToolTip(tr("Later"));
+  connect(mButtonLater, SIGNAL(clicked()), this, SLOT(onLater()));
+  ui->table->addScrollBarWidget(mButtonLater, Qt::AlignBottom);
 
   ui->table->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->table->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
@@ -109,6 +102,20 @@ void AutoDataList::hideEvent(QHideEvent* he)
   QWidget::hideEvent(he);
 
   mVisible = false;
+}
+
+void AutoDataList::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    mColumnAdd->setText(tr("Add column..."));
+    mColumnRemove->setText(tr("Remove column"));
+    mColumnReset->setText(tr("Reset columns"));
+
+    mButtonColumns->setText(tr("Columns"));
+    mButtonEarlier->setToolTip(tr("Earlier"));
+    mButtonLater->setToolTip(tr("Later"));
+  }
+  DataList::changeEvent(event);
 }
 
 void AutoDataList::navigateTo(const SensorTime& st)

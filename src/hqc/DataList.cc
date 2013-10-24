@@ -32,6 +32,8 @@ QString protectForCSV(const QVariant& v)
 {
   return protectForCSV(v.toString());
 }
+
+const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
 } // namespace anonymous
 
 DataList::DataList(QWidget* parent)
@@ -56,7 +58,7 @@ DataList::DataList(QWidget* parent)
   ui->comboTimeStep->addItem(tr("none"), QVariant(0));
   const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
   for (int i=0; i<NHOURS; ++i)
-    ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]),  QVariant(HOURS[i]*60*60));
+    ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]), QVariant(HOURS[i]*60*60));
 
   connect(ui->table, SIGNAL(currentChanged(const QModelIndex&)),
       this, SLOT(currentChanged(const QModelIndex&)));
@@ -64,6 +66,17 @@ DataList::DataList(QWidget* parent)
 
 DataList::~DataList()
 {
+}
+
+void DataList::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+    ui->comboTimeStep->setItemText(0, tr("none"));
+    for (int i=0; i<NHOURS; ++i)
+      ui->comboTimeStep->setItemText(i+1, tr("%1 h").arg(HOURS[i]));
+  }
+  QWidget::changeEvent(event);
 }
 
 void DataList::navigateTo(const SensorTime& st)

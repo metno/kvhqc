@@ -142,6 +142,23 @@ ListDialog::~ListDialog()
 {
 }
 
+void ListDialog::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+
+    mStationModel->setHorizontalHeaderLabels(QStringList()
+        << tr("Station/Region") << tr("Name") << tr("HOH")
+        << tr("County") << tr("Commune") << tr("Pri"));
+
+    // from ListDialog::setupParameterTab()
+    const int npgs = ui->comboParamGroup->count();
+    ui->comboParamGroup->setItemText(npgs-2, tr("All in obs pgm"));
+    ui->comboParamGroup->setItemText(npgs-1, tr("All defined"));
+  }
+  QWidget::changeEvent(event);
+}
+
 void ListDialog::setupStationTab()
 {
   METLIBS_LOG_SCOPE();

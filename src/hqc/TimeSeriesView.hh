@@ -31,6 +31,7 @@ public Q_SLOTS:
 protected:
   virtual void showEvent(QShowEvent* showEvent);
   virtual void hideEvent(QHideEvent* hideEvent);
+  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
   void onActionAddColumn();

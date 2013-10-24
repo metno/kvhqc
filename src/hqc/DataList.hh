@@ -39,6 +39,7 @@ private Q_SLOTS:
 
 protected:
   void updateModel(DataListModel* model);
+  virtual void changeEvent(QEvent *event);
 
 protected:
   std::auto_ptr<Ui::DataList> ui;

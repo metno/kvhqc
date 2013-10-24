@@ -60,6 +60,13 @@ ExtremesView::~ExtremesView()
 {
 }
 
+void ExtremesView::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    ui->retranslateUi(this);
+  QWidget::changeEvent(event);
+}
+
 void ExtremesView::setExtremes(const std::vector<SensorTime>& extremes)
 {
   METLIBS_LOG_SCOPE();
