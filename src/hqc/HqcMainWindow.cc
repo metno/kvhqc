@@ -437,18 +437,9 @@ void HqcMainWindow::ListOK()
   statusBar()->message("");
 }
 
-inline QString dateStr_( const QDateTime & dt )
-{
-  QString ret = dt.toString( Qt::ISODate );
-  ret[ 10 ] = ' ';
-  return ret;
-}
-
 void HqcMainWindow::textDataOK()
 {
-  const timeutil::ptime dtto = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtto));
-  const timeutil::ptime dtfrom = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(txtdlg->dtfrom));
-  TextData::showTextData(txtdlg->stnr, TimeRange(dtfrom, dtto), this);
+  TextData::showTextData(txtdlg->getStationId(), txtdlg->getTimeRange(), this);
 }
 
 void HqcMainWindow::rejectedOK()

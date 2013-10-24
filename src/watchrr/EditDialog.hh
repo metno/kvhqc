@@ -17,19 +17,23 @@ class EditTableModel;
 class EditDialog : public QDialog
 {   Q_OBJECT
 public:
-    EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime);
-    virtual ~EditDialog();
+  EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime);
+  virtual ~EditDialog();
+
+protected:
+  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
-    void onAcceptAll();
-    void onRejectAll();
-    void onButtonOk();
+  void onAcceptAll();
+  void onRejectAll();
+  void onButtonOk();
 
 private:
-    EditAccessPtr mDA;
-    TimeRange mEditableTime;
-    std::auto_ptr<EditTableModel> etm;
-    std::auto_ptr<Ui::DialogEdit> ui;
+  EditAccessPtr mDA;
+  TimeRange mEditableTime;
+  Sensor mSensor;
+  std::auto_ptr<EditTableModel> etm;
+  std::auto_ptr<Ui::DialogEdit> ui;
 };
 
 #endif // EDITDIALOG_HH

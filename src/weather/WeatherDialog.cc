@@ -43,8 +43,7 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
       METLIBS_LOG_INFO("cannot restore Weather geometry");
   }
 
-  QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
-  ui->labelStationInfo->setText(info);
+  setStationInfoText();
   ui->labelInfoRR->setText("");
 
   qApp->processEvents();
@@ -91,6 +90,21 @@ WeatherDialog::~WeatherDialog()
 
   QSettings settings;
   settings.setValue(SETTING_WEATHER_GEOMETRY, saveGeometry());
+}
+
+void WeatherDialog::setStationInfoText()
+{
+  QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
+  ui->labelStationInfo->setText(info);
+}
+
+void WeatherDialog::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+    setStationInfoText();
+  }
+  QDialog::changeEvent(event);
 }
 
 void WeatherDialog::reject()

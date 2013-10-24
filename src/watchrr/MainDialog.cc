@@ -55,9 +55,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
       HQC_LOG_WARN("cannot restore WatchRR geometry");
   }
 
-  QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
-  ui->labelStationInfo->setText(info);
-  ui->labelInfoRR->setText("");
+  setStationInfoText();
 
   ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
   ui->neighborDataButtonLayout->insertWidget(1, cb);
@@ -69,16 +67,6 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
   BusyIndicator wait;
 
   initializeRR24Data();
-
-  try {
-    const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(mSensor.stationId);
-    info += " " + Helpers::stationName(s);
-    if (s.environmentid() == 10)
-      info += " " + tr("[not daily]");
-  } catch (std::exception&) {
-    // TODO handle errors
-  }
-  ui->labelStationInfo->setText(info);
 
   QFont mono("Monospace");
 
@@ -130,6 +118,30 @@ MainDialog::~MainDialog()
 
   QSettings settings;
   settings.setValue(SETTING_WATCHRR_GEOMETRY, saveGeometry());
+}
+
+void MainDialog::setStationInfoText()
+{
+  QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
+  try {
+    const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(mSensor.stationId);
+    info += " " + Helpers::stationName(s);
+    if (s.environmentid() == 10)
+      info += " " + tr("[not daily]");
+  } catch (std::exception&) {
+    // TODO handle errors
+  }
+  ui->labelStationInfo->setText(info);
+}
+
+void MainDialog::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange) {
+    ui->retranslateUi(this);
+    setStationInfoText();
+    onSelectionChanged(QItemSelection(), QItemSelection()); // updates ui->labelInfoRR
+  }
+  QDialog::changeEvent(event);
 }
 
 void MainDialog::initializeRR24Data()

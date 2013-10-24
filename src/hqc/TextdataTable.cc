@@ -8,6 +8,7 @@
 
 #include <kvcpp/WhichDataHelper.h>
 
+#include <QtCore/QEvent>
 #include <QtGui/QHeaderView>
 #include <QtGui/QMessageBox>
 #include <QtGui/QTableView>
@@ -92,7 +93,20 @@ TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
 
   QVBoxLayout* topLayout = new QVBoxLayout(this);
   topLayout->addWidget(tv);
+  retranslateUi();
   show();
+}
+
+void TextData::retranslateUi()
+{
+  setCaption(tr("TextData"));
+}
+
+void TextData::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+  QDialog::changeEvent(event);
 }
 
 void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent)

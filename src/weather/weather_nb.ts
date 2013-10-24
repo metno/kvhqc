@@ -44,27 +44,27 @@
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="46"/>
+        <location filename="WeatherDialog.cc" line="97"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="108"/>
+        <location filename="WeatherDialog.cc" line="122"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Endringene kunne ikke lagres, de ble mistet. Beklager!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="109"/>
+        <location filename="WeatherDialog.cc" line="123"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="122"/>
+        <location filename="WeatherDialog.cc" line="136"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs data du har modifisert ble endret, du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="123"/>
+        <location filename="WeatherDialog.cc" line="137"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutte og miste endringer</translation>
     </message>

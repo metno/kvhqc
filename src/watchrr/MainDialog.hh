@@ -32,7 +32,10 @@ public:
 
 public Q_SLOTS:
   virtual void reject();
-                                                                                     
+  
+protected:
+  virtual void changeEvent(QEvent *event);
+
 private Q_SLOTS:
   void onAcceptRow();
   void onEdit();
@@ -63,6 +66,7 @@ private:
   };
 
 private:
+  void setStationInfoText();
   Selection findSelection();
   void clearSelection();
   bool isRR24Selection(const Selection& sel) const;

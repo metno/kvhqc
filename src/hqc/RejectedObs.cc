@@ -5,6 +5,7 @@
 
 #include <kvalobs/kvRejectdecode.h>
 
+#include <QtCore/QEvent>
 #include <QtGui/QHeaderView>
 #include <QtGui/QTableView>
 #include <QtGui/QVBoxLayout>
@@ -71,7 +72,6 @@ Rejects::Rejects(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* p
   : QDialog(parent)
   , mTableModel(new RejectDecodeTableModel(rejList))
 {
-  setCaption(tr("RejectDecode"));
   resize(1200, 700);
 
   QTableView* tv = new QTableView(this);
@@ -83,5 +83,18 @@ Rejects::Rejects(const std::vector<kvalobs::kvRejectdecode>& rejList, QWidget* p
 
   QVBoxLayout* topLayout = new QVBoxLayout(this);
   topLayout->addWidget(tv);
+  retranslateUi();
   show();
+}
+
+void Rejects::retranslateUi()
+{
+  setCaption(tr("RejectDecode"));
+}
+
+void Rejects::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+  QDialog::changeEvent(event);
 }

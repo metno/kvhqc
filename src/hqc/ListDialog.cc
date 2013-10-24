@@ -156,7 +156,7 @@ void ListDialog::changeEvent(QEvent *event)
     ui->comboParamGroup->setItemText(npgs-2, tr("All in obs pgm"));
     ui->comboParamGroup->setItemText(npgs-1, tr("All defined"));
   }
-  QWidget::changeEvent(event);
+  QDialog::changeEvent(event);
 }
 
 void ListDialog::setupStationTab()

@@ -30,9 +30,15 @@ public:
 
   TimeRange getTimeRange() const;
 
+protected:
+  virtual void changeEvent(QEvent *event);
+
 Q_SIGNALS:
   void rejectHide();
   void rejectApply();
+
+private:
+  void retranslateUi();
 
 private:
   QLabel* textLabel3;

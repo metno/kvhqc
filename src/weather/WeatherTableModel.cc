@@ -20,18 +20,20 @@ WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, con
 {
   const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(sensor.stationId);
   for(int i=0; i<NPARAMETERS; ++i) {
+    const int paramId = parameters[i];
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
+      if (paramId != op.paramID() or sensor.typeId != op.typeID())
+        continue;
       if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
         continue;
-      const int paramId = parameters[i];
-      if (paramId == op.paramID() and sensor.typeId == op.typeID()) {
-        const Sensor s(sensor.stationId, paramId, sensor.level, sensor.sensor, sensor.typeId);
-        DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, t);
-        if (oc) {
-          oc->setHeaderShowStation(false);
-          addColumn(oc);
-        }
+
+      const Sensor s(sensor.stationId, paramId, sensor.level, sensor.sensor, sensor.typeId);
+      DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, t);
+      if (oc) {
+        oc->setHeaderShowStation(false);
+        addColumn(oc);
       }
+      break;
     }
   }
 }

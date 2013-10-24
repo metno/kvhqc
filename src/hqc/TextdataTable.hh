@@ -23,12 +23,20 @@ private:
   std::vector<TxtDat> mTxtList;
 };
 
+// ========================================================================
+
 class TextData : public QDialog
 { Q_OBJECT;
 public:
   TextData(const std::vector<TxtDat>&, QWidget* parent=0);
 
   static void showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent);
+
+protected:
+  virtual void changeEvent(QEvent *event);
+
+private:
+  void retranslateUi();
 
 private:
   std::auto_ptr<TextDataTableModel> mTableModel;

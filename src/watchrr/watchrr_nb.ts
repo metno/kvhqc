@@ -154,7 +154,8 @@
 <context>
     <name>EditDialog</name>
     <message>
-        <location filename="EditDialog.cc" line="24"/>
+        <location filename="EditDialog.cc" line="25"/>
+        <location filename="EditDialog.cc" line="36"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
@@ -162,27 +163,27 @@
 <context>
     <name>MainDialog</name>
     <message>
-        <location filename="MainDialog.cc" line="58"/>
+        <location filename="MainDialog.cc" line="125"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="77"/>
+        <location filename="MainDialog.cc" line="130"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="169"/>
+        <location filename="MainDialog.cc" line="181"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="326"/>
+        <location filename="MainDialog.cc" line="338"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="MainDialog.cc" line="327"/>
+        <location filename="MainDialog.cc" line="339"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>
@@ -190,17 +191,17 @@
 <context>
     <name>RedistDialog</name>
     <message>
-        <location filename="RedistDialog.cc" line="27"/>
+        <location filename="RedistDialog.cc" line="48"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="RedistDialog.cc" line="40"/>
+        <location filename="RedistDialog.cc" line="51"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="RedistDialog.cc" line="44"/>
+        <location filename="RedistDialog.cc" line="55"/>
         <source>Difference %1mm to original sum %2mm!</source>
         <oldsource>Difference %2mm to original sum %3mm!</oldsource>
         <translation>%1mm differanse til original oppsamling %2mm!</translation>

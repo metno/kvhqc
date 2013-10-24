@@ -1482,33 +1482,33 @@ parametere</translation>
         <translation>Valgte data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="480"/>
+        <location filename="HqcMainWindow.cc" line="471"/>
         <source>No RejectDecode</source>
         <translation>Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="480"/>
+        <location filename="HqcMainWindow.cc" line="471"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="521"/>
+        <location filename="HqcMainWindow.cc" line="512"/>
         <source>WatchRR</source>
         <translation>WatchRR</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="522"/>
+        <location filename="HqcMainWindow.cc" line="513"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="523"/>
-        <location filename="HqcMainWindow.cc" line="766"/>
+        <location filename="HqcMainWindow.cc" line="514"/>
+        <location filename="HqcMainWindow.cc" line="757"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="726"/>
+        <location filename="HqcMainWindow.cc" line="717"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1519,67 +1519,67 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="764"/>
+        <location filename="HqcMainWindow.cc" line="755"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="765"/>
+        <location filename="HqcMainWindow.cc" line="756"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="769"/>
+        <location filename="HqcMainWindow.cc" line="760"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="778"/>
+        <location filename="HqcMainWindow.cc" line="769"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="781"/>
+        <location filename="HqcMainWindow.cc" line="772"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="782"/>
+        <location filename="HqcMainWindow.cc" line="773"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="609"/>
+        <location filename="HqcMainWindow.cc" line="600"/>
         <source>Print screenshot</source>
         <translation>Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="633"/>
+        <location filename="HqcMainWindow.cc" line="624"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="634"/>
+        <location filename="HqcMainWindow.cc" line="625"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="725"/>
+        <location filename="HqcMainWindow.cc" line="716"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="809"/>
+        <location filename="HqcMainWindow.cc" line="800"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="872"/>
+        <location filename="HqcMainWindow.cc" line="863"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="873"/>
+        <location filename="HqcMainWindow.cc" line="864"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
@@ -1911,17 +1911,17 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>RejectDecodeTable</name>
     <message>
-        <location filename="RejectedObs.cc" line="15"/>
+        <location filename="RejectedObs.cc" line="16"/>
         <source>Tbtime</source>
         <translation>Tbtime</translation>
     </message>
     <message>
-        <location filename="RejectedObs.cc" line="16"/>
+        <location filename="RejectedObs.cc" line="17"/>
         <source>Observation</source>
         <translation>Observasjon</translation>
     </message>
     <message>
-        <location filename="RejectedObs.cc" line="17"/>
+        <location filename="RejectedObs.cc" line="18"/>
         <source>Comment</source>
         <translation>Kommentar</translation>
     </message>
@@ -1929,32 +1929,32 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>RejectedObsDialog</name>
     <message>
-        <location filename="RejectedObsDialog.cc" line="15"/>
+        <location filename="RejectedObsDialog.cc" line="66"/>
         <source>RejectDecode</source>
         <translation>RejectDecode</translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="17"/>
+        <location filename="RejectedObsDialog.cc" line="67"/>
         <source>Select time range for reject list</source>
         <translation>Velg tidsrom for rejectdecode liste</translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="20"/>
+        <location filename="RejectedObsDialog.cc" line="68"/>
         <source>From</source>
         <translation>Fra</translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="23"/>
+        <location filename="RejectedObsDialog.cc" line="69"/>
         <source>To</source>
         <translation>Til</translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="36"/>
+        <location filename="RejectedObsDialog.cc" line="70"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="40"/>
+        <location filename="RejectedObsDialog.cc" line="71"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
@@ -1962,7 +1962,7 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>Rejects</name>
     <message>
-        <location filename="RejectedObs.cc" line="74"/>
+        <location filename="RejectedObs.cc" line="92"/>
         <source>RejectDecode</source>
         <translation>RejectDecode</translation>
     </message>
@@ -2199,17 +2199,18 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TextData</name>
     <message>
-        <location filename="TextdataTable.cc" line="83"/>
+        <location filename="TextdataTable.cc" line="84"/>
+        <location filename="TextdataTable.cc" line="102"/>
         <source>TextData</source>
         <translation>TextData</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="112"/>
+        <location filename="TextdataTable.cc" line="126"/>
         <source>No Textdata</source>
         <translation>Ingen Textdata</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="112"/>
+        <location filename="TextdataTable.cc" line="126"/>
         <source>Could not read text data.</source>
         <translation>Kunne ikke lese textdata.</translation>
     </message>
@@ -2217,43 +2218,43 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TextDataDialog</name>
     <message>
-        <location filename="TextdataDialog.cc" line="20"/>
-        <location filename="TextdataDialog.cc" line="119"/>
+        <location filename="TextdataDialog.cc" line="90"/>
+        <location filename="TextdataDialog.cc" line="132"/>
         <source>TextData</source>
         <translation>TextData</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="25"/>
+        <location filename="TextdataDialog.cc" line="91"/>
         <source>Station</source>
         <translation>Stasjon</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="28"/>
+        <location filename="TextdataDialog.cc" line="92"/>
         <source>Time range</source>
         <translation>Tidsrom</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="31"/>
+        <location filename="TextdataDialog.cc" line="93"/>
         <source>From</source>
         <translation>Fra</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="34"/>
+        <location filename="TextdataDialog.cc" line="94"/>
         <source>To</source>
         <translation>Til</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="59"/>
+        <location filename="TextdataDialog.cc" line="95"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="63"/>
-        <source>Avbryt</source>
+        <location filename="TextdataDialog.cc" line="96"/>
+        <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location filename="TextdataDialog.cc" line="120"/>
+        <location filename="TextdataDialog.cc" line="133"/>
         <source>Illegal station number. Choose a different station number.</source>
         <translation>Ugyldig stasjonsnummer. Vennligst velg et annet stasjonsnummer.</translation>
     </message>
@@ -2261,37 +2262,37 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TextDataTable</name>
     <message>
-        <location filename="TextdataTable.cc" line="22"/>
+        <location filename="TextdataTable.cc" line="23"/>
         <source>Stationid</source>
         <translation>Stationid</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="23"/>
+        <location filename="TextdataTable.cc" line="24"/>
         <source>Obstime</source>
         <translation>Obstime</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="24"/>
+        <location filename="TextdataTable.cc" line="25"/>
         <source>Original</source>
         <translation>Original</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="25"/>
+        <location filename="TextdataTable.cc" line="26"/>
         <source>Paramid</source>
         <translation>Paramid</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="26"/>
+        <location filename="TextdataTable.cc" line="27"/>
         <source>ParamName</source>
         <translation>ParamName</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="27"/>
+        <location filename="TextdataTable.cc" line="28"/>
         <source>Tbtime</source>
         <translation>Tbtime</translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="28"/>
+        <location filename="TextdataTable.cc" line="29"/>
         <source>Typeid</source>
         <translation>Typeid</translation>
     </message>

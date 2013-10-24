@@ -45,7 +45,7 @@ void JumpToObservation::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)
     ui->retranslateUi(this);
-  QWidget::changeEvent(event);
+  QDialog::changeEvent(event);
 }
 
 void JumpToObservation::accept()

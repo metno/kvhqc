@@ -22,21 +22,25 @@ class RedistTableModel;
 class RedistDialog : public QDialog
 {   Q_OBJECT;
 public:
-    RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime);
-    virtual ~RedistDialog();
+  RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime);
+  virtual ~RedistDialog();
+
+protected:
+  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
-    void onButtonOk();
-    void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
+  void onButtonOk();
+  void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
 private:
-    void updateSumInfo();
+  void updateSumInfo();
 
 private:
-    EditAccessPtr mDA;
-    TimeRange mEditableTime;
-    std::auto_ptr<RedistTableModel> rtm;
-    std::auto_ptr<Ui::DialogRedist> ui;
+  EditAccessPtr mDA;
+  TimeRange mEditableTime;
+  Sensor mSensor;
+  std::auto_ptr<RedistTableModel> rtm;
+  std::auto_ptr<Ui::DialogRedist> ui;
 };
 
 #endif // REDISTDIALOG_HH

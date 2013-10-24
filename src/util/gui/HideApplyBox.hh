@@ -18,6 +18,9 @@ public:
 
   void setCanApply(bool enabled);
 
+protected:
+  virtual void changeEvent(QEvent *event);
+
 Q_SIGNALS:
   void apply();
   void hide();

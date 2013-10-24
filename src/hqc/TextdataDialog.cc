@@ -2,9 +2,11 @@
 #include "TextdataDialog.hh"
 
 #include "common/KvMetaDataBuffer.hh"
+#include "common/StationIdCompletion.hh"
 #include "util/gui/MiDateTimeEdit.hh"
 #include "util/timeutil.hh"
 
+#include <QtCore/QEvent>
 #include <QtGui/QCheckBox>
 #include <QtGui/QLabel>
 #include <QtGui/QLineEdit>
@@ -15,25 +17,17 @@
 #include <QtCore/QDebug>
 
 TextDataDialog::TextDataDialog(QWidget* parent)
-    : QDialog(parent)
+  : QDialog(parent)
 {
-  setCaption(tr("TextData"));
-
   stnr = 0;
 
   textLabel0 = new QLabel(this);
-  textLabel0->setText(tr("Station"));
-
   textLabel1 = new QLabel(this);
-  textLabel1->setText(tr("Time range"));
-
   textLabel2 = new QLabel(this);
-  textLabel2->setText(tr("From"));
-
   textLabel3 = new QLabel(this);
-  textLabel3->setText(tr("To"));
-
   stationEdit = new QLineEdit(this);
+
+  Helpers::installStationIdCompleter(this, stationEdit);
 
   QDateTime ldtto = timeutil::nowWithMinutes0Seconds0();
   dtto = ldtto;
@@ -48,19 +42,19 @@ TextDataDialog::TextDataDialog(QWidget* parent)
   toEdit->setDisplayFormat("yyyy-MM-dd hh:mm");
 
   connect(stationEdit, SIGNAL(textChanged(const QString&)),
-	  this, SLOT(setStation(const QString&)));
+      this, SLOT(setStation(const QString&)));
 
   connect(fromEdit, SIGNAL(dateTimeChanged(const QDateTime&)),
-	  this, SLOT(setFromTime(const QDateTime&)));
+      this, SLOT(setFromTime(const QDateTime&)));
 
   connect(toEdit, SIGNAL(dateTimeChanged(const QDateTime&)),
-	  this, SLOT(setToTime(const QDateTime&)));
+      this, SLOT(setToTime(const QDateTime&)));
 
-  okButton = new QPushButton(tr("OK"), this);
+  okButton = new QPushButton(this);
   okButton->setGeometry(20, 620, 90, 30);
   okButton->setFont(QFont("Arial", 9));
 
-  cancelButton = new QPushButton(tr("Avbryt"), this);
+  cancelButton = new QPushButton(this);
   cancelButton->setGeometry(120, 620, 90, 30);
   cancelButton->setFont(QFont("Arial", 9));
 
@@ -85,8 +79,28 @@ TextDataDialog::TextDataDialog(QWidget* parent)
   topLayout->addLayout(toLayout);
   topLayout->addLayout(buttonLayout);
 
+  retranslateUi();
+
   connect(cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
   connect(okButton,     SIGNAL(clicked()), this, SLOT(checkStationId()));
+}
+
+void TextDataDialog::retranslateUi()
+{
+  setCaption(tr("TextData"));
+  textLabel0->setText(tr("Station"));
+  textLabel1->setText(tr("Time range"));
+  textLabel2->setText(tr("From"));
+  textLabel3->setText(tr("To"));
+  okButton->setText(tr("OK"));
+  cancelButton->setText(tr("Cancel"));
+}
+
+void TextDataDialog::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+  QDialog::changeEvent(event);
 }
 
 void TextDataDialog::setStation(const QString& st) {
@@ -102,21 +116,20 @@ void TextDataDialog::setToTime(const QDateTime& dt) {
   dtto = dt;
 }
 
-TimeSpan TextDataDialog::getTimeSpan()
+TimeRange TextDataDialog::getTimeRange() const
 {
-    TimeSpan ret;
-    ret.first = fromEdit->dateTime();
-    ret.second = timeutil::nowWithMinutes0Seconds0();
-    return ret;
+  const timeutil::ptime f = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(dtfrom));
+  const timeutil::ptime t = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(dtto));
+  return TimeRange(f, t);
 }
 
 void TextDataDialog::checkStationId()
 {
-    if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
-        hide();
-        /*emit*/ textDataApply();
-    } else {
-        QMessageBox::information( this, tr("TextData"),
-                                  tr("Illegal station number. Choose a different station number."));
-    }
+  if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
+    hide();
+    /*emit*/ textDataApply();
+  } else {
+    QMessageBox::information( this, tr("TextData"),
+        tr("Illegal station number. Choose a different station number."));
+  }
 }

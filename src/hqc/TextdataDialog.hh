@@ -3,6 +3,7 @@
 #ifndef HQC_TEXTDATADIALOG_H
 #define HQC_TEXTDATADIALOG_H
 
+#include "common/TimeRange.hh"
 #include <QtGui/qdialog.h>
 #include <QtCore/qdatetime.h>
 
@@ -15,14 +16,22 @@ class QDateTimeEdit;
 class QLineEdit;
 class QCheckBox;
 class QPushButton;
-typedef std::pair<QDateTime, QDateTime> TimeSpan;
 
 class TextDataDialog : public QDialog
-{
-  Q_OBJECT;
+{ Q_OBJECT;
 
 public:
   TextDataDialog(QWidget* parent = 0);
+
+  int getStationId() const
+    { return stnr; }
+  TimeRange getTimeRange() const;
+
+protected:
+  virtual void changeEvent(QEvent *event);
+
+private:
+  void retranslateUi();
 
   QLabel* textLabel0;
   QLabel* textLabel1;
@@ -36,8 +45,6 @@ public:
 
   QPushButton* okButton;
   QPushButton* cancelButton;
-
-  TimeSpan getTimeSpan();
 
   int stnr;
   QDateTime dtto;

@@ -15,6 +15,13 @@ HideApplyBox::HideApplyBox(QWidget* parent)
   connect(ui->applyHideButton, SIGNAL(clicked()), this, SLOT(hideApply()));
 }
 
+void HideApplyBox::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    ui->retranslateUi(this);
+  QWidget::changeEvent(event);
+}
+
 void HideApplyBox::setCanApply(bool enabled)
 {
   ui->applyButton->setEnabled(enabled);

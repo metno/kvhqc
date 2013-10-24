@@ -35,7 +35,11 @@ private Q_SLOTS:
   void onRedo();
   void onDataChanged(const QModelIndex&, const QModelIndex&);
 
+protected:
+  virtual void changeEvent(QEvent *event);
+
 private:
+  void setStationInfoText();
   void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
   void enableSave();
   void clearSelection();
