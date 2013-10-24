@@ -34,6 +34,10 @@ public:
 
   int exec();
 
+  void saveLanguage(const QString& language);
+  QString savedLanguage() const;
+  QStringList availableLanguages() const;
+
 Q_SIGNALS:
   void kvalobsAvailable(bool);
 

@@ -14,6 +14,7 @@
 #include <QtCore/QDir>
 #include <QtCore/QLibraryInfo>
 #include <QtCore/QLocale>
+#include <QtCore/QSettings>
 #include <QtCore/QThread>
 #include <QtCore/QTimer>
 #include <QtCore/QTranslator>
@@ -36,6 +37,8 @@ const char DB_CONFIG[] = "hqc_config_db";
 const char DB_KVALOBS[] = "kvalobs_db";
 
 const int AVAILABILITY_TIMEROUT = 120*1000; // milliseconds = 2 minutes
+
+const char SETTING_HQC_LANGUAGE[] = "language";
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
@@ -49,6 +52,10 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
     QCoreApplication::setOrganizationName("Meteorologisk Institutt");
     QCoreApplication::setOrganizationDomain("met.no");
     QCoreApplication::setApplicationName("Hqc");
+
+    QString language = savedLanguage();
+    if (not language.isEmpty())
+      QLocale::setDefault(QLocale(language));
 
     installTranslations("qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     installTranslations("qUtilities", "/usr/share/metlibs/translations");
@@ -156,20 +163,48 @@ std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string
   return results;
 }
 
-void HqcApplication::installTranslations(const QString& lang, const QStringList& paths)
+void HqcApplication::saveLanguage(const QString& language)
+{
+  QSettings settings;
+  settings.setValue(SETTING_HQC_LANGUAGE, language);
+}
+
+QString HqcApplication::savedLanguage() const
+{
+  QSettings settings;
+  return settings.value(SETTING_HQC_LANGUAGE).toString();
+}
+
+QStringList HqcApplication::availableLanguages() const
+{
+  QStringList available;
+
+  QDir langDir(::hqc::getPath(::hqc::DATADIR) + "/lang");
+  QStringList fileNames = langDir.entryList(QStringList("hqc_*.qm"));
+  Q_FOREACH(QString locale, fileNames) {
+    //                                    locale = "hqc_de.qm"
+    locale.truncate(locale.lastIndexOf('.'));   // "hqc_de"
+    locale.remove(0, locale.indexOf('_') + 1);  // "de"
+    available << locale;
+  }
+
+  return available;
+}
+
+void HqcApplication::installTranslations(const QString& file, const QStringList& paths)
 {
   QTranslator* translator = new QTranslator(this);
   mTranslators.push_back(translator);
   
   BOOST_FOREACH(const QString& p, paths) {
-    if (translator->load(QLocale::system(), lang, "_", p)) {
-      METLIBS_LOG_INFO("loaded '" << lang << "' translations from " << p
+    if (translator->load(QLocale(), file, "_", p)) {
+      METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p
           << " for ui languages=" << QLocale::system().uiLanguages().join(","));
       installTranslator(translator);
       return;
     }
   }
-  METLIBS_LOG_INFO("failed to load '" << lang << "' translations from ["
+  METLIBS_LOG_INFO("failed to load '" << file << "' translations from ["
       << paths.join(",")
       << "] for ui languages=" << QLocale::system().uiLanguages().join(","));
 }

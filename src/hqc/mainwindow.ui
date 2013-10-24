@@ -85,10 +85,18 @@
     <property name="title">
      <string>&amp;Other</string>
     </property>
+    <widget class="QMenu" name="menuLanguage">
+     <property name="title">
+      <string>Language</string>
+     </property>
+     <addaction name="actionLanguageSystem"/>
+    </widget>
     <addaction name="actionDianaConfig"/>
     <addaction name="actionStartKro"/>
     <addaction name="actionScreenshot"/>
     <addaction name="actionJumpToObservation"/>
+    <addaction name="separator"/>
+    <addaction name="menuLanguage"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -464,6 +472,20 @@
   <action name="actionShowMissingObservations">
    <property name="text">
     <string>Show Missing Observations</string>
+   </property>
+  </action>
+  <action name="actionLanguageSystem">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>System</string>
+   </property>
+   <property name="toolTip">
+    <string>Use system language</string>
    </property>
   </action>
  </widget>
