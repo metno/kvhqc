@@ -1,3 +1,9 @@
+kvhqc (3.2.0~b3-1) unstable; urgency=low
+
+  * added language change menu
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 23 Oct 2013 18:34:52 +0200
+
 kvhqc (3.2.0~b2-1) unstable; urgency=low
 
   * WatchRR: avoid warning when done
