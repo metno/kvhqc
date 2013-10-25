@@ -37,8 +37,6 @@ QString getFlagText(const kvalobs::kvControlInfo& cInfo);
 QString getFlagExplanation(const kvalobs::kvControlInfo& cInfo);
 QString getFlagName(int flagNumber);
 
-QString parameterName(int paramId);
-
 int kvSensorNumber(const kvalobs::kvData& d);
 Sensor sensorFromKvData(const kvalobs::kvData& d);
 SensorTime sensorTimeFromKvData(const kvalobs::kvData& d);
@@ -46,8 +44,6 @@ SensorTime sensorTimeFromKvModelData(const kvalobs::kvModelData& d);
 Sensor modelSensor(const Sensor& sensor);
 
 void updateUseInfo(kvalobs::kvData& data);
-
-QString stationName(const kvalobs::kvStation& s);
 
 struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStation, kvalobs::kvStation>
 {
@@ -87,6 +83,9 @@ inline bool same_sensor(int sensor1, int sensor2)
 { int diff = sensor1 - sensor2; return diff == 0 or diff == '0' or diff == -('0'); }
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
+
+QString paramName(int paramId);
+QString stationName(const kvalobs::kvStation& s);
 
 QString paramInfo(int paramId);
 QString typeInfo(int typeId);

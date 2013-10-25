@@ -113,8 +113,8 @@ bool StationDialog::checkType()
   mSensor.typeId = 0;
   if (mTypesModel.get()) {
     const int idx = ui->comboType->currentIndex();
-    if (idx >= 0 and idx < (int)mTypesModel->typeIds().size())
-      mSensor.typeId = mTypesModel->typeIds().at(idx);
+    if (idx >= 0 and idx < (int)mTypesModel->values().size())
+      mSensor.typeId = mTypesModel->values().at(idx);
   }
   return mSensor.typeId != 0;
 }
@@ -152,12 +152,12 @@ void StationDialog::updateTypeList()
   }
   const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());
   
-  if (not mTypesModel.get() or newTypeIds != mTypesModel->typeIds()) {
+  if (not mTypesModel.get() or newTypeIds != mTypesModel->values()) {
     mTypesModel.reset(new TypeIdModel(newTypeIds));
     ui->comboType->setModel(mTypesModel.get());
     if (not typeIdSet.empty()) {
       ui->comboType->setCurrentIndex(0);
-      mSensor.typeId = mTypesModel->typeIds().front();
+      mSensor.typeId = mTypesModel->values().front();
     } else {
       mSensor.typeId = 0;
     }

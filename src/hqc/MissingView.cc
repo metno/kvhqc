@@ -52,9 +52,11 @@ MissingView::MissingView(QWidget* parent)
   types.push_back(312); // sms12
   types.push_back(402); // ukekort
   types.push_back(412); // dagbok
-  std::auto_ptr<TypeIdModel> tim(new TypeIdModel(types));
-  tim->addTypeOverride(0, tr("any"));
-  ui->comboType->setModel(tim.release());
+  
+  OTypeIdExtract typeExtract;
+  typeExtract.override(0, tr("any"));
+  ui->comboType->setModel(new OverrideTypeIdModel(types, typeExtract));
+
   ui->comboType->setCurrentIndex(0);
 }
 
@@ -122,6 +124,6 @@ int MissingView::getTypeId() const
   const int idx = ui->comboType->currentIndex();
   if (idx < 0)
       return -1;
-  TypeIdModel* tim = static_cast<TypeIdModel*>(ui->comboType->model());
-  return tim->typeIds().at(idx);
+  OverrideTypeIdModel* tim = static_cast<OverrideTypeIdModel*>(ui->comboType->model());
+  return tim->values().at(idx);
 }

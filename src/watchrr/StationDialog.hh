@@ -4,13 +4,13 @@
 
 #include "common/Sensor.hh"
 #include "common/TimeRange.hh"
+#include "common/TypeIdModel.hh"
 
 #include <QtGui/QDialog>
 
 #include <memory>
 
 class TimeRangeControl;
-class TypeIdModel;
 namespace kvalobs {
 class kvObsPgm;
 }

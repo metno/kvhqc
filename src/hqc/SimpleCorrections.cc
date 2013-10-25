@@ -152,7 +152,7 @@ void SimpleCorrections::update()
     ui->textStation->setText(QString::number(s.stationId));
     ui->textStation->setToolTip(Helpers::stationInfo(s.stationId));
 
-    ui->textParam->setText(Helpers::parameterName(s.paramId));
+    ui->textParam->setText(Helpers::paramName(s.paramId));
     ui->textParam->setToolTip(Helpers::paramInfo(s.paramId));
 
     ui->textType->setText(QString::number(s.typeId));

@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2013 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -33,6 +31,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "common/KvMetaDataBuffer.hh"
 #include "util/gui/MiDateTimeEdit.hh"
 #include "util/gui/qtQTUtil.h"
+#include "common/KvHelpers.hh"
 
 #include <QtGui/QLabel>
 #include <QtGui/qlayout.h>
@@ -406,16 +405,12 @@ void TimeseriesDialog::resultSelected(Q3ListBoxItem*)
 
 void TimeseriesDialog::newParameterList(const std::vector<int>& parameters)
 {
-    QStringList parameterNames;
-    BOOST_FOREACH(int pid, parameters) {
-        try {
-            parameterNames << QString::fromStdString(KvMetaDataBuffer::instance()->findParam(pid).name());
-        } catch (std::exception&) {
-            // unknown param
-        }
-    }
-    parameterListbox->clear();
-    parameterListbox->insertStringList(parameterNames);
+  QStringList parameterNames;
+  BOOST_FOREACH(int pid, parameters) {
+    parameterNames << Helpers::paramName(pid);
+  }
+  parameterListbox->clear();
+  parameterListbox->insertStringList(parameterNames);
 }
 
 void TimeseriesDialog::newStationList(std::vector<QString>& stationList)

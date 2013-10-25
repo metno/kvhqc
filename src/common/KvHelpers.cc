@@ -164,11 +164,6 @@ QString getFlagName(int flagNumber)
   return flagnames[flagNumber];
 }
 
-QString parameterName(int paramId)
-{
-  return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
-}
-
 int parameterIdByName(const std::string& paramName)
 {
   try {
@@ -188,11 +183,6 @@ void updateUseInfo(kvalobs::kvData& data)
   kvalobs::kvUseInfo ui = data.useinfo();
   ui.setUseFlags( data.controlinfo() );
   data.useinfo( ui );
-}
-
-QString stationName(const kvalobs::kvStation& s)
-{
-  return QString::fromLatin1(s.name().c_str());
 }
 
 float numericalValue(int paramId, float codeValue)
@@ -359,6 +349,16 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add)
     new_cfailed += ",";
   new_cfailed += add;
   data.cfailed(new_cfailed);
+}
+
+QString paramName(int paramId)
+{
+  return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
+}
+
+QString stationName(const kvalobs::kvStation& s)
+{
+  return QString::fromLatin1(s.name().c_str());
 }
 
 QString paramInfo(int paramId)

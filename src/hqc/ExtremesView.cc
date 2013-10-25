@@ -121,5 +121,5 @@ int ExtremesView::getParamId() const
   if (idx < 0)
       return -1;
   ParamIdModel* pim = static_cast<ParamIdModel*>(ui->comboParam->model());
-  return pim->parameterIds().at(idx);
+  return pim->values().at(idx);
 }

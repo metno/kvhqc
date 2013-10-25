@@ -454,7 +454,7 @@ void ListDialog::onSetRecentTimes()
 
 void ListDialog::showParamGroup(const QString& paramGroup)
 {
-  const std::vector<int>& sel = mParamSelectedModel->parameterIds();
+  const std::vector<int>& sel = mParamSelectedModel->values();
   std::set<int> sel_set(sel.begin(), sel.end());
 
   const std::vector<int>& group = mParameterGroups[paramGroup];
@@ -469,10 +469,10 @@ void ListDialog::showParamGroup(const QString& paramGroup)
 
 void ListDialog::addParameter2Click(const QModelIndex& index)
 {
-  const std::vector<int>& add = mParamAvailableModel->parameterIds();
+  const std::vector<int>& add = mParamAvailableModel->values();
   const int paramId = add.at(index.row());
 
-  const std::vector<int>& sel = mParamSelectedModel->parameterIds();
+  const std::vector<int>& sel = mParamSelectedModel->values();
   if (std::find(sel.begin(), sel.end(), paramId) == sel.end()) {
     std::vector<int> sel2(sel);
     sel2.push_back(paramId);
@@ -484,7 +484,7 @@ void ListDialog::addParameter2Click(const QModelIndex& index)
 
 void ListDialog::delParameter2Click(const QModelIndex& index)
 {
-  std::vector<int> sel = mParamSelectedModel->parameterIds();
+  std::vector<int> sel = mParamSelectedModel->values();
   sel.erase(sel.begin() + index.row());
   mParamSelectedModel.reset(new ParamIdModel(sel));
   ui->listParamChosen->setModel(mParamSelectedModel.get());
@@ -493,9 +493,9 @@ void ListDialog::delParameter2Click(const QModelIndex& index)
 
 void ListDialog::selectParameters()
 {
-  const std::vector<int>& add = mParamAvailableModel->parameterIds();
+  const std::vector<int>& add = mParamAvailableModel->values();
 
-  std::vector<int> sel = mParamSelectedModel->parameterIds();
+  std::vector<int> sel = mParamSelectedModel->values();
   std::set<int> sel_set(sel.begin(), sel.end());
 
   const QItemSelectionModel* selection = ui->listParamAvailable->selectionModel();
@@ -512,9 +512,9 @@ void ListDialog::selectParameters()
 
 void ListDialog::selectAllParameters()
 {
-  const std::vector<int>& add = mParamAvailableModel->parameterIds();
+  const std::vector<int>& add = mParamAvailableModel->values();
 
-  std::vector<int> sel = mParamSelectedModel->parameterIds();
+  std::vector<int> sel = mParamSelectedModel->values();
   std::set<int> sel_set(sel.begin(), sel.end());
 
   for (size_t i=0; i<add.size(); ++i) {
@@ -530,7 +530,7 @@ void ListDialog::selectAllParameters()
 
 void ListDialog::deselectParameters()
 {
-  const std::vector<int>& sel = mParamSelectedModel->parameterIds();
+  const std::vector<int>& sel = mParamSelectedModel->values();
   std::vector<int> new_sel;
   const QItemSelectionModel* selection = ui->listParamChosen->selectionModel();
   for (size_t i=0; i<sel.size(); ++i) {
@@ -635,7 +635,7 @@ std::vector<int> ListDialog::getSelectedStations()
 
 std::vector<int> ListDialog::getSelectedParameters()
 {
-  return mParamSelectedModel->parameterIds();
+  return mParamSelectedModel->values();
 }
 
 void ListDialog::onItemChanged(QStandardItem* item)

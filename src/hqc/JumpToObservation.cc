@@ -112,7 +112,7 @@ int JumpToObservation::getParamId() const
   if (idx < 0)
       return -1;
   ParamIdModel* pim = static_cast<ParamIdModel*>(ui->comboParam->model());
-  return pim->parameterIds().at(idx);
+  return pim->values().at(idx);
 }
 
 int JumpToObservation::getTypeId() const
@@ -121,7 +121,7 @@ int JumpToObservation::getTypeId() const
   if (idx < 0)
       return -1;
   TypeIdModel* tim = static_cast<TypeIdModel*>(ui->comboType->model());
-  return tim->typeIds().at(idx);
+  return tim->values().at(idx);
 }
 
 void JumpToObservation::onStationEdited()
