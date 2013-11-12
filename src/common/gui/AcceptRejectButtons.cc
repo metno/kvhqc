@@ -100,10 +100,15 @@ void AcceptRejectButtons::updateModel(EditAccessPtr da, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(enableButtons()));
+  QObject::disconnect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+      this, SLOT(enableButtons()));
 
   mDA = da;
   mTableView = table;
+
   QObject::connect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(enableButtons()));
+  QObject::connect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(enableButtons()));
 }
 
