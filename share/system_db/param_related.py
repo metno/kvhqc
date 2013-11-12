@@ -13,7 +13,7 @@ def update(sdb):
 
     
     related_params = [
-        ( "RR_24", "V4", "V5", "V6", "SD", "SA" ),
+        ( "RR_24", "V4", "V5", "V6", "SD", "SA", "EE" ),
         ( "TA", "TAN", "TAX" ),
         ( "UU", "TD" ),
         ( "PR", "PP", "PO", "PON", "POX" ),
