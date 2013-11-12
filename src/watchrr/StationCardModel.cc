@@ -1,5 +1,5 @@
 
-#include "MainTableModel.hh"
+#include "StationCardModel.hh"
 
 #include "common/ColumnFactory.hh"
 #include "common/ModelColumn.hh"
@@ -7,7 +7,7 @@
 
 #include <boost/make_shared.hpp>
 
-#define MILOGGER_CATEGORY "kvhqc.MainTableModel"
+#define MILOGGER_CATEGORY "kvhqc.StationCardModel"
 #include "util/HqcLogging.hh"
 
 namespace /* anonymous */ {
@@ -38,7 +38,7 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-MainTableModel::MainTableModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
+StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
   : ObsTableModel(da, time)
 {
   std::vector<Sensor> allSensors;
@@ -70,13 +70,13 @@ MainTableModel::MainTableModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor
   }
 }
 
-int MainTableModel::getRR24Column() const
+int StationCardModel::getRR24Column() const
 {
   // must match columns as listed above
   return 9;
 }
 
-void MainTableModel::setRR24TimeRange(const TimeRange& tr)
+void StationCardModel::setRR24TimeRange(const TimeRange& tr)
 {
   mRR24EditTime->setEditableTime(tr);
 }

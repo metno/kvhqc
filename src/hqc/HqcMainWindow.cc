@@ -67,7 +67,7 @@
 #include "util/gui/HintWidget.hh"
 #include "util/gui/QNoCloseMdiSubWindow.hh"
 #include "watchrr/StationDialog.hh"
-#include "watchrr/MainDialog.hh"
+#include "watchrr/WatchRRDialog.hh"
 #include "weather/WeatherDialog.hh"
 #include "weather/WeatherStationDialog.hh"
 
@@ -500,9 +500,9 @@ void HqcMainWindow::showWatchRR()
   EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
   bool ok;
   {
-    MainDialog main(eda2, kma, sensor, time, this);
+    WatchRRDialog main(eda2, kma, sensor, time, this);
     ok = main.exec();
-  } // FIXME this is a hack to avoid MainDialog complaining about data changes in parent
+  } // FIXME this is a hack to avoid WatchRRDialog complaining about data changes in parent
   if (ok) {
     eda->newVersion();
     if (not eda2->sendChangesToParent(false)) {

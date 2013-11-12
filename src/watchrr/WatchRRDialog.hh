@@ -1,6 +1,6 @@
 
-#ifndef MAINDIALOG_HH
-#define MAINDIALOG_HH 1
+#ifndef WATCHRRDIALOG_HH
+#define WATCHRRDIALOG_HH 1
 
 #include "common/EditAccess.hh"
 #include "common/ModelAccess.hh"
@@ -20,15 +20,15 @@ QT_END_NAMESPACE
 namespace Ui {
 class DialogMain;
 }
-class MainTableModel;
-class NeighborDataModel;
-class NeighborTableModel;
+class StationCardModel;
+class NeighborRR24Model;
+class NeighborCardsModel;
 
-class MainDialog : public QDialog
+class WatchRRDialog : public QDialog
 {   Q_OBJECT;
 public:
-  MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
-  ~MainDialog();
+  WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
+  ~WatchRRDialog();
 
 public Q_SLOTS:
   virtual void reject();
@@ -83,9 +83,9 @@ private:
   Sensor mSensor;
   TimeRange mTime;
   TimeRange mEditableTime;
-  std::auto_ptr<MainTableModel> mRRModel;
-  std::auto_ptr<NeighborTableModel> mNeighborModel;
-  std::auto_ptr<NeighborDataModel> mNeighborData;
+  std::auto_ptr<StationCardModel> mStationCard;
+  std::auto_ptr<NeighborRR24Model> mNeighborRR24;
+  std::auto_ptr<NeighborCardsModel> mNeighborCards;
 };
 
-#endif // MAINDIALOG_HH
+#endif // WATCHRRDIALOG_HH

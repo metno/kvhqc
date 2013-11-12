@@ -1,17 +1,17 @@
 
-#ifndef WATCHRR_NEIGHBORDATAMODEL_HH
-#define WATCHRR_NEIGHBORDATAMODEL_HH 1
+#ifndef WATCHRR_NEIGHBORCARDSMODEL_HH
+#define WATCHRR_NEIGHBORCARDSMODEL_HH 1
 
 #include "common/DataItem.hh"
 #include <vector>
 
 #include <QtCore/QAbstractTableModel>
 
-class NeighborDataModel : public QAbstractTableModel
+class NeighborCardsModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  NeighborDataModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange);
-  virtual ~NeighborDataModel();
+  NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange);
+  virtual ~NeighborCardsModel();
 
   virtual int rowCount(const QModelIndex&) const;
   virtual int columnCount(const QModelIndex&) const;
@@ -50,4 +50,4 @@ private:
   std::vector<Sensor> mSensors;
 };
 
-#endif /* WATCHRR_NEIGHBORDATAMODEL_HH */
+#endif /* WATCHRR_NEIGHBORCARDSMODEL_HH */

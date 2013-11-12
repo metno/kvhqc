@@ -2,10 +2,10 @@
 SET(watchrr_SOURCES
   EditDialog.cc
   EditTableModel.cc
-  MainDialog.cc
-  MainTableModel.cc
-  NeighborDataModel.cc
-  NeighborTableModel.cc
+  WatchRRDialog.cc
+  StationCardModel.cc
+  NeighborCardsModel.cc
+  NeighborRR24Model.cc
   RedistDialog.cc
   RedistTableModel.cc
   StationDialog.cc
@@ -18,8 +18,8 @@ QT4_ADD_TRANSLATION(watchrr_QM
 
 QT4_WRAP_CPP(watchrr_MOC
   EditDialog.hh
-  MainDialog.hh
-  NeighborDataModel.hh
+  WatchRRDialog.hh
+  NeighborCardsModel.hh
   RedistDialog.hh
   StationDialog.hh
 )

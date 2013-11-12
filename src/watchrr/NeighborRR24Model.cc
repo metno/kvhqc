@@ -1,15 +1,15 @@
 
-#include "NeighborTableModel.hh"
+#include "NeighborRR24Model.hh"
 
 #include "common/ColumnFactory.hh"
 #include "common/gui/NeighborHeader.hh"
 
 #include <boost/foreach.hpp>
 
-#define MILOGGER_CATEGORY "kvhqc.NeighborTableModel"
+#define MILOGGER_CATEGORY "kvhqc.NeighborRR24Model"
 #include "util/HqcLogging.hh"
 
-NeighborTableModel::NeighborTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+NeighborRR24Model::NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)
     , mNeighbors(1, sensor)
 {
@@ -22,7 +22,7 @@ NeighborTableModel::NeighborTableModel(EditAccessPtr da, const Sensor& sensor, c
   }
 }
 
-QVariant NeighborTableModel::columnHeader(int section, Qt::Orientation orientation, int role) const
+QVariant NeighborRR24Model::columnHeader(int section, Qt::Orientation orientation, int role) const
 {
   if (role == Qt::ToolTipRole)
     return ObsTableModel::columnHeader(section, orientation, role);

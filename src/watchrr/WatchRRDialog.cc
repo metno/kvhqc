@@ -1,11 +1,11 @@
 
-#include "MainDialog.hh"
+#include "WatchRRDialog.hh"
 
 #include "common/DianaHelper.hh"
 #include "EditDialog.hh"
-#include "MainTableModel.hh"
-#include "NeighborDataModel.hh"
-#include "NeighborTableModel.hh"
+#include "StationCardModel.hh"
+#include "NeighborCardsModel.hh"
+#include "NeighborRR24Model.hh"
 #include "RedistDialog.hh"
 #include "common/AnalyseFCC.hh"
 #include "common/AnalyseRR24.hh"
@@ -29,7 +29,7 @@
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
-#define MILOGGER_CATEGORY "kvhqc.MainDialog"
+#define MILOGGER_CATEGORY "kvhqc.WatchRRDialog"
 #include "util/HqcLogging.hh"
 
 using namespace Helpers;
@@ -38,15 +38,15 @@ namespace {
 const char SETTING_WATCHRR_GEOMETRY[] = "geometry_watchrr";
 } // anonymous namespace
 
-MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent)
+WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::DialogMain)
   , mDianaHelper(0)
   , mDA(da)
   , mSensor(sensor)
   , mTime(time)
-  , mRRModel(new MainTableModel(mDA, ma, mSensor, mTime))
-  , mNeighborData(new NeighborDataModel(mDA, mSensor, mTime))
+  , mStationCard(new StationCardModel(mDA, ma, mSensor, mTime))
+  , mNeighborCards(new NeighborCardsModel(mDA, mSensor, mTime))
 {
   ui->setupUi(this);
   {
@@ -57,7 +57,7 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
 
   setStationInfoText();
 
-  ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborData);
+  ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborCards);
   ui->neighborDataButtonLayout->insertWidget(1, cb);
   mDianaHelper.reset(new DianaHelper(cb));
 
@@ -71,56 +71,56 @@ MainDialog::MainDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor
   QFont mono("Monospace");
 
   ui->buttonSave->setEnabled(false);
-  ui->tableRR->setModel(mRRModel.get());
-  ui->tableRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  ui->tableRR->setItemDelegate(new ObsDelegate(this));
-  ui->tableRR->verticalHeader()->setFont(mono);
+  ui->tableStationCard->setModel(mStationCard.get());
+  ui->tableStationCard->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableStationCard->setItemDelegate(new ObsDelegate(this));
+  ui->tableStationCard->verticalHeader()->setFont(mono);
   ui->labelInfoRR->setText("");
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);
   qApp->processEvents();
 
-  ui->tableNeighborRR->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  ui->tableNeighborRR->verticalHeader()->setFont(mono);
+  ui->tableNeighborRR24->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableNeighborRR24->verticalHeader()->setFont(mono);
   qApp->processEvents();
 
-  ui->tableNeighborData->setModel(mNeighborData.get());
-  ui->tableNeighborData->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableNeighborCards->setModel(mNeighborCards.get());
+  ui->tableNeighborCards->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   qApp->processEvents();
 
   const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
-  ui->dateNeighborData->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
-  ui->dateNeighborData->setMaximumDate(QDate(d1.year(), d1.month(), d1.day()));
+  ui->dateNeighborCards->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
+  ui->dateNeighborCards->setMaximumDate(QDate(d1.year(), d1.month(), d1.day()));
 
-  connect(ui->tableRR->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+  connect(ui->tableStationCard->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  connect(mRRModel.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
+  connect(mStationCard.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
-  connect(mNeighborData.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
+  connect(mNeighborCards.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
       this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
   connect(mDianaHelper.get(), SIGNAL(receivedTime(const timeutil::ptime&)),
       this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
   connect(mDianaHelper.get(), SIGNAL(connection(bool)),
       this, SLOT(dianaConnection(bool)));
 
-  mDA->backendDataChanged.connect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
+  mDA->backendDataChanged.connect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
 
   mDianaHelper->tryConnect();
-  mNeighborData->setTime(time.t1()-boost::posix_time::hours(24));
+  mNeighborCards->setTime(time.t1()-boost::posix_time::hours(24));
 }
 
-MainDialog::~MainDialog()
+WatchRRDialog::~WatchRRDialog()
 {
   mDianaHelper.reset(0);
-  mDA->backendDataChanged.disconnect(boost::bind(&MainDialog::onBackendDataChanged, this, _1, _2));
+  mDA->backendDataChanged.disconnect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
 
   QSettings settings;
   settings.setValue(SETTING_WATCHRR_GEOMETRY, saveGeometry());
 }
 
-void MainDialog::setStationInfoText()
+void WatchRRDialog::setStationInfoText()
 {
   QString info = tr("Station %1 [%2]").arg(mSensor.stationId).arg(mSensor.typeId);
   try {
@@ -134,7 +134,7 @@ void MainDialog::setStationInfoText()
   ui->labelStationInfo->setText(info);
 }
 
-void MainDialog::changeEvent(QEvent *event)
+void WatchRRDialog::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange) {
     ui->retranslateUi(this);
@@ -144,7 +144,7 @@ void MainDialog::changeEvent(QEvent *event)
   QDialog::changeEvent(event);
 }
 
-void MainDialog::initializeRR24Data()
+void WatchRRDialog::initializeRR24Data()
 {
   mEditableTime = mTime;
   mDA->newVersion();
@@ -152,11 +152,11 @@ void MainDialog::initializeRR24Data()
   qApp->processEvents();
   FCC::analyse(mDA, mSensor, mEditableTime);
   qApp->processEvents();
-  mRRModel->setRR24TimeRange(mEditableTime);
+  mStationCard->setRR24TimeRange(mEditableTime);
   qApp->processEvents();
 }
 
-void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
+void WatchRRDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
   const Selection sel = findSelection();
   if (sel.empty()) {
@@ -191,20 +191,20 @@ void MainDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&
   }
 }
 
-bool MainDialog::isRR24Selection(const Selection& sel) const
+bool WatchRRDialog::isRR24Selection(const Selection& sel) const
 {
-  return (sel.minCol == mRRModel->getRR24Column() and sel.minCol == sel.maxCol);
+  return (sel.minCol == mStationCard->getRR24Column() and sel.minCol == sel.maxCol);
 }
 
-bool MainDialog::isCompleteSingleRowSelection(const Selection& sel) const
+bool WatchRRDialog::isCompleteSingleRowSelection(const Selection& sel) const
 {
   return (sel.selTime.t0() == sel.selTime.t1())
-      and (sel.minCol == 0 and sel.maxCol >= mRRModel->columnCount(QModelIndex()) - 2);
+      and (sel.minCol == 0 and sel.maxCol >= mStationCard->columnCount(QModelIndex()) - 2);
 }
 
-MainDialog::Selection MainDialog::findSelection()
+WatchRRDialog::Selection WatchRRDialog::findSelection()
 {
-  QModelIndexList selected = ui->tableRR->selectionModel()->selectedIndexes();
+  QModelIndexList selected = ui->tableStationCard->selectionModel()->selectedIndexes();
   if( selected.isEmpty() )
     return Selection();
 
@@ -222,11 +222,11 @@ MainDialog::Selection MainDialog::findSelection()
     if( s.maxCol < c )
       s.maxCol = c;
   }
-  s.selTime = TimeRange(mRRModel->timeAtRow(minRow), mRRModel->timeAtRow(maxRow));
+  s.selTime = TimeRange(mStationCard->timeAtRow(minRow), mStationCard->timeAtRow(maxRow));
   return s;
 }
 
-void MainDialog::onAcceptRow()
+void WatchRRDialog::onAcceptRow()
 {
   const Selection sel = findSelection();
   if (isRR24Selection(sel)) {
@@ -237,18 +237,18 @@ void MainDialog::onAcceptRow()
     // should not happen, button is disabled
     return;
   }
-  ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   enableSave();
   clearSelection();
 }
 
-void MainDialog::reject()
+void WatchRRDialog::reject()
 {
   if (Helpers::askDiscardChanges(mDA->countU(), this))
     QDialog::reject();
 }
 
-void MainDialog::onEdit()
+void WatchRRDialog::onEdit()
 {
   const Selection sel = findSelection();
   EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
@@ -256,13 +256,13 @@ void MainDialog::onEdit()
   if (edit.exec()) {
     mDA->newVersion();
     eda->sendChangesToParent();
-    ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
   }
 }
 
-void MainDialog::onRedistribute()
+void WatchRRDialog::onRedistribute()
 {
   const Selection sel = findSelection();
   EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
@@ -270,22 +270,22 @@ void MainDialog::onRedistribute()
   if (redist.exec()) {
     mDA->newVersion();
     eda->sendChangesToParent();
-    ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+    ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
   }
 }
 
-void MainDialog::onRedistributeQC2()
+void WatchRRDialog::onRedistributeQC2()
 {
   const Selection sel = findSelection();
   RR24::redistributeInQC2(mDA, mSensor, sel.selTime, mEditableTime);
-  ui->tableRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   enableSave();
   clearSelection();
 }
 
-void MainDialog::onUndo()
+void WatchRRDialog::onUndo()
 {
   if (mDA->canUndo() and (mDA->currentVersion() > 1)) {
     mDA->undoVersion();
@@ -294,7 +294,7 @@ void MainDialog::onUndo()
   }
 }
 
-void MainDialog::onRedo()
+void WatchRRDialog::onRedo()
 {
   if (mDA->canRedo()) {
     mDA->redoVersion();
@@ -303,17 +303,17 @@ void MainDialog::onRedo()
   }
 }
 
-void MainDialog::clearSelection()
+void WatchRRDialog::clearSelection()
 {
-  const QModelIndex tl = mRRModel->index(0, 0, QModelIndex());
-  const QModelIndex br = mRRModel->index(mRRModel->rowCount(QModelIndex())-1,
-      mRRModel->columnCount(QModelIndex())-1, QModelIndex());
+  const QModelIndex tl = mStationCard->index(0, 0, QModelIndex());
+  const QModelIndex br = mStationCard->index(mStationCard->rowCount(QModelIndex())-1,
+      mStationCard->columnCount(QModelIndex())-1, QModelIndex());
   QItemSelection s;
   s.select(tl, br);
-  ui->tableRR->selectionModel()->select(s, QItemSelectionModel::Clear);
+  ui->tableStationCard->selectionModel()->select(s, QItemSelectionModel::Clear);
 }
 
-void MainDialog::enableSave()
+void WatchRRDialog::enableSave()
 {
   METLIBS_LOG_SCOPE();
   const int updates = mDA->countU(), tasks = mDA->countT();
@@ -324,12 +324,12 @@ void MainDialog::enableSave()
   ui->buttonRedo->setEnabled(mDA->canRedo());
 }
 
-void MainDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
+void WatchRRDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
 {
   enableSave();
 }
 
-void MainDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr ebs)
+void WatchRRDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr ebs)
 {
   if (ebs->modified() or ebs->hasTasks()) {
     QMessageBox w(this);
@@ -343,33 +343,33 @@ void MainDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr
   }
 }
 
-void MainDialog::onNeighborDataDateChanged(const QDate& date)
+void WatchRRDialog::onNeighborDataDateChanged(const QDate& date)
 {
   BusyIndicator wait;
   QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
   const timeutil::ptime& time = timeutil::from_QDateTime(qdt);
-  mNeighborData->setTime(time);
+  mNeighborCards->setTime(time);
   mDianaHelper->sendTime(time);
-  ui->tableNeighborData->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
-void MainDialog::onNeighborDataTimeChanged(const timeutil::ptime& time)
+void WatchRRDialog::onNeighborDataTimeChanged(const timeutil::ptime& time)
 {
-  ui->dateNeighborData->setDateTime(timeutil::to_QDateTime(time));
+  ui->dateNeighborCards->setDateTime(timeutil::to_QDateTime(time));
   mDianaHelper->sendTime(time);
-  mNeighborData->setTime(time);
+  mNeighborCards->setTime(time);
 }
 
-void MainDialog::onCurrentTabChanged(int tab)
+void WatchRRDialog::onCurrentTabChanged(int tab)
 {
-  if (tab == 1 and not mNeighborModel.get()) {
-    mNeighborModel.reset(new NeighborTableModel(mDA, mSensor, mTime));
-    ui->tableNeighborRR->setModel(mNeighborModel.get());
-    ui->tableNeighborRR->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  if (tab == 1 and not mNeighborRR24.get()) {
+    mNeighborRR24.reset(new NeighborRR24Model(mDA, mSensor, mTime));
+    ui->tableNeighborRR24->setModel(mNeighborRR24.get());
+    ui->tableNeighborRR24->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   }
 }
 
-void MainDialog::dianaConnection(bool c)
+void WatchRRDialog::dianaConnection(bool c)
 {
   if (not c)
     return;
@@ -378,8 +378,8 @@ void MainDialog::dianaConnection(bool c)
   for(timeutil::ptime t = mTime.t0(); t <= mTime.t1(); t += boost::posix_time::hours(24))
     times.push_back(t);
   mDianaHelper->sendTimes(times);
-  mDianaHelper->sendTime(mNeighborData->getTime());
+  mDianaHelper->sendTime(mNeighborCards->getTime());
 
-  const std::vector<int> stations = mNeighborData->neighborStations();
+  const std::vector<int> stations = mNeighborCards->neighborStations();
   mDianaHelper->sendStations(stations);
 }
