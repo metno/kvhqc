@@ -116,6 +116,8 @@ void WeatherDialog::reject()
 void WeatherDialog::accept()
 {
   mParentDA->newVersion();
+  // FIXME this is a hack to avoid complaints about data changes in parent
+  mDA->backendDataChanged.disconnect(boost::bind(&WeatherDialog::onBackendDataChanged, this, _1, _2));
   if (not mDA->sendChangesToParent(false)) {
     QMessageBox::critical(this,
         windowTitle(),

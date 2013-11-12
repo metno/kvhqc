@@ -497,22 +497,8 @@ void HqcMainWindow::showWatchRR()
   time = sd.selectedTime();
 
   mDianaHelper->setEnabled(false);
-  EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-  bool ok;
-  {
-    WatchRRDialog main(eda2, kma, sensor, time, this);
-    ok = main.exec();
-  } // FIXME this is a hack to avoid WatchRRDialog complaining about data changes in parent
-  if (ok) {
-    eda->newVersion();
-    if (not eda2->sendChangesToParent(false)) {
-      QMessageBox::critical(this,
-          tr("WatchRR"),
-          tr("Sorry, your changes could not be saved and are lost!"),
-          tr("OK"),
-          "");
-    }
-  }
+  WatchRRDialog watchrr(eda, kma, sensor, time, this);
+  watchrr.exec();
   mDianaHelper->setEnabled(true);
 }
 

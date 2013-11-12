@@ -31,6 +31,7 @@ public:
   ~WatchRRDialog();
 
 public Q_SLOTS:
+  virtual void accept();
   virtual void reject();
   
 protected:
@@ -79,7 +80,7 @@ private:
 private:
   std::auto_ptr<Ui::DialogMain> ui;
   std::auto_ptr<DianaHelper> mDianaHelper;
-  EditAccessPtr mDA;
+  EditAccessPtr mParentDA, mDA;
   Sensor mSensor;
   TimeRange mTime;
   TimeRange mEditableTime;

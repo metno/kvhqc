@@ -42,7 +42,8 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
   : QDialog(parent)
   , ui(new Ui::DialogMain)
   , mDianaHelper(0)
-  , mDA(da)
+  , mParentDA(da)
+  , mDA(boost::make_shared<EditAccess>(mParentDA))
   , mSensor(sensor)
   , mTime(time)
   , mStationCard(new StationCardModel(mDA, ma, mSensor, mTime))
@@ -246,6 +247,21 @@ void WatchRRDialog::reject()
 {
   if (Helpers::askDiscardChanges(mDA->countU(), this))
     QDialog::reject();
+}
+
+void WatchRRDialog::accept()
+{
+  mParentDA->newVersion();
+  // FIXME this is a hack to avoid complaints about data changes in parent
+  mDA->backendDataChanged.disconnect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
+  if (not mDA->sendChangesToParent(false)) {
+    QMessageBox::critical(this,
+        windowTitle(),
+        tr("Sorry, your changes could not be saved and are lost!"),
+        tr("OK"),
+        "");
+  }
+  QDialog::accept();
 }
 
 void WatchRRDialog::onEdit()
