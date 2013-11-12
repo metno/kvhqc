@@ -33,7 +33,7 @@ std::string exists_in_obspgm(const std::string& data_alias, const std::string& o
 
 namespace Missing {
 
-std::vector<SensorTime> find(const int typeId, const TimeRange& tLimits)
+std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& tLimits)
 {
   METLIBS_LOG_TIME();
   METLIBS_LOG_DEBUG(LOGVAL(tLimits));
@@ -54,8 +54,17 @@ std::vector<SensorTime> find(const int typeId, const TimeRange& tLimits)
   }
   sql << ") as t(s)"
       << " WHERE o.stationid BETWEEN 60 AND 99999";
-  if (typeId > 0)
-    sql << "   AND o.typeid = " << typeId;
+  if (typeIds.size() == 1) {
+    sql << "   AND o.typeid = " << typeIds.front();
+  } else if (typeIds.size() > 1) {
+    sql << "   AND o.typeid IN ";
+    char sep = '(';
+    BOOST_FOREACH(int t, typeIds) {
+      sql << sep << t;
+      sep = ',';
+    }
+    sql << ")";
+  }
   sql << "   AND o.paramid = 110"
       << "   AND o.fromtime <= t.s AND (o.totime IS NULL OR o.totime >= t.s)"
       << "   AND    ((extract(hour from t.s) =  6 AND o.kl06 = TRUE)"

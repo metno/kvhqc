@@ -32,19 +32,30 @@ const char STATIONINFO_CACHE_INSERT[] = "INSERT INTO stationinfo_cache VALUES"
 
 const char STATIONINFO_CACHE_SELECT_ALL[] = "SELECT stationid, municip_id, county, municip_name, is_coastal, priority FROM stationinfo_cache;";
 
+const char MANUAL_TYPES_CACHE[] = "manual_types_cache";
+const char MANUAL_TYPES_CACHE_CREATE[] = "CREATE TABLE manual_types_cache ("
+    "  typeid    INTEGER"
+    ");";
+
+const char MANUAL_TYPES_CACHE_DELETE[] = "DELETE FROM manual_types_cache;";
+const char MANUAL_TYPES_CACHE_INSERT[] = "INSERT INTO manual_types_cache VALUES"
+    " (:typeid)";
+
+const char MANUAL_TYPES_CACHE_SELECT_ALL[] = "SELECT typeid FROM manual_types_cache ORDER BY typeid;";
+
 } // anonymous namespace
 
 StationInfoBuffer* StationInfoBuffer::sInstance = 0;
 
 StationInfoBuffer::StationInfoBuffer()
 {
-    assert(not sInstance);
-    sInstance = this;
+  assert(not sInstance);
+  sInstance = this;
 }
 
 StationInfoBuffer::~StationInfoBuffer()
 {
-    sInstance = 0;
+  sInstance = 0;
 }
 
 /*!
@@ -79,6 +90,25 @@ bool StationInfoBuffer::writeToStationFile()
     insert.finish();
   }
   db.commit();
+
+  if (not db.tables().contains(MANUAL_TYPES_CACHE))
+    db.exec(MANUAL_TYPES_CACHE_CREATE);
+
+  db.transaction();
+  QSqlQuery deleteall_mc(db);
+  deleteall_mc.prepare(MANUAL_TYPES_CACHE_DELETE);
+  if (not deleteall_mc.exec())
+    HQC_LOG_ERROR("error while deleting: " << deleteall_mc.lastError().text());
+
+  QSqlQuery insert_mc(db);
+  insert_mc.prepare(MANUAL_TYPES_CACHE_INSERT);
+  BOOST_FOREACH(int t, mManualTypes) {
+    insert_mc.bindValue(":typeid", t);
+    if (not insert_mc.exec())
+      HQC_LOG_ERROR("error while inserting: " << insert_mc.lastError().text());
+    insert_mc.finish();
+  }
+  db.commit();
   return true;
 }
 
@@ -90,36 +120,44 @@ bool StationInfoBuffer::readFromStationFile()
   METLIBS_LOG_SCOPE();
   
   QSqlDatabase db = hqcApp->configDB();
-  if (not db.tables().contains(STATIONINFO_CACHE))
-    return false;
-
-  QSqlQuery query(STATIONINFO_CACHE_SELECT_ALL, hqcApp->configDB());
-  while (query.next()) {
-    try {
-      const int stationId = query.value(0).toInt();
-      const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stationId);
-      
-      listStat_t ls;
-      ls.stationid   = stationId;
-
-      ls.name        = st.name();
-      ls.altitude    = st.height();
-      ls.environment = st.environmentid();
-      ls.wmonr       = st.wmonr();
+  if (db.tables().contains(STATIONINFO_CACHE)) {
+    QSqlQuery query(STATIONINFO_CACHE_SELECT_ALL, db);
+    while (query.next()) {
+      try {
+        const int stationId = query.value(0).toInt();
+        const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stationId);
         
-      ls.municipid   = query.value(1).toInt();
-      ls.fylke       = query.value(2).toString().toStdString();
-      ls.kommune     = query.value(3).toString().toStdString();
-      ls.coast       = query.value(4).toBool();
-      ls.pri         = query.value(5).toInt();
-
-      // FIXME fromtime and totime
-        
-      listStat.push_back(ls);
-    } catch (std::exception& e) {
-      HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
+        listStat_t ls;
+        ls.stationid   = stationId;
+  
+        ls.name        = st.name();
+        ls.altitude    = st.height();
+        ls.environment = st.environmentid();
+        ls.wmonr       = st.wmonr();
+          
+        ls.municipid   = query.value(1).toInt();
+        ls.fylke       = query.value(2).toString().toStdString();
+        ls.kommune     = query.value(3).toString().toStdString();
+        ls.coast       = query.value(4).toBool();
+        ls.pri         = query.value(5).toInt();
+  
+        // FIXME fromtime and totime
+          
+        listStat.push_back(ls);
+      } catch (std::exception& e) {
+        HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
+      }
     }
   }
+  
+  if (db.tables().contains(MANUAL_TYPES_CACHE)) {
+    mManualTypes.clear();
+    QSqlQuery query(MANUAL_TYPES_CACHE_SELECT_ALL, db);
+    while (query.next()) {
+      mManualTypes.push_back(query.value(0).toInt());
+    }
+  }
+
   return true;
 }
 
@@ -131,20 +169,30 @@ bool StationInfoBuffer::isConnected()
 
 const listStat_l& StationInfoBuffer::getStationDetails()
 {
-    METLIBS_LOG_SCOPE();
+  refreshIfOld();
+  return listStat;
+}
 
-    const timeutil::ptime now = timeutil::now();
-    METLIBS_LOG_DEBUG(LOGVAL(now) << LOGVAL(mLastStationListUpdate));
-    if (mLastStationListUpdate.is_not_a_date_time()
-        or (now - mLastStationListUpdate).total_seconds() > 3600)
-    {
-        mLastStationListUpdate = now;
-        readStationInfo();
-    }
-    return listStat;
+const StationInfoBuffer::manual_types_t& StationInfoBuffer::getManualTypes()
+{
+  refreshIfOld();
+  return mManualTypes;
+}
+
+void StationInfoBuffer::refreshIfOld()
+{
+  METLIBS_LOG_SCOPE();
+  const timeutil::ptime now = timeutil::now();
+  METLIBS_LOG_DEBUG(LOGVAL(now) << LOGVAL(mLastStationListUpdate));
+  if (mLastStationListUpdate.is_not_a_date_time()
+      or (now - mLastStationListUpdate).total_seconds() > 3600)
+  {
+    mLastStationListUpdate = now;
+    readStationInfo();
+  }
 }
 
 void StationInfoBuffer::readStationInfo()
 {
-    readFromStationFile();
+  readFromStationFile();
 }

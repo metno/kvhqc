@@ -3,6 +3,7 @@
 
 #include "MissingTableModel.hh"
 #include "common/FindMissingValues.hh"
+#include "common/StationInfoBuffer.hh"
 #include "common/TypeIdModel.hh"
 #include "common/gui/TimeRangeControl.hh"
 #include "util/gui/BusyIndicator.hh"
@@ -15,6 +16,10 @@
 
 #define MILOGGER_CATEGORY "kvhqc.MissingView"
 #include "util/HqcLogging.hh"
+
+static const int TYPEID_ERROR  = -10000;
+static const int TYPEID_ANY    = -10001;
+static const int TYPEID_MANUAL = -10002;
 
 MissingView::MissingView(QWidget* parent)
   : QWidget(parent)
@@ -45,16 +50,18 @@ MissingView::MissingView(QWidget* parent)
   ui->timeTo  ->setDateTime(timeutil::to_QDateTime(t1));
 
   std::vector<int> types;
-  types.push_back(  0); // all
-  types.push_back(  3); // autoobs
-  types.push_back(302); // sms2
-  types.push_back(308); // sms8
-  types.push_back(312); // sms12
-  types.push_back(402); // ukekort
-  types.push_back(412); // dagbok
+  types.push_back(TYPEID_ANY);
+  const std::vector<int>& manualTypes = StationInfoBuffer::instance()->getManualTypes();
+  if (not manualTypes.empty()) {
+    types.push_back(TYPEID_MANUAL);
+    types.insert(types.end(), manualTypes.begin(), manualTypes.end());
+  } else {
+    HQC_LOG_WARN("empty manual types list");
+  }
   
   OTypeIdExtract typeExtract;
-  typeExtract.override(0, tr("any"));
+  typeExtract.override(TYPEID_ANY,    tr("any"));
+  typeExtract.override(TYPEID_MANUAL, tr("manual"));
   ui->comboType->setModel(new OverrideTypeIdModel(types, typeExtract));
 
   ui->comboType->setCurrentIndex(0);
@@ -98,12 +105,17 @@ void MissingView::onSelectionChanged(const QItemSelection&, const QItemSelection
 void MissingView::onUpdateClicked()
 {
   const int typeId = getTypeId();
-  if (typeId < 0)
+  if (typeId == TYPEID_ERROR)
     return;
 
   {
     BusyIndicator busy;
-    const std::vector<SensorTime> missing = Missing::find(typeId, mTimeControl->timeRange());
+    std::vector<int> typeIds;
+    if (typeId == TYPEID_MANUAL)
+      typeIds = StationInfoBuffer::instance()->getManualTypes();
+    else if (typeId != TYPEID_ANY)
+      typeIds.push_back(typeId);
+    const std::vector<SensorTime> missing = Missing::find(typeIds, mTimeControl->timeRange());
     setMissing(missing);
   }
 }
@@ -123,7 +135,7 @@ int MissingView::getTypeId() const
 
   const int idx = ui->comboType->currentIndex();
   if (idx < 0)
-      return -1;
+      return TYPEID_ERROR;
   OverrideTypeIdModel* tim = static_cast<OverrideTypeIdModel*>(ui->comboType->model());
   return tim->values().at(idx);
 }

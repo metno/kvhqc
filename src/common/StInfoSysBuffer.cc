@@ -172,6 +172,21 @@ bool StInfoSysBuffer::readFromStInfoSys()
     listStat.push_back(ls);
   }
   METLIBS_LOG_INFO("stationliste hentet fra stinfosys");
+
+  const char manual_types_SQL[] =
+      "SELECT message_formatid FROM message_format WHERE read = 'M' ORDER BY message_formatid";
+
+  if (not query.exec(manual_types_SQL)) {
+    HQC_LOG_ERROR("query to stinfosys failed: " << query.lastError().text());
+    return false;
+  }
+  mManualTypes.clear();
+  while (query.next()) {
+    const int typeId = query.value(0).toInt();
+    METLIBS_LOG_DEBUG(LOGVAL(typeId));
+    mManualTypes.push_back(typeId);
+  }
+
   writeToStationFile();
   return true;
 }

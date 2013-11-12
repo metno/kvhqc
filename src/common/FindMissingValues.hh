@@ -12,11 +12,11 @@ namespace Missing {
 
 /*! Search for missing observations.
  *
- * \param typeId typeId contraint, or no contraint if typeId = 0
+ * \param typeIds typeId contraint, or no contraint if empty
  * \param tLimits time range, only date is used
  * \return list of missing observations
  */
-std::vector<SensorTime> find(int typeId, const TimeRange& tLimits);
+std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& tLimits);
 
 } // namespace Missing
 

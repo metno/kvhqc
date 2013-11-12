@@ -4,49 +4,57 @@
 #define StationInfoBuffer_hh
 
 #include "util/timeutil.hh"
+#include <list>
 #include <string>
+#include <vector>
 
 struct listStat_t {
-    std::string name;    // listStatName
-    int stationid;       // listStatNum
-    float altitude;      // listStatHoh
-    int environment;     // listStatType
-    std::string fylke;   // listStatFylke
-    std::string kommune; // listStatKommune
-    int municipid;
-    int wmonr;           // listStatWeb
-    int pri;             // listStatPri
-    timeutil::ptime fromtime;
-    timeutil::ptime totime;
-    bool coast;
+  std::string name;    // listStatName
+  int stationid;       // listStatNum
+  float altitude;      // listStatHoh
+  int environment;     // listStatType
+  std::string fylke;   // listStatFylke
+  std::string kommune; // listStatKommune
+  int municipid;
+  int wmonr;           // listStatWeb
+  int pri;             // listStatPri
+  timeutil::ptime fromtime;
+  timeutil::ptime totime;
+  bool coast;
 };
 typedef std::list<listStat_t> listStat_l;
 
 class StationInfoBuffer {
 public:
-    StationInfoBuffer();
-    ~StationInfoBuffer();
+  typedef std::vector<int> manual_types_t;
 
-    virtual bool isConnected();
+  StationInfoBuffer();
+  ~StationInfoBuffer();
 
-    const listStat_l& getStationDetails();
+  virtual bool isConnected();
 
-    static StationInfoBuffer* instance()
-        { return sInstance; }
+  const listStat_l& getStationDetails();
 
-protected:
-    virtual void readStationInfo();
-    bool writeToStationFile();
+  static StationInfoBuffer* instance()
+    { return sInstance; }
 
-private:
-    bool readFromStationFile();
+  const manual_types_t& getManualTypes();
 
 protected:
-    listStat_l listStat;
+  virtual void readStationInfo();
+  bool writeToStationFile();
+  virtual void refreshIfOld();
 
 private:
-    static StationInfoBuffer* sInstance;
-    timeutil::ptime mLastStationListUpdate;
+  bool readFromStationFile();
+
+protected:
+  listStat_l listStat;
+  manual_types_t mManualTypes;
+
+private:
+  static StationInfoBuffer* sInstance;
+  timeutil::ptime mLastStationListUpdate;
 };
 
 #endif // StationInfoBuffer_hh
