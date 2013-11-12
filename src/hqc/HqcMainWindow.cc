@@ -381,17 +381,22 @@ void HqcMainWindow::ListOK()
       BOOST_FOREACH(int paramId, mSelectedParameters) {
         const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
         Sensor sensor(stationId, paramId, 0, 0, 0);
+        std::set<int> typeIdsShown;
         BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
-          if (timeLimits.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+          const TimeRange op_time(op.fromtime(), op.totime());
+          if (timeLimits.intersection(op_time).undef())
             continue;
-          const int p = op.paramID();
+          const int p = op.paramID(), t = op.typeID();
           if (p == paramId) {
-            sensor.typeId = op.typeID();
-            sensors.push_back(sensor);
+            sensor.typeId = t;
+          } else if (Helpers::aggregatedParameter(p, paramId)) {
+            sensor.typeId = -t;
+          } else {
+            continue;
           }
-          if (Helpers::aggregatedParameter(p, paramId)) {
-            sensor.typeId = -op.typeID();
+          if (typeIdsShown.find(sensor.typeId) == typeIdsShown.end()) {
             sensors.push_back(sensor);
+            typeIdsShown.insert(sensor.typeId);
           }
         }
       }
