@@ -301,60 +301,60 @@
         <translation>T&amp;idsskift:</translation>
     </message>
     <message>
+        <location filename="dl_addcolumn.ui" line="164"/>
         <location filename="dl_addcolumn.ui" line="167"/>
-        <location filename="dl_addcolumn.ui" line="170"/>
         <source>Corrected Value</source>
         <translation>korrigert verdi</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="173"/>
+        <location filename="dl_addcolumn.ui" line="170"/>
         <source>&amp;Corr</source>
         <translation>&amp;Korr</translation>
     </message>
     <message>
+        <location filename="dl_addcolumn.ui" line="183"/>
         <location filename="dl_addcolumn.ui" line="186"/>
-        <location filename="dl_addcolumn.ui" line="189"/>
         <source>Original Value</source>
         <translation>original verdi</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="192"/>
+        <location filename="dl_addcolumn.ui" line="189"/>
         <source>&amp;Orig</source>
         <translation>&amp;Orig</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="202"/>
+        <location filename="dl_addcolumn.ui" line="199"/>
         <source>&amp;Flags</source>
         <translation>&amp;Flagg</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="218"/>
+        <location filename="dl_addcolumn.ui" line="215"/>
         <source>&amp;Model</source>
         <translation>&amp;Modell</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="245"/>
+        <location filename="dl_addcolumn.ui" line="242"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="255"/>
+        <location filename="dl_addcolumn.ui" line="252"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
+        <location filename="dl_addcolumn.ui" line="209"/>
         <location filename="dl_addcolumn.ui" line="212"/>
-        <location filename="dl_addcolumn.ui" line="215"/>
         <source>Model value</source>
         <translation>Modellverdi</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="141"/>
+        <location filename="dl_addcolumn.ui" line="138"/>
         <source>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</source>
         <translation>Tidsskift for kolonnen. Med f.eks. en tidsskift av 1 time blir data fra 08:00 vist i raden for 09:00.</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="147"/>
+        <location filename="dl_addcolumn.ui" line="144"/>
         <source>h</source>
         <translation>t</translation>
     </message>
@@ -1587,17 +1587,17 @@ Du bruker HQC versjon %1.</translation>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="787"/>
+        <location filename="HqcMainWindow.cc" line="790"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="852"/>
+        <location filename="HqcMainWindow.cc" line="856"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="853"/>
+        <location filename="HqcMainWindow.cc" line="857"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
@@ -1610,47 +1610,47 @@ Du bruker HQC versjon %1.</translation>
         <translation>Hopp til Observasjon</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="20"/>
+        <location filename="jumptoobservation.ui" line="26"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="33"/>
+        <location filename="jumptoobservation.ui" line="39"/>
         <source>Parameter:</source>
         <translation>Parameter:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="46"/>
+        <location filename="jumptoobservation.ui" line="65"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="59"/>
+        <location filename="jumptoobservation.ui" line="88"/>
         <source>Sensor:</source>
         <translation>Sensor:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="69"/>
+        <location filename="jumptoobservation.ui" line="78"/>
         <source>Level:</source>
         <translation>Level:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="79"/>
+        <location filename="jumptoobservation.ui" line="101"/>
         <source>Obs. Time:</source>
         <translation>Obs. Tid:</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="117"/>
+        <location filename="jumptoobservation.ui" line="139"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Avbryt</translation>
     </message>
     <message>
-        <location filename="jumptoobservation.ui" line="127"/>
+        <location filename="jumptoobservation.ui" line="149"/>
         <source>&amp;Jump</source>
         <translation>&amp;Hopp</translation>
     </message>
     <message>
-        <location filename="JumpToObservation.cc" line="68"/>
+        <location filename="JumpToObservation.cc" line="60"/>
         <source>No such observation found.</source>
         <translation>Observasjon ikke funnet.</translation>
     </message>
@@ -1921,9 +1921,14 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>MissingView</name>
     <message>
-        <location filename="MissingView.cc" line="57"/>
+        <location filename="MissingView.cc" line="63"/>
         <source>any</source>
         <translation>alle</translation>
+    </message>
+    <message>
+        <location filename="MissingView.cc" line="64"/>
+        <source>manual</source>
+        <translation>manuell</translation>
     </message>
 </context>
 <context>
@@ -2042,126 +2047,146 @@ Du bruker HQC versjon %1.</translation>
         <translation>Enkelte endringer</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="45"/>
+        <location filename="simplecorrections.ui" line="51"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="87"/>
+        <location filename="simplecorrections.ui" line="86"/>
+        <source>L:</source>
+        <translation>L:</translation>
+    </message>
+    <message>
+        <location filename="simplecorrections.ui" line="123"/>
+        <source>Level</source>
+        <translation>Level</translation>
+    </message>
+    <message>
+        <location filename="simplecorrections.ui" line="139"/>
+        <source>S:</source>
+        <translation>S:</translation>
+    </message>
+    <message>
+        <location filename="simplecorrections.ui" line="176"/>
+        <source>Sensor Number</source>
+        <translation>Sensor nummer</translation>
+    </message>
+    <message>
+        <location filename="simplecorrections.ui" line="202"/>
         <source>Type:</source>
         <translation>Typ:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="151"/>
+        <location filename="simplecorrections.ui" line="272"/>
         <source>Obstime:</source>
         <translation>Obstime:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="193"/>
+        <location filename="simplecorrections.ui" line="317"/>
         <source>Param:</source>
         <translation>Param:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="252"/>
+        <location filename="simplecorrections.ui" line="379"/>
         <source>Flags:</source>
         <translation>Flagg:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="299"/>
+        <location filename="simplecorrections.ui" line="432"/>
         <source>Orig:</source>
         <translation>Orig:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="347"/>
+        <location filename="simplecorrections.ui" line="483"/>
         <source>Model:</source>
         <translation>Modell:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="411"/>
+        <location filename="simplecorrections.ui" line="547"/>
         <source>Edit</source>
         <translation>Endring</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="440"/>
+        <location filename="simplecorrections.ui" line="579"/>
         <source>Corrected:</source>
         <translation>Korrigert:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="477"/>
-        <location filename="simplecorrections.ui" line="571"/>
+        <location filename="simplecorrections.ui" line="616"/>
+        <location filename="simplecorrections.ui" line="710"/>
         <source>Accept</source>
         <translation>Godkjenn</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="487"/>
+        <location filename="simplecorrections.ui" line="626"/>
         <source>Reject</source>
         <translation>Forkast</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="497"/>
+        <location filename="simplecorrections.ui" line="636"/>
         <source>no QC2:</source>
         <translation>QC2 forbudt:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="504"/>
+        <location filename="simplecorrections.ui" line="643"/>
         <source>Accept corrected value without permitting QC2 to override.</source>
         <translation>Aksepter korrigert verdi uten å tillate at QC2 overskriver.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="507"/>
-        <location filename="simplecorrections.ui" line="544"/>
+        <location filename="simplecorrections.ui" line="646"/>
+        <location filename="simplecorrections.ui" line="683"/>
         <source>Corr.</source>
         <translation>Korr.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="514"/>
+        <location filename="simplecorrections.ui" line="653"/>
         <source>Accept original value without permitting QC2 to override.</source>
         <translation>Aksepter original verdi uten å tillate at QC2 overskriver.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="517"/>
-        <location filename="simplecorrections.ui" line="554"/>
+        <location filename="simplecorrections.ui" line="656"/>
+        <location filename="simplecorrections.ui" line="693"/>
         <source>Orig.</source>
         <translation>Orig.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="524"/>
+        <location filename="simplecorrections.ui" line="663"/>
         <source>Reject without permitting QC2 to override.</source>
         <translation>Forkast uten å tillate at QC2 overskriver.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="527"/>
-        <location filename="simplecorrections.ui" line="564"/>
+        <location filename="simplecorrections.ui" line="666"/>
+        <location filename="simplecorrections.ui" line="703"/>
         <source>Rej.</source>
         <translation>Fork.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="541"/>
+        <location filename="simplecorrections.ui" line="680"/>
         <source>Accept corrected value and allow QC2 to override.</source>
         <translation>Aksepter korrigert verdi, QC2 har lov å overskrive.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="551"/>
+        <location filename="simplecorrections.ui" line="690"/>
         <source>Accept original value and allow QC2 to override.</source>
         <translation>Aksepter original verdi, QC2 har lov å overskrive.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="561"/>
+        <location filename="simplecorrections.ui" line="700"/>
         <source>Reject and allow QC2 to override.</source>
         <translation>Forkast, QC2 har lov å overskrive.</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="534"/>
+        <location filename="simplecorrections.ui" line="673"/>
         <source>QC2 ok:</source>
         <translation>QC2 tillatt:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="603"/>
+        <location filename="simplecorrections.ui" line="742"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="SimpleCorrections.cc" line="178"/>
+        <location filename="SimpleCorrections.cc" line="196"/>
         <source>tbtime: %1</source>
         <translation>tbtime: %1</translation>
     </message>
