@@ -60,8 +60,8 @@ DataList::DataList(QWidget* parent)
   for (int i=0; i<NHOURS; ++i)
     ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]), QVariant(HOURS[i]*60*60));
 
-  connect(ui->table, SIGNAL(currentChanged(const QModelIndex&)),
-      this, SLOT(currentChanged(const QModelIndex&)));
+  connect(ui->table, SIGNAL(signalCurrentChanged(const QModelIndex&)),
+      this, SLOT(onCurrentChanged(const QModelIndex&)));
 }
 
 DataList::~DataList()
@@ -106,7 +106,7 @@ void DataList::navigateTo(const SensorTime& st)
     sm->select(selection, QItemSelectionModel::ClearAndSelect);
 }
 
-void DataList::currentChanged(const QModelIndex& current)
+void DataList::onCurrentChanged(const QModelIndex& current)
 {
   METLIBS_LOG_SCOPE();
   const SensorTime st = mTableModel->findSensorTime(current);

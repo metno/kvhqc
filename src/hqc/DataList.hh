@@ -16,9 +16,9 @@ class DataListTable : public QTableView
 public:
   DataListTable(QWidget* parent=0) : QTableView(parent) { }
   void currentChanged(const QModelIndex& c, const QModelIndex& p)
-    { QTableView::currentChanged(c, p); if (c.isValid()) /* emit */ currentChanged(c); }
+    { QTableView::currentChanged(c, p); if (c.isValid()) /* emit */ signalCurrentChanged(c); }
 Q_SIGNALS:
-  void currentChanged(const QModelIndex& c);
+  void signalCurrentChanged(const QModelIndex& c);
 };
 
 // ------------------------------------------------------------------------
@@ -34,7 +34,7 @@ public:
 private Q_SLOTS:
   void onButtonSaveAs();
   void onTimeStepChanged(int index);
-  virtual void currentChanged(const QModelIndex& current);
+  virtual void onCurrentChanged(const QModelIndex& current);
   virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 protected:
