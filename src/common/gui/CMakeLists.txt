@@ -5,6 +5,7 @@ SET(common_gui_SOURCES
   HqcApplication.cc
   NeighborHeader.cc
   ObsDelegate.cc
+  SensorChooser.cc
   SensorHeader.cc
   TimeHeader.cc
   TimeRangeControl.cc
@@ -15,6 +16,7 @@ QT4_WRAP_CPP(common_gui_MOC
   Authenticator.hh
   HqcApplication.hh
   ObsDelegate.hh
+  SensorChooser.hh
   TimeRangeControl.hh
 )
 

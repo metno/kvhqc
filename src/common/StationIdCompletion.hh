@@ -3,13 +3,13 @@
 #define StationIdCompletion_hh 1
 
 class QLineEdit;
-class QWidget;
+class QObject;
 class StationIdModel;
 
 namespace Helpers {
 
-void installStationIdCompleter(QWidget* parent, QLineEdit* editStation);
-void installStationIdCompleter(QWidget* parent, QLineEdit* editStation, StationIdModel* cmodel);
+void installStationIdCompleter(QObject* parent, QLineEdit* editStation);
+void installStationIdCompleter(QObject* parent, QLineEdit* editStation, StationIdModel* cmodel);
 
 } // namespace Helpers
 

@@ -11,11 +11,11 @@
 
 namespace Helpers {
 
-void installStationIdCompleter(QWidget* parent, QLineEdit* editStation, StationIdModel* cmodel)
+void installStationIdCompleter(QObject* parent, QLineEdit* editStation, StationIdModel* cmodel)
 {
   QCompleter *completer = new QCompleter(parent);
 
-  QTableView* completionPopup = new QTableView(parent);
+  QTableView* completionPopup = new QTableView(editStation);
   completionPopup->horizontalHeader()->setVisible(false);
   completionPopup->verticalHeader()->setVisible(false);
   completionPopup->verticalHeader()->setDefaultSectionSize(20);
@@ -34,7 +34,7 @@ void installStationIdCompleter(QWidget* parent, QLineEdit* editStation, StationI
 } // namespace anonymous
 
 
-void installStationIdCompleter(QWidget* parent, QLineEdit* editStation)
+void installStationIdCompleter(QObject* parent, QLineEdit* editStation)
 {
   installStationIdCompleter(parent, editStation, new StationIdModel(parent));
 }

@@ -8,6 +8,7 @@
 #include <set>
 
 class Sensor;
+class SensorChooser;
 class SensorTime;
 namespace Ui {
 class DataListAddColumn;
@@ -19,30 +20,19 @@ public:
   DataListAddColumn(QWidget* parent=0);
   ~DataListAddColumn();
 
-  void init(const SensorTime& st);
-
   Sensor selectedSensor() const;
   AutoDataList::ColumnType selectedColumnType() const;
   int selectedTimeOffset() const;
 
 private Q_SLOTS:
-  void onStationEdited(const QString&);
-  void onParameterSelected(int);
-  void onTypeSelected(int);
+  void slotValidSensor(bool);
 
 private:
-  void setLevels(const std::set<int>& levels);
-  void setMaxSensor(int maxSensor);
-
-  int getStationId() const;
-  int getParamId() const;
-  int getTypeId() const;
-  int getLevel() const;
-  int getSensorNumber() const;
   void resetTimeOffset();
 
 private:
   std::auto_ptr<Ui::DataListAddColumn> ui;
+  SensorChooser* mSensorChooser;
 };
 
 #endif // DataListAddColumn_hh

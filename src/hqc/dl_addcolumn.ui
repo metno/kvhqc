@@ -18,7 +18,7 @@
     <number>2</number>
    </property>
    <property name="sizeConstraint">
-    <enum>QLayout::SetMinimumSize</enum>
+    <enum>QLayout::SetDefaultConstraint</enum>
    </property>
    <property name="margin">
     <number>4</number>
@@ -134,9 +134,6 @@
      </item>
      <item row="5" column="1">
       <widget class="QSpinBox" name="spinTimeOffset">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
        <property name="toolTip">
         <string>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</string>
        </property>
@@ -278,38 +275,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>textStation</sender>
-   <signal>textChanged(QString)</signal>
-   <receiver>DataListAddColumn</receiver>
-   <slot>onStationEdited(QString)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>26</x>
-     <y>39</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>comboParam</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>DataListAddColumn</receiver>
-   <slot>onParameterSelected(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>160</x>
-     <y>60</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>53</x>
-     <y>150</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>buttonCancel</sender>
    <signal>clicked()</signal>
    <receiver>DataListAddColumn</receiver>
@@ -320,8 +285,8 @@
      <y>240</y>
     </hint>
     <hint type="destinationlabel">
-     <x>20</x>
-     <y>185</y>
+     <x>216</x>
+     <y>96</y>
     </hint>
    </hints>
   </connection>
@@ -336,24 +301,8 @@
      <y>240</y>
     </hint>
     <hint type="destinationlabel">
-     <x>38</x>
-     <y>185</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>comboType</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>DataListAddColumn</receiver>
-   <slot>onTypeSelected(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>145</x>
-     <y>78</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>202</x>
-     <y>79</y>
+     <x>268</x>
+     <y>161</y>
     </hint>
    </hints>
   </connection>
