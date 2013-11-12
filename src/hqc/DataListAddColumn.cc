@@ -13,14 +13,26 @@ DataListAddColumn::DataListAddColumn(QWidget* parent)
   , ui(new Ui::DataListAddColumn)
 {
   ui->setupUi(this);
-  mSensorChooser = new SensorChooser(ui->textStation, ui->comboParam, ui->comboType, ui->comboLevel, ui->spinSensorNumber, this);
-  connect(mSensorChooser, SIGNAL(valid(bool)), this, SLOT(slotValidSensor(bool)));
+  mSensorChooser.reset(new SensorChooser(ui->textStation, ui->comboParam, ui->comboType, ui->comboLevel, ui->spinSensorNumber, this));
+  connect(mSensorChooser.get(), SIGNAL(valid(bool)), this, SLOT(slotValidSensor(bool)));
 }
 
 DataListAddColumn::~DataListAddColumn()
 {
   delete ui->comboParam->model();
   delete ui->comboType->model();
+}
+
+void DataListAddColumn::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    ui->retranslateUi(this);
+  QDialog::changeEvent(event);
+}
+
+void DataListAddColumn::setSensor(const Sensor& sensor)
+{
+  mSensorChooser->setSensor(sensor);
 }
 
 Sensor DataListAddColumn::selectedSensor() const

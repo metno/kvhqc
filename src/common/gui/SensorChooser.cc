@@ -40,6 +40,8 @@ SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* ty
 
 SensorChooser::~SensorChooser()
 {
+  delete mParam->model();
+  delete mType->model();
   // uninstall station completer?
 }
 
@@ -48,23 +50,10 @@ void SensorChooser::setSensor(const Sensor& sensor)
   METLIBS_LOG_SCOPE();
   mStation->setText(QString::number(sensor.stationId));
   
-  const std::vector<int> params = static_cast<ParamIdModel*>(mParam->model())->values();
-  const int pidx = std::find(params.begin(), params.end(), sensor.paramId) - params.begin();
-  mParam->setCurrentIndex(pidx);
-
-  const std::vector<int> types = static_cast<TypeIdModel*>(mType->model())->values();
-  const int tidx = std::find(types.begin(), types.end(), sensor.typeId) - types.begin();
-  mType->setCurrentIndex(tidx);
-
-  QString ltext = QString::number(sensor.level);
-  for (int lidx = 0; lidx < mLevel->count(); ++lidx) {
-    if (ltext == mLevel->itemText(lidx)) {
-      mLevel->setCurrentIndex(lidx);
-      break;
-    }
-  }
-
-  mSensorNr->setValue(sensor.sensor);
+  setParamId(sensor.paramId);
+  setTypeId(sensor.typeId);
+  setLevel(sensor.level);
+  setSensorNr(sensor.sensor);
 }
 
 void SensorChooser::setTimeRange(const TimeRange& time)
@@ -86,7 +75,7 @@ Sensor SensorChooser::getSensor()
   s.sensor = getSensorNr();
   s.level = getLevel();
 
-  if (s.stationId == -1 or s.paramId == -1 or s.typeId == -1)
+  if (s.stationId == -1 or s.paramId == -1 or s.typeId == 0)
     return Sensor(); // invalid sensor
 
   return s;
@@ -110,13 +99,29 @@ int SensorChooser::getParamId() const
   return pim->values().at(idx);
 }
 
+void SensorChooser::setParamId(int pid)
+{
+  const std::vector<int> params = static_cast<ParamIdModel*>(mParam->model())->values();
+  const std::vector<int>::const_iterator it = std::find(params.begin(), params.end(), pid);
+  if (it != params.end())
+    mParam->setCurrentIndex(it - params.begin());
+}
+
 int SensorChooser::getTypeId() const
 {
   const int idx = mType->currentIndex();
   if (idx < 0)
-      return -1;
+      return 0;
   TypeIdModel* tim = static_cast<TypeIdModel*>(mType->model());
   return tim->values().at(idx);
+}
+
+void SensorChooser::setTypeId(int tid)
+{
+  const std::vector<int> types = static_cast<TypeIdModel*>(mType->model())->values();
+  const std::vector<int>::const_iterator it = std::find(types.begin(), types.end(), tid);
+  if (it != types.end())
+    mType->setCurrentIndex(it - types.begin());
 }
 
 int SensorChooser::getSensorNr() const
@@ -124,9 +129,26 @@ int SensorChooser::getSensorNr() const
   return mSensorNr->value();
 }
 
+void SensorChooser::setSensorNr(int s)
+{
+  if (s >= mSensorNr->minimum() and s <= mSensorNr->maximum())
+    mSensorNr->setValue(s);
+}
+
 int SensorChooser::getLevel() const
 {
   return mLevel->currentText().toInt();
+}
+
+void SensorChooser::setLevel(int level)
+{
+  QString ltext = QString::number(level);
+  for (int lidx = 0; lidx < mLevel->count(); ++lidx) {
+    if (ltext == mLevel->itemText(lidx)) {
+      mLevel->setCurrentIndex(lidx);
+      break;
+    }
+  }
 }
 
 void SensorChooser::setLevels(const std::set<int>& levels)
@@ -169,10 +191,12 @@ void SensorChooser::onStationEdited(const QString&)
 
   mParam->setEnabled(goodStation);
 
+  const int paramId = getParamId();
   delete mParam->model();
   mParam->setModel(new ParamIdModel(std::vector<int>(stationParams.begin(), stationParams.end())));
   if (goodStation)
     mParam->setCurrentIndex(0);
+  setParamId(paramId);
   onParameterSelected(0);
 }
 
@@ -196,11 +220,12 @@ void SensorChooser::onParameterSelected(int)
     goodParam &= (not stationTypes.empty());
   }
 
+  const int typeId = getTypeId();
   delete mType->model();
   mType->setModel(new TypeIdModel(std::vector<int>(stationTypes.begin(), stationTypes.end())));
   if (goodParam)
     mType->setCurrentIndex(0);
-
+  setTypeId(typeId);
   mType->setEnabled(goodParam);
   onTypeSelected(0);
 }
@@ -211,8 +236,9 @@ void SensorChooser::onTypeSelected(int)
   const int stationId = getStationId();
   const int paramId   = getParamId();
   const int typeId    = getTypeId();
+  METLIBS_LOG_DEBUG(LOGVAL(typeId));
 
-  bool good = (stationId >= 60 and paramId >= 0 and typeId >= 0);
+  bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   std::set<int> levels;
   int maxSensor = 0;
   if (good) {
@@ -228,8 +254,11 @@ void SensorChooser::onTypeSelected(int)
       }
     }
   }
+  const int level = getLevel(), sensorNr = getSensorNr();
   setLevels(levels);
   setMaxSensor(maxSensor);
+  setLevel(level);
+  setSensorNr(sensorNr);
 
   mLevel->setEnabled(good);
   mSensorNr->setEnabled(good);

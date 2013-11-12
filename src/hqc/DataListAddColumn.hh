@@ -20,9 +20,14 @@ public:
   DataListAddColumn(QWidget* parent=0);
   ~DataListAddColumn();
 
+  void setSensor(const Sensor& sensor);
+
   Sensor selectedSensor() const;
   AutoDataList::ColumnType selectedColumnType() const;
   int selectedTimeOffset() const;
+
+protected:
+  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
   void slotValidSensor(bool);
@@ -32,7 +37,7 @@ private:
 
 private:
   std::auto_ptr<Ui::DataListAddColumn> ui;
-  SensorChooser* mSensorChooser;
+  std::auto_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // DataListAddColumn_hh

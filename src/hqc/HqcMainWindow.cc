@@ -792,6 +792,7 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 
   mDianaHelper->navigateTo(st);
   ui->simpleCorrrections->navigateTo(st);
+  mJumpToObservation->navigateTo(st);
   mAutoDataList->navigateTo(st);
   mTimeSeriesView->navigateTo(st);
   for(int idx = 1; idx < ui->tabs->count(); ++idx) {

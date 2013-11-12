@@ -9,6 +9,7 @@
 #include <QtGui/QDialog>
 
 class Sensor;
+class SensorChooser;
 class SensorTime;
 namespace Ui {
 class JumpToObservation;
@@ -20,6 +21,8 @@ public:
   JumpToObservation(ObsAccessPtr da, QWidget* parent=0);
   ~JumpToObservation();
   
+  void navigateTo(const SensorTime&);
+
   SensorTime selectedSensorTime() const;
   
   boost::signal1<void, SensorTime> signalNavigateTo;
@@ -31,19 +34,12 @@ public Q_SLOTS:
   virtual void accept();
 
 private Q_SLOTS:
-  void onStationEdited();
-  void onParameterSelected(int);
-
-private:
-  int getStationId() const;
-  int getParamId() const;
-  int getTypeId() const;
-  int getLevel() const;
-  int getSensorNr() const;
+  void slotValidSensor(bool);
 
 private:
   std::auto_ptr<Ui::JumpToObservation> ui;
   ObsAccessPtr mDA;
+  std::auto_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // JumpToObservation_hh

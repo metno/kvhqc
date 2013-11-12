@@ -422,6 +422,7 @@ void AutoDataList::addColumnBefore(int column)
     column = columnCount;
 
   DataListAddColumn dac(this);
+  dac.setSensor(mSensorTime.sensor);
   if (dac.exec() != QDialog::Accepted)
     return;
 

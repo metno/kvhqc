@@ -39,10 +39,15 @@ private:
   void setMaxSensor(int maxSensor);
 
   int getStationId() const;
+  void setStationId(int stationId);
   int getParamId() const;
+  void setParamId(int paramId);
   int getTypeId() const;
+  void setTypeId(int typeId);
   int getLevel() const;
+  void setLevel(int level);
   int getSensorNr() const;
+  void setSensorNr(int snr);
 
 private:
   QLineEdit* mStation;

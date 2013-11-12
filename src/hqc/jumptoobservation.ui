@@ -6,14 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>242</width>
-    <height>233</height>
+    <width>232</width>
+    <height>199</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Jump to Observation</string>
   </property>
-  <layout class="QFormLayout" name="formLayout">
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="margin">
+    <number>4</number>
+   </property>
+   <property name="spacing">
+    <number>2</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="labelStation">
      <property name="text">
@@ -24,7 +30,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="1">
+   <item row="0" column="1" colspan="2">
     <widget class="QLineEdit" name="textStation"/>
    </item>
    <item row="1" column="0">
@@ -40,6 +46,19 @@
    <item row="1" column="1">
     <widget class="QComboBox" name="comboParam"/>
    </item>
+   <item row="1" column="2">
+    <spacer name="horizontalSpacer_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>73</width>
+       <height>20</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
    <item row="2" column="0">
     <widget class="QLabel" name="labelType">
      <property name="text">
@@ -54,24 +73,27 @@
     <widget class="QComboBox" name="comboType"/>
    </item>
    <item row="3" column="0">
+    <widget class="QLabel" name="labelLevel">
+     <property name="text">
+      <string>Level:</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QComboBox" name="comboLevel"/>
+   </item>
+   <item row="4" column="0">
     <widget class="QLabel" name="labelSensor">
      <property name="text">
       <string>Sensor:</string>
      </property>
      <property name="buddy">
-      <cstring>spinSensor</cstring>
+      <cstring>spinSensorNr</cstring>
      </property>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QLabel" name="labelLevel">
-     <property name="text">
-      <string>Level:</string>
-     </property>
-     <property name="buddy">
-      <cstring>spinLevel</cstring>
-     </property>
-    </widget>
+   <item row="4" column="1">
+    <widget class="QSpinBox" name="spinSensorNr"/>
    </item>
    <item row="5" column="0">
     <widget class="QLabel" name="labelObsTime">
@@ -83,7 +105,7 @@
      </property>
     </widget>
    </item>
-   <item row="5" column="1">
+   <item row="5" column="1" colspan="2">
     <widget class="MiDateTimeEdit" name="editObsTime">
      <property name="alignment">
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -96,7 +118,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="6" column="0" colspan="3">
     <layout class="QHBoxLayout" name="horizontalLayout_3">
      <item>
       <spacer name="horizontalSpacer">
@@ -130,12 +152,6 @@
      </item>
     </layout>
    </item>
-   <item row="3" column="1">
-    <widget class="QSpinBox" name="spinSensor"/>
-   </item>
-   <item row="4" column="1">
-    <widget class="QSpinBox" name="spinLevel"/>
-   </item>
   </layout>
   <zorder>textStation</zorder>
   <zorder>labelParam</zorder>
@@ -146,9 +162,10 @@
   <zorder>editObsTime</zorder>
   <zorder>labelStation</zorder>
   <zorder>labelSensor</zorder>
+  <zorder>spinSensorNr</zorder>
   <zorder>labelLevel</zorder>
-  <zorder>spinSensor</zorder>
-  <zorder>spinLevel</zorder>
+  <zorder>comboLevel</zorder>
+  <zorder>horizontalSpacer_2</zorder>
  </widget>
  <customwidgets>
   <customwidget>
@@ -166,12 +183,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>126</x>
-     <y>222</y>
+     <x>135</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel">
-     <x>20</x>
-     <y>250</y>
+     <x>162</x>
+     <y>110</y>
     </hint>
    </hints>
   </connection>
@@ -182,44 +199,12 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>231</x>
-     <y>222</y>
+     <x>226</x>
+     <y>167</y>
     </hint>
     <hint type="destinationlabel">
-     <x>38</x>
-     <y>260</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>textStation</sender>
-   <signal>editingFinished()</signal>
-   <receiver>JumpToObservation</receiver>
-   <slot>onStationEdited()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>106</x>
-     <y>23</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>26</x>
-     <y>39</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>comboParam</sender>
-   <signal>currentIndexChanged(int)</signal>
-   <receiver>JumpToObservation</receiver>
-   <slot>onParameterSelected(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>209</x>
-     <y>64</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>53</x>
-     <y>150</y>
+     <x>207</x>
+     <y>60</y>
     </hint>
    </hints>
   </connection>
