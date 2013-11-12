@@ -68,6 +68,9 @@ QString SensorHeader::displayHeader(Qt::Orientation orientation, const QString& 
   if (mShowParam == ALWAYS) {
     const QString sep = separator(orientation);
     Helpers::appendText(header, Helpers::paramName(mSensor.paramId), sep);
+    Helpers::appendText(header, QString("T%1").arg(mSensor.typeId), sep);
+    if (mSensor.sensor != 0 or mSensor.level != 0)
+      Helpers::appendText(header, QString("L%1 S%2").arg(mSensor.level).arg(mSensor.sensor), sep);
     Helpers::appendText(header, description, sep);
   }
   return header;
