@@ -42,6 +42,8 @@ Sensor DataListAddColumn::selectedSensor() const
   s.stationId = getStationId();
   s.paramId = getParamId();
   s.typeId = getTypeId();
+  s.sensor = getSensorNumber();
+  s.level = getLevel();
 
   if (s.stationId == -1 or s.paramId == -1 or s.typeId == -1)
     return Sensor(); // invalid sensor
@@ -76,6 +78,16 @@ int DataListAddColumn::getTypeId() const
   return tim->values().at(idx);
 }
 
+int DataListAddColumn::getSensorNumber() const
+{
+  return ui->spinSensorNumber->value();
+}
+
+int DataListAddColumn::getLevel() const
+{
+  return ui->comboLevel->currentText().toInt();
+}
+
 AutoDataList::ColumnType DataListAddColumn::selectedColumnType() const
 {
   AutoDataList::ColumnType ct = AutoDataList::CORRECTED;
@@ -93,7 +105,28 @@ int DataListAddColumn::selectedTimeOffset() const
   return ui->spinTimeOffset->value();
 }
 
-void DataListAddColumn::onStationEdited()
+void DataListAddColumn::setLevels(const std::set<int>& levels)
+{
+  ui->comboLevel->clear();
+  if (levels.find(0) == levels.end())
+    ui->comboLevel->addItem("0");
+  BOOST_FOREACH(int l, levels)
+    ui->comboLevel->addItem(QString::number(l));
+  ui->comboLevel->setCurrentText("0");
+}
+
+void DataListAddColumn::setMaxSensor(int maxSensor)
+{
+  ui->spinSensorNumber->setMaximum(maxSensor);
+  ui->spinSensorNumber->setValue(0);
+}
+
+void DataListAddColumn::resetTimeOffset()
+{
+  ui->spinTimeOffset->setValue(0);
+}
+
+void DataListAddColumn::onStationEdited(const QString&)
 {
   METLIBS_LOG_SCOPE();
   std::set<int> stationParams;
@@ -154,5 +187,38 @@ void DataListAddColumn::onParameterSelected(int)
     ui->comboType->setCurrentIndex(0);
 
   ui->comboType->setEnabled(goodParam);
-  ui->buttonOk->setEnabled(goodParam);
+  onTypeSelected(0);
+}
+
+void DataListAddColumn::onTypeSelected(int)
+{
+  METLIBS_LOG_SCOPE();
+  const int stationId = getStationId();
+  const int paramId   = getParamId();
+  const int typeId    = getTypeId();
+
+  bool good = (stationId >= 60 and paramId >= 0 and typeId >= 0);
+  std::set<int> levels;
+  int maxSensor = 0;
+  if (good) {
+    const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+      const int p = op.paramID(), t = op.typeID();
+      if ((paramId == p and typeId == t)
+          or (Helpers::aggregatedParameter(p, paramId) and typeId == -t))
+      {
+        levels.insert(op.level());
+        maxSensor = std::max(maxSensor, op.nr_sensor()-1);
+        METLIBS_LOG_DEBUG(LOGVAL(op.level()) << LOGVAL(op.nr_sensor()));
+      }
+    }
+  }
+  setLevels(levels);
+  setMaxSensor(maxSensor);
+  resetTimeOffset();
+
+  ui->comboLevel->setEnabled(good);
+  ui->spinSensorNumber->setEnabled(good);
+  ui->spinTimeOffset->setEnabled(good);
+  ui->buttonOk->setEnabled(good);
 }

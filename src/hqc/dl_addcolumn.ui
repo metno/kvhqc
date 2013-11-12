@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>232</width>
-    <height>275</height>
+    <width>290</width>
+    <height>246</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,104 +17,126 @@
    <property name="spacing">
     <number>2</number>
    </property>
+   <property name="sizeConstraint">
+    <enum>QLayout::SetMinimumSize</enum>
+   </property>
    <property name="margin">
-    <number>2</number>
+    <number>4</number>
    </property>
    <item>
-    <layout class="QFormLayout" name="formLayout">
-     <property name="fieldGrowthPolicy">
-      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
-     </property>
+    <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="0">
       <widget class="QLabel" name="labelStation">
        <property name="text">
-        <string>Station:</string>
+        <string>&amp;Station:</string>
+       </property>
+       <property name="buddy">
+        <cstring>textStation</cstring>
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
+     <item row="0" column="1" colspan="2">
       <widget class="QLineEdit" name="textStation"/>
      </item>
-     <item row="1" column="1">
-      <widget class="QRadioButton" name="radioCorrected">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Corrected Value</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item row="3" column="1">
-      <widget class="QRadioButton" name="radioOriginal">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Original Value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="4" column="1">
-      <widget class="QRadioButton" name="radioFlags">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Flags</string>
-       </property>
-      </widget>
-     </item>
-     <item row="5" column="1">
-      <widget class="QRadioButton" name="radioModel">
-       <property name="enabled">
-        <bool>false</bool>
-       </property>
-       <property name="text">
-        <string>Model value</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0">
+     <item row="1" column="0">
       <widget class="QLabel" name="labelParam">
        <property name="text">
-        <string>Parameter:</string>
+        <string>&amp;Parameter:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboParam</cstring>
        </property>
       </widget>
      </item>
-     <item row="7" column="1">
+     <item row="1" column="1">
       <widget class="QComboBox" name="comboParam">
        <property name="enabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="8" column="0">
+     <item row="1" column="2">
+      <spacer name="horizontalSpacer_2">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>118</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="2" column="0">
       <widget class="QLabel" name="labelType">
        <property name="text">
-        <string>Type:</string>
+        <string>&amp;Type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboType</cstring>
        </property>
       </widget>
      </item>
-     <item row="8" column="1">
+     <item row="2" column="1">
       <widget class="QComboBox" name="comboType">
        <property name="enabled">
         <bool>false</bool>
        </property>
       </widget>
      </item>
-     <item row="9" column="0">
-      <widget class="QLabel" name="labelTimeOffset">
+     <item row="3" column="0">
+      <widget class="QLabel" name="labelLevel">
        <property name="text">
-        <string>Time offset:</string>
+        <string>&amp;Level:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboLevel</cstring>
        </property>
       </widget>
      </item>
-     <item row="9" column="1">
+     <item row="3" column="1">
+      <widget class="QComboBox" name="comboLevel">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="labelSensorNumber">
+       <property name="text">
+        <string>S&amp;ensor:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinSensorNumber</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QSpinBox" name="spinSensorNumber">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="maximum">
+        <number>0</number>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QLabel" name="labelTimeOffset">
+       <property name="text">
+        <string>T&amp;ime offset:</string>
+       </property>
+       <property name="buddy">
+        <cstring>spinTimeOffset</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="1">
       <widget class="QSpinBox" name="spinTimeOffset">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
        <property name="toolTip">
         <string>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</string>
        </property>
@@ -135,7 +157,75 @@
     </layout>
    </item>
    <item>
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <item>
+      <widget class="QRadioButton" name="radioCorrected">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Corrected Value</string>
+       </property>
+       <property name="statusTip">
+        <string>Corrected Value</string>
+       </property>
+       <property name="text">
+        <string>&amp;Corr</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioOriginal">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Original Value</string>
+       </property>
+       <property name="statusTip">
+        <string>Original Value</string>
+       </property>
+       <property name="text">
+        <string>&amp;Orig</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioFlags">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="text">
+        <string>&amp;Flags</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QRadioButton" name="radioModel">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Model value</string>
+       </property>
+       <property name="statusTip">
+        <string>Model value</string>
+       </property>
+       <property name="text">
+        <string>&amp;Model</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -152,7 +242,7 @@
      <item>
       <widget class="QPushButton" name="buttonCancel">
        <property name="text">
-        <string>&amp;Cancel</string>
+        <string>Cancel</string>
        </property>
       </widget>
      </item>
@@ -162,7 +252,10 @@
         <bool>false</bool>
        </property>
        <property name="text">
-        <string>&amp;OK</string>
+        <string>OK</string>
+       </property>
+       <property name="default">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
@@ -170,13 +263,25 @@
    </item>
   </layout>
  </widget>
+ <layoutdefault spacing="2" margin="2"/>
+ <tabstops>
+  <tabstop>textStation</tabstop>
+  <tabstop>comboParam</tabstop>
+  <tabstop>comboType</tabstop>
+  <tabstop>radioCorrected</tabstop>
+  <tabstop>radioOriginal</tabstop>
+  <tabstop>radioFlags</tabstop>
+  <tabstop>radioModel</tabstop>
+  <tabstop>buttonOk</tabstop>
+  <tabstop>buttonCancel</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
    <sender>textStation</sender>
-   <signal>editingFinished()</signal>
+   <signal>textChanged(QString)</signal>
    <receiver>DataListAddColumn</receiver>
-   <slot>onStationEdited()</slot>
+   <slot>onStationEdited(QString)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>106</x>
@@ -195,8 +300,8 @@
    <slot>onParameterSelected(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>128</x>
-     <y>172</y>
+     <x>160</x>
+     <y>60</y>
     </hint>
     <hint type="destinationlabel">
      <x>53</x>
@@ -211,12 +316,12 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>70</x>
-     <y>257</y>
+     <x>197</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>20</x>
-     <y>250</y>
+     <y>185</y>
     </hint>
    </hints>
   </connection>
@@ -227,12 +332,28 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>160</x>
-     <y>256</y>
+     <x>284</x>
+     <y>240</y>
     </hint>
     <hint type="destinationlabel">
      <x>38</x>
-     <y>260</y>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>comboType</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>DataListAddColumn</receiver>
+   <slot>onTypeSelected(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>145</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>202</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>
@@ -240,5 +361,6 @@
  <slots>
   <slot>onStationEdited()</slot>
   <slot>onParameterSelected(int)</slot>
+  <slot>onTypeSelected(int)</slot>
  </slots>
 </ui>

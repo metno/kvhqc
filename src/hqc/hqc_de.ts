@@ -271,63 +271,92 @@
     </message>
     <message>
         <location filename="dl_addcolumn.ui" line="31"/>
-        <source>Station:</source>
-        <translation>Station:</translation>
+        <source>&amp;Station:</source>
+        <oldsource>Station:</oldsource>
+        <translation>&amp;Station:</translation>
     </message>
     <message>
         <location filename="dl_addcolumn.ui" line="44"/>
+        <source>&amp;Parameter:</source>
+        <translation>&amp;Parameter:</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="74"/>
+        <source>&amp;Type:</source>
+        <translation>&amp;Type:</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="91"/>
+        <source>&amp;Level:</source>
+        <translation>&amp;Level:</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="108"/>
+        <source>S&amp;ensor:</source>
+        <translation>S&amp;ensor:</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="128"/>
+        <source>T&amp;ime offset:</source>
+        <translation>Ze&amp;itverschiebung:</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="167"/>
+        <location filename="dl_addcolumn.ui" line="170"/>
         <source>Corrected Value</source>
         <translation>korrigierter Wert</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="57"/>
+        <location filename="dl_addcolumn.ui" line="173"/>
+        <source>&amp;Corr</source>
+        <translation>&amp;Korr</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="186"/>
+        <location filename="dl_addcolumn.ui" line="189"/>
         <source>Original Value</source>
         <translation>originaler Wert</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="67"/>
-        <source>Flags</source>
-        <translation>Flags</translation>
+        <location filename="dl_addcolumn.ui" line="192"/>
+        <source>&amp;Orig</source>
+        <translation>&amp;Orig</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="77"/>
+        <location filename="dl_addcolumn.ui" line="202"/>
+        <source>&amp;Flags</source>
+        <translation>&amp;Flags</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="218"/>
+        <source>&amp;Model</source>
+        <translation>&amp;Modell</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="245"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="255"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="dl_addcolumn.ui" line="212"/>
+        <location filename="dl_addcolumn.ui" line="215"/>
         <source>Model value</source>
         <translation>Modell-Wert</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="84"/>
-        <source>Parameter:</source>
-        <translation>Parameter:</translation>
-    </message>
-    <message>
-        <location filename="dl_addcolumn.ui" line="98"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
-    </message>
-    <message>
-        <location filename="dl_addcolumn.ui" line="112"/>
-        <source>Time offset:</source>
-        <translation>Zeitverschiebung:</translation>
-    </message>
-    <message>
-        <location filename="dl_addcolumn.ui" line="119"/>
+        <location filename="dl_addcolumn.ui" line="141"/>
         <source>Time shift for the column. A time shift of 1 hour means that data with, e.g., observation time 08:00 will be shown in the row for 09:00.</source>
         <translation>Zeitverschiebung der Spalte. Bei einer Zeitverschiebung um beispielsweise 1 Stunde werden Daten von 08:00 in der Zeile für 09:00 gezeigt.</translation>
     </message>
     <message>
-        <location filename="dl_addcolumn.ui" line="125"/>
+        <location filename="dl_addcolumn.ui" line="147"/>
         <source>h</source>
         <translation>h</translation>
-    </message>
-    <message>
-        <location filename="dl_addcolumn.ui" line="155"/>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Abbrechen</translation>
-    </message>
-    <message>
-        <location filename="dl_addcolumn.ui" line="165"/>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
     </message>
 </context>
 <context>
@@ -1449,12 +1478,12 @@ Parameter</translation>
         <translation>Kein Wetter-Element ausgewählt. Mindestens eins muss ausgewählt werden.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="409"/>
+        <location filename="HqcMainWindow.cc" line="414"/>
         <source>Building data list...</source>
         <translation>Baue Datenliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="402"/>
+        <location filename="HqcMainWindow.cc" line="407"/>
         <source>Building error list...</source>
         <translation>Baue Fehlerliste...</translation>
     </message>
@@ -1477,27 +1506,27 @@ Parameter</translation>
     </message>
     <message>
         <location filename="HqcMainWindow.cc" line="298"/>
-        <location filename="HqcMainWindow.cc" line="415"/>
+        <location filename="HqcMainWindow.cc" line="420"/>
         <source>Selected Data</source>
         <translation>Ausgewählte Daten</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="471"/>
+        <location filename="HqcMainWindow.cc" line="476"/>
         <source>No RejectDecode</source>
         <translation>Kein RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="471"/>
+        <location filename="HqcMainWindow.cc" line="476"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kann rejectdecode nicht lesen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="739"/>
+        <location filename="HqcMainWindow.cc" line="744"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="699"/>
+        <location filename="HqcMainWindow.cc" line="704"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1508,67 +1537,67 @@ You are using HQC version %1.</source>
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="737"/>
+        <location filename="HqcMainWindow.cc" line="742"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Daten Speichern</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="738"/>
+        <location filename="HqcMainWindow.cc" line="743"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="742"/>
+        <location filename="HqcMainWindow.cc" line="747"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Daten gespeichert&lt;/h1&gt;Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="751"/>
+        <location filename="HqcMainWindow.cc" line="756"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-Datenbank erreichbar</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="754"/>
+        <location filename="HqcMainWindow.cc" line="759"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-Datenbank nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="755"/>
+        <location filename="HqcMainWindow.cc" line="760"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs nicht erreichbar&lt;/h1&gt;Datenbank derzeit nicht erreichbar! Sie können warten und es später erneut versuchen, müssen aber damit rechnen, dass Änderungen verloren gehen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="582"/>
+        <location filename="HqcMainWindow.cc" line="587"/>
         <source>Print screenshot</source>
         <translation>Bildschirmfoto ausdrucken</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="606"/>
+        <location filename="HqcMainWindow.cc" line="611"/>
         <source>HQC - Update</source>
         <translation>HQC - Aktualisierung</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="607"/>
+        <location filename="HqcMainWindow.cc" line="612"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="698"/>
+        <location filename="HqcMainWindow.cc" line="703"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="782"/>
+        <location filename="HqcMainWindow.cc" line="787"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Vorbereitung der Daten für Station %1 um %2, bitte warten…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="847"/>
+        <location filename="HqcMainWindow.cc" line="852"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="848"/>
+        <location filename="HqcMainWindow.cc" line="853"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
@@ -1979,27 +2008,27 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="84"/>
+        <location filename="../common/gui/SensorHeader.cc" line="87"/>
         <source>+%1h</source>
         <translation>+%1h</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="85"/>
+        <location filename="../common/gui/SensorHeader.cc" line="88"/>
         <source>time offset +%1 hour(s)</source>
         <translation>Zeitverschiebung +%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="88"/>
+        <location filename="../common/gui/SensorHeader.cc" line="91"/>
         <source>-%1h</source>
         <translation>-%1h</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="89"/>
+        <location filename="../common/gui/SensorHeader.cc" line="92"/>
         <source>time offset -%1 hour(s)</source>
         <translation>Zeitverschiebung -%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="103"/>
+        <location filename="../common/gui/SensorHeader.cc" line="106"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Station %1 [%2, %3müNN] Niveau %4</translation>
     </message>
