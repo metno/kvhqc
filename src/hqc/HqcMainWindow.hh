@@ -166,6 +166,8 @@ private:
   /// True after first time ListOk() have been invoked with valid input
   bool listExist;
 
+  SensorTime mLastNavigated;
+
   std::auto_ptr<Ui::HqcMainWindow> ui;
   QSplitter* mAutoViewSplitter;
 

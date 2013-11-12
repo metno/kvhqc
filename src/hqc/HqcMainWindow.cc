@@ -474,22 +474,20 @@ void HqcMainWindow::rejectedOK()
 
 void HqcMainWindow::showWatchRR()
 {
-  Sensor sensor(83880, 110 /*kvalobs::PARAMID_RR_24*/, 0, 0, 302);
   const timeutil::ptime now = timeutil::now();
-  timeutil::ptime tMiddle = now;
 
-  EditDataPtr obs = ui->treeErrors->getObs();
-  if (obs) {
-    const SensorTime& st = obs->sensorTime();
-    if (st.sensor.paramId == 110)
-      sensor = st.sensor;
-    tMiddle = timeutil::from_miTime(st.time);
+  Sensor sensor(83880, kvalobs::PARAMID_RR_24, 0, 0, 302);
+  timeutil::ptime tMiddle = now - boost::gregorian::days(7);
+  if (mLastNavigated.valid()) {
+    sensor = mLastNavigated.sensor;
+    sensor.paramId = kvalobs::PARAMID_RR_24;
+    tMiddle = timeutil::from_miTime(mLastNavigated.time);
   }
 
   timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
   while (timeTo > now)
-    timeTo -= boost::gregorian::days(7);
+    timeTo -= boost::gregorian::days(1);
   TimeRange time(timeFrom, timeTo);
 
   StationDialog sd(sensor, time);
@@ -520,23 +518,21 @@ void HqcMainWindow::showWatchRR()
 
 void HqcMainWindow::showWeather()
 {
-  Sensor sensor(10380, 211, 0, 0, 311);
   const timeutil::ptime now = timeutil::now();
   const timeutil::ptime roundedNow = timeutil::ptime(now.date(), boost::posix_time::time_duration(now.time_of_day().hours(),0,0))
       + boost::posix_time::hours(1);
-  timeutil::ptime tMiddle = roundedNow;
 
-  EditDataPtr obs = ui->treeErrors->getObs();
-  if (obs) {
-    const SensorTime& st = obs->sensorTime();
-    sensor = st.sensor;
-    tMiddle = st.time;
+  Sensor sensor(10380, kvalobs::PARAMID_TA,    0, 0, 311);
+  timeutil::ptime tMiddle = roundedNow - boost::gregorian::days(7);
+  if (mLastNavigated.valid()) {
+    sensor = mLastNavigated.sensor;
+    tMiddle = timeutil::from_miTime(mLastNavigated.time);
   }
-  
+
   timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
   while (timeTo > now)
-    timeTo -= boost::gregorian::days(7);
+    timeTo -= boost::gregorian::days(1);
   TimeRange time(timeFrom, timeTo);
   
   WeatherStationDialog sd(sensor, time);
@@ -801,6 +797,8 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
       .arg(st.sensor.stationId)
       .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
 #endif
+  mLastNavigated = st;
+
   mDianaHelper->navigateTo(st);
   ui->simpleCorrrections->navigateTo(st);
   mAutoDataList->navigateTo(st);
