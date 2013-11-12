@@ -49,22 +49,22 @@
         <translation>Station %1 [%2]</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="122"/>
+        <location filename="WeatherDialog.cc" line="124"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden, sie sind verloren gegangen!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="123"/>
+        <location filename="WeatherDialog.cc" line="125"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="136"/>
+        <location filename="WeatherDialog.cc" line="138"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-Daten, die Sie bearbeiten, würden geändert. Sie müssen von vorne beginnen. Sorry!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="137"/>
+        <location filename="WeatherDialog.cc" line="139"/>
         <source>Quit and Discard changes</source>
         <translation>Beenden und Änderungen verwerfen</translation>
     </message>

@@ -1,3 +1,14 @@
+kvhqc (3.2.0~b4-1) unstable; urgency=low
+
+  * WatchRR handles sendChangesToParent as WatchWeather
+  * WatchRR: cleaned up class names a little
+  * use last navigation as default for WatchRR and WatchWeather
+  * bugfix: WatchRR and WatchWeather station dialog
+  * simplified TypeIdModel and ParamIdModel
+  * language update in more widgets
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 28 Oct 2013 17:27:58 +0100
+
 kvhqc (3.2.0~b3-1) unstable; urgency=low
 
   * added language change menu

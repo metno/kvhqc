@@ -116,12 +116,12 @@
 <context>
     <name>DialogStation</name>
     <message>
-        <location filename="watchrr_station.ui" line="17"/>
+        <location filename="watchrr_station.ui" line="18"/>
         <source>WatchRR -- Station</source>
         <translation>WatchRR -- Stasjon</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="23"/>
+        <location filename="watchrr_station.ui" line="30"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
@@ -131,22 +131,22 @@
         <translation>Fra:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="57"/>
+        <location filename="watchrr_station.ui" line="60"/>
         <source>To:</source>
         <translation>Til:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="74"/>
+        <location filename="watchrr_station.ui" line="80"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="96"/>
+        <location filename="watchrr_station.ui" line="108"/>
         <source>Cancel</source>
         <translation>Avbryt</translation>
     </message>
     <message>
-        <location filename="watchrr_station.ui" line="106"/>
+        <location filename="watchrr_station.ui" line="118"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
@@ -158,34 +158,6 @@
         <location filename="EditDialog.cc" line="36"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
-    </message>
-</context>
-<context>
-    <name>MainDialog</name>
-    <message>
-        <location filename="MainDialog.cc" line="125"/>
-        <source>Station %1 [%2]</source>
-        <translation>Stasjon %1 [%2]</translation>
-    </message>
-    <message>
-        <location filename="MainDialog.cc" line="130"/>
-        <source>[not daily]</source>
-        <translation>[ikke daglig]</translation>
-    </message>
-    <message>
-        <location filename="MainDialog.cc" line="181"/>
-        <source>Sum: %1mm</source>
-        <translation>Sum: %1mm</translation>
-    </message>
-    <message>
-        <location filename="MainDialog.cc" line="338"/>
-        <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
-        <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
-    </message>
-    <message>
-        <location filename="MainDialog.cc" line="339"/>
-        <source>Quit and Discard changes</source>
-        <translation>Avslutt og forkast endringer</translation>
     </message>
 </context>
 <context>
@@ -210,24 +182,62 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="97"/>
+        <location filename="StationDialog.cc" line="95"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="99"/>
+        <location filename="StationDialog.cc" line="97"/>
         <source>Invalid station number</source>
         <translation>Ugyldig stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="144"/>
+        <location filename="StationDialog.cc" line="142"/>
         <source>Unknown station (not in obs_pgm)</source>
         <translation>Ukjent stasjon (ikke i obs_pgm)</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="155"/>
+        <location filename="StationDialog.cc" line="153"/>
         <source>Could not find typeid</source>
         <translation>Ingen typeid funnet</translation>
+    </message>
+</context>
+<context>
+    <name>WatchRRDialog</name>
+    <message>
+        <location filename="WatchRRDialog.cc" line="126"/>
+        <source>Station %1 [%2]</source>
+        <translation>Stasjon %1 [%2]</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="131"/>
+        <source>[not daily]</source>
+        <translation>[ikke daglig]</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="182"/>
+        <source>Sum: %1mm</source>
+        <translation>Sum: %1mm</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="260"/>
+        <source>Sorry, your changes could not be saved and are lost!</source>
+        <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="261"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="354"/>
+        <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
+        <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
+    </message>
+    <message>
+        <location filename="WatchRRDialog.cc" line="355"/>
+        <source>Quit and Discard changes</source>
+        <translation>Avslutt og forkast endringer</translation>
     </message>
 </context>
 </TS>
