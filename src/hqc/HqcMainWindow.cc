@@ -780,6 +780,9 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
   METLIBS_LOG_TIME();
   METLIBS_LOG_DEBUG(LOGVAL(st));
 
+  if (eq_SensorTime()(mLastNavigated, st))
+    return;
+
 #if 1
   BusyIndicator busy;
 #else

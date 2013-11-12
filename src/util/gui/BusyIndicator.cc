@@ -38,13 +38,13 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 BusyIndicator::BusyIndicator(bool wait)
 {
   qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
-  qApp->processEvents();
+  //qApp->processEvents();
 }
 
 BusyIndicator::~BusyIndicator()
 {
   qApp->restoreOverrideCursor();
-  qApp->processEvents();
+  //qApp->processEvents();
 }
 
 // ========================================================================
@@ -71,7 +71,7 @@ BusyStatus::BusyStatus(QMainWindow* mw, const QString& message, bool wait)
   , BusyIndicator(wait)
 {
   mw->statusBar()->showMessage(message);
-  qApp->processEvents();
+  //qApp->processEvents();
 }
 
 BusyStatus::~BusyStatus()
