@@ -7,6 +7,7 @@
 
 #include <QtGui/QDialog>
 
+class SensorChooser;
 namespace Ui {
 class TimeSeriesAdd;
 }
@@ -22,16 +23,11 @@ public:
   Sensor selectedSensor() const;
 
 private Q_SLOTS:
-  void onStationEdited();
-  void onParameterSelected(int);
-
-private:
-  int getStationId() const;
-  int getParamId() const;
-  int getTypeId() const;
+  void slotValidSensor(bool);
 
 private:
   std::auto_ptr<Ui::TimeSeriesAdd> ui;
+  std::auto_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // TimeSeriesAdd_hh

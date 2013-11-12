@@ -64,6 +64,9 @@ public:
   VectorModel(const vector_t& values, const Extract& e = Extract())
     : mValues(values), mExtract(e) { }
 
+  VectorModel(const Extract& e = Extract())
+    : mExtract(e) { }
+
   int rowCount(const QModelIndex&) const
     { return mValues.size(); }
 
@@ -71,6 +74,8 @@ public:
   
   const vector_t& values() const
     { return mValues; }
+
+  void setValues(const vector_t& v);
 
 private:
   vector_t mValues;
@@ -86,6 +91,14 @@ QVariant VectorModel<Extract>::data(const QModelIndex& index, int role) const
     return mExtract.tip(mValues.at(index.row()));
   else
     return QVariant();
+}
+
+template<class Extract>
+void VectorModel<Extract>::setValues(const vector_t& v)
+{
+  beginResetModel();
+  mValues = v;
+  endResetModel();
 }
 
 #endif // util_VectorModel_hh

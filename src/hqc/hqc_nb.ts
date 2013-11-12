@@ -1803,13 +1803,13 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="ListDialog.cc" line="156"/>
-        <location filename="ListDialog.cc" line="299"/>
+        <location filename="ListDialog.cc" line="300"/>
         <source>All in obs pgm</source>
         <translation>Alle i obs pgm</translation>
     </message>
     <message>
         <location filename="ListDialog.cc" line="157"/>
-        <location filename="ListDialog.cc" line="308"/>
+        <location filename="ListDialog.cc" line="309"/>
         <source>All defined</source>
         <translation>Alle definerte</translation>
     </message>
@@ -1926,12 +1926,12 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>MissingView</name>
     <message>
-        <location filename="MissingView.cc" line="63"/>
+        <location filename="MissingView.cc" line="64"/>
         <source>any</source>
         <translation>alle</translation>
     </message>
     <message>
-        <location filename="MissingView.cc" line="64"/>
+        <location filename="MissingView.cc" line="65"/>
         <source>manual</source>
         <translation>manuelle</translation>
     </message>
@@ -2392,27 +2392,37 @@ Du bruker HQC versjon %1.</translation>
         <translation>Ny Linje</translation>
     </message>
     <message>
-        <location filename="ts_add.ui" line="37"/>
-        <source>Station:</source>
-        <translation>Stasjon:</translation>
-    </message>
-    <message>
-        <location filename="ts_add.ui" line="47"/>
-        <source>Parameter:</source>
-        <translation>Parameter:</translation>
+        <location filename="ts_add.ui" line="28"/>
+        <source>&amp;Parameter:</source>
+        <translation>&amp;Parameter:</translation>
     </message>
     <message>
         <location filename="ts_add.ui" line="61"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
+        <source>&amp;Station:</source>
+        <translation>&amp;Stasjon:</translation>
     </message>
     <message>
-        <location filename="ts_add.ui" line="92"/>
+        <location filename="ts_add.ui" line="71"/>
+        <source>&amp;Type:</source>
+        <translation>&amp;Type:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="81"/>
+        <source>S&amp;ensor:</source>
+        <translation>S&amp;ensor:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="108"/>
+        <source>&amp;Level:</source>
+        <translation>&amp;Level:</translation>
+    </message>
+    <message>
+        <location filename="ts_add.ui" line="145"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Avbryt</translation>
     </message>
     <message>
-        <location filename="ts_add.ui" line="102"/>
+        <location filename="ts_add.ui" line="155"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>

@@ -55,6 +55,10 @@ void StationDialog::init()
   mTimeControl->install(ui->dateFrom, ui->dateTo);
 
   Helpers::installStationIdCompleter(this, ui->editStation);
+
+  mTypesModel.reset(new TypeIdModel);
+  ui->comboType->setModel(mTypesModel.get());
+
   ui->editStation->selectAll();
 }
 
@@ -155,9 +159,8 @@ void StationDialog::updateTypeList()
   }
   const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());
   
-  if (not mTypesModel.get() or newTypeIds != mTypesModel->values()) {
-    mTypesModel.reset(new TypeIdModel(newTypeIds));
-    ui->comboType->setModel(mTypesModel.get());
+  if (newTypeIds != mTypesModel->values()) {
+    mTypesModel->setValues(newTypeIds);
     if (not typeIdSet.empty()) {
       ui->comboType->setCurrentIndex(0);
       mSensor.typeId = mTypesModel->values().front();

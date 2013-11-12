@@ -49,6 +49,7 @@ MissingView::MissingView(QWidget* parent)
   ui->timeFrom->setDateTime(timeutil::to_QDateTime(t0));
   ui->timeTo  ->setDateTime(timeutil::to_QDateTime(t1));
 
+  // FIXME use kvTypes::read to remove dependency on stinfosys
   std::vector<int> types;
   types.push_back(TYPEID_ANY);
   const std::vector<int>& manualTypes = StationInfoBuffer::instance()->getManualTypes();

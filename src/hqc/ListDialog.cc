@@ -257,9 +257,10 @@ void ListDialog::setupParameterTab()
 {
   METLIBS_LOG_SCOPE();
 
-  const std::vector<int> empty;
-  mParamSelectedModel.reset(new ParamIdModel(empty));
+  mParamSelectedModel.reset(new ParamIdModel);
   ui->listParamChosen->setModel(mParamSelectedModel.get());
+  mParamAvailableModel.reset(new ParamIdModel);
+  ui->listParamAvailable->setModel(mParamAvailableModel.get());
 
   connect(ui->listParamChosen,    SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(delParameter2Click(const QModelIndex&)));
   connect(ui->listParamAvailable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(addParameter2Click(const QModelIndex&)));
@@ -359,8 +360,7 @@ void ListDialog::doRestoreSettings(QSettings& settings)
     BOOST_FOREACH(const QString& p, parameters)
         params.push_back(p.toInt());
 
-    mParamSelectedModel.reset(new ParamIdModel(params));
-    ui->listParamChosen->setModel(mParamSelectedModel.get());
+    mParamSelectedModel->setValues(params);
     showParamGroup(ui->comboParamGroup->currentText());
   }
 
@@ -463,8 +463,7 @@ void ListDialog::showParamGroup(const QString& paramGroup)
     if (sel_set.find(pid) == sel_set.end())
       avail.push_back(pid);
   }
-  mParamAvailableModel.reset(new ParamIdModel(avail));
-  ui->listParamAvailable->setModel(mParamAvailableModel.get());
+  mParamAvailableModel->setValues(avail);
 }
 
 void ListDialog::addParameter2Click(const QModelIndex& index)
@@ -476,8 +475,7 @@ void ListDialog::addParameter2Click(const QModelIndex& index)
   if (std::find(sel.begin(), sel.end(), paramId) == sel.end()) {
     std::vector<int> sel2(sel);
     sel2.push_back(paramId);
-    mParamSelectedModel.reset(new ParamIdModel(sel2));
-    ui->listParamChosen->setModel(mParamSelectedModel.get());
+    mParamSelectedModel->setValues(sel2);
   }
   showParamGroup(ui->comboParamGroup->currentText());
 }
@@ -486,8 +484,7 @@ void ListDialog::delParameter2Click(const QModelIndex& index)
 {
   std::vector<int> sel = mParamSelectedModel->values();
   sel.erase(sel.begin() + index.row());
-  mParamSelectedModel.reset(new ParamIdModel(sel));
-  ui->listParamChosen->setModel(mParamSelectedModel.get());
+  mParamSelectedModel->setValues(sel);
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
@@ -504,9 +501,7 @@ void ListDialog::selectParameters()
       sel.push_back(add[i]);
   }
 
-  mParamSelectedModel.reset(new ParamIdModel(sel));
-  ui->listParamChosen->setModel(mParamSelectedModel.get());
-
+  mParamSelectedModel->setValues(sel);
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
@@ -522,9 +517,7 @@ void ListDialog::selectAllParameters()
       sel.push_back(add[i]);
   }
 
-  mParamSelectedModel.reset(new ParamIdModel(sel));
-  ui->listParamChosen->setModel(mParamSelectedModel.get());
-    
+  mParamSelectedModel->setValues(sel);
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
@@ -538,18 +531,13 @@ void ListDialog::deselectParameters()
       new_sel.push_back(sel[i]);
   }
 
-  mParamSelectedModel.reset(new ParamIdModel(new_sel));
-  ui->listParamChosen->setModel(mParamSelectedModel.get());
-
+  mParamSelectedModel->setValues(new_sel);
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
 void ListDialog::deselectAllParameters()
 {
-  const std::vector<int> empty;
-  mParamSelectedModel.reset(new ParamIdModel(empty));
-  ui->listParamChosen->setModel(mParamSelectedModel.get());
-
+  mParamSelectedModel->setValues(std::vector<int>());
   showParamGroup(ui->comboParamGroup->currentText());
 }
 

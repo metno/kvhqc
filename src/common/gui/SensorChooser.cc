@@ -16,7 +16,7 @@
 #include <vector>
 
 #define MILOGGER_CATEGORY "kvhqc.SensorChooser"
-#include "util/HqcLogging.hh"
+#include "common/ObsLogging.hh"
 
 SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* type, QComboBox* level, QSpinBox* sensorNr, QObject* parent)
   : QObject(parent)
@@ -33,9 +33,8 @@ SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* ty
   QObject::connect(mType,    SIGNAL(currentIndexChanged(int)), this, SLOT(onTypeSelected(int)));
   QObject::connect(mLevel,   SIGNAL(currentIndexChanged(int)), this, SLOT(onLevelSelected(int)));
 
-  std::vector<int> empty;
-  mParam->setModel(new ParamIdModel(empty));
-  mType ->setModel(new TypeIdModel(empty));
+  mParam->setModel(new ParamIdModel);
+  mType ->setModel(new TypeIdModel);
 }
 
 SensorChooser::~SensorChooser()
@@ -47,18 +46,21 @@ SensorChooser::~SensorChooser()
 
 void SensorChooser::setSensor(const Sensor& sensor)
 {
-  METLIBS_LOG_SCOPE();
-  mStation->setText(QString::number(sensor.stationId));
-  
-  setParamId(sensor.paramId);
-  setTypeId(sensor.typeId);
-  setLevel(sensor.level);
-  setSensorNr(sensor.sensor);
+  METLIBS_LOG_SCOPE(LOGVAL(sensor));
+
+  if (sensor.valid()) {
+    mStation->setText(QString::number(sensor.stationId));
+    setParamId(sensor.paramId);
+    setTypeId(sensor.typeId);
+    setLevel(sensor.level);
+    setSensorNr(sensor.sensor);
+    onStationEdited("");
+  }
 }
 
 void SensorChooser::setTimeRange(const TimeRange& time)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE("not implemented");
 }
 
 bool SensorChooser::isValid()
@@ -72,12 +74,8 @@ Sensor SensorChooser::getSensor()
   s.stationId = getStationId();
   s.paramId = getParamId();
   s.typeId = getTypeId();
-  s.sensor = getSensorNr();
   s.level = getLevel();
-
-  if (s.stationId == -1 or s.paramId == -1 or s.typeId == 0)
-    return Sensor(); // invalid sensor
-
+  s.sensor = getSensorNr();
   return s;
 }
 
@@ -92,36 +90,50 @@ int SensorChooser::getStationId() const
 
 int SensorChooser::getParamId() const
 {
+  METLIBS_LOG_SCOPE();
   const int idx = mParam->currentIndex();
+  METLIBS_LOG_DEBUG(LOGVAL(idx));
   if (idx < 0)
       return -1;
-  ParamIdModel* pim = static_cast<ParamIdModel*>(mParam->model());
-  return pim->values().at(idx);
+  return paramModel()->values().at(idx);
 }
 
 void SensorChooser::setParamId(int pid)
 {
-  const std::vector<int> params = static_cast<ParamIdModel*>(mParam->model())->values();
+  METLIBS_LOG_SCOPE();
+  const std::vector<int>& params = paramModel()->values();
   const std::vector<int>::const_iterator it = std::find(params.begin(), params.end(), pid);
-  if (it != params.end())
-    mParam->setCurrentIndex(it - params.begin());
+  if (it != params.end()) {
+    const int idx = it - params.begin();
+    mParam->setCurrentIndex(idx);
+    METLIBS_LOG_DEBUG(LOGVAL(idx));
+  } else {
+    mParam->setCurrentIndex(0);
+  }
 }
 
 int SensorChooser::getTypeId() const
 {
+  METLIBS_LOG_SCOPE();
   const int idx = mType->currentIndex();
+  METLIBS_LOG_DEBUG(LOGVAL(idx));
   if (idx < 0)
       return 0;
-  TypeIdModel* tim = static_cast<TypeIdModel*>(mType->model());
-  return tim->values().at(idx);
+  return typeModel()->values().at(idx);
 }
 
 void SensorChooser::setTypeId(int tid)
 {
-  const std::vector<int> types = static_cast<TypeIdModel*>(mType->model())->values();
+  METLIBS_LOG_SCOPE();
+  const std::vector<int>& types = typeModel()->values();
   const std::vector<int>::const_iterator it = std::find(types.begin(), types.end(), tid);
-  if (it != types.end())
-    mType->setCurrentIndex(it - types.begin());
+  if (it != types.end()) {
+    const int idx = it - types.begin();
+    mType->setCurrentIndex(idx);
+    METLIBS_LOG_DEBUG(LOGVAL(idx));
+  } else {
+    mType->setCurrentIndex(0);
+  }
 }
 
 int SensorChooser::getSensorNr() const
@@ -186,17 +198,17 @@ void SensorChooser::onStationEdited(const QString&)
       stationParams.insert(p);
       Helpers::aggregatedParameters(p, stationParams);
     }
+    METLIBS_LOG_DEBUG(LOGVAL(stationParams.size()));
     goodStation &= (not stationParams.empty());
   }
 
+  METLIBS_LOG_DEBUG(LOGVAL(goodStation));
   mParam->setEnabled(goodStation);
 
   const int paramId = getParamId();
-  delete mParam->model();
-  mParam->setModel(new ParamIdModel(std::vector<int>(stationParams.begin(), stationParams.end())));
-  if (goodStation)
-    mParam->setCurrentIndex(0);
+  paramModel()->setValues(std::vector<int>(stationParams.begin(), stationParams.end()));
   setParamId(paramId);
+
   onParameterSelected(0);
 }
 
@@ -219,14 +231,13 @@ void SensorChooser::onParameterSelected(int)
     }
     goodParam &= (not stationTypes.empty());
   }
+  METLIBS_LOG_DEBUG(LOGVAL(goodParam));
+  mType->setEnabled(goodParam);
 
   const int typeId = getTypeId();
-  delete mType->model();
-  mType->setModel(new TypeIdModel(std::vector<int>(stationTypes.begin(), stationTypes.end())));
-  if (goodParam)
-    mType->setCurrentIndex(0);
+  typeModel()->setValues(std::vector<int>(stationTypes.begin(), stationTypes.end()));
   setTypeId(typeId);
-  mType->setEnabled(goodParam);
+
   onTypeSelected(0);
 }
 
@@ -240,7 +251,6 @@ void SensorChooser::onTypeSelected(int)
 
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   std::set<int> levels;
-  int maxSensor = 0;
   if (good) {
     const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
@@ -249,23 +259,58 @@ void SensorChooser::onTypeSelected(int)
           or (Helpers::aggregatedParameter(p, paramId) and typeId == -t))
       {
         levels.insert(op.level());
-        maxSensor = std::max(maxSensor, op.nr_sensor()-1);
-        METLIBS_LOG_DEBUG(LOGVAL(op.level()) << LOGVAL(op.nr_sensor()));
+        METLIBS_LOG_DEBUG(LOGVAL(op.level()));
       }
     }
   }
-  const int level = getLevel(), sensorNr = getSensorNr();
-  setLevels(levels);
-  setMaxSensor(maxSensor);
-  setLevel(level);
-  setSensorNr(sensorNr);
-
+  METLIBS_LOG_DEBUG(LOGVAL(good));
   mLevel->setEnabled(good);
-  mSensorNr->setEnabled(good);
-  /*emit*/ valid(good);
+
+  const int level = getLevel();
+  setLevels(levels);
+  setLevel(level);
+
+  onLevelSelected(0);
 }
 
 void SensorChooser::onLevelSelected(int)
 {
   METLIBS_LOG_SCOPE();
+  const int stationId = getStationId();
+  const int paramId   = getParamId();
+  const int typeId    = getTypeId();
+  const int level     = getLevel();
+  METLIBS_LOG_DEBUG(LOGVAL(typeId));
+
+  bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
+  int maxSensor = 0;
+  if (good) {
+    const KvMetaDataBuffer::ObsPgmList& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+      const int p = op.paramID(), t = op.typeID();
+      if (level == op.level()
+          and ((paramId == p and typeId == t) or (Helpers::aggregatedParameter(p, paramId) and typeId == -t)))
+      {
+        maxSensor = std::max(maxSensor, op.nr_sensor()-1);
+      }
+    }
+  }
+  METLIBS_LOG_DEBUG(LOGVAL(good));
+  mSensorNr->setEnabled(good);
+
+  const int sensorNr = getSensorNr();
+  setMaxSensor(maxSensor);
+  setSensorNr(sensorNr);
+
+  /*emit*/ valid(good);
+}
+
+ParamIdModel* SensorChooser::paramModel() const
+{
+  return static_cast<ParamIdModel*>(mParam->model());
+}
+
+TypeIdModel* SensorChooser::typeModel() const
+{
+  return static_cast<TypeIdModel*>(mType->model());
 }

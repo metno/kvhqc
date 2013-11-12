@@ -3,7 +3,9 @@
 #define SensorChooser_hh 1
 
 #include "common/Sensor.hh"
+#include "common/ParamIdModel.hh"
 #include "common/TimeRange.hh"
+#include "common/TypeIdModel.hh"
 
 #include <QtCore/QObject>
 
@@ -48,6 +50,9 @@ private:
   void setLevel(int level);
   int getSensorNr() const;
   void setSensorNr(int snr);
+
+  ParamIdModel* paramModel() const;
+  TypeIdModel* typeModel() const;
 
 private:
   QLineEdit* mStation;
