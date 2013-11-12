@@ -31,6 +31,14 @@ StationIdModel::StationIdModel(QObject* parent)
   std::sort(mStationIds.begin(), mStationIds.end(), int_by_text());
 }
 
+StationIdModel::StationIdModel(const std::vector<int>& stationIds, QObject* parent)
+  : QAbstractTableModel(parent)
+  , mStationIds(stationIds)
+{
+  METLIBS_LOG_SCOPE();
+  std::sort(mStationIds.begin(), mStationIds.end(), int_by_text());
+}
+
 QVariant StationIdModel::data(const QModelIndex& index, int role) const
 {
   METLIBS_LOG_SCOPE();

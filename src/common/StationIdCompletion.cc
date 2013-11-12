@@ -11,7 +11,7 @@
 
 namespace Helpers {
 
-void installStationIdCompleter(QWidget* parent, QLineEdit* editStation)
+void installStationIdCompleter(QWidget* parent, QLineEdit* editStation, StationIdModel* cmodel)
 {
   QCompleter *completer = new QCompleter(parent);
 
@@ -22,7 +22,6 @@ void installStationIdCompleter(QWidget* parent, QLineEdit* editStation)
   completionPopup->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
   completer->setPopup(completionPopup);
 
-  StationIdModel* cmodel = new StationIdModel(completer);
   completer->setModel(cmodel);
 
   completer->setCompletionColumn(0);
@@ -32,6 +31,12 @@ void installStationIdCompleter(QWidget* parent, QLineEdit* editStation)
 
   QValidator *validator = new QIntValidator(cmodel->minStationId(), cmodel->maxStationId(), parent);
   editStation->setValidator(validator);
+} // namespace anonymous
+
+
+void installStationIdCompleter(QWidget* parent, QLineEdit* editStation)
+{
+  installStationIdCompleter(parent, editStation, new StationIdModel(parent));
 }
 
 } // namespace Helpers

@@ -1903,7 +1903,7 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>MissingView</name>
     <message>
-        <location filename="MissingView.cc" line="56"/>
+        <location filename="MissingView.cc" line="57"/>
         <source>any</source>
         <translation>alle</translation>
     </message>
@@ -2454,97 +2454,97 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>TimeseriesDialog</name>
     <message>
-        <location filename="TimeseriesDialog.cc" line="52"/>
+        <location filename="TimeseriesDialog.cc" line="51"/>
         <source>Time series HQC</source>
         <translation>Zeitreihe HQC</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="56"/>
+        <location filename="TimeseriesDialog.cc" line="55"/>
         <source>Data types</source>
         <translation>Datentypen</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="57"/>
+        <location filename="TimeseriesDialog.cc" line="56"/>
         <source>Observationer</source>
         <translation>Observationen</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="58"/>
+        <location filename="TimeseriesDialog.cc" line="57"/>
         <source>Model data</source>
         <translation>Modelldaten   </translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="64"/>
+        <location filename="TimeseriesDialog.cc" line="63"/>
         <source>Parameter</source>
         <translation>Parameter</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="75"/>
+        <location filename="TimeseriesDialog.cc" line="74"/>
         <source>Station</source>
         <translation>Station</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="86"/>
+        <location filename="TimeseriesDialog.cc" line="85"/>
         <source>Chosen time series</source>
         <translation>Ausgewählte Zeitreihen</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="97"/>
+        <location filename="TimeseriesDialog.cc" line="96"/>
         <source>Delete</source>
         <translation>Löschen</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="98"/>
+        <location filename="TimeseriesDialog.cc" line="97"/>
         <source>Delete all</source>
         <translation>Alles löschen</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="99"/>
+        <location filename="TimeseriesDialog.cc" line="98"/>
         <source>New curve</source>
         <translation>Neue Kurve</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="120"/>
+        <location filename="TimeseriesDialog.cc" line="119"/>
         <source>Line</source>
         <translation>Linie</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="144"/>
+        <location filename="TimeseriesDialog.cc" line="143"/>
         <source>Marker</source>
         <translation>Marker</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="150"/>
+        <location filename="TimeseriesDialog.cc" line="149"/>
         <source>Circle</source>
         <translation>Kreis</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="151"/>
+        <location filename="TimeseriesDialog.cc" line="150"/>
         <source>Rectangle</source>
         <translation>Rechteck</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="152"/>
+        <location filename="TimeseriesDialog.cc" line="151"/>
         <source>Triangle</source>
         <translation>Dreieck</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="153"/>
+        <location filename="TimeseriesDialog.cc" line="152"/>
         <source>Diamond</source>
         <translation>Diamant</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="154"/>
+        <location filename="TimeseriesDialog.cc" line="153"/>
         <source>Star</source>
         <translation>Stern</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="203"/>
+        <location filename="TimeseriesDialog.cc" line="202"/>
         <source>From:</source>
         <translation>Von:</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="205"/>
+        <location filename="TimeseriesDialog.cc" line="204"/>
         <source>To:</source>
         <translation>Bis:</translation>
     </message>

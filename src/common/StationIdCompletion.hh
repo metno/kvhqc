@@ -4,10 +4,12 @@
 
 class QLineEdit;
 class QWidget;
+class StationIdModel;
 
 namespace Helpers {
 
 void installStationIdCompleter(QWidget* parent, QLineEdit* editStation);
+void installStationIdCompleter(QWidget* parent, QLineEdit* editStation, StationIdModel* cmodel);
 
 } // namespace Helpers
 

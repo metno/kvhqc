@@ -28,17 +28,14 @@ StationDialog::StationDialog(const Sensor& sensor, const TimeRange& time, QDialo
   ui->editStation->setText(QString::number(mSensor.stationId));
   ui->dateFrom->setDateTime(timeutil::to_QDateTime(time.t0()));
   ui->dateTo  ->setDateTime(timeutil::to_QDateTime(time.t1()));
-
-  onEditStation();
+  ui->editStation->selectAll();
 }
 
 StationDialog::StationDialog(QDialog* parent)
   : QDialog(parent)
-  , mSensor(-1, kvalobs::PARAMID_RR_24, 0, 0, -1)
+  , mSensor(0, kvalobs::PARAMID_RR_24, 0, 0, -1)
 {
   init();
-
-  onEditStation();
 }
 
 void StationDialog::init()
@@ -58,6 +55,7 @@ void StationDialog::init()
   mTimeControl->install(ui->dateFrom, ui->dateTo);
 
   Helpers::installStationIdCompleter(this, ui->editStation);
+  ui->editStation->selectAll();
 }
 
 StationDialog::~StationDialog()
@@ -67,6 +65,7 @@ StationDialog::~StationDialog()
 
 void StationDialog::onEditStation()
 {
+  METLIBS_LOG_SCOPE();
   checkStation();
   updateTypeList();
   enableOk();
@@ -74,18 +73,22 @@ void StationDialog::onEditStation()
 
 void StationDialog::onEditTime()
 {
+  METLIBS_LOG_SCOPE();
   updateTypeList();
   enableOk();
 }
 
 void StationDialog::onSelectType(int)
 {
+  METLIBS_LOG_SCOPE();
   checkType();
   enableOk();
 }
 
 bool StationDialog::checkStation()
 {
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(ui->editStation->text()));
   bool numberOk = false;
   const int stationId = ui->editStation->text().toInt(&numberOk);
   if (not numberOk) {
@@ -136,7 +139,7 @@ void StationDialog::updateTypeList()
   if (mSensor.stationId > 0) {
     const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(mSensor.stationId);
     if (obs_pgm.empty()) {
-      ui->labelStationInfo->setText(tr("problem loading obs_pgm"));
+      ui->labelStationInfo->setText(tr("Unknown station (not in obs_pgm)"));
     } else {
       const TimeRange st = selectedTime();
       BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
@@ -147,7 +150,7 @@ void StationDialog::updateTypeList()
           typeIdSet.insert(t);
       }
       if (typeIdSet.empty())
-        ui->labelStationInfo->setText(tr("could not find typeid"));
+        ui->labelStationInfo->setText(tr("Could not find typeid"));
     }
   }
   const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());

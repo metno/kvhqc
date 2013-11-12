@@ -8,6 +8,7 @@
 class StationIdModel : public QAbstractTableModel {
 public:
   StationIdModel(QObject* parent=0);
+  StationIdModel(const std::vector<int>& stationIds, QObject* parent=0);
 
   int rowCount(const QModelIndex&) const
     { return mStationIds.size(); }

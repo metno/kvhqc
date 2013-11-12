@@ -210,24 +210,24 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="92"/>
+        <location filename="StationDialog.cc" line="97"/>
         <source>Cannot read station number</source>
         <translation>Kan ikke lese stasjonsnummeret</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="94"/>
+        <location filename="StationDialog.cc" line="99"/>
         <source>Invalid station number</source>
         <translation>Ugyldig stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="139"/>
-        <source>problem loading obs_pgm</source>
-        <translation>Kan ikke lese obs_pgm</translation>
+        <location filename="StationDialog.cc" line="144"/>
+        <source>Unknown station (not in obs_pgm)</source>
+        <translation>Ukjent stasjon (ikke i obs_pgm)</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="150"/>
-        <source>could not find typeid</source>
-        <translation>kan ikke finne typeid</translation>
+        <location filename="StationDialog.cc" line="155"/>
+        <source>Could not find typeid</source>
+        <translation>Ingen typeid funnet</translation>
     </message>
 </context>
 </TS>
