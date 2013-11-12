@@ -701,6 +701,11 @@
         <source>Apply</source>
         <translation>Anwenden</translation>
     </message>
+    <message>
+        <location filename="missingvalues.ui" line="82"/>
+        <source>Find missing values for RR_24</source>
+        <translation>Fehlende Messungen für RR_24</translation>
+    </message>
 </context>
 <context>
     <name>DianaShowDialog</name>
@@ -1928,7 +1933,7 @@ Sie benutzen HQC Version %1.</translation>
     <message>
         <location filename="MissingView.cc" line="64"/>
         <source>manual</source>
-        <translation>manuell</translation>
+        <translation>manuelle</translation>
     </message>
 </context>
 <context>

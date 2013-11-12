@@ -701,6 +701,11 @@
         <source>Apply</source>
         <translation>Utfør</translation>
     </message>
+    <message>
+        <location filename="missingvalues.ui" line="82"/>
+        <source>Find missing values for RR_24</source>
+        <translation>Manglende observasjoner for RR_24</translation>
+    </message>
 </context>
 <context>
     <name>DianaShowDialog</name>
@@ -1928,7 +1933,7 @@ Du bruker HQC versjon %1.</translation>
     <message>
         <location filename="MissingView.cc" line="64"/>
         <source>manual</source>
-        <translation>manuell</translation>
+        <translation>manuelle</translation>
     </message>
 </context>
 <context>
