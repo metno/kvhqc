@@ -1,3 +1,19 @@
+kvhqc (3.2.0-1) unstable; urgency=low
+
+  * missing list: fetch list of typeids from stinfosys
+  * AcceptRejectButtons: re-enable on dataChanged signal
+  * param_related: added RR_12, RR_6, ... to RR_24 group
+  * try to avoid crash in ~QtKvService
+  * try to avoid some crashes when calling navigateTo recursively
+  * SimpleCorrections: show sensor / level if != 0
+  * added helper class SensorChooser
+  * show typeid and level/sensor in column header
+  * renamed signal 'currentChanged' in DataListTable
+  * add EE where SA is shown
+  * HqcMainWindow/DataList: avoid showing same typeId more than once
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 12 Nov 2013 15:34:30 +0100
+
 kvhqc (3.2.0~b4-1) unstable; urgency=low
 
   * WatchRR handles sendChangesToParent as WatchWeather

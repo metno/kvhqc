@@ -7,7 +7,7 @@ Build-Depends: debhelper (>= 7.0.50), quilt, g++,
  libqt4-dev, libgfortran3, libgtest-dev, liblog4cpp5-dev, python (>= 2.7.3-0),
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev,
  libkvcpp-dev (>= 2.7.1-2),
- metlibs-dev (>= 4.11.0-1)
+ metlibs-dev (>= 4.12.1-1)
 Standards-Version: 3.8.4
 Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
 Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
