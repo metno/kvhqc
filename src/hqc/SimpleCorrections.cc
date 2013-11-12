@@ -152,6 +152,18 @@ void SimpleCorrections::update()
     ui->textStation->setText(QString::number(s.stationId));
     ui->textStation->setToolTip(Helpers::stationInfo(s.stationId));
 
+    const bool showLevel = (s.level != 0);
+    ui->labelLevel->setVisible(showLevel);
+    ui->textLevel->setVisible(showLevel);
+    if (showLevel)
+      ui->textLevel->setText(QString::number(s.level));
+
+    const bool showSensorNr = (s.sensor != 0);
+    ui->labelSensorNr->setVisible(showSensorNr);
+    ui->textSensorNr->setVisible(showSensorNr);
+    if (showSensorNr)
+      ui->textSensorNr->setText(QString::number(s.sensor));
+
     ui->textParam->setText(Helpers::paramName(s.paramId));
     ui->textParam->setToolTip(Helpers::paramInfo(s.paramId));
 
@@ -167,6 +179,12 @@ void SimpleCorrections::update()
   } else {
     ui->textStation->setText("");
     ui->textStation->setToolTip("");
+
+    ui->labelLevel->setVisible(false);
+    ui->textLevel->setVisible(false);
+    ui->labelSensorNr->setVisible(false);
+    ui->textSensorNr->setVisible(false);
+
     ui->textParam->setText("");
     ui->textParam->setToolTip("");
     ui->textType->setText("");

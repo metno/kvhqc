@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>358</width>
+    <width>361</width>
     <height>326</height>
    </rect>
   </property>
@@ -31,11 +31,17 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_16" stretch="1,0">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,1,0,0,0,0">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -74,10 +80,119 @@
          </property>
         </widget>
        </item>
+       <item>
+        <widget class="QLabel" name="labelLevel">
+         <property name="text">
+          <string>L:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="textLevel">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::NoContextMenu</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Level</string>
+         </property>
+         <property name="maxLength">
+          <number>5</number>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="labelSensorNr">
+         <property name="text">
+          <string>S:</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="textSensorNr">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>30</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>30</width>
+           <height>16777215</height>
+          </size>
+         </property>
+         <property name="focusPolicy">
+          <enum>Qt::NoFocus</enum>
+         </property>
+         <property name="contextMenuPolicy">
+          <enum>Qt::NoContextMenu</enum>
+         </property>
+         <property name="acceptDrops">
+          <bool>false</bool>
+         </property>
+         <property name="toolTip">
+          <string>Sensor Number</string>
+         </property>
+         <property name="maxLength">
+          <number>5</number>
+         </property>
+         <property name="frame">
+          <bool>false</bool>
+         </property>
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -101,7 +216,7 @@
          </property>
          <property name="minimumSize">
           <size>
-           <width>50</width>
+           <width>40</width>
            <height>0</height>
           </size>
          </property>
@@ -137,11 +252,17 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_15" stretch="1,0">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -184,6 +305,9 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -243,6 +367,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="0,1">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
@@ -285,11 +412,17 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_13">
+     <property name="spacing">
+      <number>2</number>
+     </property>
      <property name="sizeConstraint">
       <enum>QLayout::SetMinimumSize</enum>
      </property>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -338,6 +471,9 @@
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,1">
+       <property name="spacing">
+        <number>2</number>
+       </property>
        <property name="sizeConstraint">
         <enum>QLayout::SetMinimumSize</enum>
        </property>
@@ -431,6 +567,9 @@
        </property>
        <item>
         <layout class="QHBoxLayout" name="layoutCorrected" stretch="0,0,0">
+         <property name="spacing">
+          <number>2</number>
+         </property>
          <property name="sizeConstraint">
           <enum>QLayout::SetMinimumSize</enum>
          </property>
