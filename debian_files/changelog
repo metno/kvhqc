@@ -1,3 +1,10 @@
+kvhqc (3.2.1-1) unstable; urgency=low
+
+  * accept/reject: not allowed to accept original with fhqc=4
+  * TimeSeriesView: show level / sensor
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 13 Nov 2013 15:55:06 +0100
+
 kvhqc (3.2.0-1) unstable; urgency=low
 
   * missing list: fetch list of typeids from stinfosys
