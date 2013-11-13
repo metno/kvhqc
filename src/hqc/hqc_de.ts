@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="56"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="57"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Originalwert oder korrigierten Wert akzeptieren (abhängig von der gewählten Spalte).&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="59"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="60"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="60"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert verwerfen.&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="63"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
         <source>Reject</source>
         <translation>Verwerfen</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestimmt, ob QC2 bei &lt;span style=&quot; font-style:italic;&quot;&gt;Akzeptieren&lt;/span&gt; und &lt;span style=&quot;font-style:italic;&quot;&gt;Verwerfen&lt;/span&gt; überschreiben darf.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="67"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -2117,7 +2117,7 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="616"/>
-        <location filename="simplecorrections.ui" line="710"/>
+        <location filename="simplecorrections.ui" line="700"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
@@ -2149,19 +2149,17 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="656"/>
-        <location filename="simplecorrections.ui" line="693"/>
         <source>Orig.</source>
         <translation>Orig.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="663"/>
         <source>Reject without permitting QC2 to override.</source>
-        <translatorcomment>Verwerfen ohne dass QC2 überschreiben darf.</translatorcomment>
-        <translation></translation>
+        <translation>Verwerfen ohne dass QC2 überschreiben darf.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="666"/>
-        <location filename="simplecorrections.ui" line="703"/>
+        <location filename="simplecorrections.ui" line="693"/>
         <source>Rej.</source>
         <translation>Verw.</translation>
     </message>
@@ -2172,12 +2170,8 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="690"/>
-        <source>Accept original value and allow QC2 to override.</source>
-        <translation>Original-Wert akzeptieren, QC2 darf überschreiben.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="700"/>
         <source>Reject and allow QC2 to override.</source>
+        <oldsource>Accept original value and allow QC2 to override.</oldsource>
         <translation>Verwerfen, QC2 darf überschreiben.</translation>
     </message>
     <message>
@@ -2186,12 +2180,12 @@ Sie benutzen HQC Version %1.</translation>
         <translation>QC2 erlaubt:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="742"/>
+        <location filename="simplecorrections.ui" line="732"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="SimpleCorrections.cc" line="196"/>
+        <location filename="SimpleCorrections.cc" line="195"/>
         <source>tbtime: %1</source>
         <translation>tbtime: %1</translation>
     </message>
@@ -2460,39 +2454,39 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="56"/>
-        <location filename="TimeSeriesView.cc" line="189"/>
+        <location filename="TimeSeriesView.cc" line="195"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="57"/>
-        <location filename="TimeSeriesView.cc" line="190"/>
+        <location filename="TimeSeriesView.cc" line="196"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="58"/>
-        <location filename="TimeSeriesView.cc" line="191"/>
+        <location filename="TimeSeriesView.cc" line="197"/>
         <source>Difference</source>
         <translation>Differenz</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="199"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Neu…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="63"/>
-        <location filename="TimeSeriesView.cc" line="194"/>
+        <location filename="TimeSeriesView.cc" line="200"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Entfernen…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="64"/>
-        <location filename="TimeSeriesView.cc" line="195"/>
+        <location filename="TimeSeriesView.cc" line="201"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Linien zurücksetzen</translation>

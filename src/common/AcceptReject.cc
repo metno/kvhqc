@@ -44,7 +44,7 @@ int possibilities(EditDataPtr obs)
 
 // ----------------------------------------
 
-void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+void accept_original(EditAccessPtr eda, const SensorTime& sensorTime)
 {
   EditDataPtr obs = eda->findE(sensorTime);
   if (not obs) {
@@ -75,8 +75,6 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok
   } else if (fmis == 4) {
     Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
   }
-  if (qc2ok)
-    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
 
   editor->commit();
 }

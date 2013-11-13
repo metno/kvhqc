@@ -684,16 +684,6 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QPushButton" name="buttonAcceptOriginalQC2">
-           <property name="toolTip">
-            <string>Accept original value and allow QC2 to override.</string>
-           </property>
-           <property name="text">
-            <string>Orig.</string>
-           </property>
-          </widget>
-         </item>
          <item row="2" column="3">
           <widget class="QPushButton" name="buttonRejectQC2">
            <property name="toolTip">
@@ -851,22 +841,6 @@
     </hint>
     <hint type="destinationlabel">
      <x>191</x>
-     <y>224</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonAcceptOriginalQC2</sender>
-   <signal>clicked()</signal>
-   <receiver>SimpleCorrections</receiver>
-   <slot>onAcceptOriginalQC2()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>414</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>359</x>
      <y>224</y>
     </hint>
    </hints>

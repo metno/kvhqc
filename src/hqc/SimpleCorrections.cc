@@ -43,7 +43,6 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ui->buttonAcceptCorrected   ->setIcon(iconAccept);
   ui->buttonAcceptCorrectedQC2->setIcon(iconAccept);
   ui->buttonAcceptOriginal    ->setIcon(iconAccept);
-  ui->buttonAcceptOriginalQC2 ->setIcon(iconAccept);
   ui->buttonReject   ->setIcon(iconReject);
   ui->buttonRejectQC2->setIcon(iconReject);
 
@@ -252,7 +251,6 @@ void SimpleCorrections::enableEditing()
   ui->buttonRejectQC2->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
 
   ui->buttonAcceptOriginal   ->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
-  ui->buttonAcceptOriginalQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
 
   ui->buttonAcceptCorrected   ->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
   ui->buttonAcceptCorrectedQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
@@ -271,13 +269,7 @@ void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
 void SimpleCorrections::onAcceptOriginal()
 {
   mDA->newVersion();
-  AcceptReject::accept_original(mDA, mSensorTime, false);
-}
-
-void SimpleCorrections::onAcceptOriginalQC2()
-{
-  mDA->newVersion();
-  AcceptReject::accept_original(mDA, mSensorTime, true);
+  AcceptReject::accept_original(mDA, mSensorTime);
 }
 
 void SimpleCorrections::onAcceptCorrected()

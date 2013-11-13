@@ -33,7 +33,6 @@ private:
 
 private Q_SLOTS:
   void onAcceptOriginal();
-  void onAcceptOriginalQC2();
   void onAcceptCorrected();
   void onAcceptCorrectedQC2();
   void onReject();

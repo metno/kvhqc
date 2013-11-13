@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="56"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="57"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="59"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="60"/>
         <source>Accept</source>
         <translation>Godkjenn</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="60"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="63"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
         <source>Reject</source>
         <translation>Forkast</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="67"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -2118,7 +2118,7 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="616"/>
-        <location filename="simplecorrections.ui" line="710"/>
+        <location filename="simplecorrections.ui" line="700"/>
         <source>Accept</source>
         <translation>Godkjenn</translation>
     </message>
@@ -2150,7 +2150,6 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="656"/>
-        <location filename="simplecorrections.ui" line="693"/>
         <source>Orig.</source>
         <translation>Orig.</translation>
     </message>
@@ -2161,7 +2160,7 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="666"/>
-        <location filename="simplecorrections.ui" line="703"/>
+        <location filename="simplecorrections.ui" line="693"/>
         <source>Rej.</source>
         <translation>Fork.</translation>
     </message>
@@ -2172,12 +2171,8 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="simplecorrections.ui" line="690"/>
-        <source>Accept original value and allow QC2 to override.</source>
-        <translation>Aksepter original verdi, QC2 har lov å overskrive.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="700"/>
         <source>Reject and allow QC2 to override.</source>
+        <oldsource>Accept original value and allow QC2 to override.</oldsource>
         <translation>Forkast, QC2 har lov å overskrive.</translation>
     </message>
     <message>
@@ -2186,12 +2181,12 @@ Du bruker HQC versjon %1.</translation>
         <translation>QC2 tillatt:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="742"/>
+        <location filename="simplecorrections.ui" line="732"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="SimpleCorrections.cc" line="196"/>
+        <location filename="SimpleCorrections.cc" line="195"/>
         <source>tbtime: %1</source>
         <translation>tbtime: %1</translation>
     </message>
@@ -2460,39 +2455,39 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="56"/>
-        <location filename="TimeSeriesView.cc" line="189"/>
+        <location filename="TimeSeriesView.cc" line="195"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="57"/>
-        <location filename="TimeSeriesView.cc" line="190"/>
+        <location filename="TimeSeriesView.cc" line="196"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="58"/>
-        <location filename="TimeSeriesView.cc" line="191"/>
+        <location filename="TimeSeriesView.cc" line="197"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="199"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Ny…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="63"/>
-        <location filename="TimeSeriesView.cc" line="194"/>
+        <location filename="TimeSeriesView.cc" line="200"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Fjern…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="64"/>
-        <location filename="TimeSeriesView.cc" line="195"/>
+        <location filename="TimeSeriesView.cc" line="201"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Tilbakestill</translation>

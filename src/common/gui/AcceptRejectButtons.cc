@@ -42,6 +42,7 @@ AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
 
   QObject::connect(mButtonAccept, SIGNAL(clicked()), this, SLOT(onAccept()));
   QObject::connect(mButtonReject, SIGNAL(clicked()), this, SLOT(onReject()));
+  QObject::connect(mCheckQC2, SIGNAL(toggled(bool)), this, SLOT(enableButtons()));
 }
 
 void AcceptRejectButtons::changeEvent(QEvent *event)
@@ -74,10 +75,12 @@ void AcceptRejectButtons::onAccept()
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
     BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      if (mSelectedColumnIsOriginal)
-        AcceptReject::accept_original(mDA, st, qc2ok);
-      else
+      if (mSelectedColumnIsOriginal) {
+        if (not qc2ok)
+          AcceptReject::accept_original(mDA, st);
+      } else {
         AcceptReject::accept_corrected(mDA, st, qc2ok);
+      }
     }
   }
   enableButtons();
@@ -154,7 +157,10 @@ void AcceptRejectButtons::enableButtons()
         }
         enableReject = (possible & AcceptReject::CAN_REJECT) != 0;
         if (dc->type() == ObsColumn::ORIGINAL) {
-          enableAccept = (possible & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0;
+          if (mCheckQC2->isChecked())
+            enableAccept = false;
+          else
+            enableAccept = (possible & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0;
           mSelectedColumnIsOriginal = true;
         } else if (dc->type() == ObsColumn::NEW_CORRECTED) {
           enableAccept = (possible & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
