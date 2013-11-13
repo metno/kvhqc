@@ -97,7 +97,7 @@ void TimeSeriesView::storeChanges()
 
 void TimeSeriesView::updateSensors()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(mSensors.size()));
   std::vector<POptions::Colour> colours;
   POptions::Colour::definedColours(colours);
 
@@ -131,7 +131,13 @@ void TimeSeriesView::updateSensors()
     po.name = (tr("Station:") + QString::number(s.stationId)).toStdString();
     po.label = KvMetaDataBuffer::instance()->findParamName(s)
         + " (" + miutil::from_number(s.stationId)
-        + "/" + miutil::from_number(s.typeId) + ")";
+        + "/T" + miutil::from_number(s.typeId);
+    if (s.level != 0)
+      po.label += "/L" + miutil::from_number(s.level);
+    if (s.sensor != 0)
+      po.label += "/S" + miutil::from_number(s.sensor);
+    po.label += ")";
+    METLIBS_LOG_DEBUG(LOGVAL(s) << LOGVAL(po.label));
 
     IdxHelper poi(idx);
     const int ci = poi.next(colours.size()), mi = poi.next(markers.size()), li = poi.next(linetypes.size());
@@ -418,7 +424,8 @@ void TimeSeriesView::onActionRemoveColumns()
   METLIBS_LOG_SCOPE();
   QStringList lines;
   BOOST_FOREACH(const Sensor& s, mSensors)
-    lines << QString("%1 %2 %3").arg(s.stationId).arg(s.paramId).arg(s.typeId);
+    lines << QString("%1 P%2 T%3 L%4 S%5").arg(s.stationId).arg(s.paramId)
+      .arg(s.typeId).arg(s.level).arg(s.sensor);
 
   QDialog tr(this);
   Ui::TimeSeriesRemove tr_ui;
