@@ -73,7 +73,7 @@ bool StationInfoBuffer::writeToStationFile()
   QSqlQuery deleteall(db);
   deleteall.prepare(STATIONINFO_CACHE_DELETE);
   if (not deleteall.exec())
-    HQC_LOG_ERROR("error while deleting: " << deleteall.lastError().text());
+    HQC_LOG_ERROR("error while deleting stationinfo: " << deleteall.lastError().text());
 
   QSqlQuery insert(db);
   insert.prepare(STATIONINFO_CACHE_INSERT);
@@ -86,8 +86,8 @@ bool StationInfoBuffer::writeToStationFile()
     insert.bindValue(":prio",     ls.pri);
     insert.bindValue(":coast",    ls.coast);
     if (not insert.exec())
-      HQC_LOG_ERROR("error while inserting: " << insert.lastError().text());
-    insert.finish();
+      HQC_LOG_ERROR("error while inserting stationinfo for " << ls.stationid
+          << ": " << insert.lastError().text());
   }
   db.commit();
 
@@ -98,15 +98,14 @@ bool StationInfoBuffer::writeToStationFile()
   QSqlQuery deleteall_mc(db);
   deleteall_mc.prepare(MANUAL_TYPES_CACHE_DELETE);
   if (not deleteall_mc.exec())
-    HQC_LOG_ERROR("error while deleting: " << deleteall_mc.lastError().text());
+    HQC_LOG_ERROR("error while deleting manual type: " << deleteall_mc.lastError().text());
 
   QSqlQuery insert_mc(db);
   insert_mc.prepare(MANUAL_TYPES_CACHE_INSERT);
   BOOST_FOREACH(int t, mManualTypes) {
     insert_mc.bindValue(":typeid", t);
     if (not insert_mc.exec())
-      HQC_LOG_ERROR("error while inserting: " << insert_mc.lastError().text());
-    insert_mc.finish();
+      HQC_LOG_ERROR("error while inserting manual type " << t << ": " << insert_mc.lastError().text());
   }
   db.commit();
   return true;

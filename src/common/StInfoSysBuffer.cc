@@ -145,7 +145,8 @@ bool StInfoSysBuffer::readFromStInfoSys()
   }
 
   listStat.clear();
-  const std::list<kvalobs::kvStation> slist = KvMetaDataBuffer::instance()->allStations();
+  std::set<int> kv_stationids;
+  const std::list<kvalobs::kvStation>& slist = KvMetaDataBuffer::instance()->allStations();
   BOOST_FOREACH(const kvalobs::kvStation& st, slist) {
     const int stationid = st.stationID();
 
@@ -174,7 +175,12 @@ bool StInfoSysBuffer::readFromStInfoSys()
     ls.pri         = pri;
     ls.coast       = (station2coast.find(stationid) != station2coast.end());
     
-    listStat.push_back(ls);
+    if (kv_stationids.find(stationid) != kv_stationids.end()) {
+      HQC_LOG_WARN("kvalobs has duplicate stationid " << stationid);
+    } else {
+      listStat.push_back(ls);
+      kv_stationids.insert(stationid);
+    }
   }
   METLIBS_LOG_INFO("stationliste hentet fra stinfosys");
 
