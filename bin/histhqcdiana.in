@@ -2,6 +2,7 @@
 
 test -z "$HQC_CONFDIR" && export HQC_CONFDIR=/etc/kvhqc/@PVERSION@
 
-diana.bin -s "${HQC_CONFDIR}/diana.setup" & > ~/diana.err 2>/dev/null
+#diana.bin -s "${HQC_CONFDIR}/diana.setup" & > ~/diana.err 2>/dev/null
+diana & > ~/diana.err 2>/dev/null
 
 exec hqc-@PVERSION@ --config "${HQC_CONFDIR}/kvhist.conf"
