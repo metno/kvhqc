@@ -97,7 +97,7 @@ bool StationDialog::checkStation()
   const int stationId = ui->editStation->text().toInt(&numberOk);
   if (not numberOk) {
     ui->labelStationInfo->setText(tr("Cannot read station number"));
-  } else if (stationId < 60 or stationId > 100000) {
+  } else if (not Helpers::isNorwegianStationId(stationId)) {
     ui->labelStationInfo->setText(tr("Invalid station number"));
   } else {
     mSensor.stationId = stationId;
@@ -172,7 +172,7 @@ void StationDialog::updateTypeList()
 
 bool StationDialog::valid() const
 {
-  return mSensor.stationId >= 60 and mSensor.stationId < 100000
+  return Helpers::isNorwegianStationId(mSensor.stationId)
       and mSensor.typeId != 0 and selectedTime().closed();
 }
 

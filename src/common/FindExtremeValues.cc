@@ -36,7 +36,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   std::ostringstream excluded_station_list;
   const char* sep = "";
   BOOST_FOREACH(const listStat_t& ls, stationDetails) {
-    if (ls.stationid >= 60 and ls.stationid < 100000
+    if (Helpers::isNorwegianStationId(ls.stationid)
         and (ls.municipid <= 100 or ls.municipid >= 2100))
     {
       excluded_station_list << sep << ls.stationid;
@@ -76,7 +76,7 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   std::ostringstream sql;
   sql << "SELECT " << hqcApp->kvalobsColumnsSensorTime("d") << " FROM data AS d,"
       "  (SELECT dd.stationid AS s, " << function << "(dd.corrected) AS c FROM data AS dd"
-      "   WHERE dd.stationid BETWEEN 60 AND 100000";
+      "   WHERE " << Helpers::isNorwegianStationIdSQL("dd.stationid");
   if (not excludedIds.empty())
     sql << " AND dd.stationid NOT IN (" << excludedIds << ")";
   sql << "   AND dd.paramid IN (" << paramids.str() << ")"

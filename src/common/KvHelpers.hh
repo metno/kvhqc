@@ -64,6 +64,9 @@ private:
   int stationid;
 };
 
+bool isNorwegianStationId(int stationid);
+std::string isNorwegianStationIdSQL(const std::string& stationid_column);
+
 int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
 
 void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeRange& time, int maxNeighbors);

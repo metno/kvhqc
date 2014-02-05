@@ -53,7 +53,7 @@ std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& t
       sql << ',';
   }
   sql << ") as t(s)"
-      << " WHERE o.stationid BETWEEN 60 AND 99999";
+      << " WHERE " << Helpers::isNorwegianStationIdSQL("o.stationid");
   if (typeIds.size() == 1) {
     sql << "   AND o.typeid = " << typeIds.front();
   } else if (typeIds.size() > 1) {

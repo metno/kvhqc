@@ -192,6 +192,22 @@ float numericalValue(int paramId, float codeValue)
   return codeValue;
 }
 
+static const int STATIONID_NORWAY_MIN = 60, STATIONID_NORWAY_MAX = 99999;
+
+bool isNorwegianStationId(int stationid)
+{
+  return stationid >= STATIONID_NORWAY_MIN and
+      stationid <= STATIONID_NORWAY_MAX;
+}
+
+std::string isNorwegianStationIdSQL(const std::string& stationid_column)
+{
+  std::ostringstream sql;
+  sql << " (" << stationid_column << " BETWEEN " << STATIONID_NORWAY_MIN
+      << " AND " << STATIONID_NORWAY_MAX << ") ";
+  return sql.str();
+}
+
 int nearestStationId(float lon, float lat, float maxDistanceKm)
 {
   int nearestStation = -1;
@@ -202,7 +218,7 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   try {
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
-      if (sid < 60 or sid >= 100000)
+      if (not isNorwegianStationId(sid))
         continue;
       const float d = Helpers::distance(s.lon(), s.lat(), lon, lat);
       if (d > maxDistanceKm)
@@ -236,7 +252,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
     
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
-      if (sid < 60 or sid >= 100000 or sid == sensor.stationId)
+      if (not Helpers::isNorwegianStationId(sid) or sid == sensor.stationId)
         continue;
       if (ordering.distance(s) > 100 /*km*/)
         continue;
