@@ -4,7 +4,6 @@ SET(hqc_SOURCES
   ChecksTableModel.cc
   DataListAddColumn.cc
   DataList.cc
-  dianashowdialog.cc
   EditVersionModel.cc
   ErrorList.cc
   ErrorListTableModel.cc
@@ -47,7 +46,6 @@ QT4_WRAP_CPP(hqc_MOC
   ChecksTableModel.hh
   DataListAddColumn.hh
   DataList.hh
-  dianashowdialog.h
   EditVersionModel.hh
   ErrorList.hh
   ErrorListTableModel.hh

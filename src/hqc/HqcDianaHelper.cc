@@ -1,7 +1,6 @@
 
 #include "HqcDianaHelper.hh"
 
-#include "dianashowdialog.h"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
 
@@ -199,9 +198,8 @@ int flag4obs(ObsDataPtr obs)
 
 } // anonymous namespace
 
-HqcDianaHelper::HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB)
-  : mDianaConfigDialog(dshdlg)
-  , mClientButton(pluginB)
+HqcDianaHelper::HqcDianaHelper(ClientButton* pluginB)
+  : mClientButton(pluginB)
   , mDianaConnected(false)
   , mDianaNeedsHqcInit(true)
   , mDianaSensorTime(Sensor(0,0,0,0,0), timeutil::ptime())
@@ -830,111 +828,111 @@ void HqcDianaHelper::updateDianaParameters()
   mSendPars.clear();
 
   const char* item = "TTT";
-  if (mDianaConfigDialog->tameType->isChecked())
-    mSendPars.insert(std::make_pair(212/*TAM*/, SendPar(item)));
-  else if (mDianaConfigDialog->tamoType->isChecked())
-    mSendPars.insert(std::make_pair(211/*TA*/, SendPar(item, SendPar::MODEL)));
-  else if (mDianaConfigDialog->tadiType->isChecked())
-    mSendPars.insert(std::make_pair(211/*TA*/, SendPar(item, SendPar::DIFF)));
-  else
+  //if (mDianaConfigDialog->tameType->isChecked())
+  //  mSendPars.insert(std::make_pair(212/*TAM*/, SendPar(item)));
+  //else if (mDianaConfigDialog->tamoType->isChecked())
+  //  mSendPars.insert(std::make_pair(211/*TA*/, SendPar(item, SendPar::MODEL)));
+  //else if (mDianaConfigDialog->tadiType->isChecked())
+  //  mSendPars.insert(std::make_pair(211/*TA*/, SendPar(item, SendPar::DIFF)));
+  //else
     mSendPars.insert(std::make_pair(211, SendPar(item)));
 
   item = "TdTdTd";
-  if (mDianaConfigDialog->uuType->isChecked())
-    mSendPars.insert(std::make_pair(262/*UU*/, SendPar(item)));
-  else if ( mDianaConfigDialog->uumoType->isChecked())
-    mSendPars.insert(std::make_pair(262/*UU*/, SendPar(item, SendPar::MODEL)));
-  else if (mDianaConfigDialog->uumeType->isChecked())
-    mSendPars.insert(std::make_pair(263/*UM*/, SendPar(item)));
-  else if (mDianaConfigDialog->uumiType->isChecked())
-    mSendPars.insert(std::make_pair(264/*UN*/, SendPar(item)));
-  else if (mDianaConfigDialog->uumaType->isChecked())
-    mSendPars.insert(std::make_pair(265/*UX*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->uuType->isChecked())
+  //  mSendPars.insert(std::make_pair(262/*UU*/, SendPar(item)));
+  //else if ( mDianaConfigDialog->uumoType->isChecked())
+  //  mSendPars.insert(std::make_pair(262/*UU*/, SendPar(item, SendPar::MODEL)));
+  //else if (mDianaConfigDialog->uumeType->isChecked())
+  //  mSendPars.insert(std::make_pair(263/*UM*/, SendPar(item)));
+  //else if (mDianaConfigDialog->uumiType->isChecked())
+  //  mSendPars.insert(std::make_pair(264/*UN*/, SendPar(item)));
+  //else if (mDianaConfigDialog->uumaType->isChecked())
+  //  mSendPars.insert(std::make_pair(265/*UX*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(217/*TD*/, SendPar(item)));
 
   item = "PPPP";
-  if (mDianaConfigDialog->poType->isChecked())
-    mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item)));
-  else if (mDianaConfigDialog->prmoType->isChecked())
-    mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item, SendPar::MODEL)));
-  else if (mDianaConfigDialog->podiType->isChecked())
-    mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item, SendPar::DIFF)));
-  else if (mDianaConfigDialog->pomeType->isChecked())
-    mSendPars.insert(std::make_pair(174/*POM*/, SendPar(item))); 
-  else if (mDianaConfigDialog->pomiType->isChecked())
-    mSendPars.insert(std::make_pair(175/*PON*/, SendPar(item)));
-  else if (mDianaConfigDialog->pomaType->isChecked())
-    mSendPars.insert(std::make_pair(176/*POX*/, SendPar(item)));
-  else if (mDianaConfigDialog->phType->isChecked())
-    mSendPars.insert(std::make_pair(172/*PH*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->poType->isChecked())
+  //  mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item)));
+  //else if (mDianaConfigDialog->prmoType->isChecked())
+  //  mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item, SendPar::MODEL)));
+  //else if (mDianaConfigDialog->podiType->isChecked())
+  //  mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item, SendPar::DIFF)));
+  //else if (mDianaConfigDialog->pomeType->isChecked())
+  //  mSendPars.insert(std::make_pair(174/*POM*/, SendPar(item))); 
+  //else if (mDianaConfigDialog->pomiType->isChecked())
+  //  mSendPars.insert(std::make_pair(175/*PON*/, SendPar(item)));
+  //else if (mDianaConfigDialog->pomaType->isChecked())
+  //  mSendPars.insert(std::make_pair(176/*POX*/, SendPar(item)));
+  //else if (mDianaConfigDialog->phType->isChecked())
+  //  mSendPars.insert(std::make_pair(172/*PH*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(178/*PR*/, SendPar(item)));
 
   item = "ppp";
-  if (mDianaConfigDialog->ppmoType->isChecked())
-    mSendPars.insert(std::make_pair(177/*PP*/, SendPar(item, SendPar::MODEL)));
-  else
+  //if (mDianaConfigDialog->ppmoType->isChecked())
+  //  mSendPars.insert(std::make_pair(177/*PP*/, SendPar(item, SendPar::MODEL)));
+  //else
     mSendPars.insert(std::make_pair(177/*PP*/, SendPar(item)));
 
   item = "RRR";
-  if (mDianaConfigDialog->rrmoType->isChecked())
-    mSendPars.insert(std::make_pair(109/*RR_12*/, SendPar(item, SendPar::MODEL)));
-  else if (mDianaConfigDialog->rr1Type->isChecked())
-    mSendPars.insert(std::make_pair(106/*RR_1*/, SendPar(item)));
-  else if (mDianaConfigDialog->rr6Type->isChecked())
-    mSendPars.insert(std::make_pair(108/*RR_6*/, SendPar(item)));
-  else if (mDianaConfigDialog->rr24Type->isChecked())
-    mSendPars.insert(std::make_pair(110/*RR_24*/, SendPar(item)));
-  else if (mDianaConfigDialog->rr24moType->isChecked())
-    mSendPars.insert(std::make_pair(110/*RR_24*/, SendPar(item, SendPar::MODEL)));
-  else if (mDianaConfigDialog->rrprType->isChecked())
-    mSendPars.insert(std::make_pair(109/*RR_12*/, SendPar(item, SendPar::PROPORTION)));
-  else
+  //if (mDianaConfigDialog->rrmoType->isChecked())
+  //  mSendPars.insert(std::make_pair(109/*RR_12*/, SendPar(item, SendPar::MODEL)));
+  //else if (mDianaConfigDialog->rr1Type->isChecked())
+  //  mSendPars.insert(std::make_pair(106/*RR_1*/, SendPar(item)));
+  //else if (mDianaConfigDialog->rr6Type->isChecked())
+  //  mSendPars.insert(std::make_pair(108/*RR_6*/, SendPar(item)));
+  //else if (mDianaConfigDialog->rr24Type->isChecked())
+  //  mSendPars.insert(std::make_pair(110/*RR_24*/, SendPar(item)));
+  //else if (mDianaConfigDialog->rr24moType->isChecked())
+  //  mSendPars.insert(std::make_pair(110/*RR_24*/, SendPar(item, SendPar::MODEL)));
+  //else if (mDianaConfigDialog->rrprType->isChecked())
+  //  mSendPars.insert(std::make_pair(109/*RR_12*/, SendPar(item, SendPar::PROPORTION)));
+  //else
     mSendPars.insert(std::make_pair(109/*RR_12*/, SendPar(item)));
 
   item = "TxTn";
-  if (mDianaConfigDialog->tx12Type->isChecked())
-    mSendPars.insert(std::make_pair(216/*TAX_12*/, SendPar(item)));
-  else if (mDianaConfigDialog->tnType->isChecked())
-    mSendPars.insert(std::make_pair(213/*TAN*/, SendPar(item)));
-  else if (mDianaConfigDialog->txType->isChecked())
-    mSendPars.insert(std::make_pair(215/*TAX*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->tx12Type->isChecked())
+  //  mSendPars.insert(std::make_pair(216/*TAX_12*/, SendPar(item)));
+  //else if (mDianaConfigDialog->tnType->isChecked())
+  //  mSendPars.insert(std::make_pair(213/*TAN*/, SendPar(item)));
+  //else if (mDianaConfigDialog->txType->isChecked())
+  //  mSendPars.insert(std::make_pair(215/*TAX*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(214/*TAN_12*/, SendPar(item)));
 
   item = "dd";
-  if (mDianaConfigDialog->ddmoType->isChecked())
-    mSendPars.insert(std::make_pair(61/*DD*/, SendPar(item, SendPar::MODEL)));
-  else
+  //if (mDianaConfigDialog->ddmoType->isChecked())
+  //  mSendPars.insert(std::make_pair(61/*DD*/, SendPar(item, SendPar::MODEL)));
+  //else
     mSendPars.insert(std::make_pair(61/*DD*/, SendPar(item)));
 
   item = "ff";
-  if (mDianaConfigDialog->ffmoType->isChecked())
-    mSendPars.insert(std::make_pair(81/*FF*/, SendPar(item, SendPar::MODEL)));
-  else
+  //if (mDianaConfigDialog->ffmoType->isChecked())
+  //  mSendPars.insert(std::make_pair(81/*FF*/, SendPar(item, SendPar::MODEL)));
+  //else
     mSendPars.insert(std::make_pair(81/*FF*/, SendPar(item)));
 
   item = "fxfx";
-  if (mDianaConfigDialog->fx01Type->isChecked())
-    mSendPars.insert(std::make_pair(87/*FX_1*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->fx01Type->isChecked())
+  //  mSendPars.insert(std::make_pair(87/*FX_1*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(86/*FX*/, SendPar(item)));
 
   item = "ff_911";
-  if (mDianaConfigDialog->fg01Type->isChecked())
-    mSendPars.insert(std::make_pair(90/*FG_1*/, SendPar(item)));
-  else if (mDianaConfigDialog->fg10Type->isChecked())
-    mSendPars.insert(std::make_pair(84/*FG_10*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->fg01Type->isChecked())
+  //  mSendPars.insert(std::make_pair(90/*FG_1*/, SendPar(item)));
+  //else if (mDianaConfigDialog->fg10Type->isChecked())
+  //  mSendPars.insert(std::make_pair(84/*FG_10*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(83/*FG*/, SendPar(item)));
 
   item = "sss";
-  if (mDianaConfigDialog->sdType->isChecked())
-    mSendPars.insert(std::make_pair(18/*SD*/, SendPar(item)));
-  else if (mDianaConfigDialog->emType->isChecked())
-    mSendPars.insert(std::make_pair(7/*EM*/, SendPar(item)));
-  else
+  //if (mDianaConfigDialog->sdType->isChecked())
+  //  mSendPars.insert(std::make_pair(18/*SD*/, SendPar(item)));
+  //else if (mDianaConfigDialog->emType->isChecked())
+  //  mSendPars.insert(std::make_pair(7/*EM*/, SendPar(item)));
+  //else
     mSendPars.insert(std::make_pair(112/*SA*/, SendPar(item)));
 
   mSendPars.insert(std::make_pair( 55/*HL*/,     SendPar("h")));

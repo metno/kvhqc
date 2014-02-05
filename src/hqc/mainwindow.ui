@@ -53,21 +53,26 @@
      <string>&amp;File</string>
     </property>
     <addaction name="saveAction"/>
+    <addaction name="separator"/>
+    <addaction name="actionStartKro"/>
+    <addaction name="separator"/>
     <addaction name="printAction"/>
+    <addaction name="actionScreenshot"/>
    </widget>
    <widget class="QMenu" name="menuValg">
     <property name="title">
      <string>&amp;View</string>
     </property>
     <addaction name="actionShowErrorList"/>
-    <addaction name="actionShowChanges"/>
-    <addaction name="actionShowSimpleCorrections"/>
     <addaction name="actionShowExtremeValues"/>
     <addaction name="actionShowMissingObservations"/>
+    <addaction name="separator"/>
+    <addaction name="actionShowChanges"/>
+    <addaction name="actionShowSimpleCorrections"/>
    </widget>
    <widget class="QMenu" name="menuListType">
     <property name="title">
-     <string>&amp;Lists</string>
+     <string>Data</string>
     </property>
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorDataSalen"/>
@@ -80,17 +85,8 @@
     <addaction name="separator"/>
     <addaction name="actionTextDataList"/>
     <addaction name="actionRejectDecode"/>
-   </widget>
-   <widget class="QMenu" name="menuOther">
-    <property name="title">
-     <string>&amp;Other</string>
-    </property>
-    <addaction name="actionDianaConfig"/>
-    <addaction name="actionStartKro"/>
-    <addaction name="actionScreenshot"/>
-    <addaction name="actionJumpToObservation"/>
     <addaction name="separator"/>
-    <addaction name="actionSettings"/>
+    <addaction name="actionJumpToObservation"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -110,11 +106,12 @@
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuListType"/>
-   <addaction name="menuOther"/>
    <addaction name="menuValg"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -337,18 +334,30 @@
    </property>
   </action>
   <action name="actionDianaConfig">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
    <property name="text">
     <string>&amp;Diana presentation</string>
    </property>
   </action>
   <action name="actionStartKro">
    <property name="text">
-    <string>&amp;Kro</string>
+    <string>&amp;Open Kro…</string>
+   </property>
+   <property name="toolTip">
+    <string>Open kro in browser</string>
    </property>
   </action>
   <action name="actionHelpManual">
    <property name="text">
-    <string>&amp;User manual</string>
+    <string>&amp;User manual…</string>
+   </property>
+   <property name="iconText">
+    <string>User manual…</string>
+   </property>
+   <property name="toolTip">
+    <string>Show user manual in browser</string>
    </property>
    <property name="shortcut">
     <string>F1</string>
@@ -356,7 +365,10 @@
   </action>
   <action name="actionHelpFlags">
    <property name="text">
-    <string>&amp;Flags</string>
+    <string>&amp;Flags…</string>
+   </property>
+   <property name="toolTip">
+    <string>Show flag explanations in browser</string>
    </property>
    <property name="shortcut">
     <string>F2</string>
@@ -364,7 +376,10 @@
   </action>
   <action name="actionHelpParameters">
    <property name="text">
-    <string>&amp;Parameters</string>
+    <string>&amp;Parameters…</string>
+   </property>
+   <property name="toolTip">
+    <string>Show parameter explanation in browser</string>
    </property>
    <property name="shortcut">
     <string>F3</string>
@@ -393,7 +408,7 @@
   </action>
   <action name="actionHelpNews">
    <property name="text">
-    <string>&amp;News</string>
+    <string>&amp;News…</string>
    </property>
   </action>
   <action name="actionErrorDataSalen">

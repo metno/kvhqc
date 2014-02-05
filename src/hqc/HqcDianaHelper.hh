@@ -11,14 +11,13 @@
 #include <map>
 #include <vector>
 
-class DianaShowDialog;
 class ClientButton;
 class miMessage;
 
 class HqcDianaHelper : public QObject, public DataView
 {   Q_OBJECT;
 public:
-  HqcDianaHelper(DianaShowDialog* dshdlg, ClientButton* pluginB);
+  HqcDianaHelper(ClientButton* pluginB);
 
   void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
 
@@ -80,7 +79,6 @@ private:
   void handlePosition(float lon, float lat);
 
 private:
-  DianaShowDialog* mDianaConfigDialog;
   ClientButton* mClientButton;
 
   bool mDianaConnected;

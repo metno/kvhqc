@@ -38,7 +38,6 @@
 #include "config.h"
 
 #include "AutoDataList.hh"
-#include "dianashowdialog.h"
 #include "EditVersionModel.hh"
 #include "ErrorList.hh"
 #include "ExtremesView.hh"
@@ -169,7 +168,6 @@ HqcMainWindow::HqcMainWindow()
 
   // --- DEFINE DIALOGS --------------------------------------------
   lstdlg = new ListDialog(this);
-  dshdlg = new DianaShowDialog(this);
   txtdlg = new TextDataDialog(this);
   rejdlg = new RejectedObsDialog(this);
     
@@ -185,17 +183,13 @@ HqcMainWindow::HqcMainWindow()
   tabifyDockWidget(ui->dockErrors, ui->dockMissing);
   ui->dockMissing->setVisible(false);
 
-  mDianaHelper.reset(new HqcDianaHelper(dshdlg, pluginB));
+  mDianaHelper.reset(new HqcDianaHelper(pluginB));
   mDianaHelper->setDataAccess(eda, kma);
 
   mAutoDataList->setDataAccess(eda, kma);
   mTimeSeriesView->setDataAccess(eda, kma);
 
   connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
-
-  dshdlg->hide();
-  connect(ui->actionDianaConfig, SIGNAL(triggered()), dshdlg, SLOT(show()));
-  connect(dshdlg, SIGNAL(dianaShowApply()), this, SLOT(dianaShowOK()));
 
   connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
   connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
