@@ -976,8 +976,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>222</x>
-     <y>98</y>
+     <x>224</x>
+     <y>502</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -992,12 +992,76 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>274</x>
-     <y>104</y>
+     <x>276</x>
+     <y>502</y>
     </hint>
     <hint type="destinationlabel">
      <x>278</x>
      <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_1</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>140</x>
+     <y>61</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>152</x>
+     <y>-3</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_2</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>277</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>297</x>
+     <y>1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_3</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>421</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>441</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_9</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_9()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>413</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>441</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
