@@ -97,6 +97,7 @@
     <addaction name="actionJumpToObservation"/>
     <addaction name="separator"/>
     <addaction name="menuLanguage"/>
+    <addaction name="actionSettings"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -486,6 +487,14 @@
    </property>
    <property name="toolTip">
     <string>Use system language</string>
+   </property>
+  </action>
+  <action name="actionSettings">
+   <property name="text">
+    <string>Settings…</string>
+   </property>
+   <property name="toolTip">
+    <string>Change user settings</string>
    </property>
   </action>
  </widget>
@@ -904,6 +913,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>HqcMainWindow</receiver>
+   <slot>onUserSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>399</x>
+     <y>299</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>showFlags()</slot>
@@ -912,6 +937,7 @@
   <slot>showStat()</slot>
   <slot>showHeight()</slot>
   <slot>showPos()</slot>
+  <slot>onUserSettings()</slot>
   <slot>allListMenu()</slot>
   <slot>errListMenu()</slot>
   <slot>dataListMenu()</slot>

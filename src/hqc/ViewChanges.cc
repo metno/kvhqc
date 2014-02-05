@@ -3,7 +3,7 @@
 
 #include "common/KvHelpers.hh"
 #include "common/Sensor.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlDatabase>
@@ -95,8 +95,7 @@ std::string ViewChanges::fetch(const Sensor& s, const std::string& vtype, const 
     query.bindValue(":vid",   QString::fromStdString(vid));
     if (not query.exec())
       HQC_LOG_ERROR("error while querying: " << query.lastError().text());
-
-    if (query.next()) {
+    else if (query.next()) {
       const std::string vchanges = query.value(0).toString().toStdString();
       METLIBS_LOG_DEBUG(LOGVAL(vchanges));
       return vchanges;

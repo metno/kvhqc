@@ -1,6 +1,7 @@
 
 #include "HqcApplication.hh"
 
+#include "common/HqcUserConfig.hh"
 #include "common/KvServiceHelper.hh"
 #include "common/TimeRange.hh"
 #include "util/hqc_paths.hh"
@@ -52,6 +53,9 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   QCoreApplication::setOrganizationName("Meteorologisk Institutt");
   QCoreApplication::setOrganizationDomain("met.no");
   QCoreApplication::setApplicationName("Hqc");
+
+  // must init after configuring QCoreApplication as it reads QSettings
+  mUserConfig.reset(new HqcUserConfig);
   
   QString language = savedLanguage();
   if (not language.isEmpty())

@@ -27,6 +27,7 @@ SET(hqc_SOURCES
   ViewChanges.cc
   MissingView.cc
   MissingTableModel.cc
+  UserSettings.cc
 #  missing/MissingView.cc
 #  missing/MissingSelectorWidget.cc
 #  missing/MissingObservationWidget.cc
@@ -66,6 +67,7 @@ QT4_WRAP_CPP(hqc_MOC
   TimeseriesDialog.h
   TimeSeriesView.hh
   ViewChanges.hh
+  UserSettings.hh
   missing/MissingView.hh
   missing/MissingSelectorWidget.hh
   missing/MissingObservationWidget.hh
@@ -84,6 +86,7 @@ QT4_WRAP_UI(hqc_UIH
   timeseriesview.ui
   ts_add.ui
   ts_remove.ui
+  user_settings.ui
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

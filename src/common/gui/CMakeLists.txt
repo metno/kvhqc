@@ -2,7 +2,6 @@
 SET(common_gui_SOURCES
   AcceptRejectButtons.cc
   Authenticator.cc
-  HqcApplication.cc
   NeighborHeader.cc
   ObsDelegate.cc
   SensorChooser.cc
@@ -14,7 +13,6 @@ SET(common_gui_SOURCES
 QT4_WRAP_CPP(common_gui_MOC
   AcceptRejectButtons.hh
   Authenticator.hh
-  HqcApplication.hh
   ObsDelegate.hh
   SensorChooser.hh
   TimeRangeControl.hh

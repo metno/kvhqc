@@ -113,6 +113,7 @@ private Q_SLOTS:
   void helpParam();
   void about();
   void aboutQt();
+  void onUserSettings();
 
   void kvalobsAvailable(bool);
 

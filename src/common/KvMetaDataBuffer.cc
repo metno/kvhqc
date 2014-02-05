@@ -3,7 +3,7 @@
 
 #include "Functors.hh"
 #include "KvServiceHelper.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 #include "util/gui/BusyIndicator.hh"
 
 #include <puTools/miStringBuilder.h>

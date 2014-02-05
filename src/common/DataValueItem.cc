@@ -1,10 +1,12 @@
 
 #include "DataValueItem.hh"
 
-#include "ObsHelpers.hh"
+#include "HqcUserConfig.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ObsColumn.hh"
+#include "ObsHelpers.hh"
 #include "Tasks.hh"
+#include "HqcApplication.hh"
 
 #include <kvalobs/kvDataOperations.h>
 #include <boost/bind.hpp>
@@ -49,14 +51,9 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
         return QBrush(QColor(0xFF, 0x60, 0)); // red orange
     } else if (mColumnType == ObsColumn::ORIGINAL) {
       const int ui_2 = Helpers::extract_ui2(obs);
-      if (ui_2 == 1)      // probably ok
-        return QBrush(QColor(0xFF, 0xFF, 0xF0)); // light yellow
-      else if (ui_2 == 2) // probably wrong
-        return QBrush(QColor(0xFF, 0xF0, 0xF0)); // light red
-      else if (ui_2 == 9) // no quality information
-        return QBrush(QColor(0xFF, 0xE0, 0xB0)); // light orange
-      else if (ui_2 != 0) // wrong
-        return QBrush(QColor(0xFF, 0xE0, 0xE0)); // light red
+      const QColor bg = hqcApp->userConfig()->dataOrigUI2Background(ui_2);
+      if (bg.isValid())
+        return QBrush(bg);
     }
   } else if (role == Qt::ForegroundRole) {
     // FIXME this is a hack, but the idea of having all non-numbers in dark gray is also mysterious

@@ -52,13 +52,14 @@
 #include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
 #include "MissingView.hh"
+#include "UserSettings.hh"
 #include "common/DataView.hh"
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
 #include "common/QtKvalobsAccess.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
@@ -837,6 +838,13 @@ void HqcMainWindow::readSettings()
     HQC_LOG_WARN("cannot restore autoview splitter positions");
 
   lstdlg->restoreSettings(settings);
+}
+
+void HqcMainWindow::onUserSettings()
+{
+  METLIBS_LOG_SCOPE();
+  UserSettings us;
+  us.exec();
 }
 
 void HqcMainWindow::checkVersionSettings()

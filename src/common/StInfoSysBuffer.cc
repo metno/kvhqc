@@ -3,7 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>

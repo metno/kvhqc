@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>UserSettings</class>
+ <widget class="QDialog" name="UserSettings">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>393</width>
+    <height>125</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>User Settings</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <property name="margin">
+    <number>4</number>
+   </property>
+   <item>
+    <widget class="QGroupBox" name="groupColorsOriginal">
+     <property name="title">
+      <string>Colors for Original Data Quality</string>
+     </property>
+     <layout class="QGridLayout" name="gridLayout">
+      <item row="0" column="0">
+       <widget class="QLabel" name="labelUI2_1">
+        <property name="toolTip">
+         <string>Probably correct (useinfo(2) = 1)</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="text">
+         <string>Suspicious</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QToolButton" name="buttonUI2_1">
+        <property name="text">
+         <string notr="true">…</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="QLabel" name="labelUI2_2">
+        <property name="toolTip">
+         <string>Probably wrong (useinfo(2) = 2)</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="text">
+         <string>Very suspicious</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3">
+       <widget class="QToolButton" name="buttonUI2_2">
+        <property name="text">
+         <string notr="true">…</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="4">
+       <widget class="QLabel" name="labelUI2_3">
+        <property name="toolTip">
+         <string>Surely wrong (useinfo(2) = 3)</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="text">
+         <string>Wrong</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="5">
+       <widget class="QToolButton" name="buttonUI2_3">
+        <property name="text">
+         <string notr="true">…</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="4">
+       <widget class="QLabel" name="labelUI2_9">
+        <property name="toolTip">
+         <string>No quality information (useinfo(2) = 9)</string>
+        </property>
+        <property name="autoFillBackground">
+         <bool>true</bool>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Panel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Sunken</enum>
+        </property>
+        <property name="text">
+         <string>Unknown</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="5">
+       <widget class="QToolButton" name="buttonUI2_9">
+        <property name="text">
+         <string notr="true">…</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>222</x>
+     <y>98</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>274</x>
+     <y>104</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>278</x>
+     <y>114</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_1</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_1()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>111</x>
+     <y>40</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>13</x>
+     <y>123</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_2</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_2()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>231</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_3</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_3()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>365</x>
+     <y>30</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>359</x>
+     <y>1</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonUI2_9</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onOriginalColorUI2_9()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>377</x>
+     <y>67</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>392</x>
+     <y>67</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onOriginalColorUI2_1()</slot>
+  <slot>onOriginalColorUI2_2()</slot>
+  <slot>onOriginalColorUI2_3()</slot>
+  <slot>onOriginalColorUI2_9()</slot>
+ </slots>
+</ui>

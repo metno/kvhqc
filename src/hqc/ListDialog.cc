@@ -32,7 +32,7 @@
 #include "common/FindAllParameters.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StInfoSysBuffer.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 #include "common/gui/TimeRangeControl.hh"
 #include "util/timeutil.hh"
 #include "util/gui/BusyIndicator.hh"

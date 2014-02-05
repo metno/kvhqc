@@ -3,7 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "TimeRange.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>

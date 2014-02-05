@@ -2,7 +2,7 @@
 #include "FindAllParameters.hh"
 
 #include "KvMetaDataBuffer.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlError>

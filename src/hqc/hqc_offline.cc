@@ -32,7 +32,7 @@
 #include "common/KvServiceHelper.hh"
 #include "common/QtKvService.hh"
 #include "common/StInfoSysBuffer.hh"
-#include "common/gui/HqcApplication.hh"
+#include "common/HqcApplication.hh"
 #include "util/hqc_paths.hh"
 
 #include "common/test/FakeKvApp.hh"

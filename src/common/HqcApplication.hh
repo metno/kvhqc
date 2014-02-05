@@ -10,6 +10,8 @@
 #include <QtGui/QApplication>
 #include <QtSql/QSqlDatabase>
 
+class HqcUserConfig;
+
 class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
@@ -20,6 +22,9 @@ public:
 
   QSqlDatabase systemDB();
   QSqlDatabase configDB();
+  HqcUserConfig* userConfig()
+    { return mUserConfig.get(); }
+
   QSqlDatabase kvalobsDB();
   std::string kvalobsColumnsSensorTime(const std::string& data_alias="");
   std::vector<SensorTime> kvalobsQuerySensorTime(const std::string& constraint);
@@ -57,6 +62,7 @@ private:
   QList<QTranslator*> mTranslators;
   miutil::conf::ConfSection *mConfig;
   bool mKvalobsAvailable;
+  std::auto_ptr<HqcUserConfig> mUserConfig;
 };
 
 extern HqcApplication* hqcApp;

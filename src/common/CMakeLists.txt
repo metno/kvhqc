@@ -31,7 +31,9 @@ SET(common_SOURCES
   FlagPatterns.cc
   FlagUpdate.cc
   Functors.cc
+  HqcApplication.cc
   HqcDataReinserter.cc
+  HqcUserConfig.cc
   identifyUser.cc
   KvalobsAccess.cc
   KvalobsData.cc
@@ -67,6 +69,7 @@ QT4_WRAP_CPP(common_MOC
   AbstractUpdateListener.hh
   DataListModel.hh
   DianaHelper.hh
+  HqcApplication.hh
   KvalobsUpdateListener.hh
   ObsTableModel.hh
   QtKvalobsAccess.hh
