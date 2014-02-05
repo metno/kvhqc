@@ -35,16 +35,21 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <QtGui/QStatusBar>
 #include <QtGui/QWidget>
 
+static void processSomeEvents()
+{
+  qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
+}
+
 BusyIndicator::BusyIndicator(bool wait)
 {
   qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
-  //qApp->processEvents();
+  processSomeEvents();
 }
 
 BusyIndicator::~BusyIndicator()
 {
   qApp->restoreOverrideCursor();
-  //qApp->processEvents();
+  processSomeEvents();
 }
 
 // ========================================================================
@@ -55,13 +60,13 @@ DisableGUI::DisableGUI(QWidget* widget)
 {
   if (mWasEnabled)
     mWidget->setEnabled(false);
-  qApp->processEvents();
+  processSomeEvents();
 }
 DisableGUI::~DisableGUI()
 {
   if (mWasEnabled)
     mWidget->setEnabled(true);
-  qApp->processEvents();
+  processSomeEvents();
 }
 
 // ========================================================================
@@ -71,7 +76,7 @@ BusyStatus::BusyStatus(QMainWindow* mw, const QString& message, bool wait)
   , BusyIndicator(wait)
 {
   mw->statusBar()->showMessage(message);
-  //qApp->processEvents();
+  processSomeEvents();
 }
 
 BusyStatus::~BusyStatus()
