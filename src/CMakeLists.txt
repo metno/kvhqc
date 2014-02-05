@@ -17,22 +17,12 @@ LINK_LIBRARIES(${QT_LIBRARIES})
 #########################################################################
 # kvalobs
 
-PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.0~rc1 libkvalobs_decodeutility)
-IF(NOT PC_KVCPP_FOUND)
-  PKG_CHECK_MODULES(PC_KVCPP2 libkvcpp2>=2.5.3 puTools libpqxx)
-  IF(NOT PC_KVCPP2_FOUND)
-    ERROR("could not find required kvcpp libs")
-  ENDIF()
-  MESSAGE(WARNING "using old kvcpp with static metlibs; this might cause conflicts or crashes")
-  SET(PC_KVCPP_LIBRARIES ${PC_KVCPP2_LIBRARIES} kvalobs2_kvalobs kvalobs2_decodeutility kvalobs2_dnmithread CACHE INTERNAL "")
-  SET(PC_KVCPP_INCLUDE_DIRS ${PC_KVCPP2_INCLUDE_DIRS} CACHE INTERNAL "")
-  SET(PC_KVCPP_CFLAGS_OTHER ${PC_KVCPP2_CFLAGS_OTHER})
-ENDIF()
+PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.2 libkvalobs_decodeutility)
 
 #########################################################################
 # metlibs
 
-PKG_CHECK_MODULES(PC_METLIBSQT REQUIRED qTimeseries qUtilities)
+PKG_CHECK_MODULES(PC_METLIBSQT REQUIRED qTimeseries qUtilities puTools miLogger)
 SET(PC_METLIBSQT_LIBRARIES ${PC_METLIBSQT_LIBRARIES} -lGL)
 IF("${PC_METLIBSQT_qUtilities_VERSION}" VERSION_LESS "4.9.4")
   ADD_DEFINITIONS(-DMETLIBS_BEFORE_4_9_5)
