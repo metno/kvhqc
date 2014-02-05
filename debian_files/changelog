@@ -1,3 +1,9 @@
+kvhqc (3.3.1-1) unstable; urgency=low
+
+  * re-connect signals in user_settings.ui
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 04 Feb 2014 19:00:25 +0100
+
 kvhqc (3.3.0-1) unstable; urgency=low
 
   * reorganized menus
