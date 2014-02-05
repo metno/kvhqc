@@ -1,5 +1,6 @@
 
 SET(common_SOURCES
+  AbstractUpdateListener.cc
   AcceptReject.cc
   AnalyseErrors.cc
   AnalyseFCC.cc
@@ -36,6 +37,7 @@ SET(common_SOURCES
   KvalobsData.cc
   KvalobsModelAccess.cc
   KvalobsModelData.cc
+  KvalobsUpdateListener.cc
   KvBufferedAccess.cc
   KvHelpers.cc
   KvMetaDataBuffer.cc
@@ -62,8 +64,10 @@ SET(common_SOURCES
 )
 
 QT4_WRAP_CPP(common_MOC
+  AbstractUpdateListener.hh
   DataListModel.hh
   DianaHelper.hh
+  KvalobsUpdateListener.hh
   ObsTableModel.hh
   QtKvalobsAccess.hh
   QtKvService.hh

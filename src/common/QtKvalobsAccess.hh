@@ -6,8 +6,6 @@
 
 #include <map>
 
-class QTimer;
-
 /*! Access to kvalobs data, with update listener.
  * Uses QtKvService to listen for updates in kvalobs database.
  */
@@ -21,16 +19,9 @@ protected:
   virtual void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
 
 private Q_SLOTS:
-  void onKvData(kvservice::KvObsDataListPtr data);
-  void doReSubscribe();
+  void onUpdate(const kvalobs::kvData& kvdata);
 
 private:
-  void reSubscribe();
-
-private:
-  std::string mKvServiceSubscriberID;
-  QTimer* mResubscribeTimer;
-
   typedef std::set<int> stations_with_data_t;
   stations_with_data_t mStationsWithData;
 };

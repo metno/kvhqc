@@ -1,77 +1,45 @@
 
 #include "QtKvalobsAccess.hh"
 
-#include "QtKvService.hh"
-
-#include <QtCore/QTimer>
+#include "AbstractUpdateListener.hh"
 
 #include <boost/foreach.hpp>
-#include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.QtKvalobsAccess"
-#define M_TIME
 #include "util/HqcLogging.hh"
 
 QtKvalobsAccess::QtKvalobsAccess()
-  : mResubscribeTimer(new QTimer(this))
 {
-  mResubscribeTimer->setSingleShot(true);
-  connect(mResubscribeTimer, SIGNAL(timeout()), this, SLOT(doReSubscribe()));
+  AbstractUpdateListener* ul = updateListener();
+  if (ul)
+    connect(ul, SIGNAL(update(const kvalobs::kvData&)), this, SLOT(onUpdate(const kvalobs::kvData&)));
+  else
+    HQC_LOG_WARN("no UpdateListener");
 }
 
 QtKvalobsAccess::~QtKvalobsAccess()
 {
-  if (not mKvServiceSubscriberID.empty())
-    qtKvService()->unsubscribe(mKvServiceSubscriberID);
+  AbstractUpdateListener* ul = updateListener();
+  if (ul) {
+    BOOST_FOREACH(int sid, mStationsWithData) {
+      ul->removeStation(sid);
+    }
+  }
 }
 
-void QtKvalobsAccess::onKvData(kvservice::KvObsDataListPtr data)
+void QtKvalobsAccess::onUpdate(const kvalobs::kvData& kvdata)
 {
-  nextData(*data, true);
+  receive(kvdata, true);
 }
 
 void QtKvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
-  bool addedStation = false;
+  AbstractUpdateListener* ul = updateListener();
   BOOST_FOREACH(const Sensor& s, sensors) {
     const std::pair<stations_with_data_t::iterator, bool> ins = mStationsWithData.insert(s.stationId);
-    addedStation |= ins.second;
+    if (ul and ins.second)
+      ul->addStation(s.stationId);
   }
-  if (addedStation)
-    reSubscribe();
 
   KvalobsAccess::findRange(sensors, limits);
-}
-
-void QtKvalobsAccess::reSubscribe()
-{
-  METLIBS_LOG_SCOPE();
-  mResubscribeTimer->start(100 /*ms*/);
-}
-
-void QtKvalobsAccess::doReSubscribe()
-{
-  if (not mKvServiceSubscriberID.empty()) {
-    METLIBS_LOG_TIME();
-    METLIBS_LOG_DEBUG("old id=" << mKvServiceSubscriberID);
-    qtKvService()->unsubscribe(mKvServiceSubscriberID);
-    mKvServiceSubscriberID = "";
-  }
-  
-  if (not mStationsWithData.empty()) {
-    kvservice::KvDataSubscribeInfoHelper dataSubscription;
-    {
-      METLIBS_LOG_TIME();
-      METLIBS_LOG_DEBUG(LOGVAL(mStationsWithData.size()));
-      BOOST_FOREACH(int sid, mStationsWithData) {
-        dataSubscription.addStationId(sid);
-      }
-    }
-    {
-      METLIBS_LOG_TIME();
-      mKvServiceSubscriberID = qtKvService()
-          ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));
-      METLIBS_LOG_DEBUG("new id=" << mKvServiceSubscriberID);
-    }
-  }
 }

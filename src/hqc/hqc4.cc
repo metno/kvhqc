@@ -28,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcMainWindow.hh"
+#include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
 #include "common/QtKvService.hh"
@@ -83,6 +84,7 @@ int main( int argc, char* argv[] )
   CorbaKvApp kvapp(argc, argv, confSec);
   KvServiceHelper kvsh;
   QtKvService qkvs;
+  KvalobsUpdateListener kul;
   KvMetaDataBuffer kvmdbuf;
   StInfoSysBuffer stinfobuf(confSec);
 
