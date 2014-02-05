@@ -12,14 +12,11 @@ struct listStat_t {
   std::string name;    // listStatName
   int stationid;       // listStatNum
   float altitude;      // listStatHoh
-  int environment;     // listStatType
   std::string fylke;   // listStatFylke
   std::string kommune; // listStatKommune
   int municipid;
   int wmonr;           // listStatWeb
   int pri;             // listStatPri
-  timeutil::ptime fromtime;
-  timeutil::ptime totime;
   bool coast;
 };
 typedef std::list<listStat_t> listStat_l;

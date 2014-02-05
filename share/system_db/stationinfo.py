@@ -4,7 +4,6 @@ def update(sdb):
     cur = sdb.cur
     cur.execute("DROP TABLE IF EXISTS stationinfo_priorities")
     cur.execute("DROP TABLE IF EXISTS stationinfo_coastal")
-    cur.execute("DROP TABLE IF EXISTS stationinfo_foreign")
 
     cur.execute("""CREATE TABLE stationinfo_priorities (
            stationid INTEGER PRIMARY KEY,
@@ -13,14 +12,6 @@ def update(sdb):
 
     cur.execute("""CREATE TABLE stationinfo_coastal (
            stationid INTEGER PRIMARY KEY
-    )""")
-
-    cur.execute("""CREATE TABLE stationinfo_foreign (
-            stationid    INTEGER PRIMARY KEY,
-            county       TEXT    NOT NULL,
-            municipality TEXT    NOT NULL,
-            is_coastal   BOOLEAN NOT NULL,
-            priority     INTEGER DEFAULT 0
     )""")
 
     pri1s_ids = [
@@ -80,14 +71,6 @@ def update(sdb):
             98800, 99710, 99720, 99735, 99737, 99754, 99765, 99790, 99821, 99950,
             99970 ]
 
-    foreignId = [
-            202000, 203600, 208000, 210400, 211000,
-            220600, 222200, 230800, 241800, 250000, 280700 ]
-    foreignName = [
-            u"NORDLAND", u"NORDLAND", u"FINNMARK", u"NORDLAND", u"NORDLAND",
-            u"NORD-TRØNDELAG", u"NORD-TRØNDELAG", u"SØR-TRØNDELAG", u"ØSTFOLD",
-            u"ØSTFOLD", u"FINNMARK" ]
-
     for sid in pri1s_ids:
         cur.execute("INSERT INTO stationinfo_priorities VALUES (?, 1)", (sid,))
 
@@ -100,5 +83,63 @@ def update(sdb):
     for sid in coast_ids:
         cur.execute("INSERT INTO stationinfo_coastal VALUES (?)", (sid,))
 
-    for sid,county in zip(foreignId, foreignName):
-        cur.execute("INSERT INTO stationinfo_foreign VALUES (?, ?, 'UTLANDET', 0, 0)", (sid, county))
+    ####################################################################
+    ####################################################################
+
+    # based on nordiske_kommuner.doc in email 2014-01-15T15:04
+    cur.execute("DROP TABLE IF EXISTS stationinfo_county_map")
+    cur.execute("""CREATE TABLE stationinfo_county_map (
+            norwegian_county     TEXT    NOT NULL,
+            countryid            INTEGER NOT NULL,
+            municip_divide       INTEGER NOT NULL,
+            municip_code_divided INTEGER NOT NULL
+    )""")
+
+    NO = 6010
+    SE = 6020
+    FI = 6030
+    RU = 6310
+    county_map = [
+        (u'ØSTFOLD', SE, 100,   14), # Västra Götaland
+        (u'ØSTFOLD', SE,   1, 1765), # Årjäng i 17 Värmland
+
+        (u'HEDMARK', SE,   1, 1737), # Torsby i 17 Värmland
+        (u'HEDMARK', SE,   1, 1766), # Sunne  i 17 Värmland
+        (u'HEDMARK', SE,   1, 1730), # Eda    i 17 Värmland
+        (u'HEDMARK', SE,   1, 1784), # Arvika i 17 Värmland
+        (u'HEDMARK', SE, 100,   20), # Dalarna
+
+        (u'SØR-TRØNDELAG', SE, 1, 2326), # Berg i 23 Jämtland
+        (u'SØR-TRØNDELAG', SE, 1, 2361), # Härjedalen i 23 Jämtland
+
+        (u'NORD-TRØNDELAG', SE, 1, 2313), # Strömsund i 23 Jämtland
+        (u'NORD-TRØNDELAG', SE, 1, 2309), # Krokom i 23 Jämtland
+        (u'NORD-TRØNDELAG', SE, 1, 2321), # Åre i 23 Jämtland
+
+        (u'NORDLAND', SE, 100, 24), # Västerbotten
+        (u'NORDLAND', SE, 1, 2523), # Gällivarre i 25 Norrbotten
+        (u'NORDLAND', SE, 1, 2510), # Jokkmokk i 25 Norrbotten
+        (u'NORDLAND', SE, 1, 2506), # Arjeplog i 25 Norrbotten
+
+        (u'TROMS', SE, 1, 2584), # Kiruna i 25 Norrbotten
+        (u'TROMS', FI, 1,   47), # Enontekiö i Lappland
+
+        (u'FINNMARK', FI, 1, 148), # Inari i Lappland
+        (u'FINNMARK', FI, 1, 890), # Utsjoki i Lappland
+
+        # derived from map, the only county neighboring Russia
+        (u'FINNMARK', RU, 1, 1),
+
+        # these are not really foreign
+        (u'ISHAVET',  NO, 100, 21),
+        (u'ISHAVET',  NO, 100, 22),
+        (u'MARITIME', NO, 100, 23),
+        (u'MARITIME', NO, 100, 24),
+        (u'MARITIME', NO, 100, 25),
+        (u'MARITIME', NO, 100, 26),
+        (u'MARITIME', NO, 100, 27),
+        (u'SKIP',     NO, 1, 2800),
+        ]
+
+    for ncfc in county_map:
+        cur.execute("INSERT INTO stationinfo_county_map VALUES (?, ?, ?, ?)", ncfc)

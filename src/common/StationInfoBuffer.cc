@@ -132,7 +132,6 @@ bool StationInfoBuffer::readFromStationFile()
   
         ls.name        = st.name();
         ls.altitude    = st.height();
-        ls.environment = st.environmentid();
         ls.wmonr       = st.wmonr();
           
         ls.municipid   = query.value(1).toInt();
@@ -141,8 +140,6 @@ bool StationInfoBuffer::readFromStationFile()
         ls.coast       = query.value(4).toBool();
         ls.pri         = query.value(5).toInt();
   
-        // FIXME fromtime and totime
-          
         listStat.push_back(ls);
       } catch (std::exception& e) {
         HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
