@@ -30,17 +30,6 @@ Q_SIGNALS:
   void kvHint(bool comingUp);
   void shutdown();
 
-  void internalKvDataNotify(kvservice::KvWhatListPtr);
-  void internalKvData(kvservice::KvObsDataListPtr);
-  void internalKvHint(bool);
-  void internalShutdown();
-
-private Q_SLOTS:
-  void internalSendKvDataNotify(kvservice::KvWhatListPtr);
-  void internalSendKvData(kvservice::KvObsDataListPtr);
-  void internalSendKvHint(bool);
-  void internalSendShutdown();
-
 protected:
   virtual void run();
 

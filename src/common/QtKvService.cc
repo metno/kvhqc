@@ -14,7 +14,7 @@
 namespace /* anonymous */ {
 
 inline kvservice::corba::CorbaKvApp* app() {
-    return static_cast<kvservice::corba::CorbaKvApp*>(kvservice::KvApp::kvApp);
+  return static_cast<kvservice::corba::CorbaKvApp*>(kvservice::KvApp::kvApp);
 }
 
 QtKvService* qkvs = 0;
@@ -22,39 +22,28 @@ QtKvService* qkvs = 0;
 } // namespace anonymous
 
 QtKvService::QtKvService()
-    : mStop(false)
-    , mStopped(false)
+  : mStop(false)
+  , mStopped(false)
 {
-    assert(not qkvs);
-    qkvs = this;
+  assert(not qkvs);
+  qkvs = this;
 
+  if (not QMetaType::type("kvservice::KvObsDataListPtr"))
     qRegisterMetaType<kvservice::KvObsDataListPtr>("kvservice::KvObsDataListPtr");
+  if (not QMetaType::type("kvservice::KvWhatListPtr"))
     qRegisterMetaType<kvservice::KvWhatListPtr>("kvservice::KvWhatListPtr");
 
-    // the signals "internalKvXyz" are emitted from the CORBA POA's thread
-    // the slots "internalSendKvXyz" are called from the main/GUI thread
-    connect(this, SIGNAL(internalKvData(kvservice::KvObsDataListPtr)),
-            this, SLOT(internalSendKvData(kvservice::KvObsDataListPtr)),
-            Qt::QueuedConnection);
-    connect(this, SIGNAL(internalKvDataNotify(kvservice::KvWhatListPtr)),
-            this, SLOT(internalSendKvDataNotify(kvservice::KvWhatListPtr)),
-            Qt::QueuedConnection);
-    connect(this, SIGNAL(internalKvHint(bool)),
-            this, SLOT(internalSendKvHint(bool)),
-            Qt::QueuedConnection);
-    connect(this, SIGNAL(internalShutdown()),
-            this, SLOT(internalSendShutdown()),
-            Qt::QueuedConnection);
-
-    start();
+  start();
 }
 
 QtKvService::~QtKvService()
 {
   METLIBS_LOG_SCOPE();
 
-  if (not mStopped)
+  if (not mStopped) {
+    HQC_LOG_WARN("kvService CORBA connector not yet stopped");
     stop();
+  }
 
   if (not mSubscriptions.empty())
     HQC_LOG_WARN("kvService CORBA connector destructor: "
@@ -75,42 +64,42 @@ QtKvService::~QtKvService()
 }
 
 QtKvService::SubscriberID QtKvService::connectSubscriptionSignal(const SubscriberID& subscriberId,
-                                                                 const char* emitted, const QObject *receiver, const char* member)
+    const char* emitted, const QObject *receiver, const char* member)
 {
-    if ((not subscriberId.empty()) and receiver and member) {
-        if (not connect(this, emitted, receiver, member)) {
-            HQC_LOG_ERROR("failed to connect signal, unsubscribing again");
-	    app()->unsubscribe(subscriberId);
-	    return "";
-        }
+  if ((not subscriberId.empty()) and receiver and member) {
+    if (not connect(this, emitted, receiver, member)) {
+      HQC_LOG_ERROR("failed to connect signal, unsubscribing again");
+      app()->unsubscribe(subscriberId);
+      return "";
     }
-    mSubscriptions.insert(Subscriptions_t::value_type(subscriberId, Subscriber(emitted, receiver, member)));
-    return subscriberId;
+  }
+  mSubscriptions.insert(Subscriptions_t::value_type(subscriberId, Subscriber(emitted, receiver, member)));
+  return subscriberId;
 }
 
 QtKvService::SubscriberID QtKvService::subscribeDataNotify(const kvservice::KvDataSubscribeInfoHelper &info,
-                                                           const QObject *receiver, const char *member)
+    const QObject *receiver, const char *member)
 {
-    METLIBS_LOG_SCOPE();
-    return connectSubscriptionSignal(app()->subscribeDataNotify(info, mSignalQueue),
-                                     SIGNAL(kvData(kvservice::KvWhatListPtr)),
-                                     receiver, member);
+  METLIBS_LOG_SCOPE();
+  return connectSubscriptionSignal(app()->subscribeDataNotify(info, mSignalQueue),
+      SIGNAL(kvData(kvservice::KvWhatListPtr)),
+      receiver, member);
 }
 
 QtKvService::SubscriberID QtKvService::subscribeData(const kvservice::KvDataSubscribeInfoHelper &info,
-                                                     const QObject *receiver, const char* member)
+    const QObject *receiver, const char* member)
 {
-    METLIBS_LOG_SCOPE();
-    return connectSubscriptionSignal(app()->subscribeData(info, mSignalQueue),
-                                     SIGNAL(kvData(kvservice::KvObsDataListPtr)),
-                                     receiver, member);
+  METLIBS_LOG_SCOPE();
+  return connectSubscriptionSignal(app()->subscribeData(info, mSignalQueue),
+      SIGNAL(kvData(kvservice::KvObsDataListPtr)),
+      receiver, member);
 }
 
 QtKvService::SubscriberID QtKvService::subscribeKvHint(const QObject *receiver, const char *member)
 {
-    METLIBS_LOG_SCOPE();
-    return connectSubscriptionSignal(app()->subscribeKvHint(mSignalQueue),
-                                     SIGNAL(kvHint(bool)), receiver, member);
+  METLIBS_LOG_SCOPE();
+  return connectSubscriptionSignal(app()->subscribeKvHint(mSignalQueue),
+      SIGNAL(kvHint(bool)), receiver, member);
 }
 
 void QtKvService::unsubscribe(const SubscriberID& subscriberId)
@@ -129,30 +118,6 @@ void QtKvService::unsubscribe(const SubscriberID& subscriberId)
   }
 }
 
-void QtKvService::internalSendKvDataNotify(kvservice::KvWhatListPtr data)
-{
-    // this function is run in the GUI thread
-    /*emit*/ kvDataNotify(data);
-}
-
-void QtKvService::internalSendKvData(kvservice::KvObsDataListPtr data)
-{
-    // this function is run in the GUI thread
-    /*emit*/ kvData(data);
-}
-
-void QtKvService::internalSendKvHint(bool c)
-{
-    // this function is run in the GUI thread
-    /*emit*/ kvHint(c);
-}
-
-void QtKvService::internalSendShutdown()
-{
-    // this function is run in the GUI thread
-    /*emit*/ shutdown();
-}
-
 void QtKvService::run()
 {
   METLIBS_LOG_SCOPE();
@@ -163,14 +128,14 @@ void QtKvService::run()
       continue;
     
     if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com.get())) {
-      /*emit*/ internalKvData(dataEvent->data());
+      /*emit*/ kvData(dataEvent->data());
     } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com.get())) {
-      /*emit*/ internalKvDataNotify(dataNotifyEvent->what());
+      /*emit*/ kvDataNotify(dataNotifyEvent->what());
     } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com.get())) {
-      /*emit*/ internalKvHint(hintEvent->upEvent());
+      /*emit*/ kvHint(hintEvent->upEvent());
     }
   }
-  /*emit*/ internalShutdown();
+  /*emit*/ shutdown();
 }
 
 void QtKvService::stop()
