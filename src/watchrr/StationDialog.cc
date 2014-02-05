@@ -103,10 +103,10 @@ bool StationDialog::checkStation()
     mSensor.stationId = stationId;
     QString name = "?";
     try {
-        const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
-        name = QString::fromStdString(station.name());
+      const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
+      name = QString::fromStdString(station.name());
     } catch (std::exception& e) {
-        HQC_LOG_WARN("Error in station lookup: " << e.what());
+      METLIBS_LOG_INFO("Station lookup problem, probably bad station number: " << e.what());
     }
     ui->labelStationInfo->setText(name);
     return true;
