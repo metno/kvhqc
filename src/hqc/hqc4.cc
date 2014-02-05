@@ -102,5 +102,7 @@ int main( int argc, char* argv[] )
   splash.finish(mw.get());
 
   // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
-  return hqc.exec();
+  const int r = hqc.exec();
+  qkvs.stop();
+  return r;
 }

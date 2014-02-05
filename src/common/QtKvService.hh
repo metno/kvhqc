@@ -23,6 +23,7 @@ public:
   SubscriberID subscribeKvHint(const QObject *receiver=0, const char *member=0);
 
   void unsubscribe(const SubscriberID& subscriberId);
+  void stop();
     
 Q_SIGNALS:
   void kvDataNotify(kvservice::KvWhatListPtr what);
@@ -34,7 +35,6 @@ protected:
   virtual void run();
 
 private:
-  void stop();
   SubscriberID connectSubscriptionSignal(const SubscriberID& subscriberId, const char* emitter,
       const QObject *receiver=0, const char* member=0);
 
