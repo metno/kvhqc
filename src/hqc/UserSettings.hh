@@ -28,6 +28,10 @@ private Q_SLOTS:
 private:
   void initDataOrigUI2Colors();
   void onOriginalColorUI2(QLabel* label, QColor& colorUI2);
+  void acceptDataOrigUI2Colors();
+
+  void initLanguage();
+  void acceptLanguage();
 
 private:
   std::auto_ptr<Ui::UserSettings> ui;

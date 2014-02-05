@@ -147,8 +147,6 @@ HqcMainWindow::HqcMainWindow()
   ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
   ui->dockHistory->setVisible(false);
 
-  createLanguageMenu();
-
   mJumpToObservation = new JumpToObservation(kda, this);
 
   mExtremesView = new ExtremesView(ui->dockExtremes);
@@ -251,42 +249,6 @@ HqcMainWindow::~HqcMainWindow()
   mExtremesView     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mDianaHelper      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-}
-
-void HqcMainWindow::createLanguageMenu()
-{
-  QActionGroup* langGroup = new QActionGroup(ui->menuLanguage);
-  langGroup->setExclusive(true);
-
-  ui->actionLanguageSystem->setData("");
-  langGroup->addAction(ui->actionLanguageSystem);
- 
-  connect(langGroup, SIGNAL(triggered(QAction*)), this, SLOT(slotLanguageChanged(QAction*)));
-
-  QString language = hqcApp->savedLanguage();
-
-  QStringList available = hqcApp->availableLanguages();
-  Q_FOREACH(QString l, available) {
-    QLocale locale(l);
-    QAction* action = new QAction(locale.nativeLanguageName(), this);
-    action->setCheckable(true);
-    action->setData(l);
- 
-    ui->menuLanguage->addAction(action);
-    langGroup->addAction(action);
- 
-    if (locale == language)
-      action->setChecked(true);
-  }
-}
-
-void HqcMainWindow::slotLanguageChanged(QAction* action)
-{
-  if (not action)
-    return;
-  
-  const QString l = action->data().toString();
-  hqcApp->saveLanguage(l);
 }
 
 void HqcMainWindow::changeEvent(QEvent *event)

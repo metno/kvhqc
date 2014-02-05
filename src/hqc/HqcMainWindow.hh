@@ -135,13 +135,10 @@ private Q_SLOTS:
   void onShowSimpleCorrections();
 
   void onJumpToObservation();
-  void slotLanguageChanged(QAction* action);
 
   void onTabCloseRequested(int index);
 
 private:
-  void createLanguageMenu();
-
   void navigateTo(const SensorTime& st);
   void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
