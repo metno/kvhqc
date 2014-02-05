@@ -192,6 +192,33 @@ float numericalValue(int paramId, float codeValue)
   return codeValue;
 }
 
+int nearestStationId(float lon, float lat, float maxDistanceKm)
+{
+  int nearestStation = -1;
+  float nearestDistance = 0;
+
+  const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+  
+  try {
+    BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
+      const int sid = s.stationID();
+      if (sid < 60 or sid >= 100000)
+        continue;
+      const float d = Helpers::distance(s.lon(), s.lat(), lon, lat);
+      if (d > maxDistanceKm)
+        continue;
+      if (nearestStation < 0 or nearestDistance > d) {
+        nearestDistance = d;
+        nearestStation = sid;
+      }
+    }
+  } catch (std::exception& e) {
+    METLIBS_LOG_WARN("exception while searching nearest station: " << e.what());
+    nearestStation = -1;
+  }
+  return nearestStation;
+}
+
 void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeRange& time, int maxNeighbors)
 {
   METLIBS_LOG_SCOPE();

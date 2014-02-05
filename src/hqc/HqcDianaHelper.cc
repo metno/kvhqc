@@ -5,6 +5,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
 
+#include <puTools/miStringFunctions.h>
 #include <qUtilities/ClientButton.h>
 #include <qUtilities/miMessage.h>
 #include <qUtilities/QLetterCommands.h>
@@ -19,6 +20,9 @@
 #define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.HqcDianaHelper"
 #include "common/ObsLogging.hh"
+
+// temporarily disable sending any data
+#define DO_NOT_SEND_ANY_DATA
 
 namespace /* anonymous */ {
 
@@ -370,10 +374,43 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
     }
   } else if (letter.command == qmstrings::timechanged and mEnabled) {
     handleDianaStationAndTime(0, letter.common);
+  } else if (letter.command == qmstrings::positions and mEnabled) {
+    if (letter.commondesc == "dataset" and letter.data.size() == 1) {
+      typedef std::vector<std::string> string_v;
+      string_v description, data;
+      boost::split(description, letter.description,  boost::is_any_of(":"));
+      boost::split(data,        letter.data.front(), boost::is_any_of(":"));
+
+      const int idx_lat = std::find(description.begin(), description.end(), "lat") - description.begin();
+      const int idx_lon = std::find(description.begin(), description.end(), "lon") - description.begin();
+      if (description.size() == 2 and idx_lon >= 0 and idx_lat >= 0) {
+        const float lon = miutil::to_float(data[idx_lon]);
+        const float lat = miutil::to_float(data[idx_lat]);
+        handlePosition(lon, lat);
+        return;
+      }
+    }
+    METLIBS_LOG_INFO("Unable to handle positions message: '"
+        << "====================\n" << letter.content() << "====================");
   } else {
     METLIBS_LOG_INFO("Diana sent a command that HQC does not understand:\n"
         << "====================\n" << letter.content() << "====================");
   }
+}
+
+bool HqcDianaHelper::switchToKvalobsStationId(int stationId)
+{
+  if (stationId == 0 or stationId == mDianaSensorTime.sensor.stationId)
+    return false;
+
+  BOOST_FOREACH(const Sensor& s, mSensors) {
+    // TODO how to identify the correct sensor?
+    if (s.stationId == stationId and s.paramId == mDianaSensorTime.sensor.paramId) {
+      mDianaSensorTime.sensor = s;
+      return true;
+    }
+  }
+  return false;
 }
 
 void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string& time_txt)
@@ -397,18 +434,25 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
   } else {
     METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
   }
-  if (stationId != 0 and stationId != mDianaSensorTime.sensor.stationId) {
-    BOOST_FOREACH(const Sensor& s, mSensors) {
-      // TODO how to identify the correct sensor?
-      if (s.stationId == stationId and s.paramId == mDianaSensorTime.sensor.paramId) {
-        sendSignal = true;
-        mDianaSensorTime.sensor = s;
-        break;
-      }
-    }
-  }
+  sendSignal |= switchToKvalobsStationId(stationId);
 
   if (sendSignal) {
+    METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
+    /*emit*/ signalNavigateTo(mDianaSensorTime);
+  }
+}
+
+void HqcDianaHelper::handlePosition(float lon, float lat)
+{
+  METLIBS_LOG_SCOPE();
+  if (not mEnabled)
+    return;
+  const int nearest = Helpers::nearestStationId(lon, lat);
+  METLIBS_LOG_DEBUG(LOGVAL(nearest) << LOGVAL(lon) << LOGVAL(lat));
+  if (nearest <= 0)
+    return;
+
+  if (switchToKvalobsStationId(nearest)) {
     METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
     /*emit*/ signalNavigateTo(mDianaSensorTime);
   }
@@ -430,6 +474,7 @@ void HqcDianaHelper::applyQuickMenu()
 
 void HqcDianaHelper::sendStation()
 {
+#ifndef DO_NOT_SEND_ANY_DATA
   METLIBS_LOG_SCOPE();
   if (not mEnabled or not mDianaConnected)
     return;
@@ -437,6 +482,7 @@ void HqcDianaHelper::sendStation()
   m.command = qmstrings::station;
   m.common  = "S" + boost::lexical_cast<std::string>(mDianaSensorTime.sensor.stationId);
   sendMessage(m);
+#endif // DO_NOT_SEND_ANY_DATA
 }
 
 void HqcDianaHelper::sendTime()
@@ -552,6 +598,7 @@ std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, 
 
 void HqcDianaHelper::sendObservations()
 {
+#ifndef DO_NOT_SEND_ANY_DATA
   METLIBS_LOG_SCOPE();
   const timeutil::ptime& t = mDianaSensorTime.time;
   if (not mEnabled or not mDianaConnected or mSensors.empty() or t.is_not_a_date_time())
@@ -621,10 +668,12 @@ void HqcDianaHelper::sendObservations()
       sendTimes();
     mDianaNeedsHqcInit = false;
   }
+#endif // DO_NOT_SEND_ANY_DATA
 }
 
 void HqcDianaHelper::sendSelectedParam()
 {
+#ifndef DO_NOT_SEND_ANY_DATA
   METLIBS_LOG_SCOPE();
   if (not mEnabled or not mDianaConnected)
     return;
@@ -641,6 +690,7 @@ void HqcDianaHelper::sendSelectedParam()
   m.commondesc = "diParam";
   m.common     = it->second.dianaName;
   sendMessage(m);
+#endif // DO_NOT_SEND_ANY_DATA
 }
 
 void HqcDianaHelper::sendMessage(miMessage& m)

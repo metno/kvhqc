@@ -64,6 +64,8 @@ private:
   int stationid;
 };
 
+int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
+
 void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeRange& time, int maxNeighbors);
 
 bool aggregatedParameter(int paramFrom, int paramTo);

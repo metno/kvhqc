@@ -75,7 +75,9 @@ private:
   void sendTimes();
   void sendTime();
   bool isKnownTime(const timeutil::ptime& time) const;
+  bool switchToKvalobsStationId(int stationId);
   void handleDianaStationAndTime(int stationId, const std::string& time_txt);
+  void handlePosition(float lon, float lat);
 
 private:
   DianaShowDialog* mDianaConfigDialog;
