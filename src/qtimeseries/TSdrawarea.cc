@@ -40,19 +40,15 @@
 
 #include "glText/glTextQtTexture.h"
 
-#include <Qt>
-
-//#ifdef XFONTS
-//#include <glText/glTextX.h>
-//#else
-//#include <glText/glTextTT.h>
-//#endif
+//#include <Qt>
 
 #define MILOGGER_CATEGORY "qTimeseries.TSdrawarea"
 #include "miLogger/miLogging.h"
 
 //extern
 symbolMaker wsymbols;
+
+static const POptions::Colour GRIDCOLOUR(0xD0, 0xD0, 0xD0);
 
 using namespace TimeSeriesData;
 
@@ -74,13 +70,6 @@ TSdrawarea::~TSdrawarea()
 void TSdrawarea::prepare(const TimeSeriesData::TSPlot& tsp)
 {
   if (!Initialised) {
-//    cout << "Preparing FONTS" << endl;
-//#ifdef XFONTS
-//    glText* gltext = new glTextX();
-//#else
-//    glText* gltext= new glTextTT();
-//#endif
-
     glText* gltext = new glTextQtTexture();
     gltext->testDefineFonts();
     FM.addFontCollection(gltext, XFONTSET);
@@ -218,7 +207,7 @@ void TSdrawarea::fillElement(Primitive& p, Layout& l,
   //OBS
   l.yaid = 0;
   l.axisgrid = false;
-  l.gridcolor = ptColor("GREY25");
+  l.gridcolor = pets_colour(GRIDCOLOUR);
   l.gridstyle = DOTTED;
 
   l.axisRectangle = true;
@@ -494,7 +483,7 @@ bool TSdrawarea::prepareData()
   // AXIS-GRID -----------
   if (mainplotoptions.drawgrid) {
     curl = onel;
-    curl.color = ptColor("GREY25");
+    curl.color = pets_colour(GRIDCOLOUR);
     curl.linePattern = DOTTED;
     curl.patternInColour = true;
     curl.useTimes = mainplotoptions.gridTimes;

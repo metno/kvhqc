@@ -2,7 +2,6 @@
 #ifndef TimeSeriesAdd_hh
 #define TimeSeriesAdd_hh 1
 
-#include "TimeSeriesView.hh"
 #include "common/Sensor.hh"
 
 #include <QtGui/QDialog>

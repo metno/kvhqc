@@ -71,11 +71,6 @@ Colour::Colour(const std::string& name_)
     memberCopy(cmap[lname]);
 }
 
-Colour::Colour(uchar_t r, uchar_t g, uchar_t b, uchar_t a)
-{
-  set(r,g,b,a);
-}
-
 Colour::Colour(const std::string& name_,
     uchar_t r, uchar_t g, uchar_t b, uchar_t a)
 {
@@ -100,10 +95,6 @@ Colour& Colour::operator=(const Colour &rhs)
     memberCopy(rhs);
 
   return *this;
-}
-
-bool Colour::operator==(const Colour &rhs) const{
-  return v==rhs.v;
 }
 
 void Colour::memberCopy(const Colour& rhs)

@@ -46,12 +46,20 @@ public:
     alpha =3
   };
   enum {maxv= 255};
-  struct values{
+  struct values {
     uchar_t rgba[4];
-    inline values();
-    inline values& operator=(const values &rhs);
-    inline bool operator==(const values &rhs) const ;
+
+    values()
+      { rgba[0] = rgba[1] = rgba[2] = rgba[3] = 0; }
+
+    bool operator==(const values &rhs) const
+      { return (rgba[0]==rhs.rgba[0]
+            && rgba[1]==rhs.rgba[1]
+            && rgba[2]==rhs.rgba[2]
+            && rgba[3]==rhs.rgba[3]);
+      }
   };
+
 private:
   std::string name;
   values v;
@@ -64,14 +72,19 @@ public:
   Colour(const std::string& name_);
   Colour(const values& va);
   Colour(uint32 hexv=0);
-  Colour(uchar_t r, uchar_t g, uchar_t b, uchar_t a=maxv);
+  Colour(uchar_t r, uchar_t g, uchar_t b, uchar_t a=maxv)
+    { set(r,g,b,a); }
+
   Colour(const std::string& name_,
       uchar_t r, uchar_t g, uchar_t b, uchar_t a=maxv);
+
   Colour(const Colour &rhs);
   ~Colour();
 
   Colour& operator=(const Colour &rhs);
-  bool operator==(const Colour &rhs) const;
+
+  bool operator==(const Colour &rhs) const
+    { return v == rhs.v; }
 
   // static functions for static colour-map
   static void define(const std::string&, uchar_t r, uchar_t g,
@@ -106,30 +119,6 @@ public:
 
   friend std::ostream& operator<<(std::ostream& out, const Colour& rhs);
 };
-
-// inline Colour::values member functions
-
-inline Colour::values::values(){
-  rgba[0]=0; rgba[1]=0;
-  rgba[2]=0; rgba[3]=0;
-}
-
-inline Colour::values& Colour::values::operator=(const Colour::values &rhs){
-  if (this != &rhs){
-    rgba[0]= rhs.rgba[0];
-    rgba[1]= rhs.rgba[1];
-    rgba[2]= rhs.rgba[2];
-    rgba[3]= rhs.rgba[3];
-  }
-  return *this;
-}
-
-inline bool Colour::values::operator==(const Colour::values &rhs) const {
-  return (rgba[0]==rhs.rgba[0] &&
-      rgba[1]==rhs.rgba[1] &&
-      rgba[2]==rhs.rgba[2] &&
-      rgba[3]==rhs.rgba[3]);
-}
 
 } // namespace POptions
 
