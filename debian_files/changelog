@@ -1,3 +1,10 @@
+kvhqc (3.3.3-1) unstable; urgency=low
+
+  * TimeSeriesView: grid in light grey
+  * use new metlibs packages; include qtimeseries
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 06 Feb 2014 14:57:32 +0100
+
 kvhqc (3.3.2-1) unstable; urgency=low
 
   * refuse duplicate stationids from kvalobs' station table
