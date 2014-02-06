@@ -5,9 +5,9 @@
 #include "common/ModelData.hh"
 
 #include <puTools/miStringFunctions.h>
-#include <qUtilities/ClientButton.h>
-#include <qUtilities/miMessage.h>
-#include <qUtilities/QLetterCommands.h>
+#include <coserver/ClientButton.h>
+#include <coserver/miMessage.h>
+#include <coserver/QLetterCommands.h>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>

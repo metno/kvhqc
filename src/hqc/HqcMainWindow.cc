@@ -80,7 +80,7 @@
 #else
 #include <qUtilities/qtHelpDialog.h>
 #endif
-#include <qUtilities/ClientButton.h>
+#include <coserver/ClientButton.h>
 
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>

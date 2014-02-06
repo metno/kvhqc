@@ -27,13 +27,6 @@ SET(hqc_SOURCES
   MissingView.cc
   MissingTableModel.cc
   UserSettings.cc
-#  missing/MissingView.cc
-#  missing/MissingSelectorWidget.cc
-#  missing/MissingObservationWidget.cc
-#  missing/StationOrderedMissingDataModel.cc
-#  missing/internal/MissingList.cc
-#  missing/internal/findMissingStations.cc
-#  missing/internal/MissingDataReceiver.cc
 )
 
 QT4_ADD_TRANSLATION(hqc_QM
@@ -107,11 +100,12 @@ SET(HQC_COMMON_LIBS
   weather
   watchrr
   common
+  qtimeseries
   util_gui
   common_gui
   util
   ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBSQT_LIBRARIES} 
+  ${PC_METLIBS_LIBRARIES} 
   ${PC_LOG4CPP_LIBRARIES}
 )
 

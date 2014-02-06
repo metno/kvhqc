@@ -94,7 +94,7 @@
   <customwidget>
    <class>TSglwidget</class>
    <extends>QWidget</extends>
-   <header>qTimeseries/TSglwidget.h</header>
+   <header>qtimeseries/TSglwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

@@ -33,8 +33,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define TIMESERIESDIALOG_H
 
 #include "util/timeutil.hh"
+#include "qtimeseries/PlotOptions.h"
 
-#include <qTimeseries/PlotOptions.h>
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvStation.h>
 #include <kvalobs/kvDbGate.h>

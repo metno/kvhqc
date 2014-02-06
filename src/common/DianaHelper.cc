@@ -8,9 +8,9 @@
 #define signals Q_SIGNALS
 #define slots Q_SLOTS
 #endif
-#include <qUtilities/ClientButton.h>
-#include <qUtilities/miMessage.h>
-#include <qUtilities/QLetterCommands.h>
+#include <coserver/ClientButton.h>
+#include <coserver/miMessage.h>
+#include <coserver/QLetterCommands.h>
 
 #include <boost/foreach.hpp>
 

@@ -3,8 +3,7 @@
 #define TimeSeriesView_hh 1
 
 #include "common/DataView.hh"
-
-#include <qTimeseries/PlotOptions.h>
+#include "qtimeseries/PlotOptions.h"
 
 #include <QtGui/QWidget>
 

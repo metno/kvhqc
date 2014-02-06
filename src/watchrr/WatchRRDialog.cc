@@ -22,7 +22,7 @@
 #define signals Q_SIGNALS
 #define slots Q_SLOTS
 #endif
-#include <qUtilities/ClientButton.h>
+#include <coserver/ClientButton.h>
 #include <QtCore/qsettings.h>
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>

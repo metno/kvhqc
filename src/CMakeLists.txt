@@ -15,22 +15,25 @@ LINK_LIBRARIES(${QT_LIBRARIES})
 
 #########################################################################
 #########################################################################
+
+### FIXME this is not working properly, maybe because CMake is caching something
+### see http://www.itk.org/Wiki/CMake:How_To_Find_Libraries
+
 # kvalobs
+PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=2.7.2 libkvalobs_decodeutility)
 
-PKG_CHECK_MODULES(PC_KVCPP libkvcpp>=2.7.2 libkvalobs_decodeutility)
-
-#########################################################################
 # metlibs
+PKG_CHECK_MODULES(PC_METLIBS REQUIRED
+  tsData>=5.0.0
+  pets2>=5.0.0
+  puMet>=5.0.0
+  qUtilities>=5.0.0
+  puTools>=5.0.0
+  miLogger>=5.0.0
+  coserver>=1.0.1
+)
 
-PKG_CHECK_MODULES(PC_METLIBSQT REQUIRED qTimeseries qUtilities puTools miLogger)
-SET(PC_METLIBSQT_LIBRARIES ${PC_METLIBSQT_LIBRARIES} -lGL)
-IF("${PC_METLIBSQT_qUtilities_VERSION}" VERSION_LESS "4.9.4")
-  ADD_DEFINITIONS(-DMETLIBS_BEFORE_4_9_5)
-ENDIF()
-
-#########################################################################
 # log4cpp
-
 PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
 
 #########################################################################
@@ -42,9 +45,9 @@ LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_THREA
 #########################################################################
 # includes/defines for all pkg-config libs
 
-INCLUDE_DIRECTORIES(${PC_KVCPP_INCLUDE_DIRS} ${PC_METLIBSQT_INCLUDE_DIRS})
-ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBSQT_CFLAGS_OTHER} ${PC_LOG4CPP_CFLAGS_OTHER})
-LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBSQT_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
+INCLUDE_DIRECTORIES(${PC_KVCPP_INCLUDE_DIRS} ${PC_METLIBS_INCLUDE_DIRS})
+ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBS_CFLAGS_OTHER} ${PC_LOG4CPP_CFLAGS_OTHER})
+LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBS_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
 
 #########################################################################
 #########################################################################
@@ -70,6 +73,7 @@ CONFIGURE_FILE(common/config.h.in config.h)
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
 
 ADD_SUBDIRECTORY(util)
+ADD_SUBDIRECTORY(qtimeseries)
 ADD_SUBDIRECTORY(common)
 ADD_SUBDIRECTORY(watchrr)
 ADD_SUBDIRECTORY(weather)
