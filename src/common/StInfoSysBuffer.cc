@@ -81,7 +81,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
         " AND municip_code_divided = (? / municip_divide)");
   
     QSqlQuery query(QSqlDatabase::database(QSQLNAME_REMOTE));
-    if (not query.exec("SELECT m.municipid, m.countryid, m.code, m.name FROM municip m ORDER BY municipid")) {
+    if (not query.exec("SELECT m.municipid, m.countryid, m.code, m.name FROM municip m ORDER BY m.municipid")) {
       HQC_LOG_ERROR("cannot read municip table from stinfosys: " << query.lastError().text());
       return false;
     }
@@ -176,7 +176,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
     ls.coast       = (station2coast.find(stationid) != station2coast.end());
     
     if (kv_stationids.find(stationid) != kv_stationids.end()) {
-      HQC_LOG_WARN("kvalobs has duplicate stationid " << stationid);
+      METLIBS_LOG_INFO("kvalobs has duplicate stationid " << stationid << ", ignored");
     } else {
       listStat.push_back(ls);
       kv_stationids.insert(stationid);
