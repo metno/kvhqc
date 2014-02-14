@@ -210,7 +210,7 @@ void TimeSeriesView::navigateTo(const SensorTime& st)
   METLIBS_LOG_TIME();
   if (mVisible)
     doNavigateTo(st);
-  else if (st.valid() and not eq_SensorTime()(mPendingSensorTime, st))
+  else if (st.valid())
     mPendingSensorTime = st;
 }
 
@@ -515,7 +515,7 @@ void TimeSeriesView::updatePlot()
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
     if (idx >= (int)mPlotOptions.size()) {
-      HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid");
+      HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid, mST=" << mSensorTime << " s=" << sensor);
       break;
     }
 

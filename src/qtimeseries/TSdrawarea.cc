@@ -40,13 +40,11 @@
 
 #include "glText/glTextQtTexture.h"
 
-//#include <Qt>
-
 #define MILOGGER_CATEGORY "qTimeseries.TSdrawarea"
 #include "miLogger/miLogging.h"
 
 //extern
-symbolMaker wsymbols;
+static symbolMaker wsymbols;
 
 static const POptions::Colour GRIDCOLOUR(0xD0, 0xD0, 0xD0);
 
@@ -153,8 +151,7 @@ ptFillStyle TSdrawarea::pets_fillstyle(const POptions::Filltype& ft)
   return fs;
 }
 
-void TSdrawarea::fillElement(Primitive& p, Layout& l,
-    const POptions::PlotOptions& opt)
+void TSdrawarea::fillElement(Primitive& p, Layout& l, const POptions::PlotOptions& opt)
 {
   //static int plotorder = 1;
 
@@ -251,7 +248,6 @@ void TSdrawarea::fillElement(Primitive& p, Layout& l,
     l.axis = RIGHTLEFT;
 
   p.layout = l;
-
 }
 
 bool TSdrawarea::prepareData()
@@ -279,26 +275,20 @@ bool TSdrawarea::prepareData()
   diaStyle.clear();
   diaStyle.setMargins(150, 150, 50, 50);
 
-  if (petsdata)
-    delete petsdata;
+  delete petsdata;
   petsdata = new ptDiagramData(wsymbols);
-
-  POptions::PlotOptions mainplotoptions, plotoptions;
 
   // check if we have any data
   if (!tsplot.dataOK())
     return false;
 
-  tsList tslist = tsplot.tserieslist();
-  mainplotoptions = tsplot.plotoptions();
+  const tsList& tslist = tsplot.tserieslist();
+  const POptions::PlotOptions& mainplotoptions = tsplot.plotoptions();
 
   // fetch union of times in plot
   std::set<miutil::miTime> timesunion = tsplot.times();
   //miutil::miTime start = *(timesunion.begin());
   //miutil::miTime end = *(timesunion.rbegin());
-
-  // diagram title
-  std::string atitle = mainplotoptions.name;
 
   // DEFAULT PRIMITIVE/LAYOUT
   onel.label = "";
@@ -496,27 +486,6 @@ bool TSdrawarea::prepareData()
     diaStyle.addPrimitive(curp);
   }
 
-  // The TOP title -----------
-  curl = onel;
-  curl.text = atitle;
-  curl.align = CENTER;
-  curl.color = pets_colour(mainplotoptions.textcolour);//ptColor("RED");
-  curl.font = HEADER2;
-  curl.height = 30;
-  curl.spacing = SMALL;
-
-  curp = onep;
-  curp.type = TEXT;
-  curp.id = ID_UNDEF;
-  curp.mother = DIAGRAM;
-  curp.plotAll = false;
-  curp.order = order;
-  order += 10;
-  curp.enabled = true;
-  curp.layout = curl;
-
-  diaStyle.addPrimitive(curp);
-
   // set background color for plot
   diaStyle.backgroundColor(pets_colour(mainplotoptions.fillcolour));
 
@@ -525,20 +494,20 @@ bool TSdrawarea::prepareData()
   for (int i = 0; i < n; i++) {
     // TimeSeries
     if (tslist[i].dataOK()) {
-      std::set<miutil::miTime> times = tslist[i].times();
+      const std::set<miutil::miTime>& times = tslist[i].times();
       int nPoints = times.size();
       if (nPoints < 1)
         continue;
       // add timeline
-      std::vector<miutil::miTime> vt(times.begin(), times.end());
-      int tlindex = petsdata->addTimeLine(vt);
+      const std::vector<miutil::miTime> vt(times.begin(), times.end());
+      const int tlindex = petsdata->addTimeLine(vt);
 
       // fetch data - and make a WeatherParameter
       WeatherParameter wp;
       ParId parid;
 
-      DataList dlist = tslist[i].values();
-      plotoptions = tslist[i].plotoptions();
+      const DataList& dlist = tslist[i].values();
+      const POptions::PlotOptions& plotoptions = tslist[i].plotoptions();
 
       // Parameter-ID from paramid and stationid
       parid.alias = miutil::from_number(tslist[i].paramid()) + "_" + miutil::from_number(tslist[i].stationid());
@@ -622,8 +591,7 @@ bool TSdrawarea::prepareDiagram()
 {
   if (!petsdata)
     return (false);
-  if (diagram)
-    delete diagram;
+  delete diagram;
   diagram = new ptDiagram(&diaStyle);
 
   if (!diagram->attachData(petsdata))
@@ -635,8 +603,7 @@ bool TSdrawarea::prepareDiagram()
 
   diagram->setViewport(width, height, glwidth, glheight);
 
-  glClearColor(bgColor.colTable[0], bgColor.colTable[1], bgColor.colTable[2],
-      1.0);
+  glClearColor(bgColor.colTable[0], bgColor.colTable[1], bgColor.colTable[2], 1.0);
 
   // set correct weathersymbols
   miSymbol tmpSymbol;
