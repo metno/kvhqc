@@ -13,6 +13,7 @@
 #include "common/gui/ObsDelegate.hh"
 #include "util/Helpers.hh"
 #include "util/gui/BusyIndicator.hh"
+#include "util/gui/UiHelpers.hh"
 
 #include "ui_watchrr_main.h"
 #include "ui_watchrr_redist.h"
@@ -64,7 +65,7 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
 
   show();
 
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
   BusyIndicator wait;
 
   initializeRR24Data();
@@ -80,16 +81,16 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
   ui->labelInfoRR->setText("");
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   ui->tableNeighborRR24->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableNeighborRR24->verticalHeader()->setFont(mono);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   ui->tableNeighborCards->setModel(mNeighborCards.get());
   ui->tableNeighborCards->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
   ui->dateNeighborCards->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
@@ -150,11 +151,11 @@ void WatchRRDialog::initializeRR24Data()
   mEditableTime = mTime;
   mDA->newVersion();
   RR24::analyse(mDA, mSensor, mEditableTime);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
   FCC::analyse(mDA, mSensor, mEditableTime);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
   mStationCard->setRR24TimeRange(mEditableTime);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 }
 
 void WatchRRDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)

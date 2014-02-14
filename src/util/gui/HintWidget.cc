@@ -1,6 +1,8 @@
 
 #include "HintWidget.hh"
 
+#include "UiHelpers.hh"
+
 #include <QtCore/QTimer>
 #include <QtGui/QAbstractTextDocumentLayout>
 #include <QtGui/QApplication>
@@ -46,7 +48,7 @@ void HintWidget::addHint(const QString& hint)
     const int timeout = std::min(2500, (int) (length * readingSpeed));
     mTime.start();
     mTimer->start(timeout);
-    qApp->processEvents();
+    Helpers::processNonUserEvents();
 }
 
 void HintWidget::updateText()

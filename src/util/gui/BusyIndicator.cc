@@ -29,27 +29,24 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "BusyIndicator.hh"
 
+#include "UiHelpers.hh"
+
 #include <QtGui/QApplication>
 #include <QtGui/QCursor>
 #include <QtGui/QMainWindow>
 #include <QtGui/QStatusBar>
 #include <QtGui/QWidget>
 
-static void processSomeEvents()
-{
-  qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
 BusyIndicator::BusyIndicator(bool wait)
 {
   qApp->setOverrideCursor(wait ? Qt::WaitCursor : Qt::BusyCursor);
-  processSomeEvents();
+  Helpers::processNonUserEvents();
 }
 
 BusyIndicator::~BusyIndicator()
 {
   qApp->restoreOverrideCursor();
-  processSomeEvents();
+  Helpers::processNonUserEvents();
 }
 
 // ========================================================================
@@ -60,13 +57,13 @@ DisableGUI::DisableGUI(QWidget* widget)
 {
   if (mWasEnabled)
     mWidget->setEnabled(false);
-  processSomeEvents();
+  Helpers::processNonUserEvents();
 }
 DisableGUI::~DisableGUI()
 {
   if (mWasEnabled)
     mWidget->setEnabled(true);
-  processSomeEvents();
+  Helpers::processNonUserEvents();
 }
 
 // ========================================================================
@@ -76,7 +73,7 @@ BusyStatus::BusyStatus(QMainWindow* mw, const QString& message, bool wait)
   , BusyIndicator(wait)
 {
   mw->statusBar()->showMessage(message);
-  processSomeEvents();
+  Helpers::processNonUserEvents();
 }
 
 BusyStatus::~BusyStatus()

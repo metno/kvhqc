@@ -15,6 +15,7 @@ SET(util_gui_SOURCES
   MiDateTimeEdit.cc
   QSmallTable.hh
   ToolTipStringListModel.cc
+  UiHelpers.cc
 )
 
 QT4_WRAP_CPP(util_gui_MOC

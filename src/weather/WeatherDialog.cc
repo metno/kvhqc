@@ -6,6 +6,7 @@
 #include "common/gui/ObsDelegate.hh"
 #include "util/Helpers.hh"
 #include "util/gui/BusyIndicator.hh"
+#include "util/gui/UiHelpers.hh"
 
 #include <QtGui/QMessageBox>
 #include <QtCore/qsettings.h>
@@ -46,7 +47,7 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
   setStationInfoText();
   ui->labelInfoRR->setText("");
 
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
   BusyIndicator wait;
 
   QFont mono("Monospace");
@@ -57,21 +58,21 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
   ui->tableCorrected->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableCorrected->setItemDelegate(new ObsDelegate(this));
   ui->tableCorrected->verticalHeader()->setFont(mono);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   ui->tableOriginal->setModel(mModelOriginal.get());
   ui->tableOriginal->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableOriginal->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableOriginal->setItemDelegate(new ObsDelegate(this));
   ui->tableOriginal->verticalHeader()->setFont(mono);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   ui->tableFlags->setModel(mModelFlags.get());
   ui->tableFlags->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableFlags->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableFlags->setItemDelegate(new ObsDelegate(this));
   ui->tableFlags->verticalHeader()->setFont(mono);
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);

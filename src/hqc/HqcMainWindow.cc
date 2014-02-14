@@ -66,6 +66,7 @@
 #include "util/gui/EtaProgressDialog.hh"
 #include "util/gui/HintWidget.hh"
 #include "util/gui/QNoCloseMdiSubWindow.hh"
+#include "util/gui/UiHelpers.hh"
 #include "watchrr/StationDialog.hh"
 #include "watchrr/WatchRRDialog.hh"
 #include "weather/WeatherDialog.hh"
@@ -280,7 +281,7 @@ void HqcMainWindow::startup(const QString& captionSuffix)
   readSettings();
   show();
   checkVersionSettings();
-  qApp->processEvents();
+  Helpers::processNonUserEvents();
 
   statusBar()->message( tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000 );
   mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
