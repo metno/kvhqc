@@ -25,6 +25,8 @@
 
 namespace /* anonymous */ {
 
+const size_t MAX_TIME_CONFIRMATION_TESTS = 2;
+
 /*
   Convert to "Diana-value" of range check flag
 */
@@ -209,11 +211,7 @@ HqcDianaHelper::HqcDianaHelper(ClientButton* pluginB)
   mClientButton->useLabel(true);
   mClientButton->connectToServer();
 
-#ifdef METLIBS_BEFORE_4_9_5
-  connect(mClientButton, SIGNAL(receivedMessage(miMessage&)), SLOT(processLetterOld(miMessage&)));
-#else
   connect(mClientButton, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
-#endif
   connect(mClientButton, SIGNAL(addressListChanged()), this, SLOT(handleAddressListChanged()));
   connect(mClientButton, SIGNAL(connectionClosed()),   this, SLOT(handleConnectionClosed()));
 
@@ -222,7 +220,7 @@ HqcDianaHelper::HqcDianaHelper(ClientButton* pluginB)
 
 void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(limits));
   DataView::setSensorsAndTimes(sensors, limits);
 
   mDianaNeedsHqcInit = true;
@@ -232,6 +230,7 @@ void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRang
 
   ObsAccess::TimeSet allTimes;
   BOOST_FOREACH(const Sensor& s, sensors) {
+    METLIBS_LOG_DEBUG(LOGVAL(s));
     if (s.stationId > 0)
       mDA->addAllTimes(allTimes, s, limits);
     else
@@ -274,6 +273,7 @@ void HqcDianaHelper::setEnabled(bool enabled)
   mEnabled = enabled;
   if (mEnabled and mDianaConnected) {
     mDianaNeedsHqcInit = true;
+    mTimesAwaitingConfirmation.clear();
     sendTimes();
     sendTime();
   }
@@ -283,10 +283,12 @@ void HqcDianaHelper::handleAddressListChanged()
 {
   METLIBS_LOG_SCOPE();
   const bool dc = (mClientButton->clientTypeExist("Diana"));
+  METLIBS_LOG_DEBUG(LOGVAL(dc) << LOGVAL(mDianaConnected));
   if (dc == mDianaConnected)
     return;
 
   mDianaConnected = dc;
+  mTimesAwaitingConfirmation.clear();
   if (mDianaConnected) {
     mDianaNeedsHqcInit = true;
     sendTimes();
@@ -299,6 +301,7 @@ void HqcDianaHelper::handleConnectionClosed()
 {
   METLIBS_LOG_SCOPE();
   mDianaConnected = false;
+  mTimesAwaitingConfirmation.clear();
   /*emit*/ connectedToDiana(false);
 }
 
@@ -323,7 +326,7 @@ void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
 
 void HqcDianaHelper::sendTimes()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(mEnabled) << LOGVAL(mDianaConnected) << LOGVAL(mAllTimes.size()));
   if (not mEnabled or not mDianaConnected or mAllTimes.empty())
     return;
 
@@ -336,13 +339,6 @@ void HqcDianaHelper::sendTimes()
       m.data.push_back(timeutil::to_iso_extended_string(t));
   sendMessage(m);
 }
-
-#ifdef METLIBS_BEFORE_4_9_5
-void HqcDianaHelper::processLetterOld(miMessage& letter)
-{
-  processLetter(letter);
-}
-#endif
 
 void HqcDianaHelper::processLetter(const miMessage& letter)
 {
@@ -425,12 +421,30 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     mDianaNeedsHqcInit = true;
     sendTimes();
     sendTime();
-  } else if (time != mDianaSensorTime.time) {
-    mDianaSensorTime.time = time;
-    sendObservations();
-    sendSignal = true;
   } else {
-    METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
+    const TimesAwaitingConfirmation_t::iterator itB = mTimesAwaitingConfirmation.begin(),
+        itE = mTimesAwaitingConfirmation.end();
+    TimesAwaitingConfirmation_t::iterator itS = itB;
+    bool foundTC = false;
+    for (size_t count = 0; not foundTC and count < MAX_TIME_CONFIRMATION_TESTS and itS != itE; ++count) {
+      METLIBS_LOG_DEBUG("comparing time '" << time << "' with confirmation time[" << count << "]=" << *itS);
+      if (*itS == time)
+        foundTC = true;
+      // always advance iterator, we use it in erase later
+      ++itS;
+    }
+    mDianaSensorTime.time = time;
+    if (foundTC) {
+      METLIBS_LOG_DEBUG("time '" << time << "' found in confirmation list");
+      mTimesAwaitingConfirmation.erase(itB, itS);
+    } else {
+      METLIBS_LOG_DEBUG("time '" << time << "' not found in confirmation list, assuming it is from a click in diana");
+      mTimesAwaitingConfirmation.clear();
+      
+      METLIBS_LOG_DEBUG("re-sending observations" << LOGVAL(mDianaSensorTime));
+      sendObservations();
+      sendSignal = true;
+    }
   }
   sendSignal |= switchToKvalobsStationId(stationId);
 
@@ -488,6 +502,9 @@ void HqcDianaHelper::sendTime()
   METLIBS_LOG_SCOPE();
   if (not mEnabled or not mDianaConnected or not isKnownTime(mDianaSensorTime.time))
     return;
+
+  mTimesAwaitingConfirmation.push_back(mDianaSensorTime.time);
+  METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime.time) << LOGVAL(mTimesAwaitingConfirmation.size()));
 
   miMessage m;
   m.command = qmstrings::settime;
@@ -655,11 +672,7 @@ void HqcDianaHelper::sendObservations()
     pLetter.common = timeutil::to_iso_extended_string(mDianaSensorTime.time) + ",synop";
 
     pLetter.description = synopDescription.str();
-#ifdef METLIBS_BEFORE_4_9_5
-    pLetter.data = std::vector<miutil::miString>(synopData.begin(), synopData.end());
-#else
     pLetter.data = synopData;
-#endif
     sendMessage(pLetter);
 
     if (mDianaNeedsHqcInit)

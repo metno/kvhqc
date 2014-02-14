@@ -7,8 +7,9 @@
 #include <QtCore/QMap>
 #include <QtCore/QObject>
 
-#include <set>
+#include <deque>
 #include <map>
+#include <set>
 #include <vector>
 
 class ClientButton;
@@ -36,15 +37,10 @@ private Q_SLOTS:
   void handleAddressListChanged();
   void handleConnectionClosed();
 
-#ifdef METLIBS_BEFORE_4_9_5
-  void processLetterOld(miMessage& letter);
-#endif
   void processLetter(const miMessage& letter);
 
 Q_SIGNALS:
   void connectedToDiana(bool);
-  void receivedStation(int stationid);
-  void receivedTime(const timeutil::ptime& time);
 
 protected:
   virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
@@ -92,6 +88,17 @@ private:
   std::set<timeutil::ptime> mAllTimes;
 
   SendPars_t mSendPars;
+
+  typedef std::deque<timeutil::ptime> TimesAwaitingConfirmation_t;
+
+  /*! diana sends back all times we set via "settime" with a
+    "timechanged" message, but this is delayed quite a bit if diana
+    needs to fetch data; therefore we keep a list of times we have
+    sent but for which diana has not yet sent a "timechanged" message;
+    when we then receive a "timechanged" message and it is at the
+    beginning of this list (first few), we do not inform other views
+    but instead delete the time from this list */
+  TimesAwaitingConfirmation_t mTimesAwaitingConfirmation;
 };
 
 #endif // HqcDianaHelper_hh

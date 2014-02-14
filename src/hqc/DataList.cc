@@ -93,7 +93,7 @@ void DataList::navigateTo(const SensorTime& st)
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
   bool scroll = (not idxs.empty());
-  BOOST_FOREACH(const QModelIndex idx, idxs) {
+  BOOST_FOREACH(const QModelIndex& idx, idxs) {
     selection.select(idx, idx);
     if (idx == currentIdx)
       scroll = false;
