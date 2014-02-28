@@ -7,65 +7,66 @@
 
 #include <QtGui/QBrush>
 
+#include <boost/foreach.hpp>
+
 #define MILOGGER_CATEGORY "kvhqc.DataListModel"
 #include "util/HqcLogging.hh"
 
 DataListModel::DataListModel(EditAccessPtr eda, const TimeRange& limits)
   : ObsTableModel(eda, limits, 0)
+  , mFilterByTimestep(true)
   , mCenter(0)
 {
+  updateTimes();
 }
 
 DataListModel::~DataListModel()
 {
 }
 
-void DataListModel::insertColumn(int before, ObsColumnPtr c)
+void DataListModel::setFilterByTimestep(bool fbts)
 {
-  ObsTableModel::insertColumn(before, c);
-
-  ObsAccess::TimeSet oldTimes(mTimes.begin(), mTimes.end()), newTimes(oldTimes);
-  mDA->addAllTimes(newTimes, c->sensor(), mTime);
-
-  Times_t addedTimes;
-  std::set_difference(newTimes.begin(), newTimes.end(), oldTimes.begin(), oldTimes.end(),
-      std::back_inserter<Times_t>(addedTimes));
-  if (not addedTimes.empty()) {
-    const unsigned int aS = addedTimes.size();
-    unsigned int a = 0;
-    for (unsigned int t = 0; a < aS and t < mTimes.size(); ++t) {
-      if (mTimes[t] <= addedTimes[a])
-        continue;
-      unsigned int aE = a+1;
-      while (aE < aS && mTimes[t] > addedTimes[aE])
-        aE += 1;
-
-      beginInsertR(t, t+aE-a-1);
-      mTimes.insert(mTimes.begin() + t, addedTimes.begin() + a, addedTimes.begin() + aE);
-      endInsertR();
-      a = aE;
-    }
-    if (a < addedTimes.size()) {
-      const unsigned int tS = mTimes.size();
-      beginInsertR(tS, tS+aS-a-1);
-      mTimes.insert(mTimes.end(), addedTimes.begin() + a, addedTimes.end());
-      endInsertR();
-    }
+  if (fbts != mFilterByTimestep) {
+    mFilterByTimestep = fbts;
+    beginResetModel();
+    updateTimes();
+    endResetModel();
   }
-}
+}  
 
-void DataListModel::removeColumn(int at)
+void DataListModel::updateTimes()
 {
-  ObsTableModel::removeColumn(at);
+  METLIBS_LOG_SCOPE();
+  ObsTableModel::updateTimes();
 
-  // TODO update mTimes
+  ObsAccess::TimeSet oldTimes(mTimes.begin(), mTimes.end()), newTimes;
+  for (int i=0; i<columnCount(QModelIndex()); ++i) {
+    ObsColumnPtr c = getColumn(i);
+    if (c)
+      mDA->addAllTimes(newTimes, c->sensor(), mTime);
+  }
+
+  mTimes = Times_t(newTimes.begin(), newTimes.end());
+
+  if (getTimeStep() > 0 and mFilterByTimestep) {
+    mTimesFiltered.clear();
+    ObsAccess::TimeSet filterTimes;
+    BOOST_FOREACH(const timeutil::ptime& t, newTimes) {
+      const int s = (t - mTime0).total_seconds();
+      METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(mTime0) << LOGVAL(s) << LOGVAL(mTimeStep));
+      if ((s % mTimeStep) == 0)
+        mTimesFiltered.push_back(t);
+    }
+  } else {
+    mTimesFiltered = mTimes;
+  }
 }
 
 timeutil::ptime DataListModel::timeAtRow(int row) const
 {
-  if (getTimeStep() > 0)
+  if (getTimeStep() > 0 and not mFilterByTimestep)
     return ObsTableModel::timeAtRow(row);
-  return mTimes.at(row);
+  return mTimesFiltered.at(row);
 }
 
 QModelIndexList DataListModel::findIndexes(const SensorTime& st)
@@ -88,19 +89,19 @@ QModelIndexList DataListModel::findIndexes(const SensorTime& st)
 
 int DataListModel::rowAtTime(const timeutil::ptime& time) const
 {
-  if (getTimeStep() > 0)
+  if (getTimeStep() > 0 and not mFilterByTimestep)
     return ObsTableModel::rowAtTime(time);
 
-  Times_t::const_iterator it = std::lower_bound(mTimes.begin(), mTimes.end(), time);
+  Times_t::const_iterator it = std::lower_bound(mTimesFiltered.begin(), mTimesFiltered.end(), time);
   if (it == mTimes.end() or *it != time)
     return -1;
-  return (it - mTimes.begin());
+  return (it - mTimesFiltered.begin());
 }
 
 int DataListModel::rowOrColumnCount(bool timeDirection) const
 {
-  if (timeDirection == mTimeInRows and getTimeStep() <= 0)
-    return mTimes.size();
+  if (timeDirection == mTimeInRows and not (getTimeStep() > 0 and not mFilterByTimestep))
+    return mTimesFiltered.size();
   return ObsTableModel::rowOrColumnCount(timeDirection);
 }
 

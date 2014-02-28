@@ -34,6 +34,7 @@ public:
 private Q_SLOTS:
   void onButtonSaveAs();
   void onTimeStepChanged(int index);
+  void onCheckFilter(bool filterByTimestep);
   virtual void onCurrentChanged(const QModelIndex& current);
   virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 

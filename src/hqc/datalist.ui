@@ -49,6 +49,20 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="checkFilterTimes">
+       <property name="toolTip">
+        <string>If checked, filter obstimes from the database with the time step.
+If unchecked, show all times in the range even if not in the database.</string>
+       </property>
+       <property name="text">
+        <string>Filter</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="horizontalSpacer_2">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -116,12 +130,28 @@
    <slot>onTimeStepChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>155</x>
-     <y>9</y>
+     <x>151</x>
+     <y>11</y>
     </hint>
     <hint type="destinationlabel">
      <x>189</x>
      <y>30</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkFilterTimes</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>DataList</receiver>
+   <slot>onCheckFilter(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>206</x>
+     <y>9</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>105</x>
+     <y>29</y>
     </hint>
    </hints>
   </connection>
@@ -134,5 +164,6 @@
   <slot>onRejectQC2()</slot>
   <slot>onButtonResetColumns()</slot>
   <slot>onTimeStepChanged(int)</slot>
+  <slot>onCheckFilter(bool)</slot>
  </slots>
 </ui>

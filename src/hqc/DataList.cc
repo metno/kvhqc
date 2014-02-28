@@ -56,9 +56,16 @@ DataList::DataList(QWidget* parent)
   ui->table->setItemDelegate(new ObsDelegate(this));
 
   ui->comboTimeStep->addItem(tr("none"), QVariant(0));
-  const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
-  for (int i=0; i<NHOURS; ++i)
-    ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]), QVariant(HOURS[i]*60*60));
+  { const int NMINUTES = 5, MINUTES[NMINUTES] = { 1, 5, 10, 15, 30 };
+    for (int i=0; i<NMINUTES; ++i)
+      ui->comboTimeStep->addItem(tr("%1 min").arg(MINUTES[i]), QVariant(MINUTES[i]*60));
+  }
+
+  { const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
+    for (int i=0; i<NHOURS; ++i)
+      ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]), QVariant(HOURS[i]*60*60));
+  }
+  ui->checkFilterTimes->setEnabled(false);
 
   connect(ui->table, SIGNAL(signalCurrentChanged(const QModelIndex&)),
       this, SLOT(onCurrentChanged(const QModelIndex&)));
@@ -134,6 +141,11 @@ void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
 }
 
+void DataList::onCheckFilter(bool filterByTimestep)
+{
+  mTableModel->setFilterByTimestep(filterByTimestep);
+}
+
 void DataList::onTimeStepChanged(int index)
 {
   if (mTableModel.get()) {
@@ -143,6 +155,7 @@ void DataList::onTimeStepChanged(int index)
     else
       step = ui->comboTimeStep->itemData(index).toInt();
     mTableModel->setTimeStep(step);
+    ui->checkFilterTimes->setEnabled(step > 0);
   }
 }
 

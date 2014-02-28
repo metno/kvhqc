@@ -228,36 +228,53 @@
         <translation>Schrittweite für Zeitstempel in der Datanliste.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="67"/>
+        <location filename="datalist.ui" line="54"/>
+        <source>If checked, filter obstimes from the database with the time step.
+If unchecked, show all times in the range even if not in the database.</source>
+        <translation>Wenn ausgewählt: filtere Zeitpunkte aus der Datenbank mit dem Zeitschritt.
+Sonst: zeige alle Zeiten im Zeitraum.</translation>
+    </message>
+    <message>
+        <location filename="datalist.ui" line="58"/>
+        <source>Filter</source>
+        <translation>Filter</translation>
+    </message>
+    <message>
+        <location filename="datalist.ui" line="81"/>
         <source>Save selected (or all) data to a spreadsheet file in CSV format.</source>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Ausgewählte (oder alle) Werte als Tabelle im CSV-Format speichern.</translation>
     </message>
     <message utf8="true">
-        <location filename="datalist.ui" line="70"/>
+        <location filename="datalist.ui" line="84"/>
         <source>Save…</source>
         <translation>Speichern…</translation>
     </message>
     <message>
         <location filename="DataList.cc" line="58"/>
-        <location filename="DataList.cc" line="75"/>
+        <location filename="DataList.cc" line="82"/>
         <source>none</source>
         <translation>ohne</translation>
     </message>
     <message>
         <location filename="DataList.cc" line="61"/>
-        <location filename="DataList.cc" line="77"/>
+        <source>%1 min</source>
+        <translation>%1 min</translation>
+    </message>
+    <message>
+        <location filename="DataList.cc" line="66"/>
+        <location filename="DataList.cc" line="84"/>
         <source>%1 h</source>
         <oldsource>6 h</oldsource>
         <translation>%1 h</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="151"/>
+        <location filename="DataList.cc" line="164"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="153"/>
+        <location filename="DataList.cc" line="166"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -362,7 +379,7 @@
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="../common/DataListModel.cc" line="140"/>
+        <location filename="../common/DataListModel.cc" line="141"/>
         <source>Distance: %1km</source>
         <translation>Abstand: %1km</translation>
     </message>
@@ -1076,9 +1093,9 @@
     <name>HqcMainWindow</name>
     <message>
         <location filename="mainwindow.ui" line="14"/>
-        <location filename="HqcMainWindow.cc" line="123"/>
-        <location filename="HqcMainWindow.cc" line="229"/>
-        <location filename="HqcMainWindow.cc" line="257"/>
+        <location filename="HqcMainWindow.cc" line="124"/>
+        <location filename="HqcMainWindow.cc" line="237"/>
+        <location filename="HqcMainWindow.cc" line="265"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
@@ -1088,238 +1105,238 @@
         <translation>&amp;Datei</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="93"/>
+        <location filename="mainwindow.ui" line="87"/>
         <source>&amp;Help</source>
         <translation>&amp;Hilfe</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="105"/>
+        <location filename="mainwindow.ui" line="99"/>
         <source>Edit</source>
         <translation>Änderung</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="130"/>
+        <location filename="mainwindow.ui" line="124"/>
         <source>Error List</source>
         <oldsource>Errors</oldsource>
         <translation>Fehlerliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="151"/>
+        <location filename="mainwindow.ui" line="145"/>
         <source>Corrections</source>
         <translation>Korrekturen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="166"/>
+        <location filename="mainwindow.ui" line="160"/>
         <source>Change History</source>
         <translation>Änderungs-Historie</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="184"/>
-        <location filename="mainwindow.ui" line="433"/>
+        <location filename="mainwindow.ui" line="178"/>
+        <location filename="mainwindow.ui" line="427"/>
         <source>Undo</source>
         <translation>Undo</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="191"/>
-        <location filename="mainwindow.ui" line="447"/>
+        <location filename="mainwindow.ui" line="185"/>
+        <location filename="mainwindow.ui" line="441"/>
         <source>Redo</source>
         <translation>Redo</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="198"/>
-        <location filename="mainwindow.ui" line="252"/>
+        <location filename="mainwindow.ui" line="192"/>
+        <location filename="mainwindow.ui" line="246"/>
         <source>Save</source>
         <translation>Speichern</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="240"/>
+        <location filename="mainwindow.ui" line="234"/>
         <source>Missing Observations</source>
         <translation>Fehlende Messungen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="255"/>
+        <location filename="mainwindow.ui" line="249"/>
         <source>Ctrl+S</source>
         <translation>Ctrl+S</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="269"/>
+        <location filename="mainwindow.ui" line="263"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="274"/>
+        <location filename="mainwindow.ui" line="268"/>
         <source>Data &amp;list and Error list</source>
         <translation>Daten&amp;liste und Fehlerliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="277"/>
+        <location filename="mainwindow.ui" line="271"/>
         <source>Produce datalist and error list</source>
         <translation>Erstelle Daten- und Fehler-Liste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="280"/>
+        <location filename="mainwindow.ui" line="274"/>
         <source>Ctrl+L</source>
         <translation>Ctrl+L</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="285"/>
+        <location filename="mainwindow.ui" line="279"/>
         <source>&amp;Error list</source>
         <translation>&amp;Fehlerliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="288"/>
+        <location filename="mainwindow.ui" line="282"/>
         <source>Ctrl+F</source>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="293"/>
+        <location filename="mainwindow.ui" line="287"/>
         <source>&amp;Data list</source>
         <translation>&amp;Datenliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="298"/>
+        <location filename="mainwindow.ui" line="292"/>
         <source>&amp;Error list salen</source>
         <translation>&amp;Fehlerliste Salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="301"/>
+        <location filename="mainwindow.ui" line="295"/>
         <source>Alt+S</source>
         <translation>Alt+S</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="306"/>
+        <location filename="mainwindow.ui" line="300"/>
         <source>&amp;Precipitation</source>
         <translation>&amp;Niederschlag</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="314"/>
+        <location filename="mainwindow.ui" line="308"/>
         <source>&amp;Weather</source>
         <translation>&amp;Wetter</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="346"/>
+        <location filename="mainwindow.ui" line="340"/>
         <source>&amp;Open Kro…</source>
         <translation>&amp;Kro öffnen…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="349"/>
+        <location filename="mainwindow.ui" line="343"/>
         <source>Open kro in browser</source>
         <translation>Kro in browser öffnen</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="354"/>
+        <location filename="mainwindow.ui" line="348"/>
         <source>&amp;User manual…</source>
         <translation>Ben&amp;utzeranleitung…</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="357"/>
+        <location filename="mainwindow.ui" line="351"/>
         <source>User manual…</source>
         <translation>Benutzeranleitung…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="360"/>
+        <location filename="mainwindow.ui" line="354"/>
         <source>Show user manual in browser</source>
         <translation>Benutzeranleitung in brower öffnen</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="368"/>
+        <location filename="mainwindow.ui" line="362"/>
         <source>&amp;Flags…</source>
         <translation>&amp;Flags…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="371"/>
+        <location filename="mainwindow.ui" line="365"/>
         <source>Show flag explanations in browser</source>
         <translation>Erklärung der flags in browser öffnen</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="379"/>
+        <location filename="mainwindow.ui" line="373"/>
         <source>&amp;Parameters…</source>
         <translation>&amp;Parameter…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="382"/>
+        <location filename="mainwindow.ui" line="376"/>
         <source>Show parameter explanation in browser</source>
         <translation>Erklärung der Parameter in browser öffnen</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="411"/>
+        <location filename="mainwindow.ui" line="405"/>
         <source>&amp;News…</source>
         <translation>&amp;Neuheiten…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="416"/>
-        <location filename="mainwindow.ui" line="419"/>
+        <location filename="mainwindow.ui" line="410"/>
+        <location filename="mainwindow.ui" line="413"/>
         <source>Error+data list Salen</source>
         <oldsource>Produce errorlist and datalist for Salen</oldsource>
         <translation>Daten- und Fehler-Liste Salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="422"/>
+        <location filename="mainwindow.ui" line="416"/>
         <source>Build error list and data list for Salen</source>
         <translation>Erstelle Daten- und Fehler-Liste für Salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="425"/>
+        <location filename="mainwindow.ui" line="419"/>
         <source>Ctrl+Shift+L</source>
         <translation>Ctrl+Shift+L</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="436"/>
+        <location filename="mainwindow.ui" line="430"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo the last change. &lt;span style=&quot; font-weight:600;&quot;&gt;WARNING:&lt;/span&gt; This may be many changes at once if you edited in WatchRR or WatchWeather or accepted / rejected a time series.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Letzte Änderung rückgängig machen. &lt;span style=&quot; font-weight:600;&quot;&gt;WARNUNG:&lt;/span&gt; Das können viele Änderungen auf einmal sein, wenn die Änderungen in WatchRR, WatchWeather gemacht wurden oder eine Zeitreihe geändert wurde.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="439"/>
+        <location filename="mainwindow.ui" line="433"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="450"/>
+        <location filename="mainwindow.ui" line="444"/>
         <source>Redo a change.</source>
         <translation>Änderung wiederherstellen.</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="453"/>
+        <location filename="mainwindow.ui" line="447"/>
         <source>Ctrl+Shift+Z</source>
         <translation>Ctrl+Shift+Z</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="458"/>
+        <location filename="mainwindow.ui" line="452"/>
         <source>Show Error List</source>
         <translation>Fehlerliste zeigen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="463"/>
+        <location filename="mainwindow.ui" line="457"/>
         <source>Show Changes</source>
         <translation>Änderungen zeigen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="468"/>
+        <location filename="mainwindow.ui" line="462"/>
         <source>Show Simple Corrections</source>
         <translation>Korrektur zeigen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="473"/>
+        <location filename="mainwindow.ui" line="467"/>
         <source>Show Extreme Values</source>
         <translation>Zeige Extremwerte</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="478"/>
+        <location filename="mainwindow.ui" line="472"/>
         <source>Jump to Observation…</source>
         <translation>Springe zu Observation…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="483"/>
+        <location filename="mainwindow.ui" line="477"/>
         <source>Show Missing Observations</source>
         <translation>Zeige fehlende Messungen</translation>
     </message>
     <message utf8="true">
-        <location filename="mainwindow.ui" line="488"/>
+        <location filename="mainwindow.ui" line="482"/>
         <source>Settings…</source>
         <translation>Einstellungen…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="491"/>
+        <location filename="mainwindow.ui" line="485"/>
         <source>Change user settings</source>
         <translation>Einstellungen anpassen</translation>
     </message>
@@ -1329,166 +1346,166 @@
         <translation>&amp;Anzeige</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="309"/>
+        <location filename="mainwindow.ui" line="303"/>
         <source>Ctrl+R</source>
         <translation>Ctrl+R</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="263"/>
-        <location filename="mainwindow.ui" line="266"/>
+        <location filename="mainwindow.ui" line="257"/>
+        <location filename="mainwindow.ui" line="260"/>
         <source>Print</source>
         <translation>Drucken</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="75"/>
+        <location filename="mainwindow.ui" line="69"/>
         <source>Data</source>
         <translation>Daten</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="228"/>
+        <location filename="mainwindow.ui" line="222"/>
         <source>Extreme Values</source>
         <translation>Extremwerte</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="317"/>
+        <location filename="mainwindow.ui" line="311"/>
         <source>Ctrl+V</source>
         <translation>Ctrl+V</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="322"/>
+        <location filename="mainwindow.ui" line="316"/>
         <source>Te&amp;xt data</source>
         <translation>Te&amp;xtdaten</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="325"/>
+        <location filename="mainwindow.ui" line="319"/>
         <source>Alt+X</source>
         <translation>Alt+X</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="330"/>
+        <location filename="mainwindow.ui" line="324"/>
         <source>Re&amp;jected</source>
         <translation>Re&amp;jectDecode</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="333"/>
+        <location filename="mainwindow.ui" line="327"/>
         <source>Ctrl+J</source>
         <translation>Ctrl+J</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="341"/>
+        <location filename="mainwindow.ui" line="335"/>
         <source>&amp;Diana presentation</source>
         <translation>&amp;Diana-Präsentation</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="363"/>
+        <location filename="mainwindow.ui" line="357"/>
         <source>F1</source>
         <translation>F1</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="374"/>
+        <location filename="mainwindow.ui" line="368"/>
         <source>F2</source>
         <translation>F2</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="385"/>
+        <location filename="mainwindow.ui" line="379"/>
         <source>F3</source>
         <translation>F3</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="390"/>
+        <location filename="mainwindow.ui" line="384"/>
         <source>&amp;About Hqc</source>
         <translation>&amp;Über Hqc</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="398"/>
+        <location filename="mainwindow.ui" line="392"/>
         <source>About &amp;Qt</source>
         <translation>Über &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="406"/>
+        <location filename="mainwindow.ui" line="400"/>
         <source>&amp;Screenshot</source>
         <translation>&amp;Bildschirmfoto</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="285"/>
+        <location filename="HqcMainWindow.cc" line="293"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Willkommen zu kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="301"/>
+        <location filename="HqcMainWindow.cc" line="309"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
         <translation>&lt;h1&gt;Diana-Verbindung&lt;/h1&gt;Kein Kontakt mit diana! Sie sollten hqc und diana mit dem Kommando-server verbinden, indem Sie den Knopf unten rechts drücken.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="311"/>
+        <location filename="HqcMainWindow.cc" line="319"/>
         <source>No stations selected! At least one statione must be chosen.</source>
         <translation>Keine Stationen ausgwählt. Mindestens eine Station muss gewählt werden.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="321"/>
+        <location filename="HqcMainWindow.cc" line="329"/>
         <source>Weather Element</source>
         <translation>Wetter-Element</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="310"/>
+        <location filename="HqcMainWindow.cc" line="318"/>
         <source>Station Selection</source>
         <translation>Stastionswahl</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="322"/>
+        <location filename="HqcMainWindow.cc" line="330"/>
         <source>No weather element selected! At least one has to be chosen.</source>
         <translation>Kein Wetter-Element ausgewählt. Mindestens eins muss ausgewählt werden.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="371"/>
+        <location filename="HqcMainWindow.cc" line="379"/>
         <source>Building data list...</source>
         <translation>Baue Datenliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="364"/>
+        <location filename="HqcMainWindow.cc" line="372"/>
         <source>Building error list...</source>
         <translation>Baue Fehlerliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="211"/>
-        <location filename="HqcMainWindow.cc" line="253"/>
+        <location filename="HqcMainWindow.cc" line="219"/>
+        <location filename="HqcMainWindow.cc" line="261"/>
         <source>Auto List/Series</source>
         <translation>Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="230"/>
-        <location filename="HqcMainWindow.cc" line="258"/>
+        <location filename="HqcMainWindow.cc" line="238"/>
+        <location filename="HqcMainWindow.cc" line="266"/>
         <source>Fetching data, please wait ...</source>
         <translation>Hole Daten, bitte warten ...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="336"/>
+        <location filename="HqcMainWindow.cc" line="344"/>
         <source>Building station list...</source>
         <translation>Baue Stationsliste…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="255"/>
-        <location filename="HqcMainWindow.cc" line="377"/>
+        <location filename="HqcMainWindow.cc" line="263"/>
+        <location filename="HqcMainWindow.cc" line="385"/>
         <source>Selected Data</source>
         <translation>Ausgewählte Daten</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="433"/>
+        <location filename="HqcMainWindow.cc" line="441"/>
         <source>No RejectDecode</source>
         <translation>Kein RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="433"/>
+        <location filename="HqcMainWindow.cc" line="441"/>
         <source>Could not read rejectdecode.</source>
         <translation>Kann rejectdecode nicht lesen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="701"/>
+        <location filename="HqcMainWindow.cc" line="709"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="661"/>
+        <location filename="HqcMainWindow.cc" line="669"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1499,67 +1516,67 @@ You are using HQC version %1.</source>
 Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="699"/>
+        <location filename="HqcMainWindow.cc" line="707"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Daten Speichern</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="700"/>
+        <location filename="HqcMainWindow.cc" line="708"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="704"/>
+        <location filename="HqcMainWindow.cc" line="712"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
         <translation>&lt;h1&gt;Daten gespeichert&lt;/h1&gt;Ihre Änderungen wurden gespeichert.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="713"/>
+        <location filename="HqcMainWindow.cc" line="721"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-Datenbank erreichbar</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="716"/>
+        <location filename="HqcMainWindow.cc" line="724"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-Datenbank nicht erreichbar</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="717"/>
+        <location filename="HqcMainWindow.cc" line="725"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
         <translation>&lt;h1&gt;Kvalobs nicht erreichbar&lt;/h1&gt;Datenbank derzeit nicht erreichbar! Sie können warten und es später erneut versuchen, müssen aber damit rechnen, dass Änderungen verloren gehen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="544"/>
+        <location filename="HqcMainWindow.cc" line="552"/>
         <source>Print screenshot</source>
         <translation>Bildschirmfoto ausdrucken</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="568"/>
+        <location filename="HqcMainWindow.cc" line="576"/>
         <source>HQC - Update</source>
         <translation>HQC - Aktualisierung</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="569"/>
+        <location filename="HqcMainWindow.cc" line="577"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="660"/>
+        <location filename="HqcMainWindow.cc" line="668"/>
         <source>About Hqc</source>
         <translation>Über Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="747"/>
+        <location filename="HqcMainWindow.cc" line="755"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Vorbereitung der Daten für Station %1 um %2, bitte warten…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="820"/>
+        <location filename="HqcMainWindow.cc" line="828"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="821"/>
+        <location filename="HqcMainWindow.cc" line="829"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>

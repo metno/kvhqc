@@ -21,7 +21,7 @@ ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time, int step)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(mTime) << LOGVAL(mTimeStep));
-  updateRoundedTimes();
+  updateTimes();
 }
 
 ObsTableModel::~ObsTableModel()
@@ -34,13 +34,16 @@ ObsTableModel::~ObsTableModel()
 
 void ObsTableModel::insertColumn(int before, ObsColumnPtr c)
 {
-  beginInsertC(before, before);
+  beginResetModel();
+  //beginInsertC(before, before);
 
   mColumns.insert(mColumns.begin() + before, c);
   if (c)
     c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+  updateTimes();
 
-  endInsertC();
+  //endInsertC();
+  endResetModel();
 }
 
 void ObsTableModel::moveColumn(int from, int to)
@@ -64,15 +67,18 @@ void ObsTableModel::moveColumn(int from, int to)
 
 void ObsTableModel::removeColumn(int at)
 {
-  beginRemoveC(at, at);
+  beginResetModel();
+  //beginRemoveC(at, at);
 
   const ObsColumns_t::iterator it = mColumns.begin() + at;
   ObsColumnPtr c = *it;
   if (c)
     c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
   mColumns.erase(it);
+  updateTimes();
 
-  endRemoveC();
+  //endRemoveC();
+  endResetModel();
 }
 
 void ObsTableModel::setTimeStep(int step)
@@ -82,11 +88,11 @@ void ObsTableModel::setTimeStep(int step)
 
   beginResetModel();
   mTimeStep = step;
-  updateRoundedTimes();
+  updateTimes();
   endResetModel();
 }
 
-void ObsTableModel::updateRoundedTimes()
+void ObsTableModel::updateTimes()
 {
   METLIBS_LOG_SCOPE();
 

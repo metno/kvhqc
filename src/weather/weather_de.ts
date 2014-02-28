@@ -44,27 +44,27 @@
         <translation>Wiederherstellen</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="97"/>
+        <location filename="WeatherDialog.cc" line="98"/>
         <source>Station %1 [%2]</source>
         <translation>Station %1 [%2]</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="124"/>
+        <location filename="WeatherDialog.cc" line="125"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Leider konnten Ihre Änderungen nicht gespeichert werden, sie sind verloren gegangen!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="125"/>
+        <location filename="WeatherDialog.cc" line="126"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="138"/>
+        <location filename="WeatherDialog.cc" line="139"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-Daten, die Sie bearbeiten, würden geändert. Sie müssen von vorne beginnen. Sorry!</translation>
     </message>
     <message>
-        <location filename="WeatherDialog.cc" line="139"/>
+        <location filename="WeatherDialog.cc" line="140"/>
         <source>Quit and Discard changes</source>
         <translation>Beenden und Änderungen verwerfen</translation>
     </message>

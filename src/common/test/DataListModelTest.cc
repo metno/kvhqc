@@ -31,6 +31,7 @@ TEST(DataListModelTest, RowCountRounded)
   FakeKvApp fa;
   const TimeRange time(s2t("2013-04-02 01:00:00"), s2t("2013-04-03 01:00:00"));
   boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
+  dlm->setFilterByTimestep(false);
 
   EXPECT_EQ(25, dlm->rowCount(QModelIndex()));
 
@@ -50,6 +51,7 @@ TEST(DataListModelTest, RowCount6)
   FakeKvApp fa;
   const TimeRange time(s2t("2013-04-02 06:00:00"), s2t("2013-04-03 06:00:00"));
   boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
+  dlm->setFilterByTimestep(false);
 
   EXPECT_EQ(25, dlm->rowCount(QModelIndex()));
 
@@ -60,4 +62,19 @@ TEST(DataListModelTest, RowCount6)
   // no rounding
   dlm->setTimeStep(24*60*60);
   EXPECT_EQ(2, dlm->rowCount(QModelIndex()));
+}
+
+TEST(DataListModelTest, RowCountFiltered)
+{
+  FakeKvApp fa;
+  const TimeRange time(s2t("2013-04-09 18:00:00"), s2t("2013-04-09 23:00:00"));
+  boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
+
+  EXPECT_EQ(4, dlm->rowCount(QModelIndex()));
+
+  dlm->setTimeStep(60*60);
+  EXPECT_EQ(4, dlm->rowCount(QModelIndex()));
+
+  dlm->setFilterByTimestep(false);
+  EXPECT_EQ(6, dlm->rowCount(QModelIndex()));
 }

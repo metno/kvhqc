@@ -63,6 +63,8 @@ protected:
   virtual void endRemoveR();
   virtual void endRemoveC();
 
+  virtual void updateTimes();
+
 private:
   typedef std::vector<ObsColumnPtr> ObsColumns_t;
 
@@ -72,7 +74,6 @@ private:
     { return mTimeInRows ? index.row() : index.column(); }
   int columnIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.column() : index.row(); }
-  void updateRoundedTimes();
 
 protected:
   EditAccessPtr mDA;

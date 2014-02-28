@@ -14,9 +14,6 @@ public:
   DataListModel(EditAccessPtr eda, const TimeRange& limits);
   ~DataListModel();
 
-  virtual void insertColumn(int before, ObsColumnPtr c);
-  virtual void removeColumn(int at);
-
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
   virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
   virtual timeutil::ptime timeAtRow(int row) const;
@@ -25,13 +22,18 @@ public:
 
   void setCenter(int stationId)
     { mCenter = stationId; }
+
+  void setFilterByTimestep(bool fbts);
   
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
   virtual int rowOrColumnCount(bool timeDirection) const;
+  virtual void updateTimes();
 
 private:
   Times_t mTimes;
+  Times_t mTimesFiltered;
+  bool mFilterByTimestep;
   int mCenter;
 };
 
