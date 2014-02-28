@@ -59,18 +59,12 @@
     <addaction name="printAction"/>
     <addaction name="actionScreenshot"/>
    </widget>
-   <widget class="QMenu" name="menuValg">
+   <widget class="QMenu" name="menuView">
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <addaction name="actionShowErrorList"/>
-    <addaction name="actionShowExtremeValues"/>
-    <addaction name="actionShowMissingObservations"/>
-    <addaction name="separator"/>
-    <addaction name="actionShowChanges"/>
-    <addaction name="actionShowSimpleCorrections"/>
    </widget>
-   <widget class="QMenu" name="menuListType">
+   <widget class="QMenu" name="menuData">
     <property name="title">
      <string>Data</string>
     </property>
@@ -111,8 +105,8 @@
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
-   <addaction name="menuListType"/>
-   <addaction name="menuValg"/>
+   <addaction name="menuData"/>
+   <addaction name="menuView"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

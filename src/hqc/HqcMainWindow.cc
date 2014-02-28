@@ -136,6 +136,13 @@ HqcMainWindow::HqcMainWindow()
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
+  ui->menuView->addAction(ui->dockErrors     ->toggleViewAction());
+  ui->menuView->addAction(ui->dockExtremes   ->toggleViewAction());
+  ui->menuView->addAction(ui->dockMissing    ->toggleViewAction());
+  ui->menuView->addSeparator();
+  ui->menuView->addAction(ui->dockHistory    ->toggleViewAction());
+  ui->menuView->addAction(ui->dockCorrections->toggleViewAction());
+
   ui->treeErrors->setDataAccess(eda, kma);
   ui->simpleCorrrections->setDataAccess(eda, kma);
   ui->treeChanges->setModel(mEditVersions.get());
