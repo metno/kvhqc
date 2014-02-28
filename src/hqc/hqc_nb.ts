@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="57"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="59"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="60"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="62"/>
         <source>Accept</source>
         <translation>Godkjenn</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="63"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="66"/>
         <source>Reject</source>
         <translation>Forkast</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="67"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="70"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -1972,48 +1972,42 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="33"/>
-        <source>Parameter %1 %2</source>
-        <translation>Parameter %1 %2</translation>
-    </message>
-    <message>
         <location filename="../common/gui/SensorHeader.cc" line="28"/>
         <source>Sensor %1 Type %2</source>
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="54"/>
-        <source>Parameter %1 model value</source>
-        <oldsource>Parameter %3 model value</oldsource>
-        <translation>Parameter %1 modellverdi</translation>
-    </message>
-    <message>
-        <location filename="../common/gui/SensorHeader.cc" line="58"/>
+        <location filename="../common/gui/SensorHeader.cc" line="51"/>
         <source>model</source>
         <translation>modell</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="87"/>
+        <location filename="../common/gui/SensorHeader.cc" line="33"/>
+        <source>Parameter %1</source>
+        <translation>Parameter %1</translation>
+    </message>
+    <message>
+        <location filename="../common/gui/SensorHeader.cc" line="78"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="88"/>
+        <location filename="../common/gui/SensorHeader.cc" line="79"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="91"/>
+        <location filename="../common/gui/SensorHeader.cc" line="82"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="92"/>
+        <location filename="../common/gui/SensorHeader.cc" line="83"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="106"/>
+        <location filename="../common/gui/SensorHeader.cc" line="97"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
     </message>

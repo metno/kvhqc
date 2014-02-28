@@ -30,9 +30,10 @@ QVariant SensorHeader::sensorHeader(DataItemPtr item, Qt::Orientation orientatio
               .arg(mSensor.typeId));
     }
     if (mShowParam != NEVER) {
-      Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1 %2")
-          .arg(Helpers::paramName(mSensor.paramId))
-          .arg(item->description(false)), "\n");
+      Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1")
+          .arg(Helpers::paramName(mSensor.paramId)), "\n");
+      if (item)
+        Helpers::appendText(header, item->description(false), " ");
     }
   } else {
     header = displayHeader(orientation, item ? item->description(true) : "");
@@ -42,30 +43,12 @@ QVariant SensorHeader::sensorHeader(DataItemPtr item, Qt::Orientation orientatio
 
 QVariant SensorHeader::modelHeader(Qt::Orientation orientation, int role) const
 {
-  const bool tooltip = (role == Qt::ToolTipRole), display = (role == Qt::DisplayRole);
-  if (not tooltip and not display)
-    return QVariant();
-
-  QString header;
-  if (tooltip) {
-    if (mShowStation != NEVER)
-      header = stationTooltip();
-    if (mShowParam != NEVER) {
-      Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1 model value")
-          .arg(Helpers::paramName(mSensor.paramId)), "\n");
-    }
-  } else {
-    if (mShowStation == ALWAYS)
-      header = QString::number(mSensor.stationId);
-    if (mShowParam == ALWAYS) {
-      const QString sep = separator(orientation);
-      Helpers::appendText(header, Helpers::paramName(mSensor.paramId), sep);
-      if (mSensor.level != 0)
-        Helpers::appendText(header, QString("L%1").arg(mSensor.level), sep);
-      Helpers::appendText(header, "model", sep);
-    }
-  }
-  return header + timeOffset(orientation, display);
+  const QVariant sh = sensorHeader(DataItemPtr(), orientation, role);
+  if (not sh.isValid())
+    return sh;
+  const bool tooltip = (role == Qt::ToolTipRole);
+  const QString sep = tooltip ? QString(" ") : separator(orientation);
+  return Helpers::appendedText(sh.toString(), qApp->translate("SensorHeader", "model"), sep);
 }
 
 QString SensorHeader::displayHeader(Qt::Orientation orientation, const QString& description) const
