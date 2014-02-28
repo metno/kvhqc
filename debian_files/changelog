@@ -1,3 +1,12 @@
+kvhqc (3.3.5-1) unstable; urgency=low
+
+  * allow accepting model values
+  * added milogging adapter for kvalobs/milog
+  * added "Filter" checkbox for time steps
+  * checkable actions for "View" menu
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 28 Feb 2014 14:39:47 +0100
+
 kvhqc (3.3.4-1) unstable; urgency=low
 
   * remember times sent to diana, but not yet confirmed
