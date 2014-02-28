@@ -35,6 +35,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "common/StInfoSysBuffer.hh"
 #include "common/HqcApplication.hh"
 #include "util/hqc_paths.hh"
+#include "util/Milog4cpp.hh"
 
 #include <kvcpp/corba/CorbaKvApp.h>
 
@@ -74,6 +75,15 @@ int main( int argc, char* argv[] )
   }
 
   milogger::LoggingConfig log4cpp(log4cpp_properties);
+  { // initialize milog wrapper
+    milog::LogStream* milogstream = new Milog4cppStream();
+    if (milog::LogManager::createLogger(MILOGGER_CATEGORY, milogstream) ) {
+      milogstream->loglevel(milog::INFO);
+      milog::LogManager::setDefaultLogger(MILOGGER_CATEGORY);
+    } else {
+      METLIBS_LOG_WARN("cannot create milog adapter logger");
+    }
+  }
 
   miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
   if (not confSec) {

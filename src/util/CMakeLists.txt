@@ -4,6 +4,7 @@ SET(util_SOURCES
   Helpers.cc
   HqcLogging.cc
   hqc_paths.cc
+  Milog4cpp.cc
   timeutil.cc
   ValueChange.hh
   VersionedValue.hh
