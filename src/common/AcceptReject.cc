@@ -79,6 +79,18 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime)
   editor->commit();
 }
 
+void accept_model(EditAccessPtr eda, ModelAccessPtr mda, const SensorTime& sensorTime, bool qc2ok)
+{
+  EditDataPtr obs = eda->findE(sensorTime);
+  ModelDataPtr md = mda->find(sensorTime);
+  if (obs and md) {
+    EditDataEditorPtr editor = eda->editor(obs);
+    editor->setCorrected(md->value());
+    editor->commit();
+    accept_corrected(eda, sensorTime, qc2ok);
+  }
+}
+
 void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
 {
   EditDataPtr obs = eda->findE(sensorTime);

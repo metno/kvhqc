@@ -16,7 +16,7 @@ protected:
   bool drop(const SensorTime& st);
 
 protected:
-  typedef std::map<SensorTime, KvalobsModelDataPtr, lt_SensorTime> Data_t;
+  typedef std::map<SensorTime, KvalobsModelDataPtr, lt_ModelSensorTime> Data_t;
   Data_t mData;
 };
 typedef boost::shared_ptr<KvModelAccess> KvModelAccessPtr;

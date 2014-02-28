@@ -55,7 +55,15 @@ QVariant SensorHeader::modelHeader(Qt::Orientation orientation, int role) const
           .arg(Helpers::paramName(mSensor.paramId)), "\n");
     }
   } else {
-    header = displayHeader(orientation, qApp->translate("SensorHeader", "model"));
+    if (mShowStation == ALWAYS)
+      header = QString::number(mSensor.stationId);
+    if (mShowParam == ALWAYS) {
+      const QString sep = separator(orientation);
+      Helpers::appendText(header, Helpers::paramName(mSensor.paramId), sep);
+      if (mSensor.level != 0)
+        Helpers::appendText(header, QString("L%1").arg(mSensor.level), sep);
+      Helpers::appendText(header, "model", sep);
+    }
   }
   return header + timeOffset(orientation, display);
 }

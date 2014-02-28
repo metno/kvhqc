@@ -18,10 +18,6 @@ ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRang
   , mHeaderShowStation(true)
   , mCodes(boost::make_shared<Code2Text>())
 {
-  if (not ModelAccess::isModelSensor(mSensor)) {
-    HQC_LOG_WARN("not a model sensor: " << mSensor << ", adapting");
-    mSensor = ModelAccess::makeModelSensor(mSensor);
-  }
   mMA->modelDataChanged.connect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));
 }
 
@@ -66,7 +62,7 @@ QVariant ModelColumn::headerData(Qt::Orientation orientation, int role) const
 bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)
 {
   const SensorTime st(mdl->sensorTime());
-  if (not eq_Sensor()(st.sensor, mSensor))
+  if (not ModelAccess::eq_ModelSensor()(st.sensor, mSensor))
     return false;
   const timeutil::ptime timeo = st.time - mTimeOffset;
   ModelCache_t::iterator it = mModelCache.find(timeo);

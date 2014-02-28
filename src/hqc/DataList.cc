@@ -134,7 +134,7 @@ void DataList::updateModel(DataListModel* newModel)
   connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   
-  ui->buttonsAcceptReject->updateModel(mDA, ui->table);
+  ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)

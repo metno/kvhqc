@@ -3,6 +3,7 @@
 
 #include "common/AcceptReject.hh"
 #include "common/DataColumn.hh"
+#include "common/ModelColumn.hh"
 #include "common/ObsTableModel.hh"
 
 #include <QtCore/QEvent>
@@ -20,6 +21,7 @@
 AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
   : QWidget(parent)
   , mTableView(0)
+  , mSelectedColumnType(OTHER)
 {
   QHBoxLayout *hLayout = new QHBoxLayout(this);
   hLayout->setSpacing(2);
@@ -75,11 +77,12 @@ void AcceptRejectButtons::onAccept()
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
     BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      if (mSelectedColumnIsOriginal) {
-        if (not qc2ok)
-          AcceptReject::accept_original(mDA, st);
-      } else {
+      if (mSelectedColumnType == ORIGINAL and not qc2ok) {
+        AcceptReject::accept_original(mDA, st);
+      } else if (mSelectedColumnType == CORRECTED) {
         AcceptReject::accept_corrected(mDA, st, qc2ok);
+      } else if (mSelectedColumnType == MODEL and mMA) {
+        AcceptReject::accept_model(mDA, mMA, st, qc2ok);
       }
     }
   }
@@ -89,7 +92,7 @@ void AcceptRejectButtons::onAccept()
 void AcceptRejectButtons::onReject()
 {
   METLIBS_LOG_SCOPE();
-  if (not mSelectedObs.empty()) {
+  if (not mSelectedObs.empty() and (mSelectedColumnType == ORIGINAL or mSelectedColumnType == CORRECTED)) {
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
     BOOST_FOREACH(SensorTime& st, mSelectedObs) {
@@ -99,7 +102,7 @@ void AcceptRejectButtons::onReject()
   enableButtons();
 }
 
-void AcceptRejectButtons::updateModel(EditAccessPtr da, QTableView* table)
+void AcceptRejectButtons::updateModel(EditAccessPtr da, ModelAccessPtr ma, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(enableButtons()));
@@ -107,6 +110,7 @@ void AcceptRejectButtons::updateModel(EditAccessPtr da, QTableView* table)
       this, SLOT(enableButtons()));
 
   mDA = da;
+  mMA = ma;
   mTableView = table;
 
   QObject::connect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
@@ -127,6 +131,7 @@ void AcceptRejectButtons::enableButtons()
   const QModelIndexList selected = mTableView->selectionModel()->selectedIndexes();
   bool enableAccept = false, enableReject = false;
   mSelectedObs.clear();
+  mSelectedColumnType = OTHER;
   if (not selected.isEmpty()) {
     int minRow = selected.at(0).row(), maxRow = minRow;
     int minCol = selected.at(0).column(), maxCol = minCol;
@@ -143,9 +148,20 @@ void AcceptRejectButtons::enableButtons()
     }
     if (minCol == maxCol and (maxRow - minRow + 1 == selected.size())) {
       ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-      DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
-      if (dc and (dc->type() == ObsColumn::ORIGINAL or dc->type() == ObsColumn::NEW_CORRECTED)) {
+      if (DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {
+        if (dc->type() == ObsColumn::ORIGINAL)
+          mSelectedColumnType = ORIGINAL;
+        else if (dc->type() == ObsColumn::NEW_CORRECTED)
+          mSelectedColumnType = CORRECTED;
+      } else if (ModelColumnPtr mc = boost::dynamic_pointer_cast<ModelColumn>(tableModel->getColumn(minCol))) {
+        if (mMA)
+          mSelectedColumnType = MODEL;
+      }
+      METLIBS_LOG_DEBUG(LOGVAL(mSelectedColumnType));
+      if (mSelectedColumnType != OTHER) {
         int possible = AcceptReject::ALL;
+        if (mSelectedColumnType == MODEL)
+          possible &= ~AcceptReject::CAN_REJECT;
         for (int r=minRow; r<=maxRow; ++r) {
           const SensorTime st = tableModel->findSensorTime(tableModel->index(r, minCol));
           EditDataPtr obs = mDA->findE(st);
@@ -155,20 +171,22 @@ void AcceptRejectButtons::enableButtons()
           }
           // TODO disable if missing but in obs_pgm
         }
+        METLIBS_LOG_DEBUG(LOGVAL(possible));
         enableReject = (possible & AcceptReject::CAN_REJECT) != 0;
-        if (dc->type() == ObsColumn::ORIGINAL) {
+        if (mSelectedColumnType == ORIGINAL) {
           if (mCheckQC2->isChecked())
             enableAccept = false;
           else
             enableAccept = (possible & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0;
-          mSelectedColumnIsOriginal = true;
-        } else if (dc->type() == ObsColumn::NEW_CORRECTED) {
+        } else if (mSelectedColumnType == CORRECTED) {
           enableAccept = (possible & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
-          mSelectedColumnIsOriginal = false;
-        } else {
-          // nothing allowed if not CORRECTED or ORIGINAL column (e.g. FLAGS or MODEL)
-          enableAccept = enableReject = false;
+        } else if (mSelectedColumnType == MODEL) {
+          enableAccept = (possible & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
+          enableReject = false;
         }
+      } else {
+        // nothing allowed if not CORRECTED, ORIGINAL, or MODEL column (e.g. FLAGS)
+        enableAccept = enableReject = false;
       }
     }
   }

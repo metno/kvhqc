@@ -3,6 +3,7 @@
 #define AcceptReject_hh 1
 
 #include "EditAccess.hh"
+#include "ModelAccess.hh"
 
 namespace AcceptReject {
 
@@ -16,6 +17,7 @@ enum {
 
 int possibilities(EditDataPtr obs);
 
+void accept_model(EditAccessPtr eda, ModelAccessPtr mda, const SensorTime& sensorTime, bool qc2ok);
 void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok);
 void accept_original(EditAccessPtr eda, const SensorTime& sensorTime);
 void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok);

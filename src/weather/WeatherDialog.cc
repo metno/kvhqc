@@ -82,7 +82,7 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
   connect(mModelCorrected.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
 
-  ui->buttonsAcceptReject->updateModel(mDA, ui->tableCorrected);
+  ui->buttonsAcceptReject->updateModel(mDA, ModelAccessPtr(), ui->tableCorrected);
 }
 
 WeatherDialog::~WeatherDialog()

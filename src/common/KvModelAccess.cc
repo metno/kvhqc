@@ -26,12 +26,7 @@ ModelAccess::ModelDataSet KvModelAccess::findMany(const std::vector<SensorTime>&
 
   ModelDataSet data;
   BOOST_FOREACH(const SensorTime& st, sensorTimes) {
-    Data_t::iterator it;
-    if (isModelSensorTime(st)) {
-      it = mData.find(st);
-    } else {
-      it = mData.find(makeModelSensorTime(st));
-    }
+    const Data_t::iterator it = mData.find(st);
     if (it != mData.end())
       data.insert(it->second);
   }
@@ -45,10 +40,9 @@ ModelAccess::ModelDataSet KvModelAccess::allData(const std::vector<Sensor>& sens
 
   ModelDataSet data;
   BOOST_FOREACH(const Sensor& s, sensors) {
-    const Sensor ms = makeModelSensor(s);
-    for (Data_t::const_iterator it = mData.lower_bound(SensorTime(ms, limits.t0())); it != mData.end(); ++it) {
+    for (Data_t::const_iterator it = mData.lower_bound(SensorTime(s, limits.t0())); it != mData.end(); ++it) {
       const SensorTime& dst = it->first;
-      if ((not eq_Sensor()(dst.sensor, ms)) or (dst.time > limits.t1()))
+      if ((not eq_ModelSensor()(dst.sensor, s)) or (dst.time > limits.t1()))
         break;
       if (it->second)
         data.insert(it->second);

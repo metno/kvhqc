@@ -3,6 +3,7 @@
 #define AcceptRejectButtons_hh 1
 
 #include "common/EditAccess.hh"
+#include "common/ModelAccess.hh"
 #include "common/Sensor.hh"
 
 #include <QtGui/QWidget>
@@ -19,7 +20,7 @@ class AcceptRejectButtons : public QWidget
 public:
   AcceptRejectButtons(QWidget* parent=0);
 
-  void updateModel(EditAccessPtr da, QTableView* table);
+  void updateModel(EditAccessPtr da, ModelAccessPtr ma, QTableView* table);
 
 public Q_SLOTS:
   void enableButtons();
@@ -36,6 +37,7 @@ private:
 
 private:
   EditAccessPtr mDA;
+  ModelAccessPtr mMA;
   QTableView* mTableView;
 
   QToolButton *mButtonAccept;
@@ -43,7 +45,9 @@ private:
   QCheckBox *mCheckQC2;
 
   std::vector<SensorTime> mSelectedObs;
-  bool mSelectedColumnIsOriginal;
+
+  enum SelectedColumnType { OTHER, ORIGINAL, CORRECTED, MODEL };
+  SelectedColumnType mSelectedColumnType;
 };
 
 #endif // AcceptRejectButtons_hh
