@@ -5,6 +5,7 @@
 #include "common/DataColumn.hh"
 #include "common/ModelColumn.hh"
 #include "common/ObsTableModel.hh"
+#include "util/gui/UiHelpers.hh"
 
 #include <QtCore/QEvent>
 #include <QtGui/QCheckBox>
@@ -39,6 +40,7 @@ AcceptRejectButtons::AcceptRejectButtons(QWidget* parent)
 
   mCheckQC2 = new QCheckBox(this);
   hLayout->addWidget(mCheckQC2);
+  hLayout->addSpacing(8);
 
   retranslateUi();
 
@@ -133,19 +135,8 @@ void AcceptRejectButtons::enableButtons()
   mSelectedObs.clear();
   mSelectedColumnType = OTHER;
   if (not selected.isEmpty()) {
-    int minRow = selected.at(0).row(), maxRow = minRow;
-    int minCol = selected.at(0).column(), maxCol = minCol;
-    for (int i=1; i<selected.count(); i++) {
-        const int r = selected.at(i).row(), c = selected.at(i).column();
-        if (r < minRow)
-          minRow = r;
-        if (maxRow < r)
-          maxRow = r;
-        if (c < minCol)
-          minCol = c;
-        if (maxCol < c)
-          maxCol = c;
-    }
+    int minRow, maxRow, minCol, maxCol;
+    Helpers::findMinMaxRowCol(selected, minRow, maxRow, minCol, maxCol);
     if (minCol == maxCol and (maxRow - minRow + 1 == selected.size())) {
       ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
       if (DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {

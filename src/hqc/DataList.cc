@@ -139,6 +139,7 @@ void DataList::updateModel(DataListModel* newModel)
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   
   ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
+  ui->toolInterpolate->updateModel(mDA, ui->table);
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)

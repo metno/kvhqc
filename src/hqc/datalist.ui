@@ -29,6 +29,9 @@
       <widget class="AcceptRejectButtons" name="buttonsAcceptReject" native="true"/>
      </item>
      <item>
+      <widget class="ToolInterpolate" name="toolInterpolate" native="true"/>
+     </item>
+     <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -102,6 +105,12 @@ If unchecked, show all times in the range even if not in the database.</string>
    <class>AcceptRejectButtons</class>
    <extends>QWidget</extends>
    <header>common/gui/AcceptRejectButtons.hh</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>ToolInterpolate</class>
+   <extends>QWidget</extends>
+   <header>common/gui/ToolInterpolate.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
