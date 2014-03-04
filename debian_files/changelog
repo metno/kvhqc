@@ -1,3 +1,9 @@
+kvhqc (3.3.6-1) unstable; urgency=low
+
+  * added linear interpolation tool
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 04 Mar 2014 15:00:04 +0100
+
 kvhqc (3.3.5-1) unstable; urgency=low
 
   * allow accepting model values
