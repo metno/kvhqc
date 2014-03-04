@@ -20,10 +20,13 @@ public:
 
   QModelIndexList findIndexes(const SensorTime& st);
 
-  void setCenter(int stationId)
-    { mCenter = stationId; }
+  virtual void setCenter(int stationId);
+  virtual void setTimeStep(int step);
+  virtual void setFilterByTimestep(bool fbts);
 
-  void setFilterByTimestep(bool fbts);
+Q_SIGNALS:
+  void changedCenter(int center);
+  void changedFilterByTimestep(bool enabled, bool ftbs);
   
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;

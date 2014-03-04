@@ -32,6 +32,17 @@ ObsTableModel::~ObsTableModel()
   }
 }
 
+void ObsTableModel::setTimeInRows(bool tir)
+{
+  if (mTimeInRows == tir)
+    return;
+
+  beginResetModel();
+  mTimeInRows = tir;
+  endResetModel();
+  /*emit*/ changedTimeInRows(mTimeInRows);
+}
+
 void ObsTableModel::insertColumn(int before, ObsColumnPtr c)
 {
   beginResetModel();
@@ -90,6 +101,7 @@ void ObsTableModel::setTimeStep(int step)
   mTimeStep = step;
   updateTimes();
   endResetModel();
+  /*emit*/ changedTimeStep(mTimeStep);
 }
 
 void ObsTableModel::updateTimes()

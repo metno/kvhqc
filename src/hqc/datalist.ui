@@ -127,7 +127,7 @@ If unchecked, show all times in the range even if not in the database.</string>
    <sender>comboTimeStep</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>DataList</receiver>
-   <slot>onTimeStepChanged(int)</slot>
+   <slot>onUITimeStepChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
      <x>151</x>
@@ -163,7 +163,7 @@ If unchecked, show all times in the range even if not in the database.</string>
   <slot>onReject()</slot>
   <slot>onRejectQC2()</slot>
   <slot>onButtonResetColumns()</slot>
-  <slot>onTimeStepChanged(int)</slot>
+  <slot>onUITimeStepChanged(int)</slot>
   <slot>onCheckFilter(bool)</slot>
  </slots>
 </ui>

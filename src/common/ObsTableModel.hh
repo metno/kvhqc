@@ -25,8 +25,7 @@ public:
   virtual timeutil::ptime timeAtRow(int row) const;
   virtual SensorTime findSensorTime(const QModelIndex& idx) const;
 
-  void setTimeInRows(bool tir)
-    { mTimeInRows = tir; }
+  virtual void setTimeInRows(bool tir);
 
   virtual ObsColumnPtr getColumn(int idx) const
     { return mColumns[idx]; }
@@ -40,13 +39,17 @@ public:
   /*! Set time difference between rows.
    * \param step time step in seconds
    */
-  void setTimeStep(int step);
+  virtual void setTimeStep(int step);
 
   /*! Get time difference between rows.
    * \return time step in seconds
    */
   int getTimeStep() const
     { return mTimeStep; }
+
+Q_SIGNALS:
+  void changedTimeStep(int step);
+  void changedTimeInRows(bool tir);
 
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;

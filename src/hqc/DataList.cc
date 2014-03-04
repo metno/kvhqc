@@ -129,8 +129,12 @@ void DataList::onCurrentChanged(const QModelIndex& current)
 void DataList::updateModel(DataListModel* newModel)
 {
   mTableModel.reset(newModel);
-  onTimeStepChanged(ui->comboTimeStep->currentIndex());
+  onUITimeStepChanged(ui->comboTimeStep->currentIndex());
   ui->table->setModel(mTableModel.get());
+  connect(mTableModel.get(), SIGNAL(changedTimeStep(int)),
+      this, SLOT(onModelTimeStepChanged(int)));
+  connect(mTableModel.get(), SIGNAL(changedFilterByTimestep(bool, bool)),
+      this, SLOT(onModelFilterByTimeStepChanged(bool, bool)));
   connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   
@@ -146,17 +150,36 @@ void DataList::onCheckFilter(bool filterByTimestep)
   mTableModel->setFilterByTimestep(filterByTimestep);
 }
 
-void DataList::onTimeStepChanged(int index)
+void DataList::onUITimeStepChanged(int index)
 {
-  if (mTableModel.get()) {
-    int step;
-    if (index < 0)
-      step = 0;
-    else
-      step = ui->comboTimeStep->itemData(index).toInt();
-    mTableModel->setTimeStep(step);
-    ui->checkFilterTimes->setEnabled(step > 0);
+  if (not mTableModel.get())
+    return;
+
+  int step = 0;
+  if (index >= 0)
+    step = ui->comboTimeStep->itemData(index).toInt();
+  mTableModel->setTimeStep(step);
+}
+
+void DataList::onModelTimeStepChanged(int step)
+{
+  if (not mTableModel.get())
+    return;
+
+  for (int i=0; i<ui->comboTimeStep->count(); ++i) {
+    const int combostep = ui->comboTimeStep->itemData(i).toInt();
+    if (step == combostep) {
+      ui->comboTimeStep->setCurrentIndex(i);
+      return;
+    }
   }
+  METLIBS_LOG_WARN("datalist model time step not in combo list");
+}
+
+void DataList::onModelFilterByTimeStepChanged(bool enabled, bool ftbs)
+{
+  ui->checkFilterTimes->setEnabled(enabled);
+  ui->checkFilterTimes->setChecked(ftbs);
 }
 
 void DataList::onButtonSaveAs()

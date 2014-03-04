@@ -24,15 +24,36 @@ DataListModel::~DataListModel()
 {
 }
 
+void DataListModel::setCenter(int stationId)
+{
+  if (mCenter == stationId)
+    return;
+
+  mCenter = stationId;
+  /*emit*/ headerDataChanged(mTimeInRows ? Qt::Horizontal : Qt::Vertical, 0, columnCount(QModelIndex())-1);
+  /*emit*/ changedCenter(mCenter);
+}
+
+void DataListModel::setTimeStep(int step)
+{
+  const int oldEnabledFBTS = (mTimeStep > 0);
+  ObsTableModel::setTimeStep(step);
+  const int newEnabledFBTS = (mTimeStep > 0);
+  if (oldEnabledFBTS != newEnabledFBTS)
+    /*emit*/ changedFilterByTimestep(newEnabledFBTS, mFilterByTimestep);
+}
+
 void DataListModel::setFilterByTimestep(bool fbts)
 {
-  if (fbts != mFilterByTimestep) {
-    mFilterByTimestep = fbts;
-    beginResetModel();
-    updateTimes();
-    endResetModel();
-  }
-}  
+  if (fbts == mFilterByTimestep)
+    return;
+
+  beginResetModel();
+  mFilterByTimestep = fbts;
+  updateTimes();
+  endResetModel();
+  /*emit*/ changedFilterByTimestep(mTimeStep > 0, mFilterByTimestep);
+}
 
 void DataListModel::updateTimes()
 {
