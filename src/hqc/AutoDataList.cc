@@ -92,8 +92,8 @@ void AutoDataList::showEvent(QShowEvent* se)
   QWidget::showEvent(se);
 
   mVisible = true;
-  if (not eq_SensorTime()(mPendingSensorTime, mSensorTime))
-    doNavigateTo(mPendingSensorTime);
+  if (mPendingSensorTime.valid())
+    navigateTo(mPendingSensorTime);
 }
 
 void AutoDataList::hideEvent(QHideEvent* he)
@@ -122,33 +122,29 @@ void AutoDataList::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();
   if (mVisible)
-    doNavigateTo(st);
-  else if (st.valid() and not eq_SensorTime()(mPendingSensorTime, st))
+    DataList::navigateTo(st);
+  else
     mPendingSensorTime = st;
 }
 
-void AutoDataList::doNavigateTo(const SensorTime& st)
+void AutoDataList::doNavigateTo()
 {
   METLIBS_LOG_TIME();
-  if (not st.valid() or eq_SensorTime()(mSensorTime, st))
-    return;
-
-  if (mBlockNavigateTo == 0 or not mTableModel.get() or mTableModel->findIndexes(st).empty()) {
-    mTimeLimits = ViewChanges::defaultTimeLimits(st);
+  const SensorTime& cst = currentSensorTime();
+  if (not mTableModel.get() or mTableModel->findIndexes(cst).empty()) {
+    mTimeLimits = ViewChanges::defaultTimeLimits(currentSensorTime());
     mOriginalTimeLimits = mTimeLimits;
-    if (not mSensorTime.valid() or not eq_Sensor()(mSensorTime.sensor, st.sensor)) {
+    if (not cst.valid() or not eq_Sensor()(mStoreSensorTime.sensor, cst.sensor)) {
       // need to update related parameters and neighbor list
       storeChanges();
       
       // set original columns
-      mSensorTime = st;
       generateColumns();
-      
-      replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
+      replay(ViewChanges::fetch(cst.sensor, VIEW_TYPE, ID));
     }
     makeModel();
   }
-  DataList::navigateTo(st);
+  DataList::doNavigateTo();
 }
 
 void AutoDataList::generateColumns()
@@ -156,12 +152,12 @@ void AutoDataList::generateColumns()
   METLIBS_LOG_SCOPE();
   mColumns = Columns_t();
   
-  const std::vector<Sensor> sensors = Helpers::relatedSensors(mSensorTime.sensor, mTimeLimits, VIEW_TYPE);
+  const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, mTimeLimits, VIEW_TYPE);
   BOOST_FOREACH(const Sensor& s, sensors) {
     Column c;
     c.sensor = s;
     c.timeOffset = 0;
-    if (s.stationId == mSensorTime.sensor.stationId and s.paramId == mSensorTime.sensor.paramId) {
+    if (s.stationId == currentSensorTime().sensor.stationId and s.paramId == currentSensorTime().sensor.paramId) {
       c.type = ORIGINAL;
       mColumns.push_back(c);
     }
@@ -182,7 +178,7 @@ void AutoDataList::makeModel()
     if (oc)
       newModel->addColumn(oc);
   }
-  newModel->setCenter(mSensorTime.sensor.stationId);
+  newModel->setCenter(currentSensorTime().sensor.stationId);
   updateModel(newModel.release());
   mColumnAdd->setEnabled(true);
 }
@@ -211,8 +207,9 @@ ObsColumnPtr AutoDataList::makeColumn(const Column& c)
 void AutoDataList::storeChanges()
 {
   METLIBS_LOG_SCOPE();
-  if (mSensorTime.valid())
-    ViewChanges::store(mSensorTime.sensor, VIEW_TYPE, ID, changes());
+  if (mStoreSensorTime.valid())
+    ViewChanges::store(mStoreSensorTime.sensor, VIEW_TYPE, ID, changes());
+  mStoreSensorTime = currentSensorTime();
 }
 
 namespace /* anonymous */ {
@@ -309,7 +306,7 @@ std::string AutoDataList::changes()
     doc_changes.appendChild(doc_timeshift);
   }
 
-  METLIBS_LOG_DEBUG("changes for " << mSensorTime << ": " << doc.toString());
+  METLIBS_LOG_DEBUG("changes for " << mStoreSensorTime << ": " << doc.toString());
   return doc.toString().toStdString();
 }
 
@@ -422,7 +419,7 @@ void AutoDataList::addColumnBefore(int column)
     column = columnCount;
 
   DataListAddColumn dac(this);
-  dac.setSensor(mSensorTime.sensor);
+  dac.setSensor(currentSensorTime().sensor);
   if (dac.exec() != QDialog::Accepted)
     return;
 

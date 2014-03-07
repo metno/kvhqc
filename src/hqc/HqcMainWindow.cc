@@ -759,6 +759,7 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
   mLastNavigated = st;
 
   mDianaHelper->navigateTo(st);
+  ui->treeErrors->navigateTo(st);
   ui->simpleCorrrections->navigateTo(st);
   mJumpToObservation->navigateTo(st);
   mAutoDataList->navigateTo(st);

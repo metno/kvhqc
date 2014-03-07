@@ -26,12 +26,6 @@
   with HQC; if not, write to the Free Software Foundation Inc.,
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-/*! \file errorlist.cc
- *  \brief Code for the ErrorList class.
- *
- *  Displays the error list.
- *
- */
 
 #include "ErrorList.hh"
 
@@ -39,6 +33,7 @@
 #include "common/AnalyseErrors.hh"
 #include "common/Functors.hh"
 #include "common/KvMetaDataBuffer.hh"
+#include "util/Blocker.hh"
 
 #include <QtGui/QCloseEvent>
 #include <QtGui/QHeaderView>
@@ -52,27 +47,24 @@
 
 using namespace kvalobs;
 
-/*!
- * \brief Constructs the error list
- */
 ErrorList::ErrorList(QWidget* parent)
-    : QTableView(parent)
-    , mLastSelectedRow(-1)
-    , mErrorsForSalen(false)
-    , mSortProxy(new QSortFilterProxyModel(this))
+  : QTableView(parent)
+  , mBlockNavigateTo(0)
+  , mErrorsForSalen(false)
+  , mSortProxy(new QSortFilterProxyModel(this))
 {
-    METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE();
 
-    verticalHeader()->setDefaultSectionSize(20);
-    verticalHeader()->hide();
-    setSelectionBehavior(SelectRows);
-    setSelectionMode(SingleSelection);
-    setSortingEnabled(true);
-    setModel(mSortProxy.get());
-    resizeHeaders();
+  verticalHeader()->setDefaultSectionSize(20);
+  verticalHeader()->hide();
+  setSelectionBehavior(SelectRows);
+  setSelectionMode(SingleSelection);
+  setSortingEnabled(true);
+  setModel(mSortProxy.get());
+  resizeHeaders();
     
-    connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-            this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
 
 ErrorList::~ErrorList()
@@ -81,95 +73,126 @@ ErrorList::~ErrorList()
 
 void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
-    DataView::setDataAccess(eda, mda);
+  DataView::setDataAccess(eda, mda);
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda,
-            Errors::Sensors_t(), TimeRange(), mErrorsForSalen));
-    mSortProxy->setSourceModel(mTableModel.get());
-    resizeHeaders();
+  Blocker b(mBlockNavigateTo);
+  mLastNavigated = SensorTime();
+  mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda,
+          Errors::Sensors_t(), TimeRange(), mErrorsForSalen));
+  mSortProxy->setSourceModel(mTableModel.get());
+  resizeHeaders();
 }
 
 void ErrorList::resizeHeaders()
 {
-    horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-    horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME, 160);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_WMO,   45);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MINUTE,    30);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TYPEID,    40);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MODEL,     60);
-    horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAGS,    120);
+  horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME, 160);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_WMO,   45);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MINUTE,    30);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     60);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TYPEID,    40);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_CORR,      60);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MODEL,     60);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_FLAGS,    120);
 }
 
 void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
 {
-    METLIBS_LOG_SCOPE();
-    DataView::setSensorsAndTimes(sensors, limits);
+  METLIBS_LOG_SCOPE();
+  DataView::setSensorsAndTimes(sensors, limits);
 
-    mLastSelectedRow = -1;
-
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, sensors, limits, mErrorsForSalen));
-    mSortProxy->setSourceModel(mTableModel.get());
-    resizeHeaders();
+  Blocker b(mBlockNavigateTo);
+  mLastNavigated = SensorTime();
+  mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, sensors, limits, mErrorsForSalen));
+  mSortProxy->setSourceModel(mTableModel.get());
+  resizeHeaders();
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
 {
-    METLIBS_LOG_SCOPE();
-    showSameStation();
-    signalStationSelected();
+  METLIBS_LOG_SCOPE();
+  showSameStation();
+  signalStationSelected();
 }
 
 int ErrorList::getSelectedRow() const
 {
-    QModelIndexList selectedRows = selectionModel()->selectedRows();
-    if (selectedRows.size() != 1)
-        return -1;
-    const QModelIndex indexProxy = selectedRows.at(0);
-    const QModelIndex indexModel = static_cast<QSortFilterProxyModel*>(model())->mapToSource(indexProxy);
-    return indexModel.row();
+  QModelIndexList selectedRows = selectionModel()->selectedRows();
+  if (selectedRows.size() != 1)
+    return -1;
+  const QModelIndex indexProxy = selectedRows.at(0);
+  const QModelIndex indexModel = static_cast<QSortFilterProxyModel*>(model())->mapToSource(indexProxy);
+  return indexModel.row();
 }
 
 void ErrorList::showSameStation()
 {
-    METLIBS_LOG_SCOPE();
-    const int row = getSelectedRow();
-    METLIBS_LOG_DEBUG(LOGVAL(row));
-    if (row < 0)
-        return;
-    EditDataPtr obs = mTableModel->mem4Row(row);
-    int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
-    mTableModel->showSameStation(stationId);
+  METLIBS_LOG_SCOPE();
+  const int row = getSelectedRow();
+  METLIBS_LOG_DEBUG(LOGVAL(row));
+  if (row < 0)
+    return;
+  EditDataPtr obs = mTableModel->mem4Row(row);
+  int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
+  mTableModel->showSameStation(stationId);
 }
 
 void ErrorList::signalStationSelected()
 {
   METLIBS_LOG_SCOPE();
   const int row = getSelectedRow();
-  if (row < 0 or row == mLastSelectedRow)
+  METLIBS_LOG_DEBUG(LOGVAL(row));
+  if (row < 0)
     return;
-  mLastSelectedRow = row;
   
-  EditDataPtr obs = getObs(row);
-  if (obs) {
-    METLIBS_LOG_DEBUG(obs->sensorTime());
-    /*emit*/ signalNavigateTo(obs->sensorTime());
+  if (EditDataPtr obs = getObs(row)) {
+    const SensorTime& st = obs->sensorTime();
+    METLIBS_LOG_DEBUG(LOGVAL(st));
+    if (st.valid() and not eq_SensorTime()(mLastNavigated, st)) {
+      Blocker b(mBlockNavigateTo);
+      mLastNavigated = st;
+      METLIBS_LOG_DEBUG(LOGVAL(mBlockNavigateTo));
+      if (b.open())
+        /*emit*/ signalNavigateTo(st);
+      return;
+    }
   }
+
+  // reach here if no obs or invalid => make mLastNavigated invalid
+  mLastNavigated = SensorTime();
+  METLIBS_LOG_DEBUG("invalidated mLastNavigated");
+}
+
+void ErrorList::navigateTo(const SensorTime& st)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(st.valid()) << LOGVAL(mLastNavigated));
+  if ((not st.valid()) or eq_SensorTime()(mLastNavigated, st))
+    return;
+  mLastNavigated = st;
+
+  const int row = mTableModel->findSensorTime(st);
+  if (row < 0)
+    return;
+
+  Blocker b(mBlockNavigateTo);
+  METLIBS_LOG_DEBUG(LOGVAL(mBlockNavigateTo));
+  // scrollTo must come before select, otherwise scrolling will not happen
+  scrollTo(mTableModel->index(row, 0));
+  selectRow(row);
 }
 
 EditDataPtr ErrorList::getObs(int row) const
 {
-    return mTableModel->mem4Row(row);
+  return mTableModel->mem4Row(row);
 }
 
 EditDataPtr ErrorList::getObs() const
 {
-    return getObs(getSelectedRow());
+  return getObs(getSelectedRow());
 }

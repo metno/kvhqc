@@ -302,3 +302,11 @@ void ErrorListTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPt
     /*emit*/ dataChanged(index0, index1);
   }
 }
+
+int ErrorListTableModel::findSensorTime(const SensorTime& st)
+{
+  const Errors::Errors_t::iterator itE = std::lower_bound(mErrorList.begin(), mErrorList.end(), st, find_ErrorSensorTime());
+  if (itE != mErrorList.end() and eq_SensorTime()(itE->obs->sensorTime(), st))
+    return (itE - mErrorList.begin());
+  return -1;
+}

@@ -3,6 +3,7 @@
 
 #include "common/DataListModel.hh"
 #include "common/gui/ObsDelegate.hh"
+#include "util/Blocker.hh"
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
@@ -88,15 +89,22 @@ void DataList::changeEvent(QEvent *event)
 
 void DataList::navigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_TIME();
-  if (mBlockNavigateTo or not mTableModel.get() or not st.valid() or eq_SensorTime()(mSensorTime, st))
+  METLIBS_LOG_TIME(LOGVAL(mBlockNavigateTo) << LOGVAL(st) << LOGVAL(mSensorTime));
+  if (mBlockNavigateTo or not st.valid() or eq_SensorTime()(mSensorTime, st))
     return;
 
   mSensorTime = st;
-  METLIBS_LOG_DEBUG(LOGVAL(mSensorTime));
+  Blocker b(mBlockNavigateTo);
+  doNavigateTo();
+}
 
-  const QModelIndexList idxs = mTableModel->findIndexes(st);
+void DataList::doNavigateTo()
+{
+  METLIBS_LOG_SCOPE();
+  if (not mTableModel.get())
+    return;
 
+  const QModelIndexList idxs = mTableModel->findIndexes(mSensorTime);
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
   bool scroll = (not idxs.empty());
@@ -105,6 +113,7 @@ void DataList::navigateTo(const SensorTime& st)
     if (idx == currentIdx)
       scroll = false;
   }
+  // IMPORTANT scroll after select does not work
   if (scroll) {
     ui->table->scrollTo(idxs.front());
     ui->table->scrollTo(idxs.back());
@@ -117,19 +126,18 @@ void DataList::onCurrentChanged(const QModelIndex& current)
 {
   METLIBS_LOG_SCOPE();
   const SensorTime st = mTableModel->findSensorTime(current);
-  METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(mBlockNavigateTo));
-  if (mBlockNavigateTo == 0 and st.valid() and not eq_SensorTime()(mSensorTime, st)) {
+  METLIBS_LOG_DEBUG(LOGVAL(st));
+  Blocker b(mBlockNavigateTo);
+  if (b.open() and st.valid() and not eq_SensorTime()(mSensorTime, st)) {
     mSensorTime = st;
-    mBlockNavigateTo += 1;
     /*emit*/ signalNavigateTo(st);
-    mBlockNavigateTo -= 1;
   }
 }
 
 void DataList::updateModel(DataListModel* newModel)
 {
   METLIBS_LOG_SCOPE();
-  mBlockNavigateTo += 1;
+  Blocker b(mBlockNavigateTo);
   mTableModel.reset(newModel);
   onUITimeStepChanged(ui->comboTimeStep->currentIndex());
   METLIBS_LOG_DEBUG("about to reset table model");
@@ -143,7 +151,6 @@ void DataList::updateModel(DataListModel* newModel)
   
   ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
   ui->toolInterpolate->updateModel(mDA, ui->table);
-  mBlockNavigateTo -= 1;
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)

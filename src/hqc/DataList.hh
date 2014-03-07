@@ -43,12 +43,17 @@ private Q_SLOTS:
 protected:
   void updateModel(DataListModel* model);
   virtual void changeEvent(QEvent *event);
+  const SensorTime& currentSensorTime() const
+    { return mSensorTime; }
+  virtual void doNavigateTo();
 
 protected:
   std::auto_ptr<Ui::DataList> ui;
   std::auto_ptr<DataListModel> mTableModel;
-  SensorTime mSensorTime;
   int mBlockNavigateTo;
+
+private:
+  SensorTime mSensorTime;
 };
 
 #endif // DataList_hh

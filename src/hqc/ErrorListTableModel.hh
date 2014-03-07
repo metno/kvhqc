@@ -45,8 +45,8 @@ public:
   void showSameStation(int stationID);
   EditDataPtr mem4Row(int row) const;
 
-  const Errors::Errors_t& errorList() const
-    { return mErrorList; }
+  //! find row for sensortime, returns -1 if not found
+  int findSensorTime(const SensorTime& st);
 
 private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);

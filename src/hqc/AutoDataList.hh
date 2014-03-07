@@ -38,6 +38,7 @@ protected:
   virtual void showEvent(QShowEvent* showEvent);
   virtual void hideEvent(QHideEvent* hideEvent);
   virtual void changeEvent(QEvent *event);
+  virtual void doNavigateTo();
 
 private Q_SLOTS:
   void onEarlier();
@@ -50,7 +51,6 @@ private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
 private:
-  void doNavigateTo(const SensorTime& st);
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
   void makeModel();
@@ -61,8 +61,6 @@ private:
   void generateColumns();
 
 private:
-  SensorTime mSensorTime;
-
   QMenu* mColumnMenu;
   QAction* mColumnAdd;
   QAction* mColumnRemove;
@@ -76,6 +74,7 @@ private:
 
   bool mVisible;
   SensorTime mPendingSensorTime;
+  SensorTime mStoreSensorTime;
 };
 
 #endif // AutoDataList_hh
