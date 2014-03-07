@@ -9,6 +9,7 @@
 #include "ViewChanges.hh"
 
 #include <QtGui/QMenu>
+#include <QtGui/QResizeEvent>
 #include <QtGui/QStringListModel>
 #include <QtXml/QDomElement>
 
@@ -173,18 +174,31 @@ void TimeSeriesView::showEvent(QShowEvent* se)
 {
   METLIBS_LOG_SCOPE();
   QWidget::showEvent(se);
-
-  mVisible = true;
-  if (not eq_SensorTime()(mPendingSensorTime, mSensorTime))
-    doNavigateTo(mPendingSensorTime);
+  updateVisible(true);
 }
 
 void TimeSeriesView::hideEvent(QHideEvent* he)
 {
   METLIBS_LOG_SCOPE();
   QWidget::hideEvent(he);
+  updateVisible(false);
+}
 
-  mVisible = false;
+void TimeSeriesView::resizeEvent(QResizeEvent *re)
+{
+  METLIBS_LOG_SCOPE();
+  QWidget::resizeEvent(re);
+  updateVisible(not re->size().isEmpty());
+}
+
+void TimeSeriesView::updateVisible(bool visible)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(visible) << LOGVAL(mVisible));
+  if (visible != mVisible) {
+    mVisible = visible;
+    if (mVisible and not eq_SensorTime()(mPendingSensorTime, mSensorTime))
+      doNavigateTo(mPendingSensorTime);
+  }
 }
 
 void TimeSeriesView::changeEvent(QEvent *event)

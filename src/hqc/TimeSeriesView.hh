@@ -30,6 +30,7 @@ public Q_SLOTS:
 protected:
   virtual void showEvent(QShowEvent* showEvent);
   virtual void hideEvent(QHideEvent* hideEvent);
+  virtual void resizeEvent(QResizeEvent *resizeEvent);
   virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
@@ -52,6 +53,8 @@ private:
 
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   void setTimeRange(const TimeRange& t);
+
+  void updateVisible(bool visible);
 
   static void initalizePlotOptions();
 
