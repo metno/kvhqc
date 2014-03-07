@@ -1,3 +1,15 @@
+kvhqc (3.3.7-1) unstable; urgency=low
+
+  * ErrorListModel: drop unused ErrorInfo vector
+  * HqcMainWindow: keyboard shortcut for Edit and Data menu
+  * TimeSeriesView: invisible if size().isEmpty()
+  * error list as tree
+  * error list: removed sorting, obstime column
+  * added ErrorList::navigateTo
+  * remove resolved errors from error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 07 Mar 2014 16:05:21 +0100
+
 kvhqc (3.3.6-1) unstable; urgency=low
 
   * added linear interpolation tool
