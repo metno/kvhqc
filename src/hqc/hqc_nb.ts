@@ -735,96 +735,101 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="ErrorListTableModel.cc" line="25"/>
+        <location filename="ErrorListModel.cc" line="25"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="26"/>
+        <location filename="ErrorListModel.cc" line="26"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Navn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
+        <location filename="ErrorListModel.cc" line="27"/>
         <source>WMO</source>
         <translation>WMO</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="28"/>
+        <location filename="ErrorListModel.cc" line="28"/>
         <source>Obstime</source>
         <translation>Obstime</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="29"/>
+        <location filename="ErrorListModel.cc" line="29"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
+        <location filename="ErrorListModel.cc" line="30"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListModel.cc" line="31"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListModel.cc" line="32"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListModel.cc" line="33"/>
         <source>mod.v</source>
         <translation>mod.v</translation>
     </message>
     <message>
         <location filename="EditVersionModel.cc" line="26"/>
-        <location filename="ErrorListTableModel.cc" line="34"/>
-        <location filename="ErrorListTableModel.cc" line="47"/>
+        <location filename="ErrorListModel.cc" line="34"/>
+        <location filename="ErrorListModel.cc" line="47"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flagg</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="38"/>
+        <location filename="ErrorListModel.cc" line="38"/>
         <source>Station number</source>
         <translation>Stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListModel.cc" line="39"/>
         <source>Station name</source>
         <translation>Stasjonsnavn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListModel.cc" line="40"/>
         <source>WMO station number</source>
         <translation>WMO stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="42"/>
+        <location filename="ErrorListModel.cc" line="41"/>
+        <source>Observation time</source>
+        <translation>Observasjonstid</translation>
+    </message>
+    <message>
+        <location filename="ErrorListModel.cc" line="42"/>
         <source>Parameter name</source>
         <translation>Parameternavn</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
+        <location filename="ErrorListModel.cc" line="43"/>
         <source>Type ID</source>
         <translation>Type ID</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
+        <location filename="ErrorListModel.cc" line="44"/>
         <source>Original value</source>
         <translation>Originalverdi</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="45"/>
+        <location filename="ErrorListModel.cc" line="45"/>
         <source>Corrected value</source>
         <translation>Korrigert verdi</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="46"/>
+        <location filename="ErrorListModel.cc" line="46"/>
         <source>Model value</source>
         <translation>Modellverdi</translation>
     </message>
@@ -1073,8 +1078,9 @@ Ellers vis alle tider i tidsrom.</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="99"/>
-        <source>Edit</source>
-        <translation>Endring</translation>
+        <source>&amp;Edit</source>
+        <oldsource>Edit</oldsource>
+        <translation>&amp;Endring</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="124"/>
@@ -1320,8 +1326,9 @@ Ellers vis alle tider i tidsrom.</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="69"/>
-        <source>Data</source>
-        <translation>Data</translation>
+        <source>&amp;Data</source>
+        <oldsource>Data</oldsource>
+        <translation>&amp;Data</translation>
     </message>
     <message>
         <location filename="mainwindow.ui" line="222"/>
@@ -2384,40 +2391,40 @@ Du bruker HQC versjon %1.</translation>
         <translation>Linjer</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="56"/>
-        <location filename="TimeSeriesView.cc" line="195"/>
+        <location filename="TimeSeriesView.cc" line="57"/>
+        <location filename="TimeSeriesView.cc" line="209"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="57"/>
-        <location filename="TimeSeriesView.cc" line="196"/>
+        <location filename="TimeSeriesView.cc" line="58"/>
+        <location filename="TimeSeriesView.cc" line="210"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="58"/>
-        <location filename="TimeSeriesView.cc" line="197"/>
+        <location filename="TimeSeriesView.cc" line="59"/>
+        <location filename="TimeSeriesView.cc" line="211"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="199"/>
+        <location filename="TimeSeriesView.cc" line="63"/>
+        <location filename="TimeSeriesView.cc" line="213"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Ny…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="63"/>
-        <location filename="TimeSeriesView.cc" line="200"/>
+        <location filename="TimeSeriesView.cc" line="64"/>
+        <location filename="TimeSeriesView.cc" line="214"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Fjern…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="64"/>
-        <location filename="TimeSeriesView.cc" line="201"/>
+        <location filename="TimeSeriesView.cc" line="65"/>
+        <location filename="TimeSeriesView.cc" line="215"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Tilbakestill</translation>
@@ -2429,7 +2436,7 @@ Du bruker HQC versjon %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="131"/>
+        <location filename="TimeSeriesView.cc" line="132"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>

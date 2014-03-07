@@ -66,7 +66,7 @@
    </widget>
    <widget class="QMenu" name="menuData">
     <property name="title">
-     <string>Data</string>
+     <string>&amp;Data</string>
     </property>
     <addaction name="actionDataAndErrorList"/>
     <addaction name="actionErrorDataSalen"/>
@@ -96,7 +96,7 @@
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
-     <string>Edit</string>
+     <string>&amp;Edit</string>
     </property>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
