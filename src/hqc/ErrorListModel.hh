@@ -48,7 +48,7 @@ public:
 
   //! find row for sensortime, returns -1 if not found
   QModelIndex findSensorTime(const SensorTime& st) const
-    { return findSensorTime(st, mErrorRoot); }
+    { return findSensorTime(st, mErrorRoot.get()); }
 
   EditDataPtr findObs(const QModelIndex& index) const;
 
@@ -56,7 +56,7 @@ private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem* item) const;
   ErrorTreeItem* findParentItem(const QModelIndex& parentIndex) const;
-  void buildTree();
+  void buildTree(const Errors::Errors_t& errors);
 
   void updateErrorItem(const QModelIndex& idx);
   void removeErrorItem(QModelIndex idx);
@@ -69,8 +69,7 @@ private:
   ModelAccessPtr mMA;
   Errors::Sensors_t mSensors;
   TimeRange mTimeLimits;
-  Errors::Errors_t mErrorList;
-  ErrorTreeItem* mErrorRoot;
+  boost::shared_ptr<ErrorTreeItem> mErrorRoot;
   bool mErrorsForSalen;
   int mShowStation;
 };
