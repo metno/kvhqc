@@ -34,11 +34,11 @@
 #include "common/DataView.hh"
 
 #include <QtCore/QString>
-#include <QtGui/QTableView>
+#include <QtGui/QTreeView>
 
 #include <memory>
 
-class ErrorListTableModel;
+class ErrorListModel;
 
 /**
  * \brief The error list. i.e. list of observations with error flags.
@@ -48,7 +48,7 @@ class ErrorListTableModel;
  * new values or approve or reject existing values.
  */
 
-class ErrorList : public QTableView, public DataView
+class ErrorList : public QTreeView, public DataView
 { Q_OBJECT;
 public:
   ErrorList(QWidget* parent=0);
@@ -68,8 +68,7 @@ Q_SIGNALS:
   void errorListClosed();
 
 private:
-  EditDataPtr getObs(int row) const;
-  int getSelectedRow() const;
+  EditDataPtr getSelectedObs() const;
                                     
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
@@ -84,7 +83,7 @@ private:
   int mBlockNavigateTo;
   bool mErrorsForSalen;
 
-  std::auto_ptr<ErrorListTableModel> mTableModel;
+  std::auto_ptr<ErrorListModel> mTableModel;
 };
 
 #endif

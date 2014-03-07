@@ -11,13 +11,16 @@
 
 #include <vector>
 
-class ErrorListTableModel : public QAbstractTableModel
+
+
+class ErrorListModel : public QAbstractItemModel
 { Q_OBJECT;
+  class ErrorTreeItem;
 
 public:
-  ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda,
+  ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
       const Errors::Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen);
-  ~ErrorListTableModel();
+  ~ErrorListModel();
 
   enum EDIT_COLUMNS {
     COL_STATION_ID = 0,
@@ -33,20 +36,33 @@ public:
     NCOLUMNS
   };
 
-  virtual int rowCount(const QModelIndex&) const;
-  virtual int columnCount(const QModelIndex&) const;
+  virtual int rowCount(const QModelIndex& parent = QModelIndex()) const;
+  virtual int columnCount(const QModelIndex& parent = QModelIndex()) const;
+  QModelIndex index(int row, int column, const QModelIndex &parent = QModelIndex()) const;
+  QModelIndex parent(const QModelIndex &index) const;
   Qt::ItemFlags flags(const QModelIndex& index) const;
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
   void showSameStation(int stationID);
-  EditDataPtr mem4Row(int row) const;
 
   //! find row for sensortime, returns -1 if not found
-  int findSensorTime(const SensorTime& st);
+  QModelIndex findSensorTime(const SensorTime& st) const
+    { return findSensorTime(st, mErrorRoot); }
+
+  EditDataPtr findObs(const QModelIndex& index) const;
 
 private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem* item) const;
+  ErrorTreeItem* findParentItem(const QModelIndex& parentIndex) const;
+  void buildTree();
+
+  void updateErrorItem(const QModelIndex& idx);
+  void removeErrorItem(QModelIndex idx);
+  void insertErrorItem(Errors::ErrorInfo ei);
+
+  QModelIndex index(ErrorTreeItem* item, int column=0) const;
 
 private:
   EditAccessPtr mDA;
@@ -54,6 +70,7 @@ private:
   Errors::Sensors_t mSensors;
   TimeRange mTimeLimits;
   Errors::Errors_t mErrorList;
+  ErrorTreeItem* mErrorRoot;
   bool mErrorsForSalen;
   int mShowStation;
 };

@@ -6,7 +6,7 @@ SET(hqc_SOURCES
   DataList.cc
   EditVersionModel.cc
   ErrorList.cc
-  ErrorListTableModel.cc
+  ErrorListModel.cc
   ExtremesTableModel.cc
   ExtremesView.cc
   GetTextData.cc
@@ -41,7 +41,7 @@ QT4_WRAP_CPP(hqc_MOC
   DataList.hh
   EditVersionModel.hh
   ErrorList.hh
-  ErrorListTableModel.hh
+  ErrorListModel.hh
   ExtremesView.hh
   HqcDianaHelper.hh
   HqcMainWindow.hh
