@@ -15,7 +15,8 @@ class ErrorListTableModel : public QAbstractTableModel
 { Q_OBJECT;
 
 public:
-  ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& errorList, bool errorsForSalen);
+  ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda,
+      const Errors::Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen);
   ~ErrorListTableModel();
 
   enum EDIT_COLUMNS {
@@ -42,8 +43,7 @@ public:
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
   void showSameStation(int stationID);
-  EditDataPtr mem4Row(int row) const
-    { return (row>=0 and row<(int)mErrorList.size()) ? mErrorList.at(row).obs : EditDataPtr(); }
+  EditDataPtr mem4Row(int row) const;
 
   const Errors::Errors_t& errorList() const
     { return mErrorList; }
@@ -54,6 +54,8 @@ private:
 private:
   EditAccessPtr mDA;
   ModelAccessPtr mMA;
+  Errors::Sensors_t mSensors;
+  TimeRange mTimeLimits;
   Errors::Errors_t mErrorList;
   bool mErrorsForSalen;
   int mShowStation;

@@ -126,6 +126,7 @@ namespace Errors {
 bool recheck(ErrorInfo& ei, bool errorsForSalen)
 {
     const bool oldBad = ei.badInList;
+    ei.badInList = 0;
     if (checkError2013(ei.obs, errorsForSalen))
       ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2013;
     return (ei.badInList != oldBad);

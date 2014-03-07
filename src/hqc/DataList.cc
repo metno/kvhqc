@@ -39,7 +39,7 @@ const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
 DataList::DataList(QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::DataList)
-  , mEmittingNavigateTo(false)
+  , mBlockNavigateTo(0)
 {
   ui->setupUi(this);
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
@@ -89,7 +89,7 @@ void DataList::changeEvent(QEvent *event)
 void DataList::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();
-  if (mEmittingNavigateTo or not mTableModel.get() or not st.valid() or eq_SensorTime()(mSensorTime, st))
+  if (mBlockNavigateTo or not mTableModel.get() or not st.valid() or eq_SensorTime()(mSensorTime, st))
     return;
 
   mSensorTime = st;
@@ -117,19 +117,22 @@ void DataList::onCurrentChanged(const QModelIndex& current)
 {
   METLIBS_LOG_SCOPE();
   const SensorTime st = mTableModel->findSensorTime(current);
-  METLIBS_LOG_DEBUG(LOGVAL(st));
-  if (st.valid() and not eq_SensorTime()(mSensorTime, st)) {
+  METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(mBlockNavigateTo));
+  if (mBlockNavigateTo == 0 and st.valid() and not eq_SensorTime()(mSensorTime, st)) {
     mSensorTime = st;
-    mEmittingNavigateTo = true;
+    mBlockNavigateTo += 1;
     /*emit*/ signalNavigateTo(st);
-    mEmittingNavigateTo = false;
+    mBlockNavigateTo -= 1;
   }
 }
 
 void DataList::updateModel(DataListModel* newModel)
 {
+  METLIBS_LOG_SCOPE();
+  mBlockNavigateTo += 1;
   mTableModel.reset(newModel);
   onUITimeStepChanged(ui->comboTimeStep->currentIndex());
+  METLIBS_LOG_DEBUG("about to reset table model");
   ui->table->setModel(mTableModel.get());
   connect(mTableModel.get(), SIGNAL(changedTimeStep(int)),
       this, SLOT(onModelTimeStepChanged(int)));
@@ -140,6 +143,7 @@ void DataList::updateModel(DataListModel* newModel)
   
   ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
   ui->toolInterpolate->updateModel(mDA, ui->table);
+  mBlockNavigateTo -= 1;
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)

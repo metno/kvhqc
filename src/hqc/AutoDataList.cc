@@ -133,7 +133,7 @@ void AutoDataList::doNavigateTo(const SensorTime& st)
   if (not st.valid() or eq_SensorTime()(mSensorTime, st))
     return;
 
-  if (not mEmittingNavigateTo or not mTableModel.get() or mTableModel->findIndexes(st).empty()) {
+  if (mBlockNavigateTo == 0 or not mTableModel.get() or mTableModel->findIndexes(st).empty()) {
     mTimeLimits = ViewChanges::defaultTimeLimits(st);
     mOriginalTimeLimits = mTimeLimits;
     if (not mSensorTime.valid() or not eq_Sensor()(mSensorTime.sensor, st.sensor)) {

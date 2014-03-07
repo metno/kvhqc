@@ -14,6 +14,8 @@
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
+#include <algorithm>
+
 #define MILOGGER_CATEGORY "kvhqc.ErrorListTableModel"
 #include "common/ObsLogging.hh"
 
@@ -53,18 +55,23 @@ const char* tooltips[ErrorListTableModel::NCOLUMNS] = {
 
 }
 
-ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda, const Errors::Errors_t& errorList, bool errorsForSalen)
+ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda,
+    const Errors::Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
   : mDA(eda)
   , mMA(mda)
-  , mErrorList(errorList)
+  , mSensors(sensors)
+  , mTimeLimits(limits)
   , mErrorsForSalen(errorsForSalen)
   , mShowStation(-1)
 {
   mDA->obsDataChanged.connect(boost::bind(&ErrorListTableModel::onDataChanged, this, _1, _2));
 
+  if (mDA)
+    mErrorList = Errors::fillMemoryStore2(mDA, mSensors, mTimeLimits, mErrorsForSalen);
+
   // prefetch model data
   std::vector<SensorTime> sensorTimes;
-  BOOST_FOREACH(const Errors::ErrorInfo& ei, errorList) {
+  BOOST_FOREACH(const Errors::ErrorInfo& ei, mErrorList) {
     sensorTimes.push_back(ei.obs->sensorTime());
   }
   mMA->findMany(sensorTimes);
@@ -97,7 +104,7 @@ static QString twoDigits(int number)
 
 QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
 {
-  METLIBS_LOG_SCOPE();
+  //METLIBS_LOG_SCOPE();
   try {
     const Errors::ErrorInfo& ei = mErrorList.at(index.row());
     const EditDataPtr& obs = ei.obs;
@@ -201,6 +208,14 @@ QVariant ErrorListTableModel::headerData(int section, Qt::Orientation orientatio
   return QVariant();
 }
 
+EditDataPtr ErrorListTableModel::mem4Row(int row) const
+{
+  if (row < 0 or row >= (int)mErrorList.size())
+    return EditDataPtr();
+  
+  return mErrorList.at(row).obs;
+}
+
 void ErrorListTableModel::showSameStation(int stationID)
 {
   METLIBS_LOG_SCOPE();
@@ -214,27 +229,76 @@ void ErrorListTableModel::showSameStation(int stationID)
   /*emit*/ dataChanged(index1, index2);
 }
 
+namespace /*anonymous*/ {
+struct find_Sensor : public eq_Sensor {
+  const Sensor& a;
+  find_Sensor(const Sensor& aa) : a(aa) { }
+  bool operator()(const Sensor& b) const
+    { return eq_Sensor::operator()(a, b); }
+};
+
+struct find_ErrorSensorTime : public lt_SensorTime {
+  bool operator()(const Errors::ErrorInfo& ei, const SensorTime& st) const
+    { return lt_SensorTime::operator()(ei.obs->sensorTime(), st); }
+  };
+} // anonymous namespace
+
 void ErrorListTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(what));
-  if (what == ObsAccess::CREATED)
-    return; // ignore for now
 
-  for(unsigned int row=0; row<mErrorList.size(); ++row) {
-    Errors::ErrorInfo& ei = mErrorList[row];
-    if (eq_SensorTime()(data->sensorTime(), ei.obs->sensorTime())) {
-      if (what == ObsAccess::MODIFIED) {
-        Errors::recheck(ei, mErrorsForSalen);
-        const QModelIndex index0 = createIndex(row, COL_OBS_ORIG);
-        const QModelIndex index1 = createIndex(row, COL_OBS_FLAGS);
-        /*emit*/ dataChanged(index0, index1);
-      } else if (what == ObsAccess::DESTROYED) {
-        beginRemoveRows(QModelIndex(), row, row);
-        mErrorList.erase(mErrorList.begin() + row);
-        row -= 1;
-        endRemoveRows();
-      }
+  const SensorTime& st = data->sensorTime();
+  if (not mTimeLimits.contains(st.time))
+    return;
+
+  if (std::find_if(mSensors.begin(), mSensors.end(), find_Sensor(st.sensor)) == mSensors.end())
+    return;
+
+  const Errors::Errors_t::iterator itE = std::lower_bound(mErrorList.begin(), mErrorList.end(), st, find_ErrorSensorTime());
+  const int position = (itE - mErrorList.begin());
+  const bool found = (itE != mErrorList.end() and eq_SensorTime()(itE->obs->sensorTime(), st));
+  METLIBS_LOG_DEBUG(LOGVAL(position) << LOGVAL(found) << LOGVAL(mErrorList.size()));
+
+  Errors::ErrorInfo eiInsert;
+  bool remove = false;
+
+  if (what == ObsAccess::MODIFIED and found) {
+    Errors::recheck(*itE, mErrorsForSalen);
+    METLIBS_LOG_DEBUG("re-checked, " << itE->badInList);
+    if (not itE->badInList) {
+      METLIBS_LOG_DEBUG("was error, now fixed");
+      remove = true;
     }
+  } else if (what == ObsAccess::MODIFIED or what == ObsAccess::CREATED) {
+    Errors::ErrorInfo ei(mDA->findE(st));
+    Errors::recheck(ei, mErrorsForSalen);
+    METLIBS_LOG_DEBUG("was ok, now error; or created: " << ei.badInList);
+    if (ei.badInList) {
+      METLIBS_LOG_DEBUG("created error");
+      eiInsert = ei;
+    }
+  } else if (what == ObsAccess::DESTROYED) {
+    METLIBS_LOG_DEBUG("error disappeared");
+    remove = true;
+  }
+
+  if (remove) {
+    METLIBS_LOG_DEBUG("remove at " << position << LOGVAL(found));
+    if (found) {
+      beginRemoveRows(QModelIndex(), position, position);
+      mErrorList.erase(itE);
+      endRemoveRows();
+    }
+  } else if (eiInsert.obs) {
+    METLIBS_LOG_DEBUG("insert at " << position);
+    beginInsertRows(QModelIndex(), position, position);
+    mErrorList.insert(itE, eiInsert);
+    endInsertRows();
+  } else {
+    METLIBS_LOG_DEBUG("update at " << position);
+    const QModelIndex index0 = createIndex(position, COL_OBS_ORIG);
+    const QModelIndex index1 = createIndex(position, COL_OBS_FLAGS);
+    /*emit*/ dataChanged(index0, index1);
   }
 }

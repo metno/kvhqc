@@ -48,7 +48,7 @@ protected:
   std::auto_ptr<Ui::DataList> ui;
   std::auto_ptr<DataListModel> mTableModel;
   SensorTime mSensorTime;
-  bool mEmittingNavigateTo;
+  int mBlockNavigateTo;
 };
 
 #endif // DataList_hh

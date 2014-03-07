@@ -48,7 +48,7 @@
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ErrorList"
-#include "util/HqcLogging.hh"
+#include "common/ObsLogging.hh"
 
 using namespace kvalobs;
 
@@ -83,7 +83,8 @@ void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
     DataView::setDataAccess(eda, mda);
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda, Errors::Errors_t(), mErrorsForSalen));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda,
+            Errors::Sensors_t(), TimeRange(), mErrorsForSalen));
     mSortProxy->setSourceModel(mTableModel.get());
     resizeHeaders();
 }
@@ -113,11 +114,8 @@ void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& li
     DataView::setSensorsAndTimes(sensors, limits);
 
     mLastSelectedRow = -1;
-    Errors::Errors_t memStore2;
-    if (mDA)
-        memStore2 = Errors::fillMemoryStore2(mDA, sensors, limits, mErrorsForSalen);
 
-    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, memStore2, mErrorsForSalen));
+    mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, sensors, limits, mErrorsForSalen));
     mSortProxy->setSourceModel(mTableModel.get());
     resizeHeaders();
 }
@@ -153,13 +151,17 @@ void ErrorList::showSameStation()
 
 void ErrorList::signalStationSelected()
 {
-    const int row = getSelectedRow();
-    if (row < 0 or row == mLastSelectedRow)
-        return;
-    mLastSelectedRow = row;
-
-    EditDataPtr obs = getObs(row);
+  METLIBS_LOG_SCOPE();
+  const int row = getSelectedRow();
+  if (row < 0 or row == mLastSelectedRow)
+    return;
+  mLastSelectedRow = row;
+  
+  EditDataPtr obs = getObs(row);
+  if (obs) {
+    METLIBS_LOG_DEBUG(obs->sensorTime());
     /*emit*/ signalNavigateTo(obs->sensorTime());
+  }
 }
 
 EditDataPtr ErrorList::getObs(int row) const
