@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="59"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Originalwert oder korrigierten Wert akzeptieren (abhängig von der gewählten Spalte).&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="62"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="63"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert verwerfen.&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="66"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
         <source>Reject</source>
         <translation>Verwerfen</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="67"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="69"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestimmt, ob QC2 bei &lt;span style=&quot; font-style:italic;&quot;&gt;Akzeptieren&lt;/span&gt; und &lt;span style=&quot;font-style:italic;&quot;&gt;Verwerfen&lt;/span&gt; überschreiben darf.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="70"/>
+        <location filename="../common/gui/AcceptRejectButtons.cc" line="72"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -223,58 +223,58 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="datalist.ui" line="47"/>
+        <location filename="datalist.ui" line="50"/>
         <source>Time step for times to be shown in the data list.</source>
         <translation>Schrittweite für Zeitstempel in der Datanliste.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="54"/>
+        <location filename="datalist.ui" line="57"/>
         <source>If checked, filter obstimes from the database with the time step.
 If unchecked, show all times in the range even if not in the database.</source>
         <translation>Wenn ausgewählt: filtere Zeitpunkte aus der Datenbank mit dem Zeitschritt.
 Sonst: zeige alle Zeiten im Zeitraum.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="58"/>
+        <location filename="datalist.ui" line="61"/>
         <source>Filter</source>
         <translation>Filter</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="81"/>
+        <location filename="datalist.ui" line="84"/>
         <source>Save selected (or all) data to a spreadsheet file in CSV format.</source>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Ausgewählte (oder alle) Werte als Tabelle im CSV-Format speichern.</translation>
     </message>
     <message utf8="true">
-        <location filename="datalist.ui" line="84"/>
+        <location filename="datalist.ui" line="87"/>
         <source>Save…</source>
         <translation>Speichern…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="58"/>
-        <location filename="DataList.cc" line="82"/>
+        <location filename="DataList.cc" line="59"/>
+        <location filename="DataList.cc" line="83"/>
         <source>none</source>
         <translation>ohne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="61"/>
+        <location filename="DataList.cc" line="62"/>
         <source>%1 min</source>
         <translation>%1 min</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="66"/>
-        <location filename="DataList.cc" line="84"/>
+        <location filename="DataList.cc" line="67"/>
+        <location filename="DataList.cc" line="85"/>
         <source>%1 h</source>
         <oldsource>6 h</oldsource>
         <translation>%1 h</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="164"/>
+        <location filename="DataList.cc" line="199"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="166"/>
+        <location filename="DataList.cc" line="201"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -379,7 +379,7 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="../common/DataListModel.cc" line="141"/>
+        <location filename="../common/DataListModel.cc" line="162"/>
         <source>Distance: %1km</source>
         <translation>Abstand: %1km</translation>
     </message>
@@ -735,134 +735,96 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="ErrorListTableModel.cc" line="23"/>
+        <location filename="ErrorListTableModel.cc" line="25"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="24"/>
+        <location filename="ErrorListTableModel.cc" line="26"/>
         <source>Name</source>
         <oldsource>Navn</oldsource>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="25"/>
+        <location filename="ErrorListTableModel.cc" line="27"/>
         <source>WMO</source>
         <translation>WMO</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="26"/>
-        <source>Mt</source>
-        <oldsource>  Mt</oldsource>
-        <translation>Mt</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="27"/>
-        <source>Dy</source>
-        <oldsource>  Dy</oldsource>
-        <translation>Tg</translation>
-    </message>
-    <message>
         <location filename="ErrorListTableModel.cc" line="28"/>
-        <source>Hr</source>
-        <oldsource>  Hr</oldsource>
-        <translation>H</translation>
+        <source>Obstime</source>
+        <translation>Obstime</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="29"/>
-        <source>Mn</source>
-        <translation>Min</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="31"/>
+        <location filename="ErrorListTableModel.cc" line="30"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="32"/>
+        <location filename="ErrorListTableModel.cc" line="31"/>
         <source>Orig.d</source>
         <translation>Orig.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="33"/>
+        <location filename="ErrorListTableModel.cc" line="32"/>
         <source>Corr.d</source>
         <translation>Korr.d</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="34"/>
+        <location filename="ErrorListTableModel.cc" line="33"/>
         <source>mod.v</source>
         <translation>Mod.w</translation>
     </message>
     <message>
         <location filename="EditVersionModel.cc" line="26"/>
-        <location filename="ErrorListTableModel.cc" line="35"/>
-        <location filename="ErrorListTableModel.cc" line="51"/>
+        <location filename="ErrorListTableModel.cc" line="34"/>
+        <location filename="ErrorListTableModel.cc" line="47"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flags</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="39"/>
+        <location filename="ErrorListTableModel.cc" line="38"/>
         <source>Station number</source>
         <translation>Stationsnummer</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="40"/>
+        <location filename="ErrorListTableModel.cc" line="39"/>
         <source>Station name</source>
         <translation>Stationsname</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="41"/>
+        <location filename="ErrorListTableModel.cc" line="40"/>
         <source>WMO station number</source>
         <translation>WMO Stationsnummer</translation>
     </message>
     <message>
         <location filename="ErrorListTableModel.cc" line="42"/>
-        <source>Obs month</source>
-        <translation>Obs Monat</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="43"/>
-        <source>Obs day</source>
-        <translation>Obs Tag</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="44"/>
-        <source>Obs hour</source>
-        <translation>Obs Stunde</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="45"/>
-        <source>Obs minute</source>
-        <translation>Obs Minute</translation>
-    </message>
-    <message>
-        <location filename="ErrorListTableModel.cc" line="46"/>
         <source>Parameter name</source>
         <translation>Parameter-Name</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="47"/>
+        <location filename="ErrorListTableModel.cc" line="43"/>
         <source>Type ID</source>
         <translation>Type ID</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="48"/>
+        <location filename="ErrorListTableModel.cc" line="44"/>
         <source>Original value</source>
         <translation>Originalwert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="49"/>
+        <location filename="ErrorListTableModel.cc" line="45"/>
         <source>Corrected value</source>
         <translation>Korrigierter Wert</translation>
     </message>
     <message>
-        <location filename="ErrorListTableModel.cc" line="50"/>
+        <location filename="ErrorListTableModel.cc" line="46"/>
         <source>Model value</source>
         <translation>Modell-Wert</translation>
     </message>
@@ -1571,12 +1533,12 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Vorbereitung der Daten für Station %1 um %2, bitte warten…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="828"/>
+        <location filename="HqcMainWindow.cc" line="829"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versionsänderung</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="829"/>
+        <location filename="HqcMainWindow.cc" line="830"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
     </message>
@@ -2568,6 +2530,19 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="TimeseriesDialog.cc" line="204"/>
         <source>To:</source>
         <translation>Bis:</translation>
+    </message>
+</context>
+<context>
+    <name>ToolInterpolate</name>
+    <message>
+        <location filename="../common/gui/ToolInterpolate.cc" line="46"/>
+        <source>Perform linear interpolation</source>
+        <translation>Lineare Interpolation durchführen</translation>
+    </message>
+    <message>
+        <location filename="../common/gui/ToolInterpolate.cc" line="47"/>
+        <source>Interpolate</source>
+        <translation>Interpolieren</translation>
     </message>
 </context>
 <context>

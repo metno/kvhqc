@@ -36,13 +36,9 @@
 #include <QtCore/QString>
 #include <QtGui/QTableView>
 
-#include <vector>
+#include <memory>
 
 class ErrorListTableModel;
-QT_BEGIN_NAMESPACE;
-class QSortFilterProxyModel;
-class QWidget;
-QT_END_NAMESPACE;
 
 /**
  * \brief The error list. i.e. list of observations with error flags.
@@ -88,7 +84,6 @@ private:
   int mBlockNavigateTo;
   bool mErrorsForSalen;
 
-  std::auto_ptr<QSortFilterProxyModel> mSortProxy;
   std::auto_ptr<ErrorListTableModel> mTableModel;
 };
 

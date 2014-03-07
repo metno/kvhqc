@@ -37,7 +37,6 @@
 
 #include <QtGui/QCloseEvent>
 #include <QtGui/QHeaderView>
-#include <QtGui/QSortFilterProxyModel>
 #include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
@@ -51,7 +50,6 @@ ErrorList::ErrorList(QWidget* parent)
   : QTableView(parent)
   , mBlockNavigateTo(0)
   , mErrorsForSalen(false)
-  , mSortProxy(new QSortFilterProxyModel(this))
 {
   METLIBS_LOG_SCOPE();
 
@@ -59,12 +57,7 @@ ErrorList::ErrorList(QWidget* parent)
   verticalHeader()->hide();
   setSelectionBehavior(SelectRows);
   setSelectionMode(SingleSelection);
-  setSortingEnabled(true);
-  setModel(mSortProxy.get());
   resizeHeaders();
-    
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
 
 ErrorList::~ErrorList()
@@ -79,7 +72,9 @@ void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
   mLastNavigated = SensorTime();
   mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(eda, mda,
           Errors::Sensors_t(), TimeRange(), mErrorsForSalen));
-  mSortProxy->setSourceModel(mTableModel.get());
+  setModel(mTableModel.get());
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   resizeHeaders();
 }
 
@@ -90,10 +85,7 @@ void ErrorList::resizeHeaders()
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_ID,    60);
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_NAME, 160);
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_STATION_WMO,   45);
-  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MONTH,     30);
-  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_DAY,       30);
-  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_HOUR,      30);
-  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_MINUTE,    30);
+  horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TIME,     150);
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_PARAM,     60);
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_TYPEID,    40);
   horizontalHeader()->resizeSection(ErrorListTableModel::COL_OBS_ORIG,      60);
@@ -110,7 +102,9 @@ void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& li
   Blocker b(mBlockNavigateTo);
   mLastNavigated = SensorTime();
   mTableModel = std::auto_ptr<ErrorListTableModel>(new ErrorListTableModel(mDA, mMA, sensors, limits, mErrorsForSalen));
-  mSortProxy->setSourceModel(mTableModel.get());
+  setModel(mTableModel.get());
+  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   resizeHeaders();
 }
 
@@ -126,8 +120,7 @@ int ErrorList::getSelectedRow() const
   QModelIndexList selectedRows = selectionModel()->selectedRows();
   if (selectedRows.size() != 1)
     return -1;
-  const QModelIndex indexProxy = selectedRows.at(0);
-  const QModelIndex indexModel = static_cast<QSortFilterProxyModel*>(model())->mapToSource(indexProxy);
+  const QModelIndex indexModel = selectedRows.at(0);
   return indexModel.row();
 }
 

@@ -25,10 +25,7 @@ const char* headers[ErrorListTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("ErrorList", "Stnr"),
   QT_TRANSLATE_NOOP("ErrorList", "Name"),
   QT_TRANSLATE_NOOP("ErrorList", "WMO"),
-  QT_TRANSLATE_NOOP("ErrorList", "Mt"),
-  QT_TRANSLATE_NOOP("ErrorList", "Dy"),
-  QT_TRANSLATE_NOOP("ErrorList", "Hr"),
-  QT_TRANSLATE_NOOP("ErrorList", "Mn"),
+  QT_TRANSLATE_NOOP("ErrorList", "Obstime"),
   QT_TRANSLATE_NOOP("ErrorList", "Para"),
   QT_TRANSLATE_NOOP("ErrorList", "Type"),
   QT_TRANSLATE_NOOP("ErrorList", "Orig.d"),
@@ -41,10 +38,7 @@ const char* tooltips[ErrorListTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("ErrorList", "Station number"),
   QT_TRANSLATE_NOOP("ErrorList", "Station name"),
   QT_TRANSLATE_NOOP("ErrorList", "WMO station number"),
-  QT_TRANSLATE_NOOP("ErrorList", "Obs month"),
-  QT_TRANSLATE_NOOP("ErrorList", "Obs day"),
-  QT_TRANSLATE_NOOP("ErrorList", "Obs hour"),
-  QT_TRANSLATE_NOOP("ErrorList", "Obs minute"),
+  QT_TRANSLATE_NOOP("ErrorList", "Observation time"),
   QT_TRANSLATE_NOOP("ErrorList", "Parameter name"),
   QT_TRANSLATE_NOOP("ErrorList", "Type ID"),
   QT_TRANSLATE_NOOP("ErrorList", "Original value"),
@@ -66,7 +60,7 @@ ErrorListTableModel::ErrorListTableModel(EditAccessPtr eda, ModelAccessPtr mda,
 {
   mDA->obsDataChanged.connect(boost::bind(&ErrorListTableModel::onDataChanged, this, _1, _2));
 
-  if (mDA)
+  if (mDA and mTimeLimits.closed())
     mErrorList = Errors::fillMemoryStore2(mDA, mSensors, mTimeLimits, mErrorsForSalen);
 
   // prefetch model data
@@ -97,11 +91,6 @@ Qt::ItemFlags ErrorListTableModel::flags(const QModelIndex& /*index*/) const
   return Qt::ItemIsSelectable|Qt::ItemIsEnabled;
 }
 
-static QString twoDigits(int number)
-{
-  return QString("%1").arg(number, 2, 10, QLatin1Char('0'));
-}
-
 QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
 {
   //METLIBS_LOG_SCOPE();
@@ -114,7 +103,7 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
     const SensorTime st = obs->sensorTime();
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-      if (column <= COL_OBS_MINUTE)
+      if (column <= COL_OBS_TIME)
         return Helpers::stationInfo(st.sensor.stationId) + " "
             + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
       else if (column == COL_OBS_FLAGS)
@@ -131,14 +120,8 @@ QVariant ErrorListTableModel::data(const QModelIndex& index, int role) const
         const int wmonr = KvMetaDataBuffer::instance()->findStation(st.sensor.stationId).wmonr();
         return (wmonr > 0) ? QVariant(wmonr) : QVariant();
       }
-      case COL_OBS_MONTH:
-        return twoDigits(st.time.date().month());
-      case COL_OBS_DAY:
-        return twoDigits(st.time.date().day());
-      case COL_OBS_HOUR:
-        return twoDigits(st.time.time_of_day().hours());
-      case COL_OBS_MINUTE:
-        return twoDigits(st.time.time_of_day().minutes());
+      case COL_OBS_TIME:
+        return QString::fromStdString(timeutil::to_iso_extended_string(st.time));
       case COL_OBS_PARAM:
         return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(st.sensor.paramId).name());
       case COL_OBS_TYPEID:
