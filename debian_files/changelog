@@ -1,3 +1,11 @@
+kvhqc (3.3.9-1) unstable; urgency=low
+
+  * disable BusyIndicator in AutoDataList
+  * bugfix in AutoDataList::doNavigateTo
+  * removed unnecessary dataChanged signal
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 10 Mar 2014 16:03:31 +0100
+
 kvhqc (3.3.8-1) unstable; urgency=low
 
   * ListDialog: reduce minimum to 6 hours
