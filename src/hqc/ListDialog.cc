@@ -132,7 +132,7 @@ ListDialog::ListDialog(HqcMainWindow* parent)
   connect(ui->hab, SIGNAL(hide()), this, SLOT(hide()));
   connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
 
-  mTimeControl->setMinimumGap(24);
+  mTimeControl->setMinimumGap(6);
   mTimeControl->install(ui->fromTime, ui->toTime);
     
   enableButtons();
