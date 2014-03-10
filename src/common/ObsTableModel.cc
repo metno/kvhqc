@@ -235,10 +235,7 @@ bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int
   ObsColumnPtr oc = getColumn(columnIndex(index));
   if (not oc)
     return false;
-  const bool updated = oc->setData(timeAtRow(timeIndex(index)), value, role);
-  if (updated)
-    dataChanged(index, index);
-  return updated;
+  return oc->setData(timeAtRow(timeIndex(index)), value, role);
 }
 
 QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
