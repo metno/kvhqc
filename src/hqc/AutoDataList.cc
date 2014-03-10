@@ -175,7 +175,7 @@ void AutoDataList::generateColumns()
 void AutoDataList::makeModel()
 {
   METLIBS_LOG_SCOPE();
-  BusyIndicator busy;
+  //BusyIndicator busy;
   std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
   BOOST_FOREACH(const Column& c, mColumns) {
     ObsColumnPtr oc = makeColumn(c);
@@ -427,7 +427,7 @@ void AutoDataList::addColumnBefore(int column)
   if (dac.exec() != QDialog::Accepted)
     return;
 
-  BusyIndicator busy;
+  //BusyIndicator busy;
   Column c;
   c.sensor = dac.selectedSensor();
   c.type = dac.selectedColumnType();
