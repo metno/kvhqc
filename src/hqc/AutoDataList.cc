@@ -131,14 +131,18 @@ void AutoDataList::doNavigateTo()
 {
   METLIBS_LOG_TIME();
   const SensorTime& cst = currentSensorTime();
-  if (not mTableModel.get() or mTableModel->findIndexes(cst).empty()) {
-    mTimeLimits = ViewChanges::defaultTimeLimits(currentSensorTime());
-    mOriginalTimeLimits = mTimeLimits;
-    if (not cst.valid() or not eq_Sensor()(mStoreSensorTime.sensor, cst.sensor)) {
-      // need to update related parameters and neighbor list
+
+  // updateColumns === need to update related parameters and neighbor list
+  const bool updateColumns = (not mStoreSensorTime.valid()
+      or not eq_Sensor()(mStoreSensorTime.sensor, cst.sensor));
+
+  if (updateColumns or not mTableModel.get() or mTableModel->findIndexes(cst).empty()) {
+    if (updateColumns)
       storeChanges();
-      
-      // set original columns
+
+    mTimeLimits = ViewChanges::defaultTimeLimits(cst);
+    mOriginalTimeLimits = mTimeLimits;
+    if (updateColumns) {
       generateColumns();
       replay(ViewChanges::fetch(cst.sensor, VIEW_TYPE, ID));
     }
