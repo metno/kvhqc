@@ -1,3 +1,10 @@
+kvhqc (3.3.10-1) unstable; urgency=low
+
+  * inhibit ErrorList::navigateTo from ErrorListModel::dataChanged
+  * removed old missing values search
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 11 Mar 2014 16:28:32 +0100
+
 kvhqc (3.3.9-1) unstable; urgency=low
 
   * disable BusyIndicator in AutoDataList
