@@ -59,10 +59,6 @@ QT4_WRAP_CPP(hqc_MOC
   TimeSeriesView.hh
   ViewChanges.hh
   UserSettings.hh
-  missing/MissingView.hh
-  missing/MissingSelectorWidget.hh
-  missing/MissingObservationWidget.hh
-  missing/StationOrderedMissingDataModel.hh
 )
 
 QT4_WRAP_UI(hqc_UIH

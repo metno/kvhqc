@@ -1834,39 +1834,6 @@ Du bruker HQC versjon %1.</translation>
     </message>
 </context>
 <context>
-    <name>MissingSelectorWidget</name>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="63"/>
-        <source>&amp;From:</source>
-        <translation>&amp;Fra:</translation>
-    </message>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="68"/>
-        <source>&amp;To:</source>
-        <translation>&amp;Til:</translation>
-    </message>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="77"/>
-        <source>&amp;Type:</source>
-        <translation>&amp;Type:</translation>
-    </message>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="81"/>
-        <source>&amp;Apply</source>
-        <translation>&amp;Utfør</translation>
-    </message>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="119"/>
-        <source>Error</source>
-        <translation>Feil</translation>
-    </message>
-    <message>
-        <location filename="missing/MissingSelectorWidget.cc" line="119"/>
-        <source>Unable to understand %1!</source>
-        <translation>Forstår ikke %1!</translation>
-    </message>
-</context>
-<context>
     <name>MissingView</name>
     <message>
         <location filename="MissingView.cc" line="64"/>
