@@ -72,11 +72,14 @@ private:
                                     
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void onBeginDataChange();
+  void onEndDataChange();
 
 private:
   void resizeHeaders();
   void showSameStation();
   void signalStationSelected();
+  void updateModel(const Sensors_t& sensors, const TimeRange& limits);
 
 private:
   SensorTime mLastNavigated;

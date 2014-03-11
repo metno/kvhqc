@@ -65,11 +65,25 @@ ErrorList::~ErrorList()
 void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
 {
   DataView::setDataAccess(eda, mda);
+  updateModel(Errors::Sensors_t(), TimeRange());
+}
 
+void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
+{
+  METLIBS_LOG_SCOPE();
+  DataView::setSensorsAndTimes(sensors, limits);
+  updateModel(sensors, limits);
+}
+
+void ErrorList::updateModel(const Sensors_t& sensors, const TimeRange& limits)
+{
   Blocker b(mBlockNavigateTo);
   mLastNavigated = SensorTime();
-  mTableModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(eda, mda,
-          Errors::Sensors_t(), TimeRange(), mErrorsForSalen));
+  mTableModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
+  connect(mTableModel.get(), SIGNAL(beginDataChange()),
+      this, SLOT(onBeginDataChange()));
+  connect(mTableModel.get(), SIGNAL(endDataChange()),
+      this, SLOT(onEndDataChange()));
   setModel(mTableModel.get());
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
@@ -90,20 +104,6 @@ void ErrorList::resizeHeaders()
   header()->resizeSection(ErrorListModel::COL_OBS_CORR,      60);
   header()->resizeSection(ErrorListModel::COL_OBS_MODEL,     60);
   header()->resizeSection(ErrorListModel::COL_OBS_FLAGS,    120);
-}
-
-void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
-{
-  METLIBS_LOG_SCOPE();
-  DataView::setSensorsAndTimes(sensors, limits);
-
-  Blocker b(mBlockNavigateTo);
-  mLastNavigated = SensorTime();
-  mTableModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
-  setModel(mTableModel.get());
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  resizeHeaders();
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -142,10 +142,23 @@ void ErrorList::signalStationSelected()
   METLIBS_LOG_DEBUG("invalidated mLastNavigated");
 }
 
+void ErrorList::onBeginDataChange()
+{
+  mBlockNavigateTo += 1;
+
+  if (QItemSelectionModel* selection = selectionModel())
+    selection->clear();
+}
+
+void ErrorList::onEndDataChange()
+{
+  mBlockNavigateTo -= 1;
+}
+
 void ErrorList::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(st.valid()) << LOGVAL(mLastNavigated));
-  if ((not st.valid()) or eq_SensorTime()(mLastNavigated, st))
+  if (mBlockNavigateTo or (not st.valid()) or eq_SensorTime()(mLastNavigated, st))
     return;
   mLastNavigated = st;
 

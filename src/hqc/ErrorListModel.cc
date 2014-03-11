@@ -344,6 +344,7 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
 
   const QModelIndex idx = findSensorTime(st);
 
+  /*emit*/ beginDataChange();
   if (what == ObsAccess::MODIFIED and idx.isValid()) {
     ErrorTreeItem* item = static_cast<ErrorTreeItem*>(idx.internalPointer());
     Errors::recheck(item->info(), mErrorsForSalen);
@@ -359,20 +360,24 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   } else if (what == ObsAccess::DESTROYED) {
     removeErrorItem(idx);
   }
+  /*emit*/ endDataChange();
 }
 
 void ErrorListModel::updateErrorItem(const QModelIndex& idx)
 {
+  METLIBS_LOG_SCOPE();
   if (not idx.isValid())
     return;
 
-  const int r = idx.row();
+  const int row = idx.row();
+  METLIBS_LOG_DEBUG(LOGVAL(row));
   const QModelIndex p = parent(idx);
-  /*emit*/ dataChanged(index(r, COL_OBS_ORIG, p), index(r, COL_OBS_FLAGS, p));
+  /*emit*/ dataChanged(index(row, COL_OBS_ORIG, p), index(row, COL_OBS_FLAGS, p));
 }
 
 void ErrorListModel::removeErrorItem(QModelIndex idx)
 {
+  METLIBS_LOG_SCOPE();
   if (not idx.isValid())
     return;
   
@@ -387,13 +392,17 @@ void ErrorListModel::removeErrorItem(QModelIndex idx)
     // FIXME as the item data are swapped, the selection is unchanged => no jump to next error
   }
   const int row = item->row();
+  METLIBS_LOG_DEBUG("before begin remove" << row);
   beginRemoveRows(parent(idx), row, row);
+  METLIBS_LOG_DEBUG("before removeChild");
   item->parent()->removeChild(item);
+  METLIBS_LOG_DEBUG("before end remove");
   endRemoveRows();
 }
 
 void ErrorListModel::insertErrorItem(Errors::ErrorInfo ei)
 {
+  METLIBS_LOG_SCOPE();
   const SensorTime st = ei.obs->sensorTime();
   ErrorTreeItem* insertParent = mErrorRoot.get();
   int insertIndex = 0;
@@ -425,6 +434,7 @@ void ErrorListModel::insertErrorItem(Errors::ErrorInfo ei)
       break;
     }
   }
+  METLIBS_LOG_DEBUG(LOGVAL(insertIndex));
   beginInsertRows(index(insertParent), insertIndex, insertIndex);
   insertParent->insertChild(insertIndex, ei);
   endInsertRows();
@@ -432,6 +442,7 @@ void ErrorListModel::insertErrorItem(Errors::ErrorInfo ei)
 
 QModelIndex ErrorListModel::findSensorTime(const SensorTime& st, ErrorTreeItem* item) const
 {
+  METLIBS_LOG_SCOPE();
   if (item) {
     if (item->obs()) {
       const SensorTime& ist = item->obs()->sensorTime();

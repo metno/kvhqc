@@ -52,6 +52,10 @@ public:
 
   EditDataPtr findObs(const QModelIndex& index) const;
 
+Q_SIGNALS:
+  void beginDataChange();
+  void endDataChange();
+
 private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem* item) const;
