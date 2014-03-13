@@ -35,8 +35,9 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
   if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
     return false;
 
+  const QString svalue = value.toString();
   try {
-    const float newC = mCodes->fromText(value.toString());
+    const float newC = mCodes->fromText(svalue);
     const bool reject = (newC == kvalobs::REJECTED);
     if (reject and not obs)
       return false;
@@ -53,7 +54,8 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
       Helpers::auto_correct(da->editor(obs), newC);
     return true;
   } catch (std::exception& e) {
-    HQC_LOG_ERROR("exception while editing data for sensor/time " << st << ": " << e.what());
+    METLIBS_LOG_INFO("exception while editing data for sensor/time " << st
+        << " svalue='" << svalue << "': " << e.what());
     return false;
   }
 }
