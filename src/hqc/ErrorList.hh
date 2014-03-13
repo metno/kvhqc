@@ -32,6 +32,7 @@
 
 #include "common/AnalyseErrors.hh"
 #include "common/DataView.hh"
+#include "common/NavigateHelper.hh"
 
 #include <QtCore/QString>
 #include <QtGui/QTreeView>
@@ -66,6 +67,7 @@ public:
 
 Q_SIGNALS:
   void errorListClosed();
+  void highlightStation(int stationId);
 
 private:
   EditDataPtr getSelectedObs() const;
@@ -82,8 +84,7 @@ private:
   void updateModel(const Sensors_t& sensors, const TimeRange& limits);
 
 private:
-  SensorTime mLastNavigated;
-  int mBlockNavigateTo;
+  NavigateHelper mNavigate;
   bool mErrorsForSalen;
 
   std::auto_ptr<ErrorListModel> mTableModel;

@@ -124,7 +124,8 @@ ErrorListModel::ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
   , mTimeLimits(limits)
   , mErrorRoot(new ErrorTreeItem(Errors::ErrorInfo(), 0))
   , mErrorsForSalen(errorsForSalen)
-  , mShowStation(-1)
+  , mHighlightedStation(-1)
+  , mBlockHighlighting(false)
 {
   mDA->obsDataChanged.connect(boost::bind(&ErrorListModel::onDataChanged, this, _1, _2));
 
@@ -263,7 +264,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
         return Helpers::getFlagText(obs->controlinfo());
       } // end of switch
     } else if (role == Qt::FontRole) {
-      if ((column <= 1 and st.sensor.stationId == mShowStation)
+      if ((column <= 1 and st.sensor.stationId == mHighlightedStation)
           or (column == COL_OBS_CORR and obs->modifiedCorrected())
           or (column == COL_OBS_FLAGS and obs->modifiedControlinfo()))
       {
@@ -304,16 +305,18 @@ QVariant ErrorListModel::headerData(int section, Qt::Orientation orientation, in
   return QVariant();
 }
 
-void ErrorListModel::showSameStation(int stationID)
+void ErrorListModel::highlightStation(int stationID)
 {
-  if (mShowStation == stationID)
+  if (mHighlightedStation == stationID)
     return;
 
-  mShowStation = stationID;
+  mHighlightedStation = stationID;
 
-  const int nrows = rowCount(QModelIndex()); // FIXME all root rows, or all rows?
-  if (nrows > 0)
-    Q_EMIT dataChanged(index(0, 0), index(nrows-1, 0));
+  if (not mBlockHighlighting) {
+    const int nrows = rowCount(QModelIndex()); // FIXME all root rows, or all rows?
+    if (nrows > 0)
+      Q_EMIT dataChanged(index(0, 0), index(nrows-1, 0));
+  }
 }
 
 namespace /*anonymous*/ {
@@ -345,6 +348,9 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   const QModelIndex idx = findSensorTime(st);
 
   Q_EMIT beginDataChange();
+  int highlighted = mHighlightedStation;
+  mBlockHighlighting = true;
+
   if (what == ObsAccess::MODIFIED and idx.isValid()) {
     ErrorTreeItem* item = static_cast<ErrorTreeItem*>(idx.internalPointer());
     Errors::recheck(item->info(), mErrorsForSalen);
@@ -360,7 +366,11 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   } else if (what == ObsAccess::DESTROYED) {
     removeErrorItem(idx);
   }
+
   Q_EMIT endDataChange();
+  mBlockHighlighting = false;
+  std::swap(highlighted, mHighlightedStation);
+  highlightStation(highlighted);
 }
 
 void ErrorListModel::updateErrorItem(const QModelIndex& idx)

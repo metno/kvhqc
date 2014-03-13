@@ -48,7 +48,6 @@ using namespace kvalobs;
 
 ErrorList::ErrorList(QWidget* parent)
   : QTreeView(parent)
-  , mBlockNavigateTo(0)
   , mErrorsForSalen(false)
 {
   METLIBS_LOG_SCOPE();
@@ -77,8 +76,9 @@ void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& li
 
 void ErrorList::updateModel(const Sensors_t& sensors, const TimeRange& limits)
 {
-  Blocker b(mBlockNavigateTo);
-  mLastNavigated = SensorTime();
+  mNavigate.invalidate();
+  NavigateHelper::Locker lock(mNavigate);
+
   mTableModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
   connect(mTableModel.get(), SIGNAL(beginDataChange()),
       this, SLOT(onBeginDataChange()));
@@ -116,9 +116,12 @@ void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSe
 void ErrorList::showSameStation()
 {
   METLIBS_LOG_SCOPE();
-  EditDataPtr obs = getSelectedObs();
-  int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
-  mTableModel->showSameStation(stationId);
+
+  if (mTableModel.get()) {
+    EditDataPtr obs = getSelectedObs();
+    int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
+    mTableModel->highlightStation(stationId);
+  }
 }
 
 void ErrorList::signalStationSelected()
@@ -127,24 +130,21 @@ void ErrorList::signalStationSelected()
   if (EditDataPtr obs = getSelectedObs()) {
     const SensorTime& st = obs->sensorTime();
     METLIBS_LOG_DEBUG(LOGVAL(st));
-    if (st.valid() and not eq_SensorTime()(mLastNavigated, st)) {
-      Blocker b(mBlockNavigateTo);
-      mLastNavigated = st;
-      METLIBS_LOG_DEBUG(LOGVAL(mBlockNavigateTo));
-      if (b.open())
-        Q_EMIT signalNavigateTo(st);
+    NavigateHelper::Locker lock(mNavigate);
+    if (mNavigate.go(st)) {
+      signalNavigateTo(st);
       return;
     }
   }
 
-  // reach here if no obs or invalid => make mLastNavigated invalid
-  mLastNavigated = SensorTime();
-  METLIBS_LOG_DEBUG("invalidated mLastNavigated");
+  // reach here if no obs or invalid
+  mNavigate.invalidate();
 }
 
 void ErrorList::onBeginDataChange()
 {
-  mBlockNavigateTo += 1;
+  METLIBS_LOG_SCOPE();
+  mNavigate.lock();
 
   if (QItemSelectionModel* selection = selectionModel())
     selection->clear();
@@ -152,22 +152,21 @@ void ErrorList::onBeginDataChange()
 
 void ErrorList::onEndDataChange()
 {
-  mBlockNavigateTo -= 1;
+  METLIBS_LOG_SCOPE();
+  mNavigate.unlock();
 }
 
 void ErrorList::navigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(st.valid()) << LOGVAL(mLastNavigated));
-  if (mBlockNavigateTo or (not st.valid()) or eq_SensorTime()(mLastNavigated, st))
+  METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(st.valid()));
+  if (not mNavigate.go(st))
     return;
-  mLastNavigated = st;
 
   const QModelIndex idx = mTableModel->findSensorTime(st);
   if (not idx.isValid())
     return;
 
-  Blocker b(mBlockNavigateTo);
-  METLIBS_LOG_DEBUG(LOGVAL(mBlockNavigateTo));
+  NavigateHelper::Locker lock(mNavigate);
   // scrollTo must come before select, otherwise scrolling will not happen
   scrollTo(idx);
   if (QItemSelectionModel* selection = selectionModel())

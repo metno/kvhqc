@@ -47,6 +47,7 @@ SET(common_SOURCES
   KvServiceHelper.cc
   ModelAccess.cc
   ModelColumn.cc
+  NavigateHelper.cc
   ObsAccess.cc
   ObsColumn.cc
   ObsHelpers.cc

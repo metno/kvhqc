@@ -44,13 +44,13 @@ public:
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-  void showSameStation(int stationID);
-
   //! find row for sensortime, returns -1 if not found
   QModelIndex findSensorTime(const SensorTime& st) const
     { return findSensorTime(st, mErrorRoot.get()); }
 
   EditDataPtr findObs(const QModelIndex& index) const;
+
+  void highlightStation(int stationID);
 
 Q_SIGNALS:
   void beginDataChange();
@@ -75,7 +75,8 @@ private:
   TimeRange mTimeLimits;
   boost::shared_ptr<ErrorTreeItem> mErrorRoot;
   bool mErrorsForSalen;
-  int mShowStation;
+  int mHighlightedStation;
+  bool mBlockHighlighting;
 };
 
 #endif
