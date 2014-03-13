@@ -66,13 +66,13 @@ void DianaHelper::processConnect()
         m.data.push_back("true:true:true");
         mDianaButton->sendMessage(m);
     }
-    /*emit*/ connection(mConnected);
+    Q_EMIT connection(mConnected);
 }
 
 void DianaHelper::cleanConnection()
 {
     mConnected = false;
-    /*emit*/ connection(mConnected);
+    Q_EMIT connection(mConnected);
 }
 
 void DianaHelper::processLetter(const miMessage& m)
@@ -84,7 +84,7 @@ void DianaHelper::processLetter(const miMessage& m)
         const timeutil::ptime newTime = timeutil::from_iso_extended_string(m.common);
         if (newTime != mDianaTime) {
             mDianaTime = newTime;
-            /*emit*/ receivedTime(mDianaTime);
+            Q_EMIT receivedTime(mDianaTime);
         }
     }
 }

@@ -98,8 +98,8 @@ void NeighborCardsModel::setTime(const timeutil::ptime& time)
     return;
 
   mTime = time;
-  /*emit*/ dataChanged(createIndex(0,0), createIndex(mSensors.size()-1, mItems.size()-1));
-  /*emit*/ timeChanged(mTime);
+  Q_EMIT dataChanged(createIndex(0,0), createIndex(mSensors.size()-1, mItems.size()-1));
+  Q_EMIT timeChanged(mTime);
 }
 
 QVariant NeighborCardsModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -144,7 +144,7 @@ void NeighborCardsModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr
         sensor.paramId = columnPars[col];
         if (mItems[row]->matchSensor(sensor, st.sensor)) {
           QModelIndex idx = createIndex(row, col);
-          /*emit*/ dataChanged(idx, idx);
+          Q_EMIT dataChanged(idx, idx);
         }
       }
     }

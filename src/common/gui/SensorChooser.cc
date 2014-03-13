@@ -302,7 +302,7 @@ void SensorChooser::onLevelSelected(int)
   setMaxSensor(maxSensor);
   setSensorNr(sensorNr);
 
-  /*emit*/ valid(good);
+  Q_EMIT valid(good);
 }
 
 ParamIdModel* SensorChooser::paramModel() const

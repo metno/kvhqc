@@ -100,7 +100,7 @@ void MissingView::onSelectionChanged(const QItemSelection&, const QItemSelection
     return;
   mLastSelectedRow = row;
 
-  /*emit*/ signalNavigateTo(mMissingModel->getSensorTime(row));
+  Q_EMIT signalNavigateTo(mMissingModel->getSensorTime(row));
 }
 
 void MissingView::onUpdateClicked()

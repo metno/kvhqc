@@ -294,7 +294,7 @@ void HqcDianaHelper::handleAddressListChanged()
     sendTimes();
     sendTime();
   }
-  /*emit*/ connectedToDiana(mDianaConnected);
+  Q_EMIT connectedToDiana(mDianaConnected);
 }
 
 void HqcDianaHelper::handleConnectionClosed()
@@ -302,7 +302,7 @@ void HqcDianaHelper::handleConnectionClosed()
   METLIBS_LOG_SCOPE();
   mDianaConnected = false;
   mTimesAwaitingConfirmation.clear();
-  /*emit*/ connectedToDiana(false);
+  Q_EMIT connectedToDiana(false);
 }
 
 void HqcDianaHelper::sendTimes(const std::set<timeutil::ptime>& allTimes)
@@ -450,7 +450,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
 
   if (sendSignal) {
     METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
-    /*emit*/ signalNavigateTo(mDianaSensorTime);
+    Q_EMIT signalNavigateTo(mDianaSensorTime);
   }
 }
 
@@ -466,7 +466,7 @@ void HqcDianaHelper::handlePosition(float lon, float lat)
 
   if (switchToKvalobsStationId(nearest)) {
     METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
-    /*emit*/ signalNavigateTo(mDianaSensorTime);
+    Q_EMIT signalNavigateTo(mDianaSensorTime);
   }
 }
 

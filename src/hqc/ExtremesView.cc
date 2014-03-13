@@ -88,7 +88,7 @@ void ExtremesView::onSelectionChanged(const QItemSelection&, const QItemSelectio
   mLastSelectedRow = row;
 
   EditDataPtr obs = mExtremesModel->getObs(row);
-  /*emit*/ signalNavigateTo(obs->sensorTime());
+  Q_EMIT signalNavigateTo(obs->sensorTime());
 }
 
 void ExtremesView::onUpdateClicked()

@@ -128,14 +128,14 @@ void QtKvService::run()
       continue;
     
     if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com.get())) {
-      /*emit*/ kvData(dataEvent->data());
+      Q_EMIT kvData(dataEvent->data());
     } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com.get())) {
-      /*emit*/ kvDataNotify(dataNotifyEvent->what());
+      Q_EMIT kvDataNotify(dataNotifyEvent->what());
     } else if (HintEvent *hintEvent = dynamic_cast<HintEvent*>(com.get())) {
-      /*emit*/ kvHint(hintEvent->upEvent());
+      Q_EMIT kvHint(hintEvent->upEvent());
     }
   }
-  /*emit*/ shutdown();
+  Q_EMIT shutdown();
 }
 
 void QtKvService::stop()

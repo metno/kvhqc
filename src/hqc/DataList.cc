@@ -130,7 +130,7 @@ void DataList::onCurrentChanged(const QModelIndex& current)
   Blocker b(mBlockNavigateTo);
   if (b.open() and st.valid() and not eq_SensorTime()(mSensorTime, st)) {
     mSensorTime = st;
-    /*emit*/ signalNavigateTo(st);
+    Q_EMIT signalNavigateTo(st);
   }
 }
 

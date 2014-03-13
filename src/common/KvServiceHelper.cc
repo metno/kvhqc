@@ -45,7 +45,7 @@ bool KvServiceHelper::updateKvalobsAvailability(bool available)
 {
   if (available != mKvalobsAvailable) {
     mKvalobsAvailable = available;
-    /*emit*/ kvalobsAvailable(mKvalobsAvailable);
+    Q_EMIT kvalobsAvailable(mKvalobsAvailable);
   }
   return available;
 }

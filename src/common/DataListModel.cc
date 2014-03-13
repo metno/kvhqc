@@ -30,8 +30,8 @@ void DataListModel::setCenter(int stationId)
     return;
 
   mCenter = stationId;
-  /*emit*/ headerDataChanged(mTimeInRows ? Qt::Horizontal : Qt::Vertical, 0, columnCount(QModelIndex())-1);
-  /*emit*/ changedCenter(mCenter);
+  Q_EMIT headerDataChanged(mTimeInRows ? Qt::Horizontal : Qt::Vertical, 0, columnCount(QModelIndex())-1);
+  Q_EMIT changedCenter(mCenter);
 }
 
 void DataListModel::setTimeStep(int step)
@@ -40,7 +40,7 @@ void DataListModel::setTimeStep(int step)
   ObsTableModel::setTimeStep(step);
   const int newEnabledFBTS = (mTimeStep > 0);
   if (oldEnabledFBTS != newEnabledFBTS)
-    /*emit*/ changedFilterByTimestep(newEnabledFBTS, mFilterByTimestep);
+    Q_EMIT changedFilterByTimestep(newEnabledFBTS, mFilterByTimestep);
 }
 
 void DataListModel::setFilterByTimestep(bool fbts)
@@ -52,7 +52,7 @@ void DataListModel::setFilterByTimestep(bool fbts)
   mFilterByTimestep = fbts;
   updateTimes();
   endResetModel();
-  /*emit*/ changedFilterByTimestep(mTimeStep > 0, mFilterByTimestep);
+  Q_EMIT changedFilterByTimestep(mTimeStep > 0, mFilterByTimestep);
 }
 
 void DataListModel::updateTimes()

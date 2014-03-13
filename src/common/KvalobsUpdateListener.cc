@@ -37,7 +37,7 @@ void KvalobsUpdateListener::onKvData(kvservice::KvObsDataListPtr dl)
   BOOST_FOREACH(kvservice::KvObsData& od, *dl) {
     BOOST_FOREACH(const kvalobs::kvData& kvd, od.dataList()) {
       METLIBS_LOG_DEBUG("updated: " << kvd);
-      /*emit*/ update(kvd);
+      Q_EMIT update(kvd);
     }
   }
 }

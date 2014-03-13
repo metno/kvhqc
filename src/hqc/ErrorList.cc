@@ -132,7 +132,7 @@ void ErrorList::signalStationSelected()
       mLastNavigated = st;
       METLIBS_LOG_DEBUG(LOGVAL(mBlockNavigateTo));
       if (b.open())
-        /*emit*/ signalNavigateTo(st);
+        Q_EMIT signalNavigateTo(st);
       return;
     }
   }

@@ -395,11 +395,11 @@ void HqcMainWindow::ListOK()
       HQC_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
     }
   }
-  /*emit*/ newStationList(stationList);
+  Q_EMIT newStationList(stationList);
   METLIBS_LOG_DEBUG("newStationList emitted");
 
   //  send parameter names to ts dialog
-  /*emit*/ newParameterList(mSelectedParameters);
+  Q_EMIT newParameterList(mSelectedParameters);
   if (lity != erLi && lity != erSa) {
     mDianaHelper->setSensorsAndTimes(sensors, timeLimits);
   }

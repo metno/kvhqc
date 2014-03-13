@@ -3,5 +3,5 @@
 
 void ItemCheckBox::clicked()
 {
-    /*emit*/ clicked(mItem);
+    Q_EMIT clicked(mItem);
 }

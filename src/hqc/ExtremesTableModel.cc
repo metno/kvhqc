@@ -166,7 +166,7 @@ void ExtremesTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr
       if (what == ObsAccess::MODIFIED) {
         const QModelIndex index0 = createIndex(row, COL_OBS_ORIG);
         const QModelIndex index1 = createIndex(row, COL_OBS_FLAGS);
-        /*emit*/ dataChanged(index0, index1);
+        Q_EMIT dataChanged(index0, index1);
       } else if (what == ObsAccess::DESTROYED) {
         beginRemoveRows(QModelIndex(), row, row);
         mExtremes.erase(mExtremes.begin() + row);

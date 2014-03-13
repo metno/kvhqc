@@ -67,7 +67,7 @@ void EditVersionModel::dump()
 {
     METLIBS_LOG_SCOPE();
     METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
-    /*emit*/ beginResetModel();
+    Q_EMIT beginResetModel();
     mHistory = ChangeHistory_t();
     for(int v=1; v<=mDA->highestVersion(); ++v) {
         mHistory.push_back(mDA->versionChanges(v));
@@ -78,7 +78,7 @@ void EditVersionModel::dump()
             METLIBS_LOG_DEBUG("   " << obs->sensorTime() << " c=" << obs->corrected(v) << " f=" << obs->controlinfo(v).flagstring());
 #endif
     }
-    /*emit*/ endResetModel();
+    Q_EMIT endResetModel();
 }
 
 int EditVersionModel::columnCount(const QModelIndex& parent) const

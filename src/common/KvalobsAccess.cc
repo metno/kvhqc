@@ -141,7 +141,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
 
   mLastFetchedStationId = -1;
   mLastFetchedObsHour = -1;
-  /*emit*/ signalFetchingData(mCountHoursToFetch, 0);
+  Q_EMIT signalFetchingData(mCountHoursToFetch, 0);
 
   kvalobsdata_helpers::GetData get(*this);
   try {
@@ -163,7 +163,7 @@ void KvalobsAccess::findRange(const std::vector<Sensor>& sensors, const TimeRang
   }
 
   mCountHoursToFetch = 0;
-  /*emit*/ signalFetchingData(0, 0);
+  Q_EMIT signalFetchingData(0, 0);
 }
 
 bool KvalobsAccess::isFetched(int stationId, const timeutil::ptime& t) const
@@ -206,7 +206,7 @@ void KvalobsAccess::nextData(kvservice::KvObsDataList &dl, bool update)
         mCountFetchedHours += 1;
         if (mCountFetchedHours > mCountHoursToFetch)
           mCountHoursToFetch = mCountFetchedHours+1;
-        /*emit*/ signalFetchingData(mCountHoursToFetch, mCountFetchedHours);
+        Q_EMIT signalFetchingData(mCountHoursToFetch, mCountFetchedHours);
       }
     }
   }

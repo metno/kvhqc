@@ -127,7 +127,7 @@ void TextDataDialog::checkStationId()
 {
   if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
     hide();
-    /*emit*/ textDataApply();
+    Q_EMIT textDataApply();
   } else {
     QMessageBox::information( this, tr("TextData"),
         tr("Illegal station number. Choose a different station number."));

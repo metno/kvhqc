@@ -313,7 +313,7 @@ void ErrorListModel::showSameStation(int stationID)
 
   const int nrows = rowCount(QModelIndex()); // FIXME all root rows, or all rows?
   if (nrows > 0)
-    /*emit*/ dataChanged(index(0, 0), index(nrows-1, 0));
+    Q_EMIT dataChanged(index(0, 0), index(nrows-1, 0));
 }
 
 namespace /*anonymous*/ {
@@ -344,7 +344,7 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
 
   const QModelIndex idx = findSensorTime(st);
 
-  /*emit*/ beginDataChange();
+  Q_EMIT beginDataChange();
   if (what == ObsAccess::MODIFIED and idx.isValid()) {
     ErrorTreeItem* item = static_cast<ErrorTreeItem*>(idx.internalPointer());
     Errors::recheck(item->info(), mErrorsForSalen);
@@ -360,7 +360,7 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   } else if (what == ObsAccess::DESTROYED) {
     removeErrorItem(idx);
   }
-  /*emit*/ endDataChange();
+  Q_EMIT endDataChange();
 }
 
 void ErrorListModel::updateErrorItem(const QModelIndex& idx)
@@ -372,7 +372,7 @@ void ErrorListModel::updateErrorItem(const QModelIndex& idx)
   const int row = idx.row();
   METLIBS_LOG_DEBUG(LOGVAL(row));
   const QModelIndex p = parent(idx);
-  /*emit*/ dataChanged(index(row, COL_OBS_ORIG, p), index(row, COL_OBS_FLAGS, p));
+  Q_EMIT dataChanged(index(row, COL_OBS_ORIG, p), index(row, COL_OBS_FLAGS, p));
 }
 
 void ErrorListModel::removeErrorItem(QModelIndex idx)

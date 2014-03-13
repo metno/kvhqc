@@ -53,7 +53,7 @@ void JumpToObservation::accept()
 
   if (mDA->find(st)) {
     QDialog::accept();
-    /*emit*/ signalNavigateTo(st);
+    Q_EMIT signalNavigateTo(st);
   } else {
     QMessageBox msg;
     msg.setWindowTitle(windowTitle());
