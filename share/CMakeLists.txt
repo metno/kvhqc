@@ -15,6 +15,7 @@ ADD_CUSTOM_TARGET(system-db ALL DEPENDS ${HQC_SYS_DB})
 CONFIGURE_FILE(hqc_current_version.in hqc_current_version)
 
 INSTALL(FILES
+  log4cpp.properties
   ${HQC_SYS_DB}
   ${CMAKE_CURRENT_BINARY_DIR}/hqc_current_version
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
