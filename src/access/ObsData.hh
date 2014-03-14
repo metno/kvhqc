@@ -6,7 +6,7 @@
 
 #include <kvalobs/flag/kvControlInfo.h>
 
-#include "boostutil.hh"
+#include "util/boostutil.hh"
 
 /*! Observation data. */
 class ObsData : HQC_SHARED_NOCOPY(ObsData) {

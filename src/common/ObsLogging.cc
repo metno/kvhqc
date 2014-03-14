@@ -14,6 +14,15 @@ std::ostream& operator<<(std::ostream& out, const Sensor& s)
   return out;
 }
 
+std::ostream& operator<<(std::ostream& out, const Sensor_s& s)
+{
+  out << '{';
+  for (Sensor_s::const_iterator it=s.begin(); it != s.end(); ++it)
+    out << *it;
+  out << '}';
+  return out;
+}
+
 std::ostream& operator<<(std::ostream& out, const SensorTime& st)
 {
   out << st.sensor << '@' << st.time;

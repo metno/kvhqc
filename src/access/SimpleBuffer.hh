@@ -13,7 +13,7 @@ class SimpleBuffer : public QObject
 { Q_OBJECT;
 
 public:
-  SimpleBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter);
+  SimpleBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter);
   SimpleBuffer(SignalRequest_p mRequest);
   virtual ~SimpleBuffer() = 0;
 

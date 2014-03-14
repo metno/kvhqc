@@ -5,6 +5,8 @@
 #include "KvalobsData.hh"
 #include "SimpleBuffer.hh"
 
+#include "sqlutil.hh"
+
 #include <QtCore/QThread>
 
 #include <boost/algorithm/string.hpp>
@@ -57,24 +59,21 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
 
-  const Sensor& sensor = request->sensor();
+  const Sensor_s& sensors = request->sensors();
   const TimeSpan& time = request->timeSpan();
   ObsFilter_p filter   = request->filter();
 
   ObsData_pv data;
   
   std::ostringstream sql;
-  sql << "SELECT d.obstime, d.original, d.tbtime, d.corrected, d.controlinfo, d.useinfo, d.cfailed FROM data d"
-      "  WHERE d.stationid = " << sensor.stationId
-      << " AND d.paramid = " << sensor.paramId
-      << " AND d.typeid = " << sensor.typeId
-      << " AND d.level = " << sensor.level
-      << " AND d.sensor = " << sensor.sensor
-      << " AND d.obstime BETWEEN '" << timeutil::to_iso_extended_string(time.t0()) << "'"
-      <<                   " AND '" << timeutil::to_iso_extended_string(time.t1()) << "'";
+  sql << "SELECT d.stationid, d.paramid, d.typeid, d.level, d.sensor,"
+      " d.obstime, d.original, d.tbtime, d.corrected, d.controlinfo, d.useinfo, d.cfailed"
+      " FROM data d WHERE ";
+  sensors2sql(sql, sensors, "d.");
+  sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
   if (filter and filter->hasSQL())
     sql << " AND (" << filter->acceptingSQL("d") << ")";
-  sql << " ORDER BY d.obstime";
+  sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
   //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
   sqlite3_stmt *stmt = prepare_statement(sql.str());
@@ -82,6 +81,13 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
   int step;
   while( (step = sqlite3_step(stmt)) == SQLITE_ROW ) {
     int col = 0;
+
+    const int stationid = sqlite3_column_int(stmt, col++);
+    const int paramid = sqlite3_column_int(stmt, col++);
+    const int type_id = sqlite3_column_int(stmt, col++);
+    const int level = sqlite3_column_int(stmt, col++);
+    const int sensornr = sqlite3_column_int(stmt, col++);
+
     const Time  obstime   = my_sqlite3_time(stmt, col++);
     const float original  = sqlite3_column_double(stmt, col++);
     const Time  tbtime    = my_sqlite3_time(stmt, col++);
@@ -90,9 +96,8 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
     const kvalobs::kvUseInfo     useinfo    (sqlite3_column_text(stmt, col++));
     const std::string cfailed = my_sqlite3_string(stmt, col++);
     
-    const kvalobs::kvData kvdata(sensor.stationId, obstime, original, sensor.paramId,
-        tbtime, sensor.typeId, sensor.sensor, sensor.level,
-        corrected, controlinfo, useinfo, cfailed);
+    const kvalobs::kvData kvdata(stationid, obstime, original, paramid,
+        tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
     KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
     if ((not filter) or filter->accept(kd, true)) {
       //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
@@ -265,16 +270,21 @@ void SqliteAccess::postRequest(ObsRequest_p request)
   mCountPost += 1;
 
   mRequests.push_back(request);
-  {
-    const int stationId = request->sensor().stationId;
+
+  bool needResubscribe = false;
+  const Sensor_s& sensors = request->sensors();
+  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
+    const int stationId = itS->stationId;
     stationid_count_m::iterator it = mStationCounts.find(stationId);
     if (it != mStationCounts.end()) {
       it->second += 1;
     } else {
       mStationCounts.insert(std::make_pair(stationId, 1));
-      resubscribe();
+      needResubscribe = true;
     }
   }
+  if (needResubscribe)
+    resubscribe();
 
   if (mThread)
     mThread->enqueueRequest(request);
@@ -292,7 +302,7 @@ void SqliteAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
 
   ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
   if (it != mRequests.end()) {
-    METLIBS_LOG_DEBUG(LOGVAL(request->sensor()) << LOGVAL(request->timeSpan()));
+    METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
     request->newData(data); // FIXME this is not exception safe
     request->completed(false);
   } else {
@@ -318,18 +328,24 @@ void SqliteAccess::dropRequest(ObsRequest_p request)
   //if (mThread) // TODO
   //  mThread->unqueueRequest(request);
 
-  const int stationId = request->sensor().stationId;
-  stationid_count_m::iterator itC = mStationCounts.find(stationId);
-  if (itC == mStationCounts.end() or itC->second == 0) {
-    METLIBS_LOG_ERROR("dropping request with zero station count");
-    return;
+  bool needResubscribe = false;
+  const Sensor_s& sensors = request->sensors();
+  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
+    const int stationId = itS->stationId;
+    stationid_count_m::iterator itC = mStationCounts.find(stationId);
+    if (itC == mStationCounts.end() or itC->second == 0) {
+      METLIBS_LOG_ERROR("dropping request with zero station count");
+      return;
+    }
+    
+    itC->second -= 1;
+    if (itC->second == 0) {
+      mStationCounts.erase(stationId);
+      needResubscribe = true;
+    }
   }
-
-  itC->second -= 1;
-  if (itC->second == 0) {
-    mStationCounts.erase(stationId);
+  if (needResubscribe)
     resubscribe();
-  }
 }
 
 // ------------------------------------------------------------------------
@@ -399,4 +415,3 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
     mSqlite->exec(sql.str());
   }
 }
-

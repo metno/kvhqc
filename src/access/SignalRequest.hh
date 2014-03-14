@@ -8,12 +8,12 @@ class SignalRequest : public QObject, public ObsRequest
 { Q_OBJECT;
 
 public:
-  SignalRequest(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
+  SignalRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   SignalRequest(ObsRequest_p wrapped);
   
 public:
-  virtual const Sensor& sensor() const
-    { return mWrapped->sensor(); }
+  virtual const Sensor_s& sensors() const
+    { return mWrapped->sensors(); }
 
   virtual const TimeSpan& timeSpan() const
     { return mWrapped->timeSpan(); }

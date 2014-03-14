@@ -4,8 +4,8 @@
 #define MILOGGER_CATEGORY "kvhqc.SimpleRequest"
 #include "common/ObsLogging.hh"
 
-SimpleRequest::SimpleRequest(SimpleBuffer* buffer, const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : BaseRequest(sensor, timeSpan, filter)
+SimpleRequest::SimpleRequest(SimpleBuffer* buffer, const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+  : BaseRequest(sensors, timeSpan, filter)
   , mBuffer(buffer)
 {
 }

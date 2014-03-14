@@ -41,8 +41,14 @@ public:
   TimeRange(const timeutil::ptime& T0, const timeutil::ptime& T1)
     : mT0(T0), mT1(T1) { }
     
+  timeutil::ptime& t0()
+    { return mT0; }
+
   const timeutil::ptime& t0() const
     { return mT0; }
+
+  timeutil::ptime& t1()
+    { return mT1; }
 
   const timeutil::ptime& t1() const
     { return mT1; }

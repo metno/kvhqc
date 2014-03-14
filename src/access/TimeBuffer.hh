@@ -7,29 +7,40 @@
 class TimeBuffer : public SimpleBuffer
 {
 public:
-  TimeBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
+  struct ObsData_by_time {
+    bool operator()(ObsData_p a, ObsData_p b) const
+      { return lt_SensorTime()(a->sensorTime(), b->sensorTime()); }
+    bool operator()(ObsData_p a, const SensorTime& b) const
+      { return lt_SensorTime()(a->sensorTime(), b); }
+    bool operator()(const SensorTime& a, ObsData_p b) const
+      { return lt_SensorTime()(a, b->sensorTime()); }
+  };
+
+  typedef std::set<ObsData_p, ObsData_by_time> ObsDataByTime_ps;
+
+public:
+  TimeBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   TimeBuffer(SignalRequest_p request);
 
   size_t size() const
     { return mData.size(); }
 
-  ObsData_p get(const Time& time) const;
+  ObsData_p get(const SensorTime& st) const;
   
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
   virtual void dropData(const SensorTime_v& dropped);
 
 protected:
-  const ObsData_pl& data() const
+  const ObsDataByTime_ps& data() const
     { return mData; }
 
 private:
-  ObsData_pl::iterator findObs(ObsData_p obs);
-  ObsData_pl::iterator findObs(const Time& st);
-  ObsData_pl::const_iterator findObs(const Time& st) const;
+  ObsDataByTime_ps::iterator find(const SensorTime& st);
+  ObsDataByTime_ps::const_iterator find(const SensorTime& st) const;
 
 private:
-  ObsData_pl mData;
+  ObsDataByTime_ps mData;
 };
 
 HQC_TYPEDEF_P(TimeBuffer);

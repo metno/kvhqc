@@ -6,11 +6,6 @@
 #include "ObsFilter.hh"
 #include "TimeSpan.hh"
 
-#include "boostutil.hh"
-
-#include <vector>
-HQC_TYPEDEF_V(SensorTime);
-
 // ========================================================================
 
 /*! Observation data request. */
@@ -20,8 +15,7 @@ public:
   ObsRequest();
   virtual ~ObsRequest();
   
-  //const Sensor_s& sensors() const = 0;
-  virtual const Sensor& sensor() const = 0;
+  virtual const Sensor_s& sensors() const = 0;
 
   virtual const TimeSpan& timeSpan() const = 0;
 

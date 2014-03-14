@@ -7,14 +7,13 @@
 class IndexBuffer : public SimpleBuffer
 {
 public:
-  IndexBuffer(int stepSeconds, const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
+  IndexBuffer(int stepSeconds, const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   IndexBuffer(int stepSeconds, SignalRequest_p request);
 
   size_t size() const
-    { return mData.size(); }
+    { return mSize; }
 
-  ObsData_p get(int idx) const
-    { return mData.at(idx); }
+  ObsData_p get(const Sensor& sensor, int idx) const;
   
 public:
   virtual void newData(const ObsData_pv& data);
@@ -23,11 +22,14 @@ public:
 
 private:
   int findIndex(ObsData_p obs) const;
-  int findIndex(const Time& time) const;
+  int findIndex(const SensorTime& st) const;
 
 private:
   int mStepSeconds;
-  ObsData_pv mData;
+  int mSize;
+
+  typedef std::map<Sensor, ObsData_pv, lt_Sensor> data_m;
+  data_m mData;
 };
 
 HQC_TYPEDEF_P(IndexBuffer);

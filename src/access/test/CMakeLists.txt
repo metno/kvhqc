@@ -36,6 +36,7 @@ LINK_LIBRARIES(
 ADD_EXECUTABLE(access_test
   CachingAccessTest.cc
   IndexBufferTest.cc
+  SetDifferencesTest.cc
   SyncRequestTest.cc
 
   gtestMain.cc

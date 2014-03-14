@@ -8,10 +8,10 @@
 class BaseRequest : public ObsRequest
 {
 public:
-  BaseRequest(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
+  BaseRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   
-  virtual const Sensor& sensor() const
-    { return mSensor; }
+  virtual const Sensor_s& sensors() const
+    { return mSensors; }
 
   virtual const TimeSpan& timeSpan() const
     { return mTimeSpan; }
@@ -20,7 +20,7 @@ public:
     { return mFilter; }
 
 private:
-  Sensor mSensor;
+  Sensor_s mSensors;
   TimeSpan mTimeSpan;
   ObsFilter_p mFilter;
 };

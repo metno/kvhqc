@@ -8,7 +8,7 @@
 class SimpleRequest : public BaseRequest
 {
 public:
-  SimpleRequest(SimpleBuffer* buffer, const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
+  SimpleRequest(SimpleBuffer* buffer, const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   
   virtual void completed(bool failed);
   virtual void newData(const ObsData_pv& data);

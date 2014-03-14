@@ -3,6 +3,8 @@
 
 #include "CachingAccessPrivate.hh"
 
+#include "set_differences.hh"
+
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
@@ -13,8 +15,8 @@
 
 // ========================================================================
 
-BackendBuffer::BackendBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : TimeBuffer(boost::make_shared<SignalRequest>(sensor, timeSpan, filter))
+BackendBuffer::BackendBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+  : TimeBuffer(boost::make_shared<SignalRequest>(sensors, timeSpan, filter))
   , mUseCount(0)
   , mUnusedSince(timeutil::now())
 {
@@ -60,7 +62,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     
     METLIBS_LOG_DEBUG(LOGVAL(bb->status()));
     if (bb->status() == SimpleBuffer::COMPLETE) {
-      const ObsData_pl& data = bb->data(); // FIXME avoid list/vector problem
+      const TimeBuffer::ObsDataByTime_ps& data = bb->data(); // FIXME avoid list/vector problem
       mRequest->newData(filterData(ObsData_pv(data.begin(), data.end())));
     } else {
       mCountIncomplete += 1;
@@ -166,33 +168,24 @@ CachingAccessPrivate::~CachingAccessPrivate()
   // clear cache is automatic
 }
 
-BackendBuffer_p CachingAccessPrivate::create(ObsRequest_p request, const TimeSpan& time)
+BackendBuffer_p CachingAccessPrivate::create(const Sensor_s& sensors, const TimeSpan& time, ObsFilter_p filter)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(request->sensor()) << LOGVAL(time));
-  BackendBuffer_p bb = boost::make_shared<BackendBuffer>(request->sensor(), time, request->filter());
-  mSensorBuffers[request->sensor()].insert(bb);
+  METLIBS_LOG_SCOPE(LOGVAL(sensors) << LOGVAL(time));
+  BackendBuffer_p bb = boost::make_shared<BackendBuffer>(sensors, time, filter);
+  mBuffers.insert(bb);
   return bb;
 }
 
 void CachingAccessPrivate::clean(const Time& dropBefore)
 {
   METLIBS_LOG_SCOPE();
-  for (Sensor_Buffer_m::iterator itS = mSensorBuffers.begin(); itS != mSensorBuffers.end(); ) {
-    Sensor_Buffer_m::iterator itS_erase = itS++;
-    Buffer_s& buffers = itS_erase->second;
-    
-    for (Buffer_s::iterator itB = buffers.begin(); itB != buffers.end(); ) {
-      Buffer_s::iterator itB_erase = itB++;
-      BackendBuffer_p bb = *itB_erase;
+  for (Time0_Buffer_s::iterator itB = mBuffers.begin(); itB != mBuffers.end(); /*copy before increment*/) {
+    Time0_Buffer_s::iterator itB_erase = itB++;
+    BackendBuffer_p bb = *itB_erase;
 
-      if (bb->isUnused() and bb->unusedSince() < dropBefore) {
-        METLIBS_LOG_DEBUG("drop provider buffer " << bb->sensor() << " " << bb->timeSpan());
-        buffers.erase(itB_erase);
-      }
-    }
-    if (buffers.empty()) {
-      METLIBS_LOG_DEBUG("erase for " << itS_erase->first);
-      mSensorBuffers.erase(itS_erase);
+    if (bb->isUnused() and bb->unusedSince() < dropBefore) {
+      METLIBS_LOG_DEBUG("drop provider buffer " << bb->sensors() << " " << bb->timeSpan());
+      mBuffers.erase(itB_erase);
     }
   }
 }
@@ -213,68 +206,152 @@ void CachingAccess::cleanCache(const Time& dropBefore)
   p->clean(dropBefore);
 }
 
-static bool filtersCompatible(ObsFilter_p fa, ObsFilter_p fb)
+// ========================================================================
+
+namespace /*anonymous*/ {
+
+bool filtersCompatible(ObsFilter_p fa, ObsFilter_p fb)
 {
   if (fa and fb and not fa->equals(*fb))
     return false;
   return not (fa or fb);
 }
 
+// ========================================================================
+
+class SensorTodo {
+public:
+  typedef std::pair<Time, bool> t0_closed;
+  typedef std::map<Sensor, t0_closed, lt_Sensor> Sensor_todo;
+  Sensor_todo todo;
+
+  typedef std::map<Time, Sensor_s> Time_Sensors_m;
+  
+  SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsFilter_p filter, const Time& t0);
+
+  void requestBuffers(const Sensor_s& intersection, const TimeSpan& time);
+
+  void post();
+
+  BackendBuffer_pv& shared()
+    { return mToShare; }
+
+private:
+  /** group sensors in 'both' by needed TimeSpan to time.t0(), update
+   * todo for all of them to time.t1()
+   */
+  Time_Sensors_m calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time);
+
+private:
+  CachingAccessPrivate_p mCAP;
+  ObsFilter_p mFilter;
+  BackendBuffer_pv mToPost, mToShare;
+};
+
+SensorTodo::SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsFilter_p filter, const Time& t0)
+  : mCAP(cap)
+  , mFilter(filter)
+{
+  const t0_closed tcinit(t0, false);
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    todo.insert(std::make_pair(s, tcinit));
+  }
+}
+
+SensorTodo::Time_Sensors_m SensorTodo::calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time)
+{
+  Time_Sensors_m tsm;
+  BOOST_FOREACH(const Sensor& s, sensors) {
+    Sensor_todo::iterator it = todo.find(s);
+    if (it == todo.end()) {
+      METLIBS_LOG_ERROR("sensor not in sensorTodo");
+      continue;
+    }
+    t0_closed& tc = it->second;
+    if (time.t0() > tc.first)
+      tsm[tc.first].insert(s);
+    tc.first = time.t1();
+    tc.second = true;
+  }
+  return tsm;
+}
+
+void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& time)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(intersection) << LOGVAL(time));
+  const Time_Sensors_m tsm = calculateRequestSpans(intersection, time);
+  BackendBuffer_pl buffers;
+  BOOST_FOREACH(const Time_Sensors_m::value_type& ts, tsm) {
+    const TimeSpan trequest(ts.first, time.t0());
+    BackendBuffer_p bb = mCAP->create(ts.second, trequest, mFilter);
+    mToShare.push_back(bb);
+    mToPost .push_back(bb);
+  }
+}
+
+void SensorTodo::post()
+{
+  BOOST_FOREACH(BackendBuffer_p bb, mToPost) {
+    bb->postRequest(mCAP->backend);
+  }
+}
+
+} // namespace anonymous
+
+// ========================================================================
+
 void CachingAccess::postRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
-  const Sensor& sensor = request->sensor();
-  const TimeSpan& time = request->timeSpan();
-  ObsFilter_p filter   = request->filter();
-  METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(time));
+  const Sensor_s& rsensors = request->sensors();
+  const TimeSpan& rtime    = request->timeSpan();
+  ObsFilter_p     rfilter  = request->filter();
+
+  SensorTodo todo(p, rsensors, rfilter, rtime.t0());
 
   // TODO throw if time is not closed()
 
-  Time todo = time.t0();
-  bool todoClosed = false;
+  // may not post request before creating CacheTag, otherwise counting
+  // of incomplete buffers cannot work
 
-  BackendBuffer_pv bbs;
-  BackendBuffer_pv toPost;
-
-  BOOST_FOREACH(BackendBuffer_p bb, p->mSensorBuffers[sensor]) {
+  BOOST_FOREACH(BackendBuffer_p bb, p->mBuffers) {
     // continue if filters do not match
-    if (not filtersCompatible(filter, bb->filter())) {
+    if (not filtersCompatible(rfilter, bb->filter())) {
       METLIBS_LOG_DEBUG("incompatible filters");
       continue;
     }
 
     const TimeSpan& bbt = bb->timeSpan();
-    METLIBS_LOG_DEBUG(LOGVAL(bbt) << LOGVAL(todo));
+    METLIBS_LOG_DEBUG(LOGVAL(bbt));
 
-    if (bbt.t0() > todo and bbt.t0() <= time.t1()) {
-      BackendBuffer_p bb = p->create(request, TimeSpan(todo, time.t1()));
-      bbs.push_back(bb);
-      toPost.push_back(bb);
-      todo = bbt.t1();
-      todoClosed = true;
-    }
-    if (bbt.t0() <= todo and bbt.t1() >= todo) {
-      bbs.push_back(bb);
-      todo = bbt.t1();
-      todoClosed = true;
-      if (todo >= time.t1())
+    if (bbt.t0() > rtime.t1())
+      break;
+
+    Sensor_s intersection;
+    typedef std::insert_iterator<Sensor_s> Sensor_si;
+    std::set_intersection(rsensors.begin(), rsensors.end(),
+        bb->sensors().begin(), bb->sensors().end(),
+        Sensor_si(intersection,  intersection.begin()), lt_Sensor());
+
+    // for those in intersection, we make new requests for before the
+    // buffer, and then put the buffer into the backendbuffer list
+    if (not intersection.empty()) {
+      todo.requestBuffers(intersection, bbt);
+
+      // add the buffer for those we already had fetched
+      todo.shared().push_back(bb);
+
+      if (bbt.t1() >= rtime.t1())
         break;
     }
   }
 
-  METLIBS_LOG_DEBUG(LOGVAL(todo) << LOGVAL(todoClosed));
-  if ((todoClosed and todo < time.t1())
-      or ((not todoClosed) and todo <= time.t1()))
-  {
-    BackendBuffer_p bb = p->create(request, TimeSpan(todo, time.t1()));
-    bbs.push_back(bb);
-    toPost.push_back(bb);
-  }
+  const Time& rt1 = request->timeSpan().t1();
+  todo.requestBuffers(rsensors, TimeSpan(rt1, rt1));
 
-  request->setTag(new CacheTag(request, bbs));
-  BOOST_FOREACH(BackendBuffer_p bb, toPost) {
-    bb->postRequest(p->backend);
-  }
+  request->setTag(new CacheTag(request, todo.shared()));
+
+  todo.post();
 }
 
 void CachingAccess::dropRequest(ObsRequest_p request)

@@ -8,21 +8,12 @@
 
 namespace /*anonymous*/ {
 
-struct ObsData_by_time {
-  bool operator()(ObsData_p a, ObsData_p b) const
-    { return a->sensorTime().time < b->sensorTime().time; }
-  bool operator()(ObsData_p a, const Time& b) const
-    { return a->sensorTime().time < b; }
-  bool operator()(const Time& a, ObsData_p b) const
-    { return a < b->sensorTime().time; }
-};
-
 } // namespace anonymous
 
 // ========================================================================
 
-TimeBuffer::TimeBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : SimpleBuffer(sensor, timeSpan, filter)
+TimeBuffer::TimeBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+  : SimpleBuffer(sensors, timeSpan, filter)
 {
 }
 
@@ -31,58 +22,53 @@ TimeBuffer::TimeBuffer(SignalRequest_p request)
 {
 }
 
-ObsData_p TimeBuffer::get(const Time& time) const
+ObsData_p TimeBuffer::get(const SensorTime& st) const
 {
-  const ObsData_pl::const_iterator itGet = findObs(time);
-  ObsData_p d = *itGet;
-  if (d->sensorTime().time == time)
-    return d;
+  const ObsDataByTime_ps::const_iterator it = find(st);
+  if (it != mData.end())
+    return *it;
   return ObsData_p();
 }
 
 void TimeBuffer::newData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  if (not data.empty()) {
-    ObsData_pv::const_iterator dataBegin = data.begin();
-    const Time& dbTime = (*dataBegin)->sensorTime().time;
-    const ObsData_pl::iterator itInsert = findObs(dbTime);
-    if (itInsert != mData.end() and dbTime == (*itInsert)->sensorTime().time)
-      ++dataBegin;
-    mData.insert(itInsert, dataBegin, data.end());
-  }
+  mData.insert(data.begin(), data.end());
 }
 
 void TimeBuffer::updateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   for (ObsData_pv::const_iterator itD = data.begin(); itD != data.end(); ++itD) {
-    const ObsData_pl::iterator itU = findObs((*itD));
-    if (itU != mData.end())
-      *itU = *itD;
+    const ObsDataByTime_ps::iterator it = find((*itD)->sensorTime());
+    if (it != mData.end()) {
+      mData.erase(it);
+      mData.insert(*itD);
+    }
   }
 }
 
 void TimeBuffer::dropData(const SensorTime_v& dropped)
 {
   for (SensorTime_v::const_iterator itS = dropped.begin(); itS != dropped.end(); ++itS) {
-    const ObsData_pl::iterator itD = findObs(itS->time);
-    if (itD != mData.end())
-      mData.erase(itD);
+    const ObsDataByTime_ps::iterator it = find(*itS);
+    if (it != mData.end())
+      mData.erase(it);
   }
 }
 
-ObsData_pl::iterator TimeBuffer::findObs(ObsData_p obs)
+TimeBuffer::ObsDataByTime_ps::iterator TimeBuffer::find(const SensorTime& st)
 {
-  return std::lower_bound(mData.begin(), mData.end(), obs->sensorTime().time, ObsData_by_time());
+  const ObsDataByTime_ps::iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_time());
+  if (it != mData.end() and eq_SensorTime()(st, (*it)->sensorTime()))
+    return it;
+  return mData.end();
 }
 
-ObsData_pl::iterator TimeBuffer::findObs(const Time& time)
+TimeBuffer::ObsDataByTime_ps::const_iterator TimeBuffer::find(const SensorTime& st) const
 {
-  return std::lower_bound(mData.begin(), mData.end(), time, ObsData_by_time());
-}
-
-ObsData_pl::const_iterator TimeBuffer::findObs(const Time& time) const
-{
-  return std::lower_bound(mData.begin(), mData.end(), time, ObsData_by_time());
+  const ObsDataByTime_ps::const_iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_time());
+  if (it != mData.end() and eq_SensorTime()(st, (*it)->sensorTime()))
+    return it;
+  return mData.end();
 }

@@ -19,12 +19,14 @@ SET(access_SOURCES
   SignalRequest.cc
   TimeBuffer.hh
   TimeBuffer.cc
-  CachingAccess.cc
   CachingAccess.hh
   CachingAccessPrivate.hh
-  SyncRequest.cc
+  CachingAccess.cc
+  sqlutil.hh
+  sqlutil.cc
   SyncRequest.hh
   SyncRequestPrivate.hh
+  SyncRequest.cc
 )
 
 QT4_WRAP_CPP(access_MOC

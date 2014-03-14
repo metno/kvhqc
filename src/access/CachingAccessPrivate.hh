@@ -14,7 +14,7 @@ HQC_TYPEDEF_PV(BackendBuffer);
 class BackendBuffer : public TimeBuffer
 {
 public:
-  BackendBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter);
+  BackendBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter);
   ~BackendBuffer();
 
   void use()
@@ -28,8 +28,8 @@ public:
   const Time& unusedSince() const
     { return mUnusedSince; }
 
-  const Sensor& sensor() const
-    { return request()->sensor(); }
+  const Sensor_s& sensors() const
+    { return request()->sensors(); }
 
   const TimeSpan& timeSpan() const
     { return request()->timeSpan(); }
@@ -37,7 +37,7 @@ public:
   ObsFilter_p filter() const
     { return request()->filter(); }
 
-  const ObsData_pl& data() const
+  const ObsDataByTime_ps& data() const
     { return TimeBuffer::data(); }
 
 private:
@@ -48,6 +48,7 @@ private:
 HQC_TYPEDEF_X(BackendBuffer);
 HQC_TYPEDEF_P(BackendBuffer);
 HQC_TYPEDEF_PV(BackendBuffer);
+HQC_TYPEDEF_PL(BackendBuffer);
 
 // ========================================================================
 
@@ -113,14 +114,17 @@ public:
   CachingAccessPrivate(ObsAccess_p backend);
   ~CachingAccessPrivate();
 
-  BackendBuffer_p create(ObsRequest_p request, const TimeSpan& time);
+  BackendBuffer_p create(const Sensor_s& sensors, const TimeSpan& time, ObsFilter_p filter);
   void clean(const Time& dropBefore);
 
   ObsAccess_p backend;
   
-  typedef std::set<BackendBuffer_p, BackendBuffer_by_t0> Buffer_s;
-  typedef std::map<Sensor, Buffer_s, lt_Sensor> Sensor_Buffer_m;
-  Sensor_Buffer_m mSensorBuffers;
+  //typedef std::set<BackendBuffer_p, BackendBuffer_by_t0> Buffer_s;
+  //typedef std::map<Sensor, Buffer_s, lt_Sensor> Sensor_Buffer_m;
+  //Sensor_Buffer_m mSensorBuffers;
+
+  typedef std::set<BackendBuffer_p, BackendBuffer_by_t0> Time0_Buffer_s;
+  Time0_Buffer_s mBuffers;
 };
 
 #endif // ACCESS_CACHINGACCESSPRIVATE_HH

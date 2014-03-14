@@ -8,8 +8,8 @@
 #define MILOGGER_CATEGORY "kvhqc.SimpleBuffer"
 #include "common/ObsLogging.hh"
 
-SimpleBuffer::SimpleBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : mRequest(new SimpleRequest(this, sensor, timeSpan, filter))
+SimpleBuffer::SimpleBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+  : mRequest(new SimpleRequest(this, sensors, timeSpan, filter))
   , mComplete(INCOMPLETE) // FIXME
 {
   METLIBS_LOG_SCOPE();

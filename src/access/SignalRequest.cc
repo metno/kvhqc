@@ -11,8 +11,8 @@ namespace /*anonymous*/ {
 class DeadRequest : public BaseRequest
 {
 public:
-  DeadRequest(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-    : BaseRequest(sensor, timeSpan, filter) { }
+  DeadRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+    : BaseRequest(sensors, timeSpan, filter) { }
       
   virtual void completed(bool)
     { METLIBS_LOG_SCOPE(); }
@@ -31,8 +31,8 @@ public:
 
 // ========================================================================
 
-SignalRequest::SignalRequest(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : mWrapped(new DeadRequest(sensor, timeSpan, filter))
+SignalRequest::SignalRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
+  : mWrapped(new DeadRequest(sensors, timeSpan, filter))
 {
   METLIBS_LOG_SCOPE();
 }
