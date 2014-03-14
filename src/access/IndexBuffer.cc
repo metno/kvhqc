@@ -64,8 +64,11 @@ void IndexBuffer::newData(const ObsData_pv& data)
   for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it) {
     const SensorTime& st = (*it)->sensorTime();
     const int idx = findIndex(st);
-    if (idx >= 0)
-      mData[st.sensor][idx] = *it;
+    if (idx < 0)
+      continue;
+    const data_m::iterator itD = mData.find(st.sensor);
+    if (itD != mData.end())
+      itD->second[idx] = *it;
   }
 }
 
@@ -80,8 +83,11 @@ void IndexBuffer::dropData(const SensorTime_v& dropped)
   METLIBS_LOG_SCOPE();
   for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it) {
     const int idx = findIndex(*it);
-    if (idx >= 0)
-      mData[it->sensor][idx] = ObsData_p();
+    if (idx < 0)
+      continue;
+    const data_m::iterator itD = mData.find(it->sensor);
+    if (itD != mData.end())
+      itD->second[idx] = ObsData_p();
   }
 }
 
