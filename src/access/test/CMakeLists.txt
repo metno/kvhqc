@@ -10,7 +10,6 @@ ADD_DEFINITIONS(-DTEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
 QT4_WRAP_CPP(test_access_MOC
   SqliteAccess.hh
-  SqliteAccessPrivate.hh
 )
 
 ADD_LIBRARY(test_access

@@ -7,8 +7,6 @@
 
 #include "sqlutil.hh"
 
-#include <QtCore/QThread>
-
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
 
@@ -34,14 +32,13 @@ Time my_sqlite3_time(sqlite3_stmt *stmt, int col)
   return timeutil::from_iso_extended_string((const char*)(sqlite3_column_text(stmt, col)));
 }
 
-const size_t QUEUE_SIZE = 16;
-
 } // namespace anonymous
 
 // ========================================================================
 
 SqliteHandler::SqliteHandler()
 {
+  METLIBS_LOG_SCOPE();
   if (sqlite3_open("", &db))
     throw std::runtime_error("could not create sqlite memory db");
 }
@@ -50,6 +47,7 @@ SqliteHandler::SqliteHandler()
 
 SqliteHandler::~SqliteHandler()
 {
+  METLIBS_LOG_SCOPE();
   sqlite3_close(db);
 }
 
@@ -114,6 +112,7 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
 
 void SqliteHandler::exec(const std::string& sql)
 {
+  //METLIBS_LOG_SCOPE(LOGVAL(sql));
   char *zErrMsg = 0;
   int rc = sqlite3_exec(db, sql.c_str(), 0, 0, &zErrMsg);
   if (rc != SQLITE_OK) {
@@ -157,65 +156,14 @@ void SqliteHandler::finalize_statement(sqlite3_stmt* stmt, int lastStep)
 
 // ========================================================================
 
-// based on Qt4 blocking fortune client example
-
-SqliteThread::SqliteThread(SqliteHandler_p sqlh)
-  : mSqlite(sqlh)
-  , mDone(false)
-{
-}
-
-SqliteThread::~SqliteThread()
-{
-  mMutex.lock();
-  mDone = true;
-  mCondition.wakeOne();
-  mMutex.unlock();
-  wait();
-}
-
-void SqliteThread::enqueueRequest(ObsRequest_p request)
-{
-  QMutexLocker locker(&mMutex);
-  mQueue.push(QueuedQuery(1, request));
-  
-  if (!isRunning())
-    start();
-  else
-    mCondition.wakeOne();
-}
-
-void SqliteThread::run()
-{
-  while (!mDone) {
-    ObsRequest_p request;
-
-    mMutex.lock();
-    if (mQueue.empty())
-      mCondition.wait(&mMutex);
-    if (not mQueue.empty()) {
-      request = mQueue.top().request;
-      mQueue.pop();
-    }
-    mMutex.unlock();
-
-    if (request) {
-      ObsData_pv data = mSqlite->queryData(request);
-      // TODO why lock before emit in example?
-      Q_EMIT newData(request, data);
-    }
-  }
-}
-
-// ========================================================================
-
 SqliteAccess::SqliteAccess(bool useThread)
-  : mSqlite(new SqliteHandler)
+  : BackgroundAccess(BackgroundHandler_p(new SqliteHandler), useThread)
   , mCountPost(0)
   , mCountDrop(0)
-  , mThread(0)
 {
-  mSqlite->exec("CREATE TABLE data ("
+  METLIBS_LOG_SCOPE();
+  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  sqlite->exec("CREATE TABLE data ("
       "stationid   INTEGER NOT NULL, "
       "obstime     TIMESTAMP NOT NULL, "
       "original    FLOAT NOT NULL, "
@@ -228,36 +176,11 @@ SqliteAccess::SqliteAccess(bool useThread)
       "controlinfo CHAR(16) DEFAULT '0000000000000000', "
       "useinfo     CHAR(16) DEFAULT '0000000000000000', "
       "cfailed     TEXT DEFAULT NULL);");
-
-  if (useThread) {
-    mThread = new SqliteThread(mSqlite);
-    connect(mThread, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-        this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  }
 }
 
 // ------------------------------------------------------------------------
 
 SqliteAccess::~SqliteAccess()
-{
-  METLIBS_LOG_SCOPE();
-  delete mThread;
-}
-
-// ------------------------------------------------------------------------
-
-void SqliteAccess::checkUpdates()
-{
-  METLIBS_LOG_SCOPE();
-  for (ObsRequest_pv::iterator it = mRequests.begin(); it != mRequests.end(); ++it) {
-    ObsRequest_p request = *it;
-    request->updateData(ObsData_pv()); // FIXME do reasonable update check
-  }
-}
-
-// ------------------------------------------------------------------------
-
-void SqliteAccess::resubscribe()
 {
   METLIBS_LOG_SCOPE();
 }
@@ -266,86 +189,16 @@ void SqliteAccess::resubscribe()
 
 void SqliteAccess::postRequest(ObsRequest_p request)
 {
-  METLIBS_LOG_SCOPE();
   mCountPost += 1;
-
-  mRequests.push_back(request);
-
-  bool needResubscribe = false;
-  const Sensor_s& sensors = request->sensors();
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-    const int stationId = itS->stationId;
-    stationid_count_m::iterator it = mStationCounts.find(stationId);
-    if (it != mStationCounts.end()) {
-      it->second += 1;
-    } else {
-      mStationCounts.insert(std::make_pair(stationId, 1));
-      needResubscribe = true;
-    }
-  }
-  if (needResubscribe)
-    resubscribe();
-
-  if (mThread)
-    mThread->enqueueRequest(request);
-  else
-    onNewData(request, mSqlite->queryData(request));
-
-  //checkUpdates();
-}
-
-// ------------------------------------------------------------------------
-
-void SqliteAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
-{
-  METLIBS_LOG_SCOPE();
-
-  ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
-  if (it != mRequests.end()) {
-    METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
-    request->newData(data); // FIXME this is not exception safe
-    request->completed(false);
-  } else {
-    METLIBS_LOG_DEBUG("request has been dropped, do nothing");
-  }
+  BackgroundAccess::postRequest(request);
 }
 
 // ------------------------------------------------------------------------
 
 void SqliteAccess::dropRequest(ObsRequest_p request)
 {
-  METLIBS_LOG_SCOPE();
   mCountDrop += 1;
-
-  // TODO what to do with requests that are processed in bg thread?
-  ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
-  if (it == mRequests.end()) {
-    METLIBS_LOG_ERROR("dropping unknown request");
-    return;
-  }
-
-  mRequests.erase(it);
-  //if (mThread) // TODO
-  //  mThread->unqueueRequest(request);
-
-  bool needResubscribe = false;
-  const Sensor_s& sensors = request->sensors();
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-    const int stationId = itS->stationId;
-    stationid_count_m::iterator itC = mStationCounts.find(stationId);
-    if (itC == mStationCounts.end() or itC->second == 0) {
-      METLIBS_LOG_ERROR("dropping request with zero station count");
-      return;
-    }
-    
-    itC->second -= 1;
-    if (itC->second == 0) {
-      mStationCounts.erase(stationId);
-      needResubscribe = true;
-    }
-  }
-  if (needResubscribe)
-    resubscribe();
+  BackgroundAccess::dropRequest(request);
 }
 
 // ------------------------------------------------------------------------
@@ -370,6 +223,7 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
   std::ifstream f(filename.c_str());
   std::string line;
 
+  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
   const std::string tbtime = timeutil::to_iso_extended_string(timeutil::now());
 
   while (std::getline(f, line)) {
@@ -412,6 +266,6 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
         << "'" << controlinfo << "', "
         << "'" << useinfo << "', "
         << "'" << cfailed << "')";
-    mSqlite->exec(sql.str());
+    sqlite->exec(sql.str());
   }
 }

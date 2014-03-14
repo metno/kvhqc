@@ -118,12 +118,17 @@ QSqlDatabase HqcApplication::configDB()
 
 QSqlDatabase HqcApplication::kvalobsDB()
 {
-  if (not QSqlDatabase::contains(DB_KVALOBS)) {
-    if (not Helpers::connect2postgres(DB_KVALOBS, mConfig, "kvalobsdb")) {
+  return kvalobsDB(DB_KVALOBS);
+}
+
+QSqlDatabase HqcApplication::kvalobsDB(const QString& qname)
+{
+  if (not QSqlDatabase::contains(qname)) {
+    if (not Helpers::connect2postgres(qname, mConfig, "kvalobsdb")) {
       fatalError(tr("Cannot access kvalobs SQL database, please check the HQC configuration"));
     }
   }
-  return QSqlDatabase::database(DB_KVALOBS);
+  return QSqlDatabase::database(qname);
 }
 
 std::string HqcApplication::kvalobsColumnsSensorTime(const std::string& data_alias)
