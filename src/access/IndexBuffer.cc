@@ -58,7 +58,7 @@ IndexBuffer::IndexBuffer(int stepSeconds, SignalRequest_p request)
     mData.insert(std::make_pair(*itS, empty));
 }
 
-void IndexBuffer::newData(const ObsData_pv& data)
+void IndexBuffer::onNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it) {
@@ -72,13 +72,13 @@ void IndexBuffer::newData(const ObsData_pv& data)
   }
 }
 
-void IndexBuffer::updateData(const ObsData_pv& data)
+void IndexBuffer::onUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   newData(data);
 }
 
-void IndexBuffer::dropData(const SensorTime_v& dropped)
+void IndexBuffer::onDropData(const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
   for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it) {

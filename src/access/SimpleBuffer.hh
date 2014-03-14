@@ -31,9 +31,23 @@ public:
 
 public Q_SLOTS:
   virtual void completed(bool failed);
-  virtual void newData(const ObsData_pv& data) = 0;
-  virtual void updateData(const ObsData_pv& data) = 0;
-  virtual void dropData(const SensorTime_v& dropped) = 0;
+  void newData(const ObsData_pv& data);
+  void updateData(const ObsData_pv& data);
+  void dropData(const SensorTime_v& dropped);
+
+Q_SIGNALS:
+  void bufferCompleted(bool failed);
+  void newDataBegin();
+  void newDataEnd(const ObsData_pv& data);
+  void updateDataBegin();
+  void updateDataEnd(const ObsData_pv& data);
+  void dropDataBegin();
+  void dropDataEnd(const SensorTime_v& dropped);
+
+protected:
+  virtual void onNewData(const ObsData_pv& data) = 0;
+  virtual void onUpdateData(const ObsData_pv& data) = 0;
+  virtual void onDropData(const SensorTime_v& dropped) = 0;
 
 private:
   ObsRequest_p mRequest;

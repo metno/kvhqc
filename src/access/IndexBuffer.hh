@@ -16,9 +16,9 @@ public:
   ObsData_p get(const Sensor& sensor, int idx) const;
   
 public:
-  virtual void newData(const ObsData_pv& data);
-  virtual void updateData(const ObsData_pv& data);
-  virtual void dropData(const SensorTime_v& dropped);
+  virtual void onNewData(const ObsData_pv& data);
+  virtual void onUpdateData(const ObsData_pv& data);
+  virtual void onDropData(const SensorTime_v& dropped);
 
 private:
   int findIndex(ObsData_p obs) const;

@@ -24,11 +24,11 @@ public:
   virtual void completed(bool failed)
     { TimeBuffer::completed(failed); countComplete += 1; }
 
-  virtual void newData(const ObsData_pv& data)
-    { TimeBuffer::newData(data); countNew += 1; }
+  virtual void onNewData(const ObsData_pv& data)
+    { TimeBuffer::onNewData(data); countNew += 1; }
 
-  virtual void updateData(const ObsData_pv& data)
-    { TimeBuffer::updateData(data); countUpdate += 1; }
+  virtual void onUpdateData(const ObsData_pv& data)
+    { TimeBuffer::onUpdateData(data); countUpdate += 1; }
 
   size_t countComplete, countNew, countUpdate;
 };

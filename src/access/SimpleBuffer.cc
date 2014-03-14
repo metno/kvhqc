@@ -55,5 +55,27 @@ void SimpleBuffer::completed(bool failed)
     mComplete = FAILED;
   else
     mComplete = COMPLETE;
+  Q_EMIT bufferCompleted(failed);
   METLIBS_LOG_DEBUG(LOGVAL(failed));
+}
+
+void SimpleBuffer::newData(const ObsData_pv& data)
+{
+  Q_EMIT newDataBegin();
+  onNewData(data);
+  Q_EMIT newDataEnd(data);
+}
+
+void SimpleBuffer::updateData(const ObsData_pv& data)
+{
+  Q_EMIT updateDataBegin();
+  onUpdateData(data);
+  Q_EMIT updateDataEnd(data);
+}
+
+void SimpleBuffer::dropData(const SensorTime_v& dropped)
+{
+  Q_EMIT dropDataBegin();
+  onDropData(dropped);
+  Q_EMIT dropDataEnd(dropped);
 }

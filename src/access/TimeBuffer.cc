@@ -30,13 +30,13 @@ ObsData_p TimeBuffer::get(const SensorTime& st) const
   return ObsData_p();
 }
 
-void TimeBuffer::newData(const ObsData_pv& data)
+void TimeBuffer::onNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   mData.insert(data.begin(), data.end());
 }
 
-void TimeBuffer::updateData(const ObsData_pv& data)
+void TimeBuffer::onUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   for (ObsData_pv::const_iterator itD = data.begin(); itD != data.end(); ++itD) {
@@ -48,7 +48,7 @@ void TimeBuffer::updateData(const ObsData_pv& data)
   }
 }
 
-void TimeBuffer::dropData(const SensorTime_v& dropped)
+void TimeBuffer::onDropData(const SensorTime_v& dropped)
 {
   for (SensorTime_v::const_iterator itS = dropped.begin(); itS != dropped.end(); ++itS) {
     const ObsDataByTime_ps::iterator it = find(*itS);
