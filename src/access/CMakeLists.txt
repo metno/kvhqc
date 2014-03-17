@@ -1,5 +1,7 @@
 
 SET(access_SOURCES
+#  AccessColumn.hh
+#  AccessColumn.cc
   BackgroundAccess.hh
   BackgroundAccessPrivate.hh
   BackgroundAccess.cc
@@ -38,6 +40,7 @@ SET(access_SOURCES
 )
 
 QT4_WRAP_CPP(access_MOC
+#  AccessColumn.hh
   BackgroundAccess.hh
   BackgroundAccessPrivate.hh
   CachingAccessPrivate.hh
