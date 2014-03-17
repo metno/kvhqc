@@ -39,6 +39,9 @@ void KvalobsUpdateListener::onKvData(kvservice::KvObsDataListPtr dl)
       METLIBS_LOG_DEBUG("updated: " << kvd);
       Q_EMIT update(kvd);
     }
+
+    const kvData_v data(od.dataList().begin(), od.dataList().end());
+    Q_EMIT updated(data);
   }
 }
 

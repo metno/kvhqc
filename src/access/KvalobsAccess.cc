@@ -109,12 +109,17 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
 KvalobsAccess::KvalobsAccess()
   : BackgroundAccess(BackgroundHandler_p(new KvalobsHandler), true)
 {
+  if (AbstractUpdateListener* ul = updateListener())
+    connect(ul, SIGNAL(updated(const kvData_v&)), this, SLOT(onUpdated(const kvData_v&)));
+  else
+    HQC_LOG_WARN("no UpdateListener");
 }
 
 // ------------------------------------------------------------------------
 
 KvalobsAccess::~KvalobsAccess()
 {
+  // TODO unsubscribe all
 }
 
 // ------------------------------------------------------------------------
@@ -139,47 +144,29 @@ void KvalobsAccess::dropRequest(ObsRequest_p request)
 
 void KvalobsAccess::checkSubscribe(const Sensor_s& sensors)
 {
-  bool needResubscribe = false;
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-    const int stationId = itS->stationId;
-    stationid_count_m::iterator it = mStationCounts.find(stationId);
-    if (it != mStationCounts.end()) {
-      it->second += 1;
-    } else {
-      mStationCounts.insert(std::make_pair(stationId, 1));
-      needResubscribe = true;
+  if (AbstractUpdateListener* ul = updateListener()) {
+    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
+      const int stationId = itS->stationId;
+      ul->addStation(stationId);
     }
   }
-  if (needResubscribe)
-    resubscribe();
 }
 
 // ------------------------------------------------------------------------
 
 void KvalobsAccess::checkUnsubscribe(const Sensor_s& sensors)
 {
-  bool needResubscribe = false;
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-    const int stationId = itS->stationId;
-    stationid_count_m::iterator itC = mStationCounts.find(stationId);
-    if (itC == mStationCounts.end() or itC->second == 0) {
-      METLIBS_LOG_ERROR("unsubscribing sensor with zero count");
-      continue;
-    }
-    
-    itC->second -= 1;
-    if (itC->second == 0) {
-      mStationCounts.erase(stationId);
-      needResubscribe = true;
+  if (AbstractUpdateListener* ul = updateListener()) {
+    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
+      const int stationId = itS->stationId;
+      ul->removeStation(stationId);
     }
   }
-  if (needResubscribe)
-    resubscribe();
 }
 
 // ------------------------------------------------------------------------
 
-void KvalobsAccess::resubscribe()
+void KvalobsAccess::onUpdated(const kvData_v&)
 {
   METLIBS_LOG_SCOPE();
 }
