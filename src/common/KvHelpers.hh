@@ -43,6 +43,8 @@ SensorTime sensorTimeFromKvData(const kvalobs::kvData& d);
 SensorTime sensorTimeFromKvModelData(const kvalobs::kvModelData& d);
 Sensor modelSensor(const Sensor& sensor);
 
+kvalobs::kvData getMissingKvData(const SensorTime& st);
+
 void updateUseInfo(kvalobs::kvData& data);
 
 struct stations_by_distance : public std::binary_function<bool, kvalobs::kvStation, kvalobs::kvStation>

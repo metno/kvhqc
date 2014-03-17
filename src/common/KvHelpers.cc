@@ -164,6 +164,13 @@ QString getFlagName(int flagNumber)
   return flagnames[flagNumber];
 }
 
+kvalobs::kvData getMissingKvData(const SensorTime& st)
+{
+  const Sensor& s = st.sensor;
+  return kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
+      s.paramId, s.typeId, s.sensor, s.level);
+}
+
 int parameterIdByName(const std::string& paramName)
 {
   try {

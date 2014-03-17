@@ -18,10 +18,13 @@ public:
    */
   virtual void dropRequest(ObsRequest_p request) = 0;
 
+  //! Create update for modifying.
+  virtual ObsUpdate_p createUpdate(ObsData_p& data) = 0;
+
+  //! Create update for creating.
   virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime) = 0;
 
-  /** bool? exception? is it sync or not?
-   */
+  //! bool? exception? is it sync or not?
   virtual bool storeUpdates(const ObsUpdate_pv& updates) = 0;
 };
 

@@ -5,6 +5,10 @@
 #include "BackgroundAccess.hh"
 #include "common/AbstractUpdateListener.hh"
 
+#include <decodeutility/DataReinserter.h>
+#include <kvcpp/KvApp.h>
+#include <kvcpp/kvservicetypes.h>
+
 class KvalobsThread;
 
 class KvalobsAccess : public BackgroundAccess
@@ -16,8 +20,16 @@ public:
   virtual void postRequest(ObsRequest_p request);
   virtual void dropRequest(ObsRequest_p request);
 
-  virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
+  virtual ObsUpdate_p createUpdate(ObsRequest_p request, const SensorTime& sensorTime);
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
+
+  typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
+
+  void setReinserter(Reinserter_t* reinserter)
+    { mDataReinserter.reset(reinserter); }
+
+  bool hasReinserter() const
+    { return (mDataReinserter.get() != 0); }
 
 private Q_SLOTS:
   virtual void onUpdated(const kvData_v&);
@@ -25,6 +37,9 @@ private Q_SLOTS:
 private:
   void checkUnsubscribe(const Sensor_s& sensors);
   void checkSubscribe(const Sensor_s& sensors);
+
+private:
+  std::auto_ptr<Reinserter_t> mDataReinserter;
 };
 
 HQC_TYPEDEF_P(KvalobsAccess);

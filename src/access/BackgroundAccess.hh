@@ -36,6 +36,9 @@ protected:
   BackgroundHandler_p handler()
     { return mHandler; }
 
+  const ObsRequest_pv& requests() const
+    { return mRequests; }
+
 private Q_SLOTS:
   void onNewData(ObsRequest_p request, const ObsData_pv& data);
 

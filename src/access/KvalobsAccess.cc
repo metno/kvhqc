@@ -106,8 +106,60 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
 
 // ========================================================================
 
+KvalobsUpdate::KvalobsUpdate(KvalobsData_p kvdata)
+  : mSensorTime(kvdata->sensorTime())
+  , mChanged(0)
+  , mData(kvdata->data())
+{
+}
+
+// ------------------------------------------------------------------------
+
+KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
+  : mSensorTime(st)
+  , mChanged(CHANGED_NEW)
+  , mData(Helpers::getMissingKvData(st))
+{
+}
+
+// ------------------------------------------------------------------------
+
+void KvalobsUpdate::setCorrected(float c) const
+{
+  if (Helpers::float_eq(c, mData.corrected()))
+    mChanged &= ~CHANGED_CORRECTED;
+  else
+    mChanged |= CHANGED_CORRECTED;
+  mNewCorrected = c;
+}
+  
+// ------------------------------------------------------------------------
+
+void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci) const
+{
+  if (ci != mData.controlinfo())
+    mChanged &= ~CHANGED_CONTROLINFO;
+  else
+    mChanged |= CHANGED_CONTROLINFO;
+  mNewControlinfo = ci;
+}
+  
+// ------------------------------------------------------------------------
+
+void KvalobsUpdate::setCfailed(const std::string& cf) const
+{
+  if (cf != mData.cfailed())
+    mChanged &= ~CHANGED_CFAILED;
+  else
+    mChanged |= CHANGED_CFAILED;
+  mNewCfailed = cf;
+}
+  
+// ========================================================================
+
 KvalobsAccess::KvalobsAccess()
   : BackgroundAccess(BackgroundHandler_p(new KvalobsHandler), true)
+  , mDataReinserter(0)
 {
   if (AbstractUpdateListener* ul = updateListener())
     connect(ul, SIGNAL(updated(const kvData_v&)), this, SLOT(onUpdated(const kvData_v&)));
@@ -173,14 +225,101 @@ void KvalobsAccess::onUpdated(const kvData_v&)
 
 // ------------------------------------------------------------------------
 
-ObsUpdate_p KvalobsAccess::createUpdate(const SensorTime& sensorTime)
+ObsUpdate_p KvalobsAccess::createUpdate(ObsRequest_p request, const SensorTime& sensorTime)
 {
-  return ObsUpdate_p();
+  ObsRequest_pv matchingRequests;
+  const ObsRequest_pv& r = requests();
+  for (ObsRequest_pv::const_iterator it = r.begin(); it != r.end(); ++it) {
+    ObsRequest_p req = *it;
+    if (not req->timeSpan().contains(sensorTime.time))
+      continue;
+    if (not req->sensors().count(sensorTime.sensor))
+      continue;
+    if (req->filter() and not req->accept(sensorTime, true))
+      continue;
+    matchingRequests.push_back(req);
+  }
+  if (matchingRequests.empty())
+    return ObsUpdate_p();
 }
 
 // ------------------------------------------------------------------------
 
 bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
-  return false;
+  METLIBS_LOG_SCOPE();
+  if (not hasReinserter()) {
+    METLIBS_LOG_DEBUG("not authorized");
+    return false;
+  }
+
+  METLIBS_LOG_DEBUG(updates.size() << " updates");
+  if (updates.empty())
+    return true;
+
+  std::list<kvalobs::kvData> store;
+  std::list<KvalobsDataPtr> modifiedObs, createdObs;
+  const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
+  BOOST_FOREACH(const ObsUpdate& ou, updates) {
+    const SensorTime st = ou.obs->sensorTime();
+
+    KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
+    bool created = false;
+    if (not obs) {
+      obs = boost::static_pointer_cast<KvalobsData>(create(st));
+      created = true;
+    }
+    const bool inserted = obs->isCreated();
+        
+    kvalobs::kvData& d = obs->data();
+    if (inserted and (ou.corrected == kvalobs::NEW_ROW or d.corrected() != kvalobs::NEW_ROW)) {
+      HQC_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());
+      continue;
+    }
+    if (inserted and not d.cfailed().empty()) {
+      HQC_LOG_WARN("inserting new row with non-empty cfailed: " << obs->sensorTime());
+    }
+
+    if (not Helpers::float_eq()(d.corrected(), ou.corrected))
+      d.corrected(ou.corrected);
+    if (d.controlinfo() != ou.controlinfo)
+      d.controlinfo(ou.controlinfo);
+    Helpers::updateUseInfo(d);
+
+    if (inserted) {
+      Helpers::updateCfailed(d, "hqc-i");
+      // specify tbtime
+      d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
+          d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.sensor(), d.level(),
+          d.corrected(), d.controlinfo(), d.useinfo(), d.cfailed());
+    } else {
+      Helpers::updateCfailed(d, "hqc-m");
+    }
+    store.push_back(d);
+    (created ? createdObs : modifiedObs).push_back(obs);
+    METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(d) << LOGVAL(d.tbtime()) << LOGVAL(d.cfailed())
+        << " ins=" << (inserted ? "y" : "n")
+        << " create=" << (created ? "y" : "n"));
+    //    << " sub=" << (isSubscribed(Helpers::sensorTimeFromKvData(d)) ? "y" : "n"));
+  }
+  METLIBS_LOG_DEBUG(store.size() << " to store");
+
+  CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
+  if (res->res == CKvalObs::CDataSource::OK) {
+    BOOST_FOREACH(KvalobsDataPtr obs, modifiedObs)
+        obsDataChanged(MODIFIED, obs);
+    BOOST_FOREACH(KvalobsDataPtr obs, createdObs)
+        obsDataChanged(CREATED, obs);
+    return true;
+  } else {
+    std::ostringstream msg;
+    msg << "saving these failed: modified:";
+    BOOST_FOREACH(KvalobsDataPtr obs, modifiedObs)
+        msg << ' ' << obs->sensorTime();
+    msg << "; created:";
+    BOOST_FOREACH(KvalobsDataPtr obs, createdObs)
+        msg << ' ' << obs->sensorTime();
+    HQC_LOG_WARN(msg.str());
+    return false;
+  }
 }
