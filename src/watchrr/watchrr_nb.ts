@@ -103,12 +103,22 @@
         <translation>WatchRR - Tilfordeling</translation>
     </message>
     <message>
-        <location filename="watchrr_redist.ui" line="91"/>
+        <location filename="watchrr_redist.ui" line="78"/>
+        <source>Calculate redistributed values based on corrected values for this station and original values for neighbor stations</source>
+        <translation>Beregne tilfordelte verdier basert på korrigerte verdier for denne stasjonen og original-verdier for nabostasjoner</translation>
+    </message>
+    <message>
+        <location filename="watchrr_redist.ui" line="81"/>
+        <source>&amp;Auto</source>
+        <translation>&amp;Auto</translation>
+    </message>
+    <message>
+        <location filename="watchrr_redist.ui" line="101"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="watchrr_redist.ui" line="101"/>
+        <location filename="watchrr_redist.ui" line="111"/>
         <source>Cancel</source>
         <translation>Abvryt</translation>
     </message>

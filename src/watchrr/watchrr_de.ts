@@ -100,12 +100,22 @@
         <translation>WatchRR - Verteilung</translation>
     </message>
     <message>
-        <location filename="watchrr_redist.ui" line="91"/>
+        <location filename="watchrr_redist.ui" line="78"/>
+        <source>Calculate redistributed values based on corrected values for this station and original values for neighbor stations</source>
+        <translation>Berechne verteilte Werte anhand der korrigierten Werte für diese Station und der Original-Werte für Nachbar-Stationen</translation>
+    </message>
+    <message>
+        <location filename="watchrr_redist.ui" line="81"/>
+        <source>&amp;Auto</source>
+        <translation>&amp;Auto</translation>
+    </message>
+    <message>
+        <location filename="watchrr_redist.ui" line="101"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="watchrr_redist.ui" line="101"/>
+        <location filename="watchrr_redist.ui" line="111"/>
         <source>Cancel</source>
         <translation>Abbrechen</translation>
     </message>

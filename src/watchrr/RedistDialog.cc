@@ -68,3 +68,12 @@ void RedistDialog::onButtonOk()
   RR24::redistribute(mDA, rtm->sensor(), rtm->time().t0(), mEditableTime, rtm->newCorrected());
   accept();
 }
+
+void RedistDialog::onButtonAuto()
+{
+  METLIBS_LOG_SCOPE();
+
+  std::vector<float> values = rtm->newCorrected();
+  if (RR24::redistributeProposal(mDA, rtm->sensor(), rtm->time(), values))
+    rtm->setNewCorrected(values);
+}

@@ -30,6 +30,7 @@ protected:
 
 private Q_SLOTS:
   void onButtonOk();
+  void onButtonAuto();
   void onDataChanged(const QModelIndex& topLeft, const QModelIndex& bottomRight);
 
 private:

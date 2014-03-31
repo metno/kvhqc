@@ -73,6 +73,16 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
+      <widget class="QPushButton" name="pushPropose">
+       <property name="toolTip">
+        <string>Calculate redistributed values based on corrected values for this station and original values for neighbor stations</string>
+       </property>
+       <property name="text">
+        <string>&amp;Auto</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <spacer name="spacer1">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -148,8 +158,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>pushPropose</sender>
+   <signal>clicked()</signal>
+   <receiver>DialogRedist</receiver>
+   <slot>onButtonAuto()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>83</x>
+     <y>477</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>115</x>
+     <y>492</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onButtonOk()</slot>
+  <slot>onButtonAuto()</slot>
  </slots>
 </ui>

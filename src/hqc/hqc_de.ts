@@ -196,13 +196,13 @@
         <translation>Kontrollflags</translation>
     </message>
     <message>
-        <location filename="../common/DataCorrectedItem.cc" line="64"/>
+        <location filename="../common/DataCorrectedItem.cc" line="66"/>
         <location filename="../common/DataVxItem.cc" line="335"/>
         <source>corr</source>
         <translation>korr</translation>
     </message>
     <message>
-        <location filename="../common/DataCorrectedItem.cc" line="66"/>
+        <location filename="../common/DataCorrectedItem.cc" line="68"/>
         <location filename="../common/DataVxItem.cc" line="338"/>
         <source>corrected</source>
         <translation>korrigiert</translation>

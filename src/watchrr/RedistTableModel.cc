@@ -13,6 +13,8 @@
 #define MILOGGER_CATEGORY "kvhqc.RedistTableModel"
 #include "util/HqcLogging.hh"
 
+static const int COLUMN_NEW = 2;
+
 RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
     : ObsTableModel(da, time)
     , mSensor(sensor)
@@ -20,7 +22,7 @@ RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const
 {
     addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::ORIGINAL));
     addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::NEW_CORRECTED));
-    addColumn(ObsColumnPtr());
+    addColumn(ObsColumnPtr()); // must be COLUMN_NEW
 
     const int nDays = mTime.days() + 1;
     for(int d=0; d<nDays; ++d) {
@@ -110,4 +112,14 @@ bool RedistTableModel::hasManualChanges() const
             return true;
     }
     return false;
+}
+
+void RedistTableModel::setNewCorrected(const std::vector<float>& newCorrected)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(newCorrected.size()));
+  if (newCorrected.size() != mNewValues.size())
+    return;
+
+  mNewValues = newCorrected;
+  Q_EMIT dataChanged(index(0, COLUMN_NEW), index(mNewValues.size()-1, COLUMN_NEW));
 }

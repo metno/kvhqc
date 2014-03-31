@@ -4,6 +4,9 @@
 #include "ObsHelpers.hh"
 #include "Tasks.hh"
 
+#include "KvMetaDataBuffer.hh"
+#include "util/Helpers.hh"
+
 #include <kvalobs/kvDataOperations.h>
 #include <QtCore/QCoreApplication>
 
@@ -221,6 +224,111 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
   markPreviousAccumulation(da, sensor, TimeRange(editableTime.t0(), time.t0()-step), true);
   if( newEndpoint )
     markPreviousAccumulation(da, sensor, TimeRange(t+step, editableTime.t1()), false);
+}
+
+// ========================================================================
+
+namespace /*anonymous*/ {
+inline float dry2real(float original)
+{ return Helpers::float_eq()(original, -1.0f) ? 0.0f : original; }
+
+// ------------------------------------------------------------------------
+
+inline float real2dry(float real)
+{ return Helpers::float_eq()(real, 0.0f) ? -1.0f : real; }
+
+} //namespace anonymous
+
+bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, float_v& values)
+{
+  METLIBS_LOG_SCOPE();
+  using namespace Helpers;
+  const boost::gregorian::date_duration step = boost::gregorian::days(1);
+
+  float accumulated = 0;
+  for (float_v::const_iterator it = values.begin(); it != values.end(); ++it) {
+    const float v = dry2real(*it);
+    if (v >= 0)
+      accumulated += v;
+  }
+  if (accumulated == 0) {
+    values = float_v(values.size(), -1.0f);
+    return true;
+  }
+
+  // see QC2 RedistributionAlgorithm::redistributePrecipitation
+
+  const FlagPattern neighbor_flags_ci("fd=1", FlagPattern::CONTROLINFO);
+  const int MAX_NEIGHBORS = 5;
+  const float WARN_DIST_NEIGHBORS = 50.0f, // km
+      WARN_DIST_NEIGHBORS2 = WARN_DIST_NEIGHBORS*WARN_DIST_NEIGHBORS;
+  const float MAX_DIST_NEIGHBORS = 100.0f; // km
+
+  typedef std::vector<Sensor> Sensor_v;
+  Sensor_v neighbors;
+  Helpers::addNeighbors(neighbors, sensor, time, 10*MAX_NEIGHBORS);
+
+  std::vector<float> distances;
+  { Helpers::stations_by_distance center(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
+    for (Sensor_v::const_iterator itN = neighbors.begin(); itN != neighbors.end(); ++itN)
+      distances.push_back(center.distance(KvMetaDataBuffer::instance()->findStation(itN->stationId)));
+  }
+          
+  float weightedNeighborsAccumulated = 0;
+  std::vector<float> weightedNeighbors;
+
+  for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
+    float sumWeights = 0.0, sumWeightedValues = 0.0;
+    int iN = 0, usedNeighbors = 0, lastStation = 0;
+    for (Sensor_v::const_iterator itN = neighbors.begin(); itN != neighbors.end(); ++itN, ++iN) {
+      METLIBS_LOG_DEBUG(LOGVAL(*itN) << LOGVAL(t));
+      if (itN->stationId == lastStation or itN->typeId != sensor.typeId)
+        continue;
+
+      EditDataPtr nobs = da->findE(SensorTime(*itN, t));
+      if (not nobs)
+        continue;
+
+      if (not (neighbor_flags_ci.matches(nobs->controlinfo())
+              and Helpers::extract_ui2(nobs) == 0))
+        continue;
+
+      const float orig = dry2real(nobs->original());
+      if (orig <= -2.0f)
+        continue;
+      const float d = distances[iN];
+      if (d >= MAX_DIST_NEIGHBORS)
+        break;
+
+      lastStation = itN->stationId;
+
+      const float weight = WARN_DIST_NEIGHBORS2/(d*d);
+      METLIBS_LOG_DEBUG(LOGVAL(weight) << LOGVAL(d));
+      sumWeights += weight;
+      sumWeightedValues += weight*orig;
+      usedNeighbors += 1;
+      if (usedNeighbors >= MAX_NEIGHBORS)
+        break;
+    }
+    if (usedNeighbors == 0)
+      return false;
+    const float wn = (sumWeights > 0.0f)
+        ? sumWeightedValues/sumWeights : -1.0f;
+    METLIBS_LOG_DEBUG(LOGVAL(sumWeightedValues) << LOGVAL(sumWeights) << LOGVAL(wn));
+    weightedNeighbors.push_back(wn);
+    weightedNeighborsAccumulated += std::max(0.0f, wn);
+  }
+
+  const float scale = (weightedNeighborsAccumulated > 0.0f)
+      ? accumulated / weightedNeighborsAccumulated : 0.0f;
+  METLIBS_LOG_DEBUG(LOGVAL(scale));
+  
+  for (size_t iT = 0; iT < weightedNeighbors.size(); ++iT) {
+    values[iT] = (weightedNeighbors[iT] > 0.05)
+        ? Helpers::roundDecimals(scale * weightedNeighbors[iT], 1) : -1.0f;
+  }
+
+  return true;
 }
 
 // ========================================================================
