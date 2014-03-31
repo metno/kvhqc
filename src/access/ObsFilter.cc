@@ -28,3 +28,8 @@ bool ObsFilter::equals(const ObsFilter& other) const
 {
   return false;
 }
+
+bool ObsFilter::subsetOf(const ObsFilter& other) const
+{
+  return true;
+}
