@@ -1,3 +1,10 @@
+kvhqc (3.4.1-1) unstable; urgency=low
+
+  * new attempt to fix errors in error list tree
+  * added "Auto" button to WatchRR RedistDialog
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 31 Mar 2014 12:40:13 +0200
+
 kvhqc (3.4.0-1) unstable; urgency=low
 
   * ErrorListModel: block highlightStation in onDataChanged
