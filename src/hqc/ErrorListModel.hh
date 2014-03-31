@@ -16,6 +16,7 @@
 class ErrorListModel : public QAbstractItemModel
 { Q_OBJECT;
   class ErrorTreeItem;
+  typedef ErrorTreeItem* ErrorTreeItem_P;
 
 public:
   ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
@@ -58,15 +59,16 @@ Q_SIGNALS:
 
 private:
   void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
-  QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem* item) const;
-  ErrorTreeItem* findParentItem(const QModelIndex& parentIndex) const;
+  QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem_P item) const;
+  ErrorTreeItem_P itemFromIndex(const QModelIndex& index) const;
   void buildTree(const Errors::Errors_t& errors);
+  void removeRow(ErrorTreeItem_P parent, int row);
 
-  void updateErrorItem(const QModelIndex& idx);
+  void updateErrorItem(ErrorTreeItem_P item);
   void removeErrorItem(QModelIndex idx);
   void insertErrorItem(Errors::ErrorInfo ei);
 
-  QModelIndex index(ErrorTreeItem* item, int column=0) const;
+  QModelIndex itemIndex(ErrorTreeItem_P item, int column=0) const;
 
 private:
   EditAccessPtr mDA;

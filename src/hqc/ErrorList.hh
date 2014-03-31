@@ -30,24 +30,14 @@
 #ifndef ERRORLIST_H
 #define ERRORLIST_H
 
-#include "common/AnalyseErrors.hh"
 #include "common/DataView.hh"
 #include "common/NavigateHelper.hh"
 
-#include <QtCore/QString>
 #include <QtGui/QTreeView>
 
 #include <memory>
 
 class ErrorListModel;
-
-/**
- * \brief The error list. i.e. list of observations with error flags.
- *
- * \detailed The error list consists of two parts.  One part holds the data for the observations
- * which are flagged as erronous.  The other part has cells where the user can insert
- * new values or approve or reject existing values.
- */
 
 class ErrorList : public QTreeView, public DataView
 { Q_OBJECT;
@@ -62,12 +52,6 @@ public:
   virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
 
   virtual void navigateTo(const SensorTime&);
-
-  EditDataPtr getObs() const;
-
-Q_SIGNALS:
-  void errorListClosed();
-  void highlightStation(int stationId);
 
 private:
   EditDataPtr getSelectedObs() const;
@@ -87,7 +71,7 @@ private:
   NavigateHelper mNavigate;
   bool mErrorsForSalen;
 
-  std::auto_ptr<ErrorListModel> mTableModel;
+  std::auto_ptr<ErrorListModel> mItemModel;
 };
 
-#endif
+#endif // ERRORLIST_H

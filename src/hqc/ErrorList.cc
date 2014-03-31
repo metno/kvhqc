@@ -79,12 +79,12 @@ void ErrorList::updateModel(const Sensors_t& sensors, const TimeRange& limits)
   mNavigate.invalidate();
   NavigateHelper::Locker lock(mNavigate);
 
-  mTableModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
-  connect(mTableModel.get(), SIGNAL(beginDataChange()),
+  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
+  connect(mItemModel.get(), SIGNAL(beginDataChange()),
       this, SLOT(onBeginDataChange()));
-  connect(mTableModel.get(), SIGNAL(endDataChange()),
+  connect(mItemModel.get(), SIGNAL(endDataChange()),
       this, SLOT(onEndDataChange()));
-  setModel(mTableModel.get());
+  setModel(mItemModel.get());
   connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   resizeHeaders();
@@ -117,10 +117,10 @@ void ErrorList::showSameStation()
 {
   METLIBS_LOG_SCOPE();
 
-  if (mTableModel.get()) {
+  if (mItemModel.get()) {
     EditDataPtr obs = getSelectedObs();
-    int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
-    mTableModel->highlightStation(stationId);
+    const int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
+    mItemModel->highlightStation(stationId);
   }
 }
 
@@ -129,9 +129,9 @@ void ErrorList::signalStationSelected()
   METLIBS_LOG_SCOPE();
   if (EditDataPtr obs = getSelectedObs()) {
     const SensorTime& st = obs->sensorTime();
-    METLIBS_LOG_DEBUG(LOGVAL(st));
     NavigateHelper::Locker lock(mNavigate);
     if (mNavigate.go(st)) {
+      METLIBS_LOG_DEBUG(LOGVAL(st));
       signalNavigateTo(st);
       return;
     }
@@ -162,7 +162,7 @@ void ErrorList::navigateTo(const SensorTime& st)
   if (not mNavigate.go(st))
     return;
 
-  const QModelIndex idx = mTableModel->findSensorTime(st);
+  const QModelIndex idx = mItemModel->findSensorTime(st);
   if (not idx.isValid())
     return;
 
@@ -181,5 +181,5 @@ EditDataPtr ErrorList::getSelectedObs() const
   const QModelIndexList selected = selection->selectedRows();
   if (selected.size() != 1)
     return EditDataPtr();
-  return mTableModel->findObs(selected.front());
+  return mItemModel->findObs(selected.front());
 }
