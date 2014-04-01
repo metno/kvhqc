@@ -7,6 +7,10 @@ SET(access_SOURCES
   BackgroundAccess.cc
   BaseRequest.hh
   BaseRequest.cc
+  EditAccess.hh
+  EditAccess.cc
+  EditData.hh
+  EditData.cc
   IndexBuffer.hh
   IndexBuffer.cc
   KvalobsAccess.hh

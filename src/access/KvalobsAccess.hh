@@ -20,7 +20,8 @@ public:
   virtual void postRequest(ObsRequest_p request);
   virtual void dropRequest(ObsRequest_p request);
 
-  virtual ObsUpdate_p createUpdate(ObsRequest_p request, const SensorTime& sensorTime);
+  virtual ObsUpdate_p createUpdate(ObsData_p& data);
+  virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
   typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;

@@ -12,16 +12,16 @@ public:
   virtual ~ObsUpdate() { }
 
   /*! Observation sensor and time. */
-  virtual SensorTime sensorTime() const = 0;
+  virtual const SensorTime& sensorTime() const = 0;
   
   /*! Current corrected value, modified during quality control. */
-  virtual void setCorrected(float c) const = 0;
+  virtual void setCorrected(float c) = 0;
 
   /*! KVALOBS current control flags. */
-  virtual void setControlinfo(const kvalobs::kvControlInfo& ci) const = 0;
+  virtual void setControlinfo(const kvalobs::kvControlInfo& ci) = 0;
 
   /*! KVALOBS current list of performed checks / modifications. */
-  virtual void setCfailed(const std::string& cf) const = 0;
+  virtual void setCfailed(const std::string& cf) = 0;
 };
 
 HQC_TYPEDEF_P(ObsUpdate);

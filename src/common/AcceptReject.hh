@@ -2,7 +2,7 @@
 #ifndef AcceptReject_hh
 #define AcceptReject_hh 1
 
-#include "EditAccess.hh"
+#include "access/EditAccess.hh"
 #include "ModelAccess.hh"
 
 namespace AcceptReject {

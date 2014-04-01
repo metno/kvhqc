@@ -10,7 +10,8 @@ public:
   KvalobsData(const kvalobs::kvData& d, bool created);
   virtual ~KvalobsData();
 
-  virtual SensorTime sensorTime() const;
+  virtual const SensorTime& sensorTime() const
+    { return mSensorTime; }
 
   virtual float original() const
     { return mKvData.original(); }
@@ -18,13 +19,13 @@ public:
   virtual float corrected() const
     { return mKvData.corrected(); }
 
-  virtual kvalobs::kvControlInfo controlinfo() const
+  virtual const kvalobs::kvControlInfo& controlinfo() const
     { return mKvData.controlinfo(); }
 
-  virtual std::string cfailed() const
+  virtual const std::string& cfailed() const
     { return mKvData.cfailed(); }
 
-  virtual timeutil::ptime tbtime() const
+  virtual const timeutil::ptime& tbtime() const
     { return mKvData.tbtime(); }
 
   const kvalobs::kvData& data() const
@@ -40,6 +41,7 @@ public:
     { mCreated = c; }
 
 private:
+  SensorTime mSensorTime;
   kvalobs::kvData mKvData;
   bool mCreated;
 };

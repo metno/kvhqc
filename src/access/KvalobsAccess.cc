@@ -124,7 +124,7 @@ KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
 
 // ------------------------------------------------------------------------
 
-void KvalobsUpdate::setCorrected(float c) const
+void KvalobsUpdate::setCorrected(float c)
 {
   if (Helpers::float_eq(c, mData.corrected()))
     mChanged &= ~CHANGED_CORRECTED;
@@ -135,7 +135,7 @@ void KvalobsUpdate::setCorrected(float c) const
   
 // ------------------------------------------------------------------------
 
-void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci) const
+void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci)
 {
   if (ci != mData.controlinfo())
     mChanged &= ~CHANGED_CONTROLINFO;
@@ -146,7 +146,7 @@ void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci) const
   
 // ------------------------------------------------------------------------
 
-void KvalobsUpdate::setCfailed(const std::string& cf) const
+void KvalobsUpdate::setCfailed(const std::string& cf)
 {
   if (cf != mData.cfailed())
     mChanged &= ~CHANGED_CFAILED;

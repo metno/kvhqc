@@ -14,7 +14,7 @@ public:
   virtual ~ObsData() { }
 
   /*! Observation sensor and time. */
-  virtual SensorTime sensorTime() const = 0;
+  virtual const SensorTime& sensorTime() const = 0;
   
   /*! Original observed value, as sent by the station. */
   virtual float original() const = 0;
@@ -23,13 +23,13 @@ public:
   virtual float corrected() const = 0;
 
   /*! KVALOBS current control flags. */
-  virtual kvalobs::kvControlInfo controlinfo() const = 0;
+  virtual const kvalobs::kvControlInfo& controlinfo() const = 0;
 
   /*! KVALOBS current list of performed checks / modifications. */
-  virtual std::string cfailed() const = 0;
+  virtual const std::string& cfailed() const = 0;
 
   /*! KVALOBS tbtime. */
-  virtual timeutil::ptime tbtime() const = 0;
+  virtual const timeutil::ptime& tbtime() const = 0;
 };
 
 HQC_TYPEDEF_P(ObsData);

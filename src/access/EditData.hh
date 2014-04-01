@@ -11,9 +11,9 @@ typedef boost::shared_ptr<EditData> EditDataPtr;
 
 class EditData : public ObsData {
 public:
-  EditData(ObsDataPtr data);
+  EditData(ObsData_p data);
 
-  virtual SensorTime sensorTime() const
+  virtual const SensorTime& sensorTime() const
     { return mData->sensorTime(); }
 
   virtual float original() const
@@ -22,13 +22,13 @@ public:
   virtual float corrected() const
     { return mCorrected.value(); }
 
-  virtual kvalobs::kvControlInfo controlinfo() const
+  virtual const kvalobs::kvControlInfo& controlinfo() const
     { return mControlinfo.value(); }
 
-  virtual std::string cfailed() const
+  virtual const std::string& cfailed() const
     { return mData->cfailed(); }
 
-  virtual timeutil::ptime tbtime() const
+  virtual const timeutil::ptime& tbtime() const
     { return mData->tbtime(); }
 
   float oldCorrected() const
@@ -36,17 +36,6 @@ public:
 
   const kvalobs::kvControlInfo& oldControlinfo() const
     { return mControlinfo.original(); }
-
-  bool hasTasks() const
-    { return allTasks() != 0; }
-
-  bool hasRequiredTasks() const;
-
-  bool hasTask(int id) const
-    { return (allTasks() & (1<<id)) != 0; }
-
-  int allTasks() const
-    { return mTasks.value(); }
 
   bool modified() const
     { return (modifiedCorrected() or modifiedControlinfo()); }
@@ -57,9 +46,6 @@ public:
   bool modifiedControlinfo() const
     { return mCreated or mControlinfo.modified(); }
 
-  bool modifiedTasks() const
-    { return mTasks.modified(); }
-
   bool hasVersion(int version)
     { return mCorrected.hasVersion(version) or mControlinfo.hasVersion(version) or mTasks.hasVersion(version); }
 
@@ -69,9 +55,6 @@ public:
   const kvalobs::kvControlInfo& controlinfo(int version) const
     { return mControlinfo.value(version); }
 
-  int allTasks(int version) const
-    { return mTasks.value(version); }
-
   bool created() const
     { return mCreated; }
 
@@ -80,7 +63,7 @@ private:
   void reset();
 
 private:
-  ObsDataPtr mData;
+  ObsData_p mData;
   bool mCreated;
   float mOriginal;
 
@@ -95,5 +78,7 @@ private:
   friend class EditAccess;
   friend class EditDataEditor;
 };
+
+HQC_TYPEDEF_P(EditData);
 
 #endif // EditData_hh

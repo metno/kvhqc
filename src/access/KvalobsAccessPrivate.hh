@@ -28,13 +28,14 @@ public:
   KvalobsUpdate(KvalobsData_p kvdata);
   KvalobsUpdate(const SensorTime& st);
 
-  virtual SensorTime sensorTime() const;
+  virtual const SensorTime& sensorTime() const
+    { return mSensorTime; }
   
-  virtual void setCorrected(float c) const;
+  virtual void setCorrected(float c);
   
-  virtual void setControlinfo(const kvalobs::kvControlInfo& ci) const;
+  virtual void setControlinfo(const kvalobs::kvControlInfo& ci);
   
-  virtual void setCfailed(const std::string& cf) const;
+  virtual void setCfailed(const std::string& cf);
   
   int changes() const
     { return mChanged; }
@@ -50,7 +51,7 @@ private:
   std::string mNewCfailed;
 };
 
-HQC_TYPEDEF_P(ObsUpdate);
-HQC_TYPEDEF_PV(ObsUpdate);
+HQC_TYPEDEF_P(KvalobsUpdate);
+HQC_TYPEDEF_PV(KvalobsUpdate);
 
 #endif // ACCESS_KVALOBSACCESSPRIVATE_HH

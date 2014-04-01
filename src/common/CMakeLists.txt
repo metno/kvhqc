@@ -20,9 +20,6 @@ SET(common_SOURCES
   DataView.cc
   DataVxItem.cc
   DianaHelper.cc
-  EditAccess.cc
-  EditData.cc
-  EditDataEditor.cc
   EditTimeColumn.cc
   FindAllParameters.cc
   FindExtremeValues.cc
@@ -36,12 +33,9 @@ SET(common_SOURCES
   HqcDataReinserter.cc
   HqcUserConfig.cc
   identifyUser.cc
-  KvalobsAccess.cc
-  KvalobsData.cc
   KvalobsModelAccess.cc
   KvalobsModelData.cc
   KvalobsUpdateListener.cc
-  KvBufferedAccess.cc
   KvHelpers.cc
   KvMetaDataBuffer.cc
   KvModelAccess.cc
@@ -49,13 +43,11 @@ SET(common_SOURCES
   ModelAccess.cc
   ModelColumn.cc
   NavigateHelper.cc
-  ObsAccess.cc
   ObsColumn.cc
   ObsHelpers.cc
   ObsLogging.cc
   ObsTableModel.cc
   ParamIdModel.cc
-  QtKvalobsAccess.cc
   QtKvService.cc
   Sensor.cc
   StationIdCompletion.cc
@@ -74,7 +66,6 @@ QT4_WRAP_CPP(common_MOC
   HqcApplication.hh
   KvalobsUpdateListener.hh
   ObsTableModel.hh
-  QtKvalobsAccess.hh
   QtKvService.hh
 )
 
