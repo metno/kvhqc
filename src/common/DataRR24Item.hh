@@ -6,10 +6,10 @@
 
 class DataRR24Item : public DataCorrectedItem {
 public:
-    DataRR24Item(bool showNew, Code2TextCPtr codes);
+    DataRR24Item(Code2TextCPtr codes);
 
-    virtual Qt::ItemFlags flags(EditDataPtr obs) const;
-    virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
+    virtual Qt::ItemFlags flags(ObsData_p obs) const;
+    virtual QVariant data(ObsData_p obs, const SensorTime& st, int role) const;
 };
 
 #endif // DATARR24ITEM_HH

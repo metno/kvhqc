@@ -8,17 +8,17 @@ class DataValueItem : public DataItem {
 public:
   DataValueItem(ObsColumn::Type columnType);
 
-  virtual Qt::ItemFlags flags(EditDataPtr obs) const;
-  virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
+  virtual Qt::ItemFlags flags(ObsData_p obs) const;
+  virtual QVariant data(ObsData_p obs, const SensorTime& st, int role) const;
   virtual int type() const;
   
 protected:
-  virtual float getValue(EditDataPtr obs) const;
+  virtual float getValue(ObsData_p obs) const;
 
 protected:
   ObsColumn::Type mColumnType;
 };
 
-typedef boost::shared_ptr<DataValueItem> DataValueItemPtr;
+HQC_TYPEDEF_P(DataValueItem);
 
 #endif // DATAVALUEITEM_HH

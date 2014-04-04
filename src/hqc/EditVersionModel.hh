@@ -2,14 +2,14 @@
 #ifndef EditVersionModel_hh
 #define EditVersionModel_hh 1
 
-#include "common/EditAccess.hh"
+#include "access/EditAccess.hh"
 
 #include <QtCore/QAbstractItemModel>
 
 class EditVersionModel : public QAbstractItemModel
 { Q_OBJECT;
 public:
-  EditVersionModel(EditAccessPtr eda);
+  EditVersionModel(EditAccess_p eda);
   ~EditVersionModel();
 
   virtual int columnCount(const QModelIndex& parent) const;
@@ -24,14 +24,14 @@ public:
 
 private:
   void onCurrentVersionChanged(int current, int highest);
-  void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+  //void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
   void dump();
 
 private:
-  EditAccessPtr mDA;
+  EditAccess_p mDA;
 
-  typedef std::vector<EditAccess::ChangedData_t> ChangeHistory_t;
-  ChangeHistory_t mHistory;
+  //typedef std::vector<EditAccess::ChangedData_t> ChangeHistory_t;
+  //ChangeHistory_t mHistory;
 };
 
 #endif // EditVersionModel_hh

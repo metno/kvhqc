@@ -7,7 +7,7 @@
 
 class EditTimeColumn : public ObsColumn {
 public:
-    EditTimeColumn(DataColumnPtr oc);
+    EditTimeColumn(DataColumn_p oc);
     ~EditTimeColumn();
 
     virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
@@ -21,10 +21,10 @@ public:
       { return mDC->type(); }
 
 private:
-    void onColumnChanged(const timeutil::ptime& time, ObsColumnPtr c);
+    void onColumnChanged(const timeutil::ptime& time, ObsColumn_p c);
 
 private:
-    DataColumnPtr mDC;
+    DataColumn_p mDC;
     TimeRange mEditableTime;
 };
 

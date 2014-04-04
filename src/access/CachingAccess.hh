@@ -17,8 +17,9 @@ public:
 
   virtual void dropRequest(ObsRequest_p request);
 
-  ObsUpdate_p createUpdate(const SensorTime& sensorTime);
-  bool storeUpdates(const ObsUpdate_pv& updates);
+  virtual ObsUpdate_p createUpdate(ObsData_p data);
+  virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
+  virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
   void cleanCache(const Time& maxAge);
 

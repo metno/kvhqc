@@ -31,6 +31,7 @@ struct eq_Sensor : public std::binary_function<Sensor, Sensor, bool> {
   bool operator()(const Sensor& a, const Sensor& b) const;
 };
 
+HQC_TYPEDEF_V(Sensor);
 typedef std::set<Sensor, lt_Sensor> Sensor_s;
 
 // ========================================================================

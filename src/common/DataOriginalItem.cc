@@ -18,7 +18,7 @@ DataOriginalItem::DataOriginalItem(Code2TextCPtr codes)
 {
 }
 
-QVariant DataOriginalItem::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataOriginalItem::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   if (not obs)
     return QVariant();

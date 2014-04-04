@@ -54,7 +54,7 @@ private:
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
   void makeModel();
-  ObsColumnPtr makeColumn(const Column& c);
+  ObsColumn_p makeColumn(const Column& c);
   std::string changes();
   void replay(const std::string& changes);
   void storeChanges();
@@ -69,6 +69,8 @@ private:
   QPushButton* mButtonEarlier;
   QPushButton* mButtonLater;
 
+  EditAccess_p mDA;
+  ModelAccessPtr mMA;
   TimeRange mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
 

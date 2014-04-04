@@ -4,6 +4,8 @@
 
 #include "KvalobsData.hh"
 #include "sqlutil.hh"
+#include "common/Functors.hh"
+#include "common/KvHelpers.hh"
 #include "common/HqcApplication.hh"
 
 #include <QtCore/QVariant>
@@ -108,8 +110,8 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
 
 KvalobsUpdate::KvalobsUpdate(KvalobsData_p kvdata)
   : mSensorTime(kvdata->sensorTime())
-  , mChanged(0)
   , mData(kvdata->data())
+  , mChanged(0)
 {
 }
 
@@ -117,8 +119,8 @@ KvalobsUpdate::KvalobsUpdate(KvalobsData_p kvdata)
 
 KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
   : mSensorTime(st)
-  , mChanged(CHANGED_NEW)
   , mData(Helpers::getMissingKvData(st))
+  , mChanged(CHANGED_NEW)
 {
 }
 
@@ -126,7 +128,7 @@ KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
 
 void KvalobsUpdate::setCorrected(float c)
 {
-  if (Helpers::float_eq(c, mData.corrected()))
+  if (Helpers::float_eq()(c, mData.corrected()))
     mChanged &= ~CHANGED_CORRECTED;
   else
     mChanged |= CHANGED_CORRECTED;
@@ -225,22 +227,16 @@ void KvalobsAccess::onUpdated(const kvData_v&)
 
 // ------------------------------------------------------------------------
 
-ObsUpdate_p KvalobsAccess::createUpdate(ObsRequest_p request, const SensorTime& sensorTime)
+ObsUpdate_p KvalobsAccess::createUpdate(ObsData_p obs)
 {
-  ObsRequest_pv matchingRequests;
-  const ObsRequest_pv& r = requests();
-  for (ObsRequest_pv::const_iterator it = r.begin(); it != r.end(); ++it) {
-    ObsRequest_p req = *it;
-    if (not req->timeSpan().contains(sensorTime.time))
-      continue;
-    if (not req->sensors().count(sensorTime.sensor))
-      continue;
-    if (req->filter() and not req->accept(sensorTime, true))
-      continue;
-    matchingRequests.push_back(req);
-  }
-  if (matchingRequests.empty())
-    return ObsUpdate_p();
+  return boost::make_shared<KvalobsUpdate>(boost::static_pointer_cast<KvalobsData>(obs));
+}
+
+// ------------------------------------------------------------------------
+
+ObsUpdate_p KvalobsAccess::createUpdate(const SensorTime& sensorTime)
+{
+  return boost::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 // ------------------------------------------------------------------------
@@ -257,6 +253,8 @@ bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
   if (updates.empty())
     return true;
 
+  return false;
+#if 0
   std::list<kvalobs::kvData> store;
   std::list<KvalobsDataPtr> modifiedObs, createdObs;
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
@@ -322,4 +320,5 @@ bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
     HQC_LOG_WARN(msg.str());
     return false;
   }
+#endif
 }

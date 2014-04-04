@@ -15,12 +15,15 @@ public:
   virtual const SensorTime& sensorTime() const = 0;
   
   /*! Current corrected value, modified during quality control. */
+  virtual float corrected() const = 0;
   virtual void setCorrected(float c) = 0;
 
   /*! KVALOBS current control flags. */
+  virtual const kvalobs::kvControlInfo& controlinfo() const = 0;
   virtual void setControlinfo(const kvalobs::kvControlInfo& ci) = 0;
 
   /*! KVALOBS current list of performed checks / modifications. */
+  virtual const std::string& cfailed() const = 0;
   virtual void setCfailed(const std::string& cf) = 0;
 };
 

@@ -210,6 +210,13 @@ ObsUpdate_p SqliteAccess::createUpdate(const SensorTime& sensorTime)
 
 // ------------------------------------------------------------------------
 
+ObsUpdate_p SqliteAccess::createUpdate(ObsData_p obs)
+{
+  return ObsUpdate_p();
+}
+
+// ------------------------------------------------------------------------
+
 bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
   return false;

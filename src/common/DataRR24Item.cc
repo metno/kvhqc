@@ -9,12 +9,12 @@
 #define MILOGGER_CATEGORY "kvhqc.DataRR24Item"
 #include "util/HqcLogging.hh"
 
-DataRR24Item::DataRR24Item(bool showNew, Code2TextCPtr codes)
-    : DataCorrectedItem(showNew, codes)
+DataRR24Item::DataRR24Item(Code2TextCPtr codes)
+    : DataCorrectedItem(codes)
 {
 }
 
-Qt::ItemFlags DataRR24Item::flags(EditDataPtr obs) const
+Qt::ItemFlags DataRR24Item::flags(ObsData_p obs) const
 {
   Qt::ItemFlags f = DataCorrectedItem::flags(obs);
   if (obs) {
@@ -25,7 +25,7 @@ Qt::ItemFlags DataRR24Item::flags(EditDataPtr obs) const
   return f;
 }
 
-QVariant DataRR24Item::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataRR24Item::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   const QVariant d = DataCorrectedItem::data(obs, st, role);
   if (role == Qt::BackgroundRole and mColumnType == ObsColumn::NEW_CORRECTED

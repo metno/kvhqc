@@ -11,6 +11,7 @@ public:
   ~SqliteAccess();
 
   virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
+  virtual ObsUpdate_p createUpdate(ObsData_p data);
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
   void insertDataFromFile(const std::string& filename);

@@ -3,6 +3,7 @@
 
 #include "FlagChange.hh"
 #include "ObsHelpers.hh"
+#include "KvHelpers.hh"
 #include "ObsColumn.hh"
 #include "Tasks.hh"
 #include "util/Helpers.hh"
@@ -132,13 +133,13 @@ const VxData* vxData4SensorTime(const SensorTime& st)
 
 } // namespace anonymous
 
-DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccessPtr da)
+DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccess_p da)
   : DataValueItem(columnType)
   , mDA(da)
 {
 }
 
-QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) const
+QVariant DataVxItem::data(ObsData_p obs1, const SensorTime& st, int role) const
 {
   const VxData* vxdata = vxData4SensorTime(st);
   if (not vxdata)
@@ -174,12 +175,14 @@ QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) cons
 
   if (not obs1)
     return QVariant();
-  EditDataPtr obs2 = getObs2(obs1);
+  ObsData_p obs2 = getObs2(obs1);
 
   if (role == Qt::FontRole) {
     QFont f;
+#if 0
     if ((obs1 and obs1->modified()) or (obs2 and obs2->modified()))
       f.setBold(true);
+#endif
     return f;
   }
 
@@ -235,13 +238,15 @@ QVariant DataVxItem::data(EditDataPtr obs1, const SensorTime& st, int role) cons
         codeNumber += "/" + QString::number(codes.second);
       Helpers::appendText(tooltip, "(" + codeNumber + ")", " ");
     }
+#if 0
     Helpers::appendText(tooltip, tasks::asText(obs1->allTasks()));
+#endif
     return tooltip;
   }
   return DataValueItem::data(obs1, st, role);
 }
 
-bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, const QVariant& value, int role)
+bool DataVxItem::setData(ObsData_p obs1, EditAccess_p, const SensorTime& st, const QVariant& value, int role)
 {
   if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
     return false;
@@ -253,7 +258,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     return false;
   }
 
-  EditDataPtr obs2 = getObs2(obs1);
+  ObsData_p obs2 = getObs2(obs1);
   const Codes_t oldCodes = getCodes(obs1, obs2);
   
   const QString v = value.toString();
@@ -262,11 +267,15 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     mDA->newVersion();
     bool changed = false;
     if (obs1) {
-      mDA->editor(obs1)->setCorrected(0);
+      ObsUpdate_p update = mDA->createUpdate(obs1);
+      update->setCorrected(0);
+      mDA->storeUpdates(ObsUpdate_pv(1, update));
       changed = true;
     }
     if (obs2 and oldCodes.second != 1) {
-      mDA->editor(obs2)->setCorrected(1);
+      ObsUpdate_p update = mDA->createUpdate(obs2);
+      update->setCorrected(1);
+      mDA->storeUpdates(ObsUpdate_pv(1, update));
       changed = true;
     }
     return changed;
@@ -301,21 +310,25 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
   if (newCode1 != oldCodes.first) {
     mDA->newVersion();
     pushed = true;
-    if (not obs1)
-      obs1 = mDA->createE(st);
-    Helpers::auto_correct(mDA->editor(obs1), newCode1);
-    METLIBS_LOG_DEBUG(LOGVAL(obs1->corrected()));
+    ObsUpdate_p update = obs1 ? mDA->createUpdate(obs1) : mDA->createUpdate(st);
+    Helpers::auto_correct(update, obs1, newCode1);
+    mDA->storeUpdates(ObsUpdate_pv(1, update));
+    METLIBS_LOG_DEBUG(LOGVAL(update->corrected()));
   }
   if (newCode2 != oldCodes.second) {
     if (not pushed)
       mDA->newVersion();
-    if (not obs2) {
+    ObsUpdate_p update;
+    if (obs2) {
+      update = mDA->createUpdate(obs2);
+    } else {
       SensorTime st2(st);
       st2.sensor.paramId += 1;
-      obs2 = mDA->createE(st2);
+      update = mDA->createUpdate(st2);
     }
-    Helpers::auto_correct(mDA->editor(obs2), newCode2);
-    METLIBS_LOG_DEBUG(LOGVAL(obs2->corrected()));
+    Helpers::auto_correct(update, obs2, newCode2);
+    mDA->storeUpdates(ObsUpdate_pv(1, update));
+    METLIBS_LOG_DEBUG(LOGVAL(update->corrected()));
   }
   return true;
 }
@@ -339,7 +352,7 @@ QString DataVxItem::description(bool mini) const
   }
 }
 
-DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) const
+DataVxItem::Codes_t DataVxItem::getCodes(ObsData_p obs1, ObsData_p obs2) const
 {
   int v1 = 0, v2 = -1;
   if (mColumnType != ObsColumn::ORIGINAL) {
@@ -356,13 +369,17 @@ DataVxItem::Codes_t DataVxItem::getCodes(EditDataPtr obs1, EditDataPtr obs2) con
   return std::make_pair(v1, v2);
 }
 
-EditDataPtr DataVxItem::getObs2(EditDataPtr obs1) const
+ObsData_p DataVxItem::getObs2(ObsData_p obs1) const
 {
+#if 0
   if (not obs1)
-    return EditDataPtr();
+    return ObsData_p();
   SensorTime st2(obs1->sensorTime());
   st2.sensor.paramId += 1;
   return mDA->findE(st2);
+#else
+  return ObsData_p();
+#endif
 }
 
 Sensor DataVxItem::getSensor2(const Sensor& sensor1) const

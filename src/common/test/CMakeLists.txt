@@ -42,8 +42,6 @@ LINK_LIBRARIES(
 )
 
 ADD_EXECUTABLE(common_test
-  AnalyseFCCTest.cc
-  AnalyseRR24Test.cc
   DataListModelTest.cc
   EditAccessTest.cc
   EditTimeColumnTest.cc

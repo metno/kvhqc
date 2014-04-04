@@ -31,9 +31,18 @@ public:
   virtual const SensorTime& sensorTime() const
     { return mSensorTime; }
   
+  virtual float corrected() const
+    { return mNewCorrected; }
+
   virtual void setCorrected(float c);
   
+  virtual const kvalobs::kvControlInfo& controlinfo() const
+    { return mNewControlinfo; }
+
   virtual void setControlinfo(const kvalobs::kvControlInfo& ci);
+  
+  virtual const std::string& cfailed() const
+    { return mNewCfailed; }
   
   virtual void setCfailed(const std::string& cf);
   

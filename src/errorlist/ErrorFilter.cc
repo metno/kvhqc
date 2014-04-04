@@ -1,14 +1,16 @@
 
-#include "AnalyseErrors.hh"
+#include "ErrorFilter.hh"
 
-#include "ObsHelpers.hh"
-#include "KvMetaDataBuffer.hh"
+#include "common/Functors.hh"
+#include "common/KvHelpers.hh"
+#include "common/ObsHelpers.hh"
+#include "common/KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
 #include <boost/foreach.hpp>
 
-#define MILOGGER_CATEGORY "kvhqc.AnalyseErrors"
+#define MILOGGER_CATEGORY "kvhqc.ErrorFilter"
 #include "util/HqcLogging.hh"
 
 namespace /* anonymous */ {
@@ -31,20 +33,20 @@ const int paramid_hour_6[] = {
 
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 {
-    const timeutil::pdate otime_date = otime.date();
-
-    // this is from HqcMainWindow::checkTypeId combined with from ErrorList::typeFilter
-    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
-        const timeutil::pdate tfrom = timeutil::from_miTime(op.fromtime()).date(),
-            tto = timeutil::from_miTime(op.totime()).date();
-        if (abs(typeId) == op.typeID() and par == op.paramID() && otime_date >= tfrom && otime_date <= tto )
-            return true;
-    }
-    return false;
+  const timeutil::pdate otime_date = otime.date();
+  
+  // this is from HqcMainWindow::checkTypeId combined with from ErrorList::typeFilter
+  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
+  BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
+    const timeutil::pdate tfrom = timeutil::from_miTime(op.fromtime()).date(),
+        tto = timeutil::from_miTime(op.totime()).date();
+    if (abs(typeId) == op.typeID() and par == op.paramID() && otime_date >= tfrom && otime_date <= tto )
+      return true;
+  }
+  return false;
 }
 
-bool checkErrorSalen2013(const EditDataPtr obs)
+bool checkErrorSalen2013(const ObsData_p obs)
 {
   const kvalobs::kvControlInfo ci = obs->controlinfo();
   const int fhqc = ci.flag(kvalobs::flag::fhqc);
@@ -74,7 +76,7 @@ bool checkErrorSalen2013(const EditDataPtr obs)
   return false;
 }
 
-bool checkErrorHQC2013(const EditDataPtr obs)
+bool checkErrorHQC2013(const ObsData_p obs)
 {
   const kvalobs::kvControlInfo ci = obs->controlinfo();
   const int fhqc = ci.flag(kvalobs::flag::fhqc);
@@ -118,7 +120,7 @@ bool checkErrorHQC2013(const EditDataPtr obs)
   return false;
 }
 
-bool checkError2013(const EditDataPtr obs, bool errorsForSalen)
+bool checkError2013(const ObsData_p obs, bool errorsForSalen)
 {
   if (errorsForSalen)
     return checkErrorSalen2013(obs);
@@ -130,33 +132,25 @@ bool checkError2013(const EditDataPtr obs, bool errorsForSalen)
 
 // ************************************************************************
 
-namespace Errors {
-
-bool recheck(ErrorInfo& ei, bool errorsForSalen)
+std::string ErrorFilter::acceptingSQL(const std::string& d) const
 {
-    const bool oldBad = ei.badInList;
-    ei.badInList = 0;
-    if (checkError2013(ei.obs, errorsForSalen))
-      ei.badInList |= ErrorInfo::BAD_IN_ERRORLIST2013;
-    return (ei.badInList != oldBad);
+  std::ostringstream sql;
+  sql << "(substr(" << d << "controlinfo,16,1) = '0'"; // fhqc == 0
+  if (not mErrorsForSalen) {
+    sql << " AND substr(" << d << "controlinfo, 8,1) = '0'" // ftime == 0
+        << " AND NOT (substr(" << d << "controlinfo,13,1) IN ('7','8') AND paramid = 110)" // fd != 7,8 for RR_24
+        << " AND (substr(" << d << "useinfo, 3,1) IN ('2','3')" // useinfo(2) == 2,3
+        << "     OR substr(" << d << "controlinfo,2,1) IN ('2','3')" // fr == 2,3
+        << "     OR substr(" << d << "controlinfo,7,1) = '3')"; // fmis == 3
+  } else {
+    sql << " AND (substr(" << d << "useinfo, 4,1) = '2'" // fs == 2
+        << "     OR substr(" << d << "controlinfo,2,1) IN ('4','5','6'))"; // fr == 4,5,6
+  }
+  sql << ")";
+  return sql.str();
 }
 
-Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen)
+bool ErrorFilter::accept(ObsData_p obs, bool afterSQL) const
 {
-    // FIXME add timeFilter from ClockDialog
-    METLIBS_LOG_SCOPE();
-
-    Errors_t memStore2;
-    const ObsAccess::DataSet allData = eda->allData(sensors, limits);
-    BOOST_FOREACH(const ObsDataPtr& obs, allData) {
-      EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
-      ErrorInfo ei(ebs);
-      recheck(ei, errorsForSalen);
-      if (ei.badInList != 0)
-        memStore2.push_back(ei);
-    }
-
-    return memStore2;
+  return checkError2013(obs, mErrorsForSalen);
 }
-
-} // namespace Errors

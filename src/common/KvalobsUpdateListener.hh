@@ -3,8 +3,8 @@
 #define COMMON_KVALOBSUPDATELISTENER_HH 1
 
 #include "common/AbstractUpdateListener.hh"
+#include "util/counting_set.hh"
 #include <kvcpp/kvservicetypes.h>
-#include <map>
 
 class QTimer;
 
@@ -31,7 +31,7 @@ private:
   std::string mKvServiceSubscriberID;
   QTimer* mResubscribeTimer;
 
-  typedef std::map<int, int> station_count_t;
+  typedef counting_set<int> station_count_t;
   station_count_t mSubscribedStations;
 };
 

@@ -39,7 +39,7 @@
 
 class ErrorListModel;
 
-class ErrorList : public QTreeView, public DataView
+class ErrorList : public QTreeView
 { Q_OBJECT;
 public:
   ErrorList(QWidget* parent=0);

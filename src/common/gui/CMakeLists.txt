@@ -8,7 +8,7 @@ SET(common_gui_SOURCES
   SensorHeader.cc
   TimeHeader.cc
   TimeRangeControl.cc
-  ToolInterpolate.cc
+#  ToolInterpolate.cc
 )
 
 QT4_WRAP_CPP(common_gui_MOC
@@ -17,7 +17,7 @@ QT4_WRAP_CPP(common_gui_MOC
   ObsDelegate.hh
   SensorChooser.hh
   TimeRangeControl.hh
-  ToolInterpolate.hh
+#  ToolInterpolate.hh
 )
 
 QT4_WRAP_UI(common_gui_UIH

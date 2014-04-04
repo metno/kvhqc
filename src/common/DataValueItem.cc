@@ -7,6 +7,7 @@
 #include "ObsHelpers.hh"
 #include "Tasks.hh"
 #include "HqcApplication.hh"
+#include "KvHelpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
 #include <boost/bind.hpp>
@@ -29,7 +30,7 @@ int DataValueItem::type() const
   return mColumnType;
 }
 
-Qt::ItemFlags DataValueItem::flags(EditDataPtr obs) const
+Qt::ItemFlags DataValueItem::flags(ObsData_p obs) const
 {
     Qt::ItemFlags f = DataItem::flags(obs);
     if (mColumnType == ObsColumn::NEW_CORRECTED)
@@ -37,7 +38,7 @@ Qt::ItemFlags DataValueItem::flags(EditDataPtr obs) const
     return f;
 }
 
-QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   if (not obs)
     return QVariant();
@@ -45,10 +46,12 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
   const bool isNC = mColumnType == ObsColumn::NEW_CORRECTED;
   if (role == Qt::BackgroundRole) {
     if (isNC) {
+#if 0
       if (obs->hasRequiredTasks())
         return QBrush(Qt::red);
       else if (obs->hasTasks())
         return QBrush(QColor(0xFF, 0x60, 0)); // red orange
+#endif
     } else if (mColumnType == ObsColumn::ORIGINAL) {
       const int ui_2 = Helpers::extract_ui2(obs);
       const QColor bg = hqcApp->userConfig()->dataOrigUI2Background(ui_2);
@@ -65,7 +68,7 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
         return Qt::darkGray;
     }
     if (mColumnType != ObsColumn::ORIGINAL) {
-      const kvalobs::kvControlInfo ci(isNC ? obs->controlinfo() : obs->oldControlinfo());
+      const kvalobs::kvControlInfo& ci = obs->controlinfo();
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (ci.qc2dDone())
           return Qt::darkMagenta;
@@ -75,20 +78,20 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
     }
   } else if (role == Qt::FontRole) {
     QFont f;
+#if 0
     if (mColumnType == ObsColumn::NEW_CORRECTED and obs->modifiedCorrected())
       f.setBold(true);
+#endif
     return f;
   }
   return DataItem::data(obs, st, role);
 }
 
-float DataValueItem::getValue(EditDataPtr obs) const
+float DataValueItem::getValue(ObsData_p obs) const
 {
   if (not obs)
     return kvalobs::MISSING;
-  if (mColumnType == ObsColumn::OLD_CORRECTED)
-    return obs->oldCorrected();
-  else if (mColumnType == ObsColumn::ORIGINAL)
+  if (mColumnType == ObsColumn::ORIGINAL)
     return obs->original();
   else
     return obs->corrected();

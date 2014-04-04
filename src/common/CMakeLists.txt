@@ -2,9 +2,6 @@
 SET(common_SOURCES
   AbstractUpdateListener.cc
   AcceptReject.cc
-  AnalyseErrors.cc
-  AnalyseFCC.cc
-  AnalyseRR24.cc
   CachedParamLimits.cc
   Code2Text.cc
   ColumnFactory.cc
@@ -17,13 +14,9 @@ SET(common_SOURCES
   DataOriginalItem.cc
   DataRR24Item.cc
   DataValueItem.cc
-  DataView.cc
   DataVxItem.cc
   DianaHelper.cc
-  EditTimeColumn.cc
   FindAllParameters.cc
-  FindExtremeValues.cc
-  FindMissingValues.cc
   FlagChange.cc
   FlagPattern.cc
   FlagPatterns.cc
@@ -61,6 +54,7 @@ SET(common_SOURCES
 
 QT4_WRAP_CPP(common_MOC
   AbstractUpdateListener.hh
+  DataColumn.hh
   DataListModel.hh
   DianaHelper.hh
   HqcApplication.hh
@@ -75,4 +69,4 @@ ADD_LIBRARY(common STATIC
 )
 
 ADD_SUBDIRECTORY(gui)
-ADD_SUBDIRECTORY(test)
+#ADD_SUBDIRECTORY(test)

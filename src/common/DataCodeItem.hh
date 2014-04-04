@@ -9,12 +9,12 @@ class DataCodeItem : public DataValueItem {
 public:
   DataCodeItem(ObsColumn::Type columnType, Code2TextCPtr codes);
 
-  virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
+  virtual QVariant data(ObsData_p obs, const SensorTime& st, int role) const;
 
 protected:
   Code2TextCPtr mCodes;
 };
 
-typedef boost::shared_ptr<DataCodeItem> DataCodeItemPtr;
+HQC_TYPEDEF_P(DataCodeItem);
 
 #endif // DATACODEITEM_HH

@@ -43,5 +43,6 @@ public:
   boost::signal1<void, ModelDataPtr> modelDataChanged;
 };
 typedef boost::shared_ptr<ModelAccess> ModelAccessPtr;
+HQC_TYPEDEF_P(ModelAccess);
 
 #endif // ModelAccess_hh

@@ -366,6 +366,11 @@ ObsUpdate_p CachingAccess::createUpdate(const SensorTime& sensorTime)
   return p->backend->createUpdate(sensorTime);
 }
 
+ObsUpdate_p CachingAccess::createUpdate(ObsData_p obs)
+{
+  return p->backend->createUpdate(obs);
+}
+
 bool CachingAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
   return p->backend->storeUpdates(updates);

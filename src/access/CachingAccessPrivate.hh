@@ -70,9 +70,6 @@ private:
   bool acceptFilter(ObsData_p obs) const
     { ObsFilter_p f = filter(); return (not f) or f->accept(obs, false); }
 
-  bool acceptFilter(const SensorTime& st) const
-    { ObsFilter_p f = filter(); return (not f) or f->accept(st, false); }
-
   ObsFilter_p filter() const
     { return mRequest->filter(); }
 

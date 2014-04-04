@@ -2,6 +2,7 @@
 #ifndef AcceptReject_hh
 #define AcceptReject_hh 1
 
+#include "access/ObsData.hh"
 #include "access/EditAccess.hh"
 #include "ModelAccess.hh"
 
@@ -15,12 +16,12 @@ enum {
   ALL = 0xF
 };
 
-int possibilities(EditDataPtr obs);
+int possibilities(ObsData_p obs);
 
-void accept_model(EditAccessPtr eda, ModelAccessPtr mda, const SensorTime& sensorTime, bool qc2ok);
-void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok);
-void accept_original(EditAccessPtr eda, const SensorTime& sensorTime);
-void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok);
+void accept_model(EditAccess_p ea, ModelAccessPtr mda, ObsData_p obs, bool qc2ok);
+void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok);
+void accept_original(EditAccess_p ea, ObsData_p obs);
+void reject(EditAccess_p ea, ObsData_p obs, bool qc2ok);
 
 } // namespace AcceptReject
 

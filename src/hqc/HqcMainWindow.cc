@@ -39,26 +39,22 @@
 
 #include "AutoDataList.hh"
 #include "EditVersionModel.hh"
-#include "ErrorList.hh"
-#include "ExtremesView.hh"
-#include "HqcDianaHelper.hh"
 #include "JumpToObservation.hh"
 #include "ListDialog.hh"
-#include "RejectedObs.hh"
-#include "RejectedObsDialog.hh"
 #include "StaticDataList.hh"
-#include "TextdataDialog.hh"
-#include "TextdataTable.hh"
 #include "TimeSeriesView.hh"
-#include "MissingView.hh"
 #include "UserSettings.hh"
-#include "common/DataView.hh"
+
+#include "access/CachingAccess.hh"
+#include "access/KvalobsAccess.hh"
+
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/QtKvalobsAccess.hh"
 #include "common/HqcApplication.hh"
+
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
@@ -67,21 +63,47 @@
 #include "util/gui/HintWidget.hh"
 #include "util/gui/QNoCloseMdiSubWindow.hh"
 #include "util/gui/UiHelpers.hh"
+
+#ifdef ENABLE_WATCHRR
 #include "watchrr/StationDialog.hh"
 #include "watchrr/WatchRRDialog.hh"
+#endif // ENABLE_WATCHRR
+
+#ifdef ENABLE_WATCHWEATHER
 #include "weather/WeatherDialog.hh"
 #include "weather/WeatherStationDialog.hh"
+#endif // ENABLE_WATCHWEATHER
+
+#ifdef ENABLE_ERRORLIST
+#include "errors/ErrorList.hh"
+#endif // ENABLE_ERRORLIST
+
+#ifdef ENABLE_DIANA
+#include "HqcDianaHelper.hh"
+#include <coserver/ClientButton.h>
+#endif // ENABLE_DIANA
+
+#ifdef ENABLE_EXTREMES
+#include "extremes/ExtremesView.hh"
+#endif // ENABLE_EXTREMES
+
+#ifdef ENABLE_MISSINGOBS
+#include "missing/MissingView.hh"
+#endif // ENABLE_MISSINGOBS
+
+#ifdef ENABLE_TEXTDATA
+#include "TextdataDialog.hh"
+#include "TextdataTable.hh"
+#endif // ENABLE_TEXTDATA
+
+#ifdef ENABLE_REJECTEDOBS
+#include "RejectedObs.hh"
+#include "RejectedObsDialog.hh"
+#endif // ENABLE_REJECTEDOBS
 
 #include <kvalobs/kvData.h>
 
-#ifndef slots
-#define slots
 #include <qUtilities/qtHelpDialog.h>
-#undef slots
-#else
-#include <qUtilities/qtHelpDialog.h>
-#endif
-#include <coserver/ClientButton.h>
 
 #include <QtCore/qfile.h>
 #include <QtCore/qsettings.h>
@@ -105,7 +127,6 @@
 
 #include "ui_mainwindow.h"
 
-#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.HqcMainWindow"
 #include "common/ObsLogging.hh"
 
@@ -126,9 +147,10 @@ HqcMainWindow::HqcMainWindow()
   , ui(new Ui::HqcMainWindow)
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
-  , kda(boost::make_shared<QtKvalobsAccess>())
+  , kda(boost::make_shared<KvalobsAccess>())
+  , cda(boost::make_shared<CachingAccess>(kda))
   , kma(boost::make_shared<KvalobsModelAccess>())
-  , eda(boost::make_shared<EditAccess>(kda))
+  , eda(boost::make_shared<EditAccess>(cda))
   , mEditVersions(new EditVersionModel(eda))
   , mProgressDialog(new EtaProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))
@@ -136,14 +158,54 @@ HqcMainWindow::HqcMainWindow()
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
-  ui->menuView->addAction(ui->dockErrors     ->toggleViewAction());
-  ui->menuView->addAction(ui->dockExtremes   ->toggleViewAction());
-  ui->menuView->addAction(ui->dockMissing    ->toggleViewAction());
+
+  QDockWidget* dockSearch = 0;
+
+#ifdef ENABLE_ERRORLIST
+  { mDockErrors = new QDockWidget(this);
+    mErrorsView = new ErrorList(mDockErrors);
+    mDockErrors->setWidget(mErrorsView);
+    dockSearch = mDockErrors;
+    ui->menuView->addAction(mDockErrors->toggleViewAction());
+    mErrorsView->setDataAccess(eda, kma);
+    mErrorsView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  }
+#endif // ENABLE_ERRORLIST
+
+#ifdef ENABLE_EXTREMES
+  { mDockExtremes = new QDockWidget(this);
+    mDockExtremes->setVisible(false);
+    mExtremesView = new ExtremesView(mDockExtremes);
+    mExtremesView->setDataAccess(eda);
+    mDockExtremes->setWidget(mExtremesView);
+    if (dockSearch)
+      tabifyDockWidget(dockSearch, mDockExtremes);
+    else
+      dockSearch = mDockExtremes;
+    ui->menuView->addAction(mDockExtremes->toggleViewAction());
+    mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  }
+#endif // ENABLE_EXTREMES
+
+#ifdef ENABLE_MISSINGOBS
+  { mDockMissing = new QDockWidget(this);
+    mDockMissing->setVisible(false);
+    mMissingView = new MissingView(mDockMissing);
+    mMissingView->setDataAccess(eda);
+    mDockMissing->setWidget(mMissingView);
+    if (dockSearch)
+      tabifyDockWidget(dockSearch, mDockMissing);
+    else
+      dockSearch = mDockMissing;
+    ui->menuView->addAction(mDockMissing->toggleViewAction());
+    mMissingView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  }
+#endif // ENABLE_MISSINGOBS
+
   ui->menuView->addSeparator();
   ui->menuView->addAction(ui->dockHistory    ->toggleViewAction());
   ui->menuView->addAction(ui->dockCorrections->toggleViewAction());
 
-  ui->treeErrors->setDataAccess(eda, kma);
   ui->simpleCorrrections->setDataAccess(eda, kma);
   ui->treeChanges->setModel(mEditVersions.get());
   ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
@@ -154,63 +216,47 @@ HqcMainWindow::HqcMainWindow()
   ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
   ui->dockHistory->setVisible(false);
 
-  mJumpToObservation = new JumpToObservation(kda, this);
-
-  mExtremesView = new ExtremesView(ui->dockExtremes);
-  mExtremesView->setDataAccess(eda);
-  ui->dockExtremes->setWidget(mExtremesView);
-  tabifyDockWidget(ui->dockErrors, ui->dockExtremes);
-  ui->dockExtremes->setVisible(false);
+  mJumpToObservation = new JumpToObservation(cda, this);
 
   connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
   mVersionCheckTimer->setSingleShot(true);
 
-  connect(hqcApp, SIGNAL(kvalobsAvailable(bool)), this, SLOT(kvalobsAvailable(bool)));
-
+#ifdef ENABLE_DIANA
   pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
   statusBar()->addPermanentWidget(pluginB, 0);
+  mDianaHelper.reset(new HqcDianaHelper(pluginB));
+  mDianaHelper->setDataAccess(eda, kma);
+  mDianaHelper->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#endif
 
   mKvalobsAvailable = new QLabel(statusBar());
+  connect(hqcApp, SIGNAL(kvalobsAvailable(bool)), this, SLOT(kvalobsAvailable(bool)));
   statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
   kvalobsAvailable(hqcApp->isKvalobsAvailable());
 
-  // --- DEFINE DIALOGS --------------------------------------------
   lstdlg = new ListDialog(this);
-  txtdlg = new TextDataDialog(this);
-  rejdlg = new RejectedObsDialog(this);
-    
-  // --- START -----------------------------------------------------
-  rejdlg->hide();
   lstdlg->hide();
+  connect(lstdlg, SIGNAL(accepted()), this, SLOT(ListOK()));
 
+#ifdef ENABLE_TEXTDATA
+  txtdlg = new TextDataDialog(this);
+  txtdlg->hide();
+  connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
+  connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
+#endif // ENABLE_TEXTDATA
 
-  // dock for missing observations
-  mMissingView = new MissingView(ui->dockMissing);
-  mMissingView->setDataAccess(eda);
-  ui->dockMissing->setWidget(mMissingView);
-  tabifyDockWidget(ui->dockErrors, ui->dockMissing);
-  ui->dockMissing->setVisible(false);
-
-  mDianaHelper.reset(new HqcDianaHelper(pluginB));
-  mDianaHelper->setDataAccess(eda, kma);
+#ifdef ENABLE_REJECTEDOBS
+  rejdlg = new RejectedObsDialog(this);
+  rejdlg->hide();
+  connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
+  connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
+#endif // ENABLE_REJECTEDOBS
 
   mAutoDataList->setDataAccess(eda, kma);
   mTimeSeriesView->setDataAccess(eda, kma);
 
-  connect(lstdlg, SIGNAL(accepted()), this, SLOT(ListOK()));
-
-  connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
-  connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
-
-  connect(ui->actionRejectDecode, SIGNAL(triggered()), rejdlg, SLOT(show()));
-  connect(rejdlg, SIGNAL(rejectApply()), SLOT(rejectedOK()));
-
   mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mExtremesView     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mMissingView      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mDianaHelper      ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  ui->treeErrors    ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
@@ -238,19 +284,27 @@ HqcMainWindow::HqcMainWindow()
   mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
   mProgressDialog->setCancelButton(0); // cancel is not possible yet
   mProgressDialog->setMinimumDuration(4000);
-  kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
+  //kda->signalFetchingData.connect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 }
 
 HqcMainWindow::~HqcMainWindow()
 {
-  kda->signalFetchingData.disconnect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
+  //kda->signalFetchingData.disconnect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 
   mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
   mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#ifdef ENABLE_MISSINGOBS
   mMissingView      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#endif
+#ifdef ENABLE_EXTREMES
   mExtremesView     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#endif
+#ifdef ENABLE_DIANA
   mDianaHelper      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#endif
+#ifdef ENABLE_ERRORLIST
   ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+#endif
 }
 
 void HqcMainWindow::changeEvent(QEvent *event)
@@ -264,6 +318,16 @@ void HqcMainWindow::changeEvent(QEvent *event)
 
     mProgressDialog->setWindowTitle(tr("HQC"));
     mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
+
+#ifdef ENABLE_ERRORLIST
+    mDockErrors->setWindowTitle(tr("Error List"));
+#endif
+#ifdef ENABLE_EXTREMES
+    mDockExtremes->setWindowTitle(tr("Extreme Values"));
+#endif
+#ifdef ENABLE_ERRORLIST
+    mDockMissing->setWindowTitle(tr("Missing Observations"));
+#endif
 
     kvalobsAvailable(hqcApp->isKvalobsAvailable());
   }
@@ -294,23 +358,17 @@ void HqcMainWindow::startup(const QString& captionSuffix)
   mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 }
 
-void HqcMainWindow::dianaShowOK()
-{
-  METLIBS_LOG_SCOPE();
-  mDianaHelper->updateDianaParameters();
-  if (listExist)
-    ListOK();
-}
-
 void HqcMainWindow::ListOK()
 {
   METLIBS_LOG_SCOPE();
+#ifdef ENABLE_DIANA
   if (not mDianaHelper->isConnected()) {
     mHints->addHint(tr("<h1>Diana-Connection</h1>"
             "No contact with diana! "
             "You should connect to the command server via the button in the lower right in the hqc window, "
             "and connect diana to the command server using the button in diana's window."));
   }
+#endif // ENABLE_DIANA
   // FIXME pack selectedStations, selectedTimes, ... in class, pass this to AnalyseErrors
   const std::vector<int> selectedStations = lstdlg->getSelectedStations();
   if (selectedStations.empty()) {
@@ -339,7 +397,7 @@ void HqcMainWindow::ListOK()
 
   const TimeRange timeLimits = lstdlg->getTimeRange();
 
-  DataView::Sensors_t sensors;
+  Sensor_v sensors;
   {
     BusyStatus busySensors(this, tr("Building station list..."));
     BOOST_FOREACH(int stationId, selectedStations) {
@@ -368,12 +426,14 @@ void HqcMainWindow::ListOK()
     }
   }
 
+#ifdef ENABLE_ERRORLIST
   if (lity == erLi or lity == erSa or lity == alLi or lity == alSa) {
     BusyStatus busyErrors(this, tr("Building error list..."));
 
-    ui->treeErrors->setErrorsForSalen(lity == erSa or lity == alSa);
-    ui->treeErrors->setSensorsAndTimes(sensors, timeLimits);
+    mErrorsView->setErrorsForSalen(lity == erSa or lity == alSa);
+    mErrorsView->setSensorsAndTimes(sensors, timeLimits);
   }
+#endif // ENABLE_ERRORLIST
 
   if (lity == daLi or lity == alLi or lity == alSa) {
     BusyStatus busyData(this, tr("Building data list..."));
@@ -400,20 +460,24 @@ void HqcMainWindow::ListOK()
 
   //  send parameter names to ts dialog
   Q_EMIT newParameterList(mSelectedParameters);
-  if (lity != erLi && lity != erSa) {
+#ifdef ENABLE_DIANA
+  if (lity != erLi && lity != erSa)
     mDianaHelper->setSensorsAndTimes(sensors, timeLimits);
-  }
+#endif
 
   statusBar()->message("");
 }
 
 void HqcMainWindow::textDataOK()
 {
+#ifdef ENABLE_TEXTDATA
   TextData::showTextData(txtdlg->getStationId(), txtdlg->getTimeRange(), this);
+#endif
 }
 
 void HqcMainWindow::rejectedOK()
 {
+#ifdef ENABLE_REJECTEDOBS
   METLIBS_LOG_SCOPE();
 
   try {
@@ -440,10 +504,12 @@ void HqcMainWindow::rejectedOK()
   // reach here in case of error
   QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
       QMessageBox::Ok, QMessageBox::NoButton);
+#endif // ENABLE_REJECTEDOBS
 }
 
 void HqcMainWindow::showWatchRR()
 {
+#ifdef ENABLE_WATCHRR
   const timeutil::ptime now = timeutil::now();
 
   Sensor sensor(83880, kvalobs::PARAMID_RR_24, 0, 0, 302);
@@ -470,10 +536,12 @@ void HqcMainWindow::showWatchRR()
   WatchRRDialog watchrr(eda, kma, sensor, time, this);
   watchrr.exec();
   mDianaHelper->setEnabled(true);
+#endif // ENABLE_WATCHRR
 }
 
 void HqcMainWindow::showWeather()
 {
+#ifdef ENABLE_WATCHWEATHER
   const timeutil::ptime now = timeutil::now();
   const timeutil::ptime roundedNow = timeutil::ptime(now.date(), boost::posix_time::time_duration(now.time_of_day().hours(),0,0))
       + boost::posix_time::hours(1);
@@ -499,6 +567,7 @@ void HqcMainWindow::showWeather()
 
   WeatherDialog* wd = new WeatherDialog(eda, sensor, time, this);
   wd->show();
+#endif // ENABLE_WATCHWEATHER
 }
 
 void HqcMainWindow::errListMenu()
@@ -758,8 +827,12 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 #endif
   mLastNavigated = st;
 
+#ifdef ENABLE_DIANA
   mDianaHelper->navigateTo(st);
-  ui->treeErrors->navigateTo(st);
+#endif
+#ifdef ENABLE_ERRORLIST
+  mErrorsView->navigateTo(st);
+#endif
   ui->simpleCorrrections->navigateTo(st);
   mJumpToObservation->navigateTo(st);
   mAutoDataList->navigateTo(st);
@@ -781,7 +854,6 @@ void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
 
   ui->treeChanges->expandToDepth(2);
 }
-
 
 void HqcMainWindow::writeSettings()
 {

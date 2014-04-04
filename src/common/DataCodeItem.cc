@@ -10,7 +10,7 @@ DataCodeItem::DataCodeItem(ObsColumn::Type columnType, Code2TextCPtr codes)
 {
 }
 
-QVariant DataCodeItem::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataCodeItem::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   if (mCodes) {
     if (role == ObsColumn::ValueTypeRole or role == ObsColumn::TextCodesRole) {

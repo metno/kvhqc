@@ -9,21 +9,22 @@
 
 #include <boost/make_shared.hpp>
 
-DataControlinfoItem::DataControlinfoItem(bool showNew)
-  : mShowNew(showNew)
+DataControlinfoItem::DataControlinfoItem()
 {
 }
 
-QVariant DataControlinfoItem::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataControlinfoItem::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   if (not obs)
     return QVariant();
 
   if (role == Qt::FontRole) {
     QFont f;
-    if (mShowNew and obs->modifiedControlinfo())
+#if 0
+    if (obs->modifiedControlinfo())
       f.setBold(true);
     return f;
+#endif
   } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
     return Helpers::getFlagExplanation(getControlinfo(obs));
   } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
@@ -40,12 +41,9 @@ QString DataControlinfoItem::description(bool mini) const
     return qApp->translate("DataColumn", "controlflags");
 }
 
-kvalobs::kvControlInfo DataControlinfoItem::getControlinfo(EditDataPtr obs) const
+const kvalobs::kvControlInfo& DataControlinfoItem::getControlinfo(ObsData_p obs) const
 {
   if (not obs)
     throw std::runtime_error("no obs");
-  if (mShowNew)
-    return obs->controlinfo();
-  else
-    return obs->oldControlinfo();
+  return obs->controlinfo();
 }

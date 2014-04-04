@@ -2,7 +2,7 @@
 #ifndef ToolInterpolate_hh
 #define ToolInterpolate_hh 1
 
-#include "common/EditAccess.hh"
+#include "access/EditAccess.hh"
 #include "common/ModelAccess.hh"
 #include "common/Sensor.hh"
 
@@ -20,7 +20,7 @@ class ToolInterpolate : public QWidget
 public:
   ToolInterpolate(QWidget* parent=0);
 
-  void updateModel(EditAccessPtr da, QTableView* table);
+  void updateModel(EditAccess_p da, QTableView* table);
 
 public Q_SLOTS:
   void enableButtons();
@@ -36,12 +36,14 @@ private:
   bool checkEnabled();
 
 private:
-  EditAccessPtr mDA;
+  EditAccess_p mDA;
   QTableView* mTableView;
 
   QToolButton *mButtonInterpolate;
 
-  SensorTime mSelectedStart, mSelectedEnd;
+  Sensor mSensor;
+  TimeSpan mTime;
+
   typedef std::vector<SensorTime> SensorTime_v;
   SensorTime_v mSelectedObs;
 };

@@ -12,7 +12,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataListModel"
 #include "util/HqcLogging.hh"
 
-DataListModel::DataListModel(EditAccessPtr eda, const TimeRange& limits)
+DataListModel::DataListModel(EditAccess_p eda, const TimeRange& limits)
   : ObsTableModel(eda, limits, 0)
   , mFilterByTimestep(true)
   , mCenter(0)
@@ -60,18 +60,20 @@ void DataListModel::updateTimes()
   METLIBS_LOG_SCOPE();
   ObsTableModel::updateTimes();
 
-  ObsAccess::TimeSet oldTimes(mTimes.begin(), mTimes.end()), newTimes;
+#if 0
+  std::set<Time> oldTimes(mTimes.begin(), mTimes.end()), newTimes;
   for (int i=0; i<columnCount(QModelIndex()); ++i) {
-    ObsColumnPtr c = getColumn(i);
+    ObsColumn_p c = getColumn(i);
     if (c)
       mDA->addAllTimes(newTimes, c->sensor(), mTime);
   }
 
   mTimes = Times_t(newTimes.begin(), newTimes.end());
+#endif
 
   if (getTimeStep() > 0 and mFilterByTimestep) {
     mTimesFiltered.clear();
-    ObsAccess::TimeSet filterTimes;
+    std::set<Time> filterTimes, newTimes;
     BOOST_FOREACH(const timeutil::ptime& t, newTimes) {
       const int s = (t - mTime0).total_seconds();
       METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(mTime0) << LOGVAL(s) << LOGVAL(mTimeStep));
@@ -98,7 +100,7 @@ QModelIndexList DataListModel::findIndexes(const SensorTime& st)
   if (row >= 0) {
     const int nColumns = columnCount(QModelIndex());
     for (int col=0; col<nColumns; ++col) {
-      DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(getColumn(col));
+      DataColumn_p dc = boost::dynamic_pointer_cast<DataColumn>(getColumn(col));
       if (not dc)
         continue;
       if (dc->matchSensor(st.sensor))
@@ -140,7 +142,7 @@ QVariant DataListModel::columnHeader(int section, Qt::Orientation orientation, i
   if (mCenter == 0)
     return hdr;
   if (role == Qt::DisplayRole or role == Qt::ToolTipRole or role == Qt::StatusTipRole or role == Qt::ForegroundRole) {
-    ObsColumnPtr oc = getColumn(section);
+    ObsColumn_p oc = getColumn(section);
     if (oc and oc->sensor().stationId != mCenter) {
       METLIBS_LOG_SCOPE();
       try {

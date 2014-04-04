@@ -23,15 +23,15 @@ const char* headers[NCOLUMNS] = {
 
 }
 
-ChecksTableModel::ChecksTableModel(ObsAccessPtr da)
-    : mDA(da)
+ChecksTableModel::ChecksTableModel(ObsAccess_p da)
+  : mDA(da)
 {
-    mDA->obsDataChanged.connect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
+  //mDA->obsDataChanged.connect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
 }
 
 ChecksTableModel::~ChecksTableModel()
 {
-    mDA->obsDataChanged.disconnect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
+  //mDA->obsDataChanged.disconnect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
 }
 
 int ChecksTableModel::rowCount(const QModelIndex&) const
@@ -78,12 +78,13 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
   if (eq_SensorTime()(st, mSensorTime))
     return;
 
+#if 0
   beginResetModel();
   mChecks.clear();
   mExplanations.clear();
   mSensorTime = st;
   if (mSensorTime.valid()) {
-    if (ObsDataPtr obs = mDA->find(mSensorTime)) {
+    if (ObsData_p obs = mDA->find(mSensorTime)) {
       const std::string& cfailed = obs->cfailed();
       if (not cfailed.empty()) {
         mChecks = QString::fromStdString(cfailed).split(",");
@@ -111,15 +112,5 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
     }
   }
   endResetModel();
-}
-
-void ChecksTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
-{
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(what));
-    if (what == ObsAccess::DESTROYED) {
-      navigateTo(SensorTime()); // make invalid
-    } else {
-      navigateTo(data->sensorTime());
-    }
+#endif
 }

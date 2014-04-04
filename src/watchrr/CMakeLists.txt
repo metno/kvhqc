@@ -2,6 +2,7 @@
 SET(watchrr_SOURCES
   EditDialog.cc
   EditTableModel.cc
+  EditTimeColumn.cc
   WatchRRDialog.cc
   StationCardModel.cc
   NeighborCardsModel.cc

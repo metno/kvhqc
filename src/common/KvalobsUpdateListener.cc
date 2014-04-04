@@ -48,29 +48,15 @@ void KvalobsUpdateListener::onKvData(kvservice::KvObsDataListPtr dl)
 void KvalobsUpdateListener::addStation(int stationId)
 {
   METLIBS_LOG_SCOPE(LOGVAL(stationId));
-  station_count_t::iterator it = mSubscribedStations.find(stationId);
-  if (it == mSubscribedStations.end()) {
-    mSubscribedStations.insert(std::make_pair(stationId, 1));
+  if (mSubscribedStations.increase(stationId))
     reSubscribe();
-  } else {
-    it->second += 1;
-  }
 }
 
 void KvalobsUpdateListener::removeStation(int stationId)
 {
   METLIBS_LOG_SCOPE(LOGVAL(stationId));
-  station_count_t::iterator it = mSubscribedStations.find(stationId);
-  if (it == mSubscribedStations.end()) {
-    HQC_LOG_WARN("station not listed");
-    return;
-  }
-  if (it->second > 1) {
-    it->second -= 1;
-  } else {
-    mSubscribedStations.erase(it);
+  if (mSubscribedStations.decrease(stationId))
     reSubscribe();
-  }
 }
 
 void KvalobsUpdateListener::reSubscribe()
@@ -89,8 +75,13 @@ void KvalobsUpdateListener::doReSubscribe()
   
   if (not mSubscribedStations.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
+#if 0
+    for (station_count_t::const_iterator it=mSubscribedStations.begin(); it != mSubscribedStations.end(); ++it)
+      dataSubscription.addStationId(*it);
+#else
     BOOST_FOREACH(const station_count_t::value_type& sc, mSubscribedStations)
-        dataSubscription.addStationId(sc.first);
+      dataSubscription.addStationId(sc.first);
+#endif
 
     mKvServiceSubscriberID = qtKvService()
         ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));

@@ -1,7 +1,7 @@
 
 #include "ObsTableModel.hh"
 
-#include "ObsAccess.hh"
+#include "access/ObsAccess.hh"
 #include "common/gui/TimeHeader.hh"
 
 #include <QtGui/QApplication>
@@ -13,7 +13,7 @@
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
 #include "util/HqcLogging.hh"
 
-ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time, int step)
+ObsTableModel::ObsTableModel(EditAccess_p da, const TimeRange& time, int step)
   : mDA(da)
   , mTimeInRows(true)
   , mTime(time)
@@ -26,10 +26,6 @@ ObsTableModel::ObsTableModel(EditAccessPtr da, const TimeRange& time, int step)
 
 ObsTableModel::~ObsTableModel()
 {
-  BOOST_FOREACH(ObsColumnPtr c, mColumns) {
-    if (c)
-      c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
-  }
 }
 
 void ObsTableModel::setTimeInRows(bool tir)
@@ -43,14 +39,14 @@ void ObsTableModel::setTimeInRows(bool tir)
   Q_EMIT changedTimeInRows(mTimeInRows);
 }
 
-void ObsTableModel::insertColumn(int before, ObsColumnPtr c)
+void ObsTableModel::insertColumn(int before, ObsColumn_p c)
 {
   beginResetModel();
   //beginInsertC(before, before);
 
   mColumns.insert(mColumns.begin() + before, c);
   if (c)
-    c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+    ;//connect(c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
   updateTimes();
 
   //endInsertC();
@@ -65,7 +61,7 @@ void ObsTableModel::moveColumn(int from, int to)
 
   // do not do remove-insert as this may trigger recalculation of times (usually rows)
 
-  ObsColumnPtr c = getColumn(from);
+  ObsColumn_p c = getColumn(from);
 
   beginRemoveC(from, from);
   mColumns.erase(mColumns.begin() + from);
@@ -82,9 +78,9 @@ void ObsTableModel::removeColumn(int at)
   //beginRemoveC(at, at);
 
   const ObsColumns_t::iterator it = mColumns.begin() + at;
-  ObsColumnPtr c = *it;
+  ObsColumn_p c = *it;
   if (c)
-    c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+    ;//c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
   mColumns.erase(it);
   updateTimes();
 
@@ -216,7 +212,7 @@ void ObsTableModel::endRemoveC()
 
 Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
 {
-  ObsColumnPtr oc = getColumn(columnIndex(index));
+  ObsColumn_p oc = getColumn(columnIndex(index));
   if (not oc)
     return 0;
   return oc->flags(timeAtRow(timeIndex(index)));
@@ -224,7 +220,7 @@ Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
 
 QVariant ObsTableModel::data(const QModelIndex& index, int role) const
 {
-  ObsColumnPtr oc = getColumn(columnIndex(index));
+  ObsColumn_p oc = getColumn(columnIndex(index));
   if (not oc)
     return QVariant();
   return oc->data(timeAtRow(timeIndex(index)), role);
@@ -232,7 +228,7 @@ QVariant ObsTableModel::data(const QModelIndex& index, int role) const
 
 bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-  ObsColumnPtr oc = getColumn(columnIndex(index));
+  ObsColumn_p oc = getColumn(columnIndex(index));
   if (not oc)
     return false;
   return oc->setData(timeAtRow(timeIndex(index)), value, role);
@@ -255,7 +251,7 @@ QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int
 
 QVariant ObsTableModel::columnHeader(int section, Qt::Orientation orientation, int role) const
 {
-  ObsColumnPtr oc = getColumn(section);
+  ObsColumn_p oc = getColumn(section);
   if (oc)
     return oc->headerData(orientation, role);
   else
@@ -272,7 +268,7 @@ SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
   SensorTime st;
   st.time = timeAtRow(mTimeInRows ? idx.row() : idx.column());
 
-  ObsColumnPtr column = getColumn(mTimeInRows ? idx.column() : idx.row());
+  ObsColumn_p column = getColumn(mTimeInRows ? idx.column() : idx.row());
   if (column)
     st.sensor = column->sensor();
 
@@ -293,7 +289,7 @@ int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
     return r;
 }
 
-void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumnPtr column)
+void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p column)
 {
   METLIBS_LOG_SCOPE();
 

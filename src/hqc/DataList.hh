@@ -2,8 +2,9 @@
 #ifndef DataList_hh
 #define DataList_hh 1
 
-#include "common/DataView.hh"
-
+#include "access/EditAccess.hh"
+#include "common/ModelAccess.hh"
+#include "common/Sensor.hh"
 #include <QtGui/QTableView>
 
 class DataListModel;
@@ -23,13 +24,17 @@ Q_SIGNALS:
 
 // ------------------------------------------------------------------------
 
-class DataList : public QWidget, public DataView
+class DataList : public QWidget
 { Q_OBJECT
 public:
   DataList(QWidget* parent=0);
   ~DataList() = 0;
-  
+
+public Q_SLOTS:  
   virtual void navigateTo(const SensorTime&);
+  
+Q_SIGNALS:
+  void signalNavigateTo(const SensorTime&);
   
 private Q_SLOTS:
   void onButtonSaveAs();
@@ -53,6 +58,8 @@ protected:
   int mBlockNavigateTo;
 
 private:
+  EditAccess_p mDA;
+  ModelAccessPtr mMA;
   SensorTime mSensorTime;
 };
 

@@ -6,6 +6,7 @@
 #include "ObsColumn.hh"
 #include "Tasks.hh"
 #include "util/Helpers.hh"
+#include "common/KvHelpers.hh"
 
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>
@@ -14,23 +15,25 @@
 #define MILOGGER_CATEGORY "kvhqc.DataCorrectedItem"
 #include "common/ObsLogging.hh"
 
-DataCorrectedItem::DataCorrectedItem(bool showNew, Code2TextCPtr codes)
-  : DataCodeItem(showNew ? ObsColumn::NEW_CORRECTED : ObsColumn::OLD_CORRECTED, codes)
+DataCorrectedItem::DataCorrectedItem(Code2TextCPtr codes)
+  : DataCodeItem(ObsColumn::NEW_CORRECTED, codes)
 {
 }
 
-QVariant DataCorrectedItem::data(EditDataPtr obs, const SensorTime& st, int role) const
+QVariant DataCorrectedItem::data(ObsData_p obs, const SensorTime& st, int role) const
 {
   if (obs and (role == Qt::ToolTipRole or role == Qt::StatusTipRole)) {
     QString tip;
+#if 0
     if (mColumnType == ObsColumn::NEW_CORRECTED)
       tip = tasks::asText(obs->allTasks());
+#endif
     return Helpers::appendedText(tip, DataCodeItem::data(obs, st, role).toString());
   }
   return DataCodeItem::data(obs, st, role);
 }
 
-bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorTime& st, const QVariant& value, int role)
+bool DataCorrectedItem::setData(ObsData_p obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role)
 {
   if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
     return false;
@@ -45,13 +48,17 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
       return false;
     
     da->newVersion();
+    ObsUpdate_p update;
     if (not obs)
-      obs = da->createE(st);
+      update = da->createUpdate(st);
+    else
+      update = da->createUpdate(obs);
     
     if (reject)
-      Helpers::reject(da->editor(obs));
+      Helpers::reject(update);
     else
-      Helpers::auto_correct(da->editor(obs), newC);
+      Helpers::auto_correct(update, obs, newC);
+    da->storeUpdates(ObsUpdate_pv(1, update));
     return true;
   } catch (std::exception& e) {
     METLIBS_LOG_INFO("exception while editing data for sensor/time " << st

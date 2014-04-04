@@ -19,7 +19,7 @@ public:
   virtual void dropRequest(ObsRequest_p request) = 0;
 
   //! Create update for modification.
-  virtual ObsUpdate_p createUpdate(ObsData_p& data) = 0;
+  virtual ObsUpdate_p createUpdate(ObsData_p data) = 0;
 
   //! Create update for insertion.
   virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime) = 0;

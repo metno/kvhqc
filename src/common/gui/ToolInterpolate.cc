@@ -96,7 +96,7 @@ void ToolInterpolate::onInterpolate()
   }
 }
 
-void ToolInterpolate::updateModel(EditAccessPtr da, QTableView* table)
+void ToolInterpolate::updateModel(EditAccess_p da, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(enableButtons()));

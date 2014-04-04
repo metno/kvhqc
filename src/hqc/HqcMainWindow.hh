@@ -31,7 +31,7 @@
 #define HQC_HQCMAINWINDOW_H
 
 #include "common/HqcDataReinserter.hh"
-#include "common/ObsAccess.hh"
+#include "access/ObsAccess.hh"
 #include "util/timeutil.hh"
 
 #include <QtCore/QString>
@@ -39,7 +39,6 @@
 
 #include <memory>
 
-class ClientButton;
 class HelpDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
@@ -51,22 +50,17 @@ class QTimer;
 QT_END_NAMESPACE
 
 class AutoDataList;
-class DianaShowDialog;
+class CachingAccess;
 class EditAccess;
 class EditVersionModel;
 class EtaProgressDialog;
-class ExtremesView;
 class HintWidget;
-class HqcDianaHelper;
 class JumpToObservation;
 class KvalobsAccess;
 class KvalobsModelAccess;
 class ListDialog;
-class MissingView;
-class RejectedObsDialog;
 class SensorTime;
 class TimeSeriesView;
-class TextDataDialog;
 
 namespace Ui {
 class HqcMainWindow;
@@ -103,7 +97,6 @@ private Q_SLOTS:
   void ListOK();
   void rejectedOK();
   void textDataOK();
-  void dianaShowOK();
 
   void startKro();
   void screenshot();
@@ -117,10 +110,7 @@ private Q_SLOTS:
 
   void kvalobsAvailable(bool);
 
-  //! bring up the WatchRR dialog
   void showWatchRR();
-
-  //! bring up the WatchWeather dialog
   void showWeather();
 
   void onVersionCheckTimeout();
@@ -138,9 +128,10 @@ private Q_SLOTS:
 
   void onTabCloseRequested(int index);
 
-private:
   void navigateTo(const SensorTime& st);
-  void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+
+private:
+  //void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
   enum listType {erLi, daLi, erSa, alLi, alSa, dumLi};
   void listMenu(listType lt);
@@ -153,9 +144,12 @@ private:
 
 private:
   ListDialog* lstdlg;
-  DianaShowDialog* dshdlg;
+#ifdef ENABLE_TEXTDATA
   TextDataDialog* txtdlg;
+#endif
+#ifdef ENABLE_REJECTEDOBS
   RejectedObsDialog* rejdlg;
+#endif
   HelpDialog* mHelpDialog;
   JumpToObservation* mJumpToObservation;
 
@@ -173,14 +167,16 @@ private:
   HintWidget* mHints;
 
   boost::shared_ptr<KvalobsAccess> kda;
+  boost::shared_ptr<CachingAccess> cda;
   boost::shared_ptr<KvalobsModelAccess> kma;
   boost::shared_ptr<EditAccess> eda;
 
   std::auto_ptr<EditVersionModel> mEditVersions;
 
-
+#ifdef ENABLE_DIANA
   ClientButton* pluginB;
   std::auto_ptr<HqcDianaHelper> mDianaHelper;
+#endif
 
   QLabel* mKvalobsAvailable;
 
@@ -189,8 +185,18 @@ private:
   AutoDataList* mAutoDataList;
   TimeSeriesView* mTimeSeriesView;
 
+#ifdef ENABLE_ERRORLIST
+  ErrorList* mErrorsView;
+  QDockWidget* mDockErrors;
+#endif
+#ifdef ENABLE_EXTREMES
   ExtremesView* mExtremesView;
+  QDockWidget* mDockExtremes;
+#endif
+#ifdef ENABLE_MISSINGOBS
   MissingView* mMissingView;
+  QDockWidget* mDockMissing;
+#endif
 };
 
 #endif // HQC_HQCMAINWINDOW_H

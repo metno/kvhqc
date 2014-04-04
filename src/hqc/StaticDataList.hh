@@ -11,7 +11,7 @@ public:
   StaticDataList(QWidget* parent=0);
   ~StaticDataList();
   
-  virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+  virtual void setSensorsAndTimes(const Sensor_v& sensors, const TimeRange& limits);
 };
 
 #endif // HQC_STATICDATALIST_HH

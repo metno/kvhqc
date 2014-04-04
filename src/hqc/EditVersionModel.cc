@@ -35,50 +35,52 @@ const char* tooltips[NCOLUMNS] = {
 
 } // namespace anonymous
 
-EditVersionModel::EditVersionModel(EditAccessPtr eda)
-    : mDA(eda)
+EditVersionModel::EditVersionModel(EditAccess_p eda)
+  : mDA(eda)
 {
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
-    mDA->currentVersionChanged.connect(boost::bind(&EditVersionModel::onCurrentVersionChanged, this, _1, _2));
-    mDA->obsDataChanged       .connect(boost::bind(&EditVersionModel::onDataChanged,           this, _1, _2));
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
+  //mDA->currentVersionChanged.connect(boost::bind(&EditVersionModel::onCurrentVersionChanged, this, _1, _2));
+  //mDA->obsDataChanged       .connect(boost::bind(&EditVersionModel::onDataChanged,           this, _1, _2));
 }
 
 EditVersionModel::~EditVersionModel()
 {
-    mDA->obsDataChanged       .disconnect(boost::bind(&EditVersionModel::onDataChanged,           this, _1, _2));
-    mDA->currentVersionChanged.disconnect(boost::bind(&EditVersionModel::onCurrentVersionChanged, this, _1, _2));
+  //mDA->obsDataChanged       .disconnect(boost::bind(&EditVersionModel::onDataChanged,           this, _1, _2));
+  //mDA->currentVersionChanged.disconnect(boost::bind(&EditVersionModel::onCurrentVersionChanged, this, _1, _2));
 }
 
-void EditVersionModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
-{
-    METLIBS_LOG_SCOPE();
-    dump();
-}
+//void EditVersionModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
+//{
+//  METLIBS_LOG_SCOPE();
+//  dump();
+//}
 
 void EditVersionModel::onCurrentVersionChanged(int current, int highest)
 {
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(current) << LOGVAL(highest));
-    dump();
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(current) << LOGVAL(highest));
+  dump();
 }
 
 void EditVersionModel::dump()
 {
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
-    Q_EMIT beginResetModel();
-    mHistory = ChangeHistory_t();
-    for(int v=1; v<=mDA->highestVersion(); ++v) {
-        mHistory.push_back(mDA->versionChanges(v));
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));
+  Q_EMIT beginResetModel();
+#if 0
+  mHistory = ChangeHistory_t();
+  for(int v=1; v<=mDA->highestVersion(); ++v) {
+    mHistory.push_back(mDA->versionChanges(v));
 #if 1
-        const std::vector<EditDataPtr>& changes = mHistory.back();
-        METLIBS_LOG_DEBUG("changes for version " << v << " from " << mDA->versionTimestamp(v) << ":");
-        BOOST_FOREACH(EditDataPtr obs, changes)
-            METLIBS_LOG_DEBUG("   " << obs->sensorTime() << " c=" << obs->corrected(v) << " f=" << obs->controlinfo(v).flagstring());
+    const std::vector<EditDataPtr>& changes = mHistory.back();
+    METLIBS_LOG_DEBUG("changes for version " << v << " from " << mDA->versionTimestamp(v) << ":");
+    BOOST_FOREACH(EditDataPtr obs, changes)
+        METLIBS_LOG_DEBUG("   " << obs->sensorTime() << " c=" << obs->corrected(v) << " f=" << obs->controlinfo(v).flagstring());
 #endif
-    }
-    Q_EMIT endResetModel();
+  }
+#endif
+  Q_EMIT endResetModel();
 }
 
 int EditVersionModel::columnCount(const QModelIndex& parent) const
@@ -92,19 +94,21 @@ int EditVersionModel::columnCount(const QModelIndex& parent) const
 
 int EditVersionModel::rowCount(const QModelIndex& parent) const
 {
+#if 0
   if (not parent.isValid())
     return mHistory.size();
   const size_t parentRow = parent.row();
   if (parentRow >= mHistory.size())
+#endif
     return 0;
-  return mHistory.at(parentRow).size();
+  //return mHistory.at(parentRow).size();
 }
 
 QVariant EditVersionModel::data(const QModelIndex& index, int role) const
 {
   const qint64 internalId = index.internalId();
   const int column = index.column();
-  
+#if 0  
   if (role == Qt::DisplayRole) {
     if (internalId >= 0) {
       const int version = internalId+1;
@@ -132,6 +136,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
     if (version > mDA->currentVersion())
       return Qt::lightGray;
   }
+#endif
   return QVariant();
 }
 
@@ -142,6 +147,7 @@ bool EditVersionModel::hasChildren(const QModelIndex& index) const
 
 QModelIndex EditVersionModel::index(int row, int column, const QModelIndex& parent) const
 {
+#if 0
   if (not parent.isValid()) {
     if (column == 0  and row < (int)mHistory.size())
       return createIndex(row, column, -1);
@@ -150,15 +156,18 @@ QModelIndex EditVersionModel::index(int row, int column, const QModelIndex& pare
     if (row < (int)mHistory.at(parentRow).size())
       return createIndex(row, column, parentRow);
   }
+#endif
   return QModelIndex();
 }
 
 QModelIndex EditVersionModel::parent(const QModelIndex& index) const
 {
+#if 0
   const qint64 internalId = index.internalId();
   if (internalId >= 0)
     return createIndex(internalId, 0, -1);
   else
+#endif
     return QModelIndex();
 }
 

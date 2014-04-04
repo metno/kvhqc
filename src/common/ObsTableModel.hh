@@ -3,7 +3,7 @@
 #define OBSTABLEMODEL_HH 1
 
 #include "ObsColumn.hh"
-#include "EditAccess.hh"
+#include "access/EditAccess.hh"
 #include "TimeRange.hh"
 
 #include <QtCore/QAbstractTableModel>
@@ -11,7 +11,7 @@
 class ObsTableModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  ObsTableModel(EditAccessPtr kda, const TimeRange& time, int step = (24*60*60));
+  ObsTableModel(EditAccess_p kda, const TimeRange& time, int step = (24*60*60));
   virtual ~ObsTableModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -27,13 +27,13 @@ public:
 
   virtual void setTimeInRows(bool tir);
 
-  virtual ObsColumnPtr getColumn(int idx) const
+  virtual ObsColumn_p getColumn(int idx) const
     { return mColumns[idx]; }
-  virtual void insertColumn(int before, ObsColumnPtr c);
+  virtual void insertColumn(int before, ObsColumn_p c);
   virtual void removeColumn(int at);
   virtual void moveColumn(int from, int to);
 
-  void addColumn(ObsColumnPtr c)
+  void addColumn(ObsColumn_p c)
     { insertColumn(mColumns.size(), c); }
 
   /*! Set time difference between rows.
@@ -69,17 +69,17 @@ protected:
   virtual void updateTimes();
 
 private:
-  typedef std::vector<ObsColumnPtr> ObsColumns_t;
+  typedef std::vector<ObsColumn_p> ObsColumns_t;
 
 private:
-  void onColumnChanged(const timeutil::ptime& time, ObsColumnPtr column);
+  void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
   int timeIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.row() : index.column(); }
   int columnIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.column() : index.row(); }
 
 protected:
-  EditAccessPtr mDA;
+  EditAccess_p mDA;
   bool mTimeInRows;
   TimeRange mTime;
   int mTimeStep; //! time step between rows, in seconds

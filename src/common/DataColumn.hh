@@ -3,13 +3,15 @@
 #define DATACOLUMN_HH 1
 
 #include "DataItem.hh"
-#include "EditAccess.hh"
 #include "ObsColumn.hh"
-#include "TimeRange.hh"
+#include "access/EditAccess.hh"
+#include "access/TimeBuffer.hh"
 
-class DataColumn : public ObsColumn {
+class DataColumn : public ObsColumn
+{ Q_OBJECT;
+
 public:
-  DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, DataItemPtr item);
+  DataColumn(EditAccess_p ea, const Sensor& sensor, const TimeRange& time, DataItem_p item);
   ~DataColumn();
 
   void setHeaderShowStation(bool show)
@@ -20,7 +22,7 @@ public:
   virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
   virtual QVariant headerData(Qt::Orientation orientation, int role) const;
 
-  DataItemPtr getItem() const
+  DataItem_p getItem() const
     { return mItem; }
   virtual bool matchSensor(const Sensor& sensorObs) const;
 
@@ -35,24 +37,24 @@ public:
     { return mItem->type(); }
 
 protected:
-  EditDataPtr getObs(const timeutil::ptime& time) const;
-  SensorTime getSensorTime(const timeutil::ptime& time) const
-    { return SensorTime(mSensor, time + mTimeOffset); }
+  ObsData_p getObs(const Time& time) const;
+  SensorTime getSensorTime(const Time& time) const
+    { return SensorTime(sensor(), time + mTimeOffset); }
 
-  virtual bool onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+private Q_SLOTS:
+  void onBufferCompleted(bool failed);
+  void onNewDataEnd(const ObsData_pv& data);
+  void onUpdateDataEnd(const ObsData_pv& data);
+  void onDropDataEnd(const SensorTime_v& dropped);
 
 protected:
-  EditAccessPtr mDA;
-  Sensor mSensor;
-  TimeRange mTime;
-  DataItemPtr mItem;
+  ObsAccess_p mDA;
+  TimeBuffer_p mBuffer;
+  DataItem_p mItem;
   bool mHeaderShowStation;
   boost::posix_time::time_duration mTimeOffset;
-
-  typedef std::map<timeutil::ptime, EditDataPtr> ObsCache_t;
-  mutable ObsCache_t mObsCache;
 };
 
-typedef boost::shared_ptr<DataColumn> DataColumnPtr;
+HQC_TYPEDEF_P(DataColumn);
 
 #endif // DATACOLUMN_HH

@@ -78,13 +78,13 @@ void AcceptRejectButtons::onAccept()
   if (not mSelectedObs.empty()) {
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
+    BOOST_FOREACH(ObsData_p& obs, mSelectedObs) {
       if (mSelectedColumnType == ORIGINAL and not qc2ok) {
-        AcceptReject::accept_original(mDA, st);
+        AcceptReject::accept_original(mDA, obs);
       } else if (mSelectedColumnType == CORRECTED) {
-        AcceptReject::accept_corrected(mDA, st, qc2ok);
+        AcceptReject::accept_corrected(mDA, obs, qc2ok);
       } else if (mSelectedColumnType == MODEL and mMA) {
-        AcceptReject::accept_model(mDA, mMA, st, qc2ok);
+        AcceptReject::accept_model(mDA, mMA, obs, qc2ok);
       }
     }
   }
@@ -97,14 +97,14 @@ void AcceptRejectButtons::onReject()
   if (not mSelectedObs.empty() and (mSelectedColumnType == ORIGINAL or mSelectedColumnType == CORRECTED)) {
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
-    BOOST_FOREACH(SensorTime& st, mSelectedObs) {
-      AcceptReject::reject(mDA, st, qc2ok);
+    BOOST_FOREACH(ObsData_p& obs, mSelectedObs) {
+      AcceptReject::reject(mDA, obs, qc2ok);
     }
   }
   enableButtons();
 }
 
-void AcceptRejectButtons::updateModel(EditAccessPtr da, ModelAccessPtr ma, QTableView* table)
+void AcceptRejectButtons::updateModel(EditAccess_p da, ModelAccessPtr ma, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(enableButtons()));
@@ -139,7 +139,7 @@ void AcceptRejectButtons::enableButtons()
     Helpers::findMinMaxRowCol(selected, minRow, maxRow, minCol, maxCol);
     if (minCol == maxCol and (maxRow - minRow + 1 == selected.size())) {
       ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-      if (DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {
+      if (DataColumn_p dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {
         if (dc->type() == ObsColumn::ORIGINAL)
           mSelectedColumnType = ORIGINAL;
         else if (dc->type() == ObsColumn::NEW_CORRECTED)
@@ -155,10 +155,10 @@ void AcceptRejectButtons::enableButtons()
           possible &= ~AcceptReject::CAN_REJECT;
         for (int r=minRow; r<=maxRow; ++r) {
           const SensorTime st = tableModel->findSensorTime(tableModel->index(r, minCol));
-          EditDataPtr obs = mDA->findE(st);
+          ObsData_p obs; // FIXME = mDA->findE(st);
           if (obs) {
             possible &= AcceptReject::possibilities(obs);
-            mSelectedObs.push_back(st);
+            mSelectedObs.push_back(obs);
           }
           // TODO disable if missing but in obs_pgm
         }

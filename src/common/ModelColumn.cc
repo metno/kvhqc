@@ -70,7 +70,7 @@ bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)
     return false;
     
   mModelCache.erase(it);
-  columnChanged(timeo, shared_from_this());
+  //Q_EMIT columnChanged(timeo, shared_from_this());
   return true;
 }
 

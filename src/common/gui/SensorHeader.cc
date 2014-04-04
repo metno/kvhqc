@@ -15,7 +15,7 @@ SensorHeader::SensorHeader(const Sensor& sensor, When showStation, When showPara
 {
 }
 
-QVariant SensorHeader::sensorHeader(DataItemPtr item, Qt::Orientation orientation, int role) const
+QVariant SensorHeader::sensorHeader(DataItem_p item, Qt::Orientation orientation, int role) const
 {
   const bool tooltip = (role == Qt::ToolTipRole), display = (role == Qt::DisplayRole);
   if (not tooltip and not display)
@@ -43,7 +43,7 @@ QVariant SensorHeader::sensorHeader(DataItemPtr item, Qt::Orientation orientatio
 
 QVariant SensorHeader::modelHeader(Qt::Orientation orientation, int role) const
 {
-  const QVariant sh = sensorHeader(DataItemPtr(), orientation, role);
+  const QVariant sh = sensorHeader(DataItem_p(), orientation, role);
   if (not sh.isValid())
     return sh;
   const bool tooltip = (role == Qt::ToolTipRole);

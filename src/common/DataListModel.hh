@@ -11,7 +11,7 @@ public:
   typedef std::vector<Sensor> Sensors_t;
   typedef std::vector<timeutil::ptime> Times_t;
 
-  DataListModel(EditAccessPtr eda, const TimeRange& limits);
+  DataListModel(EditAccess_p eda, const TimeRange& limits);
   ~DataListModel();
 
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;

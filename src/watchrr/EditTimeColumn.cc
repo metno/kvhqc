@@ -7,10 +7,12 @@
 #define MILOGGER_CATEGORY "kvhqc.EditTimeColumn"
 #include "util/HqcLogging.hh"
 
-EditTimeColumn::EditTimeColumn(DataColumnPtr dc)
+EditTimeColumn::EditTimeColumn(DataColumn_p dc)
   : mDC(dc)
 {
-  mDC->columnChanged.connect(boost::bind(&EditTimeColumn::onColumnChanged, this, _1, _2));
+  connect(dc.get(), SIGNAL(columnChanged(ObsColumn_p)),
+      this, SIGNAL(onColumnChanged(ObsColumn_p)));
+  //mDC->columnChanged.connect(boost::bind(&EditTimeColumn::onColumnChanged, this, _1, _2));
 }
 
 EditTimeColumn::~EditTimeColumn()
@@ -59,7 +61,7 @@ const boost::posix_time::time_duration& EditTimeColumn::timeOffset() const
   return mDC->timeOffset();
 }
 
-void EditTimeColumn::onColumnChanged(const timeutil::ptime& time, ObsColumnPtr column)
+void EditTimeColumn::onColumnChanged(const timeutil::ptime& time, ObsColumn_p column)
 {
   if (column == mDC)
     columnChanged(time, shared_from_this());

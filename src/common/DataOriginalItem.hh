@@ -8,10 +8,10 @@ class DataOriginalItem : public DataCodeItem {
 public:
   DataOriginalItem(Code2TextCPtr codes);
   
-  virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
+  virtual QVariant data(ObsData_p obs, const SensorTime& st, int role) const;
   virtual QString description(bool mini) const;
 };
 
-typedef boost::shared_ptr<DataOriginalItem> DataOriginalItemPtr;
+HQC_TYPEDEF_P(DataOriginalItem);
 
 #endif // DATAORIGINALITEM_HH

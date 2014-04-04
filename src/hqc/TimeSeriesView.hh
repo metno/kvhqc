@@ -2,7 +2,6 @@
 #ifndef TimeSeriesView_hh
 #define TimeSeriesView_hh 1
 
-#include "common/DataView.hh"
 #include "qtimeseries/PlotOptions.h"
 
 #include <QtGui/QWidget>
@@ -18,7 +17,7 @@ namespace Ui {
 class TimeSeriesView;
 }
 
-class TimeSeriesView : public QWidget, public DataView
+class TimeSeriesView : public QWidget
 { Q_OBJECT
 public:
   TimeSeriesView(QWidget* parent=0);
@@ -52,7 +51,7 @@ private:
   void replay(const std::string& changes);
   void storeChanges();
 
-  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  //void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   void setTimeRange(const TimeRange& t);
 
   void updateVisible(bool visible);
@@ -70,7 +69,7 @@ private:
 
   SensorTime mSensorTime;
   TimeRange mTimeLimits, mOriginalTimeLimits;
-  Sensors_t mSensors, mOriginalSensors;
+  Sensor_v mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
   TimeRangeControl* mTimeControl;
   bool mChangingTimes;

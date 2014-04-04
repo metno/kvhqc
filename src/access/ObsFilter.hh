@@ -12,14 +12,12 @@ public:
 
   virtual bool hasSQL() const;
   virtual std::string acceptingSQL(const std::string& data_alias) const;
-  virtual bool accept(const SensorTime&, bool afterSQL) const;
 
   /* \param afterSQL true if accept is called after running the SQL
    * contraints from acceptingSQL(...); if false, acceptingSQL may
    * have run or not */
   virtual bool accept(ObsData_p obs, bool afterSQL) const;
 
-  virtual bool equals(const ObsFilter& other) const;
   virtual bool subsetOf(const ObsFilter& other) const;
 };
 

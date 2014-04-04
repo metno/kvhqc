@@ -1,116 +1,76 @@
 
 #include "DataColumn.hh"
 
-#include "KvHelpers.hh"
-#include "FlagChange.hh"
-#include "Tasks.hh"
 #include "common/gui/SensorHeader.hh"
+#include "util/make_set.hh"
 
-#include <kvalobs/kvDataOperations.h>
-#include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
-#include <QtGui/QApplication>
-#include <QtGui/QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.DataColumn"
 #include "common/ObsLogging.hh"
 
-DataColumn::DataColumn(EditAccessPtr da, const Sensor& sensor, const TimeRange& t, DataItemPtr item)
+DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeRange& t, DataItem_p item)
   : mDA(da)
-  , mSensor(sensor)
-  , mTime(t)
+  , mBuffer(boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
   , mItem(item)
   , mHeaderShowStation(true)
 {
-  mDA->obsDataChanged.connect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
+  TimeBuffer* b = mBuffer.get();
+  connect(b, SIGNAL(bufferCompleted(bool)),            this, SLOT(onBufferCompleted(bool)));
+  connect(b, SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(newDataEnd(const ObsData_pv&)));
+  connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(updateDataEnd(const ObsData_pv&)));
+  connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(dropDataEnd(const SensorTime_v&)));
 }
-
+      
 DataColumn::~DataColumn()
 {
-  mDA->obsDataChanged.disconnect(boost::bind(&DataColumn::onDataChanged, this, _1, _2));
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
 {
   return mItem->flags(getObs(time));
 }
-
+      
 QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 {
   const SensorTime st = getSensorTime(time);
   return mItem->data(getObs(time), st, role);
 }
 
-bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int role)
+bool DataColumn::setData(const timeutil::ptime&, const QVariant&, int)
 {
-  METLIBS_LOG_SCOPE();
-  try {
-    METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
-    return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
-  } catch (std::exception& e) {
-    HQC_LOG_WARN(e.what());
-    return false;
-  }
+  return false;
 }
 
 QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
 {
-  SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
+  SensorHeader sh(sensor(), mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
       SensorHeader::ALWAYS, mTimeOffset.hours());
   return sh.sensorHeader(mItem, orientation, role);
 }
-
-bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
+      
+void DataColumn::onBufferCompleted(bool failed)
 {
-  METLIBS_LOG_SCOPE();
-  const SensorTime st(obs->sensorTime());
-  if (not mItem->matchSensor(mSensor, st.sensor))
-    return false;
-  
-  METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
-  const timeutil::ptime timeo = st.time - mTimeOffset;
-  ObsCache_t::iterator it = mObsCache.find(timeo);
-  if (it == mObsCache.end()) {
-    METLIBS_LOG_DEBUG("not in cache");
-    return false;
-  }
-  
-  mObsCache.erase(it);
-  columnChanged(timeo, shared_from_this());
-  return true;
 }
 
-EditDataPtr DataColumn::getObs(const timeutil::ptime& time) const
+void DataColumn::onNewDataEnd(const ObsData_pv& data)
 {
-  ObsCache_t::iterator it = mObsCache.find(time);
-  EditDataPtr obs;
-  if (it == mObsCache.end()) {
-    obs = mDA->findE(getSensorTime(time));
-    mObsCache[time] = obs;
-  } else {
-    obs = it->second;
-  }
-  return obs;
 }
 
-void DataColumn::setTimeRange(const TimeRange& tr)
+void DataColumn::onUpdateDataEnd(const ObsData_pv& data)
 {
-  mTime = tr.shifted(mTimeOffset);
 }
 
-void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
+void DataColumn::onDropDataEnd(const SensorTime_v& dropped)
 {
-  mTime.shift(-mTimeOffset);
-  mTimeOffset = timeOffset;
-  mTime.shift(mTimeOffset);
 }
 
-Sensor DataColumn::sensor() const
+ObsData_p DataColumn::getObs(const Time& time) const
 {
-  return mSensor;
+  return mBuffer->get(getSensorTime(time));
 }
 
 bool DataColumn::matchSensor(const Sensor& sensorObs) const
 {
-  return mItem->matchSensor(mSensor, sensorObs);
+  return mItem->matchSensor(sensor(), sensorObs);
 }

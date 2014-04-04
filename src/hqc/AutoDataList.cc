@@ -3,8 +3,11 @@
 
 #include "DataListAddColumn.hh"
 #include "ViewChanges.hh"
+
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
+#include "common/KvHelpers.hh"
+
 #include "util/ChangeReplay.hh"
 #include "util/gui/BusyIndicator.hh"
 
@@ -178,7 +181,7 @@ void AutoDataList::makeModel()
   //BusyIndicator busy;
   std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
   BOOST_FOREACH(const Column& c, mColumns) {
-    ObsColumnPtr oc = makeColumn(c);
+    ObsColumn_p oc = makeColumn(c);
     if (oc)
       newModel->addColumn(oc);
   }
@@ -187,7 +190,7 @@ void AutoDataList::makeModel()
   mColumnAdd->setEnabled(true);
 }
 
-ObsColumnPtr AutoDataList::makeColumn(const Column& c)
+ObsColumn_p AutoDataList::makeColumn(const Column& c)
 {
   boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
 
@@ -201,7 +204,7 @@ ObsColumnPtr AutoDataList::makeColumn(const Column& c)
       cdt = ObsColumn::ORIGINAL;
     else if (c.type == FLAGS)
       cdt = ObsColumn::NEW_CONTROLINFO;
-    DataColumnPtr dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
+    DataColumn_p dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
     if (dc)
       dc->setTimeOffset(toff);
     return dc;

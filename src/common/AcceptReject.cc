@@ -1,7 +1,9 @@
 
 #include "AcceptReject.hh"
 
+#include "KvHelpers.hh"
 #include "ObsHelpers.hh"
+#include "common/Functors.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -10,7 +12,7 @@
 
 namespace AcceptReject {
 
-int possibilities(EditDataPtr obs)
+int possibilities(ObsData_p obs)
 {
   // accumulated => disable
   // fmis=3 => disable
@@ -45,103 +47,84 @@ int possibilities(EditDataPtr obs)
 
 // ----------------------------------------
 
-void accept_original(EditAccessPtr eda, const SensorTime& sensorTime)
+void accept_original(EditAccess_p ea, ObsData_p obs)
 {
-  EditDataPtr obs = eda->findE(sensorTime);
-  if (not obs) {
-    HQC_LOG_ERROR("accept_original without obs for " << sensorTime);
-    return;
-  }
-
-  const kvalobs::kvControlInfo ci = obs->controlinfo();
+  const kvalobs::kvControlInfo& ci = obs->controlinfo();
   const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3) {
-    HQC_LOG_ERROR("fmis=3, accept_original not possible for " << sensorTime);
+    HQC_LOG_ERROR("fmis=3, accept_original not possible for " << obs->sensorTime());
     return;
   }
   if (not (fmis == 0 or fmis == 1 or fmis == 2 or fmis == 4)) {
-    HQC_LOG_ERROR("bad accept_original, fmis != 0/1/2/4 for " << sensorTime);
+    HQC_LOG_ERROR("bad accept_original, fmis != 0/1/2/4 for " << obs->sensorTime());
     return;
   }
 
-  EditDataEditorPtr editor = eda->editor(obs);
-  editor->setCorrected(obs->original());
+  ObsUpdate_p update = ea->createUpdate(obs);
+  update->setCorrected(obs->original());
 
-  Helpers::set_fhqc(editor, 1);
+  Helpers::set_fhqc(update, 1);
   if (fmis == 0 or fmis == 2) {
-    Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
-    Helpers::set_flag(editor, kvalobs::flag::fd,   1);
+    Helpers::set_flag(update, kvalobs::flag::fmis, 0);
+    Helpers::set_flag(update, kvalobs::flag::fd,   1);
   } else if (fmis == 1) {
-    Helpers::set_flag(editor, kvalobs::flag::fmis, 3);
+    Helpers::set_flag(update, kvalobs::flag::fmis, 3);
   } else if (fmis == 4) {
-    Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
+    Helpers::set_flag(update, kvalobs::flag::fmis, 0);
   }
 
-  editor->commit();
+  ea->storeUpdates(ObsUpdate_pv(1, update));
 }
 
-void accept_model(EditAccessPtr eda, ModelAccessPtr mda, const SensorTime& sensorTime, bool qc2ok)
+void accept_model(EditAccess_p ea, ModelAccessPtr mda, ObsData_p obs, bool qc2ok)
 {
-  EditDataPtr obs = eda->findE(sensorTime);
-  ModelDataPtr md = mda->find(sensorTime);
+  ModelDataPtr md = mda->find(obs->sensorTime());
   if (obs and md) {
-    EditDataEditorPtr editor = eda->editor(obs);
-    editor->setCorrected(md->value());
-    editor->commit();
-    accept_corrected(eda, sensorTime, qc2ok);
+    ObsUpdate_p update = ea->createUpdate(obs);
+    update->setCorrected(md->value());
+    ea->storeUpdates(ObsUpdate_pv(1, update));
+    accept_corrected(ea, obs, qc2ok);
   }
 }
 
-void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok)
 {
-  EditDataPtr obs = eda->findE(sensorTime);
-  if (not obs) {
-    HQC_LOG_ERROR("accept_corrected without obs for " << sensorTime);
-    return;
-  }
-
   const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
-  EditDataEditorPtr editor = eda->editor(obs);
+  ObsUpdate_p update = ea->createUpdate(obs);
 
-  if (Helpers::float_eq()(obs->original(), editor->corrected())
-      and (not Helpers::is_accumulation(editor)) and fmis < 2)
+  if (Helpers::float_eq()(obs->original(), update->corrected())
+      and (not Helpers::is_accumulation(update)) and fmis < 2)
   {
-    Helpers::set_flag(editor, kvalobs::flag::fd, 1);
-    Helpers::set_fhqc(editor, 1);
+    Helpers::set_flag(update, kvalobs::flag::fd, 1);
+    Helpers::set_fhqc(update, 1);
   } else if (fmis == 0) {
-    Helpers::set_fhqc(editor, 7);
+    Helpers::set_fhqc(update, 7);
   } else if (fmis == 1 or fmis == 4) {
-    Helpers::set_fhqc(editor, 5);
+    Helpers::set_fhqc(update, 5);
   } else {
-    HQC_LOG_ERROR("bad accept_corrected for " << sensorTime);
+    HQC_LOG_ERROR("bad accept_corrected for " << obs->sensorTime());
     return;
   }
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
+    Helpers::set_fhqc(update, 4); // changes fmis=0->4
 
-  editor->commit();
+  ea->storeUpdates(ObsUpdate_pv(1, update));
 }
 
-void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
+void reject(EditAccess_p ea, ObsData_p obs, bool qc2ok)
 {
-  EditDataPtr obs = eda->findE(sensorTime);
-  if (not obs) {
-    HQC_LOG_ERROR("reject without obs for " << sensorTime);
-    return;
-  }
-
   const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
   if (fmis == 1 or fmis == 3) {
-    HQC_LOG_ERROR("bad reject with fmis=1/3 for " << sensorTime);
+    HQC_LOG_ERROR("bad reject with fmis=1/3 for " << obs->sensorTime());
     return;
   }
 
-  EditDataEditorPtr editor = eda->editor(obs);
-  Helpers::reject(editor);
+  ObsUpdate_p update = ea->createUpdate(obs);
+  Helpers::reject(update);
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4);
+    Helpers::set_fhqc(update, 4);
 
-  editor->commit();
+  ea->storeUpdates(ObsUpdate_pv(1, update));
 }
 
 } // namespace AcceptReject

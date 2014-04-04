@@ -8,6 +8,7 @@
 #include "KvMetaDataBuffer.hh"
 #include "Sensor.hh"
 #include "common/HqcApplication.hh"
+#include "common/KvHelpers.hh"
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QLocale>
@@ -134,40 +135,38 @@ Code2TextCPtr codesForParam(int pid)
     return c2t;
 }
 
-DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Type displayType)
+DataItem_p itemForSensor(EditAccess_p da, const Sensor& sensor, ObsColumn::Type displayType)
 {
     const int pid = sensor.paramId;
 
-    DataItemPtr item;
+    DataItem_p item;
     if ((pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
-        and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::ORIGINAL))
+        and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::ORIGINAL))
     {
       return boost::make_shared<DataVxItem>(displayType, da);
     }
-    if (displayType == ObsColumn::OLD_CONTROLINFO or displayType == ObsColumn::NEW_CONTROLINFO) {
-      const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
-      return boost::make_shared<DataControlinfoItem>(showNew);
+    if (displayType == ObsColumn::NEW_CONTROLINFO) {
+      return boost::make_shared<DataControlinfoItem>();
     }
     
     Code2TextCPtr codes = codesForParam(pid);
-    if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
-      const bool showNew = displayType == ObsColumn::NEW_CORRECTED;
+    if (displayType == ObsColumn::NEW_CORRECTED) {
       if (pid == kvalobs::PARAMID_RR_24)
-        return boost::make_shared<DataRR24Item>(showNew, codes);
+        return boost::make_shared<DataRR24Item>(codes);
       else
-        return boost::make_shared<DataCorrectedItem>(showNew, codes);
+        return boost::make_shared<DataCorrectedItem>(codes);
     } else if (displayType == ObsColumn::ORIGINAL) {
       return boost::make_shared<DataOriginalItem>(codes);
     }
-    return DataItemPtr();
+    return DataItem_p();
 }
 
-DataColumnPtr columnForSensor(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType)
+DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType)
 {
-  DataItemPtr item = itemForSensor(da, sensor, displayType);
+  DataItem_p item = itemForSensor(da, sensor, displayType);
   if (item)
     return boost::make_shared<DataColumn>(da, sensor, time, item);
-  return DataColumnPtr();
+  return DataColumn_p();
 }
 
 ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
