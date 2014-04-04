@@ -505,7 +505,7 @@ void TimeSeriesView::updatePlot()
     return;
 
   mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(mSensors.begin(), mSensors.end()), mTimeLimits);
-  connect(mObsBuffer.get(), SIGNAL(completed(bool)), this, SLOT(onDataComplete()));
+  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(onDataComplete()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
   mObsBuffer->postRequest(mDA);

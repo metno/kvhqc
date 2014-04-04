@@ -69,7 +69,7 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
   if (filter and filter->hasSQL())
     sql << " AND (" << filter->acceptingSQL("d.") << ")";
   sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
-  METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
+  //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
   ObsData_pv data;
   if (query.exec(QString::fromStdString(sql.str()))) {
@@ -94,7 +94,7 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
           tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
       KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
       if ((not filter) or filter->accept(kd, true)) {
-        METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
+        //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
         data.push_back(kd);
       }
     }

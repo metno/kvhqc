@@ -113,10 +113,14 @@ typedef std::set<EditVersions_p> EditVersions_ps;
 class EditAccessPrivate;
 typedef EditAccessPrivate* EditAccessPrivate_P;
 
+class EditRequest;
+HQC_TYPEDEF_P(EditRequest);
+
 class EditRequest : public ObsRequest {
 public:
-  EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
-    : mAccess(a), mWrapped(wrapped) { }
+  EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped);
+
+  static EditRequest_p untag(ObsRequest_p wrapped);
   
   virtual const Sensor_s& sensors() const
     { return mWrapped->sensors(); }
@@ -133,7 +137,6 @@ public:
   virtual void dropData(const SensorTime_v& dropped);
 
   void use(EditVersions_p ev);
-  EditVersions_ps drop();
 
   EditAccessPrivate_P mAccess;
   ObsRequest_p mWrapped;
@@ -141,7 +144,6 @@ public:
 };
 
 typedef EditRequest* EditRequest_P;
-HQC_TYPEDEF_P(EditRequest);
 HQC_TYPEDEF_PV(EditRequest);
 HQC_TYPEDEF_PS(EditRequest);
 

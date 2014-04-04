@@ -29,11 +29,11 @@ protected:
 private Q_SLOTS:
   void onInterpolate();
   void fetchData();
+  void enableButtons();
 
 private:
   void retranslateUi();
   bool checkEnabled();
-  void enableButtons();
 
 private:
   EditAccess_p mDA;

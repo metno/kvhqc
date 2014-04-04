@@ -80,6 +80,19 @@ bool EditVersions::updateBackend(ObsData_p backendData)
 
 // ========================================================================
 
+EditRequest::EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
+  : mAccess(a)
+  , mWrapped(wrapped)
+{
+  mWrapped->setTag(this);
+}
+
+EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
+{
+  EditRequest_P er = static_cast<EditRequest_P>(wrapped->tag());
+  return boost::static_pointer_cast<EditRequest>(er->shared_from_this());
+}
+
 void EditRequest::completed(bool failed)
 {
   mWrapped->completed(failed);
@@ -106,16 +119,6 @@ void EditRequest::use(EditVersions_p ev)
     ev->use();
     mUsed.insert(ev);
   }
-}
-
-EditVersions_ps EditRequest::drop()
-{
-  EditVersions_ps unused;
-  BOOST_FOREACH(EditVersions_p ev, mUsed) {
-    if (ev->drop())
-      unused.insert(ev);
-  }
-  return unused;
 }
 
 // ========================================================================
@@ -171,13 +174,18 @@ void EditAccess::postRequest(ObsRequest_p request)
 
 void EditAccess::dropRequest(ObsRequest_p request)
 {
-  EditRequest_p r = boost::static_pointer_cast<EditRequest>(request);
-  p->mBackend->dropRequest(r->mWrapped);
+  METLIBS_LOG_SCOPE();
+  EditRequest_p r = EditRequest::untag(request);
+  if (not r)
+    HQC_LOG_ERROR("not an EditRequest");
+  p->mBackend->dropRequest(r);
   p->mRequests.erase(r);
 
-  const EditVersions_ps unused = r->drop();
-  BOOST_FOREACH(EditVersions_p ev, unused)
+  BOOST_FOREACH(EditVersions_p ev, r->mUsed) {
+    METLIBS_LOG_DEBUG(ev->sensorTime());
+    if (ev->drop())
       p->mEdited.erase(ev);
+  }
   // TODO warn if an EditVersions object is modified
 }
 
