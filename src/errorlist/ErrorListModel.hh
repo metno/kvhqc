@@ -3,8 +3,8 @@
 #ifndef HQC_ERRORLISTMODEL_HH
 #define HQC_ERRORLISTMODEL_HH
 
-#include "common/AnalyseErrors.hh"
-#include "common/EditAccess.hh"
+#include "common/ObsAccess.hh"
+#include "common/TimeBuffer.hh"
 #include "common/ModelAccess.hh"
 
 #include <QtCore/QAbstractTableModel>
@@ -15,8 +15,8 @@ class ErrorListModel : public QAbstractItemModel
   typedef ErrorTreeItem* ErrorTreeItem_P;
 
 public:
-  ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
-      const Errors::Sensors_t& sensors, const TimeRange& limits, bool errorsForSalen);
+  ErrorListModel(ObsAccess_p eda, ModelAccess_p mda,
+      const Sensor_v& sensors, const TimeSpan& time, bool errorsForSalen);
   ~ErrorListModel();
 
   enum EDIT_COLUMNS {
@@ -44,7 +44,7 @@ public:
   QModelIndex findSensorTime(const SensorTime& st) const
     { return findSensorTime(st, mRootItem); }
 
-  EditDataPtr findObs(const QModelIndex& index) const;
+  ObsData_p findObs(const QModelIndex& index) const;
 
   void highlightStation(int stationID);
 
@@ -52,24 +52,27 @@ Q_SIGNALS:
   void beginDataChange();
   void endDataChange();
 
+private Q_SLOTS:
+  void onDataChanged();
+  void buildTree();
+  
 private:
-  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem_P item) const;
   ErrorTreeItem_P itemFromIndex(const QModelIndex& index) const;
-  void buildTree(const Errors::Errors_t& errors);
   void removeRow(ErrorTreeItem_P parent, int row);
 
   void updateErrorItem(ErrorTreeItem_P item);
   void removeErrorItem(ErrorTreeItem_P item);
-  void insertErrorItem(Errors::ErrorInfo ei);
+  void insertErrorItem(ObsData_p obs);
 
   QModelIndex indexFromItem(ErrorTreeItem_P item, int column=0) const;
 
 private:
-  EditAccessPtr mDA;
-  ModelAccessPtr mMA;
-  Errors::Sensors_t mSensors;
-  TimeRange mTimeLimits;
+  ObsAccess_p mDA;
+  ModelAccess_p mMA;
+  Sensor_v mSensors;
+  TimeSpan mTimeLimits;
+  TimeBuffer_p mObsBuffer;
   ErrorTreeItem_P mRootItem;
   bool mErrorsForSalen;
   int mHighlightedStation;

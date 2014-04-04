@@ -2,6 +2,9 @@
 #ifndef SimpleCorrections_hh
 #define SimpleCorrections_hh 1
 
+#include "common/SingleObsBuffer.hh"
+
+#include "common/ModelAccess.hh"
 #include "common/DataItem.hh"
 
 #include <QtGui/QWidget>
@@ -18,13 +21,12 @@ public:
   SimpleCorrections(QWidget* parent=0);
   ~SimpleCorrections();
   
-  virtual void setDataAccess(EditAccess_p eda, ModelAccess_p mda);
+  void setDataAccess(EditAccess_p eda, ModelAccess_p mda);
 
 public Q_SLOTS:
   virtual void navigateTo(const SensorTime&);
   
 protected:
-  //virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   virtual void changeEvent(QEvent *event);
   
 private:
@@ -41,8 +43,14 @@ private Q_SLOTS:
 
   void onNewCorrected();
 
+  void onDataChanged();
+
 private:
   std::auto_ptr<Ui::SimpleCorrections> ui;
+  EditAccess_p mDA;
+  ModelAccess_p mMA;
+  SingleObsBuffer_p mObsBuffer;
+
   std::auto_ptr<ChecksTableModel> mChecksModel;
   DataItem_p mItemFlags;
   DataItem_p mItemOriginal;

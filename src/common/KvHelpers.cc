@@ -2,7 +2,7 @@
 #include "KvHelpers.hh"
 
 #include "KvMetaDataBuffer.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 #include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 
@@ -242,7 +242,7 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   return nearestStation;
 }
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeRange& time, int maxNeighbors)
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time, int maxNeighbors)
 {
   METLIBS_LOG_SCOPE();
 
@@ -276,7 +276,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
   BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
     const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-      if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+      if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
       // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
       
@@ -298,7 +298,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
 }
 
 typedef std::vector<Sensor> Sensors_t;
-Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType)
+Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType)
 {
   METLIBS_LOG_TIME();
 
@@ -338,7 +338,7 @@ Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::stri
     bool accept = (par == s.paramId);
     if (not accept) {
       BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+        if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
           continue;
         
         const bool eql = op.paramID() == par;

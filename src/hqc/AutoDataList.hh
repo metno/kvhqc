@@ -71,7 +71,7 @@ private:
 
   EditAccess_p mDA;
   ModelAccessPtr mMA;
-  TimeRange mTimeLimits, mOriginalTimeLimits;
+  TimeSpan mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
 
   bool mVisible;

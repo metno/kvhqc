@@ -2,7 +2,7 @@
 #include "ModelColumn.hh"
 
 #include "ModelData.hh"
-#include "common/gui/SensorHeader.hh"
+#include "common/SensorHeader.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -12,7 +12,7 @@
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "common/ObsLogging.hh"
 
-ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
+ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
   : mMA(ma)
   , mSensor(sensor)
   , mHeaderShowStation(true)
@@ -97,7 +97,7 @@ void ModelColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffs
   mTimeOffset = timeOffset;
 }
 
-Sensor ModelColumn::sensor() const
+const Sensor& ModelColumn::sensor() const
 {
   return mSensor;
 }

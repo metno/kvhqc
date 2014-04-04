@@ -27,29 +27,29 @@
    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <ostream>
 
-#define MILOGGER_CATEGORY "kvhqc.TimeRange"
+#define MILOGGER_CATEGORY "kvhqc.TimeSpan"
 #include "util/HqcLogging.hh"
 
-bool TimeRange::undef() const
+bool TimeSpan::undef() const
 {
   return (mT0.is_not_a_date_time() and mT1.is_not_a_date_time());
 }
 
-bool TimeRange::open() const
+bool TimeSpan::open() const
 {
   return (mT0.is_not_a_date_time() xor mT1.is_not_a_date_time());
 }
 
-bool TimeRange::closed() const
+bool TimeSpan::closed() const
 {
   return not (mT0.is_not_a_date_time() or mT1.is_not_a_date_time()) and mT0 <= mT1;
 }
 
-TimeRange TimeRange::intersection(const TimeRange& t) const
+TimeSpan TimeSpan::intersection(const TimeSpan& t) const
 {
   timeutil::ptime t0, t1;
   if (mT0.is_not_a_date_time())
@@ -67,35 +67,35 @@ TimeRange TimeRange::intersection(const TimeRange& t) const
     t1 = std::min(mT1, t.mT1);
 
   if (t0 <= t1)
-    return TimeRange(t0, t1);
+    return TimeSpan(t0, t1);
   else
-    return TimeRange();
+    return TimeSpan();
 }
 
 // ------------------------------------------------------------------------
 
-int TimeRange::days() const
+int TimeSpan::days() const
 {
   return hours() / 24;
 }
 
 // ------------------------------------------------------------------------
 
-int TimeRange::hours() const
+int TimeSpan::hours() const
 {
   return minutes() / 60;
 }
 
 // ------------------------------------------------------------------------
 
-int TimeRange::minutes() const
+int TimeSpan::minutes() const
 {
   return seconds() / 60;
 }
 
 // ------------------------------------------------------------------------
 
-int TimeRange::seconds() const
+int TimeSpan::seconds() const
 {
   if (undef())
     return 0;
@@ -104,7 +104,7 @@ int TimeRange::seconds() const
 
 // ------------------------------------------------------------------------
 
-void TimeRange::extendByHours(int nHours)
+void TimeSpan::extendByHours(int nHours)
 {
   const boost::posix_time::time_duration h = boost::posix_time::hours(nHours);
   mT0 -= h;
@@ -113,7 +113,7 @@ void TimeRange::extendByHours(int nHours)
 
 // ------------------------------------------------------------------------
 
-void TimeRange::shift(const boost::posix_time::time_duration& s)
+void TimeSpan::shift(const boost::posix_time::time_duration& s)
 {
   mT0 += s;
   mT1 += s;
@@ -121,7 +121,7 @@ void TimeRange::shift(const boost::posix_time::time_duration& s)
 
 // ========================================================================
 
-std::ostream& operator<<(std::ostream& out, const TimeRange& tr)
+std::ostream& operator<<(std::ostream& out, const TimeSpan& tr)
 {
   out << '[' << tr.t0() << "--" << tr.t1() << ']';
   return out;

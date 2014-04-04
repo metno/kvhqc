@@ -8,7 +8,7 @@
 class WeatherTableModel : public DataListModel
 {
 public:
-  WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t);
+  WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, ObsColumn::Type t);
 
   static const int NPARAMETERS;
   static const int parameters[];

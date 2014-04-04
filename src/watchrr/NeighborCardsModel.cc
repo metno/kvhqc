@@ -3,8 +3,8 @@
 
 #include "common/ColumnFactory.hh"
 #include "util/Helpers.hh"
-#include "common/gui/NeighborHeader.hh"
-#include "common/gui/SensorHeader.hh"
+#include "common/NeighborHeader.hh"
+#include "common/SensorHeader.hh"
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -45,13 +45,13 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-NeighborCardsModel::NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange)
+NeighborCardsModel::NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange)
   : mDA(da)
-  , mTimeRange(timeRange)
-  , mTime(mTimeRange.t0())
+  , mTimeSpan(timeRange)
+  , mTime(mTimeSpan.t0())
   , mSensors(1, sensor)
 {
-  Helpers::addNeighbors(mSensors, sensor, mTimeRange, 20);
+  Helpers::addNeighbors(mSensors, sensor, mTimeSpan, 20);
   mItems.reserve(N_COLUMNS);
   mTimeOffsets.reserve(N_COLUMNS);
 
@@ -94,7 +94,7 @@ QVariant NeighborCardsModel::data(const QModelIndex& index, int role) const
 
 void NeighborCardsModel::setTime(const timeutil::ptime& time)
 {
-  if (not mTimeRange.contains(time) or mTime == time)
+  if (not mTimeSpan.contains(time) or mTime == time)
     return;
 
   mTime = time;

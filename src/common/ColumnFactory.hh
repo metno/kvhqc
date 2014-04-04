@@ -15,9 +15,9 @@ Code2TextCPtr codesForParam(int paramId);
 
 DataItem_p itemForSensor(EditAccess_p da, const Sensor& sensor, ObsColumn::Type displayType);
 
-DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType);
+DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeSpan& time, ObsColumn::Type displayType);
 
-ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
+ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time);
 
 } // namespace ColumnFactory
 

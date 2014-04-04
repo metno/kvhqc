@@ -34,7 +34,7 @@ ModelAccess::ModelDataSet KvModelAccess::findMany(const std::vector<SensorTime>&
   return data;
 }
 
-ModelAccess::ModelDataSet KvModelAccess::allData(const std::vector<Sensor>& sensors, const TimeRange& limits)
+ModelAccess::ModelDataSet KvModelAccess::allData(const std::vector<Sensor>& sensors, const TimeSpan& limits)
 {
   METLIBS_LOG_SCOPE();
 

@@ -2,7 +2,7 @@
 #ifndef ERRORS_ERRORFLITER_HH
 #define ERRORS_ERRORFLITER_HH 1
 
-#include "access/ObsFilter.hh"
+#include "common/ObsFilter.hh"
 
 class ErrorFilter : public ObsFilter
 {
@@ -19,11 +19,10 @@ public:
    * have run or not */
   virtual bool accept(ObsData_p obs, bool afterSQL) const;
 
-  virtual bool equals(const ObsFilter& other) const;
-  virtual bool subsetOf(const ObsFilter& other) const;
-
 private:
   bool mErrorsForSalen;
 };
+
+HQC_TYPEDEF_P(ErrorFilter);
 
 #endif // ERRORS_ERRORFLITER_HH

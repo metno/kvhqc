@@ -2,7 +2,7 @@
 #ifndef AcceptRejectButtons_hh
 #define AcceptRejectButtons_hh 1
 
-#include "access/EditAccess.hh"
+#include "common/EditAccess.hh"
 #include "common/ModelAccess.hh"
 #include "common/Sensor.hh"
 

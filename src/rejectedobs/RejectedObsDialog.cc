@@ -2,7 +2,7 @@
 #include "RejectedObsDialog.hh"
 
 #include "util/timeutil.hh"
-#include "util/gui/MiDateTimeEdit.hh"
+#include "util/MiDateTimeEdit.hh"
 
 #include <QtCore/QEvent>
 #include <Qt3Support/Q3HBoxLayout>
@@ -78,9 +78,9 @@ void RejectedObsDialog::changeEvent(QEvent *event)
   QDialog::changeEvent(event);
 }
 
-TimeRange RejectedObsDialog::getTimeRange() const
+TimeSpan RejectedObsDialog::getTimeSpan() const
 {
   const timeutil::ptime f = timeutil::from_QDateTime(fromEdit->dateTime());
   const timeutil::ptime t = timeutil::from_QDateTime(toEdit  ->dateTime());
-  return TimeRange(f, t);
+  return TimeSpan(f, t);
 }

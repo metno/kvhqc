@@ -10,7 +10,7 @@
 class NeighborCardsModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeRange& timeRange);
+  NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange);
   virtual ~NeighborCardsModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -39,7 +39,7 @@ private:
 
 private:
   EditAccessPtr mDA;
-  TimeRange mTimeRange;
+  TimeSpan mTimeSpan;
   timeutil::ptime mTime;
 
   // rows

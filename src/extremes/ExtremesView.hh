@@ -10,7 +10,7 @@
 #include <vector>
 
 class ExtremesTableModel;
-class TimeRangeControl;
+class TimeSpanControl;
 QT_BEGIN_NAMESPACE;
 class QItemSelection;
 QT_END_NAMESPACE;
@@ -46,7 +46,7 @@ private:
   boost::shared_ptr<EditAccess> mEDA;
   std::auto_ptr<ExtremesTableModel> mExtremesModel;
   int mLastSelectedRow;
-  TimeRangeControl* mTimeControl;
+  TimeSpanControl* mTimeControl;
 };
 
 #endif

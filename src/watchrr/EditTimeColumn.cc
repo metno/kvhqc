@@ -51,7 +51,7 @@ QVariant EditTimeColumn::headerData(Qt::Orientation orientation, int role) const
   return mDC->headerData(orientation, role);
 }
 
-void EditTimeColumn::setEditableTime(const TimeRange& et)
+void EditTimeColumn::setEditableTime(const TimeSpan& et)
 {
   mEditableTime = et;
 }

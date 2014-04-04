@@ -110,33 +110,6 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockErrors">
-   <property name="sizePolicy">
-    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-     <horstretch>10</horstretch>
-     <verstretch>0</verstretch>
-    </sizepolicy>
-   </property>
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeatureMask</set>
-   </property>
-   <property name="windowTitle">
-    <string>Error List</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockErrorsContents">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <property name="spacing">
-      <number>0</number>
-     </property>
-     <property name="margin">
-      <number>0</number>
-     </property>
-    </layout>
-   </widget>
-  </widget>
   <widget class="QDockWidget" name="dockCorrections">
    <property name="windowTitle">
     <string>Corrections</string>
@@ -210,30 +183,6 @@
      </item>
     </layout>
    </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockExtremes">
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeatureMask</set>
-   </property>
-   <property name="windowTitle">
-    <string>Extreme Values</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockExtremesContents"/>
-  </widget>
-  <widget class="QDockWidget" name="dockMissing">
-   <property name="features">
-    <set>QDockWidget::DockWidgetFeatureMask</set>
-   </property>
-   <property name="windowTitle">
-    <string>Missing Observations</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="QWidget" name="dockMissingContents"/>
   </widget>
   <action name="saveAction">
    <property name="enabled">
@@ -444,11 +393,6 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
-  <action name="actionShowErrorList">
-   <property name="text">
-    <string>Show Error List</string>
-   </property>
-  </action>
   <action name="actionShowChanges">
    <property name="text">
     <string>Show Changes</string>
@@ -459,19 +403,9 @@
     <string>Show Simple Corrections</string>
    </property>
   </action>
-  <action name="actionShowExtremeValues">
-   <property name="text">
-    <string>Show Extreme Values</string>
-   </property>
-  </action>
   <action name="actionJumpToObservation">
    <property name="text">
     <string>Jump to Observation…</string>
-   </property>
-  </action>
-  <action name="actionShowMissingObservations">
-   <property name="text">
-    <string>Show Missing Observations</string>
    </property>
   </action>
   <action name="actionSettings">
@@ -782,22 +716,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>actionShowErrorList</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowErrorList()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>actionShowChanges</sender>
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
@@ -818,38 +736,6 @@
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>onShowSimpleCorrections()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowExtremeValues</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowExtremes()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowMissingObservations</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowMissing()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>
@@ -954,11 +840,8 @@
   <slot>onUndoChanges()</slot>
   <slot>onRedoChanges()</slot>
   <slot>onSaveChanges()</slot>
-  <slot>onShowErrorList()</slot>
   <slot>onShowChanges()</slot>
   <slot>onShowSimpleCorrections()</slot>
-  <slot>onShowExtremes()</slot>
-  <slot>onShowMissing()</slot>
   <slot>onTabCloseRequested(int)</slot>
  </slots>
 </ui>

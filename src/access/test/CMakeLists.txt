@@ -24,7 +24,6 @@ LINK_LIBRARIES(
   test_access
   access
   common
-  util_gui
   util
   ${PC_KVCPP_LIBRARIES}
   ${PC_METLIBS_LIBRARIES}

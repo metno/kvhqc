@@ -1,21 +1,21 @@
 
-#ifndef TimeRangeControl_hh
-#define TimeRangeControl_hh 1
+#ifndef TimeSpanControl_hh
+#define TimeSpanControl_hh 1
 
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include <QtCore/QObject>
 
 class MiDateTimeEdit;
 
-class TimeRangeControl : public QObject
+class TimeSpanControl : public QObject
 { Q_OBJECT;
 public:
-  TimeRangeControl(QObject* parent=0);
+  TimeSpanControl(QObject* parent=0);
   void setMinimumGap(int hours);
   void setMaximumGap(int hours);
   void install(MiDateTimeEdit* t0, MiDateTimeEdit* t1);
 
-  TimeRange timeRange() const;
+  TimeSpan timeRange() const;
                                       
 private Q_SLOTS:
   void onT0TimeChanged(const QTime&);
@@ -34,4 +34,4 @@ private:
   int mMaximumGap;
 };
 
-#endif // TimeRangeControl_hh
+#endif // TimeSpanControl_hh

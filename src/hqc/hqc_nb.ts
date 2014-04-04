@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="64"/>
         <source>Accept</source>
         <translation>Godkjenn</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="68"/>
         <source>Reject</source>
         <translation>Forkast</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="69"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="69"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="72"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="72"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -37,12 +37,12 @@
 <context>
     <name>Authentication::Authenticator</name>
     <message>
-        <location filename="../common/gui/Authenticator.cc" line="134"/>
+        <location filename="../common/Authenticator.cc" line="134"/>
         <source>Wrong username or password</source>
         <translation>Feil brukernavn eller passord</translation>
     </message>
     <message>
-        <location filename="../common/gui/Authenticator.cc" line="135"/>
+        <location filename="../common/Authenticator.cc" line="135"/>
         <source>Wrong username or password. Please try again.</source>
         <translation>Feil brukernavn eller passord. Vennligst prøv igjen.</translation>
     </message>
@@ -50,37 +50,37 @@
 <context>
     <name>AuthenticationDialog</name>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="14"/>
+        <location filename="../common/authenticationdialog.ui" line="14"/>
         <source>Log in</source>
         <translation>Logg inn</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="23"/>
+        <location filename="../common/authenticationdialog.ui" line="23"/>
         <source>Please enter username and password:</source>
         <translation>Vennligst skriv inn brukernavn og passord:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="37"/>
+        <location filename="../common/authenticationdialog.ui" line="37"/>
         <source>Username:</source>
         <translation>Brukernavn:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="47"/>
+        <location filename="../common/authenticationdialog.ui" line="47"/>
         <source>Password:</source>
         <translation>Passord:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="103"/>
+        <location filename="../common/authenticationdialog.ui" line="103"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="119"/>
+        <location filename="../common/authenticationdialog.ui" line="119"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Avbryt</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="122"/>
+        <location filename="../common/authenticationdialog.ui" line="122"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
@@ -872,7 +872,7 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>EtaProgressBar</name>
     <message>
-        <location filename="../util/gui/EtaProgressBar.cc" line="28"/>
+        <location filename="../util/EtaProgressBar.cc" line="28"/>
         <source>ETA %1:%2</source>
         <translation>ca. %1:%2 igjen</translation>
     </message>
@@ -997,17 +997,17 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>HideApplyBox</name>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="30"/>
+        <location filename="../util/hideapplybox.ui" line="30"/>
         <source>Hide</source>
         <translation>Skjul</translation>
     </message>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="42"/>
+        <location filename="../util/hideapplybox.ui" line="42"/>
         <source>Apply</source>
         <translation>Utfør</translation>
     </message>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="54"/>
+        <location filename="../util/hideapplybox.ui" line="54"/>
         <source>&amp;Apply+Hide</source>
         <translation>&amp;Utfør+Skjul</translation>
     </message>
@@ -1908,42 +1908,42 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="28"/>
+        <location filename="../common/SensorHeader.cc" line="28"/>
         <source>Sensor %1 Type %2</source>
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="51"/>
+        <location filename="../common/SensorHeader.cc" line="51"/>
         <source>model</source>
         <translation>modell</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="33"/>
+        <location filename="../common/SensorHeader.cc" line="33"/>
         <source>Parameter %1</source>
         <translation>Parameter %1</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="78"/>
+        <location filename="../common/SensorHeader.cc" line="78"/>
         <source>+%1h</source>
         <translation>+%1t</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="79"/>
+        <location filename="../common/SensorHeader.cc" line="79"/>
         <source>time offset +%1 hour(s)</source>
         <translation>tidsskift +%1 time(r)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="82"/>
+        <location filename="../common/SensorHeader.cc" line="82"/>
         <source>-%1h</source>
         <translation>-%1t</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="83"/>
+        <location filename="../common/SensorHeader.cc" line="83"/>
         <source>time offset -%1 hour(s)</source>
         <translation>tidsskift -%1 time(r)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="97"/>
+        <location filename="../common/SensorHeader.cc" line="97"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
     </message>
@@ -2247,37 +2247,37 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TimeHeader</name>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="9"/>
+        <location filename="../common/TimeHeader.cc" line="9"/>
         <source>Mon</source>
         <translation>Man</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="10"/>
+        <location filename="../common/TimeHeader.cc" line="10"/>
         <source>Tue</source>
         <translation>Tir</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="11"/>
+        <location filename="../common/TimeHeader.cc" line="11"/>
         <source>Wed</source>
         <translation>Ons</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="12"/>
+        <location filename="../common/TimeHeader.cc" line="12"/>
         <source>Thu</source>
         <translation>Tor</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="13"/>
+        <location filename="../common/TimeHeader.cc" line="13"/>
         <source>Fri</source>
         <translation>Fre</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="14"/>
+        <location filename="../common/TimeHeader.cc" line="14"/>
         <source>Sat</source>
         <translation>Lør</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="8"/>
+        <location filename="../common/TimeHeader.cc" line="8"/>
         <source>Sun</source>
         <translation>Søn</translation>
     </message>
@@ -2509,12 +2509,12 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>ToolInterpolate</name>
     <message>
-        <location filename="../common/gui/ToolInterpolate.cc" line="46"/>
+        <location filename="../common/ToolInterpolate.cc" line="46"/>
         <source>Perform linear interpolation</source>
         <translation>Utfør lineær interpolasjon</translation>
     </message>
     <message>
-        <location filename="../common/gui/ToolInterpolate.cc" line="47"/>
+        <location filename="../common/ToolInterpolate.cc" line="47"/>
         <source>Interpolate</source>
         <translation>Interpolere</translation>
     </message>

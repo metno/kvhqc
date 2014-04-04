@@ -2,6 +2,10 @@
 #ifndef TimeSeriesView_hh
 #define TimeSeriesView_hh 1
 
+#include "common/ObsAccess.hh"
+#include "common/TimeBuffer.hh"
+#include "common/ModelAccess.hh"
+
 #include "qtimeseries/PlotOptions.h"
 
 #include <QtGui/QWidget>
@@ -11,8 +15,8 @@
 
 class QAction;
 class QMenu;
-class TimeRangeControl;
-class TimeseriesDialog;
+class TimeSpanControl;
+
 namespace Ui {
 class TimeSeriesView;
 }
@@ -22,7 +26,10 @@ class TimeSeriesView : public QWidget
 public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
-                        
+  
+  void setDataAccess(ObsAccess_p eda, ModelAccess_p mda)
+    { mDA = eda; mMA = mda; }
+
 public Q_SLOTS:
   void navigateTo(const SensorTime&);
 
@@ -41,6 +48,9 @@ private Q_SLOTS:
   void onDateFromChanged(const QDateTime&);
   void onDateToChanged(const QDateTime&);
 
+  void onDataComplete();
+  void onDataChanged();
+
 private:
   void doNavigateTo(const SensorTime& st);
   void updateSensors();
@@ -51,8 +61,7 @@ private:
   void replay(const std::string& changes);
   void storeChanges();
 
-  //void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
-  void setTimeRange(const TimeRange& t);
+  void setTimeSpan(const TimeSpan& t);
 
   void updateVisible(bool visible);
 
@@ -60,20 +69,22 @@ private:
 
 private:
   std::auto_ptr<Ui::TimeSeriesView> ui;
-  std::auto_ptr<TimeseriesDialog> tsdlg;
 
   QMenu* mColumnMenu;
   QAction* mColumnAdd;
   QAction* mColumnRemove;
   QAction* mColumnReset;
 
+  ObsAccess_p mDA;
+  ModelAccess_p mMA;
   SensorTime mSensorTime;
-  TimeRange mTimeLimits, mOriginalTimeLimits;
+  TimeSpan mTimeLimits, mOriginalTimeLimits;
   Sensor_v mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
-  TimeRangeControl* mTimeControl;
+  TimeSpanControl* mTimeControl;
   bool mChangingTimes;
 
+  TimeBuffer_p mObsBuffer;
   bool mVisible;
   SensorTime mPendingSensorTime;
 

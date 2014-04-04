@@ -48,7 +48,7 @@ TEST(CachingAccessTest, Single)
   const Sensor sensor(18210, 211, 0, 0, 514);
 
   // this assumes that SqliteAccess is syncronous
-  { const TimeRange time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
+  { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
@@ -56,7 +56,7 @@ TEST(CachingAccessTest, Single)
     EXPECT_EQ(1, counter->countComplete);
   }
 
-  { const TimeRange time(s2t("2013-04-01 00:00:00"), s2t("2013-04-02 00:00:00"));
+  { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-02 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
@@ -64,14 +64,14 @@ TEST(CachingAccessTest, Single)
     EXPECT_EQ(1, counter->countComplete);
   }
 
-  { const TimeRange time(s2t("2013-04-02 00:00:00"), s2t("2013-04-03 00:00:00"));
+  { const TimeSpan time(s2t("2013-04-02 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
     EXPECT_EQ(1*24 + 1, counter->size());
   }
 
-  { const TimeRange time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
+  { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(2, sqla->countPost());
@@ -80,13 +80,13 @@ TEST(CachingAccessTest, Single)
 
   ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
 
-  { const TimeRange time(s2t("2013-04-01 06:00:00"), s2t("2013-04-02 06:00:00"));
+  { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-02 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(3, sqla->countPost());
     EXPECT_EQ(1*24 + 1, counter->size());
   }
-  { const TimeRange time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
+  { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(4, sqla->countPost());
@@ -105,7 +105,7 @@ TEST(CachingAccessTest, Multi)
   const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
 
   // this assumes that SqliteAccess is syncronous
-  { const TimeRange time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 06:00:00"));
+  { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor1, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
@@ -113,7 +113,7 @@ TEST(CachingAccessTest, Multi)
     EXPECT_EQ(1, counter->countComplete);
   }
 
-  { const TimeRange time(s2t("2014-03-01 03:00:00"), s2t("2014-03-01 09:00:00"));
+  { const TimeSpan time(s2t("2014-03-01 03:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor2, time));
     counter->postRequest(ca);
     EXPECT_EQ(2, sqla->countPost());
@@ -121,7 +121,7 @@ TEST(CachingAccessTest, Multi)
     EXPECT_EQ(1, counter->countComplete);
   }
 
-  { const TimeRange time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
+  { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensors, time));
     counter->postRequest(ca);
     EXPECT_EQ(4, sqla->countPost());
@@ -131,7 +131,7 @@ TEST(CachingAccessTest, Multi)
 
   ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
 
-  { const TimeRange time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
+  { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensors, time));
     counter->postRequest(ca);
     EXPECT_EQ(5, sqla->countPost());

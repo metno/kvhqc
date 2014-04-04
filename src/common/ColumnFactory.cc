@@ -161,7 +161,7 @@ DataItem_p itemForSensor(EditAccess_p da, const Sensor& sensor, ObsColumn::Type 
     return DataItem_p();
 }
 
-DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type displayType)
+DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeSpan& time, ObsColumn::Type displayType)
 {
   DataItem_p item = itemForSensor(da, sensor, displayType);
   if (item)
@@ -169,7 +169,7 @@ DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeRa
   return DataColumn_p();
 }
 
-ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
+ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
 {
     ModelColumnPtr mc = boost::make_shared<ModelColumn>(ma, sensor, time);
     mc->setCodes(codesForParam(sensor.paramId));

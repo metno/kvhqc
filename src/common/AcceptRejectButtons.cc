@@ -5,7 +5,7 @@
 #include "common/DataColumn.hh"
 #include "common/ModelColumn.hh"
 #include "common/ObsTableModel.hh"
-#include "util/gui/UiHelpers.hh"
+#include "util/UiHelpers.hh"
 
 #include <QtCore/QEvent>
 #include <QtGui/QCheckBox>

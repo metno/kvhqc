@@ -3,7 +3,7 @@
 #define WEATHERDIALOG_HH 1
 
 #include "common/EditAccess.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtGui/QDialog>
 
@@ -23,7 +23,7 @@ class WeatherTableModel;
 class WeatherDialog : public QDialog
 { Q_OBJECT;
 public:
-  WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
+  WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, QWidget* parent=0);
   ~WeatherDialog();
 
 public Q_SLOTS:
@@ -49,7 +49,7 @@ private:
   std::auto_ptr<Ui::WeatherDialog> ui;
   EditAccessPtr mParentDA, mDA;
   Sensor mSensor;
-  TimeRange mTime;
+  TimeSpan mTime;
   std::auto_ptr<WeatherTableModel> mModelCorrected;
   std::auto_ptr<WeatherTableModel> mModelOriginal;
   std::auto_ptr<WeatherTableModel> mModelFlags;

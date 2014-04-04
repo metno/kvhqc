@@ -5,8 +5,8 @@
 #include "common/FindMissingValues.hh"
 #include "common/StationInfoBuffer.hh"
 #include "common/TypeIdModel.hh"
-#include "common/gui/TimeRangeControl.hh"
-#include "util/gui/BusyIndicator.hh"
+#include "common/TimeSpanControl.hh"
+#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 
@@ -25,7 +25,7 @@ MissingView::MissingView(QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::DialogMissingObservations)
   , mLastSelectedRow(-1)
-  , mTimeControl(new TimeRangeControl(this))
+  , mTimeControl(new TimeSpanControl(this))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);

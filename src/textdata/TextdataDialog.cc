@@ -3,7 +3,7 @@
 
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StationIdCompletion.hh"
-#include "util/gui/MiDateTimeEdit.hh"
+#include "util/MiDateTimeEdit.hh"
 #include "util/timeutil.hh"
 
 #include <QtCore/QEvent>
@@ -116,11 +116,11 @@ void TextDataDialog::setToTime(const QDateTime& dt) {
   dtto = dt;
 }
 
-TimeRange TextDataDialog::getTimeRange() const
+TimeSpan TextDataDialog::getTimeSpan() const
 {
   const timeutil::ptime f = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(dtfrom));
   const timeutil::ptime t = timeutil::from_QDateTime(timeutil::clearedMinutesAndSeconds(dtto));
-  return TimeRange(f, t);
+  return TimeSpan(f, t);
 }
 
 void TextDataDialog::checkStationId()

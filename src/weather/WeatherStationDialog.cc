@@ -8,7 +8,7 @@
 #define MILOGGER_CATEGORY "kvhqc.WeatherStationDialog"
 #include "util/HqcLogging.hh"
 
-WeatherStationDialog::WeatherStationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent)
+WeatherStationDialog::WeatherStationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent)
   : StationDialog(sensor, time, parent)
 {
   setWindowTitle(tr("WatchWeather -- Station"));

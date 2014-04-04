@@ -9,7 +9,7 @@ class KvModelAccess : public ModelAccess {
 public:
   virtual ModelDataPtr find(const SensorTime& st);
   virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes);
-  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits);
+  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeSpan& limits);
 
 protected:
   KvalobsModelDataPtr receive(const kvalobs::kvModelData& data);

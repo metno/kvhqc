@@ -33,7 +33,7 @@ const int ALL_RR24_TASKS =
 
 namespace RR24 {
 
-bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
+bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
@@ -66,7 +66,7 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
       break;
   }
   METLIBS_LOG_DEBUG(LOGVAL(mTS) << LOGVAL(mTE));
-  time = TimeRange(mTS, mTE);
+  time = TimeSpan(mTS, mTE);
 
   // add tasks for RR24 observations if the have errors
   int last_acc = NO, last_endpoint = NO, have_endpoint = NO;
@@ -118,7 +118,7 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeRange& time)
 
 // ========================================================================
 
-void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, bool before)
+void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, bool before)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(time));
@@ -146,7 +146,7 @@ void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const Time
 
 // ========================================================================
 
-void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeRange& editableTime,
+void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
     const std::vector<float>& newCorr)
 {
   METLIBS_LOG_SCOPE();
@@ -187,15 +187,15 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
   }
 
   // mark all accumulation rows around period with task
-  markPreviousAccumulation(da, sensor, TimeRange(editableTime.t0(), t0-step), true);
+  markPreviousAccumulation(da, sensor, TimeSpan(editableTime.t0(), t0-step), true);
   if (newEndpoint)
-    markPreviousAccumulation(da, sensor, TimeRange(t, editableTime.t1()), false);
+    markPreviousAccumulation(da, sensor, TimeSpan(t, editableTime.t1()), false);
 }
 
 // ========================================================================
 
 void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
-    const TimeRange& time, const TimeRange& editableTime)
+    const TimeSpan& time, const TimeSpan& editableTime)
 {
   using namespace Helpers;
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
@@ -221,9 +221,9 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
       .clearTasks(ALL_RR24_TASKS);
 
   // mark all accumulation rows around period with task
-  markPreviousAccumulation(da, sensor, TimeRange(editableTime.t0(), time.t0()-step), true);
+  markPreviousAccumulation(da, sensor, TimeSpan(editableTime.t0(), time.t0()-step), true);
   if( newEndpoint )
-    markPreviousAccumulation(da, sensor, TimeRange(t+step, editableTime.t1()), false);
+    markPreviousAccumulation(da, sensor, TimeSpan(t+step, editableTime.t1()), false);
 }
 
 // ========================================================================
@@ -239,7 +239,7 @@ inline float real2dry(float real)
 
 } //namespace anonymous
 
-bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, float_v& values)
+bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, float_v& values)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
@@ -333,7 +333,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeRang
 
 // ========================================================================
 
-bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   if (time.days() < 1)
     return false;
@@ -364,7 +364,7 @@ bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeRang
 
 // ========================================================================
 
-void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeRange& editableTime,
+void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
     const std::vector<float>& newCorrected, const std::vector<int>& acceptReject)
 {
   using namespace Helpers;
@@ -383,9 +383,9 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
     if (ar == AR_ACCEPT or ar == AR_REJECT) {
       if (not previousWasSingle) {
         if (is_accumulation(obs))
-          markPreviousAccumulation(da, sensor, TimeRange(tMarkStart, t-step), true);
+          markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), true);
         if (previousWasAcc)
-          markPreviousAccumulation(da, sensor, TimeRange(tMarkStart, t-step), false);
+          markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), false);
       }
       previousWasAcc = (is_accumulation(obs) and not is_endpoint(obs));
       previousWasSingle = true;
@@ -409,12 +409,12 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
 
   // mark all accumulation rows around period with task
   if (previousWasAcc)
-    markPreviousAccumulation(da, sensor, TimeRange(tMarkStart, editableTime.t1()), false);
+    markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, editableTime.t1()), false);
 }
 
 // ========================================================================
 
-float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
@@ -430,7 +430,7 @@ float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time
 
 // ========================================================================
 
-float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   if (time.days() < 1)
     return kvalobs::MISSING;
@@ -451,7 +451,7 @@ float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeRan
 
 // ========================================================================
 
-bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
@@ -471,7 +471,7 @@ bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
 
 // ========================================================================
 
-void accept(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+void accept(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);

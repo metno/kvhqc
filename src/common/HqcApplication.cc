@@ -3,7 +3,7 @@
 
 #include "common/HqcUserConfig.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include "util/hqc_paths.hh"
 #include "util/Helpers.hh"
 

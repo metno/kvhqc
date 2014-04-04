@@ -227,7 +227,7 @@
   <customwidget>
    <class>AcceptRejectButtons</class>
    <extends>QWidget</extends>
-   <header>common/gui/AcceptRejectButtons.hh</header>
+   <header>common/AcceptRejectButtons.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

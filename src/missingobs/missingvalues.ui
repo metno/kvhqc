@@ -94,7 +94,7 @@
   <customwidget>
    <class>MiDateTimeEdit</class>
    <extends>QDateTimeEdit</extends>
-   <header>util/gui/MiDateTimeEdit.hh</header>
+   <header>util/MiDateTimeEdit.hh</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -4,7 +4,7 @@
 
 #include "ModelData.hh"
 #include "Sensor.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <boost/signals.hpp>
 
@@ -37,7 +37,7 @@ public:
   };
   typedef std::set<ModelDataPtr, lt_ModelDataPtr> ModelDataSet;
   virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes) = 0;
-  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits) = 0;
+  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeSpan& limits) = 0;
 
 public:
   boost::signal1<void, ModelDataPtr> modelDataChanged;

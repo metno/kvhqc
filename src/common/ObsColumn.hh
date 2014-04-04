@@ -2,7 +2,7 @@
 #ifndef OBSCOLUMN_HH
 #define OBSCOLUMN_HH 1
 
-#include "access/ObsAccess.hh"
+#include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QObject>
@@ -31,7 +31,7 @@ public:
   virtual QVariant headerData(Qt::Orientation orientation, int role) const = 0;
   
   virtual const boost::posix_time::time_duration& timeOffset() const = 0;
-  virtual Sensor sensor() const;
+  virtual const Sensor& sensor() const;
   virtual int type() const = 0;
   
   //boost::signal2<void, timeutil::ptime, ObsColumn_p> columnChanged;

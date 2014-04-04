@@ -1,7 +1,8 @@
 
 #include "JumpToObservation.hh"
 
-#include "common/gui/SensorChooser.hh"
+#include "common/SingleObsBuffer.hh"
+#include "common/SensorChooser.hh"
 
 #include <QtGui/qmessagebox.h>
 
@@ -10,7 +11,7 @@
 #define MILOGGER_CATEGORY "kvhqc.JumpToObservation"
 #include "common/ObsLogging.hh"
 
-JumpToObservation::JumpToObservation(ObsAccessPtr da, QWidget* parent)
+JumpToObservation::JumpToObservation(ObsAccess_p da, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::JumpToObservation)
   , mDA(da)
@@ -51,7 +52,9 @@ void JumpToObservation::accept()
   if (not st.valid())
     return;
 
-  if (mDA->find(st)) {
+  SingleObsBuffer sob(st);
+  sob.syncRequest(mDA);
+  if (sob.get()) {
     QDialog::accept();
     Q_EMIT signalNavigateTo(st);
   } else {

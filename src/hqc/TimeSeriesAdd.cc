@@ -1,7 +1,7 @@
 
 #include "TimeSeriesAdd.hh"
 
-#include "common/gui/SensorChooser.hh"
+#include "common/SensorChooser.hh"
 
 #include "ui_ts_add.h"
 

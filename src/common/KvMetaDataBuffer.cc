@@ -5,7 +5,7 @@
 #include "KvHelpers.hh"
 #include "KvServiceHelper.hh"
 #include "common/HqcApplication.hh"
-#include "util/gui/BusyIndicator.hh"
+#include "util/BusyIndicator.hh"
 
 #include <puTools/miStringBuilder.h>
 

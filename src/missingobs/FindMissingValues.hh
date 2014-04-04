@@ -3,7 +3,7 @@
 #define common_FindMissingValues_hh 1
 
 #include "Sensor.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <set>
 #include <vector>
@@ -16,7 +16,7 @@ namespace Missing {
  * \param tLimits time range, only date is used
  * \return list of missing observations
  */
-std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& tLimits);
+std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeSpan& tLimits);
 
 } // namespace Missing
 

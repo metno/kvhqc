@@ -17,7 +17,7 @@ TEST(IndexBufferTest, Basic)
   sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/../../common/test/data_18210_20130410.txt");
 
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
-  const TimeRange time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
 
   { IndexBuffer_p buffer = boost::make_shared<IndexBuffer>(3600, sensors, time);
     buffer->syncRequest(sqla);

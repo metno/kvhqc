@@ -1,6 +1,10 @@
 
 #include "ObsFilter.hh"
 
+ObsFilter::~ObsFilter()
+{
+}
+
 bool ObsFilter::hasSQL() const
 {
   return false;

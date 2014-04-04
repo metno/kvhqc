@@ -6,7 +6,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StationIdCompletion.hh"
 #include "common/TypeIdModel.hh"
-#include "common/gui/TimeRangeControl.hh"
+#include "common/TimeSpanControl.hh"
 
 #include "ui_watchrr_station.h"
 
@@ -19,7 +19,7 @@
 
 static const int MIN_DAYS = 7, MAX_DAYS = 120;
 
-StationDialog::StationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent)
+StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent)
   : QDialog(parent)
   , mSensor(sensor)
 {
@@ -50,7 +50,7 @@ void StationDialog::init()
   ui->dateFrom->setDateTime(today.addDays(-4*MIN_DAYS));
   ui->dateTo  ->setDateTime(today);
 
-  mTimeControl = new TimeRangeControl(this);
+  mTimeControl = new TimeSpanControl(this);
   mTimeControl->setMinimumGap(4*24);
   mTimeControl->install(ui->dateFrom, ui->dateTo);
 
@@ -145,9 +145,9 @@ void StationDialog::updateTypeList()
     if (obs_pgm.empty()) {
       ui->labelStationInfo->setText(tr("Unknown station (not in obs_pgm)"));
     } else {
-      const TimeRange st = selectedTime();
+      const TimeSpan st = selectedTime();
       BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (st.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+        if (st.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
           continue;
         const int t = acceptThisObsPgm(op);
         if (t != 0)
@@ -181,9 +181,9 @@ void StationDialog::enableOk()
   ui->buttonOK->setEnabled(valid());
 }
 
-TimeRange StationDialog::selectedTime() const
+TimeSpan StationDialog::selectedTime() const
 {
   const timeutil::ptime tFrom = timeutil::from_QDateTime(QDateTime(ui->dateFrom->dateTime()));
   const timeutil::ptime tTo   = timeutil::from_QDateTime(QDateTime(ui->dateTo  ->dateTime()));
-  return TimeRange(tFrom, tTo);
+  return TimeSpan(tFrom, tTo);
 }

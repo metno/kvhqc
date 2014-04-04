@@ -4,8 +4,8 @@
 #include "ExtremesTableModel.hh"
 #include "common/FindExtremeValues.hh"
 #include "common/ParamIdModel.hh"
-#include "common/gui/TimeRangeControl.hh"
-#include "util/gui/BusyIndicator.hh"
+#include "common/TimeSpanControl.hh"
+#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 
@@ -20,7 +20,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::DialogExtremeValues)
   , mLastSelectedRow(-1)
-  , mTimeControl(new TimeRangeControl(this))
+  , mTimeControl(new TimeSpanControl(this))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);

@@ -38,7 +38,7 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time)
+StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
   : ObsTableModel(da, time)
 {
   std::vector<Sensor> allSensors;
@@ -76,7 +76,7 @@ int StationCardModel::getRR24Column() const
   return 9;
 }
 
-void StationCardModel::setRR24TimeRange(const TimeRange& tr)
+void StationCardModel::setRR24TimeSpan(const TimeSpan& tr)
 {
   mRR24EditTime->setEditableTime(tr);
 }

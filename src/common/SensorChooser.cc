@@ -58,7 +58,7 @@ void SensorChooser::setSensor(const Sensor& sensor)
   }
 }
 
-void SensorChooser::setTimeRange(const TimeRange& time)
+void SensorChooser::setTimeSpan(const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE("not implemented");
 }

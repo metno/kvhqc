@@ -218,7 +218,7 @@ HqcDianaHelper::HqcDianaHelper(ClientButton* pluginB)
   updateDianaParameters();
 }
 
-void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
+void HqcDianaHelper::setSensorsAndTimes(const Sensors_t& sensors, const TimeSpan& limits)
 {
   METLIBS_LOG_SCOPE(LOGVAL(limits));
   DataView::setSensorsAndTimes(sensors, limits);

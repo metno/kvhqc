@@ -3,8 +3,8 @@
 #ifndef HQC_CHECKSTABLEMODEL_HH
 #define HQC_CHECKSTABLEMODEL_HH
 
-#include "access/ObsAccess.hh"
-#include "access/ObsData.hh"
+#include "common/ObsAccess.hh"
+#include "common/ObsData.hh"
 
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QStringList>

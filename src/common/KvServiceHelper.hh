@@ -4,7 +4,7 @@
 
 #include <boost/signals.hpp>
 
-class TimeRange;
+class TimeSpan;
 namespace kvalobs {
 class kvModelData;
 class kvRejectdecode;
@@ -34,7 +34,7 @@ public:
 
   bool getKvData(kvservice::KvGetDataReceiver& dataReceiver, const kvservice::WhichDataHelper& wd);
   bool getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper& wd);
-  bool getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeRange& timeLimits);
+  bool getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeSpan& timeLimits);
   bool getKvParams(std::list<kvalobs::kvParam>& paramList);
   bool getKvStations( std::list<kvalobs::kvStation>& stationList);
   bool getKvTypes(std::list<kvalobs::kvTypes>& typeList);

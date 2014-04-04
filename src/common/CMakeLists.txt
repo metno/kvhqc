@@ -48,8 +48,58 @@ SET(common_SOURCES
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
   Tasks.cc
-  TimeRange.cc
+  TimeSpan.cc
   TypeIdModel.cc
+
+  BackgroundAccess.hh
+  BackgroundAccessPrivate.hh
+  BackgroundAccess.cc
+  BaseRequest.hh
+  BaseRequest.cc
+  EditAccess.hh
+  EditAccess.cc
+  IndexBuffer.hh
+  IndexBuffer.cc
+  KvalobsAccess.hh
+  KvalobsAccessPrivate.hh
+  KvalobsAccess.cc
+  KvalobsData.hh
+  KvalobsData.cc
+  ObsAccess.hh
+  ObsAccess.cc
+  ObsData.hh
+  ObsRequest.hh
+  ObsRequest.cc
+  ObsFilter.cc
+  ObsFilter.hh
+  SignalRequest.hh
+  SignalRequest.cc
+  SimpleBuffer.hh
+  SimpleBuffer.cc
+  SimpleRequest.hh
+  SimpleRequest.cc
+  SingleObsBuffer.hh
+  SingleObsBuffer.cc
+  TimeBuffer.hh
+  TimeBuffer.cc
+  CachingAccess.hh
+  CachingAccessPrivate.hh
+  CachingAccess.cc
+  sqlutil.hh
+  sqlutil.cc
+  SyncRequest.hh
+  SyncRequestPrivate.hh
+  SyncRequest.cc
+
+  AcceptRejectButtons.cc
+  Authenticator.cc
+  NeighborHeader.cc
+  ObsDelegate.cc
+  SensorChooser.cc
+  SensorHeader.cc
+  TimeHeader.cc
+  TimeSpanControl.cc
+  ToolInterpolate.cc
 )
 
 QT4_WRAP_CPP(common_MOC
@@ -61,12 +111,33 @@ QT4_WRAP_CPP(common_MOC
   KvalobsUpdateListener.hh
   ObsTableModel.hh
   QtKvService.hh
+
+  BackgroundAccess.hh
+  BackgroundAccessPrivate.hh
+  CachingAccessPrivate.hh
+  EditAccess.hh
+  KvalobsAccess.hh
+  SignalRequest.hh
+  SimpleBuffer.hh
+  SyncRequestPrivate.hh
+
+  AcceptRejectButtons.hh
+  Authenticator.hh
+  ObsDelegate.hh
+  SensorChooser.hh
+  TimeSpanControl.hh
+  ToolInterpolate.hh
+)
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+QT4_WRAP_UI(common_UIH
+  authenticationdialog.ui
 )
 
 ADD_LIBRARY(common STATIC
   ${common_SOURCES}
   ${common_MOC}
+  ${common_UIH}
 )
 
-ADD_SUBDIRECTORY(gui)
 #ADD_SUBDIRECTORY(test)

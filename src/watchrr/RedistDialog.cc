@@ -9,7 +9,7 @@
 #define MILOGGER_CATEGORY "kvhqc.RedistDialog"
 #include "util/HqcLogging.hh"
 
-RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime)
+RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
   : QDialog(parent)
   , mDA(da)
   , mEditableTime(editableTime)

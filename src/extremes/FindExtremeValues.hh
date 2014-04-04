@@ -3,13 +3,13 @@
 #define FindExtremeValues_hh 1
 
 #include "Sensor.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <vector>
 
 namespace Extremes {
 
-std::vector<SensorTime> find(int paramid, const TimeRange& tLimits);
+std::vector<SensorTime> find(int paramid, const TimeSpan& tLimits);
 
 } // namespace Extremes
 

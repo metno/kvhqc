@@ -7,7 +7,7 @@
 
 class RedistTableModel : public ObsTableModel {
 public:
-    RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
+    RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time);
     virtual ~RedistTableModel();
 
     const std::vector<float>& newCorrected() const
@@ -27,7 +27,7 @@ public:
     const Sensor& sensor() const
         { return mSensor; }
 
-    const TimeRange& time() const
+    const TimeSpan& time() const
         { return mTime; }
 
 private:

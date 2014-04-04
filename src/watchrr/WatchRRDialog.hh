@@ -4,7 +4,7 @@
 
 #include "common/EditAccess.hh"
 #include "common/ModelAccess.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtGui/QDialog>
 
@@ -27,7 +27,7 @@ class NeighborCardsModel;
 class WatchRRDialog : public QDialog
 {   Q_OBJECT;
 public:
-  WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent=0);
+  WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent=0);
   ~WatchRRDialog();
 
 public Q_SLOTS:
@@ -55,12 +55,12 @@ private Q_SLOTS:
 
 private:
   struct Selection {
-    TimeRange selTime;
+    TimeSpan selTime;
     int minCol;
     int maxCol;
     Selection()
       : minCol(-1), maxCol(-1) { }
-    Selection(const TimeRange& s, int mic, int mac)
+    Selection(const TimeSpan& s, int mic, int mac)
       : selTime(s), minCol(mic), maxCol(mac) { }
     bool empty() const
       { return minCol<0 or maxCol<0; }
@@ -82,8 +82,8 @@ private:
   std::auto_ptr<DianaHelper> mDianaHelper;
   EditAccessPtr mParentDA, mDA;
   Sensor mSensor;
-  TimeRange mTime;
-  TimeRange mEditableTime;
+  TimeSpan mTime;
+  TimeSpan mEditableTime;
   std::auto_ptr<StationCardModel> mStationCard;
   std::auto_ptr<NeighborRR24Model> mNeighborRR24;
   std::auto_ptr<NeighborCardsModel> mNeighborCards;

@@ -26,7 +26,7 @@ void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alia
       << " AND " << data_alias << "paramid = " << s.paramId
       << " AND " << data_alias << "typeid = " << s.typeId
       << " AND " << data_alias << "level = " << s.level
-      << " AND " << data_alias << "sensor = " << s.sensor;
+      << " AND " << data_alias << "sensor = '" << s.sensor << "'";
 }
 
 void sensors2sql(std::ostream& sql, const Sensor_s& s, const std::string& data_alias)

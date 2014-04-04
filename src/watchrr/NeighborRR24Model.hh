@@ -8,7 +8,7 @@
 class NeighborRR24Model : public ObsTableModel
 {
 public:
-  NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeRange& time);
+  NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time);
   virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
 
 private:

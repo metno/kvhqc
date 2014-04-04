@@ -7,7 +7,7 @@
 
 class EditTableModel : public ObsTableModel {
 public:
-  EditTableModel(EditAccessPtr kda, const Sensor& sensor, const TimeRange& time);
+  EditTableModel(EditAccessPtr kda, const Sensor& sensor, const TimeSpan& time);
 
   virtual Qt::ItemFlags flags(const QModelIndex& index) const;
   virtual QVariant data(const QModelIndex& index, int role) const;
@@ -26,7 +26,7 @@ public:
   const Sensor& sensor() const
     { return mSensor; }
 
-  const TimeRange& time() const
+  const TimeSpan& time() const
     { return mTime; }
 
 private:

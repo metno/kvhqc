@@ -70,7 +70,7 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
   sensors2sql(sql, sensors, "d.");
   sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
   if (filter and filter->hasSQL())
-    sql << " AND (" << filter->acceptingSQL("d") << ")";
+    sql << " AND (" << filter->acceptingSQL("d.") << ")";
   sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
   //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 

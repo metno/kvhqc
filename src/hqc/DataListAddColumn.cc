@@ -1,7 +1,7 @@
 
 #include "DataListAddColumn.hh"
 
-#include "common/gui/SensorChooser.hh"
+#include "common/SensorChooser.hh"
 
 #include "ui_dl_addcolumn.h"
 

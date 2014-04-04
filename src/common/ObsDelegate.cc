@@ -2,7 +2,7 @@
 #include "ObsDelegate.hh"
 
 #include "common/ObsColumn.hh"
-#include "util/gui/ToolTipStringListModel.hh"
+#include "util/ToolTipStringListModel.hh"
 
 #include <QtGui/QComboBox>
 

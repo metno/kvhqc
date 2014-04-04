@@ -55,7 +55,7 @@ bool DataCorrectedItem::setData(ObsData_p obs, EditAccess_p da, const SensorTime
       update = da->createUpdate(obs);
     
     if (reject)
-      Helpers::reject(update);
+      Helpers::reject(update, obs);
     else
       Helpers::auto_correct(update, obs, newC);
     da->storeUpdates(ObsUpdate_pv(1, update));

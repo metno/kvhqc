@@ -6,13 +6,16 @@
 #include "common/ObsHelpers.hh"
 #include "common/ObsTableModel.hh"
 #include "util/Helpers.hh"
-#include "util/gui/UiHelpers.hh"
+#include "util/make_set.hh"
+#include "util/UiHelpers.hh"
 
 #include <QtCore/QEvent>
 #include <QtGui/QHBoxLayout>
 #include <QtGui/QItemSelection>
 #include <QtGui/QTableView>
 #include <QtGui/QToolButton>
+
+#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ToolInterpolate"
 #include "common/ObsLogging.hh"
@@ -55,8 +58,7 @@ void ToolInterpolate::onInterpolate()
   if (not checkEnabled())
     return;
 
-  const SensorTime &st0 = mSelectedStart, &st1 = mSelectedEnd;
-  EditDataPtr d0 = mDA->findE(st0), d1 = mDA->findE(st1);
+  ObsData_p d0 = mObsBuffer->get(mFirst), d1 = mObsBuffer->get(mLast);
   if (not (d0 and d1))
     return;
 
@@ -74,12 +76,14 @@ void ToolInterpolate::onInterpolate()
       c0 += 360;
     METLIBS_LOG_DEBUG(LOGVAL(modulo) << LOGVAL(c0));
   }
+  const SensorTime& st0 = d0->sensorTime(), st1 = d1->sensorTime();
   const float dt = (st1.time - st0.time).total_seconds(), dti = 1/dt;
   METLIBS_LOG_DEBUG(LOGVAL(st0) << LOGVAL(st1) << LOGVAL(c0) << LOGVAL(c1) << LOGVAL(dt));
 
   mDA->newVersion();
-  for (SensorTime_v::const_iterator it = mSelectedObs.begin(); it != mSelectedObs.end(); ++it) {
-    const float tdiff = (it->time - st0.time).total_seconds(), r = tdiff * dti;
+  ObsUpdate_pv updates;
+  for (Time_v::const_iterator it = mSelectedTimes.begin(); it != mSelectedTimes.end(); ++it) {
+    const float tdiff = (*it - st0.time).total_seconds(), r = tdiff * dti;
     float c = Helpers::roundDecimals(r*c1 + (1-r)*c0, decimals);
     if (modulo > 0)
       c = std::fmod(c, modulo);
@@ -89,17 +93,19 @@ void ToolInterpolate::onInterpolate()
       c = 360;
     METLIBS_LOG_DEBUG(LOGVAL(*it) << LOGVAL(tdiff) << LOGVAL(r) << LOGVAL(c));
 
-    EditDataPtr obs = mDA->findOrCreateE(*it);
-    EditDataEditorPtr editor = mDA->editor(obs);
-    Helpers::correct(editor, c);
-    editor->commit();
+    const SensorTime st(mFirst.sensor, *it);
+    ObsData_p obs = mObsBuffer->get(st);
+    ObsUpdate_p update = obs ? mDA->createUpdate(obs) : mDA->createUpdate(st);
+    Helpers::correct(update, c);
+    updates.push_back(update);
   }
+  mDA->storeUpdates(updates);
 }
 
 void ToolInterpolate::updateModel(EditAccess_p da, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(enableButtons()));
+      this, SLOT(fetchData()));
   QObject::disconnect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(enableButtons()));
 
@@ -107,9 +113,50 @@ void ToolInterpolate::updateModel(EditAccess_p da, QTableView* table)
   mTableView = table;
 
   QObject::connect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(enableButtons()));
+      this, SLOT(fetchData()));
   QObject::connect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
       this, SLOT(enableButtons()));
+
+  fetchData();
+}
+
+void ToolInterpolate::fetchData()
+{
+  METLIBS_LOG_SCOPE();
+
+  mButtonInterpolate->setEnabled(false);
+
+  if (not (mTableView and mTableView->selectionModel()))
+    return;
+
+  const QModelIndexList selected = mTableView->selectionModel()->selectedIndexes();
+  if (selected.size() < 3)
+    return;
+
+  int minRow, maxRow, minCol, maxCol;
+  Helpers::findMinMaxRowCol(selected, minRow, maxRow, minCol, maxCol);
+  if (minCol != maxCol or (maxRow - minRow + 1 != selected.size()))
+    return;
+
+  ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
+  DataColumn_p dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
+  if (not dc or dc->type() != ObsColumn::NEW_CORRECTED)
+    return;
+
+  mFirst = tableModel->findSensorTime(tableModel->index(minRow, minCol));
+  mLast = tableModel->findSensorTime(tableModel->index(maxRow, minCol));
+
+  mSelectedTimes.clear();
+  for (int r=minRow+1; r<maxRow; ++r) {
+    const Time t = tableModel->findSensorTime(tableModel->index(r, minCol)).time;
+    mSelectedTimes.push_back(t);
+  }
+
+  mObsBuffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(mFirst.sensor), TimeSpan(mFirst.time, mLast.time));
+  connect(mObsBuffer.get(), SIGNAL(completed(bool)), this, SLOT(enableButtons()));
+  connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(enableButtons()));
+  connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(enableButtons()));
+  mObsBuffer->postRequest(mDA);
 }
 
 void ToolInterpolate::enableButtons()
@@ -121,49 +168,22 @@ void ToolInterpolate::enableButtons()
 bool ToolInterpolate::checkEnabled()
 {
   METLIBS_LOG_SCOPE();
-  if (not (mTableView and mTableView->selectionModel()))
+
+  ObsData_p o0 = mObsBuffer->get(mFirst);
+  if (not o0 or Helpers::is_missing(o0) or Helpers::is_rejected(o0))
     return false;
 
-  const QModelIndexList selected = mTableView->selectionModel()->selectedIndexes();
-  if (selected.size() < 3)
+  ObsData_p o1 = mObsBuffer->get(mLast);
+  if (not o1 or Helpers::is_missing(o1) or Helpers::is_rejected(o1))
     return false;
 
-  int minRow, maxRow, minCol, maxCol;
-  Helpers::findMinMaxRowCol(selected, minRow, maxRow, minCol, maxCol);
-  if (minCol != maxCol or (maxRow - minRow + 1 != selected.size()))
-    return false;
-
-  ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-  DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
-  if (not dc or dc->type() != ObsColumn::NEW_CORRECTED)
-    return false;
-
-  const SensorTime st = tableModel->findSensorTime(tableModel->index(minRow, minCol));
-  const bool is_direction = KvMetaDataBuffer::instance()->isDirectionInDegreesParam(st.sensor.paramId);
-  bool direction_start_0 = false, direction_stop_0 = false;
-
-  mSelectedObs.clear();
-  for (int r=minRow; r<=maxRow; ++r) {
-    const SensorTime st = tableModel->findSensorTime(tableModel->index(r, minCol));
-    if (r == minRow or r == maxRow) {
-      EditDataPtr obs = mDA->findE(st);
-      if (not obs)
-        return false;
-      if (Helpers::is_missing(obs) or Helpers::is_rejected(obs))
-        return false;
-      if (is_direction and r == minRow)
-        direction_start_0 = obs->corrected() == 0;
-      if (is_direction and r == maxRow)
-        direction_stop_0 = obs->corrected() == 0;
-    }
-    if (r == minRow)
-      mSelectedStart = st;
-    else if (r == maxRow)
-      mSelectedEnd = st;
-    else
-      mSelectedObs.push_back(st);
+  const bool is_direction = KvMetaDataBuffer::instance()->isDirectionInDegreesParam(mFirst.sensor.paramId);
+  if (is_direction) {
+    const bool direction_start_0 = (o0->corrected() == 0);
+    const bool direction_stop_0  = (o1->corrected() == 0);
+    if (direction_start_0 != direction_stop_0)
+      return false;
   }
-  if (is_direction and direction_start_0 != direction_stop_0)
-    return false;
+
   return true;
 }

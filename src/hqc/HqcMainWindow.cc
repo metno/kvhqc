@@ -45,8 +45,8 @@
 #include "TimeSeriesView.hh"
 #include "UserSettings.hh"
 
-#include "access/CachingAccess.hh"
-#include "access/KvalobsAccess.hh"
+#include "common/CachingAccess.hh"
+#include "common/KvalobsAccess.hh"
 
 #include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
@@ -58,11 +58,11 @@
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
-#include "util/gui/BusyIndicator.hh"
-#include "util/gui/EtaProgressDialog.hh"
-#include "util/gui/HintWidget.hh"
-#include "util/gui/QNoCloseMdiSubWindow.hh"
-#include "util/gui/UiHelpers.hh"
+#include "util/BusyIndicator.hh"
+#include "util/EtaProgressDialog.hh"
+#include "util/HintWidget.hh"
+#include "util/QNoCloseMdiSubWindow.hh"
+#include "util/UiHelpers.hh"
 
 #ifdef ENABLE_WATCHRR
 #include "watchrr/StationDialog.hh"
@@ -75,7 +75,7 @@
 #endif // ENABLE_WATCHWEATHER
 
 #ifdef ENABLE_ERRORLIST
-#include "errors/ErrorList.hh"
+#include "errorlist/ErrorList.hh"
 #endif // ENABLE_ERRORLIST
 
 #ifdef ENABLE_DIANA
@@ -165,10 +165,11 @@ HqcMainWindow::HqcMainWindow()
   { mDockErrors = new QDockWidget(this);
     mErrorsView = new ErrorList(mDockErrors);
     mDockErrors->setWidget(mErrorsView);
+    addDockWidget(Qt::BottomDockWidgetArea, mDockErrors);
     dockSearch = mDockErrors;
     ui->menuView->addAction(mDockErrors->toggleViewAction());
     mErrorsView->setDataAccess(eda, kma);
-    mErrorsView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+    connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
   }
 #endif // ENABLE_ERRORLIST
 
@@ -178,6 +179,7 @@ HqcMainWindow::HqcMainWindow()
     mExtremesView = new ExtremesView(mDockExtremes);
     mExtremesView->setDataAccess(eda);
     mDockExtremes->setWidget(mExtremesView);
+    addDockWidget(Qt::BottomDockWidgetArea, mDockExtremes);
     if (dockSearch)
       tabifyDockWidget(dockSearch, mDockExtremes);
     else
@@ -193,6 +195,7 @@ HqcMainWindow::HqcMainWindow()
     mMissingView = new MissingView(mDockMissing);
     mMissingView->setDataAccess(eda);
     mDockMissing->setWidget(mMissingView);
+    addDockWidget(Qt::BottomDockWidgetArea, mDockMissing);
     if (dockSearch)
       tabifyDockWidget(dockSearch, mDockMissing);
     else
@@ -255,8 +258,8 @@ HqcMainWindow::HqcMainWindow()
   mAutoDataList->setDataAccess(eda, kma);
   mTimeSeriesView->setDataAccess(eda, kma);
 
-  mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  //mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  //mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
@@ -264,7 +267,7 @@ HqcMainWindow::HqcMainWindow()
   mAutoViewSplitter->setOpaqueResize(false);
   ui->tabs->addTab(mAutoViewSplitter, tr("Auto List/Series"));
 
-  eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
+  //eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
   ui->saveAction->setEnabled(false); // no changes yet
 
   HelpDialog::Info info;
@@ -291,8 +294,8 @@ HqcMainWindow::~HqcMainWindow()
 {
   //kda->signalFetchingData.disconnect(boost::bind(&HqcMainWindow::onKvalobsFetchingData, this, _1, _2));
 
-  mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  //mJumpToObservation->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  //mAutoDataList     ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 #ifdef ENABLE_MISSINGOBS
   mMissingView      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 #endif
@@ -301,9 +304,6 @@ HqcMainWindow::~HqcMainWindow()
 #endif
 #ifdef ENABLE_DIANA
   mDianaHelper      ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-#endif
-#ifdef ENABLE_ERRORLIST
-  ui->treeErrors    ->signalNavigateTo.disconnect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
 #endif
 }
 
@@ -325,7 +325,7 @@ void HqcMainWindow::changeEvent(QEvent *event)
 #ifdef ENABLE_EXTREMES
     mDockExtremes->setWindowTitle(tr("Extreme Values"));
 #endif
-#ifdef ENABLE_ERRORLIST
+#ifdef ENABLE_MISSINGOBS
     mDockMissing->setWindowTitle(tr("Missing Observations"));
 #endif
 
@@ -395,7 +395,7 @@ void HqcMainWindow::ListOK()
   BusyIndicator busyIndicator;
   listExist = true;
 
-  const TimeRange timeLimits = lstdlg->getTimeRange();
+  const TimeSpan timeLimits = lstdlg->getTimeSpan();
 
   Sensor_v sensors;
   {
@@ -406,7 +406,7 @@ void HqcMainWindow::ListOK()
         Sensor sensor(stationId, paramId, 0, 0, 0);
         std::set<int> typeIdsShown;
         BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
-          const TimeRange op_time(op.fromtime(), op.totime());
+          const TimeSpan op_time(op.fromtime(), op.totime());
           if (timeLimits.intersection(op_time).undef())
             continue;
           const int p = op.paramID(), t = op.typeID();
@@ -441,7 +441,7 @@ void HqcMainWindow::ListOK()
     StaticDataList* dl = new StaticDataList(this);
     dl->setDataAccess(eda, kma);
     dl->setSensorsAndTimes(sensors, timeLimits);
-    dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+    //dl->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
     ui->tabs->addTab(dl, tr("Selected Data"));
   }
 
@@ -471,7 +471,7 @@ void HqcMainWindow::ListOK()
 void HqcMainWindow::textDataOK()
 {
 #ifdef ENABLE_TEXTDATA
-  TextData::showTextData(txtdlg->getStationId(), txtdlg->getTimeRange(), this);
+  TextData::showTextData(txtdlg->getStationId(), txtdlg->getTimeSpan(), this);
 #endif
 }
 
@@ -482,7 +482,7 @@ void HqcMainWindow::rejectedOK()
 
   try {
     std::list<kvalobs::kvRejectdecode> rejectList;
-    const TimeRange t = rejdlg->getTimeRange();
+    const TimeSpan t = rejdlg->getTimeSpan();
     if (KvServiceHelper::instance()->getKvRejectDecode(rejectList, t)) {
       std::string decoder = "comobs";
       std::vector<kvalobs::kvRejectdecode> rejList;
@@ -524,7 +524,7 @@ void HqcMainWindow::showWatchRR()
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
   while (timeTo > now)
     timeTo -= boost::gregorian::days(1);
-  TimeRange time(timeFrom, timeTo);
+  TimeSpan time(timeFrom, timeTo);
 
   StationDialog sd(sensor, time);
   if (not sd.exec())
@@ -557,7 +557,7 @@ void HqcMainWindow::showWeather()
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
   while (timeTo > now)
     timeTo -= boost::gregorian::days(1);
-  TimeRange time(timeFrom, timeTo);
+  TimeSpan time(timeFrom, timeTo);
   
   WeatherStationDialog sd(sensor, time);
   if (not sd.exec())
@@ -671,27 +671,6 @@ void HqcMainWindow::onKvalobsFetchingData(int total, int ready)
   }
 }
 
-void HqcMainWindow::onShowErrorList()
-{
-  METLIBS_LOG_SCOPE();
-  ui->dockErrors->setVisible(true);
-  ui->dockErrors->raise();
-}
-
-void HqcMainWindow::onShowExtremes()
-{
-  METLIBS_LOG_SCOPE();
-  ui->dockExtremes->setVisible(true);
-  ui->dockExtremes->raise();
-}
-
-void HqcMainWindow::onShowMissing()
-{
-  METLIBS_LOG_SCOPE();
-  ui->dockMissing->setVisible(true);
-  ui->dockMissing->raise();
-}
-
 void HqcMainWindow::onShowChanges()
 {
   METLIBS_LOG_SCOPE();
@@ -772,7 +751,7 @@ void HqcMainWindow::onSaveChanges()
     HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
     kda->setReinserter(r);
   }
-  if (not eda->sendChangesToParent()) {
+  if (not eda->storeToBackend()) {
     QMessageBox::critical(this, tr("HQC - Saving data"),
         tr("Sorry, your changes could not be saved!"),
         tr("OK"),
@@ -845,15 +824,15 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
   }
 }
 
-void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
-{
-  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-  ui->saveAction->setEnabled(eda->countU() > 0);
-  ui->actionUndo->setEnabled(eda->canUndo());
-  ui->actionRedo->setEnabled(eda->canRedo());
-
-  ui->treeChanges->expandToDepth(2);
-}
+//void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
+//{
+//  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
+//  ui->saveAction->setEnabled(eda->countU() > 0);
+//  ui->actionUndo->setEnabled(eda->canUndo());
+//  ui->actionRedo->setEnabled(eda->canRedo());
+//
+//  ui->treeChanges->expandToDepth(2);
+//}
 
 void HqcMainWindow::writeSettings()
 {

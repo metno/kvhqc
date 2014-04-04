@@ -1,16 +1,33 @@
 
-#ifndef ObsUpdate_hh
-#define ObsUpdate_hh 1
+#ifndef ACCESS_OBSUPDATE_HH
+#define ACCESS_OBSUPDATE_HH 1
 
 #include "ObsData.hh"
 
-struct ObsUpdate {
-    ObsDataPtr obs;
-    float corrected;
-    kvalobs::kvControlInfo controlinfo;
-    int tasks;
-    ObsUpdate(ObsDataPtr o, float c, const kvalobs::kvControlInfo& ci, int t)
-        : obs(o), corrected(c), controlinfo(ci), tasks(t) { }
+#include <vector>
+
+/*! Observation update. */
+class ObsUpdate : HQC_SHARED_NOCOPY(ObsUpdate) {
+public:
+  virtual ~ObsUpdate() { }
+
+  /*! Observation sensor and time. */
+  virtual const SensorTime& sensorTime() const = 0;
+  
+  /*! Current corrected value, modified during quality control. */
+  virtual float corrected() const = 0;
+  virtual void setCorrected(float c) = 0;
+
+  /*! KVALOBS current control flags. */
+  virtual const kvalobs::kvControlInfo& controlinfo() const = 0;
+  virtual void setControlinfo(const kvalobs::kvControlInfo& ci) = 0;
+
+  /*! KVALOBS current list of performed checks / modifications. */
+  virtual const std::string& cfailed() const = 0;
+  virtual void setCfailed(const std::string& cf) = 0;
 };
 
-#endif // ObsUpdate_hh
+HQC_TYPEDEF_P(ObsUpdate);
+HQC_TYPEDEF_PV(ObsUpdate);
+
+#endif // ACCESS_OBSUPDATE_HH

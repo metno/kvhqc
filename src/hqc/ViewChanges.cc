@@ -104,7 +104,7 @@ std::string ViewChanges::fetch(const Sensor& s, const std::string& vtype, const 
   return "";
 }
 
-TimeRange ViewChanges::defaultTimeLimits(const SensorTime& st)
+TimeSpan ViewChanges::defaultTimeLimits(const SensorTime& st)
 {
   int hours = 24;
   if (st.sensor.paramId == kvalobs::PARAMID_RR_24)
@@ -112,5 +112,5 @@ TimeRange ViewChanges::defaultTimeLimits(const SensorTime& st)
   
   const boost::posix_time::time_duration dt = boost::posix_time::hours(hours);
   const timeutil::ptime& t = st.time;
-  return TimeRange(t - dt, t + dt);
+  return TimeSpan(t - dt, t + dt);
 }

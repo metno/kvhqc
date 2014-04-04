@@ -33,7 +33,7 @@ std::string exists_in_obspgm(const std::string& data_alias, const std::string& o
 
 namespace Missing {
 
-std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& tLimits)
+std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeSpan& tLimits)
 {
   METLIBS_LOG_TIME();
   METLIBS_LOG_DEBUG(LOGVAL(tLimits));

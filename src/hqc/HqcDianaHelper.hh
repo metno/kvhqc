@@ -20,7 +20,7 @@ class HqcDianaHelper : public QObject, public DataView
 public:
   HqcDianaHelper(ClientButton* pluginB);
 
-  void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
+  void setSensorsAndTimes(const Sensors_t& sensors, const TimeSpan& limits);
 
   bool isConnected() const
     { return mDianaConnected; }
@@ -84,7 +84,7 @@ private:
   bool mEnabled;
 
   Sensors_t mSensors;
-  TimeRange mTimeLimits;
+  TimeSpan mTimeLimits;
   std::set<timeutil::ptime> mAllTimes;
 
   SendPars_t mSendPars;

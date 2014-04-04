@@ -10,10 +10,10 @@
 class StationCardModel : public ObsTableModel
 {
 public:
-  StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
+  StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time);
 
   int getRR24Column() const;
-  void setRR24TimeRange(const TimeRange& tr);
+  void setRR24TimeSpan(const TimeSpan& tr);
 
 private:
   boost::shared_ptr<EditTimeColumn> mRR24EditTime;

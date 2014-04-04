@@ -3,10 +3,10 @@
 
 #include "WeatherTableModel.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/gui/ObsDelegate.hh"
+#include "common/ObsDelegate.hh"
 #include "util/Helpers.hh"
-#include "util/gui/BusyIndicator.hh"
-#include "util/gui/UiHelpers.hh"
+#include "util/BusyIndicator.hh"
+#include "util/UiHelpers.hh"
 
 #include <QtGui/QMessageBox>
 #include <QtCore/qsettings.h>
@@ -26,7 +26,7 @@ namespace {
 const char SETTING_WEATHER_GEOMETRY[] = "geometry_weather";
 } // anonymous namespace
 
-WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, QWidget* parent)
+WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::WeatherDialog)
   , mParentDA(da)

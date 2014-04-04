@@ -3,7 +3,7 @@
 #define EDITDIALOG_HH 1
 
 #include "common/EditAccess.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtGui/QDialog>
 
@@ -17,7 +17,7 @@ class EditTableModel;
 class EditDialog : public QDialog
 {   Q_OBJECT
 public:
-  EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime);
+  EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime);
   virtual ~EditDialog();
 
 protected:
@@ -30,7 +30,7 @@ private Q_SLOTS:
 
 private:
   EditAccessPtr mDA;
-  TimeRange mEditableTime;
+  TimeSpan mEditableTime;
   Sensor mSensor;
   std::auto_ptr<EditTableModel> etm;
   std::auto_ptr<Ui::DialogEdit> ui;

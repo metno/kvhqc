@@ -3,15 +3,15 @@
 #define OBSTABLEMODEL_HH 1
 
 #include "ObsColumn.hh"
-#include "access/EditAccess.hh"
-#include "TimeRange.hh"
+#include "common/EditAccess.hh"
+#include "TimeSpan.hh"
 
 #include <QtCore/QAbstractTableModel>
 
 class ObsTableModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  ObsTableModel(EditAccess_p kda, const TimeRange& time, int step = (24*60*60));
+  ObsTableModel(EditAccess_p kda, const TimeSpan& time, int step = (24*60*60));
   virtual ~ObsTableModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -81,7 +81,7 @@ private:
 protected:
   EditAccess_p mDA;
   bool mTimeInRows;
-  TimeRange mTime;
+  TimeSpan mTime;
   int mTimeStep; //! time step between rows, in seconds
   timeutil::ptime mTime0; //! start time rounded to timeStep
   int mRowCount; //! number of rows after rounding

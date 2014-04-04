@@ -4,7 +4,7 @@
 
 #include "common/Sensor.hh"
 #include "common/ParamIdModel.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include "common/TypeIdModel.hh"
 
 #include <QtCore/QObject>
@@ -22,7 +22,7 @@ public:
   ~SensorChooser();
 
   void setSensor(const Sensor& sensor);
-  void setTimeRange(const TimeRange& time);
+  void setTimeSpan(const TimeSpan& time);
 
   bool isValid();
   Sensor getSensor();
@@ -61,7 +61,7 @@ private:
   QComboBox* mLevel;
   QSpinBox* mSensorNr;
 
-  TimeRange mTime;
+  TimeSpan mTime;
 };
 
 #endif // SensorChooser_hh

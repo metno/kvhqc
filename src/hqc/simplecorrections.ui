@@ -776,7 +776,7 @@
   <customwidget>
    <class>QSmallTable</class>
    <extends>QTableView</extends>
-   <header>util/gui/QSmallTable.hh</header>
+   <header>util/QSmallTable.hh</header>
   </customwidget>
  </customwidgets>
  <resources/>

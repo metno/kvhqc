@@ -4,7 +4,7 @@
 #include "GetTextData.h"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/gui/TimeHeader.hh"
+#include "common/TimeHeader.hh"
 
 #include <kvcpp/WhichDataHelper.h>
 
@@ -109,7 +109,7 @@ void TextData::changeEvent(QEvent *event)
   QDialog::changeEvent(event);
 }
 
-void TextData::showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent)
+void TextData::showTextData(int stationId, const TimeSpan& timeLimits, QWidget* parent)
 {
   kvservice::WhichDataHelper whichData;
   whichData.addStation(stationId, timeLimits.t0(), timeLimits.t1());

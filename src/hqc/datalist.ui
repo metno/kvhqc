@@ -104,13 +104,13 @@ If unchecked, show all times in the range even if not in the database.</string>
   <customwidget>
    <class>AcceptRejectButtons</class>
    <extends>QWidget</extends>
-   <header>common/gui/AcceptRejectButtons.hh</header>
+   <header>common/AcceptRejectButtons.hh</header>
    <container>1</container>
   </customwidget>
   <customwidget>
    <class>ToolInterpolate</class>
    <extends>QWidget</extends>
-   <header>common/gui/ToolInterpolate.hh</header>
+   <header>common/ToolInterpolate.hh</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

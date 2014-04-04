@@ -41,7 +41,7 @@ timeutil::ptime timeWithOffset(const timeutil::ptime& t, int column)
 
 } // namespace FCC::detail
 
-void analyse(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+void analyse(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;

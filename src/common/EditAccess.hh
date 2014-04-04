@@ -3,13 +3,16 @@
 #define EditAccess_hh 1
 
 #include "ObsAccess.hh"
+#include <QtCore/QObject>
 
 #include <memory>
 class EditAccessPrivate;
 
 /*! Access to editable data. Supports undo and redo.
  */
-class EditAccess : public ObsAccess {
+class EditAccess : public QObject, public ObsAccess
+{ Q_OBJECT;
+
 public:
   /*! Edit data from \c backend */
   EditAccess(ObsAccess_p backend);
@@ -43,7 +46,7 @@ private:
   //void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);
   //void onBackendDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
   void updateToCurrentVersion(bool drop);
-  //void addEditTimes(TimeSet& times, const std::vector<Sensor>& sensors, const TimeRange& limits);
+  //void addEditTimes(TimeSet& times, const std::vector<Sensor>& sensors, const TimeSpan& limits);
 
 private:
   std::auto_ptr<EditAccessPrivate> p;

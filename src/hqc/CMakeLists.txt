@@ -73,13 +73,12 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}.bin")
 
 SET(HQC_COMMON_LIBS 
-  weather
-  watchrr
+#  weather
+#  watchrr
+  errorlist
   common
-  qtimeseries
-  util_gui
-  common_gui
   util
+  qtimeseries
   ${PC_KVCPP_LIBRARIES}
   ${PC_METLIBS_LIBRARIES} 
   ${PC_LOG4CPP_LIBRARIES}
@@ -93,18 +92,18 @@ TARGET_LINK_LIBRARIES(hqc
 
 INSTALL(TARGETS hqc DESTINATION bin)
 
-ADD_EXECUTABLE(hqc_offline
-  hqc_offline.cc
-)
-
-SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
-  OUTPUT_NAME "hqc-${PVERSION}-offline")
-
-TARGET_LINK_LIBRARIES(hqc_offline
-  hqc_common
-  test_common
-  ${HQC_COMMON_LIBS}
-)
+## ADD_EXECUTABLE(hqc_offline
+##   hqc_offline.cc
+## )
+## 
+## SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
+##   OUTPUT_NAME "hqc-${PVERSION}-offline")
+## 
+## TARGET_LINK_LIBRARIES(hqc_offline
+##   hqc_common
+##   test_common
+##   ${HQC_COMMON_LIBS}
+## )
 
 INSTALL(FILES ${hqc_QM}
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")

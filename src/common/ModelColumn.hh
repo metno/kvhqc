@@ -8,7 +8,7 @@
 
 class ModelColumn : public ObsColumn {
 public:
-    ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time);
+    ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time);
     ~ModelColumn();
 
     void setHeaderShowStation(bool show)
@@ -22,7 +22,7 @@ public:
     virtual const boost::posix_time::time_duration& timeOffset() const
         { return mTimeOffset; }
     void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
-    virtual Sensor sensor() const;
+    virtual const Sensor& sensor() const;
     virtual int type() const
       { return ObsColumn::MODEL; }
 

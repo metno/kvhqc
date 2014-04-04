@@ -27,10 +27,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 #include "TimeseriesDialog.h"
-#include "util/gui/HideApplyBox.hh"
+#include "util/HideApplyBox.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "util/gui/MiDateTimeEdit.hh"
-#include "util/gui/qtQTUtil.h"
+#include "util/MiDateTimeEdit.hh"
+#include "util/qtQTUtil.h"
 #include "common/KvHelpers.hh"
 
 #include <QtGui/QLabel>

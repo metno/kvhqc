@@ -16,7 +16,7 @@ class kvStation;
 class kvTypes;
 class kvUseInfo;
 } // namespace kvalobs
-class TimeRange;
+class TimeSpan;
 
 // ------------------------------------------------------------------------
 
@@ -71,11 +71,11 @@ std::string isNorwegianStationIdSQL(const std::string& stationid_column);
 
 int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeRange& time, int maxNeighbors);
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeSpan& time, int maxNeighbors);
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
-std::vector<Sensor> relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType);
+std::vector<Sensor> relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)

@@ -2,7 +2,7 @@
 #ifndef JumpToObservation_hh
 #define JumpToObservation_hh 1
 
-#include "access/ObsAccess.hh"
+#include "common/ObsAccess.hh"
 
 #include <boost/signals.hpp>
 

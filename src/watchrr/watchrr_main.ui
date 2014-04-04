@@ -303,17 +303,17 @@
   <customwidget>
    <class>MiDateTimeEdit</class>
    <extends>QDateEdit</extends>
-   <header>util/gui/MiDateTimeEdit.hh</header>
+   <header>util/MiDateTimeEdit.hh</header>
   </customwidget>
   <customwidget>
    <class>FrozenColumnTableView</class>
    <extends>QTableView</extends>
-   <header>util/gui/FrozenColumnTableView.hh</header>
+   <header>util/FrozenColumnTableView.hh</header>
   </customwidget>
   <customwidget>
    <class>FrozenRowTableView</class>
    <extends>QTableView</extends>
-   <header>util/gui/FrozenRowTableView.hh</header>
+   <header>util/FrozenRowTableView.hh</header>
   </customwidget>
  </customwidgets>
  <tabstops>

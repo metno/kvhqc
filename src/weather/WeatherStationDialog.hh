@@ -7,7 +7,7 @@
 class WeatherStationDialog : public StationDialog
 { Q_OBJECT;
 public:
-  WeatherStationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent=0);
+  WeatherStationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent=0);
   WeatherStationDialog(QDialog* parent=0);
 
 protected:

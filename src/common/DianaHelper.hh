@@ -2,7 +2,7 @@
 #ifndef DIANAHELPER_HH
 #define DIANAHELPER_HH 1
 
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <QtCore/QObject>
 

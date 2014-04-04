@@ -25,13 +25,15 @@ public:
   size_t size() const
     { return mData.size(); }
 
+  typedef std::set<Time> Time_s;
+  Time_s times() const;
+
   ObsData_p get(const SensorTime& st) const;
   
   virtual void onNewData(const ObsData_pv& data);
   virtual void onUpdateData(const ObsData_pv& data);
   virtual void onDropData(const SensorTime_v& dropped);
 
-protected:
   const ObsDataByTime_ps& data() const
     { return mData; }
 

@@ -61,7 +61,7 @@ ModelAccess::ModelDataSet KvalobsModelAccess::findMany(const std::vector<SensorT
       std::list<kvalobs::kvModelData> model;
       if (KvServiceHelper::instance()->getKvModelData(model, whichData)) {
         BOOST_FOREACH(const SensorTime& st, sensorTimes) {
-          addFetched(st.sensor.stationId, TimeRange(st.time, st.time));
+          addFetched(st.sensor.stationId, TimeSpan(st.time, st.time));
         }
         BOOST_FOREACH(const kvalobs::kvModelData& md, model) {
           receive(md);
@@ -88,7 +88,7 @@ bool KvalobsModelAccess::isFetched(int stationId, const timeutil::ptime& t) cons
   return boost::icl::contains(f->second, t);
 }
 
-void KvalobsModelAccess::addFetched(int stationId, const TimeRange& limits)
+void KvalobsModelAccess::addFetched(int stationId, const TimeSpan& limits)
 {
   METLIBS_LOG_SCOPE();
   mFetched[stationId] += boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1());
@@ -102,7 +102,7 @@ void KvalobsModelAccess::removeFetched(int stationId, const timeutil::ptime& t)
   METLIBS_LOG_DEBUG(LOGVAL(mFetched[stationId]));
 }
 
-ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>& sensors, const TimeRange& limits)
+ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>& sensors, const TimeSpan& limits)
 {
   METLIBS_LOG_SCOPE();
   if (not limits.closed()) {
@@ -128,7 +128,7 @@ ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>&
       boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
       const FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
       BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
-        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeRange(t.lower(), t.upper()));
+        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeSpan(t.lower(), t.upper()));
         whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
         empty = false;
       }

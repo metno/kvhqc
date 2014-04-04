@@ -15,7 +15,7 @@ const int WeatherTableModel::parameters[] = {
 };
 const int WeatherTableModel::NPARAMETERS = sizeof(parameters)/sizeof(parameters[0]);
 
-WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time, ObsColumn::Type t)
+WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, ObsColumn::Type t)
   : DataListModel(da, time)
 {
   const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(sensor.stationId);
@@ -24,7 +24,7 @@ WeatherTableModel::WeatherTableModel(EditAccessPtr da, const Sensor& sensor, con
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
       if (paramId != op.paramID() or sensor.typeId != op.typeID())
         continue;
-      if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
+      if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
 
       const Sensor s(sensor.stationId, paramId, sensor.level, sensor.sensor, sensor.typeId);

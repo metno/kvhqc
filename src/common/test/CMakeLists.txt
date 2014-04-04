@@ -8,6 +8,10 @@ FIND_LIBRARY(SQLITE3_LIBRARY sqlite3)
 
 ADD_DEFINITIONS(-DTEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
 
+QT4_WRAP_CPP(test_common_MOC
+  SqliteAccess.hh
+)
+
 ADD_LIBRARY(test_common
   CountDataChanged.hh
   CountDataChanged.cc
@@ -19,6 +23,11 @@ ADD_LIBRARY(test_common
   FakeReinserter.cc
   TestHelpers.hh
   TestHelpers.cc
+
+  SqliteAccess.hh
+  SqliteAccessPrivate.hh
+  SqliteAccess.cc
+
   load_examples_201303.cc
   load_1650_20130130.cc
   load_18210_20130410.cc
@@ -27,7 +36,10 @@ ADD_LIBRARY(test_common
   load_52640_20121231.cc
   load_54420_20121130.cc
   load_44160_20121207.cc
-  load_84070_20120930.cc)
+  load_84070_20120930.cc
+
+  ${test_common_MOC}
+)
 
 LINK_LIBRARIES(
   test_common
@@ -50,6 +62,12 @@ ADD_EXECUTABLE(common_test
   TimeRangeTest.cc
   VxColumnTest.cc
   ObsTableModelTest.cc
+
+  CachingAccessTest.cc
+  IndexBufferTest.cc
+  SetDifferencesTest.cc
+  SyncRequestTest.cc
+
   gtestMain.cc
 )
 

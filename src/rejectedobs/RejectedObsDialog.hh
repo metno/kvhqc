@@ -3,7 +3,7 @@
 #ifndef HQC_REJECTEDOBSDIALOG_HH
 #define HQC_REJECTEDOBSDIALOG_HH
 
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtCore/qvariant.h>
 #include <QtGui/qdialog.h>
@@ -28,7 +28,7 @@ class RejectedObsDialog : public QDialog
 public:
   RejectedObsDialog(QWidget* parent = 0);
 
-  TimeRange getTimeRange() const;
+  TimeSpan getTimeSpan() const;
 
 protected:
   virtual void changeEvent(QEvent *event);

@@ -33,12 +33,14 @@
 #include "util/timeutil.hh"
 #include <iosfwd>
 
-class TimeRange {
+typedef timeutil::ptime Time;
+
+class TimeSpan {
 public:
-  TimeRange()
+  TimeSpan()
     { }
 
-  TimeRange(const timeutil::ptime& T0, const timeutil::ptime& T1)
+  TimeSpan(const timeutil::ptime& T0, const timeutil::ptime& T1)
     : mT0(T0), mT1(T1) { }
     
   timeutil::ptime& t0()
@@ -57,7 +59,7 @@ public:
     { return (mT0.is_not_a_date_time() or mT0 <= t)
           and (mT1.is_not_a_date_time() or t <= mT1); }
 
-  TimeRange intersection(const TimeRange& t) const;
+  TimeSpan intersection(const TimeSpan& t) const;
 
   /** @return true iff both t0 and t1 are undefined */
   bool undef() const;
@@ -73,20 +75,20 @@ public:
   int minutes() const;
   int seconds() const;
 
-  TimeRange extendedByHours(int nHours) const
-    { TimeRange t(*this); t.extendByHours(nHours); return t; }
+  TimeSpan extendedByHours(int nHours) const
+    { TimeSpan t(*this); t.extendByHours(nHours); return t; }
 
   void extendByHours(int nHours);
 
-  TimeRange shifted(const boost::posix_time::time_duration& s) const
-    { TimeRange t(*this); t.shift(s); return t; }
+  TimeSpan shifted(const boost::posix_time::time_duration& s) const
+    { TimeSpan t(*this); t.shift(s); return t; }
 
   void shift(const boost::posix_time::time_duration& s);
 
-  bool operator==(const TimeRange& other) const
+  bool operator==(const TimeSpan& other) const
     { return mT0 == other.mT0 and mT1 == other.mT1; }
 
-  bool operator!=(const TimeRange& other) const
+  bool operator!=(const TimeSpan& other) const
     { return mT0 != other.mT0 or mT1 != other.mT1; }
 
 private:
@@ -94,6 +96,6 @@ private:
   timeutil::ptime mT1;
 };
 
-std::ostream& operator<<(std::ostream& out, const TimeRange& tr);
+std::ostream& operator<<(std::ostream& out, const TimeSpan& tr);
 
 #endif /* COMMON_TIMERANGE_H */

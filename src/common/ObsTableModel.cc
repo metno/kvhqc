@@ -1,8 +1,8 @@
 
 #include "ObsTableModel.hh"
 
-#include "access/ObsAccess.hh"
-#include "common/gui/TimeHeader.hh"
+#include "common/ObsAccess.hh"
+#include "common/TimeHeader.hh"
 
 #include <QtGui/QApplication>
 
@@ -13,7 +13,7 @@
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
 #include "util/HqcLogging.hh"
 
-ObsTableModel::ObsTableModel(EditAccess_p da, const TimeRange& time, int step)
+ObsTableModel::ObsTableModel(EditAccess_p da, const TimeSpan& time, int step)
   : mDA(da)
   , mTimeInRows(true)
   , mTime(time)

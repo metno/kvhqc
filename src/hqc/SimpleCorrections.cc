@@ -2,10 +2,15 @@
 #include "SimpleCorrections.hh"
 
 #include "ChecksTableModel.hh"
+
 #include "common/AcceptReject.hh"
 #include "common/ColumnFactory.hh"
+#include "common/KvHelpers.hh"
 #include "common/ModelData.hh"
-#include "util/gui/ToolTipStringListModel.hh"
+
+#include "util/ToolTipStringListModel.hh"
+
+#include <boost/make_shared.hpp>
 
 #include "ui_simplecorrections.h"
 
@@ -72,10 +77,10 @@ SimpleCorrections::~SimpleCorrections()
 {
 }
 
-void SimpleCorrections::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
+void SimpleCorrections::setDataAccess(EditAccess_p eda, ModelAccess_p mda)
 {
-  DataView::setDataAccess(eda, mda);
-
+  mDA = eda;
+  mMA = mda;
   mChecksModel.reset(new ChecksTableModel(eda));
   ui->tableChecks->setModel(mChecksModel.get());
   update();
@@ -85,7 +90,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(st));
-    
+  
   mChecksModel->navigateTo(st);
   ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
@@ -108,7 +113,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 
 namespace /* anonymous */
 {
-static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
+static void setFBF(QWidget* w, DataItem_p item, ObsData_p obs)
 {
   if (not (w and w->parentWidget()))
     return;
@@ -146,7 +151,7 @@ void SimpleCorrections::update()
 
   const Sensor& s = mSensorTime.sensor;
   ModelDataPtr mdl;
-  EditDataPtr obs;
+  ObsData_p obs;
   if (s.valid()) {
     ui->textStation->setText(QString::number(s.stationId));
     ui->textStation->setToolTip(Helpers::stationInfo(s.stationId));
@@ -171,8 +176,13 @@ void SimpleCorrections::update()
 
     ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
-    if (mDA)
-      obs = mDA->findE(mSensorTime);
+    if (mDA) {
+      mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
+      mObsBuffer->syncRequest(mDA);
+      connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
+      connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
+      obs = mObsBuffer->get();
+    }
     if (mMA)
       mdl = mMA->find(mSensorTime);
   } else {
@@ -238,7 +248,7 @@ void SimpleCorrections::enableEditing()
 {
   METLIBS_LOG_SCOPE();
 
-  EditDataPtr obs = (mDA and mSensorTime.sensor.valid()) ? mDA->findE(mSensorTime) : EditDataPtr();
+  ObsData_p obs = mObsBuffer ? mObsBuffer->get() : ObsData_p();
   if (not obs) {
     setEnabled(false);
     return;
@@ -258,42 +268,45 @@ void SimpleCorrections::enableEditing()
   ui->comboCorrected->setEnabled((p & AcceptReject::CAN_CORRECT) != 0);
 }
 
-void SimpleCorrections::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr data)
+void SimpleCorrections::onDataChanged()
 {
   METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(mSensorTime));
-  if (data and eq_SensorTime()(data->sensorTime(), mSensorTime))
-    update();
+  update();
 }
 
 void SimpleCorrections::onAcceptOriginal()
 {
   mDA->newVersion();
-  AcceptReject::accept_original(mDA, mSensorTime);
+  if (mObsBuffer->get())
+    AcceptReject::accept_original(mDA, mObsBuffer->get());
 }
 
 void SimpleCorrections::onAcceptCorrected()
 {
   mDA->newVersion();
-  AcceptReject::accept_corrected(mDA, mSensorTime, false);
+  if (mObsBuffer->get())
+    AcceptReject::accept_corrected(mDA, mObsBuffer->get(), false);
 }
 
 void SimpleCorrections::onAcceptCorrectedQC2()
 {
   mDA->newVersion();
-  AcceptReject::accept_corrected(mDA, mSensorTime, true);
+  if (mObsBuffer->get())
+    AcceptReject::accept_corrected(mDA, mObsBuffer->get(), true);
 }
 
 void SimpleCorrections::onReject()
 {
   mDA->newVersion();
-  AcceptReject::reject(mDA, mSensorTime, false);
+  if (mObsBuffer->get())
+    AcceptReject::reject(mDA, mObsBuffer->get(), false);
 }
 
 void SimpleCorrections::onRejectQC2()
 {
   mDA->newVersion();
-  AcceptReject::reject(mDA, mSensorTime, true);
+  if (mObsBuffer->get())
+    AcceptReject::reject(mDA, mObsBuffer->get(), true);
 }
 
 void SimpleCorrections::onNewCorrected()
@@ -302,7 +315,7 @@ void SimpleCorrections::onNewCorrected()
   if (not (mDA and mItemCorrected and mSensorTime.valid()))
     return;
   
-  EditDataPtr obs = mDA->findE(mSensorTime);
+  ObsData_p obs = mObsBuffer->get();
   if (obs) {
     if (not (mItemCorrected->flags(obs) & Qt::ItemIsEditable))
       return;

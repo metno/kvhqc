@@ -15,7 +15,7 @@
 
 static const int COLUMN_NEW = 2;
 
-RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+RedistTableModel::RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
     : ObsTableModel(da, time)
     , mSensor(sensor)
     , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))

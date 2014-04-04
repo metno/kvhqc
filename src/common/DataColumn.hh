@@ -4,14 +4,14 @@
 
 #include "DataItem.hh"
 #include "ObsColumn.hh"
-#include "access/EditAccess.hh"
-#include "access/TimeBuffer.hh"
+#include "common/EditAccess.hh"
+#include "common/TimeBuffer.hh"
 
 class DataColumn : public ObsColumn
 { Q_OBJECT;
 
 public:
-  DataColumn(EditAccess_p ea, const Sensor& sensor, const TimeRange& time, DataItem_p item);
+  DataColumn(EditAccess_p ea, const Sensor& sensor, const TimeSpan& time, DataItem_p item);
   ~DataColumn();
 
   void setHeaderShowStation(bool show)
@@ -30,9 +30,9 @@ public:
     { return mTimeOffset; }
   void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
 
-  void setTimeRange(const TimeRange& tr);
+  void setTimeSpan(const TimeSpan& tr);
 
-  virtual Sensor sensor() const;
+  virtual const Sensor& sensor() const;
   virtual int type() const
     { return mItem->type(); }
 

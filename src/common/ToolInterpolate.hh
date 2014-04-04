@@ -2,7 +2,8 @@
 #ifndef ToolInterpolate_hh
 #define ToolInterpolate_hh 1
 
-#include "access/EditAccess.hh"
+#include "common/EditAccess.hh"
+#include "common/TimeBuffer.hh"
 #include "common/ModelAccess.hh"
 #include "common/Sensor.hh"
 
@@ -22,18 +23,17 @@ public:
 
   void updateModel(EditAccess_p da, QTableView* table);
 
-public Q_SLOTS:
-  void enableButtons();
-                                                           
 protected:
   virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
   void onInterpolate();
+  void fetchData();
 
 private:
   void retranslateUi();
   bool checkEnabled();
+  void enableButtons();
 
 private:
   EditAccess_p mDA;
@@ -41,11 +41,12 @@ private:
 
   QToolButton *mButtonInterpolate;
 
-  Sensor mSensor;
-  TimeSpan mTime;
+  SensorTime mFirst, mLast;
 
-  typedef std::vector<SensorTime> SensorTime_v;
-  SensorTime_v mSelectedObs;
+  TimeBuffer_p mObsBuffer;
+
+  typedef std::vector<Time> Time_v;
+  Time_v mSelectedTimes;
 };
 
 #endif // ToolInterpolate_hh

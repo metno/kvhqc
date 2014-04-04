@@ -2,8 +2,8 @@
 #ifndef OBSACCESS_OBSHELPERS_HH
 #define OBSACCESS_OBSHELPERS_HH 1
 
-#include "access/ObsData.hh"
-#include "access/ObsUpdate.hh"
+#include "common/ObsData.hh"
+#include "common/ObsUpdate.hh"
 #include "FlagChange.hh"
 
 namespace Helpers {
@@ -20,7 +20,7 @@ bool is_missing(ObsUpdate_p update);
 bool is_orig_missing(ObsData_p obs);
 bool is_orig_missing(ObsUpdate_p update, ObsData_p obs);
 
-void reject(ObsUpdate_p update);
+void reject(ObsUpdate_p update, ObsData_p obs);
 void correct(ObsUpdate_p update, float newC);
 void auto_correct(ObsUpdate_p update, ObsData_p obs, float newC);
 

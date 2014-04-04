@@ -67,10 +67,9 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
   sensors2sql(sql, sensors, "d.");
   sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
   if (filter and filter->hasSQL())
-    sql << " AND (" << filter->acceptingSQL("d") << ")";
+    sql << " AND (" << filter->acceptingSQL("d.") << ")";
   sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
-  //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
-
+  METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
   ObsData_pv data;
   if (query.exec(QString::fromStdString(sql.str()))) {
@@ -95,7 +94,7 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
           tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
       KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
       if ((not filter) or filter->accept(kd, true)) {
-        //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
+        METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
         data.push_back(kd);
       }
     }
@@ -199,10 +198,8 @@ void KvalobsAccess::dropRequest(ObsRequest_p request)
 void KvalobsAccess::checkSubscribe(const Sensor_s& sensors)
 {
   if (AbstractUpdateListener* ul = updateListener()) {
-    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-      const int stationId = itS->stationId;
-      ul->addStation(stationId);
-    }
+    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS)
+      ul->addStation(itS->stationId);
   }
 }
 
@@ -211,10 +208,8 @@ void KvalobsAccess::checkSubscribe(const Sensor_s& sensors)
 void KvalobsAccess::checkUnsubscribe(const Sensor_s& sensors)
 {
   if (AbstractUpdateListener* ul = updateListener()) {
-    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
-      const int stationId = itS->stationId;
-      ul->removeStation(stationId);
-    }
+    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS)
+      ul->removeStation(itS->stationId);
   }
 }
 

@@ -2,8 +2,8 @@
 #ifndef AcceptReject_hh
 #define AcceptReject_hh 1
 
-#include "access/ObsData.hh"
-#include "access/EditAccess.hh"
+#include "common/ObsData.hh"
+#include "common/EditAccess.hh"
 #include "ModelAccess.hh"
 
 namespace AcceptReject {

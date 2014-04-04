@@ -1,7 +1,7 @@
 
 #include "DataColumn.hh"
 
-#include "common/gui/SensorHeader.hh"
+#include "common/SensorHeader.hh"
 #include "util/make_set.hh"
 
 #include <boost/make_shared.hpp>
@@ -9,7 +9,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataColumn"
 #include "common/ObsLogging.hh"
 
-DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeRange& t, DataItem_p item)
+DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t, DataItem_p item)
   : mDA(da)
   , mBuffer(boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
   , mItem(item)
@@ -73,4 +73,14 @@ ObsData_p DataColumn::getObs(const Time& time) const
 bool DataColumn::matchSensor(const Sensor& sensorObs) const
 {
   return mItem->matchSensor(sensor(), sensorObs);
+}
+
+const Sensor& DataColumn::sensor() const
+{
+  return *mBuffer->request()->sensors().begin();
+}
+
+void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
+{
+  // FIXME implemet setTimeOffset
 }

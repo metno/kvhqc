@@ -4,7 +4,7 @@
 #define HQC_TEXTDATATABLE_HH
 
 #include "TxtDat.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtGui/QDialog>
 #include <QtCore/QAbstractTableModel>
@@ -30,7 +30,7 @@ class TextData : public QDialog
 public:
   TextData(const std::vector<TxtDat>&, QWidget* parent=0);
 
-  static void showTextData(int stationId, const TimeRange& timeLimits, QWidget* parent);
+  static void showTextData(int stationId, const TimeSpan& timeLimits, QWidget* parent);
 
 protected:
   virtual void changeEvent(QEvent *event);

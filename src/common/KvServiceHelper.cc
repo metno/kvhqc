@@ -1,7 +1,7 @@
 
 #include "KvServiceHelper.hh"
 
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <kvalobs/kvStationParam.h>
 #include <kvcpp/KvApp.h>
@@ -104,7 +104,7 @@ bool KvServiceHelper::getKvModelData(std::list<kvalobs::kvModelData> &dataList, 
   }
 }
 
-bool KvServiceHelper::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeRange& timeLimits)
+bool KvServiceHelper::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeSpan& timeLimits)
 {
   METLIBS_LOG_SCOPE();
   rejectList.clear();

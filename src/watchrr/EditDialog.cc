@@ -10,7 +10,7 @@
 #define MILOGGER_CATEGORY "kvhqc.EditDialog"
 #include "util/HqcLogging.hh"
 
-EditDialog::EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeRange& time, const TimeRange& editableTime)
+EditDialog::EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
   : QDialog(parent)
   , mDA(da)
   , mEditableTime(editableTime)

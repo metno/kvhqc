@@ -2,14 +2,14 @@
 #include "NeighborRR24Model.hh"
 
 #include "common/ColumnFactory.hh"
-#include "common/gui/NeighborHeader.hh"
+#include "common/NeighborHeader.hh"
 
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.NeighborRR24Model"
 #include "util/HqcLogging.hh"
 
-NeighborRR24Model::NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+NeighborRR24Model::NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
     : ObsTableModel(da, time)
     , mNeighbors(1, sensor)
 {

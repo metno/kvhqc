@@ -9,7 +9,7 @@
 #include "common/KvHelpers.hh"
 
 #include "util/ChangeReplay.hh"
-#include "util/gui/BusyIndicator.hh"
+#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
@@ -355,14 +355,14 @@ void AutoDataList::replay(const std::string& changesText)
   ChangeReplay<Column, lt_Column> cr;
   mColumns = cr.replay(mOriginalColumns, actual, removed);
   
-  TimeRange newTimeLimits(mOriginalTimeLimits);
+  TimeSpan newTimeLimits(mOriginalTimeLimits);
   const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
   if (not doc_timeshift.isNull()) {
     const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
     const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
     const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
     const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
-    TimeRange newTimeLimits(t0, t1);
+    TimeSpan newTimeLimits(t0, t1);
     METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
   }
   mTimeLimits = newTimeLimits;
@@ -376,13 +376,13 @@ void AutoDataList::replay(const std::string& changesText)
 
 void AutoDataList::onEarlier()
 {
-  mTimeLimits = TimeRange(mTimeLimits.t0() - boost::posix_time::hours(24), mTimeLimits.t1());
+  mTimeLimits = TimeSpan(mTimeLimits.t0() - boost::posix_time::hours(24), mTimeLimits.t1());
   makeModel();
 }
 
 void AutoDataList::onLater()
 {
-  mTimeLimits = TimeRange(mTimeLimits.t0(), mTimeLimits.t1() + boost::posix_time::hours(24));
+  mTimeLimits = TimeSpan(mTimeLimits.t0(), mTimeLimits.t1() + boost::posix_time::hours(24));
   makeModel();
 }
 

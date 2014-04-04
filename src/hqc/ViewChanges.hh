@@ -2,7 +2,7 @@
 #ifndef HQC_VIEWCHANGES_HH
 #define HQC_VIEWCHANGES_HH 1
 
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include <string>
 
 class Sensor;
@@ -12,7 +12,7 @@ namespace ViewChanges {
 void store(const Sensor& s, const std::string& vtype, const std::string& vid, const std::string& vchanges);
 std::string fetch(const Sensor& s, const std::string& vtype, const std::string& vid);
 
-TimeRange defaultTimeLimits(const SensorTime& st);
+TimeSpan defaultTimeLimits(const SensorTime& st);
 
 } // namespace ViewChanges
 

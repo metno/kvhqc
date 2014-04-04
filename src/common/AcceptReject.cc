@@ -120,7 +120,7 @@ void reject(EditAccess_p ea, ObsData_p obs, bool qc2ok)
   }
 
   ObsUpdate_p update = ea->createUpdate(obs);
-  Helpers::reject(update);
+  Helpers::reject(update, obs);
   if (qc2ok)
     Helpers::set_fhqc(update, 4);
 

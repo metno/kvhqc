@@ -24,7 +24,7 @@ enum Columns {
 };
 } // namespace anonymous
 
-EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const TimeRange& time)
+EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
   : ObsTableModel(da, time)
   , mSensor(sensor)
   , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))

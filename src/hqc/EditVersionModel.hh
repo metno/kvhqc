@@ -2,7 +2,7 @@
 #ifndef EditVersionModel_hh
 #define EditVersionModel_hh 1
 
-#include "access/EditAccess.hh"
+#include "common/EditAccess.hh"
 
 #include <QtCore/QAbstractItemModel>
 

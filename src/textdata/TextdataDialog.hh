@@ -3,7 +3,7 @@
 #ifndef HQC_TEXTDATADIALOG_H
 #define HQC_TEXTDATADIALOG_H
 
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include <QtGui/qdialog.h>
 #include <QtCore/qdatetime.h>
 
@@ -25,7 +25,7 @@ public:
 
   int getStationId() const
     { return stnr; }
-  TimeRange getTimeRange() const;
+  TimeSpan getTimeSpan() const;
 
 protected:
   virtual void changeEvent(QEvent *event);

@@ -3,7 +3,7 @@
 #define EDITTIMECOLUMN_HH 1
 
 #include "DataColumn.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 class EditTimeColumn : public ObsColumn {
 public:
@@ -15,7 +15,7 @@ public:
     virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
     virtual QVariant headerData(Qt::Orientation orientation, int role) const;
 
-    void setEditableTime(const TimeRange& et);
+    void setEditableTime(const TimeSpan& et);
     const boost::posix_time::time_duration& timeOffset() const;
     virtual int type() const
       { return mDC->type(); }
@@ -25,7 +25,7 @@ private:
 
 private:
     DataColumn_p mDC;
-    TimeRange mEditableTime;
+    TimeSpan mEditableTime;
 };
 
 #endif // EDITTIMECOLUMN_HH

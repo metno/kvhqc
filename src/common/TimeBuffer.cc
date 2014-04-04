@@ -22,6 +22,14 @@ TimeBuffer::TimeBuffer(SignalRequest_p request)
 {
 }
 
+TimeBuffer::Time_s TimeBuffer::times() const
+{
+  Time_s times;
+  for (ObsDataByTime_ps::iterator itD = mData.begin(); itD != mData.end(); ++itD)
+    times.insert((*itD)->sensorTime().time);
+  return times;
+}
+
 ObsData_p TimeBuffer::get(const SensorTime& st) const
 {
   const ObsDataByTime_ps::const_iterator it = find(st);

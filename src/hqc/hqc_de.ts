@@ -4,32 +4,32 @@
 <context>
     <name>AcceptRejectButtons</name>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="61"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="61"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Originalwert oder korrigierten Wert akzeptieren (abhängig von der gewählten Spalte).&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="64"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="64"/>
         <source>Accept</source>
         <translation>Akzeptieren</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="65"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="65"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Wert verwerfen.&lt;/p&gt;&lt;p&gt;QC2 darf überschreiben, wenn &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; angekreuzt ist.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="68"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="68"/>
         <source>Reject</source>
         <translation>Verwerfen</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="69"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="69"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestimmt, ob QC2 bei &lt;span style=&quot; font-style:italic;&quot;&gt;Akzeptieren&lt;/span&gt; und &lt;span style=&quot;font-style:italic;&quot;&gt;Verwerfen&lt;/span&gt; überschreiben darf.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="../common/gui/AcceptRejectButtons.cc" line="72"/>
+        <location filename="../common/AcceptRejectButtons.cc" line="72"/>
         <source>QC2</source>
         <translation>QC2</translation>
     </message>
@@ -37,12 +37,12 @@
 <context>
     <name>Authentication::Authenticator</name>
     <message>
-        <location filename="../common/gui/Authenticator.cc" line="134"/>
+        <location filename="../common/Authenticator.cc" line="134"/>
         <source>Wrong username or password</source>
         <translation>Falscher Benutzername oder falsches Passwort</translation>
     </message>
     <message>
-        <location filename="../common/gui/Authenticator.cc" line="135"/>
+        <location filename="../common/Authenticator.cc" line="135"/>
         <source>Wrong username or password. Please try again.</source>
         <translation>Falscher Benutzername oder falsches Passwort. Bitte nochmal vresuchen.</translation>
     </message>
@@ -50,37 +50,37 @@
 <context>
     <name>AuthenticationDialog</name>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="14"/>
+        <location filename="../common/authenticationdialog.ui" line="14"/>
         <source>Log in</source>
         <translation>Anmelden</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="23"/>
+        <location filename="../common/authenticationdialog.ui" line="23"/>
         <source>Please enter username and password:</source>
         <translation>Bitte Benutzernamen und Passwort eingeben:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="37"/>
+        <location filename="../common/authenticationdialog.ui" line="37"/>
         <source>Username:</source>
         <translation>Benutzername:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="47"/>
+        <location filename="../common/authenticationdialog.ui" line="47"/>
         <source>Password:</source>
         <translation>Passwort:</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="103"/>
+        <location filename="../common/authenticationdialog.ui" line="103"/>
         <source>&amp;OK</source>
         <translation>&amp;OK</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="119"/>
+        <location filename="../common/authenticationdialog.ui" line="119"/>
         <source>&amp;Cancel</source>
         <translation>&amp;Abbrechen</translation>
     </message>
     <message>
-        <location filename="../common/gui/authenticationdialog.ui" line="122"/>
+        <location filename="../common/authenticationdialog.ui" line="122"/>
         <source>Alt+A</source>
         <translation>Alt+A</translation>
     </message>
@@ -872,7 +872,7 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>EtaProgressBar</name>
     <message>
-        <location filename="../util/gui/EtaProgressBar.cc" line="28"/>
+        <location filename="../util/EtaProgressBar.cc" line="28"/>
         <source>ETA %1:%2</source>
         <translation>noch ca. %1:%2</translation>
     </message>
@@ -997,17 +997,17 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>HideApplyBox</name>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="30"/>
+        <location filename="../util/hideapplybox.ui" line="30"/>
         <source>Hide</source>
         <translation>Ausblenden</translation>
     </message>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="42"/>
+        <location filename="../util/hideapplybox.ui" line="42"/>
         <source>Apply</source>
         <translation>Anwenden</translation>
     </message>
     <message>
-        <location filename="../util/gui/hideapplybox.ui" line="54"/>
+        <location filename="../util/hideapplybox.ui" line="54"/>
         <source>&amp;Apply+Hide</source>
         <translation>&amp;Anwenden+Ausblenden</translation>
     </message>
@@ -1908,42 +1908,42 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="28"/>
+        <location filename="../common/SensorHeader.cc" line="28"/>
         <source>Sensor %1 Type %2</source>
         <translation>Sensor %1 Type %2</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="51"/>
+        <location filename="../common/SensorHeader.cc" line="51"/>
         <source>model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="33"/>
+        <location filename="../common/SensorHeader.cc" line="33"/>
         <source>Parameter %1</source>
         <translation>Parameter %1</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="78"/>
+        <location filename="../common/SensorHeader.cc" line="78"/>
         <source>+%1h</source>
         <translation>+%1h</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="79"/>
+        <location filename="../common/SensorHeader.cc" line="79"/>
         <source>time offset +%1 hour(s)</source>
         <translation>Zeitverschiebung +%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="82"/>
+        <location filename="../common/SensorHeader.cc" line="82"/>
         <source>-%1h</source>
         <translation>-%1h</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="83"/>
+        <location filename="../common/SensorHeader.cc" line="83"/>
         <source>time offset -%1 hour(s)</source>
         <translation>Zeitverschiebung -%1 Stunde(n)</translation>
     </message>
     <message>
-        <location filename="../common/gui/SensorHeader.cc" line="97"/>
+        <location filename="../common/SensorHeader.cc" line="97"/>
         <source>Station %1 [%2, %3masl] Level %4</source>
         <translation>Station %1 [%2, %3müNN] Niveau %4</translation>
     </message>
@@ -2247,37 +2247,37 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>TimeHeader</name>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="8"/>
+        <location filename="../common/TimeHeader.cc" line="8"/>
         <source>Sun</source>
         <translation>So</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="9"/>
+        <location filename="../common/TimeHeader.cc" line="9"/>
         <source>Mon</source>
         <translation>Mo</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="10"/>
+        <location filename="../common/TimeHeader.cc" line="10"/>
         <source>Tue</source>
         <translation>Di</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="11"/>
+        <location filename="../common/TimeHeader.cc" line="11"/>
         <source>Wed</source>
         <translation>Mi</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="12"/>
+        <location filename="../common/TimeHeader.cc" line="12"/>
         <source>Thu</source>
         <translation>Do</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="13"/>
+        <location filename="../common/TimeHeader.cc" line="13"/>
         <source>Fri</source>
         <translation>Fr</translation>
     </message>
     <message>
-        <location filename="../common/gui/TimeHeader.cc" line="14"/>
+        <location filename="../common/TimeHeader.cc" line="14"/>
         <source>Sat</source>
         <translation>Sa</translation>
     </message>
@@ -2509,12 +2509,12 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>ToolInterpolate</name>
     <message>
-        <location filename="../common/gui/ToolInterpolate.cc" line="46"/>
+        <location filename="../common/ToolInterpolate.cc" line="46"/>
         <source>Perform linear interpolation</source>
         <translation>Lineare Interpolation durchführen</translation>
     </message>
     <message>
-        <location filename="../common/gui/ToolInterpolate.cc" line="47"/>
+        <location filename="../common/ToolInterpolate.cc" line="47"/>
         <source>Interpolate</source>
         <translation>Interpolieren</translation>
     </message>

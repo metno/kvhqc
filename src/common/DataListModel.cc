@@ -12,7 +12,7 @@
 #define MILOGGER_CATEGORY "kvhqc.DataListModel"
 #include "util/HqcLogging.hh"
 
-DataListModel::DataListModel(EditAccess_p eda, const TimeRange& limits)
+DataListModel::DataListModel(EditAccess_p eda, const TimeSpan& limits)
   : ObsTableModel(eda, limits, 0)
   , mFilterByTimestep(true)
   , mCenter(0)

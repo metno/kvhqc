@@ -3,7 +3,7 @@
 #define KvalobsModelAccess_hh 1
 
 #include "KvModelAccess.hh"
-#include "TimeRange.hh"
+#include "TimeSpan.hh"
 
 #include <kvcpp/kvservicetypes.h>
 #include <boost/icl/interval_set.hpp>
@@ -14,11 +14,11 @@ public:
   ~KvalobsModelAccess();
 
   virtual ModelDataSet findMany(const std::vector<SensorTime>& sensorTimes);
-  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits);
+  virtual ModelDataSet allData(const std::vector<Sensor>& sensors, const TimeSpan& limits);
 
 private:
   bool isFetched(int stationid, const timeutil::ptime& t) const;
-  void addFetched(int stationid, const TimeRange& t);
+  void addFetched(int stationid, const TimeSpan& t);
   void removeFetched(int stationid, const timeutil::ptime& t);
 
 private:

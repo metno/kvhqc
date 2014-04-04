@@ -30,8 +30,15 @@
 #ifndef HQC_HQCMAINWINDOW_H
 #define HQC_HQCMAINWINDOW_H
 
+#define ENABLE_ERRORLIST 1
+//#define ENABLE_EXTREMES 1
+//#define ENABLE_MISSINGOBS 1
+//#define ENABLE_REJECTEDOBS 1
+//#define ENABLE_TEXTDATA 1
+//#define ENABLE_DIANA 1
+
 #include "common/HqcDataReinserter.hh"
-#include "access/ObsAccess.hh"
+#include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 
 #include <QtCore/QString>
@@ -61,6 +68,10 @@ class KvalobsModelAccess;
 class ListDialog;
 class SensorTime;
 class TimeSeriesView;
+
+#ifdef ENABLE_ERRORLIST
+class ErrorList;
+#endif
 
 namespace Ui {
 class HqcMainWindow;
@@ -118,9 +129,6 @@ private Q_SLOTS:
   void onUndoChanges();
   void onRedoChanges();
 
-  void onShowExtremes();
-  void onShowMissing();
-  void onShowErrorList();
   void onShowChanges();
   void onShowSimpleCorrections();
 

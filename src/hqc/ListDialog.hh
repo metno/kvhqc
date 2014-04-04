@@ -31,7 +31,7 @@
 #define LISTDIALOG2_HH
 
 #include "common/ParamIdModel.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtCore/QSettings>
 #include <QtGui/QDialog>
@@ -46,7 +46,7 @@ class QStandardItemModel;
 
 class HqcMainWindow;
 class StationSelection;
-class TimeRangeControl;
+class TimeSpanControl;
 
 class Ui_ListDialog;
 
@@ -56,7 +56,7 @@ public:
   ListDialog(HqcMainWindow* parent);
   ~ListDialog();
     
-  TimeRange getTimeRange() const;
+  TimeSpan getTimeSpan() const;
     
   std::vector<int> getSelectedStations();
   std::vector<int> getSelectedParameters();
@@ -104,7 +104,7 @@ private:
   std::auto_ptr<ParamIdModel> mParamAvailableModel;
   std::auto_ptr<ParamIdModel> mParamSelectedModel;
 
-  TimeRangeControl* mTimeControl;
+  TimeSpanControl* mTimeControl;
 
   bool mIsInToggle;
 };

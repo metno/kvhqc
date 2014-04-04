@@ -30,7 +30,6 @@
 #include "ErrorList.hh"
 
 #include "ErrorListModel.hh"
-#include "common/AnalyseErrors.hh"
 #include "common/Functors.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "util/Blocker.hh"
@@ -61,25 +60,25 @@ ErrorList::~ErrorList()
 {
 }
 
-void ErrorList::setDataAccess(EditAccessPtr eda, ModelAccessPtr mda)
+void ErrorList::setDataAccess(ObsAccess_p eda, ModelAccess_p mda)
 {
-  DataView::setDataAccess(eda, mda);
-  updateModel(Errors::Sensors_t(), TimeRange());
+  mDA = eda;
+  mMA = mda;
+  updateModel(Sensor_v(), TimeSpan());
 }
 
-void ErrorList::setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits)
+void ErrorList::setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
-  DataView::setSensorsAndTimes(sensors, limits);
-  updateModel(sensors, limits);
+  updateModel(sensors, time);
 }
 
-void ErrorList::updateModel(const Sensors_t& sensors, const TimeRange& limits)
+void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
 {
   mNavigate.invalidate();
   NavigateHelper::Locker lock(mNavigate);
 
-  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, limits, mErrorsForSalen));
+  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, time, mErrorsForSalen));
   connect(mItemModel.get(), SIGNAL(beginDataChange()),
       this, SLOT(onBeginDataChange()));
   connect(mItemModel.get(), SIGNAL(endDataChange()),
@@ -118,7 +117,7 @@ void ErrorList::showSameStation()
   METLIBS_LOG_SCOPE();
 
   if (mItemModel.get()) {
-    EditDataPtr obs = getSelectedObs();
+    ObsData_p obs = getSelectedObs();
     const int stationId = obs ? obs->sensorTime().sensor.stationId : -1;
     mItemModel->highlightStation(stationId);
   }
@@ -127,7 +126,7 @@ void ErrorList::showSameStation()
 void ErrorList::signalStationSelected()
 {
   METLIBS_LOG_SCOPE();
-  if (EditDataPtr obs = getSelectedObs()) {
+  if (ObsData_p obs = getSelectedObs()) {
     const SensorTime& st = obs->sensorTime();
     NavigateHelper::Locker lock(mNavigate);
     if (mNavigate.go(st)) {
@@ -173,13 +172,12 @@ void ErrorList::navigateTo(const SensorTime& st)
     selection->select(idx, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
-EditDataPtr ErrorList::getSelectedObs() const
+ObsData_p ErrorList::getSelectedObs() const
 {
-  QItemSelectionModel* selection = selectionModel();
-  if (not selection)
-    return EditDataPtr();
-  const QModelIndexList selected = selection->selectedRows();
-  if (selected.size() != 1)
-    return EditDataPtr();
-  return mItemModel->findObs(selected.front());
+  if (QItemSelectionModel* selection = selectionModel()) {
+    const QModelIndexList selected = selection->selectedRows();
+    if (selected.size() == 1)
+      return mItemModel->findObs(selected.front());
+  }
+  return ObsData_p();
 }

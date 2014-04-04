@@ -28,7 +28,7 @@ std::string exists_in_obspgm(const std::string& data_alias, const std::string& o
 
 namespace Extremes {
 
-std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
+std::vector<SensorTime> find(int paramid, const TimeSpan& tLimits)
 {
   METLIBS_LOG_SCOPE();
 

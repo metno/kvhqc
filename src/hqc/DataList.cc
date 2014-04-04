@@ -2,7 +2,7 @@
 #include "DataList.hh"
 
 #include "common/DataListModel.hh"
-#include "common/gui/ObsDelegate.hh"
+#include "common/ObsDelegate.hh"
 #include "util/Blocker.hh"
 
 #include <QtCore/QFile>
@@ -74,6 +74,12 @@ DataList::DataList(QWidget* parent)
 
 DataList::~DataList()
 {
+}
+
+void DataList::setDataAccess(EditAccess_p eda, ModelAccess_p ma)
+{
+  mDA = eda;
+  mMA = ma;
 }
 
 void DataList::changeEvent(QEvent *event)

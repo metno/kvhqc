@@ -2,7 +2,7 @@
 #ifndef DATAITEM_HH
 #define DATAITEM_HH 1
 
-#include "access/EditAccess.hh"
+#include "common/EditAccess.hh"
 #include "ObsColumn.hh"
 
 class DataItem {

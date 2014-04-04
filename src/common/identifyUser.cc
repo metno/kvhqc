@@ -29,7 +29,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "identifyUser.h"
 
-#include "common/gui/Authenticator.hh"
+#include "common/Authenticator.hh"
 #include "HqcDataReinserter.hh"
 #include "KvServiceHelper.hh"
 

@@ -10,10 +10,10 @@
 #include "common/AnalyseFCC.hh"
 #include "common/AnalyseRR24.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/gui/ObsDelegate.hh"
+#include "common/ObsDelegate.hh"
 #include "util/Helpers.hh"
-#include "util/gui/BusyIndicator.hh"
-#include "util/gui/UiHelpers.hh"
+#include "util/BusyIndicator.hh"
+#include "util/UiHelpers.hh"
 
 #include "ui_watchrr_main.h"
 #include "ui_watchrr_redist.h"
@@ -39,7 +39,7 @@ namespace {
 const char SETTING_WATCHRR_GEOMETRY[] = "geometry_watchrr";
 } // anonymous namespace
 
-WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeRange& time, QWidget* parent)
+WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::DialogMain)
   , mDianaHelper(0)
@@ -154,7 +154,7 @@ void WatchRRDialog::initializeRR24Data()
   Helpers::processNonUserEvents();
   FCC::analyse(mDA, mSensor, mEditableTime);
   Helpers::processNonUserEvents();
-  mStationCard->setRR24TimeRange(mEditableTime);
+  mStationCard->setRR24TimeSpan(mEditableTime);
   Helpers::processNonUserEvents();
 }
 
@@ -224,7 +224,7 @@ WatchRRDialog::Selection WatchRRDialog::findSelection()
     if( s.maxCol < c )
       s.maxCol = c;
   }
-  s.selTime = TimeRange(mStationCard->timeAtRow(minRow), mStationCard->timeAtRow(maxRow));
+  s.selTime = TimeSpan(mStationCard->timeAtRow(minRow), mStationCard->timeAtRow(maxRow));
   return s;
 }
 

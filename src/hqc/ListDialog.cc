@@ -33,9 +33,9 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StInfoSysBuffer.hh"
 #include "common/HqcApplication.hh"
-#include "common/gui/TimeRangeControl.hh"
+#include "common/TimeSpanControl.hh"
 #include "util/timeutil.hh"
-#include "util/gui/BusyIndicator.hh"
+#include "util/BusyIndicator.hh"
 
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
@@ -123,7 +123,7 @@ bool StationFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &paren
 ListDialog::ListDialog(HqcMainWindow* parent)
   : QDialog(parent)
   , ui(new Ui_ListDialog)
-  , mTimeControl(new TimeRangeControl(this))
+  , mTimeControl(new TimeSpanControl(this))
   , mIsInToggle(false)
 {
   ui->setupUi(this);
@@ -550,7 +550,7 @@ void ListDialog::deselectAllParameters()
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-TimeRange ListDialog::getTimeRange() const
+TimeSpan ListDialog::getTimeSpan() const
 {
   return mTimeControl->timeRange();
 }

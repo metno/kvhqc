@@ -3,14 +3,14 @@
 #define WATCHRR_STATIONDIALOG_HH
 
 #include "common/Sensor.hh"
-#include "common/TimeRange.hh"
+#include "common/TimeSpan.hh"
 #include "common/TypeIdModel.hh"
 
 #include <QtGui/QDialog>
 
 #include <memory>
 
-class TimeRangeControl;
+class TimeSpanControl;
 namespace kvalobs {
 class kvObsPgm;
 }
@@ -21,14 +21,14 @@ class DialogStation;
 class StationDialog : public QDialog
 { Q_OBJECT;
 public:
-  StationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent=0);
+  StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent=0);
   StationDialog(QDialog* parent=0);
   virtual ~StationDialog();
                             
   Sensor selectedSensor() const
     { return mSensor; }
 
-  virtual TimeRange selectedTime() const;
+  virtual TimeSpan selectedTime() const;
 
   virtual bool valid() const;
 
@@ -50,7 +50,7 @@ protected:
 protected:
   Sensor mSensor;
   std::auto_ptr<Ui::DialogStation> ui;
-  TimeRangeControl* mTimeControl;
+  TimeSpanControl* mTimeControl;
   std::auto_ptr<TypeIdModel> mTypesModel;
 };
 
