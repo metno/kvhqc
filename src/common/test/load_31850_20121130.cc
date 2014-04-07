@@ -1,8 +1,8 @@
 #include "common/test/FakeKvApp.hh"
 #include "common/test/TestHelpers.hh"
 #include "common/KvalobsAccess.hh"
-inline TimeRange t_31850_20121130()
-    { return TimeRange(s2t("2012-10-20 06:00:00"), s2t("2012-11-30 06:00:00")); }
+inline TimeSpan t_31850_20121130()
+    { return TimeSpan(s2t("2012-10-20 06:00:00"), s2t("2012-11-30 06:00:00")); }
 #ifdef LOAD_DECL_ONLY
 void load_31850_20121130(FakeKvApp& fa);
 #else // LOAD_DECL_ONLY

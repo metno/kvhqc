@@ -92,7 +92,7 @@ public:
     std::list<kvalobs::kvParam>  mKvParams;
     std::list<kvalobs::kvStation> mKvStations;
     std::list<kvalobs::kvObsPgm> mObsPgm;
-    KvalobsAccessPtr kda;
+    KvalobsAccess_p kda;
 
 private:
     typedef std::map<SensorTime, kvalobs::kvData, lt_SensorTime> Data_t;

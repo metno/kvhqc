@@ -141,4 +141,4 @@ ADD_LIBRARY(common STATIC
   ${common_UIH}
 )
 
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)

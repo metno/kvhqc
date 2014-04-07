@@ -13,8 +13,8 @@ QT4_WRAP_CPP(test_common_MOC
 )
 
 ADD_LIBRARY(test_common
-  CountDataChanged.hh
-  CountDataChanged.cc
+#  CountDataChanged.hh
+#  CountDataChanged.cc
   FakeKvApp.hh
   FakeKvApp.cc
   FakeModelAccess.hh
@@ -44,9 +44,7 @@ ADD_LIBRARY(test_common
 LINK_LIBRARIES(
   test_common
   common
-  common_gui
   util
-  util_gui
   ${PC_KVCPP_LIBRARIES}
   ${PC_METLIBS_LIBRARIES}
   ${SQLITE3_LIBRARY}
@@ -54,14 +52,14 @@ LINK_LIBRARIES(
 )
 
 ADD_EXECUTABLE(common_test
-  DataListModelTest.cc
-  EditAccessTest.cc
-  EditTimeColumnTest.cc
-  KvalobsAccessTest.cc
+#  DataListModelTest.cc
+#  EditAccessTest.cc
+#  EditTimeColumnTest.cc
+#  KvalobsAccessTest.cc
   KvHelpersTest.cc
   TimeRangeTest.cc
-  VxColumnTest.cc
-  ObsTableModelTest.cc
+#  VxColumnTest.cc
+#  ObsTableModelTest.cc
 
   CachingAccessTest.cc
   IndexBufferTest.cc

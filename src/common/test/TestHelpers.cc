@@ -4,7 +4,7 @@
 #include "ObsHelpers.hh"
 
 ::testing::AssertionResult AssertCorrControl(const char* ec_expr, const char* eci_expr, const char* a_expr,
-    float ec, const std::string& eci, const ObsDataPtr& a)
+    float ec, const std::string& eci, const ObsData_p& a)
 {
   ::testing::Message msg;
   if (not a) {

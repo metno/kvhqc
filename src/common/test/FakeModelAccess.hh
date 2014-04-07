@@ -4,7 +4,6 @@
 
 #include "KvModelAccess.hh"
 #include "Sensor.hh"
-#include "TimeRange.hh"
 
 #include <gtest/gtest.h>
 #include <boost/make_shared.hpp>

@@ -1,6 +1,6 @@
 
-#include "AnalyseFCC.hh"
-#include "AnalyseRR24.hh"
+#include "watchrr/AnalyseFCC.hh"
+#include "watchrr/AnalyseRR24.hh"
 #include "FlagChange.hh"
 #include "EditAccess.hh"
 

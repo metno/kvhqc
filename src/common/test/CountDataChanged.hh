@@ -2,7 +2,7 @@
 #ifndef CountDataChanged_hh
 #define CountDataChanged_hh 1
 
-#include "access/ObsAccess.hh"
+#include "ObsAccess.hh"
 #include <boost/noncopyable.hpp>
 
 struct CountDataChanged : private boost::noncopyable

@@ -13,11 +13,11 @@
 
 namespace /* anonymous */ {
 
-boost::shared_ptr<DataListModel> makeDLM(FakeKvApp& fa, const TimeRange& time)
+boost::shared_ptr<DataListModel> makeDLM(FakeKvApp& fa, const TimeSpan& time)
 {
   load_18210_20130410(fa);
   const Sensor sensor(18210, kvalobs::PARAMID_TA, 0, 0, 514);
-  EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+  EditAccess_p eda = boost::make_shared<EditAccess>(fa.kda);
 
   boost::shared_ptr<DataListModel> dlm(new DataListModel(eda, time));
   dlm->addColumn(ColumnFactory::columnForSensor(eda, sensor, time, ObsColumn::NEW_CORRECTED));
@@ -29,7 +29,7 @@ boost::shared_ptr<DataListModel> makeDLM(FakeKvApp& fa, const TimeRange& time)
 TEST(DataListModelTest, RowCountRounded)
 {
   FakeKvApp fa;
-  const TimeRange time(s2t("2013-04-02 01:00:00"), s2t("2013-04-03 01:00:00"));
+  const TimeSpan time(s2t("2013-04-02 01:00:00"), s2t("2013-04-03 01:00:00"));
   boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
   dlm->setFilterByTimestep(false);
 
@@ -49,7 +49,7 @@ TEST(DataListModelTest, RowCountRounded)
 TEST(DataListModelTest, RowCount6)
 {
   FakeKvApp fa;
-  const TimeRange time(s2t("2013-04-02 06:00:00"), s2t("2013-04-03 06:00:00"));
+  const TimeSpan time(s2t("2013-04-02 06:00:00"), s2t("2013-04-03 06:00:00"));
   boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
   dlm->setFilterByTimestep(false);
 
@@ -67,7 +67,7 @@ TEST(DataListModelTest, RowCount6)
 TEST(DataListModelTest, RowCountFiltered)
 {
   FakeKvApp fa;
-  const TimeRange time(s2t("2013-04-09 18:00:00"), s2t("2013-04-09 23:00:00"));
+  const TimeSpan time(s2t("2013-04-09 18:00:00"), s2t("2013-04-09 23:00:00"));
   boost::shared_ptr<DataListModel> dlm = makeDLM(fa, time);
 
   EXPECT_EQ(4, dlm->rowCount(QModelIndex()));

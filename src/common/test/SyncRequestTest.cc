@@ -17,7 +17,7 @@ inline timeutil::ptime s2t(const std::string& t)
 TEST(SyncRequestTest, NoThread)
 {
   SqliteAccess_p sqla(new SqliteAccess(false));
-  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/../../common/test/data_18210_20130410.txt");
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
 
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
   const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
@@ -31,7 +31,7 @@ TEST(SyncRequestTest, NoThread)
 TEST(SyncRequestTest, Thread)
 {
   SqliteAccess_p sqla(new SqliteAccess(true));
-  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/../../common/test/data_18210_20130410.txt");
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
 
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
   const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
@@ -45,7 +45,7 @@ TEST(SyncRequestTest, Thread)
 TEST(SyncRequestTest, Cached)
 {
   SqliteAccess_p sqla(new SqliteAccess(true));
-  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/../../common/test/data_18210_20130410.txt");
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
 
   CachingAccess_p ca(new CachingAccess(sqla));
 
@@ -69,7 +69,7 @@ TEST(SyncRequestTest, Cached)
 TEST(SyncRequestTest, CachedMulti)
 {
   SqliteAccess_p sqla(new SqliteAccess);
-  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/../../access/test/data_18700_20140304.txt");
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18700_20140304.txt");
   CachingAccess_p ca(new CachingAccess(sqla));
 
   const Sensor sensor1(18210, 211, 0, 0, 514);
