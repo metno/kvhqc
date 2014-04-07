@@ -109,6 +109,7 @@ QT4_WRAP_CPP(common_MOC
   DianaHelper.hh
   HqcApplication.hh
   KvalobsUpdateListener.hh
+  ObsColumn.hh
   ObsTableModel.hh
   QtKvService.hh
 

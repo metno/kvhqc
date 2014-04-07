@@ -25,7 +25,6 @@ public:
   size_t size() const
     { return mData.size(); }
 
-  typedef std::set<Time> Time_s;
   Time_s times() const;
 
   ObsData_p get(const SensorTime& st) const;

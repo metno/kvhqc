@@ -22,7 +22,7 @@ TimeBuffer::TimeBuffer(SignalRequest_p request)
 {
 }
 
-TimeBuffer::Time_s TimeBuffer::times() const
+Time_s TimeBuffer::times() const
 {
   Time_s times;
   for (ObsDataByTime_ps::iterator itD = mData.begin(); itD != mData.end(); ++itD)

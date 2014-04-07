@@ -33,6 +33,7 @@ public:
   void setTimeSpan(const TimeSpan& tr);
 
   virtual const Sensor& sensor() const;
+  virtual Time_s times() const;
   virtual int type() const
     { return mItem->type(); }
 

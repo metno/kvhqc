@@ -4,6 +4,7 @@
 #include "common/SensorHeader.hh"
 #include "util/make_set.hh"
 
+#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.DataColumn"
@@ -15,11 +16,13 @@ DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t,
   , mItem(item)
   , mHeaderShowStation(true)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(sensor) << LOGVAL(t));
   TimeBuffer* b = mBuffer.get();
   connect(b, SIGNAL(bufferCompleted(bool)),            this, SLOT(onBufferCompleted(bool)));
-  connect(b, SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(newDataEnd(const ObsData_pv&)));
-  connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(updateDataEnd(const ObsData_pv&)));
-  connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(dropDataEnd(const SensorTime_v&)));
+  connect(b, SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(onNewDataEnd(const ObsData_pv&)));
+  connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
+  connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
+  mBuffer->postRequest(mDA);
 }
       
 DataColumn::~DataColumn()
@@ -51,6 +54,8 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
       
 void DataColumn::onBufferCompleted(bool failed)
 {
+  METLIBS_LOG_SCOPE();
+  Q_EMIT columnTimesChanged(shared_from_this());
 }
 
 void DataColumn::onNewDataEnd(const ObsData_pv& data)
@@ -59,6 +64,15 @@ void DataColumn::onNewDataEnd(const ObsData_pv& data)
 
 void DataColumn::onUpdateDataEnd(const ObsData_pv& data)
 {
+  METLIBS_LOG_SCOPE();
+  BOOST_FOREACH(ObsData_p obs, data) {
+    Q_EMIT columnChanged(obs->sensorTime().time, shared_from_this());
+  }
+}
+
+Time_s DataColumn::times() const
+{
+  return mBuffer->times();
 }
 
 void DataColumn::onDropDataEnd(const SensorTime_v& dropped)

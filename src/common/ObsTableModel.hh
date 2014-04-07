@@ -71,8 +71,11 @@ protected:
 private:
   typedef std::vector<ObsColumn_p> ObsColumns_t;
 
-private:
+private Q_SLOTS:
   void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
+  void onColumnTimesChanged(ObsColumn_p column);
+
+private:
   int timeIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.row() : index.column(); }
   int columnIndex(const QModelIndex& index) const

@@ -45,8 +45,12 @@ void ObsTableModel::insertColumn(int before, ObsColumn_p c)
   //beginInsertC(before, before);
 
   mColumns.insert(mColumns.begin() + before, c);
-  if (c)
-    ;//connect(c->columnChanged.connect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+  if (c) {
+    connect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
+        this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
+    connect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
+        this, SLOT(onColumnTimesChanged(ObsColumn_p)));
+  }
   updateTimes();
 
   //endInsertC();
@@ -79,8 +83,12 @@ void ObsTableModel::removeColumn(int at)
 
   const ObsColumns_t::iterator it = mColumns.begin() + at;
   ObsColumn_p c = *it;
-  if (c)
-    ;//c->columnChanged.disconnect(boost::bind(&ObsTableModel::onColumnChanged, this, _1, _2));
+  if (c) {
+    disconnect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
+        this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
+    disconnect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
+        this, SLOT(onColumnTimesChanged(ObsColumn_p)));
+  }
   mColumns.erase(it);
   updateTimes();
 
@@ -303,4 +311,12 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p col
   
   const QModelIndex index = createIndex(row, (it - mColumns.begin()));
   dataChanged(index, index);
+}
+
+void ObsTableModel::onColumnTimesChanged(ObsColumn_p column)
+{
+  METLIBS_LOG_SCOPE();
+  beginResetModel();
+  updateTimes();
+  endResetModel();
 }

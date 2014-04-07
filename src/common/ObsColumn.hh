@@ -11,7 +11,8 @@
 class ObsColumn;
 HQC_TYPEDEF_P(ObsColumn);
 
-class ObsColumn : public QObject, public boost::enable_shared_from_this<ObsColumn> {
+class ObsColumn : public QObject, public boost::enable_shared_from_this<ObsColumn>
+{ Q_OBJECT;
 public:
   enum ValueType { Numerical=1, TextCode=2, Text=4 };
   enum { ValueTypeRole = Qt::UserRole, TextCodesRole, TextCodeExplanationsRole };
@@ -32,9 +33,13 @@ public:
   
   virtual const boost::posix_time::time_duration& timeOffset() const = 0;
   virtual const Sensor& sensor() const;
+  virtual Time_s times() const
+    { return Time_s(); }
   virtual int type() const = 0;
-  
-  //boost::signal2<void, timeutil::ptime, ObsColumn_p> columnChanged;
+
+Q_SIGNALS:
+  void columnChanged(const timeutil::ptime& time, ObsColumn_p column);
+  void columnTimesChanged(ObsColumn_p column);
   
 protected:
   boost::posix_time::time_duration mTimeOffset;

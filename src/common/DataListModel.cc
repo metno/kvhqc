@@ -60,16 +60,16 @@ void DataListModel::updateTimes()
   METLIBS_LOG_SCOPE();
   ObsTableModel::updateTimes();
 
-#if 0
   std::set<Time> oldTimes(mTimes.begin(), mTimes.end()), newTimes;
   for (int i=0; i<columnCount(QModelIndex()); ++i) {
     ObsColumn_p c = getColumn(i);
-    if (c)
-      mDA->addAllTimes(newTimes, c->sensor(), mTime);
+    if (c) {
+      const Time_s ct = c->times();
+      newTimes.insert(ct.begin(), ct.end());
+    }
   }
 
   mTimes = Times_t(newTimes.begin(), newTimes.end());
-#endif
 
   if (getTimeStep() > 0 and mFilterByTimestep) {
     mTimesFiltered.clear();

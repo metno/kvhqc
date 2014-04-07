@@ -534,7 +534,7 @@ void TimeSeriesView::onDataComplete()
       break;
     }
 
-    const TimeBuffer::Time_s times = mObsBuffer->times();
+    const Time_s times = mObsBuffer->times();
     METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(times.size()));
     if (times.empty())
       continue;

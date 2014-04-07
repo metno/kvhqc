@@ -31,9 +31,12 @@
 #define COMMON_TIMERANGE_HH 1
 
 #include "util/timeutil.hh"
+
 #include <iosfwd>
+#include <set>
 
 typedef timeutil::ptime Time;
+typedef std::set<Time> Time_s;
 
 class TimeSpan {
 public:

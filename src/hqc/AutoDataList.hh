@@ -69,8 +69,6 @@ private:
   QPushButton* mButtonEarlier;
   QPushButton* mButtonLater;
 
-  EditAccess_p mDA;
-  ModelAccessPtr mMA;
   TimeSpan mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
 
