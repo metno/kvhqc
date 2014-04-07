@@ -83,7 +83,7 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
       const int sensornr  = query.value(col++).toInt();
       
       const Time  obstime   = my_qsql_time(query.value(col++));
-      const float original  = query.value(col++).toInt();
+      const float original  = query.value(col++).toFloat();
       const Time  tbtime    = my_qsql_time(query.value(col++));
       const float corrected = query.value(col++).toFloat();;
       const kvalobs::kvControlInfo controlinfo(my_qsql_string(query.value(col++)));
