@@ -196,7 +196,8 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
 
   if (c.type == MODEL) {
     ModelColumnPtr mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
-    mc->setTimeOffset(toff);
+    if (mc and c.timeOffset != 0)
+      mc->setTimeOffset(boost::posix_time::hours(c.timeOffset));
     return mc;
   } else {
     ObsColumn::Type cdt = ObsColumn::NEW_CORRECTED;
@@ -205,8 +206,8 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
     else if (c.type == FLAGS)
       cdt = ObsColumn::NEW_CONTROLINFO;
     DataColumn_p dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
-    if (dc)
-      dc->setTimeOffset(toff);
+    if (dc and c.timeOffset != 0)
+      dc->setTimeOffset(boost::posix_time::hours(c.timeOffset));
     return dc;
   }
 }
