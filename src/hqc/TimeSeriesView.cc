@@ -511,8 +511,11 @@ void TimeSeriesView::updatePlot()
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
   mObsBuffer->postRequest(mDA);
 
-  // FIXME this is really slow sometimes (several seconds)
-  mMA->allData(mSensors, mTimeLimits);
+  const int whatToPlot = ui->comboWhatToPlot->currentIndex();
+  if (whatToPlot == 1 or whatToPlot == 2) {
+    // FIXME this is really slow sometimes (several seconds)
+    mMA->allData(mSensors, mTimeLimits);
+  }
 }
 
 void TimeSeriesView::onDataComplete()
