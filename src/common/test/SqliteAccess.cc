@@ -53,7 +53,7 @@ SqliteHandler::~SqliteHandler()
 
 // ------------------------------------------------------------------------
 
-ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
+void SqliteHandler::queryData(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
 
@@ -105,7 +105,8 @@ ObsData_pv SqliteHandler::queryData(ObsRequest_p request)
 
   finalize_statement(stmt, step);
 
-  return data;
+  Q_EMIT newData(request, data);
+  Q_EMIT newData(request, ObsData_pv());
 }
 
 // ------------------------------------------------------------------------

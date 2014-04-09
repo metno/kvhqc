@@ -6,13 +6,16 @@
 #include <QtCore/QSemaphore>
 #include <string>
 
-class BackgroundHandler
-{
+class BackgroundHandler : public QObject
+{ Q_OBJECT;
 public:
   virtual ~BackgroundHandler();
   virtual void initialize() = 0;
   virtual void finalize() = 0;
-  virtual ObsData_pv queryData(ObsRequest_p request) = 0;
+  virtual void queryData(ObsRequest_p request) = 0;
+
+Q_SIGNALS:
+  void newData(ObsRequest_p request, const ObsData_pv& data);
 };
 
 HQC_TYPEDEF_P(BackgroundHandler);

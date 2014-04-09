@@ -13,7 +13,7 @@ public:
   virtual void initialize() { }
   virtual void finalize() { }
 
-  ObsData_pv queryData(ObsRequest_p request);
+  void queryData(ObsRequest_p request);
   void exec(const std::string& sql);
 
 private:

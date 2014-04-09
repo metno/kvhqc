@@ -32,6 +32,8 @@ Time my_qsql_time(const QVariant& v)
 
 const QString QDBNAME = "kvalobs_bg";
 
+const size_t QUERY_DATA_CHUNKSIZE = 32;
+
 } // namespace anonymous
 
 // ========================================================================
@@ -50,7 +52,7 @@ void KvalobsHandler::finalize()
 
 // ------------------------------------------------------------------------
 
-ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
+void KvalobsHandler::queryData(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
 
@@ -96,13 +98,18 @@ ObsData_pv KvalobsHandler::queryData(ObsRequest_p request)
       if ((not filter) or filter->accept(kd, true)) {
         //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
         data.push_back(kd);
+        if (data.size() >= QUERY_DATA_CHUNKSIZE) {
+          Q_EMIT newData(request, data);
+          data.clear();
+        }
       }
     }
+    if (not data.empty())
+      Q_EMIT newData(request, data);
+    Q_EMIT newData(request, ObsData_pv());
   } else {
     HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
   }
-
-  return data;
 }
 
 // ========================================================================

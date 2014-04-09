@@ -20,6 +20,8 @@ BackgroundThread::BackgroundThread(BackgroundHandler_p handler)
   , mDone(false)
 {
   METLIBS_LOG_SCOPE();
+  connect(mHandler.get(), SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
+      this, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)));
 }
 
 BackgroundThread::~BackgroundThread()
@@ -60,11 +62,8 @@ void BackgroundThread::run()
     }
     mMutex.unlock();
 
-    if (request) {
-      ObsData_pv data = mHandler->queryData(request);
-      // TODO why lock before emit in example?
-      Q_EMIT newData(request, data);
-    }
+    if (request)
+      mHandler->queryData(request);
   }
   mHandler->finalize();
 }
@@ -79,6 +78,9 @@ BackgroundAccess::BackgroundAccess(BackgroundHandler_p handler, bool useThread)
   if (useThread) {
     mThread = new BackgroundThread(mHandler);
     connect(mThread, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
+        this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
+  } else {
+    connect(mHandler.get(), SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
         this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
   }
 }
@@ -100,7 +102,7 @@ void BackgroundAccess::postRequest(ObsRequest_p request)
   if (mThread)
     mThread->enqueueRequest(request);
   else
-    onNewData(request, mHandler->queryData(request));
+    mHandler->queryData(request);
 }
 
 // ------------------------------------------------------------------------
@@ -112,8 +114,10 @@ void BackgroundAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
   ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
   if (it != mRequests.end()) {
     METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
-    request->newData(data); // FIXME this is not exception safe
-    request->completed(false);
+    if (not data.empty())
+      request->newData(data); // FIXME this is not exception safe
+    else
+      request->completed(false);
   } else {
     METLIBS_LOG_DEBUG("request has been dropped, do nothing");
   }
