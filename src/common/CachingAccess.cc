@@ -224,7 +224,12 @@ bool filtersCompatible(ObsFilter_p fa, ObsFilter_p fb)
 
 class SensorTodo {
 public:
-  typedef std::pair<Time, bool> t0_closed;
+  struct t0_closed {
+    Time t0;
+    bool closed;
+    t0_closed(const Time& t)
+      : t0(t), closed(false) { }
+  };
   typedef std::map<Sensor, t0_closed, lt_Sensor> Sensor_todo;
   Sensor_todo todo;
 
@@ -232,7 +237,7 @@ public:
   
   SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsFilter_p filter, const Time& t0);
 
-  void requestBuffers(const Sensor_s& intersection, const TimeSpan& time);
+  void requestBuffers(const Sensor_s& intersection, const TimeSpan& time, bool close);
 
   void post();
 
@@ -243,7 +248,7 @@ private:
   /** group sensors in 'both' by needed TimeSpan to time.t0(), update
    * todo for all of them to time.t1()
    */
-  Time_Sensors_m calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time);
+  Time_Sensors_m calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time, bool close);
 
 private:
   CachingAccessPrivate_p mCAP;
@@ -255,14 +260,15 @@ SensorTodo::SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsF
   : mCAP(cap)
   , mFilter(filter)
 {
-  const t0_closed tcinit(t0, false);
+  const t0_closed tcinit(t0);
   BOOST_FOREACH(const Sensor& s, sensors) {
     todo.insert(std::make_pair(s, tcinit));
   }
 }
 
-SensorTodo::Time_Sensors_m SensorTodo::calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time)
+SensorTodo::Time_Sensors_m SensorTodo::calculateRequestSpans(const Sensor_s& sensors, const TimeSpan& time, bool close)
 {
+  METLIBS_LOG_SCOPE();
   Time_Sensors_m tsm;
   BOOST_FOREACH(const Sensor& s, sensors) {
     Sensor_todo::iterator it = todo.find(s);
@@ -271,18 +277,19 @@ SensorTodo::Time_Sensors_m SensorTodo::calculateRequestSpans(const Sensor_s& sen
       continue;
     }
     t0_closed& tc = it->second;
-    if (time.t0() > tc.first)
-      tsm[tc.first].insert(s);
-    tc.first = time.t1();
-    tc.second = true;
+    METLIBS_LOG_DEBUG(LOGVAL(tc.t0) << LOGVAL(tc.closed));
+    if (time.t0() > tc.t0 or (close and not tc.closed and time.t0() == tc.t0))
+      tsm[tc.t0].insert(s);
+    tc.t0 = time.t1();
+    tc.closed = true;
   }
   return tsm;
 }
 
-void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& time)
+void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& time, bool close)
 {
   METLIBS_LOG_SCOPE(LOGVAL(intersection) << LOGVAL(time));
-  const Time_Sensors_m tsm = calculateRequestSpans(intersection, time);
+  const Time_Sensors_m tsm = calculateRequestSpans(intersection, time, close);
   BOOST_FOREACH(const Time_Sensors_m::value_type& ts, tsm) {
     const TimeSpan trequest(ts.first, time.t0());
     BackendBuffer_p bb = mCAP->create(ts.second, trequest, mFilter);
@@ -338,7 +345,7 @@ void CachingAccess::postRequest(ObsRequest_p request)
     // for those in intersection, we make new requests for before the
     // buffer, and then put the buffer into the backendbuffer list
     if (not intersection.empty()) {
-      todo.requestBuffers(intersection, bbt);
+      todo.requestBuffers(intersection, bbt, false);
 
       // add the buffer for those we already had fetched
       todo.shared().push_back(bb);
@@ -349,7 +356,7 @@ void CachingAccess::postRequest(ObsRequest_p request)
   }
 
   const Time& rt1 = request->timeSpan().t1();
-  todo.requestBuffers(rsensors, TimeSpan(rt1, rt1));
+  todo.requestBuffers(rsensors, TimeSpan(rt1, rt1), true);
 
   request->setTag(new CacheTag(request, todo.shared()));
 

@@ -1,6 +1,7 @@
 
 #include "CachingAccess.hh"
 #include "SqliteAccess.hh"
+#include "SingleObsBuffer.hh"
 #include "TimeBuffer.hh"
 
 #include "util/make_set.hh"
@@ -39,7 +40,7 @@ HQC_TYPEDEF_P(CountingBuffer);
 
 // ========================================================================
 
-TEST(CachingAccessTest, Single)
+TEST(CachingAccessTest, SingleSensor)
 {
   SqliteAccess_p sqla(new SqliteAccess);
   sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
@@ -96,7 +97,7 @@ TEST(CachingAccessTest, Single)
   }
 }
 
-TEST(CachingAccessTest, Multi)
+TEST(CachingAccessTest, MultipleSensor)
 {
   SqliteAccess_p sqla(new SqliteAccess);
   sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18700_20140304.txt");
@@ -141,5 +142,57 @@ TEST(CachingAccessTest, Multi)
     EXPECT_EQ(5, sqla->countPost());
     EXPECT_EQ(20, counter->size());
     EXPECT_EQ(1, counter->countComplete);
+  }
+}
+
+TEST(CachingAccessTest, SingleObsAfterRange)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+
+  const Sensor sensor(18210, 211, 0, 0, 514);
+
+  // this assumes that SqliteAccess is syncronous
+  { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
+    CountingBuffer_p counter(new CountingBuffer(sensor, time));
+    counter->postRequest(ca);
+    EXPECT_EQ(1, sqla->countPost());
+    EXPECT_EQ(1, counter->countNew);
+    EXPECT_EQ(2*24 + 1, counter->size());
+    EXPECT_EQ(1, counter->countComplete);
+  }
+
+  { const SensorTime st(sensor, s2t("2013-04-01 00:00:00"));
+    SingleObsBuffer_p obs1(new SingleObsBuffer(st));
+    obs1->postRequest(ca);
+    EXPECT_TRUE(obs1->get());
+  }
+
+  { const SensorTime st(sensor, s2t("2013-04-01 01:00:00"));
+    SingleObsBuffer_p obs1(new SingleObsBuffer(st));
+    obs1->postRequest(ca);
+    EXPECT_TRUE(obs1->get());
+  }
+  { const SensorTime st(sensor, s2t("2013-04-01 03:00:00"));
+    SingleObsBuffer_p obs1(new SingleObsBuffer(st));
+    obs1->postRequest(ca);
+    EXPECT_TRUE(obs1->get());
+  }
+}
+
+TEST(CachingAccessTest, SingleObs)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+
+  const Sensor sensor(18210, 211, 0, 0, 514);
+
+  // this assumes that SqliteAccess is syncronous
+  { const SensorTime st(sensor, s2t("2013-04-01 00:00:00"));
+    SingleObsBuffer_p obs1(new SingleObsBuffer(st));
+    obs1->postRequest(ca);
+    EXPECT_TRUE(obs1->get());
   }
 }
