@@ -68,9 +68,6 @@ protected:
 
   virtual void updateTimes();
 
-private:
-  typedef std::vector<ObsColumn_p> ObsColumns_t;
-
 private Q_SLOTS:
   void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
   void onColumnTimesChanged(ObsColumn_p column);
@@ -90,7 +87,7 @@ protected:
   int mRowCount; //! number of rows after rounding
 
 private:
-  ObsColumns_t mColumns;
+  ObsColumn_pv mColumns;
 };
 
 #endif /* OBSTABLEMODEL_HH */

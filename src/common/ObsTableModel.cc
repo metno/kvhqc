@@ -26,6 +26,10 @@ ObsTableModel::ObsTableModel(EditAccess_p da, const TimeSpan& time, int step)
 
 ObsTableModel::~ObsTableModel()
 {
+  BOOST_FOREACH(ObsColumn_p c, mColumns) {
+    if (c)
+      c->detach(this);
+  }
 }
 
 void ObsTableModel::setTimeInRows(bool tir)
@@ -50,6 +54,7 @@ void ObsTableModel::insertColumn(int before, ObsColumn_p c)
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     connect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
         this, SLOT(onColumnTimesChanged(ObsColumn_p)));
+    c->attach(this);
   }
   updateTimes();
 
@@ -81,9 +86,10 @@ void ObsTableModel::removeColumn(int at)
   beginResetModel();
   //beginRemoveC(at, at);
 
-  const ObsColumns_t::iterator it = mColumns.begin() + at;
+  const ObsColumn_pv::iterator it = mColumns.begin() + at;
   ObsColumn_p c = *it;
   if (c) {
+    c->detach(this);
     disconnect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     disconnect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
@@ -301,7 +307,7 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p col
 {
   METLIBS_LOG_SCOPE();
 
-  const ObsColumns_t::const_iterator it = std::find(mColumns.begin(), mColumns.end(), column);
+  const ObsColumn_pv::const_iterator it = std::find(mColumns.begin(), mColumns.end(), column);
   if (it == mColumns.end())
     return;
 

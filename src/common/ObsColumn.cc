@@ -1,6 +1,14 @@
 
 #include "ObsColumn.hh"
 
+void ObsColumn::attach(ObsTableModel*)
+{
+}
+
+void ObsColumn::detach(ObsTableModel*)
+{
+}
+
 Qt::ItemFlags ObsColumn::flags(const timeutil::ptime& /*time*/) const
 {
     return Qt::ItemIsEnabled;

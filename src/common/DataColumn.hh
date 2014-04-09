@@ -17,6 +17,8 @@ public:
   void setHeaderShowStation(bool show)
     { mHeaderShowStation = show; }
 
+  virtual void attach(ObsTableModel* table);
+
   virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
   virtual QVariant data(const timeutil::ptime& time, int role) const;
   virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);

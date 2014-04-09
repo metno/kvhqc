@@ -22,6 +22,9 @@
 #define HQC_TYPEDEF_X(klazz) \
   typedef klazz* klazz ## _x
 
+#define HQC_TYPEDEF_XV(klazz) \
+  typedef std::vector<klazz ## _x> klazz ## _xv
+
 #define HQC_TYPEDEF_S(klazz) \
   typedef std::set<klazz> klazz ## _s
 

@@ -22,11 +22,16 @@ DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t,
   connect(b, SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(onNewDataEnd(const ObsData_pv&)));
   connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
   connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
-  mBuffer->postRequest(mDA);
 }
       
 DataColumn::~DataColumn()
 {
+}
+
+void DataColumn::attach(ObsTableModel*)
+{
+  METLIBS_LOG_SCOPE();
+  mBuffer->postRequest(mDA);
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const

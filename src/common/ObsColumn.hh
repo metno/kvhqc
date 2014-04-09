@@ -10,6 +10,9 @@
 
 class ObsColumn;
 HQC_TYPEDEF_P(ObsColumn);
+HQC_TYPEDEF_PV(ObsColumn);
+
+class ObsTableModel;
 
 class ObsColumn : public QObject, public boost::enable_shared_from_this<ObsColumn>
 { Q_OBJECT;
@@ -25,6 +28,9 @@ public:
   
   ObsColumn() { }
   virtual ~ObsColumn() { }
+
+  virtual void attach(ObsTableModel* table);
+  virtual void detach(ObsTableModel* table);
   
   virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
   virtual QVariant data(const timeutil::ptime& time, int role) const = 0;
