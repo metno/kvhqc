@@ -47,6 +47,8 @@ void KvalobsHandler::initialize()
 
 void KvalobsHandler::finalize()
 {
+  METLIBS_LOG_SCOPE();
+  mKvalobsDB.close();
   QSqlDatabase::removeDatabase(QDBNAME);
 }
 
