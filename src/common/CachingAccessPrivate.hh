@@ -90,6 +90,10 @@ HQC_TYPEDEF_X(CacheTag);
 struct BackendBuffer_by_t0 {
   bool operator()(BackendBuffer_p a, BackendBuffer_p b) const
     { return a->timeSpan().t0() < b->timeSpan().t0(); }
+  bool operator()(const Time& ta, BackendBuffer_p b) const
+    { return ta < b->timeSpan().t0(); }
+  bool operator()(BackendBuffer_p a, const Time& tb) const
+    { return a->timeSpan().t0() < tb; }
 };
 
 // ========================================================================
@@ -115,13 +119,7 @@ public:
   void clean(const Time& dropBefore);
 
   ObsAccess_p backend;
-  
-  //typedef std::set<BackendBuffer_p, BackendBuffer_by_t0> Buffer_s;
-  //typedef std::map<Sensor, Buffer_s, lt_Sensor> Sensor_Buffer_m;
-  //Sensor_Buffer_m mSensorBuffers;
-
-  typedef std::set<BackendBuffer_p, BackendBuffer_by_t0> Time0_Buffer_s;
-  Time0_Buffer_s mBuffers;
+  BackendBuffer_pl mBuffers;
 };
 
 #endif // ACCESS_CACHINGACCESSPRIVATE_HH

@@ -20,17 +20,17 @@ BackendBuffer::BackendBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, 
   , mUseCount(0)
   , mUnusedSince(timeutil::now())
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(sensors) << LOGVAL(timeSpan));
 }
 
 BackendBuffer::~BackendBuffer()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(sensors()) << LOGVAL(timeSpan()) << LOGVAL(mUseCount));
 }
 
 void BackendBuffer::drop()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(mUseCount));
+  METLIBS_LOG_SCOPE(LOGVAL(sensors()) << LOGVAL(timeSpan()) << LOGVAL(mUseCount));
   mUseCount -= 1;
   if (isUnused())
     mUnusedSince = timeutil::now();
@@ -75,7 +75,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
 
 CacheTag::~CacheTag()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(mRequest->timeSpan()));
   BOOST_FOREACH(BackendBuffer_p bb, mBackendBuffers) {
     bb->drop();
   }
@@ -165,6 +165,7 @@ CachingAccessPrivate::CachingAccessPrivate(ObsAccess_p b)
 
 CachingAccessPrivate::~CachingAccessPrivate()
 {
+  METLIBS_LOG_SCOPE();
   // clear cache is automatic
 }
 
@@ -172,15 +173,16 @@ BackendBuffer_p CachingAccessPrivate::create(const Sensor_s& sensors, const Time
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensors) << LOGVAL(time));
   BackendBuffer_p bb = boost::make_shared<BackendBuffer>(sensors, time, filter);
-  mBuffers.insert(bb);
+  BackendBuffer_pl::iterator it = std::upper_bound(mBuffers.begin(), mBuffers.end(), time.t0(), BackendBuffer_by_t0());
+  mBuffers.insert(it, bb);
   return bb;
 }
 
 void CachingAccessPrivate::clean(const Time& dropBefore)
 {
   METLIBS_LOG_SCOPE();
-  for (Time0_Buffer_s::iterator itB = mBuffers.begin(); itB != mBuffers.end(); /*copy before increment*/) {
-    Time0_Buffer_s::iterator itB_erase = itB++;
+  for (BackendBuffer_pl::iterator itB = mBuffers.begin(); itB != mBuffers.end(); /*copy before increment*/) {
+    BackendBuffer_pl::iterator itB_erase = itB++;
     BackendBuffer_p bb = *itB_erase;
 
     if (bb->isUnused() and bb->unusedSince() < dropBefore) {
@@ -199,6 +201,7 @@ CachingAccess::CachingAccess(ObsAccess_p backend)
 
 CachingAccess::~CachingAccess()
 {
+  METLIBS_LOG_SCOPE();
 }
 
 void CachingAccess::cleanCache(const Time& dropBefore)
@@ -280,7 +283,6 @@ void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& ti
 {
   METLIBS_LOG_SCOPE(LOGVAL(intersection) << LOGVAL(time));
   const Time_Sensors_m tsm = calculateRequestSpans(intersection, time);
-  BackendBuffer_pl buffers;
   BOOST_FOREACH(const Time_Sensors_m::value_type& ts, tsm) {
     const TimeSpan trequest(ts.first, time.t0());
     BackendBuffer_p bb = mCAP->create(ts.second, trequest, mFilter);
