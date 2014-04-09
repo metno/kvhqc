@@ -21,7 +21,6 @@
 
 #include "ui_datalist.h"
 
-#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.AutoDataList"
 #include "common/ObsLogging.hh"
 

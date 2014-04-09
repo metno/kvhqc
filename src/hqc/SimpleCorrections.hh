@@ -31,7 +31,6 @@ protected:
   
 private:
   void enableEditing();
-  void update();
   void adjustSizes();
 
 private Q_SLOTS:
@@ -43,6 +42,7 @@ private Q_SLOTS:
 
   void onNewCorrected();
 
+  void update();
   void onDataChanged();
 
 private:

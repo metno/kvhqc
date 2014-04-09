@@ -88,8 +88,7 @@ void SimpleCorrections::setDataAccess(EditAccess_p eda, ModelAccess_p mda)
 
 void SimpleCorrections::navigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(st));
+  METLIBS_LOG_TIME(LOGVAL(st));
   
   mChecksModel->navigateTo(st);
   ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
@@ -108,7 +107,16 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CORRECTED);
   }
 
-  update();
+  if (mDA) {
+    METLIBS_LOG_DEBUG("requesting " << mSensorTime);
+    mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
+    connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
+    connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
+    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(update()));
+    mObsBuffer->postRequest(mDA);
+  } else {
+    update();
+  }
 }
 
 namespace /* anonymous */
@@ -176,13 +184,10 @@ void SimpleCorrections::update()
 
     ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 
-    if (mDA) {
-      mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
-      mObsBuffer->syncRequest(mDA);
-      connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
-      connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
-      obs = mObsBuffer->get();
-    }
+    ObsData_p bobs = mObsBuffer->get();
+    // maybe the observation is from an old request?
+    if (bobs and eq_SensorTime()(bobs->sensorTime(), mSensorTime))
+      obs = bobs;
     if (mMA)
       mdl = mMA->find(mSensorTime);
   } else {

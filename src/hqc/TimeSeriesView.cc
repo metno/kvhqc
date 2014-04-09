@@ -97,13 +97,14 @@ TimeSeriesView::~TimeSeriesView()
                         
 void TimeSeriesView::storeChanges()
 {
+  METLIBS_LOG_TIME(LOGVAL(mSensorTime));
   if (mSensorTime.valid())
     ViewChanges::store(mSensorTime.sensor, VIEW_TYPE, ID, changes());
 }
 
 void TimeSeriesView::updateSensors()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(mSensors.size()));
+  METLIBS_LOG_TIME(LOGVAL(mSensors.size()));
 
   std::vector<POptions::yAxis> axes;
   axes.push_back(POptions::axis_left_left);
@@ -500,7 +501,7 @@ void TimeSeriesView::onDateToChanged(const QDateTime&)
 
 void TimeSeriesView::updatePlot()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   if (not mDA)
     return;
 
@@ -510,6 +511,7 @@ void TimeSeriesView::updatePlot()
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
   mObsBuffer->postRequest(mDA);
 
+  // FIXME this is really slow sometimes (several seconds)
   mMA->allData(mSensors, mTimeLimits);
 }
 

@@ -219,8 +219,6 @@ HqcMainWindow::HqcMainWindow()
   ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
   ui->dockHistory->setVisible(false);
 
-  mJumpToObservation = new JumpToObservation(cda, this);
-
   connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
   mVersionCheckTimer->setSingleShot(true);
 
@@ -256,10 +254,14 @@ HqcMainWindow::HqcMainWindow()
 #endif // ENABLE_REJECTEDOBS
 
   mAutoDataList->setDataAccess(eda, kma);
+  connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
+
   mTimeSeriesView->setDataAccess(eda, kma);
 
-  //mJumpToObservation->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-  //mAutoDataList     ->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+  mJumpToObservation = new JumpToObservation(cda, this);
+  connect(mJumpToObservation, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
 
   mAutoViewSplitter = new QSplitter(ui->tabs);
   mAutoViewSplitter->addWidget(mAutoDataList);
