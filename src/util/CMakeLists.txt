@@ -9,7 +9,9 @@ SET(util_SOURCES
   ValueChange.hh
   VersionedValue.hh
 
+  AnimatedLabel.cc
   BusyIndicator.cc
+  BusyLabel.cc
   EtaProgressBar.cc
   EtaProgressDialog.cc
   FrozenColumnTableView.cc
@@ -24,6 +26,8 @@ SET(util_SOURCES
 )
 
 QT4_WRAP_CPP(util_MOC
+  AnimatedLabel.hh
+  BusyLabel.hh
   EtaProgressBar.hh
   FrozenColumnTableView.hh
   FrozenRowTableView.hh

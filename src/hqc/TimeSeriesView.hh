@@ -5,6 +5,7 @@
 #include "common/ObsAccess.hh"
 #include "common/TimeBuffer.hh"
 #include "common/ModelAccess.hh"
+#include "util/BusyLabel.hh"
 
 #include "qtimeseries/PlotOptions.h"
 
@@ -74,6 +75,7 @@ private:
   QAction* mColumnAdd;
   QAction* mColumnRemove;
   QAction* mColumnReset;
+  BusyLabel* mBusy;
 
   ObsAccess_p mDA;
   ModelAccess_p mMA;

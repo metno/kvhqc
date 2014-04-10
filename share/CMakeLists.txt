@@ -24,6 +24,7 @@ INSTALL(FILES
   images/kv_ok.svg
   images/search_red.svg
   images/filter.svg
+  images/busy_animation.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

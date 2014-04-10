@@ -64,6 +64,9 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
       << tr("Difference"));
   ui->comboWhatToPlot->setCurrentIndex(0);
 
+  mBusy = new BusyLabel(this);
+  ui->topRow->addWidget(mBusy);
+
   mColumnMenu = new QMenu(this);
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add..."), this, SLOT(onActionAddColumn()));
   mColumnRemove = mColumnMenu->addAction(QIcon("icons:dl_columns_remove.svg"), tr("Remove..."), this, SLOT(onActionRemoveColumns()));
@@ -509,6 +512,7 @@ void TimeSeriesView::updatePlot()
   connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(onDataComplete()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
+  mBusy->setBusy(true);
   mObsBuffer->postRequest(mDA);
 
   const int whatToPlot = ui->comboWhatToPlot->currentIndex();
@@ -521,6 +525,7 @@ void TimeSeriesView::updatePlot()
 void TimeSeriesView::onDataComplete()
 {
   METLIBS_LOG_SCOPE();
+  mBusy->setBusy(false);
   if (not mObsBuffer or mPlotOptions.empty())
     return;
 
