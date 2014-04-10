@@ -2,7 +2,7 @@
 #include "CachingAccess.hh"
 #include "SqliteAccess.hh"
 #include "SingleObsBuffer.hh"
-#include "TimeBuffer.hh"
+#include "CountingBuffer.hh"
 
 #include "util/make_set.hh"
 
@@ -12,29 +12,6 @@ namespace /*anonymous*/ {
 
 inline timeutil::ptime s2t(const std::string& t)
 { return timeutil::from_iso_extended_string(t); }
-
-class CountingBuffer : public TimeBuffer
-{
-public:
-  CountingBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p())
-    : TimeBuffer(sensors, timeSpan, filter), countComplete(0), countNew(0), countUpdate(0) { }
-
-  CountingBuffer(const Sensor& sensor, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p())
-    : TimeBuffer(make_set<Sensor_s>(sensor), timeSpan, filter), countComplete(0), countNew(0), countUpdate(0) { }
-
-  virtual void completed(bool failed)
-    { TimeBuffer::completed(failed); countComplete += 1; }
-
-  virtual void onNewData(const ObsData_pv& data)
-    { TimeBuffer::onNewData(data); countNew += 1; }
-
-  virtual void onUpdateData(const ObsData_pv& data)
-    { TimeBuffer::onUpdateData(data); countUpdate += 1; }
-
-  size_t countComplete, countNew, countUpdate;
-};
-
-HQC_TYPEDEF_P(CountingBuffer);
 
 } // namespace anonymous
 
@@ -194,5 +171,68 @@ TEST(CachingAccessTest, SingleObs)
     SingleObsBuffer_p obs1(new SingleObsBuffer(st));
     obs1->postRequest(ca);
     EXPECT_TRUE(obs1->get());
+  }
+}
+
+TEST(CachingAccessTest, Update)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+
+  const Sensor sensor(18210, 211, 0, 0, 514);
+
+  { const TimeSpan time1(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 03:00:00"));
+    const TimeSpan time2(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 01:00:00"));
+    const TimeSpan time3(s2t("2013-04-01 02:00:00"), s2t("2013-04-01 03:00:00"));
+    CountingBuffer_p counter1(new CountingBuffer(sensor, time1));
+    CountingBuffer_p counter2(new CountingBuffer(sensor, time2));
+    CountingBuffer_p counter3(new CountingBuffer(sensor, time3));
+    counter1->postRequest(ca);
+    counter2->postRequest(ca);
+    counter3->postRequest(ca);
+    
+    EXPECT_EQ(1, counter1->countNew);
+    EXPECT_EQ(1, counter2->countNew);
+    EXPECT_EQ(2, counter2->size());
+    EXPECT_EQ(1, counter3->countNew);
+    
+    ObsUpdate_pv updated;
+    
+    ObsData_p obs = counter1->get(SensorTime(sensor, time1.t0()));
+    ASSERT_TRUE(obs);
+    ObsUpdate_p ou = ca->createUpdate(obs);
+    ASSERT_TRUE(ou);
+    ou->setCorrected(-12.3);
+    updated.push_back(ou);
+    
+    obs = counter1->get(SensorTime(sensor, s2t("2013-04-01 01:00:00")));
+    ASSERT_TRUE(obs);
+    ou = ca->createUpdate(obs);
+    ASSERT_TRUE(ou);
+    ou->setCorrected(-21.0);
+    updated.push_back(ou);
+    
+    ou = ca->createUpdate(SensorTime(sensor, s2t("2013-04-01 00:30:00")));
+    ASSERT_TRUE(ou);
+    ou->setCorrected(-1.0);
+    updated.push_back(ou);
+    
+    EXPECT_TRUE(ca->storeUpdates(updated));
+    EXPECT_EQ(2, counter1->countNew);
+    EXPECT_EQ(2, counter2->countNew);
+    EXPECT_EQ(1, counter3->countNew);
+    
+    EXPECT_EQ(1, counter1->countUpdate);
+    EXPECT_EQ(1, counter2->countUpdate);
+    EXPECT_EQ(0, counter3->countUpdate);
+  }
+
+  ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
+
+  { const TimeSpan time2(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 01:00:00"));
+    CountingBuffer_p counter2(new CountingBuffer(sensor, time2));
+    counter2->postRequest(ca);
+    EXPECT_EQ(3, counter2->size());
   }
 }

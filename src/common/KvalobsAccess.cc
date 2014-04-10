@@ -3,6 +3,7 @@
 #include "KvalobsAccessPrivate.hh"
 
 #include "KvalobsData.hh"
+#include "KvalobsUpdate.hh"
 #include "sqlutil.hh"
 #include "common/Functors.hh"
 #include "common/KvHelpers.hh"
@@ -116,57 +117,6 @@ void KvalobsHandler::queryData(ObsRequest_p request)
 
 // ========================================================================
 
-KvalobsUpdate::KvalobsUpdate(KvalobsData_p kvdata)
-  : mSensorTime(kvdata->sensorTime())
-  , mData(kvdata->data())
-  , mChanged(0)
-{
-}
-
-// ------------------------------------------------------------------------
-
-KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
-  : mSensorTime(st)
-  , mData(Helpers::getMissingKvData(st))
-  , mChanged(CHANGED_NEW)
-{
-}
-
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setCorrected(float c)
-{
-  if (Helpers::float_eq()(c, mData.corrected()))
-    mChanged &= ~CHANGED_CORRECTED;
-  else
-    mChanged |= CHANGED_CORRECTED;
-  mNewCorrected = c;
-}
-  
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci)
-{
-  if (ci != mData.controlinfo())
-    mChanged &= ~CHANGED_CONTROLINFO;
-  else
-    mChanged |= CHANGED_CONTROLINFO;
-  mNewControlinfo = ci;
-}
-  
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setCfailed(const std::string& cf)
-{
-  if (cf != mData.cfailed())
-    mChanged &= ~CHANGED_CFAILED;
-  else
-    mChanged |= CHANGED_CFAILED;
-  mNewCfailed = cf;
-}
-  
-// ========================================================================
-
 KvalobsAccess::KvalobsAccess()
   : BackgroundAccess(BackgroundHandler_p(new KvalobsHandler), true)
   , mDataReinserter(0)
@@ -224,9 +174,14 @@ void KvalobsAccess::checkUnsubscribe(const Sensor_s& sensors)
 
 // ------------------------------------------------------------------------
 
-void KvalobsAccess::onUpdated(const kvData_v&)
+void KvalobsAccess::onUpdated(const kvData_v& data)
 {
   METLIBS_LOG_SCOPE();
+  ObsData_pv updated;
+  updated.reserve(data.size());
+  for (kvData_v::const_iterator it=data.begin(); it!=data.end(); ++it)
+    updated.push_back(boost::make_shared<KvalobsData>(*it, false));
+  distributeUpdates(updated, ObsData_pv());
 }
 
 // ------------------------------------------------------------------------

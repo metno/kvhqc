@@ -81,12 +81,6 @@ CacheTag::~CacheTag()
   }
 }
 
-bool CacheTag::acceptObs(ObsData_p obs) const
-{
-  return mRequest->timeSpan().contains(obs->sensorTime().time)
-      and acceptFilter(obs);
-}
-
 ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn)
 {
   METLIBS_LOG_SCOPE();
@@ -128,13 +122,17 @@ void CacheTag::onBackendCompleted(bool failed)
 void CacheTag::onBackendNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  mRequest->newData(filterData(data));
+  const ObsData_pv fdata = filterData(data);
+  if (not fdata.empty())
+    mRequest->newData(fdata);
 }
 
 void CacheTag::onBackendUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  mRequest->updateData(filterData(data));
+  const ObsData_pv fdata = filterData(data);
+  if (not fdata.empty())
+    mRequest->updateData(fdata);
 }
 
 void CacheTag::onBackendDropData(const SensorTime_v& droppedIn)
@@ -153,7 +151,8 @@ void CacheTag::onBackendDropData(const SensorTime_v& droppedIn)
     droppedOut.push_back(*itI);
   }
 
-  mRequest->dropData(droppedOut);
+  if (not droppedOut.empty())
+    mRequest->dropData(droppedOut);
 }
 
 // ========================================================================

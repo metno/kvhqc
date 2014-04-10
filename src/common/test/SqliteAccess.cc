@@ -3,9 +3,12 @@
 #include "SqliteAccessPrivate.hh"
 
 #include "KvalobsData.hh"
+#include "KvalobsUpdate.hh"
 #include "SimpleBuffer.hh"
 
 #include "sqlutil.hh"
+
+#include "common/KvHelpers.hh"
 
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
@@ -31,6 +34,46 @@ Time my_sqlite3_time(sqlite3_stmt *stmt, int col)
 {
   return timeutil::from_iso_extended_string((const char*)(sqlite3_column_text(stmt, col)));
 }
+
+std::string sql4insert(const kvalobs::kvData& d)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO data VALUES("
+      << d.stationID() << ", "
+      << time2sql(d.obstime()) << ", "
+      << d.original() << ", "
+      << d.paramID() << ", "
+      << time2sql(d.tbtime()) << ", "
+      << d.typeID() << ", "
+      << "'" << d.sensor() << "',"
+      << d.level() << ", "
+      << d.corrected() << ", "
+      << "'" << d.controlinfo() << "', "
+      << "'" << d.useinfo() << "', "
+      << "'" << d.cfailed() << "')";
+  return sql.str();
+}
+
+std::string sql4update(const kvalobs::kvData& d)
+{
+  std::ostringstream sql;
+  sql << "UPDATE data SET "
+      << " corrected = " << d.corrected() << ", "
+      << " controlinfo = '" << d.controlinfo().flagstring() << "', "
+      << " useinfo = '" << d.useinfo().flagstring() << "', "
+      << " cfailed = '" << d.cfailed() << "' "
+      << "WHERE stationid = " << d.stationID()
+      << "  AND obstime = " << time2sql(d.obstime())
+      << "  AND tbtime = " << time2sql(d.tbtime())
+      // << "  AND original = " << d.original()
+      << "  AND paramid = " << d.paramID()
+      << "  AND typeid = " << d.typeID()
+      << "  AND sensor = '" << d.sensor() << "'"
+      << "  AND level = " << d.level();
+  return sql.str();
+}
+
+typedef std::vector<kvalobs::kvData> kvData_v;
 
 } // namespace anonymous
 
@@ -206,21 +249,67 @@ void SqliteAccess::dropRequest(ObsRequest_p request)
 
 ObsUpdate_p SqliteAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return ObsUpdate_p();
+  return boost::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 // ------------------------------------------------------------------------
 
 ObsUpdate_p SqliteAccess::createUpdate(ObsData_p obs)
 {
-  return ObsUpdate_p();
+  return boost::make_shared<KvalobsUpdate>(boost::static_pointer_cast<KvalobsData>(obs));
 }
 
 // ------------------------------------------------------------------------
 
 bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
-  return false;
+  const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
+
+  kvData_v dataInsert, dataUpdate;
+  for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
+    KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
+    
+    kvalobs::kvData d = ou->data();
+    if (ou->changes() & KvalobsUpdate::CHANGED_CORRECTED)
+      d.corrected(ou->corrected());
+    if (ou->changes() & KvalobsUpdate::CHANGED_CONTROLINFO) {
+      d.controlinfo(ou->controlinfo());
+      Helpers::updateUseInfo(d);
+    }
+    if (ou->changes() & KvalobsUpdate::CHANGED_CFAILED)
+      d.controlinfo(ou->cfailed());
+
+    if ((ou->changes() & KvalobsUpdate::CHANGED_NEW)) {
+      Helpers::updateCfailed(d, "hqc-i");
+      // specify tbtime
+      d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
+          d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.sensor(), d.level(),
+          d.corrected(), d.controlinfo(), d.useinfo(), d.cfailed());
+      dataInsert.push_back(d);
+    } else {
+      Helpers::updateCfailed(d, "hqc-m");
+      dataUpdate.push_back(d);
+    }
+  }
+
+  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+
+  ObsData_pv inserted;
+  inserted.reserve(dataInsert.size());
+  for (kvData_v::const_iterator itI = dataInsert.begin(); itI != dataInsert.end(); ++itI) {
+    sqlite->exec(sql4insert(*itI));
+    inserted.push_back(boost::make_shared<KvalobsData>(*itI, false));
+  }
+
+  ObsData_pv updated;
+  updated.reserve(dataUpdate.size());
+  for (kvData_v::const_iterator itU = dataUpdate.begin(); itU != dataUpdate.end(); ++itU) {
+    sqlite->exec(sql4update(*itU));
+    updated.push_back(boost::make_shared<KvalobsData>(*itU, false));
+  }
+
+  distributeUpdates(updated, inserted);
+  return true;
 }
 
 // ------------------------------------------------------------------------
@@ -232,7 +321,7 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
   std::string line;
 
   SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
-  const std::string tbtime = timeutil::to_iso_extended_string(timeutil::now());
+  const timeutil::ptime tbtime = timeutil::now();
 
   while (std::getline(f, line)) {
     if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
@@ -257,23 +346,13 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
     if (c<columns.size())
       cfailed = columns[c++];
 
+    const kvalobs::kvControlInfo ci(controlinfo);
     kvalobs::kvUseInfo ui;
     ui.setUseFlags(kvalobs::kvControlInfo(controlinfo));
     const std::string useinfo = ui.flagstring();
 
-    std::ostringstream sql;
-    sql << "INSERT INTO data VALUES("
-        << stationId << ", "
-        << "'" << obstime << "', "
-        << original << ", "
-        << paramId << ", "
-        << "'" << tbtime << "', "
-        << typeId << ", "
-        << "'0', 0, " // sensor + level
-        << corrected << ", "
-        << "'" << controlinfo << "', "
-        << "'" << useinfo << "', "
-        << "'" << cfailed << "')";
-    sqlite->exec(sql.str());
+    const kvalobs::kvData d(stationId, timeutil::from_iso_extended_string(obstime), original,
+        paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed);
+    sqlite->exec(sql4insert(d));
   }
 }

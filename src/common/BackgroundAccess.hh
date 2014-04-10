@@ -42,6 +42,8 @@ protected:
   const ObsRequest_pv& requests() const
     { return mRequests; }
 
+  void distributeUpdates(const ObsData_pv& updated, const ObsData_pv& inserted);
+
 private Q_SLOTS:
   void onNewData(ObsRequest_p request, const ObsData_pv& data);
 

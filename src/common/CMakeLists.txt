@@ -28,6 +28,7 @@ SET(common_SOURCES
   identifyUser.cc
   KvalobsModelAccess.cc
   KvalobsModelData.cc
+  KvalobsUpdate.cc
   KvalobsUpdateListener.cc
   KvHelpers.cc
   KvMetaDataBuffer.cc
