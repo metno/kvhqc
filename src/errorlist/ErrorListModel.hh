@@ -15,9 +15,10 @@ class ErrorListModel : public QAbstractItemModel
   typedef ErrorTreeItem* ErrorTreeItem_P;
 
 public:
-  ErrorListModel(ObsAccess_p eda, ModelAccess_p mda,
-      const Sensor_v& sensors, const TimeSpan& time, bool errorsForSalen);
+  ErrorListModel(ObsAccess_p eda, ModelAccess_p mda);
   ~ErrorListModel();
+
+  void search(const Sensor_v& sensors, const TimeSpan& time, bool errorsForSalen);
 
   enum EDIT_COLUMNS {
     COL_STATION_ID = 0,
@@ -51,6 +52,7 @@ public:
 Q_SIGNALS:
   void beginDataChange();
   void endDataChange();
+  void fetchingData(bool busy);
 
 private Q_SLOTS:
   void onDataChanged();
@@ -70,11 +72,11 @@ private:
 private:
   ObsAccess_p mDA;
   ModelAccess_p mMA;
-  Sensor_v mSensors;
-  TimeSpan mTimeLimits;
+  //Sensor_v mSensors;
+  //TimeSpan mTimeLimits;
   TimeBuffer_p mObsBuffer;
   ErrorTreeItem_P mRootItem;
-  bool mErrorsForSalen;
+  //bool mErrorsForSalen;
   int mHighlightedStation;
   bool mBlockHighlighting;
 };

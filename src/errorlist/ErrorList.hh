@@ -33,14 +33,20 @@
 #include "common/ObsAccess.hh"
 #include "common/ModelAccess.hh"
 #include "common/NavigateHelper.hh"
+#include "util/BusyLabel.hh"
 
-#include <QtGui/QTreeView>
+#include <QtGui/QWidget>
 
 #include <memory>
 
-class ErrorListModel;
+class QItemSelection;
 
-class ErrorList : public QTreeView
+class ErrorListModel;
+namespace Ui {
+class ErrorList;
+}
+
+class ErrorList : public QWidget
 { Q_OBJECT;
 public:
   ErrorList(QWidget* parent=0);
@@ -65,6 +71,7 @@ private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onBeginDataChange();
   void onEndDataChange();
+  void onButtonExpand();
 
 private:
   void resizeHeaders();
@@ -73,6 +80,9 @@ private:
   void updateModel(const Sensor_v& sensors, const TimeSpan& time);
 
 private:
+  std::auto_ptr<Ui::ErrorList> ui;
+  BusyLabel* mBusy;
+
   ObsAccess_p mDA;
   ModelAccess_p mMA;
   NavigateHelper mNavigate;

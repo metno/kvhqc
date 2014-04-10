@@ -124,31 +124,33 @@ int ErrorListModel::ErrorTreeItem::row() const
 
 // ========================================================================
 
-ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda,
-    const Sensor_v& sensors, const TimeSpan& limits, bool errorsForSalen)
+ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
   : mDA(eda)
   , mMA(mda)
-  , mSensors(sensors)
-  , mTimeLimits(limits)
   , mRootItem(new ErrorTreeItem)
-  , mErrorsForSalen(errorsForSalen)
   , mHighlightedStation(-1)
   , mBlockHighlighting(false)
 {
-  if (mDA and mTimeLimits.closed()) {
-    ErrorFilter_p filter = boost::make_shared<ErrorFilter>(mErrorsForSalen);
-    mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(mSensors.begin(), mSensors.end()),
-        mTimeLimits, filter);
-    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(buildTree()));
-    mObsBuffer->postRequest(mDA);
-
-    // TODO prefetch model data
-  }
 }
 
 ErrorListModel::~ErrorListModel()
 {
   delete mRootItem;
+}
+
+void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, bool errorsForSalen)
+{
+  if (mDA and limits.closed()) {
+    ErrorFilter_p filter = boost::make_shared<ErrorFilter>(errorsForSalen);
+    mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(sensors.begin(), sensors.end()),
+        limits, filter);
+    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(buildTree()));
+
+    Q_EMIT fetchingData(true);
+    mObsBuffer->postRequest(mDA);
+
+    // TODO prefetch model data
+  }
 }
 
 ErrorListModel::ErrorTreeItem_P ErrorListModel::itemFromIndex(const QModelIndex& index) const
@@ -498,6 +500,8 @@ ObsData_p ErrorListModel::findObs(const QModelIndex& index) const
 void ErrorListModel::buildTree()
 {
   METLIBS_LOG_SCOPE();
+
+  Q_EMIT fetchingData(false);
 
   beginResetModel();
   typedef TimeBuffer::ObsDataByTime_ps errors_t;

@@ -40,19 +40,26 @@
 
 #include <boost/foreach.hpp>
 
+#include "ui_errorlist.h"
+
 #define MILOGGER_CATEGORY "kvhqc.ErrorList"
 #include "common/ObsLogging.hh"
 
 using namespace kvalobs;
 
 ErrorList::ErrorList(QWidget* parent)
-  : QTreeView(parent)
+  : QWidget(parent)
+  , ui(new Ui::ErrorList)
   , mErrorsForSalen(false)
 {
   METLIBS_LOG_SCOPE();
+  ui->setupUi(this);
 
-  setSelectionBehavior(SelectRows);
-  setSelectionMode(SingleSelection);
+  mBusy = new BusyLabel(this);
+  ui->buttonBox->addWidget(mBusy);
+
+  ui->tree->setSelectionBehavior(QTreeView::SelectRows);
+  ui->tree->setSelectionMode(QTreeView::SingleSelection);
   resizeHeaders();
 }
 
@@ -78,31 +85,36 @@ void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
   mNavigate.invalidate();
   NavigateHelper::Locker lock(mNavigate);
 
-  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA, sensors, time, mErrorsForSalen));
+  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA));
   connect(mItemModel.get(), SIGNAL(beginDataChange()),
       this, SLOT(onBeginDataChange()));
   connect(mItemModel.get(), SIGNAL(endDataChange()),
       this, SLOT(onEndDataChange()));
-  setModel(mItemModel.get());
-  connect(selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+  connect(mItemModel.get(), SIGNAL(fetchingData(bool)), mBusy, SLOT(setBusy(bool)));
+
+  ui->tree->setModel(mItemModel.get());
+  mItemModel->search(sensors, time, mErrorsForSalen);
+
+  connect(ui->tree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   resizeHeaders();
 }
 
 void ErrorList::resizeHeaders()
 {
-  header()->setResizeMode(QHeaderView::Interactive);
-  header()->resizeSections(QHeaderView::ResizeToContents);
-  header()->resizeSection(ErrorListModel::COL_STATION_ID,   100);
-  header()->resizeSection(ErrorListModel::COL_STATION_NAME, 160);
-  header()->resizeSection(ErrorListModel::COL_STATION_WMO,   45);
-  header()->resizeSection(ErrorListModel::COL_OBS_TIME,     150);
-  header()->resizeSection(ErrorListModel::COL_OBS_PARAM,     60);
-  header()->resizeSection(ErrorListModel::COL_OBS_TYPEID,    40);
-  header()->resizeSection(ErrorListModel::COL_OBS_ORIG,      60);
-  header()->resizeSection(ErrorListModel::COL_OBS_CORR,      60);
-  header()->resizeSection(ErrorListModel::COL_OBS_MODEL,     60);
-  header()->resizeSection(ErrorListModel::COL_OBS_FLAGS,    120);
+  QHeaderView* header = ui->tree->header();
+  header->setResizeMode(QHeaderView::Interactive);
+  header->resizeSections(QHeaderView::ResizeToContents);
+  header->resizeSection(ErrorListModel::COL_STATION_ID,   100);
+  header->resizeSection(ErrorListModel::COL_STATION_NAME, 160);
+  header->resizeSection(ErrorListModel::COL_STATION_WMO,   45);
+  header->resizeSection(ErrorListModel::COL_OBS_TIME,     150);
+  header->resizeSection(ErrorListModel::COL_OBS_PARAM,     60);
+  header->resizeSection(ErrorListModel::COL_OBS_TYPEID,    40);
+  header->resizeSection(ErrorListModel::COL_OBS_ORIG,      60);
+  header->resizeSection(ErrorListModel::COL_OBS_CORR,      60);
+  header->resizeSection(ErrorListModel::COL_OBS_MODEL,     60);
+  header->resizeSection(ErrorListModel::COL_OBS_FLAGS,    120);
 }
 
 void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -145,7 +157,7 @@ void ErrorList::onBeginDataChange()
   METLIBS_LOG_SCOPE();
   mNavigate.lock();
 
-  if (QItemSelectionModel* selection = selectionModel())
+  if (QItemSelectionModel* selection = ui->tree->selectionModel())
     selection->clear();
 }
 
@@ -167,17 +179,22 @@ void ErrorList::navigateTo(const SensorTime& st)
 
   NavigateHelper::Locker lock(mNavigate);
   // scrollTo must come before select, otherwise scrolling will not happen
-  scrollTo(idx);
-  if (QItemSelectionModel* selection = selectionModel())
+  ui->tree->scrollTo(idx);
+  if (QItemSelectionModel* selection = ui->tree->selectionModel())
     selection->select(idx, QItemSelectionModel::ClearAndSelect | QItemSelectionModel::Rows);
 }
 
 ObsData_p ErrorList::getSelectedObs() const
 {
-  if (QItemSelectionModel* selection = selectionModel()) {
+  if (QItemSelectionModel* selection = ui->tree->selectionModel()) {
     const QModelIndexList selected = selection->selectedRows();
     if (selected.size() == 1)
       return mItemModel->findObs(selected.front());
   }
   return ObsData_p();
+}
+
+void ErrorList::onButtonExpand()
+{
+  ui->tree->expandAll();
 }
