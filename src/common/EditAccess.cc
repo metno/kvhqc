@@ -1,7 +1,9 @@
 
 #include "EditAccess.hh"
 #include "EditAccessPrivate.hh"
-//#include "common/ObsHelpers.hh"
+
+#include "DistributeUpdates.hh"
+#include "ObsAccept.hh"
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -13,12 +15,16 @@
 #define MILOGGER_CATEGORY "kvhqc.EditAccess"
 #include "common/ObsLogging.hh"
 
+namespace /*anonymous*/ {
+
+} // namespace anonymous
+
 EditVersions::EditVersions(ObsData_p backendData)
-  : mSensorTime(mBackendData->sensorTime())
+  : mSensorTime(backendData->sensorTime())
   , mBackendData(backendData)
-  , mCorrected(mBackendData->corrected())
-  , mControlinfo(mBackendData->controlinfo())
-  , mCfailed(mBackendData->cfailed())
+  , mCorrected(backendData->corrected())
+  , mControlinfo(backendData->controlinfo())
+  , mCfailed(backendData->cfailed())
   , mUsed(0)
 {
 }
@@ -89,7 +95,7 @@ EditRequest::EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
 
 EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
 {
-  EditRequest_P er = static_cast<EditRequest_P>(wrapped->tag());
+  EditRequest_x er = static_cast<EditRequest_x>(wrapped->tag());
   return boost::static_pointer_cast<EditRequest>(er->shared_from_this());
 }
 
@@ -100,17 +106,22 @@ void EditRequest::completed(bool failed)
 
 void EditRequest::newData(const ObsData_pv& data)
 {
-  mWrapped->newData(mAccess->replace(this, data));
+  const ObsData_pv replaced = mAccess->replace(this, data);
+  mWrapped->newData(replaced);
 }
 
 void EditRequest::updateData(const ObsData_pv& data)
 {
-  mWrapped->updateData(mAccess->replace(this, data));
+  METLIBS_LOG_SCOPE();
+  // this is called from the backend
+  const ObsData_pv replaced = mAccess->replace(this, data);
+  mWrapped->updateData(replaced);
 }
 
 void EditRequest::dropData(const SensorTime_v& dropped)
 {
-  /*mWrapped->newData(mAccess->replace(dropped));*/
+  mAccess->replace(this, dropped);
+  mWrapped->dropData(dropped);
 }
 
 void EditRequest::use(EditVersions_p ev)
@@ -140,16 +151,50 @@ EditVersions_ps::iterator EditAccessPrivate::findEditVersions(const SensorTime& 
     return mEdited.end();
 }
 
-ObsData_pv EditAccessPrivate::replace(EditRequest_P er, ObsData_pv backendData)
+ObsData_pv EditAccessPrivate::replace(EditRequest_x er, ObsData_pv backendData)
 {
+  METLIBS_LOG_SCOPE();
   for (ObsData_pv::iterator itB = backendData.begin(); itB != backendData.end(); ++itB) {
     EditVersions_ps::iterator itEV = findEditVersions((*itB)->sensorTime());
     if (itEV != mEdited.end()) {
-      *itB = *itEV;
-      er->use(*itEV);
+      EditVersions_p ev = *itEV;
+      ev->updateBackend(*itB);
+      *itB = ev;
+      er->use(ev);
     }
   }
   return backendData;
+}
+
+void EditAccessPrivate::replace(EditRequest_x er, const SensorTime_v& backendDropped)
+{
+  METLIBS_LOG_SCOPE();
+  ObsData_p none;
+  for (SensorTime_v::const_iterator itST = backendDropped.begin(); itST != backendDropped.end(); ++itST) {
+    EditVersions_ps::iterator itEV = findEditVersions(*itST);
+    if (itEV != mEdited.end())
+      (*itEV)->updateBackend(none);
+  }
+}
+
+void EditAccessPrivate::updateWrapped(DistributeUpdates& du, EditVersions_p ev)
+{
+  BOOST_FOREACH(EditRequest_p r, mRequests) {
+    if (acceptObs(r->mWrapped, ev)) {
+      r->use(ev);
+      du.updateData(r->mWrapped, ev);
+    }
+  }
+}
+
+void EditAccessPrivate::insertWrapped(DistributeUpdates& du, EditVersions_p ev)
+{
+  BOOST_FOREACH(EditRequest_p r, mRequests) {
+    if (acceptObs(r->mWrapped, ev)) {
+      r->use(ev);
+      du.newData(r->mWrapped, ev);
+    }
+  }
 }
 
 // ========================================================================
@@ -191,33 +236,49 @@ void EditAccess::dropRequest(ObsRequest_p request)
 
 ObsUpdate_p EditAccess::createUpdate(ObsData_p data)
 {
-  return boost::make_shared<EditUpdate>(data->sensorTime(), false);
+  return boost::make_shared<EditUpdate>(data);
 }
 
 ObsUpdate_p EditAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return boost::make_shared<EditUpdate>(sensorTime, true);
+  return boost::make_shared<EditUpdate>(sensorTime);
 }
 
 bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
+  METLIBS_LOG_SCOPE();
+  DistributeUpdates du;
+
   BOOST_FOREACH(ObsUpdate_p u, updates) {
     EditUpdate_p eu = boost::dynamic_pointer_cast<EditUpdate>(u);
     if (not eu) {
       // FIXME HCQ_LOG_ERROR("not an EditUpdate:" << u->sensorTime());
       continue;
     }
+    EditVersions_p ev;
     EditVersions_ps::iterator itEV = p->findEditVersions(eu->sensorTime());
-    if (itEV == p->mEdited.end())
-      itEV = p->mEdited.insert(boost::make_shared<EditVersions>(eu->sensorTime())).first;
-    (*itEV)->set(p->mCurrentVersion, eu->mCorrected, eu->mControlinfo, eu->mCfailed);
-
-    BOOST_FOREACH(ObsRequest_p r, p->mRequests) {
-      if (r->timeSpan().contains(eu->sensorTime().time) /* TODO and filter ...*/) {
-        // r->updateData(...);
-      }
+    const bool insert = (itEV == p->mEdited.end()), haveB = eu->obs();
+    if (insert) {
+      if (haveB)
+        ev = boost::make_shared<EditVersions>(eu->obs());
+      else
+        ev = boost::make_shared<EditVersions>(eu->sensorTime());
+    } else {
+      ev = *itEV;
     }
+    if (ev->set(p->mCurrentVersion, eu->mCorrected, eu->mControlinfo, eu->mCfailed)) {
+      if (insert and not haveB)
+        p->insertWrapped(du, ev);
+      else
+        p->updateWrapped(du, ev);
+    }
+    METLIBS_LOG_DEBUG(LOGVAL(ev->mUsed));
+    if (itEV == p->mEdited.end() and ev->mUsed > 0)
+      p->mEdited.insert(ev);
   }
+
+  du.send();
+
   return true;
 }
 
@@ -253,26 +314,48 @@ bool EditAccess::storeToBackend()
   // FIXME when to set mCurrentVersion=0? before or while or after mBackend->storeUpdates?
 
   p->mCurrentVersion = 0;
+  p->mEdited.clear();
+  if (p->mVersionTimestamps.size() > 1)
+    p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
+
+  BOOST_FOREACH(EditRequest_p r, p->mRequests) {
+    r->mUsed.clear();
+  }
+
   Q_EMIT currentVersionChanged(p->mCurrentVersion, p->mCurrentVersion);
+
   return true;
 }
 
 void EditAccess::reset()
 {
-#if 0
-  BOOST_FOREACH(const SensorEditVersions::value_type& sevv, sev) {
-    BOOST_FOREACH(ObsRequest_p r, mRequests) {
-      if (r matches eu->sensorTime()) {
-        r->updateData(...);
-      }
-    }
-  }
-#endif
+  METLIBS_LOG_SCOPE();
 
   p->mCurrentVersion = 0;
   p->mEdited.clear();
   if (p->mVersionTimestamps.size() > 1)
     p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
+
+  BOOST_FOREACH(EditRequest_p r, p->mRequests) {
+    ObsData_pv updated;
+    SensorTime_v dropped;
+    BOOST_FOREACH(EditVersions_p ev, r->mUsed) {
+      if (ev->isCreated()) {
+        METLIBS_LOG_DEBUG(LOGVAL("drop: " << ev->sensorTime()));
+        dropped.push_back(ev->sensorTime());
+      } else {
+        METLIBS_LOG_DEBUG(LOGVAL("update: " << ev->sensorTime()));
+        updated.push_back(ev->mBackendData);
+      }
+    }
+    if (not updated.empty())
+      r->mWrapped->updateData(updated);
+    if (not dropped.empty())
+      r->mWrapped->dropData(dropped);
+
+    r->mUsed.clear();
+  }
+
   Q_EMIT currentVersionChanged(p->mCurrentVersion, p->mCurrentVersion);
 }
 
@@ -289,9 +372,15 @@ void EditAccess::newVersion()
 
 void EditAccess::updateToCurrentVersion(bool drop)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(drop) << LOGVAL(p->mCurrentVersion));
+  DistributeUpdates du;
   BOOST_FOREACH(EditVersions_p ev, p->mEdited) {
-    ev->set(p->mCurrentVersion, drop);
+    const bool changed = ev->set(p->mCurrentVersion, drop);
+    METLIBS_LOG_DEBUG(LOGVAL(ev->sensorTime()) << LOGVAL(changed) << LOGVAL(ev->corrected()));
+    if (changed)
+      p->updateWrapped(du, ev);
   }
+  du.send();
 }
 
 bool EditAccess::canUndo() const

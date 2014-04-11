@@ -53,7 +53,7 @@ LINK_LIBRARIES(
 
 ADD_EXECUTABLE(common_test
 #  DataListModelTest.cc
-#  EditAccessTest.cc
+  EditAccessTest.cc
 #  EditTimeColumnTest.cc
 #  KvalobsAccessTest.cc
   KvHelpersTest.cc

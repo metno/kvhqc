@@ -1,8 +1,8 @@
 
 #include "CachingAccess.hh"
-#include "SqliteAccess.hh"
-#include "SingleObsBuffer.hh"
 #include "CountingBuffer.hh"
+#include "SingleObsBuffer.hh"
+#include "SqliteAccess.hh"
 
 #include "util/make_set.hh"
 

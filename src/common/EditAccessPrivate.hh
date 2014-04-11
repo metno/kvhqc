@@ -11,8 +11,11 @@
 
 class EditUpdate : public ObsUpdate {
 public:
-  EditUpdate(const SensorTime& st, bool created)
-    : mSensorTime(st), mCreated(created) { }
+  EditUpdate(const SensorTime& st)
+    : mSensorTime(st) { }
+
+  EditUpdate(ObsData_p obs)
+    : mSensorTime(obs->sensorTime()), mObs(obs) { }
 
   virtual const SensorTime& sensorTime() const
     { return mSensorTime; }
@@ -35,8 +38,11 @@ public:
   virtual void setCfailed(const std::string& cf)
     { mCfailed = cf; }
 
+  ObsData_p obs()
+    { return mObs; }
+
   SensorTime mSensorTime;
-  bool mCreated;
+  ObsData_p mObs;
 
   float mCorrected;
   kvalobs::kvControlInfo mControlinfo;
@@ -137,24 +143,30 @@ public:
   virtual void dropData(const SensorTime_v& dropped);
 
   void use(EditVersions_p ev);
+  void drop(EditVersions_p ev);
 
   EditAccessPrivate_P mAccess;
   ObsRequest_p mWrapped;
   EditVersions_ps mUsed;
 };
 
-typedef EditRequest* EditRequest_P;
+HQC_TYPEDEF_X(EditRequest);
 HQC_TYPEDEF_PV(EditRequest);
 HQC_TYPEDEF_PS(EditRequest);
 
 // ========================================================================
+
+class DistributeUpdates;
 
 class EditAccessPrivate {
 public:
   EditAccessPrivate(ObsAccess_p backend);
 
   EditVersions_ps::iterator findEditVersions(const SensorTime& st);
-  ObsData_pv replace(EditRequest_P er, ObsData_pv backendData);
+  ObsData_pv replace(EditRequest_x er, ObsData_pv backendData);
+  void replace(EditRequest_x er, const SensorTime_v& backendDropped);
+  void updateWrapped(DistributeUpdates& du, EditVersions_p ev);
+  void insertWrapped(DistributeUpdates& du, EditVersions_p ev);
 
   ObsAccess_p mBackend;
 

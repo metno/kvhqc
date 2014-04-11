@@ -1,318 +1,293 @@
 
-#include "watchrr/AnalyseFCC.hh"
-#include "watchrr/AnalyseRR24.hh"
-#include "FlagChange.hh"
+#include "CachingAccess.hh"
+#include "CountingBuffer.hh"
 #include "EditAccess.hh"
+#include "SingleObsBuffer.hh"
+#include "SqliteAccess.hh"
 
-#include "FakeKvApp.hh"
-#include "CountDataChanged.hh"
-#include "TestHelpers.hh"
+#include "Functors.hh"
+#include "util/make_set.hh"
 
-#define LOAD_DECL_ONLY
-#include "load_31850_20121130.cc"
-#include "load_44160_20121207.cc"
-#include "load_54420_20121130.cc"
+#include <gtest/gtest.h>
 
-TEST(EditAccessTest, SendToParent)
+namespace /*anonymous*/ {
+
+inline timeutil::ptime s2t(const std::string& t)
+{ return timeutil::from_iso_extended_string(t); }
+
+class Updater {
+public:
+  Updater(ObsAccess_p ea, TimeBuffer_p buffer)
+    : mOA(ea), mBuffer(buffer) { }
+
+  ObsUpdate_p createUpdate(const SensorTime& st);
+
+  void send();
+
+private:
+  ObsAccess_p mOA;
+  TimeBuffer_p mBuffer;
+  ObsUpdate_pv mUpdates;
+};
+
+ObsUpdate_p Updater::createUpdate(const SensorTime& st)
 {
-    FakeKvApp fa;
-    const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
-    load_31850_20121130(fa);
+  if (ObsData_p obs = mBuffer->get(st))
+    mUpdates.push_back(mOA->createUpdate(obs));
+  else
+    mUpdates.push_back(mOA->createUpdate(st));
+  return mUpdates.back();
+}
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+void Updater::send()
+{
+  mOA->storeUpdates(mUpdates);
+}
 
-    const FlagChange fc_ok("fhqc=1");
-    const Sensor s(31850, 18, 0, 0, 302);
+const float NO_OBS = -32765;
 
-    CountDataChanged cdcF, cdcE;
-    cdcF.filterParam = cdcE.filterParam = s.paramId;
-    fa.kda->obsDataChanged.connect(boost::ref(cdcF));
-    eda->obsDataChanged.connect(boost::ref(cdcE));
+inline float corrected(TimeBuffer_p buffer, const SensorTime& st)
+{
+  if (ObsData_p obs = buffer->get(st))
+    return obs->corrected();
+  else
+    return NO_OBS;
+}
 
-    eda->newVersion();
-    EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
-    eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
+} // namespace anonymous
 
-    EditDataPtr ebs2 = eda->findE(SensorTime(s, s2t("2012-11-10 06:00:00")));
-    ASSERT_TRUE(ebs2);
-    eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
+// ========================================================================
 
-    EditDataPtr ebs3 = eda->findE(SensorTime(s, s2t("2012-11-11 06:00:00")));
-    ASSERT_TRUE(ebs3);
-    eda->editor(ebs3)->setCorrected(3).changeControlinfo(fc_ok).commit();
+TEST(EditAccessTest, UndoRedoStore)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
 
-    EXPECT_EQ(0, cdcF.count);
-    EXPECT_EQ(3, cdcE.count);
-    EXPECT_TRUE(ebs1->modified());
-    EXPECT_TRUE(ebs2->modified());
-    EXPECT_TRUE(ebs3->modified());
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
 
-    EXPECT_TRUE(eda->sendChangesToParent());
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
 
-    EXPECT_EQ(3, cdcF.count);
-    EXPECT_EQ(6, cdcE.count); // EditData are no longer modified, therefore obsDataChanged is emitted
-    EXPECT_FALSE(ebs1->modified());
-    EXPECT_FALSE(ebs2->modified());
-    EXPECT_FALSE(ebs3->modified());
+  const float ORIG_C1 = -4.5f, ORIG_C2 = -5.0f;
+  const float CHNG_C1 =  4.0f, CHNG_C2 =  3.0f;
 
-    EXPECT_CORR_CONTROL(4, "0000000000000001", ebs1);
-    EXPECT_CORR_CONTROL(5, "0000000000000001", ebs2);
-    EXPECT_CORR_CONTROL(3, "0000000000000001", ebs3);
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+
+  ea->newVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+
+  { Updater updater(ea, counter);
+    ObsUpdate_p up = updater.createUpdate(st1);
+    up->setCorrected(CHNG_C1);
+    
+    up = updater.createUpdate(st2);
+    up->setCorrected(CHNG_C2);
+    
+    updater.send();
+  }
+
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countUpdate);
+
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+
+  ea->undoVersion();
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(2, counter->countUpdate);
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+
+  ea->redoVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(3, counter->countUpdate);
+
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+
+  EXPECT_TRUE(ea->storeToBackend());
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(4, counter->countUpdate);
+
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
 }
 
 TEST(EditAccessTest, Reset)
 {
-    FakeKvApp fa;
-    const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
-    load_31850_20121130(fa);
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
 
-    const FlagChange fc_ok("fhqc=1");
-    const Sensor s(31850, 18, 0, 0, 302);
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
 
-    CountDataChanged cdcF, cdcE;
-    cdcF.filterParam = cdcE.filterParam = s.paramId;
-    fa.kda->obsDataChanged.connect(boost::ref(cdcF));
-    eda->obsDataChanged.connect(boost::ref(cdcE));
+  const float ORIG_C1 = -4.5f, ORIG_C2 = -5.0f;
+  const float CHNG_C1 =  4.0f, CHNG_C2 =  3.0f;
 
-    eda->newVersion();
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
 
-    EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
-    eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
 
-    EditDataPtr ebs2 = eda->findE(SensorTime(s, s2t("2012-11-10 06:00:00")));
-    ASSERT_TRUE(ebs2);
-    eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
+  ea->newVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
 
-    EXPECT_EQ(0, cdcF.count);
-    EXPECT_EQ(2, cdcE.count);
-
-    eda->reset();
-
-    EXPECT_EQ(0, cdcF.count);
-    EXPECT_EQ(4, cdcE.count);
-
-    EXPECT_CORR_CONTROL(2, "0000000000000000", ebs1);
-    EXPECT_CORR_CONTROL(1, "0000000000000000", ebs2);
-}
-
-TEST(EditAccessTest, ResetCreate)
-{
-    FakeKvApp fa;
-    const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
-    load_31850_20121130(fa);
-
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
-
-    const FlagChange fc_ok("fhqc=1");
-    const Sensor s(31850, 18, 0, 0, 302);
-
-    CountDataChanged cdcF, cdcE, cdcEdestroy;
-    cdcF.filterParam = cdcE.filterParam = cdcEdestroy.filterParam = s.paramId;
-    cdcEdestroy.filterWhat = ObsAccess::DESTROYED;
-    fa.kda->obsDataChanged.connect(boost::ref(cdcF));
-    eda->obsDataChanged.connect(boost::ref(cdcE));
-    eda->obsDataChanged.connect(boost::ref(cdcEdestroy));
-
-    eda->newVersion();
-
-    EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
-    eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
-
-    EditDataPtr ebs2 = eda->createE(SensorTime(s, s2t("2012-11-09 18:00:00")));
-    ASSERT_TRUE(ebs2);
-    eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
-
-    EXPECT_EQ(0, cdcF.count);
-    EXPECT_EQ(2, cdcE.count);
-
-    eda->reset();
-
-    EXPECT_EQ(0, cdcF.count);
-    EXPECT_EQ(3, cdcE.count);
-    EXPECT_EQ(1, cdcEdestroy.count);
-
-    EXPECT_CORR_CONTROL(2, "0000000000000000", ebs1);
-    // next would fail because KvBufferedAccess is not told to forget the object it created
-    // EXPECT_FALSE(eda->findE(SensorTime(s, s2t("2012-11-09 18:00:00"))));
-}
-
-TEST(EditAccessTest, OnlyTasks)
-{
-    const Sensor sensor(44160, 110, 0, 0, 302);
-    const TimeRange time(t_44160_20121207());
-    FakeKvApp fa;
-    load_44160_20121207(fa);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
-
-    CountDataChanged cdcF, cdcE;
-    fa.kda->obsDataChanged.connect(boost::ref(cdcF));
-    eda->obsDataChanged.connect(boost::ref(cdcE));
-
-    eda->newVersion();
-    FCC::analyse(eda, sensor, time);
-
-    ASSERT_EQ(0, cdcF.count);
-    ASSERT_EQ(2, cdcE.count);
-
-    eda->sendChangesToParent();
-
-    ASSERT_EQ(0, cdcF.count); // analyse only sets tasks, which are not kept in fda
-    ASSERT_EQ(2, cdcE.count);
-}
-
-TEST(EditAccessTest, PopChange)
-{
-    const Sensor sensor(54420, 110, 0, 0, 302);
-    const TimeRange time(s2t("2012-10-01 06:00:00"), s2t("2012-11-20 06:00:00"));
-    FakeKvApp fa;
-    load_54420_20121130(fa);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
-
-    CountDataChanged cdcF, cdcE, cdcE2;
-    fa.kda->obsDataChanged.connect(boost::ref(cdcF));
-    eda->obsDataChanged.connect(boost::ref(cdcE));
-
-    eda->newVersion();
-    TimeRange editableTime(time);
-    RR24::analyse(eda, sensor, editableTime);
-
-    ASSERT_EQ( 0, cdcF.count);
-    ASSERT_EQ(33, cdcE.count);
-    cdcE.count = 0;
+  { Updater updater(ea, counter);
+    ObsUpdate_p up = updater.createUpdate(st1);
+    up->setCorrected(CHNG_C1);
     
-    const TimeRange timeAcc(s2t("2012-10-05 06:00:00"), s2t("2012-10-11 06:00:00"));
-    const std::vector<float> newCorrected(timeAcc.days()+1, 123.4);
+    up = updater.createUpdate(st2);
+    up->setCorrected(CHNG_C2);
+    
+    updater.send();
+  }
 
-    EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
-    eda2->obsDataChanged.connect(boost::ref(cdcE2));
-    RR24::redistribute(eda2, sensor, timeAcc.t0(), editableTime, newCorrected);
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countUpdate);
 
-    ASSERT_EQ(7, cdcE2.count);
-    ASSERT_EQ(0, cdcE .count);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
 
-    eda->newVersion();
-    eda2->sendChangesToParent();
-    ASSERT_EQ(7, cdcE.count);
-    cdcE.count = 0;
+  ea->reset();
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(2, counter->countUpdate);
 
-    eda->undoVersion();
-    ASSERT_EQ(7, cdcE.count); // pop 7 days with changes
-
-    eda->sendChangesToParent();
-    ASSERT_EQ(0, cdcF.count); // only tasks from RR24::analyse remain, but fda does not keep tasks
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
 }
 
-TEST(EditAccessTest, UndoRedoNewVersions)
+TEST(EditAccessTest, CreateReset)
 {
-    using boost::gregorian::days;
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
 
-    const Sensor sensor(32780, 211, 0, 0, 302);
-    const TimeRange time(s2t("2012-12-01 06:00:00"), s2t("2012-12-06 06:00:00"));
-    FakeKvApp fa;
-    fa.insertStation = sensor.stationId;
-    fa.insertParam   = sensor.paramId;
-    fa.insertType    = sensor.typeId;
-    fa.insertData("2012-12-01 06:00:00", 6.0, 6.0, "0110000000001000", "");
-    fa.insertData("2012-12-02 06:00:00", 1.0, 1.0, "0110000000001000", "");
-    fa.insertData("2012-12-03 06:00:00", 1.0, 1.0, "0110000000001000", "");
-    fa.insertData("2012-12-04 06:00:00", 1.0, 1.0, "0110000000001000", "");
-    fa.insertData("2012-12-05 06:00:00", 4.0, 4.0, "0110000000001000", "");
-    fa.insertData("2012-12-06 06:00:00", 8.0, 8.0, "0110000000001000", "");
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 02:00:00"));
 
-    const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+  const Time t1 = s2t("2013-04-01 01:30:00");
+  const SensorTime st1(sensor1, t1);
 
-    EditDataPtr obs1 = eda->findE(SensorTime(sensor, s2t("2012-12-03 06:00:00")));
-    EditDataPtr obs2 = eda->findE(SensorTime(sensor, s2t("2012-12-04 06:00:00")));
-    EditDataPtr obs3 = eda->findE(SensorTime(sensor, s2t("2012-12-05 06:00:00")));
-    ASSERT_TRUE(obs1);
-    ASSERT_TRUE(obs2);
-    ASSERT_TRUE(obs3);
+  const float CHNG_C1 = 5.0f;
 
-    eda->newVersion();
-    eda->editor(obs1)->setCorrected(2);
-    EXPECT_TRUE(obs1->hasVersion(1));
-    EXPECT_EQ(2, obs1->corrected());
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(1, counter->countNew);
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
 
-    eda->newVersion();
-    eda->editor(obs1)->setCorrected(7);
-    EXPECT_TRUE(obs1->hasVersion(1));
-    EXPECT_TRUE(obs1->hasVersion(2));
-    EXPECT_EQ(2, obs1->corrected(1));
-    EXPECT_EQ(7, obs1->corrected());
-    eda->editor(obs2)->setCorrected(3);
-    EXPECT_TRUE(obs2->hasVersion(2));
-    EXPECT_EQ(3, obs2->corrected());
+  EXPECT_FLOAT_EQ(NO_OBS,  corrected(counter, st1));
 
-    eda->undoVersion();
-    EXPECT_EQ(2, obs1->corrected());
-    EXPECT_EQ(1, obs2->corrected());
-    EXPECT_TRUE(eda->canRedo());
-    EXPECT_TRUE(eda->canUndo());
+  ea->newVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
 
-    eda->redoVersion();
-    EXPECT_EQ(7, obs1->corrected());
-    EXPECT_EQ(3, obs2->corrected());
-    EXPECT_FALSE(eda->canRedo());
-    EXPECT_TRUE(eda->canUndo());
+  { Updater updater(ea, counter);
+    ObsUpdate_p up = updater.createUpdate(st1);
+    up->setCorrected(CHNG_C1);
+    updater.send();
+  }
 
-    eda->undoVersion();
-    EXPECT_EQ(1, eda->currentVersion());
-    eda->newVersion();
-    EXPECT_EQ(2, eda->currentVersion());
-    EXPECT_EQ(2, obs1->corrected());
-    EXPECT_EQ(1, obs2->corrected());
-    EXPECT_FALSE(eda->canRedo());
-    EXPECT_TRUE(eda->canUndo());
+  EXPECT_EQ(4, counter->size());
+  EXPECT_EQ(0, counter->countUpdate);
+  EXPECT_EQ(2, counter->countNew);
 
-    const std::vector<EditDataPtr> changed1 = eda->versionChanges(1);
-    ASSERT_EQ(1, changed1.size());
-    EXPECT_EQ(2, changed1.at(0)->corrected(1));
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
 
-    const std::vector<EditDataPtr> changed2 = eda->versionChanges(2);
-    ASSERT_TRUE(changed2.empty());
+  ea->reset();
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(0, counter->countUpdate);
+  EXPECT_EQ(2, counter->countNew);
+  EXPECT_EQ(1, counter->countDrop);
+
+  EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
 }
 
-TEST(EditAccessTest, ChangeInParent)
+TEST(EditAccessTest, UpdateInParent)
 {
-    FakeKvApp fa;
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
 
-    const Sensor s(31850, 18, 0, 0, 302);
-    const timeutil::ptime t0 = s2t("2012-11-09 06:00:00");
-    const SensorTime st(s, t0);
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 02:00:00"));
 
-    const float OCORR = 2, NCORR = 4;
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 01:30:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
 
-    fa.insertData(s.stationId, s.paramId, s.typeId, "2012-11-09 06:00:00", 2, OCORR);
+  const float ORIG_C1 = -4.5f;
+  const float CHNG_C1 =  4.0f, CHNG_C2 = 3.0f;
 
-    EditAccessPtr parent = boost::make_shared<EditAccess>(fa.kda);
-    EditAccessPtr child  = boost::make_shared<EditAccess>(parent);
+  // get data from EditAccess
+  CountingBuffer_p counterE(new CountingBuffer(sensor1, time));
+  counterE->postRequest(ea);
+  EXPECT_EQ(3, counterE->size());
+  EXPECT_EQ(1, counterE->countComplete);
+  EXPECT_EQ(1, counterE->countNew);
 
-    const FlagChange fc_ok("fhqc=1");
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counterE, st1));
+  EXPECT_FLOAT_EQ(NO_OBS,  corrected(counterE, st2));
 
-    CountDataChanged cdcP, cdcC;
-    cdcP.filterParam = cdcC.filterParam = s.paramId;
-    parent->obsDataChanged.connect(boost::ref(cdcP));
-    child ->obsDataChanged.connect(boost::ref(cdcC));
+  // get same data from CachingAccess
+  CountingBuffer_p counterC(new CountingBuffer(sensor1, time));
+  counterC->postRequest(ca);
+  EXPECT_EQ(3, counterC->size());
+  EXPECT_EQ(1, counterC->countComplete);
 
-    parent->newVersion();
-    EditDataPtr ebsP = parent->findE(st);
-    ASSERT_TRUE(ebsP);
-    EXPECT_EQ(OCORR, ebsP->corrected());
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counterC, st1));
+  EXPECT_FLOAT_EQ(NO_OBS,  corrected(counterC, st2));
 
-    EditDataPtr ebsC = child ->findE(st);
-    ASSERT_TRUE(ebsC);
-    EXPECT_EQ(OCORR, ebsC->corrected());
-  
-    parent->editor(ebsP)->setCorrected(NCORR).changeControlinfo(fc_ok).commit();
+  // change data in CachingAccess
+  ea->newVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
 
-    EXPECT_EQ(1, cdcP.count);
-    EXPECT_EQ(1, cdcC.count);
-    EXPECT_EQ(NCORR, ebsP->corrected());
-    EXPECT_EQ(NCORR, ebsC->corrected());
+  { Updater updater(ca, counterC);
+    ObsUpdate_p up1 = updater.createUpdate(st1);
+    up1->setCorrected(CHNG_C1);
+    ObsUpdate_p up2 = updater.createUpdate(st2);
+    up2->setCorrected(CHNG_C2);
+    updater.send();
+  }
+
+  EXPECT_EQ(4, counterE->size());
+  EXPECT_EQ(1, counterE->countUpdate);
+  EXPECT_EQ(2, counterE->countNew);
+
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counterE, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counterE, st2));
 }

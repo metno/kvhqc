@@ -57,6 +57,8 @@ SET(common_SOURCES
   BackgroundAccess.cc
   BaseRequest.hh
   BaseRequest.cc
+  DistributeUpdates.hh
+  DistributeUpdates.cc
   EditAccess.hh
   EditAccess.cc
   IndexBuffer.hh
@@ -66,6 +68,8 @@ SET(common_SOURCES
   KvalobsAccess.cc
   KvalobsData.hh
   KvalobsData.cc
+  ObsAccept.hh
+  ObsAccept.cc
   ObsAccess.hh
   ObsAccess.cc
   ObsData.hh
