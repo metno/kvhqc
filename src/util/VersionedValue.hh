@@ -99,6 +99,16 @@ public:
      */
     bool hasVersion(int version) const;
 
+    /**
+     * Check if a value was set for a specific version.
+     *
+     * This function has to search for the version.
+     *
+     * \return true iff a value was set (and has not been dropped) for the given version.
+     */
+    bool hasVersions() const
+        { return mVersions.size() > 1; }
+  
 #ifndef VERSIONEDVALUE_TEST
 private:
 #endif // VERSIONEDVALUE_TEST

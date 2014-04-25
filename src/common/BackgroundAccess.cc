@@ -146,24 +146,19 @@ void BackgroundAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
 
 // ------------------------------------------------------------------------
 
-void BackgroundAccess::distributeUpdates(const ObsData_pv& updated, const ObsData_pv& inserted)
+void BackgroundAccess::distributeUpdates(const ObsData_pv& updated, const ObsData_pv& inserted, const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
-  DistributeUpdates du;
+  DistributeRequestUpdates<ObsRequest_pv> du(mRequests);
 
-  for (ObsRequest_pv::iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
-    ObsRequest_p request = *itR;
+  for (ObsData_pv::const_iterator itD = updated.begin(); itD != updated.end(); ++itD)
+    du.updateData(*itD);
 
-    for (ObsData_pv::const_iterator itD = updated.begin(); itD != updated.end(); ++itD) {
-      if (acceptObs(request, *itD))
-        du.updateData(request, *itD);
-    }
+  for (ObsData_pv::const_iterator itI = inserted.begin(); itI != inserted.end(); ++itI)
+    du.newData(*itI);
 
-    for (ObsData_pv::const_iterator itI = inserted.begin(); itI != inserted.end(); ++itI) {
-      if (acceptObs(request, *itI))
-        du.newData(request, *itI);
-    }
-  }
+  for (SensorTime_v::const_iterator itD = dropped.begin(); itD != dropped.end(); ++itD)
+    du.dropData(*itD);
 
   du.send();
 }

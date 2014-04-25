@@ -38,6 +38,61 @@ public:
 private:
   r_obs_t r_update, r_insert;
   r_st_t r_drop;
+
+  ObsRequest_pv mRequests;
 };
+
+// ========================================================================
+
+template<class R>
+class DistributeRequestUpdates
+{
+public:
+  DistributeRequestUpdates(const R& r)
+    : mRequests(r) { }
+
+  void updateData(ObsData_p obs);
+
+  void newData(ObsData_p obs);
+
+  void dropData(ObsData_p obs)
+    { dropData(obs->sensorTime()); }
+
+  void dropData(const SensorTime& st);
+
+  void send()
+    { mDU.send(); }
+
+private:
+  DistributeUpdates mDU;
+  const R& mRequests;
+};
+
+template<class R>
+void DistributeRequestUpdates<R>::updateData(ObsData_p obs)
+{
+  for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
+    if (acceptObs(*itR, obs))
+      mDU.updateData(*itR, obs);
+  }
+}
+
+template<class R>
+void DistributeRequestUpdates<R>::newData(ObsData_p obs)
+{
+  for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
+    if (acceptObs(*itR, obs))
+      mDU.newData(*itR, obs);
+  }
+}
+
+template<class R>
+void DistributeRequestUpdates<R>::dropData(const SensorTime& st)
+{
+  for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
+    if ((*itR)->timeSpan().contains(st.time) and (*itR)->sensors().count(st.sensor))
+      mDU.dropData(*itR, st);
+  }
+}
 
 #endif // DISTRIBUTEUPDATES_HH

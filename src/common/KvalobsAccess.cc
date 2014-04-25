@@ -181,7 +181,7 @@ void KvalobsAccess::onUpdated(const kvData_v& data)
   updated.reserve(data.size());
   for (kvData_v::const_iterator it=data.begin(); it!=data.end(); ++it)
     updated.push_back(boost::make_shared<KvalobsData>(*it, false));
-  distributeUpdates(updated, ObsData_pv());
+  distributeUpdates(updated, ObsData_pv(), SensorTime_v());
 }
 
 // ------------------------------------------------------------------------

@@ -25,14 +25,14 @@ TimeBuffer::TimeBuffer(SignalRequest_p request)
 Time_s TimeBuffer::times() const
 {
   Time_s times;
-  for (ObsDataByTime_ps::iterator itD = mData.begin(); itD != mData.end(); ++itD)
+  for (ObsData_ps_ST::iterator itD = mData.begin(); itD != mData.end(); ++itD)
     times.insert((*itD)->sensorTime().time);
   return times;
 }
 
 ObsData_p TimeBuffer::get(const SensorTime& st) const
 {
-  const ObsDataByTime_ps::const_iterator it = find(st);
+  const ObsData_ps_ST::const_iterator it = find(st);
   if (it != mData.end())
     return *it;
   return ObsData_p();
@@ -48,7 +48,7 @@ void TimeBuffer::onUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   for (ObsData_pv::const_iterator itD = data.begin(); itD != data.end(); ++itD) {
-    const ObsDataByTime_ps::iterator it = find((*itD)->sensorTime());
+    const ObsData_ps_ST::iterator it = find((*itD)->sensorTime());
     if (it != mData.end()) {
       mData.erase(it);
       mData.insert(*itD);
@@ -59,23 +59,23 @@ void TimeBuffer::onUpdateData(const ObsData_pv& data)
 void TimeBuffer::onDropData(const SensorTime_v& dropped)
 {
   for (SensorTime_v::const_iterator itS = dropped.begin(); itS != dropped.end(); ++itS) {
-    const ObsDataByTime_ps::iterator it = find(*itS);
+    const ObsData_ps_ST::iterator it = find(*itS);
     if (it != mData.end())
       mData.erase(it);
   }
 }
 
-TimeBuffer::ObsDataByTime_ps::iterator TimeBuffer::find(const SensorTime& st)
+ObsData_ps_ST::iterator TimeBuffer::find(const SensorTime& st)
 {
-  const ObsDataByTime_ps::iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_time());
+  const ObsData_ps_ST::iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_SensorTime());
   if (it != mData.end() and eq_SensorTime()(st, (*it)->sensorTime()))
     return it;
   return mData.end();
 }
 
-TimeBuffer::ObsDataByTime_ps::const_iterator TimeBuffer::find(const SensorTime& st) const
+ObsData_ps_ST::const_iterator TimeBuffer::find(const SensorTime& st) const
 {
-  const ObsDataByTime_ps::const_iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_time());
+  const ObsData_ps_ST::const_iterator it = std::lower_bound(mData.begin(), mData.end(), st, ObsData_by_SensorTime());
   if (it != mData.end() and eq_SensorTime()(st, (*it)->sensorTime()))
     return it;
   return mData.end();

@@ -37,7 +37,7 @@ public:
   ObsFilter_p filter() const
     { return request()->filter(); }
 
-  const ObsDataByTime_ps& data() const
+  const ObsData_ps_ST& data() const
     { return TimeBuffer::data(); }
 
 private:
@@ -92,17 +92,6 @@ struct BackendBuffer_by_t0 {
     { return ta < b->timeSpan().t0(); }
   bool operator()(BackendBuffer_p a, const Time& tb) const
     { return a->timeSpan().t0() < tb; }
-};
-
-// ========================================================================
-
-struct ObsData_by_time {
-  bool operator()(ObsData_p a, ObsData_p b) const
-    { return a->sensorTime().time < b->sensorTime().time; }
-  bool operator()(ObsData_p a, const Time& b) const
-    { return a->sensorTime().time < b; }
-  bool operator()(const Time& a, ObsData_p b) const
-    { return a < b->sensorTime().time; }
 };
 
 // ========================================================================

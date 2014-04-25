@@ -504,7 +504,7 @@ void ErrorListModel::buildTree()
   Q_EMIT fetchingData(false);
 
   beginResetModel();
-  typedef TimeBuffer::ObsDataByTime_ps errors_t;
+  typedef ObsData_ps_ST errors_t;
   const errors_t& errors = mObsBuffer->data();
 
   // FIXME this and remove/insert rely on "errors" being sorted by obs()->sensorTime()

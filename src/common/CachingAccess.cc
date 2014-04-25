@@ -62,7 +62,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     
     METLIBS_LOG_DEBUG(LOGVAL(bb->status()));
     if (bb->status() == SimpleBuffer::COMPLETE) {
-      const TimeBuffer::ObsDataByTime_ps& data = bb->data(); // FIXME avoid list/vector problem
+      const ObsData_ps_ST& data = bb->data(); // FIXME avoid list/vector problem
       mRequest->newData(filterData(ObsData_pv(data.begin(), data.end())));
     } else {
       mCountIncomplete += 1;
