@@ -153,7 +153,7 @@ void ToolInterpolate::fetchData()
   }
 
   mObsBuffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(mFirst.sensor), TimeSpan(mFirst.time, mLast.time));
-  connect(mObsBuffer.get(), SIGNAL(completed(bool)), this, SLOT(enableButtons()));
+  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(enableButtons()));
   mObsBuffer->postRequest(mDA);
@@ -168,6 +168,11 @@ void ToolInterpolate::enableButtons()
 bool ToolInterpolate::checkEnabled()
 {
   METLIBS_LOG_SCOPE();
+
+  if (not mObsBuffer) {
+    HQC_LOG_WARN("no obsbuffer");
+    return false;
+  }
 
   ObsData_p o0 = mObsBuffer->get(mFirst);
   if (not o0 or Helpers::is_missing(o0) or Helpers::is_rejected(o0))
