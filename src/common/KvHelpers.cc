@@ -1,6 +1,7 @@
 
 #include "KvHelpers.hh"
 
+#include "KvalobsData.hh"
 #include "KvMetaDataBuffer.hh"
 #include "TimeSpan.hh"
 #include "common/HqcApplication.hh"
@@ -15,6 +16,7 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvHelpers"
 #include "common/ObsLogging.hh"
@@ -169,6 +171,28 @@ kvalobs::kvData getMissingKvData(const SensorTime& st)
   const Sensor& s = st.sensor;
   return kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
       s.paramId, s.typeId, s.sensor, s.level);
+}
+
+static KvalobsData_p makeData(const SensorTime& st, const timeutil::ptime& tbtime, float original,
+    float co, const kvalobs::kvControlInfo& ci, const std::string& cf, bool created)
+{
+  const Sensor& s = st.sensor;
+  kvalobs::kvUseInfo ui;
+  ui.setUseFlags(ci);
+  const kvalobs::kvData kvdata(s.stationId, st.time, original, s.paramId,
+      tbtime, s.typeId, s.sensor, s.level, co, ci, ui, cf);
+  return boost::make_shared<KvalobsData>(kvdata, created);
+}
+
+KvalobsData_p createdData(const SensorTime& st, const timeutil::ptime& tbtime,
+    float co, const kvalobs::kvControlInfo& ci, const std::string& cf)
+{
+  return makeData(st, tbtime, kvalobs::MISSING, co, ci, cf, true);
+}
+
+KvalobsData_p modifiedData(ObsData_p base, float co, const kvalobs::kvControlInfo& ci, const std::string& cf)
+{
+  return makeData(base->sensorTime(), base->tbtime(), base->original(), co, ci, cf, false);
 }
 
 int parameterIdByName(const std::string& paramName)

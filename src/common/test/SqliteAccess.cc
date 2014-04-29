@@ -280,47 +280,24 @@ bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
 
-  kvData_v dataInsert, dataUpdate;
-  for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
-    KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
-    
-    kvalobs::kvData d = ou->data();
-    if (ou->changes() & KvalobsUpdate::CHANGED_CORRECTED)
-      d.corrected(ou->corrected());
-    if (ou->changes() & KvalobsUpdate::CHANGED_CONTROLINFO) {
-      d.controlinfo(ou->controlinfo());
-      Helpers::updateUseInfo(d);
-    }
-    if (ou->changes() & KvalobsUpdate::CHANGED_CFAILED)
-      d.controlinfo(ou->cfailed());
-
-    if ((ou->changes() & KvalobsUpdate::CHANGED_NEW)) {
-      Helpers::updateCfailed(d, "hqc-i");
-      // specify tbtime
-      d = kvalobs::kvData(d.stationID(), d.obstime(), d.original(),
-          d.paramID(), timeutil::to_miTime(tbtime), d.typeID(), d.sensor(), d.level(),
-          d.corrected(), d.controlinfo(), d.useinfo(), d.cfailed());
-      dataInsert.push_back(d);
-    } else {
-      Helpers::updateCfailed(d, "hqc-m");
-      dataUpdate.push_back(d);
-    }
-  }
-
   SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
 
-  ObsData_pv inserted;
-  inserted.reserve(dataInsert.size());
-  for (kvData_v::const_iterator itI = dataInsert.begin(); itI != dataInsert.end(); ++itI) {
-    sqlite->exec(sql4insert(*itI));
-    inserted.push_back(boost::make_shared<KvalobsData>(*itI, false));
-  }
+  ObsData_pv updated, inserted;
+  for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
+    KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
 
-  ObsData_pv updated;
-  updated.reserve(dataUpdate.size());
-  for (kvData_v::const_iterator itU = dataUpdate.begin(); itU != dataUpdate.end(); ++itU) {
-    sqlite->exec(sql4update(*itU));
-    updated.push_back(boost::make_shared<KvalobsData>(*itU, false));
+    KvalobsData_p d;
+    if (ou->obs()) {
+      d = Helpers::modifiedData(ou->obs(), ou->corrected(), ou->controlinfo(), ou->cfailed());
+      Helpers::updateCfailed(d->data(), "hqc-m");
+      sqlite->exec(sql4update(d->data()));
+      updated.push_back(d);
+    } else {
+      d = Helpers::createdData(ou->sensorTime(), tbtime, ou->corrected(), ou->controlinfo(), ou->cfailed());
+      Helpers::updateCfailed(d->data(), "hqc-i");
+      sqlite->exec(sql4insert(d->data()));
+      inserted.push_back(d);
+    }
   }
 
   distributeUpdates(updated, inserted, SensorTime_v());

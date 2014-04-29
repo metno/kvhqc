@@ -7,42 +7,41 @@
 
 class KvalobsUpdate : public ObsUpdate {
 public:
-  KvalobsUpdate(KvalobsData_p kvdata);
   KvalobsUpdate(const SensorTime& st);
+
+  KvalobsUpdate(ObsData_p obs);
 
   virtual const SensorTime& sensorTime() const
     { return mSensorTime; }
   
   virtual float corrected() const
-    { return mNewCorrected; }
+    { return mCorrected; }
 
-  virtual void setCorrected(float c);
+  virtual void setCorrected(float c)
+    { mCorrected = c; }
   
   virtual const kvalobs::kvControlInfo& controlinfo() const
-    { return mNewControlinfo; }
+    { return mControlinfo; }
 
-  virtual void setControlinfo(const kvalobs::kvControlInfo& ci);
+  virtual void setControlinfo(const kvalobs::kvControlInfo& ci)
+    { mControlinfo = ci; }
   
   virtual const std::string& cfailed() const
-    { return mNewCfailed; }
+    { return mCfailed; }
   
-  virtual void setCfailed(const std::string& cf);
-  
-  enum { CHANGED_CORRECTED = 1, CHANGED_CONTROLINFO = 2, CHANGED_CFAILED = 4, CHANGED_NEW = 8 };
+  virtual void setCfailed(const std::string& cf)
+    { mCfailed = cf; }
 
-  int changes() const
-    { return mChanged; }
-
-  const kvalobs::kvData& data() const
-    { return mData; }
+  ObsData_p obs()
+    { return mObs; }
 
 private:
   SensorTime mSensorTime;
-  kvalobs::kvData mData;
-  int mChanged;
-  float mNewCorrected;
-  kvalobs::kvControlInfo mNewControlinfo;
-  std::string mNewCfailed;
+  ObsData_p mObs;
+
+  float mCorrected;
+  kvalobs::kvControlInfo mControlinfo;
+  std::string mCfailed;
 };
 
 HQC_TYPEDEF_P(KvalobsUpdate);

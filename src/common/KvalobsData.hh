@@ -47,5 +47,6 @@ private:
 };
 
 HQC_TYPEDEF_P(KvalobsData);
+HQC_TYPEDEF_PV(KvalobsData);
 
 #endif // ACCESS_KVALOBSDATA_HH

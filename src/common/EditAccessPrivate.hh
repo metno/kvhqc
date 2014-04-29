@@ -10,51 +10,6 @@
 
 // ========================================================================
 
-class EditUpdate : public ObsUpdate {
-public:
-  EditUpdate(const SensorTime& st)
-    : mSensorTime(st) { }
-
-  EditUpdate(ObsData_p obs)
-    : mSensorTime(obs->sensorTime()), mObs(obs) { }
-
-  virtual const SensorTime& sensorTime() const
-    { return mSensorTime; }
-  
-  virtual float corrected() const
-    { return mCorrected; }
-
-  virtual void setCorrected(float c)
-    { mCorrected = c; }
-  
-  virtual const kvalobs::kvControlInfo& controlinfo() const
-    { return mControlinfo; }
-
-  virtual void setControlinfo(const kvalobs::kvControlInfo& ci)
-    { mControlinfo = ci; }
-  
-  virtual const std::string& cfailed() const
-    { return mCfailed; }
-  
-  virtual void setCfailed(const std::string& cf)
-    { mCfailed = cf; }
-
-  ObsData_p obs()
-    { return mObs; }
-
-  SensorTime mSensorTime;
-  ObsData_p mObs;
-
-  float mCorrected;
-  kvalobs::kvControlInfo mControlinfo;
-  std::string mCfailed;
-};
-
-HQC_TYPEDEF_P(EditUpdate);
-HQC_TYPEDEF_PV(EditUpdate);
-
-// ========================================================================
-
 class EditVersions {
 public:
   EditVersions(ObsData_p backendData, size_t editVersion, ObsData_p editData);

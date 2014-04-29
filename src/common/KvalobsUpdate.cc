@@ -1,54 +1,22 @@
 
 #include "KvalobsUpdate.hh"
 
-#include "common/Functors.hh"
-#include "common/KvHelpers.hh"
-
-KvalobsUpdate::KvalobsUpdate(KvalobsData_p kvdata)
-  : mSensorTime(kvdata->sensorTime())
-  , mData(kvdata->data())
-  , mChanged(0)
-{
-}
-
-// ------------------------------------------------------------------------
+#include "KvHelpers.hh"
 
 KvalobsUpdate::KvalobsUpdate(const SensorTime& st)
   : mSensorTime(st)
-  , mData(Helpers::getMissingKvData(st))
-  , mChanged(CHANGED_NEW)
 {
+  const kvalobs::kvData missing = Helpers::getMissingKvData(st);
+  mCorrected = missing.corrected();
+  mControlinfo = missing.controlinfo();
+  mCfailed = missing.cfailed();
 }
 
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setCorrected(float c)
+KvalobsUpdate::KvalobsUpdate(ObsData_p obs)
+  : mSensorTime(obs->sensorTime())
+  , mObs(obs)
+  , mCorrected(obs->corrected())
+  , mControlinfo(obs->controlinfo())
+  , mCfailed(obs->cfailed())
 {
-  if (Helpers::float_eq()(c, mData.corrected()))
-    mChanged &= ~CHANGED_CORRECTED;
-  else
-    mChanged |= CHANGED_CORRECTED;
-  mNewCorrected = c;
-}
-  
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setControlinfo(const kvalobs::kvControlInfo& ci)
-{
-  if (ci != mData.controlinfo())
-    mChanged &= ~CHANGED_CONTROLINFO;
-  else
-    mChanged |= CHANGED_CONTROLINFO;
-  mNewControlinfo = ci;
-}
-  
-// ------------------------------------------------------------------------
-
-void KvalobsUpdate::setCfailed(const std::string& cf)
-{
-  if (cf != mData.cfailed())
-    mChanged &= ~CHANGED_CFAILED;
-  else
-    mChanged |= CHANGED_CFAILED;
-  mNewCfailed = cf;
 }

@@ -4,6 +4,11 @@
 
 #include "Sensor.hh"
 
+class KvalobsData;
+HQC_TYPEDEF_P(KvalobsData);
+class ObsData;
+HQC_TYPEDEF_P(ObsData);
+
 #include <set>
 #include <vector>
 
@@ -44,6 +49,9 @@ SensorTime sensorTimeFromKvModelData(const kvalobs::kvModelData& d);
 Sensor modelSensor(const Sensor& sensor);
 
 kvalobs::kvData getMissingKvData(const SensorTime& st);
+KvalobsData_p createdData(const SensorTime& st, const timeutil::ptime& tbtime,
+    float co, const kvalobs::kvControlInfo& ci, const std::string& cf);
+KvalobsData_p modifiedData(ObsData_p base, float co, const kvalobs::kvControlInfo& ci, const std::string& cf);
 
 void updateUseInfo(kvalobs::kvData& data);
 

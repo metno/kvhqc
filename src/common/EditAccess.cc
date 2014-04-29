@@ -3,6 +3,7 @@
 #include "EditAccessPrivate.hh"
 
 #include "DistributeUpdates.hh"
+#include "KvalobsUpdate.hh"
 #include "KvHelpers.hh"
 #include "ObsAccept.hh"
 
@@ -293,34 +294,12 @@ void EditAccess::dropRequest(ObsRequest_p request)
 
 ObsUpdate_p EditAccess::createUpdate(ObsData_p data)
 {
-  return boost::make_shared<EditUpdate>(data);
+  return boost::make_shared<KvalobsUpdate>(data);
 }
 
 ObsUpdate_p EditAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return boost::make_shared<EditUpdate>(sensorTime);
-}
-
-static KvalobsData_p makeData(const SensorTime& st, const timeutil::ptime& tbtime, float original,
-    float co, const kvalobs::kvControlInfo& ci, const std::string& cf, bool created)
-{
-  const Sensor& s = st.sensor;
-  kvalobs::kvUseInfo ui;
-  ui.setUseFlags(ci);
-  const kvalobs::kvData kvdata(s.stationId, st.time, original, s.paramId,
-      tbtime, s.typeId, s.sensor, s.level, co, ci, ui, cf);
-  return boost::make_shared<KvalobsData>(kvdata, created);
-}
-
-static KvalobsData_p createdData(const SensorTime& st, const timeutil::ptime& tbtime,
-    float co, const kvalobs::kvControlInfo& ci, const std::string& cf)
-{
-  return makeData(st, tbtime, kvalobs::MISSING, co, ci, cf, true);
-}
-
-static KvalobsData_p modifiedData(ObsData_p base, float co, const kvalobs::kvControlInfo& ci, const std::string& cf)
-{
-  return makeData(base->sensorTime(), base->tbtime(), base->original(), co, ci, cf, false);
+  return boost::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
@@ -331,34 +310,27 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
 
   const timeutil::ptime& tbtime = versionTimestamp(currentVersion());
 
-  BOOST_FOREACH(ObsUpdate_p u, updates) {
-    EditUpdate_p eu = boost::dynamic_pointer_cast<EditUpdate>(u);
-    if (not eu) {
-      // FIXME HCQ_LOG_ERROR("not an EditUpdate:" << u->sensorTime());
-      continue;
-    }
+  for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
+    KvalobsUpdate_p eu = boost::static_pointer_cast<KvalobsUpdate>(*it);
 
     EditVersions_ps::iterator itE = p->findEditVersions(eu->sensorTime());
     if (itE != p->mEdited.end()) {
       // TODO check for correct parent
-      KvalobsData_p d = modifiedData((*itE)->currentData(), eu->corrected(), eu->controlinfo(), eu->cfailed());
-      METLIBS_LOG_DEBUG("edited before" << LOGOBS(d));
+      KvalobsData_p d = Helpers::modifiedData((*itE)->currentData(), eu->corrected(), eu->controlinfo(), eu->cfailed());
       (*itE)->addVersion(p->mCurrentVersion, d);
       du.updateData((*itE)->currentData());
     } else {
       KvalobsData_p d;
       if (eu->obs())
-        d = modifiedData(eu->obs(), eu->corrected(), eu->controlinfo(), eu->cfailed());
+        d = Helpers::modifiedData(eu->obs(), eu->corrected(), eu->controlinfo(), eu->cfailed());
       else
-        d = createdData(eu->sensorTime(), tbtime, eu->corrected(), eu->controlinfo(), eu->cfailed());
-      METLIBS_LOG_DEBUG("new edit" << LOGOBS(d));
+        d = Helpers::createdData(eu->sensorTime(), tbtime, eu->corrected(), eu->controlinfo(), eu->cfailed());
       EditVersions_p ev = boost::make_shared<EditVersions>(eu->obs(), p->mCurrentVersion, d);
       p->mEdited.insert(ev);
       if (eu->obs())
         du.updateData(ev->currentData());
       else
         du.newData(ev->currentData());
-      METLIBS_LOG_DEBUG(" => currentData = " << LOGOBS(ev->currentData()));
     }
   }
 
