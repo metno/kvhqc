@@ -269,7 +269,8 @@ HqcMainWindow::HqcMainWindow()
   mAutoViewSplitter->setOpaqueResize(false);
   ui->tabs->addTab(mAutoViewSplitter, tr("Auto List/Series"));
 
-  //eda->obsDataChanged.connect(boost::bind(&HqcMainWindow::onDataChanged, this, _1, _2));
+  connect(eda.get(), SIGNAL(currentVersionChanged(size_t, size_t)),
+      this, SLOT(onEditVersionChanged(size_t, size_t)));
   ui->saveAction->setEnabled(false); // no changes yet
 
   HelpDialog::Info info;
@@ -826,15 +827,14 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
   }
 }
 
-//void HqcMainWindow::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
-//{
-//  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-//  ui->saveAction->setEnabled(eda->countU() > 0);
-//  ui->actionUndo->setEnabled(eda->canUndo());
-//  ui->actionRedo->setEnabled(eda->canRedo());
-//
-//  ui->treeChanges->expandToDepth(2);
-//}
+void HqcMainWindow::onEditVersionChanged(size_t current, size_t highest)
+{
+  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
+  ui->saveAction->setEnabled(current > 0); // FIXME (eda->countU() > 0);
+  ui->actionUndo->setEnabled(eda->canUndo());
+  ui->actionRedo->setEnabled(eda->canRedo());
+  ui->treeChanges->expandToDepth(2);
+}
 
 void HqcMainWindow::writeSettings()
 {

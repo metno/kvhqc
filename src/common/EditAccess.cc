@@ -49,6 +49,19 @@ void EditVersions::setVersion(size_t version)
   METLIBS_LOG_DEBUG(LOGVAL(mCurrent));
 }
 
+void EditVersions::dropVersionsFrom(size_t version)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
+  const bool newCurrent = (version <= currentVersion());
+  Version_v::iterator b = mVersions.begin();
+  while (b->version < version)
+    ++b;
+  mVersions.erase(b, mVersions.end());
+  if (newCurrent)
+    mCurrent = mVersions.size() - 1;
+  METLIBS_LOG_DEBUG(LOGVAL(mCurrent));
+}
+
 ObsData_p EditVersions::versionData(size_t version) const
 {
   // FIXME binary search
@@ -398,7 +411,7 @@ bool EditAccess::storeToBackend()
 
     if (p->mVersionTimestamps.size() > 1)
       p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
-    Q_EMIT currentVersionChanged(p->mCurrentVersion, p->mCurrentVersion);
+    Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
     
     return true;
   }
@@ -423,7 +436,7 @@ void EditAccess::reset()
   p->mEdited.clear();
   if (p->mVersionTimestamps.size() > 1)
     p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
-  Q_EMIT currentVersionChanged(p->mCurrentVersion, p->mCurrentVersion);
+  Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
 
   du.send();
 }
@@ -435,16 +448,21 @@ void EditAccess::newVersion()
   if (p->mVersionTimestamps.size() >= p->mCurrentVersion)
     p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + p->mCurrentVersion, p->mVersionTimestamps.end());
   p->mVersionTimestamps.push_back(timeutil::now());
+
+  for (EditVersions_ps::iterator itE = p->mEdited.begin(); itE != p->mEdited.end(); ++itE)
+    (*itE)->dropVersionsFrom(p->mCurrentVersion);
+
+  Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
 }
 
 bool EditAccess::canUndo() const
 {
-  return p->mCurrentVersion > 0;
+  return currentVersion() > 0;
 }
 
 bool EditAccess::canRedo() const
 {
-  return p->mCurrentVersion < highestVersion();
+  return currentVersion() < highestVersion();
 }
 
 size_t EditAccess::highestVersion() const
@@ -465,15 +483,19 @@ size_t EditAccess::countU() const
 void EditAccess::undoVersion()
 {
   METLIBS_LOG_SCOPE();
-  if (p->mCurrentVersion > 0)
+  if (canUndo()) {
     p->updateToPreviousVersion();
+    Q_EMIT currentVersionChanged(currentVersion(), highestVersion());
+  }
 }
 
 void EditAccess::redoVersion()
 {
   METLIBS_LOG_SCOPE();
-  if (p->mCurrentVersion < highestVersion())
+  if (canRedo()) {
     p->updateToNextVersion();
+    Q_EMIT currentVersionChanged(currentVersion(), highestVersion());
+  }
 }
 
 const timeutil::ptime& EditAccess::versionTimestamp(size_t version) const

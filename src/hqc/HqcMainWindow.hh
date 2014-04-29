@@ -138,9 +138,9 @@ private Q_SLOTS:
 
   void navigateTo(const SensorTime& st);
 
-private:
-  //void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
+  void onEditVersionChanged(size_t current, size_t highest);
 
+private:
   enum listType {erLi, daLi, erSa, alLi, alSa, dumLi};
   void listMenu(listType lt);
 

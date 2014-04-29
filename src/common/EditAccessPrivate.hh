@@ -74,6 +74,7 @@ public:
 
   void addVersion(size_t version, ObsData_p data);
   void setVersion(size_t version);
+  void dropVersionsFrom(size_t version);
 
   ObsData_p versionData(size_t version) const;
   bool hasVersion(size_t version) const
