@@ -45,9 +45,16 @@ QVariant DataColumn::data(const timeutil::ptime& time, int role) const
   return mItem->data(getObs(time), st, role);
 }
 
-bool DataColumn::setData(const timeutil::ptime&, const QVariant&, int)
+bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int role)
 {
-  return false;
+  METLIBS_LOG_SCOPE();
+  try {
+    METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
+    return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
+  } catch (std::exception& e) {
+    HQC_LOG_WARN(e.what());
+    return false;
+  }
 }
 
 QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const

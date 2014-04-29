@@ -51,7 +51,7 @@ private Q_SLOTS:
   void onDropDataEnd(const SensorTime_v& dropped);
 
 protected:
-  ObsAccess_p mDA;
+  EditAccess_p mDA;
   TimeBuffer_p mBuffer;
   DataItem_p mItem;
   bool mHeaderShowStation;
