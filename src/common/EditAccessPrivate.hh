@@ -3,6 +3,7 @@
 #define ACCESS_EDITACCESSPRIVATE_HH 1
 
 #include "EditAccess.hh"
+#include "KvalobsData.hh"
 
 #include "util/VersionedValue.hh"
 #include "common/Functors.hh"
@@ -54,51 +55,53 @@ HQC_TYPEDEF_PV(EditUpdate);
 
 // ========================================================================
 
-class EditVersions : public ObsData {
+class EditVersions {
 public:
-  EditVersions(ObsData_p backendData);
-  EditVersions(const SensorTime& sensorTime);
+  EditVersions(ObsData_p backendData, size_t editVersion, ObsData_p editData);
 
   virtual const SensorTime& sensorTime() const
-    { return mSensorTime; }
+    { return currentData()->sensorTime(); }
   virtual float original() const
-    { return mBackendData->original(); }
+    { return currentData()->original(); }
   virtual float corrected() const
-    { return mCorrected.value(); }
+    { return currentData()->corrected(); }
   virtual const kvalobs::kvControlInfo& controlinfo() const
-    { return mControlinfo.value(); }
+    { return currentData()->controlinfo(); }
   virtual const std::string& cfailed() const
-    { return mCfailed.value(); }
+    { return currentData()->cfailed(); }
   virtual const timeutil::ptime& tbtime() const
-    { return mBackendData->tbtime(); }
-  
-  bool set(size_t version, bool drop);
-  bool hasVersion(size_t version) const;
+    { return currentData()->tbtime(); }
 
-  bool set(size_t version, float corrected, const kvalobs::kvControlInfo& controlinfo, const std::string& cfailed);
-  bool modified() const
-    { return mCorrected.modified() or mControlinfo.modified() or mCfailed.modified(); }
-  bool updateBackend(ObsData_p backendData);
+  void addVersion(size_t version, ObsData_p data);
+  void setVersion(size_t version);
 
-  void use()
-    { mUsed += 1; }
-  bool drop()
-    { mUsed -= 1; return mUsed == 0; }
+  ObsData_p versionData(size_t version) const;
+  bool hasVersion(size_t version) const
+    { return versionData(version); }
 
-  bool isCreated() const
-    { return not mBackendData; }
+  void updateBackend(ObsData_p backendData);
 
-  SensorTime mSensorTime;
-  ObsData_p mBackendData;
+  bool hasBackendData() const
+    { return backendData(); }
 
-  typedef VersionedValue<float, Helpers::float_eq> VersionedCorrected_t;
-  typedef VersionedValue<kvalobs::kvControlInfo>   VersionedControlinfo_t;
-  typedef VersionedValue<std::string>              VersionedCfailed_t;
+  size_t currentVersion() const
+    { return mVersions[mCurrent].version; }
 
-  VersionedCorrected_t   mCorrected;
-  VersionedControlinfo_t mControlinfo;
-  VersionedCfailed_t     mCfailed;
-  size_t mUsed;
+  ObsData_p backendData() const
+    { return mVersions.front().data; }
+
+  ObsData_p currentData() const;
+
+private:
+  struct Version {
+    size_t version;
+    ObsData_p data;
+    Version(size_t v, ObsData_p d) : version(v), data(d) { }
+  };
+  HQC_TYPEDEF_V(Version);
+
+  Version_v mVersions;
+  size_t mCurrent;
 };
 
 HQC_TYPEDEF_P(EditVersions);
@@ -112,7 +115,7 @@ struct lt_EditVersions : public std::binary_function<EditVersions_p, EditVersion
     { return lt_SensorTime()(a->sensorTime(), b); }
 };
 
-typedef std::set<EditVersions_p> EditVersions_ps;
+typedef std::set<EditVersions_p, lt_EditVersions> EditVersions_ps;
 
 // ========================================================================
 
@@ -154,6 +157,13 @@ HQC_TYPEDEF_X(EditRequest);
 HQC_TYPEDEF_PV(EditRequest);
 HQC_TYPEDEF_PS(EditRequest);
 
+struct EditRequestUnwrap {
+  ObsRequest_p operator()(EditRequest_p er) const
+    { return er->mWrapped; }
+};
+
+
+
 // ========================================================================
 
 class DistributeUpdates;
@@ -163,10 +173,12 @@ public:
   EditAccessPrivate(ObsAccess_p backend);
 
   EditVersions_ps::iterator findEditVersions(const SensorTime& st);
-  ObsData_pv replace(EditRequest_x er, ObsData_pv backendData);
-  void replace(EditRequest_x er, const SensorTime_v& backendDropped);
-  void updateWrapped(DistributeUpdates& du, EditVersions_p ev);
-  void insertWrapped(DistributeUpdates& du, EditVersions_p ev);
+  void handleBackendNew(ObsRequest_p wr, const ObsData_pv& backendData);
+  void handleBackendUpdate(ObsRequest_p wr, const ObsData_pv& backendData);
+  void handleBackendDrop(ObsRequest_p wr, const SensorTime_v& backendDropped);
+
+  void updateToPreviousVersion();
+  void updateToNextVersion();
 
   ObsAccess_p mBackend;
 

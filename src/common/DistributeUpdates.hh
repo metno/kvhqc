@@ -2,6 +2,7 @@
 #ifndef DISTRIBUTEUPDATES_HH
 #define DISTRIBUTEUPDATES_HH 1
 
+#include "ObsAccept.hh"
 #include "ObsData.hh"
 #include "ObsRequest.hh"
 #include <map>
@@ -44,7 +45,12 @@ private:
 
 // ========================================================================
 
-template<class R>
+struct DistributeRequestUnwrap {
+  ObsRequest_p operator()(ObsRequest_p r) const
+    { return r; }
+};
+
+template<class R, class U = DistributeRequestUnwrap>
 class DistributeRequestUpdates
 {
 public:
@@ -68,30 +74,36 @@ private:
   const R& mRequests;
 };
 
-template<class R>
-void DistributeRequestUpdates<R>::updateData(ObsData_p obs)
+template<class R, class U>
+void DistributeRequestUpdates<R, U>::updateData(ObsData_p obs)
 {
+  const U unwrap;
   for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
-    if (acceptObs(*itR, obs))
-      mDU.updateData(*itR, obs);
+    ObsRequest_p r = unwrap(*itR);
+    if (acceptObs(r, obs))
+      mDU.updateData(r, obs);
   }
 }
 
-template<class R>
-void DistributeRequestUpdates<R>::newData(ObsData_p obs)
+template<class R, class U>
+void DistributeRequestUpdates<R, U>::newData(ObsData_p obs)
 {
+  const U unwrap;
   for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
-    if (acceptObs(*itR, obs))
-      mDU.newData(*itR, obs);
+    ObsRequest_p r = unwrap(*itR);
+    if (acceptObs(r, obs))
+      mDU.newData(r, obs);
   }
 }
 
-template<class R>
-void DistributeRequestUpdates<R>::dropData(const SensorTime& st)
+template<class R, class U>
+void DistributeRequestUpdates<R, U>::dropData(const SensorTime& st)
 {
+  const U unwrap;
   for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
-    if ((*itR)->timeSpan().contains(st.time) and (*itR)->sensors().count(st.sensor))
-      mDU.dropData(*itR, st);
+    ObsRequest_p r = unwrap(*itR);
+    if (r->timeSpan().contains(st.time) and r->sensors().count(st.sensor))
+      mDU.dropData(r, st);
   }
 }
 

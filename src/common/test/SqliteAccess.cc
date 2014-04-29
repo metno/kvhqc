@@ -73,6 +73,20 @@ std::string sql4update(const kvalobs::kvData& d)
   return sql.str();
 }
 
+std::string sql4drop(const SensorTime& st)
+{
+  const Sensor& s = st.sensor;
+  std::ostringstream sql;
+  sql << "DELETE FROM data "
+      << "WHERE stationid = " << s.stationId
+      << "  AND obstime = " << time2sql(st.time)
+      << "  AND paramid = " << s.paramId
+      << "  AND typeid = " << s.typeId
+      << "  AND sensor = '" << s.sensor << "'"
+      << "  AND level = " << s.level;
+  return sql.str();
+}
+
 typedef std::vector<kvalobs::kvData> kvData_v;
 
 } // namespace anonymous
@@ -154,7 +168,7 @@ void SqliteHandler::queryData(ObsRequest_p request)
 
 // ------------------------------------------------------------------------
 
-void SqliteHandler::exec(const std::string& sql)
+int SqliteHandler::exec(const std::string& sql)
 {
   //METLIBS_LOG_SCOPE(LOGVAL(sql));
   char *zErrMsg = 0;
@@ -164,6 +178,7 @@ void SqliteHandler::exec(const std::string& sql)
     sqlite3_free(zErrMsg);
     throw std::runtime_error(what);
   }
+  return sqlite3_changes(db);
 }
 
 // ------------------------------------------------------------------------
@@ -308,7 +323,7 @@ bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
     updated.push_back(boost::make_shared<KvalobsData>(*itU, false));
   }
 
-  distributeUpdates(updated, inserted);
+  distributeUpdates(updated, inserted, SensorTime_v());
   return true;
 }
 
@@ -355,4 +370,15 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
         paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed);
     sqlite->exec(sql4insert(d));
   }
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::dropData(const SensorTime_v& drop)
+{
+  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  for (SensorTime_v::const_iterator it = drop.begin(); it != drop.end(); ++it)
+    sqlite->exec(sql4drop(*it));
+
+  distributeUpdates(ObsData_pv(), ObsData_pv(), drop);
 }

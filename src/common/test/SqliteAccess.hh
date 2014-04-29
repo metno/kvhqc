@@ -15,6 +15,7 @@ public:
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
   void insertDataFromFile(const std::string& filename);
+  void dropData(const SensorTime_v& toDrop);
 
   virtual void postRequest(ObsRequest_p request);
   virtual void dropRequest(ObsRequest_p request);

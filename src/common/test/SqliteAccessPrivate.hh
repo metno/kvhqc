@@ -14,7 +14,7 @@ public:
   virtual void finalize() { }
 
   void queryData(ObsRequest_p request);
-  void exec(const std::string& sql);
+  int exec(const std::string& sql);
 
 private:
   sqlite3_stmt* prepare_statement(const std::string& sql);

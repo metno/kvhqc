@@ -291,3 +291,92 @@ TEST(EditAccessTest, UpdateInParent)
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counterE, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counterE, st2));
 }
+
+TEST(EditAccessTest, DropInParent)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 02:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00");
+  const SensorTime st1(sensor1, t1);
+
+  const float ORIG_C1 = -4.5f;
+
+  // get data from EditAccess
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(1, counter->countNew);
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+
+  // drop data in SqliteAccess
+  sqla->dropData(SensorTime_v(1, st1));
+
+  EXPECT_EQ(2, counter->size());
+  EXPECT_EQ(1, counter->countDrop);
+
+  EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
+}
+
+TEST(EditAccessTest, DropInParentAfterChange)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 02:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00");
+  const SensorTime st1(sensor1, t1);
+
+  const float ORIG_C1 = -4.5f;
+  const float CHNG_C1 =  4.0f;
+
+  // get data from EditAccess
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(1, counter->countNew);
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+
+  ea->newVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+
+  { Updater updater(ea, counter);
+    ObsUpdate_p up = updater.createUpdate(st1);
+    up->setCorrected(CHNG_C1);
+    updater.send();
+  }
+
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countUpdate);
+
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+
+  // drop data in SqliteAccess
+  sqla->dropData(SensorTime_v(1, st1));
+
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countUpdate);
+  EXPECT_EQ(0, counter->countDrop);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+
+  ea->reset();
+
+  EXPECT_EQ(2, counter->size());
+  EXPECT_EQ(1, counter->countDrop);
+
+  EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
+}
