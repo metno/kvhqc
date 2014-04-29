@@ -49,13 +49,12 @@ private Q_SLOTS:
   void onDateFromChanged(const QDateTime&);
   void onDateToChanged(const QDateTime&);
 
-  void onDataComplete();
-  void onDataChanged();
+  void updatePlot();
 
 private:
   void doNavigateTo(const SensorTime& st);
   void updateSensors();
-  void updatePlot();
+  void updateTime();
   void updateTimeEditors();
 
   std::string changes();

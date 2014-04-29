@@ -159,7 +159,7 @@ void TimeSeriesView::updateSensors()
       HQC_LOG_WARN("exception while retrieving kvParam for " << s);
     }
   }
-  updatePlot();
+  updateTime();
 }
 
 void TimeSeriesView::showEvent(QShowEvent* se)
@@ -264,7 +264,7 @@ void TimeSeriesView::doNavigateTo(const SensorTime& st)
   if (changedSensors)
     updateSensors();
   else if (changedTime)
-    updatePlot();
+    updateTime();
 }
 
 namespace /* anonymous */ {
@@ -401,11 +401,6 @@ void TimeSeriesView::replay(const std::string& changesText)
   updateSensors();
 }
 
-//void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
-//{
-//  updatePlot();
-//}
-
 void TimeSeriesView::onActionAddColumn()
 {
   METLIBS_LOG_SCOPE();
@@ -461,7 +456,7 @@ void TimeSeriesView::onActionResetColumns()
 void TimeSeriesView::onRadioPlot()
 {
   METLIBS_LOG_SCOPE();
-  updatePlot();
+  updateTime();
 }
 
 void TimeSeriesView::updateTimeEditors()
@@ -479,7 +474,7 @@ void TimeSeriesView::setTimeSpan(const TimeSpan& t)
     return;
 
   mTimeLimits = t;
-  updatePlot();
+  updateTime();
 }
 
 void TimeSeriesView::onDateFromChanged(const QDateTime&)
@@ -502,16 +497,16 @@ void TimeSeriesView::onDateToChanged(const QDateTime&)
   setTimeSpan(TimeSpan(stime, etime));
 }
 
-void TimeSeriesView::updatePlot()
+void TimeSeriesView::updateTime()
 {
   METLIBS_LOG_TIME();
   if (not mDA)
     return;
 
   mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(mSensors.begin(), mSensors.end()), mTimeLimits);
-  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(onDataComplete()));
-  connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
-  connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
+  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(updatePlot()));
+  connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(updatePlot()));
+  connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(updatePlot()));
   mBusy->setBusy(true);
   mObsBuffer->postRequest(mDA);
 
@@ -522,7 +517,7 @@ void TimeSeriesView::updatePlot()
   }
 }
 
-void TimeSeriesView::onDataComplete()
+void TimeSeriesView::updatePlot()
 {
   METLIBS_LOG_SCOPE();
   mBusy->setBusy(false);
@@ -610,12 +605,6 @@ void TimeSeriesView::onDataComplete()
   tsplot.tserieslist(tslist);      // set list of timeseries
 
   ui->plot->prepare(tsplot);
-}
-
-void TimeSeriesView::onDataChanged()
-{
-  METLIBS_LOG_SCOPE();
-  updatePlot();
 }
 
 // static
