@@ -380,3 +380,51 @@ TEST(EditAccessTest, DropInParentAfterChange)
 
   EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
 }
+
+TEST(EditAccessTest, RequestAfterEdit)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
+
+  const float ORIG_C1 = -4.5f, ORIG_C2 = -5.0f;
+  const float CHNG_C1 =  4.0f, CHNG_C2 =  3.0f;
+
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+
+  ea->newVersion();
+
+  { Updater updater(ea, counter);
+    ObsUpdate_p up = updater.createUpdate(st1);
+    up->setCorrected(CHNG_C1);
+    
+    up = updater.createUpdate(st2);
+    up->setCorrected(CHNG_C2);
+    
+    updater.send();
+  }
+
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countUpdate);
+
+  CountingBuffer_p counter2(new CountingBuffer(sensor1, time));
+  counter2->postRequest(ea);
+  EXPECT_EQ(7, counter2->size());
+  EXPECT_EQ(1, counter2->countComplete);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter2, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter2, st2));
+}

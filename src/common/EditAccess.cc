@@ -153,11 +153,10 @@ void EditAccessPrivate::handleBackendNew(ObsRequest_p wr, const ObsData_pv& back
       if (not ev->hasBackendData())
         // FIXME there may be multiple equivalent KvalobsData objects for the same SensorTime
         ev->updateBackend(*itB);
-      if (ev->currentVersion() > 0)
-        // no change, omit from wrappedData
-        continue;
+      wrappedData.push_back(ev->currentData());
+    } else {
+      wrappedData.push_back(*itB);
     }
-    wrappedData.push_back(*itB);
   }
   
   if (not wrappedData.empty())
