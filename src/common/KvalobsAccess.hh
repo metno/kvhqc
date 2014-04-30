@@ -3,6 +3,7 @@
 #define ACCESS_KVALOBSACCESS_HH 1
 
 #include "BackgroundAccess.hh"
+#include "common/AbstractReinserter.hh"
 #include "common/AbstractUpdateListener.hh"
 
 #include <decodeutility/DataReinserter.h>
@@ -24,13 +25,11 @@ public:
   virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
-  typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
-
-  void setReinserter(Reinserter_t* reinserter)
-    { mDataReinserter.reset(reinserter); }
+  void setReinserter(AbstractReinserter_p reinserter)
+    { mDataReinserter = reinserter; }
 
   bool hasReinserter() const
-    { return (mDataReinserter.get() != 0); }
+    { return mDataReinserter; }
 
 private Q_SLOTS:
   virtual void onUpdated(const kvData_v&);
@@ -40,7 +39,7 @@ private:
   void checkSubscribe(const Sensor_s& sensors);
 
 private:
-  std::auto_ptr<Reinserter_t> mDataReinserter;
+  AbstractReinserter_p mDataReinserter;
 };
 
 HQC_TYPEDEF_P(KvalobsAccess);

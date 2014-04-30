@@ -119,7 +119,6 @@ void KvalobsHandler::queryData(ObsRequest_p request)
 
 KvalobsAccess::KvalobsAccess()
   : BackgroundAccess(BackgroundHandler_p(new KvalobsHandler), true)
-  , mDataReinserter(0)
 {
   if (AbstractUpdateListener* ul = updateListener())
     connect(ul, SIGNAL(updated(const kvData_v&)), this, SLOT(onUpdated(const kvData_v&)));
@@ -203,7 +202,7 @@ ObsUpdate_p KvalobsAccess::createUpdate(const SensorTime& sensorTime)
 bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
   METLIBS_LOG_SCOPE();
-  if (not hasReinserter()) {
+  if (not mDataReinserter) {
     METLIBS_LOG_DEBUG("not authorized");
     return false;
   }
@@ -212,29 +211,27 @@ bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
   if (updates.empty())
     return true;
 
-  std::list<kvalobs::kvData> store;
+  AbstractReinserter::kvData_l dataUpdate, dataInsert;
   ObsData_pv modifiedObs, createdObs;
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
     KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
 
-    KvalobsData_p d;
     if (ou->obs()) {
-      d = Helpers::modifiedData(ou->obs(), ou->corrected(), ou->controlinfo(), ou->cfailed());
+      KvalobsData_p d = Helpers::modifiedData(ou->obs(), ou->corrected(), ou->controlinfo(), ou->cfailed());
       Helpers::updateCfailed(d->data(), "hqc-m");
       modifiedObs.push_back(d);
+      dataUpdate.push_back(d->data());
     } else {
-      d = Helpers::createdData(ou->sensorTime(), tbtime, ou->corrected(), ou->controlinfo(), ou->cfailed());
+      KvalobsData_p d = Helpers::createdData(ou->sensorTime(), tbtime, ou->corrected(), ou->controlinfo(), ou->cfailed());
       Helpers::updateCfailed(d->data(), "hqc-i");
       createdObs.push_back(d);
+      dataInsert.push_back(d->data());
     }
-
-    store.push_back(d->data());
   }
-  METLIBS_LOG_DEBUG(store.size() << " to store");
+  METLIBS_LOG_DEBUG(dataUpdate.size() << " to update, " << dataInsert.size() << " to insert");
 
-  CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
-  if (res->res == CKvalObs::CDataSource::OK) {
+  if (mDataReinserter->storeChanges(dataUpdate, dataInsert)) {
     distributeUpdates(modifiedObs, createdObs, SensorTime_v());
     return true;
   } else {

@@ -2,40 +2,16 @@
 #include "FakeReinserter.hh"
 
 FakeReinserter::FakeReinserter()
-    : kvalobs::DataReinserter<kvservice::KvApp>(0, 123)
-    , mInsertSuccess(true)
-{
-}
-
-FakeReinserter::~FakeReinserter()
+  : mInsertSuccess(true)
 {
 }
 
 void FakeReinserter::setInsertSuccess(bool successful)
 {
-    mInsertSuccess = successful;
+  mInsertSuccess = successful;
 }
 
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(kvalobs::kvData&) const
+bool FakeReinserter::storeChanges(const kvData_l& toUpdate, const kvData_l& toInsert)
 {
-    return makeInsertResult();
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(std::list<kvalobs::kvData>&) const
-{
-    return makeInsertResult();
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::insert(const kvalobs::serialize::KvalobsData&) const
-{
-    return makeInsertResult();
-}
-
-const CKvalObs::CDataSource::Result_var FakeReinserter::makeInsertResult() const
-{
-    using namespace CKvalObs::CDataSource;
-    Result_var ret(new Result);
-    ret->res = (mInsertSuccess ? OK : ERROR);
-    ret->message = "FakeKvApp insert result";
-    return ret;
+  return mInsertSuccess;
 }

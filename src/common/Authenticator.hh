@@ -2,9 +2,7 @@
 
    HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-   $Id$
-
-   Copyright (C) 2007 met.no
+   Copyright (C) 2007-2014 met.no
 
    Contact information:
    Norwegian Meteorological Institute

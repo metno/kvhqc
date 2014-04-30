@@ -1,7 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2013 met.no
+Copyright (C) 2013-2014 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -95,7 +95,7 @@ const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::seriali
     return DataReinserter<KvApp>::insert(data);
 }
 
-CKvalObs::CDataSource::Result_var HqcDataReinserter::fail(const std::string& why) const
+const HqcDataReinserter::Result HqcDataReinserter::fail(const std::string& why) const
 {
     CKvalObs::CDataSource::Result_var ret(new CKvalObs::CDataSource::Result);
     ret->res = CKvalObs::CDataSource::ERROR;

@@ -68,6 +68,8 @@ SET(common_SOURCES
   KvalobsAccess.cc
   KvalobsData.hh
   KvalobsData.cc
+  KvalobsReinserter.hh
+  KvalobsReinserter.cc
   ObsAccept.hh
   ObsAccept.cc
   ObsAccess.hh

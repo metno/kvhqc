@@ -37,7 +37,7 @@
 //#define ENABLE_TEXTDATA 1
 //#define ENABLE_DIANA 1
 
-#include "common/HqcDataReinserter.hh"
+#include "common/AbstractReinserter.hh"
 #include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 
@@ -86,7 +86,7 @@ public:
 
   void startup(const QString& captionSuffix);
 
-  void setReinserter(HqcReinserter* r);
+  void setReinserter(AbstractReinserter_p r);
 
 protected:
   virtual void moveEvent(QMoveEvent* event);

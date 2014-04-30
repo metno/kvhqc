@@ -48,7 +48,6 @@
 #include "common/CachingAccess.hh"
 #include "common/KvalobsAccess.hh"
 
-#include "common/identifyUser.h"
 #include "common/KvalobsModelAccess.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
@@ -337,7 +336,7 @@ void HqcMainWindow::changeEvent(QEvent *event)
   QMainWindow::changeEvent(event);
 }
 
-void HqcMainWindow::setReinserter(HqcReinserter* r)
+void HqcMainWindow::setReinserter(AbstractReinserter_p r)
 {
   kda->setReinserter(r);
 }
@@ -749,11 +748,6 @@ void HqcMainWindow::onRedoChanges()
 
 void HqcMainWindow::onSaveChanges()
 {
-  if (not kda->hasReinserter()) {
-    QString userName = "?";
-    HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
-    kda->setReinserter(r);
-  }
   if (not eda->storeToBackend()) {
     QMessageBox::critical(this, tr("HQC - Saving data"),
         tr("Sorry, your changes could not be saved!"),

@@ -28,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcMainWindow.hh"
+#include "common/KvalobsReinserter.hh"
 #include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
@@ -40,6 +41,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <kvcpp/corba/CorbaKvApp.h>
 
 #include <QtGui/QSplashScreen>
+
+#include <boost/make_shared.hpp>
 
 #include <iostream>
 
@@ -109,6 +112,7 @@ int main( int argc, char* argv[] )
   hqc.processEvents();
 
   std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
+  mw->setReinserter(boost::make_shared<KvalobsReinserter>());
   mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
 
   splash.finish(mw.get());
