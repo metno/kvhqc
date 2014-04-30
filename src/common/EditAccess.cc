@@ -230,6 +230,8 @@ void EditAccessPrivate::updateToPreviousVersion()
         du.dropData(ev->sensorTime());
       else
         du.updateData(ev->currentData());
+      if (c1 == 0)
+        mUpdated -= 1;
     }
   }
 
@@ -254,6 +256,8 @@ void EditAccessPrivate::updateToNextVersion()
         du.newData(ev->currentData());
       else
         du.updateData(ev->currentData());
+      if (c0 == 0)
+        mUpdated += 1;
     }
   }
 
@@ -330,6 +334,7 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
         du.updateData(ev->currentData());
       else
         du.newData(ev->currentData());
+      p->mUpdated += 1;
     }
   }
 
@@ -361,7 +366,7 @@ private:
 bool EditAccess::storeToBackend()
 {
   swapback<EditVersions_ps> oldEdited(p->mEdited);
-  swapback<size_t> oldCurrent(p->mCurrentVersion, 0);
+  swapback<size_t> oldCurrent(p->mCurrentVersion, 0), oldUpdated(p->mUpdated, 0);
 
   ObsUpdate_pv updates;
   BOOST_FOREACH(EditVersions_p ev, oldEdited.value()) {
@@ -378,6 +383,7 @@ bool EditAccess::storeToBackend()
   if (p->mBackend->storeUpdates(updates)) {
     oldEdited.accept();
     oldCurrent.accept();
+    oldUpdated.accept();
 
     if (p->mVersionTimestamps.size() > 1)
       p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
@@ -406,6 +412,8 @@ void EditAccess::reset()
   p->mEdited.clear();
   if (p->mVersionTimestamps.size() > 1)
     p->mVersionTimestamps.erase(p->mVersionTimestamps.begin() + 1, p->mVersionTimestamps.end());
+  p->mUpdated = 0;
+
   Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
 
   du.send();

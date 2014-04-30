@@ -104,6 +104,7 @@ TEST(EditAccessTest, UndoRedoStore)
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
 
   ea->undoVersion();
   EXPECT_EQ(0, ea->currentVersion());
@@ -112,6 +113,7 @@ TEST(EditAccessTest, UndoRedoStore)
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(0, ea->countU());
 
   ea->redoVersion();
   EXPECT_EQ(1, ea->currentVersion());
@@ -120,14 +122,17 @@ TEST(EditAccessTest, UndoRedoStore)
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
 
   EXPECT_TRUE(ea->storeToBackend());
+
   EXPECT_EQ(0, ea->currentVersion());
   EXPECT_EQ(0, ea->highestVersion());
   EXPECT_EQ(4, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(0, ea->countU());
 }
 
 TEST(EditAccessTest, Reset)
