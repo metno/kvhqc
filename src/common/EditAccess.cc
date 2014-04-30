@@ -323,6 +323,7 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
         d = Helpers::modifiedData(eu->obs(), eu->corrected(), eu->controlinfo(), eu->cfailed());
       else
         d = Helpers::createdData(eu->sensorTime(), tbtime, eu->corrected(), eu->controlinfo(), eu->cfailed());
+      d->setModified(true);
       EditVersions_p ev = boost::make_shared<EditVersions>(eu->obs(), p->mCurrentVersion, d);
       p->mEdited.insert(ev);
       if (eu->obs())

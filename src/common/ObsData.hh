@@ -30,6 +30,9 @@ public:
 
   /*! KVALOBS tbtime. */
   virtual const timeutil::ptime& tbtime() const = 0;
+
+  virtual bool isModified() const
+    { return false; }
 };
 
 HQC_TYPEDEF_P(ObsData);

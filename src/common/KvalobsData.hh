@@ -40,10 +40,17 @@ public:
   void setCreated(bool c)
     { mCreated = c; }
 
+  virtual bool isModified() const
+    { return mModified; }
+
+  void setModified(bool m)
+    { mModified = m; }
+
 private:
   SensorTime mSensorTime;
   kvalobs::kvData mKvData;
   bool mCreated;
+  bool mModified;
 };
 
 HQC_TYPEDEF_P(KvalobsData);

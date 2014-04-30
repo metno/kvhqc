@@ -78,10 +78,8 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
     }
   } else if (role == Qt::FontRole) {
     QFont f;
-#if 0
-    if (mColumnType == ObsColumn::NEW_CORRECTED and obs->modifiedCorrected())
+    if (obs->isModified())
       f.setBold(true);
-#endif
     return f;
   }
   return DataItem::data(obs, st, role);
