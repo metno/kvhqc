@@ -95,6 +95,7 @@ SET(common_SOURCES
   SyncRequest.hh
   SyncRequestPrivate.hh
   SyncRequest.cc
+  WrapRequest.cc
 
   AcceptRejectButtons.cc
   Authenticator.cc

@@ -3,6 +3,8 @@
 
 #include "BaseRequest.hh"
 
+#include <boost/make_shared.hpp>
+
 #define MILOGGER_CATEGORY "kvhqc.SignalRequest"
 #include "common/ObsLogging.hh"
 
@@ -32,13 +34,13 @@ public:
 // ========================================================================
 
 SignalRequest::SignalRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : mWrapped(new DeadRequest(sensors, timeSpan, filter))
+  : WrapRequest(boost::make_shared<DeadRequest>(sensors, timeSpan, filter))
 {
   METLIBS_LOG_SCOPE();
 }
 
 SignalRequest::SignalRequest(ObsRequest_p wrapped)
-  : mWrapped(wrapped)
+  : WrapRequest(wrapped)
 {
   METLIBS_LOG_SCOPE();
 }
@@ -46,27 +48,27 @@ SignalRequest::SignalRequest(ObsRequest_p wrapped)
 void SignalRequest::completed(bool failed)
 {
   METLIBS_LOG_SCOPE();
-  mWrapped->completed(failed);
+  wrapped()->completed(failed);
   Q_EMIT requestCompleted(failed);
 }
 
 void SignalRequest::newData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  mWrapped->newData(data);
+  wrapped()->newData(data);
   Q_EMIT requestNewData(data);
 }
 
 void SignalRequest::updateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  mWrapped->updateData(data);
+  wrapped()->updateData(data);
   Q_EMIT requestUpdateData(data);
 }
 
 void SignalRequest::dropData(const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
-  mWrapped->dropData(dropped);
+  wrapped()->dropData(dropped);
   Q_EMIT requestDropData(dropped);
 }

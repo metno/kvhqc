@@ -2,9 +2,9 @@
 #ifndef ACCESS_SIGNALREQUEST_HH
 #define ACCESS_SIGNALREQUEST_HH 1
 
-#include "BaseRequest.hh"
+#include "WrapRequest.hh"
 
-class SignalRequest : public QObject, public ObsRequest
+class SignalRequest : public QObject, public WrapRequest
 { Q_OBJECT;
 
 public:
@@ -12,15 +12,6 @@ public:
   SignalRequest(ObsRequest_p wrapped);
   
 public:
-  virtual const Sensor_s& sensors() const
-    { return mWrapped->sensors(); }
-
-  virtual const TimeSpan& timeSpan() const
-    { return mWrapped->timeSpan(); }
-
-  virtual ObsFilter_p filter() const
-    { return mWrapped->filter(); }
-
   virtual void completed(bool failed);
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
@@ -31,9 +22,6 @@ Q_SIGNALS:
   void requestNewData(const ObsData_pv& data);
   void requestUpdateData(const ObsData_pv& data);
   void requestDropData(const SensorTime_v& dropped);
-
-private:
-  ObsRequest_p mWrapped;
 };
 
 HQC_TYPEDEF_P(SignalRequest);

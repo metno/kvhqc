@@ -90,36 +90,34 @@ ObsData_p EditVersions::currentData() const
 // ========================================================================
 
 EditRequest::EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
-  : mAccess(a)
-  , mWrapped(wrapped)
+  : WrapRequest(wrapped)
+  , mAccess(a)
 {
-  mWrapped->setTag(this);
 }
 
 EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
 {
-  EditRequest_x er = static_cast<EditRequest_x>(wrapped->tag());
-  return boost::static_pointer_cast<EditRequest>(er->shared_from_this());
+  return boost::static_pointer_cast<EditRequest>(WrapRequest::untag(wrapped));
 }
 
 void EditRequest::completed(bool failed)
 {
-  mWrapped->completed(failed);
+  wrapped()->completed(failed);
 }
 
 void EditRequest::newData(const ObsData_pv& data)
 {
-  mAccess->handleBackendNew(mWrapped, data);
+  mAccess->handleBackendNew(wrapped(), data);
 }
 
 void EditRequest::updateData(const ObsData_pv& data)
 {
-  mAccess->handleBackendUpdate(mWrapped, data);
+  mAccess->handleBackendUpdate(wrapped(), data);
 }
 
 void EditRequest::dropData(const SensorTime_v& dropped)
 {
-  mAccess->handleBackendDrop(mWrapped, dropped);
+  mAccess->handleBackendDrop(wrapped(), dropped);
 }
 
 // ========================================================================

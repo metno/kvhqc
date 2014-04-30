@@ -4,6 +4,7 @@
 
 #include "EditAccess.hh"
 #include "KvalobsData.hh"
+#include "WrapRequest.hh"
 
 #include "util/VersionedValue.hh"
 #include "common/Functors.hh"
@@ -81,32 +82,18 @@ typedef EditAccessPrivate* EditAccessPrivate_P;
 class EditRequest;
 HQC_TYPEDEF_P(EditRequest);
 
-class EditRequest : public ObsRequest {
+class EditRequest : public WrapRequest {
 public:
   EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped);
 
   static EditRequest_p untag(ObsRequest_p wrapped);
   
-  virtual const Sensor_s& sensors() const
-    { return mWrapped->sensors(); }
-
-  virtual const TimeSpan& timeSpan() const
-    { return mWrapped->timeSpan(); }
-
-  virtual ObsFilter_p filter() const
-    { return mWrapped->filter(); }
-
   virtual void completed(bool failed);
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
   virtual void dropData(const SensorTime_v& dropped);
 
-  void use(EditVersions_p ev);
-  void drop(EditVersions_p ev);
-
   EditAccessPrivate_P mAccess;
-  ObsRequest_p mWrapped;
-  EditVersions_ps mUsed;
 };
 
 HQC_TYPEDEF_X(EditRequest);
@@ -115,10 +102,8 @@ HQC_TYPEDEF_PS(EditRequest);
 
 struct EditRequestUnwrap {
   ObsRequest_p operator()(EditRequest_p er) const
-    { return er->mWrapped; }
+    { return er->wrapped(); }
 };
-
-
 
 // ========================================================================
 
