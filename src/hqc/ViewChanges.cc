@@ -87,7 +87,11 @@ std::string ViewChanges::fetch(const Sensor& s, const std::string& vtype, const 
   METLIBS_LOG_DEBUG(LOGVAL(s) << LOGVAL(vtype) << LOGVAL(vid));
 
   if (hqcApp) {
-    QSqlQuery query(hqcApp->configDB());
+    QSqlDatabase db = hqcApp->configDB();
+    if (not db.tables().contains(CHANGES_TABLE))
+      return "";
+
+    QSqlQuery query(db);
     query.prepare(CHANGES_TABLE_SELECT);
     query.bindValue(":sid", s.stationId);
     query.bindValue(":pid", s.paramId);
