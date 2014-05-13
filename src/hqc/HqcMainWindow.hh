@@ -36,19 +36,21 @@
 //#define ENABLE_REJECTEDOBS 1
 //#define ENABLE_TEXTDATA 1
 //#define ENABLE_DIANA 1
+#define ENABLE_SIMPLECORRECTIONS 1
 
 #include "common/AbstractReinserter.hh"
 #include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 
-#include <QtCore/QString>
-#include <QtGui/QMainWindow>
+#include <QString>
+#include <QMainWindow>
 
 #include <memory>
 
 class HelpDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
+class QDockWidget;
 class QLabel;
 class QMdiArea;
 class QMdiSubWindow;
@@ -67,6 +69,7 @@ class KvalobsAccess;
 class KvalobsModelAccess;
 class ListDialog;
 class SensorTime;
+class SimpleCorrections;
 class TimeSeriesView;
 
 #ifdef ENABLE_ERRORLIST
@@ -129,9 +132,6 @@ private Q_SLOTS:
   void onUndoChanges();
   void onRedoChanges();
 
-  void onShowChanges();
-  void onShowSimpleCorrections();
-
   void onJumpToObservation();
 
   void onTabCloseRequested(int index);
@@ -149,6 +149,8 @@ private:
   void checkVersionSettings();
 
   void onKvalobsFetchingData(int total, int ready);
+  QDockWidget* addDock(QWidget* searchView, Qt::DockWidgetArea area);
+  QDockWidget* addSearchDock(QWidget* searchView);
 
 private:
   ListDialog* lstdlg;
@@ -193,17 +195,23 @@ private:
   AutoDataList* mAutoDataList;
   TimeSeriesView* mTimeSeriesView;
 
+  //! last added search dock, all of them are in tabs at the same bottoms
+  QDockWidget* mDockSearch;
+
+  //! all docks added by addDock
+  QList<QDockWidget*> mDocks;
+
 #ifdef ENABLE_ERRORLIST
   ErrorList* mErrorsView;
-  QDockWidget* mDockErrors;
 #endif
 #ifdef ENABLE_EXTREMES
   ExtremesView* mExtremesView;
-  QDockWidget* mDockExtremes;
 #endif
 #ifdef ENABLE_MISSINGOBS
   MissingView* mMissingView;
-  QDockWidget* mDockMissing;
+#endif
+#ifdef ENABLE_SIMPLECORRECTIONS
+  SimpleCorrections* mCorrections;
 #endif
 };
 

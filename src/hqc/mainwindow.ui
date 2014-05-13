@@ -110,15 +110,6 @@
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QDockWidget" name="dockCorrections">
-   <property name="windowTitle">
-    <string>Corrections</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>8</number>
-   </attribute>
-   <widget class="SimpleCorrections" name="simpleCorrrections"/>
-  </widget>
   <widget class="QDockWidget" name="dockHistory">
    <property name="minimumSize">
     <size>
@@ -393,16 +384,6 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
-  <action name="actionShowChanges">
-   <property name="text">
-    <string>Show Changes</string>
-   </property>
-  </action>
-  <action name="actionShowSimpleCorrections">
-   <property name="text">
-    <string>Show Simple Corrections</string>
-   </property>
-  </action>
   <action name="actionJumpToObservation">
    <property name="text">
     <string>Jump to Observation…</string>
@@ -417,14 +398,6 @@
    </property>
   </action>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>SimpleCorrections</class>
-   <extends>QWidget</extends>
-   <header>hqc/SimpleCorrections.hh</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources/>
  <connections>
   <connection>
@@ -704,38 +677,6 @@
    <signal>triggered()</signal>
    <receiver>HqcMainWindow</receiver>
    <slot>onRedoChanges()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowChanges</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowChanges()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>399</x>
-     <y>299</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionShowSimpleCorrections</sender>
-   <signal>triggered()</signal>
-   <receiver>HqcMainWindow</receiver>
-   <slot>onShowSimpleCorrections()</slot>
    <hints>
     <hint type="sourcelabel">
      <x>-1</x>

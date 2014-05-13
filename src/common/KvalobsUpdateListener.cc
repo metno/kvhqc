@@ -75,13 +75,8 @@ void KvalobsUpdateListener::doReSubscribe()
   
   if (not mSubscribedStations.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
-#if 0
     for (station_count_t::const_iterator it=mSubscribedStations.begin(); it != mSubscribedStations.end(); ++it)
-      dataSubscription.addStationId(*it);
-#else
-    BOOST_FOREACH(const station_count_t::value_type& sc, mSubscribedStations)
-      dataSubscription.addStationId(sc.first);
-#endif
+      dataSubscription.addStationId(it->first);
 
     mKvServiceSubscriberID = qtKvService()
         ->subscribeData(dataSubscription, this, SLOT(onKvData(kvservice::KvObsDataListPtr)));

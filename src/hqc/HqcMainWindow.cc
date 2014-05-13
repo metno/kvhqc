@@ -100,7 +100,9 @@
 #include "RejectedObsDialog.hh"
 #endif // ENABLE_REJECTEDOBS
 
-#include <kvalobs/kvData.h>
+#ifdef ENABLE_SIMPLECORRECTIONS
+#include "SimpleCorrections.hh"
+#endif // ENABLE_SIMPLECORRECTIONS
 
 #include <qUtilities/qtHelpDialog.h>
 
@@ -120,7 +122,6 @@
 #include <QtGui/QProgressDialog>
 #include <QtGui/QSplitter>
 
-#include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
@@ -154,61 +155,47 @@ HqcMainWindow::HqcMainWindow()
   , mProgressDialog(new EtaProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))
   , mTimeSeriesView(new TimeSeriesView(this))
+  , mDockSearch(0)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
 
-  QDockWidget* dockSearch = 0;
-
 #ifdef ENABLE_ERRORLIST
-  { mDockErrors = new QDockWidget(this);
-    mErrorsView = new ErrorList(mDockErrors);
-    mDockErrors->setWidget(mErrorsView);
-    addDockWidget(Qt::BottomDockWidgetArea, mDockErrors);
-    dockSearch = mDockErrors;
-    ui->menuView->addAction(mDockErrors->toggleViewAction());
+  { mErrorsView = new ErrorList(this);
     mErrorsView->setDataAccess(eda, kma);
     connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
+    addSearchDock(mErrorsView);
   }
 #endif // ENABLE_ERRORLIST
 
 #ifdef ENABLE_EXTREMES
-  { mDockExtremes = new QDockWidget(this);
-    mDockExtremes->setVisible(false);
-    mExtremesView = new ExtremesView(mDockExtremes);
+  { mExtremesView = new ExtremesView(this);
     mExtremesView->setDataAccess(eda);
-    mDockExtremes->setWidget(mExtremesView);
-    addDockWidget(Qt::BottomDockWidgetArea, mDockExtremes);
-    if (dockSearch)
-      tabifyDockWidget(dockSearch, mDockExtremes);
-    else
-      dockSearch = mDockExtremes;
-    ui->menuView->addAction(mDockExtremes->toggleViewAction());
     mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+    QDockWidget* dock = addSearchDock(mExtremesView);
+    dock->setVisible(false);
   }
 #endif // ENABLE_EXTREMES
 
 #ifdef ENABLE_MISSINGOBS
-  { mDockMissing = new QDockWidget(this);
-    mDockMissing->setVisible(false);
-    mMissingView = new MissingView(mDockMissing);
+  { mMissingView = new MissingView(this);
     mMissingView->setDataAccess(eda);
-    mDockMissing->setWidget(mMissingView);
-    addDockWidget(Qt::BottomDockWidgetArea, mDockMissing);
-    if (dockSearch)
-      tabifyDockWidget(dockSearch, mDockMissing);
-    else
-      dockSearch = mDockMissing;
-    ui->menuView->addAction(mDockMissing->toggleViewAction());
     mMissingView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
+    QDockWidget dock = addSearchDock(mMissingView);
+    dock->setVisible(false);
   }
 #endif // ENABLE_MISSINGOBS
 
   ui->menuView->addSeparator();
-  ui->menuView->addAction(ui->dockHistory    ->toggleViewAction());
-  ui->menuView->addAction(ui->dockCorrections->toggleViewAction());
+  ui->menuView->addAction(ui->dockHistory->toggleViewAction());
 
-  ui->simpleCorrrections->setDataAccess(eda, kma);
+#ifdef ENABLE_SIMPLECORRECTIONS
+  { mCorrections = new SimpleCorrections(this);
+    mCorrections->setDataAccess(eda, kma);
+    addDock(mCorrections, Qt::BottomDockWidgetArea);
+  }
+#endif
+
   ui->treeChanges->setModel(mEditVersions.get());
   ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
   ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
@@ -309,6 +296,27 @@ HqcMainWindow::~HqcMainWindow()
 #endif
 }
 
+QDockWidget* HqcMainWindow::addSearchDock(QWidget* view)
+{
+  QDockWidget* dock = addDock(view, Qt::BottomDockWidgetArea);
+  if (mDockSearch)
+    tabifyDockWidget(mDockSearch, dock);
+  else
+    mDockSearch = dock;
+  return dock;
+}
+
+QDockWidget* HqcMainWindow::addDock(QWidget* view, Qt::DockWidgetArea area)
+{
+  QDockWidget* dock = new QDockWidget(this);
+  dock->setWidget(view);
+  dock->setWindowTitle(view->windowTitle());
+  addDockWidget(area, dock);
+  ui->menuView->addAction(dock->toggleViewAction());
+  mDocks.append(dock);
+  return dock;
+}
+
 void HqcMainWindow::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange) {
@@ -321,15 +329,10 @@ void HqcMainWindow::changeEvent(QEvent *event)
     mProgressDialog->setWindowTitle(tr("HQC"));
     mProgressDialog->setLabelText(tr("Fetching data, please wait ..."));
 
-#ifdef ENABLE_ERRORLIST
-    mDockErrors->setWindowTitle(tr("Error List"));
-#endif
-#ifdef ENABLE_EXTREMES
-    mDockExtremes->setWindowTitle(tr("Extreme Values"));
-#endif
-#ifdef ENABLE_MISSINGOBS
-    mDockMissing->setWindowTitle(tr("Missing Observations"));
-#endif
+    for (int i=0; i<mDocks.size(); ++i) {
+      QDockWidget* dock = mDocks[i];
+      dock->setWindowTitle(dock->widget()->windowTitle());
+    }
 
     kvalobsAvailable(hqcApp->isKvalobsAvailable());
   }
@@ -673,18 +676,6 @@ void HqcMainWindow::onKvalobsFetchingData(int total, int ready)
   }
 }
 
-void HqcMainWindow::onShowChanges()
-{
-  METLIBS_LOG_SCOPE();
-  ui->dockHistory->setVisible(true);
-}
-
-void HqcMainWindow::onShowSimpleCorrections()
-{
-  METLIBS_LOG_SCOPE();
-  ui->dockCorrections->setVisible(true);
-}
-
 void HqcMainWindow::onJumpToObservation()
 {
   METLIBS_LOG_SCOPE();
@@ -809,7 +800,9 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 #ifdef ENABLE_ERRORLIST
   mErrorsView->navigateTo(st);
 #endif
-  ui->simpleCorrrections->navigateTo(st);
+#ifdef ENABLE_SIMPLECORRECTIONS
+  mCorrections->navigateTo(st);
+#endif
   mJumpToObservation->navigateTo(st);
   mAutoDataList->navigateTo(st);
   mTimeSeriesView->navigateTo(st);
@@ -824,7 +817,7 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 void HqcMainWindow::onEditVersionChanged(size_t current, size_t highest)
 {
   METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-  ui->saveAction->setEnabled(current > 0); // FIXME (eda->countU() > 0);
+  ui->saveAction->setEnabled(eda->countU() > 0);
   ui->actionUndo->setEnabled(eda->canUndo());
   ui->actionRedo->setEnabled(eda->canRedo());
   ui->treeChanges->expandToDepth(2);

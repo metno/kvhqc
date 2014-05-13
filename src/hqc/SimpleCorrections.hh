@@ -7,7 +7,7 @@
 #include "common/ModelAccess.hh"
 #include "common/DataItem.hh"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <memory>
 
 class ChecksTableModel;
