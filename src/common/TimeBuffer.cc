@@ -58,7 +58,9 @@ void TimeBuffer::onUpdateData(const ObsData_pv& data)
 
 void TimeBuffer::onDropData(const SensorTime_v& dropped)
 {
+  METLIBS_LOG_SCOPE();
   for (SensorTime_v::const_iterator itS = dropped.begin(); itS != dropped.end(); ++itS) {
+    METLIBS_LOG_SCOPE(*itS);
     const ObsData_ps_ST::iterator it = find(*itS);
     if (it != mData.end())
       mData.erase(it);

@@ -80,7 +80,7 @@ void DistributeRequestUpdates<R, U>::updateData(ObsData_p obs)
   const U unwrap;
   for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
     ObsRequest_p r = unwrap(*itR);
-    if (acceptObs(r, obs))
+    if (acceptST(r, obs))
       mDU.updateData(r, obs);
   }
 }
@@ -102,7 +102,7 @@ void DistributeRequestUpdates<R, U>::dropData(const SensorTime& st)
   const U unwrap;
   for (typename R::const_iterator itR = mRequests.begin(); itR != mRequests.end(); ++itR) {
     ObsRequest_p r = unwrap(*itR);
-    if (r->timeSpan().contains(st.time) and r->sensors().count(st.sensor))
+    if (acceptST(r, st))
       mDU.dropData(r, st);
   }
 }

@@ -127,9 +127,9 @@ int ErrorListModel::ErrorTreeItem::row() const
 ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
   : mDA(eda)
   , mMA(mda)
-  , mRootItem(new ErrorTreeItem)
+  , mRootItem(0)
   , mHighlightedStation(-1)
-  , mBlockHighlighting(false)
+  , mHideResolved(true)
 {
 }
 
@@ -140,11 +140,21 @@ ErrorListModel::~ErrorListModel()
 
 void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, bool errorsForSalen)
 {
+  beginResetModel();
+  delete mRootItem;
+  mRootItem = new ErrorTreeItem;
+  endResetModel();
+
   if (mDA and limits.closed()) {
     ErrorFilter_p filter = boost::make_shared<ErrorFilter>(errorsForSalen);
     mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(sensors.begin(), sensors.end()),
         limits, filter);
-    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(buildTree()));
+
+    TimeBuffer* b = mObsBuffer.get();
+    connect(b, SIGNAL(bufferCompleted(bool)), this, SLOT(onFetchComplete(bool)));
+    connect(b, SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(onFetchDataEnd(const ObsData_pv&)));
+    connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
+    connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
 
     Q_EMIT fetchingData(true);
     mObsBuffer->postRequest(mDA);
@@ -165,6 +175,8 @@ ErrorListModel::ErrorTreeItem_P ErrorListModel::itemFromIndex(const QModelIndex&
 
 int ErrorListModel::rowCount(const QModelIndex& parent) const
 {
+  if (not mRootItem)
+    return 0;
   if (not parent.isValid())
     return mRootItem->childCount();
   else if (parent.column() == 0)
@@ -247,7 +259,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
       case COL_OBS_ORIG:
       case COL_OBS_CORR:
       case COL_OBS_MODEL: {
-        float value;
+        float value = 17;
         if (column == COL_OBS_ORIG)
           value = obs->original();
         else if (column == COL_OBS_CORR)
@@ -268,18 +280,15 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
         return Helpers::getFlagText(obs->controlinfo());
       } // end of switch
     } else if (role == Qt::FontRole) {
-#if 0 // TODO
       if ((column <= COL_STATION_NAME and st.sensor.stationId == mHighlightedStation)
-          or (column == COL_OBS_CORR and obs->modifiedCorrected())
-          or (column == COL_OBS_FLAGS and obs->modifiedControlinfo()))
+          or (obs->isModified() and (column == COL_OBS_CORR or column == COL_OBS_FLAGS)))
       {
         QFont f;
         f.setBold(true);
         return f;
       }
-#endif
     } else if (role == Qt::ForegroundRole) {
-      const kvalobs::kvControlInfo ci(obs->controlinfo());
+      const kvalobs::kvControlInfo& ci(obs->controlinfo());
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (column == COL_OBS_CORR) {
           if (ci.qc2dDone())
@@ -325,92 +334,55 @@ void ErrorListModel::highlightStation(int stationID)
 
   mHighlightedStation = stationID;
 
-  if (not mBlockHighlighting) {
-    const int nrows = rowCount(); // FIXME all root rows, or all rows?
-    if (nrows > 0)
-      Q_EMIT dataChanged(index(0, COL_STATION_ID), index(nrows-1, COL_STATION_NAME));
-  }
+  const int nrows = rowCount(); // FIXME all root rows, or all rows?
+  if (nrows > 0)
+    Q_EMIT dataChanged(index(0, COL_STATION_ID), index(nrows-1, COL_STATION_NAME));
 #endif // ENABLE_HIGHLIGHT
 }
 
-namespace /*anonymous*/ {
-struct find_Sensor : public eq_Sensor {
-  const Sensor& a;
-  find_Sensor(const Sensor& aa) : a(aa) { }
-  bool operator()(const Sensor& b) const
-    { return eq_Sensor::operator()(a, b); }
-};
-
-// struct find_ErrorSensorTime : public lt_SensorTime {
-//   bool operator()(const Errors::ErrorInfo& ei, const SensorTime& st) const
-//     { return lt_SensorTime::operator()(ei.obs->sensorTime(), st); }
-// };
-} // anonymous namespace
-
-void ErrorListModel::onDataChanged()
+bool ErrorListModel::isError(ObsData_p obs) const
 {
-  METLIBS_LOG_SCOPE();
+  ErrorFilter_p filter = boost::static_pointer_cast<ErrorFilter>(mObsBuffer->request()->filter());
+  return filter->accept(obs, false);
+}
 
-#if 0
-  const SensorTime& st = data->sensorTime();
-  if (not mTimeLimits.contains(st.time))
-    return;
+void ErrorListModel::onDataNew(ObsData_p obs)
+{
+  if (isError(obs))
+    insertErrorItem(obs);
+}
 
-  if (std::find_if(mSensors.begin(), mSensors.end(), find_Sensor(st.sensor)) == mSensors.end())
-    return;
+void ErrorListModel::onDataUpdate(ObsData_p obs)
+{
+  const QModelIndex index = findSensorTime(obs->sensorTime());
+  const bool error = isError(obs);
 
-  const QModelIndex index = findSensorTime(st);
-
-  Q_EMIT beginDataChange();
-#ifdef ENABLE_HIGHLIGHT
-  int highlighted = mHighlightedStation;
-  mBlockHighlighting = true;
-#endif // ENABLE_HIGHLIGHT
-
-#ifdef ENABLE_HIDE
-  if (what == ObsAccess::MODIFIED and index.isValid()) {
+  if (index.isValid()) {
     ErrorTreeItem_P item = itemFromIndex(index);
-    Errors::recheck(item->info(), mErrorsForSalen);
-    if (not item->info().badInList)
+    if (not error and mHideResolved)
       removeErrorItem(item);
     else
       updateErrorItem(item);
-  } else if (what == ObsAccess::MODIFIED or what == ObsAccess::CREATED) {
-    Errors::ErrorInfo ei(mDA->findE(st));
-    Errors::recheck(ei, mErrorsForSalen);
-    if (ei.badInList)
-      insertErrorItem(ei);
-  } else if (what == ObsAccess::DESTROYED) {
-    removeErrorItem(itemFromIndex(index));
+  } else if (error) {
+    insertErrorItem(obs);
   }
-#else
-  if (what == ObsAccess::MODIFIED and index.isValid()) {
-    ErrorTreeItem_P item = static_cast<ErrorTreeItem_P>(index.internalPointer());
-    Errors::recheck(item->info(), mErrorsForSalen);
-    updateErrorItem(item);
-  } else if (what == ObsAccess::DESTROYED) {
-    removeErrorItem(itemFromIndex(index));
-  }
-#endif
+}
 
-  Q_EMIT endDataChange();
-#ifdef ENABLE_HIGHLIGHT
-  mBlockHighlighting = false;
-  std::swap(highlighted, mHighlightedStation);
-  highlightStation(highlighted);
-#endif // ENABLE_HIGHLIGHT
+void ErrorListModel::onDataDrop(const SensorTime& st)
+{
+  const QModelIndex index = findSensorTime(st);
+  ErrorTreeItem_P item = itemFromIndex(index);
+  removeErrorItem(item);
 }
 
 void ErrorListModel::updateErrorItem(ErrorTreeItem_P item)
 {
-  METLIBS_LOG_SCOPE();
   if (item)
     Q_EMIT dataChanged(indexFromItem(item, COL_OBS_ORIG), indexFromItem(item, COL_OBS_FLAGS));
 }
 
 void ErrorListModel::removeErrorItem(ErrorTreeItem_P item)
 {
-  METLIBS_LOG_SCOPE();
   if (not item or item == mRootItem)
     return;
 
@@ -435,7 +407,6 @@ void ErrorListModel::removeRow(ErrorTreeItem_P parent, int row)
 
 void ErrorListModel::insertErrorItem(ObsData_p obs)
 {
-  METLIBS_LOG_SCOPE();
   const SensorTime& st = obs->sensorTime();
   ErrorTreeItem_P parent = mRootItem;
   int position = 0;
@@ -472,7 +443,6 @@ void ErrorListModel::insertErrorItem(ObsData_p obs)
 
 QModelIndex ErrorListModel::findSensorTime(const SensorTime& st, ErrorTreeItem_P item) const
 {
-  METLIBS_LOG_SCOPE();
   // TODO error list is sorted, should use binary search
   if (item) {
     if (item != mRootItem and item->obs()) {
@@ -497,28 +467,35 @@ ObsData_p ErrorListModel::findObs(const QModelIndex& index) const
     return ObsData_p();
 }
 
-void ErrorListModel::buildTree()
+void ErrorListModel::onFetchComplete(bool failed)
 {
-  METLIBS_LOG_SCOPE();
-
+  METLIBS_LOG_SCOPE(LOGVAL(failed));
   Q_EMIT fetchingData(false);
+}
 
-  beginResetModel();
-  typedef ObsData_ps_ST errors_t;
-  const errors_t& errors = mObsBuffer->data();
+void ErrorListModel::onFetchDataEnd(const ObsData_pv& data)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(data.size()));
+  Q_EMIT beginDataChange();
+  for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it)
+    onDataNew(*it);
+  Q_EMIT endDataChange();
+}
 
-  // FIXME this and remove/insert rely on "errors" being sorted by obs()->sensorTime()
-  ErrorTreeItem_P sameItem = 0;
-  Sensor sameSensor;
-  for (errors_t::const_iterator it=errors.begin(); it!=errors.end(); ++it) {
-    const Sensor& eSensor = (*it)->sensorTime().sensor;
-    if (sameItem and eq_Sensor()(sameSensor, eSensor)) {
-      sameItem->appendChild(*it);
-    } else {
-      sameItem   = mRootItem->appendChild(*it);
-      sameSensor = eSensor;
-    }
-  }
-  METLIBS_LOG_DEBUG(LOGVAL(rowCount()) << LOGVAL(mRootItem->childCount()));
-  endResetModel();
+void ErrorListModel::onUpdateDataEnd(const ObsData_pv& data)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(data.size()));
+  Q_EMIT beginDataChange();
+  for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it)
+    onDataUpdate(*it);
+  Q_EMIT endDataChange();
+}
+
+void ErrorListModel::onDropDataEnd(const SensorTime_v& dropped)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(dropped.size()));
+  Q_EMIT beginDataChange();
+  for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it)
+    onDataDrop(*it);
+  Q_EMIT endDataChange();
 }

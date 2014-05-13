@@ -55,10 +55,16 @@ Q_SIGNALS:
   void fetchingData(bool busy);
 
 private Q_SLOTS:
-  void onDataChanged();
-  void buildTree();
+  void onFetchComplete(bool);
+  void onFetchDataEnd(const ObsData_pv& data);
+  void onUpdateDataEnd(const ObsData_pv& data);
+  void onDropDataEnd(const SensorTime_v& dropped);
   
 private:
+  void onDataNew(ObsData_p obs);
+  void onDataUpdate(ObsData_p obs);
+  void onDataDrop(const SensorTime& st);
+  
   QModelIndex findSensorTime(const SensorTime& st, ErrorTreeItem_P item) const;
   ErrorTreeItem_P itemFromIndex(const QModelIndex& index) const;
   void removeRow(ErrorTreeItem_P parent, int row);
@@ -69,16 +75,15 @@ private:
 
   QModelIndex indexFromItem(ErrorTreeItem_P item, int column=0) const;
 
+  bool isError(ObsData_p obs) const;
+
 private:
   ObsAccess_p mDA;
   ModelAccess_p mMA;
-  //Sensor_v mSensors;
-  //TimeSpan mTimeLimits;
   TimeBuffer_p mObsBuffer;
   ErrorTreeItem_P mRootItem;
-  //bool mErrorsForSalen;
   int mHighlightedStation;
-  bool mBlockHighlighting;
+  bool mHideResolved;
 };
 
 #endif // HQC_ERRORLISTMODEL_HH

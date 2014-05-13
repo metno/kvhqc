@@ -63,7 +63,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     METLIBS_LOG_DEBUG(LOGVAL(bb->status()));
     if (bb->status() == SimpleBuffer::COMPLETE) {
       const ObsData_ps_ST& data = bb->data(); // FIXME avoid list/vector problem
-      mRequest->newData(filterData(ObsData_pv(data.begin(), data.end())));
+      mRequest->newData(filterData(ObsData_pv(data.begin(), data.end()), true));
     } else {
       mCountIncomplete += 1;
       if (bb->status() == SimpleBuffer::FAILED)
@@ -81,7 +81,7 @@ CacheTag::~CacheTag()
   }
 }
 
-ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn)
+ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn, bool applyFilter)
 {
   METLIBS_LOG_SCOPE();
   ObsData_pv dataOut;
@@ -96,7 +96,7 @@ ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn)
     if (timeI > rtime.t1())
       break;
 
-    if (acceptFilter(obsI))
+    if ((not applyFilter) or acceptFilter(obsI))
       // FIXME mData is a vector, insert one-by-one is not efficent
       dataOut.push_back(obsI);
   }
@@ -122,7 +122,7 @@ void CacheTag::onBackendCompleted(bool failed)
 void CacheTag::onBackendNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  const ObsData_pv fdata = filterData(data);
+  const ObsData_pv fdata = filterData(data, true);
   if (not fdata.empty())
     mRequest->newData(fdata);
 }
@@ -130,7 +130,7 @@ void CacheTag::onBackendNewData(const ObsData_pv& data)
 void CacheTag::onBackendUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  const ObsData_pv fdata = filterData(data);
+  const ObsData_pv fdata = filterData(data, false);
   if (not fdata.empty())
     mRequest->updateData(fdata);
 }

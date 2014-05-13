@@ -73,7 +73,7 @@ private:
   ObsFilter_p filter() const
     { return mRequest->filter(); }
 
-  ObsData_pv filterData(const ObsData_pv& dataIn);
+  ObsData_pv filterData(const ObsData_pv& dataIn, bool applyFilter);
 
 public:
   ObsRequest_p mRequest;
