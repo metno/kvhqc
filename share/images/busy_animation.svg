@@ -6,15 +6,19 @@
   <circle cx="120" cy="120" r="100" stroke="none" fill="#dddddd" />
 
   <circle cx="120" cy="360" r="100" stroke="none" fill="#dddddd" />
+  <path d="M125,355 v-100 a100,100 0 0,0 -100,100 z" fill="#88f" stroke="none"/>
   <path d="M125,355 h100 a100,100 0 0,0 -100,-100 z" fill="blue" stroke="none"/>
 
   <circle cx="120" cy="600" r="100" stroke="none" fill="#dddddd" />
+  <path d="M125,605 h100 a100,100 0 0,0 -100,-100 z" fill="#88f" stroke="none"/>
   <path d="M125,605 h100 a100,100 0 0 1 -100,100 z" fill="blue" stroke="none"/>
 
   <circle cx="120" cy="840" r="100" stroke="none" fill="#dddddd" />
+  <path d="M125,845 h100 a100,100 0 0 1 -100,100 z" fill="#88f" stroke="none"/>
   <path d="M115,845 v100 a100,100 0 0 1 -100,-100 z" fill="blue" stroke="none"/>
 
   <circle cx="120" cy="1080" r="100" stroke="none" fill="#dddddd" />
+  <path d="M115,1075 v100 a100,100 0 0 1 -100,-100 z" fill="#88f" stroke="none"/>
   <path d="M115,1075 v-100 a100,100 0 0,0 -100,100 z" fill="blue" stroke="none"/>
 
 </svg>

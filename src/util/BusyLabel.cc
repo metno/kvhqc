@@ -6,7 +6,7 @@
 static const char BUSY_ANIMATION[] = "icons:busy_animation.svg";
      
 BusyLabel::BusyLabel(QWidget *parent)
-  : AnimatedLabel(BUSY_ANIMATION, 5, 100, 24, parent)
+  : AnimatedLabel(BUSY_ANIMATION, 5, 200, 24, parent)
 {
   setFixedSize(QSize(24,24));
   setBusy(false);
