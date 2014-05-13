@@ -35,8 +35,9 @@ const char* tooltips[NCOLUMNS] = {
 
 } // namespace anonymous
 
-EditVersionModel::EditVersionModel(EditAccess_p eda)
-  : mDA(eda)
+EditVersionModel::EditVersionModel(EditAccess_p eda, QObject* parent)
+  : QAbstractItemModel(parent)
+  , mDA(eda)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(mDA->currentVersion()) << LOGVAL(mDA->highestVersion()));

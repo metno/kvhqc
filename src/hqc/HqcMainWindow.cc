@@ -39,6 +39,7 @@
 
 #include "AutoDataList.hh"
 #include "EditVersionModel.hh"
+#include "EditVersionsView.hh"
 #include "JumpToObservation.hh"
 #include "ListDialog.hh"
 #include "StaticDataList.hh"
@@ -112,6 +113,7 @@
 #include <QtCore/qtimer.h>
 #include <QtCore/qurl.h>
 #include <QtGui/QDesktopServices>
+#include <QtGui/QDockWidget>
 #include <QtGui/QLabel>
 #include <QtGui/QMdiSubWindow>
 #include <QtGui/QMessageBox>
@@ -151,7 +153,7 @@ HqcMainWindow::HqcMainWindow()
   , cda(boost::make_shared<CachingAccess>(kda))
   , kma(boost::make_shared<KvalobsModelAccess>())
   , eda(boost::make_shared<EditAccess>(cda))
-  , mEditVersions(new EditVersionModel(eda))
+  , mEditVersions(new EditVersionModel(eda, this))
   , mProgressDialog(new EtaProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))
   , mTimeSeriesView(new TimeSeriesView(this))
@@ -164,7 +166,7 @@ HqcMainWindow::HqcMainWindow()
   { mErrorsView = new ErrorList(this);
     mErrorsView->setDataAccess(eda, kma);
     connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
-    addSearchDock(mErrorsView);
+    addSearchDock(mErrorsView, true);
   }
 #endif // ENABLE_ERRORLIST
 
@@ -172,8 +174,7 @@ HqcMainWindow::HqcMainWindow()
   { mExtremesView = new ExtremesView(this);
     mExtremesView->setDataAccess(eda);
     mExtremesView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-    QDockWidget* dock = addSearchDock(mExtremesView);
-    dock->setVisible(false);
+    addSearchDock(mExtremesView);
   }
 #endif // ENABLE_EXTREMES
 
@@ -181,29 +182,26 @@ HqcMainWindow::HqcMainWindow()
   { mMissingView = new MissingView(this);
     mMissingView->setDataAccess(eda);
     mMissingView->signalNavigateTo.connect(boost::bind(&HqcMainWindow::navigateTo, this, _1));
-    QDockWidget dock = addSearchDock(mMissingView);
-    dock->setVisible(false);
+    addSearchDock(mMissingView);
   }
 #endif // ENABLE_MISSINGOBS
 
   ui->menuView->addSeparator();
-  ui->menuView->addAction(ui->dockHistory->toggleViewAction());
+
+  { EditVersionsView* evv = new EditVersionsView(mEditVersions, this);
+    addDock(evv, Qt::RightDockWidgetArea);
+    connect(evv, SIGNAL(saveRequested()), this, SLOT(onSaveChanges()));
+  }
 
 #ifdef ENABLE_SIMPLECORRECTIONS
   { mCorrections = new SimpleCorrections(this);
     mCorrections->setDataAccess(eda, kma);
-    addDock(mCorrections, Qt::BottomDockWidgetArea);
+    addDock(mCorrections, Qt::BottomDockWidgetArea, true);
   }
 #endif
 
-  ui->treeChanges->setModel(mEditVersions.get());
-  ui->toolButtonUndo->setDefaultAction(ui->actionUndo);
-  ui->toolButtonRedo->setDefaultAction(ui->actionRedo);
-  ui->toolButtonSave->setDefaultAction(ui->saveAction);
-
   ui->actionRedo->setIcon(QIcon("icons:redo.svg"));
   ui->actionUndo->setIcon(QIcon("icons:undo.svg"));
-  ui->dockHistory->setVisible(false);
 
   connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
   mVersionCheckTimer->setSingleShot(true);
@@ -296,9 +294,9 @@ HqcMainWindow::~HqcMainWindow()
 #endif
 }
 
-QDockWidget* HqcMainWindow::addSearchDock(QWidget* view)
+QDockWidget* HqcMainWindow::addSearchDock(QWidget* view, bool visible)
 {
-  QDockWidget* dock = addDock(view, Qt::BottomDockWidgetArea);
+  QDockWidget* dock = addDock(view, Qt::BottomDockWidgetArea, visible);
   if (mDockSearch)
     tabifyDockWidget(mDockSearch, dock);
   else
@@ -306,9 +304,10 @@ QDockWidget* HqcMainWindow::addSearchDock(QWidget* view)
   return dock;
 }
 
-QDockWidget* HqcMainWindow::addDock(QWidget* view, Qt::DockWidgetArea area)
+QDockWidget* HqcMainWindow::addDock(QWidget* view, Qt::DockWidgetArea area, bool visible)
 {
   QDockWidget* dock = new QDockWidget(this);
+  dock->setVisible(visible);
   dock->setWidget(view);
   dock->setWindowTitle(view->windowTitle());
   addDockWidget(area, dock);
@@ -817,10 +816,9 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
 void HqcMainWindow::onEditVersionChanged(size_t current, size_t highest)
 {
   METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-  ui->saveAction->setEnabled(eda->countU() > 0);
+  ui->saveAction->setEnabled(eda->canUndo());
   ui->actionUndo->setEnabled(eda->canUndo());
   ui->actionRedo->setEnabled(eda->canRedo());
-  ui->treeChanges->expandToDepth(2);
 }
 
 void HqcMainWindow::writeSettings()

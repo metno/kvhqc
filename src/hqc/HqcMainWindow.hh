@@ -149,8 +149,8 @@ private:
   void checkVersionSettings();
 
   void onKvalobsFetchingData(int total, int ready);
-  QDockWidget* addDock(QWidget* searchView, Qt::DockWidgetArea area);
-  QDockWidget* addSearchDock(QWidget* searchView);
+  QDockWidget* addDock(QWidget* searchView, Qt::DockWidgetArea area, bool visible = false);
+  QDockWidget* addSearchDock(QWidget* searchView, bool visible = false);
 
 private:
   ListDialog* lstdlg;
@@ -181,7 +181,7 @@ private:
   boost::shared_ptr<KvalobsModelAccess> kma;
   boost::shared_ptr<EditAccess> eda;
 
-  std::auto_ptr<EditVersionModel> mEditVersions;
+  EditVersionModel* mEditVersions;
 
 #ifdef ENABLE_DIANA
   ClientButton* pluginB;

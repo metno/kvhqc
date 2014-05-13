@@ -5,6 +5,7 @@ SET(hqc_SOURCES
   DataListAddColumn.cc
   DataList.cc
   EditVersionModel.cc
+  EditVersionsView.cc
   GetTextData.cc
 #  HqcDianaHelper.cc
   HqcMainWindow.cc
@@ -30,6 +31,7 @@ QT4_WRAP_CPP(hqc_MOC
   DataListAddColumn.hh
   DataList.hh
   EditVersionModel.hh
+  EditVersionsView.hh
 #  HqcDianaHelper.hh
   HqcMainWindow.hh
   JumpToObservation.hh

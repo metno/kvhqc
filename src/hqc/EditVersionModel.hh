@@ -9,8 +9,11 @@
 class EditVersionModel : public QAbstractItemModel
 { Q_OBJECT;
 public:
-  EditVersionModel(EditAccess_p eda);
+  EditVersionModel(EditAccess_p eda, QObject* parent);
   ~EditVersionModel();
+
+  EditAccess_p editAccess() const
+    { return mDA; }
 
   virtual int columnCount(const QModelIndex& parent) const;
   virtual int rowCount(const QModelIndex& parent) const;
