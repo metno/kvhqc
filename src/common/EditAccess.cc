@@ -24,15 +24,18 @@ namespace /*anonymous*/ {
 EditVersions::EditVersions(ObsData_p backendData, size_t editVersion, ObsData_p editData)
   : mCurrent(1)
 {
+  METLIBS_LOG_SCOPE();
   mVersions.push_back(Version(0, backendData));
   mVersions.push_back(Version(editVersion, editData));
+  METLIBS_LOG_DEBUG(LOGVAL(sensorTime()));
 }
 
 void EditVersions::addVersion(size_t version, ObsData_p data)
 {
-  if (version >= currentVersion()) {
+  METLIBS_LOG_SCOPE(LOGVAL(sensorTime()) << LOGVAL(currentVersion()) << LOGVAL(version));
+  if (version >= currentVersion() and mCurrent < mVersions.size() - 1) {
     Version_v::iterator b = mVersions.begin();
-    std::advance(b, mCurrent);
+    std::advance(b, mCurrent+1);
     mVersions.erase(b, mVersions.end());
   }
   mVersions.push_back(Version(version, data));
@@ -41,18 +44,21 @@ void EditVersions::addVersion(size_t version, ObsData_p data)
 
 void EditVersions::setVersion(size_t version)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
-  while (mCurrent > 0 and version < currentVersion())
-    mCurrent -= 1;
-  const size_t maxVersion = mVersions.size()-1;
-  while (mCurrent < maxVersion and version > currentVersion())
-    mCurrent += 1;
-  METLIBS_LOG_DEBUG(LOGVAL(mCurrent));
+  METLIBS_LOG_SCOPE(LOGVAL(sensorTime()) << LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
+  if (version < currentVersion()) {
+    while (mCurrent > 0 and version < currentVersion())
+      mCurrent -= 1;
+  } else {
+    const size_t maxVersion = mVersions.size()-1;
+    while (mCurrent < maxVersion and version >= mVersions[mCurrent+1].version)
+      mCurrent += 1;
+  }
+  METLIBS_LOG_DEBUG(LOGVAL(mCurrent) << LOGVAL(currentVersion()));
 }
 
 void EditVersions::dropVersionsFrom(size_t version)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
+  METLIBS_LOG_SCOPE(LOGVAL(sensorTime()) << LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
   const bool newCurrent = (version <= currentVersion());
   Version_v::iterator b = mVersions.begin();
   while (b->version < version)
@@ -224,7 +230,7 @@ void EditAccessPrivate::updateToPreviousVersion()
     const size_t c0 = ev->currentVersion();
     ev->setVersion(mCurrentVersion);
     const size_t c1 = ev->currentVersion();
-    METLIBS_LOG_DEBUG(LOGVAL(c0) << LOGVAL(c1) << LOGVAL(ev->hasBackendData()));
+    METLIBS_LOG_DEBUG(LOGVAL(ev->sensorTime()) << LOGVAL(c0) << LOGVAL(c1) << LOGVAL(ev->hasBackendData()));
     if (c1 != c0) {
       if (c1 == 0 and not ev->hasBackendData())
         du.dropData(ev->sensorTime());
@@ -250,7 +256,7 @@ void EditAccessPrivate::updateToNextVersion()
     const size_t c0 = ev->currentVersion();
     ev->setVersion(mCurrentVersion);
     const size_t c1 = ev->currentVersion();
-    METLIBS_LOG_DEBUG(LOGVAL(c0) << LOGVAL(c1) << LOGVAL(ev->hasBackendData()));
+    METLIBS_LOG_DEBUG(LOGVAL(ev->sensorTime()) << LOGVAL(c0) << LOGVAL(c1) << LOGVAL(ev->hasBackendData()));
     if (c1 != c0) {
       if (c0 == 0 and not ev->hasBackendData())
         du.newData(ev->currentData());
@@ -273,6 +279,7 @@ EditAccess::EditAccess(ObsAccess_p backend)
 
 EditAccess::~EditAccess()
 {
+  reset();
   if (not p->mRequests.empty())
     HQC_LOG_ERROR("destroying EditAccess with requests");
 }
@@ -319,8 +326,11 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
     if (itE != p->mEdited.end()) {
       // TODO check for correct parent
       KvalobsData_p d = Helpers::modifiedData((*itE)->currentData(), eu->corrected(), eu->controlinfo(), eu->cfailed());
-      (*itE)->addVersion(p->mCurrentVersion, d);
-      du.updateData((*itE)->currentData());
+      EditVersions_p ev = *itE;
+      if (ev->currentVersion() == 0)
+        p->mUpdated += 1;
+      ev->addVersion(p->mCurrentVersion, d);
+      du.updateData(ev->currentData());
     } else {
       KvalobsData_p d;
       if (eu->obs())

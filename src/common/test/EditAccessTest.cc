@@ -21,6 +21,7 @@ public:
     : mOA(ea), mBuffer(buffer) { }
 
   ObsUpdate_p createUpdate(const SensorTime& st);
+  void setCorrected(const SensorTime& st, float newC);
 
   void send();
 
@@ -29,6 +30,13 @@ private:
   TimeBuffer_p mBuffer;
   ObsUpdate_pv mUpdates;
 };
+
+void Updater::setCorrected(const SensorTime& st, float newC)
+{
+  ObsUpdate_p up = createUpdate(st);
+  up->setCorrected(newC);
+  send();
+}
 
 ObsUpdate_p Updater::createUpdate(const SensorTime& st)
 {
@@ -42,6 +50,7 @@ ObsUpdate_p Updater::createUpdate(const SensorTime& st)
 void Updater::send()
 {
   mOA->storeUpdates(mUpdates);
+  mUpdates.clear();
 }
 
 const float NO_OBS = -32765;
@@ -133,6 +142,201 @@ TEST(EditAccessTest, UndoRedoStore)
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
   EXPECT_EQ(0, ea->countU());
+}
+
+TEST(EditAccessTest, UndoRedoTwice)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
+
+  const float ORIG_C1 = -4.5f, ORIG_C2 = -5.0f;
+  const float CHNG_C1 =  4.0f, CHNG_C2 =  3.0f;
+
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(7, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+
+  Updater updater(ea, counter);
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st2, CHNG_C2);
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
+
+  ea->undoVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(3, counter->countUpdate);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->undoVersion();
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(4, counter->countUpdate);
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(0, ea->countU());
+
+  ea->redoVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(5, counter->countUpdate);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->redoVersion();
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(6, counter->countUpdate);
+  EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
+}
+
+TEST(EditAccessTest, UndoRedoNew1)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
+
+  const float ORIG_C1 = -4.5f, ORIG_C2 = -5.0f;
+  const float CHNG_C1a = 4.0f, CHNG_C1b = 4.1f, CHNG_C1c = 4.2f, CHNG_C2 =  3.0f;
+
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+
+  Updater updater(ea, counter);
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1a);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st2, CHNG_C2);
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1b);
+  EXPECT_EQ(3, ea->currentVersion());
+  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1b, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
+
+  ea->undoVersion();
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
+  EXPECT_EQ(2, ea->countU());
+
+  ea->undoVersion();
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1c);
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_FLOAT_EQ(CHNG_C1c, corrected(counter, st1));
+  EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
+  EXPECT_EQ(1, ea->countU());
+}
+
+TEST(EditAccessTest, UndoRedoNew2)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
+  const float CHNG_C1a = 4.0f, CHNG_C1b = 4.1f, CHNG_C2 =  3.0f;
+
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+
+  Updater updater(ea, counter);
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1a);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st2, CHNG_C2);
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(2, ea->countU());
+
+  ea->undoVersion();
+  EXPECT_EQ(1, ea->countU());
+  ea->undoVersion();
+  EXPECT_EQ(0, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1b);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1, ea->countU());
 }
 
 TEST(EditAccessTest, Reset)
