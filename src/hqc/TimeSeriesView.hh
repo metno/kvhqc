@@ -2,9 +2,11 @@
 #ifndef TimeSeriesView_hh
 #define TimeSeriesView_hh 1
 
+#include "AbstractDataView.hh"
 #include "common/ObsAccess.hh"
 #include "common/TimeBuffer.hh"
 #include "common/ModelAccess.hh"
+#include "common/NavigateHelper.hh"
 #include "util/BusyLabel.hh"
 
 #include "qtimeseries/PlotOptions.h"
@@ -22,7 +24,7 @@ namespace Ui {
 class TimeSeriesView;
 }
 
-class TimeSeriesView : public QWidget
+class TimeSeriesView : public AbstractDataView
 { Q_OBJECT
 public:
   TimeSeriesView(QWidget* parent=0);
@@ -30,15 +32,6 @@ public:
   
   void setDataAccess(ObsAccess_p eda, ModelAccess_p mda)
     { mDA = eda; mMA = mda; }
-
-public Q_SLOTS:
-  void navigateTo(const SensorTime&);
-
-protected:
-  virtual void showEvent(QShowEvent* showEvent);
-  virtual void hideEvent(QHideEvent* hideEvent);
-  virtual void resizeEvent(QResizeEvent *resizeEvent);
-  virtual void changeEvent(QEvent *event);
 
 private Q_SLOTS:
   void onActionAddColumn();
@@ -52,18 +45,17 @@ private Q_SLOTS:
   void updatePlot();
 
 private:
-  void doNavigateTo(const SensorTime& st);
+  void doNavigateTo();
   void updateSensors();
   void updateTime();
   void updateTimeEditors();
+  void retranslateUi();
 
   std::string changes();
   void replay(const std::string& changes);
   void storeChanges();
 
   void setTimeSpan(const TimeSpan& t);
-
-  void updateVisible(bool visible);
 
   static void initalizePlotOptions();
 
@@ -86,8 +78,7 @@ private:
   bool mChangingTimes;
 
   TimeBuffer_p mObsBuffer;
-  bool mVisible;
-  SensorTime mPendingSensorTime;
+  SensorTime mStoreSensorTime;
 
   static std::vector<POptions::Colour> sDefinedColours;
   static std::vector<POptions::Linetype> sDefinedLinetypes;

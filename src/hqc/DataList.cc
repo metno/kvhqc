@@ -3,7 +3,6 @@
 
 #include "common/DataListModel.hh"
 #include "common/ObsDelegate.hh"
-#include "util/Blocker.hh"
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
@@ -17,7 +16,6 @@
 
 #include "ui_datalist.h"
 
-#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.DataList"
 #include "common/ObsLogging.hh"
 
@@ -33,14 +31,12 @@ QString protectForCSV(const QVariant& v)
 {
   return protectForCSV(v.toString());
 }
-
-const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
+const int MINUTE = 60, HOUR = 60*MINUTE;
 } // namespace anonymous
 
 DataList::DataList(QWidget* parent)
-  : QWidget(parent)
+  : AbstractDataView(parent)
   , ui(new Ui::DataList)
-  , mBlockNavigateTo(0)
 {
   ui->setupUi(this);
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
@@ -59,12 +55,12 @@ DataList::DataList(QWidget* parent)
   ui->comboTimeStep->addItem(tr("none"), QVariant(0));
   { const int NMINUTES = 5, MINUTES[NMINUTES] = { 1, 5, 10, 15, 30 };
     for (int i=0; i<NMINUTES; ++i)
-      ui->comboTimeStep->addItem(tr("%1 min").arg(MINUTES[i]), QVariant(MINUTES[i]*60));
+      addTimeStepItem(MINUTES[i]*MINUTE);
   }
 
   { const int NHOURS = 5, HOURS[NHOURS] = { 1, 3, 6, 12, 24 };
     for (int i=0; i<NHOURS; ++i)
-      ui->comboTimeStep->addItem(tr("%1 h").arg(HOURS[i]), QVariant(HOURS[i]*60*60));
+      addTimeStepItem(HOURS[i]*HOUR);
   }
   ui->checkFilterTimes->setEnabled(false);
 
@@ -82,26 +78,30 @@ void DataList::setDataAccess(EditAccess_p eda, ModelAccess_p ma)
   mMA = ma;
 }
 
-void DataList::changeEvent(QEvent *event)
+void DataList::addTimeStepItem(int step)
 {
-  if (event->type() == QEvent::LanguageChange) {
-    ui->retranslateUi(this);
-    ui->comboTimeStep->setItemText(0, tr("none"));
-    for (int i=0; i<NHOURS; ++i)
-      ui->comboTimeStep->setItemText(i+1, tr("%1 h").arg(HOURS[i]));
-  }
-  QWidget::changeEvent(event);
+  ui->comboTimeStep->addItem(labelForStep(step), QVariant(step));
 }
 
-void DataList::navigateTo(const SensorTime& st)
+QString DataList::labelForStep(int step)
 {
-  METLIBS_LOG_TIME(LOGVAL(mBlockNavigateTo) << LOGVAL(st) << LOGVAL(mSensorTime));
-  if (mBlockNavigateTo or not st.valid() or eq_SensorTime()(mSensorTime, st))
-    return;
+  if (step == 0)
+    return tr("none");
+  else if (step >= HOUR and (step % HOUR) == 0)
+    return tr("%1 h").arg(step / HOUR);
+  else if (step >= MINUTE and (step % MINUTE) == 0)
+    return tr("%1 min").arg(step / MINUTE);
+  else
+    return tr("%1 s").arg(step);
+}
 
-  mSensorTime = st;
-  Blocker b(mBlockNavigateTo);
-  doNavigateTo();
+void DataList::retranslateUi()
+{
+  ui->retranslateUi(this);
+  for (int i=0; i<ui->comboTimeStep->count(); ++i) {
+    const int step = ui->comboTimeStep->itemData(i).toInt();
+    ui->comboTimeStep->setItemText(i, labelForStep(step));
+  }
 }
 
 void DataList::doNavigateTo()
@@ -110,7 +110,7 @@ void DataList::doNavigateTo()
   if (not mTableModel.get())
     return;
 
-  const QModelIndexList idxs = mTableModel->findIndexes(mSensorTime);
+  const QModelIndexList idxs = mTableModel->findIndexes(mNavigate.current());
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
   bool scroll = (not idxs.empty());
@@ -130,20 +130,16 @@ void DataList::doNavigateTo()
 
 void DataList::onCurrentChanged(const QModelIndex& current)
 {
-  METLIBS_LOG_SCOPE();
-  const SensorTime st = mTableModel->findSensorTime(current);
-  METLIBS_LOG_DEBUG(LOGVAL(st));
-  Blocker b(mBlockNavigateTo);
-  if (b.open() and st.valid() and not eq_SensorTime()(mSensorTime, st)) {
-    mSensorTime = st;
-    Q_EMIT signalNavigateTo(st);
-  }
+  sendNavigateTo(mTableModel->findSensorTime(current));
 }
 
 void DataList::updateModel(DataListModel* newModel)
 {
   METLIBS_LOG_SCOPE();
-  Blocker b(mBlockNavigateTo);
+
+  mNavigate.invalidate();
+  NavigateHelper::Blocker block(mNavigate);
+
   mTableModel.reset(newModel);
   onUITimeStepChanged(ui->comboTimeStep->currentIndex());
   METLIBS_LOG_DEBUG("about to reset table model");
@@ -191,7 +187,11 @@ void DataList::onModelTimeStepChanged(int step)
       return;
     }
   }
-  METLIBS_LOG_WARN("datalist model time step not in combo list");
+  METLIBS_LOG_WARN("datalist model time step '" << step << "' not in combo list");
+  if (step > 0) {
+    addTimeStepItem(step);
+    ui->comboTimeStep->setCurrentIndex(ui->comboTimeStep->count() - 1);
+  }
 }
 
 void DataList::onModelFilterByTimeStepChanged(bool enabled, bool ftbs)

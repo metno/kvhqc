@@ -88,24 +88,6 @@ AutoDataList::~AutoDataList()
   storeChanges();
 }
 
-void AutoDataList::showEvent(QShowEvent* se)
-{
-  METLIBS_LOG_SCOPE();
-  QWidget::showEvent(se);
-
-  mVisible = true;
-  if (mPendingSensorTime.valid())
-    navigateTo(mPendingSensorTime);
-}
-
-void AutoDataList::hideEvent(QHideEvent* he)
-{
-  METLIBS_LOG_SCOPE();
-  QWidget::hideEvent(he);
-
-  mVisible = false;
-}
-
 void AutoDataList::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange) {
@@ -118,15 +100,6 @@ void AutoDataList::changeEvent(QEvent *event)
     mButtonLater->setToolTip(tr("Later"));
   }
   DataList::changeEvent(event);
-}
-
-void AutoDataList::navigateTo(const SensorTime& st)
-{
-  METLIBS_LOG_TIME();
-  if (mVisible)
-    DataList::navigateTo(st);
-  else
-    mPendingSensorTime = st;
 }
 
 void AutoDataList::doNavigateTo()

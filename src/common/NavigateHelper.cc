@@ -2,7 +2,7 @@
 #include "NavigateHelper.hh"
 
 NavigateHelper::NavigateHelper()
-  : mLocked(0)
+  : mBlocked(0)
   , mChanged(false)
 {
 }
@@ -19,7 +19,14 @@ bool NavigateHelper::go(const SensorTime& st)
   mLastNavigated = st;
   mChanged = true;
   
-  return not locked();
+  return not blocked();
+}
+
+bool NavigateHelper::unblock()
+{
+  if (mBlocked>0)
+    mBlocked -= 1;
+  return mLastNavigated.valid() and not blocked();
 }
 
 bool NavigateHelper::invalidate()
@@ -30,5 +37,19 @@ bool NavigateHelper::invalidate()
   mLastNavigated = SensorTime();
   mChanged = true;
   
-  return not locked();
+  return not blocked();
+}
+
+// ########################################################################
+
+bool NavigateVisible::updateVisible(bool visible)
+{
+  if (visible and not mVisible) { // show
+    mVisible = true;
+    return unblock();
+  } else if (mVisible and not visible) { // hide
+    mVisible = false;
+    block();
+  }
+  return false;
 }

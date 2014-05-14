@@ -16,8 +16,6 @@ public:
   AutoDataList(QWidget* parent=0);
   ~AutoDataList();
   
-  virtual void navigateTo(const SensorTime&);
-  
 public:
   enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
   
@@ -35,8 +33,6 @@ private:
   typedef std::vector<Column> Columns_t;
 
 protected:
-  virtual void showEvent(QShowEvent* showEvent);
-  virtual void hideEvent(QHideEvent* hideEvent);
   virtual void changeEvent(QEvent *event);
   virtual void doNavigateTo();
 
@@ -72,8 +68,6 @@ private:
   TimeSpan mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
 
-  bool mVisible;
-  SensorTime mPendingSensorTime;
   SensorTime mStoreSensorTime;
 };
 

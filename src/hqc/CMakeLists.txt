@@ -1,5 +1,6 @@
 
 SET(hqc_SOURCES
+  AbstractDataView.cc
   AutoDataList.cc
   ChecksTableModel.cc
   DataListAddColumn.cc
@@ -26,6 +27,7 @@ QT4_ADD_TRANSLATION(hqc_QM
 )
 
 QT4_WRAP_CPP(hqc_MOC
+  AbstractDataView.hh
   AutoDataList.hh
   ChecksTableModel.hh
   DataListAddColumn.hh

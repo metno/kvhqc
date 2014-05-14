@@ -50,11 +50,14 @@ const int NMARKERS = 5;
 // ########################################################################
 
 TimeSeriesView::TimeSeriesView(QWidget* parent)
-    : QWidget(parent)
+    : AbstractDataView(parent)
     , ui(new Ui::TimeSeriesView)
     , mTimeControl(new TimeSpanControl(this))
+<<<<<<< HEAD
     , mChangingTimes(false)
     , mVisible(false)
+=======
+>>>>>>> simplified navigation handling in views
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -100,9 +103,10 @@ TimeSeriesView::~TimeSeriesView()
                         
 void TimeSeriesView::storeChanges()
 {
-  METLIBS_LOG_TIME(LOGVAL(mSensorTime));
-  if (mSensorTime.valid())
-    ViewChanges::store(mSensorTime.sensor, VIEW_TYPE, ID, changes());
+  METLIBS_LOG_TIME(LOGVAL(mStoreSensorTime));
+  if (mStoreSensorTime.valid())
+    ViewChanges::store(mStoreSensorTime.sensor, VIEW_TYPE, ID, changes());
+  mStoreSensorTime = mNavigate.current();
 }
 
 void TimeSeriesView::updateSensors()
@@ -162,106 +166,63 @@ void TimeSeriesView::updateSensors()
   updateTime();
 }
 
-void TimeSeriesView::showEvent(QShowEvent* se)
+void TimeSeriesView::retranslateUi()
 {
-  METLIBS_LOG_SCOPE();
-  QWidget::showEvent(se);
-  updateVisible(true);
+  ui->retranslateUi(this);
+  
+  ui->comboWhatToPlot->setItemText(0, tr("Corrected"));
+  ui->comboWhatToPlot->setItemText(1, tr("Model"));
+  ui->comboWhatToPlot->setItemText(2, tr("Difference"));
+  
+  mColumnAdd->setText(tr("Add..."));
+  mColumnRemove->setText(tr("Remove..."));
+  mColumnReset->setText(tr("Reset"));
+  
+  updateSensors(); // language-specific legend
 }
 
-void TimeSeriesView::hideEvent(QHideEvent* he)
-{
-  METLIBS_LOG_SCOPE();
-  QWidget::hideEvent(he);
-  updateVisible(false);
-}
-
-void TimeSeriesView::resizeEvent(QResizeEvent *re)
-{
-  METLIBS_LOG_SCOPE();
-  QWidget::resizeEvent(re);
-  updateVisible(not re->size().isEmpty());
-}
-
-void TimeSeriesView::updateVisible(bool visible)
-{
-  METLIBS_LOG_SCOPE(LOGVAL(visible) << LOGVAL(mVisible));
-  if (visible != mVisible) {
-    mVisible = visible;
-    if (mVisible and not eq_SensorTime()(mPendingSensorTime, mSensorTime))
-      doNavigateTo(mPendingSensorTime);
-  }
-}
-
-void TimeSeriesView::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange) {
-    ui->retranslateUi(this);
-
-    ui->comboWhatToPlot->setItemText(0, tr("Corrected"));
-    ui->comboWhatToPlot->setItemText(1, tr("Model"));
-    ui->comboWhatToPlot->setItemText(2, tr("Difference"));
-
-    mColumnAdd->setText(tr("Add..."));
-    mColumnRemove->setText(tr("Remove..."));
-    mColumnReset->setText(tr("Reset"));
-    
-    updateSensors(); // language-specific legend
-  }
-  QWidget::changeEvent(event);
-}
-
-void TimeSeriesView::navigateTo(const SensorTime& st)
+void TimeSeriesView::doNavigateTo()
 {
   METLIBS_LOG_TIME();
-  if (mVisible)
-    doNavigateTo(st);
-  else if (st.valid())
-    mPendingSensorTime = st;
-}
 
-void TimeSeriesView::doNavigateTo(const SensorTime& st)
-{
-  METLIBS_LOG_TIME();
-  if (not st.valid() or eq_SensorTime()(mSensorTime, st))
-    return;
+  const SensorTime& st = mNavigate.current();
 
-  bool changedTime = false, changedSensors = false;
+  const bool changedSensor = (not mStoreSensorTime.valid()
+      or eq_Sensor()(st.sensor, mStoreSensorTime.sensor));
+  const bool changedTime = changedSensor
+      or not mTimeLimits.contains(st.time);
 
-  const bool sensorShown = eq_Sensor()(mSensorTime.sensor, st.sensor);
-  METLIBS_LOG_DEBUG(LOGVAL(sensorShown));
-  if (not mSensorTime.valid() or not sensorShown) {
+  if (changedSensor) {
     // need to update related parameters and neighbor list
     storeChanges();
 
     // set original columns
-    mSensorTime = st;
-
-    mSensors = Sensor_v(1, mSensorTime.sensor);
-    Helpers::addNeighbors(mSensors, mSensorTime.sensor, mTimeLimits, MAX_LINES*2);
+    mSensors = Sensor_v(1, st.sensor);
+    Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, MAX_LINES*2);
     mOriginalSensors = mSensors;
-
-    changedSensors = true;
   }
-  if (changedSensors or not mTimeLimits.contains(st.time)) {
+  if (changedTime) {
     mTimeLimits = ViewChanges::defaultTimeLimits(st);
     mOriginalTimeLimits = mTimeLimits;
-    changedTime = true;
   }
-  if (changedSensors) {
+  if (changedSensor)
     replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
-  }
-
+  
   ui->plot->clearTimemarks();
   ui->plot->setTimemark(timeutil::make_miTime(st.time), "here");
+<<<<<<< HEAD
 
   updateTimeEditors();
+=======
+  
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+>>>>>>> simplified navigation handling in views
 
   mColumnAdd->setEnabled(true);
   mColumnRemove->setEnabled(true);
-
-  METLIBS_LOG_DEBUG(LOGVAL(changedSensors) << LOGVAL(changedTime));
-  if (changedSensors)
+  
+  if (changedSensor)
     updateSensors();
   else if (changedTime)
     updateTime();
@@ -397,8 +358,6 @@ void TimeSeriesView::replay(const std::string& changesText)
   if (not changed)
     changed = not std::equal(mSensors.begin(), mSensors.end(), mOriginalSensors.begin(), eq_Sensor());
   mColumnReset->setEnabled(changed);
-  
-  updateSensors();
 }
 
 void TimeSeriesView::onActionAddColumn()

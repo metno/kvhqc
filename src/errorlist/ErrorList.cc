@@ -32,7 +32,6 @@
 #include "ErrorListModel.hh"
 #include "common/Functors.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "util/Blocker.hh"
 
 #include <QtGui/QCloseEvent>
 #include <QtGui/QHeaderView>
@@ -83,7 +82,7 @@ void ErrorList::setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time
 void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
 {
   mNavigate.invalidate();
-  NavigateHelper::Locker lock(mNavigate);
+  NavigateHelper::Blocker block(mNavigate);
 
   mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA));
   connect(mItemModel.get(), SIGNAL(beginDataChange()),
@@ -140,7 +139,7 @@ void ErrorList::signalStationSelected()
   METLIBS_LOG_SCOPE();
   if (ObsData_p obs = getSelectedObs()) {
     const SensorTime& st = obs->sensorTime();
-    NavigateHelper::Locker lock(mNavigate);
+    NavigateHelper::Blocker block(mNavigate);
     if (mNavigate.go(st)) {
       METLIBS_LOG_DEBUG(LOGVAL(st));
       signalNavigateTo(st);
@@ -155,7 +154,7 @@ void ErrorList::signalStationSelected()
 void ErrorList::onBeginDataChange()
 {
   METLIBS_LOG_SCOPE();
-  mNavigate.lock();
+  mNavigate.block();
 
   if (QItemSelectionModel* selection = ui->tree->selectionModel())
     selection->clear();
@@ -164,7 +163,7 @@ void ErrorList::onBeginDataChange()
 void ErrorList::onEndDataChange()
 {
   METLIBS_LOG_SCOPE();
-  mNavigate.unlock();
+  mNavigate.unblock();
 }
 
 void ErrorList::navigateTo(const SensorTime& st)
@@ -177,7 +176,7 @@ void ErrorList::navigateTo(const SensorTime& st)
   if (not idx.isValid())
     return;
 
-  NavigateHelper::Locker lock(mNavigate);
+  NavigateHelper::Blocker block(mNavigate);
   // scrollTo must come before select, otherwise scrolling will not happen
   ui->tree->scrollTo(idx);
   if (QItemSelectionModel* selection = ui->tree->selectionModel())
