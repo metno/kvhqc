@@ -23,6 +23,7 @@ SET(util_SOURCES
   QSmallTable.hh
   ToolTipStringListModel.cc
   UiHelpers.cc
+  VisibleWidget.cc
 )
 
 QT4_WRAP_CPP(util_MOC
@@ -34,6 +35,7 @@ QT4_WRAP_CPP(util_MOC
   HideApplyBox.hh
   HintWidget.hh
   MiDateTimeEdit.hh
+  VisibleWidget.hh
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

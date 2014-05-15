@@ -6,9 +6,9 @@
 #include "common/ModelAccess.hh"
 #include "common/NavigateHelper.hh"
 #include "common/Sensor.hh"
-#include <QtGui/QTableView>
+#include "util/VisibleWidget.hh"
 
-class AbstractDataView : public QWidget
+class AbstractDataView : public VisibleWidget
 { Q_OBJECT
 public:
   AbstractDataView(QWidget* parent=0);
@@ -21,17 +21,14 @@ public Q_SLOTS:
   
 Q_SIGNALS:
   void signalNavigateTo(const SensorTime&);
+
+private Q_SLOTS:
+  virtual void onVisibilityUpdate(bool visible);
   
 protected:
-  virtual void showEvent(QShowEvent* showEvent);
-  virtual void hideEvent(QHideEvent* hideEvent);
-  virtual void resizeEvent(QResizeEvent *resizeEvent);
-  virtual void changeEvent(QEvent *event);
-
   const SensorTime& currentSensorTime() const
     { return mNavigate.current(); }
   virtual void doNavigateTo() = 0;
-  virtual void retranslateUi();
   virtual void sendNavigateTo(const SensorTime& st);
 
 protected:
