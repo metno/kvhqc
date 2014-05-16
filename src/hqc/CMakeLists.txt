@@ -9,9 +9,9 @@ SET(hqc_SOURCES
   EditVersionsView.cc
   GetTextData.cc
 #  HqcDianaHelper.cc
-  HqcMainWindow.cc
   JumpToObservation.cc
-  ListDialog.cc
+  NavigationHistory.cc
+  SearchWindow.cc
   SimpleCorrections.cc
   StaticDataList.cc
   TimeSeriesAdd.cc
@@ -35,9 +35,9 @@ QT4_WRAP_CPP(hqc_MOC
   EditVersionModel.hh
   EditVersionsView.hh
 #  HqcDianaHelper.hh
-  HqcMainWindow.hh
   JumpToObservation.hh
-  ListDialog.hh
+  NavigationHistory.hh
+  SearchWindow.hh
   SimpleCorrections.hh
   StaticDataList.hh
   TimeSeriesAdd.hh
@@ -51,8 +51,7 @@ QT4_WRAP_UI(hqc_UIH
   datalist.ui
   dl_addcolumn.ui
   jumptoobservation.ui
-  listdialog.ui
-  mainwindow.ui
+  navigationhistory.ui
   simplecorrections.ui
   timeseriesview.ui
   ts_add.ui

@@ -8,6 +8,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
 #include "common/TimeSpanControl.hh"
+#include "common/HqcApplication.hh"
 
 #include "util/ChangeReplay.hh"
 
@@ -50,14 +51,10 @@ const int NMARKERS = 5;
 // ########################################################################
 
 TimeSeriesView::TimeSeriesView(QWidget* parent)
-    : AbstractDataView(parent)
-    , ui(new Ui::TimeSeriesView)
-    , mTimeControl(new TimeSpanControl(this))
-<<<<<<< HEAD
-    , mChangingTimes(false)
-    , mVisible(false)
-=======
->>>>>>> simplified navigation handling in views
+  : AbstractDataView(parent)
+  , ui(new Ui::TimeSeriesView)
+  , mTimeControl(new TimeSpanControl(this))
+  , mChangingTimes(false)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -94,6 +91,9 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
   // TODO improve plot options
   initalizePlotOptions();
+
+  mDA = hqcApp->editAccess();
+  mMA = hqcApp->modelAccess();
 }
 
 TimeSeriesView::~TimeSeriesView()

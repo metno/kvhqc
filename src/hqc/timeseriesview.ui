@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Time Series</string>
   </property>
+  <property name="windowIcon">
+   <iconset>icons:timeseries.svg</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
     <number>2</number>

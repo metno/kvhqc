@@ -21,8 +21,6 @@ public:
   SimpleCorrections(QWidget* parent=0);
   ~SimpleCorrections();
   
-  void setDataAccess(EditAccess_p eda, ModelAccess_p mda);
-
 public Q_SLOTS:
   virtual void navigateTo(const SensorTime&);
   

@@ -18,7 +18,7 @@ class JumpToObservation;
 class JumpToObservation : public QDialog
 { Q_OBJECT;
 public:
-  JumpToObservation(ObsAccess_p da, QWidget* parent=0);
+  JumpToObservation(QWidget* parent=0);
   ~JumpToObservation();
   
   SensorTime selectedSensorTime() const;

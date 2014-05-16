@@ -2,7 +2,7 @@
 
    HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-   Copyright (C) 2013 met.no
+   Copyright (C) 2013-2014 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -27,8 +27,8 @@
    with HQC; if not, write to the Free Software Foundation Inc.,
    51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef LISTDIALOG2_HH
-#define LISTDIALOG2_HH
+#ifndef ERRORSEARCHDIALOG_HH
+#define ERRORSEARCHDIALOG_HH
 
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpan.hh"
@@ -44,17 +44,16 @@
 class QStandardItem;
 class QStandardItemModel;
 
-class HqcMainWindow;
 class StationSelection;
 class TimeSpanControl;
 
-class Ui_ListDialog;
+class Ui_ErrorSearchDialog;
 
-class ListDialog : public QDialog
+class ErrorSearchDialog : public QDialog
 { Q_OBJECT;
 public:
-  ListDialog(HqcMainWindow* parent);
-  ~ListDialog();
+  ErrorSearchDialog(QWidget* parent);
+  ~ErrorSearchDialog();
     
   TimeSpan getTimeSpan() const;
     
@@ -97,7 +96,7 @@ private:
   void doRestoreSettings(QSettings& settings);
 
 private:
-  std::auto_ptr<Ui_ListDialog> ui;
+  std::auto_ptr<Ui_ErrorSearchDialog> ui;
   std::auto_ptr<QStandardItemModel> mStationModel;
 
   std::map<QString, std::vector<int> > mParameterGroups;
@@ -109,4 +108,4 @@ private:
   bool mIsInToggle;
 };
 
-#endif // LISTDIALOG2_HH
+#endif // ERRORSEARCHDIALOG_HH

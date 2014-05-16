@@ -3,6 +3,7 @@
 
 #include "common/DataListModel.hh"
 #include "common/ObsDelegate.hh"
+#include "common/HqcApplication.hh"
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
@@ -37,6 +38,8 @@ const int MINUTE = 60, HOUR = 60*MINUTE;
 DataList::DataList(QWidget* parent)
   : AbstractDataView(parent)
   , ui(new Ui::DataList)
+  , mDA(hqcApp->editAccess())
+  , mMA(hqcApp->modelAccess())
 {
   ui->setupUi(this);
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
@@ -70,12 +73,6 @@ DataList::DataList(QWidget* parent)
 
 DataList::~DataList()
 {
-}
-
-void DataList::setDataAccess(EditAccess_p eda, ModelAccess_p ma)
-{
-  mDA = eda;
-  mMA = ma;
 }
 
 void DataList::addTimeStepItem(int step)

@@ -30,9 +30,6 @@ public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
   
-  void setDataAccess(ObsAccess_p eda, ModelAccess_p mda)
-    { mDA = eda; mMA = mda; }
-
 private Q_SLOTS:
   void onActionAddColumn();
   void onActionRemoveColumns();

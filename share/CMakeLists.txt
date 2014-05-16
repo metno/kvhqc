@@ -25,6 +25,12 @@ INSTALL(FILES
   images/search_red.svg
   images/filter.svg
   images/busy_animation.svg
+  images/history.svg
+  images/forget.svg
+  images/jump_to_obs.svg
+  images/error.svg
+  images/search_red.svg
+  images/timeseries.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

@@ -3,6 +3,7 @@
 
 #include "common/SingleObsBuffer.hh"
 #include "common/SensorChooser.hh"
+#include "common/HqcApplication.hh"
 
 #include <QtGui/qmessagebox.h>
 
@@ -11,10 +12,10 @@
 #define MILOGGER_CATEGORY "kvhqc.JumpToObservation"
 #include "common/ObsLogging.hh"
 
-JumpToObservation::JumpToObservation(ObsAccess_p da, QWidget* parent)
+JumpToObservation::JumpToObservation(QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::JumpToObservation)
-  , mDA(da)
+  , mDA(hqcApp->editAccess())
 {
   ui->setupUi(this);
 

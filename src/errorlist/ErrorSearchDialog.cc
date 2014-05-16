@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2013 met.no
+  Copyright (C) 2013-2014 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -26,9 +26,8 @@
   with HQC; if not, write to the Free Software Foundation Inc.,
   51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include "ListDialog.hh"
+#include "ErrorSearchDialog.hh"
 
-#include "HqcMainWindow.hh"
 #include "common/FindAllParameters.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StInfoSysBuffer.hh"
@@ -48,9 +47,9 @@
 
 #include <algorithm>
 
-#include "ui_listdialog.h"
+#include "ui_error_search_dialog.h"
 
-#define MILOGGER_CATEGORY "kvhqc.ListDialog"
+#define MILOGGER_CATEGORY "kvhqc.ErrorSearchDialog"
 #include "util/HqcLogging.hh"
 
 namespace /* anonymous */ {
@@ -120,9 +119,9 @@ bool StationFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &paren
 
 // ========================================================================
 
-ListDialog::ListDialog(HqcMainWindow* parent)
+ErrorSearchDialog::ErrorSearchDialog(QWidget* parent)
   : QDialog(parent)
-  , ui(new Ui_ListDialog)
+  , ui(new Ui::ErrorSearchDialog)
   , mTimeControl(new TimeSpanControl(this))
   , mIsInToggle(false)
 {
@@ -140,11 +139,11 @@ ListDialog::ListDialog(HqcMainWindow* parent)
   enableButtons();
 }
 
-ListDialog::~ListDialog()
+ErrorSearchDialog::~ErrorSearchDialog()
 {
 }
 
-void ListDialog::changeEvent(QEvent *event)
+void ErrorSearchDialog::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange) {
     ui->retranslateUi(this);
@@ -153,7 +152,7 @@ void ListDialog::changeEvent(QEvent *event)
         << tr("Station/Region") << tr("Name") << tr("HOH")
         << tr("County") << tr("Commune") << tr("Pri"));
 
-    // from ListDialog::setupParameterTab()
+    // from ErrorSearchDialog::setupParameterTab()
     const int npgs = ui->comboParamGroup->count();
     ui->comboParamGroup->setItemText(npgs-2, tr("All in obs pgm"));
     ui->comboParamGroup->setItemText(npgs-1, tr("All defined"));
@@ -161,7 +160,7 @@ void ListDialog::changeEvent(QEvent *event)
   QDialog::changeEvent(event);
 }
 
-void ListDialog::setupStationTab()
+void ErrorSearchDialog::setupStationTab()
 {
   METLIBS_LOG_SCOPE();
   const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
@@ -263,7 +262,7 @@ void ListDialog::onFilterStations(const QString& text)
   proxyModel->setFilterFixedString(text);
 }
 
-void ListDialog::setupParameterTab()
+void ErrorSearchDialog::setupParameterTab()
 {
   METLIBS_LOG_SCOPE();
 
@@ -330,21 +329,21 @@ void ListDialog::setupParameterTab()
   ui->comboParamGroup->setCurrentIndex(0);
 }
 
-void ListDialog::saveSettings(QSettings& settings)
+void ErrorSearchDialog::saveSettings(QSettings& settings)
 {
   settings.beginGroup(QSETTINGS_GROUP);
   doSaveSettings(settings);
   settings.endGroup();
 }
 
-void ListDialog::restoreSettings(QSettings& settings)
+void ErrorSearchDialog::restoreSettings(QSettings& settings)
 {
   settings.beginGroup(QSETTINGS_GROUP);
   doRestoreSettings(settings);
   settings.endGroup();
 }
 
-void ListDialog::doSaveSettings(QSettings& settings)
+void ErrorSearchDialog::doSaveSettings(QSettings& settings)
 {
   {
     QStringList parameters;
@@ -362,7 +361,7 @@ void ListDialog::doSaveSettings(QSettings& settings)
   settings.setValue("time_to",   ui->toTime  ->dateTime());
 }
 
-void ListDialog::doRestoreSettings(QSettings& settings)
+void ErrorSearchDialog::doRestoreSettings(QSettings& settings)
 {
   {
     const QStringList parameters = settings.value("selected_parameters").toStringList();
@@ -385,7 +384,7 @@ void ListDialog::doRestoreSettings(QSettings& settings)
   }
 }
 
-void ListDialog::onSaveSettings()
+void ErrorSearchDialog::onSaveSettings()
 {
   QString group = QString("data_") + QDateTime::currentDateTime().toString("yyyyMMddhhmmss");
 
@@ -418,7 +417,7 @@ void ListDialog::onSaveSettings()
   }
 }
 
-void ListDialog::onRestoreSettings()
+void ErrorSearchDialog::onRestoreSettings()
 {
   QSettings settings;
   const QStringList groups = settings.childGroups();
@@ -452,7 +451,7 @@ void ListDialog::onRestoreSettings()
   }
 }
 
-void ListDialog::onSetRecentTimes()
+void ErrorSearchDialog::onSetRecentTimes()
 {
   QDateTime t = timeutil::nowWithMinutes0Seconds0();
   QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
@@ -460,7 +459,7 @@ void ListDialog::onSetRecentTimes()
   ui->toTime->setDateTime(t);
 }
 
-void ListDialog::showParamGroup(const QString& paramGroup)
+void ErrorSearchDialog::showParamGroup(const QString& paramGroup)
 {
   const std::vector<int>& sel = mParamSelectedModel->values();
   std::set<int> sel_set(sel.begin(), sel.end());
@@ -475,7 +474,7 @@ void ListDialog::showParamGroup(const QString& paramGroup)
   enableButtons();
 }
 
-void ListDialog::addParameter2Click(const QModelIndex& index)
+void ErrorSearchDialog::addParameter2Click(const QModelIndex& index)
 {
   const std::vector<int>& add = mParamAvailableModel->values();
   const int paramId = add.at(index.row());
@@ -489,7 +488,7 @@ void ListDialog::addParameter2Click(const QModelIndex& index)
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::delParameter2Click(const QModelIndex& index)
+void ErrorSearchDialog::delParameter2Click(const QModelIndex& index)
 {
   std::vector<int> sel = mParamSelectedModel->values();
   sel.erase(sel.begin() + index.row());
@@ -497,7 +496,7 @@ void ListDialog::delParameter2Click(const QModelIndex& index)
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::selectParameters()
+void ErrorSearchDialog::selectParameters()
 {
   const std::vector<int>& add = mParamAvailableModel->values();
 
@@ -514,7 +513,7 @@ void ListDialog::selectParameters()
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::selectAllParameters()
+void ErrorSearchDialog::selectAllParameters()
 {
   const std::vector<int>& add = mParamAvailableModel->values();
 
@@ -530,7 +529,7 @@ void ListDialog::selectAllParameters()
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::deselectParameters()
+void ErrorSearchDialog::deselectParameters()
 {
   const std::vector<int>& sel = mParamSelectedModel->values();
   std::vector<int> new_sel;
@@ -544,18 +543,18 @@ void ListDialog::deselectParameters()
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-void ListDialog::deselectAllParameters()
+void ErrorSearchDialog::deselectAllParameters()
 {
   mParamSelectedModel->setValues(std::vector<int>());
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
-TimeSpan ListDialog::getTimeSpan() const
+TimeSpan ErrorSearchDialog::getTimeSpan() const
 {
   return mTimeControl->timeRange();
 }
 
-void ListDialog::enableButtons()
+void ErrorSearchDialog::enableButtons()
 {
   const bool haveStations   = not getSelectedStations()  .empty();
   const bool haveParameters = not getSelectedParameters().empty();
@@ -564,7 +563,7 @@ void ListDialog::enableButtons()
   ui->buttonOk->setEnabled(allowApply);
 }
 
-QStringList ListDialog::getSelectedCounties()
+QStringList ErrorSearchDialog::getSelectedCounties()
 {
   METLIBS_LOG_SCOPE();
 
@@ -588,7 +587,7 @@ QStringList ListDialog::getSelectedCounties()
   return t;
 }
 
-void ListDialog::setSelectedCounties(const QStringList& selectedCounties)
+void ErrorSearchDialog::setSelectedCounties(const QStringList& selectedCounties)
 {
   METLIBS_LOG_SCOPE();
 
@@ -607,7 +606,7 @@ void ListDialog::setSelectedCounties(const QStringList& selectedCounties)
   enableButtons();
 }
 
-std::vector<int> ListDialog::getSelectedStations()
+std::vector<int> ErrorSearchDialog::getSelectedStations()
 {
   std::vector<int> stations;
 
@@ -630,12 +629,12 @@ std::vector<int> ListDialog::getSelectedStations()
   return stations;
 }
 
-std::vector<int> ListDialog::getSelectedParameters()
+std::vector<int> ErrorSearchDialog::getSelectedParameters()
 {
   return mParamSelectedModel->values();
 }
 
-void ListDialog::onItemChanged(QStandardItem* item)
+void ErrorSearchDialog::onItemChanged(QStandardItem* item)
 {
   if (mIsInToggle)
     return;

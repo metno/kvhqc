@@ -1,7 +1,7 @@
 /* -*- c++ -*-
    HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-   Copyright (C) 2013 met.no
+   Copyright (C) 2013-2014 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -42,9 +42,8 @@
 class QItemSelection;
 
 class ErrorListModel;
-namespace Ui {
-class ErrorList;
-}
+class ErrorSearchDialog;
+class Ui_ErrorList;
 
 class ErrorList : public QWidget
 { Q_OBJECT;
@@ -52,13 +51,10 @@ public:
   ErrorList(QWidget* parent=0);
   ~ErrorList();
 
-  void setErrorsForSalen(bool errorsForSalen)
-    { mErrorsForSalen = errorsForSalen; }
-
-  virtual void setDataAccess(ObsAccess_p eda, ModelAccess_p mda);
   virtual void setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time);
 
 public Q_SLOTS:
+  //void initiateSearch();
   void navigateTo(const SensorTime&);
 
 Q_SIGNALS:
@@ -71,7 +67,10 @@ private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onBeginDataChange();
   void onEndDataChange();
+
+  void onButtonSearch();
   void onButtonExpand();
+  void onButtonForget();
 
 private:
   void resizeHeaders();
@@ -80,8 +79,8 @@ private:
   void updateModel(const Sensor_v& sensors, const TimeSpan& time);
 
 private:
-  std::auto_ptr<Ui::ErrorList> ui;
-  BusyLabel* mBusy;
+  std::auto_ptr<Ui_ErrorList> ui;
+  ErrorSearchDialog* mDialog;
 
   ObsAccess_p mDA;
   ModelAccess_p mMA;

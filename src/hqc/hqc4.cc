@@ -28,6 +28,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcMainWindow.hh"
+#include "SearchWindow.hh"
 #include "common/KvalobsReinserter.hh"
 #include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
@@ -111,11 +112,17 @@ int main( int argc, char* argv[] )
   splash.show();
   hqc.processEvents();
 
+  const QString kvalobsInstanceName = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
+  std::auto_ptr<SearchWindow> sw(new SearchWindow(kvalobsInstanceName));
+  sw->show();
+
+#if 0
   std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
   mw->setReinserter(boost::make_shared<KvalobsReinserter>());
   mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
+#endif
 
-  splash.finish(mw.get());
+  splash.finish(sw.get());
 
   // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
   const int r = hqc.exec();

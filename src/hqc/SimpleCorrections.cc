@@ -7,6 +7,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/KvHelpers.hh"
 #include "common/ModelData.hh"
+#include "common/HqcApplication.hh"
 
 #include "util/ToolTipStringListModel.hh"
 
@@ -36,6 +37,8 @@ void setCommonMinWidth(QWidget* w[])
 SimpleCorrections::SimpleCorrections(QWidget* parent)
   : QWidget(parent)
   , ui(new Ui::SimpleCorrections)
+  , mDA(hqcApp->editAccess())
+  , mMA(hqcApp->modelAccess())
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -51,6 +54,8 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ui->buttonReject   ->setIcon(iconReject);
   ui->buttonRejectQC2->setIcon(iconReject);
 
+  mChecksModel.reset(new ChecksTableModel(mDA));
+  ui->tableChecks->setModel(mChecksModel.get());
   update();
 }
 
@@ -75,15 +80,6 @@ void SimpleCorrections::changeEvent(QEvent *event)
 
 SimpleCorrections::~SimpleCorrections()
 {
-}
-
-void SimpleCorrections::setDataAccess(EditAccess_p eda, ModelAccess_p mda)
-{
-  mDA = eda;
-  mMA = mda;
-  mChecksModel.reset(new ChecksTableModel(eda));
-  ui->tableChecks->setModel(mChecksModel.get());
-  update();
 }
 
 void SimpleCorrections::navigateTo(const SensorTime& st)

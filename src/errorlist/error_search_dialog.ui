@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>ListDialog</class>
- <widget class="QDialog" name="ListDialog">
+ <class>ErrorSearchDialog</class>
+ <widget class="QDialog" name="ErrorSearchDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -11,10 +11,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Data selection HQC</string>
+   <string>Error Search</string>
   </property>
   <property name="windowIcon">
-    <iconset>icons:search_red.svg</iconset>
+   <iconset>icons:search_red.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <property name="spacing">
@@ -512,7 +512,7 @@
   <connection>
    <sender>buttonDefaultTime</sender>
    <signal>clicked()</signal>
-   <receiver>ListDialog</receiver>
+   <receiver>ErrorSearchDialog</receiver>
    <slot>onSetRecentTimes()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -528,7 +528,7 @@
   <connection>
    <sender>buttonCancel</sender>
    <signal>clicked()</signal>
-   <receiver>ListDialog</receiver>
+   <receiver>ErrorSearchDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -544,7 +544,7 @@
   <connection>
    <sender>buttonOk</sender>
    <signal>clicked()</signal>
-   <receiver>ListDialog</receiver>
+   <receiver>ErrorSearchDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -560,7 +560,7 @@
   <connection>
    <sender>editFilter</sender>
    <signal>textChanged(QString)</signal>
-   <receiver>ListDialog</receiver>
+   <receiver>ErrorSearchDialog</receiver>
    <slot>onFilterStations(QString)</slot>
    <hints>
     <hint type="sourcelabel">

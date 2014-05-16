@@ -28,10 +28,15 @@
 */
 
 #include "ErrorList.hh"
-
 #include "ErrorListModel.hh"
+#include "ErrorSearchDialog.hh"
+
 #include "common/Functors.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
+#include "common/HqcApplication.hh"
+
+#include "util/BusyIndicator.hh"
 
 #include <QtGui/QCloseEvent>
 #include <QtGui/QHeaderView>
@@ -48,29 +53,64 @@ using namespace kvalobs;
 
 ErrorList::ErrorList(QWidget* parent)
   : QWidget(parent)
-  , ui(new Ui::ErrorList)
+  , ui(new Ui_ErrorList)
+  , mDialog(new ErrorSearchDialog(this))
+  , mDA(hqcApp->editAccess())
+  , mMA(hqcApp->modelAccess())
   , mErrorsForSalen(false)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
 
-  mBusy = new BusyLabel(this);
-  ui->buttonBox->addWidget(mBusy);
-
   ui->tree->setSelectionBehavior(QTreeView::SelectRows);
   ui->tree->setSelectionMode(QTreeView::SingleSelection);
   resizeHeaders();
+
+  updateModel(Sensor_v(), TimeSpan());
 }
 
 ErrorList::~ErrorList()
 {
 }
 
-void ErrorList::setDataAccess(ObsAccess_p eda, ModelAccess_p mda)
+void ErrorList::onButtonSearch()
 {
-  mDA = eda;
-  mMA = mda;
-  updateModel(Sensor_v(), TimeSpan());
+  if (not mDialog->exec())
+    return;
+
+  const TimeSpan timeLimits = mDialog->getTimeSpan();
+  const std::vector<int> selectedStations = mDialog->getSelectedStations();
+  const std::vector<int> selectedParameters = mDialog->getSelectedParameters();
+
+  Sensor_v sensors;
+
+  BusyIndicator busy;
+  BOOST_FOREACH(int stationId, selectedStations) {
+    BOOST_FOREACH(int paramId, selectedParameters) {
+      const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+      Sensor sensor(stationId, paramId, 0, 0, 0);
+      std::set<int> typeIdsShown;
+      BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
+        const TimeSpan op_time(op.fromtime(), op.totime());
+        if (timeLimits.intersection(op_time).undef())
+          continue;
+        const int p = op.paramID(), t = op.typeID();
+        if (p == paramId) {
+          sensor.typeId = t;
+        } else if (Helpers::aggregatedParameter(p, paramId)) {
+          sensor.typeId = -t;
+        } else {
+          continue;
+        }
+        if (typeIdsShown.find(sensor.typeId) == typeIdsShown.end()) {
+          sensors.push_back(sensor);
+          typeIdsShown.insert(sensor.typeId);
+        }
+      }
+    }
+  }
+
+  setSensorsAndTimes(sensors, timeLimits);
 }
 
 void ErrorList::setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time)
@@ -89,7 +129,7 @@ void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
       this, SLOT(onBeginDataChange()));
   connect(mItemModel.get(), SIGNAL(endDataChange()),
       this, SLOT(onEndDataChange()));
-  connect(mItemModel.get(), SIGNAL(fetchingData(bool)), mBusy, SLOT(setBusy(bool)));
+  connect(mItemModel.get(), SIGNAL(fetchingData(bool)), ui->busyLabel, SLOT(setBusy(bool)));
 
   ui->tree->setModel(mItemModel.get());
   mItemModel->search(sensors, time, mErrorsForSalen);
@@ -196,4 +236,9 @@ ObsData_p ErrorList::getSelectedObs() const
 void ErrorList::onButtonExpand()
 {
   ui->tree->expandAll();
+}
+
+void ErrorList::onButtonForget()
+{
+  // FIXME not implemented yet
 }

@@ -1,0 +1,248 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2014 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or
+  modify it under the terms of the GNU General Public License as
+  published by the Free Software Foundation; either version 2
+  of the License, or (at your option) any later version.
+
+  HQC is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+  General Public License for more details.
+
+  You should have received a copy of the GNU General Public License along
+  with HQC; if not, write to the Free Software Foundation Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+#include "SearchWindow.hh"
+
+#include "config.h"
+
+#include "AutoDataList.hh"
+#include "NavigationHistory.hh"
+#include "TimeSeriesView.hh"
+
+#include "common/CachingAccess.hh"
+#include "common/KvalobsAccess.hh"
+
+#include "common/KvalobsModelAccess.hh"
+#include "common/KvHelpers.hh"
+#include "common/KvMetaDataBuffer.hh"
+#include "common/KvServiceHelper.hh"
+#include "common/HqcApplication.hh"
+
+#include "util/Helpers.hh"
+#include "util/hqc_paths.hh"
+#include "util/timeutil.hh"
+#include "util/BusyIndicator.hh"
+#include "util/UiHelpers.hh"
+
+#ifdef ENABLE_ERRORLIST
+#include "errorlist/ErrorList.hh"
+#endif // ENABLE_ERRORLIST
+
+#ifdef ENABLE_DIANA
+#include "HqcDianaHelper.hh"
+#include <coserver/ClientButton.h>
+#endif // ENABLE_DIANA
+
+#ifdef ENABLE_EXTREMES
+#include "extremes/ExtremesView.hh"
+#endif // ENABLE_EXTREMES
+
+#ifdef ENABLE_MISSINGOBS
+#include "missing/MissingView.hh"
+#endif // ENABLE_MISSINGOBS
+
+#ifdef ENABLE_SIMPLECORRECTIONS
+#include "SimpleCorrections.hh"
+#endif // ENABLE_SIMPLECORRECTIONS
+
+#include <QtGui/QSplitter>
+
+#define MILOGGER_CATEGORY "kvhqc.SearchWindow"
+#include "common/ObsLogging.hh"
+
+namespace {
+
+const char SETTING_HQC_GEOMETRY[] = "geometry";
+const char SETTING_HQC_AUTOVIEW_SPLITTER[] = "autoview_slider";
+const char SETTING_VERSION[] = "version";
+const char SETTING_VERSION_FULL[] = "version_full";
+
+void addTab(QTabWidget* tabs, QWidget* widget)
+{
+  tabs->addTab(widget, widget->windowIcon(), widget->windowTitle());
+}
+
+void retranslateTabs(QTabWidget* tabs)
+{
+  for (int i=0; i<tabs->count(); ++i)
+    tabs->setTabText(i, tabs->widget(i)->windowTitle());
+}
+
+} // anonymous namespace
+
+SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
+  : QMainWindow(parent)
+{
+  METLIBS_LOG_SCOPE();
+  setWindowTitle(tr("HQC Search %1").arg(kvalobsInstanceName));
+  setWindowIcon(QIcon("icons:hqc_logo.svg"));
+  resize(975, 700);
+
+  QSplitter* sDataSearch = new QSplitter(Qt::Vertical, this);
+  setCentralWidget(sDataSearch);
+
+  mTabsData = new QTabWidget(sDataSearch);
+  mTabsSearch = new QTabWidget(sDataSearch);
+
+  sDataSearch->addWidget(mTabsData);
+  sDataSearch->addWidget(mTabsSearch);
+
+  setupSearchTabs();
+  setupDataTabs();
+
+#ifdef ENABLE_DIANA
+  pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
+  statusBar()->addPermanentWidget(pluginB, 0);
+  mDianaHelper.reset(new HqcDianaHelper(pluginB));
+  mDianaHelper->setDataAccess(eda, kma);
+  mDianaHelper->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
+#endif
+}
+
+void SearchWindow::setupSearchTabs()
+{
+#ifdef ENABLE_ERRORLIST
+  mErrorsView = new ErrorList(mTabsSearch);
+  addTab(mTabsSearch, mErrorsView);
+  connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
+#endif // ENABLE_ERRORLIST
+
+#ifdef ENABLE_EXTREMES
+  mExtremesView = new ExtremesView(this);
+  mExtremesView->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
+  addTab(mTabsSearch, mExtremesView);
+#endif // ENABLE_EXTREMES
+
+#ifdef ENABLE_MISSINGOBS
+  mMissingView = new MissingView(mTabsSearch);
+  mMissingView->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
+  addTab(mTabsSearch, mMissingView);
+#endif // ENABLE_MISSINGOBS
+
+  mNavigationHistory = new NavigationHistory(mTabsSearch);
+  addTab(mTabsSearch, mNavigationHistory);
+  connect(mNavigationHistory, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
+}
+
+void SearchWindow::setupDataTabs()
+{
+  mSplitterDataPlot = new QSplitter(Qt::Horizontal, mTabsData);
+  mSplitterDataPlot->setOpaqueResize(false);
+  addTab(mTabsData, mSplitterDataPlot);
+  
+  mAutoDataList = new AutoDataList(mSplitterDataPlot);
+  connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
+
+  mTimeSeriesView = new TimeSeriesView(mSplitterDataPlot);
+
+  mSplitterDataPlot->addWidget(mAutoDataList);
+  mSplitterDataPlot->addWidget(mTimeSeriesView);
+
+#ifdef ENABLE_SIMPLECORRECTIONS
+  mCorrections = new SimpleCorrections(mTabsSearch);
+  addTab(mTabsData, mCorrections);
+#endif
+}
+
+SearchWindow::~SearchWindow()
+{
+}
+
+void SearchWindow::changeEvent(QEvent *event)
+{
+  if (event->type() == QEvent::LanguageChange)
+    retranslateUi();
+  QMainWindow::changeEvent(event);
+}
+
+void SearchWindow::retranslateUi()
+{
+  retranslateTabs(mTabsData);
+  retranslateTabs(mTabsSearch);
+}
+
+void SearchWindow::navigateTo(const SensorTime& st)
+{
+  METLIBS_LOG_TIME();
+  METLIBS_LOG_DEBUG(LOGVAL(st));
+
+  if (eq_SensorTime()(mLastNavigated, st))
+    return;
+
+#if 1
+  BusyIndicator busy;
+#else
+  // this disables the GUI and is therefore often much slower than updating the views
+  BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
+      .arg(st.sensor.stationId)
+      .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
+#endif
+  mLastNavigated = st;
+
+#ifdef ENABLE_DIANA
+  mDianaHelper->navigateTo(st);
+#endif
+#ifdef ENABLE_ERRORLIST
+  mErrorsView->navigateTo(st);
+#endif
+#ifdef ENABLE_SIMPLECORRECTIONS
+  mCorrections->navigateTo(st);
+#endif
+
+  mNavigationHistory->navigateTo(st);
+
+  mAutoDataList->navigateTo(st);
+  mTimeSeriesView->navigateTo(st);
+}
+
+#if 0
+void SearchWindow::writeSettings()
+{
+  QSettings settings;
+  settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
+  settings.setValue(SETTING_HQC_AUTOVIEW_SPLITTER, mAutoViewSplitter->saveState());
+
+  lstdlg->saveSettings(settings);
+}
+
+void SearchWindow::readSettings()
+{
+  METLIBS_LOG_SCOPE();
+
+  QSettings settings;
+  if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
+    HQC_LOG_WARN("cannot restore hqc main window geometry");
+  if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
+    HQC_LOG_WARN("cannot restore autoview splitter positions");
+
+  lstdlg->restoreSettings(settings);
+}
+#endif

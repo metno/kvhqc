@@ -30,8 +30,6 @@ public:
   DataList(QWidget* parent=0);
   ~DataList() = 0;
                  
-  void setDataAccess(EditAccess_p eda, ModelAccess_p ma);
-
 private Q_SLOTS:
   void onButtonSaveAs();
   void onCheckFilter(bool filterByTimestep);

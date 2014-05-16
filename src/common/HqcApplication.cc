@@ -27,6 +27,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcApplication"
 #define M_TIME
@@ -70,6 +71,11 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   QTimer* availabilityTimer = new QTimer(this);
   connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
+
+  kda = boost::make_shared<KvalobsAccess>();
+  cda = boost::make_shared<CachingAccess>(kda);
+  kma = boost::make_shared<KvalobsModelAccess>();
+  eda = boost::make_shared<EditAccess>(cda);
   
   KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
 }

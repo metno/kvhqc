@@ -2,7 +2,10 @@
 #ifndef HqcApplication_hh
 #define HqcApplication_hh 1
 
-#include "common/Sensor.hh"
+#include "CachingAccess.hh"
+#include "EditAccess.hh"
+#include "KvalobsAccess.hh"
+#include "KvalobsModelAccess.hh"
 
 #include <miconfparser/confsection.h>
 
@@ -10,7 +13,11 @@
 #include <QtGui/QApplication>
 #include <QtSql/QSqlDatabase>
 
+class CachingAccess;
+class EditAccess;
 class HqcUserConfig;
+class KvalobsAccess;
+class KvalobsModelAccess;
 
 class HqcApplication : public QApplication
 {   Q_OBJECT;
@@ -24,6 +31,11 @@ public:
   QSqlDatabase configDB();
   HqcUserConfig* userConfig()
     { return mUserConfig.get(); }
+
+  EditAccess_p editAccess() const
+    { return eda; }
+  ModelAccess_p modelAccess() const
+    { return kma; }
 
   QSqlDatabase kvalobsDB();
   QSqlDatabase kvalobsDB(const QString& qname);
@@ -64,6 +76,12 @@ private:
   miutil::conf::ConfSection *mConfig;
   bool mKvalobsAvailable;
   std::auto_ptr<HqcUserConfig> mUserConfig;
+
+  KvalobsAccess_p kda;
+  CachingAccess_p cda;
+  EditAccess_p eda;
+
+  ModelAccess_p kma;
 };
 
 extern HqcApplication* hqcApp;
