@@ -1,3 +1,11 @@
+kvhqc (3.4.2-1) unstable; urgency=low
+
+  * updated check_explain.py
+  * some ErrorListModel refactoring
+  * disabled milog wrapper
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 16 May 2014 17:39:44 +0200
+
 kvhqc (3.4.1-1) unstable; urgency=low
 
   * new attempt to fix errors in error list tree
@@ -8,7 +16,6 @@ kvhqc (3.4.1-1) unstable; urgency=low
 kvhqc (3.4.0-1) unstable; urgency=low
 
   * ErrorListModel: block highlightStation in onDataChanged
-  * 
 
  -- Alexander Bürger <alexander.buerger@met.no>  Thu, 13 Mar 2014 10:31:24 +0100
 
