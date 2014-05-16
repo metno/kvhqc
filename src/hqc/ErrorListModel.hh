@@ -1,17 +1,13 @@
 // -*- c++ -*-
 
-#ifndef ERRORLISTTABLE_H
-#define ERRORLISTTABLE_H
+#ifndef HQC_ERRORLISTMODEL_HH
+#define HQC_ERRORLISTMODEL_HH
 
 #include "common/AnalyseErrors.hh"
 #include "common/EditAccess.hh"
 #include "common/ModelAccess.hh"
 
 #include <QtCore/QAbstractTableModel>
-
-#include <vector>
-
-
 
 class ErrorListModel : public QAbstractItemModel
 { Q_OBJECT;
@@ -45,9 +41,8 @@ public:
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-  //! find row for sensortime, returns -1 if not found
   QModelIndex findSensorTime(const SensorTime& st) const
-    { return findSensorTime(st, mErrorRoot.get()); }
+    { return findSensorTime(st, mRootItem); }
 
   EditDataPtr findObs(const QModelIndex& index) const;
 
@@ -65,20 +60,20 @@ private:
   void removeRow(ErrorTreeItem_P parent, int row);
 
   void updateErrorItem(ErrorTreeItem_P item);
-  void removeErrorItem(QModelIndex idx);
+  void removeErrorItem(ErrorTreeItem_P item);
   void insertErrorItem(Errors::ErrorInfo ei);
 
-  QModelIndex itemIndex(ErrorTreeItem_P item, int column=0) const;
+  QModelIndex indexFromItem(ErrorTreeItem_P item, int column=0) const;
 
 private:
   EditAccessPtr mDA;
   ModelAccessPtr mMA;
   Errors::Sensors_t mSensors;
   TimeRange mTimeLimits;
-  boost::shared_ptr<ErrorTreeItem> mErrorRoot;
+  ErrorTreeItem_P mRootItem;
   bool mErrorsForSalen;
   int mHighlightedStation;
   bool mBlockHighlighting;
 };
 
-#endif
+#endif // HQC_ERRORLISTMODEL_HH

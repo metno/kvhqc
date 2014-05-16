@@ -19,6 +19,8 @@
 #define MILOGGER_CATEGORY "kvhqc.ErrorListModel"
 #include "common/ObsLogging.hh"
 
+#define ENABLE_HIDE 1
+
 namespace {
 
 const char* headers[ErrorListModel::NCOLUMNS] = {
@@ -52,7 +54,8 @@ const char* tooltips[ErrorListModel::NCOLUMNS] = {
 class ErrorListModel::ErrorTreeItem
 {
 public:
-  ErrorTreeItem(const Errors::ErrorInfo& ei, ErrorTreeItem_P parent = 0);
+  ErrorTreeItem(const Errors::ErrorInfo& ei, ErrorTreeItem_P parent);
+  ErrorTreeItem();
   ~ErrorTreeItem();
 
   ErrorTreeItem_P appendChild(ErrorTreeItem_P child)
@@ -67,8 +70,8 @@ public:
   ErrorTreeItem_P insertChild(int i, const Errors::ErrorInfo& childInfo)
     { return insertChild(i, new ErrorTreeItem(childInfo, this)); }
 
-  void removeChild(int child)
-    { delete mChildren.value(child); mChildren.removeAt(child); }
+  void removeChild(int row)
+    { delete mChildren.takeAt(row); }
 
   int childCount() const
     { return mChildren.count(); }
@@ -102,6 +105,11 @@ ErrorListModel::ErrorTreeItem::ErrorTreeItem(const Errors::ErrorInfo& ei, ErrorT
 {
 }
 
+ErrorListModel::ErrorTreeItem::ErrorTreeItem()
+  : mParent(0)
+{
+}
+
 ErrorListModel::ErrorTreeItem::~ErrorTreeItem()
 {
   qDeleteAll(mChildren);
@@ -122,7 +130,7 @@ ErrorListModel::ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
   , mMA(mda)
   , mSensors(sensors)
   , mTimeLimits(limits)
-  , mErrorRoot(new ErrorTreeItem(Errors::ErrorInfo(), 0))
+  , mRootItem(new ErrorTreeItem)
   , mErrorsForSalen(errorsForSalen)
   , mHighlightedStation(-1)
   , mBlockHighlighting(false)
@@ -146,20 +154,27 @@ ErrorListModel::ErrorListModel(EditAccessPtr eda, ModelAccessPtr mda,
 ErrorListModel::~ErrorListModel()
 {
   mDA->obsDataChanged.disconnect(boost::bind(&ErrorListModel::onDataChanged, this, _1, _2));
+  delete mRootItem;
 }
 
 ErrorListModel::ErrorTreeItem_P ErrorListModel::itemFromIndex(const QModelIndex& index) const
 {
-  if (not index.isValid())
-    return mErrorRoot.get();
-  return static_cast<ErrorTreeItem_P>(index.internalPointer());
+  if (index.isValid()) {
+    const ErrorTreeItem_P item = static_cast<ErrorTreeItem_P>(index.internalPointer());
+    if (item)
+      return item;
+  }
+  return mRootItem;
 }
 
 int ErrorListModel::rowCount(const QModelIndex& parent) const
 {
-  if (parent.column() > 0)
+  if (not parent.isValid())
+    return mRootItem->childCount();
+  else if (parent.column() == 0)
+    return itemFromIndex(parent)->childCount();
+  else
     return 0;
-  return itemFromIndex(parent)->childCount();
 }
 
 int ErrorListModel::columnCount(const QModelIndex&) const
@@ -169,40 +184,35 @@ int ErrorListModel::columnCount(const QModelIndex&) const
 
 QModelIndex ErrorListModel::index(int row, int column, const QModelIndex &parent) const
 {
-  if (not hasIndex(row, column, parent))
+  const ErrorTreeItem_P child = itemFromIndex(parent)->child(row);
+  if (child)
+    return createIndex(row, column, child);
+  else
     return QModelIndex();
-  
-  ErrorTreeItem_P parentItem = itemFromIndex(parent);
-  ErrorTreeItem_P childItem = parentItem->child(row);
-  if (not childItem)
-    return QModelIndex();
-  return createIndex(row, column, childItem);
 }
 
-QModelIndex ErrorListModel::itemIndex(ErrorTreeItem_P item, int column) const
+QModelIndex ErrorListModel::indexFromItem(ErrorTreeItem_P item, int column) const
 {
-  if (not item or item == mErrorRoot.get())
+  if (item and item != mRootItem)
+    return createIndex(item->row(), column, item);
+  else
     return QModelIndex();
-  return createIndex(item->row(), column, item);
 }
 
-QModelIndex ErrorListModel::parent(const QModelIndex &idx) const
+QModelIndex ErrorListModel::parent(const QModelIndex &index) const
 {
-  if (not idx.isValid())
+  if (index.isValid())
+    return indexFromItem(itemFromIndex(index)->parent());
+  else
     return QModelIndex();
-
-  ErrorTreeItem_P childItem = itemFromIndex(idx);
-  ErrorTreeItem_P parentItem = childItem->parent();
-
-  if (parentItem == mErrorRoot.get())
-    return QModelIndex();
-  
-  return itemIndex(parentItem);
 }
 
-Qt::ItemFlags ErrorListModel::flags(const QModelIndex& /*index*/) const
+Qt::ItemFlags ErrorListModel::flags(const QModelIndex& index) const
 {
-  return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  if (index.isValid())
+    return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
+  else
+    return 0;
 }
 
 QVariant ErrorListModel::data(const QModelIndex& index, int role) const
@@ -311,7 +321,7 @@ void ErrorListModel::highlightStation(int stationID)
   mHighlightedStation = stationID;
 
   if (not mBlockHighlighting) {
-    const int nrows = rowCount(QModelIndex()); // FIXME all root rows, or all rows?
+    const int nrows = rowCount(); // FIXME all root rows, or all rows?
     if (nrows > 0)
       Q_EMIT dataChanged(index(0, COL_STATION_ID), index(nrows-1, COL_STATION_NAME));
   }
@@ -333,8 +343,7 @@ struct find_ErrorSensorTime : public lt_SensorTime {
 
 void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
 {
-  METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(what));
+  METLIBS_LOG_SCOPE(LOGVAL(data->sensorTime()) << LOGVAL(what));
 
   const SensorTime& st = data->sensorTime();
   if (not mTimeLimits.contains(st.time))
@@ -343,17 +352,18 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   if (std::find_if(mSensors.begin(), mSensors.end(), find_Sensor(st.sensor)) == mSensors.end())
     return;
 
-  const QModelIndex idx = findSensorTime(st);
+  const QModelIndex index = findSensorTime(st);
 
   Q_EMIT beginDataChange();
   int highlighted = mHighlightedStation;
   mBlockHighlighting = true;
 
-  if (what == ObsAccess::MODIFIED and idx.isValid()) {
-    ErrorTreeItem_P item = static_cast<ErrorTreeItem_P>(idx.internalPointer());
+#ifdef ENABLE_HIDE
+  if (what == ObsAccess::MODIFIED and index.isValid()) {
+    ErrorTreeItem_P item = itemFromIndex(index);
     Errors::recheck(item->info(), mErrorsForSalen);
     if (not item->info().badInList)
-      removeErrorItem(idx);
+      removeErrorItem(item);
     else
       updateErrorItem(item);
   } else if (what == ObsAccess::MODIFIED or what == ObsAccess::CREATED) {
@@ -362,8 +372,15 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
     if (ei.badInList)
       insertErrorItem(ei);
   } else if (what == ObsAccess::DESTROYED) {
-    removeErrorItem(idx);
+    removeErrorItem(itemFromIndex(index));
   }
+#else
+  if (what == ObsAccess::MODIFIED and index.isValid()) {
+    ErrorTreeItem_P item = static_cast<ErrorTreeItem_P>(index.internalPointer());
+    Errors::recheck(item->info(), mErrorsForSalen);
+    updateErrorItem(item);
+  }
+#endif
 
   Q_EMIT endDataChange();
   mBlockHighlighting = false;
@@ -375,18 +392,14 @@ void ErrorListModel::updateErrorItem(ErrorTreeItem_P item)
 {
   METLIBS_LOG_SCOPE();
   if (item)
-    Q_EMIT dataChanged(itemIndex(item, COL_OBS_ORIG), itemIndex(item, COL_OBS_FLAGS));
+    Q_EMIT dataChanged(indexFromItem(item, COL_OBS_ORIG), indexFromItem(item, COL_OBS_FLAGS));
 }
 
-void ErrorListModel::removeErrorItem(QModelIndex idx)
+void ErrorListModel::removeErrorItem(ErrorTreeItem_P item)
 {
   METLIBS_LOG_SCOPE();
-
-  ErrorTreeItem_P item = itemFromIndex(idx);
-  if (not item or item == mErrorRoot.get()) {
-    HQC_LOG_WARN("trying to remove invalid/root index");
+  if (not item or item == mRootItem)
     return;
-  }
 
   if (item->childCount() > 0) {
     // this item is a group parent; swap data with 1st child and remove child
@@ -402,7 +415,7 @@ void ErrorListModel::removeErrorItem(QModelIndex idx)
 
 void ErrorListModel::removeRow(ErrorTreeItem_P parent, int row)
 {
-  beginRemoveRows(itemIndex(parent), row, row);
+  beginRemoveRows(indexFromItem(parent), row, row);
   parent->removeChild(row);
   endRemoveRows();
 }
@@ -411,25 +424,25 @@ void ErrorListModel::insertErrorItem(Errors::ErrorInfo ei)
 {
   METLIBS_LOG_SCOPE();
   const SensorTime& st = ei.obs->sensorTime();
-  ErrorTreeItem_P insertParent = mErrorRoot.get();
-  int insertIndex = 0;
-  for (; insertIndex < mErrorRoot->childCount(); ++insertIndex) {
-    ErrorTreeItem_P level0 = mErrorRoot->child(insertIndex);
+  ErrorTreeItem_P parent = mRootItem;
+  int position = 0;
+  for (; position < mRootItem->childCount(); ++position) {
+    ErrorTreeItem_P level0 = mRootItem->child(position);
     const SensorTime& level0ST = level0->obs()->sensorTime();
     if (lt_Sensor()(st.sensor, level0ST.sensor)) {
       // sensor is before root child's sensor, insert at root level
       break;
     }
     if (eq_Sensor()(st.sensor, level0ST.sensor)) {
-      insertIndex = 0;
-      insertParent = level0;
+      position = 0;
+      parent = level0;
       if (st.time < level0ST.time) {
         // need to replace parent
         std::swap(level0->info(), ei);
         updateErrorItem(level0); // this will cause calls to ::data(...)
       } else {
-        for (; insertIndex<level0->childCount(); ++insertIndex) {
-          ErrorTreeItem_P level1 = level0->child(insertIndex);
+        for (; position<level0->childCount(); ++position) {
+          ErrorTreeItem_P level1 = level0->child(position);
           const SensorTime& level1ST = level1->obs()->sensorTime();
           if (st.time < level1ST.time)
             break;
@@ -438,24 +451,25 @@ void ErrorListModel::insertErrorItem(Errors::ErrorInfo ei)
       break;
     }
   }
-  METLIBS_LOG_DEBUG(LOGVAL(insertIndex));
-  beginInsertRows(itemIndex(insertParent), insertIndex, insertIndex);
-  insertParent->insertChild(insertIndex, ei);
+  METLIBS_LOG_DEBUG(LOGVAL(position));
+  beginInsertRows(indexFromItem(parent), position, position);
+  parent->insertChild(position, ei);
   endInsertRows();
 }
 
 QModelIndex ErrorListModel::findSensorTime(const SensorTime& st, ErrorTreeItem_P item) const
 {
   METLIBS_LOG_SCOPE();
+  // TODO error list is sorted, should use binary search
   if (item) {
-    if (item != mErrorRoot.get() and item->obs()) {
+    if (item != mRootItem and item->obs()) {
       if (eq_SensorTime()(st, item->obs()->sensorTime()))
-        return itemIndex(item);
+        return indexFromItem(item);
     }
     for (int i=0; i<item->childCount(); ++i) {
-      const QModelIndex idx = findSensorTime(st, item->child(i));
-      if (idx.isValid())
-        return idx;
+      const QModelIndex index = findSensorTime(st, item->child(i));
+      if (index.isValid())
+        return index;
     }
   }
   return QModelIndex();
@@ -464,14 +478,16 @@ QModelIndex ErrorListModel::findSensorTime(const SensorTime& st, ErrorTreeItem_P
 EditDataPtr ErrorListModel::findObs(const QModelIndex& index) const
 {
   const ErrorTreeItem_P item = itemFromIndex(index);
-  if (not item or item == mErrorRoot.get())
+  if (item and item != mRootItem)
+    return item->obs();
+  else
     return EditDataPtr();
-
-  return item->obs();
 }
 
 void ErrorListModel::buildTree(const Errors::Errors_t& errors)
 {
+  METLIBS_LOG_SCOPE();
+  // FIXME this and remove/insert rely on "errors" being sorted by obs()->sensorTime()
   ErrorTreeItem_P sameItem = 0;
   Sensor sameSensor;
   for (Errors::Errors_t::const_iterator it=errors.begin(); it!=errors.end(); ++it) {
@@ -479,8 +495,9 @@ void ErrorListModel::buildTree(const Errors::Errors_t& errors)
     if (sameItem and eq_Sensor()(sameSensor, eSensor)) {
       sameItem->appendChild(*it);
     } else {
-      sameItem   = mErrorRoot->appendChild(*it);
+      sameItem   = mRootItem->appendChild(*it);
       sameSensor = eSensor;
     }
   }
+  METLIBS_LOG_DEBUG(LOGVAL(rowCount()) << LOGVAL(mRootItem->childCount()));
 }
