@@ -75,6 +75,7 @@ int main( int argc, char* argv[] )
   }
 
   milogger::LoggingConfig log4cpp(log4cpp_properties);
+#if 0
   { // initialize milog wrapper
     milog::LogStream* milogstream = new Milog4cppStream();
     if (milog::LogManager::createLogger(MILOGGER_CATEGORY, milogstream) ) {
@@ -82,8 +83,10 @@ int main( int argc, char* argv[] )
       milog::LogManager::setDefaultLogger(MILOGGER_CATEGORY);
     } else {
       METLIBS_LOG_WARN("cannot create milog adapter logger");
+      delete milogstream;
     }
   }
+#endif
 
   miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
   if (not confSec) {
