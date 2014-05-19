@@ -2,20 +2,20 @@
 #ifndef ACCESS_KVALOBSACCESS_HH
 #define ACCESS_KVALOBSACCESS_HH 1
 
-#include "BackgroundAccess.hh"
-#include "common/AbstractReinserter.hh"
-#include "common/AbstractUpdateListener.hh"
+#include "QueryTaskAccess.hh"
+#include "AbstractReinserter.hh"
+#include "AbstractUpdateListener.hh"
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
 #include <kvcpp/kvservicetypes.h>
 
-class KvalobsThread;
-
-class KvalobsAccess : public BackgroundAccess
+class KvalobsAccess : public QueryTaskAccess
 { Q_OBJECT;
 public:
-  KvalobsAccess();
+  /** handler is assumed to be connected to the same kvalobs database
+   * that QtKvService is connected to */
+  KvalobsAccess(QueryTaskHandler_p handler);
   ~KvalobsAccess();
 
   virtual void postRequest(ObsRequest_p request);

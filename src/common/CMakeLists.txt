@@ -28,6 +28,7 @@ SET(common_SOURCES
   identifyUser.cc
   KvalobsModelAccess.cc
   KvalobsModelData.cc
+  KvalobsQueryRunner.cc
   KvalobsUpdate.cc
   KvalobsUpdateListener.cc
   KvHelpers.cc
@@ -52,9 +53,11 @@ SET(common_SOURCES
   TimeSpan.cc
   TypeIdModel.cc
 
-  BackgroundAccess.hh
-  BackgroundAccessPrivate.hh
-  BackgroundAccess.cc
+  QueryTaskHandler.hh
+  QueryTaskHandlerPrivate.hh
+  QueryTaskHandler.cc
+  QueryTaskAccess.hh
+  QueryTaskAccess.cc
   BaseRequest.hh
   BaseRequest.cc
   DistributeUpdates.hh
@@ -64,7 +67,6 @@ SET(common_SOURCES
   IndexBuffer.hh
   IndexBuffer.cc
   KvalobsAccess.hh
-  KvalobsAccessPrivate.hh
   KvalobsAccess.cc
   KvalobsData.hh
   KvalobsData.cc
@@ -123,11 +125,10 @@ QT4_WRAP_CPP(common_MOC
   ObsTableModel.hh
   QtKvService.hh
 
-  BackgroundAccess.hh
-  BackgroundAccessPrivate.hh
   CachingAccessPrivate.hh
   EditAccess.hh
   KvalobsAccess.hh
+  QueryTaskAccess.hh
   SignalRequest.hh
   SimpleBuffer.hh
   SyncRequestPrivate.hh

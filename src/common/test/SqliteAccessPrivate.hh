@@ -5,16 +5,15 @@
 #include "SqliteAccess.hh"
 #include <sqlite3.h>
 
-class SqliteHandler : public BackgroundHandler {
+class SqliteQueryRunner : public QueryTaskRunner {
 public:
-  SqliteHandler();
-  ~SqliteHandler();
+  SqliteQueryRunner();
+  ~SqliteQueryRunner();
 
-  virtual void initialize() { }
-  virtual void finalize() { }
+  void initialize() { }
+  void finalize() { }
 
-  void queryData(ObsRequest_p request);
-  void queryTask(QueryTask* qtask);
+  void run(QueryTask* qtask);
   int exec(const std::string& sql);
 
 private:
@@ -25,6 +24,6 @@ private:
   sqlite3 *db;
 };
 
-HQC_TYPEDEF_P(SqliteHandler);
+HQC_TYPEDEF_P(SqliteQueryRunner);
 
 #endif // ACCESS_SQLITEACCESSPRIVATE_HH

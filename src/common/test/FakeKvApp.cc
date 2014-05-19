@@ -18,8 +18,8 @@
 FakeKvApp::FakeKvApp()
 {
   kvservice::KvApp::kvApp = this;
-  kda = boost::make_shared<KvalobsAccess>();
-  kda->setReinserter(boost::make_shared<FakeReinserter>());
+  //kda = HqcApplicationboost::make_shared<KvalobsAccess>();
+  //kda->setReinserter(boost::make_shared<FakeReinserter>());
 
   mKvParams.push_back(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));
   mKvParams.push_back(kvalobs::kvParam(34, "V4", "Været siden forrige hovedobservasjon, første tegn", "nasjonal kode to siffer", 0, "None"));

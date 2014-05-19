@@ -117,7 +117,7 @@ const QString DBVERSION = "test_sqlite:1";
 
 // ========================================================================
 
-SqliteHandler::SqliteHandler()
+SqliteQueryRunner::SqliteQueryRunner()
 {
   METLIBS_LOG_SCOPE();
   if (sqlite3_open("", &db))
@@ -126,7 +126,7 @@ SqliteHandler::SqliteHandler()
 
 // ------------------------------------------------------------------------
 
-SqliteHandler::~SqliteHandler()
+SqliteQueryRunner::~SqliteQueryRunner()
 {
   METLIBS_LOG_SCOPE();
   sqlite3_close(db);
@@ -134,7 +134,7 @@ SqliteHandler::~SqliteHandler()
 
 // ------------------------------------------------------------------------
 
-void SqliteHandler::queryTask(QueryTask* qtask)
+void SqliteQueryRunner::run(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
@@ -151,7 +151,7 @@ void SqliteHandler::queryTask(QueryTask* qtask)
 
 // ------------------------------------------------------------------------
 
-int SqliteHandler::exec(const std::string& sql)
+int SqliteQueryRunner::exec(const std::string& sql)
 {
   //METLIBS_LOG_SCOPE(LOGVAL(sql));
   char *zErrMsg = 0;
@@ -166,7 +166,7 @@ int SqliteHandler::exec(const std::string& sql)
 
 // ------------------------------------------------------------------------
 
-sqlite3_stmt* SqliteHandler::prepare_statement(const std::string& sql, QueryTask* qtask)
+sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, QueryTask* qtask)
 {
   int status;
   sqlite3_stmt *stmt;
@@ -186,7 +186,7 @@ sqlite3_stmt* SqliteHandler::prepare_statement(const std::string& sql, QueryTask
 
 // ------------------------------------------------------------------------
 
-void SqliteHandler::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
+void SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
 {
   sqlite3_finalize(stmt);
   if (lastStep == SQLITE_DONE) {
@@ -201,12 +201,12 @@ void SqliteHandler::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTa
 // ========================================================================
 
 SqliteAccess::SqliteAccess(bool useThread)
-  : BackgroundAccess(BackgroundHandler_p(new SqliteHandler), useThread)
+  : QueryTaskAccess(boost::make_shared<QueryTaskHandler>(boost::make_shared<SqliteQueryRunner>(), useThread))
   , mCountPost(0)
   , mCountDrop(0)
 {
   METLIBS_LOG_SCOPE();
-  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  SqliteQueryRunner_p sqlite = runner();
   sqlite->exec("CREATE TABLE data ("
       "stationid   INTEGER NOT NULL, "
       "obstime     TIMESTAMP NOT NULL, "
@@ -234,7 +234,7 @@ SqliteAccess::~SqliteAccess()
 void SqliteAccess::postRequest(ObsRequest_p request)
 {
   mCountPost += 1;
-  BackgroundAccess::postRequest(request);
+  QueryTaskAccess::postRequest(request);
 }
 
 // ------------------------------------------------------------------------
@@ -242,7 +242,7 @@ void SqliteAccess::postRequest(ObsRequest_p request)
 void SqliteAccess::dropRequest(ObsRequest_p request)
 {
   mCountDrop += 1;
-  BackgroundAccess::dropRequest(request);
+  QueryTaskAccess::dropRequest(request);
 }
 
 // ------------------------------------------------------------------------
@@ -265,7 +265,7 @@ bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
 {
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
 
-  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  SqliteQueryRunner_p sqlite = runner();
 
   ObsData_pv updated, inserted;
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
@@ -297,7 +297,7 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
   std::ifstream f(filename.c_str());
   std::string line;
 
-  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  SqliteQueryRunner_p sqlite = runner();
   const timeutil::ptime tbtime = timeutil::now();
 
   while (std::getline(f, line)) {
@@ -338,9 +338,17 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
 
 void SqliteAccess::dropData(const SensorTime_v& drop)
 {
-  SqliteHandler_p sqlite = boost::static_pointer_cast<SqliteHandler>(handler());
+  SqliteQueryRunner_p sqlite = runner();
   for (SensorTime_v::const_iterator it = drop.begin(); it != drop.end(); ++it)
     sqlite->exec(sql4drop(*it));
 
   distributeUpdates(ObsData_pv(), ObsData_pv(), drop);
 }
+
+// ------------------------------------------------------------------------
+
+SqliteQueryRunner_p SqliteAccess::runner()
+{
+  return boost::static_pointer_cast<SqliteQueryRunner>(handler()->runner());
+}
+

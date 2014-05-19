@@ -2,23 +2,23 @@
 #ifndef ACCESS_KVALOBSACCESSPRIVATE_HH
 #define ACCESS_KVALOBSACCESSPRIVATE_HH 1
 
-#include "KvalobsAccess.hh"
-#include "KvalobsData.hh"
+#include "QueryTaskHandler.hh"
 
 #include <QtSql/QSqlDatabase>
 
 // ========================================================================
 
-class KvalobsHandler : public BackgroundHandler
+class KvalobsQueryRunner : public QueryTaskRunner
 {
 public:
-  virtual void initialize();
-  virtual void finalize();
-
-  virtual void queryTask(QueryTask* task);
+  void initialize();
+  void finalize();
+  void run(QueryTask* task);
 
 private:
   QSqlDatabase mKvalobsDB;
 };
+
+HQC_TYPEDEF_P(KvalobsQueryRunner);
 
 #endif // ACCESS_KVALOBSACCESSPRIVATE_HH

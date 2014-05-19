@@ -2,9 +2,11 @@
 #ifndef ACCESS_SQLITEACCESS_HH
 #define ACCESS_SQLITEACCESS_HH 1
 
-#include "BackgroundAccess.hh"
+#include "QueryTaskAccess.hh"
 
-class SqliteAccess : public BackgroundAccess
+class SqliteQueryRunner;
+
+class SqliteAccess : public QueryTaskAccess
 { Q_OBJECT;
 public:
   SqliteAccess(bool useThread = false);
@@ -25,6 +27,9 @@ public:
 
   size_t countDrop() const
     { return mCountDrop; }
+
+private:
+  boost::shared_ptr<SqliteQueryRunner> runner();
 
 private:
   size_t mCountPost, mCountDrop;

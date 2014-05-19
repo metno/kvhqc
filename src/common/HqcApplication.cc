@@ -4,6 +4,7 @@
 #include "CachingAccess.hh"
 #include "EditAccess.hh"
 #include "KvalobsAccess.hh"
+#include "KvalobsQueryRunner.hh"
 #include "KvalobsModelAccess.hh"
 #include "HqcUserConfig.hh"
 #include "KvServiceHelper.hh"
@@ -76,7 +77,9 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
 
-  kda = boost::make_shared<KvalobsAccess>();
+  KvalobsQueryRunner_p kvalobsRunner = boost::make_shared<KvalobsQueryRunner>();
+  QueryTaskHandler_p kvalobsHandler = boost::make_shared<QueryTaskHandler>(kvalobsRunner, true);
+  kda = boost::make_shared<KvalobsAccess>(kvalobsHandler);
   cda = boost::make_shared<CachingAccess>(kda);
   kma = boost::make_shared<KvalobsModelAccess>();
   eda = boost::make_shared<EditAccess>(cda);

@@ -1,96 +1,20 @@
 
 #include "KvalobsAccess.hh"
-#include "KvalobsAccessPrivate.hh"
 
 #include "KvalobsData.hh"
 #include "KvalobsUpdate.hh"
-#include "sqlutil.hh"
 #include "Functors.hh"
 #include "KvHelpers.hh"
-#include "HqcApplication.hh"
-#include "QueryTask.hh"
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
-
-#include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsAccess"
 #include "common/ObsLogging.hh"
 
-namespace /*anonymous*/ {
-
-const QString QDBNAME = "kvalobs_bg";
-const QString DBVERSION = "kvalobs:1";
-
-class QtSqlRow : public ResultRow
-{
-public:
-  QtSqlRow(QSqlQuery& query) : mQuery(query) { }
-
-  QVariant value(int index) const
-    { return mQuery.value(index); }
-
-  int getInt(int index) const
-    { return mQuery.value(index).toInt(); }
-
-  float getFloat(int index) const
-    { return mQuery.value(index).toFloat(); }
-  
-  QString getQString(int index) const
-    { return mQuery.value(index).toString(); }
-
-  std::string getStdString(int index) const
-    { return getQString(index).toStdString(); }
-
-private:
-  QSqlQuery& mQuery;
-};
-
-} // namespace anonymous
-
 // ========================================================================
 
-void KvalobsHandler::initialize()
-{
-  mKvalobsDB = hqcApp->kvalobsDB(QDBNAME);
-}
-
-// ------------------------------------------------------------------------
-
-void KvalobsHandler::finalize()
-{
-  METLIBS_LOG_SCOPE();
-  mKvalobsDB.close();
-  QSqlDatabase::removeDatabase(QDBNAME);
-}
-
-// ------------------------------------------------------------------------
-
-void KvalobsHandler::queryTask(QueryTask* qtask)
-{
-  METLIBS_LOG_SCOPE();
-
-  QSqlQuery query(mKvalobsDB);
-  QtSqlRow row(query);
-
-  const QString sql = qtask->querySql(DBVERSION);
-  if (query.exec(sql)) {
-    while (query.next())
-      qtask->notifyRow(row);
-    qtask->notifyDone();
-  } else {
-    HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
-    qtask->notifyError(query.lastError().text());
-  }
-}
-
-// ========================================================================
-
-KvalobsAccess::KvalobsAccess()
-  : BackgroundAccess(BackgroundHandler_p(new KvalobsHandler), true)
+KvalobsAccess::KvalobsAccess(QueryTaskHandler_p handler)
+  : QueryTaskAccess(handler)
 {
   if (AbstractUpdateListener* ul = updateListener())
     connect(ul, SIGNAL(updated(const kvData_v&)), this, SLOT(onUpdated(const kvData_v&)));
@@ -111,7 +35,7 @@ void KvalobsAccess::postRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
   checkSubscribe(request->sensors());
-  BackgroundAccess::postRequest(request);
+  QueryTaskAccess::postRequest(request);
 }
 
 // ------------------------------------------------------------------------
@@ -119,7 +43,7 @@ void KvalobsAccess::postRequest(ObsRequest_p request)
 void KvalobsAccess::dropRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
-  BackgroundAccess::dropRequest(request);
+  QueryTaskAccess::dropRequest(request);
   checkUnsubscribe(request->sensors());
 }
 
