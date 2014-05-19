@@ -61,10 +61,10 @@ ErrorList::ErrorList(QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
-
   ui->tree->setSelectionBehavior(QTreeView::SelectRows);
   ui->tree->setSelectionMode(QTreeView::SingleSelection);
   resizeHeaders();
+  setFocusProxy(ui->tree);
 
   updateModel(Sensor_v(), TimeSpan());
 }

@@ -52,7 +52,7 @@
       <string>Clear list of recentliy viewed observations</string>
      </property>
      <property name="text">
-      <string>Forget</string>
+      <string>For&amp;get</string>
      </property>
      <property name="icon">
       <iconset>icons:forget.svg</iconset>

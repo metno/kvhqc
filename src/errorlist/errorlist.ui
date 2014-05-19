@@ -35,7 +35,7 @@
       <string>Open search dialog</string>
      </property>
      <property name="text">
-      <string>Search…</string>
+      <string>&amp;Search…</string>
      </property>
      <property name="icon">
       <iconset>icons:search_red.svg</iconset>
@@ -58,7 +58,7 @@
    <item row="0" column="2">
     <widget class="QPushButton" name="buttonForget">
      <property name="text">
-      <string>Forget Resolved</string>
+      <string>For&amp;get Resolved</string>
      </property>
      <property name="icon">
       <iconset>icons:forget.svg</iconset>
@@ -81,7 +81,7 @@
    <item row="0" column="4">
     <widget class="QPushButton" name="buttonExpand">
      <property name="text">
-      <string>Expand all</string>
+      <string>Expand a&amp;ll</string>
      </property>
     </widget>
    </item>

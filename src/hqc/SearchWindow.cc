@@ -71,6 +71,8 @@
 #include "SimpleCorrections.hh"
 #endif // ENABLE_SIMPLECORRECTIONS
 
+#include <QtCore/QSignalMapper>
+#include <QtGui/QShortcut>
 #include <QtGui/QSplitter>
 
 #define MILOGGER_CATEGORY "kvhqc.SearchWindow"
@@ -83,21 +85,12 @@ const char SETTING_HQC_AUTOVIEW_SPLITTER[] = "autoview_slider";
 const char SETTING_VERSION[] = "version";
 const char SETTING_VERSION_FULL[] = "version_full";
 
-void addTab(QTabWidget* tabs, QWidget* widget)
-{
-  tabs->addTab(widget, widget->windowIcon(), widget->windowTitle());
-}
-
-void retranslateTabs(QTabWidget* tabs)
-{
-  for (int i=0; i<tabs->count(); ++i)
-    tabs->setTabText(i, tabs->widget(i)->windowTitle());
-}
-
 } // anonymous namespace
 
 SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
   : QMainWindow(parent)
+  , mActivateSearchTab(new QSignalMapper(this))
+  , mActivateDataTab(new QSignalMapper(this))
 {
   METLIBS_LOG_SCOPE();
   setWindowTitle(tr("HQC Search %1").arg(kvalobsInstanceName));
@@ -116,6 +109,11 @@ SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
   setupSearchTabs();
   setupDataTabs();
 
+  connect(mActivateSearchTab, SIGNAL(mapped(int)),
+      this, SLOT(onActivateSearchTab(int)));
+  connect(mActivateDataTab, SIGNAL(mapped(int)),
+      this, SLOT(onActivateDataTab(int)));
+
 #ifdef ENABLE_DIANA
   pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
   statusBar()->addPermanentWidget(pluginB, 0);
@@ -129,14 +127,15 @@ void SearchWindow::setupSearchTabs()
 {
 #ifdef ENABLE_ERRORLIST
   mErrorsView = new ErrorList(mTabsSearch);
-  addTab(mTabsSearch, mErrorsView);
-  connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
+  addTab(mErrorsView, tr("Ctrl+F", "Error search tab shortcut"));
+  connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
 #endif // ENABLE_ERRORLIST
 
 #ifdef ENABLE_EXTREMES
   mExtremesView = new ExtremesView(this);
   mExtremesView->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
-  addTab(mTabsSearch, mExtremesView);
+  addTab(mExtremesView);
 #endif // ENABLE_EXTREMES
 
 #ifdef ENABLE_MISSINGOBS
@@ -146,7 +145,7 @@ void SearchWindow::setupSearchTabs()
 #endif // ENABLE_MISSINGOBS
 
   mNavigationHistory = new NavigationHistory(mTabsSearch);
-  addTab(mTabsSearch, mNavigationHistory);
+  addTab(mNavigationHistory, tr("Ctrl+R", "Recent tab shortcut"));
   connect(mNavigationHistory, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
 }
@@ -155,7 +154,9 @@ void SearchWindow::setupDataTabs()
 {
   mSplitterDataPlot = new QSplitter(Qt::Horizontal, mTabsData);
   mSplitterDataPlot->setOpaqueResize(false);
-  addTab(mTabsData, mSplitterDataPlot);
+  mSplitterDataPlot->setWindowTitle(tr("Auto List/Series"));
+  mSplitterDataPlot->setWindowIcon(QIcon("icons:timeseries.svg"));
+  addTab(mSplitterDataPlot, tr("Ctrl+1", "Auto List tab shortcut"));
   
   mAutoDataList = new AutoDataList(mSplitterDataPlot);
   connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),
@@ -167,8 +168,8 @@ void SearchWindow::setupDataTabs()
   mSplitterDataPlot->addWidget(mTimeSeriesView);
 
 #ifdef ENABLE_SIMPLECORRECTIONS
-  mCorrections = new SimpleCorrections(mTabsSearch);
-  addTab(mTabsData, mCorrections);
+  mCorrections = new SimpleCorrections(mTabsData);
+  addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));
 #endif
 }
 
@@ -183,10 +184,27 @@ void SearchWindow::changeEvent(QEvent *event)
   QMainWindow::changeEvent(event);
 }
 
+void SearchWindow::addTab(QWidget* widget, QString keys)
+{
+  QTabWidget* tabs = static_cast<QTabWidget*>(widget->parent());
+  tabs->addTab(widget, widget->windowIcon(), widget->windowTitle());
+
+  QSignalMapper* sm = tabs == mTabsSearch ? mActivateSearchTab : mActivateDataTab;
+  QShortcut* sc = new QShortcut(QKeySequence(keys), this);
+  connect(sc, SIGNAL(activated()), sm, SLOT(map()));
+  sm->setMapping(sc, tabs->count() - 1);
+}
+
 void SearchWindow::retranslateUi()
 {
   retranslateTabs(mTabsData);
   retranslateTabs(mTabsSearch);
+}
+
+void SearchWindow::retranslateTabs(QTabWidget* tabs)
+{
+  for (int i=0; i<tabs->count(); ++i)
+    tabs->setTabText(i, tabs->widget(i)->windowTitle());
 }
 
 void SearchWindow::navigateTo(const SensorTime& st)
@@ -221,6 +239,23 @@ void SearchWindow::navigateTo(const SensorTime& st)
 
   mAutoDataList->navigateTo(st);
   mTimeSeriesView->navigateTo(st);
+}
+
+void SearchWindow::activateTab(QTabWidget* tabs, int index)
+{
+  METLIBS_LOG_SCOPE();
+  tabs->setCurrentIndex(index);
+  tabs->currentWidget()->setFocus(Qt::ShortcutFocusReason);
+}
+
+void SearchWindow::onActivateSearchTab(int index)
+{
+  activateTab(mTabsSearch, index);
+}
+
+void SearchWindow::onActivateDataTab(int index)
+{
+  activateTab(mTabsData, index);
 }
 
 #if 0

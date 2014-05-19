@@ -129,6 +129,7 @@ NavigationHistory::NavigationHistory(QWidget* parent)
   , ui(new Ui_NavigationHistory)
 {
   ui->setupUi(this);
+  setFocusProxy(ui->tableHistory);
 
   ui->tableHistory->setModel(new NavigationHistoryModel(this));
   connect(ui->tableHistory->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),

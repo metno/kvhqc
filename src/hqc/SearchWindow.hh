@@ -50,12 +50,9 @@
 class HelpDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
-class QDockWidget;
 class QLabel;
-class QMdiArea;
-class QMdiSubWindow;
+class QSignalMapper;
 class QSplitter;
-class QTimer;
 QT_END_NAMESPACE
 
 class AutoDataList;
@@ -90,8 +87,14 @@ protected:
 private Q_SLOTS:
   void navigateTo(const SensorTime& st);
 
+  void onActivateSearchTab(int index);
+  void onActivateDataTab(int index);
+
 private:
+  void addTab(QWidget* widget, QString keys);
+  void activateTab(QTabWidget* tabs, int index);
   void retranslateUi();
+  void retranslateTabs(QTabWidget* tabs);
   void setupSearchTabs();
   void setupDataTabs();
 
@@ -127,6 +130,8 @@ private:
 #ifdef ENABLE_SIMPLECORRECTIONS
   SimpleCorrections* mCorrections;
 #endif
+
+  QSignalMapper *mActivateSearchTab, *mActivateDataTab;
 };
 
 #endif // HQC_SEARCHWINDOW_H
