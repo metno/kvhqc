@@ -5,12 +5,11 @@
 #include "BackgroundAccess.hh"
 
 #include "QueryTask.hh"
+#include "util/priority_list.hh"
 
 #include <QtCore/QMutex>
 #include <QtCore/QThread>
 #include <QtCore/QWaitCondition>
-
-#include <queue> // priority_queue
 
 // ========================================================================
 
@@ -21,6 +20,7 @@ public:
   ~BackgroundThread();
 
   void enqueueTask(QueryTask* task);
+  void unqueueTask(QueryTask* task);
 
   virtual void run();
 
@@ -33,7 +33,7 @@ private:
 private:
   BackgroundHandler_p mHandler;
 
-  typedef std::priority_queue<QueryTask_x, std::vector<QueryTask_x>, QueryTask_by_Priority> Queue_t;
+  typedef priority_list<QueryTask_x, QueryTask_by_Priority> Queue_t;
   Queue_t mQueue;
 
   QMutex mMutex;

@@ -49,6 +49,14 @@ void BackgroundThread::enqueueTask(QueryTask* task)
     mCondition.wakeOne();
 }
 
+void BackgroundThread::unqueueTask(QueryTask* task)
+{
+  METLIBS_LOG_SCOPE();
+
+  QMutexLocker locker(&mMutex);
+  mQueue.drop(task);
+}
+
 void BackgroundThread::run()
 {
   METLIBS_LOG_SCOPE();
@@ -110,6 +118,7 @@ void BackgroundAccess::postRequest(ObsRequest_p request)
   mRequests.push_back(request);
   QueryTask* task = taskForRequest(request);
   if (mThread) {
+    request->setTag(task);
     mThread->enqueueTask(task);
   } else {
     mHandler->queryTask(task);
@@ -131,8 +140,10 @@ void BackgroundAccess::dropRequest(ObsRequest_p request)
   }
 
   mRequests.erase(it);
-  //if (mThread) // TODO
-  //  mThread->unqueueRequest(request);
+  if (mThread) {
+    mThread->unqueueTask(static_cast<QueryTask*>(request->tag()));
+    request->setTag(0);
+  }
 }
 
 // ------------------------------------------------------------------------
