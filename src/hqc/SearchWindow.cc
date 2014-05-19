@@ -155,9 +155,9 @@ void SearchWindow::setupDataTabs()
 {
   mSplitterDataPlot = new QSplitter(Qt::Horizontal, mTabsData);
   mSplitterDataPlot->setOpaqueResize(false);
-  mSplitterDataPlot->setWindowTitle(tr("Auto List/Series"));
+  mSplitterDataPlot->setWindowTitle(tr("List/Series"));
   mSplitterDataPlot->setWindowIcon(QIcon("icons:timeseries.svg"));
-  addTab(mSplitterDataPlot, tr("Ctrl+1", "Auto List tab shortcut"));
+  addTab(mSplitterDataPlot, tr("Ctrl+1", "List/Series tab shortcut"));
   
   mAutoDataList = new AutoDataList(mSplitterDataPlot);
   connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),

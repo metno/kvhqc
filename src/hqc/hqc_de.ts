@@ -251,34 +251,34 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
         <translation>Speichern…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="55"/>
-        <location filename="DataList.cc" line="89"/>
+        <location filename="DataList.cc" line="58"/>
+        <location filename="DataList.cc" line="86"/>
         <source>none</source>
         <translation>ohne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="93"/>
+        <location filename="DataList.cc" line="90"/>
         <source>%1 min</source>
         <translation>%1 min</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="91"/>
+        <location filename="DataList.cc" line="88"/>
         <source>%1 h</source>
         <oldsource>6 h</oldsource>
         <translation>%1 h</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="95"/>
+        <location filename="DataList.cc" line="92"/>
         <source>%1 s</source>
         <translation>%1 s</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="205"/>
+        <location filename="DataList.cc" line="202"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="207"/>
+        <location filename="DataList.cc" line="204"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -683,6 +683,52 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
     </message>
 </context>
 <context>
+    <name>DialogExtremeValues</name>
+    <message>
+        <location filename="../extremes/extremevalues.ui" line="14"/>
+        <source>Extreme Values</source>
+        <translation>Extremwerte</translation>
+    </message>
+    <message>
+        <location filename="../extremes/extremevalues.ui" line="41"/>
+        <source> to:</source>
+        <translation> bis:</translation>
+    </message>
+    <message>
+        <location filename="../extremes/extremevalues.ui" line="55"/>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+</context>
+<context>
+    <name>DialogMissingObservations</name>
+    <message>
+        <location filename="../missingobs/missingvalues.ui" line="14"/>
+        <source>Missing Observations</source>
+        <translation>Fehlende Messungen</translation>
+    </message>
+    <message>
+        <location filename="../missingobs/missingvalues.ui" line="31"/>
+        <source>Type:</source>
+        <translation>Typ:</translation>
+    </message>
+    <message>
+        <location filename="../missingobs/missingvalues.ui" line="48"/>
+        <source> to:</source>
+        <translation> bis:</translation>
+    </message>
+    <message>
+        <location filename="../missingobs/missingvalues.ui" line="62"/>
+        <source>Apply</source>
+        <translation>Anwenden</translation>
+    </message>
+    <message>
+        <location filename="../missingobs/missingvalues.ui" line="82"/>
+        <source>Find missing values for RR_24</source>
+        <translation>Fehlende Messungen für RR_24</translation>
+    </message>
+</context>
+<context>
     <name>EditVersionModel</name>
     <message>
         <location filename="EditVersionModel.cc" line="133"/>
@@ -717,6 +763,8 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
     <name>ErrorList</name>
     <message>
         <location filename="EditVersionModel.cc" line="26"/>
+        <location filename="../errorlist/ErrorListModel.cc" line="38"/>
+        <location filename="../errorlist/ErrorListModel.cc" line="51"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flags</translation>
@@ -756,6 +804,318 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
         <source>New Flags</source>
         <translation>Neue Flags</translation>
     </message>
+    <message>
+        <location filename="../errorlist/errorlist.ui" line="14"/>
+        <source>Error List</source>
+        <translation>Fehlerliste</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/errorlist.ui" line="35"/>
+        <source>Open search dialog</source>
+        <translation>Suchdialog öffnen</translation>
+    </message>
+    <message utf8="true">
+        <location filename="../errorlist/errorlist.ui" line="38"/>
+        <source>&amp;Search…</source>
+        <translation>&amp;Suche…</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/errorlist.ui" line="61"/>
+        <source>For&amp;get Resolved</source>
+        <translation>Korrigierte ver&amp;gessen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/errorlist.ui" line="84"/>
+        <source>Expand a&amp;ll</source>
+        <translation>A&amp;lle ausklappen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="29"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="30"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="31"/>
+        <source>WMO</source>
+        <translation>WMO</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="32"/>
+        <source>Obstime</source>
+        <translation>Obszeit</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="33"/>
+        <source>Para</source>
+        <translation>Para</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="34"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="35"/>
+        <source>Orig.d</source>
+        <translation>Orig.d</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="36"/>
+        <source>Corr.d</source>
+        <translation>Korr.d</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="37"/>
+        <source>mod.v</source>
+        <translation>Mod.v</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="42"/>
+        <source>Station number</source>
+        <translation>Stations-Nummer</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="43"/>
+        <source>Station name</source>
+        <translation>Stations-Name</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="44"/>
+        <source>WMO station number</source>
+        <translation>WMO Stationsnummer</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="45"/>
+        <source>Observation time</source>
+        <translation>Observationszeit</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="46"/>
+        <source>Parameter name</source>
+        <translation>Parameter-Name</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="47"/>
+        <source>Type ID</source>
+        <translation>Typ ID</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="48"/>
+        <source>Original value</source>
+        <translation>Original-Wert</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="49"/>
+        <source>Corrected value</source>
+        <translation>Korrigierter Wert</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorListModel.cc" line="50"/>
+        <source>Model value</source>
+        <translation>Modell-Wert</translation>
+    </message>
+</context>
+<context>
+    <name>ErrorSearchDialog</name>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="14"/>
+        <source>Error Search</source>
+        <translation>Fehlersuche</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="33"/>
+        <location filename="../errorlist/error_search_dialog.ui" line="54"/>
+        <source>Stations</source>
+        <translation>Stationen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="72"/>
+        <source>Time range</source>
+        <translation>Zeitraum</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="84"/>
+        <source>&amp;From</source>
+        <translation>&amp;Von</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="97"/>
+        <location filename="../errorlist/error_search_dialog.ui" line="117"/>
+        <source>yyyy-MM-dd hh:mm</source>
+        <translation>yyyy-MM-dd hh:mm</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="104"/>
+        <source>&amp;To</source>
+        <translation>&amp;Bis</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="124"/>
+        <source>Sets the time range to cover approximately the last 2 days.</source>
+        <translation>Wählt ungefähr die letzten 2 Tage aus.</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="127"/>
+        <source>Recent</source>
+        <translation>Verlauf</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="134"/>
+        <source>Remember the chosen time span.</source>
+        <translation>Ausgewählten Zeitraum merken.</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="137"/>
+        <source>Remember</source>
+        <translation>Merken</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="164"/>
+        <source>Weather element</source>
+        <translation>Wetter-Element</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="185"/>
+        <source>Available</source>
+        <translatorcomment>Verfügbar</translatorcomment>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="227"/>
+        <source>Sho&amp;w only:</source>
+        <translation>Zeige n&amp;ur:</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="284"/>
+        <source>add to chosen values</source>
+        <translation>zu den ausgewählten Parametern hinzufügen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="305"/>
+        <source>remove from chosen values</source>
+        <translation>Parameter abwählen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="326"/>
+        <source>A&amp;ll</source>
+        <translation>A&amp;lle</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="344"/>
+        <source>&amp;None</source>
+        <translation>&amp;Keine</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="372"/>
+        <source>Chosen</source>
+        <translation>Ausgewählt</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="418"/>
+        <source>Save</source>
+        <translation>Speichern</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="425"/>
+        <source>Load</source>
+        <translation>L&amp;esen…</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="445"/>
+        <source>&amp;Cancel</source>
+        <translation>&amp;Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/error_search_dialog.ui" line="452"/>
+        <source>&amp;OK</source>
+        <translation>&amp;OK</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
+        <source>Station/Region</source>
+        <translation>Station/Region</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
+        <source>HOH</source>
+        <translation>HüM</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
+        <source>County</source>
+        <translation>Provinz</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
+        <source>Commune</source>
+        <translation>Gemeinde</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
+        <source>Pri</source>
+        <translation>Pri</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="153"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="298"/>
+        <source>All in obs pgm</source>
+        <translation>Alle in obs pgm</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="154"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="307"/>
+        <source>All defined</source>
+        <translation>Alle definierten</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="381"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="391"/>
+        <source>Save data selection</source>
+        <translation>Datenauswahl speichern</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="382"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="429"/>
+        <source>Name:</source>
+        <translation>Name:</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="392"/>
+        <source>Data selection with name &apos;%1&apos; exists.</source>
+        <translation>Datenauswahl mit dem Namen &apos;%1&apos; existiert.</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="393"/>
+        <source>Do you want to overwrite it?</source>
+        <translation>Möchten Sie speichern und überschreiben?</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="421"/>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="428"/>
+        <source>Load data selection</source>
+        <translation>Datenauswahl laden</translation>
+    </message>
+    <message>
+        <location filename="../errorlist/ErrorSearchDialog.cc" line="422"/>
+        <source>No saved data selections found.</source>
+        <translation>Keine gespeicherten Einstellungen vorhanden.</translation>
+    </message>
 </context>
 <context>
     <name>EtaProgressBar</name>
@@ -763,6 +1123,85 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
         <location filename="../util/EtaProgressBar.cc" line="28"/>
         <source>ETA %1:%2</source>
         <translation>noch ca. %1:%2</translation>
+    </message>
+</context>
+<context>
+    <name>Extremes</name>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="23"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="24"/>
+        <source>Name</source>
+        <translation>Name</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="25"/>
+        <source>Time</source>
+        <translation>Zeit</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="26"/>
+        <source>Para</source>
+        <translation>Para</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="27"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="28"/>
+        <source>Orig.d</source>
+        <translation>Orig.d</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="29"/>
+        <source>Corr.d</source>
+        <translation>Korr.d</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="30"/>
+        <location filename="../extremes/ExtremesTableModel.cc" line="41"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="34"/>
+        <source>Station number</source>
+        <translation>Stations-Nummer</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="35"/>
+        <source>Station name</source>
+        <translation>Stations-Name</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="36"/>
+        <source>Obstime</source>
+        <translation>Obszeit</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="37"/>
+        <source>Parameter name</source>
+        <translation>Parameter-Name</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="38"/>
+        <source>Type ID</source>
+        <translation>Typ ID</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="39"/>
+        <source>Original value</source>
+        <translation>originaler Wert</translation>
+    </message>
+    <message>
+        <location filename="../extremes/ExtremesTableModel.cc" line="40"/>
+        <source>Corrected value</source>
+        <translation>korrigierter Wert</translation>
     </message>
 </context>
 <context>
@@ -824,43 +1263,43 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../common/HqcApplication.cc" line="94"/>
+        <location filename="../common/HqcApplication.cc" line="100"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Systemdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="105"/>
+        <location filename="../common/HqcApplication.cc" line="111"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Umgebungsvariable $HOME leer; bitte überprüfen Sie die Einstellungen Ihres Computers</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="113"/>
+        <location filename="../common/HqcApplication.cc" line="119"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Konfigurationsdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="128"/>
+        <location filename="../common/HqcApplication.cc" line="134"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kann nicht auf kvalobs SQL Datenbank zugreifen; bitte prüfen Sie die HQC-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="260"/>
-        <location filename="../common/HqcApplication.cc" line="285"/>
+        <location filename="../common/HqcApplication.cc" line="266"/>
+        <location filename="../common/HqcApplication.cc" line="291"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="262"/>
+        <location filename="../common/HqcApplication.cc" line="268"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Ein schwerwiegender Fehler ist aufgetreten. Sie sollten HQC neu starten und den Fehler melden.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="306"/>
+        <location filename="../common/HqcApplication.cc" line="312"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="307"/>
+        <location filename="../common/HqcApplication.cc" line="313"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Datenbank nicht benutzt werden kann.</translation>
     </message>
@@ -1353,196 +1792,252 @@ Sie benutzen HQC Version %1.</translation>
         <translation>&amp;Springen</translation>
     </message>
     <message>
-        <location filename="JumpToObservation.cc" line="63"/>
+        <location filename="JumpToObservation.cc" line="64"/>
         <source>No such observation found.</source>
         <translation>Observation nicht gefunden.</translation>
     </message>
 </context>
 <context>
-    <name>ListDialog</name>
+    <name>Missing</name>
     <message>
-        <location filename="listdialog.ui" line="14"/>
-        <source>Data selection HQC</source>
-        <translation>Datenauswahl HQC</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="30"/>
-        <location filename="listdialog.ui" line="51"/>
-        <source>Stations</source>
-        <translation>Stationen</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="23"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="listdialog.ui" line="81"/>
-        <source>&amp;From</source>
-        <translation>&amp;Von</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="131"/>
-        <source>Remember the chosen time span.</source>
-        <translation>Ausgewählten Zeitraum merken.</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="134"/>
-        <source>Remember</source>
-        <translation>Merken</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="101"/>
-        <source>&amp;To</source>
-        <translation>&amp;Bis</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="121"/>
-        <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation>Wählt ungefähr die letzten 2 Tage aus.</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="124"/>
-        <source>Recent</source>
-        <translation>Neue</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="224"/>
-        <source>Sho&amp;w only:</source>
-        <translation>Zeige n&amp;ur:</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="323"/>
-        <source>A&amp;ll</source>
-        <translation>A&amp;lle</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="415"/>
-        <source>L&amp;oad…</source>
-        <translation>L&amp;esen…</translation>
-    </message>
-    <message utf8="true">
-        <location filename="listdialog.ui" line="422"/>
-        <source>&amp;Save…</source>
-        <translation>&amp;Speichern…</translation>
-    </message>
-    <message>
-        <location filename="ListDialog.cc" line="152"/>
-        <location filename="ListDialog.cc" line="172"/>
-        <source>County</source>
-        <translation>Provinz</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="69"/>
-        <source>Time range</source>
-        <oldsource>Message types</oldsource>
-        <translation>Zeitraum</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="94"/>
-        <location filename="listdialog.ui" line="114"/>
-        <source>yyyy-MM-dd hh:mm</source>
-        <translation>yyyy-MM-dd hh:mm</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="161"/>
-        <source>Weather element</source>
-        <translation>Wetter-Element</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="182"/>
-        <source>Available</source>
-        <translation>Verfügbar</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="281"/>
-        <source>add to chosen values</source>
-        <translation>zu den ausgewählten Parametern hinzufügen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="302"/>
-        <source>remove from chosen values</source>
-        <translation>Parameter abwählen</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="341"/>
-        <source>&amp;None</source>
-        <translation>&amp;Keine</translation>
-    </message>
-    <message>
-        <location filename="listdialog.ui" line="369"/>
-        <source>Chosen</source>
-        <translation>Ausgewählt</translation>
-    </message>
-    <message>
-        <location filename="ListDialog.cc" line="151"/>
-        <location filename="ListDialog.cc" line="171"/>
-        <source>Station/Region</source>
-        <translation>Station/Region</translation>
-    </message>
-    <message>
-        <location filename="ListDialog.cc" line="151"/>
-        <location filename="ListDialog.cc" line="171"/>
+        <location filename="../missingobs/MissingTableModel.cc" line="24"/>
         <source>Name</source>
         <translation>Name</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="151"/>
-        <location filename="ListDialog.cc" line="171"/>
-        <source>HOH</source>
-        <translation>HüM</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="25"/>
+        <source>Time</source>
+        <translation>Zeit</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="152"/>
-        <location filename="ListDialog.cc" line="172"/>
-        <source>Commune</source>
-        <translation>Commune</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="26"/>
+        <source>Type</source>
+        <translation>Typ</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="152"/>
-        <location filename="ListDialog.cc" line="172"/>
-        <source>Pri</source>
-        <translation>Pri</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="30"/>
+        <source>Station number</source>
+        <translation>Stations-Nummer</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="156"/>
-        <location filename="ListDialog.cc" line="300"/>
-        <source>All in obs pgm</source>
-        <translation>Alle in obs pgm</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="31"/>
+        <source>Station name</source>
+        <translation>Stations-Name</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="157"/>
-        <location filename="ListDialog.cc" line="309"/>
-        <source>All defined</source>
-        <translation>Alle definierten</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="32"/>
+        <source>Obstime</source>
+        <translation>Obszeit</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="383"/>
-        <location filename="ListDialog.cc" line="393"/>
-        <source>Save data selection</source>
-        <translation>Datenauswahl Speichern</translation>
+        <location filename="../missingobs/MissingTableModel.cc" line="33"/>
+        <source>Type ID</source>
+        <translation>Typ ID</translation>
+    </message>
+</context>
+<context>
+    <name>MissingView</name>
+    <message>
+        <location filename="../missingobs/MissingView.cc" line="64"/>
+        <source>any</source>
+        <translation>alle</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="384"/>
-        <location filename="ListDialog.cc" line="431"/>
-        <source>Name:</source>
-        <translation>Name:</translation>
+        <location filename="../missingobs/MissingView.cc" line="65"/>
+        <source>manual</source>
+        <translation>manuelle</translation>
+    </message>
+</context>
+<context>
+    <name>NavigationHistory</name>
+    <message>
+        <location filename="navigationhistory.ui" line="14"/>
+        <source>Recent</source>
+        <translation>Verlauf</translation>
+    </message>
+    <message utf8="true">
+        <location filename="navigationhistory.ui" line="29"/>
+        <source>Jum&amp;p…</source>
+        <oldsource>&amp;Jump…</oldsource>
+        <translation>S&amp;pringen…</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="394"/>
-        <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation>Datenauswahl mit dem Namen &apos;%1&apos; existiert.</translation>
+        <location filename="navigationhistory.ui" line="52"/>
+        <source>Clear list of recently viewed observations</source>
+        <oldsource>Clear list of recentliy viewed observations</oldsource>
+        <translation>Verlauf löschen</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="395"/>
-        <source>Do you want to overwrite it?</source>
-        <translation>Möchten Sie speichern und überschreiben?</translation>
+        <location filename="navigationhistory.ui" line="55"/>
+        <source>For&amp;get</source>
+        <translation>Ver&amp;gessen</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="423"/>
-        <location filename="ListDialog.cc" line="430"/>
-        <source>Load data selection</source>
-        <translation>Datenauswahl laden</translation>
+        <location filename="NavigationHistory.cc" line="50"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="ListDialog.cc" line="424"/>
-        <source>No saved data selections found.</source>
-        <translation>Keine gespeicherten Einstellungen vorhanden.</translation>
+        <location filename="NavigationHistory.cc" line="51"/>
+        <source>Lvl</source>
+        <translation>Lvl</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="52"/>
+        <source>Snsr</source>
+        <translation>Snsr</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="53"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="54"/>
+        <source>Para</source>
+        <translation>Para</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="55"/>
+        <source>Obstime</source>
+        <translation>Obszeit</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="59"/>
+        <source>Station number</source>
+        <translation>Stations-Nummer</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="60"/>
+        <source>Level</source>
+        <translation>Level</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="61"/>
+        <source>Sensor Number</source>
+        <translation>Sensor-Nummer</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="62"/>
+        <source>Type ID</source>
+        <translation>Typ ID</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="63"/>
+        <source>Parameter name</source>
+        <translation>Parameter-Name</translation>
+    </message>
+    <message>
+        <location filename="NavigationHistory.cc" line="64"/>
+        <source>Observation time</source>
+        <translation>Observationszeit</translation>
+    </message>
+</context>
+<context>
+    <name>RejectDecodeTable</name>
+    <message>
+        <location filename="../rejectedobs/RejectedObs.cc" line="16"/>
+        <source>Tbtime</source>
+        <translation>Tbtime</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObs.cc" line="17"/>
+        <source>Observation</source>
+        <translation>Observation</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObs.cc" line="18"/>
+        <source>Comment</source>
+        <translation>Kommentar</translation>
+    </message>
+</context>
+<context>
+    <name>RejectedObsDialog</name>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="66"/>
+        <source>RejectDecode</source>
+        <translation>RejectDecode</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="67"/>
+        <source>Select time range for reject list</source>
+        <translation>Zeitraum für rejectdecode auswählen</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="68"/>
+        <source>From</source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="69"/>
+        <source>To</source>
+        <translation>Bis</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="70"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../rejectedobs/RejectedObsDialog.cc" line="71"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+</context>
+<context>
+    <name>Rejects</name>
+    <message>
+        <location filename="../rejectedobs/RejectedObs.cc" line="92"/>
+        <source>RejectDecode</source>
+        <translation>RejectDecode</translation>
+    </message>
+</context>
+<context>
+    <name>SearchWindow</name>
+    <message>
+        <location filename="SearchWindow.cc" line="97"/>
+        <source>HQC Search %1</source>
+        <translation>HQC Suche %1</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="131"/>
+        <source>Ctrl+F</source>
+        <comment>Error search tab shortcut</comment>
+        <translation>Ctrl+F</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="149"/>
+        <source>Ctrl+R</source>
+        <comment>Recent tab shortcut</comment>
+        <translation>Ctrl+R</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="158"/>
+        <source>List/Series</source>
+        <oldsource>Auto List/Series</oldsource>
+        <translation>Liste/Serie</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="160"/>
+        <source>Ctrl+1</source>
+        <comment>List/Series tab shortcut</comment>
+        <translation>Ctrl+1</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="173"/>
+        <source>Ctrl+3</source>
+        <comment>Single Observation tab shortcut</comment>
+        <translation>Ctrl+3</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="223"/>
+        <source>Preparing data for station %1 at %2, please wait...</source>
+        <translation>Vorbereitung der Daten für Station %1 um %2, bitte warten…</translation>
     </message>
 </context>
 <context>
@@ -1730,7 +2225,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="SimpleCorrections.cc" line="210"/>
+        <location filename="SimpleCorrections.cc" line="206"/>
         <source>tbtime: %1</source>
         <translation>tbtime: %1</translation>
     </message>
@@ -1781,6 +2276,107 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="../common/Tasks.cc" line="40"/>
         <source>consistency error</source>
         <translation>Konsistenzfehler</translation>
+    </message>
+</context>
+<context>
+    <name>TextData</name>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="84"/>
+        <location filename="../textdata/TextdataTable.cc" line="102"/>
+        <source>TextData</source>
+        <translation>Text-Daten</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="126"/>
+        <source>No Textdata</source>
+        <translation>Keine Textdaten</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="126"/>
+        <source>Could not read text data.</source>
+        <translation>Kann Textdaten nicht lesen.</translation>
+    </message>
+</context>
+<context>
+    <name>TextDataDialog</name>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="90"/>
+        <location filename="../textdata/TextdataDialog.cc" line="132"/>
+        <source>TextData</source>
+        <translation>Text-Daten</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="91"/>
+        <source>Station</source>
+        <translation>Station</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="92"/>
+        <source>Time range</source>
+        <translation>Zeitraum</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="93"/>
+        <source>From</source>
+        <translation>Von</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="94"/>
+        <source>To</source>
+        <translation>Bis</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="95"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="96"/>
+        <source>Cancel</source>
+        <translation>Abbrechen</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataDialog.cc" line="133"/>
+        <source>Illegal station number. Choose a different station number.</source>
+        <translation>Ungültige Stationsnummer. Wählen Sie bitte eine andere Stationsnummer.</translation>
+    </message>
+</context>
+<context>
+    <name>TextDataTable</name>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="23"/>
+        <source>Stationid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="24"/>
+        <source>Obstime</source>
+        <translation type="unfinished">Obszeit</translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="25"/>
+        <source>Original</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="26"/>
+        <source>Paramid</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="27"/>
+        <source>ParamName</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="28"/>
+        <source>Tbtime</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../textdata/TextdataTable.cc" line="29"/>
+        <source>Typeid</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -1892,57 +2488,57 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Zeitreihe</translation>
     </message>
     <message>
-        <location filename="timeseriesview.ui" line="31"/>
+        <location filename="timeseriesview.ui" line="34"/>
         <source>Lines</source>
         <translation>Linien</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="59"/>
-        <location filename="TimeSeriesView.cc" line="184"/>
+        <location filename="TimeSeriesView.cc" line="60"/>
+        <location filename="TimeSeriesView.cc" line="188"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="60"/>
-        <location filename="TimeSeriesView.cc" line="185"/>
+        <location filename="TimeSeriesView.cc" line="61"/>
+        <location filename="TimeSeriesView.cc" line="189"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="61"/>
-        <location filename="TimeSeriesView.cc" line="186"/>
+        <location filename="TimeSeriesView.cc" line="62"/>
+        <location filename="TimeSeriesView.cc" line="190"/>
         <source>Difference</source>
         <translation>Differenz</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="68"/>
-        <location filename="TimeSeriesView.cc" line="188"/>
+        <location filename="TimeSeriesView.cc" line="69"/>
+        <location filename="TimeSeriesView.cc" line="192"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Neu…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="69"/>
-        <location filename="TimeSeriesView.cc" line="189"/>
+        <location filename="TimeSeriesView.cc" line="70"/>
+        <location filename="TimeSeriesView.cc" line="193"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Entfernen…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="70"/>
-        <location filename="TimeSeriesView.cc" line="190"/>
+        <location filename="TimeSeriesView.cc" line="71"/>
+        <location filename="TimeSeriesView.cc" line="194"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Linien zurücksetzen</translation>
     </message>
     <message>
-        <location filename="timeseriesview.ui" line="44"/>
-        <location filename="timeseriesview.ui" line="54"/>
+        <location filename="timeseriesview.ui" line="47"/>
+        <location filename="timeseriesview.ui" line="57"/>
         <source>yyyy-MM-dd hh:mm</source>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="139"/>
+        <location filename="TimeSeriesView.cc" line="143"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>

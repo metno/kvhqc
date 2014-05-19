@@ -26,7 +26,7 @@
    <item row="0" column="0">
     <widget class="QPushButton" name="buttonJump">
      <property name="text">
-      <string>&amp;Jump…</string>
+      <string>Jum&amp;p…</string>
      </property>
      <property name="icon">
       <iconset>icons:jump_to_obs.svg</iconset>
@@ -49,7 +49,7 @@
    <item row="0" column="2">
     <widget class="QPushButton" name="buttonClear">
      <property name="toolTip">
-      <string>Clear list of recentliy viewed observations</string>
+      <string>Clear list of recently viewed observations</string>
      </property>
      <property name="text">
       <string>For&amp;get</string>
