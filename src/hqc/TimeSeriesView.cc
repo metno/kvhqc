@@ -188,7 +188,7 @@ void TimeSeriesView::doNavigateTo()
   const SensorTime& st = mNavigate.current();
 
   const bool changedSensor = (not mStoreSensorTime.valid()
-      or eq_Sensor()(st.sensor, mStoreSensorTime.sensor));
+      or not eq_Sensor()(st.sensor, mStoreSensorTime.sensor));
   const bool changedTime = changedSensor
       or not mTimeLimits.contains(st.time);
 
