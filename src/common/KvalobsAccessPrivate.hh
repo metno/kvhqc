@@ -15,7 +15,7 @@ public:
   virtual void initialize();
   virtual void finalize();
 
-  virtual void queryData(ObsRequest_p request);
+  virtual void queryTask(QueryTask* task);
 
 private:
   QSqlDatabase mKvalobsDB;

@@ -2,6 +2,7 @@
 #include "BackgroundAccess.hh"
 #include "BackgroundAccessPrivate.hh"
 
+#include "DataQueryTask.hh"
 #include "DistributeUpdates.hh"
 #include "ObsAccept.hh"
 
@@ -23,8 +24,6 @@ BackgroundThread::BackgroundThread(BackgroundHandler_p handler)
   , mDone(false)
 {
   METLIBS_LOG_SCOPE();
-  connect(mHandler.get(), SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-      this, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)));
 }
 
 BackgroundThread::~BackgroundThread()
@@ -37,11 +36,12 @@ BackgroundThread::~BackgroundThread()
   wait();
 }
 
-void BackgroundThread::enqueueRequest(ObsRequest_p request)
+void BackgroundThread::enqueueTask(QueryTask* task)
 {
   METLIBS_LOG_SCOPE();
+
   QMutexLocker locker(&mMutex);
-  mQueue.push(QueuedQuery(1, request));
+  mQueue.push(task);
   
   if (!isRunning())
     start();
@@ -54,19 +54,21 @@ void BackgroundThread::run()
   METLIBS_LOG_SCOPE();
   mHandler->initialize();
   while (!mDone) {
-    ObsRequest_p request;
+    QueryTask* task = 0;
 
     mMutex.lock();
     if (mQueue.empty())
       mCondition.wait(&mMutex);
     if (not mQueue.empty()) {
-      request = mQueue.top().request;
+      task = mQueue.top();
       mQueue.pop();
     }
     mMutex.unlock();
 
-    if (request)
-      mHandler->queryData(request);
+    if (task) {
+      mHandler->queryTask(task);
+      delete task;
+    }
   }
   mHandler->finalize();
 }
@@ -78,14 +80,8 @@ BackgroundAccess::BackgroundAccess(BackgroundHandler_p handler, bool useThread)
   , mThread(0)
 {
   METLIBS_LOG_SCOPE();
-  if (useThread) {
+  if (useThread)
     mThread = new BackgroundThread(mHandler);
-    connect(mThread, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-        this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  } else {
-    connect(mHandler.get(), SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-        this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  }
 }
 
 // ------------------------------------------------------------------------
@@ -98,14 +94,27 @@ BackgroundAccess::~BackgroundAccess()
 
 // ------------------------------------------------------------------------
 
+QueryTask* BackgroundAccess::taskForRequest(ObsRequest_p request)
+{
+  DataQueryTask* task = new DataQueryTask(request, 10);
+  connect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
+      this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
+  return task;
+}
+
+// ------------------------------------------------------------------------
+
 void BackgroundAccess::postRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
   mRequests.push_back(request);
-  if (mThread)
-    mThread->enqueueRequest(request);
-  else
-    mHandler->queryData(request);
+  QueryTask* task = taskForRequest(request);
+  if (mThread) {
+    mThread->enqueueTask(task);
+  } else {
+    mHandler->queryTask(task);
+    delete task;
+  }
 }
 
 // ------------------------------------------------------------------------

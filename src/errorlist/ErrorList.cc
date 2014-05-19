@@ -31,6 +31,7 @@
 #include "ErrorListModel.hh"
 #include "ErrorSearchDialog.hh"
 
+#include "common/EditAccess.hh"
 #include "common/Functors.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"

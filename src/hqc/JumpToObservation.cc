@@ -1,6 +1,7 @@
 
 #include "JumpToObservation.hh"
 
+#include "common/EditAccess.hh"
 #include "common/SingleObsBuffer.hh"
 #include "common/SensorChooser.hh"
 #include "common/HqcApplication.hh"

@@ -4,7 +4,6 @@
 
 #include "ObsData.hh"
 
-
 struct ObsData_by_SensorTime {
   bool operator()(ObsData_p a, ObsData_p b) const
     { return lt_SensorTime()(a->sensorTime(), b->sensorTime()); }

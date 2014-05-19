@@ -2,22 +2,19 @@
 #ifndef HqcApplication_hh
 #define HqcApplication_hh 1
 
-#include "CachingAccess.hh"
-#include "EditAccess.hh"
-#include "KvalobsAccess.hh"
-#include "KvalobsModelAccess.hh"
-
 #include <miconfparser/confsection.h>
 
 #include <QtCore/QList>
 #include <QtGui/QApplication>
 #include <QtSql/QSqlDatabase>
 
+#include <boost/shared_ptr.hpp>
+
 class CachingAccess;
 class EditAccess;
 class HqcUserConfig;
 class KvalobsAccess;
-class KvalobsModelAccess;
+class ModelAccess;
 
 class HqcApplication : public QApplication
 {   Q_OBJECT;
@@ -32,15 +29,13 @@ public:
   HqcUserConfig* userConfig()
     { return mUserConfig.get(); }
 
-  EditAccess_p editAccess() const
+  boost::shared_ptr<EditAccess> editAccess() const
     { return eda; }
-  ModelAccess_p modelAccess() const
+  boost::shared_ptr<ModelAccess> modelAccess() const
     { return kma; }
 
   QSqlDatabase kvalobsDB();
   QSqlDatabase kvalobsDB(const QString& qname);
-  std::string kvalobsColumnsSensorTime(const std::string& data_alias="");
-  std::vector<SensorTime> kvalobsQuerySensorTime(const std::string& constraint);
 
   void exitNoKvalobs();
 
@@ -77,11 +72,11 @@ private:
   bool mKvalobsAvailable;
   std::auto_ptr<HqcUserConfig> mUserConfig;
 
-  KvalobsAccess_p kda;
-  CachingAccess_p cda;
-  EditAccess_p eda;
+  boost::shared_ptr<KvalobsAccess> kda;
+  boost::shared_ptr<CachingAccess> cda;
+  boost::shared_ptr<EditAccess> eda;
 
-  ModelAccess_p kma;
+  boost::shared_ptr<ModelAccess> kma;
 };
 
 extern HqcApplication* hqcApp;

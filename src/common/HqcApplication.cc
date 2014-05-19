@@ -1,9 +1,13 @@
 
 #include "HqcApplication.hh"
 
-#include "common/HqcUserConfig.hh"
-#include "common/KvServiceHelper.hh"
-#include "common/TimeSpan.hh"
+#include "CachingAccess.hh"
+#include "EditAccess.hh"
+#include "KvalobsAccess.hh"
+#include "KvalobsModelAccess.hh"
+#include "HqcUserConfig.hh"
+#include "KvServiceHelper.hh"
+#include "TimeSpan.hh"
 #include "util/hqc_paths.hh"
 #include "util/Helpers.hh"
 
@@ -135,40 +139,6 @@ QSqlDatabase HqcApplication::kvalobsDB(const QString& qname)
     }
   }
   return QSqlDatabase::database(qname);
-}
-
-std::string HqcApplication::kvalobsColumnsSensorTime(const std::string& data_alias)
-{
-  std::stringstream columns;
-  const std::string d = data_alias.empty() ? "" : (data_alias + ".");
-  columns << d << "stationid,"
-          << d << "paramid,"
-          << d << "level,"
-          << d << "sensor,"
-          << d << "typeid,"
-          << d << "obstime";
-  return columns.str();
-}
-
-std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string& sql)
-{
-  METLIBS_LOG_TIME();
-  METLIBS_LOG_DEBUG(sql);
-
-  QSqlQuery query(hqcApp->kvalobsDB());
-  std::vector<SensorTime> results;
-  if (query.exec(QString::fromStdString(sql))) {
-    while (query.next()) {
-      const Sensor s(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(),
-          query.value(3).toInt(), query.value(4).toInt());
-      const timeutil::ptime t = timeutil::from_iso_extended_string(query.value(5).toString().toStdString());
-      const SensorTime st(s, t);
-      results.push_back(st);
-    }
-  } else {
-    HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
-  }
-  return results;
 }
 
 void HqcApplication::saveLanguage(const QString& language)

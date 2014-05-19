@@ -4,6 +4,8 @@
 
 #include "BackgroundAccess.hh"
 
+#include "QueryTask.hh"
+
 #include <QtCore/QMutex>
 #include <QtCore/QThread>
 #include <QtCore/QWaitCondition>
@@ -18,7 +20,7 @@ public:
   BackgroundThread(BackgroundHandler_p handler);
   ~BackgroundThread();
 
-  void enqueueRequest(ObsRequest_p request);
+  void enqueueTask(QueryTask* task);
 
   virtual void run();
 
@@ -26,22 +28,13 @@ Q_SIGNALS:
   void newData(ObsRequest_p request, const ObsData_pv& data);
 
 private:
-  struct QueuedQuery {
-    int priority;
+  QueryTask* taskForRequest(ObsRequest_p request);
 
-    ObsRequest_p request;
-
-    QueuedQuery(int p, ObsRequest_p r)
-      : priority(p), request(r) { }
-    
-    bool operator<(const QueuedQuery& other) const
-      { return priority < other.priority; }
-  };
-
+private:
   BackgroundHandler_p mHandler;
 
-  typedef std::priority_queue<QueuedQuery> QueryQueue_t;
-  QueryQueue_t mQueue;
+  typedef std::priority_queue<QueryTask_x, std::vector<QueryTask_x>, QueryTask_by_Priority> Queue_t;
+  Queue_t mQueue;
 
   QMutex mMutex;
   QWaitCondition mCondition;

@@ -5,9 +5,10 @@
 #include "KvalobsData.hh"
 #include "KvalobsUpdate.hh"
 #include "sqlutil.hh"
-#include "common/Functors.hh"
-#include "common/KvHelpers.hh"
-#include "common/HqcApplication.hh"
+#include "Functors.hh"
+#include "KvHelpers.hh"
+#include "HqcApplication.hh"
+#include "QueryTask.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlError>
@@ -21,19 +22,32 @@
 
 namespace /*anonymous*/ {
 
-std::string my_qsql_string(const QVariant& v)
-{
-  return v.toString().toStdString();
-}
-
-Time my_qsql_time(const QVariant& v)
-{
-  return timeutil::from_iso_extended_string(my_qsql_string(v));
-}
-
 const QString QDBNAME = "kvalobs_bg";
+const QString DBVERSION = "kvalobs:1";
 
-const size_t QUERY_DATA_CHUNKSIZE = 32;
+class QtSqlRow : public ResultRow
+{
+public:
+  QtSqlRow(QSqlQuery& query) : mQuery(query) { }
+
+  QVariant value(int index) const
+    { return mQuery.value(index); }
+
+  int getInt(int index) const
+    { return mQuery.value(index).toInt(); }
+
+  float getFloat(int index) const
+    { return mQuery.value(index).toFloat(); }
+  
+  QString getQString(int index) const
+    { return mQuery.value(index).toString(); }
+
+  std::string getStdString(int index) const
+    { return getQString(index).toStdString(); }
+
+private:
+  QSqlQuery& mQuery;
+};
 
 } // namespace anonymous
 
@@ -55,63 +69,21 @@ void KvalobsHandler::finalize()
 
 // ------------------------------------------------------------------------
 
-void KvalobsHandler::queryData(ObsRequest_p request)
+void KvalobsHandler::queryTask(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
   QSqlQuery query(mKvalobsDB);
+  QtSqlRow row(query);
 
-  const Sensor_s& sensors = request->sensors();
-  const TimeSpan& time = request->timeSpan();
-  ObsFilter_p filter   = request->filter();
-
-  std::ostringstream sql;
-  sql << "SELECT d.stationid, d.paramid, d.typeid, d.level, d.sensor,"
-      " d.obstime, d.original, d.tbtime, d.corrected, d.controlinfo, d.useinfo, d.cfailed"
-      " FROM data d WHERE ";
-  sensors2sql(sql, sensors, "d.");
-  sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
-  if (filter and filter->hasSQL())
-    sql << " AND (" << filter->acceptingSQL("d.") << ")";
-  sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
-  //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
-
-  ObsData_pv data;
-  if (query.exec(QString::fromStdString(sql.str()))) {
-    while (query.next()) {
-      int col = 0;
-      
-      const int stationid = query.value(col++).toInt();
-      const int paramid   = query.value(col++).toInt();
-      const int type_id   = query.value(col++).toInt();
-      const int level     = query.value(col++).toInt();
-      const int sensornr  = query.value(col++).toInt();
-      
-      const Time  obstime   = my_qsql_time(query.value(col++));
-      const float original  = query.value(col++).toFloat();
-      const Time  tbtime    = my_qsql_time(query.value(col++));
-      const float corrected = query.value(col++).toFloat();;
-      const kvalobs::kvControlInfo controlinfo(my_qsql_string(query.value(col++)));
-      const kvalobs::kvUseInfo     useinfo    (my_qsql_string(query.value(col++)));
-      const std::string cfailed = my_qsql_string(query.value(col++));
-      
-      const kvalobs::kvData kvdata(stationid, obstime, original, paramid,
-          tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
-      KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
-      if ((not filter) or filter->accept(kd, true)) {
-        //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
-        data.push_back(kd);
-        if (data.size() >= QUERY_DATA_CHUNKSIZE) {
-          Q_EMIT newData(request, data);
-          data.clear();
-        }
-      }
-    }
-    if (not data.empty())
-      Q_EMIT newData(request, data);
-    Q_EMIT newData(request, ObsData_pv());
+  const QString sql = qtask->querySql(DBVERSION);
+  if (query.exec(sql)) {
+    while (query.next())
+      qtask->notifyRow(row);
+    qtask->notifyDone();
   } else {
     HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
+    qtask->notifyError(query.lastError().text());
   }
 }
 

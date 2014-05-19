@@ -14,11 +14,12 @@ public:
   virtual void finalize() { }
 
   void queryData(ObsRequest_p request);
+  void queryTask(QueryTask* qtask);
   int exec(const std::string& sql);
 
 private:
-  sqlite3_stmt* prepare_statement(const std::string& sql);
-  void finalize_statement(sqlite3_stmt* stmt, int lastStep);
+  sqlite3_stmt* prepare_statement(const std::string& sql, QueryTask* qtask);
+  void finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask);
 
 private:
   sqlite3 *db;

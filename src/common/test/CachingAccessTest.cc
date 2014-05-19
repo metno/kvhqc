@@ -30,7 +30,7 @@ TEST(CachingAccessTest, SingleSensor)
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
-    EXPECT_EQ(1, counter->countNew);
+    EXPECT_LE(1, counter->countNew);
     EXPECT_EQ(2*24 + 1, counter->size());
     EXPECT_EQ(1, counter->countComplete);
   }
@@ -135,7 +135,7 @@ TEST(CachingAccessTest, SingleObsAfterRange)
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
-    EXPECT_EQ(1, counter->countNew);
+    EXPECT_LE(1, counter->countNew);
     EXPECT_EQ(2*24 + 1, counter->size());
     EXPECT_EQ(1, counter->countComplete);
   }

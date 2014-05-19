@@ -98,6 +98,8 @@ SET(common_SOURCES
   SyncRequestPrivate.hh
   SyncRequest.cc
   WrapRequest.cc
+  QueryTask.cc
+  DataQueryTask.cc
 
   AcceptRejectButtons.cc
   Authenticator.cc
@@ -129,6 +131,7 @@ QT4_WRAP_CPP(common_MOC
   SignalRequest.hh
   SimpleBuffer.hh
   SyncRequestPrivate.hh
+  DataQueryTask.hh
 
   AcceptRejectButtons.hh
   Authenticator.hh

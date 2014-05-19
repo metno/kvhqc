@@ -5,6 +5,7 @@
 #include "KvalobsData.hh"
 #include "KvalobsUpdate.hh"
 #include "SimpleBuffer.hh"
+#include "QueryTask.hh"
 
 #include "sqlutil.hh"
 
@@ -89,6 +90,29 @@ std::string sql4drop(const SensorTime& st)
 
 typedef std::vector<kvalobs::kvData> kvData_v;
 
+class SqliteRow : public ResultRow
+{
+public:
+  SqliteRow(sqlite3_stmt *stmt) : mStmt(stmt) { }
+
+  int getInt(int index) const
+    { return sqlite3_column_int(mStmt, index); }
+
+  float getFloat(int index) const
+    { return sqlite3_column_double(mStmt, index); }
+
+  std::string getStdString(int index) const
+    { return my_sqlite3_string(mStmt, index); }
+
+  QString getQString(int index) const
+    { return QString::fromStdString(getStdString(index)); }
+
+private:
+  sqlite3_stmt *mStmt;
+};
+
+const QString DBVERSION = "test_sqlite:1";
+
 } // namespace anonymous
 
 // ========================================================================
@@ -110,60 +134,19 @@ SqliteHandler::~SqliteHandler()
 
 // ------------------------------------------------------------------------
 
-void SqliteHandler::queryData(ObsRequest_p request)
+void SqliteHandler::queryTask(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
-  const Sensor_s& sensors = request->sensors();
-  const TimeSpan& time = request->timeSpan();
-  ObsFilter_p filter   = request->filter();
+  sqlite3_stmt *stmt = prepare_statement(qtask->querySql(DBVERSION).toStdString(), qtask);
+  if (not stmt)
+    return;
 
-  ObsData_pv data;
-  
-  std::ostringstream sql;
-  sql << "SELECT d.stationid, d.paramid, d.typeid, d.level, d.sensor,"
-      " d.obstime, d.original, d.tbtime, d.corrected, d.controlinfo, d.useinfo, d.cfailed"
-      " FROM data d WHERE ";
-  sensors2sql(sql, sensors, "d.");
-  sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
-  if (filter and filter->hasSQL())
-    sql << " AND (" << filter->acceptingSQL("d.") << ")";
-  sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
-  //METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
-
-  sqlite3_stmt *stmt = prepare_statement(sql.str());
-
+  SqliteRow row(stmt);
   int step;
-  while( (step = sqlite3_step(stmt)) == SQLITE_ROW ) {
-    int col = 0;
-
-    const int stationid = sqlite3_column_int(stmt, col++);
-    const int paramid = sqlite3_column_int(stmt, col++);
-    const int type_id = sqlite3_column_int(stmt, col++);
-    const int level = sqlite3_column_int(stmt, col++);
-    const int sensornr = sqlite3_column_int(stmt, col++);
-
-    const Time  obstime   = my_sqlite3_time(stmt, col++);
-    const float original  = sqlite3_column_double(stmt, col++);
-    const Time  tbtime    = my_sqlite3_time(stmt, col++);
-    const float corrected = sqlite3_column_double(stmt, col++);
-    const kvalobs::kvControlInfo controlinfo(sqlite3_column_text(stmt, col++));
-    const kvalobs::kvUseInfo     useinfo    (sqlite3_column_text(stmt, col++));
-    const std::string cfailed = my_sqlite3_string(stmt, col++);
-    
-    const kvalobs::kvData kvdata(stationid, obstime, original, paramid,
-        tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
-    KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
-    if ((not filter) or filter->accept(kd, true)) {
-      //METLIBS_LOG_DEBUG("accepted " << kd->sensorTime());
-      data.push_back(kd);
-    }
-  }
-
-  finalize_statement(stmt, step);
-
-  Q_EMIT newData(request, data);
-  Q_EMIT newData(request, ObsData_pv());
+  while ((step = sqlite3_step(stmt)) == SQLITE_ROW)
+    qtask->notifyRow(row);
+  finalize_statement(stmt, step, qtask);
 }
 
 // ------------------------------------------------------------------------
@@ -183,7 +166,7 @@ int SqliteHandler::exec(const std::string& sql)
 
 // ------------------------------------------------------------------------
 
-sqlite3_stmt* SqliteHandler::prepare_statement(const std::string& sql)
+sqlite3_stmt* SqliteHandler::prepare_statement(const std::string& sql, QueryTask* qtask)
 {
   int status;
   sqlite3_stmt *stmt;
@@ -193,23 +176,25 @@ sqlite3_stmt* SqliteHandler::prepare_statement(const std::string& sql)
   status = sqlite3_prepare(db, sql.c_str(), sql.length(), &stmt, 0);
 #endif
   if (status != SQLITE_OK) {
-    std::ostringstream msg;
-    msg << "Error preparing SQL statement '" << sql
-        << "'; message from sqlite3 is:" << sqlite3_errmsg(db);
-    throw std::runtime_error(msg.str());
+    QString message = QString("Error preparing SQL statement '%1'; message from sqlite3 is: %2")
+        .arg(QString::fromStdString(sql))
+        .arg(QString(sqlite3_errmsg(db)));
+    qtask->notifyError(message);
   }
   return stmt;
 }
 
 // ------------------------------------------------------------------------
 
-void SqliteHandler::finalize_statement(sqlite3_stmt* stmt, int lastStep)
+void SqliteHandler::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
 {
   sqlite3_finalize(stmt);
-  if (lastStep != SQLITE_DONE) {
-    std::ostringstream msg;
-    msg << "Statement stepping not finished with DONE; error=" << sqlite3_errmsg(db);
-    throw std::runtime_error(msg.str());
+  if (lastStep == SQLITE_DONE) {
+    qtask->notifyDone();
+  } else {
+    QString message = QString("Statement stepping not finished with DONE; error=")
+        +  sqlite3_errmsg(db);
+    qtask->notifyError(message);
   }
 }
 

@@ -6,16 +6,15 @@
 #include <QtCore/QSemaphore>
 #include <string>
 
+class QueryTask;
+
 class BackgroundHandler : public QObject
 { Q_OBJECT;
 public:
   virtual ~BackgroundHandler();
   virtual void initialize() = 0;
   virtual void finalize() = 0;
-  virtual void queryData(ObsRequest_p request) = 0;
-
-Q_SIGNALS:
-  void newData(ObsRequest_p request, const ObsData_pv& data);
+  virtual void queryTask(QueryTask* task) = 0;
 };
 
 HQC_TYPEDEF_P(BackgroundHandler);
@@ -43,6 +42,7 @@ protected:
     { return mRequests; }
 
   void distributeUpdates(const ObsData_pv& updated, const ObsData_pv& inserted, const SensorTime_v& dropped);
+  QueryTask* taskForRequest(ObsRequest_p request);
 
 private Q_SLOTS:
   void onNewData(ObsRequest_p request, const ObsData_pv& data);
