@@ -114,6 +114,7 @@ int main( int argc, char* argv[] )
 
   const QString kvalobsInstanceName = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
   std::auto_ptr<SearchWindow> sw(new SearchWindow(kvalobsInstanceName));
+  sw->readSettings();
   sw->show();
 
 #if 0
@@ -127,5 +128,7 @@ int main( int argc, char* argv[] )
   // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
   const int r = hqc.exec();
   qkvs.stop();
+  sw->writeSettings();
+
   return r;
 }

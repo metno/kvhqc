@@ -71,6 +71,7 @@
 #include "SimpleCorrections.hh"
 #endif // ENABLE_SIMPLECORRECTIONS
 
+#include <QtCore/QSettings>
 #include <QtCore/QSignalMapper>
 #include <QtGui/QShortcut>
 #include <QtGui/QSplitter>
@@ -80,10 +81,10 @@
 
 namespace {
 
-const char SETTING_HQC_GEOMETRY[] = "geometry";
-const char SETTING_HQC_AUTOVIEW_SPLITTER[] = "autoview_slider";
-const char SETTING_VERSION[] = "version";
-const char SETTING_VERSION_FULL[] = "version_full";
+const char SETTINGS_SEARCH_GROUP[] = "searchwindow";
+const char SETTING_SEARCH_GEOMETRY[] = "geometry";
+const char SETTING_SEARCH_AUTOVIEW_SPLITTER[] = "autoview_slider";
+const char SETTING_SEARCH_DATASEARCH_SPLITTER[] = "datasearch_slider";
 
 } // anonymous namespace
 
@@ -258,14 +259,16 @@ void SearchWindow::onActivateDataTab(int index)
   activateTab(mTabsData, index);
 }
 
-#if 0
 void SearchWindow::writeSettings()
 {
   QSettings settings;
-  settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
-  settings.setValue(SETTING_HQC_AUTOVIEW_SPLITTER, mAutoViewSplitter->saveState());
+  settings.beginGroup(SETTINGS_SEARCH_GROUP);
+  settings.setValue(SETTING_SEARCH_GEOMETRY, saveGeometry());
+  settings.setValue(SETTING_SEARCH_AUTOVIEW_SPLITTER, mSplitterDataPlot->saveState());
+  settings.setValue(SETTING_SEARCH_DATASEARCH_SPLITTER, splitterDataSearch()->saveState());
+  settings.endGroup();
 
-  lstdlg->saveSettings(settings);
+  mErrorsView->saveSettings(settings);
 }
 
 void SearchWindow::readSettings()
@@ -273,11 +276,19 @@ void SearchWindow::readSettings()
   METLIBS_LOG_SCOPE();
 
   QSettings settings;
-  if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
-    HQC_LOG_WARN("cannot restore hqc main window geometry");
-  if (not mAutoViewSplitter->restoreState(settings.value(SETTING_HQC_AUTOVIEW_SPLITTER).toByteArray()))
-    HQC_LOG_WARN("cannot restore autoview splitter positions");
+  settings.beginGroup(SETTINGS_SEARCH_GROUP);
+  if (not restoreGeometry(settings.value(SETTING_SEARCH_GEOMETRY).toByteArray()))
+    METLIBS_LOG_INFO("cannot restore search window geometry");
+  if (not mSplitterDataPlot->restoreState(settings.value(SETTING_SEARCH_AUTOVIEW_SPLITTER).toByteArray()))
+    METLIBS_LOG_INFO("cannot restore autoview splitter positions");
+  if (not splitterDataSearch()->restoreState(settings.value(SETTING_SEARCH_DATASEARCH_SPLITTER).toByteArray()))
+    METLIBS_LOG_INFO("cannot restore data-search splitter positions");
+  settings.endGroup();
 
-  lstdlg->restoreSettings(settings);
+  mErrorsView->restoreSettings(settings);
 }
-#endif
+
+QSplitter* SearchWindow::splitterDataSearch() const
+{
+  return static_cast<QSplitter*>(centralWidget());
+}

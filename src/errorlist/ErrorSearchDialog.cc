@@ -36,6 +36,7 @@
 #include "util/timeutil.hh"
 #include "util/BusyIndicator.hh"
 
+#include <QtCore/QSettings>
 #include <QtGui/QInputDialog>
 #include <QtGui/QMessageBox>
 #include <QtGui/QSortFilterProxyModel>
@@ -56,7 +57,7 @@ namespace /* anonymous */ {
 
 enum { C_ITEM_COUNTY_DB = Qt::UserRole + 1 };
 
-const char QSETTINGS_GROUP[] = "lstdlg";
+const char QSETTINGS_GROUP[] = "errorlist_search";
 
 void setChildren(QStandardItem* parent, bool on)
 {
@@ -254,7 +255,7 @@ void ErrorSearchDialog::setupStationTab()
     onSetRecentTimes();
 }
 
-void ListDialog::onFilterStations(const QString& text)
+void ErrorSearchDialog::onFilterStations(const QString& text)
 {
   if (not text.isEmpty())
     ui->treeStations->expandAll();

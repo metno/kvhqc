@@ -38,9 +38,8 @@
 
 #include "util/BusyIndicator.hh"
 
-#include <QtGui/QCloseEvent>
+#include <QtCore/QSettings>
 #include <QtGui/QHeaderView>
-#include <QtGui/QMessageBox>
 
 #include <boost/foreach.hpp>
 
@@ -241,4 +240,14 @@ void ErrorList::onButtonExpand()
 void ErrorList::onButtonForget()
 {
   // FIXME not implemented yet
+}
+
+void ErrorList::saveSettings(QSettings& settings)
+{
+  mDialog->saveSettings(settings);
+}
+
+void ErrorList::restoreSettings(QSettings& settings)
+{
+  mDialog->restoreSettings(settings);
 }

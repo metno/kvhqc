@@ -39,7 +39,10 @@
 
 #include <memory>
 
+QT_BEGIN_NAMESPACE
 class QItemSelection;
+class QSettings;
+QT_END_NAMESPACE
 
 class ErrorListModel;
 class ErrorSearchDialog;
@@ -51,18 +54,15 @@ public:
   ErrorList(QWidget* parent=0);
   ~ErrorList();
 
-  virtual void setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time);
+  void saveSettings(QSettings& settings);
+  void restoreSettings(QSettings& settings);
 
 public Q_SLOTS:
-  //void initiateSearch();
   void navigateTo(const SensorTime&);
 
 Q_SIGNALS:
   void signalNavigateTo(const SensorTime&);
 
-private:
-  ObsData_p getSelectedObs() const;
-                                    
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onBeginDataChange();
@@ -73,6 +73,8 @@ private Q_SLOTS:
   void onButtonForget();
 
 private:
+  void setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time);
+  ObsData_p getSelectedObs() const;
   void resizeHeaders();
   void showSameStation();
   void signalStationSelected();

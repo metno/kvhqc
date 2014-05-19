@@ -51,6 +51,7 @@ class HelpDialog;
 QT_BEGIN_NAMESPACE
 class QAction;
 class QLabel;
+class QSettings;
 class QSignalMapper;
 class QSplitter;
 QT_END_NAMESPACE
@@ -81,6 +82,9 @@ public:
   SearchWindow(const QString& kvalobsInstanceName, QWidget* parent=0);
   ~SearchWindow();
 
+  void writeSettings();
+  void readSettings();
+
 protected:
   virtual void changeEvent(QEvent *event);
  
@@ -97,6 +101,7 @@ private:
   void retranslateTabs(QTabWidget* tabs);
   void setupSearchTabs();
   void setupDataTabs();
+  QSplitter* splitterDataSearch() const;
 
 private:
   QTabWidget* mTabsData;

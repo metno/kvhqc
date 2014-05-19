@@ -33,7 +33,6 @@
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpan.hh"
 
-#include <QtCore/QSettings>
 #include <QtGui/QDialog>
 
 #include <map>
@@ -41,8 +40,11 @@
 #include <set>
 #include <vector>
 
+QT_BEGIN_NAMESPACE
 class QStandardItem;
 class QStandardItemModel;
+class QSettings;
+QT_END_NAMESPACE
 
 class StationSelection;
 class TimeSpanControl;
