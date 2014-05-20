@@ -8,18 +8,21 @@ INSTALL(FILES
   images/diana_icon_hqc.png
   images/diana_img_hqc.png
 
-  images/undo.svg
-  images/redo.svg
   images/accept.svg
-  images/reject.svg
-  images/interpolate.svg
+  images/busy_animation.svg
   images/dl_columns.svg
   images/dl_columns_add.svg
   images/dl_columns_remove.svg
   images/dl_columns_reset.svg
   images/dl_save_as.svg
+  images/error.svg
+  images/editor.svg
+  images/forget.svg
+  images/history.svg
   images/hqc_logo.svg
   images/hqc_splash.svg
+  images/interpolate.svg
+  images/jump_to_obs.svg
   images/kv_error.svg
   images/kv_ok.svg
   images/search_red.svg
@@ -28,9 +31,11 @@ INSTALL(FILES
   images/history.svg
   images/forget.svg
   images/jump_to_obs.svg
-  images/error.svg
-  images/search_red.svg
+  images/redo.svg
+  images/reject.svg
+  images/singleobservation.svg
   images/timeseries.svg
+  images/undo.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

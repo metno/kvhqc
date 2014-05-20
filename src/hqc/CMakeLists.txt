@@ -29,7 +29,6 @@ QT4_ADD_TRANSLATION(hqc_QM
 QT4_WRAP_CPP(hqc_MOC
   AbstractDataView.hh
   AutoDataList.hh
-  ChecksTableModel.hh
   DataListAddColumn.hh
   DataList.hh
   EditVersionModel.hh
@@ -52,7 +51,7 @@ QT4_WRAP_UI(hqc_UIH
   dl_addcolumn.ui
   jumptoobservation.ui
   navigationhistory.ui
-  simplecorrections.ui
+  singleobservation.ui
   timeseriesview.ui
   ts_add.ui
   ts_remove.ui

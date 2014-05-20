@@ -13,30 +13,14 @@
 
 #include <boost/make_shared.hpp>
 
-#include "ui_simplecorrections.h"
+#include "ui_singleobservation.h"
 
 #define MILOGGER_CATEGORY "kvhqc.SimpleCorrections"
 #include "common/ObsLogging.hh"
 
-namespace /* anonymous */ {
-
-int preferredWidth(QWidget* w)
-{ return w->sizeHint().width(); }
-
-void setCommonMinWidth(QWidget* w[])
-{
-  int mw = preferredWidth(w[0]);
-  for (int i=1; w[i]; ++i)
-    mw = std::max(mw, preferredWidth(w[i]));
-  for (int i=0; w[i]; ++i)
-    w[i]->setMinimumSize(mw, w[i]->minimumSize().height());
-}
-
-} // anonymous namespace
-
 SimpleCorrections::SimpleCorrections(QWidget* parent)
   : QWidget(parent)
-  , ui(new Ui::SimpleCorrections)
+  , ui(new Ui_SingleObservation)
   , mDA(hqcApp->editAccess())
   , mMA(hqcApp->modelAccess())
 {
@@ -45,36 +29,16 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
   ui->comboCorrected->setModel(ttl);
   ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  adjustSizes();
 
-  QIcon iconAccept("icons:accept.svg"), iconReject("icons:reject.svg");
-  ui->buttonAcceptCorrected   ->setIcon(iconAccept);
-  ui->buttonAcceptCorrectedQC2->setIcon(iconAccept);
-  ui->buttonAcceptOriginal    ->setIcon(iconAccept);
-  ui->buttonReject   ->setIcon(iconReject);
-  ui->buttonRejectQC2->setIcon(iconReject);
-
-  mChecksModel.reset(new ChecksTableModel(mDA));
-  ui->tableChecks->setModel(mChecksModel.get());
+  mChecksModel = new ChecksTableModel(this);
+  ui->tableChecks->setModel(mChecksModel);
   update();
-}
-
-void SimpleCorrections::adjustSizes()
-{
-  QWidget* labels1[] = { ui->labelStation, ui->labelObstime, ui->labelFlags, ui->labelOriginal, 0 };
-  setCommonMinWidth(labels1);
-  QWidget* labels2[] = { ui->labelType, ui->labelParam, 0 };
-  setCommonMinWidth(labels2);
-  METLIBS_LOG_DEBUG(LOGVAL(minimumSize().height()) << LOGVAL(ui->tableChecks->minimumSize().height()));
-  setMaximumSize(QSize(minimumSize().width(), maximumSize().height()));
 }
 
 void SimpleCorrections::changeEvent(QEvent *event)
 {
-  if (event->type() == QEvent::LanguageChange) {
+  if (event->type() == QEvent::LanguageChange)
     ui->retranslateUi(this);
-    adjustSizes();
-  }
   QWidget::changeEvent(event);
 }
 
@@ -86,7 +50,6 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME(LOGVAL(st));
   
-  mChecksModel->navigateTo(st);
   ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
   if (eq_SensorTime()(mSensorTime, st))
@@ -243,6 +206,9 @@ void SimpleCorrections::update()
     setFBF(c, mItemCorrected, obs);
   }
   enableEditing();
+
+  mChecksModel->showChecks(obs);
+  ui->tableChecks->resizeColumnsToContents();
 }
 
 void SimpleCorrections::enableEditing()
@@ -259,12 +225,8 @@ void SimpleCorrections::enableEditing()
   METLIBS_LOG_DEBUG("possibilities = " << p);
 
   ui->buttonReject   ->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
-  ui->buttonRejectQC2->setEnabled((p & AcceptReject::CAN_REJECT) != 0);
-
   ui->buttonAcceptOriginal   ->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
-
   ui->buttonAcceptCorrected   ->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
-  ui->buttonAcceptCorrectedQC2->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
 
   ui->comboCorrected->setEnabled((p & AcceptReject::CAN_CORRECT) != 0);
 }
@@ -286,28 +248,18 @@ void SimpleCorrections::onAcceptCorrected()
 {
   mDA->newVersion();
   if (mObsBuffer->get())
-    AcceptReject::accept_corrected(mDA, mObsBuffer->get(), false);
+    AcceptReject::accept_corrected(mDA, mObsBuffer->get(), ui->checkQC2->isChecked());
 }
 
-void SimpleCorrections::onAcceptCorrectedQC2()
+void SimpleCorrections::onAcceptModel()
 {
-  mDA->newVersion();
-  if (mObsBuffer->get())
-    AcceptReject::accept_corrected(mDA, mObsBuffer->get(), true);
 }
 
 void SimpleCorrections::onReject()
 {
   mDA->newVersion();
   if (mObsBuffer->get())
-    AcceptReject::reject(mDA, mObsBuffer->get(), false);
-}
-
-void SimpleCorrections::onRejectQC2()
-{
-  mDA->newVersion();
-  if (mObsBuffer->get())
-    AcceptReject::reject(mDA, mObsBuffer->get(), true);
+    AcceptReject::reject(mDA, mObsBuffer->get(), ui->checkQC2->isChecked());
 }
 
 void SimpleCorrections::onNewCorrected()
@@ -324,4 +276,12 @@ void SimpleCorrections::onNewCorrected()
       update();
     }
   }
+}
+
+void SimpleCorrections::onStartEditor()
+{
+}
+
+void SimpleCorrections::onQc2Toggled(bool)
+{
 }

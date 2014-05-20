@@ -1,0 +1,18 @@
+<svg height="24" width="24">
+  <!--rect x="1" y="1" width="22" height="22" fill="white" stroke="none"/-->
+  <path d="M10 4
+           A 2 2, 0, 0, 1, 14 4
+           L 14 16
+           A 4 4, 0, 1, 1, 10 16
+           z" stroke="none" fill="white"/>
+  <path d="M10 8
+           L 14 8
+           L 14 16
+           A 4 4, 0, 1, 1, 10 16
+           z" stroke="black" stroke-width="1" fill="red"/>
+  <path d="M10 4
+           A 2 2, 0, 0, 1, 14 4
+           L 14 16
+           A 4 4, 0, 1, 1, 10 16
+           z" stroke="black" stroke-width="1" fill="none"/>
+</svg>

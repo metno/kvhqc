@@ -23,15 +23,13 @@ const char* headers[NCOLUMNS] = {
 
 }
 
-ChecksTableModel::ChecksTableModel(ObsAccess_p da)
-  : mDA(da)
+ChecksTableModel::ChecksTableModel(QObject* parent)
+  : QAbstractTableModel(parent)
 {
-  //mDA->obsDataChanged.connect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
 }
 
 ChecksTableModel::~ChecksTableModel()
 {
-  //mDA->obsDataChanged.disconnect(boost::bind(&ChecksTableModel::onDataChanged, this, _1, _2));
 }
 
 int ChecksTableModel::rowCount(const QModelIndex&) const
@@ -72,45 +70,47 @@ QVariant ChecksTableModel::headerData(int section, Qt::Orientation orientation, 
     return QVariant();
 }
 
-void ChecksTableModel::navigateTo(const SensorTime& st)
+void ChecksTableModel::showChecks(ObsData_p obs)
 {
   METLIBS_LOG_SCOPE();
-  if (eq_SensorTime()(st, mSensorTime))
-    return;
 
-#if 0
   beginResetModel();
+  buildModel(obs);
+  endResetModel();
+}
+
+void ChecksTableModel::buildModel(ObsData_p obs)
+{
+  METLIBS_LOG_SCOPE();
+
   mChecks.clear();
   mExplanations.clear();
-  mSensorTime = st;
-  if (mSensorTime.valid()) {
-    if (ObsData_p obs = mDA->find(mSensorTime)) {
-      const std::string& cfailed = obs->cfailed();
-      if (not cfailed.empty()) {
-        mChecks = QString::fromStdString(cfailed).split(",");
-        QSqlQuery query(hqcApp->systemDB());
-        query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
-        
-        BOOST_FOREACH(QString& c, mChecks) {
-          if (c.startsWith("QC2N_")) {
-            QString n = c.mid(5);
-            n.replace("_", ", ");
-            n.prepend(tr("neighbors: "));
-            c = "QC2-redist-N";
-            mExplanations.push_back(n);
-            continue;
-          }
-            
-          query.bindValue(0, c);
-          query.exec();
-          if (query.next())
-            mExplanations.push_back(query.value(0).toString());
-          else
-            mExplanations.push_back("?");
-        }
-      }
+  if (not obs)
+    return;
+
+  const std::string& cfailed = obs->cfailed();
+  if (cfailed.empty())
+    return;
+  
+  mChecks = QString::fromStdString(cfailed).split(",");
+  QSqlQuery query(hqcApp->systemDB());
+  query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
+  
+  BOOST_FOREACH(QString& c, mChecks) {
+    if (c.startsWith("QC2N_")) {
+      QString n = c.mid(5);
+      n.replace("_", ", ");
+      n.prepend(tr("neighbors: "));
+      c = "QC2-redist-N";
+      mExplanations.push_back(n);
+      continue;
     }
+    
+    query.bindValue(0, c);
+    query.exec();
+    if (query.next())
+      mExplanations.push_back(query.value(0).toString());
+    else
+      mExplanations.push_back("?");
   }
-  endResetModel();
-#endif
 }

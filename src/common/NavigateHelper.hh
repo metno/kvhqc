@@ -3,7 +3,6 @@
 #define COMMON_NAVIGATEHELPER_HH 1
 
 #include "Sensor.hh"
-#include <boost/noncopyable.hpp>
 
 class NavigateHelper
 {

@@ -11,9 +11,7 @@
 #include <memory>
 
 class ChecksTableModel;
-namespace Ui {
-class SimpleCorrections;
-}
+class Ui_SingleObservation;
 
 class SimpleCorrections : public QWidget
 { Q_OBJECT;
@@ -29,27 +27,27 @@ protected:
   
 private:
   void enableEditing();
-  void adjustSizes();
 
 private Q_SLOTS:
   void onAcceptOriginal();
+  void onAcceptModel();
   void onAcceptCorrected();
-  void onAcceptCorrectedQC2();
   void onReject();
-  void onRejectQC2();
+  void onQc2Toggled(bool);
 
   void onNewCorrected();
+  void onStartEditor();
 
   void update();
   void onDataChanged();
 
 private:
-  std::auto_ptr<Ui::SimpleCorrections> ui;
+  std::auto_ptr<Ui_SingleObservation> ui;
   EditAccess_p mDA;
   ModelAccess_p mMA;
   SingleObsBuffer_p mObsBuffer;
 
-  std::auto_ptr<ChecksTableModel> mChecksModel;
+  ChecksTableModel *mChecksModel;
   DataItem_p mItemFlags;
   DataItem_p mItemOriginal;
   DataItem_p mItemCorrected;
