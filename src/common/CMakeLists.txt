@@ -102,6 +102,7 @@ SET(common_SOURCES
   WrapRequest.cc
   QueryTask.cc
   DataQueryTask.cc
+  DataHistoryQueryTask.cc
 
   AcceptRejectButtons.cc
   Authenticator.cc
@@ -117,7 +118,9 @@ SET(common_SOURCES
 QT4_WRAP_CPP(common_MOC
   AbstractUpdateListener.hh
   DataColumn.hh
+  DataHistoryQueryTask.hh
   DataListModel.hh
+  DataQueryTask.hh
   DianaHelper.hh
   HqcApplication.hh
   KvalobsUpdateListener.hh
@@ -132,7 +135,6 @@ QT4_WRAP_CPP(common_MOC
   SignalRequest.hh
   SimpleBuffer.hh
   SyncRequestPrivate.hh
-  DataQueryTask.hh
 
   AcceptRejectButtons.hh
   Authenticator.hh

@@ -3,6 +3,7 @@ SET(hqc_SOURCES
   AbstractDataView.cc
   AutoDataList.cc
   ChecksTableModel.cc
+  DataHistoryTableModel.cc
   DataListAddColumn.cc
   DataList.cc
   EditVersionModel.cc
@@ -29,6 +30,7 @@ QT4_ADD_TRANSLATION(hqc_QM
 QT4_WRAP_CPP(hqc_MOC
   AbstractDataView.hh
   AutoDataList.hh
+  DataHistoryTableModel.hh
   DataListAddColumn.hh
   DataList.hh
   EditVersionModel.hh

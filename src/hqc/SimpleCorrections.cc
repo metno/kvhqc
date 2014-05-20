@@ -2,6 +2,7 @@
 #include "SimpleCorrections.hh"
 
 #include "ChecksTableModel.hh"
+#include "DataHistoryTableModel.hh"
 
 #include "common/AcceptReject.hh"
 #include "common/ColumnFactory.hh"
@@ -32,6 +33,11 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
 
   mChecksModel = new ChecksTableModel(this);
   ui->tableChecks->setModel(mChecksModel);
+
+  mHistoryModel = new DataHistoryTableModel(this);
+  ui->tableHistory->setModel(mHistoryModel);
+  connect(mHistoryModel, SIGNAL(modelReset()), this, SLOT(onHistoryTableUpdated()));
+
   update();
 }
 
@@ -50,8 +56,6 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME(LOGVAL(st));
   
-  ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-
   if (eq_SensorTime()(mSensorTime, st))
     return;
 
@@ -209,6 +213,8 @@ void SimpleCorrections::update()
 
   mChecksModel->showChecks(obs);
   ui->tableChecks->resizeColumnsToContents();
+
+  mHistoryModel->showHistory(mSensorTime);
 }
 
 void SimpleCorrections::enableEditing()
@@ -284,4 +290,9 @@ void SimpleCorrections::onStartEditor()
 
 void SimpleCorrections::onQc2Toggled(bool)
 {
+}
+
+void SimpleCorrections::onHistoryTableUpdated()
+{
+  ui->tableHistory->resizeColumnsToContents();
 }

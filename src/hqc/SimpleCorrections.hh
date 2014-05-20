@@ -11,7 +11,10 @@
 #include <memory>
 
 class ChecksTableModel;
+class DataHistoryTableModel;
+QT_BEGIN_NAMESPACE
 class Ui_SingleObservation;
+QT_END_NAMESPACE
 
 class SimpleCorrections : public QWidget
 { Q_OBJECT;
@@ -41,6 +44,8 @@ private Q_SLOTS:
   void update();
   void onDataChanged();
 
+  void onHistoryTableUpdated();
+
 private:
   std::auto_ptr<Ui_SingleObservation> ui;
   EditAccess_p mDA;
@@ -48,6 +53,7 @@ private:
   SingleObsBuffer_p mObsBuffer;
 
   ChecksTableModel *mChecksModel;
+  DataHistoryTableModel *mHistoryModel;
   DataItem_p mItemFlags;
   DataItem_p mItemOriginal;
   DataItem_p mItemCorrected;

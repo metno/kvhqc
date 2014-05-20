@@ -78,8 +78,8 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
 
   KvalobsQueryRunner_p kvalobsRunner = boost::make_shared<KvalobsQueryRunner>();
-  QueryTaskHandler_p kvalobsHandler = boost::make_shared<QueryTaskHandler>(kvalobsRunner, true);
-  kda = boost::make_shared<KvalobsAccess>(kvalobsHandler);
+  mKvalobsHandler = boost::make_shared<QueryTaskHandler>(kvalobsRunner, true);
+  kda = boost::make_shared<KvalobsAccess>(mKvalobsHandler);
   cda = boost::make_shared<CachingAccess>(kda);
   kma = boost::make_shared<KvalobsModelAccess>();
   eda = boost::make_shared<EditAccess>(cda);

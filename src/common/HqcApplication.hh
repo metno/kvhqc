@@ -15,6 +15,7 @@ class EditAccess;
 class HqcUserConfig;
 class KvalobsAccess;
 class ModelAccess;
+class QueryTaskHandler;
 
 class HqcApplication : public QApplication
 {   Q_OBJECT;
@@ -29,6 +30,8 @@ public:
   HqcUserConfig* userConfig()
     { return mUserConfig.get(); }
 
+  boost::shared_ptr<QueryTaskHandler> kvalobsHandler() const
+    { return mKvalobsHandler; }
   boost::shared_ptr<EditAccess> editAccess() const
     { return eda; }
   boost::shared_ptr<ModelAccess> modelAccess() const
@@ -72,6 +75,7 @@ private:
   bool mKvalobsAvailable;
   std::auto_ptr<HqcUserConfig> mUserConfig;
 
+  boost::shared_ptr<QueryTaskHandler> mKvalobsHandler;
   boost::shared_ptr<KvalobsAccess> kda;
   boost::shared_ptr<CachingAccess> cda;
   boost::shared_ptr<EditAccess> eda;
