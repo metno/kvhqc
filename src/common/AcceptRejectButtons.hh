@@ -20,7 +20,7 @@ class AcceptRejectButtons : public QWidget
 public:
   AcceptRejectButtons(QWidget* parent=0);
 
-  void updateModel(EditAccess_p da, ModelAccessPtr ma, QTableView* table);
+  void updateModel(EditAccess_p da, ModelAccess_p ma, QTableView* table);
 
 public Q_SLOTS:
   void enableButtons();
@@ -37,7 +37,7 @@ private:
 
 private:
   EditAccess_p mDA;
-  ModelAccessPtr mMA;
+  ModelAccess_p mMA;
   QTableView* mTableView;
 
   QToolButton *mButtonAccept;

@@ -8,7 +8,6 @@
 static bool initMetaType = false;
 
 ObsRequest::ObsRequest()
-  : mTag(0)
 {
   if (not initMetaType) {
     qRegisterMetaType<ObsRequest_p>("ObsRequest_p");

@@ -167,7 +167,7 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
   boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
 
   if (c.type == MODEL) {
-    ModelColumnPtr mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
+    ModelColumn_p mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
     if (mc and c.timeOffset != 0)
       mc->setTimeOffset(boost::posix_time::hours(c.timeOffset));
     return mc;

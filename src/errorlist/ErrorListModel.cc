@@ -126,11 +126,13 @@ int ErrorListModel::ErrorTreeItem::row() const
 
 ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
   : mDA(eda)
-  , mMA(mda)
+  , mModelBuffer(boost::make_shared<ModelBuffer>(mda))
   , mRootItem(0)
   , mHighlightedStation(-1)
   , mHideResolved(true)
 {
+  connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
+      this, SLOT(onModelData(const ModelData_pv&)));
 }
 
 ErrorListModel::~ErrorListModel()
@@ -140,6 +142,8 @@ ErrorListModel::~ErrorListModel()
 
 void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, bool errorsForSalen)
 {
+  mModelBuffer->clear();
+
   beginResetModel();
   delete mRootItem;
   mRootItem = new ErrorTreeItem;
@@ -265,7 +269,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
         else if (column == COL_OBS_CORR)
           value = obs->corrected();
         else {
-          ModelDataPtr md = mMA->find(st);
+          ModelData_p md = mModelBuffer->get(st);
           if (not md)
             return QVariant();
           value = md->value();
@@ -498,4 +502,13 @@ void ErrorListModel::onDropDataEnd(const SensorTime_v& dropped)
   for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it)
     onDataDrop(*it);
   Q_EMIT endDataChange();
+}
+
+void ErrorListModel::onModelData(const ModelData_pv& mdata)
+{
+  for (ModelData_pv::const_iterator it = mdata.begin(); it != mdata.end(); ++it) {
+    const QModelIndex index = findSensorTime((*it)->sensorTime()); // FIXME this will try to match sensorNr and typeid, too
+    if (index.isValid())
+      Q_EMIT dataChanged(index, index);
+  }
 }

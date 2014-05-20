@@ -1,29 +1,24 @@
 
 #include "ModelColumn.hh"
 
-#include "ModelData.hh"
-#include "common/SensorHeader.hh"
+#include "ModelAccess.hh"
+#include "SensorHeader.hh"
 
-#include <kvalobs/kvDataOperations.h>
-
-#include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "common/ObsLogging.hh"
 
-ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
-  : mMA(ma)
+ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time)
+  : mBuffer(new ModelBuffer(ma))
   , mSensor(sensor)
   , mHeaderShowStation(true)
   , mCodes(boost::make_shared<Code2Text>())
 {
-  mMA->modelDataChanged.connect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));
 }
 
 ModelColumn::~ModelColumn()
 {
-  mMA->modelDataChanged.disconnect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));
 }
 
 Qt::ItemFlags ModelColumn::flags(const timeutil::ptime& /*time*/) const
@@ -33,14 +28,15 @@ Qt::ItemFlags ModelColumn::flags(const timeutil::ptime& /*time*/) const
 
 QVariant ModelColumn::data(const timeutil::ptime& time, int role) const
 {
-  ModelDataPtr mdl = getModel(time);
+  ModelData_p mdl = get(time);
   if (not mdl)
     return QVariant();
 
+  const float value = mdl->value();
   if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-    return mCodes->asTip(getValue(mdl));
+    return mCodes->asTip(value);
   } else if (role == Qt::DisplayRole or role == Qt::EditRole) {
-    return mCodes->asText(getValue(mdl));
+    return mCodes->asText(value);
   } else if (role == Qt::TextAlignmentRole) {
     return Qt::AlignRight;
   }
@@ -59,50 +55,25 @@ QVariant ModelColumn::headerData(Qt::Orientation orientation, int role) const
   return sh.modelHeader(orientation, role);
 }
 
-bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)
-{
-  const SensorTime st(mdl->sensorTime());
-  if (not ModelAccess::eq_ModelSensor()(st.sensor, mSensor))
-    return false;
-  const timeutil::ptime timeo = st.time - mTimeOffset;
-  ModelCache_t::iterator it = mModelCache.find(timeo);
-  if (it == mModelCache.end())
-    return false;
-    
-  mModelCache.erase(it);
-  //Q_EMIT columnChanged(timeo, shared_from_this());
-  return true;
-}
-
-ModelDataPtr ModelColumn::getModel(const timeutil::ptime& time) const
-{
-  ModelCache_t::iterator it = mModelCache.find(time);
-  ModelDataPtr mdl;
-  if (it == mModelCache.end()) {
-    mdl = mMA->find(SensorTime(mSensor, time + mTimeOffset));
-    mModelCache[time] = mdl;
-  } else {
-    mdl = it->second;
-  }
-  return mdl;
-}
-
-float ModelColumn::getValue(ModelDataPtr mdl) const
-{
-  return mdl->value();
-}
-
 void ModelColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
 {
   mTimeOffset = timeOffset;
 }
 
-const Sensor& ModelColumn::sensor() const
-{
-  return mSensor;
-}
-
 void ModelColumn::setCodes(Code2TextCPtr codes)
 {
   mCodes = codes;
+}
+
+void ModelColumn::bufferReceived(const ModelData_pv& mdata)
+{
+  for (ModelData_pv::const_iterator it = mdata.begin(); it != mdata.end(); ++it) {
+    const SensorTime& st = (*it)->sensorTime();
+    Q_EMIT columnChanged(st.time - mTimeOffset, shared_from_this());
+  }
+}
+
+ModelData_p ModelColumn::get(const timeutil::ptime& time) const
+{
+  return mBuffer->get(SensorTime(mSensor, time + mTimeOffset));
 }

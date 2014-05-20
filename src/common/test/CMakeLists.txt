@@ -17,8 +17,8 @@ ADD_LIBRARY(test_common
 #  CountDataChanged.cc
   FakeKvApp.hh
   FakeKvApp.cc
-  FakeModelAccess.hh
-  FakeModelAccess.cc
+#  FakeModelAccess.hh
+#  FakeModelAccess.cc
   FakeReinserter.hh
   FakeReinserter.cc
   TestHelpers.hh

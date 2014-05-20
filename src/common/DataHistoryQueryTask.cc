@@ -25,6 +25,7 @@ DataHistoryQueryTask::DataHistoryQueryTask(const SensorTime& st, size_t priority
   if (not initMetaType) {
     qRegisterMetaType<SensorTime>("SensorTime");
     qRegisterMetaType<kvDataHistoryValues_v>("kvDataHistoryValues_v");
+    initMetaType = true;
   }
 }
 

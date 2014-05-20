@@ -5,7 +5,7 @@
 
 #include "common/ObsAccess.hh"
 #include "common/TimeBuffer.hh"
-#include "common/ModelAccess.hh"
+#include "common/ModelBuffer.hh"
 
 #include <QtCore/QAbstractTableModel>
 
@@ -59,6 +59,7 @@ private Q_SLOTS:
   void onFetchDataEnd(const ObsData_pv& data);
   void onUpdateDataEnd(const ObsData_pv& data);
   void onDropDataEnd(const SensorTime_v& dropped);
+  void onModelData(const ModelData_pv& mdata);
   
 private:
   void onDataNew(ObsData_p obs);
@@ -79,7 +80,7 @@ private:
 
 private:
   ObsAccess_p mDA;
-  ModelAccess_p mMA;
+  ModelBuffer_p mModelBuffer;
   TimeBuffer_p mObsBuffer;
   ErrorTreeItem_P mRootItem;
   int mHighlightedStation;

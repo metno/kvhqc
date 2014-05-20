@@ -104,7 +104,7 @@ void AcceptRejectButtons::onReject()
   enableButtons();
 }
 
-void AcceptRejectButtons::updateModel(EditAccess_p da, ModelAccessPtr ma, QTableView* table)
+void AcceptRejectButtons::updateModel(EditAccess_p da, ModelAccess_p ma, QTableView* table)
 {
   QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(enableButtons()));
@@ -144,7 +144,7 @@ void AcceptRejectButtons::enableButtons()
           mSelectedColumnType = ORIGINAL;
         else if (dc->type() == ObsColumn::NEW_CORRECTED)
           mSelectedColumnType = CORRECTED;
-      } else if (ModelColumnPtr mc = boost::dynamic_pointer_cast<ModelColumn>(tableModel->getColumn(minCol))) {
+      } else if (ModelColumn_p mc = boost::dynamic_pointer_cast<ModelColumn>(tableModel->getColumn(minCol))) {
         if (mMA)
           mSelectedColumnType = MODEL;
       }

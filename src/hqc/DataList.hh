@@ -52,7 +52,7 @@ protected:
   std::auto_ptr<Ui::DataList> ui;
   std::auto_ptr<DataListModel> mTableModel;
   EditAccess_p mDA;
-  ModelAccessPtr mMA;
+  ModelAccess_p mMA;
 };
 
 #endif // DataList_hh

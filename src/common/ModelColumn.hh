@@ -3,53 +3,56 @@
 #define MODELCOLUMN_HH 1
 
 #include "Code2Text.hh"
-#include "ModelAccess.hh"
+#include "ModelBuffer.hh"
+#include "ModelData.hh"
 #include "ObsColumn.hh"
 
-class ModelColumn : public ObsColumn {
+class ModelAccess;
+HQC_TYPEDEF_P(ModelAccess);
+
+class ModelColumn : public ObsColumn
+{
 public:
-    ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time);
-    ~ModelColumn();
+  ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time);
+  ~ModelColumn();
 
-    void setHeaderShowStation(bool show)
-        { mHeaderShowStation = show; }
+  void setHeaderShowStation(bool show)
+    { mHeaderShowStation = show; }
 
-    virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
-    virtual QVariant data(const timeutil::ptime& time, int role) const;
-    virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
-    virtual QVariant headerData(Qt::Orientation orientation, int role) const;
+  Qt::ItemFlags flags(const timeutil::ptime& time) const;
+  QVariant data(const timeutil::ptime& time, int role) const;
+  bool setData(const timeutil::ptime& time, const QVariant& value, int role);
+  QVariant headerData(Qt::Orientation orientation, int role) const;
 
-    virtual const boost::posix_time::time_duration& timeOffset() const
-        { return mTimeOffset; }
-    void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
-    virtual const Sensor& sensor() const;
-    virtual int type() const
-      { return ObsColumn::MODEL; }
+  const boost::posix_time::time_duration& timeOffset() const
+    { return mTimeOffset; }
 
-    void setCodes(Code2TextCPtr codes);
+  void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
 
-protected:
-    ModelDataPtr getModel(const timeutil::ptime& time) const;
+  const Sensor& sensor() const
+    { return mSensor; }
 
-    float getValue(const timeutil::ptime& time) const
-        { return getValue(getModel(time)); }
+  int type() const
+    { return ObsColumn::MODEL; }
 
-    float getValue(ModelDataPtr mdl) const;
+  void setCodes(Code2TextCPtr codes);
 
-    virtual bool onModelDataChanged(ModelDataPtr obs);
+private Q_SLOTS:
+  void bufferReceived(const ModelData_pv&);
 
-protected:
-    ModelAccessPtr mMA;
-    Sensor mSensor;
-    bool mHeaderShowStation;
-    boost::posix_time::time_duration mTimeOffset;
+private:
+  ModelData_p get(const timeutil::ptime& time) const;
 
-    Code2TextCPtr mCodes;
+private:
+  std::auto_ptr<ModelBuffer> mBuffer;
 
-    typedef std::map<timeutil::ptime, ModelDataPtr> ModelCache_t;
-    mutable ModelCache_t mModelCache;
+  Sensor mSensor;
+  bool mHeaderShowStation;
+  boost::posix_time::time_duration mTimeOffset;
+
+  Code2TextCPtr mCodes;
 };
 
-typedef boost::shared_ptr<ModelColumn> ModelColumnPtr;
+HQC_TYPEDEF_P(ModelColumn);
 
 #endif // MODELCOLUMN_HH

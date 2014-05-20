@@ -19,8 +19,12 @@ std::ostream& operator<<(std::ostream& sql, const Time2Sql& t);
 inline Time2Sql time2sql(const timeutil::ptime& t)
   { return Time2Sql(t); }
 
-void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alias);
+void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alias, bool model_data=false);
 
-void sensors2sql(std::ostream& sql, const Sensor_s& s, const std::string& data_alias);
+void sensors2sql(std::ostream& sql, const Sensor_s& s, const std::string& data_alias, bool model_data=false);
+
+void sensortime2sql(std::ostream& sql, const SensorTime& st, const std::string& table_alias, bool model_data=false);
+
+void sensortimes2sql(std::ostream& sql, const SensorTime_v& s, const std::string& table_alias, bool model_data=false);
 
 #endif // SQLUTIL_HH

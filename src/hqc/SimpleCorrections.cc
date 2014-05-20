@@ -23,7 +23,7 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   : QWidget(parent)
   , ui(new Ui_SingleObservation)
   , mDA(hqcApp->editAccess())
-  , mMA(hqcApp->modelAccess())
+  , mModelBuffer(boost::make_shared<ModelBuffer>(hqcApp->modelAccess()))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -37,6 +37,12 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   mHistoryModel = new DataHistoryTableModel(this);
   ui->tableHistory->setModel(mHistoryModel);
   connect(mHistoryModel, SIGNAL(modelReset()), this, SLOT(onHistoryTableUpdated()));
+
+  // FIXME bad things happen if this is called while the user is
+  // editing the corrected value, or after editing and just before
+  // pressing return
+  connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
+      this, SLOT(update()));
 
   update();
 }
@@ -70,6 +76,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mItemCorrected = ColumnFactory::itemForSensor(mDA, mSensorTime.sensor, ObsColumn::NEW_CORRECTED);
   }
 
+  mModelBuffer->clear();
   if (mDA) {
     METLIBS_LOG_DEBUG("requesting " << mSensorTime);
     mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
@@ -121,7 +128,7 @@ void SimpleCorrections::update()
   METLIBS_LOG_SCOPE();
 
   const Sensor& s = mSensorTime.sensor;
-  ModelDataPtr mdl;
+  ModelData_p mdl;
   ObsData_p obs;
   if (s.valid()) {
     ui->textStation->setText(QString::number(s.stationId));
@@ -151,8 +158,7 @@ void SimpleCorrections::update()
     // maybe the observation is from an old request?
     if (bobs and eq_SensorTime()(bobs->sensorTime(), mSensorTime))
       obs = bobs;
-    if (mMA)
-      mdl = mMA->find(mSensorTime);
+    mdl = mModelBuffer->get(mSensorTime);
   } else {
     ui->textStation->setText("");
     ui->textStation->setToolTip("");

@@ -2,10 +2,13 @@
 #include "AcceptReject.hh"
 
 #include "KvHelpers.hh"
+#include "ModelBuffer.hh"
 #include "ObsHelpers.hh"
-#include "common/Functors.hh"
+#include "Functors.hh"
 
 #include <kvalobs/kvDataOperations.h>
+
+#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.AcceptReject"
 #include "common/ObsLogging.hh"
@@ -76,9 +79,10 @@ void accept_original(EditAccess_p ea, ObsData_p obs)
   ea->storeUpdates(ObsUpdate_pv(1, update));
 }
 
-void accept_model(EditAccess_p ea, ModelAccessPtr mda, ObsData_p obs, bool qc2ok)
+void accept_model(EditAccess_p ea, ModelAccess_p mda, ObsData_p obs, bool qc2ok)
 {
-  ModelDataPtr md = mda->find(obs->sensorTime());
+  ModelBuffer_p buffer = boost::make_shared<ModelBuffer>(mda);
+  ModelData_p md = buffer->getSync(obs->sensorTime());
   if (obs and md) {
     ObsUpdate_p update = ea->createUpdate(obs);
     update->setCorrected(md->value());

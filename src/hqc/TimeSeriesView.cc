@@ -93,7 +93,10 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   initalizePlotOptions();
 
   mDA = hqcApp->editAccess();
-  mMA = hqcApp->modelAccess();
+
+  mModelBuffer = boost::make_shared<ModelBuffer>(hqcApp->modelAccess());
+  connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
+      this, SLOT(updatePlot()));
 }
 
 TimeSeriesView::~TimeSeriesView()
@@ -200,6 +203,8 @@ void TimeSeriesView::doNavigateTo()
     mSensors = Sensor_v(1, st.sensor);
     Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, MAX_LINES*2);
     mOriginalSensors = mSensors;
+
+    mModelBuffer->clear();
   }
   if (changedTime) {
     mTimeLimits = ViewChanges::defaultTimeLimits(st);
@@ -468,12 +473,6 @@ void TimeSeriesView::updateTime()
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(updatePlot()));
   mBusy->setBusy(true);
   mObsBuffer->postRequest(mDA);
-
-  const int whatToPlot = ui->comboWhatToPlot->currentIndex();
-  if (whatToPlot == 1 or whatToPlot == 2) {
-    // FIXME this is really slow sometimes (several seconds)
-    mMA->allData(mSensors, mTimeLimits);
-  }
 }
 
 void TimeSeriesView::updatePlot()
@@ -511,7 +510,7 @@ void TimeSeriesView::updatePlot()
     BOOST_FOREACH(const timeutil::ptime& time, times) {
       const SensorTime st(sensor, time);
       ObsData_p obs;
-      ModelDataPtr mdl;
+      ModelData_p mdl;
 
       float value = 0;
       if (whatToPlot == 0 or whatToPlot == 2) {
@@ -527,7 +526,7 @@ void TimeSeriesView::updatePlot()
       }
 
       if (whatToPlot == 1 or whatToPlot == 2) {
-        mdl = mMA->find(st);
+        mdl = mModelBuffer->get(st);
         if (not mdl)
           continue;
         const float mv = mdl->value();

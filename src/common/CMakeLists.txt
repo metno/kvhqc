@@ -1,21 +1,34 @@
 
 SET(common_SOURCES
   AbstractUpdateListener.cc
+  AcceptRejectButtons.cc
   AcceptReject.cc
+  Authenticator.cc
+  BaseRequest.cc
+  BaseRequest.hh
   CachedParamLimits.cc
+  CachingAccess.cc
+  CachingAccess.hh
+  CachingAccessPrivate.hh
   Code2Text.cc
   ColumnFactory.cc
   DataCodeItem.cc
   DataColumn.cc
   DataControlinfoItem.cc
   DataCorrectedItem.cc
+  DataHistoryQueryTask.cc
   DataItem.cc
   DataListModel.cc
   DataOriginalItem.cc
+  DataQueryTask.cc
   DataRR24Item.cc
   DataValueItem.cc
   DataVxItem.cc
   DianaHelper.cc
+  DistributeUpdates.cc
+  DistributeUpdates.hh
+  EditAccess.cc
+  EditAccess.hh
   FindAllParameters.cc
   FlagChange.cc
   FlagPattern.cc
@@ -26,120 +39,111 @@ SET(common_SOURCES
   HqcDataReinserter.cc
   HqcUserConfig.cc
   identifyUser.cc
+  IndexBuffer.cc
+  IndexBuffer.hh
+  KvalobsAccess.cc
+  KvalobsAccess.hh
+  KvalobsData.cc
+  KvalobsData.hh
   KvalobsModelAccess.cc
-  KvalobsModelData.cc
   KvalobsQueryRunner.cc
+  KvalobsReinserter.cc
+  KvalobsReinserter.hh
   KvalobsUpdate.cc
   KvalobsUpdateListener.cc
   KvHelpers.cc
   KvMetaDataBuffer.cc
-  KvModelAccess.cc
   KvServiceHelper.cc
   ModelAccess.cc
+  ModelBuffer.cc
   ModelColumn.cc
+  ModelData.cc
+  ModelQueryTask.cc
+  ModelRequest.cc
   NavigateHelper.cc
+  NeighborHeader.cc
+  ObsAccept.cc
+  ObsAccept.hh
+  ObsAccess.cc
+  ObsAccess.hh
   ObsColumn.cc
+  ObsData.hh
+  ObsDelegate.cc
+  ObsFilter.cc
+  ObsFilter.hh
   ObsHelpers.cc
   ObsLogging.cc
+  ObsRequest.cc
+  ObsRequest.hh
   ObsTableModel.cc
   ParamIdModel.cc
   QtKvService.cc
+  QueryTaskAccess.cc
+  QueryTaskAccess.hh
+  QueryTask.cc
+  QueryTaskHandler.cc
+  QueryTaskHandler.hh
+  QueryTaskHandlerPrivate.hh
   Sensor.cc
+  SensorChooser.cc
+  SensorHeader.cc
+  SignalRequest.cc
+  SignalRequest.hh
+  SignalTask.cc
+  SimpleBuffer.cc
+  SimpleBuffer.hh
+  SimpleRequest.cc
+  SimpleRequest.hh
+  SingleObsBuffer.cc
+  SingleObsBuffer.hh
+  sqlutil.cc
+  sqlutil.hh
   StationIdCompletion.cc
   StationIdModel.cc
   StationInfoBuffer.cc
   StInfoSysBuffer.cc
-  Tasks.cc
-  TimeSpan.cc
-  TypeIdModel.cc
-
-  QueryTaskHandler.hh
-  QueryTaskHandlerPrivate.hh
-  QueryTaskHandler.cc
-  QueryTaskAccess.hh
-  QueryTaskAccess.cc
-  BaseRequest.hh
-  BaseRequest.cc
-  DistributeUpdates.hh
-  DistributeUpdates.cc
-  EditAccess.hh
-  EditAccess.cc
-  IndexBuffer.hh
-  IndexBuffer.cc
-  KvalobsAccess.hh
-  KvalobsAccess.cc
-  KvalobsData.hh
-  KvalobsData.cc
-  KvalobsReinserter.hh
-  KvalobsReinserter.cc
-  ObsAccept.hh
-  ObsAccept.cc
-  ObsAccess.hh
-  ObsAccess.cc
-  ObsData.hh
-  ObsRequest.hh
-  ObsRequest.cc
-  ObsFilter.cc
-  ObsFilter.hh
-  SignalRequest.hh
-  SignalRequest.cc
-  SimpleBuffer.hh
-  SimpleBuffer.cc
-  SimpleRequest.hh
-  SimpleRequest.cc
-  SingleObsBuffer.hh
-  SingleObsBuffer.cc
-  TimeBuffer.hh
-  TimeBuffer.cc
-  CachingAccess.hh
-  CachingAccessPrivate.hh
-  CachingAccess.cc
-  sqlutil.hh
-  sqlutil.cc
-  SyncRequest.hh
-  SyncRequestPrivate.hh
   SyncRequest.cc
-  WrapRequest.cc
-  QueryTask.cc
-  DataQueryTask.cc
-  DataHistoryQueryTask.cc
-
-  AcceptRejectButtons.cc
-  Authenticator.cc
-  NeighborHeader.cc
-  ObsDelegate.cc
-  SensorChooser.cc
-  SensorHeader.cc
+  SyncRequest.hh
+  SyncTask.cc
+  SyncTask.hh
+  Tasks.cc
+  TimeBuffer.cc
+  TimeBuffer.hh
   TimeHeader.cc
+  TimeSpan.cc
   TimeSpanControl.cc
   ToolInterpolate.cc
+  TypeIdModel.cc
+  WrapRequest.cc
 )
 
 QT4_WRAP_CPP(common_MOC
   AbstractUpdateListener.hh
+  AcceptRejectButtons.hh
+  Authenticator.hh
+  CachingAccessPrivate.hh
   DataColumn.hh
   DataHistoryQueryTask.hh
   DataListModel.hh
   DataQueryTask.hh
   DianaHelper.hh
+  EditAccess.hh
   HqcApplication.hh
+  KvalobsAccess.hh
+  KvalobsModelAccess.hh
   KvalobsUpdateListener.hh
+  ModelBuffer.hh
+  ModelQueryTask.hh
+  ModelRequest.hh
   ObsColumn.hh
+  ObsDelegate.hh
   ObsTableModel.hh
   QtKvService.hh
-
-  CachingAccessPrivate.hh
-  EditAccess.hh
-  KvalobsAccess.hh
   QueryTaskAccess.hh
-  SignalRequest.hh
-  SimpleBuffer.hh
-  SyncRequestPrivate.hh
-
-  AcceptRejectButtons.hh
-  Authenticator.hh
-  ObsDelegate.hh
   SensorChooser.hh
+  SignalRequest.hh
+  SignalTask.hh
+  SimpleBuffer.hh
   TimeSpanControl.hh
   ToolInterpolate.hh
 )

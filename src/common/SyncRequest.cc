@@ -1,65 +1,42 @@
 
 #include "SyncRequest.hh"
-#include "SyncRequestPrivate.hh"
 
-#include <QtCore/QCoreApplication>
+#include "ModelAccess.hh"
+#include "ModelRequest.hh"
+#include "ObsAccess.hh"
+#include "SignalRequest.hh"
+#include "util/Synchronizer.hh"
 
 #include <boost/make_shared.hpp>
 
-#define MILOGGER_CATEGORY "kvhqc.SyncRequest"
-#include "common/ObsLogging.hh"
-
-// ========================================================================
-
-ExecSyncRequest::ExecSyncRequest(ObsRequest_p request)
-{
-  mRequest = boost::dynamic_pointer_cast<SignalRequest>(request);
-  if (not mRequest)
-    mRequest = boost::make_shared<SignalRequest>(request);
-
-  connect(mRequest.get(), SIGNAL(requestCompleted(bool)), this, SLOT(onCompleted(bool)));
-}
-
-// ------------------------------------------------------------------------
-
-SignalRequest_p ExecSyncRequest::exec(ObsAccess_p access)
-{
-  METLIBS_LOG_SCOPE();
-
-  access->postRequest(mRequest);
-
-  QCoreApplication* app = 0;
-  int timeout = 2;
-  while (not semaphore.tryAcquire(1, timeout)) {
-    if (not app) {
-      app = QCoreApplication::instance();
-      if (not app) {
-        METLIBS_LOG_ERROR("no QCoreApplication instance, Qt signal delivery not working");
-        mRequest->completed(true);
-        break;
-      }
-    }
-    app->processEvents(QEventLoop::ExcludeUserInputEvents);
-    if (timeout < 128)
-      timeout *= 2;
-  }
-  
-  METLIBS_LOG_DEBUG(LOGVAL(timeout));
-  return mRequest;
-}
-
-// ------------------------------------------------------------------------
-
-void ExecSyncRequest::onCompleted(bool)
-{
-  METLIBS_LOG_SCOPE();
-  semaphore.release();
-}
-
-// ========================================================================
-
 ObsRequest_p syncRequest(ObsRequest_p request, ObsAccess_p access)
 {
-  ExecSyncRequest esr(request);
-  return esr.exec(access);
+  SignalRequest_p r = boost::dynamic_pointer_cast<SignalRequest>(request);
+  if (not r)
+    r = boost::make_shared<SignalRequest>(request);
+
+  Synchronizer sync;
+  QObject::connect(r.get(), SIGNAL(requestCompleted(bool)), &sync, SLOT(taskDone()));
+
+  access->postRequest(r);
+  sync.waitForSignal();
+  
+  QObject::disconnect(r.get(), SIGNAL(requestCompleted(bool)), &sync, SLOT(taskDone()));
+
+  return r;
+}
+
+//########################################################################
+
+ModelRequest_p syncRequest(ModelRequest_p request, ModelAccess_p access)
+{
+  Synchronizer sync;
+  QObject::connect(request.get(), SIGNAL(completed(bool)), &sync, SLOT(taskDone()));
+
+  access->postRequest(request);
+  sync.waitForSignal();
+  
+  QObject::disconnect(request.get(), SIGNAL(completed(bool)), &sync, SLOT(taskDone()));
+
+  return request;
 }

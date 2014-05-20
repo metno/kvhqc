@@ -1,12 +1,9 @@
 
 #include "KvalobsModelAccess.hh"
 
-#include "KvServiceHelper.hh"
-
-#include <kvcpp/KvGetDataReceiver.h>
-#include <kvcpp/WhichDataHelper.h>
-
-#include <boost/foreach.hpp>
+#include "HqcApplication.hh"
+#include "ModelQueryTask.hh"
+#include "QueryTaskHandler.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
 #include "common/ObsLogging.hh"
@@ -19,144 +16,84 @@ KvalobsModelAccess::~KvalobsModelAccess()
 {
 }
 
-namespace /* anonymous */ {
-struct sensorTimeString {
-  const std::vector<SensorTime>& mSensorTimes;
-  sensorTimeString(const std::vector<SensorTime>& sensorTimes) : mSensorTimes(sensorTimes) { }
-};
-std::ostream& operator<<(std::ostream& out, const sensorTimeString& stst)
+void KvalobsModelAccess::cleanCache()
 {
-  BOOST_FOREACH(const SensorTime& st, stst.mSensorTimes)
-      out << st;
-  return out;
+  mCache.clear();
 }
 
-struct sensorString {
-  const std::vector<Sensor>& mSensors;
-  sensorString(const std::vector<Sensor>& sensors) : mSensors(sensors) { }
-};
-std::ostream& operator<<(std::ostream& out, const sensorString& sst)
-{
-  BOOST_FOREACH(const Sensor& s, sst.mSensors)
-      out << s;
-  return out;
-}
-} // namespace anonymous
-
-ModelAccess::ModelDataSet KvalobsModelAccess::findMany(const std::vector<SensorTime>& sensorTimes)
+void KvalobsModelAccess::postRequest(ModelRequest_p request)
 {
   METLIBS_LOG_SCOPE();
+  mRequests.push_back(request);
 
-  kvservice::WhichDataHelper whichData;
-  bool empty = true;
-  BOOST_FOREACH(const SensorTime& st, sensorTimes) {
-    if (not isFetched(st.sensor.stationId, st.time)) {
-      whichData.addStation(st.sensor.stationId, timeutil::to_miTime(st.time), timeutil::to_miTime(st.time));
-      empty = false;
-    }
-  }
-  
-  if (not empty) {
-    try {
-      std::list<kvalobs::kvModelData> model;
-      if (KvServiceHelper::instance()->getKvModelData(model, whichData)) {
-        BOOST_FOREACH(const SensorTime& st, sensorTimes) {
-          addFetched(st.sensor.stationId, TimeSpan(st.time, st.time));
-        }
-        BOOST_FOREACH(const kvalobs::kvModelData& md, model) {
-          receive(md);
-        }
-      } else {
-        HQC_LOG_ERROR("problem receiving model data for sensors/times " << sensorTimeString(sensorTimes));
-      }
-    } catch (std::exception& e) {
-      HQC_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes)
-          << ", exception is: " << e.what());
-    } catch (...) {
-      HQC_LOG_ERROR("exception while retrieving model data for sensors/times " << sensorTimeString(sensorTimes));
-    }
-  }
-  return KvModelAccess::findMany(sensorTimes);
-}
+  const SensorTime_v& requested = request->sensorTimes();
+  SensorTime_v toQuery;
+  ModelData_pv cached;
+  METLIBS_LOG_DEBUG(LOGVAL(requested.size()));
 
-bool KvalobsModelAccess::isFetched(int stationId, const timeutil::ptime& t) const
-{
-  Fetched_t::const_iterator f = mFetched.find(stationId);
-  if (f == mFetched.end())
-    return false;
-  
-  return boost::icl::contains(f->second, t);
-}
-
-void KvalobsModelAccess::addFetched(int stationId, const TimeSpan& limits)
-{
-  METLIBS_LOG_SCOPE();
-  mFetched[stationId] += boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1());
-  METLIBS_LOG_DEBUG(LOGVAL(stationId) << LOGVAL(mFetched[stationId]));
-}
-
-void KvalobsModelAccess::removeFetched(int stationId, const timeutil::ptime& t)
-{
-  METLIBS_LOG_SCOPE();
-  mFetched[stationId] -= t; //boost::icl::interval<timeutil::ptime>::type(limits.t0(), limits.t1());
-  METLIBS_LOG_DEBUG(LOGVAL(mFetched[stationId]));
-}
-
-ModelAccess::ModelDataSet KvalobsModelAccess::allData(const std::vector<Sensor>& sensors, const TimeSpan& limits)
-{
-  METLIBS_LOG_SCOPE();
-  if (not limits.closed()) {
-    HQC_LOG_ERROR("invalid time: " << LOGVAL(limits.t0()) << LOGVAL(limits.t1()));
-    return ModelDataSet();
-  }
-
-  kvservice::WhichDataHelper whichData;
-  const FetchedTimes_t limits_set(boost::icl::interval<timeutil::ptime>::closed(limits.t0(), limits.t1()));
-  bool empty = true;
-  BOOST_FOREACH(const Sensor& s, sensors) {
-    if (not s.valid()) {
-      HQC_LOG_ERROR("invalid sensor: " << s);
-      continue;
-    }
-    Fetched_t::const_iterator f = mFetched.find(s.stationId);
-    if (f == mFetched.end()) {
-      METLIBS_LOG_DEBUG("request for station " << s.stationId << " time " << limits);
-      whichData.addStation(s.stationId, timeutil::to_miTime(limits.t0()), timeutil::to_miTime(limits.t1()));
-      empty = false;
+  for (SensorTime_v::const_iterator it = requested.begin(); it != requested.end(); ++it) {
+    METLIBS_LOG_DEBUG(LOGVAL(*it));
+    ModelDataCache_t::iterator itC = mCache.find(*it);
+    if (itC != mCache.end()) {
+      if (itC->second)
+        cached.push_back(itC->second);
     } else {
-      FetchedTimes_t fetched_in_limits;
-      boost::icl::add_intersection(fetched_in_limits, limits_set, f->second);
-      const FetchedTimes_t to_fetch = limits_set - fetched_in_limits;
-      BOOST_FOREACH(const FetchedTimes_t::value_type& t, to_fetch) {
-        METLIBS_LOG_DEBUG("request for station " << s.stationId << " time interval " << TimeSpan(t.lower(), t.upper()));
-        whichData.addStation(s.stationId, timeutil::to_miTime(t.lower()), timeutil::to_miTime(t.upper()));
-        empty = false;
-      }
-    }
-  }
-  if (not empty) {
-    try {
-      std::list<kvalobs::kvModelData> model;
-      if (KvServiceHelper::instance()->getKvModelData(model, whichData)) {
-        BOOST_FOREACH(const Sensor& s, sensors) {
-          addFetched(s.stationId, limits);
-        }
-        BOOST_FOREACH(const kvalobs::kvModelData& md, model) {
-          receive(md);
-        }
-      } else {
-        HQC_LOG_ERROR("problem retrieving data for sensors " << sensorString(sensors)
-            << " and time " << limits);
-      }
-    } catch (std::exception& e) {
-      HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
-          << " and time " << limits << ", message is: " << e.what());
-    } catch (...) {
-      HQC_LOG_ERROR("exception while retrieving data for sensors " << sensorString(sensors)
-          << " and time " << limits);
+      toQuery.push_back(*it);
+      // insert null pointer into cache to prevent repeated lookup for missing model values
+      mCache.insert(std::make_pair(*it, ModelData_p()));
     }
   }
 
-  return KvModelAccess::allData(sensors, limits);
+  METLIBS_LOG_DEBUG(LOGVAL(cached.size()) << LOGVAL(toQuery.size()));
+  if (not cached.empty())
+    request->notifyData(cached);
+
+  if (not toQuery.empty()) {
+    ModelQueryTask* task = new ModelQueryTask(toQuery, 10);
+    connect(task, SIGNAL(data(const ModelData_pv&)),
+        request.get(), SIGNAL(data(const ModelData_pv&)));
+    connect(task, SIGNAL(completed(bool)),
+        request.get(), SIGNAL(completed(bool)));
+    connect(task, SIGNAL(data(const ModelData_pv&)),
+        this, SLOT(modelData(const ModelData_pv&)));
+
+    request->setTag(task);
+    hqcApp->kvalobsHandler()->postTask(task);
+  } else {
+    request->notifyCompleted(false);
+  }
 }
 
+void KvalobsModelAccess::dropRequest(ModelRequest_p request)
+{
+  METLIBS_LOG_SCOPE();
+  ModelRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
+  if (it == mRequests.end()) {
+    HQC_LOG_ERROR("dropping unknown model request");
+    return;
+  }
+
+  ModelQueryTask* task = static_cast<ModelQueryTask*>(request->tag());
+  if (task) {
+    // request has no tag if it was fulfilled from the cache
+
+    request->setTag(0);
+    disconnect(task, SIGNAL(data(const ModelData_pv&)),
+        request.get(), SIGNAL(data(const ModelData_pv&)));
+    disconnect(task, SIGNAL(completed(bool)),
+        request.get(), SIGNAL(completed(bool)));
+    disconnect(task, SIGNAL(data(const ModelData_pv&)),
+        this, SLOT(modelData(const ModelData_pv&)));
+    hqcApp->kvalobsHandler()->dropTask(task);
+    task->deleteLater();
+  }
+
+  mRequests.erase(it);
+}
+
+void KvalobsModelAccess::modelData(const ModelData_pv& mdata)
+{
+  METLIBS_LOG_SCOPE();
+  for (ModelData_pv::const_iterator it = mdata.begin(); it != mdata.end(); ++it)
+    mCache[(*it)->sensorTime()] = *it; // overwrite existing cache entry
+}

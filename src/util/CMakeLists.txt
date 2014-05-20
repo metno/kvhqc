@@ -21,6 +21,7 @@ SET(util_SOURCES
   ItemCheckBox.cc
   MiDateTimeEdit.cc
   QSmallTable.hh
+  Synchronizer.cc
   ToolTipStringListModel.cc
   UiHelpers.cc
   VisibleWidget.cc
@@ -35,6 +36,7 @@ QT4_WRAP_CPP(util_MOC
   HideApplyBox.hh
   HintWidget.hh
   MiDateTimeEdit.hh
+  Synchronizer.hh
   VisibleWidget.hh
 )
 

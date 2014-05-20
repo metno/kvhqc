@@ -5,7 +5,7 @@
 #include "AbstractDataView.hh"
 #include "common/ObsAccess.hh"
 #include "common/TimeBuffer.hh"
-#include "common/ModelAccess.hh"
+#include "common/ModelBuffer.hh"
 #include "common/NavigateHelper.hh"
 #include "util/BusyLabel.hh"
 
@@ -66,7 +66,7 @@ private:
   BusyLabel* mBusy;
 
   ObsAccess_p mDA;
-  ModelAccess_p mMA;
+  ModelBuffer_p mModelBuffer;
   SensorTime mSensorTime;
   TimeSpan mTimeLimits, mOriginalTimeLimits;
   Sensor_v mSensors, mOriginalSensors;

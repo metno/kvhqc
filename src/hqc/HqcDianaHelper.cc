@@ -558,7 +558,7 @@ std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, 
   if (obs) {
     corr = obs->corrected();
     if (sp.what != SendPar::CORRECTED) {
-      ModelDataPtr mdl = mMA->find(st);
+      ModelData_p mdl = mMA->find(st);
       if (mdl) {
         const double modelValue = mdl->value();
         if (sp.what == SendPar::MODEL)

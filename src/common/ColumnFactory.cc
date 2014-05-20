@@ -169,11 +169,11 @@ DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeSp
   return DataColumn_p();
 }
 
-ModelColumnPtr columnForSensor(ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
+ModelColumn_p columnForSensor(ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time)
 {
-    ModelColumnPtr mc = boost::make_shared<ModelColumn>(ma, sensor, time);
-    mc->setCodes(codesForParam(sensor.paramId));
-    return mc;
+  ModelColumn_p mc = boost::make_shared<ModelColumn>(ma, sensor, time);
+  mc->setCodes(codesForParam(sensor.paramId));
+  return mc;
 }
 
 } // namespace ColumnFactory

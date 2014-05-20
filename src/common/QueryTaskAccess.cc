@@ -50,7 +50,7 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
   // TODO what to do with requests that are processed in bg thread?
   ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
   if (it == mRequests.end()) {
-    METLIBS_LOG_ERROR("dropping unknown request");
+    HQC_LOG_ERROR("dropping unknown request");
     return;
   }
 

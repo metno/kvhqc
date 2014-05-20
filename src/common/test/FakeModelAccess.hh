@@ -2,14 +2,14 @@
 #ifndef FakeModelAccess_hh
 #define FakeModelAccess_hh 1
 
-#include "KvModelAccess.hh"
+#include "ModelAccess.hh"
 #include "Sensor.hh"
 
 #include <gtest/gtest.h>
 #include <boost/make_shared.hpp>
 #include <string>
 
-class FakeModelAccess : public KvModelAccess {
+class FakeModelAccess : public ModelAccess {
 public:
 
     int insertStation;
@@ -20,9 +20,9 @@ public:
     void insert(const std::string& obstime, float value)
         { insert(insertStation, insertParam, obstime, value); }
 
-    bool erase(ModelDataPtr mdl);
+    bool erase(ModelData_p mdl);
 };
 
-typedef boost::shared_ptr<FakeModelAccess> FakeModelAccessPtr;
+HQC_TYPEDEF_P(FakeModelAccess);
 
 #endif // FakeModelAccess_hh

@@ -27,7 +27,6 @@ DataQueryTask::DataQueryTask(ObsRequest_p request, size_t priority)
 
 QString DataQueryTask::querySql(QString dbversion) const
 {
-
   const Sensor_s& sensors = mRequest->sensors();
   const TimeSpan& time = mRequest->timeSpan();
   ObsFilter_p filter = mRequest->filter();
