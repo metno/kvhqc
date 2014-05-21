@@ -53,7 +53,8 @@ Q_SIGNALS:
 
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
-  virtual int rowOrColumnCount(bool timeDirection) const;
+  virtual int countTimes() const;
+  virtual int countColumns() const;
   virtual bool isTimeOrientation(Qt::Orientation orientation) const;
 
   virtual void beginInsertR(int first, int last);
@@ -84,10 +85,10 @@ protected:
   TimeSpan mTime;
   int mTimeStep; //! time step between rows, in seconds
   timeutil::ptime mTime0; //! start time rounded to timeStep
-  int mRowCount; //! number of rows after rounding
 
 private:
   ObsColumn_pv mColumns;
+  int mTimeCount; //! number of times after rounding
 };
 
 #endif /* OBSTABLEMODEL_HH */

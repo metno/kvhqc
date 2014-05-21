@@ -34,9 +34,11 @@
 
 #include <iosfwd>
 #include <set>
+#include <vector>
 
 typedef timeutil::ptime Time;
 typedef std::set<Time> Time_s;
+typedef std::vector<Time> Time_v;
 
 class TimeSpan {
 public:

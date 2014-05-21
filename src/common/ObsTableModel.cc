@@ -125,33 +125,34 @@ void ObsTableModel::updateTimes()
     const int r = s % mTimeStep;
     mTime0 -= boost::posix_time::seconds(r);
 
-    mRowCount = 1 + (mTime.seconds() / mTimeStep); // integer division
+    mTimeCount = 1 + (mTime.seconds() / mTimeStep); // integer division
     if (r != 0)
-      mRowCount += 1;
+      mTimeCount += 1;
 
-    METLIBS_LOG_DEBUG(LOGVAL(mTime0) << LOGVAL(mRowCount) << LOGVAL(mTimeStep) << LOGVAL(r));
+    METLIBS_LOG_DEBUG(LOGVAL(mTime0) << LOGVAL(mTimeCount) << LOGVAL(mTimeStep) << LOGVAL(r));
   } else {
-    mRowCount = 0;
+    mTimeCount = 0;
   }
 }
 
 int ObsTableModel::rowCount(const QModelIndex&) const
 {
-  return rowOrColumnCount(true);
+  return mTimeInRows ? countTimes() : countColumns();
 }
 
 int ObsTableModel::columnCount(const QModelIndex&) const
 {
-  return rowOrColumnCount(false);
+  return mTimeInRows ? countColumns() : countTimes();
 }
 
-int ObsTableModel::rowOrColumnCount(bool timeDirection) const
+int ObsTableModel::countTimes() const
 {
-  if (timeDirection == mTimeInRows) {
-    return mRowCount;
-  } else {
-    return mColumns.size();
-  }
+  return mTimeCount;
+}
+
+int ObsTableModel::countColumns() const
+{
+  return mColumns.size();
 }
 
 bool ObsTableModel::isTimeOrientation(Qt::Orientation orientation) const

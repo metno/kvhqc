@@ -8,20 +8,24 @@
 class DataListModel : public ObsTableModel
 { Q_OBJECT;
 public:
-  typedef std::vector<Sensor> Sensors_t;
-  typedef std::vector<timeutil::ptime> Times_t;
-
   DataListModel(EditAccess_p eda, const TimeSpan& limits);
   ~DataListModel();
 
-  virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
-  virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
-  virtual timeutil::ptime timeAtRow(int row) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role) const;
+  QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
+  timeutil::ptime timeAtRow(int row) const;
 
   QModelIndexList findIndexes(const SensorTime& st);
 
+  /*! Set station in the center.
+   *  Headers for other stations should show distance to this station.
+   */
   virtual void setCenter(int stationId);
+
   virtual void setTimeStep(int step);
+
+  /*! Enables or disables time filtering by getTimeStep().
+   */
   virtual void setFilterByTimestep(bool fbts);
 
 Q_SIGNALS:
@@ -29,14 +33,18 @@ Q_SIGNALS:
   void changedFilterByTimestep(bool enabled, bool ftbs);
   
 protected:
-  virtual int rowAtTime(const timeutil::ptime& time) const;
-  virtual int rowOrColumnCount(bool timeDirection) const;
-  virtual void updateTimes();
+  int rowAtTime(const timeutil::ptime& time) const;
+  int countTimes() const;
+  void updateTimes();
 
 private:
-  Times_t mTimes;
-  Times_t mTimesFiltered;
+  //! all times from all columns, possibly filtered by getTimeStep()
+  Time_v mTimes;
+
+  //! \see setFilterByTimestep
   bool mFilterByTimestep;
+
+  //! \see setCenter()
   int mCenter;
 };
 

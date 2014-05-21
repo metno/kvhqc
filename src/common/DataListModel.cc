@@ -60,7 +60,7 @@ void DataListModel::updateTimes()
   METLIBS_LOG_SCOPE();
   ObsTableModel::updateTimes();
 
-  std::set<Time> oldTimes(mTimes.begin(), mTimes.end()), newTimes;
+  Time_s newTimes;
   for (int i=0; i<columnCount(QModelIndex()); ++i) {
     ObsColumn_p c = getColumn(i);
     if (c) {
@@ -68,28 +68,27 @@ void DataListModel::updateTimes()
       newTimes.insert(ct.begin(), ct.end());
     }
   }
-
-  mTimes = Times_t(newTimes.begin(), newTimes.end());
+  mTimes.clear();
+  mTimes.insert(mTimes.begin(), newTimes.begin(), newTimes.end());
 
   if (getTimeStep() > 0 and mFilterByTimestep) {
-    mTimesFiltered.clear();
-    std::set<Time> filterTimes, newTimes;
-    BOOST_FOREACH(const timeutil::ptime& t, newTimes) {
+    Time_v filtered;
+    BOOST_FOREACH(const timeutil::ptime& t, mTimes) {
       const int s = (t - mTime0).total_seconds();
       METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(mTime0) << LOGVAL(s) << LOGVAL(mTimeStep));
       if ((s % mTimeStep) == 0)
-        mTimesFiltered.push_back(t);
+        filtered.push_back(t);
     }
-  } else {
-    mTimesFiltered = mTimes;
+    mTimes.swap(filtered);
   }
+  METLIBS_LOG_DEBUG(LOGVAL(mTimes.size()));
 }
 
 timeutil::ptime DataListModel::timeAtRow(int row) const
 {
   if (getTimeStep() > 0 and not mFilterByTimestep)
     return ObsTableModel::timeAtRow(row);
-  return mTimesFiltered.at(row);
+  return mTimes.at(row);
 }
 
 QModelIndexList DataListModel::findIndexes(const SensorTime& st)
@@ -115,17 +114,17 @@ int DataListModel::rowAtTime(const timeutil::ptime& time) const
   if (getTimeStep() > 0 and not mFilterByTimestep)
     return ObsTableModel::rowAtTime(time);
 
-  Times_t::const_iterator it = std::lower_bound(mTimesFiltered.begin(), mTimesFiltered.end(), time);
+  Time_v::const_iterator it = std::lower_bound(mTimes.begin(), mTimes.end(), time);
   if (it == mTimes.end() or *it != time)
     return -1;
-  return (it - mTimesFiltered.begin());
+  return (it - mTimes.begin());
 }
 
-int DataListModel::rowOrColumnCount(bool timeDirection) const
+int DataListModel::countTimes() const
 {
-  if (timeDirection == mTimeInRows and not (getTimeStep() > 0 and not mFilterByTimestep))
-    return mTimesFiltered.size();
-  return ObsTableModel::rowOrColumnCount(timeDirection);
+  if (getTimeStep() > 0 and not mFilterByTimestep)
+    return ObsTableModel::countTimes();
+  return mTimes.size();
 }
 
 QVariant DataListModel::headerData(int section, Qt::Orientation orientation, int role) const
