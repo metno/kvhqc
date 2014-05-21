@@ -137,7 +137,7 @@
         <translation>Beschreibung</translation>
     </message>
     <message>
-        <location filename="ChecksTableModel.cc" line="98"/>
+        <location filename="ChecksTableModel.cc" line="103"/>
         <source>neighbors: </source>
         <translation>Nachbarn: </translation>
     </message>
@@ -218,6 +218,39 @@
         <location filename="../common/DataVxItem.cc" line="350"/>
         <source>original</source>
         <translation>original</translation>
+    </message>
+</context>
+<context>
+    <name>DataHistoryTableModel</name>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="22"/>
+        <source>Mod.time</source>
+        <translation>Änd.zeit</translation>
+    </message>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="23"/>
+        <source>Corr</source>
+        <translation>Korr</translation>
+    </message>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="24"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="25"/>
+        <source>Checks</source>
+        <translation>Checks</translation>
+    </message>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="29"/>
+        <source>Modificationtime</source>
+        <translation>Änderungszeitpunkt</translation>
+    </message>
+    <message>
+        <location filename="DataHistoryTableModel.cc" line="30"/>
+        <source>Corrected value</source>
+        <translation>Korrigierter Wert</translation>
     </message>
 </context>
 <context>
@@ -962,7 +995,7 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
     <message>
         <location filename="../errorlist/error_search_dialog.ui" line="127"/>
         <source>Recent</source>
-        <translation>Verlauf</translation>
+        <translation>Kürzlich</translation>
     </message>
     <message>
         <location filename="../errorlist/error_search_dialog.ui" line="134"/>
@@ -1263,43 +1296,43 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../common/HqcApplication.cc" line="100"/>
+        <location filename="../common/HqcApplication.cc" line="107"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Systemdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="111"/>
+        <location filename="../common/HqcApplication.cc" line="118"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Umgebungsvariable $HOME leer; bitte überprüfen Sie die Einstellungen Ihres Computers</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="119"/>
+        <location filename="../common/HqcApplication.cc" line="126"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Konfigurationsdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="134"/>
+        <location filename="../common/HqcApplication.cc" line="141"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kann nicht auf kvalobs SQL Datenbank zugreifen; bitte prüfen Sie die HQC-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="266"/>
-        <location filename="../common/HqcApplication.cc" line="291"/>
+        <location filename="../common/HqcApplication.cc" line="239"/>
+        <location filename="../common/HqcApplication.cc" line="264"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="268"/>
+        <location filename="../common/HqcApplication.cc" line="241"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Ein schwerwiegender Fehler ist aufgetreten. Sie sollten HQC neu starten und den Fehler melden.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="312"/>
+        <location filename="../common/HqcApplication.cc" line="285"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="313"/>
+        <location filename="../common/HqcApplication.cc" line="286"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Datenbank nicht benutzt werden kann.</translation>
     </message>
@@ -1792,7 +1825,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation>&amp;Springen</translation>
     </message>
     <message>
-        <location filename="JumpToObservation.cc" line="64"/>
+        <location filename="JumpToObservation.cc" line="65"/>
         <source>No such observation found.</source>
         <translation>Observation nicht gefunden.</translation>
     </message>
@@ -2086,148 +2119,164 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>SimpleCorrections</name>
     <message>
-        <location filename="simplecorrections.ui" line="20"/>
-        <source>Simple Corrections</source>
-        <translation>Einfache Änderungen</translation>
+        <location filename="SimpleCorrections.cc" line="179"/>
+        <source>tbtime: %1</source>
+        <translation>tbtime: %1</translation>
+    </message>
+</context>
+<context>
+    <name>SingleObservation</name>
+    <message>
+        <location filename="singleobservation.ui" line="14"/>
+        <source>Single Observation</source>
+        <translation>Einzelne Messung</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="51"/>
+        <location filename="singleobservation.ui" line="30"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="86"/>
+        <location filename="singleobservation.ui" line="70"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="123"/>
+        <location filename="singleobservation.ui" line="107"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="139"/>
+        <location filename="singleobservation.ui" line="123"/>
         <source>S:</source>
         <translation>S:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="176"/>
+        <location filename="singleobservation.ui" line="160"/>
         <source>Sensor Number</source>
         <translation>Sensor-Nummer</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="202"/>
+        <location filename="singleobservation.ui" line="176"/>
         <source>Type:</source>
         <translation>Typ:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="272"/>
-        <source>Obstime:</source>
-        <translation>Obstime:</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="317"/>
+        <location filename="singleobservation.ui" line="226"/>
         <source>Param:</source>
         <translation>Param:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="379"/>
-        <source>Flags:</source>
-        <translation>Flags:</translation>
+        <location filename="singleobservation.ui" line="276"/>
+        <source>Obstime:</source>
+        <translation>Obszeit:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="432"/>
+        <location filename="singleobservation.ui" line="313"/>
         <source>Orig:</source>
         <translation>Orig:</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="483"/>
-        <source>Model:</source>
-        <translation>Modell:</translation>
+        <location filename="singleobservation.ui" line="354"/>
+        <source>Accept the original value</source>
+        <translation>Originalwert akzeptieren</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="547"/>
-        <source>Edit</source>
-        <translation>Änderung</translation>
+        <location filename="singleobservation.ui" line="357"/>
+        <location filename="singleobservation.ui" line="511"/>
+        <location filename="singleobservation.ui" line="604"/>
+        <source>Acc</source>
+        <translation>Akz</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="579"/>
-        <source>Corrected:</source>
-        <translation>Korrigiert:</translation>
+        <location filename="singleobservation.ui" line="363"/>
+        <source>Ctrl+G</source>
+        <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="simplecorrections.ui" line="616"/>
-        <location filename="simplecorrections.ui" line="700"/>
-        <source>Accept</source>
-        <translation>Akzeptieren</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="626"/>
-        <source>Reject</source>
-        <translation>Verwerfen</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="636"/>
-        <source>no QC2:</source>
-        <translation>kein QC2:</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="643"/>
-        <source>Accept corrected value without permitting QC2 to override.</source>
-        <translation>Korrigierten Wert akzeptieren ohne dass QC2 überschreiben darf.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="646"/>
-        <location filename="simplecorrections.ui" line="683"/>
-        <source>Corr.</source>
-        <translation>Korr.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="653"/>
-        <source>Accept original value without permitting QC2 to override.</source>
-        <translation>Original-Wert akzeptieren ohne dass QC2 überschreiben darf.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="656"/>
-        <source>Orig.</source>
-        <translation>Orig.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="663"/>
-        <source>Reject without permitting QC2 to override.</source>
-        <translation>Verwerfen ohne dass QC2 überschreiben darf.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="666"/>
-        <location filename="simplecorrections.ui" line="693"/>
-        <source>Rej.</source>
-        <translation>Verw.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="680"/>
-        <source>Accept corrected value and allow QC2 to override.</source>
-        <translation>Korrigierten Wert akzeptieren, QC2 darf überschreiben.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="690"/>
-        <source>Reject and allow QC2 to override.</source>
-        <oldsource>Accept original value and allow QC2 to override.</oldsource>
-        <translation>Verwerfen, QC2 darf überschreiben.</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="673"/>
-        <source>QC2 ok:</source>
-        <translation>QC2 erlaubt:</translation>
-    </message>
-    <message>
-        <location filename="simplecorrections.ui" line="732"/>
+        <location filename="singleobservation.ui" line="389"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="SimpleCorrections.cc" line="206"/>
-        <source>tbtime: %1</source>
-        <translation>tbtime: %1</translation>
+        <location filename="singleobservation.ui" line="436"/>
+        <source>History</source>
+        <translation>Verlauf</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="467"/>
+        <source>Model:</source>
+        <translation>Modell:</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="508"/>
+        <source>Accept the model value</source>
+        <translation>Modellwert akzeptieren</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="517"/>
+        <source>Ctrl+H</source>
+        <translation>Ctrl+H</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="524"/>
+        <source>Flags:</source>
+        <translation>Flags:</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="559"/>
+        <source>&amp;Corr:</source>
+        <translation>&amp;Korr:</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="585"/>
+        <source>Start an editor for this observation</source>
+        <translation>Editor für diese Messung öffnen</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="588"/>
+        <source>Edit</source>
+        <translation>Edit</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="594"/>
+        <source>Ctrl+E</source>
+        <translation>Ctrl+E</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="601"/>
+        <source>Accept the corrected value</source>
+        <translation>Korrigierten Wert akzeptieren</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="610"/>
+        <source>Ctrl+J</source>
+        <translation>Ctrl+J</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="617"/>
+        <source>Allow QC2 to override</source>
+        <translation>QC2 darf überschreiben</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="620"/>
+        <source>QC&amp;2</source>
+        <translation>QC&amp;2</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="627"/>
+        <source>Reject the observation</source>
+        <translation>Messung verwerfen</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="630"/>
+        <source>Rej</source>
+        <translation>Rej</translation>
+    </message>
+    <message>
+        <location filename="singleobservation.ui" line="636"/>
+        <source>Ctrl+K</source>
+        <translation>Ctrl+K</translation>
     </message>
 </context>
 <context>
@@ -2346,37 +2395,37 @@ Sie benutzen HQC Version %1.</translation>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="23"/>
         <source>Stationid</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationid</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="24"/>
         <source>Obstime</source>
-        <translation type="unfinished">Obszeit</translation>
+        <translation>Obszeit</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="25"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>Original</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="26"/>
         <source>Paramid</source>
-        <translation type="unfinished"></translation>
+        <translation>Paramid</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="27"/>
         <source>ParamName</source>
-        <translation type="unfinished"></translation>
+        <translation>Param-Name</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="28"/>
         <source>Tbtime</source>
-        <translation type="unfinished"></translation>
+        <translation>Tbtime</translation>
     </message>
     <message>
         <location filename="../textdata/TextdataTable.cc" line="29"/>
         <source>Typeid</source>
-        <translation type="unfinished"></translation>
+        <translation>Typeid</translation>
     </message>
 </context>
 <context>
@@ -2494,39 +2543,39 @@ Sie benutzen HQC Version %1.</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="60"/>
-        <location filename="TimeSeriesView.cc" line="188"/>
+        <location filename="TimeSeriesView.cc" line="191"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="61"/>
-        <location filename="TimeSeriesView.cc" line="189"/>
+        <location filename="TimeSeriesView.cc" line="192"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="190"/>
+        <location filename="TimeSeriesView.cc" line="193"/>
         <source>Difference</source>
         <translation>Differenz</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="69"/>
-        <location filename="TimeSeriesView.cc" line="192"/>
+        <location filename="TimeSeriesView.cc" line="195"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Neu…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="70"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="196"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Entfernen…</translation>
     </message>
     <message>
         <location filename="TimeSeriesView.cc" line="71"/>
-        <location filename="TimeSeriesView.cc" line="194"/>
+        <location filename="TimeSeriesView.cc" line="197"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Linien zurücksetzen</translation>
@@ -2538,7 +2587,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="143"/>
+        <location filename="TimeSeriesView.cc" line="146"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>

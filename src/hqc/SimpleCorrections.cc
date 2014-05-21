@@ -38,7 +38,7 @@ SimpleCorrections::SimpleCorrections(QWidget* parent)
   ui->tableHistory->setModel(mHistoryModel);
   connect(mHistoryModel, SIGNAL(modelReset()), this, SLOT(onHistoryTableUpdated()));
 
-  // FIXME bad things happen if this is called while the user is
+  // FIXME bad things happen if this slot is called while the user is
   // editing the corrected value, or after editing and just before
   // pressing return
   connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
@@ -240,6 +240,13 @@ void SimpleCorrections::enableEditing()
   ui->buttonAcceptOriginal   ->setEnabled((p & AcceptReject::CAN_ACCEPT_ORIGINAL) != 0);
   ui->buttonAcceptCorrected   ->setEnabled((p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0);
 
+  bool enableAcceptModel = (p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
+  if (enableAcceptModel) {
+    ModelData_p mdl = mModelBuffer->get(mSensorTime);
+    enableAcceptModel = mdl;
+  }
+  ui->buttonAcceptModel->setEnabled(enableAcceptModel);
+
   ui->comboCorrected->setEnabled((p & AcceptReject::CAN_CORRECT) != 0);
 }
 
@@ -265,6 +272,9 @@ void SimpleCorrections::onAcceptCorrected()
 
 void SimpleCorrections::onAcceptModel()
 {
+  mDA->newVersion();
+  if (mObsBuffer->get())
+    AcceptReject::accept_model(mDA, hqcApp->modelAccess(), mObsBuffer->get(), ui->checkQC2->isChecked());
 }
 
 void SimpleCorrections::onReject()
