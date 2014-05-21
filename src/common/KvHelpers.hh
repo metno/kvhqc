@@ -106,6 +106,8 @@ QString paramInfo(int paramId);
 QString typeInfo(int typeId);
 QString stationInfo(int stationId);
 
+QString sensorTimeToString(const SensorTime& st);
+SensorTime sensorTimeFromString(const QString& s);
 } // namespace Helpers
 
 // ########################################################################

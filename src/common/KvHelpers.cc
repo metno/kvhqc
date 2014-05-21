@@ -472,4 +472,39 @@ QString stationInfo(int stationId)
   }
 }
 
+QString sensorTimeToString(const SensorTime& st)
+{
+  const Sensor& s = st.sensor;
+  return QString("stationid=%1;level=%2;sensornr=%3;typeid=%4;paramid=%5;time=%6;")
+      .arg(s.stationId).arg(s.level).arg(s.sensor).arg(s.typeId).arg(s.paramId)
+      .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time)));
+}
+
+SensorTime sensorTimeFromString(const QString& s)
+{
+  SensorTime st;
+  const QStringList parts = s.split(";", QString::SkipEmptyParts);
+  for (int i=0; i<parts.size(); ++i) {
+    const QString& p = parts.at(i);
+    int eq = p.indexOf("=");
+    const QString key = p.left(eq);
+    const QString value = p.mid(eq+1);
+    if (key == "stationid")
+      st.sensor.stationId = value.toInt();
+    else if (key == "level")
+      st.sensor.level = value.toInt();
+    else if (key == "sensornr")
+      st.sensor.sensor = value.toInt();
+    else if (key == "typeid")
+      st.sensor.typeId = value.toInt();
+    else if (key == "paramid")
+      st.sensor.paramId = value.toInt();
+    else if (key == "paramid")
+      st.sensor.paramId = value.toInt();
+    else if (key == "time")
+      st.time = timeutil::from_iso_extended_string(value.toStdString());
+  }
+  return st;
+}
+
 } // namespace Helpers

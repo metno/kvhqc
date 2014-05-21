@@ -279,6 +279,7 @@ void SearchWindow::writeSettings()
   settings.endGroup();
 
   mErrorsView->saveSettings(settings);
+  mNavigationHistory->saveSettings(settings);
 }
 
 void SearchWindow::readSettings()
@@ -296,6 +297,7 @@ void SearchWindow::readSettings()
   settings.endGroup();
 
   mErrorsView->restoreSettings(settings);
+  mNavigationHistory->restoreSettings(settings);
 }
 
 QSplitter* SearchWindow::splitterDataSearch() const

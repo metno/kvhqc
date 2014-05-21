@@ -8,6 +8,7 @@
 #include <QWidget>
 
 class QItemSelection;
+class QSettings;
 
 class JumpToObservation;
 class NavigationHistoryModel;
@@ -19,6 +20,9 @@ class NavigationHistory : public QWidget
 
 public:
   NavigationHistory(QWidget* parent=0);
+
+  void saveSettings(QSettings& settings);
+  void restoreSettings(QSettings& settings);
 
 public Q_SLOTS:
   void navigateTo(const SensorTime& st);

@@ -2,19 +2,37 @@
 #include "NavigationHistory.hh"
 
 #include "JumpToObservation.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 
 #include <QApplication>
 #include <QAbstractTableModel>
 #include <QHeaderView>
+#include <QtCore/QSettings>
 
 #include "ui_navigationhistory.h"
+
+#define MILOGGER_CATEGORY "kvhqc.NavigationHistory"
+#include "common/ObsLogging.hh"
+
+namespace /* anonymous */ {
+const char QSETTINGS_GROUP[] = "navigationhistory";
+const char QSETTINGS_RECENT_MAX[] = "recent_max";
+const char QSETTINGS_RECENT[] = "recent_%1";
+
+QString recentKey(int i)
+{
+  return QString(QSETTINGS_RECENT).arg(i);
+}
+} // anonymous namespace
+
+// ########################################################################
 
 class NavigationHistoryModel : public QAbstractTableModel
 {
 public:
   NavigationHistoryModel(QObject* parent=0)
-    : QAbstractTableModel(parent) { }
+    : QAbstractTableModel(parent), mMaximumSize(100) { }
 
   enum COLUMNS {
     COL_STATIONID = 0,
@@ -27,21 +45,34 @@ public:
   };
 
   void clear();
-  QModelIndex add(const SensorTime& st);
+  void set(const SensorTime_v& history);
   const SensorTime& get(int row) const
     { return mHistory.at(row); }
+  int size() const
+    { return mHistory.size(); }
+
+  QModelIndex add(const SensorTime& st);
 
   int rowCount(const QModelIndex&) const
-    { return mHistory.size(); }
+    { return size(); }
 
   int columnCount(const QModelIndex&) const
     { return NCOLUMNS; }
+
+  void setMaximumSize(int maxi)
+    { mMaximumSize = std::max(3, maxi); trim(); }
+
+  int maximumSize() const
+    { return mMaximumSize; }
+
+  void trim();
 
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;
   QVariant data(const QModelIndex& index, int role) const;
 
 private:
   SensorTime_v mHistory;
+  size_t mMaximumSize;
 };
 
 namespace {
@@ -118,8 +149,31 @@ QModelIndex NavigationHistoryModel::add(const SensorTime& st)
     beginInsertRows(QModelIndex(), row, row);
     mHistory.push_back(st);
     endInsertRows();
+    if (mHistory.size() > mMaximumSize) {
+      beginRemoveRows(QModelIndex(), 0, 0);
+      mHistory.erase(mHistory.begin());
+      endRemoveRows();
+    }
   }
   return createIndex(0, row);
+}
+
+void NavigationHistoryModel::trim()
+{
+  const int tooMuch = size() - mMaximumSize;
+  if (tooMuch <= 0)
+    return;
+
+  beginRemoveRows(QModelIndex(), 0, tooMuch-1);
+  mHistory.erase(mHistory.begin(), mHistory.begin() + tooMuch);
+  endRemoveRows();
+}
+
+void NavigationHistoryModel::set(const SensorTime_v& history)
+{
+  beginResetModel();
+  mHistory = history;
+  endResetModel();
 }
 
 // ########################################################################
@@ -198,4 +252,39 @@ void NavigationHistory::onClear()
 {
   mNavigate.invalidate();
   model()->clear();
+}
+
+void NavigationHistory::saveSettings(QSettings& settings)
+{
+  settings.beginGroup(QSETTINGS_GROUP);
+  NavigationHistoryModel* m = model();
+  for (int i = 0; true; ++i) {
+    const QString key = recentKey(i);
+    if (i < m->size())
+      settings.setValue(key, Helpers::sensorTimeToString(m->get(i)));
+    else if (settings.contains(key))
+      settings.remove(key);
+    else
+      break;
+  }
+  settings.endGroup();
+}
+
+void NavigationHistory::restoreSettings(QSettings& settings)
+{
+  METLIBS_LOG_SCOPE();
+  settings.beginGroup(QSETTINGS_GROUP);
+  SensorTime_v history;
+  for (int i = 0; true; ++i) {
+    const QVariant value = settings.value(recentKey(i));
+    if (not value.isValid())
+      break;
+    const SensorTime st = Helpers::sensorTimeFromString(value.toString());
+    METLIBS_LOG_DEBUG(LOGVAL(i) << LOGVAL(st));
+    if (st.valid())
+      history.push_back(st);
+  }
+  settings.endGroup();
+
+  model()->set(history);
 }
