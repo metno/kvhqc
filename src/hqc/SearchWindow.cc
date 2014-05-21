@@ -67,6 +67,8 @@
 #include "missing/MissingView.hh"
 #endif // ENABLE_MISSINGOBS
 
+#include "StationDataList.hh"
+
 #ifdef ENABLE_SIMPLECORRECTIONS
 #include "SimpleCorrections.hh"
 #endif // ENABLE_SIMPLECORRECTIONS
@@ -168,6 +170,11 @@ void SearchWindow::setupDataTabs()
   mSplitterDataPlot->addWidget(mAutoDataList);
   mSplitterDataPlot->addWidget(mTimeSeriesView);
 
+  mStationData = new StationDataList(mTabsData);
+  connect(mStationData, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
+  addTab(mStationData, tr("Ctrl+2", "Station data tab shortcut"));
+
 #ifdef ENABLE_SIMPLECORRECTIONS
   mCorrections = new SimpleCorrections(mTabsData);
   addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));
@@ -232,14 +239,17 @@ void SearchWindow::navigateTo(const SensorTime& st)
 #ifdef ENABLE_ERRORLIST
   mErrorsView->navigateTo(st);
 #endif
-#ifdef ENABLE_SIMPLECORRECTIONS
-  mCorrections->navigateTo(st);
-#endif
 
   mNavigationHistory->navigateTo(st);
 
   mAutoDataList->navigateTo(st);
   mTimeSeriesView->navigateTo(st);
+
+  mStationData->navigateTo(st);
+
+#ifdef ENABLE_SIMPLECORRECTIONS
+  mCorrections->navigateTo(st);
+#endif
 }
 
 void SearchWindow::activateTab(QTabWidget* tabs, int index)

@@ -2,7 +2,7 @@
 #ifndef AutoDataList_hh
 #define AutoDataList_hh 1
 
-#include "DataList.hh"
+#include "DynamicDataList.hh"
 #include "common/ObsColumn.hh"
 
 class QPushButton;
@@ -10,7 +10,7 @@ class QDomElement;
 
 // ------------------------------------------------------------------------
 
-class AutoDataList : public DataList
+class AutoDataList : public DynamicDataList
 { Q_OBJECT
 public:
   AutoDataList(QWidget* parent=0);
@@ -33,12 +33,13 @@ private:
   typedef std::vector<Column> Columns_t;
 
 protected:
-  virtual void changeEvent(QEvent *event);
-  virtual void doNavigateTo();
+  DataListModel* makeModel();
+  std::string viewType() const;
+  void changes(QDomElement& doc_changes);
+  void replay(const QDomElement& doc_changes);
+  void retranslateUi();
 
 private Q_SLOTS:
-  void onEarlier();
-  void onLater();
   void onHorizontalHeaderContextMenu(const QPoint& pos);
   void onHorizontalHeaderSectionMoved(int logicalIndex, int oldVisualIndex, int newVisualIndex);
   void onActionAddColumn();
@@ -49,11 +50,7 @@ private Q_SLOTS:
 private:
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
-  void makeModel();
   ObsColumn_p makeColumn(const Column& c);
-  std::string changes();
-  void replay(const std::string& changes);
-  void storeChanges();
   void generateColumns();
 
 private:
@@ -62,13 +59,8 @@ private:
   QAction* mColumnRemove;
   QAction* mColumnReset;
   QPushButton* mButtonColumns;
-  QPushButton* mButtonEarlier;
-  QPushButton* mButtonLater;
 
-  TimeSpan mTimeLimits, mOriginalTimeLimits;
   Columns_t mColumns,    mOriginalColumns;
-
-  SensorTime mStoreSensorTime;
 };
 
 #endif // AutoDataList_hh

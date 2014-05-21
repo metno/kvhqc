@@ -65,6 +65,7 @@ class KvalobsModelAccess;
 class ListDialog;
 class SensorTime;
 class SimpleCorrections;
+class StationDataList;
 class TimeSeriesView;
 
 #ifdef ENABLE_ERRORLIST
@@ -132,6 +133,7 @@ private:
 #endif
   NavigationHistory* mNavigationHistory;
 
+  StationDataList* mStationData;
 #ifdef ENABLE_SIMPLECORRECTIONS
   SimpleCorrections* mCorrections;
 #endif

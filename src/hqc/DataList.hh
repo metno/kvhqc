@@ -41,8 +41,8 @@ private Q_SLOTS:
 
 protected:
   void updateModel(DataListModel* model);
-  virtual void doNavigateTo();
-  virtual void retranslateUi();
+  void doNavigateTo();
+  void retranslateUi();
 
 private:
   void addTimeStepItem(int step);

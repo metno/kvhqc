@@ -36,6 +36,7 @@ INSTALL(FILES
   images/singleobservation.svg
   images/timeseries.svg
   images/undo.svg
+  images/weatherstation.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

@@ -99,6 +99,7 @@ void DataList::retranslateUi()
     const int step = ui->comboTimeStep->itemData(i).toInt();
     ui->comboTimeStep->setItemText(i, labelForStep(step));
   }
+  VisibleWidget::retranslateUi();
 }
 
 void DataList::doNavigateTo()

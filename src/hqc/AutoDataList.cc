@@ -2,7 +2,6 @@
 #include "AutoDataList.hh"
 
 #include "DataListAddColumn.hh"
-#include "ViewChanges.hh"
 
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
@@ -51,7 +50,7 @@ struct AutoDataList::lt_Column : public std::binary_function<Column, Column, boo
 
 
 AutoDataList::AutoDataList(QWidget* parent)
-  : DataList(parent)
+  : DynamicDataList(parent)
 {
   mColumnMenu = new QMenu(this);
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
@@ -66,16 +65,6 @@ AutoDataList::AutoDataList(QWidget* parent)
   mButtonColumns->setMenu(mColumnMenu);
   ui->layoutButtons->addWidget(mButtonColumns);
 
-  mButtonEarlier = new QPushButton("+", this);
-  mButtonEarlier->setToolTip(tr("Earlier"));
-  connect(mButtonEarlier, SIGNAL(clicked()), this, SLOT(onEarlier()));
-  ui->table->addScrollBarWidget(mButtonEarlier, Qt::AlignTop);
-
-  mButtonLater = new QPushButton("+", this);
-  mButtonLater->setToolTip(tr("Later"));
-  connect(mButtonLater, SIGNAL(clicked()), this, SLOT(onLater()));
-  ui->table->addScrollBarWidget(mButtonLater, Qt::AlignBottom);
-
   ui->table->horizontalHeader()->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(ui->table->horizontalHeader(), SIGNAL(customContextMenuRequested(const QPoint&)),
       this, SLOT(onHorizontalHeaderContextMenu(const QPoint&)));
@@ -85,45 +74,18 @@ AutoDataList::AutoDataList(QWidget* parent)
 
 AutoDataList::~AutoDataList()
 {
+  // cannot be called from ~DynamicDataList as it calls virtual methods
   storeChanges();
 }
 
-void AutoDataList::changeEvent(QEvent *event)
+void AutoDataList::retranslateUi()
 {
-  if (event->type() == QEvent::LanguageChange) {
-    mColumnAdd->setText(tr("Add column..."));
-    mColumnRemove->setText(tr("Remove column"));
-    mColumnReset->setText(tr("Reset columns"));
+  mColumnAdd->setText(tr("Add column..."));
+  mColumnRemove->setText(tr("Remove column"));
+  mColumnReset->setText(tr("Reset columns"));
+  mButtonColumns->setText(tr("Columns"));
 
-    mButtonColumns->setText(tr("Columns"));
-    mButtonEarlier->setToolTip(tr("Earlier"));
-    mButtonLater->setToolTip(tr("Later"));
-  }
-  DataList::changeEvent(event);
-}
-
-void AutoDataList::doNavigateTo()
-{
-  METLIBS_LOG_TIME();
-  const SensorTime& cst = currentSensorTime();
-
-  // updateColumns === need to update related parameters and neighbor list
-  const bool updateColumns = (not mStoreSensorTime.valid()
-      or not eq_Sensor()(mStoreSensorTime.sensor, cst.sensor));
-
-  if (updateColumns or not mTableModel.get() or mTableModel->findIndexes(cst).empty()) {
-    if (updateColumns)
-      storeChanges();
-
-    mTimeLimits = ViewChanges::defaultTimeLimits(cst);
-    mOriginalTimeLimits = mTimeLimits;
-    if (updateColumns) {
-      generateColumns();
-      replay(ViewChanges::fetch(cst.sensor, VIEW_TYPE, ID));
-    }
-    makeModel();
-  }
-  DataList::doNavigateTo();
+  DynamicDataList::retranslateUi();
 }
 
 void AutoDataList::generateColumns()
@@ -131,7 +93,7 @@ void AutoDataList::generateColumns()
   METLIBS_LOG_SCOPE();
   mColumns = Columns_t();
   
-  const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, mTimeLimits, VIEW_TYPE);
+  const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE);
   BOOST_FOREACH(const Sensor& s, sensors) {
     Column c;
     c.sensor = s;
@@ -147,19 +109,20 @@ void AutoDataList::generateColumns()
   mOriginalColumns = mColumns;
 }
 
-void AutoDataList::makeModel()
+DataListModel* AutoDataList::makeModel()
 {
   METLIBS_LOG_SCOPE();
   //BusyIndicator busy;
-  std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, mTimeLimits));
+  std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, timeSpan()));
   BOOST_FOREACH(const Column& c, mColumns) {
     ObsColumn_p oc = makeColumn(c);
     if (oc)
       newModel->addColumn(oc);
   }
   newModel->setCenter(currentSensorTime().sensor.stationId);
-  updateModel(newModel.release());
   mColumnAdd->setEnabled(true);
+
+  return newModel.release();
 }
 
 ObsColumn_p AutoDataList::makeColumn(const Column& c)
@@ -167,7 +130,7 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
   boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
 
   if (c.type == MODEL) {
-    ModelColumn_p mc = ColumnFactory::columnForSensor(mMA, c.sensor, mTimeLimits);
+    ModelColumn_p mc = ColumnFactory::columnForSensor(mMA, c.sensor, timeSpan());
     if (mc and c.timeOffset != 0)
       mc->setTimeOffset(boost::posix_time::hours(c.timeOffset));
     return mc;
@@ -177,19 +140,11 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
       cdt = ObsColumn::ORIGINAL;
     else if (c.type == FLAGS)
       cdt = ObsColumn::NEW_CONTROLINFO;
-    DataColumn_p dc = ColumnFactory::columnForSensor(mDA, c.sensor, mTimeLimits, cdt);
+    DataColumn_p dc = ColumnFactory::columnForSensor(mDA, c.sensor, timeSpan(), cdt);
     if (dc and c.timeOffset != 0)
       dc->setTimeOffset(boost::posix_time::hours(c.timeOffset));
     return dc;
   }
-}
-
-void AutoDataList::storeChanges()
-{
-  METLIBS_LOG_SCOPE();
-  if (mStoreSensorTime.valid())
-    ViewChanges::store(mStoreSensorTime.sensor, VIEW_TYPE, ID, changes());
-  mStoreSensorTime = currentSensorTime();
 }
 
 namespace /* anonymous */ {
@@ -201,15 +156,15 @@ static const char C_ATTR_LEVEL[]     = "level";
 static const char C_ATTR_CTYPE[]     = "ctype";
 static const char C_ATTR_TOFFSET[]   = "timeoffset";
 
-static const char T_ATTR_START[] = "start";
-static const char T_ATTR_END[]   = "end";
-
-static const char E_TAG_CHANGES[] = "changes";
 static const char E_TAG_COLUMNS[] = "columns";
 static const char E_TAG_REMOVED[] = "removed";
 static const char E_TAG_COLUMN[]  = "column";
-static const char E_TAG_TSHIFT[]  = "timeshift";
 } // anonymous namespace
+
+std::string AutoDataList::viewType() const
+{
+  return VIEW_TYPE;
+}
 
 void AutoDataList::Column::toText(QDomElement& ce) const
 {
@@ -252,12 +207,9 @@ void AutoDataList::Column::fromText(const QDomElement& ce)
     timeOffset = 0;
 }
 
-std::string AutoDataList::changes()
+void AutoDataList::changes(QDomElement& doc_changes)
 {
-  METLIBS_LOG_SCOPE();
-  QDomDocument doc("changes");
-  QDomElement doc_changes = doc.createElement(E_TAG_CHANGES);
-  doc.appendChild(doc_changes);
+  QDomDocument doc = doc_changes.ownerDocument();
 
   ChangeReplay<Column, lt_Column> cr;
   const Columns_t removed = cr.removals(mOriginalColumns, mColumns);
@@ -278,31 +230,10 @@ std::string AutoDataList::changes()
     doc_columns.appendChild(doc_column);
   } 
   doc_changes.appendChild(doc_columns);
-
-  if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
-    QDomElement doc_timeshift = doc.createElement(E_TAG_TSHIFT);
-    doc_timeshift.setAttribute(T_ATTR_START, (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours());
-    doc_timeshift.setAttribute(T_ATTR_END,   (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours());
-    doc_changes.appendChild(doc_timeshift);
-  }
-
-  METLIBS_LOG_DEBUG("changes for " << mStoreSensorTime << ": " << doc.toString());
-  return doc.toString().toStdString();
 }
 
-void AutoDataList::replay(const std::string& changesText)
+void AutoDataList::replay(const QDomElement& doc_changes)
 {
-  METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG("replaying '" << changesText << "'");
-
-  if (changesText.empty())
-    return;
-
-  QDomDocument doc;
-  doc.setContent(QString::fromStdString(changesText));
-
-  const QDomElement doc_changes = doc.documentElement();
-
   Columns_t removed;
   const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
   if (not doc_removed.isNull()) {
@@ -328,35 +259,9 @@ void AutoDataList::replay(const std::string& changesText)
   ChangeReplay<Column, lt_Column> cr;
   mColumns = cr.replay(mOriginalColumns, actual, removed);
   
-  TimeSpan newTimeLimits(mOriginalTimeLimits);
-  const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
-  if (not doc_timeshift.isNull()) {
-    const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
-    const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
-    const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
-    const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
-    TimeSpan newTimeLimits(t0, t1);
-    METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
-  }
-  mTimeLimits = newTimeLimits;
-
   bool changed = (mColumns.size() != mOriginalColumns.size())
-      or mTimeLimits != mOriginalTimeLimits;
-  if (not changed)
-    changed = not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
+      or not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
   mColumnReset->setEnabled(changed);
-}
-
-void AutoDataList::onEarlier()
-{
-  mTimeLimits = TimeSpan(mTimeLimits.t0() - boost::posix_time::hours(24), mTimeLimits.t1());
-  makeModel();
-}
-
-void AutoDataList::onLater()
-{
-  mTimeLimits = TimeSpan(mTimeLimits.t0(), mTimeLimits.t1() + boost::posix_time::hours(24));
-  makeModel();
 }
 
 void AutoDataList::onHorizontalHeaderContextMenu(const QPoint& pos)
@@ -422,7 +327,7 @@ void AutoDataList::removeColumns(std::vector<int> columns)
     if (c >= 0 and c < (int)mColumns.size())
       mColumns.erase(mColumns.begin() + c);
   }
-  makeModel();
+  updateModel(makeModel());
   mColumnReset->setEnabled(true);
 }
 
@@ -441,9 +346,9 @@ void AutoDataList::onActionRemoveColumn()
 
 void AutoDataList::onActionResetColumns()
 {
-  mTimeLimits = mOriginalTimeLimits;
+  resetTimeSpan();
   mColumns = mOriginalColumns;
-  makeModel();
+  updateModel(makeModel());
   mColumnReset->setEnabled(false);
 }
 
