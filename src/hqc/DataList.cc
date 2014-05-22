@@ -4,6 +4,7 @@
 #include "common/DataListModel.hh"
 #include "common/ObsDelegate.hh"
 #include "common/HqcApplication.hh"
+#include "util/Helpers.hh"
 
 #include <QtCore/QFile>
 #include <QtCore/QTextStream>
@@ -77,19 +78,7 @@ DataList::~DataList()
 
 void DataList::addTimeStepItem(int step)
 {
-  ui->comboTimeStep->addItem(labelForStep(step), QVariant(step));
-}
-
-QString DataList::labelForStep(int step)
-{
-  if (step == 0)
-    return tr("none");
-  else if (step >= HOUR and (step % HOUR) == 0)
-    return tr("%1 h").arg(step / HOUR);
-  else if (step >= MINUTE and (step % MINUTE) == 0)
-    return tr("%1 min").arg(step / MINUTE);
-  else
-    return tr("%1 s").arg(step);
+  ui->comboTimeStep->addItem(Helpers::timeStepAsText(step), QVariant(step));
 }
 
 void DataList::retranslateUi()
@@ -97,7 +86,7 @@ void DataList::retranslateUi()
   ui->retranslateUi(this);
   for (int i=0; i<ui->comboTimeStep->count(); ++i) {
     const int step = ui->comboTimeStep->itemData(i).toInt();
-    ui->comboTimeStep->setItemText(i, labelForStep(step));
+    ui->comboTimeStep->setItemText(i, Helpers::timeStepAsText(step));
   }
   VisibleWidget::retranslateUi();
 }
@@ -105,9 +94,12 @@ void DataList::retranslateUi()
 void DataList::doNavigateTo()
 {
   METLIBS_LOG_SCOPE();
-  if (not mTableModel.get())
-    return;
+  if (mTableModel.get())
+    selectCurrent();
+}
 
+void DataList::selectCurrent()
+{
   const QModelIndexList idxs = mTableModel->findIndexes(mNavigate.current());
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
@@ -122,8 +114,11 @@ void DataList::doNavigateTo()
     ui->table->scrollTo(idxs.front());
     ui->table->scrollTo(idxs.back());
   }
-  if (QItemSelectionModel* sm = ui->table->selectionModel())
+  if (QItemSelectionModel* sm = ui->table->selectionModel()) {
     sm->select(selection, QItemSelectionModel::ClearAndSelect);
+    if (scroll)
+      sm->setCurrentIndex(idxs.back(), QItemSelectionModel::NoUpdate);
+  }
 }
 
 void DataList::onCurrentChanged(const QModelIndex& current)
@@ -135,7 +130,6 @@ void DataList::updateModel(DataListModel* newModel)
 {
   METLIBS_LOG_SCOPE();
 
-  mNavigate.invalidate();
   NavigateHelper::Blocker block(mNavigate);
 
   mTableModel.reset(newModel);
@@ -151,6 +145,8 @@ void DataList::updateModel(DataListModel* newModel)
   
   ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
   ui->toolInterpolate->updateModel(mDA, ui->table);
+
+  selectCurrent();
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)

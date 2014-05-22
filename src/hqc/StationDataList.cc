@@ -47,7 +47,7 @@ void StationDataList::addSensorColumns(DataListModel* model, const Sensor& s)
 
 DataListModel* StationDataList::makeModel()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(currentSensorTime()) << LOGVAL(timeSpan()));
 
   const Sensor& s = currentSensorTime().sensor;
   const TimeSpan& time = timeSpan();

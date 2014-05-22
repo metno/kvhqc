@@ -1,0 +1,5 @@
+<svg height="24" width="24">
+  <circle cx="10" cy="14" r="8" stroke="black" fill="white" />
+  <polyline points="10,8 10,14 14,14" style="fill:none;stroke:black;stroke-width:1" />
+  <line x1="16" y1="5" x2="22" y2="5" style="stroke:magenta;stroke-width:1" />
+</svg>

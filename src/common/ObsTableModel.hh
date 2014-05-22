@@ -27,8 +27,7 @@ public:
 
   virtual void setTimeInRows(bool tir);
 
-  virtual ObsColumn_p getColumn(int idx) const
-    { return mColumns[idx]; }
+  virtual ObsColumn_p getColumn(int idx) const;
   virtual void insertColumn(int before, ObsColumn_p c);
   virtual void removeColumn(int at);
   virtual void moveColumn(int from, int to);

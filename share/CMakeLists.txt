@@ -15,6 +15,7 @@ INSTALL(FILES
   images/dl_columns_remove.svg
   images/dl_columns_reset.svg
   images/dl_save_as.svg
+  images/earlier.svg
   images/error.svg
   images/editor.svg
   images/forget.svg
@@ -29,8 +30,8 @@ INSTALL(FILES
   images/filter.svg
   images/busy_animation.svg
   images/history.svg
-  images/forget.svg
   images/jump_to_obs.svg
+  images/later.svg
   images/redo.svg
   images/reject.svg
   images/singleobservation.svg

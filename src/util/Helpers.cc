@@ -167,4 +167,23 @@ bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, con
   }
 }
 
+// ------------------------------------------------------------------------
+
+QString timeStepAsText(int step)
+{
+  const int MINUTE = 60, HOUR = 60*MINUTE, DAY = 24*HOUR;
+
+  if (step == 0)
+    return qApp->translate("Helpers", "none");
+  if (step < 0)
+    step = -step;
+  if (step >= DAY and (step % DAY) == 0)
+    return qApp->translate("Helpers", "%1 d").arg(step / DAY);
+  if (step >= HOUR and (step % HOUR) == 0)
+    return qApp->translate("Helpers", "%1 h").arg(step / HOUR);
+  if (step >= MINUTE and (step % MINUTE) == 0)
+    return qApp->translate("Helpers", "%1 min").arg(step / MINUTE);
+  return qApp->translate("Helpers", "%1 s").arg(step);
+}
+
 } // namespace Helpers

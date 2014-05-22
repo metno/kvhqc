@@ -135,6 +135,13 @@ void ObsTableModel::updateTimes()
   }
 }
 
+ObsColumn_p ObsTableModel::getColumn(int idx) const
+{
+  if (idx >= 0 and idx < (int)mColumns.size())
+    return mColumns[idx];
+  return ObsColumn_p();
+}
+
 int ObsTableModel::rowCount(const QModelIndex&) const
 {
   return mTimeInRows ? countTimes() : countColumns();
@@ -227,26 +234,23 @@ void ObsTableModel::endRemoveC()
 
 Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
 {
-  ObsColumn_p oc = getColumn(columnIndex(index));
-  if (not oc)
-    return 0;
-  return oc->flags(timeAtRow(timeIndex(index)));
+  if (ObsColumn_p oc = getColumn(columnIndex(index)))
+    return oc->flags(timeAtRow(timeIndex(index)));
+  return 0;
 }
 
 QVariant ObsTableModel::data(const QModelIndex& index, int role) const
 {
-  ObsColumn_p oc = getColumn(columnIndex(index));
-  if (not oc)
-    return QVariant();
-  return oc->data(timeAtRow(timeIndex(index)), role);
+  if (ObsColumn_p oc = getColumn(columnIndex(index)))
+    return oc->data(timeAtRow(timeIndex(index)), role);
+  return QVariant();
 }
 
 bool ObsTableModel::setData(const QModelIndex& index, const QVariant& value, int role)
 {
-  ObsColumn_p oc = getColumn(columnIndex(index));
-  if (not oc)
-    return false;
-  return oc->setData(timeAtRow(timeIndex(index)), value, role);
+  if (ObsColumn_p oc = getColumn(columnIndex(index)))
+    return oc->setData(timeAtRow(timeIndex(index)), value, role);
+  return false;
 }
 
 QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -266,11 +270,9 @@ QVariant ObsTableModel::headerData(int section, Qt::Orientation orientation, int
 
 QVariant ObsTableModel::columnHeader(int section, Qt::Orientation orientation, int role) const
 {
-  ObsColumn_p oc = getColumn(section);
-  if (oc)
+  if (ObsColumn_p oc = getColumn(section))
     return oc->headerData(orientation, role);
-  else
-    return QVariant();
+  return QVariant();
 }
 
 timeutil::ptime ObsTableModel::timeAtRow(int row) const
@@ -281,12 +283,9 @@ timeutil::ptime ObsTableModel::timeAtRow(int row) const
 SensorTime ObsTableModel::findSensorTime(const QModelIndex& idx) const
 {
   SensorTime st;
-  st.time = timeAtRow(mTimeInRows ? idx.row() : idx.column());
-
-  ObsColumn_p column = getColumn(mTimeInRows ? idx.column() : idx.row());
-  if (column)
+  st.time = timeAtRow(timeIndex(idx));
+  if (ObsColumn_p column = getColumn(columnIndex(idx)))
     st.sensor = column->sensor();
-
   return st;
 }
 

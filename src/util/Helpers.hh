@@ -84,6 +84,12 @@ bool connect2postgres(const QString& qname, const QString& host, const QString& 
  */
 bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, const std::string& prefix);
 
+/*! Format a time step as localized text.
+ * Largest unit is day, step 0 is "none"
+ * \param step time step in seconds (absolute value is used)
+ */
+QString timeStepAsText(int step);
+
 } // namespace Helpers
 
 #endif // UTIL_HELPERS_HH

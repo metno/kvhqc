@@ -47,6 +47,7 @@ protected:
 private:
   void addTimeStepItem(int step);
   QString labelForStep(int step);
+  void selectCurrent();
 
 protected:
   std::auto_ptr<Ui::DataList> ui;

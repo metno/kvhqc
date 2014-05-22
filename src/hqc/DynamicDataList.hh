@@ -5,8 +5,10 @@
 #include "DataList.hh"
 #include "common/ObsColumn.hh"
 
-class QPushButton;
 class QDomElement;
+class QMenu;
+class QToolButton;
+class QSignalMapper;
 
 // ------------------------------------------------------------------------
 
@@ -30,20 +32,25 @@ protected:
 
   const TimeSpan& timeSpan() const
     { return mTimeLimits; }
-  void resetTimeSpan()
-    { mTimeLimits = mOriginalTimeLimits; }
 
 private Q_SLOTS:
-  void onEarlier();
-  void onLater();
+  void onChangeStart(QObject*);
+  void onChangeEnd(QObject*);
+  void onResetTime();
 
 private:
   std::string changesXML();
   void replayXML(const std::string& changes);
 
 private:
-  QPushButton* mButtonEarlier;
-  QPushButton* mButtonLater;
+  QSignalMapper* mMapperStart;
+  QSignalMapper* mMapperEnd;
+  QMenu* mMenuTime;
+  QMenu* mMenuStart;
+  QMenu* mMenuEnd;
+  QToolButton* mButtonTime;
+  QList<QAction*> mTimeActions;
+  QAction* mActionResetTime;
 
   TimeSpan mTimeLimits, mOriginalTimeLimits;
 

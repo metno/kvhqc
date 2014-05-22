@@ -346,7 +346,6 @@ void AutoDataList::onActionRemoveColumn()
 
 void AutoDataList::onActionResetColumns()
 {
-  resetTimeSpan();
   mColumns = mOriginalColumns;
   updateModel(makeModel());
   mColumnReset->setEnabled(false);

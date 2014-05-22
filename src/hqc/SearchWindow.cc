@@ -81,8 +81,7 @@
 #define MILOGGER_CATEGORY "kvhqc.SearchWindow"
 #include "common/ObsLogging.hh"
 
-namespace {
-
+namespace /*anonymous*/ {
 const char SETTINGS_SEARCH_GROUP[] = "searchwindow";
 const char SETTING_SEARCH_GEOMETRY[] = "geometry";
 const char SETTING_SEARCH_AUTOVIEW_SPLITTER[] = "autoview_slider";
