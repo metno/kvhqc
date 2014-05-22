@@ -87,7 +87,13 @@ const char SETTINGS_SEARCH_GROUP[] = "searchwindow";
 const char SETTING_SEARCH_GEOMETRY[] = "geometry";
 const char SETTING_SEARCH_AUTOVIEW_SPLITTER[] = "autoview_slider";
 const char SETTING_SEARCH_DATASEARCH_SPLITTER[] = "datasearch_slider";
-
+const char SETTING_TAB_DATA[] = "tab_data";
+const char SETTING_TAB_RELATED[] = "related";
+const char SETTING_TAB_STATION[] = "station";
+const char SETTING_TAB_SINGLE[] = "single";
+const char SETTING_TAB_SEARCH[] = "tab_search";
+const char SETTING_TAB_ERRORS[] = "errorlist";
+const char SETTING_TAB_RECENT[] = "recent";
 } // anonymous namespace
 
 SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
@@ -271,11 +277,25 @@ void SearchWindow::onActivateDataTab(int index)
 
 void SearchWindow::writeSettings()
 {
+  QWidget* ws = mTabsSearch->currentWidget();
+  QString tabSearch = SETTING_TAB_ERRORS;
+  if (ws == mNavigationHistory)
+    tabSearch = SETTING_TAB_RECENT;
+
+  QWidget* wd = mTabsData->currentWidget();
+  QString tabData = SETTING_TAB_RELATED;
+  if (wd == mStationData)
+    tabData = SETTING_TAB_STATION;
+  else if (wd == mCorrections)
+    tabData = SETTING_TAB_SINGLE;
+
   QSettings settings;
   settings.beginGroup(SETTINGS_SEARCH_GROUP);
   settings.setValue(SETTING_SEARCH_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_SEARCH_AUTOVIEW_SPLITTER, mSplitterDataPlot->saveState());
   settings.setValue(SETTING_SEARCH_DATASEARCH_SPLITTER, splitterDataSearch()->saveState());
+  settings.setValue(SETTING_TAB_SEARCH, tabSearch);
+  settings.setValue(SETTING_TAB_DATA,   tabData);
   settings.endGroup();
 
   mErrorsView->saveSettings(settings);
@@ -294,10 +314,27 @@ void SearchWindow::readSettings()
     METLIBS_LOG_INFO("cannot restore autoview splitter positions");
   if (not splitterDataSearch()->restoreState(settings.value(SETTING_SEARCH_DATASEARCH_SPLITTER).toByteArray()))
     METLIBS_LOG_INFO("cannot restore data-search splitter positions");
+  const QString tabSearch = settings.value(SETTING_TAB_SEARCH, SETTING_TAB_ERRORS).toString();
+  const QString tabData   = settings.value(SETTING_TAB_DATA,   SETTING_TAB_RELATED).toString();
   settings.endGroup();
 
   mErrorsView->restoreSettings(settings);
   mNavigationHistory->restoreSettings(settings);
+
+  if (tabSearch == SETTING_TAB_RECENT)
+    mTabsSearch->setCurrentWidget(mNavigationHistory);
+  else
+    mTabsSearch->setCurrentWidget(mErrorsView);
+
+  if (tabData == SETTING_TAB_SINGLE)
+    mTabsData->setCurrentWidget(mCorrections);
+  else if (tabData == SETTING_TAB_STATION)
+    mTabsData->setCurrentWidget(mStationData);
+  else
+    mTabsData->setCurrentWidget(mSplitterDataPlot);
+
+  METLIBS_LOG_DEBUG(LOGVAL(tabSearch) << LOGVAL(mTabsSearch->currentIndex()));
+  METLIBS_LOG_DEBUG(LOGVAL(tabData)   << LOGVAL(mTabsData->currentIndex()));
 }
 
 QSplitter* SearchWindow::splitterDataSearch() const
