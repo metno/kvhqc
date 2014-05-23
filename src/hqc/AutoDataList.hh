@@ -2,20 +2,18 @@
 #ifndef AutoDataList_hh
 #define AutoDataList_hh 1
 
-#include "DynamicDataList.hh"
-#include "common/ObsColumn.hh"
+#include "TimespanDataList.hh"
 
 class QPushButton;
-class QDomElement;
 
 // ------------------------------------------------------------------------
 
-class AutoDataList : public DynamicDataList
+class AutoDataList : public TimespanDataList
 { Q_OBJECT
 public:
   AutoDataList(QWidget* parent=0);
   ~AutoDataList();
-  
+
 public:
   enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
   
@@ -34,9 +32,12 @@ private:
 
 protected:
   DataListModel* makeModel();
+
   std::string viewType() const;
-  void changes(QDomElement& doc_changes);
-  void replay(const QDomElement& doc_changes);
+  void switchSensorPrepare();
+  void loadChangesXML(const QDomElement& doc_changes);
+  void storeChangesXML(QDomElement& doc_changes);
+
   void retranslateUi();
 
 private Q_SLOTS:
@@ -51,7 +52,7 @@ private:
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
   ObsColumn_p makeColumn(const Column& c);
-  void generateColumns();
+  bool hasChangedColumns() const;
 
 private:
   QMenu* mColumnMenu;
@@ -60,7 +61,7 @@ private:
   QAction* mColumnReset;
   QPushButton* mButtonColumns;
 
-  Columns_t mColumns,    mOriginalColumns;
+  Columns_t mColumns, mOriginalColumns;
 };
 
 #endif // AutoDataList_hh

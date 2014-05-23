@@ -5,7 +5,7 @@ SET(hqc_SOURCES
   ChecksTableModel.cc
   DataHistoryTableModel.cc
   DataListAddColumn.cc
-  DynamicDataList.cc
+  DynamicDataView.cc
   DataList.cc
   EditVersionModel.cc
   EditVersionsView.cc
@@ -20,6 +20,7 @@ SET(hqc_SOURCES
   TimeSeriesAdd.cc
   TimeseriesDialog.cc
   TimeSeriesView.cc
+  TimespanDataList.cc
   ViewChanges.cc
   UserSettings.cc
 )
@@ -35,7 +36,7 @@ QT4_WRAP_CPP(hqc_MOC
   DataHistoryTableModel.hh
   DataListAddColumn.hh
   DataList.hh
-  DynamicDataList.hh
+  DynamicDataView.hh
   EditVersionModel.hh
   EditVersionsView.hh
 #  HqcDianaHelper.hh
@@ -47,7 +48,7 @@ QT4_WRAP_CPP(hqc_MOC
   TimeSeriesAdd.hh
   TimeseriesDialog.h
   TimeSeriesView.hh
-  ViewChanges.hh
+  TimespanDataList.hh
   UserSettings.hh
 )
 

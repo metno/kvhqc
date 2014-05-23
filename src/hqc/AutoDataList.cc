@@ -23,10 +23,21 @@
 #define MILOGGER_CATEGORY "kvhqc.AutoDataList"
 #include "common/ObsLogging.hh"
 
-namespace {
+namespace /* anonymous */ {
+static const char C_ATTR_STATIONID[] = "stationid";
+static const char C_ATTR_PARAMID[]   = "paramid";
+static const char C_ATTR_TYPEID[]    = "typeid";
+static const char C_ATTR_SENSORNR[]  = "sensornr";
+static const char C_ATTR_LEVEL[]     = "level";
+static const char C_ATTR_CTYPE[]     = "ctype";
+static const char C_ATTR_TOFFSET[]   = "timeoffset";
+
+static const char E_TAG_COLUMNS[] = "columns";
+static const char E_TAG_REMOVED[] = "removed";
+static const char E_TAG_COLUMN[]  = "column";
+
 const std::string VIEW_TYPE = "DataList";
-const std::string ID = "1";
-}
+} // anonymous namespace
 
 struct AutoDataList::eq_Column : public std::binary_function<Column, Column, bool> {
   bool operator()(const Column& a, const Column& b) const
@@ -50,7 +61,7 @@ struct AutoDataList::lt_Column : public std::binary_function<Column, Column, boo
 
 
 AutoDataList::AutoDataList(QWidget* parent)
-  : DynamicDataList(parent)
+  : TimespanDataList(parent)
 {
   mColumnMenu = new QMenu(this);
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
@@ -74,7 +85,7 @@ AutoDataList::AutoDataList(QWidget* parent)
 
 AutoDataList::~AutoDataList()
 {
-  // cannot be called from ~DynamicDataList as it calls virtual methods
+  // cannot be called from ~DynamicDataView as it calls virtual methods
   storeChanges();
 }
 
@@ -85,12 +96,14 @@ void AutoDataList::retranslateUi()
   mColumnReset->setText(tr("Reset columns"));
   mButtonColumns->setText(tr("Columns"));
 
-  DynamicDataList::retranslateUi();
+  TimespanDataList::retranslateUi();
 }
 
-void AutoDataList::generateColumns()
+void AutoDataList::switchSensorPrepare()
 {
   METLIBS_LOG_SCOPE();
+  TimespanDataList::switchSensorPrepare();
+
   mColumns = Columns_t();
   
   const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE);
@@ -107,6 +120,74 @@ void AutoDataList::generateColumns()
     METLIBS_LOG_DEBUG("gen " << s);
   }
   mOriginalColumns = mColumns;
+}
+
+void AutoDataList::loadChangesXML(const QDomElement& doc_changes)
+{
+  TimespanDataList::loadChangesXML(doc_changes);
+
+  Columns_t removed;
+  const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
+  if (not doc_removed.isNull()) {
+    for(QDomElement c = doc_removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Column col;
+      col.fromText(c);
+      removed.push_back(col);
+      METLIBS_LOG_DEBUG("removed " << col.sensor);
+    }
+  }
+
+  Columns_t actual;
+  const QDomElement doc_actual = doc_changes.firstChildElement(E_TAG_COLUMNS);
+  if (not doc_actual.isNull()) {
+    for(QDomElement c = doc_actual.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
+      Column col;
+      col.fromText(c);
+      actual.push_back(col);
+      METLIBS_LOG_DEBUG("column " << col.sensor);
+    }
+  }
+  
+  ChangeReplay<Column, lt_Column> cr;
+  mColumns = cr.replay(mOriginalColumns, actual, removed);
+  
+  mColumnReset->setEnabled(hasChangedColumns());
+}
+
+void AutoDataList::storeChangesXML(QDomElement& doc_changes)
+{
+  TimespanDataList::storeChangesXML(doc_changes);
+
+  if (not hasChangedColumns())
+    return;
+
+  QDomDocument doc = doc_changes.ownerDocument();
+
+  ChangeReplay<Column, lt_Column> cr;
+  const Columns_t removed = cr.removals(mOriginalColumns, mColumns);
+  if (not removed.empty()) {
+    QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
+    BOOST_FOREACH(const Column& r, removed) {
+      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+      r.toText(doc_column);
+      doc_removed.appendChild(doc_column);
+    } 
+    doc_changes.appendChild(doc_removed);
+  }
+
+  QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
+  BOOST_FOREACH(const Column& c, mColumns) {
+    QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
+    c.toText(doc_column);
+    doc_columns.appendChild(doc_column);
+  } 
+  doc_changes.appendChild(doc_columns);
+}
+
+bool AutoDataList::hasChangedColumns() const
+{
+  return (mColumns.size() != mOriginalColumns.size())
+      or not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
 }
 
 DataListModel* AutoDataList::makeModel()
@@ -146,20 +227,6 @@ ObsColumn_p AutoDataList::makeColumn(const Column& c)
     return dc;
   }
 }
-
-namespace /* anonymous */ {
-static const char C_ATTR_STATIONID[] = "stationid";
-static const char C_ATTR_PARAMID[]   = "paramid";
-static const char C_ATTR_TYPEID[]    = "typeid";
-static const char C_ATTR_SENSORNR[]  = "sensornr";
-static const char C_ATTR_LEVEL[]     = "level";
-static const char C_ATTR_CTYPE[]     = "ctype";
-static const char C_ATTR_TOFFSET[]   = "timeoffset";
-
-static const char E_TAG_COLUMNS[] = "columns";
-static const char E_TAG_REMOVED[] = "removed";
-static const char E_TAG_COLUMN[]  = "column";
-} // anonymous namespace
 
 std::string AutoDataList::viewType() const
 {
@@ -205,63 +272,6 @@ void AutoDataList::Column::fromText(const QDomElement& ce)
     timeOffset = ce.attribute(C_ATTR_TOFFSET).toInt();
   else
     timeOffset = 0;
-}
-
-void AutoDataList::changes(QDomElement& doc_changes)
-{
-  QDomDocument doc = doc_changes.ownerDocument();
-
-  ChangeReplay<Column, lt_Column> cr;
-  const Columns_t removed = cr.removals(mOriginalColumns, mColumns);
-  if (not removed.empty()) {
-    QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
-    BOOST_FOREACH(const Column& r, removed) {
-      QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
-      r.toText(doc_column);
-      doc_removed.appendChild(doc_column);
-    } 
-    doc_changes.appendChild(doc_removed);
-  }
-
-  QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
-  BOOST_FOREACH(const Column& c, mColumns) {
-    QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
-    c.toText(doc_column);
-    doc_columns.appendChild(doc_column);
-  } 
-  doc_changes.appendChild(doc_columns);
-}
-
-void AutoDataList::replay(const QDomElement& doc_changes)
-{
-  Columns_t removed;
-  const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
-  if (not doc_removed.isNull()) {
-    for(QDomElement c = doc_removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
-      Column col;
-      col.fromText(c);
-      removed.push_back(col);
-      METLIBS_LOG_DEBUG("removed " << col.sensor);
-    }
-  }
-
-  Columns_t actual;
-  const QDomElement doc_actual = doc_changes.firstChildElement(E_TAG_COLUMNS);
-  if (not doc_actual.isNull()) {
-    for(QDomElement c = doc_actual.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
-      Column col;
-      col.fromText(c);
-      actual.push_back(col);
-      METLIBS_LOG_DEBUG("column " << col.sensor);
-    }
-  }
-  
-  ChangeReplay<Column, lt_Column> cr;
-  mColumns = cr.replay(mOriginalColumns, actual, removed);
-  
-  bool changed = (mColumns.size() != mOriginalColumns.size())
-      or not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
-  mColumnReset->setEnabled(changed);
 }
 
 void AutoDataList::onHorizontalHeaderContextMenu(const QPoint& pos)

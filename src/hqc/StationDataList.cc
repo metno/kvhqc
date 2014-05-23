@@ -22,7 +22,7 @@ const int* WeatherParametersE = WeatherParameters + NWeatherParameters;
 }
 
 StationDataList::StationDataList(QWidget* parent)
-  : DynamicDataList(parent)
+  : TimespanDataList(parent)
 {
   setWindowTitle(tr("Station Data"));
   setWindowIcon(QIcon("icons:weatherstation.svg"));
@@ -30,8 +30,21 @@ StationDataList::StationDataList(QWidget* parent)
 
 StationDataList::~StationDataList()
 {
-  // cannot be called from ~DynamicDataList as it calls virtual methods
+  // cannot be called from ~DynamicDataView as it calls virtual methods
   storeChanges();
+}
+
+SensorTime StationDataList::sensorSwitch() const
+{
+  const SensorTime& sst = storeSensorTime(), cst = currentSensorTime();
+  if (sst.sensor.stationId == cst.sensor.stationId and timeSpan().contains(cst.time))
+    return sst;
+
+  Sensor s = cst.sensor;
+  s.paramId = 1;
+  s.level = 0;
+  s.sensor = 0;
+  return SensorTime(s, cst.time);
 }
 
 void StationDataList::addSensorColumns(DataListModel* model, const Sensor& s)

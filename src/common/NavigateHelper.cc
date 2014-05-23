@@ -13,20 +13,29 @@ NavigateHelper::~NavigateHelper()
 
 bool NavigateHelper::go(const SensorTime& st)
 {
-  if (not st.valid() or eq_SensorTime()(mLastNavigated, st))
-    return false;
-
+  const bool changed = mChanged
+      || (st.valid() != mLastNavigated.valid())
+      || (not eq_SensorTime()(st, mLastNavigated));
   mLastNavigated = st;
-  mChanged = true;
   
-  return not blocked();
+  if (not blocked()) {
+    mChanged = false;
+    return changed;
+  } else {
+    mChanged = changed;
+    return false;
+  }
 }
 
 bool NavigateHelper::unblock()
 {
   if (mBlocked>0)
     mBlocked -= 1;
-  return mLastNavigated.valid() and not blocked();
+
+  if (not blocked())
+    return mChanged;
+  else
+    return 0;
 }
 
 bool NavigateHelper::invalidate()

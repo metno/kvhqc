@@ -30,7 +30,8 @@ const char CHANGES_TABLE_UPDATE[] = "UPDATE user_view_changes SET view_changes =
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 const char CHANGES_TABLE_INSERT[] = "INSERT INTO user_view_changes VALUES"
     " (:sid, :pid, :vtype, :vid, :vchanges)";
-
+const char CHANGES_TABLE_DELETE[] = "DLETE FROM user_view_changes"
+    " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM user_view_changes"
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 
@@ -78,6 +79,36 @@ void ViewChanges::store(const Sensor& s, const std::string& vtype, const std::st
       HQC_LOG_ERROR("error while inserting: " << insert.lastError().text());
     insert.finish();
   }
+  db.commit();
+}
+
+void ViewChanges::forget(const Sensor& s, const std::string& vtype, const std::string& vid)
+{
+  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_DEBUG(LOGVAL(s) << LOGVAL(vtype) << LOGVAL(vid));
+
+  if (not hqcApp)
+    return;
+
+  const QString qtype = QString::fromStdString(vtype), qid = QString::fromStdString(vid);
+
+  QSqlDatabase db = hqcApp->configDB();
+  if (not db.tables().contains(CHANGES_TABLE))
+    return;
+
+  db.transaction();
+
+  QSqlQuery drop(db);
+  drop.prepare(CHANGES_TABLE_DELETE);
+  drop.bindValue(":sid", s.stationId);
+  drop.bindValue(":pid", s.paramId);
+  drop.bindValue(":vtype",    qtype);
+  drop.bindValue(":vid",      qid);
+
+  if (not drop.exec())
+    HQC_LOG_ERROR("error while deleting: " << drop.lastError().text());
+  drop.finish();
+  
   db.commit();
 }
 

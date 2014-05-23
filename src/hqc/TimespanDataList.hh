@@ -1,33 +1,30 @@
 
-#ifndef DynamicDataList_hh
-#define DynamicDataList_hh 1
+#ifndef TimespanDataList_hh
+#define TimespanDataList_hh 1
 
 #include "DataList.hh"
 #include "common/ObsColumn.hh"
 
-class QDomElement;
 class QMenu;
 class QToolButton;
 class QSignalMapper;
 
 // ------------------------------------------------------------------------
 
-class DynamicDataList : public DataList
+class TimespanDataList : public DataList
 { Q_OBJECT
 public:
-  DynamicDataList(QWidget* parent=0);
-  ~DynamicDataList();
+  TimespanDataList(QWidget* parent=0);
+  ~TimespanDataList();
   
 protected:
-  void doNavigateTo();
-
-  void storeChanges();
-  virtual std::string viewType() const = 0;
-  virtual std::string viewId() const;
+  SensorTime sensorSwitch() const;
+  void switchSensorPrepare();
+  void loadChangesXML(const QDomElement& doc_changes);
+  void switchSensorDone();
+  void storeChangesXML(QDomElement& doc_changes);
 
   virtual DataListModel* makeModel() = 0;
-  virtual void changes(QDomElement& doc_changes);
-  virtual void replay(const QDomElement& doc_changes);
   void retranslateUi();
 
   const TimeSpan& timeSpan() const
@@ -37,10 +34,6 @@ private Q_SLOTS:
   void onChangeStart(QObject*);
   void onChangeEnd(QObject*);
   void onResetTime();
-
-private:
-  std::string changesXML();
-  void replayXML(const std::string& changes);
 
 private:
   QSignalMapper* mMapperStart;
@@ -53,8 +46,6 @@ private:
   QAction* mActionResetTime;
 
   TimeSpan mTimeLimits, mOriginalTimeLimits;
-
-  SensorTime mStoreSensorTime;
 };
 
-#endif // DynamicDataList_hh
+#endif // TimespanDataList_hh

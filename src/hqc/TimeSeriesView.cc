@@ -4,11 +4,12 @@
 #include "TimeSeriesAdd.hh"
 #include "ViewChanges.hh"
 
+#include "common/EditAccess.hh"
+#include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
 #include "common/TimeSpanControl.hh"
-#include "common/HqcApplication.hh"
 
 #include "util/ChangeReplay.hh"
 

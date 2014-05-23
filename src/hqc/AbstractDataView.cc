@@ -23,6 +23,8 @@ void AbstractDataView::onVisibilityUpdate(bool visible)
 
 void AbstractDataView::navigateTo(const SensorTime& st)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(st));
+  NavigateHelper::Blocker block(mNavigate);
   if (mNavigate.go(st))
     doNavigateTo();
 }
@@ -31,6 +33,5 @@ void AbstractDataView::sendNavigateTo(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE(LOGVAL(st));
   NavigateHelper::Blocker block(mNavigate);
-  if (mNavigate.go(st))
-    Q_EMIT signalNavigateTo(st);
+  Q_EMIT signalNavigateTo(st);
 }

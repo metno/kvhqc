@@ -30,6 +30,12 @@ public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
   
+protected:
+  void doNavigateTo();
+  std::string changes();
+  void replay(const std::string& changes);
+  void prepareReplay();
+
 private Q_SLOTS:
   void onActionAddColumn();
   void onActionRemoveColumns();
@@ -42,14 +48,11 @@ private Q_SLOTS:
   void updatePlot();
 
 private:
-  void doNavigateTo();
   void updateSensors();
   void updateTime();
   void updateTimeEditors();
   void retranslateUi();
 
-  std::string changes();
-  void replay(const std::string& changes);
   void storeChanges();
 
   void setTimeSpan(const TimeSpan& t);

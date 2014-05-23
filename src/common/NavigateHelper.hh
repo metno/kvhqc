@@ -48,7 +48,7 @@ private:
 
 class NavigateVisible : public NavigateHelper {
 public:
-  NavigateVisible() : mVisible(false) { }
+  NavigateVisible(bool initiallyVisible=true) : mVisible(initiallyVisible) { }
 
   /** Update visibility, return true if navigtion should be performed.
    *  Never returns true if visible is false.

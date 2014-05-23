@@ -37,8 +37,8 @@ const int MINUTE = 60, HOUR = 60*MINUTE;
 } // namespace anonymous
 
 DataList::DataList(QWidget* parent)
-  : AbstractDataView(parent)
-  , ui(new Ui::DataList)
+  : DynamicDataView(parent)
+  , ui(new Ui_DataList)
   , mDA(hqcApp->editAccess())
   , mMA(hqcApp->modelAccess())
 {
@@ -94,6 +94,7 @@ void DataList::retranslateUi()
 void DataList::doNavigateTo()
 {
   METLIBS_LOG_SCOPE();
+  DynamicDataView::doNavigateTo();
   if (mTableModel.get())
     selectCurrent();
 }

@@ -20,6 +20,12 @@ protected:
   virtual void changeEvent(QEvent *event);
 
   virtual void retranslateUi();
+
+private:
+  void sendUpdate();
+
+private:
+  bool mShown, mEmpty;
 };
 
 #endif // VisibleWidget_hh

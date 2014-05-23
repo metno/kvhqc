@@ -5,6 +5,8 @@
 
 VisibleWidget::VisibleWidget(QWidget* parent)
   : QWidget(parent)
+  , mShown(true)
+  , mEmpty(false)
 {
 }
 
@@ -15,19 +17,34 @@ VisibleWidget::~VisibleWidget()
 void VisibleWidget::showEvent(QShowEvent* se)
 {
   QWidget::showEvent(se);
-  Q_EMIT visibilityUpdate(true);
+  if (not mShown) {
+    mShown = true;
+    sendUpdate();
+  }
 }
 
 void VisibleWidget::hideEvent(QHideEvent* he)
 {
   QWidget::hideEvent(he);
-  Q_EMIT visibilityUpdate(false);
+  if (mShown) {
+    mShown = false;
+    sendUpdate();
+  }
 }
 
 void VisibleWidget::resizeEvent(QResizeEvent *re)
 {
   QWidget::resizeEvent(re);
-  Q_EMIT visibilityUpdate(not re->size().isEmpty());
+  const bool empty = re->size().isEmpty();
+  if (empty != mEmpty) {
+    mEmpty = empty;
+    sendUpdate();
+  }
+}
+
+void VisibleWidget::sendUpdate()
+{
+  Q_EMIT visibilityUpdate(mShown and not mEmpty);
 }
 
 void VisibleWidget::changeEvent(QEvent *event)

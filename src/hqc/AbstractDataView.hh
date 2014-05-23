@@ -2,22 +2,17 @@
 #ifndef AbstractDataView_hh
 #define AbstractDataView_hh 1
 
-#include "common/EditAccess.hh"
-#include "common/ModelAccess.hh"
 #include "common/NavigateHelper.hh"
-#include "common/Sensor.hh"
 #include "util/VisibleWidget.hh"
 
 class AbstractDataView : public VisibleWidget
 { Q_OBJECT
 public:
   AbstractDataView(QWidget* parent=0);
-  ~AbstractDataView() = 0;
+  ~AbstractDataView();
                  
-  void setDataAccess(EditAccess_p eda, ModelAccess_p ma);
-
 public Q_SLOTS:  
-  void navigateTo(const SensorTime&);
+  virtual void navigateTo(const SensorTime&);
   
 Q_SIGNALS:
   void signalNavigateTo(const SensorTime&);
@@ -28,8 +23,11 @@ private Q_SLOTS:
 protected:
   const SensorTime& currentSensorTime() const
     { return mNavigate.current(); }
+  
+  //! Subclass should navigate to new sensor or time or both
   virtual void doNavigateTo() = 0;
-  virtual void sendNavigateTo(const SensorTime& st);
+
+  void sendNavigateTo(const SensorTime& st);
 
 protected:
   NavigateVisible mNavigate;

@@ -1,5 +1,5 @@
 
-#include "DynamicDataList.hh"
+#include "TimespanDataList.hh"
 
 #include "common/DataListModel.hh"
 #include "ViewChanges.hh"
@@ -14,7 +14,7 @@
 
 #include "ui_datalist.h"
 
-#define MILOGGER_CATEGORY "kvhqc.DynamicDataList"
+#define MILOGGER_CATEGORY "kvhqc.TimespanDataList"
 #include "common/ObsLogging.hh"
 
 namespace /*anonymous*/ {
@@ -23,8 +23,8 @@ const int HOUR = 3600, DAY = 24*HOUR;
 QString timeActionText(int step)
 {
   QString t = (step < 0)
-      ? qApp->translate("DynamicDataList", "%1 earlier")
-      : qApp->translate("DynamicDataList", "%1 later");
+      ? qApp->translate("TimespanDataList", "%1 earlier")
+      : qApp->translate("TimespanDataList", "%1 later");
   return t.arg(Helpers::timeStepAsText(step));
 }
 
@@ -37,11 +37,15 @@ QAction* makeTimeAction(QMenu* menu, int timeStep, QSignalMapper* mapper)
   mapper->setMapping(a, a);
   return a;
 }
+
+static const char T_ATTR_START[] = "start";
+static const char T_ATTR_END[]   = "end";
+static const char E_TAG_TSHIFT[]  = "timeshift";
 } // anonymous namespace
 
 // ########################################################################
 
-DynamicDataList::DynamicDataList(QWidget* parent)
+TimespanDataList::TimespanDataList(QWidget* parent)
   : DataList(parent)
 {
   mMenuTime = new QMenu(this);
@@ -75,11 +79,11 @@ DynamicDataList::DynamicDataList(QWidget* parent)
   ui->layoutButtons->addWidget(mButtonTime);
 }
 
-DynamicDataList::~DynamicDataList()
+TimespanDataList::~TimespanDataList()
 {
 }
 
-void DynamicDataList::retranslateUi()
+void TimespanDataList::retranslateUi()
 {
   mButtonTime->setToolTip(tr("Change start end end times"));
   mMenuStart->setTitle(tr("Change start time"));
@@ -94,81 +98,41 @@ void DynamicDataList::retranslateUi()
   DataList::retranslateUi();
 }
 
-void DynamicDataList::doNavigateTo()
-{
-  METLIBS_LOG_TIME();
-  const SensorTime& cst = currentSensorTime();
-
-  // updateColumns === changed sensor
-  const bool updateColumns = (not mStoreSensorTime.valid()
-      or not eq_Sensor()(mStoreSensorTime.sensor, cst.sensor));
-
-  if (updateColumns or not mTableModel.get() or mTableModel->findIndexes(cst).empty()) {
-    if (updateColumns)
-      storeChanges();
-
-    mTimeLimits = ViewChanges::defaultTimeLimits(cst);
-    mOriginalTimeLimits = mTimeLimits;
-    if (updateColumns)
-      replayXML(ViewChanges::fetch(cst.sensor, viewType(), viewId()));
-    updateModel(makeModel());
-  }
-  DataList::doNavigateTo();
-}
-
-std::string DynamicDataList::viewId() const
-{
-  return "1";
-}
-
-void DynamicDataList::storeChanges()
+SensorTime TimespanDataList::sensorSwitch() const
 {
   METLIBS_LOG_SCOPE();
-  if (mStoreSensorTime.valid() and not eq_SensorTime()(mStoreSensorTime, currentSensorTime())) {
-    ViewChanges::store(mStoreSensorTime.sensor, viewType(), viewId(), changesXML());
-    mStoreSensorTime = currentSensorTime();
+  const SensorTime& sst = storeSensorTime(), cst = currentSensorTime();
+  METLIBS_LOG_DEBUG(LOGVAL(sst) << LOGVAL(sst));
+  if (eq_Sensor()(sst.sensor, cst.sensor) and timeSpan().contains(cst.time))
+    return sst;
+  else
+    return cst;
+}
+
+void TimespanDataList::switchSensorPrepare()
+{
+  mTimeLimits = ViewChanges::defaultTimeLimits(currentSensorTime());
+  mOriginalTimeLimits = mTimeLimits;
+}
+
+void TimespanDataList::loadChangesXML(const QDomElement& doc_changes)
+{
+  const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
+  if (not doc_timeshift.isNull()) {
+    const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
+    const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
+    const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
+    const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
+    mTimeLimits = TimeSpan(t0, t1);
   }
 }
 
-namespace /* anonymous */ {
-static const char T_ATTR_START[] = "start";
-static const char T_ATTR_END[]   = "end";
-static const char E_TAG_CHANGES[] = "changes";
-static const char E_TAG_TSHIFT[]  = "timeshift";
-} // anonymous namespace
-
-
-std::string DynamicDataList::changesXML()
+void TimespanDataList::switchSensorDone()
 {
-  METLIBS_LOG_SCOPE();
-  QDomDocument doc("changes");
-  QDomElement doc_changes = doc.createElement(E_TAG_CHANGES);
-  doc.appendChild(doc_changes);
-
-  changes(doc_changes);
-
-  if (doc_changes.hasChildNodes()) {
-    METLIBS_LOG_DEBUG("changes for " << mStoreSensorTime << ": " << doc.toString());
-    return doc.toString().toStdString();
-  } else {
-    return "";
-  }
+  updateModel(makeModel());
 }
 
-void DynamicDataList::replayXML(const std::string& changesXML)
-{
-  METLIBS_LOG_SCOPE();
-  if (changesXML.empty())
-    return;
-
-  QDomDocument doc;
-  doc.setContent(QString::fromStdString(changesXML));
-
-  const QDomElement doc_changes = doc.documentElement();
-  replay(doc_changes);
-}
-
-void DynamicDataList::changes(QDomElement& doc_changes)
+void TimespanDataList::storeChangesXML(QDomElement& doc_changes)
 {
   METLIBS_LOG_SCOPE();
   if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
@@ -180,21 +144,7 @@ void DynamicDataList::changes(QDomElement& doc_changes)
   }
 }
 
-void DynamicDataList::replay(const QDomElement& doc_changes)
-{
-  TimeSpan newTimeLimits(mOriginalTimeLimits);
-  const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
-  if (not doc_timeshift.isNull()) {
-    const int dT0 = doc_timeshift.attribute(T_ATTR_START).toInt();
-    const int dT1 = doc_timeshift.attribute(T_ATTR_END)  .toInt();
-    const timeutil::ptime t0 = mOriginalTimeLimits.t0() + boost::posix_time::hours(dT0);
-    const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
-    newTimeLimits = TimeSpan(t0, t1);
-  }
-  mTimeLimits = newTimeLimits;
-}
-
-void DynamicDataList::onChangeStart(QObject* action)
+void TimespanDataList::onChangeStart(QObject* action)
 {
   METLIBS_LOG_SCOPE();
   const int step = static_cast<QAction*>(action)->data().toInt();
@@ -210,7 +160,7 @@ void DynamicDataList::onChangeStart(QObject* action)
   updateModel(makeModel());
 }
 
-void DynamicDataList::onChangeEnd(QObject* action)
+void TimespanDataList::onChangeEnd(QObject* action)
 {
   METLIBS_LOG_SCOPE();
   const int step = static_cast<QAction*>(action)->data().toInt();
@@ -226,7 +176,7 @@ void DynamicDataList::onChangeEnd(QObject* action)
   updateModel(makeModel());
 }
 
-void DynamicDataList::onResetTime()
+void TimespanDataList::onResetTime()
 {
   METLIBS_LOG_SCOPE();
   mTimeLimits = mOriginalTimeLimits;
