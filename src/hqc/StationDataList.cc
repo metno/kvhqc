@@ -47,25 +47,27 @@ SensorTime StationDataList::sensorSwitch() const
   return SensorTime(s, cst.time);
 }
 
-void StationDataList::addSensorColumns(DataListModel* model, const Sensor& s)
+void StationDataList::addSensorColumns(const Sensor& s)
 {
   DataColumn_p ocOrig = ColumnFactory::columnForSensor(mDA, s, timeSpan(), ObsColumn::ORIGINAL);
   if (ocOrig)
-    model->addColumn(ocOrig);
+    model()->addColumn(ocOrig);
 
   DataColumn_p ocCorr = ColumnFactory::columnForSensor(mDA, s, timeSpan(), ObsColumn::NEW_CORRECTED);
   if (ocCorr)
-    model->addColumn(ocCorr);
+    model()->addColumn(ocCorr);
 }
 
-DataListModel* StationDataList::makeModel()
+void StationDataList::updateModel()
 {
   METLIBS_LOG_SCOPE(LOGVAL(currentSensorTime()) << LOGVAL(timeSpan()));
+
+  model()->removeAllColumns();
 
   const Sensor& s = currentSensorTime().sensor;
   const TimeSpan& time = timeSpan();
 
-  std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, time));
+  model()->setTimeSpan(time);
 
   const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   for(size_t i=0; i<NWeatherParameters; ++i) {
@@ -79,7 +81,7 @@ DataListModel* StationDataList::makeModel()
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
 
-      addSensorColumns(newModel.get(), Sensor(s.stationId, paramId, s.level, s.sensor, s.typeId));
+      addSensorColumns(Sensor(s.stationId, paramId, s.level, s.sensor, s.typeId));
       break;
     }
   }
@@ -93,10 +95,8 @@ DataListModel* StationDataList::makeModel()
     if (std::find(WeatherParameters, WeatherParametersE, op.paramID()) != WeatherParametersE)
       continue;
     
-    addSensorColumns(newModel.get(), Sensor(s.stationId, op.paramID(), s.level, s.sensor, s.typeId));
+    addSensorColumns(Sensor(s.stationId, op.paramID(), s.level, s.sensor, s.typeId));
   }
-
-  return newModel.release();
 }
 
 std::string StationDataList::viewType() const

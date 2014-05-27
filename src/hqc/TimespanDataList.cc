@@ -129,7 +129,7 @@ void TimespanDataList::loadChangesXML(const QDomElement& doc_changes)
 
 void TimespanDataList::switchSensorDone()
 {
-  updateModel(makeModel());
+  updateModel();
 }
 
 void TimespanDataList::storeChangesXML(QDomElement& doc_changes)
@@ -157,7 +157,7 @@ void TimespanDataList::onChangeStart(QObject* action)
   mTimeLimits = TimeSpan(t0, t1);
   METLIBS_LOG_DEBUG(LOGVAL(mTimeLimits));
 
-  updateModel(makeModel());
+  updateModel();
 }
 
 void TimespanDataList::onChangeEnd(QObject* action)
@@ -173,12 +173,12 @@ void TimespanDataList::onChangeEnd(QObject* action)
   mTimeLimits = TimeSpan(t0, t1);
   METLIBS_LOG_DEBUG(LOGVAL(mTimeLimits));
 
-  updateModel(makeModel());
+  updateModel();
 }
 
 void TimespanDataList::onResetTime()
 {
   METLIBS_LOG_SCOPE();
   mTimeLimits = mOriginalTimeLimits;
-  updateModel(makeModel());
+  updateModel();
 }

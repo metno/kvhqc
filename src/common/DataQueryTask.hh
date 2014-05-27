@@ -14,12 +14,12 @@ public:
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyDone();
+  void notifyStatus(int);
   void notifyError(QString message);
 
 Q_SIGNALS:
   void newData(ObsRequest_p, const ObsData_pv&);
-  void completed(ObsRequest_p, bool);
+  void queryStatus(ObsRequest_p, int);
 
 private:
   void sendData();

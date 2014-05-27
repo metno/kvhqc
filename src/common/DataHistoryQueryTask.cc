@@ -54,10 +54,12 @@ void DataHistoryQueryTask::notifyRow(const ResultRow& row)
   mHistory.push_back(v);
 }
 
-void DataHistoryQueryTask::notifyDone()
+void DataHistoryQueryTask::notifyStatus(int status)
 {
-  Q_EMIT completed(mSensorTime, mHistory, false);
-  mHistory.clear();
+  if (status >= COMPLETE) {
+    Q_EMIT completed(mSensorTime, mHistory, status == FAILED);
+    mHistory.clear();
+  }
 }
 
 void DataHistoryQueryTask::notifyError(QString)

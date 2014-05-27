@@ -26,6 +26,10 @@ protected:
 
 private Q_SLOTS:
   void onNewData(ObsRequest_p request, const ObsData_pv& data);
+  void onStatus(ObsRequest_p request, int);
+
+private:
+  bool isKnownRequest(ObsRequest_p request) const;
 
 private:
   QueryTaskHandler_p mHandler;

@@ -6,29 +6,33 @@
 
 #include <QtGui/QApplication>
 
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
-#include "util/HqcLogging.hh"
+#include "ObsLogging.hh"
 
-ObsTableModel::ObsTableModel(EditAccess_p da, const TimeSpan& time, int step)
-  : mDA(da)
+ObsTableModel::ObsTableModel(EditAccess_p da, int step, QObject* parent)
+  : QAbstractTableModel(parent)
+  , mDA(da)
   , mTimeInRows(true)
-  , mTime(time)
   , mTimeStep(step)
+  , mTimeCount(0)
+  , mHaveBusyColumns(false)
 {
   METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(mTime) << LOGVAL(mTimeStep));
-  updateTimes();
 }
 
 ObsTableModel::~ObsTableModel()
 {
-  BOOST_FOREACH(ObsColumn_p c, mColumns) {
-    if (c)
-      c->detach(this);
+  for (ObsColumn_pv::iterator it = mColumns.begin(); it != mColumns.end(); ++it)
+    detachColumn(*it);
+}
+
+void ObsTableModel::setTimeSpan(const TimeSpan& limits)
+{
+  if (limits != mTime) {
+    mTime = limits;
+    updateTimes();
   }
 }
 
@@ -45,21 +49,23 @@ void ObsTableModel::setTimeInRows(bool tir)
 
 void ObsTableModel::insertColumn(int before, ObsColumn_p c)
 {
-  beginResetModel();
-  //beginInsertC(before, before);
-
+  columnInsertBegin(before, before);
   mColumns.insert(mColumns.begin() + before, c);
   if (c) {
     connect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     connect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
         this, SLOT(onColumnTimesChanged(ObsColumn_p)));
+    connect(c.get(), SIGNAL(columnBusyStatus(int)),
+        this, SLOT(onColumnBusyStatus(int)));
     c->attach(this);
   }
-  updateTimes();
+  columnInsertEnd();
 
-  //endInsertC();
-  endResetModel();
+  countBusyColumns(true);
+
+  if (c)
+    onColumnTimesChanged(c);
 }
 
 void ObsTableModel::moveColumn(int from, int to)
@@ -72,34 +78,58 @@ void ObsTableModel::moveColumn(int from, int to)
 
   ObsColumn_p c = getColumn(from);
 
-  beginRemoveC(from, from);
+  columnRemoveBegin(from, from);
   mColumns.erase(mColumns.begin() + from);
-  endRemoveC();
+  columnRemoveEnd();
 
-  beginInsertC(to, to);
+  columnInsertBegin(to, to);
   mColumns.insert(mColumns.begin() + to, c);
-  endInsertC();
+  columnInsertEnd();
+
+  if (c)
+    onColumnTimesChanged(c);
 }
 
 void ObsTableModel::removeColumn(int at)
 {
-  beginResetModel();
-  //beginRemoveC(at, at);
-
+  columnRemoveBegin(at, at);
   const ObsColumn_pv::iterator it = mColumns.begin() + at;
-  ObsColumn_p c = *it;
+  ObsColumn_p c = *it; // copy pointer, needed after erase / iterator invalidation
+  detachColumn(c);
+  mColumns.erase(it);
+  columnRemoveEnd();
+
+  countBusyColumns(false);
+
+  if (c)
+    onColumnTimesChanged(c);
+}
+
+void ObsTableModel::detachColumn(ObsColumn_p c)
+{
   if (c) {
     c->detach(this);
     disconnect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     disconnect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
         this, SLOT(onColumnTimesChanged(ObsColumn_p)));
+    disconnect(c.get(), SIGNAL(columnBusyStatus(int)),
+        this, SLOT(onColumnBusyStatus(int)));
   }
-  mColumns.erase(it);
-  updateTimes();
+}
 
-  //endRemoveC();
+void ObsTableModel::removeAllColumns()
+{
+  beginResetModel();
+  for (ObsColumn_pv::iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
+    detachColumn(*it);
+  }
+  mColumns.clear();
+  updateTimes();
   endResetModel();
+
+  countBusyColumns(true);
+  onColumnTimesChanged(ObsColumn_p());
 }
 
 void ObsTableModel::setTimeStep(int step)
@@ -116,10 +146,10 @@ void ObsTableModel::setTimeStep(int step)
 
 void ObsTableModel::updateTimes()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(mTime) << LOGVAL(mTimeStep));
 
-  mTime0 = mTime.t0();
-  if (mTimeStep > 0) {
+  if (mTime.closed() and mTimeStep > 0) {
+    mTime0 = mTime.t0();
     const timeutil::ptime tt = mTime0 - boost::posix_time::hours(6);
     const int s = tt.time_of_day().total_seconds();
     const int r = s % mTimeStep;
@@ -168,7 +198,7 @@ bool ObsTableModel::isTimeOrientation(Qt::Orientation orientation) const
       or ((not mTimeInRows) and orientation == Qt::Horizontal);
 }
 
-void ObsTableModel::beginInsertR(int first, int last)
+void ObsTableModel::timeInsertBegin(int first, int last)
 {
   if (mTimeInRows)
     beginInsertRows(QModelIndex(), first, last);
@@ -176,7 +206,15 @@ void ObsTableModel::beginInsertR(int first, int last)
     beginInsertColumns(QModelIndex(), first, last);
 }
 
-void ObsTableModel::beginInsertC(int first, int last)
+void ObsTableModel::timeInsertEnd()
+{
+  if (mTimeInRows)
+    endInsertRows();
+  else
+    endInsertColumns();
+}
+
+void ObsTableModel::columnInsertBegin(int first, int last)
 {
   if (mTimeInRows)
     beginInsertColumns(QModelIndex(), first, last);
@@ -184,15 +222,7 @@ void ObsTableModel::beginInsertC(int first, int last)
     beginInsertRows(QModelIndex(), first, last);
 }
 
-void ObsTableModel::endInsertR()
-{
-  if (mTimeInRows)
-    endInsertRows();
-  else
-    endInsertColumns();
-}
-
-void ObsTableModel::endInsertC()
+void ObsTableModel::columnInsertEnd()
 {
   if (mTimeInRows)
     endInsertColumns();
@@ -200,7 +230,7 @@ void ObsTableModel::endInsertC()
     endInsertRows();
 }
 
-void ObsTableModel::beginRemoveR(int first, int last)
+void ObsTableModel::timeRemoveBegin(int first, int last)
 {
   if (mTimeInRows)
     beginRemoveRows(QModelIndex(), first, last);
@@ -208,15 +238,7 @@ void ObsTableModel::beginRemoveR(int first, int last)
     beginRemoveColumns(QModelIndex(), first, last);
 }
 
-void ObsTableModel::beginRemoveC(int first, int last)
-{
-  if (mTimeInRows)
-    beginRemoveColumns(QModelIndex(), first, last);
-  else
-    beginRemoveRows(QModelIndex(), first, last);
-}
-
-void ObsTableModel::endRemoveR()
+void ObsTableModel::timeRemoveEnd()
 {
   if (mTimeInRows)
     endRemoveRows();
@@ -224,7 +246,15 @@ void ObsTableModel::endRemoveR()
     endRemoveColumns();
 }
 
-void ObsTableModel::endRemoveC()
+void ObsTableModel::columnRemoveBegin(int first, int last)
+{
+  if (mTimeInRows)
+    beginRemoveColumns(QModelIndex(), first, last);
+  else
+    beginRemoveRows(QModelIndex(), first, last);
+}
+
+void ObsTableModel::columnRemoveEnd()
 {
   if (mTimeInRows)
     endRemoveColumns();
@@ -321,8 +351,40 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p col
 
 void ObsTableModel::onColumnTimesChanged(ObsColumn_p column)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGMYTYPE());
+  if (column)
+    METLIBS_LOG_DEBUG(LOGVAL(column->sensor()));
   beginResetModel();
   updateTimes();
   endResetModel();
+}
+
+void ObsTableModel::onColumnBusyStatus(int status)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(status));
+  const bool columnBusy = (status < QueryTask::COMPLETE);
+  if (columnBusy == mHaveBusyColumns)
+    return;
+
+  countBusyColumns(false);
+}
+
+void ObsTableModel::countBusyColumns(bool send)
+{
+  METLIBS_LOG_SCOPE();
+  bool haveBusy = false;
+  for (ObsColumn_pv::iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
+    if (ObsColumn_p c = *it) {
+      const int bs = c->busyStatus();
+      if (bs < QueryTask::COMPLETE) {
+        haveBusy = true;
+        break;
+      }
+    }
+  }
+
+  if (send or haveBusy != mHaveBusyColumns) {
+    mHaveBusyColumns = haveBusy;
+    Q_EMIT busyStatus(mHaveBusyColumns);
+  }
 }

@@ -74,25 +74,23 @@ void DataQueryTask::notifyRow(const ResultRow& row)
 
 void DataQueryTask::sendData()
 {
-  if (mData.empty())
-    return;
-
   std::sort(mData.begin(), mData.end(), ObsData_by_SensorTime());
 
   Q_EMIT newData(mRequest, mData);
   mData.clear();
 }
 
-void DataQueryTask::notifyDone()
+void DataQueryTask::notifyStatus(int status)
 {
-  if (not mData.empty())
-    sendData();
-  Q_EMIT newData(mRequest, mData);
-  Q_EMIT completed(mRequest, false);
+  if (status >= COMPLETE) {
+    if (not mData.empty())
+      sendData();
+    //Q_EMIT newData(mRequest, mData); // empty data
+  }
+  Q_EMIT queryStatus(mRequest, status);
 }
 
 void DataQueryTask::notifyError(QString)
 {
-  Q_EMIT newData(mRequest, mData);
-  Q_EMIT completed(mRequest, true);
+  Q_EMIT queryStatus(mRequest, QueryTask::FAILED);
 }

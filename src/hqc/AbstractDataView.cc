@@ -9,6 +9,7 @@ AbstractDataView::AbstractDataView(QWidget* parent)
 {
   connect(this, SIGNAL(visibilityUpdate(bool)),
       this, SLOT(onVisibilityUpdate(bool)));
+  mNavigate.updateVisible(visibility());
 }
 
 AbstractDataView::~AbstractDataView()
@@ -23,7 +24,7 @@ void AbstractDataView::onVisibilityUpdate(bool visible)
 
 void AbstractDataView::navigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(st));
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(st));
   NavigateHelper::Blocker block(mNavigate);
   if (mNavigate.go(st))
     doNavigateTo();

@@ -24,7 +24,7 @@ protected:
   void switchSensorDone();
   void storeChangesXML(QDomElement& doc_changes);
 
-  virtual DataListModel* makeModel() = 0;
+  virtual void updateModel() = 0;
   void retranslateUi();
 
   const TimeSpan& timeSpan() const

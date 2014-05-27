@@ -13,10 +13,10 @@ public:
 protected:
   std::string viewType() const;
   SensorTime sensorSwitch() const;
-  DataListModel* makeModel();
+  void updateModel();
 
 private:
-  void addSensorColumns(DataListModel* model, const Sensor& s);
+  void addSensorColumns(const Sensor& s);
 };
 
 #endif // StationDataList_hh

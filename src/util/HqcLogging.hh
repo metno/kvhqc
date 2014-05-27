@@ -23,4 +23,10 @@ extern bool HqcLoggingWarnOrError;
   do { HqcLoggingWarnOrError = true ;        \
     METLIBS_LOG_ERROR(x); } while(0)
 
+#define LOGTYPE(type)                           \
+  '{' << typeid(type).name() << '}'
+
+#define LOGMYTYPE()                             \
+  LOGTYPE(*this)
+
 #endif // HQC_LOGGING_HH

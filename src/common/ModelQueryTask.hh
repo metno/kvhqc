@@ -14,12 +14,11 @@ public:
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyDone();
-  void notifyError(QString message);
+  void notifyStatus(int status);
 
 Q_SIGNALS:
   void data(const ModelData_pv&);
-  void completed(bool failed);
+  void queryStatus(int);
 
 private:
   void sendData();

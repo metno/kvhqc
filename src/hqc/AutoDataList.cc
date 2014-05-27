@@ -16,8 +16,6 @@
 
 #include <QtXml/QDomElement>
 
-#include <boost/foreach.hpp>
-
 #include "ui_datalist.h"
 
 #define MILOGGER_CATEGORY "kvhqc.AutoDataList"
@@ -104,20 +102,25 @@ void AutoDataList::switchSensorPrepare()
   METLIBS_LOG_SCOPE();
   TimespanDataList::switchSensorPrepare();
 
-  mColumns = Columns_t();
+  mColumns = Column_v();
+
+  model()->setTimeSpan(timeSpan());
+
+  const int currentStationId = currentSensorTime().sensor.stationId,
+      currentParamId = currentSensorTime().sensor.paramId;
   
-  const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE);
-  BOOST_FOREACH(const Sensor& s, sensors) {
+  const Sensor_v sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE);
+  for (Sensor_v::const_iterator it = sensors.begin(); it != sensors.end(); ++it) {
     Column c;
-    c.sensor = s;
+    c.sensor = *it;
     c.timeOffset = 0;
-    if (s.stationId == currentSensorTime().sensor.stationId and s.paramId == currentSensorTime().sensor.paramId) {
+    if (it->stationId == currentStationId and it->paramId == currentParamId) {
       c.type = ORIGINAL;
       mColumns.push_back(c);
     }
     c.type = CORRECTED;
     mColumns.push_back(c);
-    METLIBS_LOG_DEBUG("gen " << s);
+    METLIBS_LOG_DEBUG("gen " << *it);
   }
   mOriginalColumns = mColumns;
 }
@@ -126,7 +129,7 @@ void AutoDataList::loadChangesXML(const QDomElement& doc_changes)
 {
   TimespanDataList::loadChangesXML(doc_changes);
 
-  Columns_t removed;
+  Column_v removed;
   const QDomElement doc_removed = doc_changes.firstChildElement(E_TAG_REMOVED);
   if (not doc_removed.isNull()) {
     for(QDomElement c = doc_removed.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
@@ -137,7 +140,7 @@ void AutoDataList::loadChangesXML(const QDomElement& doc_changes)
     }
   }
 
-  Columns_t actual;
+  Column_v actual;
   const QDomElement doc_actual = doc_changes.firstChildElement(E_TAG_COLUMNS);
   if (not doc_actual.isNull()) {
     for(QDomElement c = doc_actual.firstChildElement(E_TAG_COLUMN); not c.isNull(); c = c.nextSiblingElement(E_TAG_COLUMN)) {
@@ -164,21 +167,21 @@ void AutoDataList::storeChangesXML(QDomElement& doc_changes)
   QDomDocument doc = doc_changes.ownerDocument();
 
   ChangeReplay<Column, lt_Column> cr;
-  const Columns_t removed = cr.removals(mOriginalColumns, mColumns);
+  const Column_v removed = cr.removals(mOriginalColumns, mColumns);
   if (not removed.empty()) {
     QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
-    BOOST_FOREACH(const Column& r, removed) {
+    for (Column_v::const_iterator it = removed.begin(); it != removed.end(); ++it) {
       QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
-      r.toText(doc_column);
+      it->toText(doc_column);
       doc_removed.appendChild(doc_column);
     } 
     doc_changes.appendChild(doc_removed);
   }
 
   QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
-  BOOST_FOREACH(const Column& c, mColumns) {
+  for (Column_v::const_iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
     QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
-    c.toText(doc_column);
+    it->toText(doc_column);
     doc_columns.appendChild(doc_column);
   } 
   doc_changes.appendChild(doc_columns);
@@ -190,20 +193,18 @@ bool AutoDataList::hasChangedColumns() const
       or not std::equal(mColumns.begin(), mColumns.end(), mOriginalColumns.begin(), eq_Column());
 }
 
-DataListModel* AutoDataList::makeModel()
+void AutoDataList::updateModel()
 {
   METLIBS_LOG_SCOPE();
-  //BusyIndicator busy;
-  std::auto_ptr<DataListModel> newModel(new DataListModel(mDA, timeSpan()));
-  BOOST_FOREACH(const Column& c, mColumns) {
-    ObsColumn_p oc = makeColumn(c);
-    if (oc)
-      newModel->addColumn(oc);
-  }
-  newModel->setCenter(currentSensorTime().sensor.stationId);
-  mColumnAdd->setEnabled(true);
 
-  return newModel.release();
+  model()->removeAllColumns();
+  for (Column_v::const_iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
+    ObsColumn_p oc = makeColumn(*it);
+    if (oc)
+      model()->addColumn(oc);
+  }
+  model()->setCenter(currentSensorTime().sensor.stationId);
+  mColumnAdd->setEnabled(true);
 }
 
 ObsColumn_p AutoDataList::makeColumn(const Column& c)
@@ -298,7 +299,7 @@ void AutoDataList::onActionAddColumn()
   if (not sm)
     return;
 
-  int column = mTableModel->columnCount(QModelIndex());
+  int column = model()->columnCount(QModelIndex());
   if (const QItemSelectionModel* sm = ui->table->selectionModel()) {
     const QModelIndexList sc = sm->selectedColumns();
     if (sc.size() == 1)
@@ -309,7 +310,7 @@ void AutoDataList::onActionAddColumn()
 
 void AutoDataList::addColumnBefore(int column)
 {
-  const int columnCount = mTableModel->columnCount(QModelIndex());
+  const int columnCount = model()->countColumns();
   if (column < 0 or column > columnCount)
     column = columnCount;
 
@@ -324,7 +325,7 @@ void AutoDataList::addColumnBefore(int column)
   c.type = dac.selectedColumnType();
   c.timeOffset = dac.selectedTimeOffset();
   mColumns.insert(mColumns.begin() + column, c);
-  mTableModel->insertColumn(column, makeColumn(c));
+  model()->insertColumn(column, makeColumn(c));
   mColumnReset->setEnabled(true);
 }
 
@@ -333,11 +334,12 @@ void AutoDataList::removeColumns(std::vector<int> columns)
   if (columns.empty())
     return;
   std::sort(columns.begin(), columns.end(), std::greater<int>());
-  BOOST_FOREACH(int c, columns) {
+  for (std::vector<int>::const_iterator it = columns.begin(); it != columns.end(); ++it) {
+    const int c = *it;
     if (c >= 0 and c < (int)mColumns.size())
       mColumns.erase(mColumns.begin() + c);
+    model()->removeColumn(c);
   }
-  updateModel(makeModel());
   mColumnReset->setEnabled(true);
 }
 
@@ -357,7 +359,7 @@ void AutoDataList::onActionRemoveColumn()
 void AutoDataList::onActionResetColumns()
 {
   mColumns = mOriginalColumns;
-  updateModel(makeModel());
+  updateModel();
   mColumnReset->setEnabled(false);
 }
 
@@ -376,7 +378,7 @@ void AutoDataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, in
 
   const int from = logicalIndex, to = nVis;
   ui->table->horizontalHeader()->moveSection(to, from);
-  mTableModel->moveColumn(from, to); // move back and switch model columns instead
+  model()->moveColumn(from, to); // move back and switch model columns instead
 
   const Column c = mColumns[from];
   mColumns.erase(mColumns.begin() + from);

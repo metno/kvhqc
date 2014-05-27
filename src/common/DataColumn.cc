@@ -15,6 +15,7 @@ DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t,
   , mBuffer(boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
   , mItem(item)
   , mHeaderShowStation(true)
+  , mRequestStatus(QueryTask::STARTED)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor) << LOGVAL(t));
   TimeBuffer* b = mBuffer.get();
@@ -32,6 +33,7 @@ void DataColumn::attach(ObsTableModel*)
 {
   METLIBS_LOG_SCOPE();
   mBuffer->postRequest(mDA);
+  Q_EMIT columnBusyStatus(mRequestStatus);
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
@@ -66,8 +68,10 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
       
 void DataColumn::onBufferCompleted(bool failed)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(sensor()));
   Q_EMIT columnTimesChanged(shared_from_this());
+  mRequestStatus = failed ? QueryTask::FAILED : QueryTask::COMPLETE;
+  Q_EMIT columnBusyStatus(mRequestStatus);
 }
 
 void DataColumn::onNewDataEnd(const ObsData_pv& data)

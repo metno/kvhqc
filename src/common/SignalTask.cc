@@ -6,10 +6,10 @@ SignalTask::~SignalTask()
   delete mWrapped;
 }
 
-void SignalTask::notifyDone()
+void SignalTask::notifyStatus(int status)
 {
-  mWrapped->notifyDone();
-  Q_EMIT signalDone();
+  mWrapped->notifyStatus(status);
+  Q_EMIT signalStatus(status);
 }
 
 void SignalTask::notifyError(QString message)

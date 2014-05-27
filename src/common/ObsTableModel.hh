@@ -11,7 +11,7 @@
 class ObsTableModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  ObsTableModel(EditAccess_p kda, const TimeSpan& time, int step = (24*60*60));
+  ObsTableModel(EditAccess_p da, int step = (24*60*60), QObject* parent=0);
   virtual ~ObsTableModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -22,15 +22,20 @@ public:
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
   virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
 
+  virtual void setTimeSpan(const TimeSpan& limits);
   virtual timeutil::ptime timeAtRow(int row) const;
   virtual SensorTime findSensorTime(const QModelIndex& idx) const;
 
   virtual void setTimeInRows(bool tir);
 
+  virtual int countTimes() const;
+  virtual int countColumns() const;
+
   virtual ObsColumn_p getColumn(int idx) const;
   virtual void insertColumn(int before, ObsColumn_p c);
   virtual void removeColumn(int at);
   virtual void moveColumn(int from, int to);
+  virtual void removeAllColumns();
 
   void addColumn(ObsColumn_p c)
     { insertColumn(mColumns.size(), c); }
@@ -49,34 +54,38 @@ public:
 Q_SIGNALS:
   void changedTimeStep(int step);
   void changedTimeInRows(bool tir);
+  void busyStatus(bool busy);
 
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
-  virtual int countTimes() const;
-  virtual int countColumns() const;
   virtual bool isTimeOrientation(Qt::Orientation orientation) const;
 
-  virtual void beginInsertR(int first, int last);
-  virtual void beginInsertC(int first, int last);
-  virtual void endInsertR();
-  virtual void endInsertC();
+  virtual void timeInsertBegin(int first, int last);
+  virtual void timeInsertEnd();
+  virtual void columnInsertBegin(int first, int last);
+  virtual void columnInsertEnd();
 
-  virtual void beginRemoveR(int first, int last);
-  virtual void beginRemoveC(int first, int last);
-  virtual void endRemoveR();
-  virtual void endRemoveC();
+  virtual void timeRemoveBegin(int first, int last);
+  virtual void timeRemoveEnd();
+  virtual void columnRemoveBegin(int first, int last);
+  virtual void columnRemoveEnd();
 
   virtual void updateTimes();
 
+  //! check if there are som busy columns; emit busyStatus if send==true or if changed
+  void countBusyColumns(bool send);
+
 private Q_SLOTS:
-  void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
-  void onColumnTimesChanged(ObsColumn_p column);
+  virtual void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
+  virtual void onColumnTimesChanged(ObsColumn_p column);
+  virtual void onColumnBusyStatus(int);
 
 private:
   int timeIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.row() : index.column(); }
   int columnIndex(const QModelIndex& index) const
     { return mTimeInRows ? index.column() : index.row(); }
+  void detachColumn(ObsColumn_p column);
 
 protected:
   EditAccess_p mDA;
@@ -88,6 +97,7 @@ protected:
 private:
   ObsColumn_pv mColumns;
   int mTimeCount; //! number of times after rounding
+  bool mHaveBusyColumns;
 };
 
 #endif /* OBSTABLEMODEL_HH */

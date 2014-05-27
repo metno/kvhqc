@@ -15,7 +15,7 @@ public:
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyDone();
+  void notifyStatus(int status);
   void notifyError(QString message);
 
 Q_SIGNALS:

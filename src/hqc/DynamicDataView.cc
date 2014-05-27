@@ -25,7 +25,7 @@ DynamicDataView::~DynamicDataView()
 
 void DynamicDataView::doNavigateTo()
 {
-  METLIBS_LOG_TIME();
+  METLIBS_LOG_TIME(LOGMYTYPE());
   const SensorTime storeST = sensorSwitch();
   const bool sv = mStoreST.valid(), sw = sv and not eq_SensorTime()(mStoreST, storeST);
   METLIBS_LOG_DEBUG(LOGVAL(mStoreST) << LOGVAL(storeST) << LOGVAL(sv) << LOGVAL(sw));
@@ -69,7 +69,7 @@ void DynamicDataView::switchSensorDone()
 
 void DynamicDataView::storeChanges()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGMYTYPE());
   const std::string vt = viewType();
   if (mStoreST.valid() and not vt.empty()) {
     QDomDocument doc("changes");
@@ -90,6 +90,7 @@ void DynamicDataView::storeChanges()
 
 void DynamicDataView::loadChanges()
 {
+  METLIBS_LOG_SCOPE(LOGMYTYPE());
   switchSensorPrepare();
 
   const std::string vt = viewType();

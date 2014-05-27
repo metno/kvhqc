@@ -45,22 +45,27 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
   }
 
   METLIBS_LOG_DEBUG(LOGVAL(cached.size()) << LOGVAL(toQuery.size()));
-  if (not cached.empty())
+  if (not cached.empty()) {
+    // FIXME STARTED might come again when there are data to fetch
+    // from the database
+    request->notifyStatus(QueryTask::STARTED);
+
     request->notifyData(cached);
+  }
 
   if (not toQuery.empty()) {
     ModelQueryTask* task = new ModelQueryTask(toQuery, 10);
-    connect(task, SIGNAL(data(const ModelData_pv&)),
+    connect(task, SIGNAL(notifyData(const ModelData_pv&)),
         request.get(), SIGNAL(data(const ModelData_pv&)));
-    connect(task, SIGNAL(completed(bool)),
-        request.get(), SIGNAL(completed(bool)));
+    connect(task, SIGNAL(queryStatus(int)),
+        request.get(), SLOT(notifyStatus(int)));
     connect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
 
     request->setTag(task);
     hqcApp->kvalobsHandler()->postTask(task);
   } else {
-    request->notifyCompleted(false);
+    request->notifyStatus(QueryTask::COMPLETE);
   }
 }
 
@@ -79,9 +84,9 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
 
     request->setTag(0);
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
-        request.get(), SIGNAL(data(const ModelData_pv&)));
-    disconnect(task, SIGNAL(completed(bool)),
-        request.get(), SIGNAL(completed(bool)));
+        request.get(), SIGNAL(notifyData(const ModelData_pv&)));
+    disconnect(task, SIGNAL(queryStatus(int)),
+        request.get(), SLOT(notifyStatus(int)));
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
     hqcApp->kvalobsHandler()->dropTask(task);

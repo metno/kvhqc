@@ -71,15 +71,9 @@ void ModelQueryTask::sendData()
   mData.clear();
 }
 
-void ModelQueryTask::notifyDone()
+void ModelQueryTask::notifyStatus(int status)
 {
-  if (not mData.empty())
+  if (status >= COMPLETE and not mData.empty())
     sendData();
-  Q_EMIT completed(false);
-}
-
-void ModelQueryTask::notifyError(QString message)
-{
-  HQC_LOG_ERROR(message);
-  Q_EMIT completed(true);
+  Q_EMIT queryStatus(status);
 }

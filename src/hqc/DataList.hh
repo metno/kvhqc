@@ -5,6 +5,7 @@
 #include "DynamicDataView.hh"
 #include "common/EditAccess.hh"
 #include "common/ModelAccess.hh"
+#include "util/BusyLabel.hh"
 #include "util/CurrentTableView.hh"
 
 class DataListModel;
@@ -24,11 +25,12 @@ private Q_SLOTS:
   void onUITimeStepChanged(int index);
   void onModelTimeStepChanged(int step);
   void onModelFilterByTimeStepChanged(bool enabled, bool ftbs);
+  void onBusyStatus(bool);
 
 protected:
   void doNavigateTo();
-  void updateModel(DataListModel* model);
   void retranslateUi();
+  DataListModel* model() const;
 
 private:
   void addTimeStepItem(int step);
@@ -37,9 +39,10 @@ private:
 
 protected:
   std::auto_ptr<Ui_DataList> ui;
-  std::auto_ptr<DataListModel> mTableModel;
+  BusyLabel* mBusy;
   EditAccess_p mDA;
   ModelAccess_p mMA;
+  bool mCurrentSelected;
 };
 
 #endif // DataList_hh

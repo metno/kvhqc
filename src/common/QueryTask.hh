@@ -28,13 +28,22 @@ public:
   virtual QString querySql(QString dbversion) const = 0;
 
   virtual void notifyRow(const ResultRow& row) = 0;
-  virtual void notifyDone() = 0;
-  virtual void notifyError(QString message) = 0;
+
+  enum {
+    PENDING = -1,
+    STARTED = 0,
+    COMPLETE = 100,
+    FAILED = 112
+  };
+
+  virtual void notifyStatus(int status) = 0;
+  virtual void notifyError(QString message);
 
   enum {
     PRIORITY_AUTOMATIC = 20,
     PRIORITY_SEARCH = 50,
-    PRIORITY_INTERACTIVE = 100
+    PRIORITY_INTERACTIVE = 80,
+    PRIORITY_SYNC = 100
   };
 
   size_t priority() const

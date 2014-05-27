@@ -5,8 +5,8 @@
 
 VisibleWidget::VisibleWidget(QWidget* parent)
   : QWidget(parent)
-  , mShown(true)
-  , mEmpty(false)
+  , mShown(isVisible())
+  , mEmpty(size().isEmpty())
 {
 }
 
@@ -44,7 +44,7 @@ void VisibleWidget::resizeEvent(QResizeEvent *re)
 
 void VisibleWidget::sendUpdate()
 {
-  Q_EMIT visibilityUpdate(mShown and not mEmpty);
+  Q_EMIT visibilityUpdate(visibility());
 }
 
 void VisibleWidget::changeEvent(QEvent *event)

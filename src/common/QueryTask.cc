@@ -9,3 +9,7 @@ QueryTask::QueryTask(size_t priority)
 QueryTask::~QueryTask()
 {
 }
+
+void QueryTask::notifyError(QString)
+{
+}

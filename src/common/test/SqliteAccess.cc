@@ -190,8 +190,9 @@ void SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, Que
 {
   sqlite3_finalize(stmt);
   if (lastStep == SQLITE_DONE) {
-    qtask->notifyDone();
+    qtask->notifyStatus(QueryTask::COMPLETE);
   } else {
+    qtask->notifyStatus(QueryTask::FAILED);
     QString message = QString("Statement stepping not finished with DONE; error=")
         +  sqlite3_errmsg(db);
     qtask->notifyError(message);

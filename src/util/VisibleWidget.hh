@@ -9,6 +9,9 @@ class VisibleWidget : public QWidget
 public:
   VisibleWidget(QWidget* parent=0);
   ~VisibleWidget() = 0;
+
+  bool visibility() const
+    { return mShown and not mEmpty; }
                  
 Q_SIGNALS:
   void visibilityUpdate(bool visible);

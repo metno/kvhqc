@@ -1,6 +1,9 @@
 
 #include "NavigateHelper.hh"
 
+#define MILOGGER_CATEGORY "kvhqc.NavigateHelper"
+#include "common/ObsLogging.hh"
+
 NavigateHelper::NavigateHelper()
   : mBlocked(0)
   , mChanged(false)
@@ -13,6 +16,7 @@ NavigateHelper::~NavigateHelper()
 
 bool NavigateHelper::go(const SensorTime& st)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(mBlocked));
   const bool changed = mChanged
       || (st.valid() != mLastNavigated.valid())
       || (not eq_SensorTime()(st, mLastNavigated));

@@ -41,9 +41,13 @@ DataList::DataList(QWidget* parent)
   , ui(new Ui_DataList)
   , mDA(hqcApp->editAccess())
   , mMA(hqcApp->modelAccess())
+  , mCurrentSelected(false)
 {
   ui->setupUi(this);
   ui->buttonSaveAs->setIcon(QIcon("icons:dl_save_as.svg"));
+
+  mBusy = new BusyLabel(this);
+  ui->layoutButtons->addWidget(mBusy);
 
   QFont mono("Monospace");
   ui->table->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
@@ -55,6 +59,10 @@ DataList::DataList(QWidget* parent)
   ui->table->setSelectionBehavior(QAbstractItemView::SelectItems);
   ui->table->setSelectionMode(QAbstractItemView::ExtendedSelection);
   ui->table->setItemDelegate(new ObsDelegate(this));
+  
+  // need to do this before adding time steps
+  DataListModel* mdl = new DataListModel(mDA, this);
+  ui->table->setModel(mdl);
 
   ui->comboTimeStep->addItem(tr("none"), QVariant(0));
   { const int NMINUTES = 5, MINUTES[NMINUTES] = { 1, 5, 10, 15, 30 };
@@ -68,12 +76,31 @@ DataList::DataList(QWidget* parent)
   }
   ui->checkFilterTimes->setEnabled(false);
 
+  onUITimeStepChanged(ui->comboTimeStep->currentIndex());
+
+  connect(mdl, SIGNAL(changedTimeStep(int)),
+      this, SLOT(onModelTimeStepChanged(int)));
+  connect(mdl, SIGNAL(changedFilterByTimestep(bool, bool)),
+      this, SLOT(onModelFilterByTimeStepChanged(bool, bool)));
+  connect(mdl, SIGNAL(busyStatus(bool)),
+      this, SLOT(onBusyStatus(bool)));
+  
+  ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
+  ui->toolInterpolate->updateModel(mDA, ui->table);
+
+  connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   connect(ui->table, SIGNAL(signalCurrentChanged(const QModelIndex&)),
       this, SLOT(onCurrentChanged(const QModelIndex&)));
 }
 
 DataList::~DataList()
 {
+}
+
+DataListModel* DataList::model() const
+{
+  return static_cast<DataListModel*>(ui->table->model());
 }
 
 void DataList::addTimeStepItem(int step)
@@ -93,19 +120,31 @@ void DataList::retranslateUi()
 
 void DataList::doNavigateTo()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGMYTYPE());
   DynamicDataView::doNavigateTo();
-  if (mTableModel.get())
-    selectCurrent();
+  mCurrentSelected = false;
+  selectCurrent();
 }
 
 void DataList::selectCurrent()
 {
-  const QModelIndexList idxs = mTableModel->findIndexes(mNavigate.current());
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(mCurrentSelected));
+  if (mCurrentSelected)
+    return;
+
+  const QModelIndexList idxs = model()->findIndexes(mNavigate.current());
+  METLIBS_LOG_DEBUG(LOGVAL(idxs.isEmpty()));
+  if (idxs.isEmpty())
+    return;
+
+  METLIBS_LOG_DEBUG("found " << idxs.size() << " indexes for " << mNavigate.current());
+  mCurrentSelected = true;
+
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
   bool scroll = (not idxs.empty());
   BOOST_FOREACH(const QModelIndex& idx, idxs) {
+    METLIBS_LOG_DEBUG("  -- r=" << idx.row() << " c=" << idx.column());
     selection.select(idx, idx);
     if (idx == currentIdx)
       scroll = false;
@@ -124,57 +163,40 @@ void DataList::selectCurrent()
 
 void DataList::onCurrentChanged(const QModelIndex& current)
 {
-  sendNavigateTo(mTableModel->findSensorTime(current));
-}
-
-void DataList::updateModel(DataListModel* newModel)
-{
-  METLIBS_LOG_SCOPE();
-
-  NavigateHelper::Blocker block(mNavigate);
-
-  mTableModel.reset(newModel);
-  onUITimeStepChanged(ui->comboTimeStep->currentIndex());
-  METLIBS_LOG_DEBUG("about to reset table model");
-  ui->table->setModel(mTableModel.get());
-  connect(mTableModel.get(), SIGNAL(changedTimeStep(int)),
-      this, SLOT(onModelTimeStepChanged(int)));
-  connect(mTableModel.get(), SIGNAL(changedFilterByTimestep(bool, bool)),
-      this, SLOT(onModelFilterByTimeStepChanged(bool, bool)));
-  connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  
-  ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
-  ui->toolInterpolate->updateModel(mDA, ui->table);
-
-  selectCurrent();
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(current.isValid()));
+  if (current.isValid()) {
+    mCurrentSelected = true;
+    sendNavigateTo(model()->findSensorTime(current));
+  }
 }
 
 void DataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
 }
 
+void DataList::onBusyStatus(bool busy)
+{
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(busy));
+  mBusy->setBusy(busy);
+  if (not busy)
+    selectCurrent();
+}
+
 void DataList::onCheckFilter(bool filterByTimestep)
 {
-  mTableModel->setFilterByTimestep(filterByTimestep);
+  model()->setFilterByTimestep(filterByTimestep);
 }
 
 void DataList::onUITimeStepChanged(int index)
 {
-  if (not mTableModel.get())
-    return;
-
   int step = 0;
   if (index >= 0)
     step = ui->comboTimeStep->itemData(index).toInt();
-  mTableModel->setTimeStep(step);
+  model()->setTimeStep(step);
 }
 
 void DataList::onModelTimeStepChanged(int step)
 {
-  if (not mTableModel.get())
-    return;
-
   for (int i=0; i<ui->comboTimeStep->count(); ++i) {
     const int combostep = ui->comboTimeStep->itemData(i).toInt();
     if (step == combostep) {
@@ -226,9 +248,9 @@ void DataList::onButtonSaveAs()
     c1 = *selectedColumns.rbegin();
   } else {
     r0 = 0;
-    r1 = mTableModel->rowCount(QModelIndex())-1; // no problem if < 0
+    r1 = model()->rowCount(QModelIndex())-1; // no problem if < 0
     c0 = 0;
-    c1 = mTableModel->columnCount(QModelIndex())-1; // no problem if < 0
+    c1 = model()->columnCount(QModelIndex())-1; // no problem if < 0
   }
 
   QTextStream out(&file);
@@ -236,18 +258,18 @@ void DataList::onButtonSaveAs()
   out << "\"\"";
   for (int c=c0; c<=c1; ++c) {
     if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end())
-      out << "\t\"" << protectForCSV(mTableModel->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
+      out << "\t\"" << protectForCSV(model()->headerData(c, Qt::Horizontal, Qt::ToolTipRole)) << '\"';
   }
   out << "\n";
 
   for (int r=r0; r<=r1; ++r) {
     if (selectedRows.empty() or selectedRows.find(r) != selectedRows.end()) {
-      out << '\"' << protectForCSV(mTableModel->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
+      out << '\"' << protectForCSV(model()->headerData(r, Qt::Vertical, Qt::DisplayRole)) << '\"';
       for (int c=c0; c<=c1; ++c) {
         if (selectedColumns.empty() or selectedColumns.find(c) != selectedColumns.end()) {
           QString cell;
           if (selectedCells.empty() or selectedCells.find(std::make_pair(r, c)) != selectedCells.end())
-            cell = protectForCSV(mTableModel->data(mTableModel->index(r, c), Qt::DisplayRole));
+            cell = protectForCSV(model()->data(model()->index(r, c), Qt::DisplayRole));
           out << "\t\"" << cell << '\"';
         }
       }

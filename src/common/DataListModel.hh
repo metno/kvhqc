@@ -8,7 +8,7 @@
 class DataListModel : public ObsTableModel
 { Q_OBJECT;
 public:
-  DataListModel(EditAccess_p eda, const TimeSpan& limits);
+  DataListModel(EditAccess_p eda, QObject* parent=0);
   ~DataListModel();
 
   QVariant headerData(int section, Qt::Orientation orientation, int role) const;

@@ -17,11 +17,11 @@ public:
   void notifyRow(const ResultRow& row)
     { mWrapped->notifyRow(row); }
 
-  void notifyDone();
+  void notifyStatus(int status);
   void notifyError(QString message);
 
 Q_SIGNALS:
-  void signalDone();
+  void signalStatus(int status);
   void signalError(QString message);
 
 private:

@@ -12,12 +12,11 @@
 #define MILOGGER_CATEGORY "kvhqc.DataListModel"
 #include "util/HqcLogging.hh"
 
-DataListModel::DataListModel(EditAccess_p eda, const TimeSpan& limits)
-  : ObsTableModel(eda, limits, 0)
+DataListModel::DataListModel(EditAccess_p eda, QObject* parent)
+  : ObsTableModel(eda, 0, parent)
   , mFilterByTimestep(true)
   , mCenter(0)
 {
-  updateTimes();
 }
 
 DataListModel::~DataListModel()
@@ -61,7 +60,7 @@ void DataListModel::updateTimes()
   ObsTableModel::updateTimes();
 
   Time_s newTimes;
-  for (int i=0; i<columnCount(QModelIndex()); ++i) {
+  for (int i=0; i<countColumns(); ++i) {
     ObsColumn_p c = getColumn(i);
     if (c) {
       const Time_s ct = c->times();

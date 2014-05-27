@@ -28,10 +28,10 @@ private:
   };
   struct eq_Column;
   struct lt_Column;
-  typedef std::vector<Column> Columns_t;
+  typedef std::vector<Column> Column_v;
 
 protected:
-  DataListModel* makeModel();
+  void updateModel();
 
   std::string viewType() const;
   void switchSensorPrepare();
@@ -61,7 +61,7 @@ private:
   QAction* mColumnReset;
   QPushButton* mButtonColumns;
 
-  Columns_t mColumns, mOriginalColumns;
+  Column_v mColumns, mOriginalColumns;
 };
 
 #endif // AutoDataList_hh

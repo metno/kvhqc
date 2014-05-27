@@ -17,12 +17,13 @@ public:
   const SensorTime_v& sensorTimes() const
     { return mSensorTimes; }
 
+public Q_SLOTS:
   void notifyData(const ModelData_pv&);
-  void notifyCompleted(bool error);
+  void notifyStatus(int status);
 
 Q_SIGNALS:
   void data(const ModelData_pv&);
-  void completed(bool error);
+  void completed(bool);
   
 private:
   SensorTime_v mSensorTimes;

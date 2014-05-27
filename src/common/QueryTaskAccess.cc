@@ -28,6 +28,8 @@ QueryTask* QueryTaskAccess::taskForRequest(ObsRequest_p request)
   DataQueryTask* task = new DataQueryTask(request, 10);
   connect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
+  connect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
+      this, SLOT(onStatus(ObsRequest_p, int)));
   request->setTag(task);
   return task;
 }
@@ -57,6 +59,8 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
   DataQueryTask* task = static_cast<DataQueryTask*>(request->tag());
   disconnect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
+  disconnect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
+      this, SLOT(onStatus(ObsRequest_p, int)));
   mHandler->dropTask(task);
   delete task;
   request->setTag(0);
@@ -70,16 +74,33 @@ void QueryTaskAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
 
-  ObsRequest_pv::iterator it = std::find(mRequests.begin(), mRequests.end(), request);
-  if (it != mRequests.end()) {
+  if (isKnownRequest(request)) {
     METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
-    if (not data.empty())
-      request->newData(data); // FIXME this is not exception safe
-    else
-      request->completed(false);
+    request->newData(data); // FIXME this is not exception safe
   } else {
     METLIBS_LOG_DEBUG("request has been dropped, do nothing");
   }
+}
+
+// ------------------------------------------------------------------------
+
+void QueryTaskAccess::onStatus(ObsRequest_p request, int status)
+{
+  METLIBS_LOG_SCOPE();
+  if (status < QueryTask::COMPLETE)
+    return;
+
+  if (isKnownRequest(request)) {
+    METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
+    request->completed(status == QueryTask::FAILED);
+  } else {
+    METLIBS_LOG_DEBUG("request has been dropped, do nothing");
+  }
+}
+
+bool QueryTaskAccess::isKnownRequest(ObsRequest_p request) const
+{
+  return (std::find(mRequests.begin(), mRequests.end(), request) != mRequests.end());
 }
 
 // ------------------------------------------------------------------------
