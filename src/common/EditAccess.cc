@@ -350,6 +350,8 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
 
   du.send();
 
+  Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
+
   return true;
 }
 

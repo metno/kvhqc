@@ -637,3 +637,62 @@ TEST(EditAccessTest, RequestAfterEdit)
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter2, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter2, st2));
 }
+
+TEST(EditAccessTest, History)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+  EditAccess_p ea(new EditAccess(ca));
+
+  const Sensor sensor1(18210, 211, 0, 0, 514);
+  //const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
+  const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
+
+  const Time t1 = s2t("2013-04-01 01:00:00"), t2 = s2t("2013-04-01 02:00:00");
+  const SensorTime st1(sensor1, t1), st2(sensor1, t2);
+  const float CHNG_C1a = 4.0f, CHNG_C1b = 4.1f, CHNG_C2 =  3.0f;
+
+  CountingBuffer_p counter(new CountingBuffer(sensor1, time));
+  counter->postRequest(ea);
+
+  Updater updater(ea, counter);
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1a);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1, ea->countU());
+
+  { const ObsData_pv changes1 = ea->versionChanges(1);
+    ASSERT_EQ(1, changes1.size());
+    EXPECT_TRUE(eq_SensorTime()(st1, changes1[0]->sensorTime()));
+  }
+
+  ea->newVersion();
+  updater.setCorrected(st2, CHNG_C2);
+  EXPECT_EQ(2, ea->currentVersion());
+  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(2, ea->countU());
+
+  { const ObsData_pv changes1 = ea->versionChanges(1);
+    ASSERT_EQ(1, changes1.size());
+    EXPECT_TRUE(eq_SensorTime()(st1, changes1[0]->sensorTime()));
+
+    const ObsData_pv changes2 = ea->versionChanges(2);
+    ASSERT_EQ(1, changes2.size());
+    EXPECT_TRUE(eq_SensorTime()(st2, changes2[0]->sensorTime()));
+  }
+
+  ea->undoVersion();
+  EXPECT_EQ(1, ea->countU());
+  ea->undoVersion();
+  EXPECT_EQ(0, ea->countU());
+
+  ea->newVersion();
+  updater.setCorrected(st1, CHNG_C1b);
+  EXPECT_EQ(1, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1, ea->countU());
+}
+
