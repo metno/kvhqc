@@ -1,3 +1,9 @@
+kvhqc (4.0.0~a1-1) unstable; urgency=low
+
+  * asynchronous data access
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 02 Jun 2014 09:24:08 +0200
+
 kvhqc (3.4.12-1) unstable; urgency=low
 
   * fetch param limits from station_param table, ignoring all with hour != -1
