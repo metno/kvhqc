@@ -3,8 +3,8 @@
 #define EditVersionModel_hh 1
 
 #include "common/EditAccess.hh"
-
 #include <QtCore/QAbstractItemModel>
+#include <vector>
 
 class EditVersionModel : public QAbstractItemModel
 { Q_OBJECT;
@@ -25,16 +25,22 @@ public:
   virtual QModelIndex index(int row, int column, const QModelIndex & parent) const;
   virtual QModelIndex parent(const QModelIndex& index) const;
 
+private Q_SLOTS:
+  void onCurrentVersionChanged(size_t current, size_t highest);
+
 private:
-  void onCurrentVersionChanged(int current, int highest);
-  //void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
   void dump();
 
 private:
   EditAccess_p mDA;
 
-  //typedef std::vector<EditAccess::ChangedData_t> ChangeHistory_t;
-  //ChangeHistory_t mHistory;
+  struct Change {
+    timeutil::ptime timestamp;
+    ObsData_pv changed;
+  };
+  typedef std::vector<Change> Change_v;
+
+  Change_v mHistory;
 };
 
 #endif // EditVersionModel_hh

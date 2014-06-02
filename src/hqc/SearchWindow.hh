@@ -46,6 +46,7 @@
 #include <QMainWindow>
 
 #include <memory>
+#include <set>
 
 class HelpDialog;
 QT_BEGIN_NAMESPACE
@@ -57,12 +58,7 @@ class QSplitter;
 QT_END_NAMESPACE
 
 class AutoDataList;
-class CachingAccess;
-class EditAccess;
 class NavigationHistory;
-class KvalobsAccess;
-class KvalobsModelAccess;
-class ListDialog;
 class SensorTime;
 class SimpleCorrections;
 class StationDataList;
@@ -80,7 +76,7 @@ class SearchWindow : public QMainWindow
 { Q_OBJECT;
 
 public:
-  SearchWindow(const QString& kvalobsInstanceName, QWidget* parent=0);
+  SearchWindow(QWidget* parent=0);
   ~SearchWindow();
 
   void writeSettings();
@@ -110,9 +106,6 @@ private:
 
   SensorTime mLastNavigated;
 
-  boost::shared_ptr<KvalobsModelAccess> kma;
-  boost::shared_ptr<EditAccess> eda;
-
 #ifdef ENABLE_DIANA
   ClientButton* pluginB;
   std::auto_ptr<HqcDianaHelper> mDianaHelper;
@@ -139,6 +132,14 @@ private:
 #endif
 
   QSignalMapper *mActivateSearchTab, *mActivateDataTab;
+  int mId;
+
+private: // static
+  static int findId();
+  static void releaseId(int id);
+
+  typedef std::set<int> int_s;
+  static int_s sUsedIds;
 };
 
 #endif // HQC_SEARCHWINDOW_H

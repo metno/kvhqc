@@ -2,6 +2,8 @@
 #ifndef HqcApplication_hh
 #define HqcApplication_hh 1
 
+#include "AbstractReinserter.hh"
+
 #include <miconfparser/confsection.h>
 
 #include <QtCore/QList>
@@ -37,6 +39,8 @@ public:
   boost::shared_ptr<ModelAccess> modelAccess() const
     { return kma; }
 
+  void setReinserter(AbstractReinserter_p reinserter);
+
   QSqlDatabase kvalobsDB();
   QSqlDatabase kvalobsDB(const QString& qname);
 
@@ -44,6 +48,8 @@ public:
 
   /** Query last known availability of kvServiced. Does not re-check. */
   bool isKvalobsAvailable() const;
+
+  QString instanceName() const;
 
   int exec();
 

@@ -27,8 +27,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "HqcMainWindow.hh"
-#include "SearchWindow.hh"
+#include "HqcAppWindow.hh"
 #include "common/KvalobsReinserter.hh"
 #include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
@@ -107,28 +106,22 @@ int main( int argc, char* argv[] )
   HqcApplication hqc(argc, argv, confSec);
   QObject::connect(&qkvs, SIGNAL(shutdown()), &hqc, SLOT(quit()));
 
+  hqc.setReinserter(boost::make_shared<KvalobsReinserter>());
+
   QPixmap pixmap("icons:hqc_splash.svg");
   QSplashScreen splash(pixmap);
   splash.show();
   hqc.processEvents();
 
-  const QString kvalobsInstanceName = QString::fromStdString(kvapp.kvpathInCorbaNameserver());
-  std::auto_ptr<SearchWindow> sw(new SearchWindow(kvalobsInstanceName));
-  sw->readSettings();
-  sw->show();
+  std::auto_ptr<HqcAppWindow> aw(new HqcAppWindow());
+  aw->startup();
 
-#if 0
-  std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
-  mw->setReinserter(boost::make_shared<KvalobsReinserter>());
-  mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
-#endif
-
-  splash.finish(sw.get());
+  splash.finish(aw.get());
 
   // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
   const int r = hqc.exec();
   qkvs.stop();
-  sw->writeSettings();
+  aw->finish();
 
   return r;
 }

@@ -10,6 +10,7 @@ SET(hqc_SOURCES
   EditVersionModel.cc
   EditVersionsView.cc
   GetTextData.cc
+  HqcAppWindow.cc
 #  HqcDianaHelper.cc
   JumpToObservation.cc
   NavigationHistory.cc
@@ -39,6 +40,7 @@ QT4_WRAP_CPP(hqc_MOC
   DynamicDataView.hh
   EditVersionModel.hh
   EditVersionsView.hh
+  HqcAppWindow.hh
 #  HqcDianaHelper.hh
   JumpToObservation.hh
   NavigationHistory.hh
@@ -53,6 +55,7 @@ QT4_WRAP_CPP(hqc_MOC
 )
 
 QT4_WRAP_UI(hqc_UIH
+  appwindow.ui
   datalist.ui
   dl_addcolumn.ui
   jumptoobservation.ui

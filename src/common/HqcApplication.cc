@@ -13,6 +13,8 @@
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvStationParam.h>
+
+#include <kvcpp/corba/CorbaKvApp.h>
 #include <kvcpp/KvApp.h>
 
 #include <puTools/miString.h>
@@ -46,6 +48,11 @@ const char DB_KVALOBS[] = "kvalobs_db";
 const int AVAILABILITY_TIMEROUT = 120*1000; // milliseconds = 2 minutes
 
 const char SETTING_HQC_LANGUAGE[] = "language";
+
+inline kvservice::corba::CorbaKvApp* app() {
+  return static_cast<kvservice::corba::CorbaKvApp*>(kvservice::KvApp::kvApp);
+}
+
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
@@ -97,6 +104,11 @@ HqcApplication::~HqcApplication()
   hqcApp = 0;
 }
 
+QString HqcApplication::instanceName() const
+{
+  return QString::fromStdString(app()->kvpathInCorbaNameserver());
+}
+
 QSqlDatabase HqcApplication::systemDB()
 {
   if (not QSqlDatabase::contains(DB_SYSTEM)) {
@@ -142,6 +154,11 @@ QSqlDatabase HqcApplication::kvalobsDB(const QString& qname)
     }
   }
   return QSqlDatabase::database(qname);
+}
+
+void HqcApplication::setReinserter(AbstractReinserter_p reinserter)
+{
+  kda->setReinserter(reinserter);
 }
 
 void HqcApplication::saveLanguage(const QString& language)

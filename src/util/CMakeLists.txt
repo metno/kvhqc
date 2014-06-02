@@ -9,6 +9,7 @@ SET(util_SOURCES
   ValueChange.hh
   VersionedValue.hh
 
+  ActionButton.cc
   AnimatedLabel.cc
   BusyIndicator.cc
   BusyLabel.cc
@@ -29,6 +30,7 @@ SET(util_SOURCES
 )
 
 QT4_WRAP_CPP(util_MOC
+  ActionButton.hh
   AnimatedLabel.hh
   BusyLabel.hh
   CurrentTableView.hh

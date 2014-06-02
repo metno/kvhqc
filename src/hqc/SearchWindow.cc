@@ -82,7 +82,7 @@
 #include "common/ObsLogging.hh"
 
 namespace /*anonymous*/ {
-const char SETTINGS_SEARCH_GROUP[] = "searchwindow";
+const char SETTINGS_SEARCH_GROUP[] = "searchwindow_%1";
 const char SETTING_SEARCH_GEOMETRY[] = "geometry";
 const char SETTING_SEARCH_AUTOVIEW_SPLITTER[] = "autoview_slider";
 const char SETTING_SEARCH_DATASEARCH_SPLITTER[] = "datasearch_slider";
@@ -93,15 +93,21 @@ const char SETTING_TAB_SINGLE[] = "single";
 const char SETTING_TAB_SEARCH[] = "tab_search";
 const char SETTING_TAB_ERRORS[] = "errorlist";
 const char SETTING_TAB_RECENT[] = "recent";
+
+QString settingsSearchGroup(int id)
+{
+  return QString(SETTINGS_SEARCH_GROUP).arg(id);
+}
 } // anonymous namespace
 
-SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
+SearchWindow::SearchWindow(QWidget* parent)
   : QMainWindow(parent)
   , mActivateSearchTab(new QSignalMapper(this))
   , mActivateDataTab(new QSignalMapper(this))
+  , mId(findId())
 {
   METLIBS_LOG_SCOPE();
-  setWindowTitle(tr("HQC Search %1").arg(kvalobsInstanceName));
+  setWindowTitle(tr("HQC Search %1").arg(hqcApp->instanceName()));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
   resize(975, 700);
 
@@ -129,6 +135,14 @@ SearchWindow::SearchWindow(const QString& kvalobsInstanceName, QWidget* parent)
   mDianaHelper->setDataAccess(eda, kma);
   mDianaHelper->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
 #endif
+
+  readSettings();
+}
+
+SearchWindow::~SearchWindow()
+{
+  writeSettings();
+  releaseId(mId);
 }
 
 void SearchWindow::setupSearchTabs()
@@ -184,10 +198,6 @@ void SearchWindow::setupDataTabs()
   mCorrections = new SimpleCorrections(mTabsData);
   addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));
 #endif
-}
-
-SearchWindow::~SearchWindow()
-{
 }
 
 void SearchWindow::changeEvent(QEvent *event)
@@ -289,7 +299,7 @@ void SearchWindow::writeSettings()
     tabData = SETTING_TAB_SINGLE;
 
   QSettings settings;
-  settings.beginGroup(SETTINGS_SEARCH_GROUP);
+  settings.beginGroup(settingsSearchGroup(mId));
   settings.setValue(SETTING_SEARCH_GEOMETRY, saveGeometry());
   settings.setValue(SETTING_SEARCH_AUTOVIEW_SPLITTER, mSplitterDataPlot->saveState());
   settings.setValue(SETTING_SEARCH_DATASEARCH_SPLITTER, splitterDataSearch()->saveState());
@@ -306,7 +316,7 @@ void SearchWindow::readSettings()
   METLIBS_LOG_SCOPE();
 
   QSettings settings;
-  settings.beginGroup(SETTINGS_SEARCH_GROUP);
+  settings.beginGroup(settingsSearchGroup(mId));
   if (not restoreGeometry(settings.value(SETTING_SEARCH_GEOMETRY).toByteArray()))
     METLIBS_LOG_INFO("cannot restore search window geometry");
   if (not mSplitterDataPlot->restoreState(settings.value(SETTING_SEARCH_AUTOVIEW_SPLITTER).toByteArray()))
@@ -340,3 +350,24 @@ QSplitter* SearchWindow::splitterDataSearch() const
 {
   return static_cast<QSplitter*>(centralWidget());
 }
+
+// static
+int SearchWindow::findId()
+{
+  for (int id=0; id<1000; ++id) {
+    if (sUsedIds.count(id) == 0) {
+      sUsedIds.insert(id);
+      return id;
+    }
+  }
+  return 0;
+}
+
+// static
+void SearchWindow::releaseId(int id)
+{
+  sUsedIds.erase(id);
+}
+
+// static
+std::set<int> SearchWindow::sUsedIds;
