@@ -61,7 +61,7 @@ void EditVersions::dropVersionsFrom(size_t version)
   METLIBS_LOG_SCOPE(LOGVAL(sensorTime()) << LOGVAL(currentVersion()) << LOGVAL(version) << LOGVAL(mCurrent));
   const bool newCurrent = (version <= currentVersion());
   Version_v::iterator b = mVersions.begin();
-  while (b->version < version)
+  while (b != mVersions.end() and b->version < version)
     ++b;
   mVersions.erase(b, mVersions.end());
   if (newCurrent)
