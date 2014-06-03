@@ -91,17 +91,17 @@ HqcAppWindow::HqcAppWindow()
   : ui(new Ui_AppWindow)
   , mVersionCheckTimer(new QTimer(this))
   , mHelpDialog(0)
-  , mEditVersions(new EditVersionModel(hqcApp->editAccess(), this))
 {
   METLIBS_LOG_SCOPE();
   setCaption(tr("HQC %1").arg(hqcApp->instanceName()));
   ui->setupUi(this);
+  EditVersionsView* evv = new EditVersionsView(hqcApp->editAccess(), ui->groupChanges);
+  ui->gridChanges->addWidget(evv, 1, 0, 1, 4);
+  ui->gridChanges->setRowStretch(1, 1);
 
   mActionButtonSave = new ActionButton(ui->buttonSave, ui->actionSave, this);
   mActionButtonUndo = new ActionButton(ui->buttonUndo, ui->actionUndo, this);
   mActionButtonRedo = new ActionButton(ui->buttonRedo, ui->actionRedo, this);
-
-  ui->treeChanges->setModel(mEditVersions);
 
   connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
   mVersionCheckTimer->setSingleShot(true);

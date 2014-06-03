@@ -79,6 +79,9 @@ inline QDateTime clearedMinutesAndSeconds(const QDateTime& dt)
 
 QDateTime nowWithMinutes0Seconds0();
 
+QString shortenedTime(const timeutil::ptime& t);
+QString shortenedTime(const ptime& t, const ptime& ref);
+
 } // namespace timeutil
 
 std::ostream& operator<<(std::ostream& o, timeutil::ptime const& pt);

@@ -30,54 +30,34 @@
 #include "EditVersionsView.hh"
 
 #include "EditVersionModel.hh"
+#include "common/HqcApplication.hh"
 
-#include <QBoxLayout>
-#include <QEvent>
-#include <QTreeView>
-#include <QToolButton>
+#include <QHeaderView>
 
 #define MILOGGER_CATEGORY "kvhqc.EditVersionsView"
 #include "common/ObsLogging.hh"
 
-EditVersionsView::EditVersionsView(EditVersionModel* model, QWidget* parent)
-  : QWidget(parent)
+EditVersionsView::EditVersionsView(EditAccess_p eda, QWidget* parent)
+  : QTreeView(parent)
 {
-  METLIBS_LOG_SCOPE();
+  EditVersionModel* mdl = new EditVersionModel(hqcApp->editAccess(), this);
+  setModel(mdl);
 
-  QVBoxLayout* vl = new QVBoxLayout(this);
-  vl->setSpacing(2);
-  vl->setContentsMargins(2, 2, 2, 2);
+  header()->setResizeMode(QHeaderView::Interactive);
+  header()->resizeSection(EditVersionModel::COL_TIME, 200);
+  header()->resizeSection(EditVersionModel::COL_STATION, 50);
+  header()->resizeSection(EditVersionModel::COL_SENSORNR, 30);
+  header()->resizeSection(EditVersionModel::COL_LEVEL, 30);
+  header()->resizeSection(EditVersionModel::COL_TYPEID, 40);
+  header()->resizeSection(EditVersionModel::COL_PARAMID, 40);
+  header()->resizeSection(EditVersionModel::COL_CORRECTED, 50);
+  header()->resizeSection(EditVersionModel::COL_FLAGS, 120);
 
-  QHBoxLayout* hl = new QHBoxLayout();
+  setSelectionBehavior(QTreeView::SelectRows);
+  setSelectionMode(QTreeView::SingleSelection);
 
-  mButtonUndo = new QToolButton(this);
-  mButtonUndo->setIcon(QIcon("icons:undo.svg"));
-  hl->addWidget(mButtonUndo);
-
-  mButtonRedo = new QToolButton(this);
-  mButtonRedo->setIcon(QIcon("icons:redo.svg"));
-  hl->addWidget(mButtonRedo);
-
-  mButtonSave = new QToolButton(this);
-  hl->addWidget(mButtonSave);
-
-  QSpacerItem* spacer = new QSpacerItem(0, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-  hl->addItem(spacer);
-
-  vl->addLayout(hl);
-
-  mTree = new QTreeView(this);
-  vl->addWidget(mTree);
-
-  retranslateUi();
-
-  mTree->setModel(model);
-  mTree->setSelectionBehavior(QTreeView::SelectRows);
-  mTree->setSelectionMode(QTreeView::SingleSelection);
-
-  connect(model->editAccess().get(), SIGNAL(currentVersionChanged(size_t, size_t)),
+  connect(eda.get(), SIGNAL(currentVersionChanged(size_t, size_t)),
       this, SLOT(onEditVersionChanged(size_t, size_t)));
-  connect(mButtonSave, SIGNAL(clicked()), this, SIGNAL(saveRequested()));
 }
 
 EditVersionsView::~EditVersionsView()
@@ -86,27 +66,5 @@ EditVersionsView::~EditVersionsView()
 
 void EditVersionsView::onEditVersionChanged(size_t current, size_t highest)
 {
-  METLIBS_LOG_SCOPE();
-
-  EditAccess_p eda = static_cast<EditVersionModel*>(mTree->model())->editAccess();
-  METLIBS_LOG_DEBUG(LOGVAL(eda->countU()));
-  mButtonSave->setEnabled(eda->canUndo());
-  mButtonUndo->setEnabled(eda->canUndo());
-  mButtonRedo->setEnabled(eda->canRedo());
-  mTree->expandToDepth(2);
-}
-
-void EditVersionsView::changeEvent(QEvent *event)
-{
-  if (event->type() == QEvent::LanguageChange)
-    retranslateUi();
-  QWidget::changeEvent(event);
-}
-
-void EditVersionsView::retranslateUi()
-{
-  setWindowTitle(tr("Change History"));
-  mButtonUndo->setText(tr("Undo"));
-  mButtonRedo->setText(tr("Redo"));
-  mButtonSave->setText(tr("Save"));
+  expandToDepth(2);
 }

@@ -32,35 +32,16 @@
 
 #include "common/EditAccess.hh"
 
-#include <QWidget>
+#include <QTreeView>
 
-class EditVersionModel;
-class QToolButton;
-class QTreeView;
-
-class EditVersionsView : public QWidget
+class EditVersionsView : public QTreeView
 { Q_OBJECT;
 public:
-  EditVersionsView(EditVersionModel* model, QWidget* parent=0);
+  EditVersionsView(EditAccess_p eda, QWidget* parent=0);
   ~EditVersionsView();
 
-Q_SIGNALS:
-  void saveRequested();
-
-protected:
-  virtual void changeEvent(QEvent *event);
- 
 private Q_SLOTS:
   void onEditVersionChanged(size_t current, size_t highest);
-
-private:
-  void retranslateUi();
-
-private:
-  QToolButton* mButtonUndo;
-  QToolButton* mButtonRedo;
-  QToolButton* mButtonSave;
-  QTreeView* mTree;
 };
 
-#endif // ERRORLIST_H
+#endif // EDITVERSIONS_VIEW_H

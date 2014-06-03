@@ -13,19 +13,7 @@
 
 namespace /* anonymous */ {
 
-enum EDIT_COLUMNS {
-  COL_TIME = 0,
-  COL_STATION,
-  COL_SENSORNR,
-  COL_LEVEL,
-  COL_TYPEID,
-  COL_PARAMID,
-  COL_CORRECTED,
-  COL_FLAGS,
-  NCOLUMNS
-};
-
-const char* headers[NCOLUMNS] = {
+const char* headers[EditVersionModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("EditVersionModel", "Time"),
   QT_TRANSLATE_NOOP("EditVersionModel", "Stnr"),
   QT_TRANSLATE_NOOP("EditVersionModel", "Snr"),
@@ -36,7 +24,7 @@ const char* headers[NCOLUMNS] = {
   QT_TRANSLATE_NOOP("EditVersionModel", "Flags")
 };
 
-const char* tooltips[NCOLUMNS] = {
+const char* tooltips[EditVersionModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("EditVersionModel", "Change time / Observation time"),
   QT_TRANSLATE_NOOP("EditVersionModel", "Station number"),
   QT_TRANSLATE_NOOP("EditVersionModel", "Sensor number"),
@@ -63,29 +51,52 @@ EditVersionModel::~EditVersionModel()
 {
 }
 
+void EditVersionModel::emitDataChanged(int version, bool includeParent)
+{
+  if (version < 1 or version >= (int)mHistory.size())
+      return;
+
+  const QModelIndex parent = index(version-1, 0, QModelIndex());
+  if (includeParent)
+    Q_EMIT dataChanged(parent, parent);
+  Q_EMIT dataChanged(index(0, 0, parent), index(rowCount(parent)-1, columnCount(parent), parent));
+}
+
 void EditVersionModel::onCurrentVersionChanged(size_t current, size_t highest)
 {
   METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(current) << LOGVAL(highest));
-  dump();
-}
+  METLIBS_LOG_DEBUG(LOGVAL(mHistory.size()) << LOGVAL(current) << LOGVAL(highest));
 
-void EditVersionModel::dump()
-{
-  METLIBS_LOG_SCOPE();
-
-  beginResetModel();
-  mHistory.clear();
-  const size_t hv = mDA->highestVersion();
-  METLIBS_LOG_DEBUG(LOGVAL(hv));
-  for(size_t v=1; v<=hv; ++v) {
-    Change c;
-    c.timestamp = mDA->versionTimestamp(v);
-    c.changed = mDA->versionChanges(v);
-    mHistory.push_back(c);
-    METLIBS_LOG_DEBUG(LOGVAL(v) << LOGVAL(c.timestamp) << LOGVAL(c.changed.size()));
+  if (highest < mHistory.size()) {
+    beginRemoveRows(QModelIndex(), highest, mHistory.size()-1);
+    Change_v::iterator it = mHistory.begin() + highest;
+    mHistory.erase(it, mHistory.end());
+    endRemoveRows();
+  } else if (highest > mHistory.size()) {
+    beginInsertRows(QModelIndex(), mHistory.size(), highest-1);
+    for (size_t c = mHistory.size()+1; c<=highest; ++c)
+      mHistory.push_back(Change(mDA->versionTimestamp(c)));
+    endInsertRows();
   }
-  endResetModel();
+  if (current >= 1) {
+    const QModelIndex parent = index(current-1, 0, QModelIndex());
+    const ObsData_pv changed = mDA->versionChanges(current);
+    Change& c = mHistory.back();
+    const size_t nc = c.changed.size();
+    if (changed.size() < nc) {
+      beginRemoveRows(parent, changed.size(), nc-1);
+      c.changed = changed;
+      endRemoveRows();
+    } else if (changed.size() > nc) {
+      beginInsertRows(parent, nc, changed.size()-1);
+      c.changed = changed;
+      endInsertRows();
+    }
+  }
+  
+  emitDataChanged(current-1, true);
+  emitDataChanged(current, true);
+  emitDataChanged(current+1, true);
 }
 
 int EditVersionModel::columnCount(const QModelIndex& parent) const
@@ -123,7 +134,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
       const SensorTime& st = obs->sensorTime();
       switch (column) {
       case COL_TIME:
-        return QString::fromStdString(timeutil::to_iso_extended_string(st.time));
+        return timeutil::shortenedTime(st.time);
       case COL_STATION:
         return st.sensor.stationId;
       case COL_SENSORNR:
@@ -146,9 +157,9 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
       case COL_FLAGS:
         return Helpers::getFlagText(obs->controlinfo());
       }
-    } else if (column == 0) {      
+    } else if (column == COL_TIME) {
       const timeutil::ptime& t = mHistory.at(index.row()).timestamp;
-      return tr("Changed %1").arg(QString::fromStdString(timeutil::to_iso_extended_string(t)));
+      return tr("Changed %1").arg(timeutil::shortenedTime(t));
     }
   } else if (role == Qt::ForegroundRole) {
     const size_t version = 1 + ((internalId >= 0) ? internalId : index.row());

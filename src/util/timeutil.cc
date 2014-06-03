@@ -137,6 +137,31 @@ QDateTime nowWithMinutes0Seconds0()
   return dt;
 }
 
+QString shortenedTime(const timeutil::ptime& t)
+{
+  return shortenedTime(t, now());
+}
+
+QString shortenedTime(const timeutil::ptime& t, const timeutil::ptime& ref)
+{
+  QString when;
+  const int maxDiff = 20;
+  if (timeutil::hourDiff(timeutil::now(), t) >= maxDiff) {
+    const boost::gregorian::date d = t.date();
+    when = QString("%1-%2-%3 ")
+        .arg((int)d.year(), 4, 10, QChar('0'))
+        .arg(d.month(), 2, 10, QChar('0'))
+        .arg(d.day(), 2, 10, QChar('0'));
+  }
+  const boost::posix_time::time_duration tod = t.time_of_day();
+  when += QString("%1:%2")
+      .arg(tod.hours(),   2, 10, QChar('0'))
+      .arg(tod.minutes(), 2, 10, QChar('0'));
+  if (tod.seconds() != 0)
+    when += QString(":%1").arg(tod.seconds(), 2, 10, QChar('0'));
+  return when;
+}
+
 } // namespace timeutil
 
 std::ostream& operator<<(std::ostream& o, b_pt::ptime const& pt)

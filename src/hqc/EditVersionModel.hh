@@ -9,6 +9,18 @@
 class EditVersionModel : public QAbstractItemModel
 { Q_OBJECT;
 public:
+  enum EDIT_COLUMNS {
+    COL_TIME = 0,
+    COL_STATION,
+    COL_SENSORNR,
+    COL_LEVEL,
+    COL_TYPEID,
+    COL_PARAMID,
+    COL_CORRECTED,
+    COL_FLAGS,
+    NCOLUMNS
+  };
+
   EditVersionModel(EditAccess_p eda, QObject* parent);
   ~EditVersionModel();
 
@@ -29,7 +41,7 @@ private Q_SLOTS:
   void onCurrentVersionChanged(size_t current, size_t highest);
 
 private:
-  void dump();
+  void emitDataChanged(int version, bool includeParent);
 
 private:
   EditAccess_p mDA;
@@ -37,9 +49,11 @@ private:
   struct Change {
     timeutil::ptime timestamp;
     ObsData_pv changed;
+    Change(const timeutil::ptime& ts) : timestamp(ts) { }
   };
   typedef std::vector<Change> Change_v;
 
+  // mHistory.size() == highest; mHistory[0] = version 1; mHistory[highest-1] = highest version
   Change_v mHistory;
 };
 
