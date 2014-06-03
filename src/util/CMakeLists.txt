@@ -11,7 +11,6 @@ SET(util_SOURCES
 
   ActionButton.cc
   AnimatedLabel.cc
-  BusyIndicator.cc
   BusyLabel.cc
   CurrentTableView.cc
   EtaProgressBar.cc
@@ -19,7 +18,6 @@ SET(util_SOURCES
   FrozenColumnTableView.cc
   FrozenRowTableView.cc
   HideApplyBox.cc
-  HintWidget.cc
   ItemCheckBox.cc
   MiDateTimeEdit.cc
   QSmallTable.hh
@@ -38,7 +36,6 @@ QT4_WRAP_CPP(util_MOC
   FrozenColumnTableView.hh
   FrozenRowTableView.hh
   HideApplyBox.hh
-  HintWidget.hh
   MiDateTimeEdit.hh
   Synchronizer.hh
   VisibleWidget.hh

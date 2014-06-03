@@ -6,7 +6,6 @@
 #include "common/StationInfoBuffer.hh"
 #include "common/TypeIdModel.hh"
 #include "common/TimeSpanControl.hh"
-#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 
@@ -110,7 +109,6 @@ void MissingView::onUpdateClicked()
     return;
 
   {
-    BusyIndicator busy;
     std::vector<int> typeIds;
     if (typeId == TYPEID_MANUAL)
       typeIds = StationInfoBuffer::instance()->getManualTypes();

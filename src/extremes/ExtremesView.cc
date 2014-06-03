@@ -5,7 +5,6 @@
 #include "common/FindExtremeValues.hh"
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpanControl.hh"
-#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 
@@ -98,7 +97,6 @@ void ExtremesView::onUpdateClicked()
     return;
 
   {
-    BusyIndicator busy;
     const std::vector<SensorTime> extremes = Extremes::find(paramId, mTimeControl->timeRange());
     setExtremes(extremes);
   }

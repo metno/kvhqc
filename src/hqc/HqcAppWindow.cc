@@ -39,7 +39,6 @@
 #include "common/HqcApplication.hh"
 
 #include "util/ActionButton.hh"
-#include "util/BusyIndicator.hh"
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 
@@ -151,8 +150,6 @@ void HqcAppWindow::startup()
 {
   METLIBS_LOG_SCOPE();
     
-  DisableGUI disableGUI(this);
-
   readSettings();
   show();
   checkVersionSettings();

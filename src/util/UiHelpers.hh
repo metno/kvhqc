@@ -6,8 +6,6 @@
 
 namespace Helpers {
 
-void processNonUserEvents();
-
 void findMinMaxRowCol(const QModelIndexList& selected, int& minRow, int& maxRow, int& minCol, int& maxCol);
 
 } // namespace Helpers

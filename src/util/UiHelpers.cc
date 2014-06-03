@@ -5,11 +5,6 @@
 
 namespace Helpers {
 
-void processNonUserEvents()
-{
-  qApp->processEvents(QEventLoop::ExcludeUserInputEvents);
-}
-
 void findMinMaxRowCol(const QModelIndexList& selected, int& minRow, int& maxRow, int& minCol, int& maxCol)
 {
   if (not selected.isEmpty()) {

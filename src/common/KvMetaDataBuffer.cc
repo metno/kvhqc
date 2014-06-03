@@ -5,7 +5,6 @@
 #include "KvHelpers.hh"
 #include "KvServiceHelper.hh"
 #include "common/HqcApplication.hh"
-#include "util/BusyIndicator.hh"
 
 #include <puTools/miStringBuilder.h>
 
@@ -220,7 +219,6 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
 void KvMetaDataBuffer::fetchStations()
 {
   METLIBS_LOG_SCOPE();
-  BusyIndicator wait;
   mHaveStations = true;
   mStations.clear();
   try {
@@ -239,7 +237,6 @@ void KvMetaDataBuffer::fetchStations()
 void KvMetaDataBuffer::fetchParams()
 {
   METLIBS_LOG_SCOPE();
-  BusyIndicator wait;
   mHaveParams = true;
   mParams.clear();
   try {
@@ -264,7 +261,6 @@ void KvMetaDataBuffer::fetchParams()
 void KvMetaDataBuffer::fetchTypes()
 {
   METLIBS_LOG_SCOPE();
-  BusyIndicator wait;
   mHaveTypes = true;
   mTypes.clear();
   try {

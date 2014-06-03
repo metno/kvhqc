@@ -8,7 +8,6 @@
 #include "common/KvHelpers.hh"
 
 #include "util/ChangeReplay.hh"
-#include "util/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
 #include <QtGui/QMenu>
@@ -319,7 +318,6 @@ void AutoDataList::addColumnBefore(int column)
   if (dac.exec() != QDialog::Accepted)
     return;
 
-  //BusyIndicator busy;
   Column c;
   c.sensor = dac.selectedSensor();
   c.type = dac.selectedColumnType();

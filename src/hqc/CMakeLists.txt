@@ -16,7 +16,6 @@ SET(hqc_SOURCES
   NavigationHistory.cc
   SearchWindow.cc
   SimpleCorrections.cc
-  StaticDataList.cc
   StationDataList.cc
   TimeSeriesAdd.cc
   TimeseriesDialog.cc
@@ -46,7 +45,6 @@ QT4_WRAP_CPP(hqc_MOC
   NavigationHistory.hh
   SearchWindow.hh
   SimpleCorrections.hh
-  StaticDataList.hh
   TimeSeriesAdd.hh
   TimeseriesDialog.h
   TimeSeriesView.hh

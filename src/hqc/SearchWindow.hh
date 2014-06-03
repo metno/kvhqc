@@ -39,6 +39,7 @@
 #define ENABLE_SIMPLECORRECTIONS 1
 
 #include "common/AbstractReinserter.hh"
+#include "common/NavigateHelper.hh"
 #include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 
@@ -84,6 +85,9 @@ public:
 
 protected:
   virtual void changeEvent(QEvent *event);
+
+Q_SIGNALS:
+  void signalNavigateTo(const SensorTime&);
  
 private Q_SLOTS:
   void navigateTo(const SensorTime& st);
@@ -104,7 +108,7 @@ private:
   QTabWidget* mTabsData;
   QTabWidget* mTabsSearch;
 
-  SensorTime mLastNavigated;
+  NavigateHelper mNavigate;
 
 #ifdef ENABLE_DIANA
   ClientButton* pluginB;

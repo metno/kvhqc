@@ -34,7 +34,6 @@
 #include "common/HqcApplication.hh"
 #include "common/TimeSpanControl.hh"
 #include "util/timeutil.hh"
-#include "util/BusyIndicator.hh"
 
 #include <QtCore/QSettings>
 #include <QtGui/QInputDialog>

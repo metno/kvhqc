@@ -47,8 +47,6 @@
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 #include "util/timeutil.hh"
-#include "util/BusyIndicator.hh"
-#include "util/UiHelpers.hh"
 
 #ifdef ENABLE_ERRORLIST
 #include "errorlist/ErrorList.hh"
@@ -106,7 +104,7 @@ SearchWindow::SearchWindow(QWidget* parent)
   , mActivateDataTab(new QSignalMapper(this))
   , mId(findId())
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   setWindowTitle(tr("HQC Search %1").arg(hqcApp->instanceName()));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
   resize(975, 700);
@@ -147,11 +145,14 @@ SearchWindow::~SearchWindow()
 
 void SearchWindow::setupSearchTabs()
 {
+  METLIBS_LOG_TIME();
 #ifdef ENABLE_ERRORLIST
   mErrorsView = new ErrorList(mTabsSearch);
   addTab(mErrorsView, tr("Ctrl+F", "Error search tab shortcut"));
   connect(mErrorsView, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mErrorsView, SLOT(navigateTo(const SensorTime&)));
 #endif // ENABLE_ERRORLIST
 
 #ifdef ENABLE_EXTREMES
@@ -170,10 +171,13 @@ void SearchWindow::setupSearchTabs()
   addTab(mNavigationHistory, tr("Ctrl+R", "Recent tab shortcut"));
   connect(mNavigationHistory, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mNavigationHistory, SLOT(navigateTo(const SensorTime&)));
 }
 
 void SearchWindow::setupDataTabs()
 {
+  METLIBS_LOG_TIME();
   mSplitterDataPlot = new QSplitter(Qt::Horizontal, mTabsData);
   mSplitterDataPlot->setOpaqueResize(false);
   mSplitterDataPlot->setWindowTitle(tr("List/Series"));
@@ -183,8 +187,12 @@ void SearchWindow::setupDataTabs()
   mAutoDataList = new AutoDataList(mSplitterDataPlot);
   connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mAutoDataList, SLOT(navigateTo(const SensorTime&)));
 
   mTimeSeriesView = new TimeSeriesView(mSplitterDataPlot);
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mTimeSeriesView, SLOT(navigateTo(const SensorTime&)));
 
   mSplitterDataPlot->addWidget(mAutoDataList);
   mSplitterDataPlot->addWidget(mTimeSeriesView);
@@ -192,10 +200,14 @@ void SearchWindow::setupDataTabs()
   mStationData = new StationDataList(mTabsData);
   connect(mStationData, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mStationData, SLOT(navigateTo(const SensorTime&)));
   addTab(mStationData, tr("Ctrl+2", "Station data tab shortcut"));
 
 #ifdef ENABLE_SIMPLECORRECTIONS
   mCorrections = new SimpleCorrections(mTabsData);
+  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
+      mCorrections, SLOT(navigateTo(const SensorTime&)));
   addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));
 #endif
 }
@@ -235,36 +247,8 @@ void SearchWindow::navigateTo(const SensorTime& st)
   METLIBS_LOG_TIME();
   METLIBS_LOG_DEBUG(LOGVAL(st));
 
-  if (eq_SensorTime()(mLastNavigated, st))
-    return;
-
-#if 1
-  BusyIndicator busy;
-#else
-  // this disables the GUI and is therefore often much slower than updating the views
-  BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
-      .arg(st.sensor.stationId)
-      .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
-#endif
-  mLastNavigated = st;
-
-#ifdef ENABLE_DIANA
-  mDianaHelper->navigateTo(st);
-#endif
-#ifdef ENABLE_ERRORLIST
-  mErrorsView->navigateTo(st);
-#endif
-
-  mNavigationHistory->navigateTo(st);
-
-  mAutoDataList->navigateTo(st);
-  mTimeSeriesView->navigateTo(st);
-
-  mStationData->navigateTo(st);
-
-#ifdef ENABLE_SIMPLECORRECTIONS
-  mCorrections->navigateTo(st);
-#endif
+  if (mNavigate.go(st))
+    Q_EMIT signalNavigateTo(st);
 }
 
 void SearchWindow::activateTab(QTabWidget* tabs, int index)

@@ -37,8 +37,6 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/HqcApplication.hh"
 
-#include "util/BusyIndicator.hh"
-
 #include <QtCore/QSettings>
 #include <QtGui/QHeaderView>
 
@@ -84,7 +82,6 @@ void ErrorList::onButtonSearch()
 
   Sensor_v sensors;
 
-  BusyIndicator busy;
   BOOST_FOREACH(int stationId, selectedStations) {
     BOOST_FOREACH(int paramId, selectedParameters) {
       const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
