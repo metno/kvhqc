@@ -35,6 +35,146 @@
     </message>
 </context>
 <context>
+    <name>AppWindow</name>
+    <message>
+        <location filename="appwindow.ui" line="14"/>
+        <source>hqc application</source>
+        <translation>hqc application</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="30"/>
+        <source>New window</source>
+        <translation>Neues Fenster</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="42"/>
+        <source>&amp;Search Tool</source>
+        <translation>&amp;Suchwerkzeug</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="52"/>
+        <source>&amp;Text Data</source>
+        <translation>&amp;Textdaten</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="62"/>
+        <source>&amp;WatchRR</source>
+        <translation>&amp;WatchRR</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="69"/>
+        <source>&amp;Rejected</source>
+        <translation>&amp;Rejected</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="92"/>
+        <source>Changes</source>
+        <translation>Änderungen</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="104"/>
+        <source>Undo</source>
+        <translation>Undo</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="110"/>
+        <location filename="appwindow.ui" line="254"/>
+        <source>Ctrl+Z</source>
+        <translation>Ctrl+Z</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="117"/>
+        <source>Redo</source>
+        <translation>Redo</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="123"/>
+        <location filename="appwindow.ui" line="265"/>
+        <source>Ctrl+Shift+Z</source>
+        <translation>Ctrl+Shift+Z</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="143"/>
+        <source>Save…</source>
+        <translation>Speichern…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="163"/>
+        <source>&amp;File</source>
+        <translation>&amp;Datei</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="172"/>
+        <source>&amp;Help</source>
+        <translation>&amp;Hilfe</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="184"/>
+        <source>&amp;Edit</source>
+        <translation>Änd&amp;erung</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="198"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Beenden</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="203"/>
+        <source>&amp;User manual…</source>
+        <translation>Ben&amp;utzeranleitung…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="208"/>
+        <source>&amp;Flags…</source>
+        <translation>&amp;Flags…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="213"/>
+        <source>&amp;News…</source>
+        <translation>&amp;Neuheiten…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="218"/>
+        <source>&amp;Parameters…</source>
+        <translation>&amp;Parameter…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="223"/>
+        <source>&amp;About HQC</source>
+        <translation>Über &amp;HQC</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="228"/>
+        <source>About &amp;Qt</source>
+        <translation>Über &amp;Qt</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="233"/>
+        <source>Open Kro…</source>
+        <translation>Kro öffnen…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="238"/>
+        <source>&amp;Settings…</source>
+        <translation>&amp;Einstellungen…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="243"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Speichern</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="251"/>
+        <source>&amp;Undo</source>
+        <translation>&amp;Undo</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="262"/>
+        <source>&amp;Redo</source>
+        <translation>&amp;Redo</translation>
+    </message>
+</context>
+<context>
     <name>Authentication::Authenticator</name>
     <message>
         <location filename="../common/Authenticator.cc" line="134"/>
@@ -88,40 +228,28 @@
 <context>
     <name>AutoDataList</name>
     <message>
-        <location filename="AutoDataList.cc" line="57"/>
-        <location filename="AutoDataList.cc" line="94"/>
+        <location filename="AutoDataList.cc" line="65"/>
+        <location filename="AutoDataList.cc" line="92"/>
         <source>Add column...</source>
         <translation>Spalte hinzufügen…</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="58"/>
-        <location filename="AutoDataList.cc" line="95"/>
+        <location filename="AutoDataList.cc" line="66"/>
+        <location filename="AutoDataList.cc" line="93"/>
         <source>Remove column</source>
         <translation>Spalte entfernen</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="59"/>
-        <location filename="AutoDataList.cc" line="96"/>
+        <location filename="AutoDataList.cc" line="67"/>
+        <location filename="AutoDataList.cc" line="94"/>
         <source>Reset columns</source>
         <translation>Spalten zurücksetzen</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="64"/>
-        <location filename="AutoDataList.cc" line="98"/>
+        <location filename="AutoDataList.cc" line="72"/>
+        <location filename="AutoDataList.cc" line="95"/>
         <source>Columns</source>
         <translation>Spalten</translation>
-    </message>
-    <message>
-        <location filename="AutoDataList.cc" line="70"/>
-        <location filename="AutoDataList.cc" line="99"/>
-        <source>Earlier</source>
-        <translation>Früher</translation>
-    </message>
-    <message>
-        <location filename="AutoDataList.cc" line="75"/>
-        <location filename="AutoDataList.cc" line="100"/>
-        <source>Later</source>
-        <translation>Später</translation>
     </message>
 </context>
 <context>
@@ -284,34 +412,17 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
         <translation>Speichern…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="58"/>
-        <location filename="DataList.cc" line="86"/>
+        <location filename="DataList.cc" line="67"/>
         <source>none</source>
         <translation>ohne</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="90"/>
-        <source>%1 min</source>
-        <translation>%1 min</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="88"/>
-        <source>%1 h</source>
-        <oldsource>6 h</oldsource>
-        <translation>%1 h</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="92"/>
-        <source>%1 s</source>
-        <translation>%1 s</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="202"/>
+        <location filename="DataList.cc" line="222"/>
         <source>Save Table</source>
         <translation>Tabelle speichern</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="204"/>
+        <location filename="DataList.cc" line="224"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabelle (*.csv)</translation>
     </message>
@@ -416,7 +527,7 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="../common/DataListModel.cc" line="164"/>
+        <location filename="../common/DataListModel.cc" line="162"/>
         <source>Distance: %1km</source>
         <translation>Abstand: %1km</translation>
     </message>
@@ -764,78 +875,95 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
 <context>
     <name>EditVersionModel</name>
     <message>
-        <location filename="EditVersionModel.cc" line="133"/>
+        <location filename="EditVersionModel.cc" line="17"/>
+        <source>Time</source>
+        <translation>Zeit</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="18"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="19"/>
+        <source>Snr</source>
+        <translation>Snr</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="20"/>
+        <source>Lvl</source>
+        <translation>Lvl</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="21"/>
+        <location filename="EditVersionModel.cc" line="32"/>
+        <source>Type</source>
+        <translation>Typ</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="22"/>
+        <source>Par</source>
+        <translation>Par</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="23"/>
+        <source>Corr.</source>
+        <translation>Korr.</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="24"/>
+        <source>Flags</source>
+        <translation>Flags</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="28"/>
+        <source>Change time / Observation time</source>
+        <translation>Zeitpunkt Änderung/Messung</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="29"/>
+        <source>Station number</source>
+        <translation>Stations-Nummer</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="30"/>
+        <source>Sensor number</source>
+        <translation>Sensor-Nummer</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="31"/>
+        <source>Level</source>
+        <translation>Level</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="33"/>
+        <source>Parameter</source>
+        <translation>Parameter</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="34"/>
+        <source>New Corrected Value</source>
+        <translation>Neuer korrigierter Wert</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="35"/>
+        <source>New Flags</source>
+        <translation>Neue Flags</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="162"/>
         <source>Changed %1</source>
         <translation>Änderung %1</translation>
     </message>
 </context>
 <context>
-    <name>EditVersionsView</name>
-    <message>
-        <location filename="EditVersionsView.cc" line="108"/>
-        <source>Change History</source>
-        <translation>Änderungs-Historie</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="109"/>
-        <source>Undo</source>
-        <translation>Undo</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="110"/>
-        <source>Redo</source>
-        <translation>Redo</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="111"/>
-        <source>Save</source>
-        <translation>Speichern</translation>
-    </message>
-</context>
-<context>
     <name>ErrorList</name>
     <message>
-        <location filename="EditVersionModel.cc" line="26"/>
         <location filename="../errorlist/ErrorListModel.cc" line="38"/>
         <location filename="../errorlist/ErrorListModel.cc" line="51"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flags</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="23"/>
-        <source>Time</source>
-        <translation>Zeit</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="24"/>
-        <source>Station</source>
-        <translation>Station</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="25"/>
-        <source>Corr.</source>
-        <translation>Korr.</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="30"/>
-        <source>Change time / Observation time</source>
-        <translation>Zeitpunkt Änderung/Messung</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="31"/>
-        <source>Station / Type Parameter</source>
-        <translation>Station / Typ Parameter</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="32"/>
-        <source>New Corrected Value</source>
-        <translation>Neuer korrigierter Wert</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="33"/>
-        <source>New Flags</source>
-        <translation>Neue Flags</translation>
     </message>
     <message>
         <location filename="../errorlist/errorlist.ui" line="14"/>
@@ -1274,6 +1402,31 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
         <source>Continue</source>
         <translation>Weiter</translation>
     </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="177"/>
+        <source>none</source>
+        <translation>ohne</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="181"/>
+        <source>%1 d</source>
+        <translation>%1 d</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="183"/>
+        <source>%1 h</source>
+        <translation>%1 h</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="185"/>
+        <source>%1 min</source>
+        <translation>%1 min</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="186"/>
+        <source>%1 s</source>
+        <translation>%1 s</translation>
+    </message>
 </context>
 <context>
     <name>HideApplyBox</name>
@@ -1294,45 +1447,129 @@ Sonst: zeige alle Zeiten im Zeitraum.</translation>
     </message>
 </context>
 <context>
+    <name>HqcAppWindow</name>
+    <message>
+        <location filename="HqcAppWindow.cc" line="97"/>
+        <source>HQC %1</source>
+        <translation>HQC %1</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="160"/>
+        <source>Welcome to kvhqc %1!</source>
+        <translation>Willkommen zu kvhqc %1!</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="208"/>
+        <source>No RejectDecode</source>
+        <translation>Kein RejectDecode</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="208"/>
+        <source>Could not read rejectdecode.</source>
+        <translation>Kann rejectdecode nicht lesen.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="259"/>
+        <source>HQC - Update</source>
+        <translation>HQC - Aktualisierung</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="260"/>
+        <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
+        <translation>Das Hqc-Programm auf Ihrem Computer wurde aktualisert. Sie sollten eventuelle Änderungen speichern und das hqc-Programm neu starten, um die neue Version zu benutzen.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="296"/>
+        <source>About Hqc</source>
+        <translation>Über Hqc</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="297"/>
+        <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
+
+The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
+
+You are using HQC version %1.</source>
+        <translation>Hqc ist ein Programm für die manuelle Kontrolle von Wetterobservationen.
+
+Sie benutzen HQC Version %1.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="333"/>
+        <source>HQC - Saving data</source>
+        <translation>HQC - Daten Speichern</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="334"/>
+        <source>Sorry, your changes could not be saved!</source>
+        <translation>Leider konnten Ihre Änderungen nicht gespeichert werden!</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="335"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="344"/>
+        <source>Kvalobs seems to be available</source>
+        <translation>Kvalobs-Datenbank erreichbar</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="347"/>
+        <source>Kvalobs seems not to be available</source>
+        <translation>Kvalobs-Datenbank nicht erreichbar</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="408"/>
+        <source>HQC - Version Change</source>
+        <translation>HQC - Versionsänderung</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="409"/>
+        <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
+        <translation>Sie benutzten eine andere HQC-Version als vorher (jetzt: %1, voher: %2). Sie müssen prüfen, ob alle Einstellungen richtig sind.</translation>
+    </message>
+</context>
+<context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../common/HqcApplication.cc" line="107"/>
+        <location filename="../common/HqcApplication.cc" line="119"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Systemdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="118"/>
+        <location filename="../common/HqcApplication.cc" line="130"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Umgebungsvariable $HOME leer; bitte überprüfen Sie die Einstellungen Ihres Computers</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="126"/>
+        <location filename="../common/HqcApplication.cc" line="138"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kann nicht auf hqc-Konfigurationsdatenbank zugreifen; bitte prüfen Sie die HQC-Installation</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="141"/>
+        <location filename="../common/HqcApplication.cc" line="153"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kann nicht auf kvalobs SQL Datenbank zugreifen; bitte prüfen Sie die HQC-Konfiguration</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="239"/>
-        <location filename="../common/HqcApplication.cc" line="264"/>
+        <location filename="../common/HqcApplication.cc" line="256"/>
+        <location filename="../common/HqcApplication.cc" line="281"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="241"/>
+        <location filename="../common/HqcApplication.cc" line="258"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Ein schwerwiegender Fehler ist aufgetreten. Sie sollten HQC neu starten und den Fehler melden.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="285"/>
+        <location filename="../common/HqcApplication.cc" line="302"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Die kvalobs-Datenbank ist leider nicht erreichbar.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="286"/>
+        <location filename="../common/HqcApplication.cc" line="303"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Datenbank nicht benutzt werden kann.</translation>
     </message>
@@ -1911,62 +2148,62 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Ver&amp;gessen</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="50"/>
+        <location filename="NavigationHistory.cc" line="81"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="51"/>
+        <location filename="NavigationHistory.cc" line="82"/>
         <source>Lvl</source>
         <translation>Lvl</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="52"/>
+        <location filename="NavigationHistory.cc" line="83"/>
         <source>Snsr</source>
         <translation>Snsr</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="53"/>
+        <location filename="NavigationHistory.cc" line="84"/>
         <source>Type</source>
         <translation>Typ</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="54"/>
+        <location filename="NavigationHistory.cc" line="85"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="55"/>
+        <location filename="NavigationHistory.cc" line="86"/>
         <source>Obstime</source>
         <translation>Obszeit</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="59"/>
+        <location filename="NavigationHistory.cc" line="90"/>
         <source>Station number</source>
         <translation>Stations-Nummer</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="60"/>
+        <location filename="NavigationHistory.cc" line="91"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="61"/>
+        <location filename="NavigationHistory.cc" line="92"/>
         <source>Sensor Number</source>
         <translation>Sensor-Nummer</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="62"/>
+        <location filename="NavigationHistory.cc" line="93"/>
         <source>Type ID</source>
         <translation>Typ ID</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="63"/>
+        <location filename="NavigationHistory.cc" line="94"/>
         <source>Parameter name</source>
         <translation>Parameter-Name</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="64"/>
+        <location filename="NavigationHistory.cc" line="95"/>
         <source>Observation time</source>
         <translation>Observationszeit</translation>
     </message>
@@ -2033,42 +2270,48 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>SearchWindow</name>
     <message>
-        <location filename="SearchWindow.cc" line="97"/>
+        <location filename="SearchWindow.cc" line="110"/>
         <source>HQC Search %1</source>
         <translation>HQC Suche %1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="131"/>
+        <location filename="SearchWindow.cc" line="152"/>
         <source>Ctrl+F</source>
         <comment>Error search tab shortcut</comment>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="149"/>
+        <location filename="SearchWindow.cc" line="170"/>
         <source>Ctrl+R</source>
         <comment>Recent tab shortcut</comment>
         <translation>Ctrl+R</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="158"/>
+        <location filename="SearchWindow.cc" line="179"/>
         <source>List/Series</source>
         <oldsource>Auto List/Series</oldsource>
         <translation>Liste/Serie</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="160"/>
+        <location filename="SearchWindow.cc" line="181"/>
         <source>Ctrl+1</source>
         <comment>List/Series tab shortcut</comment>
         <translation>Ctrl+1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="173"/>
+        <location filename="SearchWindow.cc" line="195"/>
+        <source>Ctrl+2</source>
+        <comment>Station data tab shortcut</comment>
+        <translation>Ctrl+2</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="199"/>
         <source>Ctrl+3</source>
         <comment>Single Observation tab shortcut</comment>
         <translation>Ctrl+3</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="223"/>
+        <location filename="SearchWindow.cc" line="245"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Vorbereitung der Daten für Station %1 um %2, bitte warten…</translation>
     </message>
@@ -2132,151 +2375,159 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Einzelne Messung</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="30"/>
+        <location filename="singleobservation.ui" line="29"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="70"/>
+        <location filename="singleobservation.ui" line="387"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="107"/>
+        <location filename="singleobservation.ui" line="424"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="123"/>
+        <location filename="singleobservation.ui" line="440"/>
         <source>S:</source>
         <translation>S:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="160"/>
+        <location filename="singleobservation.ui" line="477"/>
         <source>Sensor Number</source>
         <translation>Sensor-Nummer</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="176"/>
+        <location filename="singleobservation.ui" line="493"/>
         <source>Type:</source>
         <translation>Typ:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="226"/>
+        <location filename="singleobservation.ui" line="543"/>
         <source>Param:</source>
         <translation>Param:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="276"/>
+        <location filename="singleobservation.ui" line="593"/>
         <source>Obstime:</source>
         <translation>Obszeit:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="313"/>
+        <location filename="singleobservation.ui" line="39"/>
         <source>Orig:</source>
         <translation>Orig:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="354"/>
+        <location filename="singleobservation.ui" line="80"/>
         <source>Accept the original value</source>
         <translation>Originalwert akzeptieren</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="357"/>
-        <location filename="singleobservation.ui" line="511"/>
-        <location filename="singleobservation.ui" line="604"/>
+        <location filename="singleobservation.ui" line="83"/>
+        <location filename="singleobservation.ui" line="237"/>
+        <location filename="singleobservation.ui" line="330"/>
         <source>Acc</source>
         <translation>Akz</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="363"/>
+        <location filename="singleobservation.ui" line="89"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="389"/>
+        <location filename="singleobservation.ui" line="115"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="436"/>
+        <location filename="singleobservation.ui" line="162"/>
         <source>History</source>
         <translation>Verlauf</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="467"/>
+        <location filename="singleobservation.ui" line="193"/>
         <source>Model:</source>
         <translation>Modell:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="508"/>
+        <location filename="singleobservation.ui" line="234"/>
         <source>Accept the model value</source>
         <translation>Modellwert akzeptieren</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="517"/>
+        <location filename="singleobservation.ui" line="243"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="524"/>
+        <location filename="singleobservation.ui" line="250"/>
         <source>Flags:</source>
         <translation>Flags:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="559"/>
+        <location filename="singleobservation.ui" line="285"/>
         <source>&amp;Corr:</source>
         <translation>&amp;Korr:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="585"/>
+        <location filename="singleobservation.ui" line="311"/>
         <source>Start an editor for this observation</source>
         <translation>Editor für diese Messung öffnen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="588"/>
+        <location filename="singleobservation.ui" line="314"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="594"/>
+        <location filename="singleobservation.ui" line="320"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="601"/>
+        <location filename="singleobservation.ui" line="327"/>
         <source>Accept the corrected value</source>
         <translation>Korrigierten Wert akzeptieren</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="610"/>
+        <location filename="singleobservation.ui" line="336"/>
         <source>Ctrl+J</source>
         <translation>Ctrl+J</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="617"/>
+        <location filename="singleobservation.ui" line="343"/>
         <source>Allow QC2 to override</source>
         <translation>QC2 darf überschreiben</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="620"/>
+        <location filename="singleobservation.ui" line="346"/>
         <source>QC&amp;2</source>
         <translation>QC&amp;2</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="627"/>
+        <location filename="singleobservation.ui" line="353"/>
         <source>Reject the observation</source>
         <translation>Messung verwerfen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="630"/>
+        <location filename="singleobservation.ui" line="356"/>
         <source>Rej</source>
         <translation>Rej</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="636"/>
+        <location filename="singleobservation.ui" line="362"/>
         <source>Ctrl+K</source>
         <translation>Ctrl+K</translation>
+    </message>
+</context>
+<context>
+    <name>StationDataList</name>
+    <message>
+        <location filename="StationDataList.cc" line="27"/>
+        <source>Station Data</source>
+        <translation>Stationsdaten</translation>
     </message>
 </context>
 <context>
@@ -2542,40 +2793,40 @@ Sie benutzen HQC Version %1.</translation>
         <translation>Linien</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="60"/>
-        <location filename="TimeSeriesView.cc" line="191"/>
+        <location filename="TimeSeriesView.cc" line="61"/>
+        <location filename="TimeSeriesView.cc" line="192"/>
         <source>Corrected</source>
         <translation>Korrigiert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="61"/>
-        <location filename="TimeSeriesView.cc" line="192"/>
+        <location filename="TimeSeriesView.cc" line="62"/>
+        <location filename="TimeSeriesView.cc" line="193"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="63"/>
+        <location filename="TimeSeriesView.cc" line="194"/>
         <source>Difference</source>
         <translation>Differenz</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="69"/>
-        <location filename="TimeSeriesView.cc" line="195"/>
+        <location filename="TimeSeriesView.cc" line="70"/>
+        <location filename="TimeSeriesView.cc" line="196"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Neu…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="70"/>
-        <location filename="TimeSeriesView.cc" line="196"/>
+        <location filename="TimeSeriesView.cc" line="71"/>
+        <location filename="TimeSeriesView.cc" line="197"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Entfernen…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="71"/>
-        <location filename="TimeSeriesView.cc" line="197"/>
+        <location filename="TimeSeriesView.cc" line="72"/>
+        <location filename="TimeSeriesView.cc" line="198"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Linien zurücksetzen</translation>
@@ -2587,7 +2838,7 @@ Sie benutzen HQC Version %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="146"/>
+        <location filename="TimeSeriesView.cc" line="147"/>
         <source>Station:</source>
         <translation>Station:</translation>
     </message>
@@ -2688,6 +2939,43 @@ Sie benutzen HQC Version %1.</translation>
         <location filename="TimeseriesDialog.cc" line="204"/>
         <source>To:</source>
         <translation>Bis:</translation>
+    </message>
+</context>
+<context>
+    <name>TimespanDataList</name>
+    <message>
+        <location filename="TimespanDataList.cc" line="26"/>
+        <source>%1 earlier</source>
+        <translation>%1 früher</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="27"/>
+        <source>%1 later</source>
+        <translation>%1 später</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="52"/>
+        <location filename="TimespanDataList.cc" line="89"/>
+        <source>Change start time</source>
+        <translation>Startzeit ändern</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="53"/>
+        <location filename="TimespanDataList.cc" line="90"/>
+        <source>Change end time</source>
+        <translation>Endzeit ändern</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="54"/>
+        <location filename="TimespanDataList.cc" line="91"/>
+        <source>Reset time range</source>
+        <translation>Zeitauswahl zurückstellen</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="76"/>
+        <location filename="TimespanDataList.cc" line="88"/>
+        <source>Change start end end times</source>
+        <translation>Start- und End-zeiten ändern</translation>
     </message>
 </context>
 <context>

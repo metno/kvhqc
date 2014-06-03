@@ -1,3 +1,9 @@
+kvhqc (4.0.0~a2-1) unstable; urgency=low
+
+  * added introduction
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 03 Jun 2014 08:13:12 +0200
+
 kvhqc (4.0.0~a1-1) unstable; urgency=low
 
   * asynchronous data access

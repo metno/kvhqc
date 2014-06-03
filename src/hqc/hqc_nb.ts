@@ -35,6 +35,146 @@
     </message>
 </context>
 <context>
+    <name>AppWindow</name>
+    <message>
+        <location filename="appwindow.ui" line="14"/>
+        <source>hqc application</source>
+        <translation>hqc application</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="30"/>
+        <source>New window</source>
+        <translation>Ny vindu</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="42"/>
+        <source>&amp;Search Tool</source>
+        <translation>&amp;Søkeverktøy</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="52"/>
+        <source>&amp;Text Data</source>
+        <translation>&amp;Text Data</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="62"/>
+        <source>&amp;WatchRR</source>
+        <translation>&amp;WatchRR</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="69"/>
+        <source>&amp;Rejected</source>
+        <translation>&amp;Rejected</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="92"/>
+        <source>Changes</source>
+        <translation>Endringer</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="104"/>
+        <source>Undo</source>
+        <translation>Angre</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="110"/>
+        <location filename="appwindow.ui" line="254"/>
+        <source>Ctrl+Z</source>
+        <translation>Ctrl+Z</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="117"/>
+        <source>Redo</source>
+        <translation>Gjenta</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="123"/>
+        <location filename="appwindow.ui" line="265"/>
+        <source>Ctrl+Shift+Z</source>
+        <translation>Ctrl+Shift+Z</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="143"/>
+        <source>Save…</source>
+        <translation>Lagre…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="163"/>
+        <source>&amp;File</source>
+        <translation>&amp;Fil</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="172"/>
+        <source>&amp;Help</source>
+        <translation>&amp;Hjelp</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="184"/>
+        <source>&amp;Edit</source>
+        <translation>&amp;Endring</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="198"/>
+        <source>&amp;Quit</source>
+        <translation>&amp;Avslutt</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="203"/>
+        <source>&amp;User manual…</source>
+        <translation>Br&amp;ukerveiledning…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="208"/>
+        <source>&amp;Flags…</source>
+        <translation>&amp;Flagg…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="213"/>
+        <source>&amp;News…</source>
+        <translation>&amp;Nyheter…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="218"/>
+        <source>&amp;Parameters…</source>
+        <translation>&amp;Parametere…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="223"/>
+        <source>&amp;About HQC</source>
+        <translation>&amp;Om HQC</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="228"/>
+        <source>About &amp;Qt</source>
+        <translation>Om &amp;Qt</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="233"/>
+        <source>Open Kro…</source>
+        <translation>Åpne kro…</translation>
+    </message>
+    <message utf8="true">
+        <location filename="appwindow.ui" line="238"/>
+        <source>&amp;Settings…</source>
+        <translation>&amp;Innstillinger…</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="243"/>
+        <source>&amp;Save</source>
+        <translation>&amp;Lagre</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="251"/>
+        <source>&amp;Undo</source>
+        <translation>&amp;Angre</translation>
+    </message>
+    <message>
+        <location filename="appwindow.ui" line="262"/>
+        <source>&amp;Redo</source>
+        <translation>&amp;Gjenta</translation>
+    </message>
+</context>
+<context>
     <name>Authentication::Authenticator</name>
     <message>
         <location filename="../common/Authenticator.cc" line="134"/>
@@ -88,40 +228,28 @@
 <context>
     <name>AutoDataList</name>
     <message>
-        <location filename="AutoDataList.cc" line="57"/>
-        <location filename="AutoDataList.cc" line="94"/>
+        <location filename="AutoDataList.cc" line="65"/>
+        <location filename="AutoDataList.cc" line="92"/>
         <source>Add column...</source>
         <translation>Ny kolonne…</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="58"/>
-        <location filename="AutoDataList.cc" line="95"/>
+        <location filename="AutoDataList.cc" line="66"/>
+        <location filename="AutoDataList.cc" line="93"/>
         <source>Remove column</source>
         <translation>Fjern kolonne</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="59"/>
-        <location filename="AutoDataList.cc" line="96"/>
+        <location filename="AutoDataList.cc" line="67"/>
+        <location filename="AutoDataList.cc" line="94"/>
         <source>Reset columns</source>
         <translation>Tilbakestill kolonnevalg</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="64"/>
-        <location filename="AutoDataList.cc" line="98"/>
+        <location filename="AutoDataList.cc" line="72"/>
+        <location filename="AutoDataList.cc" line="95"/>
         <source>Columns</source>
         <translation>Kolonner</translation>
-    </message>
-    <message>
-        <location filename="AutoDataList.cc" line="70"/>
-        <location filename="AutoDataList.cc" line="99"/>
-        <source>Earlier</source>
-        <translation>Tidligere</translation>
-    </message>
-    <message>
-        <location filename="AutoDataList.cc" line="75"/>
-        <location filename="AutoDataList.cc" line="100"/>
-        <source>Later</source>
-        <translation>Senere</translation>
     </message>
 </context>
 <context>
@@ -284,34 +412,17 @@ Ellers vis alle tider i tidsrom.</translation>
         <translation>Lagre…</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="58"/>
-        <location filename="DataList.cc" line="86"/>
+        <location filename="DataList.cc" line="67"/>
         <source>none</source>
         <translation>uten</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="90"/>
-        <source>%1 min</source>
-        <translation>%1 min</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="88"/>
-        <source>%1 h</source>
-        <oldsource>6 h</oldsource>
-        <translation>%1 t</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="92"/>
-        <source>%1 s</source>
-        <translation>%1 s</translation>
-    </message>
-    <message>
-        <location filename="DataList.cc" line="202"/>
+        <location filename="DataList.cc" line="222"/>
         <source>Save Table</source>
         <translation>Lagre tabellen</translation>
     </message>
     <message>
-        <location filename="DataList.cc" line="204"/>
+        <location filename="DataList.cc" line="224"/>
         <source>CSV Table (*.csv)</source>
         <translation>CSV Tabell (*.csv)</translation>
     </message>
@@ -416,7 +527,7 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>DataListModel</name>
     <message>
-        <location filename="../common/DataListModel.cc" line="164"/>
+        <location filename="../common/DataListModel.cc" line="162"/>
         <source>Distance: %1km</source>
         <translation>Avstand: %1km</translation>
     </message>
@@ -764,78 +875,95 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>EditVersionModel</name>
     <message>
-        <location filename="EditVersionModel.cc" line="133"/>
+        <location filename="EditVersionModel.cc" line="17"/>
+        <source>Time</source>
+        <translation>Tid</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="18"/>
+        <source>Stnr</source>
+        <translation>Stnr</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="19"/>
+        <source>Snr</source>
+        <translation>Snr</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="20"/>
+        <source>Lvl</source>
+        <translation>Lvl</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="21"/>
+        <location filename="EditVersionModel.cc" line="32"/>
+        <source>Type</source>
+        <translation>Type</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="22"/>
+        <source>Par</source>
+        <translation>Par</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="23"/>
+        <source>Corr.</source>
+        <translation>Korr.</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="24"/>
+        <source>Flags</source>
+        <translation>Flagg</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="28"/>
+        <source>Change time / Observation time</source>
+        <translation>Tid Endring/Obs</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="29"/>
+        <source>Station number</source>
+        <translation>Stasjonsnummer</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="30"/>
+        <source>Sensor number</source>
+        <translation>Sensor-nummer</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="31"/>
+        <source>Level</source>
+        <translation>Level</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="33"/>
+        <source>Parameter</source>
+        <translation>Parametere</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="34"/>
+        <source>New Corrected Value</source>
+        <translation>Ny korrigert verdi</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="35"/>
+        <source>New Flags</source>
+        <translation>Nye flagg</translation>
+    </message>
+    <message>
+        <location filename="EditVersionModel.cc" line="162"/>
         <source>Changed %1</source>
         <translation>Endring %1</translation>
     </message>
 </context>
 <context>
-    <name>EditVersionsView</name>
-    <message>
-        <location filename="EditVersionsView.cc" line="108"/>
-        <source>Change History</source>
-        <translation>Endrings-historikk</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="109"/>
-        <source>Undo</source>
-        <translation>Angre</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="110"/>
-        <source>Redo</source>
-        <translation>Gjenta</translation>
-    </message>
-    <message>
-        <location filename="EditVersionsView.cc" line="111"/>
-        <source>Save</source>
-        <translation>Lagre</translation>
-    </message>
-</context>
-<context>
     <name>ErrorList</name>
     <message>
-        <location filename="EditVersionModel.cc" line="26"/>
         <location filename="../errorlist/ErrorListModel.cc" line="38"/>
         <location filename="../errorlist/ErrorListModel.cc" line="51"/>
         <source>Flags</source>
         <oldsource>Flag</oldsource>
         <translation>Flagg</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="23"/>
-        <source>Time</source>
-        <translation>Tid</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="24"/>
-        <source>Station</source>
-        <translation>Stasjon</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="25"/>
-        <source>Corr.</source>
-        <translation>Korr.</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="30"/>
-        <source>Change time / Observation time</source>
-        <translation>Tid Endring/Obs</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="31"/>
-        <source>Station / Type Parameter</source>
-        <translation>Stasjon / Typ Parameter</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="32"/>
-        <source>New Corrected Value</source>
-        <translation>Ny korrigert verdi</translation>
-    </message>
-    <message>
-        <location filename="EditVersionModel.cc" line="33"/>
-        <source>New Flags</source>
-        <translation>Nye flagg</translation>
     </message>
     <message>
         <location filename="../errorlist/errorlist.ui" line="14"/>
@@ -1273,6 +1401,31 @@ Ellers vis alle tider i tidsrom.</translation>
         <source>Continue</source>
         <translation>Fortsett</translation>
     </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="177"/>
+        <source>none</source>
+        <translation>uten</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="181"/>
+        <source>%1 d</source>
+        <translation>%1 d</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="183"/>
+        <source>%1 h</source>
+        <translation>%1 t</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="185"/>
+        <source>%1 min</source>
+        <translation>%1 min</translation>
+    </message>
+    <message>
+        <location filename="../util/Helpers.cc" line="186"/>
+        <source>%1 s</source>
+        <translation>%1 s</translation>
+    </message>
 </context>
 <context>
     <name>HideApplyBox</name>
@@ -1293,45 +1446,129 @@ Ellers vis alle tider i tidsrom.</translation>
     </message>
 </context>
 <context>
+    <name>HqcAppWindow</name>
+    <message>
+        <location filename="HqcAppWindow.cc" line="97"/>
+        <source>HQC %1</source>
+        <translation>HQC %1</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="160"/>
+        <source>Welcome to kvhqc %1!</source>
+        <translation>Velkommen til kvhqc %1!</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="208"/>
+        <source>No RejectDecode</source>
+        <translation>Ingen RejectDecode</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="208"/>
+        <source>Could not read rejectdecode.</source>
+        <translation>Kunne ikke lese rejectdecode.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="259"/>
+        <source>HQC - Update</source>
+        <translation>HQC - Oppdatering</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="260"/>
+        <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
+        <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="296"/>
+        <source>About Hqc</source>
+        <translation>Om Hqc</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="297"/>
+        <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
+
+The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
+
+You are using HQC version %1.</source>
+        <translation>HQC er et programm for manuell kontroll av værobservasjoner.
+
+Du bruker HQC versjon %1.</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="333"/>
+        <source>HQC - Saving data</source>
+        <translation>HQC - Lagre Data</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="334"/>
+        <source>Sorry, your changes could not be saved!</source>
+        <translation>Dessverre kunne endringene ikke bli lagret!</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="335"/>
+        <source>OK</source>
+        <translation>OK</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="344"/>
+        <source>Kvalobs seems to be available</source>
+        <translation>Kvalobs-databasen tilgjengelig</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="347"/>
+        <source>Kvalobs seems not to be available</source>
+        <translation>Kvalobs-databasen ikke tilgjengelig</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="408"/>
+        <source>HQC - Version Change</source>
+        <translation>HQC - Versjonsendring</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="409"/>
+        <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
+        <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
+    </message>
+</context>
+<context>
     <name>HqcApplication</name>
     <message>
-        <location filename="../common/HqcApplication.cc" line="107"/>
+        <location filename="../common/HqcApplication.cc" line="119"/>
         <source>Cannot access hqc system database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC systemdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="118"/>
+        <location filename="../common/HqcApplication.cc" line="130"/>
         <source>No $HOME enviroment, please check your computer&apos;s setup</source>
         <translation>Variablen $HOME er tom; vennligst sjekk instillingene på datamaskinen</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="126"/>
+        <location filename="../common/HqcApplication.cc" line="138"/>
         <source>Cannot access/create hqc config database, please check the HQC installation</source>
         <translation>Kan ikke lese HQC konfigurasjonsdatabasen; vennligst sjekk HQC-installasjonen</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="141"/>
+        <location filename="../common/HqcApplication.cc" line="153"/>
         <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
         <translation>Kan ikke lese kvalobs SQL databasen; vennligst sjekk HQC-konfigurasjonen</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="239"/>
-        <location filename="../common/HqcApplication.cc" line="264"/>
+        <location filename="../common/HqcApplication.cc" line="256"/>
+        <location filename="../common/HqcApplication.cc" line="281"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="241"/>
+        <location filename="../common/HqcApplication.cc" line="258"/>
         <source>A severe error has occurred. You should restart the application, and report the error.</source>
         <translation>Alvorlig feil oppsto. Prøv å starte HQC på nytt, og gi beskjed om feilen.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="285"/>
+        <location filename="../common/HqcApplication.cc" line="302"/>
         <source>The kvalobs database is not accessible.</source>
         <translation>Kvalobsdatabasen er dessverre ikke tilgjengelig.</translation>
     </message>
     <message>
-        <location filename="../common/HqcApplication.cc" line="286"/>
+        <location filename="../common/HqcApplication.cc" line="303"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen.</translation>
     </message>
@@ -1910,62 +2147,62 @@ Du bruker HQC versjon %1.</translation>
         <translation>&amp;Glem</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="50"/>
+        <location filename="NavigationHistory.cc" line="81"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="51"/>
+        <location filename="NavigationHistory.cc" line="82"/>
         <source>Lvl</source>
         <translation>Lvl</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="52"/>
+        <location filename="NavigationHistory.cc" line="83"/>
         <source>Snsr</source>
         <translation>Snsr</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="53"/>
+        <location filename="NavigationHistory.cc" line="84"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="54"/>
+        <location filename="NavigationHistory.cc" line="85"/>
         <source>Para</source>
         <translation>Para</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="55"/>
+        <location filename="NavigationHistory.cc" line="86"/>
         <source>Obstime</source>
         <translation>Obstid</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="59"/>
+        <location filename="NavigationHistory.cc" line="90"/>
         <source>Station number</source>
         <translation>Stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="60"/>
+        <location filename="NavigationHistory.cc" line="91"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="61"/>
+        <location filename="NavigationHistory.cc" line="92"/>
         <source>Sensor Number</source>
         <translation>Sensor nummer</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="62"/>
+        <location filename="NavigationHistory.cc" line="93"/>
         <source>Type ID</source>
         <translation>Type ID</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="63"/>
+        <location filename="NavigationHistory.cc" line="94"/>
         <source>Parameter name</source>
         <translation>Parameternavn</translation>
     </message>
     <message>
-        <location filename="NavigationHistory.cc" line="64"/>
+        <location filename="NavigationHistory.cc" line="95"/>
         <source>Observation time</source>
         <translation>Observasjonstid</translation>
     </message>
@@ -2032,42 +2269,48 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>SearchWindow</name>
     <message>
-        <location filename="SearchWindow.cc" line="97"/>
+        <location filename="SearchWindow.cc" line="110"/>
         <source>HQC Search %1</source>
         <translation>HQC Søk %1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="131"/>
+        <location filename="SearchWindow.cc" line="152"/>
         <source>Ctrl+F</source>
         <comment>Error search tab shortcut</comment>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="149"/>
+        <location filename="SearchWindow.cc" line="170"/>
         <source>Ctrl+R</source>
         <comment>Recent tab shortcut</comment>
         <translation>Ctrl+R</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="158"/>
+        <location filename="SearchWindow.cc" line="179"/>
         <source>List/Series</source>
         <oldsource>Auto List/Series</oldsource>
         <translation>Liste/Serie</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="160"/>
+        <location filename="SearchWindow.cc" line="181"/>
         <source>Ctrl+1</source>
         <comment>List/Series tab shortcut</comment>
         <translation>Ctrl+1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="173"/>
+        <location filename="SearchWindow.cc" line="195"/>
+        <source>Ctrl+2</source>
+        <comment>Station data tab shortcut</comment>
+        <translation>Ctrl+2</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="199"/>
         <source>Ctrl+3</source>
         <comment>Single Observation tab shortcut</comment>
         <translation>Ctrl+3</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="223"/>
+        <location filename="SearchWindow.cc" line="245"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
         <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
@@ -2131,151 +2374,159 @@ Du bruker HQC versjon %1.</translation>
         <translation>Enkelt Observasjon</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="30"/>
+        <location filename="singleobservation.ui" line="29"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="70"/>
+        <location filename="singleobservation.ui" line="387"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="107"/>
+        <location filename="singleobservation.ui" line="424"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="123"/>
+        <location filename="singleobservation.ui" line="440"/>
         <source>S:</source>
         <translation>S:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="160"/>
+        <location filename="singleobservation.ui" line="477"/>
         <source>Sensor Number</source>
         <translation>Sensor nummer</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="176"/>
+        <location filename="singleobservation.ui" line="493"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="226"/>
+        <location filename="singleobservation.ui" line="543"/>
         <source>Param:</source>
         <translation>Param:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="276"/>
+        <location filename="singleobservation.ui" line="593"/>
         <source>Obstime:</source>
         <translation>Obstid:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="313"/>
+        <location filename="singleobservation.ui" line="39"/>
         <source>Orig:</source>
         <translation>Orig:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="354"/>
+        <location filename="singleobservation.ui" line="80"/>
         <source>Accept the original value</source>
         <translation>Aksepter original verdi</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="357"/>
-        <location filename="singleobservation.ui" line="511"/>
-        <location filename="singleobservation.ui" line="604"/>
+        <location filename="singleobservation.ui" line="83"/>
+        <location filename="singleobservation.ui" line="237"/>
+        <location filename="singleobservation.ui" line="330"/>
         <source>Acc</source>
         <translation>Aks</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="363"/>
+        <location filename="singleobservation.ui" line="89"/>
         <source>Ctrl+G</source>
         <translation>Ctrl+G</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="389"/>
+        <location filename="singleobservation.ui" line="115"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="436"/>
+        <location filename="singleobservation.ui" line="162"/>
         <source>History</source>
         <translation>Historie</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="467"/>
+        <location filename="singleobservation.ui" line="193"/>
         <source>Model:</source>
         <translation>Modell:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="508"/>
+        <location filename="singleobservation.ui" line="234"/>
         <source>Accept the model value</source>
         <translation>Aksepter modell-verdi</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="517"/>
+        <location filename="singleobservation.ui" line="243"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="524"/>
+        <location filename="singleobservation.ui" line="250"/>
         <source>Flags:</source>
         <translation>Flagg:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="559"/>
+        <location filename="singleobservation.ui" line="285"/>
         <source>&amp;Corr:</source>
         <translation>&amp;Korr:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="585"/>
+        <location filename="singleobservation.ui" line="311"/>
         <source>Start an editor for this observation</source>
         <translation>Åpne editor for observasjonen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="588"/>
+        <location filename="singleobservation.ui" line="314"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="594"/>
+        <location filename="singleobservation.ui" line="320"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="601"/>
+        <location filename="singleobservation.ui" line="327"/>
         <source>Accept the corrected value</source>
         <translation>Aksepter korrigert verdi</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="610"/>
+        <location filename="singleobservation.ui" line="336"/>
         <source>Ctrl+J</source>
         <translation>Ctrl+J</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="617"/>
+        <location filename="singleobservation.ui" line="343"/>
         <source>Allow QC2 to override</source>
         <translation>QC kan overskrive</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="620"/>
+        <location filename="singleobservation.ui" line="346"/>
         <source>QC&amp;2</source>
         <translation>QC&amp;2</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="627"/>
+        <location filename="singleobservation.ui" line="353"/>
         <source>Reject the observation</source>
         <translation>Forkast observasjonen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="630"/>
+        <location filename="singleobservation.ui" line="356"/>
         <source>Rej</source>
         <translation>Rej</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="636"/>
+        <location filename="singleobservation.ui" line="362"/>
         <source>Ctrl+K</source>
         <translation>Ctrl+K</translation>
+    </message>
+</context>
+<context>
+    <name>StationDataList</name>
+    <message>
+        <location filename="StationDataList.cc" line="27"/>
+        <source>Station Data</source>
+        <translation>Stasjonsdata</translation>
     </message>
 </context>
 <context>
@@ -2541,40 +2792,40 @@ Du bruker HQC versjon %1.</translation>
         <translation>Linjer</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="60"/>
-        <location filename="TimeSeriesView.cc" line="191"/>
+        <location filename="TimeSeriesView.cc" line="61"/>
+        <location filename="TimeSeriesView.cc" line="192"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="61"/>
-        <location filename="TimeSeriesView.cc" line="192"/>
+        <location filename="TimeSeriesView.cc" line="62"/>
+        <location filename="TimeSeriesView.cc" line="193"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="63"/>
+        <location filename="TimeSeriesView.cc" line="194"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="69"/>
-        <location filename="TimeSeriesView.cc" line="195"/>
+        <location filename="TimeSeriesView.cc" line="70"/>
+        <location filename="TimeSeriesView.cc" line="196"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Ny…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="70"/>
-        <location filename="TimeSeriesView.cc" line="196"/>
+        <location filename="TimeSeriesView.cc" line="71"/>
+        <location filename="TimeSeriesView.cc" line="197"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Fjern…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="71"/>
-        <location filename="TimeSeriesView.cc" line="197"/>
+        <location filename="TimeSeriesView.cc" line="72"/>
+        <location filename="TimeSeriesView.cc" line="198"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Tilbakestill</translation>
@@ -2586,7 +2837,7 @@ Du bruker HQC versjon %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="146"/>
+        <location filename="TimeSeriesView.cc" line="147"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
@@ -2687,6 +2938,43 @@ Du bruker HQC versjon %1.</translation>
         <location filename="TimeseriesDialog.cc" line="204"/>
         <source>To:</source>
         <translation>Til:</translation>
+    </message>
+</context>
+<context>
+    <name>TimespanDataList</name>
+    <message>
+        <location filename="TimespanDataList.cc" line="26"/>
+        <source>%1 earlier</source>
+        <translation>%1 tidligere</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="27"/>
+        <source>%1 later</source>
+        <translation>%1 senere</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="52"/>
+        <location filename="TimespanDataList.cc" line="89"/>
+        <source>Change start time</source>
+        <translation>Endre starttid</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="53"/>
+        <location filename="TimespanDataList.cc" line="90"/>
+        <source>Change end time</source>
+        <translation>Endre sluttid</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="54"/>
+        <location filename="TimespanDataList.cc" line="91"/>
+        <source>Reset time range</source>
+        <translation>Tilbakestill tidsvalg</translation>
+    </message>
+    <message>
+        <location filename="TimespanDataList.cc" line="76"/>
+        <location filename="TimespanDataList.cc" line="88"/>
+        <source>Change start end end times</source>
+        <translation>Endre start- og slutt-tid</translation>
     </message>
 </context>
 <context>
