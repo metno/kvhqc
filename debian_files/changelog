@@ -1,3 +1,10 @@
+kvhqc (4.0.0~a3-1) unstable; urgency=low
+
+  * removed BusyIndicator and Helpers::processNonUserEvents
+  * DataCodeItem::data: check that code list exists
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 03 Jun 2014 18:14:35 +0200
+
 kvhqc (4.0.0~a2-1) unstable; urgency=low
 
   * added introduction
