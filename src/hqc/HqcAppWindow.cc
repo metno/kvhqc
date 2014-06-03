@@ -80,10 +80,11 @@ namespace {
 
 const int VERSION_CHECK_TIMEOUT = 60*60*1000; // milliseconds
 
-const char SETTING_HQC_GEOMETRY[] = "geometry";
-const char SETTING_HQC_AUTOVIEW_SPLITTER[] = "autoview_slider";
+const char SETTING_HQC_POSITION[] = "position";
 const char SETTING_VERSION[] = "version";
 const char SETTING_VERSION_FULL[] = "version_full";
+
+enum { HELP_NEWS, HELP_INTRO };
 
 } // anonymous namespace
 
@@ -273,7 +274,11 @@ void HqcAppWindow::onVersionCheckTimeout()
 
 void HqcAppWindow::onHelpUse()
 {
+#if 0
   QDesktopServices::openUrl(QUrl("https://dokit.met.no/klima/tools/qc/hqc-help"));
+#else
+  showHelpDialog(HELP_INTRO);
+#endif
 }
 
 void HqcAppWindow::onHelpFlag()
@@ -369,8 +374,7 @@ void HqcAppWindow::onEditVersionChanged(size_t current, size_t highest)
 void HqcAppWindow::writeSettings()
 {
   QSettings settings;
-  settings.setValue(SETTING_HQC_GEOMETRY, saveGeometry());
-  //lstdlg->saveSettings(settings);
+  settings.setValue(SETTING_HQC_POSITION, pos());
 }
 
 void HqcAppWindow::readSettings()
@@ -378,9 +382,7 @@ void HqcAppWindow::readSettings()
   METLIBS_LOG_SCOPE();
 
   QSettings settings;
-  if (not restoreGeometry(settings.value(SETTING_HQC_GEOMETRY).toByteArray()))
-    HQC_LOG_WARN("cannot restore hqc main window geometry");
-  //lstdlg->restoreSettings(settings);
+  move(settings.value(SETTING_HQC_POSITION).toPoint());
 }
 
 void HqcAppWindow::onUserSettings()
@@ -413,6 +415,11 @@ void HqcAppWindow::checkVersionSettings()
 
 void HqcAppWindow::onHelpNews()
 {
+  showHelpDialog(HELP_NEWS, PVERSION_FULL);
+}
+
+void HqcAppWindow::showHelpDialog(int doc, const std::string& anchor)
+{
   if (not mHelpDialog) {
     HelpDialog::Info info;
     info.path = (::hqc::getPath(::hqc::DOCDIR) + "/html").toStdString();
@@ -423,9 +430,12 @@ void HqcAppWindow::onHelpNews()
     helpsource.defaultlink = "";
     info.src.push_back(helpsource);
 
+    helpsource.source = "intro.html";
+    helpsource.name = "Kvhqc Introduction";
+    helpsource.defaultlink = "";
+    info.src.push_back(helpsource);
+
     mHelpDialog = new HelpDialog(this, info);
   }
-
-  mHelpDialog->show();
-  mHelpDialog->showdoc(0, PVERSION_FULL);
+  mHelpDialog->showdoc(doc, anchor);
 }

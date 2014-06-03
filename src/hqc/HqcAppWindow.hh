@@ -89,6 +89,7 @@ private:
   void readSettings();
   void checkVersionSettings();
   void retranslateUi();
+  void showHelpDialog(int doc, const std::string& anchor = std::string());
 
 private:
   std::auto_ptr<Ui_AppWindow> ui;

@@ -43,4 +43,5 @@ INSTALL(FILES
 
 INSTALL(FILES
   doc/news.html
+  doc/intro.html
   DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
