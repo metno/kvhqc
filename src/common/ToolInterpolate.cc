@@ -169,10 +169,8 @@ bool ToolInterpolate::checkEnabled()
 {
   METLIBS_LOG_SCOPE();
 
-  if (not mObsBuffer) {
-    HQC_LOG_WARN("no obsbuffer");
+  if (not mObsBuffer)
     return false;
-  }
 
   ObsData_p o0 = mObsBuffer->get(mFirst);
   if (not o0 or Helpers::is_missing(o0) or Helpers::is_rejected(o0))
