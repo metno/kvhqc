@@ -30,7 +30,7 @@ const char CHANGES_TABLE_UPDATE[] = "UPDATE user_view_changes SET view_changes =
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 const char CHANGES_TABLE_INSERT[] = "INSERT INTO user_view_changes VALUES"
     " (:sid, :pid, :vtype, :vid, :vchanges)";
-const char CHANGES_TABLE_DELETE[] = "DLETE FROM user_view_changes"
+const char CHANGES_TABLE_DELETE[] = "DELETE FROM user_view_changes"
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
 const char CHANGES_TABLE_SELECT[] = "SELECT view_changes FROM user_view_changes"
     " WHERE stationid = :sid AND paramid = :pid AND view_type = :vtype AND view_id = :vid;";
