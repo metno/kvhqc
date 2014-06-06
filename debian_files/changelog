@@ -1,3 +1,9 @@
+kvhqc (4.0.0~a5-1) unstable; urgency=low
+
+  * AcceptRejectButtons: synchronized obs fetch
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 06 Jun 2014 13:00:11 +0200
+
 kvhqc (4.0.0~a4-1) unstable; urgency=low
 
   * ToolInterpolate: remove useless warning
