@@ -1,3 +1,11 @@
+kvhqc (4.0.0~a4-1) unstable; urgency=low
+
+  * ToolInterpolate: remove useless warning
+  * ViewChanges: fix typo
+  * KvalobsModelAccess: fix signal names
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 06 Jun 2014 08:10:43 +0200
+
 kvhqc (4.0.0~a3-1) unstable; urgency=low
 
   * removed BusyIndicator and Helpers::processNonUserEvents
