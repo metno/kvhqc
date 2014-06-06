@@ -115,8 +115,8 @@ SearchWindow::SearchWindow(QWidget* parent)
   mTabsData = new QTabWidget(sDataSearch);
   mTabsSearch = new QTabWidget(sDataSearch);
 
-  sDataSearch->addWidget(mTabsData);
   sDataSearch->addWidget(mTabsSearch);
+  sDataSearch->addWidget(mTabsData);
 
   setupSearchTabs();
   setupDataTabs();
