@@ -5,6 +5,7 @@
 #include "common/DataColumn.hh"
 #include "common/ModelColumn.hh"
 #include "common/ObsTableModel.hh"
+#include "common/SingleObsBuffer.hh"
 #include "util/UiHelpers.hh"
 
 #include <QtCore/QEvent>
@@ -155,7 +156,9 @@ void AcceptRejectButtons::enableButtons()
           possible &= ~AcceptReject::CAN_REJECT;
         for (int r=minRow; r<=maxRow; ++r) {
           const SensorTime st = tableModel->findSensorTime(tableModel->index(r, minCol));
-          ObsData_p obs; // FIXME = mDA->findE(st);
+          SingleObsBuffer_p sobs(new SingleObsBuffer(st));
+          sobs->syncRequest(mDA);
+          ObsData_p obs = sobs->get();
           if (obs) {
             possible &= AcceptReject::possibilities(obs);
             mSelectedObs.push_back(obs);
