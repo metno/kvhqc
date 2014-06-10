@@ -98,7 +98,7 @@ void AutoDataList::retranslateUi()
 
 void AutoDataList::switchSensorPrepare()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   TimespanDataList::switchSensorPrepare();
 
   mColumns = Column_v();
@@ -126,6 +126,7 @@ void AutoDataList::switchSensorPrepare()
 
 void AutoDataList::loadChangesXML(const QDomElement& doc_changes)
 {
+  METLIBS_LOG_TIME();
   TimespanDataList::loadChangesXML(doc_changes);
 
   Column_v removed;
@@ -194,7 +195,7 @@ bool AutoDataList::hasChangedColumns() const
 
 void AutoDataList::updateModel()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
 
   model()->removeAllColumns();
   for (Column_v::const_iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
@@ -208,6 +209,7 @@ void AutoDataList::updateModel()
 
 ObsColumn_p AutoDataList::makeColumn(const Column& c)
 {
+  METLIBS_LOG_TIME();
   boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
 
   if (c.type == MODEL) {

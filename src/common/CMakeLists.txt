@@ -75,8 +75,10 @@ SET(common_SOURCES
   ObsLogging.cc
   ObsRequest.cc
   ObsRequest.hh
+  ObsPgmQueryTask.cc
   ObsTableModel.cc
   ParamIdModel.cc
+  ParamQueryTask.cc
   QtKvService.cc
   QueryTaskAccess.cc
   QueryTaskAccess.hh
@@ -84,6 +86,8 @@ SET(common_SOURCES
   QueryTaskHandler.cc
   QueryTaskHandler.hh
   QueryTaskHandlerPrivate.hh
+  QueryTaskHelper.cc
+  QueryTaskHelper.hh
   Sensor.cc
   SensorChooser.cc
   SensorHeader.cc
@@ -101,6 +105,7 @@ SET(common_SOURCES
   StationIdCompletion.cc
   StationIdModel.cc
   StationInfoBuffer.cc
+  StationQueryTask.cc
   StInfoSysBuffer.cc
   SyncRequest.cc
   SyncRequest.hh
@@ -114,6 +119,7 @@ SET(common_SOURCES
   TimeSpanControl.cc
   ToolInterpolate.cc
   TypeIdModel.cc
+  TypesQueryTask.cc
   WrapRequest.cc
 )
 
@@ -132,20 +138,26 @@ QT4_WRAP_CPP(common_MOC
   KvalobsAccess.hh
   KvalobsModelAccess.hh
   KvalobsUpdateListener.hh
+  KvMetaDataBuffer.hh
   ModelBuffer.hh
   ModelQueryTask.hh
   ModelRequest.hh
   ObsColumn.hh
   ObsDelegate.hh
+  ObsPgmQueryTask.hh
   ObsTableModel.hh
+  ParamQueryTask.hh
   QtKvService.hh
   QueryTaskAccess.hh
+  QueryTaskHelper.hh
   SensorChooser.hh
   SignalRequest.hh
   SignalTask.hh
   SimpleBuffer.hh
+  StationQueryTask.hh
   TimeSpanControl.hh
   ToolInterpolate.hh
+  TypesQueryTask.hh
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

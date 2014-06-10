@@ -8,22 +8,32 @@
 class SignalTask : public QObject, public QueryTask
 { Q_OBJECT;
 public:
-  SignalTask(QueryTask* wrapped);
-  ~SignalTask();
-  
-  QString querySql(QString dbversion) const
-    { return mWrapped->querySql(dbversion); }
-
-  void notifyRow(const ResultRow& row)
-    { mWrapped->notifyRow(row); }
+  SignalTask(size_t priority);
 
   void notifyStatus(int status);
   void notifyError(QString message);
-
+  void notifyDone();
+  
 Q_SIGNALS:
-  void signalStatus(int status);
-  void signalError(QString message);
+  void status(int status);
+  void error(QString message);
+  void done();
+};
 
+// ########################################################################
+
+class WrapperTask : public SignalTask
+{ Q_OBJECT;
+public:
+  WrapperTask(QueryTask* wrapped);
+  ~WrapperTask();
+  
+  QString querySql(QString dbversion) const;
+  void notifyRow(const ResultRow& row);
+  void notifyStatus(int status);
+  void notifyError(QString message);
+  void notifyDone();
+  
 private:
   QueryTask* mWrapped;
 };

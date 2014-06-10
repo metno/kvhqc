@@ -13,3 +13,7 @@ QueryTask::~QueryTask()
 void QueryTask::notifyError(QString)
 {
 }
+
+void QueryTask::notifyDone()
+{
+}

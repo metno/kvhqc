@@ -69,10 +69,10 @@ void StationDataList::updateModel()
 
   model()->setTimeSpan(time);
 
-  const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
+  const KvMetaDataBuffer::kvObsPgm_v& opl = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   for(size_t i=0; i<NWeatherParameters; ++i) {
     const int paramId = WeatherParameters[i];
-    for(KvMetaDataBuffer::ObsPgmList::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+    for(KvMetaDataBuffer::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
       const kvalobs::kvObsPgm& op = *it;
       if (paramId != op.paramID())
         continue;
@@ -86,7 +86,7 @@ void StationDataList::updateModel()
     }
   }
 
-  for(KvMetaDataBuffer::ObsPgmList::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+  for(KvMetaDataBuffer::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
     const kvalobs::kvObsPgm& op = *it;
     if (s.typeId != op.typeID())
       continue;

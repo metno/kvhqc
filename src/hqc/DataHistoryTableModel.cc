@@ -1,6 +1,8 @@
 
 #include "DataHistoryTableModel.hh"
 
+#include "common/ColumnFactory.hh"
+#include "common/DataHistoryQueryTask.hh"
 #include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
@@ -63,24 +65,32 @@ Qt::ItemFlags DataHistoryTableModel::flags(const QModelIndex& /*index*/) const
 
 QVariant DataHistoryTableModel::data(const QModelIndex& index, int role) const
 {
+  const kvDataHistoryValues& v = mHistory.at(index.row());
   if (role == Qt::DisplayRole) {
-    const kvDataHistoryValues& v = mHistory.at(index.row());
     switch (index.column()) {
     case COL_MTIME:
-      return QString::fromStdString(timeutil::to_iso_extended_string(v.modificationtime));
+      return timeutil::shortenedTime(v.modificationtime);
     case COL_CORR: {
-      const float value = v.corrected;
-      // FIXME this is copied from ErrorListModel
-      if (value == -32767 or value == -32766)
-        return QString("-");
-      const bool isCodeParam = KvMetaDataBuffer::instance()->isCodeParam(mSensorTime.sensor.paramId);
-      const int nDigits = isCodeParam ? 0 : 1;
-      return QString::number(value ,'f', nDigits);
+      if (mCode2Text)
+        return mCode2Text->asText(v.corrected);
+      else
+        return QVariant(v.corrected);
     }
     case COL_FLAGS:
       return Helpers::getFlagText(v.controlinfo);
     case COL_CHECKS:
       return QString::fromStdString(v.cfailed);
+    }
+  } else if (role == Qt::ToolTipRole) {
+    switch (index.column()) {
+    case COL_MTIME:
+      return QString::fromStdString(timeutil::to_iso_extended_string(v.modificationtime));
+    case COL_CORR: {
+      if (mCode2Text)
+        return mCode2Text->asTip(v.corrected);
+    }
+    case COL_FLAGS:
+      return Helpers::getFlagExplanation(v.controlinfo);
     }
   }
   return QVariant();
@@ -104,47 +114,32 @@ void DataHistoryTableModel::showHistory(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE();
 
-  if (eq_SensorTime()(st, mSensorTime))
-    return;
-
-  mSensorTime = st;
-
   dropTask();
-
-  if (not mSensorTime.valid()) {
+  if (not st.valid()) {
     beginResetModel();
+    mCode2Text = Code2TextCPtr();
     mHistory.clear();
     endResetModel();
   } else {
-    mTask = new DataHistoryQueryTask(mSensorTime, QueryTask::PRIORITY_AUTOMATIC, this);
-    connect(mTask, SIGNAL(completed(const SensorTime&, const kvDataHistoryValues_v&, bool)),
-        this, SLOT(onCompleted(const SensorTime&, const kvDataHistoryValues_v&, bool)));
-    mKvalobsHandler->postTask(mTask);
+    mCode2Text = ColumnFactory::codesForParam(st.sensor.paramId);
+    DataHistoryQueryTask* t = new DataHistoryQueryTask(st, QueryTask::PRIORITY_AUTOMATIC);
+    mTask = new QueryTaskHelper(t);
+    connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone(SignalTask*)));
+    mTask->post(mKvalobsHandler.get());
   }
 }
 
-void DataHistoryTableModel::onCompleted(const SensorTime& st, const kvDataHistoryValues_v& history, bool error)
+void DataHistoryTableModel::onQueryDone(SignalTask* task)
 {
   METLIBS_LOG_SCOPE();
   beginResetModel();
-  if (error or not eq_SensorTime()(st, mSensorTime)) {
-    mHistory.clear();
-  } else {
-    mHistory = history;
-  }
-  METLIBS_LOG_DEBUG(LOGVAL(mHistory.size()));
+  mHistory = static_cast<DataHistoryQueryTask*>(task)->history();
   endResetModel();
   dropTask();
 }
 
 void DataHistoryTableModel::dropTask()
 {
-  if (not mTask)
-    return;
-
-  disconnect(mTask, SIGNAL(completed(const SensorTime&, const kvDataHistoryValues_v&, bool)),
-      this, SLOT(onCompleted(const SensorTime&, const kvDataHistoryValues_v&, bool)));
-  mKvalobsHandler->dropTask(mTask);
-  mTask->deleteLater();
+  delete mTask;
   mTask = 0;
 }

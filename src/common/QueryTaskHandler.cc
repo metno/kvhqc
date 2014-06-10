@@ -45,12 +45,12 @@ void QueryTaskThread::enqueueTask(QueryTask* task)
     mCondition.wakeOne();
 }
 
-void QueryTaskThread::unqueueTask(QueryTask* task)
+bool QueryTaskThread::unqueueTask(QueryTask* task)
 {
   METLIBS_LOG_SCOPE();
 
   QMutexLocker locker(&mMutex);
-  mQueue.drop(task);
+  return mQueue.drop(task);
 }
 
 void QueryTaskThread::run()
@@ -70,8 +70,10 @@ void QueryTaskThread::run()
       }
     }
 
-    if (task)
+    if (task) {
       mRunner->run(task);
+      task->notifyDone();
+    }
   }
   mRunner->finalize();
 }
@@ -115,10 +117,12 @@ void QueryTaskHandler::postTask(QueryTask_x task)
 
 // ------------------------------------------------------------------------
 
-void QueryTaskHandler::dropTask(QueryTask_x task)
+bool QueryTaskHandler::dropTask(QueryTask_x task)
 {
   METLIBS_LOG_SCOPE();
   
   if (mThread)
-    mThread->unqueueTask(task);
+    return mThread->unqueueTask(task);
+  else
+    return false;
 }

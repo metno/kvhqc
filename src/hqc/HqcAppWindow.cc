@@ -37,6 +37,7 @@
 #include "SearchWindow.hh"
 
 #include "common/HqcApplication.hh"
+#include "common/KvMetaDataBuffer.hh"
 
 #include "util/ActionButton.hh"
 #include "util/Helpers.hh"
@@ -156,6 +157,8 @@ void HqcAppWindow::startup()
 
   statusBar()->message(tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000);
   mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
+
+  KvMetaDataBuffer::instance()->reload();
 }
 
 void HqcAppWindow::finish()

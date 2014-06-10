@@ -202,7 +202,9 @@ void TimeSeriesView::doNavigateTo()
 
     // set original columns
     mSensors = Sensor_v(1, st.sensor);
-    Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, MAX_LINES*2);
+    { METLIBS_LOG_TIME("adding neighbors");
+      Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, MAX_LINES*2);
+    }
     mOriginalSensors = mSensors;
 
     mModelBuffer->clear();

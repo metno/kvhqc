@@ -10,25 +10,71 @@
 #include <kvalobs/kvStation.h>
 #include <kvalobs/kvTypes.h>
 
+#include <QtCore/QObject> 
+
 #include <list>
+#include <map>
 #include <set>
 
-class KvMetaDataBuffer {
+class ObsPgmQueryTask;
+class ParamQueryTask;
+class StationQueryTask;
+class TypesQueryTask;
+
+class ObsPgmRequest : public QObject
+{ Q_OBJECT;
+public:
+  typedef std::vector<kvalobs::kvObsPgm> kvObsPgm_v;
+  typedef std::map<int, kvObsPgm_v> kvObsPgm_m;
+  typedef std::set<int> int_s;
+
+  ObsPgmRequest(const int_s& stationIds);
+  ~ObsPgmRequest();
+
+  const kvObsPgm_v& operator[](int stationId) const;
+  bool isComplete() const
+    { return not mTask; }
+  void post();
+
+Q_SIGNALS:
+  void complete();
+
+private Q_SLOTS:
+  void onTaskStatus(int);
+
+private:
+  void put(const kvObsPgm_v& op);
+
+private:
+  kvObsPgm_m mObsPgms;
+  static const kvObsPgm_v sEmpty;
+
+  ObsPgmQueryTask* mTask;
+  bool mPosted;
+};
+
+// ########################################################################
+
+class KvMetaDataBuffer : public QObject
+{ Q_OBJECT;
 public:
   KvMetaDataBuffer();
   ~KvMetaDataBuffer();
 
+  typedef std::vector<kvalobs::kvStation> kvStation_v;
   bool isKnownStation(int id);
   const kvalobs::kvStation& findStation(int id);
   const kvalobs::kvStation& findStation(const Sensor& sensor)
     { return findStation(sensor.stationId); }
-  const std::list<kvalobs::kvStation>& allStations();
+  const kvStation_v& allStations();
 
+  typedef std::vector<kvalobs::kvParam> kvParam_v;
   bool isKnownParam(int id);
   const kvalobs::kvParam& findParam(int id);
   const kvalobs::kvParam& findParam(const Sensor& sensor)
     { return findParam(sensor.paramId); }
-  const std::list<kvalobs::kvParam>& allParams();
+  const kvParam_v& allParams();
+
   std::string findParamName(int paramId);
   std::string findParamName(const Sensor& sensor)
     { return findParamName(sensor.paramId); }
@@ -38,52 +84,63 @@ public:
 
   CachedParamLimits::ParamLimit checkPhysicalLimits(const SensorTime& st, float value);
 
+  typedef std::vector<kvalobs::kvTypes> kvTypes_v;
   bool isKnownType(int id);
   const kvalobs::kvTypes& findType(int id);
   const kvalobs::kvTypes& findType(const Sensor& sensor)
     { return findType(sensor.typeId); }
-  const std::list<kvalobs::kvTypes>& allTypes();
+  const kvTypes_v& allTypes();
 
-  typedef std::list<kvalobs::kvObsPgm> ObsPgmList;
-  const ObsPgmList& findObsPgm(int stationId);
-  const ObsPgmList& findObsPgm(const Sensor& sensor)
+  typedef std::vector<kvalobs::kvObsPgm> kvObsPgm_v;
+  const kvObsPgm_v& findObsPgm(int stationId);
+  const kvObsPgm_v& findObsPgm(const Sensor& sensor)
     { return findObsPgm(sensor.stationId); }
-  void findObsPgm(const std::set<long>& stationids);
+  void putObsPgm(const kvObsPgm_v& op);
 
-  void reload();
+  bool isComplete() const
+    { return (mHaveStations and mHaveParams and mHaveTypes); }
 
   static KvMetaDataBuffer* instance()
     { return sInstance; }
+
+public Q_SLOTS:
+  void reload();
+
+Q_SIGNALS:
+  //! Emitted when params, types, and stations have been fetched.
+  void complete();
+
+private Q_SLOTS:
+  void statusStations(int);
+  void statusParams(int);
+  void statusTypes(int);
 
 private:
   void fetchStations();
   void fetchParams();
   void fetchTypes();
 
+  void dropStations();
+  void dropParams();
+  void dropTypes();
+
+  void sendComplete();
+
 private:
   bool mHaveStations;
-  typedef std::list<kvalobs::kvStation> stations_t;
-  typedef stations_t::const_iterator stations_cit;
-  typedef std::pair<stations_cit, stations_cit> stations_cit_p;
-  stations_t mStations;
+  StationQueryTask *mTaskStations;
 
   bool mHaveParams;
-  typedef std::list<kvalobs::kvParam> params_t;
-  typedef params_t::const_iterator params_cit;
-  typedef std::pair<params_cit, params_cit> params_cit_p;
-  std::list<kvalobs::kvParam> mParams;
+  ParamQueryTask *mTaskParams;
 
   bool mHaveTypes;
-  typedef std::list<kvalobs::kvTypes> types_t;
-  typedef types_t::const_iterator types_cit;
-  typedef std::pair<types_cit, types_cit> types_cit_p;
-  std::list<kvalobs::kvTypes> mTypes;
+  TypesQueryTask *mTaskTypes;
 
   std::set<int> mCodeParams;
   CachedParamLimits mCachedParamLimits;
 
-  typedef std::map<int, ObsPgmList> ObsPgms_t;
-  ObsPgms_t mObsPgms;
+  typedef std::map<int, kvObsPgm_v> kvObsPgm_m;
+  kvObsPgm_m mObsPgms;
 
   static KvMetaDataBuffer* sInstance;
 };

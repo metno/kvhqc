@@ -195,20 +195,6 @@ KvalobsData_p modifiedData(ObsData_p base, float co, const kvalobs::kvControlInf
   return makeData(base->sensorTime(), base->tbtime(), base->original(), co, ci, cf, false);
 }
 
-int parameterIdByName(const std::string& paramName)
-{
-  try {
-    const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
-    BOOST_FOREACH(const kvalobs::kvParam& p, allParams) {
-      if (p.name() == paramName)
-        return p.paramID();
-    }
-  } catch (std::exception& e) {
-    HQC_LOG_ERROR("exception while fetching params: " << e.what());
-  }
-  return -1;
-}
-
 void updateUseInfo(kvalobs::kvData& data)
 {
   kvalobs::kvUseInfo ui = data.useinfo();
@@ -244,7 +230,7 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   int nearestStation = -1;
   float nearestDistance = 0;
 
-  const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+  const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
   
   try {
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
@@ -275,7 +261,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
     return;
   }
   
-  const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+  const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
   
   std::vector<kvalobs::kvStation> stations;
   try {
@@ -298,7 +284,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
   
   int count = 0;
   BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
+    const std::vector<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
@@ -354,7 +340,7 @@ Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::strin
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
-  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
+  const std::vector<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   Sensors_t sensors;
   BOOST_FOREACH(int par, stationPar) {
     Sensor s2(s);

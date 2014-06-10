@@ -57,7 +57,7 @@ ErrorList::ErrorList(QWidget* parent)
   , mMA(hqcApp->modelAccess())
   , mErrorsForSalen(false)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   ui->setupUi(this);
   ui->tree->setSelectionBehavior(QTreeView::SelectRows);
   ui->tree->setSelectionMode(QTreeView::SingleSelection);
@@ -84,7 +84,7 @@ void ErrorList::onButtonSearch()
 
   BOOST_FOREACH(int stationId, selectedStations) {
     BOOST_FOREACH(int paramId, selectedParameters) {
-      const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+      const KvMetaDataBuffer::kvObsPgm_v& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
       Sensor sensor(stationId, paramId, 0, 0, 0);
       std::set<int> typeIdsShown;
       BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {

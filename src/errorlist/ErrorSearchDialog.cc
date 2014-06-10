@@ -162,7 +162,7 @@ void ErrorSearchDialog::changeEvent(QEvent *event)
 
 void ErrorSearchDialog::setupStationTab()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
     
   mStationModel.reset(new QStandardItemModel(this));
@@ -264,7 +264,7 @@ void ErrorSearchDialog::onFilterStations(const QString& text)
 
 void ErrorSearchDialog::setupParameterTab()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
 
   mParamSelectedModel.reset(new ParamIdModel);
   ui->listParamChosen->setModel(mParamSelectedModel.get());
@@ -314,7 +314,7 @@ void ErrorSearchDialog::setupParameterTab()
   }
 
   try {
-    const std::list<kvalobs::kvParam>& allParams = KvMetaDataBuffer::instance()->allParams();
+    const KvMetaDataBuffer::kvParam_v& allParams = KvMetaDataBuffer::instance()->allParams();
     const QString labelAll = tr("All defined");
     labels << labelAll;
     std::vector<int>& parameters = mParameterGroups[labelAll];

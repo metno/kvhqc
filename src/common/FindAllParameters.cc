@@ -38,7 +38,7 @@ std::vector<int> findAllParameters(bool historic)
   } else {
     HQC_LOG_ERROR("failed to fetch parameter list from kvalobs SQL db -- using kvParam; error was: " << query.lastError().text());
 
-    const std::list<kvalobs::kvParam> allParam = KvMetaDataBuffer::instance()->allParams();
+    const std::vector<kvalobs::kvParam> allParam = KvMetaDataBuffer::instance()->allParams();
     BOOST_FOREACH(const kvalobs::kvParam& p, allParam)
         params.push_back(p.paramID());
   }

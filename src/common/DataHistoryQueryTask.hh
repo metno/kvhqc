@@ -3,23 +3,28 @@
 #define COMMON_DATAHISTORYQUERYTASK_HH 1
 
 #include "kvDataHistoryValues.hh"
-#include "QueryTask.hh"
+#include "SignalTask.hh"
 #include "Sensor.hh"
 
 #include <QtCore/QObject>
 
-class DataHistoryQueryTask : public QObject, public QueryTask
+class DataHistoryQueryTask : public SignalTask
 { Q_OBJECT;
 public:
-  DataHistoryQueryTask(const SensorTime& st, size_t priority, QObject* parent=0);
+  DataHistoryQueryTask(const SensorTime& st, size_t priority);
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
   void notifyStatus(int status);
-  void notifyError(QString message);
 
-Q_SIGNALS:
-  void completed(const SensorTime&, const kvDataHistoryValues_v&, bool);
+  const SensorTime& sensorTime() const
+    { return mSensorTime; }
+
+  const kvDataHistoryValues_v& history() const
+    { return mHistory; }
+
+  kvDataHistoryValues_v& history()
+    { return mHistory; }
 
 private:
   SensorTime mSensorTime;

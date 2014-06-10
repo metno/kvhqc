@@ -17,9 +17,8 @@ bool initMetaType = false;
 
 } // namespace anonymous
 
-DataHistoryQueryTask::DataHistoryQueryTask(const SensorTime& st, size_t priority, QObject *parent)
-  : QObject(parent)
-  , QueryTask(priority)
+DataHistoryQueryTask::DataHistoryQueryTask(const SensorTime& st, size_t priority)
+  : SignalTask(priority)
   , mSensorTime(st)
 {
   if (not initMetaType) {
@@ -56,14 +55,7 @@ void DataHistoryQueryTask::notifyRow(const ResultRow& row)
 
 void DataHistoryQueryTask::notifyStatus(int status)
 {
-  if (status >= COMPLETE) {
-    Q_EMIT completed(mSensorTime, mHistory, status == FAILED);
+  if (status > COMPLETE)
     mHistory.clear();
-  }
-}
-
-void DataHistoryQueryTask::notifyError(QString)
-{
-  mHistory.clear();
-  Q_EMIT completed(mSensorTime, mHistory, true);
+  SignalTask::notifyStatus(status);
 }

@@ -20,7 +20,7 @@ public:
   ~QueryTaskThread();
 
   void enqueueTask(QueryTask* task);
-  void unqueueTask(QueryTask* task);
+  bool unqueueTask(QueryTask* task);
 
   void run();
 

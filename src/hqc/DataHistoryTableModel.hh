@@ -3,13 +3,13 @@
 #ifndef HQC_DATAHISTORYTABLEMODEL_HH
 #define HQC_DATAHISTORYTABLEMODEL_HH
 
+#include "common/Code2Text.hh"
+#include "common/kvDataHistoryValues.hh"
 #include "common/QueryTaskHandler.hh"
-#include "common/DataHistoryQueryTask.hh"
+#include "common/QueryTaskHelper.hh"
+#include "common/Sensor.hh"
 
 #include <QtCore/QAbstractTableModel>
-#include <QtCore/QStringList>
-
-#include <vector>
 
 class DataHistoryTableModel : public QAbstractTableModel
 { Q_OBJECT;
@@ -26,16 +26,16 @@ public:
   void showHistory(const SensorTime& st);
 
 private Q_SLOTS:
-  void onCompleted(const SensorTime&, const kvDataHistoryValues_v&, bool);
+  void onQueryDone(SignalTask* task);
 
 private:
   void dropTask();
 
 private:
   QueryTaskHandler_p mKvalobsHandler;
-  DataHistoryQueryTask *mTask;
-  SensorTime mSensorTime;
+  QueryTaskHelper *mTask;
   kvDataHistoryValues_v mHistory;
+  Code2TextCPtr mCode2Text;
 };
 
 #endif // HQC_DATAHISTORYTABLEMODEL_HH

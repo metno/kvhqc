@@ -146,7 +146,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
 
   listStat.clear();
   std::set<int> kv_stationids;
-  const std::list<kvalobs::kvStation>& slist = KvMetaDataBuffer::instance()->allStations();
+  const KvMetaDataBuffer::kvStation_v& slist = KvMetaDataBuffer::instance()->allStations();
   BOOST_FOREACH(const kvalobs::kvStation& st, slist) {
     const int stationid = st.stationID();
 

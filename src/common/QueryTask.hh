@@ -39,6 +39,16 @@ public:
   virtual void notifyStatus(int status) = 0;
   virtual void notifyError(QString message);
 
+  /*! Called when handler finished processing the task.
+   *
+   * This will not be called when dropTask returned true.
+   *
+   * After this is the last call from the task handler on this object,
+   * and after this call the handler will not hold a reference to the
+   * task any more.
+   */
+  virtual void notifyDone();
+
   enum {
     PRIORITY_AUTOMATIC = 20,
     PRIORITY_SEARCH = 50,

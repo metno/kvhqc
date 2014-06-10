@@ -24,7 +24,7 @@ StationIdModel::StationIdModel(QObject* parent)
   : QAbstractTableModel(parent)
 {
   METLIBS_LOG_SCOPE();
-  const std::list<kvalobs::kvStation>& stations = KvMetaDataBuffer::instance()->allStations();
+  const KvMetaDataBuffer::kvStation_v& stations = KvMetaDataBuffer::instance()->allStations();
   BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
     mStationIds.push_back(s.stationID());
   }

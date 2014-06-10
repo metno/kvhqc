@@ -6,11 +6,11 @@
 
 #include <boost/make_shared.hpp>
 
-QueryTask* SyncTask(QueryTask* task, QueryTaskHandler_p handler)
+QueryTask* syncTask(QueryTask* task, QueryTaskHandler_p handler)
 {
   SignalTask* stask = dynamic_cast<SignalTask*>(task);
   if (not stask)
-    stask = new SignalTask(task);
+    stask = new WrapperTask(task);
 
   Synchronizer sync;
   QObject::connect(stask, SIGNAL(signalDone()), &sync, SLOT(taskDone()));
