@@ -28,14 +28,16 @@ QueryTaskHelper::~QueryTaskHelper()
 {
   if (not drop()) {
     // posted but not yet done; cannot delete task before done was
-    // emitted (as QueryTaskHandler still makes calls to it), so
-    // we create an object to wait for this signal
+    // emitted (as QueryTaskHandler still makes calls to it), so we
+    // create an object to wait for the done signal
     new DeleteTaskWhenDone(mTask);
   }
 }
 
 void QueryTaskHelper::post(QueryTaskHandler* handler)
 {
+  if (not mTask)
+    return;
   assert(handler);
   assert(not mHandler);
   connect(mTask, SIGNAL(done()), this, SLOT(onQueryDone()));
@@ -45,6 +47,8 @@ void QueryTaskHelper::post(QueryTaskHandler* handler)
 
 bool QueryTaskHelper::drop()
 {
+  if (not mTask)
+    return true;
   QueryTaskHandler* handler = mHandler;
   mHandler = 0;
   if (not handler or handler->dropTask(mTask)) {
@@ -61,8 +65,6 @@ void QueryTaskHelper::onQueryDone()
 {
   if (mHandler and mTask) {
     Q_EMIT done(mTask); // FIXME this is more like a callback; queued connections will not work
-    mTask->deleteLater();
-    mTask = 0;
     mHandler = 0;
   }
 }

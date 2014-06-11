@@ -65,7 +65,7 @@ Qt::ItemFlags DataHistoryTableModel::flags(const QModelIndex& /*index*/) const
 
 QVariant DataHistoryTableModel::data(const QModelIndex& index, int role) const
 {
-  const kvDataHistoryValues& v = mHistory.at(index.row());
+  const kvDataHistoryValues& v = history().at(index.row());
   if (role == Qt::DisplayRole) {
     switch (index.column()) {
     case COL_MTIME:

@@ -30,6 +30,8 @@ private Q_SLOTS:
 
 private:
   void dropTask();
+  const kvDataHistoryValues_v& history() const
+    { return mHistory; }
 
 private:
   QueryTaskHandler_p mKvalobsHandler;
