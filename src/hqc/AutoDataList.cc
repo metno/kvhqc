@@ -82,8 +82,6 @@ AutoDataList::AutoDataList(QWidget* parent)
 
 AutoDataList::~AutoDataList()
 {
-  // cannot be called from ~DynamicDataView as it calls virtual methods
-  storeChanges();
 }
 
 void AutoDataList::retranslateUi()
@@ -327,6 +325,7 @@ void AutoDataList::addColumnBefore(int column)
   mColumns.insert(mColumns.begin() + column, c);
   model()->insertColumn(column, makeColumn(c));
   mColumnReset->setEnabled(true);
+  storeChanges();
 }
 
 void AutoDataList::removeColumns(std::vector<int> columns)
@@ -341,6 +340,7 @@ void AutoDataList::removeColumns(std::vector<int> columns)
     model()->removeColumn(c);
   }
   mColumnReset->setEnabled(true);
+  storeChanges();
 }
 
 void AutoDataList::onActionRemoveColumn()
@@ -361,6 +361,7 @@ void AutoDataList::onActionResetColumns()
   mColumns = mOriginalColumns;
   updateModel();
   mColumnReset->setEnabled(false);
+  storeChanges();
 }
 
 void AutoDataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
@@ -385,6 +386,7 @@ void AutoDataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, in
   mColumns.insert(mColumns.begin() + to, c);
 
   mColumnReset->setEnabled(true);
+  storeChanges();
 
   //ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }

@@ -30,8 +30,6 @@ StationDataList::StationDataList(QWidget* parent)
 
 StationDataList::~StationDataList()
 {
-  // cannot be called from ~DynamicDataView as it calls virtual methods
-  storeChanges();
 }
 
 SensorTime StationDataList::sensorSwitch() const

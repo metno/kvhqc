@@ -102,7 +102,6 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
 TimeSeriesView::~TimeSeriesView()
 {
-  storeChanges();
 }
                         
 void TimeSeriesView::storeChanges()
@@ -198,7 +197,6 @@ void TimeSeriesView::doNavigateTo()
 
   if (changedSensor) {
     // need to update related parameters and neighbor list
-    storeChanges();
 
     // set original columns
     mSensors = Sensor_v(1, st.sensor);
@@ -380,6 +378,7 @@ void TimeSeriesView::onActionAddColumn()
   METLIBS_LOG_DEBUG(s);
   
   mColumnReset->setEnabled(true);
+  storeChanges();
   updateSensors();
 }
 
@@ -408,6 +407,7 @@ void TimeSeriesView::onActionRemoveColumns()
   }
   
   mColumnReset->setEnabled(true);
+  storeChanges();
   updateSensors();
 }
 
@@ -416,6 +416,7 @@ void TimeSeriesView::onActionResetColumns()
   mTimeLimits = mOriginalTimeLimits;
   mSensors = mOriginalSensors;
   mColumnReset->setEnabled(false);
+  storeChanges();
   updateTimeEditors();
   updateSensors();
 }
@@ -441,6 +442,7 @@ void TimeSeriesView::setTimeSpan(const TimeSpan& t)
     return;
 
   mTimeLimits = t;
+  storeChanges();
   updateTime();
 }
 

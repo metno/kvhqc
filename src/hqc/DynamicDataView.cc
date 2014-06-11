@@ -29,8 +29,6 @@ void DynamicDataView::doNavigateTo()
   const SensorTime storeST = sensorSwitch();
   const bool sv = mStoreST.valid(), sw = sv and not eq_SensorTime()(mStoreST, storeST);
   METLIBS_LOG_DEBUG(LOGVAL(mStoreST) << LOGVAL(storeST) << LOGVAL(sv) << LOGVAL(sw));
-  if (sw)
-    storeChanges();
   mStoreST = storeST;
   if (sw or not sv)
     loadChanges();

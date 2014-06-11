@@ -158,6 +158,7 @@ void TimespanDataList::onChangeStart(QObject* action)
   METLIBS_LOG_DEBUG(LOGVAL(mTimeLimits));
 
   updateModel();
+  storeChanges();
 }
 
 void TimespanDataList::onChangeEnd(QObject* action)
@@ -174,6 +175,7 @@ void TimespanDataList::onChangeEnd(QObject* action)
   METLIBS_LOG_DEBUG(LOGVAL(mTimeLimits));
 
   updateModel();
+  storeChanges();
 }
 
 void TimespanDataList::onResetTime()
@@ -181,4 +183,5 @@ void TimespanDataList::onResetTime()
   METLIBS_LOG_SCOPE();
   mTimeLimits = mOriginalTimeLimits;
   updateModel();
+  storeChanges();
 }
