@@ -56,7 +56,7 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
   if (not toQuery.empty()) {
     ModelQueryTask* task = new ModelQueryTask(toQuery, 10);
     connect(task, SIGNAL(data(const ModelData_pv&)),
-        request.get(), SIGNAL(notifyData(const ModelData_pv&)));
+        request.get(), SLOT(notifyData(const ModelData_pv&)));
     connect(task, SIGNAL(queryStatus(int)),
         request.get(), SLOT(notifyStatus(int)));
     connect(task, SIGNAL(data(const ModelData_pv&)),
