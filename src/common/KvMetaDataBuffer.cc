@@ -7,6 +7,7 @@
 #include "KvHelpers.hh"
 #include "ParamQueryTask.hh"
 #include "QueryTaskHandler.hh"
+#include "QueryTaskHelper.hh"
 #include "StationQueryTask.hh"
 #include "TypesQueryTask.hh"
 
@@ -36,31 +37,29 @@ ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
     }
   }
   if (request.empty()) {
-    mTask = 0;
-    mPosted = true;
+    mTaskHelper = 0;
   } else {
-    mTask = new ObsPgmQueryTask(request, QueryTask::PRIORITY_AUTOMATIC);
-    connect(mTask, SIGNAL(queryStatus(int)), this, SLOT(onTaskStatus(int)));
-    mPosted = false;
+    ObsPgmQueryTask* ot = new ObsPgmQueryTask(request, QueryTask::PRIORITY_AUTOMATIC);
+    mTaskHelper = new QueryTaskHelper(ot);
+    connect(mTaskHelper, SIGNAL(done(SignalTask*)), this, SLOT(onTaskDone(SignalTask*)));
   }
 }
 
 ObsPgmRequest::~ObsPgmRequest()
 {
-    delete mTask;
+  delete mTaskHelper;
 }
 
 void ObsPgmRequest::post()
 {
-  if (mTask) {
-    if (not mPosted)
-      hqcApp->kvalobsHandler()->postTask(mTask);
+  if (mTaskHelper) {
+    mTaskHelper->post(hqcApp->kvalobsHandler().get());
   } else {
     Q_EMIT complete();
   }
 }
 
-const ObsPgmRequest::kvObsPgm_v& ObsPgmRequest::operator[](int stationId) const
+const ObsPgmRequest::kvObsPgm_v& ObsPgmRequest::get(int stationId) const
 {
   const kvObsPgm_m::const_iterator it = mObsPgms.find(stationId);
   if (it != mObsPgms.end())
@@ -75,16 +74,10 @@ void ObsPgmRequest::put(const kvObsPgm_v& op)
     mObsPgms[it->stationID()].push_back(*it);
 }
 
-void ObsPgmRequest::onTaskStatus(int status)
+void ObsPgmRequest::onTaskDone(SignalTask* task)
 {
-  if (status == QueryTask::COMPLETE)
-    put(mTask->obsPgms());
-  if (status >= QueryTask::COMPLETE) {
-    hqcApp->kvalobsHandler()->dropTask(mTask);
-    delete mTask;
-    mTask = 0;
-    Q_EMIT complete();
-  }
+  put(static_cast<ObsPgmQueryTask*>(task)->obsPgms());
+  Q_EMIT complete();
 }
 
 // static

@@ -16,6 +16,7 @@
 #include <memory>
 #include <vector>
 
+class ObsPgmRequest;
 class QAction;
 class QMenu;
 class TimeSpanControl;
@@ -46,11 +47,14 @@ private Q_SLOTS:
   void onDateToChanged(const QDateTime&);
 
   void updatePlot();
+  void haveNeighbors();
 
 private:
+  void findNeighbors();
   void updateSensors();
   void updateTime();
   void updateTimeEditors();
+  void highlightTime();
   void retranslateUi();
 
   void storeChanges();
@@ -82,6 +86,8 @@ private:
 
   static std::vector<POptions::Colour> sDefinedColours;
   static std::vector<POptions::Linetype> sDefinedLinetypes;
+
+  ObsPgmRequest* mObsPgmRequest;
 };
 
 #endif // TimeSeriesView_hh

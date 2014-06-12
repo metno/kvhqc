@@ -18,6 +18,8 @@
 
 class ObsPgmQueryTask;
 class ParamQueryTask;
+class QueryTaskHelper;
+class SignalTask;
 class StationQueryTask;
 class TypesQueryTask;
 
@@ -31,16 +33,18 @@ public:
   ObsPgmRequest(const int_s& stationIds);
   ~ObsPgmRequest();
 
-  const kvObsPgm_v& operator[](int stationId) const;
-  bool isComplete() const
-    { return not mTask; }
   void post();
+
+  const kvObsPgm_v& operator[](int stationId) const
+    { return get(stationId); }
+
+  const kvObsPgm_v& get(int stationId) const;
 
 Q_SIGNALS:
   void complete();
 
 private Q_SLOTS:
-  void onTaskStatus(int);
+  void onTaskDone(SignalTask*);
 
 private:
   void put(const kvObsPgm_v& op);
@@ -49,8 +53,7 @@ private:
   kvObsPgm_m mObsPgms;
   static const kvObsPgm_v sEmpty;
 
-  ObsPgmQueryTask* mTask;
-  bool mPosted;
+  QueryTaskHelper *mTaskHelper;
 };
 
 // ########################################################################

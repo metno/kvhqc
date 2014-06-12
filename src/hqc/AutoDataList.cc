@@ -6,6 +6,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
 #include "common/KvHelpers.hh"
+#include "common/KvMetaDataBuffer.hh"
 
 #include "util/ChangeReplay.hh"
 
@@ -59,6 +60,7 @@ struct AutoDataList::lt_Column : public std::binary_function<Column, Column, boo
 
 AutoDataList::AutoDataList(QWidget* parent)
   : TimespanDataList(parent)
+  , mObsPgmRequest(0)
 {
   mColumnMenu = new QMenu(this);
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
@@ -82,6 +84,7 @@ AutoDataList::AutoDataList(QWidget* parent)
 
 AutoDataList::~AutoDataList()
 {
+  delete mObsPgmRequest;
 }
 
 void AutoDataList::retranslateUi()
@@ -94,10 +97,22 @@ void AutoDataList::retranslateUi()
   TimespanDataList::retranslateUi();
 }
 
-void AutoDataList::switchSensorPrepare()
+void AutoDataList::doSensorSwitch()
 {
   METLIBS_LOG_TIME();
-  TimespanDataList::switchSensorPrepare();
+  setDefaultTimeSpan();
+
+  ObsPgmRequest::int_s stationIds = Helpers::findNeighborStationIds(storeSensorTime().sensor.stationId);
+  stationIds.insert(storeSensorTime().sensor.stationId);
+  delete mObsPgmRequest;
+  mObsPgmRequest = new ObsPgmRequest(stationIds);
+  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
+  mObsPgmRequest->post();
+}
+
+void AutoDataList::onObsPgmsComplete()
+{
+  METLIBS_LOG_TIME();
 
   mColumns = Column_v();
 
@@ -106,7 +121,7 @@ void AutoDataList::switchSensorPrepare()
   const int currentStationId = currentSensorTime().sensor.stationId,
       currentParamId = currentSensorTime().sensor.paramId;
   
-  const Sensor_v sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE);
+  const Sensor_v sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE, mObsPgmRequest);
   for (Sensor_v::const_iterator it = sensors.begin(); it != sensors.end(); ++it) {
     Column c;
     c.sensor = *it;
@@ -120,6 +135,10 @@ void AutoDataList::switchSensorPrepare()
     METLIBS_LOG_DEBUG("gen " << *it);
   }
   mOriginalColumns = mColumns;
+
+  // FIXME this relies on the implementation in TimespanDataList
+  loadChanges();
+  updateModel();
 }
 
 void AutoDataList::loadChangesXML(const QDomElement& doc_changes)

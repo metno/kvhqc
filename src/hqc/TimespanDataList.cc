@@ -109,7 +109,14 @@ SensorTime TimespanDataList::sensorSwitch() const
     return cst;
 }
 
-void TimespanDataList::switchSensorPrepare()
+void TimespanDataList::doSensorSwitch()
+{
+  setDefaultTimeSpan();
+  loadChanges();
+  updateModel();
+}
+
+void TimespanDataList::setDefaultTimeSpan()
 {
   mTimeLimits = ViewChanges::defaultTimeLimits(currentSensorTime());
   mOriginalTimeLimits = mTimeLimits;
@@ -125,11 +132,6 @@ void TimespanDataList::loadChangesXML(const QDomElement& doc_changes)
     const timeutil::ptime t1 = mOriginalTimeLimits.t1() + boost::posix_time::hours(dT1);
     mTimeLimits = TimeSpan(t0, t1);
   }
-}
-
-void TimespanDataList::switchSensorDone()
-{
-  updateModel();
 }
 
 void TimespanDataList::storeChangesXML(QDomElement& doc_changes)

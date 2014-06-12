@@ -13,7 +13,7 @@ bool initMetaType = false;
 } // namespace anonymous
 
 ObsPgmQueryTask::ObsPgmQueryTask(const int_s& stationIds, size_t priority)
-  : QueryTask(priority)
+  : SignalTask(priority)
   , mStationIds(stationIds)
 {
   METLIBS_LOG_SCOPE();
@@ -90,9 +90,4 @@ void ObsPgmQueryTask::notifyRow(const ResultRow& row)
           kl16, kl17, kl18, kl19, kl20, kl21, kl22, kl23,
           mon, tue, wed, thu, fri, sat, sun,
           fromtime, totime));
-}
-
-void ObsPgmQueryTask::notifyStatus(int status)
-{
-  Q_EMIT queryStatus(status);
 }

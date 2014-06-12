@@ -56,6 +56,9 @@ std::string to_iso_extended_string(const pdate& pd)
 
 b_pt::ptime from_iso_extended_string(const std::string& st)
 {
+  if (st.empty())
+    return b_pt::ptime();
+
   if( st.size() > 10 && st[10] == 'T' ) {
     std::string t = st;
     t[10] = ' ';

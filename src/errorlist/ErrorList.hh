@@ -46,6 +46,7 @@ QT_END_NAMESPACE
 
 class ErrorListModel;
 class ErrorSearchDialog;
+class ObsPgmRequest;
 class Ui_ErrorList;
 
 class ErrorList : public QWidget
@@ -72,6 +73,8 @@ private Q_SLOTS:
   void onButtonExpand();
   void onButtonForget();
 
+  void onObsPgmsComplete();
+
 private:
   void setSensorsAndTimes(const Sensor_v& sensors, const TimeSpan& time);
   ObsData_p getSelectedObs() const;
@@ -90,6 +93,7 @@ private:
   bool mErrorsForSalen;
 
   std::auto_ptr<ErrorListModel> mItemModel;
+  ObsPgmRequest* mObsPgmRequest;
 };
 
 #endif // ERRORLIST_H

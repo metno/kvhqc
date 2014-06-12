@@ -56,6 +56,7 @@ ErrorList::ErrorList(QWidget* parent)
   , mDA(hqcApp->editAccess())
   , mMA(hqcApp->modelAccess())
   , mErrorsForSalen(false)
+  , mObsPgmRequest(0)
 {
   METLIBS_LOG_TIME();
   ui->setupUi(this);
@@ -69,6 +70,7 @@ ErrorList::ErrorList(QWidget* parent)
 
 ErrorList::~ErrorList()
 {
+  delete mObsPgmRequest;
 }
 
 void ErrorList::onButtonSearch()
@@ -76,6 +78,17 @@ void ErrorList::onButtonSearch()
   if (not mDialog->exec())
     return;
 
+  const std::vector<int> selectedStations = mDialog->getSelectedStations();
+  const ObsPgmRequest::int_s stationIds(selectedStations.begin(), selectedStations.end());
+
+  delete mObsPgmRequest;
+  mObsPgmRequest = new ObsPgmRequest(stationIds);
+  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
+  mObsPgmRequest->post();
+}
+ 
+void ErrorList::onObsPgmsComplete()
+{
   const TimeSpan timeLimits = mDialog->getTimeSpan();
   const std::vector<int> selectedStations = mDialog->getSelectedStations();
   const std::vector<int> selectedParameters = mDialog->getSelectedParameters();
@@ -84,7 +97,7 @@ void ErrorList::onButtonSearch()
 
   BOOST_FOREACH(int stationId, selectedStations) {
     BOOST_FOREACH(int paramId, selectedParameters) {
-      const KvMetaDataBuffer::kvObsPgm_v& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+      const KvMetaDataBuffer::kvObsPgm_v& opl = mObsPgmRequest->get(stationId);
       Sensor sensor(stationId, paramId, 0, 0, 0);
       std::set<int> typeIdsShown;
       BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
@@ -106,6 +119,9 @@ void ErrorList::onButtonSearch()
       }
     }
   }
+
+  delete mObsPgmRequest;
+  mObsPgmRequest = 0;
 
   setSensorsAndTimes(sensors, timeLimits);
 }

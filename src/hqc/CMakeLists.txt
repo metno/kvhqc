@@ -45,6 +45,7 @@ QT4_WRAP_CPP(hqc_MOC
   NavigationHistory.hh
   SearchWindow.hh
   SimpleCorrections.hh
+  StationDataList.hh
   TimeSeriesAdd.hh
   TimeseriesDialog.h
   TimeSeriesView.hh

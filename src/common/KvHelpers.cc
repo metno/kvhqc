@@ -252,39 +252,48 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   return nearestStation;
 }
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time, int maxNeighbors)
+StationQueryTask::kvStation_v findNeighborStations(int stationId, float maxDistanceKm)
 {
-  METLIBS_LOG_SCOPE();
+  StationQueryTask::kvStation_v neighbors;
 
-  if (not hqcApp) {
-    METLIBS_LOG_INFO("no KvApp -- no neighbors, probably running a test program");
-    return;
-  }
-  
-  const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
-  
-  std::vector<kvalobs::kvStation> stations;
   try {
-    Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
+    const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+    Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(stationId));
     
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
-      if (not Helpers::isNorwegianStationId(sid) or sid == sensor.stationId)
+      if (not Helpers::isNorwegianStationId(sid) or sid == stationId)
         continue;
-      if (ordering.distance(s) > 100 /*km*/)
+      if (ordering.distance(s) > maxDistanceKm)
         continue;
-      stations.push_back(s);
+      neighbors.push_back(s);
       METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
     }
-    std::sort(stations.begin(), stations.end(), ordering);
+    std::sort(neighbors.begin(), neighbors.end(), ordering);
   } catch (std::exception& e) {
     METLIBS_LOG_WARN("exception while searching neighbor stations: " << e.what());
-    return;
   }
-  
+  return neighbors;
+}
+
+ObsPgmQueryTask::int_s findNeighborStationIds(int stationId, float maxDistanceKm)
+{
+  const StationQueryTask::kvStation_v neighbors = findNeighborStations(stationId, maxDistanceKm);
+  ObsPgmQueryTask::int_s neighborIds;
+  BOOST_FOREACH(const kvalobs::kvStation& s, neighbors) {
+    neighborIds.insert(s.stationID());
+  }
+  return neighborIds;
+}
+
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const StationQueryTask::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors)
+{
+  METLIBS_LOG_SCOPE();
+
   int count = 0;
-  BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-    const std::vector<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
+  BOOST_FOREACH(const kvalobs::kvStation& s, neighborStations) {
+    const std::vector<kvalobs::kvObsPgm>& obs_pgm = obsPgms->get(s.stationID());
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
@@ -307,8 +316,14 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
   }
 }
 
-typedef std::vector<Sensor> Sensors_t;
-Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType)
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const ObsPgmRequest* obsPgms, int maxNeighbors)
+{
+  addNeighbors(neighbors, sensor, time, findNeighborStations(sensor.stationId), obsPgms, maxNeighbors);
+}
+
+Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
+    const ObsPgmRequest* obsPgms, const StationQueryTask::kvStation_v& neighborStations)
 {
   METLIBS_LOG_TIME();
 
@@ -340,8 +355,8 @@ Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::strin
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
-  const std::vector<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
-  Sensors_t sensors;
+  const std::vector<kvalobs::kvObsPgm>& obs_pgm = obsPgms->get(s.stationId);
+  Sensor_v sensors;
   BOOST_FOREACH(int par, stationPar) {
     Sensor s2(s);
     s2.paramId = par;
@@ -367,7 +382,7 @@ Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::strin
   BOOST_FOREACH(int par, neighborPar) {
     Sensor sn(s);
     sn.paramId = par;
-    addNeighbors(sensors, sn, time, nNeighbors);
+    addNeighbors(sensors, sn, time, neighborStations, obsPgms, nNeighbors);
   }
 #if 0
   METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
@@ -376,6 +391,12 @@ Sensors_t relatedSensors(const Sensor& s, const TimeSpan& time, const std::strin
   }
 #endif
   return sensors;
+}
+
+Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
+    const ObsPgmRequest* obsPgms)
+{
+  return relatedSensors(s, time, viewType, obsPgms, findNeighborStations(s.stationId));
 }
 
 bool aggregatedParameter(int paramFrom, int paramTo)

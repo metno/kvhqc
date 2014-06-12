@@ -31,17 +31,17 @@ void DynamicDataView::doNavigateTo()
   METLIBS_LOG_DEBUG(LOGVAL(mStoreST) << LOGVAL(storeST) << LOGVAL(sv) << LOGVAL(sw));
   mStoreST = storeST;
   if (sw or not sv)
-    loadChanges();
+    doSensorSwitch();
+}
+
+void DynamicDataView::doSensorSwitch()
+{
+  loadChanges();
 }
 
 SensorTime DynamicDataView::sensorSwitch() const
 {
   return currentSensorTime();
-}
-
-std::string DynamicDataView::viewType() const
-{
-  return "";
 }
 
 std::string DynamicDataView::viewId() const
@@ -53,29 +53,21 @@ void DynamicDataView::storeChangesXML(QDomElement&)
 {
 }
 
-void DynamicDataView::switchSensorPrepare()
-{
-}
-
 void DynamicDataView::loadChangesXML(const QDomElement&)
-{
-}
-
-void DynamicDataView::switchSensorDone()
 {
 }
 
 void DynamicDataView::storeChanges()
 {
   METLIBS_LOG_SCOPE(LOGMYTYPE());
-  const std::string vt = viewType();
-  if (mStoreST.valid() and not vt.empty()) {
-    QDomDocument doc("changes");
+  if (mStoreST.valid()) {
+    QDomDocument doc;
     QDomElement doc_changes = doc.createElement(E_TAG_CHANGES);
     doc.appendChild(doc_changes);
 
     storeChangesXML(doc_changes);
 
+    const std::string vt = viewType();
     if (doc_changes.hasChildNodes()) {
       const std::string xml = doc.toString().toStdString();
       ViewChanges::store(mStoreST.sensor, vt, viewId(), xml);
@@ -83,24 +75,17 @@ void DynamicDataView::storeChanges()
       ViewChanges::forget(mStoreST.sensor, vt, viewId());
     }
   }
-  mStoreST = currentSensorTime();
 }
 
 void DynamicDataView::loadChanges()
 {
   METLIBS_LOG_SCOPE(LOGMYTYPE());
-  switchSensorPrepare();
 
-  const std::string vt = viewType();
-  if (not vt.empty()) {
-    const std::string stored = ViewChanges::fetch(mStoreST.sensor, vt, viewId());
-    if (not stored.empty()) {
-      QDomDocument doc;
-      doc.setContent(QString::fromStdString(stored));
-      const QDomElement doc_changes = doc.documentElement();
-      loadChangesXML(doc_changes);
-    }
+  const std::string stored = ViewChanges::fetch(mStoreST.sensor, viewType(), viewId());
+  if (not stored.empty()) {
+    QDomDocument doc;
+    doc.setContent(QString::fromStdString(stored));
+    const QDomElement doc_changes = doc.documentElement();
+    loadChangesXML(doc_changes);
   }
-
-  switchSensorDone();
 }

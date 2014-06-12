@@ -4,6 +4,7 @@
 
 #include "TimespanDataList.hh"
 
+class ObsPgmRequest;
 class QPushButton;
 
 // ------------------------------------------------------------------------
@@ -32,6 +33,7 @@ private:
 
 protected:
   void updateModel();
+  void doSensorSwitch();
 
   std::string viewType() const;
   void switchSensorPrepare();
@@ -48,6 +50,8 @@ private Q_SLOTS:
   void onActionResetColumns();
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
 
+  void onObsPgmsComplete();
+
 private:
   void addColumnBefore(int column);
   void removeColumns(std::vector<int> columns);
@@ -62,6 +66,7 @@ private:
   QPushButton* mButtonColumns;
 
   Column_v mColumns, mOriginalColumns;
+  ObsPgmRequest* mObsPgmRequest;
 };
 
 #endif // AutoDataList_hh

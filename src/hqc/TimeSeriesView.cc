@@ -56,6 +56,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
   , ui(new Ui::TimeSeriesView)
   , mTimeControl(new TimeSpanControl(this))
   , mChangingTimes(false)
+  , mObsPgmRequest(0)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -102,6 +103,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
 TimeSeriesView::~TimeSeriesView()
 {
+  delete mObsPgmRequest;
 }
                         
 void TimeSeriesView::storeChanges()
@@ -195,43 +197,59 @@ void TimeSeriesView::doNavigateTo()
   const bool changedTime = changedSensor
       or not mTimeLimits.contains(st.time);
 
-  if (changedSensor) {
-    // need to update related parameters and neighbor list
-
-    // set original columns
-    mSensors = Sensor_v(1, st.sensor);
-    { METLIBS_LOG_TIME("adding neighbors");
-      Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, MAX_LINES*2);
-    }
-    mOriginalSensors = mSensors;
-
-    mModelBuffer->clear();
-  }
   if (changedTime) {
     mTimeLimits = ViewChanges::defaultTimeLimits(st);
     mOriginalTimeLimits = mTimeLimits;
+    updateTimeEditors();
   }
-  if (changedSensor)
-    replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
-  
-  ui->plot->clearTimemarks();
-  ui->plot->setTimemark(timeutil::make_miTime(st.time), "here");
-<<<<<<< HEAD
+  if (changedSensor) {
+    findNeighbors();
+  } else if (changedTime) {
+    updateTime();
+  } else {
+    highlightTime();
+  }
+}
 
-  updateTimeEditors();
-=======
-  
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
->>>>>>> simplified navigation handling in views
+void TimeSeriesView::findNeighbors()
+{
+  METLIBS_LOG_TIME();
+  mColumnAdd->setEnabled(false);
+  mColumnRemove->setEnabled(false);
 
+  const SensorTime& st = mNavigate.current();
+  ObsPgmRequest::int_s stationIds = Helpers::findNeighborStationIds(st.sensor.stationId);
+  stationIds.insert(st.sensor.stationId);
+  delete mObsPgmRequest;
+  mObsPgmRequest = new ObsPgmRequest(stationIds);
+  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(haveNeighbors()));
+  mObsPgmRequest->post();
+}
+
+void TimeSeriesView::haveNeighbors()
+{
+  METLIBS_LOG_TIME();
+  // need to update related parameters and neighbor list
+  
+  // set original columns
+  const SensorTime& st = mNavigate.current();
+  mSensors = Sensor_v(1, st.sensor);
+  Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, mObsPgmRequest, MAX_LINES*2);
+  mOriginalSensors = mSensors;
+  
+  mModelBuffer->clear();
+  replay(ViewChanges::fetch(mSensorTime.sensor, VIEW_TYPE, ID));
+  
   mColumnAdd->setEnabled(true);
   mColumnRemove->setEnabled(true);
   
-  if (changedSensor)
-    updateSensors();
-  else if (changedTime)
-    updateTime();
+  updateSensors();
+}
+
+void TimeSeriesView::highlightTime()
+{
+  ui->plot->clearTimemarks();
+  ui->plot->setTimemark(timeutil::make_miTime(mNavigate.current().time), "here");
 }
 
 namespace /* anonymous */ {
@@ -568,6 +586,8 @@ void TimeSeriesView::updatePlot()
   tsplot.tserieslist(tslist);      // set list of timeseries
 
   ui->plot->prepare(tsplot);
+
+  highlightTime();
 }
 
 // static

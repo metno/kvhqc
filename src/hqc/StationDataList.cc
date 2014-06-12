@@ -23,6 +23,7 @@ const int* WeatherParametersE = WeatherParameters + NWeatherParameters;
 
 StationDataList::StationDataList(QWidget* parent)
   : TimespanDataList(parent)
+  , mObsPgmRequest(0)
 {
   setWindowTitle(tr("Station Data"));
   setWindowIcon(QIcon("icons:weatherstation.svg"));
@@ -30,6 +31,7 @@ StationDataList::StationDataList(QWidget* parent)
 
 StationDataList::~StationDataList()
 {
+  delete mObsPgmRequest;
 }
 
 SensorTime StationDataList::sensorSwitch() const
@@ -56,6 +58,28 @@ void StationDataList::addSensorColumns(const Sensor& s)
     model()->addColumn(ocCorr);
 }
 
+void StationDataList::doSensorSwitch()
+{
+  METLIBS_LOG_TIME();
+  setDefaultTimeSpan();
+
+  ObsPgmRequest::int_s stationIds;
+  stationIds.insert(storeSensorTime().sensor.stationId);
+  delete mObsPgmRequest;
+  mObsPgmRequest = new ObsPgmRequest(stationIds);
+  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
+  mObsPgmRequest->post();
+}
+
+void StationDataList::onObsPgmsComplete()
+{
+  METLIBS_LOG_TIME();
+
+  // FIXME this relies on the implementation in TimespanDataList
+  loadChanges();
+  updateModel();
+}
+
 void StationDataList::updateModel()
 {
   METLIBS_LOG_SCOPE(LOGVAL(currentSensorTime()) << LOGVAL(timeSpan()));
@@ -67,7 +91,7 @@ void StationDataList::updateModel()
 
   model()->setTimeSpan(time);
 
-  const KvMetaDataBuffer::kvObsPgm_v& opl = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
+  const KvMetaDataBuffer::kvObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
   for(size_t i=0; i<NWeatherParameters; ++i) {
     const int paramId = WeatherParameters[i];
     for(KvMetaDataBuffer::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {

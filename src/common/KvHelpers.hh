@@ -2,7 +2,10 @@
 #ifndef LIB_KVHELPERS_HH
 #define LIB_KVHELPERS_HH 1
 
+#include "KvMetaDataBuffer.hh"
+#include "ObsPgmQueryTask.hh"
 #include "Sensor.hh"
+#include "StationQueryTask.hh"
 
 class KvalobsData;
 HQC_TYPEDEF_P(KvalobsData);
@@ -79,11 +82,20 @@ std::string isNorwegianStationIdSQL(const std::string& stationid_column);
 
 int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const TimeSpan& time, int maxNeighbors);
+StationQueryTask::kvStation_v findNeighborStations(int stationId, float maxDistanceKm = 100);
+ObsPgmQueryTask:: int_s findNeighborStationIds(int stationId, float maxDistanceKm = 100);
+
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const StationQueryTask::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors);
+void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const ObsPgmRequest* obsPgms, int maxNeighbors);
+Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
+    const ObsPgmRequest* obsPgms, const StationQueryTask::kvStation_v& neighborStations);
+Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
+    const ObsPgmRequest* obsPgms);
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
-std::vector<Sensor> relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)

@@ -2,13 +2,13 @@
 #ifndef COMMON_OBSPGMQUERYTASK_HH
 #define COMMON_OBSPGMQUERYTASK_HH 1
 
-#include "QueryTask.hh"
+#include "SignalTask.hh"
 #include <kvalobs/kvObsPgm.h>
 #include <QtCore/QObject>
 #include <vector>
 #include <set>
 
-class ObsPgmQueryTask : public QObject, public QueryTask
+class ObsPgmQueryTask : public SignalTask
 { Q_OBJECT;
 public:
   typedef std::vector<kvalobs::kvObsPgm> kvObsPgm_v;
@@ -18,13 +18,9 @@ public:
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
 
   const kvObsPgm_v& obsPgms() const
     { return mObsPgms; }
-
-Q_SIGNALS:
-  void queryStatus(int);
 
 private:
   int_s mStationIds;

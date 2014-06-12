@@ -19,6 +19,8 @@ public:
   
 protected:
   SensorTime sensorSwitch() const;
+  void doSensorSwitch();
+  void setDefaultTimeSpan();
   void switchSensorPrepare();
   void loadChangesXML(const QDomElement& doc_changes);
   void switchSensorDone();

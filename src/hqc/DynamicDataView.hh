@@ -13,24 +13,44 @@ public:
   ~DynamicDataView();
   
 protected:
+  /*! Uses sensorSwitch() to determine if the store sensor has
+   *  changed. If yes, updates storeSensorTime() and calls doSensorSwitch().
+   */
   void doNavigateTo();
 
+  /*! Store changes, calling storeChangesXML() to build XML description.
+   */
   void storeChanges();
 
-  virtual std::string viewType() const;
+  /*! Load changes, calling loadChangesXML() to extract changes from
+   *  XML iff there are stored changes.
+   */
+  void loadChanges();
+
+  /*! Starts actual sensor switch.
+   */
+  virtual void doSensorSwitch();
+
+  virtual std::string viewType() const = 0;
   virtual std::string viewId() const;
 
+  /*! Derives store sensor from current sensor. May be simpler,
+   *  e.g. not depending on parameter id. Default is to return current
+   *  sensor.
+   */
   virtual SensorTime sensorSwitch() const;
-  virtual void switchSensorPrepare();
+  
+  /*! Parse changes XML document to replay changes for store sensor.
+   */
   virtual void loadChangesXML(const QDomElement& doc_changes);
-  virtual void switchSensorDone();
+
+  /*! Store changes for store sensor to XML document. Empty document
+   *  mean no changes. Default does nothing.
+   */
   virtual void storeChangesXML(QDomElement& doc_changes);
 
   const SensorTime& storeSensorTime() const
     { return mStoreST; }
-
-private:
-  void loadChanges();
 
 private:
   SensorTime mStoreST;
