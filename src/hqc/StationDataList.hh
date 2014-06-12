@@ -22,9 +22,11 @@ private Q_SLOTS:
   void onObsPgmsComplete();
 
 private:
-  void addSensorColumns(const Sensor& s);
+  void addSensorColumn(const Sensor& s, ObsColumn::Type type);
+  void addSensorColumns(Sensor_s& alreadyShown, const Sensor& add);
 
 private:
+  bool mShowAggregated;
   ObsPgmRequest* mObsPgmRequest;
 };
 

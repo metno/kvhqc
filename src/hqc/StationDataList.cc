@@ -19,10 +19,12 @@ const int WeatherParameters[] = {
 };
 const size_t NWeatherParameters = sizeof(WeatherParameters)/sizeof(WeatherParameters[0]);
 const int* WeatherParametersE = WeatherParameters + NWeatherParameters;
+typedef std::set<int> int_s;
 }
 
 StationDataList::StationDataList(QWidget* parent)
   : TimespanDataList(parent)
+  , mShowAggregated(true)
   , mObsPgmRequest(0)
 {
   setWindowTitle(tr("Station Data"));
@@ -41,21 +43,39 @@ SensorTime StationDataList::sensorSwitch() const
     return sst;
 
   Sensor s = cst.sensor;
+  if (s.typeId < 0)
+    s.typeId = -s.typeId;
   s.paramId = 1;
   s.level = 0;
   s.sensor = 0;
   return SensorTime(s, cst.time);
 }
 
-void StationDataList::addSensorColumns(const Sensor& s)
+void StationDataList::addSensorColumn(const Sensor& s, ObsColumn::Type type)
 {
-  DataColumn_p ocOrig = ColumnFactory::columnForSensor(mDA, s, timeSpan(), ObsColumn::ORIGINAL);
-  if (ocOrig)
-    model()->addColumn(ocOrig);
+  if (DataColumn_p oc = ColumnFactory::columnForSensor(mDA, s, timeSpan(), type))
+    model()->addColumn(oc);
+}
 
-  DataColumn_p ocCorr = ColumnFactory::columnForSensor(mDA, s, timeSpan(), ObsColumn::NEW_CORRECTED);
-  if (ocCorr)
-    model()->addColumn(ocCorr);
+void StationDataList::addSensorColumns(Sensor_s& alreadyShown, const Sensor& add)
+{
+  if (alreadyShown.insert(add).second) {
+    addSensorColumn(add, ObsColumn::ORIGINAL);
+    addSensorColumn(add, ObsColumn::NEW_CORRECTED);
+  }
+  
+  if (not mShowAggregated)
+    return;
+  
+  int_s aggregatedTo;
+  Helpers::aggregatedParameters(add.paramId, aggregatedTo);
+  Sensor agg(add);
+  agg.typeId = -add.typeId;
+  for (int_s::const_iterator it = aggregatedTo.begin(); it != aggregatedTo.end(); ++it) {
+    agg.paramId = *it;
+    if (alreadyShown.insert(agg).second)
+      addSensorColumn(agg, ObsColumn::NEW_CORRECTED);
+  }
 }
 
 void StationDataList::doSensorSwitch()
@@ -84,11 +104,14 @@ void StationDataList::updateModel()
 {
   METLIBS_LOG_SCOPE(LOGVAL(currentSensorTime()) << LOGVAL(timeSpan()));
 
-  model()->removeAllColumns();
-
-  const Sensor& s = currentSensorTime().sensor;
+  Sensor s(currentSensorTime().sensor);
+  if (s.typeId < 0)
+    s.typeId = -s.typeId;
   const TimeSpan& time = timeSpan();
 
+  Sensor_s columnSensors; // to avoid duplicate columns
+
+  model()->removeAllColumns();
   model()->setTimeSpan(time);
 
   const KvMetaDataBuffer::kvObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
@@ -103,7 +126,7 @@ void StationDataList::updateModel()
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
 
-      addSensorColumns(Sensor(s.stationId, paramId, s.level, s.sensor, s.typeId));
+      addSensorColumns(columnSensors, Sensor(s.stationId, paramId, s.level, s.sensor, s.typeId));
       break;
     }
   }
@@ -116,8 +139,8 @@ void StationDataList::updateModel()
       continue;
     if (std::find(WeatherParameters, WeatherParametersE, op.paramID()) != WeatherParametersE)
       continue;
-    
-    addSensorColumns(Sensor(s.stationId, op.paramID(), s.level, s.sensor, s.typeId));
+
+    addSensorColumns(columnSensors, Sensor(s.stationId, op.paramID(), s.level, s.sensor, s.typeId));
   }
 }
 
