@@ -1,10 +1,11 @@
 
 #include "KvHelpers.hh"
 
+#include "HqcApplication.hh"
 #include "KvalobsData.hh"
 #include "KvMetaDataBuffer.hh"
+#include "ObsPgmRequest.hh"
 #include "TimeSpan.hh"
-#include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -230,7 +231,7 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   int nearestStation = -1;
   float nearestDistance = 0;
 
-  const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+  const hqc::kvStation_v& stationsList = KvMetaDataBuffer::instance()->allStations();
   
   try {
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
@@ -252,12 +253,12 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   return nearestStation;
 }
 
-StationQueryTask::kvStation_v findNeighborStations(int stationId, float maxDistanceKm)
+hqc::kvStation_v findNeighborStations(int stationId, float maxDistanceKm)
 {
-  StationQueryTask::kvStation_v neighbors;
+  hqc::kvStation_v neighbors;
 
   try {
-    const std::vector<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
+    const hqc::kvStation_v& stationsList = KvMetaDataBuffer::instance()->allStations();
     Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(stationId));
     
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
@@ -276,24 +277,24 @@ StationQueryTask::kvStation_v findNeighborStations(int stationId, float maxDista
   return neighbors;
 }
 
-ObsPgmQueryTask::int_s findNeighborStationIds(int stationId, float maxDistanceKm)
+hqc::int_s findNeighborStationIds(int stationId, float maxDistanceKm)
 {
-  const StationQueryTask::kvStation_v neighbors = findNeighborStations(stationId, maxDistanceKm);
-  ObsPgmQueryTask::int_s neighborIds;
+  const hqc::kvStation_v neighbors = findNeighborStations(stationId, maxDistanceKm);
+  hqc::int_s neighborIds;
   BOOST_FOREACH(const kvalobs::kvStation& s, neighbors) {
     neighborIds.insert(s.stationID());
   }
   return neighborIds;
 }
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
-    const StationQueryTask::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors)
+void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const hqc::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors)
 {
   METLIBS_LOG_SCOPE();
 
   int count = 0;
   BOOST_FOREACH(const kvalobs::kvStation& s, neighborStations) {
-    const std::vector<kvalobs::kvObsPgm>& obs_pgm = obsPgms->get(s.stationID());
+    const hqc::kvObsPgm_v& obs_pgm = obsPgms->get(s.stationID());
     BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
@@ -316,14 +317,14 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
   }
 }
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
     const ObsPgmRequest* obsPgms, int maxNeighbors)
 {
   addNeighbors(neighbors, sensor, time, findNeighborStations(sensor.stationId), obsPgms, maxNeighbors);
 }
 
 Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
-    const ObsPgmRequest* obsPgms, const StationQueryTask::kvStation_v& neighborStations)
+    const ObsPgmRequest* obsPgms, const hqc::kvStation_v& neighborStations)
 {
   METLIBS_LOG_TIME();
 
@@ -355,7 +356,7 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
-  const std::vector<kvalobs::kvObsPgm>& obs_pgm = obsPgms->get(s.stationId);
+  const hqc::kvObsPgm_v& obs_pgm = obsPgms->get(s.stationId);
   Sensor_v sensors;
   BOOST_FOREACH(int par, stationPar) {
     Sensor s2(s);

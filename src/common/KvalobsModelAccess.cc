@@ -1,9 +1,11 @@
 
 #include "KvalobsModelAccess.hh"
 
+#include "DeleteTaskWhenDone.hh"
 #include "HqcApplication.hh"
 #include "ModelQueryTask.hh"
 #include "QueryTaskHandler.hh"
+#include "WrapperTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
 #include "common/ObsLogging.hh"
@@ -54,7 +56,7 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
   }
 
   if (not toQuery.empty()) {
-    ModelQueryTask* task = new ModelQueryTask(toQuery, 10);
+    ModelQueryTask* task = new ModelQueryTask(toQuery, QueryTask::PRIORITY_AUTOMATIC);
     connect(task, SIGNAL(data(const ModelData_pv&)),
         request.get(), SLOT(notifyData(const ModelData_pv&)));
     connect(task, SIGNAL(queryStatus(int)),
@@ -89,8 +91,10 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
         request.get(), SLOT(notifyStatus(int)));
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
-    hqcApp->kvalobsHandler()->dropTask(task);
-    task->deleteLater();
+    if (hqcApp->kvalobsHandler()->dropTask(task))
+      delete task;
+    else
+      new DeleteTaskWhenDone(new WrapperTask(task));
   }
 
   mRequests.erase(it);

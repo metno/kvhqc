@@ -297,7 +297,7 @@ void ErrorSearchDialog::setupParameterTab()
     METLIBS_LOG_DEBUG(LOGVAL(groupLabel));
 
     labels << groupLabel;
-    std::vector<int>& parameters = mParameterGroups[groupLabel];
+    hqc::int_v& parameters = mParameterGroups[groupLabel];
             
     queryParams.bindValue(0, groupId);
     queryParams.exec();
@@ -314,10 +314,10 @@ void ErrorSearchDialog::setupParameterTab()
   }
 
   try {
-    const KvMetaDataBuffer::kvParam_v& allParams = KvMetaDataBuffer::instance()->allParams();
+    const hqc::kvParam_v& allParams = KvMetaDataBuffer::instance()->allParams();
     const QString labelAll = tr("All defined");
     labels << labelAll;
-    std::vector<int>& parameters = mParameterGroups[labelAll];
+    hqc::int_v& parameters = mParameterGroups[labelAll];
 
     BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
         parameters.push_back(p.paramID());
@@ -347,7 +347,7 @@ void ErrorSearchDialog::doSaveSettings(QSettings& settings)
 {
   {
     QStringList parameters;
-    const std::vector<int> params = getSelectedParameters();
+    const hqc::int_v params = getSelectedParameters();
     BOOST_FOREACH(int pid, params)
         parameters << QString::number(pid);
     settings.setValue("selected_parameters", parameters);
@@ -365,7 +365,7 @@ void ErrorSearchDialog::doRestoreSettings(QSettings& settings)
 {
   {
     const QStringList parameters = settings.value("selected_parameters").toStringList();
-    std::vector<int> params;
+    hqc::int_v params;
     BOOST_FOREACH(const QString& p, parameters)
         params.push_back(p.toInt());
 
@@ -461,11 +461,11 @@ void ErrorSearchDialog::onSetRecentTimes()
 
 void ErrorSearchDialog::showParamGroup(const QString& paramGroup)
 {
-  const std::vector<int>& sel = mParamSelectedModel->values();
-  std::set<int> sel_set(sel.begin(), sel.end());
+  const hqc::int_v& sel = mParamSelectedModel->values();
+  hqc::int_s sel_set(sel.begin(), sel.end());
 
-  const std::vector<int>& group = mParameterGroups[paramGroup];
-  std::vector<int> avail;
+  const hqc::int_v& group = mParameterGroups[paramGroup];
+  hqc::int_v avail;
   BOOST_FOREACH(int pid, group) {
     if (sel_set.find(pid) == sel_set.end())
       avail.push_back(pid);
@@ -476,12 +476,12 @@ void ErrorSearchDialog::showParamGroup(const QString& paramGroup)
 
 void ErrorSearchDialog::addParameter2Click(const QModelIndex& index)
 {
-  const std::vector<int>& add = mParamAvailableModel->values();
+  const hqc::int_v& add = mParamAvailableModel->values();
   const int paramId = add.at(index.row());
 
-  const std::vector<int>& sel = mParamSelectedModel->values();
+  const hqc::int_v& sel = mParamSelectedModel->values();
   if (std::find(sel.begin(), sel.end(), paramId) == sel.end()) {
-    std::vector<int> sel2(sel);
+    hqc::int_v sel2(sel);
     sel2.push_back(paramId);
     mParamSelectedModel->setValues(sel2);
   }
@@ -490,7 +490,7 @@ void ErrorSearchDialog::addParameter2Click(const QModelIndex& index)
 
 void ErrorSearchDialog::delParameter2Click(const QModelIndex& index)
 {
-  std::vector<int> sel = mParamSelectedModel->values();
+  hqc::int_v sel = mParamSelectedModel->values();
   sel.erase(sel.begin() + index.row());
   mParamSelectedModel->setValues(sel);
   showParamGroup(ui->comboParamGroup->currentText());
@@ -498,10 +498,10 @@ void ErrorSearchDialog::delParameter2Click(const QModelIndex& index)
 
 void ErrorSearchDialog::selectParameters()
 {
-  const std::vector<int>& add = mParamAvailableModel->values();
+  const hqc::int_v& add = mParamAvailableModel->values();
 
-  std::vector<int> sel = mParamSelectedModel->values();
-  std::set<int> sel_set(sel.begin(), sel.end());
+  hqc::int_v sel = mParamSelectedModel->values();
+  hqc::int_s sel_set(sel.begin(), sel.end());
 
   const QItemSelectionModel* selection = ui->listParamAvailable->selectionModel();
   for (size_t i=0; i<add.size(); ++i) {
@@ -515,10 +515,10 @@ void ErrorSearchDialog::selectParameters()
 
 void ErrorSearchDialog::selectAllParameters()
 {
-  const std::vector<int>& add = mParamAvailableModel->values();
+  const hqc::int_v& add = mParamAvailableModel->values();
 
-  std::vector<int> sel = mParamSelectedModel->values();
-  std::set<int> sel_set(sel.begin(), sel.end());
+  hqc::int_v sel = mParamSelectedModel->values();
+  hqc::int_s sel_set(sel.begin(), sel.end());
 
   for (size_t i=0; i<add.size(); ++i) {
     if (sel_set.find(add[i]) == sel_set.end())
@@ -531,8 +531,8 @@ void ErrorSearchDialog::selectAllParameters()
 
 void ErrorSearchDialog::deselectParameters()
 {
-  const std::vector<int>& sel = mParamSelectedModel->values();
-  std::vector<int> new_sel;
+  const hqc::int_v& sel = mParamSelectedModel->values();
+  hqc::int_v new_sel;
   const QItemSelectionModel* selection = ui->listParamChosen->selectionModel();
   for (size_t i=0; i<sel.size(); ++i) {
     if (not selection->isRowSelected(i, QModelIndex()))
@@ -545,7 +545,7 @@ void ErrorSearchDialog::deselectParameters()
 
 void ErrorSearchDialog::deselectAllParameters()
 {
-  mParamSelectedModel->setValues(std::vector<int>());
+  mParamSelectedModel->setValues(hqc::int_v());
   showParamGroup(ui->comboParamGroup->currentText());
 }
 
@@ -606,9 +606,9 @@ void ErrorSearchDialog::setSelectedCounties(const QStringList& selectedCounties)
   enableButtons();
 }
 
-std::vector<int> ErrorSearchDialog::getSelectedStations()
+hqc::int_v ErrorSearchDialog::getSelectedStations()
 {
-  std::vector<int> stations;
+  hqc::int_v stations;
 
   QStandardItem* root = mStationModel->invisibleRootItem();
   const int nRegions = root->rowCount();
@@ -629,7 +629,7 @@ std::vector<int> ErrorSearchDialog::getSelectedStations()
   return stations;
 }
 
-std::vector<int> ErrorSearchDialog::getSelectedParameters()
+hqc::int_v ErrorSearchDialog::getSelectedParameters()
 {
   return mParamSelectedModel->values();
 }

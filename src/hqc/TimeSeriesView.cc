@@ -7,8 +7,8 @@
 #include "common/EditAccess.hh"
 #include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
-#include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
+#include "common/ObsPgmRequest.hh"
 #include "common/TimeSpanControl.hh"
 
 #include "util/ChangeReplay.hh"
@@ -218,7 +218,7 @@ void TimeSeriesView::findNeighbors()
   mColumnRemove->setEnabled(false);
 
   const SensorTime& st = mNavigate.current();
-  ObsPgmRequest::int_s stationIds = Helpers::findNeighborStationIds(st.sensor.stationId);
+  hqc::int_s stationIds = Helpers::findNeighborStationIds(st.sensor.stationId);
   stationIds.insert(st.sensor.stationId);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);

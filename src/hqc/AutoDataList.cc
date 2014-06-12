@@ -6,7 +6,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
 #include "common/KvHelpers.hh"
-#include "common/KvMetaDataBuffer.hh"
+#include "common/ObsPgmRequest.hh"
 
 #include "util/ChangeReplay.hh"
 
@@ -102,7 +102,7 @@ void AutoDataList::doSensorSwitch()
   METLIBS_LOG_TIME();
   setDefaultTimeSpan();
 
-  ObsPgmRequest::int_s stationIds = Helpers::findNeighborStationIds(storeSensorTime().sensor.stationId);
+  hqc::int_s stationIds = Helpers::findNeighborStationIds(storeSensorTime().sensor.stationId);
   stationIds.insert(storeSensorTime().sensor.stationId);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
@@ -307,7 +307,7 @@ void AutoDataList::onHorizontalHeaderContextMenu(const QPoint& pos)
   if (chosen == actionAdd) {
     addColumnBefore(column);
   } else if (chosen == actionDel) {
-    removeColumns(std::vector<int>(1, column));
+    removeColumns(hqc::int_v(1, column));
   }
 }
 
@@ -347,12 +347,12 @@ void AutoDataList::addColumnBefore(int column)
   storeChanges();
 }
 
-void AutoDataList::removeColumns(std::vector<int> columns)
+void AutoDataList::removeColumns(hqc::int_v columns)
 {
   if (columns.empty())
     return;
   std::sort(columns.begin(), columns.end(), std::greater<int>());
-  for (std::vector<int>::const_iterator it = columns.begin(); it != columns.end(); ++it) {
+  for (hqc::int_v::const_iterator it = columns.begin(); it != columns.end(); ++it) {
     const int c = *it;
     if (c >= 0 and c < (int)mColumns.size())
       mColumns.erase(mColumns.begin() + c);
@@ -368,7 +368,7 @@ void AutoDataList::onActionRemoveColumn()
   if (not sm)
     return;
 
-  std::vector<int> columns;
+  hqc::int_v columns;
   const QModelIndexList sc = sm->selectedColumns();
   Q_FOREACH(const QModelIndex& idx, sc)
       columns.push_back(idx.column());

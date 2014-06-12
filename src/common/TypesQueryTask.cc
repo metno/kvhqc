@@ -11,11 +11,11 @@ bool initMetaType = false;
 } // namespace anonymous
 
 TypesQueryTask::TypesQueryTask(size_t priority)
-  : QueryTask(priority)
+  : SignalTask(priority)
 {
   METLIBS_LOG_SCOPE();
   if (not initMetaType) {
-    qRegisterMetaType<kvTypes_v>("kvTypes_v");
+    qRegisterMetaType<hqc::kvTypes_v>("kvTypes_v");
     initMetaType = true;
   }
 }
@@ -41,9 +41,4 @@ void TypesQueryTask::notifyRow(const ResultRow& row)
   
   mTypes.push_back(kvalobs::kvTypes(typesid, format, earlyobs, lateobs,
           read, obspgm, comment));
-}
-
-void TypesQueryTask::notifyStatus(int status)
-{
-  Q_EMIT queryStatus(status);
 }

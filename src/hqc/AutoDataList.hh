@@ -3,6 +3,7 @@
 #define AutoDataList_hh 1
 
 #include "TimespanDataList.hh"
+#include "common/KvTypedefs.hh"
 
 class ObsPgmRequest;
 class QPushButton;
@@ -54,7 +55,7 @@ private Q_SLOTS:
 
 private:
   void addColumnBefore(int column);
-  void removeColumns(std::vector<int> columns);
+  void removeColumns(hqc::int_v columns);
   ObsColumn_p makeColumn(const Column& c);
   bool hasChangedColumns() const;
 

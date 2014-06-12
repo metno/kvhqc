@@ -11,11 +11,11 @@ bool initMetaType = false;
 } // namespace anonymous
 
 ParamQueryTask::ParamQueryTask(size_t priority)
-  : QueryTask(priority)
+  : SignalTask(priority)
 {
   METLIBS_LOG_SCOPE();
   if (not initMetaType) {
-    qRegisterMetaType<kvParam_v>("kvParam_v");
+    qRegisterMetaType<hqc::kvParam_v>("kvParam_v");
     initMetaType = true;
   }
 }
@@ -39,9 +39,4 @@ void ParamQueryTask::notifyRow(const ResultRow& row)
   const std::string comment = row.getStdString(col++);
   mParams.push_back(kvalobs::kvParam(paramid, name, description, unit,
           level_scale, comment));
-}
-
-void ParamQueryTask::notifyStatus(int status)
-{
-  Q_EMIT queryStatus(status);
 }

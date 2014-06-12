@@ -7,27 +7,13 @@
 class SignalTask;
 class QueryTaskHandler;
 
-class DeleteTaskWhenDone : public QObject
-{ Q_OBJECT;
-public:
-  DeleteTaskWhenDone(SignalTask* t);
-
-private Q_SLOTS:
-  void onQueryDone();
-
-private:
-  SignalTask* mTask;
-};
-
-// ########################################################################
-
 class QueryTaskHelper : public QObject
 { Q_OBJECT;
 
 public:
   /*! Task helper for the given task. Takes ownership of the task
    *  object. Task object may not have a parent. */
-  QueryTaskHelper(SignalTask* task = 0);
+  QueryTaskHelper(SignalTask* task);
 
   /*! Destruct helper and task. If the task has been posted and is not
    *  done yet, wait for done signal and then delete the task object

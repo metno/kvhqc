@@ -24,6 +24,7 @@ SET(common_SOURCES
   DataRR24Item.cc
   DataValueItem.cc
   DataVxItem.cc
+  DeleteTaskWhenDone.cc
   DianaHelper.cc
   DistributeUpdates.cc
   DistributeUpdates.hh
@@ -54,6 +55,7 @@ SET(common_SOURCES
   KvHelpers.cc
   KvMetaDataBuffer.cc
   KvServiceHelper.cc
+  KvTypedefs.hh
   ModelAccess.cc
   ModelBuffer.cc
   ModelColumn.cc
@@ -76,6 +78,7 @@ SET(common_SOURCES
   ObsRequest.cc
   ObsRequest.hh
   ObsPgmQueryTask.cc
+  ObsPgmRequest.cc
   ObsTableModel.cc
   ParamIdModel.cc
   ParamQueryTask.cc
@@ -120,6 +123,7 @@ SET(common_SOURCES
   ToolInterpolate.cc
   TypeIdModel.cc
   TypesQueryTask.cc
+  WrapperTask.cc
   WrapRequest.cc
 )
 
@@ -132,6 +136,7 @@ QT4_WRAP_CPP(common_MOC
   DataHistoryQueryTask.hh
   DataListModel.hh
   DataQueryTask.hh
+  DeleteTaskWhenDone.hh
   DianaHelper.hh
   EditAccess.hh
   HqcApplication.hh
@@ -145,8 +150,8 @@ QT4_WRAP_CPP(common_MOC
   ObsColumn.hh
   ObsDelegate.hh
   ObsPgmQueryTask.hh
+  ObsPgmRequest.hh
   ObsTableModel.hh
-  ParamQueryTask.hh
   QtKvService.hh
   QueryTaskAccess.hh
   QueryTaskHelper.hh
@@ -154,10 +159,8 @@ QT4_WRAP_CPP(common_MOC
   SignalRequest.hh
   SignalTask.hh
   SimpleBuffer.hh
-  StationQueryTask.hh
   TimeSpanControl.hh
   ToolInterpolate.hh
-  TypesQueryTask.hh
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

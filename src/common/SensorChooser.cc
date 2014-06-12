@@ -190,7 +190,7 @@ void SensorChooser::onStationEdited(const QString&)
     goodStation &= KvMetaDataBuffer::instance()->isKnownStation(stationId);
 
   if (goodStation) {
-    const KvMetaDataBuffer::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
       if (p == kvalobs::PARAMID_V4S or p == kvalobs::PARAMID_V5S or p == kvalobs::PARAMID_V6S)
@@ -221,7 +221,7 @@ void SensorChooser::onParameterSelected(int)
   bool goodParam = paramId >= 0;
   std::set<int> stationTypes;
   if (goodParam) {
-    const KvMetaDataBuffer::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
       if (p == paramId)
@@ -252,7 +252,7 @@ void SensorChooser::onTypeSelected(int)
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   std::set<int> levels;
   if (good) {
-    const KvMetaDataBuffer::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID(), t = op.typeID();
       if ((paramId == p and typeId == t)
@@ -285,7 +285,7 @@ void SensorChooser::onLevelSelected(int)
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   int maxSensor = 0;
   if (good) {
-    const KvMetaDataBuffer::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID(), t = op.typeID();
       if (level == op.level()

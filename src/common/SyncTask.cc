@@ -1,7 +1,7 @@
 
 #include "SyncTask.hh"
 
-#include "SignalTask.hh"
+#include "WrapperTask.hh"
 #include "util/Synchronizer.hh"
 
 #include <boost/make_shared.hpp>

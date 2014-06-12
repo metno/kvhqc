@@ -20,22 +20,4 @@ Q_SIGNALS:
   void done();
 };
 
-// ########################################################################
-
-class WrapperTask : public SignalTask
-{ Q_OBJECT;
-public:
-  WrapperTask(QueryTask* wrapped);
-  ~WrapperTask();
-  
-  QString querySql(QString dbversion) const;
-  void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
-  void notifyError(QString message);
-  void notifyDone();
-  
-private:
-  QueryTask* mWrapped;
-};
-
 #endif // SIGNALTASK_HH

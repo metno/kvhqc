@@ -41,11 +41,12 @@ public:
 
   /*! Called when handler finished processing the task.
    *
-   * This will not be called when dropTask returned true.
+   * This will not be called when QueryTaskHandler::dropTask returned
+   * true.
    *
-   * After this is the last call from the task handler on this object,
-   * and after this call the handler will not hold a reference to the
-   * task any more.
+   * This is the last call from the task handler on this object, and
+   * after this call the handler will not hold a reference to the task
+   * any more.
    */
   virtual void notifyDone();
 

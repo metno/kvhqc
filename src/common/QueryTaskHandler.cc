@@ -30,6 +30,12 @@ QueryTaskThread::~QueryTaskThread()
   mCondition.wakeOne();
   mMutex.unlock();
   wait();
+
+  while (not mQueue.empty()) {
+    QueryTask* task = mQueue.top();
+    task->notifyDone();
+    mQueue.pop();
+  }
 }
 
 void QueryTaskThread::enqueueTask(QueryTask* task)
@@ -109,10 +115,12 @@ QueryTaskHandler::~QueryTaskHandler()
 void QueryTaskHandler::postTask(QueryTask_x task)
 {
   METLIBS_LOG_SCOPE();
-  if (mThread)
+  if (mThread) {
     mThread->enqueueTask(task);
-  else
+  } else {
     mRunner->run(task);
+    task->notifyDone();
+  }
 }
 
 // ------------------------------------------------------------------------

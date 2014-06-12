@@ -11,11 +11,11 @@ bool initMetaType = false;
 } // namespace anonymous
 
 StationQueryTask::StationQueryTask(size_t priority)
-  : QueryTask(priority)
+  : SignalTask(priority)
 {
   METLIBS_LOG_SCOPE();
   if (not initMetaType) {
-    qRegisterMetaType<kvStation_v>("kvStation_v");
+    qRegisterMetaType<hqc::kvStation_v>("kvStation_v");
     initMetaType = true;
   }
 }
@@ -50,9 +50,4 @@ void StationQueryTask::notifyRow(const ResultRow& row)
   mStations.push_back(kvalobs::kvStation(stationid, lat, lon, height, maxspeed,
           name, wmonr, nationalnr, icaoid, call_sign, stationstr, environmentid,
           is_static, fromtime));
-}
-
-void StationQueryTask::notifyStatus(int status)
-{
-  Q_EMIT queryStatus(status);
 }

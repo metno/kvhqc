@@ -3,17 +3,16 @@
 #define LIB_KVHELPERS_HH 1
 
 #include "KvMetaDataBuffer.hh"
-#include "ObsPgmQueryTask.hh"
+#include "KvTypedefs.hh"
 #include "Sensor.hh"
-#include "StationQueryTask.hh"
 
 class KvalobsData;
+class ObsPgmRequest;
 HQC_TYPEDEF_P(KvalobsData);
 class ObsData;
 HQC_TYPEDEF_P(ObsData);
 
-#include <set>
-#include <vector>
+#include <string>
 
 namespace kvalobs {
 class kvControlInfo;
@@ -82,20 +81,20 @@ std::string isNorwegianStationIdSQL(const std::string& stationid_column);
 
 int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
 
-StationQueryTask::kvStation_v findNeighborStations(int stationId, float maxDistanceKm = 100);
-ObsPgmQueryTask:: int_s findNeighborStationIds(int stationId, float maxDistanceKm = 100);
+hqc::kvStation_v findNeighborStations(int stationId, float maxDistanceKm = 100);
+hqc::int_s findNeighborStationIds(int stationId, float maxDistanceKm = 100);
 
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
-    const StationQueryTask::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors);
-void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const TimeSpan& time,
+void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
+    const hqc::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors);
+void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
     const ObsPgmRequest* obsPgms, int maxNeighbors);
 Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
-    const ObsPgmRequest* obsPgms, const StationQueryTask::kvStation_v& neighborStations);
+    const ObsPgmRequest* obsPgms, const hqc::kvStation_v& neighborStations);
 Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
     const ObsPgmRequest* obsPgms);
 
 bool aggregatedParameter(int paramFrom, int paramTo);
-void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
+void aggregatedParameters(int paramFrom, hqc::int_s& paramTo);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)

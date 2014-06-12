@@ -2,8 +2,11 @@
 #include "QueryTaskAccess.hh"
 
 #include "DataQueryTask.hh"
+#include "DeleteTaskWhenDone.hh"
 #include "DistributeUpdates.hh"
 #include "ObsAccept.hh"
+#include "QueryTaskHelper.hh"
+#include "WrapperTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.QueryTaskAccess"
 #include "common/ObsLogging.hh"
@@ -61,8 +64,10 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
   disconnect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
       this, SLOT(onStatus(ObsRequest_p, int)));
-  mHandler->dropTask(task);
-  delete task;
+  if (mHandler->dropTask(task))
+    delete task;
+  else
+    new DeleteTaskWhenDone(new WrapperTask(task));
   request->setTag(0);
 
   mRequests.erase(it);

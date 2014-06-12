@@ -4,7 +4,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
 #include "common/KvHelpers.hh"
-#include "common/KvMetaDataBuffer.hh"
+#include "common/ObsPgmRequest.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.StationDataList"
 #include "common/ObsLogging.hh"
@@ -83,7 +83,7 @@ void StationDataList::doSensorSwitch()
   METLIBS_LOG_TIME();
   setDefaultTimeSpan();
 
-  ObsPgmRequest::int_s stationIds;
+  hqc::int_s stationIds;
   stationIds.insert(storeSensorTime().sensor.stationId);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
@@ -114,10 +114,10 @@ void StationDataList::updateModel()
   model()->removeAllColumns();
   model()->setTimeSpan(time);
 
-  const KvMetaDataBuffer::kvObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
+  const hqc::kvObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
   for(size_t i=0; i<NWeatherParameters; ++i) {
     const int paramId = WeatherParameters[i];
-    for(KvMetaDataBuffer::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+    for(hqc::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
       const kvalobs::kvObsPgm& op = *it;
       if (paramId != op.paramID())
         continue;
@@ -131,7 +131,7 @@ void StationDataList::updateModel()
     }
   }
 
-  for(KvMetaDataBuffer::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+  for(hqc::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
     const kvalobs::kvObsPgm& op = *it;
     if (s.typeId != op.typeID())
       continue;

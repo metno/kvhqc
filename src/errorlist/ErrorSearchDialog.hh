@@ -30,6 +30,7 @@
 #ifndef ERRORSEARCHDIALOG_HH
 #define ERRORSEARCHDIALOG_HH
 
+#include "common/KvTypedefs.hh"
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpan.hh"
 
@@ -37,8 +38,6 @@
 
 #include <map>
 #include <memory>
-#include <set>
-#include <vector>
 
 QT_BEGIN_NAMESPACE
 class QStandardItem;
@@ -59,8 +58,8 @@ public:
     
   TimeSpan getTimeSpan() const;
     
-  std::vector<int> getSelectedStations();
-  std::vector<int> getSelectedParameters();
+  hqc::int_v getSelectedStations();
+  hqc::int_v getSelectedParameters();
     
   void saveSettings(QSettings& settings);
   void restoreSettings(QSettings& settings);
@@ -101,7 +100,7 @@ private:
   std::auto_ptr<Ui_ErrorSearchDialog> ui;
   std::auto_ptr<QStandardItemModel> mStationModel;
 
-  std::map<QString, std::vector<int> > mParameterGroups;
+  std::map<QString, hqc::int_v > mParameterGroups;
   std::auto_ptr<ParamIdModel> mParamAvailableModel;
   std::auto_ptr<ParamIdModel> mParamSelectedModel;
 

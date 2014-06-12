@@ -33,9 +33,10 @@
 
 #include "common/EditAccess.hh"
 #include "common/Functors.hh"
+#include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/HqcApplication.hh"
+#include "common/ObsPgmRequest.hh"
 
 #include <QtCore/QSettings>
 #include <QtGui/QHeaderView>
@@ -78,8 +79,8 @@ void ErrorList::onButtonSearch()
   if (not mDialog->exec())
     return;
 
-  const std::vector<int> selectedStations = mDialog->getSelectedStations();
-  const ObsPgmRequest::int_s stationIds(selectedStations.begin(), selectedStations.end());
+  const hqc::int_v selectedStations = mDialog->getSelectedStations();
+  const hqc::int_s stationIds(selectedStations.begin(), selectedStations.end());
 
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
@@ -90,16 +91,16 @@ void ErrorList::onButtonSearch()
 void ErrorList::onObsPgmsComplete()
 {
   const TimeSpan timeLimits = mDialog->getTimeSpan();
-  const std::vector<int> selectedStations = mDialog->getSelectedStations();
-  const std::vector<int> selectedParameters = mDialog->getSelectedParameters();
+  const hqc::int_v selectedStations = mDialog->getSelectedStations();
+  const hqc::int_v selectedParameters = mDialog->getSelectedParameters();
 
   Sensor_v sensors;
 
   BOOST_FOREACH(int stationId, selectedStations) {
     BOOST_FOREACH(int paramId, selectedParameters) {
-      const KvMetaDataBuffer::kvObsPgm_v& opl = mObsPgmRequest->get(stationId);
+      const hqc::kvObsPgm_v& opl = mObsPgmRequest->get(stationId);
       Sensor sensor(stationId, paramId, 0, 0, 0);
-      std::set<int> typeIdsShown;
+      hqc::int_s typeIdsShown;
       BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
         const TimeSpan op_time(op.fromtime(), op.totime());
         if (timeLimits.intersection(op_time).undef())

@@ -25,66 +25,6 @@
 #define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
 #include "common/ObsLogging.hh"
 
-ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
-{
-  int_s request;
-  for (int_s::const_iterator itS = stationIds.begin(); itS != stationIds.end(); ++itS) {
-    const kvObsPgm_v& op = KvMetaDataBuffer::instance()->findObsPgm(*itS);
-    if (op.empty()) {
-      request.insert(*itS);
-    } else {
-      put(op);
-    }
-  }
-  if (request.empty()) {
-    mTaskHelper = 0;
-  } else {
-    ObsPgmQueryTask* ot = new ObsPgmQueryTask(request, QueryTask::PRIORITY_AUTOMATIC);
-    mTaskHelper = new QueryTaskHelper(ot);
-    connect(mTaskHelper, SIGNAL(done(SignalTask*)), this, SLOT(onTaskDone(SignalTask*)));
-  }
-}
-
-ObsPgmRequest::~ObsPgmRequest()
-{
-  delete mTaskHelper;
-}
-
-void ObsPgmRequest::post()
-{
-  if (mTaskHelper) {
-    mTaskHelper->post(hqcApp->kvalobsHandler().get());
-  } else {
-    Q_EMIT complete();
-  }
-}
-
-const ObsPgmRequest::kvObsPgm_v& ObsPgmRequest::get(int stationId) const
-{
-  const kvObsPgm_m::const_iterator it = mObsPgms.find(stationId);
-  if (it != mObsPgms.end())
-    return it->second;
-  else
-    return sEmpty;
-}
-
-void ObsPgmRequest::put(const kvObsPgm_v& op)
-{
-  for (kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
-    mObsPgms[it->stationID()].push_back(*it);
-}
-
-void ObsPgmRequest::onTaskDone(SignalTask* task)
-{
-  put(static_cast<ObsPgmQueryTask*>(task)->obsPgms());
-  Q_EMIT complete();
-}
-
-// static
-const ObsPgmRequest::kvObsPgm_v ObsPgmRequest::sEmpty;
-
-// ########################################################################
-
 KvMetaDataBuffer* KvMetaDataBuffer::sInstance = 0;
 
 KvMetaDataBuffer::KvMetaDataBuffer()
@@ -101,26 +41,24 @@ KvMetaDataBuffer::KvMetaDataBuffer()
 
 KvMetaDataBuffer::~KvMetaDataBuffer()
 {
-#if 0
-  // FIXME this is called after eol of hqcApp->kvalobsHandler()
   dropStations();
   dropParams();
   dropTypes();
-#endif
+
   sInstance = 0;
 }
 
 bool KvMetaDataBuffer::isKnownStation(int id)
 {
-  const kvStation_v& all = allStations();
-  kvStation_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvStation_lt_id());
+  const hqc::kvStation_v& all = allStations();
+  hqc::kvStation_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvStation_lt_id());
   return (it != all.end() and it->stationID() == id);
 }
 
 const kvalobs::kvStation& KvMetaDataBuffer::findStation(int id)
 {
-  const kvStation_v& all = allStations();
-  kvStation_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvStation_lt_id());
+  const hqc::kvStation_v& all = allStations();
+  hqc::kvStation_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvStation_lt_id());
   if (it != all.end() and it->stationID() == id)
     return *it;
   throw std::runtime_error(miutil::StringBuilder() << "station " << id << "' not found");
@@ -128,23 +66,23 @@ const kvalobs::kvStation& KvMetaDataBuffer::findStation(int id)
 
 const std::vector<kvalobs::kvStation>& KvMetaDataBuffer::allStations()
 {
-  static kvStation_v empty;
+  static hqc::kvStation_v empty;
   if (mTaskStations and mHaveStations)
-    return mTaskStations->stations();
+    return static_cast<const StationQueryTask*>(mTaskStations->task())->stations();
   return empty;
 }
 
 bool KvMetaDataBuffer::isKnownParam(int id)
 {
-  const kvParam_v& all = allParams();
-  kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
+  const hqc::kvParam_v& all = allParams();
+  hqc::kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
   return (it != all.end() and it->paramID() == id);
 }
 
 const kvalobs::kvParam& KvMetaDataBuffer::findParam(int id)
 {
-  const kvParam_v& all = allParams();
-  kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
+  const hqc::kvParam_v& all = allParams();
+  hqc::kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
   if (it != all.end() and it->paramID() == id)
     return *it;
   throw std::runtime_error(miutil::StringBuilder() << "param " << id << "' not found");
@@ -152,16 +90,16 @@ const kvalobs::kvParam& KvMetaDataBuffer::findParam(int id)
 
 const std::vector<kvalobs::kvParam>& KvMetaDataBuffer::allParams()
 {
-  static kvParam_v empty;
+  static hqc::kvParam_v empty;
   if (mTaskParams and mHaveParams)
-    return mTaskParams->params();
+    return static_cast<const ParamQueryTask*>(mTaskParams->task())->params();
   return empty;
 }
 
 std::string KvMetaDataBuffer::findParamName(int id)
 {
-  const kvParam_v& all = allParams();
-  kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
+  const hqc::kvParam_v& all = allParams();
+  hqc::kvParam_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvParam_lt_id());
   if (it != all.end() and it->paramID() == id)
     return it->name();
   
@@ -199,31 +137,31 @@ CachedParamLimits::ParamLimit KvMetaDataBuffer::checkPhysicalLimits(const Sensor
 
 bool KvMetaDataBuffer::isKnownType(int id)
 {
-  const kvTypes_v& all = allTypes();
-  kvTypes_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvTypes_lt_id());
+  const hqc::kvTypes_v& all = allTypes();
+  hqc::kvTypes_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvTypes_lt_id());
   return (it != all.end() and it->typeID() == id);
 }
 
 const kvalobs::kvTypes& KvMetaDataBuffer::findType(int id)
 {
-  const kvTypes_v& all = allTypes();
-  kvTypes_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvTypes_lt_id());
+  const hqc::kvTypes_v& all = allTypes();
+  hqc::kvTypes_v::const_iterator it = std::lower_bound(all.begin(), all.end(), id, Helpers::kvTypes_lt_id());
   if (it != all.end() and it->typeID() == id)
     return *it;
   throw std::runtime_error(miutil::StringBuilder() << "type " << id << "' not found");
 }
 
-const std::vector<kvalobs::kvTypes>& KvMetaDataBuffer::allTypes()
+const hqc::kvTypes_v& KvMetaDataBuffer::allTypes()
 {
-  static kvTypes_v empty;
+  static hqc::kvTypes_v empty;
   if (mTaskTypes and mHaveTypes)
-    return mTaskTypes->types();
+    return static_cast<const TypesQueryTask*>(mTaskTypes->task())->types();
   return empty;
 }
 
-const KvMetaDataBuffer::kvObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
+const hqc::kvObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
 {
-  static kvObsPgm_v empty;
+  static hqc::kvObsPgm_v empty;
 
   const kvObsPgm_m::iterator it = mObsPgms.find(stationid);
   if (it != mObsPgms.end())
@@ -232,46 +170,35 @@ const KvMetaDataBuffer::kvObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
   return empty;
 }
 
-void KvMetaDataBuffer::putObsPgm(const kvObsPgm_v& op)
+void KvMetaDataBuffer::putObsPgm(const hqc::kvObsPgm_v& op)
 {
-  for (kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
+  for (hqc::kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
     mObsPgms[it->stationID()].push_back(*it);
 }
 
-void KvMetaDataBuffer::statusStations(int status)
+void KvMetaDataBuffer::taskDoneStations()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  if (status == QueryTask::COMPLETE) {
-    mHaveStations = true;
-  } else if (status > QueryTask::COMPLETE) {
-    HQC_LOG_ERROR("error while retrieving station list");
-    mHaveStations = true;
-  }
+  mHaveStations = true;
   sendComplete();
 }
 
-void KvMetaDataBuffer::statusParams(int status)
+void KvMetaDataBuffer::taskDoneParams()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  if (status >= QueryTask::COMPLETE) {
-    mHaveParams = true;
+  mHaveParams = true;
 
-    mCodeParams.clear();
-    BOOST_FOREACH(const kvalobs::kvParam& p, allParams()) {
-      if (p.unit().find("kode") != std::string::npos) {
-        mCodeParams.insert(p.paramID());
-      }
+  mCodeParams.clear();
+  BOOST_FOREACH(const kvalobs::kvParam& p, allParams()) {
+    if (p.unit().find("kode") != std::string::npos) {
+      mCodeParams.insert(p.paramID());
     }
   }
 
   sendComplete();
 }
 
-void KvMetaDataBuffer::statusTypes(int status)
+void KvMetaDataBuffer::taskDoneTypes()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  if (status >= QueryTask::COMPLETE)
-    mHaveTypes = true;
+  mHaveTypes = true;
   sendComplete();
 }
 
@@ -285,57 +212,51 @@ void KvMetaDataBuffer::fetchStations()
 {
   METLIBS_LOG_SCOPE();
   dropStations();
-  mTaskStations = new StationQueryTask(QueryTask::PRIORITY_AUTOMATIC);
-  connect(mTaskStations, SIGNAL(queryStatus(int)), this, SLOT(statusStations(int)));
-  hqcApp->kvalobsHandler()->postTask(mTaskStations);
+
+  StationQueryTask* q = new StationQueryTask(QueryTask::PRIORITY_AUTOMATIC);
+  mTaskStations = new QueryTaskHelper(q);
+  connect(mTaskStations, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneStations()));
+  mTaskStations->post(hqcApp->kvalobsHandler().get());
 }
 
 void KvMetaDataBuffer::fetchParams()
 {
   METLIBS_LOG_SCOPE();
   dropParams();
-  mTaskParams = new ParamQueryTask(QueryTask::PRIORITY_AUTOMATIC);
-  connect(mTaskParams, SIGNAL(queryStatus(int)), this, SLOT(statusParams(int)));
-  hqcApp->kvalobsHandler()->postTask(mTaskParams);
+
+  ParamQueryTask* q = new ParamQueryTask(QueryTask::PRIORITY_AUTOMATIC);
+  mTaskParams = new QueryTaskHelper(q);
+  connect(mTaskParams, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneParams()));
+  mTaskParams->post(hqcApp->kvalobsHandler().get());
 }
 
 void KvMetaDataBuffer::fetchTypes()
 {
   METLIBS_LOG_SCOPE();
   dropTypes();
-  mTaskTypes = new TypesQueryTask(QueryTask::PRIORITY_AUTOMATIC);
-  connect(mTaskTypes, SIGNAL(queryStatus(int)), this, SLOT(statusTypes(int)));
-  hqcApp->kvalobsHandler()->postTask(mTaskTypes);
+
+  TypesQueryTask* q = new TypesQueryTask(QueryTask::PRIORITY_AUTOMATIC);
+  mTaskTypes = new QueryTaskHelper(q);
+  connect(mTaskTypes, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneTypes()));
+  mTaskTypes->post(hqcApp->kvalobsHandler().get());
 }
 
 void KvMetaDataBuffer::dropStations()
 {
-  METLIBS_LOG_SCOPE();
-  if (mTaskStations) {
-    hqcApp->kvalobsHandler()->dropTask(mTaskStations);
-    delete mTaskStations;
-    mTaskStations = 0;
-  }
+  delete mTaskStations;
+  mTaskStations = 0;
 }
 
 void KvMetaDataBuffer::dropParams()
 {
-  METLIBS_LOG_SCOPE();
-  if (mTaskParams) {
-    hqcApp->kvalobsHandler()->dropTask(mTaskParams);
-    delete mTaskParams;
-    mTaskParams = 0;
-  }
+  delete mTaskParams;
+  mTaskParams = 0;
 }
 
 void KvMetaDataBuffer::dropTypes()
 {
-  METLIBS_LOG_SCOPE();
-  if (mTaskTypes) {
-    hqcApp->kvalobsHandler()->dropTask(mTaskTypes);
-    delete mTaskTypes;
-    mTaskTypes = 0;
-  }
+  delete mTaskTypes;
+  mTaskTypes = 0;
 }
 
 void KvMetaDataBuffer::reload()
