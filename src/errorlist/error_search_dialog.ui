@@ -14,7 +14,7 @@
    <string>Error Search</string>
   </property>
   <property name="windowIcon">
-   <iconset>icons:search_red.svg</iconset>
+  <iconset>icons:search_red.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_6">
    <property name="spacing">

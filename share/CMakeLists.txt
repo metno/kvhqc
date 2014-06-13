@@ -18,6 +18,7 @@ INSTALL(FILES
   images/earlier.svg
   images/error.svg
   images/editor.svg
+  images/filter.svg
   images/forget.svg
   images/history.svg
   images/hqc_logo.svg

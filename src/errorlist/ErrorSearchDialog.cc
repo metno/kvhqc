@@ -91,7 +91,7 @@ class StationFilterProxyModel : public QSortFilterProxyModel
 public:
   StationFilterProxyModel(QObject* parent=0)
     : QSortFilterProxyModel(parent) { }
-  
+
 protected:
   bool filterAcceptsRow(int row, const QModelIndex &parent) const;
 };
