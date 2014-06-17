@@ -105,6 +105,7 @@ SearchWindow::SearchWindow(QWidget* parent)
   , mId(findId())
 {
   METLIBS_LOG_TIME();
+  setAttribute(Qt::WA_DeleteOnClose, true);
   setWindowTitle(tr("HQC Search %1").arg(hqcApp->instanceName()));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
   resize(975, 700);
@@ -139,6 +140,7 @@ SearchWindow::SearchWindow(QWidget* parent)
 
 SearchWindow::~SearchWindow()
 {
+  METLIBS_LOG_SCOPE();
   writeSettings();
   releaseId(mId);
 }
