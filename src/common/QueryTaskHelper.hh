@@ -3,6 +3,7 @@
 #define COMMON_QUERYTASKHELPER_HH 1
 
 #include <QObject>
+#include <boost/shared_ptr.hpp>
 
 class SignalTask;
 class QueryTaskHandler;
@@ -24,6 +25,9 @@ public:
   /*! Post the task in the handler's queue.
    */
   void post(QueryTaskHandler* handler);
+
+  void post(boost::shared_ptr<QueryTaskHandler> handler)
+    { post(handler.get()); }
 
   /*! Drop the task from the handler's queue. Even if the task is
    *  already being processed, the done signal will not be forwarded

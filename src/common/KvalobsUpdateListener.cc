@@ -67,7 +67,7 @@ void KvalobsUpdateListener::reSubscribe()
 
 void KvalobsUpdateListener::doReSubscribe()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME();
   if (not mKvServiceSubscriberID.empty()) {
     qtKvService()->unsubscribe(mKvServiceSubscriberID);
     mKvServiceSubscriberID = "";

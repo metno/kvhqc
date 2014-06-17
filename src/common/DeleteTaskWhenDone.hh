@@ -10,6 +10,7 @@ class DeleteTaskWhenDone : public QObject
 { Q_OBJECT;
 public:
   DeleteTaskWhenDone(SignalTask* t);
+  ~DeleteTaskWhenDone();
 
 private Q_SLOTS:
   void onQueryDone();

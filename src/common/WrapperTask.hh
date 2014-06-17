@@ -15,6 +15,9 @@ public:
   void notifyStatus(int status);
   void notifyError(QString message);
   void notifyDone();
+
+  QueryTask* wrapped() const
+    { return mWrapped; }
   
 private:
   QueryTask* mWrapped;

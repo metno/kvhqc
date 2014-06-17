@@ -11,6 +11,7 @@ class ModelQueryTask : public QObject, public QueryTask
 { Q_OBJECT;
 public:
   ModelQueryTask(const SensorTime_v& sensorTimes, size_t priority);
+  ~ModelQueryTask();
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);

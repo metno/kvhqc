@@ -71,6 +71,7 @@ ErrorList::ErrorList(QWidget* parent)
 
 ErrorList::~ErrorList()
 {
+  METLIBS_LOG_SCOPE();
   delete mObsPgmRequest;
 }
 

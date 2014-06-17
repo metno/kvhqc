@@ -141,6 +141,7 @@ ErrorSearchDialog::ErrorSearchDialog(QWidget* parent)
 
 ErrorSearchDialog::~ErrorSearchDialog()
 {
+  METLIBS_LOG_SCOPE();
 }
 
 void ErrorSearchDialog::changeEvent(QEvent *event)

@@ -112,6 +112,7 @@ ErrorListModel::ErrorTreeItem::ErrorTreeItem()
 
 ErrorListModel::ErrorTreeItem::~ErrorTreeItem()
 {
+  METLIBS_LOG_SCOPE();
   qDeleteAll(mChildren);
 }
 
@@ -137,6 +138,7 @@ ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
 
 ErrorListModel::~ErrorListModel()
 {
+  METLIBS_LOG_SCOPE();
   delete mRootItem;
 }
 

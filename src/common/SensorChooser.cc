@@ -101,8 +101,8 @@ int SensorChooser::getParamId() const
 void SensorChooser::setParamId(int pid)
 {
   METLIBS_LOG_SCOPE();
-  const std::vector<int>& params = paramModel()->values();
-  const std::vector<int>::const_iterator it = std::find(params.begin(), params.end(), pid);
+  const hqc::int_v& params = paramModel()->values();
+  const hqc::int_v::const_iterator it = std::find(params.begin(), params.end(), pid);
   if (it != params.end()) {
     const int idx = it - params.begin();
     mParam->setCurrentIndex(idx);
@@ -125,8 +125,8 @@ int SensorChooser::getTypeId() const
 void SensorChooser::setTypeId(int tid)
 {
   METLIBS_LOG_SCOPE();
-  const std::vector<int>& types = typeModel()->values();
-  const std::vector<int>::const_iterator it = std::find(types.begin(), types.end(), tid);
+  const hqc::int_v& types = typeModel()->values();
+  const hqc::int_v::const_iterator it = std::find(types.begin(), types.end(), tid);
   if (it != types.end()) {
     const int idx = it - types.begin();
     mType->setCurrentIndex(idx);
@@ -163,7 +163,7 @@ void SensorChooser::setLevel(int level)
   }
 }
 
-void SensorChooser::setLevels(const std::set<int>& levels)
+void SensorChooser::setLevels(const hqc::int_s& levels)
 {
   mLevel->clear();
   if (levels.find(0) == levels.end())
@@ -182,7 +182,7 @@ void SensorChooser::setMaxSensor(int maxSensor)
 void SensorChooser::onStationEdited(const QString&)
 {
   METLIBS_LOG_SCOPE();
-  std::set<int> stationParams;
+  hqc::int_s stationParams;
 
   bool goodStation = false;
   const int stationId = mStation->text().toInt(&goodStation);
@@ -206,7 +206,7 @@ void SensorChooser::onStationEdited(const QString&)
   mParam->setEnabled(goodStation);
 
   const int paramId = getParamId();
-  paramModel()->setValues(std::vector<int>(stationParams.begin(), stationParams.end()));
+  paramModel()->setValues(hqc::int_v(stationParams.begin(), stationParams.end()));
   setParamId(paramId);
 
   onParameterSelected(0);
@@ -219,7 +219,7 @@ void SensorChooser::onParameterSelected(int)
   const int paramId   = getParamId();
 
   bool goodParam = paramId >= 0;
-  std::set<int> stationTypes;
+  hqc::int_s stationTypes;
   if (goodParam) {
     const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
@@ -235,7 +235,7 @@ void SensorChooser::onParameterSelected(int)
   mType->setEnabled(goodParam);
 
   const int typeId = getTypeId();
-  typeModel()->setValues(std::vector<int>(stationTypes.begin(), stationTypes.end()));
+  typeModel()->setValues(hqc::int_v(stationTypes.begin(), stationTypes.end()));
   setTypeId(typeId);
 
   onTypeSelected(0);
@@ -250,7 +250,7 @@ void SensorChooser::onTypeSelected(int)
   METLIBS_LOG_DEBUG(LOGVAL(typeId));
 
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
-  std::set<int> levels;
+  hqc::int_s levels;
   if (good) {
     const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {

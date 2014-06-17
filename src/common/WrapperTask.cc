@@ -1,14 +1,23 @@
 
 #include "WrapperTask.hh"
 
+#define MILOGGER_CATEGORY "kvhqc.WrapperTask"
+#include "common/ObsLogging.hh"
+
+LOG_CONSTRUCT_COUNTER;
+
 WrapperTask::WrapperTask(QueryTask* wrapped)
   : SignalTask(wrapped->priority())
   , mWrapped(wrapped)
 {
+  METLIBS_LOG_SCOPE("wrapped=" << mWrapped);
+  LOG_CONSTRUCT();
 }
 
 WrapperTask::~WrapperTask()
 {
+  METLIBS_LOG_SCOPE("wrapped=" << mWrapped);
+  LOG_DESTRUCT();
   delete mWrapped;
 }
 
@@ -36,6 +45,7 @@ void WrapperTask::notifyError(QString message)
 
 void WrapperTask::notifyDone()
 {
+  METLIBS_LOG_SCOPE("this=" << this << " wrapped=" << mWrapped);
   mWrapped->notifyDone();
   SignalTask::notifyDone();
 }

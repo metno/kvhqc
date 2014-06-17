@@ -9,6 +9,8 @@
 #define MILOGGER_CATEGORY "kvhqc.ModelQueryTask"
 #include "common/ObsLogging.hh"
 
+LOG_CONSTRUCT_COUNTER;
+
 namespace /*anonymous*/ {
 
 inline timeutil::ptime my_qsql_time(const std::string& s)
@@ -26,10 +28,17 @@ ModelQueryTask::ModelQueryTask(const SensorTime_v& sensorTimes, size_t priority)
   , mSensorTimes(sensorTimes)
 {
   METLIBS_LOG_SCOPE();
+  LOG_CONSTRUCT();
   if (not initMetaType) {
     qRegisterMetaType<ModelData_pv>("ModelData_pv");
     initMetaType = true;
   }
+}
+
+ModelQueryTask::~ModelQueryTask()
+{
+  METLIBS_LOG_SCOPE();
+  LOG_DESTRUCT();
 }
 
 QString ModelQueryTask::querySql(QString dbversion) const
@@ -43,7 +52,6 @@ QString ModelQueryTask::querySql(QString dbversion) const
 
 void ModelQueryTask::notifyRow(const ResultRow& row)
 {
-  METLIBS_LOG_SCOPE();
   int col = 0;
 
   SensorTime st;

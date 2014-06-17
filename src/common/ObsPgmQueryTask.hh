@@ -15,6 +15,7 @@ public:
   typedef std::set<int> int_s;
 
   ObsPgmQueryTask(const int_s& stationIds, size_t priority);
+  ~ObsPgmQueryTask();
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);

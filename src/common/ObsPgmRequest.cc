@@ -10,8 +10,12 @@
 #define MILOGGER_CATEGORY "kvhqc.ObsPgmRequest"
 #include "util/HqcLogging.hh"
 
+LOG_CONSTRUCT_COUNTER;
+
 ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
 {
+  METLIBS_LOG_SCOPE();
+  LOG_CONSTRUCT();
   hqc::int_s request;
   for (hqc::int_s::const_iterator itS = stationIds.begin(); itS != stationIds.end(); ++itS) {
     const hqc::kvObsPgm_v& op = KvMetaDataBuffer::instance()->findObsPgm(*itS);
@@ -32,6 +36,8 @@ ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
 
 ObsPgmRequest::~ObsPgmRequest()
 {
+  METLIBS_LOG_SCOPE();
+  LOG_DESTRUCT();
   delete mTaskHelper;
 }
 

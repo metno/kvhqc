@@ -5,6 +5,8 @@
 #include "ObsAccess.hh"
 #include "QueryTaskHandler.hh"
 
+class QueryTaskHelper;
+
 class QueryTaskAccess : public QObject, public ObsAccess
 { Q_OBJECT;
 public:
@@ -19,7 +21,6 @@ protected:
     { return mRequests; }
 
   void distributeUpdates(const ObsData_pv& updated, const ObsData_pv& inserted, const SensorTime_v& dropped);
-  QueryTask* taskForRequest(ObsRequest_p request);
 
   QueryTaskHandler_p handler() const
     { return mHandler; }
@@ -30,6 +31,7 @@ private Q_SLOTS:
 
 private:
   bool isKnownRequest(ObsRequest_p request) const;
+  QueryTaskHelper* taskForRequest(ObsRequest_p request);
 
 private:
   QueryTaskHandler_p mHandler;

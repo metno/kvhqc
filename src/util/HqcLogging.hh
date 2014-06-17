@@ -29,4 +29,17 @@ extern bool HqcLoggingWarnOrError;
 #define LOGMYTYPE()                             \
   LOGTYPE(*this)
 
+#define LOG_CONSTRUCT_COUNTER \
+  namespace { int count_contruct = 0; }
+
+#define LOG_CONSTRUCT() \
+  do { count_contruct += 1;                                             \
+    METLIBS_LOG_DEBUG("this=" << this << " count=" << count_contruct);  \
+  } while(0)
+  
+#define LOG_DESTRUCT() \
+  do { count_contruct -= 1;                                             \
+    METLIBS_LOG_DEBUG("this=" << this << " count=" << count_contruct);  \
+  } while(0)
+
 #endif // HQC_LOGGING_HH

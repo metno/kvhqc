@@ -26,15 +26,17 @@ QueryTaskAccess::~QueryTaskAccess()
 
 // ------------------------------------------------------------------------
 
-QueryTask* QueryTaskAccess::taskForRequest(ObsRequest_p request)
+QueryTaskHelper* QueryTaskAccess::taskForRequest(ObsRequest_p request)
 {
-  DataQueryTask* task = new DataQueryTask(request, 10);
+  DataQueryTask* task = new DataQueryTask(request, QueryTask::PRIORITY_INTERACTIVE);
   connect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
   connect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
       this, SLOT(onStatus(ObsRequest_p, int)));
-  request->setTag(task);
-  return task;
+
+  QueryTaskHelper* helper = new QueryTaskHelper(new WrapperTask(task));
+  request->setTag(helper);
+  return helper;
 }
 
 // ------------------------------------------------------------------------
@@ -43,7 +45,17 @@ void QueryTaskAccess::postRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
   mRequests.push_back(request);
-  mHandler->postTask(taskForRequest(request));
+  taskForRequest(request)->post(mHandler);
+}
+
+// ------------------------------------------------------------------------
+
+namespace {
+const DataQueryTask* unwrapTask(QueryTaskHelper* helper)
+{
+  const WrapperTask* wt = static_cast<const WrapperTask*>(helper->task());
+  return static_cast<const DataQueryTask*>(wt->wrapped());
+}
 }
 
 // ------------------------------------------------------------------------
@@ -59,15 +71,13 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
     return;
   }
 
-  DataQueryTask* task = static_cast<DataQueryTask*>(request->tag());
+  QueryTaskHelper* helper = static_cast<QueryTaskHelper*>(request->tag());
+  const DataQueryTask* task = unwrapTask(helper);
   disconnect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
   disconnect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
       this, SLOT(onStatus(ObsRequest_p, int)));
-  if (mHandler->dropTask(task))
-    delete task;
-  else
-    new DeleteTaskWhenDone(new WrapperTask(task));
+  delete helper;
   request->setTag(0);
 
   mRequests.erase(it);

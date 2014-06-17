@@ -5,6 +5,7 @@
 #include "HqcApplication.hh"
 #include "ModelQueryTask.hh"
 #include "QueryTaskHandler.hh"
+#include "QueryTaskHelper.hh"
 #include "WrapperTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
@@ -64,11 +65,20 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
     connect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
 
-    request->setTag(task);
-    hqcApp->kvalobsHandler()->postTask(task);
+    QueryTaskHelper* helper = new QueryTaskHelper(new WrapperTask(task));
+    request->setTag(helper);
+    helper->post(hqcApp->kvalobsHandler());
   } else {
     request->notifyStatus(QueryTask::COMPLETE);
   }
+}
+
+namespace {
+const ModelQueryTask* unwrapTask(QueryTaskHelper* helper)
+{
+  const WrapperTask* wt = static_cast<const WrapperTask*>(helper->task());
+  return static_cast<const ModelQueryTask*>(wt->wrapped());
+}
 }
 
 void KvalobsModelAccess::dropRequest(ModelRequest_p request)
@@ -80,21 +90,18 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
     return;
   }
 
-  ModelQueryTask* task = static_cast<ModelQueryTask*>(request->tag());
-  if (task) {
+  if (QueryTaskHelper* helper = static_cast<QueryTaskHelper*>(request->tag())) {
     // request has no tag if it was fulfilled from the cache
 
-    request->setTag(0);
+    const ModelQueryTask* task = unwrapTask(helper);
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         request.get(), SIGNAL(notifyData(const ModelData_pv&)));
     disconnect(task, SIGNAL(queryStatus(int)),
         request.get(), SLOT(notifyStatus(int)));
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
-    if (hqcApp->kvalobsHandler()->dropTask(task))
-      delete task;
-    else
-      new DeleteTaskWhenDone(new WrapperTask(task));
+    delete helper;
+    request->setTag(0);
   }
 
   mRequests.erase(it);

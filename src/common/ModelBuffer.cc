@@ -8,21 +8,26 @@
 #define MILOGGER_CATEGORY "kvhqc.ModelBuffer"
 #include "ObsLogging.hh"
 
+LOG_CONSTRUCT_COUNTER;
+
 ModelBuffer::ModelBuffer(ModelAccess_p ma)
   : mMA(ma)
 {
   METLIBS_LOG_SCOPE();
+  LOG_CONSTRUCT();
 }
 
 ModelBuffer::~ModelBuffer()
 {
   METLIBS_LOG_SCOPE();
+  LOG_DESTRUCT();
   if (mRequest)
     dropRequest();
 }
 
 ModelData_p ModelBuffer::get(const SensorTime& st)
 {
+  METLIBS_LOG_SCOPE(st);
   ModelData_p c = cached(st);
   if (not c) {
     mPending.push_back(st);
@@ -34,6 +39,7 @@ ModelData_p ModelBuffer::get(const SensorTime& st)
 
 ModelData_p ModelBuffer::getSync(const SensorTime& st)
 {
+  METLIBS_LOG_SCOPE(st);
   ModelData_p c = cached(st);
   if (not c) {
     ModelRequest_p sRequest = makeRequest(SensorTime_v(1, st));
@@ -53,7 +59,7 @@ void ModelBuffer::clear()
 
 ModelData_p ModelBuffer::cached(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(st);
   ModelData_ps::const_iterator it = std::lower_bound(mCache.begin(), mCache.end(), st, lt_ModelData_p());
   if (it != mCache.end() and eq_ModelSensorTime()((*it)->sensorTime(), st))
     return *it;

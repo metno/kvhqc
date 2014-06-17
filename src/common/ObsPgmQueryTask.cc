@@ -12,15 +12,24 @@ bool initMetaType = false;
 
 } // namespace anonymous
 
+LOG_CONSTRUCT_COUNTER;
+
 ObsPgmQueryTask::ObsPgmQueryTask(const int_s& stationIds, size_t priority)
   : SignalTask(priority)
   , mStationIds(stationIds)
 {
   METLIBS_LOG_SCOPE();
+  LOG_CONSTRUCT();
   if (not initMetaType) {
     qRegisterMetaType<kvObsPgm_v>("kvObsPgm_v");
     initMetaType = true;
   }
+}
+
+ObsPgmQueryTask::~ObsPgmQueryTask()
+{
+  METLIBS_LOG_SCOPE();
+  LOG_DESTRUCT();
 }
 
 QString ObsPgmQueryTask::querySql(QString dbversion) const
@@ -41,7 +50,6 @@ QString ObsPgmQueryTask::querySql(QString dbversion) const
 
 void ObsPgmQueryTask::notifyRow(const ResultRow& row)
 {
-  METLIBS_LOG_SCOPE();
   int col = 0;
 
   const int stationid = row.getInt(col++);
