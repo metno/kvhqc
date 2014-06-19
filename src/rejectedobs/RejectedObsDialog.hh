@@ -5,25 +5,14 @@
 
 #include "common/TimeSpan.hh"
 
-#include <QtCore/qvariant.h>
-#include <QtGui/qdialog.h>
-#include <QtCore/qdatetime.h>
+#include <QtGui/QDialog>
 
-#include <utility>
-
-class Q3VBoxLayout;
-class Q3HBoxLayout;
-class Q3GridLayout;
-class QSpacerItem;
 class QLabel;
 class QDateTimeEdit;
-class QCheckBox;
 class QPushButton;
-typedef std::pair<QDateTime, QDateTime> TimeSpan;
 
 class RejectedObsDialog : public QDialog
-{
-  Q_OBJECT;
+{ Q_OBJECT;
 
 public:
   RejectedObsDialog(QWidget* parent = 0);
@@ -31,11 +20,7 @@ public:
   TimeSpan getTimeSpan() const;
 
 protected:
-  virtual void changeEvent(QEvent *event);
-
-Q_SIGNALS:
-  void rejectHide();
-  void rejectApply();
+  void changeEvent(QEvent *event);
 
 private:
   void retranslateUi();

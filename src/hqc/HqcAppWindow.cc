@@ -43,7 +43,7 @@
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 
-//#define ENABLE_REJECTEDOBS 1
+#define ENABLE_REJECTEDOBS 1
 #define ENABLE_TEXTDATA 1
 
 #ifdef ENABLE_WATCHRR
@@ -119,8 +119,6 @@ HqcAppWindow::HqcAppWindow()
 #endif // ENABLE_TEXTDATA
 
 #ifndef ENABLE_REJECTEDOBS
-  connect(ui->buttonRejected, SIGNAL(clicked()), this, SLOT(onNewRejectedObs()));
-#else
   ui->buttonRejected->setEnabled(false);
 #endif // ENABLE_REJECTEDOBS
 
@@ -183,31 +181,9 @@ void HqcAppWindow::onNewTextdata()
 
 void HqcAppWindow::onNewRejectedObs()
 {
+  METLIBS_LOG_SCOPE();
 #ifdef ENABLE_REJECTEDOBS
-  try {
-    std::list<kvalobs::kvRejectdecode> rejectList;
-    const TimeSpan t = rejdlg->getTimeSpan();
-    if (KvServiceHelper::instance()->getKvRejectDecode(rejectList, t)) {
-      std::string decoder = "comobs";
-      std::vector<kvalobs::kvRejectdecode> rejList;
-      BOOST_FOREACH(const kvalobs::kvRejectdecode& reject, rejectList) {
-        if (reject.decoder().substr(0, decoder.size()) != decoder)
-          continue;
-        if (reject.comment() == "No decoder for SMS code <12>!")
-          continue;
-          
-        METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
-        rejList.push_back(reject);
-      }
-      new Rejects(rejList, this);
-      return;
-    }
-  } catch (std::exception& e) {
-    HQC_LOG_ERROR("exception while retrieving rejectdecode data: " << e.what());
-  }
-  // reach here in case of error
-  QMessageBox::critical(this, tr("No RejectDecode"), tr("Could not read rejectdecode."),
-      QMessageBox::Ok, QMessageBox::NoButton);
+  Rejects::showRejected(this);
 #endif // ENABLE_REJECTEDOBS
 }
 

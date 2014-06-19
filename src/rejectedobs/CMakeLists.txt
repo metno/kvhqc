@@ -2,6 +2,7 @@
 SET(rejectedobs_SOURCES
   RejectedObs.cc
   RejectedObsDialog.cc
+  RejectedQueryTask.cc
 )
 
 QT4_WRAP_CPP(rejectedobs_MOC

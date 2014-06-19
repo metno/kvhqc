@@ -71,6 +71,9 @@
          <property name="text">
           <string>&amp;Rejected</string>
          </property>
+         <property name="icon">
+         <iconset>icons:rejectedobs.svg</iconset>
+         </property>
         </widget>
        </item>
        <item row="0" column="2">

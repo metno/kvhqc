@@ -85,6 +85,7 @@ SET(HQC_COMMON_LIBS
 #  weather
 #  watchrr
   errorlist
+  rejectedobs
   textdata
   common
   util

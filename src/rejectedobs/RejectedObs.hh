@@ -3,20 +3,20 @@
 #ifndef HQC_REJECTEDOBS_HH
 #define HQC_REJECTEDOBS_HH
 
+#include "common/KvTypedefs.hh"
+#include "common/TimeSpan.hh"
+
 #include <QtGui/QDialog>
 #include <QtCore/QAbstractTableModel>
-#include <QtCore/QRegExp>
-#include <memory>
-#include <vector>
 
-namespace kvalobs {
-class kvRejectdecode;
-}
+class BusyLabel;
+class QTableView;
+class QueryTaskHelper;
 
 class RejectDecodeTableModel : public QAbstractTableModel
 { Q_OBJECT;
 public:
-  RejectDecodeTableModel(const std::vector<kvalobs::kvRejectdecode>& txtList);
+  RejectDecodeTableModel(const hqc::kvRejectdecode_v& rejected);
   virtual ~RejectDecodeTableModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -25,7 +25,7 @@ public:
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
 private:
-  std::vector<kvalobs::kvRejectdecode> mRecjectList;
+  hqc::kvRejectdecode_v mRecjected;
   QRegExp mDataRegexp;
 };
 
@@ -34,16 +34,28 @@ private:
 class Rejects : public QDialog
 { Q_OBJECT;
 public:
-  Rejects(const std::vector<kvalobs::kvRejectdecode>&, QWidget* parent=0);
+  Rejects(const TimeSpan& time, QWidget* parent=0);
+  ~Rejects();
+
+  static void showRejected(QWidget* parent);
 
 protected:
   virtual void changeEvent(QEvent *event);
 
 private:
   void retranslateUi();
+  void readSettings();
+  void writeSettings();
+
+private Q_SLOTS:
+  void onQueryDone();
 
 private:
-  std::auto_ptr<RejectDecodeTableModel> mTableModel;
+  QTableView* mTableView;
+  BusyLabel* mBusy;
+
+  RejectDecodeTableModel* mTableModel;
+  QueryTaskHelper* mTask;
 };
 
 #endif // HQC_REJECTEDOBS_HH

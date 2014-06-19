@@ -174,7 +174,7 @@ void TextData::readSettings()
   QSettings settings;
   settings.beginGroup(SETTINGS_GROUP);
   if (not restoreGeometry(settings.value(SETTING_GEOMETRY).toByteArray())) {
-    METLIBS_LOG_INFO("cannot restore search window geometry");
+    METLIBS_LOG_INFO("cannot restore text data window geometry");
     resize(800, 700);
   }
   settings.endGroup();

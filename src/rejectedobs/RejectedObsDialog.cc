@@ -5,15 +5,16 @@
 #include "util/MiDateTimeEdit.hh"
 
 #include <QtCore/QEvent>
-#include <Qt3Support/Q3HBoxLayout>
-#include <Qt3Support/Q3VBoxLayout>
+#include <QtGui/QHBoxLayout>
+#include <QtGui/QVBoxLayout>
 #include <QtGui/QLabel>
-#include <QtGui/QCheckBox>
 #include <QtGui/QPushButton>
 
 RejectedObsDialog::RejectedObsDialog(QWidget* parent)
   : QDialog(parent)
 {
+  setWindowIcon(QIcon("icons:rejectedobs.svg"));
+
   textLabel1 = new QLabel(this);
   textLabel2 = new QLabel(this);
   textLabel3 = new QLabel(this);
@@ -56,9 +57,8 @@ RejectedObsDialog::RejectedObsDialog(QWidget* parent)
 
   retranslateUi();
 
-  connect(cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
-  connect(okButton,     SIGNAL(clicked()), this, SLOT(hide()));
-  connect(okButton,     SIGNAL(clicked()), this, SIGNAL(rejectApply()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(okButton,     SIGNAL(clicked()), this, SLOT(accept()));
 }
 
 void RejectedObsDialog::retranslateUi()

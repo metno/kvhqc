@@ -35,6 +35,7 @@ INSTALL(FILES
   images/later.svg
   images/redo.svg
   images/reject.svg
+  images/rejectedobs.svg
   images/singleobservation.svg
   images/timeseries.svg
   images/textdata.svg
