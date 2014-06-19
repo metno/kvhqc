@@ -9,6 +9,10 @@
 #include <QtGui/QDialog>
 #include <QtCore/QAbstractTableModel>
 
+class BusyLabel;
+class QTableView;
+class QueryTaskHelper;
+
 class TextDataTableModel : public QAbstractTableModel
 { Q_OBJECT;
 public:
@@ -29,14 +33,16 @@ private:
 class TextData : public QDialog
 { Q_OBJECT;
 public:
-  TextData(const std::vector<TxtDat>&, QWidget* parent=0);
+  TextData(const int stationId, const TimeSpan& time, QWidget* parent=0);
   ~TextData();
 
-  static void showTextData(int stationId, const TimeSpan& timeLimits, QWidget* parent);
   static void showTextData(QWidget* parent);
 
 protected:
   virtual void changeEvent(QEvent *event);
+
+private Q_SLOTS:
+  void onQueryDone();
 
 private:
   void retranslateUi();
@@ -44,7 +50,11 @@ private:
   void writeSettings();
 
 private:
-  std::auto_ptr<TextDataTableModel> mTableModel;
+  QTableView* mTableView;
+  BusyLabel* mBusy;
+
+  TextDataTableModel* mTableModel;
+  QueryTaskHelper* mTask;
 };
 
 #endif // HQC_TEXTDATATABLE_HH

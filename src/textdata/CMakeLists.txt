@@ -1,9 +1,9 @@
 
 SET(textdata_SOURCES
-  GetTextData.cc
-  GetTextData.h
   TextdataDialog.cc
   TextdataTable.cc
+  TextDataQueryTask.cc
+  TextDataQueryTask.hh
   TxtDat.hh
 )
 

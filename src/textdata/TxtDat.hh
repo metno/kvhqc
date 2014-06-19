@@ -32,7 +32,9 @@
 #define HQC_TXTDAT_HH
 
 #include "util/timeutil.hh"
+
 #include <string>
+#include <vector>
 
 struct TxtDat {
   int stationId;
@@ -42,5 +44,7 @@ struct TxtDat {
   timeutil::ptime tbtime;
   int typeId;
 };
+
+typedef std::vector<TxtDat> TxtDat_v;
 
 #endif // HQC_TXTDAT_HH

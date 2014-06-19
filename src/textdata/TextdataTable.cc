@@ -1,13 +1,15 @@
 
 #include "TextdataTable.hh"
 
-#include "GetTextData.h"
 #include "TextdataDialog.hh"
+#include "TextDataQueryTask.hh"
+
+#include "common/HqcApplication.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/KvServiceHelper.hh"
+#include "common/QueryTaskHelper.hh"
 #include "common/TimeHeader.hh"
 
-#include <kvcpp/WhichDataHelper.h>
+#include "util/BusyLabel.hh"
 
 #include <QtCore/QEvent>
 #include <QtCore/QSettings>
@@ -123,30 +125,36 @@ QVariant TextDataTableModel::headerData(int section, Qt::Orientation orientation
   return QVariant();
 }
 
-TextData::TextData(const std::vector<TxtDat>& txtList, QWidget* parent)
+TextData::TextData(const int stationId, const TimeSpan& time, QWidget* parent)
   : QDialog(parent)
-  , mTableModel(new TextDataTableModel(txtList, this))
+  , mTableModel(0)
 {
   setWindowIcon(QIcon("icons:textdata.svg"));
   setAttribute(Qt::WA_DeleteOnClose, true);
 
-  QTableView* tv = new QTableView(this);
-  tv->setModel(mTableModel.get());
-  tv->verticalHeader()->setDefaultSectionSize(20);
-  tv->verticalHeader()->hide();
-  tv->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
-  tv->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  mTableView = new QTableView(this);
+  mTableView->verticalHeader()->setDefaultSectionSize(20);
+  mTableView->verticalHeader()->hide();
+
+  mBusy = new BusyLabel(this);
 
   QVBoxLayout* topLayout = new QVBoxLayout(this);
-  topLayout->addWidget(tv);
+  topLayout->addWidget(mBusy);
+  topLayout->addWidget(mTableView);
   retranslateUi();
 
   readSettings();
+
+  mTask = new QueryTaskHelper(new TextDataQueryTask(stationId, time, QueryTask::PRIORITY_AUTOMATIC));
+  connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone()));
+  mTask->post(hqcApp->kvalobsHandler());
+  mBusy->setBusy(true);
 }
 
 TextData::~TextData()
 {
   writeSettings();
+  delete mTask;
 }
 
 void TextData::retranslateUi()
@@ -180,23 +188,20 @@ void TextData::writeSettings()
   settings.endGroup();
 }
 
-void TextData::showTextData(int stationId, const TimeSpan& timeLimits, QWidget* parent)
+void TextData::onQueryDone()
 {
-  kvservice::WhichDataHelper whichData;
-  whichData.addStation(stationId, timeLimits.t0(), timeLimits.t1());
+  delete mTableModel;
 
-  GetTextData textDataReceiver;
-  try {
-    if (KvServiceHelper::instance()->getKvData(textDataReceiver, whichData)) {
-      TextData* td = new TextData(textDataReceiver.textData(), parent);
-      td->open();
-      return;
-    }
-  } catch (std::exception& e) {
-    HQC_LOG_ERROR("exception while retrieving text data: " << e.what());
-  }
-  QMessageBox::critical(parent, tr("No Textdata"), tr("Could not read text data."),
-      QMessageBox::Ok, QMessageBox::NoButton);
+  const TextDataQueryTask* t = static_cast<const TextDataQueryTask*>(mTask->task());
+  mTableModel = new TextDataTableModel(t->textData(), this);
+  mTableView->setModel(mTableModel);
+  mTableView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  mTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+
+  mBusy->setBusy(false);
+
+  delete mTask;
+  mTask = 0;
 }
 
 void TextData::showTextData(QWidget* parent)
@@ -204,6 +209,7 @@ void TextData::showTextData(QWidget* parent)
   METLIBS_LOG_SCOPE();
   TextDataDialog dlg(parent);
   if (dlg.exec() == QDialog::Accepted) {
-    showTextData(dlg.getStationId(), dlg.getTimeSpan(), parent);
+    TextData* td = new TextData(dlg.getStationId(), dlg.getTimeSpan(), parent);
+    td->open();
   }
 }
