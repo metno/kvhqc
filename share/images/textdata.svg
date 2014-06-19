@@ -1,0 +1,20 @@
+<svg height="24" width="24">
+  <rect x="1" y="1" width="22" height="22" fill="#88E" stroke="none" />
+
+  <!-- T -->
+  <line x1="4" y1="3" x2="12" y2="3" style="stroke:black;stroke-width:1" />
+  <line x1="8" y1="3" x2="8" y2="13" style="stroke:black;stroke-width:1" />
+
+  <!-- D -->
+  <path d="M12 10
+           l 0 10
+           l 4 0
+           a 3 5, 0, 0, 0, 0 -10
+           z" style="stroke:black;stroke-width:1;fill:none;" />
+
+  <!-- TD not shown properly in Qt -->
+  <!--text x="2" y="2" style="fill:black;" font-size="18" >
+    <tspan x="2" y="16">T</tspan>
+    <tspan x="10" y="20">D</tspan>
+  </text-->
+</svg>

@@ -27,8 +27,20 @@ public:
     { return stnr; }
   TimeSpan getTimeSpan() const;
 
+public Q_SLOTS:
+  void accept();
+
 protected:
-  virtual void changeEvent(QEvent *event);
+  void changeEvent(QEvent *event);
+
+Q_SIGNALS:
+  void textDataHide();
+  void textDataApply();
+
+private Q_SLOTS:
+  void setStation(const QString& st);
+  void setFromTime(const QDateTime& dt);
+  void setToTime(const QDateTime& dt);
 
 private:
   void retranslateUi();
@@ -49,16 +61,6 @@ private:
   int stnr;
   QDateTime dtto;
   QDateTime dtfrom;
-
-public Q_SLOTS:
-  void setStation(const QString& st);
-  void setFromTime(const QDateTime& dt);
-  void setToTime(const QDateTime& dt);
-  void checkStationId();
-
-Q_SIGNALS:
-  void textDataHide();
-  void textDataApply();
 };
 
 #endif // HQC_TEXTDATADIALOG_H

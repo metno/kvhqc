@@ -37,6 +37,7 @@ INSTALL(FILES
   images/reject.svg
   images/singleobservation.svg
   images/timeseries.svg
+  images/textdata.svg
   images/undo.svg
   images/weatherstation.svg
 

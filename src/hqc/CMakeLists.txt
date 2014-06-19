@@ -9,7 +9,6 @@ SET(hqc_SOURCES
   DataList.cc
   EditVersionModel.cc
   EditVersionsView.cc
-  GetTextData.cc
   HqcAppWindow.cc
 #  HqcDianaHelper.cc
   JumpToObservation.cc
@@ -86,6 +85,7 @@ SET(HQC_COMMON_LIBS
 #  weather
 #  watchrr
   errorlist
+  textdata
   common
   util
   qtimeseries

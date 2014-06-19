@@ -19,6 +19,7 @@
 TextDataDialog::TextDataDialog(QWidget* parent)
   : QDialog(parent)
 {
+  setWindowIcon(QIcon("icons:textdata.svg"));
   stnr = 0;
 
   textLabel0 = new QLabel(this);
@@ -81,8 +82,8 @@ TextDataDialog::TextDataDialog(QWidget* parent)
 
   retranslateUi();
 
-  connect(cancelButton, SIGNAL(clicked()), this, SLOT(hide()));
-  connect(okButton,     SIGNAL(clicked()), this, SLOT(checkStationId()));
+  connect(cancelButton, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(okButton,     SIGNAL(clicked()), this, SLOT(accept()));
 }
 
 void TextDataDialog::retranslateUi()
@@ -123,11 +124,10 @@ TimeSpan TextDataDialog::getTimeSpan() const
   return TimeSpan(f, t);
 }
 
-void TextDataDialog::checkStationId()
+void TextDataDialog::accept()
 {
   if (KvMetaDataBuffer::instance()->isKnownStation(stnr)) {
-    hide();
-    Q_EMIT textDataApply();
+    QDialog::accept();
   } else {
     QMessageBox::information( this, tr("TextData"),
         tr("Illegal station number. Choose a different station number."));

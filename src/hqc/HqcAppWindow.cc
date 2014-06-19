@@ -43,13 +43,15 @@
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 
+//#define ENABLE_REJECTEDOBS 1
+#define ENABLE_TEXTDATA 1
+
 #ifdef ENABLE_WATCHRR
 #include "watchrr/StationDialog.hh"
 #include "watchrr/WatchRRDialog.hh"
 #endif // ENABLE_WATCHRR
 
 #ifdef ENABLE_TEXTDATA
-#include "textdata/TextdataDialog.hh"
 #include "textdata/TextdataTable.hh"
 #endif // ENABLE_TEXTDATA
 
@@ -112,13 +114,11 @@ HqcAppWindow::HqcAppWindow()
   statusBar()->addPermanentWidget(mKvalobsAvailable, 0);
   kvalobsAvailable(hqcApp->isKvalobsAvailable());
 
-#ifdef ENABLE_TEXTDATA
-  connect(ui->buttonTextData, SIGNAL(clicked()), this, SLOT(onNewTextdata()));
-#else
+#ifndef ENABLE_TEXTDATA
   ui->buttonTextData->setEnabled(false);
 #endif // ENABLE_TEXTDATA
 
-#ifdef ENABLE_REJECTEDOBS
+#ifndef ENABLE_REJECTEDOBS
   connect(ui->buttonRejected, SIGNAL(clicked()), this, SLOT(onNewRejectedObs()));
 #else
   ui->buttonRejected->setEnabled(false);
@@ -175,8 +175,9 @@ void HqcAppWindow::onNewSearch()
 
 void HqcAppWindow::onNewTextdata()
 {
+  METLIBS_LOG_SCOPE();
 #ifdef ENABLE_TEXTDATA
-  TextData::showTextData(txtdlg->getStationId(), txtdlg->getTimeSpan(), this);
+  TextData::showTextData(this);
 #endif
 }
 

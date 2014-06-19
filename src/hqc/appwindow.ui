@@ -51,6 +51,9 @@
          <property name="text">
           <string>&amp;Text Data</string>
          </property>
+         <property name="icon">
+         <iconset>icons:textdata.svg</iconset>
+         </property>
         </widget>
        </item>
        <item row="1" column="0">
