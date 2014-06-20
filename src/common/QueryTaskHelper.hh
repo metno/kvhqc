@@ -2,6 +2,7 @@
 #ifndef COMMON_QUERYTASKHELPER_HH
 #define COMMON_QUERYTASKHELPER_HH 1
 
+#include "DeleteTaskWhenDone.hh"
 #include <QObject>
 #include <boost/shared_ptr.hpp>
 
@@ -36,8 +37,8 @@ public:
   bool drop();
 
   /*! Access the task object. */
-  const SignalTask* task() const
-    { return mTask; }
+  SignalTask* task() const
+    { return mDeleter->task(); }
 
 private Q_SLOTS:
   void onQueryDone();
@@ -50,7 +51,7 @@ Q_SIGNALS:
 
 private:
   QueryTaskHandler* mHandler;
-  SignalTask* mTask;
+  DeleteTaskWhenDone* mDeleter;
 };
 
 #endif // COMMON_QUERYTASKHELPER_HH

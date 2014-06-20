@@ -122,6 +122,8 @@ int main( int argc, char* argv[] )
   const int r = hqc.exec();
   qkvs.stop();
   aw->finish();
+  aw.reset(0);
+  hqc.processEvents();
 
   return r;
 }
