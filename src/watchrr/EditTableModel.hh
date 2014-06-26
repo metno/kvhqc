@@ -2,12 +2,13 @@
 #ifndef EDITTABLEMODEL_HH
 #define EDITTABLEMODEL_HH
 
+#include "TaskAccess.hh"
 #include "common/Code2Text.hh"
-#include "common/ObsTableModel.hh"
+#include "WatchRRTableModel.hh"
 
-class EditTableModel : public ObsTableModel {
+class EditTableModel : public WatchRRTableModel {
 public:
-  EditTableModel(EditAccessPtr kda, const Sensor& sensor, const TimeSpan& time);
+  EditTableModel(TaskAccess_p kda, const Sensor& sensor, const TimeSpan& time, QObject* parent=0);
 
   virtual Qt::ItemFlags flags(const QModelIndex& index) const;
   virtual QVariant data(const QModelIndex& index, int role) const;
@@ -31,6 +32,7 @@ public:
 
 private:
   Sensor mSensor;
+  TimeSpan mTime;
   std::vector<float> mNewValues;
   std::vector<int> mAcceptReject;
   Code2TextCPtr mRR24Codes;

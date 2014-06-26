@@ -3,14 +3,14 @@
 
 #include "EditTableModel.hh"
 
-#include "common/AnalyseRR24.hh"
+#include "AnalyseRR24.hh"
 
 #include "ui_watchrr_edit.h"
 
 #define MILOGGER_CATEGORY "kvhqc.EditDialog"
 #include "util/HqcLogging.hh"
 
-EditDialog::EditDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
+EditDialog::EditDialog(QDialog* parent, TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
   : QDialog(parent)
   , mDA(da)
   , mEditableTime(editableTime)

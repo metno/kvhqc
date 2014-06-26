@@ -30,6 +30,13 @@ public:
   void post(boost::shared_ptr<QueryTaskHandler> handler)
     { post(handler.get()); }
 
+  /*! Post the task in the handler's queue, wait for completion.
+   */
+  void sync(QueryTaskHandler* handler);
+
+  void sync(boost::shared_ptr<QueryTaskHandler> handler)
+    { sync(handler.get()); }
+
   /*! Drop the task from the handler's queue. Even if the task is
    *  already being processed, the done signal will not be forwarded
    *  from this helper any more.

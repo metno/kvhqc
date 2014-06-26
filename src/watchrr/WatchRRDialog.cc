@@ -7,12 +7,12 @@
 #include "NeighborCardsModel.hh"
 #include "NeighborRR24Model.hh"
 #include "RedistDialog.hh"
-#include "common/AnalyseFCC.hh"
-#include "common/AnalyseRR24.hh"
+#include "AnalyseFCC.hh"
+#include "AnalyseRR24.hh"
 #include "common/KvMetaDataBuffer.hh"
+#include "common/KvHelpers.hh"
 #include "common/ObsDelegate.hh"
 #include "util/Helpers.hh"
-#include "util/BusyIndicator.hh"
 #include "util/UiHelpers.hh"
 
 #include "ui_watchrr_main.h"
@@ -39,12 +39,12 @@ namespace {
 const char SETTING_WATCHRR_GEOMETRY[] = "geometry_watchrr";
 } // anonymous namespace
 
-WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent)
+WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent)
   : QDialog(parent)
   , ui(new Ui::DialogMain)
   , mDianaHelper(0)
   , mParentDA(da)
-  , mDA(boost::make_shared<EditAccess>(mParentDA))
+  , mDA(boost::make_shared<TaskAccess>(mParentDA))
   , mSensor(sensor)
   , mTime(time)
   , mStationCard(new StationCardModel(mDA, ma, mSensor, mTime))
@@ -65,9 +65,6 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
 
   show();
 
-  Helpers::processNonUserEvents();
-  BusyIndicator wait;
-
   initializeRR24Data();
 
   QFont mono("Monospace");
@@ -81,16 +78,13 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
   ui->labelInfoRR->setText("");
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);
-  Helpers::processNonUserEvents();
 
   ui->tableNeighborRR24->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableNeighborRR24->verticalHeader()->setFont(mono);
-  Helpers::processNonUserEvents();
 
   ui->tableNeighborCards->setModel(mNeighborCards.get());
   ui->tableNeighborCards->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  Helpers::processNonUserEvents();
 
   const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();
   ui->dateNeighborCards->setMinimumDate(QDate(d0.year(), d0.month(), d0.day()));
@@ -107,8 +101,6 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
   connect(mDianaHelper.get(), SIGNAL(connection(bool)),
       this, SLOT(dianaConnection(bool)));
 
-  mDA->backendDataChanged.connect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
-
   mDianaHelper->tryConnect();
   mNeighborCards->setTime(time.t1()-boost::posix_time::hours(24));
 }
@@ -116,7 +108,6 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
 WatchRRDialog::~WatchRRDialog()
 {
   mDianaHelper.reset(0);
-  mDA->backendDataChanged.disconnect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
 
   QSettings settings;
   settings.setValue(SETTING_WATCHRR_GEOMETRY, saveGeometry());
@@ -151,11 +142,8 @@ void WatchRRDialog::initializeRR24Data()
   mEditableTime = mTime;
   mDA->newVersion();
   RR24::analyse(mDA, mSensor, mEditableTime);
-  Helpers::processNonUserEvents();
   FCC::analyse(mDA, mSensor, mEditableTime);
-  Helpers::processNonUserEvents();
   mStationCard->setRR24TimeSpan(mEditableTime);
-  Helpers::processNonUserEvents();
 }
 
 void WatchRRDialog::onSelectionChanged(const QItemSelection&, const QItemSelection&)
@@ -254,8 +242,8 @@ void WatchRRDialog::accept()
 {
   mParentDA->newVersion();
   // FIXME this is a hack to avoid complaints about data changes in parent
-  mDA->backendDataChanged.disconnect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
-  if (not mDA->sendChangesToParent(false)) {
+  // mDA->backendDataChanged.disconnect(boost::bind(&WatchRRDialog::onBackendDataChanged, this, _1, _2));
+  if (not mDA->storeToBackend()) {
     QMessageBox::critical(this,
         windowTitle(),
         tr("Sorry, your changes could not be saved and are lost!"),
@@ -268,11 +256,11 @@ void WatchRRDialog::accept()
 void WatchRRDialog::onEdit()
 {
   const Selection sel = findSelection();
-  EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
+  TaskAccess_p eda = boost::make_shared<TaskAccess>(mDA);
   EditDialog edit(this, eda, mSensor, sel.selTime, mEditableTime);
   if (edit.exec()) {
     mDA->newVersion();
-    eda->sendChangesToParent();
+    eda->storeToBackend();
     ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
@@ -282,11 +270,11 @@ void WatchRRDialog::onEdit()
 void WatchRRDialog::onRedistribute()
 {
   const Selection sel = findSelection();
-  EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
+  TaskAccess_p eda = boost::make_shared<TaskAccess>(mDA);
   RedistDialog redist(this, eda, mSensor, sel.selTime, mEditableTime);
   if (redist.exec()) {
     mDA->newVersion();
-    eda->sendChangesToParent();
+    eda->storeToBackend();
     ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
     enableSave();
     clearSelection();
@@ -333,7 +321,7 @@ void WatchRRDialog::clearSelection()
 void WatchRRDialog::enableSave()
 {
   METLIBS_LOG_SCOPE();
-  const int updates = mDA->countU(), tasks = mDA->countT();
+  const int updates = mDA->countU(), tasks = 0;// FIXME mDA->countT();
   METLIBS_LOG_DEBUG(LOGVAL(updates) << LOGVAL(tasks));
 
   ui->buttonSave->setEnabled(tasks == 0 and updates > 0);
@@ -341,12 +329,13 @@ void WatchRRDialog::enableSave()
   ui->buttonRedo->setEnabled(mDA->canRedo());
 }
 
+#if 0
 void WatchRRDialog::onDataChanged(const QModelIndex&, const QModelIndex&)
 {
   enableSave();
 }
 
-void WatchRRDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr ebs)
+void WatchRRDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, ObsData_p ebs)
 {
   if (ebs->modified() or ebs->hasTasks()) {
     QMessageBox w(this);
@@ -359,10 +348,10 @@ void WatchRRDialog::onBackendDataChanged(ObsAccess::ObsDataChange what, EditData
     QDialog::reject();
   }
 }
+#endif
 
 void WatchRRDialog::onNeighborDataDateChanged(const QDate& date)
 {
-  BusyIndicator wait;
   QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
   const timeutil::ptime& time = timeutil::from_QDateTime(qdt);
   mNeighborCards->setTime(time);

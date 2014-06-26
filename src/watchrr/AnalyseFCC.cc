@@ -1,10 +1,12 @@
 
 #include "AnalyseFCC.hh"
+#include "TaskUpdate.hh"
 
-#include "FlagChange.hh"
-#include "FlagPattern.hh"
-#include "KvHelpers.hh"
-#include "Tasks.hh"
+#include "common/FlagChange.hh"
+#include "common/FlagPattern.hh"
+#include "common/KvHelpers.hh"
+#include "common/ObsHelpers.hh"
+#include "common/Tasks.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.AnalyseFCC"
 #include "common/ObsLogging.hh"
@@ -41,7 +43,7 @@ timeutil::ptime timeWithOffset(const timeutil::ptime& t, int column)
 
 } // namespace FCC::detail
 
-void analyse(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+void analyse(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
@@ -52,9 +54,10 @@ void analyse(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
   const FlagPattern bad_fcc("fcc=[34]&fhqc=0", FlagPattern::CONTROLINFO);
 
+  ObsUpdate_pv updates;
   for(timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
     bool have_bad = false;
-    std::vector<EditDataPtr> obs(N_COLUMNS);
+    std::vector<ObsData_p> obs(N_COLUMNS);
     for(int i=0; i<detail::N_COLUMNS; ++i) {
       obs[i] = da->findE(SensorTime(sensors[i], timeWithOffset(t, i)));
       if (obs[i] and bad_fcc.matches(obs[i]->controlinfo())) {
@@ -65,14 +68,19 @@ void analyse(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
     if (have_bad) {
       METLIBS_LOG_DEBUG(LOGVAL(t));
       for(int i=0; i<N_COLUMNS; ++i) {
-        if (obs[i])
-          da->editor(obs[i])->addTask(tasks::TASK_FCC_ERROR);
+        if (obs[i]) {
+          TaskUpdate_p up = boost::static_pointer_cast<TaskUpdate>(da->createUpdate(obs[i]));
+          up->addTask(tasks::TASK_FCC_ERROR);
+          updates.push_back(up);
+        }
       }
     }
   }
+  if (not updates.empty())
+    da->storeUpdates(updates);
 }
 
-void acceptRow(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& time)
+void acceptRow(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& time)
 {
   METLIBS_LOG_SCOPE();
   using namespace detail;
@@ -80,12 +88,18 @@ void acceptRow(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& ti
   const std::vector<Sensor> sensors = makeSensors(sensor);
   const FlagChange accept_fcc("fhqc=[0234]->fhqc=1"); // FIXME OkCheckTableItem has fmis=0 -- strange; and not fhqc=[34]
 
-  da->newVersion();
+  ObsUpdate_pv updates;
   for(int i=0; i<N_COLUMNS; ++i) {
-    EditDataPtr obs = da->findE(SensorTime(sensors[i], timeWithOffset(time, i)));
-    if (obs)
-      da->editor(obs)->changeControlinfo(accept_fcc)
-          .clearTask(tasks::TASK_FCC_ERROR);
+    if (ObsData_p obs = da->findE(SensorTime(sensors[i], timeWithOffset(time, i)))) {
+      TaskUpdate_p up = boost::static_pointer_cast<TaskUpdate>(da->createUpdate(obs));
+      Helpers::changeControlinfo(up, accept_fcc);
+      up->clearTask(tasks::TASK_FCC_ERROR);
+      updates.push_back(up);
+    }
+  }
+  if (not updates.empty()) {
+    da->newVersion();
+    da->storeUpdates(updates);
   }
 }
 

@@ -2,13 +2,14 @@
 #ifndef WATCHRR_NEIGHBORRR24MODEL_HH
 #define WATCHRR_NEIGHBORRR24MODEL_HH 1
 
-#include "common/ObsTableModel.hh"
+#include "TaskAccess.hh"
+#include "WatchRRTableModel.hh"
 #include <vector>
 
-class NeighborRR24Model : public ObsTableModel
+class NeighborRR24Model : public WatchRRTableModel
 {
 public:
-  NeighborRR24Model(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time);
+  NeighborRR24Model(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
   virtual QVariant columnHeader(int section, Qt::Orientation orientation, int role) const;
 
 private:

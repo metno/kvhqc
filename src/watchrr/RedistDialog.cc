@@ -2,14 +2,17 @@
 #include "RedistDialog.hh"
 
 #include "RedistTableModel.hh"
-#include "common/AnalyseRR24.hh"
+#include "AnalyseRR24.hh"
+
+#include "common/KvHelpers.hh"
+#include "common/ObsPgmRequest.hh"
 
 #include "ui_watchrr_redist.h"
 
 #define MILOGGER_CATEGORY "kvhqc.RedistDialog"
 #include "util/HqcLogging.hh"
 
-RedistDialog::RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
+RedistDialog::RedistDialog(QDialog* parent, TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime)
   : QDialog(parent)
   , mDA(da)
   , mEditableTime(editableTime)
@@ -73,7 +76,13 @@ void RedistDialog::onButtonAuto()
 {
   METLIBS_LOG_SCOPE();
 
+  hqc::int_s stationIds = Helpers::findNeighborStationIds(rtm->sensor().stationId);
+  stationIds.insert(rtm->sensor().stationId);
+
+  std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
+  op->sync();
+  
   std::vector<float> values = rtm->newCorrected();
-  if (RR24::redistributeProposal(mDA, rtm->sensor(), rtm->time(), values))
+  if (RR24::redistributeProposal(mDA, rtm->sensor(), rtm->time(), op.get(), values))
     rtm->setNewCorrected(values);
 }

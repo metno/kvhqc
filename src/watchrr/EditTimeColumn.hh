@@ -2,8 +2,8 @@
 #ifndef EDITTIMECOLUMN_HH
 #define EDITTIMECOLUMN_HH 1
 
-#include "DataColumn.hh"
-#include "TimeSpan.hh"
+#include "common/DataColumn.hh"
+#include "common/TimeSpan.hh"
 
 class EditTimeColumn : public ObsColumn {
 public:

@@ -18,9 +18,11 @@ public:
   typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
 
   ObsPgmRequest(const hqc::int_s& stationIds);
+  ObsPgmRequest(int stationId);
   ~ObsPgmRequest();
 
   void post();
+  void sync();
 
   const hqc::kvObsPgm_v& operator[](int stationId) const
     { return get(stationId); }
@@ -34,6 +36,7 @@ private Q_SLOTS:
   void onTaskDone(SignalTask*);
 
 private:
+  void init(const hqc::int_s& stationIds);
   void put(const hqc::kvObsPgm_v& op);
 
 private:

@@ -50,6 +50,7 @@ QString ObsPgmQueryTask::querySql(QString dbversion) const
 
 void ObsPgmQueryTask::notifyRow(const ResultRow& row)
 {
+  METLIBS_LOG_SCOPE();
   int col = 0;
 
   const int stationid = row.getInt(col++);

@@ -2,8 +2,10 @@
 #include "StationDialog.hh"
 
 #include "RedistTableModel.hh"
-#include "common/AnalyseRR24.hh"
+#include "AnalyseRR24.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
+#include "common/ObsPgmRequest.hh"
 #include "common/StationIdCompletion.hh"
 #include "common/TypeIdModel.hh"
 #include "common/TimeSpanControl.hh"
@@ -22,6 +24,7 @@ static const int MIN_DAYS = 7, MAX_DAYS = 120;
 StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent)
   : QDialog(parent)
   , mSensor(sensor)
+  , mObsPgmRequest(0)
 {
   init();
 
@@ -34,6 +37,7 @@ StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog
 StationDialog::StationDialog(QDialog* parent)
   : QDialog(parent)
   , mSensor(0, kvalobs::PARAMID_RR_24, 0, 0, -1)
+  , mObsPgmRequest(0)
 {
   init();
 }
@@ -65,6 +69,7 @@ void StationDialog::init()
 StationDialog::~StationDialog()
 {
   METLIBS_LOG_SCOPE();
+  delete mObsPgmRequest;
 }
 
 void StationDialog::onEditStation()
@@ -101,18 +106,29 @@ bool StationDialog::checkStation()
     ui->labelStationInfo->setText(tr("Invalid station number"));
   } else {
     mSensor.stationId = stationId;
-    QString name = "?";
-    try {
-      const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
-      name = QString::fromStdString(station.name());
-    } catch (std::exception& e) {
-      METLIBS_LOG_INFO("Station lookup problem, probably bad station number: " << e.what());
-    }
-    ui->labelStationInfo->setText(name);
+    updateStationInfoText();
+
+    delete mObsPgmRequest;
+    mObsPgmRequest = new ObsPgmRequest(mSensor.stationId);
+    connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmDone()));
+    mObsPgmRequest->post();
+
     return true;
   } 
   mSensor.stationId = 0;
   return false;
+}
+
+void StationDialog::updateStationInfoText()
+{
+  QString name = "?";
+  try {
+    const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(mSensor.stationId);
+    name = QString::fromStdString(station.name());
+  } catch (std::exception& e) {
+    METLIBS_LOG_INFO("Station lookup problem, probably bad station number: " << e.what());
+  }
+  ui->labelStationInfo->setText(name);
 }
 
 bool StationDialog::checkType()
@@ -137,14 +153,23 @@ int StationDialog::acceptThisObsPgm(const kvalobs::kvObsPgm& op) const
   return 0;
 }
 
+void StationDialog::onObsPgmDone()
+{
+  METLIBS_LOG_SCOPE();
+  updateTypeList();
+}
+
 void StationDialog::updateTypeList()
 {
+  METLIBS_LOG_SCOPE();
   std::set<int> typeIdSet;
-  if (mSensor.stationId > 0) {
-    const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(mSensor.stationId);
+  if (mSensor.stationId > 0 and mObsPgmRequest) {
+    const hqc::kvObsPgm_v& obs_pgm = mObsPgmRequest->get(mSensor.stationId);
+    METLIBS_LOG_DEBUG(LOGVAL(obs_pgm.size()));
     if (obs_pgm.empty()) {
       ui->labelStationInfo->setText(tr("Unknown station (not in obs_pgm)"));
     } else {
+      updateStationInfoText();
       const TimeSpan st = selectedTime();
       BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
         if (st.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
@@ -157,13 +182,20 @@ void StationDialog::updateTypeList()
         ui->labelStationInfo->setText(tr("Could not find typeid"));
     }
   }
-  const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());
-  
+  const hqc::int_v newTypeIds(typeIdSet.begin(), typeIdSet.end());
+  int newIdx = 0;
   if (newTypeIds != mTypesModel->values()) {
+    const int currentIdx = ui->comboType->currentIndex();
+    if (currentIdx >= 0) {
+      const int currentTypeId = mTypesModel->values().at(currentIdx);
+      hqc::int_v::const_iterator it = std::find(newTypeIds.begin(), newTypeIds.end(), currentTypeId);
+      if (it != newTypeIds.end())
+        newIdx = it - newTypeIds.end();
+    }
     mTypesModel->setValues(newTypeIds);
-    if (not typeIdSet.empty()) {
-      ui->comboType->setCurrentIndex(0);
-      mSensor.typeId = mTypesModel->values().front();
+    if (not newTypeIds.empty()) {
+      ui->comboType->setCurrentIndex(newIdx);
+      mSensor.typeId = mTypesModel->values().at(newIdx);
     } else {
       mSensor.typeId = 0;
     }

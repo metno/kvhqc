@@ -83,7 +83,7 @@ SET_TARGET_PROPERTIES(hqc PROPERTIES
 
 SET(HQC_COMMON_LIBS 
 #  weather
-#  watchrr
+  watchrr
   errorlist
   rejectedobs
   textdata

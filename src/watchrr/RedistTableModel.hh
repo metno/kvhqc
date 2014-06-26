@@ -2,12 +2,12 @@
 #ifndef REDISTTABLEMODEL_HH
 #define REDISTTABLEMODEL_HH
 
+#include "WatchRRTableModel.hh"
 #include "common/Code2Text.hh"
-#include "common/ObsTableModel.hh"
 
-class RedistTableModel : public ObsTableModel {
+class RedistTableModel : public WatchRRTableModel {
 public:
-    RedistTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time);
+    RedistTableModel(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
     virtual ~RedistTableModel();
 
     const std::vector<float>& newCorrected() const

@@ -40,6 +40,7 @@ INSTALL(FILES
   images/timeseries.svg
   images/textdata.svg
   images/undo.svg
+  images/watchrr.svg
   images/weatherstation.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")

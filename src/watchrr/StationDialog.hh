@@ -11,6 +11,7 @@
 #include <memory>
 
 class TimeSpanControl;
+class ObsPgmRequest;
 namespace kvalobs {
 class kvObsPgm;
 }
@@ -39,9 +40,11 @@ protected Q_SLOTS:
   virtual void onEditStation();
   virtual void onEditTime();
   virtual void onSelectType(int);
+  void onObsPgmDone();
 
 protected:
   void init();
+  void updateStationInfoText();
   virtual bool checkStation();
   virtual bool checkType();
   virtual void updateTypeList();
@@ -52,6 +55,7 @@ protected:
   std::auto_ptr<Ui::DialogStation> ui;
   TimeSpanControl* mTimeControl;
   std::auto_ptr<TypeIdModel> mTypesModel;
+  ObsPgmRequest* mObsPgmRequest;
 };
 
 #endif // WATCHRR_STATIONDIALOG_HH

@@ -1,10 +1,15 @@
 
 #include "AnalyseRR24.hh"
-#include "FlagChange.hh"
-#include "ObsHelpers.hh"
-#include "Tasks.hh"
+#include "TaskData.hh"
+#include "TaskUpdate.hh"
 
-#include "KvMetaDataBuffer.hh"
+#include "common/FlagChange.hh"
+#include "common/Functors.hh"
+#include "common/KvHelpers.hh"
+#include "common/ObsHelpers.hh"
+#include "common/Tasks.hh"
+#include "common/KvMetaDataBuffer.hh"
+
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -14,10 +19,18 @@
 #include "common/ObsLogging.hh"
 
 namespace { // anonymous
-void addRR24Task(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& time, int task)
+
+TaskUpdate_p createU(TaskAccess_p da, const SensorTime& st)
 {
-  EditDataPtr obs = da->findOrCreateE(SensorTime(sensor, time));
-  da->editor(obs)->addTask(task);
+  ObsData_p obs = da->findE(st);
+  return boost::static_pointer_cast<TaskUpdate>(obs ? da->createUpdate(obs) : da->createUpdate(st));
+}
+
+void addRR24Task(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& time, int task)
+{
+  TaskUpdate_p up = createU(da, SensorTime(sensor, time));
+  up->addTask(task);
+  da->storeUpdates(ObsUpdate_pv(1, up));
 }
 
 const int ALL_RR24_TASKS =
@@ -33,7 +46,7 @@ const int ALL_RR24_TASKS =
 
 namespace RR24 {
 
-bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
+bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
@@ -45,7 +58,7 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
   // cannot tell if we see the complete accumulation
   timeutil::ptime mTS = time.t0(), mTE = time.t1();
   for(; mTS <= mTE; mTS += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, mTS));
+    ObsData_p obs = da->findE(SensorTime(sensor, mTS));
     if (not obs)
       continue;
     if (not is_accumulation(obs))
@@ -59,7 +72,7 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
   // mark all accumulation rows at end unmodifiable because we
   // cannot tell if we see the complete accumulation
   for(; mTE >= mTS; mTE -= step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, mTE));
+    ObsData_p obs = da->findE(SensorTime(sensor, mTE));
     if (not obs)
       continue;
     if (not is_accumulation(obs) or is_endpoint(obs))
@@ -71,10 +84,11 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
   // add tasks for RR24 observations if the have errors
   int last_acc = NO, last_endpoint = NO, have_endpoint = NO;
   for (timeutil::ptime t = mTE; t >= mTS; t -= step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs) {
-      obs = da->createE(SensorTime(sensor, t));
-      da->editor(obs)->addTask(tasks::TASK_MISSING_OBS);
+      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      up->addTask(tasks::TASK_MISSING_OBS);
+      da->storeUpdates(ObsUpdate_pv(1, up));
       last_acc = last_endpoint = have_endpoint = false;
       continue;
     }
@@ -110,15 +124,18 @@ bool analyse(EditAccessPtr da, const Sensor& sensor, TimeSpan& time)
         task = tasks::TASK_MAYBE_ACCUMULATED;
     }
     last_acc = acc;
-    if (task != 0)
-      da->editor(obs)->addTask(task);
+    if (task != 0) {
+      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      up->addTask(task);
+      da->storeUpdates(ObsUpdate_pv(1, up));
+    }
   }
   return true;
 }
 
 // ========================================================================
 
-void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, bool before)
+void markPreviousAccumulation(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool before)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(time));
@@ -126,65 +143,69 @@ void markPreviousAccumulation(EditAccessPtr da, const Sensor& sensor, const Time
 
   const boost::gregorian::date_duration step = boost::gregorian::days(before ? -1 : 1);
   for(timeutil::ptime t = before ? time.t1() : time.t0(); time.contains(t); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs)
       continue;
     if (is_accumulation(obs) == NO)
       break;
     if (not before) {
       METLIBS_LOG_DEBUG(LOGVAL(t));
-      da->editor(obs)->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
+      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      up->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
+      da->storeUpdates(ObsUpdate_pv(1, up));
     }
     if (is_endpoint(obs) != NO)
       break;
     if (before) {
       METLIBS_LOG_DEBUG(LOGVAL(t));
-      da->editor(obs)->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
+      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      up->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
+      da->storeUpdates(ObsUpdate_pv(1, up));
     }
   }
 }
 
 // ========================================================================
 
-void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
+void redistribute(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
     const std::vector<float>& newCorr)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
-  std::vector<EditDataPtr> obs(newCorr.size());
-  unsigned int redistRow = 0;
   timeutil::ptime t = t0;
-  bool newEndpoint = false;
-  for (; redistRow < newCorr.size(); t += step, redistRow += 1) {
-    EditDataPtr& o = obs[redistRow] = da->findE(SensorTime(sensor, t));
-    if (redistRow == newCorr.size()-1)
-      newEndpoint = (not o) or (is_endpoint(o) == NO);
-    if (not o)
-      o = da->createE(SensorTime(sensor, t));
-  }
+
+  ObsUpdate_pv obsu(newCorr.size());
+  for (size_t r=0; r < newCorr.size(); r += 1, t += step)
+    obsu[r] = createU(da, SensorTime(sensor, t));
+
+  ObsData_p obs_endpoint = da->findE(SensorTime(sensor, t - step));
+  const bool newEndpoint = (not obs_endpoint) or (is_endpoint(obs_endpoint) == NO);
 
   const FlagChange fc_miss("fd=9;fhqc=6;fmis=3->fmis=1"),
       fc_end("fd=A;fhqc=6"), fc_dryEnd("fmis=4->fmis=0"), fc_wetEnd("fmis=0->fmis=4");
 
   da->newVersion();
-  redistRow = 0;
   t = t0;
-  for (; redistRow < newCorr.size(); t += step, redistRow += 1) {
-    EditDataEditorPtr editor = da->editor(obs[redistRow]);
-    const float newC = newCorr.at(redistRow);
-    editor->setCorrected(newC);
-    if (redistRow == newCorr.size()-1) {
-      const float oldC = obs[redistRow]->corrected();
-      editor->changeControlinfo(fc_end)
-          .changeControlinfo((newC == -1 and oldC == -1) ? fc_dryEnd : fc_wetEnd);
+  for (size_t r=0; r < newCorr.size(); r += 1, t += step) {
+    const ObsUpdate_p& u = obsu[r];
+    const float newC = newCorr.at(r);
+    u->setCorrected(newC);
+    if (r == newCorr.size()-1) {
+      const float oldC = u->corrected();
+      Helpers::changeControlinfo(u, fc_end);
+      if (newC == -1 and oldC == -1)
+        Helpers::changeControlinfo(u, fc_dryEnd);
+      else
+        Helpers::changeControlinfo(u, fc_wetEnd);
     } else
-      editor->changeControlinfo(fc_miss);
-    editor->clearTasks(ALL_RR24_TASKS);
-    editor->commit();
-    METLIBS_LOG_DEBUG(LOGOBS(obs[redistRow]));
+      Helpers::changeControlinfo(u, fc_miss);
+
+    TaskUpdate_p tu = boost::static_pointer_cast<TaskUpdate>(u);
+    tu->clearTasks(ALL_RR24_TASKS);
   }
+  da->storeUpdates(obsu);
 
   // mark all accumulation rows around period with task
   markPreviousAccumulation(da, sensor, TimeSpan(editableTime.t0(), t0-step), true);
@@ -194,7 +215,7 @@ void redistribute(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime&
 
 // ========================================================================
 
-void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
+void redistributeInQC2(TaskAccess_p da, const Sensor& sensor,
     const TimeSpan& time, const TimeSpan& editableTime)
 {
   using namespace Helpers;
@@ -207,18 +228,29 @@ void redistributeInQC2(EditAccessPtr da, const Sensor& sensor,
     throw std::runtime_error("cannot redistribute this in QC2");
 
   da->newVersion();
+  ObsUpdate_pv updates;
+
   timeutil::ptime t = time.t0();
   for (; t < time.t1(); t += step) {
-    EditDataPtr obs = da->findOrCreateE(SensorTime(sensor, t));
-    da->editor(obs)->changeControlinfo(fc_miss).clearTasks(ALL_RR24_TASKS);
+    TaskUpdate_p tu = createU(da, SensorTime(sensor, t));
+    Helpers::changeControlinfo(tu, fc_miss);
+    tu->clearTasks(ALL_RR24_TASKS);
+    updates.push_back(tu);
   }
-  EditDataPtr obs = da->findE(SensorTime(sensor, t));
+  ObsData_p obs = da->findE(SensorTime(sensor, t));
   const bool newEndpoint = obs and (is_endpoint(obs) == NO);
-  if (not obs)
-    obs = da->createE(SensorTime(sensor, t));
-  da->editor(obs)->changeControlinfo(fc_end)
-      .changeControlinfo((obs->corrected() == -1 and obs->original() == -1) ? fc_dryEnd : fc_wetEnd)
-      .clearTasks(ALL_RR24_TASKS);
+
+  TaskUpdate_p tu = createU(da, SensorTime(sensor, t));
+  const float obs_orig = obs ? obs->original() : tu->corrected();
+
+  Helpers::changeControlinfo(tu, fc_end);
+  if (tu->corrected() == -1 and obs_orig == -1)
+    Helpers::changeControlinfo(tu, fc_dryEnd);
+  else
+    Helpers::changeControlinfo(tu, fc_wetEnd);
+  tu->clearTasks(ALL_RR24_TASKS);
+
+  da->storeUpdates(updates);
 
   // mark all accumulation rows around period with task
   markPreviousAccumulation(da, sensor, TimeSpan(editableTime.t0(), time.t0()-step), true);
@@ -239,7 +271,7 @@ inline float real2dry(float real)
 
 } //namespace anonymous
 
-bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, float_v& values)
+bool redistributeProposal(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, const ObsPgmRequest* op, float_v& values)
 {
   METLIBS_LOG_SCOPE();
   using namespace Helpers;
@@ -266,7 +298,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeSpan
 
   typedef std::vector<Sensor> Sensor_v;
   Sensor_v neighbors;
-  Helpers::addNeighbors(neighbors, sensor, time, 10*MAX_NEIGHBORS);
+  Helpers::addNeighbors(neighbors, sensor, time, op, 10*MAX_NEIGHBORS);
 
   std::vector<float> distances;
   { Helpers::stations_by_distance center(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
@@ -285,7 +317,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeSpan
       if (itN->stationId == lastStation or itN->typeId != sensor.typeId)
         continue;
 
-      EditDataPtr nobs = da->findE(SensorTime(*itN, t));
+      ObsData_p nobs = da->findE(SensorTime(*itN, t));
       if (not nobs)
         continue;
 
@@ -333,7 +365,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeSpan
 
 // ========================================================================
 
-bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+bool canRedistributeInQC2(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   if (time.days() < 1)
     return false;
@@ -344,7 +376,7 @@ bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeSpan
 
   int acc_type = -1;
   for (timeutil::ptime t = time.t0(); t < time.t1(); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs)
       continue;
     if (not ok_miss.matches(obs->controlinfo()))
@@ -354,7 +386,7 @@ bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeSpan
     else if (acc_type != Helpers::is_accumulation(obs))
       return false;
   }
-  EditDataPtr obs = da->findE(SensorTime(sensor, time.t1()));
+  ObsData_p obs = da->findE(SensorTime(sensor, time.t1()));
   if (not obs or not ok_end.matches(obs->controlinfo()) or obs->original() < -1.0f)
     return false;
   if (acc_type >= 0 and acc_type != Helpers::is_accumulation(obs))
@@ -364,7 +396,7 @@ bool canRedistributeInQC2(EditAccessPtr da, const Sensor& sensor, const TimeSpan
 
 // ========================================================================
 
-void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
+void singles(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
     const std::vector<float>& newCorrected, const std::vector<int>& acceptReject)
 {
   using namespace Helpers;
@@ -372,40 +404,47 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
   const FlagChange fc_clear_fd("fd=1");
 
   da->newVersion();
+  ObsUpdate_pv updates;
+
   bool previousWasSingle = false, previousWasAcc = false;
   unsigned int editRow = 0;
   timeutil::ptime t = t0, tMarkStart = editableTime.t0();
   for (; editRow < newCorrected.size(); t += step, editRow += 1) {
     METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(previousWasSingle) << LOGVAL(previousWasAcc));
-    EditDataPtr obs = da->findOrCreateE(SensorTime(sensor, t));
+    const SensorTime st(sensor, t);
+    ObsData_p obs = da->findE(st);
+    TaskUpdate_p u = createU(da, st);
     const int ar = acceptReject.at(editRow);
 
     if (ar == AR_ACCEPT or ar == AR_REJECT) {
       if (not previousWasSingle) {
-        if (is_accumulation(obs))
+        if (obs and is_accumulation(obs))
           markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), true);
         if (previousWasAcc)
           markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), false);
       }
-      previousWasAcc = (is_accumulation(obs) and not is_endpoint(obs));
+      previousWasAcc = (obs and is_accumulation(obs) and not is_endpoint(obs));
       previousWasSingle = true;
 
-      EditDataEditorPtr editor = da->editor(obs);
       if (ar == AR_ACCEPT)
-        Helpers::auto_correct(editor, newCorrected.at(editRow));
+        Helpers::auto_correct(u, obs, newCorrected.at(editRow));
       else
-        Helpers::reject(editor);
-      editor->changeControlinfo(fc_clear_fd).clearTasks(ALL_RR24_TASKS);
+        Helpers::reject(u, obs);
+      Helpers::changeControlinfo(u, fc_clear_fd);
+      u->clearTasks(ALL_RR24_TASKS);
     } else if (previousWasSingle) {
       tMarkStart = t;
       METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
       previousWasSingle = false;
     }
+    updates.push_back(u);
   }
   if (previousWasSingle) {
     tMarkStart = t;
     METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
   }
+
+  da->storeUpdates(updates);
 
   // mark all accumulation rows around period with task
   if (previousWasAcc)
@@ -414,13 +453,13 @@ void singles(EditAccessPtr da, const Sensor& sensor, const timeutil::ptime& t0, 
 
 // ========================================================================
 
-float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+float calculateSum(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
   float sum = 0;
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs or Helpers::is_missing(obs))
       continue;
     sum += std::max(0.0f, obs->corrected());
@@ -430,20 +469,20 @@ float calculateSum(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
 
 // ========================================================================
 
-float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+float calculateOriginalSum(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   if (time.days() < 1)
     return kvalobs::MISSING;
 
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
   for (timeutil::ptime t = time.t0(); t < time.t1(); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs)
       continue;
     if (not Helpers::is_orig_missing(obs))
       return kvalobs::MISSING;
   }
-  EditDataPtr obs = da->findE(SensorTime(sensor, time.t1()));
+  ObsData_p obs = da->findE(SensorTime(sensor, time.t1()));
   if (not obs or Helpers::is_orig_missing(obs))
     return kvalobs::MISSING;
   return std::max(0.0f, obs->original());
@@ -451,39 +490,49 @@ float calculateOriginalSum(EditAccessPtr da, const Sensor& sensor, const TimeSpa
 
 // ========================================================================
 
-bool canAccept(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
   const FlagPattern acceptable("fhqc=[01234]", FlagPattern::CONTROLINFO);
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    ObsData_p obs = da->findE(SensorTime(sensor, t));
     if (not obs)
       continue;
     if (not acceptable.matches(obs->controlinfo()))
       return false;
-    if ((obs->allTasks() & ALL_RR24_TASKS) != 0)
-      return false;
+    if (TaskData_p tobs = boost::dynamic_pointer_cast<TaskData>(obs)) {
+      if ((tobs->allTasks() & ALL_RR24_TASKS) != 0)
+        return false;
+    }
   }
   return true;
 }
 
 // ========================================================================
 
-void accept(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
+void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
   const FlagChange fc_accept("fhqc=[0234]->fhqc=1");
+
   da->newVersion();
+  ObsUpdate_pv updates;
+
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
-    EditDataPtr obs = da->findE(SensorTime(sensor, t));
+    const SensorTime st(sensor, t);
+    ObsData_p obs = da->findE(st);
     if (not obs)
       continue;
-    da->editor(obs)->changeControlinfo(fc_accept);
+    ObsUpdate_p u = createU(da, st);
+    Helpers::changeControlinfo(u, fc_accept);
+    updates.push_back(u);
   }
+
+  da->storeUpdates(updates);
 }
 
 } // namespace RR24

@@ -2,6 +2,7 @@
 #ifndef WATCHRR_NEIGHBORCARDSMODEL_HH
 #define WATCHRR_NEIGHBORCARDSMODEL_HH 1
 
+#include "TaskAccess.hh"
 #include "common/DataItem.hh"
 #include <vector>
 
@@ -10,7 +11,7 @@
 class NeighborCardsModel : public QAbstractTableModel
 {   Q_OBJECT;
 public:
-  NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange);
+  NeighborCardsModel(TaskAccess_p da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange);
   virtual ~NeighborCardsModel();
 
   virtual int rowCount(const QModelIndex&) const;
@@ -29,21 +30,20 @@ Q_SIGNALS:
   void timeChanged(const timeutil::ptime& time);
 
 private:
-  EditDataPtr getObs(const QModelIndex& index) const;
+  ObsData_p getObs(const QModelIndex& index) const;
   SensorTime getSensorTime(const QModelIndex& index) const;
-  DataItemPtr getItem(const QModelIndex& index) const
+  DataItem_p getItem(const QModelIndex& index) const
     { return mItems[index.column()]; }
   timeutil::ptime getTime(const QModelIndex& index) const
     { return mTime + mTimeOffsets[index.column()]; }
-  void onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs);
 
 private:
-  EditAccessPtr mDA;
+  TaskAccess_p mDA;
   TimeSpan mTimeSpan;
   timeutil::ptime mTime;
 
   // rows
-  std::vector<DataItemPtr> mItems;
+  std::vector<DataItem_p> mItems;
   std::vector<boost::posix_time::time_duration> mTimeOffsets;
 
   // columns

@@ -3,6 +3,7 @@
 
 #include "common/ColumnFactory.hh"
 #include "common/ModelColumn.hh"
+#include "common/KvHelpers.hh"
 #include "util/Helpers.hh"
 
 #include <boost/make_shared.hpp>
@@ -38,20 +39,21 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time)
-  : ObsTableModel(da, time)
+StationCardModel::StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time)
+  : WatchRRTableModel(da)
 {
+  setTimeSpan(time);
+
   std::vector<Sensor> allSensors;
   allSensors.reserve(N_COLUMNS);
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
     allSensors.push_back(s);
   }
-  da->allData(allSensors, time);
 
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor& s = allSensors[i];
-    DataColumnPtr oc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
+    DataColumn_p oc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
     oc->setHeaderShowStation(false);
     if (columnTimeOffsets[i] != 0)
       oc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
@@ -64,7 +66,7 @@ StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Se
   }
 
   if (ma) {
-    ModelColumnPtr mc = ColumnFactory::columnForSensor(ma, sensor, time);
+    ModelColumn_p mc = ColumnFactory::columnForSensor(ma, sensor, time);
     mc->setHeaderShowStation(false);
     addColumn(mc);
   }

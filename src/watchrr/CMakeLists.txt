@@ -1,15 +1,20 @@
 
 SET(watchrr_SOURCES
+  AnalyseFCC.cc
+  AnalyseRR24.cc
   EditDialog.cc
   EditTableModel.cc
   EditTimeColumn.cc
-  WatchRRDialog.cc
-  StationCardModel.cc
   NeighborCardsModel.cc
   NeighborRR24Model.cc
   RedistDialog.cc
   RedistTableModel.cc
+  StationCardModel.cc
   StationDialog.cc
+  TaskAccess.cc
+  TaskUpdate.cc
+  WatchRRDialog.cc
+  WatchRRTableModel.cc
 )
 
 QT4_ADD_TRANSLATION(watchrr_QM

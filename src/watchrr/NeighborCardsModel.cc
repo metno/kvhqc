@@ -2,9 +2,11 @@
 #include "NeighborCardsModel.hh"
 
 #include "common/ColumnFactory.hh"
-#include "util/Helpers.hh"
+#include "common/KvHelpers.hh"
 #include "common/NeighborHeader.hh"
+#include "common/ObsPgmRequest.hh"
 #include "common/SensorHeader.hh"
+#include "util/Helpers.hh"
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -45,13 +47,19 @@ const int columnTimeOffsets[N_COLUMNS] = {
 };
 } // namespace anonymous
 
-NeighborCardsModel::NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange)
+NeighborCardsModel::NeighborCardsModel(TaskAccess_p da/*, ModelAccessPtr ma*/, const Sensor& sensor, const TimeSpan& timeRange)
   : mDA(da)
   , mTimeSpan(timeRange)
   , mTime(mTimeSpan.t0())
   , mSensors(1, sensor)
 {
-  Helpers::addNeighbors(mSensors, sensor, mTimeSpan, 20);
+  hqc::int_s stationIds = Helpers::findNeighborStationIds(sensor.stationId);
+  stationIds.insert(sensor.stationId);
+
+  ObsPgmRequest* mObsPgmRequest = new ObsPgmRequest(stationIds);
+  mObsPgmRequest->sync();
+  
+  Helpers::addNeighbors(mSensors, sensor, mTimeSpan, mObsPgmRequest, 20);
   mItems.reserve(N_COLUMNS);
   mTimeOffsets.reserve(N_COLUMNS);
 
@@ -61,13 +69,12 @@ NeighborCardsModel::NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, 
     
     mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
   }
-  
-  mDA->obsDataChanged.connect(boost::bind(&NeighborCardsModel::onDataChanged, this, _1, _2));
+
+  delete mObsPgmRequest;
 }
 
 NeighborCardsModel::~NeighborCardsModel()
 {
-  mDA->obsDataChanged.disconnect(boost::bind(&NeighborCardsModel::onDataChanged, this, _1, _2));
 }
 
 int NeighborCardsModel::rowCount(const QModelIndex&) const
@@ -88,7 +95,7 @@ Qt::ItemFlags NeighborCardsModel::flags(const QModelIndex& index) const
 QVariant NeighborCardsModel::data(const QModelIndex& index, int role) const
 {
   const SensorTime st(getSensorTime(index));
-  const EditDataPtr obs = mDA->findE(st);
+  const ObsData_p obs = mDA->findE(st);
   return getItem(index)->data(obs, st, role);
 }
 
@@ -111,7 +118,7 @@ QVariant NeighborCardsModel::headerData(int section, Qt::Orientation orientation
       return sh.sensorHeader(mItems[section], orientation, role);
     } else if (role == Qt::ToolTipRole) {
       SensorHeader sh(mSensors[section], SensorHeader::ALWAYS, SensorHeader::NEVER, 0);
-      return sh.sensorHeader(DataItemPtr(), orientation, role);
+      return sh.sensorHeader(DataItem_p(), orientation, role);
     } else {
       return NeighborHeader::headerData(mSensors[0].stationId, mSensors[section].stationId, orientation, role);
     }
@@ -119,7 +126,7 @@ QVariant NeighborCardsModel::headerData(int section, Qt::Orientation orientation
   return QVariant();
 }
 
-EditDataPtr NeighborCardsModel::getObs(const QModelIndex& index) const
+ObsData_p NeighborCardsModel::getObs(const QModelIndex& index) const
 {
   return mDA->findE(getSensorTime(index));
 }
@@ -129,26 +136,6 @@ SensorTime NeighborCardsModel::getSensorTime(const QModelIndex& index) const
   Sensor sensor = mSensors[index.row()];
   sensor.paramId = columnPars[index.column()];
   return SensorTime(sensor, getTime(index));
-}
-
-void NeighborCardsModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
-{
-  METLIBS_LOG_SCOPE();
-  const SensorTime st(obs->sensorTime());
-  METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs) << LOGVAL(st.sensor.stationId));
-
-  for(size_t col = 0; col < mTimeOffsets.size(); col += 1) {
-    if (st.time == mTime + mTimeOffsets[col]) {
-      for(size_t row = 0;row < mItems.size(); row += 1) {
-        Sensor sensor = mSensors[row];
-        sensor.paramId = columnPars[col];
-        if (mItems[row]->matchSensor(sensor, st.sensor)) {
-          QModelIndex idx = createIndex(row, col);
-          Q_EMIT dataChanged(idx, idx);
-        }
-      }
-    }
-  }
 }
 
 std::vector<int> NeighborCardsModel::neighborStations() const

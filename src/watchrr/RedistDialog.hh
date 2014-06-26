@@ -2,7 +2,7 @@
 #ifndef REDISTDIALOG_HH
 #define REDISTDIALOG_HH
 
-#include "common/EditAccess.hh"
+#include "TaskAccess.hh"
 #include "common/TimeSpan.hh"
 
 #include <QtGui/QDialog>
@@ -22,7 +22,7 @@ class RedistTableModel;
 class RedistDialog : public QDialog
 {   Q_OBJECT;
 public:
-  RedistDialog(QDialog* parent, EditAccessPtr da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime);
+  RedistDialog(QDialog* parent, TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, const TimeSpan& editableTime);
   virtual ~RedistDialog();
 
 protected:
@@ -37,7 +37,7 @@ private:
   void updateSumInfo();
 
 private:
-  EditAccessPtr mDA;
+  TaskAccess_p mDA;
   TimeSpan mEditableTime;
   Sensor mSensor;
   std::auto_ptr<RedistTableModel> rtm;

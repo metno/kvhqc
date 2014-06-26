@@ -2,15 +2,15 @@
 #ifndef WATCHRR_STATIONCARDMODEL_HH
 #define WATCHRR_STATIONCARDMODEL_HH 1
 
-#include "common/EditTimeColumn.hh"
+#include "EditTimeColumn.hh"
+#include "WatchRRTableModel.hh"
 #include "common/ObsColumn.hh"
-#include "common/ObsTableModel.hh"
 #include "common/ModelAccess.hh"
 
-class StationCardModel : public ObsTableModel
+class StationCardModel : public WatchRRTableModel
 {
 public:
-  StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time);
+  StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time);
 
   int getRR24Column() const;
   void setRR24TimeSpan(const TimeSpan& tr);

@@ -12,10 +12,25 @@
 
 LOG_CONSTRUCT_COUNTER;
 
-ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
+ObsPgmRequest::ObsPgmRequest(const hqc::int_s& stationIds)
 {
   METLIBS_LOG_SCOPE();
   LOG_CONSTRUCT();
+  init(stationIds);
+}
+
+ObsPgmRequest::ObsPgmRequest(int stationId)
+{
+  METLIBS_LOG_SCOPE();
+  LOG_CONSTRUCT();
+  hqc::int_s stationIds;
+  stationIds.insert(stationId);
+  init(stationIds);
+}
+
+void ObsPgmRequest::init(const hqc::int_s& stationIds)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(stationIds.size()));
   hqc::int_s request;
   for (hqc::int_s::const_iterator itS = stationIds.begin(); itS != stationIds.end(); ++itS) {
     const hqc::kvObsPgm_v& op = KvMetaDataBuffer::instance()->findObsPgm(*itS);
@@ -25,6 +40,7 @@ ObsPgmRequest::ObsPgmRequest(const std::set<int>& stationIds)
       put(op);
     }
   }
+  METLIBS_LOG_DEBUG(LOGVAL(request.size()));
   if (request.empty()) {
     mTaskHelper = 0;
   } else {
@@ -43,8 +59,19 @@ ObsPgmRequest::~ObsPgmRequest()
 
 void ObsPgmRequest::post()
 {
+  METLIBS_LOG_SCOPE();
   if (mTaskHelper) {
-    mTaskHelper->post(hqcApp->kvalobsHandler().get());
+    mTaskHelper->post(hqcApp->kvalobsHandler());
+  } else {
+    Q_EMIT complete();
+  }
+}
+
+void ObsPgmRequest::sync()
+{
+  METLIBS_LOG_SCOPE();
+  if (mTaskHelper) {
+    mTaskHelper->sync(hqcApp->kvalobsHandler());
   } else {
     Q_EMIT complete();
   }
@@ -67,6 +94,7 @@ void ObsPgmRequest::put(const hqc::kvObsPgm_v& op)
 
 void ObsPgmRequest::onTaskDone(SignalTask* task)
 {
+  METLIBS_LOG_SCOPE();
   put(static_cast<ObsPgmQueryTask*>(task)->obsPgms());
   Q_EMIT complete();
 }

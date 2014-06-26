@@ -37,12 +37,14 @@
 #include "SearchWindow.hh"
 
 #include "common/HqcApplication.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 
 #include "util/ActionButton.hh"
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
 
+#define ENABLE_WATCHRR 1
 #define ENABLE_REJECTEDOBS 1
 #define ENABLE_TEXTDATA 1
 
@@ -122,6 +124,10 @@ HqcAppWindow::HqcAppWindow()
   ui->buttonRejected->setEnabled(false);
 #endif // ENABLE_REJECTEDOBS
 
+#ifndef ENABLE_WATCHRR
+  ui->buttonWatchRR->setEnabled(false);
+#endif // ENABLE_WATCHRR
+
   connect(hqcApp->editAccess().get(), SIGNAL(currentVersionChanged(size_t, size_t)),
       this, SLOT(onEditVersionChanged(size_t, size_t)));
   // initialize save/undo/redo buttons
@@ -194,11 +200,13 @@ void HqcAppWindow::onNewWatchRR()
 
   Sensor sensor(83880, kvalobs::PARAMID_RR_24, 0, 0, 302);
   timeutil::ptime tMiddle = now - boost::gregorian::days(7);
+#if 0
   if (mLastNavigated.valid()) {
     sensor = mLastNavigated.sensor;
     sensor.paramId = kvalobs::PARAMID_RR_24;
     tMiddle = timeutil::from_miTime(mLastNavigated.time);
   }
+#endif
 
   timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
@@ -212,8 +220,7 @@ void HqcAppWindow::onNewWatchRR()
   sensor = sd.selectedSensor();
   time = sd.selectedTime();
 
-  WatchRRDialog watchrr(eda, kma, sensor, time, this);
-  watchrr.show();
+  new WatchRRDialog(hqcApp->editAccess(), hqcApp->modelAccess(), sensor, time, this);
 #endif // ENABLE_WATCHRR
 }
 

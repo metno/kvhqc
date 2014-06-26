@@ -1,8 +1,9 @@
 
 #include "EditTableModel.hh"
 
-#include "common/AnalyseRR24.hh"
+#include "AnalyseRR24.hh"
 #include "common/ColumnFactory.hh"
+#include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ObsHelpers.hh"
 #include "util/Helpers.hh"
@@ -24,16 +25,17 @@ enum Columns {
 };
 } // namespace anonymous
 
-EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const TimeSpan& time)
-  : ObsTableModel(da, time)
+EditTableModel::EditTableModel(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, QObject* parent)
+  : WatchRRTableModel(da, parent)
   , mSensor(sensor)
+  , mTime(time)
   , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))
 {
   const int nDays = mTime.days() + 1;
   for(int d=0; d<nDays; ++d) {
     const timeutil::ptime t = timeAtRow(d);
     METLIBS_LOG_DEBUG(LOGVAL(t));
-    EditDataPtr obs = mDA->findE(SensorTime(mSensor, t));
+    ObsData_p obs = ta()->findE(SensorTime(mSensor, t));
     if( not obs ) {
       mNewValues.push_back(kvalobs::MISSING);
       mAcceptReject.push_back(RR24::AR_NONE);
@@ -48,10 +50,10 @@ EditTableModel::EditTableModel(EditAccessPtr da, const Sensor& sensor, const Tim
     }
   }
 
-  addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::ORIGINAL));
-  addColumn(ColumnFactory::columnForSensor(mDA, mSensor, time, ObsColumn::NEW_CORRECTED));
-  addColumn(ObsColumnPtr());
-  addColumn(ObsColumnPtr());
+  addColumn(ColumnFactory::columnForSensor(ta(), mSensor, time, ObsColumn::ORIGINAL));
+  addColumn(ColumnFactory::columnForSensor(ta(), mSensor, time, ObsColumn::NEW_CORRECTED));
+  addColumn(ObsColumn_p());
+  addColumn(ObsColumn_p());
 }
 
 Qt::ItemFlags EditTableModel::flags(const QModelIndex& index) const
@@ -153,7 +155,7 @@ void EditTableModel::acceptAll()
     if( mAcceptReject.at(row) == RR24::AR_ACCEPT )
       continue;
     if( mAcceptReject.at(row) == RR24::AR_REJECT ) {
-      EditDataPtr obs = mDA->findE(SensorTime(mSensor, timeAtRow(row)));
+      ObsData_p obs = ta()->findE(SensorTime(mSensor, timeAtRow(row)));
       if( not obs )
         continue;
       mNewValues.at(row) = obs->corrected();

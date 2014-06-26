@@ -4,6 +4,7 @@
 #include "DeleteTaskWhenDone.hh"
 #include "QueryTaskHandler.hh"
 #include "SignalTask.hh"
+#include "SyncTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.QueryTaskHelper"
 #include "util/HqcLogging.hh"
@@ -35,6 +36,16 @@ void QueryTaskHelper::post(QueryTaskHandler* handler)
 
   mHandler = handler;
   mHandler->postTask(task());
+}
+
+void QueryTaskHelper::sync(QueryTaskHandler* handler)
+{
+  METLIBS_LOG_SCOPE("this=" << this);
+  assert(handler);
+  assert(not mHandler);
+
+  mHandler = handler;
+  syncTask(task(), mHandler);
 }
 
 bool QueryTaskHelper::drop()

@@ -2,6 +2,8 @@
 #ifndef EditAccess_hh
 #define EditAccess_hh 1
 
+#include "KvalobsData.hh"
+#include "KvalobsUpdate.hh"
 #include "ObsAccess.hh"
 #include <QtCore/QObject>
 
@@ -41,6 +43,9 @@ public:
 
 Q_SIGNALS:
   void currentVersionChanged(size_t current, size_t highest);
+
+protected:
+  virtual KvalobsData_p createDataForUpdate(KvalobsUpdate_p update, const timeutil::ptime& tbtime);
 
 private:
   //void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);

@@ -2,7 +2,7 @@
 #ifndef WATCHRRDIALOG_HH
 #define WATCHRRDIALOG_HH 1
 
-#include "common/EditAccess.hh"
+#include "TaskAccess.hh"
 #include "common/ModelAccess.hh"
 #include "common/TimeSpan.hh"
 
@@ -27,7 +27,7 @@ class NeighborCardsModel;
 class WatchRRDialog : public QDialog
 {   Q_OBJECT;
 public:
-  WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent=0);
+  WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent=0);
   ~WatchRRDialog();
 
 public Q_SLOTS:
@@ -45,8 +45,6 @@ private Q_SLOTS:
   void onUndo();
   void onRedo();
   void onSelectionChanged(const QItemSelection&, const QItemSelection&);
-  void onDataChanged(const QModelIndex&, const QModelIndex&);
-  void onBackendDataChanged(ObsAccess::ObsDataChange what, EditDataPtr obs);
   void onNeighborDataDateChanged(const QDate&);
   void onNeighborDataTimeChanged(const timeutil::ptime& time);
   void onCurrentTabChanged(int tab);
@@ -80,7 +78,8 @@ private:
 private:
   std::auto_ptr<Ui::DialogMain> ui;
   std::auto_ptr<DianaHelper> mDianaHelper;
-  EditAccessPtr mParentDA, mDA;
+  EditAccess_p mParentDA;
+  TaskAccess_p mDA;
   Sensor mSensor;
   TimeSpan mTime;
   TimeSpan mEditableTime;

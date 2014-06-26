@@ -4,6 +4,9 @@
 
 #include "QueryTaskHandler.hh"
 
-QueryTask* syncTask(QueryTask* task, QueryTaskHandler_p handler);
+QueryTask* syncTask(QueryTask* task, QueryTaskHandler* handler);
+
+inline QueryTask* syncTask(QueryTask* task, QueryTaskHandler_p handler)
+{ return syncTask(task, handler.get()); }
 
 #endif // ACCESS_SYNCTASK_HH

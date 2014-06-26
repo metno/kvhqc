@@ -12,12 +12,10 @@ EditTimeColumn::EditTimeColumn(DataColumn_p dc)
 {
   connect(dc.get(), SIGNAL(columnChanged(ObsColumn_p)),
       this, SIGNAL(onColumnChanged(ObsColumn_p)));
-  //mDC->columnChanged.connect(boost::bind(&EditTimeColumn::onColumnChanged, this, _1, _2));
 }
 
 EditTimeColumn::~EditTimeColumn()
 {
-  mDC->columnChanged.disconnect(boost::bind(&EditTimeColumn::onColumnChanged, this, _1, _2));
 }
 
 Qt::ItemFlags EditTimeColumn::flags(const timeutil::ptime& time) const

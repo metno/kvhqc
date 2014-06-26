@@ -3,7 +3,6 @@
 #include "EditAccessPrivate.hh"
 
 #include "DistributeUpdates.hh"
-#include "KvalobsUpdate.hh"
 #include "KvHelpers.hh"
 #include "ObsAccept.hh"
 
@@ -325,18 +324,15 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
     EditVersions_ps::iterator itE = p->findEditVersions(eu->sensorTime());
     if (itE != p->mEdited.end()) {
       // TODO check for correct parent
-      KvalobsData_p d = Helpers::modifiedData((*itE)->currentData(), eu->corrected(), eu->controlinfo(), eu->cfailed());
+      assert((*itE)->currentData() == eu->obs());
+      KvalobsData_p d = createDataForUpdate(eu, tbtime);
       EditVersions_p ev = *itE;
       if (ev->currentVersion() == 0)
         p->mUpdated += 1;
       ev->addVersion(p->mCurrentVersion, d);
       du.updateData(ev->currentData());
     } else {
-      KvalobsData_p d;
-      if (eu->obs())
-        d = Helpers::modifiedData(eu->obs(), eu->corrected(), eu->controlinfo(), eu->cfailed());
-      else
-        d = Helpers::createdData(eu->sensorTime(), tbtime, eu->corrected(), eu->controlinfo(), eu->cfailed());
+      KvalobsData_p d = createDataForUpdate(eu, tbtime);
       d->setModified(true);
       EditVersions_p ev = boost::make_shared<EditVersions>(eu->obs(), p->mCurrentVersion, d);
       p->mEdited.insert(ev);
@@ -353,6 +349,14 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
   Q_EMIT currentVersionChanged(currentVersion(), currentVersion());
 
   return true;
+}
+
+KvalobsData_p EditAccess::createDataForUpdate(KvalobsUpdate_p eu, const timeutil::ptime& tbtime)
+{
+  if (eu->obs())
+    return Helpers::modifiedData(eu->obs(), eu->corrected(), eu->controlinfo(), eu->cfailed());
+  else
+    return Helpers::createdData(eu->sensorTime(), tbtime, eu->corrected(), eu->controlinfo(), eu->cfailed());
 }
 
 template<class T>
