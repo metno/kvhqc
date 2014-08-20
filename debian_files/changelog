@@ -1,3 +1,13 @@
+kvhqc (4.0.0~a7-2) unstable; urgency=low
+
+  * watchrr starts, but is not very useful yet
+  * rejectedobs dialog
+  * text data
+  * some bugfixes
+  * still very experimental
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 21 Aug 2014 09:28:00 +0200
+
 kvhqc (4.0.0~a6-1) unstable; urgency=low
 
   * StationDataList: handle aggregated parameters
@@ -6,7 +16,6 @@ kvhqc (4.0.0~a6-1) unstable; urgency=low
   * KvalobsModelRequest: typo, correct is "SLOT"
   * singleobs: adjust table row height
   * QueryTaskHelper: do not delete task when it is done
-  * 
 
  -- Alexander Bürger <alexander.buerger@met.no>  Thu, 12 Jun 2014 10:14:02 +0200
 
