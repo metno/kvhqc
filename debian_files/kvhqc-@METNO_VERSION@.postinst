@@ -1,9 +1,0 @@
-#!/bin/sh
-
-set -e
-
-MASTER=hqc
-exec update-alternatives --install "/usr/bin/$MASTER" "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@" "@PVERSION_NUMBER_MAJOR_MINOR@" \
-    --slave "/usr/bin/hqc.bin" "hqc.bin" "/usr/bin/hqc-@METNO_VERSION@.bin" \
-    --slave "/etc/kvhqc/hqc_current_version" "hqc_current_version" "/usr/share/kvhqc/@METNO_VERSION@/hqc_current_version" \
-    --slave "/etc/kvhqc/current" "hqc_current_conf" "/etc/kvhqc/@METNO_VERSION@"

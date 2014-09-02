@@ -1,6 +1,0 @@
-#!/bin/sh
-
-set -e
-
-MASTER=hqc
-exec update-alternatives --remove "$MASTER" "/usr/bin/$MASTER-@METNO_VERSION@"
