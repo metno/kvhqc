@@ -19,7 +19,8 @@
 #define MILOGGER_CATEGORY "kvhqc.ErrorListModel"
 #include "common/ObsLogging.hh"
 
-#define ENABLE_HIDE 1
+//#define ENABLE_HIDE 1
+//#define ENABLE_HIGHLIGHT 1
 
 namespace {
 
@@ -315,6 +316,7 @@ QVariant ErrorListModel::headerData(int section, Qt::Orientation orientation, in
 
 void ErrorListModel::highlightStation(int stationID)
 {
+#ifdef ENABLE_HIGHLIGHT
   if (mHighlightedStation == stationID)
     return;
 
@@ -325,6 +327,7 @@ void ErrorListModel::highlightStation(int stationID)
     if (nrows > 0)
       Q_EMIT dataChanged(index(0, COL_STATION_ID), index(nrows-1, COL_STATION_NAME));
   }
+#endif // ENABLE_HIGHLIGHT
 }
 
 namespace /*anonymous*/ {
@@ -355,8 +358,10 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
   const QModelIndex index = findSensorTime(st);
 
   Q_EMIT beginDataChange();
+#ifdef ENABLE_HIGHLIGHT
   int highlighted = mHighlightedStation;
   mBlockHighlighting = true;
+#endif // ENABLE_HIGHLIGHT
 
 #ifdef ENABLE_HIDE
   if (what == ObsAccess::MODIFIED and index.isValid()) {
@@ -379,13 +384,17 @@ void ErrorListModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
     ErrorTreeItem_P item = static_cast<ErrorTreeItem_P>(index.internalPointer());
     Errors::recheck(item->info(), mErrorsForSalen);
     updateErrorItem(item);
+  } else if (what == ObsAccess::DESTROYED) {
+    removeErrorItem(itemFromIndex(index));
   }
 #endif
 
   Q_EMIT endDataChange();
+#ifdef ENABLE_HIGHLIGHT
   mBlockHighlighting = false;
   std::swap(highlighted, mHighlightedStation);
   highlightStation(highlighted);
+#endif // ENABLE_HIGHLIGHT
 }
 
 void ErrorListModel::updateErrorItem(ErrorTreeItem_P item)
