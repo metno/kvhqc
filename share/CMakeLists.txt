@@ -1,22 +1,6 @@
 
-SET(HQC_SYS_DB ${CMAKE_CURRENT_BINARY_DIR}/hqc_system.db)
-
-SET(PY_SYS_DB "${CMAKE_CURRENT_SOURCE_DIR}/create_system_db.py")
-FILE(GLOB PY_SYS_DB_PARTS "${CMAKE_CURRENT_SOURCE_DIR}/system_db/*py")
-
-ADD_CUSTOM_COMMAND(
-   OUTPUT "${HQC_SYS_DB}"
-   COMMAND python ${PY_SYS_DB} "${HQC_SYS_DB}"
-   DEPENDS ${PY_SYS_DB} ${PY_SYS_DB_PARTS}
-)
-
-ADD_CUSTOM_TARGET(system-db ALL DEPENDS ${HQC_SYS_DB})
-
 CONFIGURE_FILE(hqc_current_version.in hqc_current_version)
-
 INSTALL(FILES
-  log4cpp.properties
-  ${HQC_SYS_DB}
   ${CMAKE_CURRENT_BINARY_DIR}/hqc_current_version
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
 
@@ -44,10 +28,3 @@ INSTALL(FILES
 INSTALL(FILES
   doc/news.html
   DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
-
-FOREACH(df hqcdiana histhqcdiana)
-  SET(dfi metno-${df}.desktop.in)
-  SET(dfo metno-${df}-${PVERSION}.desktop)
-  CONFIGURE_FILE(${dfi} ${dfo})
-  INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/${dfo} DESTINATION "share/applications")
-ENDFOREACH()

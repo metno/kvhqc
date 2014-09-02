@@ -17,12 +17,6 @@ ENDIF()
 INCLUDE(FindPkgConfig)
 
 ADD_SUBDIRECTORY(src)
-ADD_SUBDIRECTORY(bin)
 ADD_SUBDIRECTORY(share)
 
-SET(etc_files
-  etc/kvhqc/diana.setup
-  etc/kvhqc/kvalobs.conf
-  etc/kvhqc/kvhist.conf
-  etc/kvhqc/kvtest.conf)
-INSTALL(FILES ${etc_files} DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")
+INSTALL(FILES etc/README DESTINATION "${SYSCONFDIR}/kvhqc/${PVERSION}")

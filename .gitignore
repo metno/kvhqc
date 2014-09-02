@@ -20,7 +20,7 @@ moc_*.cpp
 /obj-i486-linux-gnu
 /hqc.log.20*
 /tests.log.20*
+/memcheck.log.20*
 /.pc
-/etc/hqc_current_version
 /callgrind.out.*
 /core

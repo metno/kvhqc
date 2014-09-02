@@ -18,13 +18,13 @@ Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
 Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
+ kvhqcconfig-@METNO_VERSION@,
 @metno_config_if ^lucid$
 @metno_config_else
  libkvcpp4 (>= 2.7.1-2),
 @metno_config_endif
  ${shlibs:Depends}, ${misc:Depends}
-Recommends: diana, dianaconfig, catchcrash,
- metno-qt4-translations (>= 0.2.0),
+Recommends: metno-qt4-translations (>= 0.2.0),
  metlibs-translations
 Provides: kvhqc
 Description: manual quality control for kvalobs
