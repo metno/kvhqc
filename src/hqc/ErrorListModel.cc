@@ -281,13 +281,19 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
         f.setBold(true);
         return f;
       }
-    } else if (role == Qt::ForegroundRole and column == COL_OBS_CORR) {
+    } else if (role == Qt::ForegroundRole) {
       const kvalobs::kvControlInfo ci(obs->controlinfo());
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
-        if (ci.qc2dDone())
-          return Qt::darkMagenta;
-        else if (ci.flag(kvalobs::flag::fnum) >= 6)
-          return Qt::red;
+        if (column == COL_OBS_CORR) {
+          if (ci.qc2dDone())
+            return Qt::darkMagenta;
+          else if (ci.flag(kvalobs::flag::fnum) >= 6)
+            return Qt::red;
+        }
+#ifndef ENABLE_HIDE
+      } else { // hqc touched
+        return Qt::darkGreen;
+#endif
       }
     } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR or column==COL_OBS_MODEL)) {
       return Qt::AlignRight+Qt::AlignVCenter;
