@@ -1,3 +1,9 @@
+kvhqc (3.4.4-1) unstable; urgency=low
+
+  * removed config files from svn/kvoss/kvhqc into new package
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 18 Jun 2014 15:17:20 +0200
+
 kvhqc (3.4.3-1) unstable; urgency=low
 
   * DataCodeItem::data: check that code list exists
