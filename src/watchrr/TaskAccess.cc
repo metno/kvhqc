@@ -30,15 +30,25 @@ ObsUpdate_p TaskAccess::createUpdate(const SensorTime& sensorTime)
   return boost::make_shared<TaskUpdate>(sensorTime);
 }
 
-bool TaskAccess::storeToBackend()
-{
-  return EditAccess::storeToBackend();
-}
-
 KvalobsData_p TaskAccess::createDataForUpdate(KvalobsUpdate_p update, const timeutil::ptime& tbtime)
 {
+  int tasks = 0;
+  if (TaskUpdate_p tu = boost::dynamic_pointer_cast<TaskUpdate>(update))
+    tasks = tu->tasks();
   KvalobsData_p kd = EditAccess::createDataForUpdate(update, tbtime);
-  return boost::make_shared<TaskData>(kd);
+  return boost::make_shared<TaskData>(kd, tasks);
+}
+
+bool TaskAccess::fillBackendupdate(ObsUpdate_p backendUpdate, ObsData_p currentData)
+{
+  TaskUpdate_p tu = boost::dynamic_pointer_cast<TaskUpdate>(backendUpdate);
+  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(currentData)) {
+    if (tu)
+      tu->setTasks(td->allTasks());
+    else if (td->hasRequiredTasks())
+      return false;
+  }
+  return EditAccess::fillBackendupdate(backendUpdate, currentData);
 }
 
 ObsData_p TaskAccess::findE(const SensorTime& st)

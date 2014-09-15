@@ -46,6 +46,7 @@ Q_SIGNALS:
 
 protected:
   virtual KvalobsData_p createDataForUpdate(KvalobsUpdate_p update, const timeutil::ptime& tbtime);
+  virtual bool fillBackendupdate(ObsUpdate_p backendUpdate, ObsData_p currentData);
 
 private:
   //void sendObsDataChanged(ObsDataChange what, ObsDataPtr obs, int dUpdated, int dTasks);

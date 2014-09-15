@@ -1,6 +1,7 @@
 
 #include "StationCardModel.hh"
 
+#include "TasksColumn.hh"
 #include "common/ColumnFactory.hh"
 #include "common/ModelColumn.hh"
 #include "common/KvHelpers.hh"
@@ -9,7 +10,7 @@
 #include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.StationCardModel"
-#include "util/HqcLogging.hh"
+#include "common/ObsLogging.hh"
 
 namespace /* anonymous */ {
 const int N_COLUMNS = 18;
@@ -44,24 +45,24 @@ StationCardModel::StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sens
 {
   setTimeSpan(time);
 
-  std::vector<Sensor> allSensors;
-  allSensors.reserve(N_COLUMNS);
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
-    allSensors.push_back(s);
-  }
 
-  for(int i=0; i<N_COLUMNS; ++i) {
-    const Sensor& s = allSensors[i];
-    DataColumn_p oc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
-    oc->setHeaderShowStation(false);
+    DataColumn_p dc = ColumnFactory::columnForSensor(da, s, time, columnTypes[i]);
+    if (not dc) {
+      HQC_LOG_WARN("no column for sensor " << s);
+      continue;
+    }
+
+    dc->setHeaderShowStation(false);
     if (columnTimeOffsets[i] != 0)
-      oc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
+      dc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
+
     if (i == getRR24Column()) {
-      mRR24EditTime = boost::make_shared<EditTimeColumn>(oc);
+      mRR24EditTime = boost::make_shared<EditTimeColumn>(dc);
       addColumn(mRR24EditTime);
     } else {
-      addColumn(oc);
+      addColumn(boost::make_shared<TasksColumn>(dc));
     }
   }
 

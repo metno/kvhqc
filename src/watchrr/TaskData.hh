@@ -7,8 +7,8 @@
 class TaskData : public KvalobsData
 {
 public:
-  TaskData(KvalobsData_p kd)
-    : KvalobsData(kd->data(), kd->isCreated()), mTasks(0) { }
+  TaskData(KvalobsData_p kd, int tasks)
+    : KvalobsData(kd->data(), kd->isCreated()), mTasks(tasks) { }
 
   bool hasTasks() const
     { return allTasks() != 0; }

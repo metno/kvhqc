@@ -12,9 +12,12 @@ SET(watchrr_SOURCES
   StationCardModel.cc
   StationDialog.cc
   TaskAccess.cc
+  TaskData.cc
   TaskUpdate.cc
+  TasksColumn.cc
   WatchRRDialog.cc
   WatchRRTableModel.cc
+  WrapperColumn.cc
 )
 
 QT4_ADD_TRANSLATION(watchrr_QM

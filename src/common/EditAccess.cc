@@ -391,9 +391,8 @@ bool EditAccess::storeToBackend()
       backendUpdate = p->mBackend->createUpdate(ev->backendData());
     else
       backendUpdate = p->mBackend->createUpdate(ev->sensorTime());
-    backendUpdate->setCorrected  (ev->corrected());
-    backendUpdate->setControlinfo(ev->controlinfo());
-    backendUpdate->setCfailed    (ev->cfailed());
+    if (not fillBackendupdate(backendUpdate, ev->currentData()))
+      return false;
     updates.push_back(backendUpdate);
   }
   if (p->mBackend->storeUpdates(updates)) {
@@ -408,6 +407,14 @@ bool EditAccess::storeToBackend()
     return true;
   }
   return false;
+}
+
+bool EditAccess::fillBackendupdate(ObsUpdate_p backendUpdate, ObsData_p currentData)
+{
+  backendUpdate->setCorrected  (currentData->corrected());
+  backendUpdate->setControlinfo(currentData->controlinfo());
+  backendUpdate->setCfailed    (currentData->cfailed());
+  return true;
 }
 
 void EditAccess::reset()

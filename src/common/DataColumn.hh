@@ -42,7 +42,6 @@ public:
   virtual int busyStatus() const
     { return mRequestStatus; }
 
-protected:
   ObsData_p getObs(const Time& time) const;
   SensorTime getSensorTime(const Time& time) const
     { return SensorTime(sensor(), time + mTimeOffset); }
