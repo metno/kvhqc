@@ -39,7 +39,9 @@ StationDataList::~StationDataList()
 SensorTime StationDataList::sensorSwitch() const
 {
   const SensorTime& sst = storeSensorTime(), cst = currentSensorTime();
-  if (sst.sensor.stationId == cst.sensor.stationId and timeSpan().contains(cst.time))
+  if (sst.sensor.stationId == cst.sensor.stationId
+      and std::abs(sst.sensor.typeId) == std::abs(cst.sensor.typeId)
+      and timeSpan().contains(cst.time))
     return sst;
 
   Sensor s = cst.sensor;
