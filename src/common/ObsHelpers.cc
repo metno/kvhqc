@@ -61,8 +61,16 @@ bool is_valid(EditDataEditorPtr editor) // same as kvDataOperations.cc
 
 void reject(EditDataEditorPtr editor) // same as kvDataOperations.cc
 {
-    if (not is_valid(editor))
-        return;
+#if 0
+  if (not is_valid(editor))
+    return;
+#else
+  // this is different from kvDataOperations.cc: allow rejecting a
+  // rejected value, in effect setting fhqc=A such that the rejected
+  // observation does not appear in the error list any more
+  if (is_missing(editor))
+    return;
+#endif
     
     const FlagChange fc_reject("fmis=[04]->fmis=2;fmis=1->fmis=3;fhqc=A");
     editor->changeControlinfo(fc_reject);

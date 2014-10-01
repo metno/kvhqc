@@ -24,12 +24,13 @@ int possibilities(EditDataPtr obs)
     // for accumulations, always use WatchRR
     return 0;
   
-  const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+  const kvalobs::kvControlInfo ci = obs->controlinfo();
+  const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3)
     return CAN_CORRECT;
   
   int possible = ALL;
-  if (Helpers::is_rejected(obs))
+  if (ci.flag(kvalobs::flag::fhqc) == 0xA)
     possible &= ~CAN_REJECT;
   if (fmis == 3)
     possible &= ~CAN_ACCEPT_ORIGINAL;
@@ -138,7 +139,7 @@ void reject(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2ok)
   EditDataEditorPtr editor = eda->editor(obs);
   Helpers::reject(editor);
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
+    Helpers::set_fhqc(editor, 4);
 
   editor->commit();
 }
