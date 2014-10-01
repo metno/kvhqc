@@ -1,3 +1,10 @@
+kvhqc (3.4.8-1) unstable; urgency=low
+
+  * error list: exclude foreign stations
+  * interpolation tool: better handling of direction in degrees
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 23 Sep 2014 08:15:56 +0200
+
 kvhqc (3.4.7-1) unstable; urgency=low
 
   * backported search dialog from 4.0.0 alpha
