@@ -1,3 +1,9 @@
+kvhqc (3.4.7-1) unstable; urgency=low
+
+  * backported search dialog from 4.0.0 alpha
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 09 Sep 2014 08:51:21 +0200
+
 kvhqc (3.4.6-1) unstable; urgency=low
 
   * errorlist: green text for resolved errors
