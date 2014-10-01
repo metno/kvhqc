@@ -46,13 +46,17 @@ bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 
 bool checkErrorSalen2013(const EditDataPtr obs)
 {
-  const int fhqc = obs->controlinfo().flag(kvalobs::flag::fhqc);
+  const kvalobs::kvControlInfo ci = obs->controlinfo();
+  const int fhqc = ci.flag(kvalobs::flag::fhqc);
   if (fhqc != 0)
     return false;
 
   const SensorTime& st = obs->sensorTime();
   const Sensor& sensor = st.sensor;
-  const int hour = obs->sensorTime().time.time_of_day().hours();
+  if (not Helpers::isNorwegianStationId(sensor.stationId))
+    return false;
+
+  const int hour = st.time.time_of_day().hours();
 
   const bool param_6_18 = std::binary_search(paramid_hour_6_18, boost::end(paramid_hour_6_18), sensor.paramId);
   const bool param_6 = std::binary_search(paramid_hour_6, boost::end(paramid_hour_6), sensor.paramId);
@@ -62,8 +66,8 @@ bool checkErrorSalen2013(const EditDataPtr obs)
   if (not IsTypeInObsPgm(sensor.stationId, sensor.paramId, sensor.typeId, st.time))
     return false;
 
-  const int fs = obs->controlinfo().flag(kvalobs::flag::fs);
-  const int fr = obs->controlinfo().flag(kvalobs::flag::fr);
+  const int fs = ci.flag(kvalobs::flag::fs);
+  const int fr = ci.flag(kvalobs::flag::fr);
   if (fr == 4 || fr == 5 || fr == 6 || fs == 2)
     return true;
 
@@ -72,25 +76,30 @@ bool checkErrorSalen2013(const EditDataPtr obs)
 
 bool checkErrorHQC2013(const EditDataPtr obs)
 {
-  const int fhqc = obs->controlinfo().flag(kvalobs::flag::fhqc);
+  const kvalobs::kvControlInfo ci = obs->controlinfo();
+  const int fhqc = ci.flag(kvalobs::flag::fhqc);
   if (fhqc != 0)
     return false;
 
-  const Sensor& sensor = obs->sensorTime().sensor;
-  const int hour = obs->sensorTime().time.time_of_day().hours();
+  const SensorTime& st = obs->sensorTime();
+  const Sensor& sensor = st.sensor;
+  if (not Helpers::isNorwegianStationId(sensor.stationId))
+    return false;
 
-  const int fpre = obs->controlinfo().flag(kvalobs::flag::fpre);
+  const int hour = st.time.time_of_day().hours();
+
+  const int fpre = ci.flag(kvalobs::flag::fpre);
   if (fpre == 4 or fpre == 6) {
     const bool error_6_18 = (hour == 6 or hour == 18) and std::binary_search(paramid_hour_6_18, boost::end(paramid_hour_6_18), sensor.paramId);
     const bool error_6 = hour == 6 and std::binary_search(paramid_hour_6, boost::end(paramid_hour_6), sensor.paramId);
     return (error_6 or error_6_18);
   }
 
-  const int ftime = obs->controlinfo().flag(kvalobs::flag::ftime);
+  const int ftime = ci.flag(kvalobs::flag::ftime);
   if (ftime > 0)
     return false;
 
-  const int fd = obs->controlinfo().flag(kvalobs::flag::fd);
+  const int fd = ci.flag(kvalobs::flag::fd);
   if ((fd == 7 or fd == 8) and sensor.paramId == kvalobs::PARAMID_RR_24)
     return false;
 
@@ -98,11 +107,11 @@ bool checkErrorHQC2013(const EditDataPtr obs)
   if (ui_2 == 2 or ui_2 == 3)
     return true;
 
-  const int fr = obs->controlinfo().flag(kvalobs::flag::fr);
+  const int fr = ci.flag(kvalobs::flag::fr);
   if (fr == 2 or fr == 3)
     return true;
 
-  const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
+  const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3)
     return true;
 
