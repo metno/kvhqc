@@ -2,6 +2,7 @@
 #include "ToolInterpolate.hh"
 
 #include "common/DataColumn.hh"
+#include "common/KvMetaDataBuffer.hh"
 #include "common/ObsHelpers.hh"
 #include "common/ObsTableModel.hh"
 #include "util/gui/UiHelpers.hh"
@@ -58,14 +59,23 @@ void ToolInterpolate::onInterpolate()
   if (not (d0 and d1))
     return;
 
-  const float c0 = d0->corrected(), c1 = d1->corrected();
+  float c0 = d0->corrected(), c1 = d1->corrected();
+  float modulo = 0;
+  if (KvMetaDataBuffer::instance()->isDirectionInDegreesParam(d0->sensorTime().sensor.paramId)) {
+    modulo = 360;
+    if (abs(c0+360 - c1) < abs(c0 - c1))
+      c0 += 360;
+    METLIBS_LOG_DEBUG(LOGVAL(modulo) << LOGVAL(c0));
+  }
   const float dt = (st1.time - st0.time).total_seconds(), dti = 1/dt;
   METLIBS_LOG_DEBUG(LOGVAL(st0) << LOGVAL(st1) << LOGVAL(c0) << LOGVAL(c1) << LOGVAL(dt));
 
   mDA->newVersion();
   for (SensorTime_v::const_iterator it = mSelectedObs.begin(); it != mSelectedObs.end(); ++it) {
     const float tdiff = (it->time - st0.time).total_seconds(), r = tdiff * dti;
-    const float c = r*c1 + (1-r)*c0;
+    float c = r*c1 + (1-r)*c0;
+    if (modulo > 0)
+      c = std::fmod(c, modulo);
     METLIBS_LOG_DEBUG(LOGVAL(*it) << LOGVAL(tdiff) << LOGVAL(r) << LOGVAL(c));
 
     EditDataPtr obs = mDA->findOrCreateE(*it);

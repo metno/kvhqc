@@ -2,6 +2,7 @@
 #include "KvMetaDataBuffer.hh"
 
 #include "Functors.hh"
+#include "KvHelpers.hh"
 #include "KvServiceHelper.hh"
 #include "common/HqcApplication.hh"
 #include "util/gui/BusyIndicator.hh"
@@ -108,6 +109,14 @@ bool KvMetaDataBuffer::isCodeParam(int paramid)
   if (not mHaveParams)
     fetchParams();
   return mCodeParams.find(paramid) != mCodeParams.end();
+}
+
+bool KvMetaDataBuffer::isDirectionInDegreesParam(int pid)
+{
+  const kvalobs::kvParam& param = findParam(pid);
+  return (param.unit().find("grader") != std::string::npos
+      and pid != kvalobs::PARAMID_MLON
+      and pid != kvalobs::PARAMID_MLAT);
 }
 
 namespace /* anonymous */ {

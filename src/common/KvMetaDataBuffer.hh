@@ -32,6 +32,7 @@ public:
   std::string findParamName(const Sensor& sensor)
     { return findParamName(sensor.paramId); }
   bool isCodeParam(int paramId);
+  bool isDirectionInDegreesParam(int paramId);
   bool isModelParam(int paramId);
   bool checkPhysicalLimits(int paramid, float value);
 
