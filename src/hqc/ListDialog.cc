@@ -87,29 +87,34 @@ void checkChildren(QStandardItem* parent)
     parent->setCheckState(pcs_new);
 }
 
-class StationSortFilterProxyModel : public QSortFilterProxyModel
+class StationFilterProxyModel : public QSortFilterProxyModel
 {
 public:
-  StationSortFilterProxyModel(QObject* parent=0)
+  StationFilterProxyModel(QObject* parent=0)
     : QSortFilterProxyModel(parent) { }
-
-  bool lessThan(const QModelIndex &left, const QModelIndex &right) const;
+  
+protected:
+  bool filterAcceptsRow(int row, const QModelIndex &parent) const;
 };
 
-bool StationSortFilterProxyModel::lessThan(const QModelIndex &left,
-    const QModelIndex &right) const
+bool StationFilterProxyModel::filterAcceptsRow(int row, const QModelIndex &parent) const
 {
-  if (left.column() == 0 and right.column() == 0) {
-    const int stationL = sourceModel()->data(left) .toString().toInt();
-    const int stationR = sourceModel()->data(right).toString().toInt();
-    return stationL < stationR;
-  } else if (left.column() == 2 and right.column() == 2) {
-    const int altL = sourceModel()->data(left) .toString().toFloat();
-    const int altR = sourceModel()->data(right).toString().toFloat();
-    return altL < altR;
-  } else {
-    return QSortFilterProxyModel::lessThan(left, right);
-  }
+  // accept highest level (region)
+  if (not parent.isValid())
+    return true;
+  // accept next-highest level (county)
+  if (not parent.parent().isValid())
+    return true;
+
+  const QRegExp& filter = filterRegExp();
+  const QString stationid = sourceModel()->data(parent.child(row, 0)).toString();
+  if (filter.indexIn(stationid) == 0) // match station id at start
+    return true;
+  const QString stationname = sourceModel()->data(parent.child(row, 1)).toString();
+  if (filter.indexIn(stationname) >= 0) // match station name anywhere
+    return true;
+  // do not match other columns
+  return false;
 }
 } // anonymous namespace
 
@@ -117,7 +122,7 @@ bool StationSortFilterProxyModel::lessThan(const QModelIndex &left,
 
 ListDialog::ListDialog(HqcMainWindow* parent)
   : QDialog(parent)
-  , ui(new Ui::ListDialog)
+  , ui(new Ui_ListDialog)
   , mTimeControl(new TimeRangeControl(this))
   , mIsInToggle(false)
 {
@@ -129,9 +134,6 @@ ListDialog::ListDialog(HqcMainWindow* parent)
   connect(ui->buttonSave,    SIGNAL(clicked()), this, SLOT(onSaveSettings()));
   connect(ui->buttonRestore, SIGNAL(clicked()), this, SLOT(onRestoreSettings()));
     
-  connect(ui->hab, SIGNAL(hide()), this, SLOT(hide()));
-  connect(ui->hab, SIGNAL(apply()), this, SIGNAL(ListApply()));
-
   mTimeControl->setMinimumGap(6);
   mTimeControl->install(ui->fromTime, ui->toTime);
     
@@ -234,11 +236,10 @@ void ListDialog::setupStationTab()
     }
   }
 
-  StationSortFilterProxyModel *proxyModel = new StationSortFilterProxyModel(this);
+  StationFilterProxyModel *proxyModel = new StationFilterProxyModel(this);
   proxyModel->setSourceModel(mStationModel.get());
+  proxyModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
   ui->treeStations->setModel(proxyModel);
-  ui->treeStations->setSortingEnabled(true);
-  ui->treeStations->sortByColumn(0, Qt::AscendingOrder);
 
   ui->treeStations->expandAll();
   ui->treeStations->header()->resizeSections(QHeaderView::ResizeToContents);
@@ -250,7 +251,16 @@ void ListDialog::setupStationTab()
   connect(mStationModel.get(), SIGNAL(itemChanged(QStandardItem*)),
       this, SLOT(onItemChanged(QStandardItem*)));
   
-  onSetRecentTimes();
+  if (not ui->checkRememberTimes->isChecked())
+    onSetRecentTimes();
+}
+
+void ListDialog::onFilterStations(const QString& text)
+{
+  if (not text.isEmpty())
+    ui->treeStations->expandAll();
+  StationFilterProxyModel* proxyModel = static_cast<StationFilterProxyModel*>(ui->treeStations->model());
+  proxyModel->setFilterFixedString(text);
 }
 
 void ListDialog::setupParameterTab()
@@ -444,12 +454,10 @@ void ListDialog::onRestoreSettings()
 
 void ListDialog::onSetRecentTimes()
 {
-  if (not ui->checkRememberTimes->isChecked()) {
-    QDateTime t = timeutil::nowWithMinutes0Seconds0();
-    QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
-    ui->fromTime->setDateTime(f);
-    ui->toTime->setDateTime(t);
-  }
+  QDateTime t = timeutil::nowWithMinutes0Seconds0();
+  QDateTime f = t.addSecs(-2*24*3600 + 3600*(17-t.time().hour()) + 60*45);
+  ui->fromTime->setDateTime(f);
+  ui->toTime->setDateTime(t);
 }
 
 void ListDialog::showParamGroup(const QString& paramGroup)
@@ -464,6 +472,7 @@ void ListDialog::showParamGroup(const QString& paramGroup)
       avail.push_back(pid);
   }
   mParamAvailableModel->setValues(avail);
+  enableButtons();
 }
 
 void ListDialog::addParameter2Click(const QModelIndex& index)
@@ -552,7 +561,7 @@ void ListDialog::enableButtons()
   const bool haveParameters = not getSelectedParameters().empty();
 
   const bool allowApply = haveStations and haveParameters;
-  ui->hab->setCanApply(allowApply);
+  ui->buttonOk->setEnabled(allowApply);
 }
 
 QStringList ListDialog::getSelectedCounties()

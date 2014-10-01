@@ -22,6 +22,8 @@ INSTALL(FILES
   images/hqc_splash.svg
   images/kv_error.svg
   images/kv_ok.svg
+  images/search_red.svg
+  images/filter.svg
 
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
 

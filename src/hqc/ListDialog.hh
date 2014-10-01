@@ -48,9 +48,7 @@ class HqcMainWindow;
 class StationSelection;
 class TimeRangeControl;
 
-namespace Ui {
-class ListDialog;
-}
+class Ui_ListDialog;
 
 class ListDialog : public QDialog
 { Q_OBJECT;
@@ -71,6 +69,7 @@ protected:
 
 private Q_SLOTS:
   void onSetRecentTimes();
+  void onFilterStations(const QString&);
 
   void showParamGroup(const QString& paramGroup);
   void selectParameters();
@@ -85,10 +84,6 @@ private Q_SLOTS:
 
   void onItemChanged(QStandardItem* item);
 
-Q_SIGNALS:
-  void ListHide();
-  void ListApply();
-
 private:
   void enableButtons();
 
@@ -102,7 +97,7 @@ private:
   void doRestoreSettings(QSettings& settings);
 
 private:
-  std::auto_ptr<Ui::ListDialog> ui;
+  std::auto_ptr<Ui_ListDialog> ui;
   std::auto_ptr<QStandardItemModel> mStationModel;
 
   std::map<QString, std::vector<int> > mParameterGroups;

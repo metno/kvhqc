@@ -197,7 +197,7 @@ HqcMainWindow::HqcMainWindow()
   mAutoDataList->setDataAccess(eda, kma);
   mTimeSeriesView->setDataAccess(eda, kma);
 
-  connect(lstdlg, SIGNAL(ListApply()), this, SLOT(ListOK()));
+  connect(lstdlg, SIGNAL(accepted()), this, SLOT(ListOK()));
 
   connect(ui->actionTextDataList, SIGNAL(triggered()), txtdlg, SLOT(show()));
   connect(txtdlg, SIGNAL(textDataApply()), SLOT(textDataOK()));
