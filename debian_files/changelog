@@ -1,3 +1,13 @@
+kvhqc (3.4.9-1) unstable; urgency=low
+
+  * ToolInterpolate: better handling direction "0 degrees"
+  * new attempt at forwarding milog to log4cpp
+  * allow rejecting rejected data, effectively setting fhqc=A
+  * fix lintian complaint
+  * TimeSeriesView: print more debugging info
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 01 Oct 2014 14:47:52 +0200
+
 kvhqc (3.4.8-1) unstable; urgency=low
 
   * error list: exclude foreign stations
