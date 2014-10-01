@@ -121,8 +121,6 @@ void TimeSeriesView::updateSensors()
   axes.push_back(POptions::axis_right_right);
   axes.push_back(POptions::axis_left_right);
   axes.push_back(POptions::axis_right_left);
-  axes.push_back(POptions::axis_right_left);
-  axes.push_back(POptions::axis_right_left);
 
   mPlotOptions = std::vector<POptions::PlotOptions>(mSensors.size());
   int idx = -1;
@@ -272,6 +270,7 @@ void TimeSeriesView::doNavigateTo(const SensorTime& st)
   mColumnAdd->setEnabled(true);
   mColumnRemove->setEnabled(true);
 
+  METLIBS_LOG_DEBUG(LOGVAL(changedSensors) << LOGVAL(changedTime));
   if (changedSensors)
     updateSensors();
   else if (changedTime)
@@ -415,6 +414,7 @@ void TimeSeriesView::replay(const std::string& changesText)
 
 void TimeSeriesView::onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr)
 {
+  METLIBS_LOG_SCOPE();
   updatePlot();
 }
 
@@ -479,6 +479,7 @@ void TimeSeriesView::onRadioPlot()
 
 void TimeSeriesView::setTimeRange(const TimeRange& t)
 {
+  METLIBS_LOG_SCOPE();
   if (t == mTimeLimits)
     return;
 
@@ -529,7 +530,8 @@ void TimeSeriesView::updatePlot()
   BOOST_FOREACH(const Sensor& sensor, mSensors) {
     idx += 1;
     if (idx >= (int)mPlotOptions.size()) {
-      HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions, idx " << idx << " is invalid, mST=" << mSensorTime << " s=" << sensor);
+      HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions for " << mSensors.size()
+          << " sensors,, idx " << idx << " is invalid, mST=" << mSensorTime << " s=" << sensor);
       break;
     }
 
