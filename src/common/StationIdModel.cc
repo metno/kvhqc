@@ -41,7 +41,7 @@ StationIdModel::StationIdModel(const std::vector<int>& stationIds, QObject* pare
 
 QVariant StationIdModel::data(const QModelIndex& index, int role) const
 {
-  METLIBS_LOG_SCOPE();
+  //METLIBS_LOG_SCOPE();
   if (role == Qt::DisplayRole or role == Qt::EditRole) {
     const int stationId = mStationIds[index.row()];
     if (index.column() == 0)

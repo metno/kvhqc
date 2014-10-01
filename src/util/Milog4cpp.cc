@@ -45,15 +45,10 @@ std::string Milog4cppLayout::formatMessage(const std::string &msg, milog::LogLev
 // ================================================================================
 
 Milog4cppStream::Milog4cppStream()
-  : milog::LogStream(new Milog4cppLayout)
+  : milog::LogStream(new Milog4cppLayout, milog::DEBUG6)
 {
 }
 
-Milog4cppStream::Milog4cppStream(milog::Layout *layout)
-  : milog::LogStream(layout)
-{
-}
-  
 Milog4cppStream::~Milog4cppStream()
 {
 }

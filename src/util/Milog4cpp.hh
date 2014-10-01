@@ -20,8 +20,6 @@ class Milog4cppStream : public milog::LogStream
 {
 public:
   Milog4cppStream();
-  Milog4cppStream(milog::Layout *layout);
-      
   ~Milog4cppStream();
 
 protected:
