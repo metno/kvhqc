@@ -5,6 +5,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ObsHelpers.hh"
 #include "common/ObsTableModel.hh"
+#include "util/Helpers.hh"
 #include "util/gui/UiHelpers.hh"
 
 #include <QtCore/QEvent>
@@ -61,9 +62,15 @@ void ToolInterpolate::onInterpolate()
 
   float c0 = d0->corrected(), c1 = d1->corrected();
   float modulo = 0;
-  if (KvMetaDataBuffer::instance()->isDirectionInDegreesParam(d0->sensorTime().sensor.paramId)) {
+  int decimals = 1;
+  const bool is_direction = KvMetaDataBuffer::instance()->isDirectionInDegreesParam(d0->sensorTime().sensor.paramId);
+  bool direction_start_0 = false, direction_stop_0 = false;
+  if (is_direction) {
+    decimals = 0;
     modulo = 360;
-    if (abs(c0+360 - c1) < abs(c0 - c1))
+    direction_start_0 = c0 == 0;
+    direction_stop_0  = c1 == 0;
+    if (abs(c0+360 - c1) < abs(c0 - c1) and not (direction_start_0 or direction_stop_0))
       c0 += 360;
     METLIBS_LOG_DEBUG(LOGVAL(modulo) << LOGVAL(c0));
   }
@@ -73,9 +80,13 @@ void ToolInterpolate::onInterpolate()
   mDA->newVersion();
   for (SensorTime_v::const_iterator it = mSelectedObs.begin(); it != mSelectedObs.end(); ++it) {
     const float tdiff = (it->time - st0.time).total_seconds(), r = tdiff * dti;
-    float c = r*c1 + (1-r)*c0;
+    float c = Helpers::roundDecimals(r*c1 + (1-r)*c0, decimals);
     if (modulo > 0)
       c = std::fmod(c, modulo);
+    if (direction_start_0 or direction_stop_0)
+      c = 0;
+    else if (is_direction and c == 0)
+      c = 360;
     METLIBS_LOG_DEBUG(LOGVAL(*it) << LOGVAL(tdiff) << LOGVAL(r) << LOGVAL(c));
 
     EditDataPtr obs = mDA->findOrCreateE(*it);
@@ -127,6 +138,10 @@ bool ToolInterpolate::checkEnabled()
   if (not dc or dc->type() != ObsColumn::NEW_CORRECTED)
     return false;
 
+  const SensorTime st = tableModel->findSensorTime(tableModel->index(minRow, minCol));
+  const bool is_direction = KvMetaDataBuffer::instance()->isDirectionInDegreesParam(st.sensor.paramId);
+  bool direction_start_0 = false, direction_stop_0 = false;
+
   mSelectedObs.clear();
   for (int r=minRow; r<=maxRow; ++r) {
     const SensorTime st = tableModel->findSensorTime(tableModel->index(r, minCol));
@@ -136,6 +151,10 @@ bool ToolInterpolate::checkEnabled()
         return false;
       if (Helpers::is_missing(obs) or Helpers::is_rejected(obs))
         return false;
+      if (is_direction and r == minRow)
+        direction_start_0 = obs->corrected() == 0;
+      if (is_direction and r == maxRow)
+        direction_stop_0 = obs->corrected() == 0;
     }
     if (r == minRow)
       mSelectedStart = st;
@@ -144,5 +163,7 @@ bool ToolInterpolate::checkEnabled()
     else
       mSelectedObs.push_back(st);
   }
+  if (is_direction and direction_start_0 != direction_stop_0)
+    return false;
   return true;
 }
