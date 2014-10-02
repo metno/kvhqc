@@ -46,10 +46,12 @@ namespace internal_
 
 void updateUseAddCFailed(kvalobs::kvData &d)
 {
-    const kvalobs::kvControlInfo cinfo = d.controlinfo();
-    const int fhqc = cinfo.flag(flag::fhqc);
-    if (fhqc == 0)
-        HQC_LOG_ERROR("inserting data with fhqc==0: " << d);
+    kvalobs::kvControlInfo cinfo = d.controlinfo();
+    if (cinfo.flag(flag::fhqc) == 0) {
+      cinfo.set(flag::fhqc, 3);
+      d.controlinfo(cinfo);
+      HQC_LOG_ERROR("inserting data with fhqc==0, forced to fhqc==3: " << d);
+    }
     
     kvUseInfo ui = d.useinfo();
     ui.setUseFlags(cinfo);
