@@ -6,7 +6,6 @@
 #include "ObsPgmQueryTask.hh"
 #include "KvHelpers.hh"
 #include "ParamQueryTask.hh"
-#include "QueryTaskHandler.hh"
 #include "QueryTaskHelper.hh"
 #include "StationQueryTask.hh"
 #include "TypesQueryTask.hh"
@@ -208,6 +207,14 @@ void KvMetaDataBuffer::sendComplete()
     Q_EMIT complete();
 }
 
+QueryTaskHandler* KvMetaDataBuffer::handler()
+{
+  if (mHandler)
+    return mHandler.get();
+  else
+    return hqcApp->kvalobsHandler().get();
+}
+
 void KvMetaDataBuffer::fetchStations()
 {
   METLIBS_LOG_SCOPE();
@@ -216,7 +223,7 @@ void KvMetaDataBuffer::fetchStations()
   StationQueryTask* q = new StationQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskStations = new QueryTaskHelper(q);
   connect(mTaskStations, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneStations()));
-  mTaskStations->post(hqcApp->kvalobsHandler().get());
+  mTaskStations->post(handler());
 }
 
 void KvMetaDataBuffer::fetchParams()
@@ -227,7 +234,7 @@ void KvMetaDataBuffer::fetchParams()
   ParamQueryTask* q = new ParamQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskParams = new QueryTaskHelper(q);
   connect(mTaskParams, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneParams()));
-  mTaskParams->post(hqcApp->kvalobsHandler().get());
+  mTaskParams->post(handler());
 }
 
 void KvMetaDataBuffer::fetchTypes()
@@ -238,7 +245,7 @@ void KvMetaDataBuffer::fetchTypes()
   TypesQueryTask* q = new TypesQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskTypes = new QueryTaskHelper(q);
   connect(mTaskTypes, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneTypes()));
-  mTaskTypes->post(hqcApp->kvalobsHandler().get());
+  mTaskTypes->post(handler());
 }
 
 void KvMetaDataBuffer::dropStations()

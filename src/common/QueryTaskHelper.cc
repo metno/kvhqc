@@ -28,7 +28,7 @@ QueryTaskHelper::~QueryTaskHelper()
   drop();
 }
 
-void QueryTaskHelper::post(QueryTaskHandler* handler)
+void QueryTaskHelper::post(QueryTaskHandler_x handler)
 {
   METLIBS_LOG_SCOPE("this=" << this);
   assert(handler);
@@ -38,7 +38,7 @@ void QueryTaskHelper::post(QueryTaskHandler* handler)
   mHandler->postTask(task());
 }
 
-void QueryTaskHelper::sync(QueryTaskHandler* handler)
+void QueryTaskHelper::sync(QueryTaskHandler_x handler)
 {
   METLIBS_LOG_SCOPE("this=" << this);
   assert(handler);

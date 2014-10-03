@@ -5,6 +5,7 @@
 #include "CachedParamLimits.hh"
 #include "Sensor.hh"
 #include "KvTypedefs.hh"
+#include "QueryTaskHandler.hh"
 
 #include <QtCore/QObject> 
 
@@ -54,6 +55,9 @@ public:
   bool isComplete() const
     { return (mHaveStations and mHaveParams and mHaveTypes); }
 
+  void setHandler(QueryTaskHandler_p handler)
+      { mHandler = handler; }
+
   static KvMetaDataBuffer* instance()
     { return sInstance; }
 
@@ -80,6 +84,8 @@ private:
 
   void sendComplete();
 
+  QueryTaskHandler_x handler();
+
 private:
   bool mHaveStations;
   QueryTaskHelper *mTaskStations;
@@ -95,6 +101,8 @@ private:
 
   typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
   kvObsPgm_m mObsPgms;
+
+  boost::shared_ptr<QueryTaskHandler> mHandler;
 
   static KvMetaDataBuffer* sInstance;
 };

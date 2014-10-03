@@ -69,5 +69,6 @@ private:
 };
 
 HQC_TYPEDEF_P(QueryTaskHandler);
+HQC_TYPEDEF_X(QueryTaskHandler);
 
 #endif // COMMON_QUERYTASKHANDLER_HH
