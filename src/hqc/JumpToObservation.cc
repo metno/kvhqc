@@ -79,6 +79,7 @@ SensorTime JumpToObservation::selectedSensorTime() const
 
 void JumpToObservation::slotValidSensor(bool valid)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(valid));
   ui->editObsTime->setEnabled(valid);
   ui->buttonJump->setEnabled(valid);
 }

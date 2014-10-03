@@ -255,9 +255,9 @@ void load_84070_20120930(FakeKvApp& fa)
     fa.insertModel("2012-09-29 18:00:00",       1.1);
     fa.insertModel("2012-09-30 06:00:00",       0.0);
 
-    fa.mKvStations.push_back(kvalobs::kvStation(84070, 68.330200, 16.788300, 53.000000, 0.0f, "BJØRKÅSEN", 0, 0, "?", "?", "?", 10, true, timeutil::to_miTime(timeutil::from_iso_extended_string("1964-01-01 00:00:00"))));
+    fa.addStation(kvalobs::kvStation(84070, 68.330200, 16.788300, 53.000000, 0.0f, "BJØRKÅSEN", 0, 0, "?", "?", "?", 10, true, timeutil::to_miTime(timeutil::from_iso_extended_string("1964-01-01 00:00:00"))));
 
-    fa.mObsPgm.push_back(kvalobs::kvObsPgm(84070, 110, 0, 1, 302, 0,
+    fa.addObsPgm(kvalobs::kvObsPgm(84070, 110, 0, 1, 302, 0,
                                            0, 0, 0, 0, 0, 0,
                                            1, 0, 0, 0, 0, 0,
                                            0, 0, 0, 0, 0, 0,

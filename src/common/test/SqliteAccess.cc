@@ -36,6 +36,22 @@ Time my_sqlite3_time(sqlite3_stmt *stmt, int col)
   return timeutil::from_iso_extended_string((const char*)(sqlite3_column_text(stmt, col)));
 }
 
+timeutil::ptime from_iso(const std::string& iso)
+{
+  if (iso.size() >= 19)
+    return timeutil::from_iso_extended_string(iso);
+  else
+    return timeutil::ptime();
+}
+
+std::string to_iso(const timeutil::ptime& t)
+{
+  if (t.is_not_a_date_time())
+    return "NULL";
+  else
+    return timeutil::to_iso_extended_string(t);
+}
+
 std::string sql4insert(const kvalobs::kvData& d)
 {
   std::ostringstream sql;
@@ -85,6 +101,89 @@ std::string sql4drop(const SensorTime& st)
       << "  AND typeid = " << s.typeId
       << "  AND sensor = '" << s.sensor << "'"
       << "  AND level = " << s.level;
+  return sql.str();
+}
+
+std::string sql4insert(const kvalobs::kvModelData& m)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO model_data VALUES " << m.toSend();
+  return sql.str();
+}
+
+struct quoted_bool_t {
+public:
+  quoted_bool_t(bool v) : value(v) { }
+  bool value;
+};
+std::ostream& operator<<(std::ostream& out, const quoted_bool_t& qb)
+{ out << '\'' << (qb.value ? '1' : '0') << '\''; return out; }
+quoted_bool_t quoted(bool v) { return quoted_bool_t(v); }
+
+std::string sql4insert(const kvalobs::kvObsPgm& op)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO obs_pgm VALUES "
+#if 0
+      << op.toSend()
+#else
+      << "("
+      << op.stationID() << ", "
+      << op.paramID() << ", "
+      << op.level() << ", "
+      << op.nr_sensor() << ", "
+      << op.typeID() << ", "
+      << /*op.priority_message() <<*/ "'1', "
+      << quoted(op.collector()) << ","
+      << quoted(op.kl00()) << ","
+      << quoted(op.kl01()) << ","
+      << quoted(op.kl02()) << ","
+      << quoted(op.kl03()) << ","
+      << quoted(op.kl04()) << ","
+      << quoted(op.kl05()) << ","
+      << quoted(op.kl06()) << ","
+      << quoted(op.kl07()) << ","
+      << quoted(op.kl08()) << ","
+      << quoted(op.kl09()) << ","
+      << quoted(op.kl10()) << ","
+      << quoted(op.kl11()) << ","
+      << quoted(op.kl12()) << ","
+      << quoted(op.kl13()) << ","
+      << quoted(op.kl14()) << ","
+      << quoted(op.kl15()) << ","
+      << quoted(op.kl16()) << ","
+      << quoted(op.kl17()) << ","
+      << quoted(op.kl18()) << ","
+      << quoted(op.kl19()) << ","
+      << quoted(op.kl20()) << ","
+      << quoted(op.kl21()) << ","
+      << quoted(op.kl22()) << ","
+      << quoted(op.kl23()) << ","
+      << quoted(op.mon())  << ","
+      << quoted(op.tue())  << ","
+      << quoted(op.wed())  << ","
+      << quoted(op.thu())  << ","
+      << quoted(op.fri())  << ","
+      << quoted(op.sat())  << ","
+      << quoted(op.sun())  << ","
+      << time2sql(op.fromtime()) << ","
+      << time2sql(op.totime()) << ")"
+#endif
+      ;
+  return sql.str();
+}
+
+std::string sql4insert(const kvalobs::kvParam& p)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO param VALUES " << p.toSend();
+  return sql.str();
+}
+
+std::string sql4insert(const kvalobs::kvStation& s)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO station VALUES " << s.toSend();
   return sql.str();
 }
 
@@ -208,6 +307,7 @@ SqliteAccess::SqliteAccess(bool useThread)
 {
   METLIBS_LOG_SCOPE();
   SqliteQueryRunner_p sqlite = runner();
+
   sqlite->exec("CREATE TABLE data ("
       "stationid   INTEGER NOT NULL, "
       "obstime     TIMESTAMP NOT NULL, "
@@ -221,6 +321,61 @@ SqliteAccess::SqliteAccess(bool useThread)
       "controlinfo CHAR(16) DEFAULT '0000000000000000', "
       "useinfo     CHAR(16) DEFAULT '0000000000000000', "
       "cfailed     TEXT DEFAULT NULL);");
+
+  sqlite->exec("CREATE TABLE model_data ("
+      "stationid   INTEGER NOT NULL, "
+      "obstime     TIMESTAMP NOT NULL, "
+      "paramid     INTEGER NOT NULL, "
+      "level       INTEGER DEFAULT 0, "
+      "modelid     INTEGER NOT NULL, "
+      "original    FLOAT NOT NULL);");
+
+  std::ostringstream sql;
+  sql << "CREATE TABLE obs_pgm ("
+      "stationid   INTEGER NOT NULL, "
+      "paramid     INTEGER NOT NULL, "
+      "level       INTEGER NOT NULL, "
+      "nr_sensor   DEFAULT 1, "
+      "typeid      INTEGER NOT NULL, "
+      "priority_message BOOLEAN DEFAULT TRUE, "
+      "collector   BOOLEAN DEFAULT FALSE, ";
+  for (int i=0; i<24; ++i)
+    sql << "kl" << std::setw(2) << std::setfill('0') << i << " BOOLEAN DEFAULT FALSE, ";
+  sql << "mon BOOLEAN DEFAULT FALSE, "
+      "tue BOOLEAN DEFAULT FALSE, "
+      "wed BOOLEAN DEFAULT FALSE, "
+      "thu BOOLEAN DEFAULT FALSE, "
+      "fri BOOLEAN DEFAULT FALSE, "
+      "sat BOOLEAN DEFAULT FALSE, "
+      "sun BOOLEAN DEFAULT FALSE, "
+      "fromtime TIMESTAMP NOT NULL, "
+      "totime   TIMESTAMP);";
+  sqlite->exec(sql.str());
+
+  sqlite->exec("CREATE TABLE param ("
+     "paramid     INTEGER NOT NULL, "
+     "name        TEXT NOT NULL, "
+     "description TEXT, "
+     "unit        TEXT, "
+     "level_scale INTEGER DEFAULT 0, "
+     "comment     TEXT);");
+
+  sqlite->exec("CREATE TABLE station ("
+      "stationid     INTEGER NOT NULL, "
+      "lat           FLOAT, "
+      "lon           FLOAT, "
+      "height        FLOAT, "
+      "maxspeed      FLOAT, "
+      "name          TEXT, "
+      "wmonr         INTEGER, "
+      "nationalnr    INTEGER, "
+      "icaoid        TEXT DEFAULT NULL, "
+      "call_sign     TEXT DEFAULT NULL, "
+      "stationstr    TEXT, "
+      "environmentid INTEGER, "
+      "static        BOOLEAN DEFAULT FALSE, "
+      "fromtime      TIMESTAMP NOT NULL);");
+
 }
 
 // ------------------------------------------------------------------------
@@ -298,7 +453,6 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
   std::ifstream f(filename.c_str());
   std::string line;
 
-  SqliteQueryRunner_p sqlite = runner();
   const timeutil::ptime tbtime = timeutil::now();
 
   while (std::getline(f, line)) {
@@ -329,10 +483,17 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
     ui.setUseFlags(kvalobs::kvControlInfo(controlinfo));
     const std::string useinfo = ui.flagstring();
 
-    const kvalobs::kvData d(stationId, timeutil::from_iso_extended_string(obstime), original,
-        paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed);
-    sqlite->exec(sql4insert(d));
+    insertData(kvalobs::kvData(stationId, from_iso(obstime), original,
+            paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed));
   }
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertData(const kvalobs::kvData& kd)
+{
+  const std::string sql = sql4insert(kd);
+  runner()->exec(sql);
 }
 
 // ------------------------------------------------------------------------
@@ -348,8 +509,79 @@ void SqliteAccess::dropData(const SensorTime_v& drop)
 
 // ------------------------------------------------------------------------
 
+void SqliteAccess::insertModelFromFile(const std::string& filename)
+{
+  METLIBS_LOG_SCOPE("loading model data from file '" << filename << "'");
+  std::ifstream f(filename.c_str());
+  std::string line;
+
+  while (std::getline(f, line)) {
+    if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+      continue;
+
+    try {
+      std::vector<std::string> columns;
+      boost::split(columns, line, boost::is_any_of("\t"));
+      if (columns.size() != 4) {
+        HQC_LOG_WARN("bad model line '" << line << "' cols=" << columns.size());
+        continue;
+      }
+
+      unsigned int c = 0;
+      const int stationId = boost::lexical_cast<int>(columns[c++]);
+      const int paramId   = boost::lexical_cast<int>(columns[c++]);
+      const std::string obstime = columns[c++];
+      const float value  = boost::lexical_cast<float>(columns[c++]);
+
+      insertModel(kvalobs::kvModelData(stationId, from_iso(obstime), paramId, 0, 0, value));
+    } catch (std::exception& e) {
+      HQC_LOG_WARN("error parsing model line '" << line << "' in file '" + filename + "'");
+    }
+  }
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertModel(const kvalobs::kvModelData& kvm)
+{
+  const std::string sql = sql4insert(kvm);
+  runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertStation(const kvalobs::kvStation& kvs)
+{
+  const std::string sql = sql4insert(kvs);
+  runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertObsPgm(const kvalobs::kvObsPgm& kvo)
+{
+  const std::string sql = sql4insert(kvo);
+  runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertParam(const kvalobs::kvParam& kvp)
+{
+  const std::string sql = sql4insert(kvp);
+  runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
 SqliteQueryRunner_p SqliteAccess::runner()
 {
   return boost::static_pointer_cast<SqliteQueryRunner>(handler()->runner());
 }
 
+// ------------------------------------------------------------------------
+
+void SqliteAccess::execSQL(const std::string& sql)
+{
+  runner()->exec(sql);
+}

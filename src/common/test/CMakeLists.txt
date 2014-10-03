@@ -68,7 +68,18 @@ ADD_EXECUTABLE(common_test
 
   gtestMain.cc
 )
-
 ADD_TEST(NAME common_test
   COMMAND common_test --gtest_color=yes
+)
+
+QT4_WRAP_CPP(test_common_gui_MOC
+  SensorChooserTest.hh
+)
+ADD_EXECUTABLE(common_gui_test
+  SensorChooserTest.cc
+  qtestMain.cc
+  ${test_common_gui_MOC}
+)
+ADD_TEST(NAME common_gui_test
+  COMMAND common_gui_test
 )

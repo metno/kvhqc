@@ -181,7 +181,7 @@ void SensorChooser::setMaxSensor(int maxSensor)
 
 void SensorChooser::onStationEdited(const QString&)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(mStation->text()));
   hqc::int_s stationParams;
 
   bool goodStation = false;
