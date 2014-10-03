@@ -6,15 +6,14 @@
 #include "util/MiDateTimeEdit.hh"
 #include "util/timeutil.hh"
 
-#include <QtCore/QEvent>
-#include <QtGui/QCheckBox>
-#include <QtGui/QLabel>
-#include <QtGui/QLineEdit>
-#include <QtGui/qmessagebox.h>
-#include <QtGui/QPushButton>
-#include <Qt3Support/Q3HBoxLayout>
-#include <Qt3Support/Q3VBoxLayout>
-#include <QtCore/QDebug>
+#include <QEvent>
+#include <QCheckBox>
+#include <QLabel>
+#include <QLineEdit>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 TextDataDialog::TextDataDialog(QWidget* parent)
   : QDialog(parent)
@@ -88,7 +87,7 @@ TextDataDialog::TextDataDialog(QWidget* parent)
 
 void TextDataDialog::retranslateUi()
 {
-  setCaption(tr("TextData"));
+  setWindowTitle(tr("TextData"));
   textLabel0->setText(tr("Station"));
   textLabel1->setText(tr("Time range"));
   textLabel2->setText(tr("From"));

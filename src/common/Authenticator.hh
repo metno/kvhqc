@@ -52,8 +52,7 @@ class Authenticator : public QDialog
   Q_OBJECT;
 
 public:
-  Authenticator(const char *server, int port = DEFAULT_LDAP_PORT,
-      QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WindowFlags fl = 0);
+  Authenticator(const char *server, int port = DEFAULT_LDAP_PORT, QWidget* parent = 0);
   virtual ~Authenticator();
 
   static const QString authenticate(QWidget* parent, const char *server, int port = DEFAULT_LDAP_PORT);

@@ -13,9 +13,10 @@
 #include <boost/bind.hpp>
 #include <boost/make_shared.hpp>
 
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QBrush>
+#include <QApplication>
+#include <QBrush>
+#include <QFont>
+#include <QVariant>
 
 #define MILOGGER_CATEGORY "kvhqc.DataValueItem"
 #include "util/HqcLogging.hh"

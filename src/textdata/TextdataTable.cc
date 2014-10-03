@@ -159,7 +159,7 @@ TextData::~TextData()
 
 void TextData::retranslateUi()
 {
-  setCaption(tr("TextData"));
+  setWindowTitle(tr("TextData"));
 }
 
 void TextData::changeEvent(QEvent *event)

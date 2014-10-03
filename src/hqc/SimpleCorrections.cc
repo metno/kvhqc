@@ -108,11 +108,11 @@ static void setFBF(QWidget* w, DataItem_p item, ObsData_p obs)
     
     const QVariant vFG = item->data(obs, st, Qt::ForegroundRole);
     if (vFG.isValid())
-      palette.setColor(w->foregroundRole(), vFG.value<QBrush>());
+      palette.setColor(w->foregroundRole(), vFG.value<QColor>());
 
     const QVariant vBG = item->data(obs, st, Qt::BackgroundRole);
     if (vBG.isValid())
-      palette.setColor(w->backgroundRole(), vBG.value<QBrush>());
+      palette.setColor(w->backgroundRole(), vBG.value<QColor>());
 
     toolTip = item->data(obs, st, Qt::ToolTipRole).toString();
   }
@@ -193,7 +193,7 @@ void SimpleCorrections::update()
       ttl->setToolTipList(QStringList());
       c->setEditable(false);
       c->setEnabled(false);
-      c->setCurrentText("");
+      c->setEditText("");
     } else {
       // FIXME this is almost identical to ObsDelegate code
       ttl->setStringList(mItemCorrected->data(obs, mSensorTime, ObsColumn::TextCodesRole).toStringList());
@@ -211,7 +211,7 @@ void SimpleCorrections::update()
       if(idx >= 0)
         c->setCurrentIndex(idx);
       else
-        c->setCurrentText(currentText.toString());
+        c->setEditText(currentText.toString());
     }
     setFBF(c, mItemCorrected, obs);
   }

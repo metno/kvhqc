@@ -17,7 +17,6 @@ SET(hqc_SOURCES
   SimpleCorrections.cc
   StationDataList.cc
   TimeSeriesAdd.cc
-  TimeseriesDialog.cc
   TimeSeriesView.cc
   TimespanDataList.cc
   ViewChanges.cc
@@ -46,7 +45,6 @@ QT4_WRAP_CPP(hqc_MOC
   SimpleCorrections.hh
   StationDataList.hh
   TimeSeriesAdd.hh
-  TimeseriesDialog.h
   TimeSeriesView.hh
   TimespanDataList.hh
   UserSettings.hh

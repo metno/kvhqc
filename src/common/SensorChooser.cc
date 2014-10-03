@@ -170,7 +170,7 @@ void SensorChooser::setLevels(const hqc::int_s& levels)
     mLevel->addItem("0");
   BOOST_FOREACH(int l, levels)
       mLevel->addItem(QString::number(l));
-  mLevel->setCurrentText("0");
+  mLevel->setCurrentIndex(0);
 }
 
 void SensorChooser::setMaxSensor(int maxSensor)

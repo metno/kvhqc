@@ -15,7 +15,7 @@ AnimatedLabel::AnimatedLabel(const QString &image, int imageCount, int interval,
   METLIBS_LOG_DEBUG(LOGVAL(img.width()) << LOGVAL(img.height()) << LOGVAL(imageCount));
   for (int i = 0; i < imageCount; ++i) {
     QImage si = img.copy(0, i * subImageHeight, img.width(), subImageHeight);
-    QPixmap sp(si);
+    QPixmap sp = QPixmap::fromImage(si);
     if (width > 0)
       sp = sp.scaledToWidth(width);
     mPixmaps.push_back(sp);

@@ -89,8 +89,8 @@ bool authenticate(const char *username, const char *password,
 }
 
 Authenticator::Authenticator(const char *server, int port,
-    QWidget* parent, const char* name, bool modal,  Qt::WindowFlags fl)
-  : QDialog(parent, name, modal, fl)
+    QWidget* parent)
+  : QDialog(parent)
   , ui(new Ui::AuthenticationDialog)
   , server(server)
   , port(port)
@@ -103,11 +103,11 @@ Authenticator::Authenticator(const char *server, int port,
   ui->password->setFocus();
 #endif
 
-  QRegExpValidator *validUN = new QRegExpValidator(this, "unInputValidator");
+  QRegExpValidator *validUN = new QRegExpValidator(this);
   validUN->setRegExp(QRegExp("[-\\w]+"));
   ui->username->setValidator(validUN);
 
-  QRegExpValidator *validPW = new QRegExpValidator(this, "pwInputValidator");
+  QRegExpValidator *validPW = new QRegExpValidator(this);
   validPW->setRegExp(QRegExp("\\S+"));
   ui->password->setValidator(validPW);
 }
@@ -139,7 +139,7 @@ void Authenticator::doAuthenticate()
 
 const QString Authenticator::authenticate(QWidget* parent, const char *server, int port)
 {
-  Authenticator auth(server, port, parent, 0, 0);
+  Authenticator auth(server, port, parent);
   int result = auth.exec();
   if ( result == QDialog::Accepted )
     return auth.ui->username->text();

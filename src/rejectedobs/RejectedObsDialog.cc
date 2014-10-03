@@ -63,7 +63,7 @@ RejectedObsDialog::RejectedObsDialog(QWidget* parent)
 
 void RejectedObsDialog::retranslateUi()
 {
-  setCaption(tr("RejectDecode"));
+  setWindowTitle(tr("RejectDecode"));
   textLabel1->setText(tr("Select time range for reject list"));
   textLabel2->setText(tr("From"));
   textLabel3->setText(tr("To"));

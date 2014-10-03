@@ -48,7 +48,7 @@ void ObsDelegate::setEditorData(QWidget *editor, const QModelIndex &index) const
         if(cbIndex >= 0)
             cb->setCurrentIndex(cbIndex);
         else
-            cb->setCurrentText(currentText);
+            cb->setEditText(currentText);
     } else {
         QStyledItemDelegate::setEditorData(editor, index);
     }

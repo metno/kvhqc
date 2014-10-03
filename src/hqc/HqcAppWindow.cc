@@ -98,7 +98,7 @@ HqcAppWindow::HqcAppWindow()
   , mHelpDialog(0)
 {
   METLIBS_LOG_SCOPE();
-  setCaption(tr("HQC %1").arg(hqcApp->instanceName()));
+  setWindowTitle(tr("HQC %1").arg(hqcApp->instanceName()));
   ui->setupUi(this);
   EditVersionsView* evv = new EditVersionsView(hqcApp->editAccess(), ui->groupChanges);
   ui->gridChanges->addWidget(evv, 1, 0, 1, 4);
@@ -159,7 +159,7 @@ void HqcAppWindow::startup()
   show();
   checkVersionSettings();
 
-  statusBar()->message(tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000);
+  statusBar()->showMessage(tr("Welcome to kvhqc %1!").arg(PVERSION_FULL), 2000);
   mVersionCheckTimer->start(VERSION_CHECK_TIMEOUT);
 
   KvMetaDataBuffer::instance()->reload();

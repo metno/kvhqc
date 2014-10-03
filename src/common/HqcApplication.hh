@@ -6,9 +6,10 @@
 
 #include <miconfparser/confsection.h>
 
-#include <QtCore/QList>
-#include <QtGui/QApplication>
-#include <QtSql/QSqlDatabase>
+#include <QApplication>
+#include <QList>
+#include <QStringList>
+#include <QSqlDatabase>
 
 #include <boost/shared_ptr.hpp>
 

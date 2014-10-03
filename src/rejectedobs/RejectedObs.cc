@@ -65,7 +65,7 @@ QVariant RejectDecodeTableModel::data(const QModelIndex& index, int role) const
       return timeutil::shortenedTime(rd.tbtime());
     case 1: {
       QString msg = QString::fromStdString(rd.message());
-      const QRegExp REJ_DAT(".*\\<data\\>(.*)\\<\\/data\\>.*", false);
+      const QRegExp REJ_DAT(".*\\<data\\>(.*)\\<\\/data\\>.*", Qt::CaseInsensitive);
       if (REJ_DAT.exactMatch(msg))
         msg = REJ_DAT.cap(1);
       return msg;
@@ -123,7 +123,7 @@ Rejects::~Rejects()
 
 void Rejects::retranslateUi()
 {
-  setCaption(tr("RejectDecode"));
+  setWindowTitle(tr("RejectDecode"));
 }
 
 void Rejects::changeEvent(QEvent *event)
