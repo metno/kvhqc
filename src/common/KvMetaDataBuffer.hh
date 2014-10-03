@@ -58,6 +58,8 @@ public:
   void setHandler(QueryTaskHandler_p handler)
       { mHandler = handler; }
 
+  QueryTaskHandler_p handler();
+
   static KvMetaDataBuffer* instance()
     { return sInstance; }
 
@@ -83,8 +85,6 @@ private:
   void dropTypes();
 
   void sendComplete();
-
-  QueryTaskHandler_x handler();
 
 private:
   bool mHaveStations;

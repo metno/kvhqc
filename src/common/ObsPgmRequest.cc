@@ -1,7 +1,6 @@
 
 #include "ObsPgmRequest.hh"
 
-#include "HqcApplication.hh"
 #include "KvMetaDataBuffer.hh"
 #include "ObsPgmQueryTask.hh"
 #include "QueryTaskHandler.hh"
@@ -61,7 +60,7 @@ void ObsPgmRequest::post()
 {
   METLIBS_LOG_SCOPE();
   if (mTaskHelper) {
-    mTaskHelper->post(hqcApp->kvalobsHandler());
+    mTaskHelper->post(KvMetaDataBuffer::instance()->handler());
   } else {
     Q_EMIT complete();
   }
@@ -71,7 +70,7 @@ void ObsPgmRequest::sync()
 {
   METLIBS_LOG_SCOPE();
   if (mTaskHelper) {
-    mTaskHelper->sync(hqcApp->kvalobsHandler());
+    mTaskHelper->sync(KvMetaDataBuffer::instance()->handler());
   } else {
     Q_EMIT complete();
   }
@@ -88,6 +87,7 @@ const hqc::kvObsPgm_v& ObsPgmRequest::get(int stationId) const
 
 void ObsPgmRequest::put(const hqc::kvObsPgm_v& op)
 {
+  KvMetaDataBuffer::instance()->putObsPgm(op);
   for (hqc::kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
     mObsPgms[it->stationID()].push_back(*it);
 }
