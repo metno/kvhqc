@@ -3,6 +3,7 @@
 
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
+#include "common/ObsPgmRequest.hh"
 #include "common/ParamIdModel.hh"
 #include "common/StationIdCompletion.hh"
 #include "common/TypeIdModel.hh"
@@ -18,7 +19,8 @@
 #define MILOGGER_CATEGORY "kvhqc.SensorChooser"
 #include "common/ObsLogging.hh"
 
-SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* type, QComboBox* level, QSpinBox* sensorNr, QObject* parent)
+SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* type, QComboBox* level, QSpinBox* sensorNr,
+    QObject* parent, bool completion)
   : QObject(parent)
   , mStation(station)
   , mParam(param)
@@ -27,7 +29,8 @@ SensorChooser::SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* ty
   , mSensorNr(sensorNr)
 {
   METLIBS_LOG_SCOPE();
-  Helpers::installStationIdCompleter(this, mStation);
+  if (completion)
+    Helpers::installStationIdCompleter(this, mStation);
   QObject::connect(mStation, SIGNAL(textChanged(QString)),     this, SLOT(onStationEdited(QString)));
   QObject::connect(mParam,   SIGNAL(currentIndexChanged(int)), this, SLOT(onParameterSelected(int)));
   QObject::connect(mType,    SIGNAL(currentIndexChanged(int)), this, SLOT(onTypeSelected(int)));
@@ -190,7 +193,10 @@ void SensorChooser::onStationEdited(const QString&)
     goodStation &= KvMetaDataBuffer::instance()->isKnownStation(stationId);
 
   if (goodStation) {
-    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationId));
+    op->sync();
+    const hqc::kvObsPgm_v& opgm = op->get(stationId);
+    METLIBS_LOG_DEBUG(LOGVAL(opgm.size()));
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
       if (p == kvalobs::PARAMID_V4S or p == kvalobs::PARAMID_V5S or p == kvalobs::PARAMID_V6S)

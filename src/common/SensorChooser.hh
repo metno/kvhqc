@@ -18,7 +18,8 @@ class QSpinBox;
 class SensorChooser : public QObject
 { Q_OBJECT;
 public:
-  SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* type, QComboBox* level, QSpinBox* sensorNr, QObject* parent = 0);
+  SensorChooser(QLineEdit* station, QComboBox* param, QComboBox* type, QComboBox* level, QSpinBox* sensorNr,
+      QObject* parent = 0, bool completion=true);
   ~SensorChooser();
 
   void setSensor(const Sensor& sensor);

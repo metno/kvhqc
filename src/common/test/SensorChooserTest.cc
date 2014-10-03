@@ -15,13 +15,14 @@ void TestSensorChooser::testGui()
   QComboBox param, type, level;
   QSpinBox sensorNr;
 
-  SensorChooser sc(&station, &param, &type, &level, &sensorNr);
+  SensorChooser sc(&station, &param, &type, &level, &sensorNr,
+      0, false /*completion disturbs test*/);
   QVERIFY2(not sc.isValid(), "empty station is not valid");
 
   { const int stationid = 83880;
     QVERIFY(not KvMetaDataBuffer::instance()->isKnownStation(stationid));
 
-    QTest::keyClicks(&station, QString::number(stationid), Qt::NoModifier, 100);
+    QTest::keyClicks(&station, QString::number(stationid));
 
     QCOMPARE(sc.getSensor().stationId, stationid);
     QVERIFY2(not param.isEnabled(), "unknown station should disable parameter selection");
@@ -32,10 +33,10 @@ void TestSensorChooser::testGui()
     QVERIFY(KvMetaDataBuffer::instance()->isKnownStation(stationid));
 
     station.clear();
-    QTest::keyClicks(&station, QString::number(stationid), Qt::NoModifier, 100);
+    QTest::keyClicks(&station, QString::number(stationid));
 
     QCOMPARE(sc.getSensor().stationId, stationid);
     QVERIFY2(param.isEnabled(), "known station should enable parameter selection");
-    QVERIFY(not sc.isValid());
+    QVERIFY2(sc.isValid(), "known station should have at least one parameter/typeid/level/sensor");
   }
 }
