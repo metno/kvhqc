@@ -16,7 +16,10 @@ void set2sql(std::ostream& sql, const std::set<int>& s)
 
 std::ostream& operator<<(std::ostream& sql, const Time2Sql& t)
 {
-  sql << '\'' << timeutil::to_iso_extended_string(t.value) << '\'';
+  if (t.value.is_not_a_date_time())
+    sql << "NULL";
+  else
+    sql << '\'' << timeutil::to_iso_extended_string(t.value) << '\'';
   return sql;
 }
 
