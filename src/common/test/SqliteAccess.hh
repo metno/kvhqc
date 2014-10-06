@@ -5,9 +5,6 @@
 #include "KvTypedefs.hh"
 #include "QueryTaskAccess.hh"
 
-#include <kvalobs/kvData.h>
-#include <kvalobs/kvModelData.h>
-
 class SqliteQueryRunner;
 
 class SqliteAccess : public QueryTaskAccess

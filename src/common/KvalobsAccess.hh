@@ -2,19 +2,13 @@
 #ifndef ACCESS_KVALOBSACCESS_HH
 #define ACCESS_KVALOBSACCESS_HH 1
 
-#include "QueryTaskAccess.hh"
 #include "AbstractReinserter.hh"
-#include "AbstractUpdateListener.hh"
-
-#include <decodeutility/DataReinserter.h>
-#include <kvcpp/KvApp.h>
-#include <kvcpp/kvservicetypes.h>
+#include "KvTypedefs.hh"
+#include "QueryTaskAccess.hh"
 
 class KvalobsAccess : public QueryTaskAccess
 { Q_OBJECT;
 public:
-  /** handler is assumed to be connected to the same kvalobs database
-   * that QtKvService is connected to */
   KvalobsAccess(QueryTaskHandler_p handler);
   ~KvalobsAccess();
 
@@ -32,7 +26,7 @@ public:
     { return mDataReinserter; }
 
 private Q_SLOTS:
-  virtual void onUpdated(const kvData_v&);
+  virtual void onUpdated(const hqc::kvData_v&);
 
 private:
   void checkUnsubscribe(const Sensor_s& sensors);

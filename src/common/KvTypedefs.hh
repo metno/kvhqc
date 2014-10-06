@@ -9,6 +9,9 @@
 #include <kvalobs/kvTextData.h>
 #include <kvalobs/kvTypes.h>
 
+#include <kvalobs/kvData.h>
+#include <kvalobs/kvModelData.h>
+
 #include <vector>
 #include <set>
 
@@ -20,6 +23,9 @@ typedef std::vector<kvalobs::kvRejectdecode> kvRejectdecode_v;
 typedef std::vector<kvalobs::kvStation> kvStation_v;
 typedef std::vector<kvalobs::kvTextData> kvTextData_v;
 typedef std::vector<kvalobs::kvTypes> kvTypes_v;
+
+typedef std::vector<kvalobs::kvData> kvData_v;
+typedef std::vector<kvalobs::kvModelData> kvModelData_v;
 
 typedef std::set<int> int_s;
 typedef std::vector<int> int_v;

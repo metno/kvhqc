@@ -30,7 +30,6 @@
 #include "HqcMainWindow.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/QtKvService.hh"
 #include "common/StInfoSysBuffer.hh"
 #include "common/HqcApplication.hh"
 #include "util/hqc_paths.hh"
@@ -79,7 +78,6 @@ int main( int argc, char* argv[] )
   load_52640_20121231(fa);
   load_54420_20121130(fa);
   load_84070_20120930(fa);
-  QtKvService qkvs;
   KvServiceHelper kvsh;
   KvMetaDataBuffer kvmdbuf;
   StationInfoBuffer stinfobuf;

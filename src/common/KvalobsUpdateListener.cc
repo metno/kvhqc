@@ -14,11 +14,15 @@
 
 KvalobsUpdateListener::KvalobsUpdateListener()
   : mResubscribeTimer(new QTimer(this))
+  , qtkvs(qtKvService())
 {
   METLIBS_LOG_SCOPE();
   mResubscribeTimer->setSingleShot(true);
   connect(mResubscribeTimer, SIGNAL(timeout()), this, SLOT(doReSubscribe()));
   setUpdateListener(this);
+
+  if (not qtkvs)
+    qtkvs = new QtKvService();
 }
 
 KvalobsUpdateListener::~KvalobsUpdateListener()
@@ -29,6 +33,11 @@ KvalobsUpdateListener::~KvalobsUpdateListener()
   if (not mSubscribedStations.empty())
     HQC_LOG_WARN("station list not empty");
   setUpdateListener(0);
+
+  if (qtkvs == qtKvService()) {
+    qtkvs->stop();
+    delete qtkvs;
+  }
 }
 
 void KvalobsUpdateListener::onKvData(kvservice::KvObsDataListPtr dl)
@@ -40,7 +49,7 @@ void KvalobsUpdateListener::onKvData(kvservice::KvObsDataListPtr dl)
       Q_EMIT update(kvd);
     }
 
-    const kvData_v data(od.dataList().begin(), od.dataList().end());
+    const hqc::kvData_v data(od.dataList().begin(), od.dataList().end());
     Q_EMIT updated(data);
   }
 }

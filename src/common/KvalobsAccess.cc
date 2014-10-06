@@ -1,6 +1,7 @@
 
 #include "KvalobsAccess.hh"
 
+#include "AbstractUpdateListener.hh"
 #include "KvalobsData.hh"
 #include "KvalobsUpdate.hh"
 #include "Functors.hh"
@@ -17,7 +18,8 @@ KvalobsAccess::KvalobsAccess(QueryTaskHandler_p handler)
   : QueryTaskAccess(handler)
 {
   if (AbstractUpdateListener* ul = updateListener())
-    connect(ul, SIGNAL(updated(const kvData_v&)), this, SLOT(onUpdated(const kvData_v&)));
+    connect(ul, SIGNAL(updated(const hqc::kvData_v&)),
+        this, SLOT(onUpdated(const hqc::kvData_v&)));
   else
     HQC_LOG_WARN("no UpdateListener");
 }
@@ -26,6 +28,9 @@ KvalobsAccess::KvalobsAccess(QueryTaskHandler_p handler)
 
 KvalobsAccess::~KvalobsAccess()
 {
+  if (AbstractUpdateListener* ul = updateListener())
+    disconnect(ul, SIGNAL(updated(const hqc::kvData_v&)),
+        this, SLOT(onUpdated(const hqc::kvData_v&)));
   // TODO unsubscribe all
 }
 
@@ -69,12 +74,12 @@ void KvalobsAccess::checkUnsubscribe(const Sensor_s& sensors)
 
 // ------------------------------------------------------------------------
 
-void KvalobsAccess::onUpdated(const kvData_v& data)
+void KvalobsAccess::onUpdated(const hqc::kvData_v& data)
 {
   METLIBS_LOG_SCOPE();
   ObsData_pv updated;
   updated.reserve(data.size());
-  for (kvData_v::const_iterator it=data.begin(); it!=data.end(); ++it)
+  for (hqc::kvData_v::const_iterator it=data.begin(); it!=data.end(); ++it)
     updated.push_back(boost::make_shared<KvalobsData>(*it, false));
   distributeUpdates(updated, ObsData_pv(), SensorTime_v());
 }

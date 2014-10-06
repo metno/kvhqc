@@ -32,7 +32,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/QtKvService.hh"
 #include "common/StInfoSysBuffer.hh"
 #include "common/HqcApplication.hh"
 #include "util/hqc_paths.hh"
@@ -98,13 +97,11 @@ int main( int argc, char* argv[] )
     
   CorbaKvApp kvapp(argc, argv, confSec);
   KvServiceHelper kvsh;
-  QtKvService qkvs;
   KvalobsUpdateListener kul;
   KvMetaDataBuffer kvmdbuf;
   StInfoSysBuffer stinfobuf(confSec);
 
   HqcApplication hqc(argc, argv, confSec);
-  QObject::connect(&qkvs, SIGNAL(shutdown()), &hqc, SLOT(quit()));
 
   hqc.setReinserter(boost::make_shared<KvalobsReinserter>());
 
@@ -120,7 +117,6 @@ int main( int argc, char* argv[] )
 
   // FIXME "move desctructors" to aboutToQuit handler, see file:///usr/share/qt4/doc/html/qcoreapplication.html#exec
   const int r = hqc.exec();
-  qkvs.stop();
   aw->finish();
   aw.reset(0);
   hqc.processEvents();
