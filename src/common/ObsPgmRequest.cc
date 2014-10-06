@@ -36,7 +36,7 @@ void ObsPgmRequest::init(const hqc::int_s& stationIds)
     if (op.empty()) {
       request.insert(*itS);
     } else {
-      put(op);
+      mObsPgms[*itS] = op;
     }
   }
   METLIBS_LOG_DEBUG(LOGVAL(request.size()));
