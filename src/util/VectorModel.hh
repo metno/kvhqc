@@ -89,6 +89,8 @@ QVariant VectorModel<Extract>::data(const QModelIndex& index, int role) const
     return mExtract.text(mValues.at(index.row()));
   else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole)
     return mExtract.tip(mValues.at(index.row()));
+  else if (role == Qt::UserRole)
+    return QVariant(mValues.at(index.row()));
   else
     return QVariant();
 }

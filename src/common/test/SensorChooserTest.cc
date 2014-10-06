@@ -33,11 +33,21 @@ void TestSensorChooser::testGui()
   { const int stationid = 18700;
     QVERIFY(KvMetaDataBuffer::instance()->isKnownStation(stationid));
 
+    const SensorTime st(Sensor(stationid, 61, 0, 0, 308), s2t("2014-10-01 06:00:00"));
+    sc.setSensorTime(st);
+
     station.clear();
     QTest::keyClicks(&station, QString::number(stationid));
 
     QCOMPARE(sc.getSensor().stationId, stationid);
     QVERIFY2(param.isEnabled(), "known station should enable parameter selection");
     QVERIFY2(sc.isValid(), "known station should have at least one parameter/typeid/level/sensor");
+
+    const int idxP81 = param.findData(81);
+    QVERIFY2(idxP81 >= 0, "parameter 81 is in obs_pgm and should appear in param QComboBox");
+    param.setCurrentIndex(idxP81);
+    QCOMPARE(sc.getSensor().paramId, 81);
+
+    QCOMPARE(sc.getSensor().typeId, st.sensor.typeId);
   }
 }
