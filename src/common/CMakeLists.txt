@@ -144,6 +144,7 @@ QT4_WRAP_CPP(common_MOC
   KvalobsModelAccess.hh
   KvalobsUpdateListener.hh
   KvMetaDataBuffer.hh
+  KvServiceHelper.hh
   ModelBuffer.hh
   ModelQueryTask.hh
   ModelRequest.hh

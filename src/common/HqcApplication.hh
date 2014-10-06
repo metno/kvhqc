@@ -63,6 +63,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   void checkKvalobsAvailability();
+  void changedKvalobsAvailability(bool);
 
 private:
   void installTranslations();
@@ -74,7 +75,6 @@ private:
   void fatalError(const QString& message, const QString& info="");
   bool isGuiThread() const;
   bool updateKvalobsAvailability(bool available);
-  void changedKvalobsAvailability(bool);
 
 private:
   QList<QTranslator*> mTranslators;

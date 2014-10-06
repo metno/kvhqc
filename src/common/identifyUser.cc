@@ -33,19 +33,10 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "HqcDataReinserter.hh"
 #include "KvServiceHelper.hh"
 
-#include <kvalobs/kvOperator.h>
-
-#include <boost/foreach.hpp>
-
 #include <list>
 #include <cstring>
 
 namespace Authentication {
-
-namespace {
-typedef std::list<kvalobs::kvOperator> opList;
-typedef opList::const_iterator opIter;
-};
 
 kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
     const char *ldap_server, QString& userName)
@@ -59,17 +50,11 @@ kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, k
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())
     return 0; // Not authenticated
-  
-  // Get list of operators from database, and find our operator:
-  opList operators;
-  KvServiceHelper::instance()->getKvOperator(operators);
 
-  BOOST_FOREACH(const kvalobs::kvOperator& op, operators) {
-    const QString uname = QString::fromStdString(op.username());
-    if (user == uname) {
-      userName = uname;
-      return new HqcDataReinserter(app, op.userID());
-    }
+  const int userid = KvServiceHelper::instance()->identifyOperator(user);
+  if (userid >= 0) {
+    userName = user;
+    return new HqcDataReinserter(app, userid);
   }
 
   return 0;

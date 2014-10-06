@@ -2,25 +2,12 @@
 #ifndef KvServiceHelper_hh
 #define KvServiceHelper_hh 1
 
-#include <boost/signals.hpp>
+#include <QObject>
 
-class TimeSpan;
-namespace kvalobs {
-class kvModelData;
-class kvRejectdecode;
-class kvParam;
-class kvStation;
-class kvTypes;
-class kvObsPgm;
-class kvOperator;
-}
-namespace kvservice {
-class KvGetDataReceiver;
-class WhichDataHelper;
-}
-
-class KvServiceHelper
+class KvServiceHelper : public QObject
 {
+  Q_OBJECT;
+
 public:
   KvServiceHelper();
   ~KvServiceHelper();
@@ -32,19 +19,13 @@ public:
   /** Query last known availability of kvServiced. Does not re-check. */
   bool checkKvalobsAvailability();
 
-  bool getKvData(kvservice::KvGetDataReceiver& dataReceiver, const kvservice::WhichDataHelper& wd);
-  bool getKvModelData(std::list<kvalobs::kvModelData> &dataList, const kvservice::WhichDataHelper& wd);
-  bool getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& rejectList, const TimeSpan& timeLimits);
-  bool getKvParams(std::list<kvalobs::kvParam>& paramList);
-  bool getKvStations( std::list<kvalobs::kvStation>& stationList);
-  bool getKvTypes(std::list<kvalobs::kvTypes>& typeList);
-  bool getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const std::list<long>& stationList);
-  bool getKvOperator(std::list<kvalobs::kvOperator>& operatorList );
-
-  boost::signal1<void, bool> kvalobsAvailable;
+  int identifyOperator(const QString& username);
 
   static KvServiceHelper* instance()
     { return sInstance; }
+
+Q_SIGNALS:
+  void kvalobsAvailable(bool available);
 
 private:
   bool updateKvalobsAvailability(bool available);

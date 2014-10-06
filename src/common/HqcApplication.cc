@@ -91,13 +91,12 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   kma = boost::make_shared<KvalobsModelAccess>();
   eda = boost::make_shared<EditAccess>(cda);
   
-  KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
+  QObject::connect(KvServiceHelper::instance(), SIGNAL(kvalobsAvailable(bool)),
+      this, SLOT(changedKvalobsAvailability(bool)));
 }
 
 HqcApplication::~HqcApplication()
 {
-  KvServiceHelper::instance()->kvalobsAvailable.disconnect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
-
   QSqlDatabase::removeDatabase(DB_SYSTEM);
   QSqlDatabase::removeDatabase(DB_CONFIG);
 
