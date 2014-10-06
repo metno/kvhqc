@@ -6,6 +6,7 @@
 #include "KvMetaDataBuffer.hh"
 #include "ObsPgmRequest.hh"
 #include "TimeSpan.hh"
+#include "common/HqcSystemDB.hh"
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
@@ -114,13 +115,8 @@ bool is_orig_missing(const kvalobs::kvControlInfo& ci, float orig)
 static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
 {
   METLIBS_LOG_TIME();
-  std::auto_ptr<QSqlQuery> query;
-  if (explain and hqcApp) {
-    query.reset(new QSqlQuery(hqcApp->systemDB()));
-    query->prepare("SELECT description FROM flag_explain WHERE flag = :fn AND flagvalue = :fv AND language = 'nb'");
-  }
 
-  std::ostringstream ss;
+  QString ff;
   bool first = true;
 
   const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
@@ -128,25 +124,22 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
     const int flag = cInfo.flag(f);
     using namespace kvalobs::flag;
     if (flag > showFlagAbove[f]) {
-      if( not first )
-        ss << (query.get() ? '\n' : ' ');
-      ss << flagnames[f] << '=' << int2char(flag);
-      if (query.get()) {
-        query->bindValue("fn", f);
-        query->bindValue("fv", flag);
-        query->exec();
-        QString explanation;
-        if (query->next())
-          explanation = query->value(0).toString();
-        else
+      if (not first)
+        ff.append(explain ? '\n' : ' ');
+      ff.append(flagnames[f]);
+      ff.append('=');
+      ff.append(int2char(flag));
+      if (explain) {
+        QString explanation = HqcSystemDB::explainFlagValue(f, flag);
+        if (explanation.isNull())
           explanation = qApp->translate("Helpers", "Unknown or invalid flag value");
-        query->finish();
-        ss << ": " << explanation.toStdString();
+        ff.append(": ");
+        ff.append(explanation);
       }
       first = false;
     }
   }
-  return QString::fromStdString(ss.str());
+  return ff;
 }
 
 
@@ -328,33 +321,12 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
 {
   METLIBS_LOG_TIME();
 
-  std::vector<int> stationPar, neighborPar;
-  int nNeighbors = 8;
-
-  if (hqcApp) {
-    QSqlQuery query(hqcApp->systemDB());
-    query.prepare("SELECT pr1.paramid FROM param_related AS pr1"
-        " WHERE pr1.groupid = (SELECT pr2.groupid FROM param_related AS pr2 WHERE pr2.paramid = :pid)"
-        "   AND (pr1.view_types_excluded IS NULL OR pr1.view_types_excluded NOT LIKE :vt)"
-        " ORDER BY pr1.sortkey");
-
-    query.bindValue(":pid", s.paramId);
-    query.bindValue(":vt",  "%" + QString::fromStdString(viewType) + "%");
-    query.exec();
-    while (query.next())
-      stationPar.push_back(query.value(0).toInt());
-  }
-#if 1
-  METLIBS_LOG_DEBUG("found " << stationPar.size() << " station pars for " << LOGVAL(s) << LOGVAL(time) << LOGVAL(viewType));
-  BOOST_FOREACH(int pid, stationPar) {
-    METLIBS_LOG_DEBUG(LOGVAL(pid));
-  }
-#endif
-
+  hqc::int_v stationPar = HqcSystemDB::relatedParameters(s.paramId, QString::fromStdString(viewType));
   if (stationPar.empty())
     stationPar.push_back(s.paramId);
-  if (neighborPar.empty())
-    neighborPar.push_back(s.paramId);
+
+  const int nNeighbors = 8;
+  hqc::int_v neighborPar(1, s.paramId);
 
   const hqc::kvObsPgm_v& obs_pgm = obsPgms->get(s.stationId);
   Sensor_v sensors;
@@ -409,19 +381,7 @@ bool aggregatedParameter(int paramFrom, int paramTo)
 
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
 {
-  METLIBS_LOG_SCOPE();
-  if (hqcApp) {
-    QSqlQuery query(hqcApp->systemDB());
-    query.prepare("SELECT paramid_to FROM param_aggregated WHERE paramid_from = ?");
-    query.bindValue(0, paramFrom);
-    if (query.exec()) {
-      while (query.next())
-        paramTo.insert(query.value(0).toInt());
-    } else {
-      HQC_LOG_WARN("error getting aggregated parameters for " << paramFrom
-          << ": " << query.lastError().text());
-    }
-  }
+  HqcSystemDB::aggregatedParameters(paramFrom, paramTo);
 }
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add)

@@ -31,7 +31,7 @@
 #include "common/FindAllParameters.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/StInfoSysBuffer.hh"
-#include "common/HqcApplication.hh"
+#include "common/HqcSystemDB.hh"
 #include "common/TimeSpanControl.hh"
 #include "util/timeutil.hh"
 
@@ -175,38 +175,24 @@ void ErrorSearchDialog::setupStationTab()
 
   typedef std::map<QString, QStandardItem*> county2item_t;
   county2item_t county2item;
-  
-  QSqlQuery queryRegions(hqcApp->systemDB());
-  queryRegions.prepare("SELECT sr.id, srl.label FROM station_regions AS sr, station_region_labels AS srl"
-      " WHERE sr.id = srl.region_id AND srl.language = 'nb' ORDER BY sr.sortkey");
-    
-  QSqlQuery queryCounties(hqcApp->systemDB());
-  queryCounties.prepare("SELECT sc.db_name, scl.label FROM station_county_labels AS scl, station_counties AS sc"
-      " WHERE sc.id = scl.county_id AND scl.language = 'nb' AND sc.region_id = ? ORDER BY sc.sortkey");
-    
-  queryRegions.exec();
-  while (queryRegions.next()) {
-    const int regionId = queryRegions.value(0).toInt();
-    const QString regionLabel = queryRegions.value(1).toString();
 
-    QStandardItem *r_item = new QStandardItem(regionLabel);
+  const HqcSystemDB::Region_ql regions = HqcSystemDB::regions();
+  for (HqcSystemDB::Region_ql::const_iterator itR = regions.begin(); itR != regions.end(); ++itR) {
+    QStandardItem *r_item = new QStandardItem(itR->regionLabel);
     r_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
     r_item->setCheckable(true);
     root->appendRow(r_item);
 
-    queryCounties.bindValue(0, regionId);
-    queryCounties.exec();
-    while (queryCounties.next()) {
-      const QString countyDB = queryCounties.value(0).toString();
-      const QString countyLabel = queryCounties.value(1).toString();
-
-      QStandardItem *c_item = new QStandardItem(countyLabel);
+    for (QStringList::const_iterator itCL = itR->countyLabels.begin(), itCD = itR->countyDbNames.begin();
+         itCL != itR->countyLabels.end(); ++itCL, ++itCD)
+    {
+      QStandardItem *c_item = new QStandardItem(*itCL);
       c_item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsTristate);
       c_item->setCheckable(true);
-      c_item->setData(countyDB, C_ITEM_COUNTY_DB);
+      c_item->setData(*itCD, C_ITEM_COUNTY_DB);
 
       r_item->appendRow(c_item);
-      county2item.insert(std::make_pair(countyDB, c_item));
+      county2item.insert(std::make_pair(*itCD, c_item));
     }
   }
   
@@ -284,26 +270,10 @@ void ErrorSearchDialog::setupParameterTab()
   QStringList labels;
   mParameterGroups.clear();
 
-  QSqlQuery queryGroups(hqcApp->systemDB());
-  queryGroups.prepare("SELECT pg.id, pgl.label FROM param_groups AS pg, param_group_labels AS pgl"
-      " WHERE pg.id = pgl.group_id AND pgl.language = 'nb' ORDER BY pg.sortkey");
-    
-  QSqlQuery queryParams(hqcApp->systemDB());
-  queryParams.prepare("SELECT paramid FROM param_order WHERE group_id = ? ORDER BY sortkey");
-    
-  queryGroups.exec();
-  while (queryGroups.next()) {
-    const int groupId = queryGroups.value(0).toInt();
-    const QString groupLabel = queryGroups.value(1).toString();
-    METLIBS_LOG_DEBUG(LOGVAL(groupLabel));
-
-    labels << groupLabel;
-    hqc::int_v& parameters = mParameterGroups[groupLabel];
-            
-    queryParams.bindValue(0, groupId);
-    queryParams.exec();
-    while (queryParams.next())
-      parameters.push_back(queryParams.value(0).toInt());
+  const HqcSystemDB::ParamGroup_ql pgl = HqcSystemDB::paramGroups();
+  for (HqcSystemDB::ParamGroup_ql::const_iterator itG = pgl.begin(); itG != pgl.end(); ++itG) {
+    labels << itG->label;
+    mParameterGroups[itG->label] = itG->paramIds;
   }
 
   try {

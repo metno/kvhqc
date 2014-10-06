@@ -3,7 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
-#include "common/HqcApplication.hh"
+#include "common/HqcSystemDB.hh"
 
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlError>
@@ -43,43 +43,14 @@ bool StInfoSysBuffer::readFromStInfoSys()
   if (not isConnected())
     return false;
 
-  QSqlDatabase db = hqcApp->systemDB();
-  if (not db.tables().contains("stationinfo_priorities"))
+  const HqcSystemDB::station2prio_t station2prio = HqcSystemDB::stationPriorities();
+  const hqc::int_s station2coast = HqcSystemDB::coastalStations();
+  if (station2prio.empty() and station2coast.empty())
     return false;
-
-  typedef std::map<int, int> station2prio_t;
-  station2prio_t station2prio;
-  {
-    QSqlQuery query(db);
-    if (not query.exec("SELECT stationid, priority FROM stationinfo_priorities")) {
-      HQC_LOG_ERROR("cannot read priorities: " << query.lastError().text());
-      return false;
-    }
-    while (query.next()) {
-      const int stationId = query.value(0).toInt(), prio = query.value(1).toInt();
-      station2prio.insert(std::make_pair(stationId, prio));
-    }
-  }
-
-  typedef std::set<int> station2coast_t;
-  station2coast_t station2coast;
-  {
-    QSqlQuery query(db);
-    if (not query.exec("SELECT stationid FROM stationinfo_coastal")) {
-      HQC_LOG_ERROR("cannot read coastal station list: " << query.lastError().text());
-      return false;
-    }
-    while (query.next())
-      station2coast.insert(query.value(0).toInt());
-  }
 
   typedef std::map<int, municip_info> municip2info_m;
   municip2info_m municip2info;
   {
-    QSqlQuery queryNCFC(hqcApp->systemDB());
-    queryNCFC.prepare("SELECT norwegian_county FROM stationinfo_county_map WHERE countryid = ?"
-        " AND municip_code_divided = (? / municip_divide)");
-  
     QSqlQuery query(QSqlDatabase::database(QSQLNAME_REMOTE));
     if (not query.exec("SELECT m.municipid, m.countryid, m.code, m.name FROM municip m ORDER BY m.municipid")) {
       HQC_LOG_ERROR("cannot read municip table from stinfosys: " << query.lastError().text());
@@ -96,14 +67,9 @@ bool StInfoSysBuffer::readFromStInfoSys()
       if (municipid == 0) {
         county_name = municip_name = "OTHER";
       } else {
-        queryNCFC.bindValue(0, countryid);
-        queryNCFC.bindValue(1, municip_code);
-        if (not queryNCFC.exec()) {
-          HQC_LOG_ERROR("cannot read stationinfo_county_map: " << queryNCFC.lastError().text());
-          return false;
-        }
-        if (queryNCFC.next()) {
-          county_name = queryNCFC.value(0).toString();
+        QString cn = HqcSystemDB::remappedCounty(countryid, municip_code);
+        if (not cn.isNull()) {
+          county_name = cn;
           METLIBS_LOG_DEBUG("stationinfo remapped " << LOGVAL(county_name));
         } else if (countryid == norway_countryid and municipid >= norway_remap_municip) {
           // FIXME this is fragile, it depends on the order of the query results
@@ -161,7 +127,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
     }
     const municip_info& mi = itI->second;
     
-    const station2prio_t::const_iterator it = station2prio.find(stationid);
+    const HqcSystemDB::station2prio_t::const_iterator it = station2prio.find(stationid);
     const int pri = (it != station2prio.end()) ? it->second : 0;
     
     listStat_t ls;

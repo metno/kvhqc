@@ -126,16 +126,7 @@ void CachedParamLimits::parseMetadata(const QString& metadata)
 
 void CachedParamLimits::fetchLimitsFromSystemDB(const SensorTime& st)
 {
-  if (not hqcApp)
-    return;
-
-  QSqlQuery query(hqcApp->systemDB());
-  query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
-  query.bindValue(0, st.sensor.paramId);
-  query.exec();
-  if (query.next()) {
-    param_min = query.value(0).toFloat();
-    param_max = query.value(1).toFloat();
+  if (HqcSystemDB::paramLimits(paramid, param_min, param_max)) {
     have_max  = have_min = true;
     have_high = have_low = false;
   }

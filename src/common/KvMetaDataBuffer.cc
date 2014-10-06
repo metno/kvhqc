@@ -2,8 +2,8 @@
 #include "KvMetaDataBuffer.hh"
 
 #include "Functors.hh"
+#include "HqcSystemDB.hh"
 #include "HqcApplication.hh"
-#include "ObsPgmQueryTask.hh"
 #include "KvHelpers.hh"
 #include "ParamQueryTask.hh"
 #include "QueryTaskHelper.hh"
@@ -12,11 +12,6 @@
 
 #include <puTools/miStringBuilder.h>
 #include <puTools/miStringFunctions.h>
-
-#include <QtCore/QCoreApplication>
-#include <QtCore/QVariant>
-#include <QtGui/QMessageBox>
-#include <QtSql/QSqlQuery>
 
 #define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
 #include "common/ObsLogging.hh"

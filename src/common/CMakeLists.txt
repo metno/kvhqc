@@ -38,6 +38,7 @@ SET(common_SOURCES
   Functors.cc
   HqcApplication.cc
   HqcDataReinserter.cc
+  HqcSystemDB.cc
   HqcUserConfig.cc
   identifyUser.cc
   IndexBuffer.cc

@@ -1,13 +1,7 @@
 
 #include "ChecksTableModel.hh"
 
-#include "common/HqcApplication.hh"
-
-#include <QtCore/QVariant>
-#include <QtSql/QSqlQuery>
-
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
+#include "common/HqcSystemDB.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.ChecksTableModel"
 #include "common/ObsLogging.hh"
@@ -93,24 +87,7 @@ void ChecksTableModel::buildModel(ObsData_p obs)
     return;
   
   mChecks = QString::fromStdString(cfailed).split(",");
-  QSqlQuery query(hqcApp->systemDB());
-  query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
   
-  BOOST_FOREACH(QString& c, mChecks) {
-    if (c.startsWith("QC2N_")) {
-      QString n = c.mid(5);
-      n.replace("_", ", ");
-      n.prepend(tr("neighbors: "));
-      c = "QC2-redist-N";
-      mExplanations.push_back(n);
-      continue;
-    }
-    
-    query.bindValue(0, c);
-    query.exec();
-    if (query.next())
-      mExplanations.push_back(query.value(0).toString());
-    else
-      mExplanations.push_back("?");
-  }
+  for(QStringList::iterator it = mChecks.begin(); it != mChecks.end(); ++it)
+    mExplanations.push_back(HqcSystemDB::explainCheck(*it));
 }
