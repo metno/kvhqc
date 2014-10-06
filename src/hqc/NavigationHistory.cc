@@ -245,6 +245,9 @@ void NavigationHistory::navigateTo(const SensorTime& st)
 
 void NavigationHistory::onJump()
 {
+  QPoint pos = ui->buttonJump->mapToGlobal(ui->buttonJump->rect().topRight());
+  mJump->move(pos);
+
   mJump->exec();
 }
 
