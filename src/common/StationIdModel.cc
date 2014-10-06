@@ -27,9 +27,9 @@ StationIdModel::StationIdModel(QObject* parent)
   if (not KvMetaDataBuffer::instance())
     return;
 
-  const KvMetaDataBuffer::kvStation_v& stations = KvMetaDataBuffer::instance()->allStations();
-  BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
-    mStationIds.push_back(s.stationID());
+  const hqc::kvStation_v& stations = KvMetaDataBuffer::instance()->allStations();
+  for (hqc::kvStation_v::const_iterator it = stations.begin(); it != stations.end(); ++it) {
+    mStationIds.push_back(it->stationID());
   }
   std::sort(mStationIds.begin(), mStationIds.end(), int_by_text());
 }

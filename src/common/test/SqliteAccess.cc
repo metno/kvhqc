@@ -11,6 +11,8 @@
 
 #include "common/KvHelpers.hh"
 
+#include <puTools/miStringBuilder.h>
+
 #include <boost/algorithm/string.hpp>
 #include <boost/make_shared.hpp>
 
@@ -184,6 +186,13 @@ std::string sql4insert(const kvalobs::kvStation& s)
 {
   std::ostringstream sql;
   sql << "INSERT INTO station VALUES " << s.toSend();
+  return sql.str();
+}
+
+std::string sql4insert(const kvalobs::kvTypes& t)
+{
+  std::ostringstream sql;
+  sql << "INSERT INTO types VALUES " << t.toSend();
   return sql.str();
 }
 
@@ -375,6 +384,15 @@ SqliteAccess::SqliteAccess(bool useThread)
       "environmentid INTEGER, "
       "static        BOOLEAN DEFAULT FALSE, "
       "fromtime      TIMESTAMP NOT NULL);");
+
+  sqlite->exec("CREATE TABLE types ("
+      "typeid   INTEGER NOT NULL, "
+      "format   TEXT, "
+      "earlyobs INTEGER, "
+      "lateobs  INTEGER, "
+      "read     TEXT, "
+      "obspgm   TEXT, "
+      "comment  TEXT);");
 }
 
 // ------------------------------------------------------------------------
@@ -551,6 +569,7 @@ void SqliteAccess::insertModel(const kvalobs::kvModelData& kvm)
 
 void SqliteAccess::insertStation(const kvalobs::kvStation& kvs)
 {
+  runner()->exec((miutil::StringBuilder() << "DELETE FROM station WHERE stationid = " << kvs.stationID()).str());
   const std::string sql = sql4insert(kvs);
   runner()->exec(sql);
 }
@@ -567,7 +586,17 @@ void SqliteAccess::insertObsPgm(const kvalobs::kvObsPgm& kvo)
 
 void SqliteAccess::insertParam(const kvalobs::kvParam& kvp)
 {
+  runner()->exec((miutil::StringBuilder() << "DELETE FROM param WHERE paramid = " << kvp.paramID()).str());
   const std::string sql = sql4insert(kvp);
+  runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::insertTypes(const kvalobs::kvTypes& kvt)
+{
+  runner()->exec((miutil::StringBuilder() << "DELETE FROM types WHERE typeid = " << kvt.typeID()).str());
+  const std::string sql = sql4insert(kvt);
   runner()->exec(sql);
 }
 
@@ -594,4 +623,5 @@ void SqliteAccess::clear()
   runner()->exec("DELETE FROM obs_pgm");
   runner()->exec("DELETE FROM param");
   runner()->exec("DELETE FROM station");
+  runner()->exec("DELETE FROM types");
 }

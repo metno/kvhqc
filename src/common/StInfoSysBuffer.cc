@@ -146,8 +146,9 @@ bool StInfoSysBuffer::readFromStInfoSys()
 
   listStat.clear();
   std::set<int> kv_stationids;
-  const KvMetaDataBuffer::kvStation_v& slist = KvMetaDataBuffer::instance()->allStations();
-  BOOST_FOREACH(const kvalobs::kvStation& st, slist) {
+  const hqc::kvStation_v& slist = KvMetaDataBuffer::instance()->allStations();
+  for (hqc::kvStation_v::const_iterator itS = slist.begin(); itS != slist.end(); ++itS) {
+    const kvalobs::kvStation& st = *itS;
     const int stationid = st.stationID();
 
     const station2municip_m::const_iterator itM = station2municip.find(stationid);

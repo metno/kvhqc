@@ -11,15 +11,12 @@
 #include "TypesQueryTask.hh"
 
 #include <puTools/miStringBuilder.h>
+#include <puTools/miStringFunctions.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QVariant>
 #include <QtGui/QMessageBox>
 #include <QtSql/QSqlQuery>
-
-#include <boost/foreach.hpp>
-#include <boost/format.hpp>
-#include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
 #include "common/ObsLogging.hh"
@@ -102,7 +99,7 @@ std::string KvMetaDataBuffer::findParamName(int id)
   if (it != all.end() and it->paramID() == id)
     return it->name();
   
-  return (boost::format("{%1$d}") % id).str();
+  return miutil::from_number(id);
 }
 
 bool KvMetaDataBuffer::isCodeParam(int paramid)
@@ -110,12 +107,9 @@ bool KvMetaDataBuffer::isCodeParam(int paramid)
   return mCodeParams.find(paramid) != mCodeParams.end();
 }
 
-bool KvMetaDataBuffer::isDirectionInDegreesParam(int pid)
+bool KvMetaDataBuffer::isDirectionInDegreesParam(int paramid)
 {
-  const kvalobs::kvParam& param = findParam(pid);
-  return (param.unit().find("grader") != std::string::npos
-      and pid != kvalobs::PARAMID_MLON
-      and pid != kvalobs::PARAMID_MLAT);
+  return mDirectionParams.find(paramid) != mDirectionParams.end();
 }
 
 namespace /* anonymous */ {
@@ -186,9 +180,16 @@ void KvMetaDataBuffer::taskDoneParams()
   mHaveParams = true;
 
   mCodeParams.clear();
-  BOOST_FOREACH(const kvalobs::kvParam& p, allParams()) {
-    if (p.unit().find("kode") != std::string::npos) {
-      mCodeParams.insert(p.paramID());
+  const hqc::kvParam_v& ap = allParams();
+  for (hqc::kvParam_v::const_iterator it = ap.begin(); it != ap.end(); ++it) {
+    const int pid = it->paramID();
+    if (it->unit().find("kode") != std::string::npos)
+      mCodeParams.insert(pid);
+    if (it->unit().find("grader") != std::string::npos
+        and pid != kvalobs::PARAMID_MLON
+        and pid != kvalobs::PARAMID_MLAT)
+    {
+      mDirectionParams.insert(pid);
     }
   }
 
@@ -272,6 +273,7 @@ void KvMetaDataBuffer::reload()
 {
   mHaveStations = mHaveParams = mHaveTypes = false;
   mCodeParams.clear();
+  mDirectionParams.clear();
   mObsPgms.clear();
 
   fetchStations();

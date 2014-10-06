@@ -4,6 +4,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/SensorChooser.hh"
 
+#define LOAD_DECL_ONLY
 #include "load_18700_20141001.cc"
 
 void TestSensorChooser::testGui()

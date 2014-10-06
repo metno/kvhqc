@@ -2,13 +2,11 @@
 #ifndef ACCESS_SQLITEACCESS_HH
 #define ACCESS_SQLITEACCESS_HH 1
 
+#include "KvTypedefs.hh"
 #include "QueryTaskAccess.hh"
 
 #include <kvalobs/kvData.h>
 #include <kvalobs/kvModelData.h>
-#include <kvalobs/kvObsPgm.h>
-#include <kvalobs/kvParam.h>
-#include <kvalobs/kvStation.h>
 
 class SqliteQueryRunner;
 
@@ -43,6 +41,7 @@ public:
   void insertObsPgm(const kvalobs::kvObsPgm& kvo);
   void insertParam(const kvalobs::kvParam& kvp);
   void insertStation(const kvalobs::kvStation& kvs);
+  void insertTypes(const kvalobs::kvTypes& kvt);
 
   void execSQL(const std::string& sql);
   void clear();

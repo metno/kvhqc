@@ -19,12 +19,11 @@ public:
   KvMetaDataBuffer();
   ~KvMetaDataBuffer();
 
-  typedef std::vector<kvalobs::kvStation> kvStation_v;
   bool isKnownStation(int id);
   const kvalobs::kvStation& findStation(int id);
   const kvalobs::kvStation& findStation(const Sensor& sensor)
     { return findStation(sensor.stationId); }
-  const kvStation_v& allStations();
+  const hqc::kvStation_v& allStations();
 
   bool isKnownParam(int id);
   const kvalobs::kvParam& findParam(int id);
@@ -98,6 +97,7 @@ private:
 
   hqc::int_s mCodeParams;
   CachedParamLimits mCachedParamLimits;
+  hqc::int_s mDirectionParams;
 
   typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
   kvObsPgm_m mObsPgms;

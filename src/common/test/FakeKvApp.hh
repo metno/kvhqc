@@ -52,6 +52,9 @@ public:
   void addParam(const kvalobs::kvParam& kvp)
     { obsAccess()->insertParam(kvp); }
 
+  void addTypes(const kvalobs::kvTypes& kvt)
+    { obsAccess()->insertTypes(kvt); }
+
   void addStation(const std::string& line);
   void addStation(const kvalobs::kvStation& kvs)
     { obsAccess()->insertStation(kvs); }

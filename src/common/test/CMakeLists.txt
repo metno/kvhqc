@@ -58,6 +58,7 @@ ADD_EXECUTABLE(common_test
 #  EditTimeColumnTest.cc
 #  KvalobsAccessTest.cc
   KvHelpersTest.cc
+  KvMetaDataBufferTest.cc
   TimeRangeTest.cc
 #  VxColumnTest.cc
 #  ObsTableModelTest.cc
