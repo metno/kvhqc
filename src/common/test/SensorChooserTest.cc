@@ -4,11 +4,12 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/SensorChooser.hh"
 
-#include "load_31850_20121130.cc"
+#include "load_18700_20141001.cc"
 
 void TestSensorChooser::testGui()
 {
-  load_31850_20121130(*FakeKvApp::app());
+  FakeKvApp::app()->clear();
+  load_18700_20141001(*FakeKvApp::app());
   KvMetaDataBuffer::instance()->reload();
 
   QLineEdit station;
@@ -19,7 +20,7 @@ void TestSensorChooser::testGui()
       0, false /*completion disturbs test*/);
   QVERIFY2(not sc.isValid(), "empty station is not valid");
 
-  { const int stationid = 83880;
+  { const int stationid = 18210;
     QVERIFY(not KvMetaDataBuffer::instance()->isKnownStation(stationid));
 
     QTest::keyClicks(&station, QString::number(stationid));
@@ -29,7 +30,7 @@ void TestSensorChooser::testGui()
     QVERIFY(not sc.isValid());
   }
 
-  { const int stationid = 31850;
+  { const int stationid = 18700;
     QVERIFY(KvMetaDataBuffer::instance()->isKnownStation(stationid));
 
     station.clear();

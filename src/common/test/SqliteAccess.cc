@@ -375,7 +375,6 @@ SqliteAccess::SqliteAccess(bool useThread)
       "environmentid INTEGER, "
       "static        BOOLEAN DEFAULT FALSE, "
       "fromtime      TIMESTAMP NOT NULL);");
-
 }
 
 // ------------------------------------------------------------------------
@@ -584,4 +583,15 @@ SqliteQueryRunner_p SqliteAccess::runner()
 void SqliteAccess::execSQL(const std::string& sql)
 {
   runner()->exec(sql);
+}
+
+// ------------------------------------------------------------------------
+
+void SqliteAccess::clear()
+{
+  runner()->exec("DELETE FROM data");
+  runner()->exec("DELETE FROM model_data");
+  runner()->exec("DELETE FROM obs_pgm");
+  runner()->exec("DELETE FROM param");
+  runner()->exec("DELETE FROM station");
 }

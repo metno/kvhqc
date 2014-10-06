@@ -45,6 +45,7 @@ public:
   void insertStation(const kvalobs::kvStation& kvs);
 
   void execSQL(const std::string& sql);
+  void clear();
 
   using QueryTaskAccess::handler;
 

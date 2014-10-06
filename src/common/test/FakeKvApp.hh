@@ -23,8 +23,8 @@ public:
 public:
   SqliteAccess_p obsAccess()
     { return mObsAccess; }
-
-  void clear();
+  void clear()
+    { obsAccess()->clear(); }
 
   int insertStation;
   int insertParam;
