@@ -298,7 +298,7 @@ bool redistributeProposal(TaskAccess_p da, const Sensor& sensor, const TimeSpan&
 
   typedef std::vector<Sensor> Sensor_v;
   Sensor_v neighbors;
-  Helpers::addNeighbors(neighbors, sensor, time, op, 10*MAX_NEIGHBORS);
+  KvMetaDataBuffer::instance()->addNeighbors(neighbors, sensor, time, op, 10*MAX_NEIGHBORS);
 
   std::vector<float> distances;
   { Helpers::stations_by_distance center(KvMetaDataBuffer::instance()->findStation(sensor.stationId));

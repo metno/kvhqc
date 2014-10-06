@@ -76,7 +76,7 @@ void RedistDialog::onButtonAuto()
 {
   METLIBS_LOG_SCOPE();
 
-  hqc::int_s stationIds = Helpers::findNeighborStationIds(rtm->sensor().stationId);
+  hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(rtm->sensor().stationId);
   stationIds.insert(rtm->sensor().stationId);
 
   std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));

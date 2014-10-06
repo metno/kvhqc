@@ -3,7 +3,6 @@
 
 #include "HqcApplication.hh"
 #include "KvalobsData.hh"
-#include "KvMetaDataBuffer.hh"
 #include "ObsPgmRequest.hh"
 #include "TimeSpan.hh"
 #include "common/HqcSystemDB.hh"
@@ -116,7 +115,7 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
 {
   METLIBS_LOG_TIME();
 
-  QString ff;
+  QString ff, sep = QChar(explain ? '\n' : ' ');
   bool first = true;
 
   const int showFlagAbove[16] = { 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 1, 1, 0 };
@@ -125,7 +124,7 @@ static QString formatFlag(const kvalobs::kvControlInfo & cInfo, bool explain)
     using namespace kvalobs::flag;
     if (flag > showFlagAbove[f]) {
       if (not first)
-        ff.append(explain ? '\n' : ' ');
+        ff.append(sep);
       ff.append(flagnames[f]);
       ff.append('=');
       ff.append(int2char(flag));
@@ -219,67 +218,6 @@ std::string isNorwegianStationIdSQL(const std::string& stationid_column)
   return sql.str();
 }
 
-int nearestStationId(float lon, float lat, float maxDistanceKm)
-{
-  int nearestStation = -1;
-  float nearestDistance = 0;
-
-  const hqc::kvStation_v& stationsList = KvMetaDataBuffer::instance()->allStations();
-  
-  try {
-    BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
-      const int sid = s.stationID();
-      if (not isNorwegianStationId(sid))
-        continue;
-      const float d = Helpers::distance(s.lon(), s.lat(), lon, lat);
-      if (d > maxDistanceKm)
-        continue;
-      if (nearestStation < 0 or nearestDistance > d) {
-        nearestDistance = d;
-        nearestStation = sid;
-      }
-    }
-  } catch (std::exception& e) {
-    METLIBS_LOG_WARN("exception while searching nearest station: " << e.what());
-    nearestStation = -1;
-  }
-  return nearestStation;
-}
-
-hqc::kvStation_v findNeighborStations(int stationId, float maxDistanceKm)
-{
-  hqc::kvStation_v neighbors;
-
-  try {
-    const hqc::kvStation_v& stationsList = KvMetaDataBuffer::instance()->allStations();
-    Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(stationId));
-    
-    BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
-      const int sid = s.stationID();
-      if (not Helpers::isNorwegianStationId(sid) or sid == stationId)
-        continue;
-      if (ordering.distance(s) > maxDistanceKm)
-        continue;
-      neighbors.push_back(s);
-      METLIBS_LOG_DEBUG(LOGVAL(s.stationID()));
-    }
-    std::sort(neighbors.begin(), neighbors.end(), ordering);
-  } catch (std::exception& e) {
-    METLIBS_LOG_WARN("exception while searching neighbor stations: " << e.what());
-  }
-  return neighbors;
-}
-
-hqc::int_s findNeighborStationIds(int stationId, float maxDistanceKm)
-{
-  const hqc::kvStation_v neighbors = findNeighborStations(stationId, maxDistanceKm);
-  hqc::int_s neighborIds;
-  BOOST_FOREACH(const kvalobs::kvStation& s, neighbors) {
-    neighborIds.insert(s.stationID());
-  }
-  return neighborIds;
-}
-
 void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
     const hqc::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors)
 {
@@ -308,12 +246,6 @@ void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& tim
     if (count >= maxNeighbors)
       break;
   }
-}
-
-void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
-    const ObsPgmRequest* obsPgms, int maxNeighbors)
-{
-  addNeighbors(neighbors, sensor, time, findNeighborStations(sensor.stationId), obsPgms, maxNeighbors);
 }
 
 Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
@@ -366,12 +298,6 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
   return sensors;
 }
 
-Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
-    const ObsPgmRequest* obsPgms)
-{
-  return relatedSensors(s, time, viewType, obsPgms, findNeighborStations(s.stationId));
-}
-
 bool aggregatedParameter(int paramFrom, int paramTo)
 {
   std::set<int> pTo;
@@ -393,51 +319,9 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add)
   data.cfailed(new_cfailed);
 }
 
-QString paramName(int paramId)
-{
-  return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
-}
-
 QString stationName(const kvalobs::kvStation& s)
 {
   return QString::fromLatin1(s.name().c_str());
-}
-
-QString paramInfo(int paramId)
-{
-  QString info = QString::number(paramId) + ": ";
-  try {
-    const kvalobs::kvParam& p = KvMetaDataBuffer::instance()->findParam(paramId);
-    info += QString::fromStdString(p.description());
-  } catch (std::exception& e) {
-    info += "?";
-  }
-  return info;
-}
-
-QString typeInfo(int typeId)
-{
-  QString info = QString::number(typeId) + ": ";
-  try {
-    const kvalobs::kvTypes& t = KvMetaDataBuffer::instance()->findType(typeId);
-    info += QString::fromStdString(t.format());
-  } catch (std::exception& e) {
-    info += "?";
-  }
-  if (typeId < 0)
-    info += qApp->translate("Helpers", " generated by kvalobs");
-  return info;
-}
-
-QString stationInfo(int stationId)
-{
-  try {
-    const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationId);
-    return QString(qApp->translate("Helpers", "%1 %2 %3masl."))
-        .arg(stationId).arg(QString::fromStdString(s.name())).arg(s.height());
-  } catch (std::exception& e) {
-    return QString::number(stationId);
-  }
 }
 
 QString sensorTimeToString(const SensorTime& st)

@@ -132,7 +132,7 @@ void SimpleCorrections::update()
   ObsData_p obs;
   if (s.valid()) {
     ui->textStation->setText(QString::number(s.stationId));
-    ui->textStation->setToolTip(Helpers::stationInfo(s.stationId));
+    ui->textStation->setToolTip(KvMetaDataBuffer::instance()->stationInfo(s.stationId));
 
     const bool showLevel = (s.level != 0);
     ui->labelLevel->setVisible(showLevel);
@@ -146,11 +146,11 @@ void SimpleCorrections::update()
     if (showSensorNr)
       ui->textSensorNr->setText(QString::number(s.sensor));
 
-    ui->textParam->setText(Helpers::paramName(s.paramId));
-    ui->textParam->setToolTip(Helpers::paramInfo(s.paramId));
+    ui->textParam->setText(KvMetaDataBuffer::instance()->paramName(s.paramId));
+    ui->textParam->setToolTip(KvMetaDataBuffer::instance()->paramInfo(s.paramId));
 
     ui->textType->setText(QString::number(s.typeId));
-    ui->textType->setToolTip(Helpers::typeInfo(s.typeId));
+    ui->textType->setToolTip(KvMetaDataBuffer::instance()->typeInfo(s.typeId));
 
     ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
 

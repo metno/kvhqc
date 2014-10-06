@@ -4,6 +4,7 @@
 
 #include "CachedParamLimits.hh"
 #include "Sensor.hh"
+#include "TimeSpan.hh"
 #include "KvTypedefs.hh"
 #include "QueryTaskHandler.hh"
 
@@ -11,6 +12,7 @@
 
 #include <map>
 
+class ObsPgmRequest;
 class QueryTaskHelper;
 
 class KvMetaDataBuffer : public QObject
@@ -51,6 +53,7 @@ public:
     { return findObsPgm(sensor.stationId); }
   void putObsPgm(const hqc::kvObsPgm_v& op);
 
+
   bool isComplete() const
     { return (mHaveStations and mHaveParams and mHaveTypes); }
 
@@ -61,6 +64,25 @@ public:
 
   static KvMetaDataBuffer* instance()
     { return sInstance; }
+
+  // ====================
+  // utility functions
+
+  QString stationInfo(int stationId);
+  QString paramInfo(int paramId);
+  QString typeInfo(int typeId);
+  QString paramName(int paramId);
+
+  int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
+  hqc::kvStation_v findNeighborStations(int stationId, float maxDistanceKm = 100);
+  hqc::int_s findNeighborStationIds(int stationId, float maxDistanceKm = 100);
+  void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
+      const ObsPgmRequest* obsPgms, int maxNeighbors);
+  Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
+      const ObsPgmRequest* obsPgms);
+
+  // end utility functions
+  // ====================
 
 public Q_SLOTS:
   void reload();

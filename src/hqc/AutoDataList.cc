@@ -102,7 +102,7 @@ void AutoDataList::doSensorSwitch()
   METLIBS_LOG_TIME();
   setDefaultTimeSpan();
 
-  hqc::int_s stationIds = Helpers::findNeighborStationIds(storeSensorTime().sensor.stationId);
+  hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(storeSensorTime().sensor.stationId);
   stationIds.insert(storeSensorTime().sensor.stationId);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
@@ -121,7 +121,7 @@ void AutoDataList::onObsPgmsComplete()
   const int currentStationId = currentSensorTime().sensor.stationId,
       currentParamId = currentSensorTime().sensor.paramId;
   
-  const Sensor_v sensors = Helpers::relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE, mObsPgmRequest);
+  const Sensor_v sensors = KvMetaDataBuffer::instance()->relatedSensors(currentSensorTime().sensor, timeSpan(), VIEW_TYPE, mObsPgmRequest);
   for (Sensor_v::const_iterator it = sensors.begin(); it != sensors.end(); ++it) {
     Column c;
     c.sensor = *it;

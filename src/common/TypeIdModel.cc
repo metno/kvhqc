@@ -5,5 +5,5 @@
 
 QVariant  TypeIdExtract::tip(int typeId) const
 {
-  return Helpers::typeInfo(typeId);
+  return KvMetaDataBuffer::instance()->typeInfo(typeId);
 }

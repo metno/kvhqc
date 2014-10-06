@@ -5,10 +5,10 @@
 
 QVariant ParamIdExtract::text(int paramId) const
 {
-  return Helpers::paramName(paramId);
+  return KvMetaDataBuffer::instance()->paramName(paramId);
 }
 
 QVariant  ParamIdExtract::tip(int paramId) const
 {
-  return Helpers::paramInfo(paramId);
+  return KvMetaDataBuffer::instance()->paramInfo(paramId);
 }

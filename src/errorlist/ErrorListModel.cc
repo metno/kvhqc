@@ -240,7 +240,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
       if (column <= COL_OBS_TIME)
-        return Helpers::stationInfo(st.sensor.stationId) + " "
+        return KvMetaDataBuffer::instance()->stationInfo(st.sensor.stationId) + " "
             + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
       else if (column == COL_OBS_FLAGS)
         return Helpers::getFlagExplanation(obs->controlinfo());

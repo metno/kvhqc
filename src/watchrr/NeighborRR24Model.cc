@@ -17,13 +17,13 @@ NeighborRR24Model::NeighborRR24Model(TaskAccess_p da, const Sensor& sensor, cons
 {
   setTimeSpan(time);
 
-  hqc::int_s stationIds = Helpers::findNeighborStationIds(sensor.stationId);
+  hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(sensor.stationId);
   stationIds.insert(sensor.stationId);
 
   std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
   op->sync();
   
-  Helpers::addNeighbors(mNeighbors, sensor, time, op.get(), 20);
+  KvMetaDataBuffer::instance()->addNeighbors(mNeighbors, sensor, time, op.get(), 20);
   BOOST_FOREACH(const Sensor& s, mNeighbors) {
     if (DataColumn_p oc = ColumnFactory::columnForSensor(da, s, time, ObsColumn::ORIGINAL))
       addColumn(oc);

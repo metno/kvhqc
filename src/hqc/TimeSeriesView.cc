@@ -218,7 +218,7 @@ void TimeSeriesView::findNeighbors()
   mColumnRemove->setEnabled(false);
 
   const SensorTime& st = mNavigate.current();
-  hqc::int_s stationIds = Helpers::findNeighborStationIds(st.sensor.stationId);
+  hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(st.sensor.stationId);
   stationIds.insert(st.sensor.stationId);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
@@ -234,7 +234,7 @@ void TimeSeriesView::haveNeighbors()
   // set original columns
   const SensorTime& st = mNavigate.current();
   mSensors = Sensor_v(1, st.sensor);
-  Helpers::addNeighbors(mSensors, st.sensor, mTimeLimits, mObsPgmRequest, MAX_LINES*2);
+  KvMetaDataBuffer::instance()->addNeighbors(mSensors, st.sensor, mTimeLimits, mObsPgmRequest, MAX_LINES*2);
   mOriginalSensors = mSensors;
   
   mModelBuffer->clear();

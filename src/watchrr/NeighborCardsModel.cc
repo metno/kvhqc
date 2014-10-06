@@ -53,13 +53,13 @@ NeighborCardsModel::NeighborCardsModel(TaskAccess_p da/*, ModelAccessPtr ma*/, c
   , mTime(mTimeSpan.t0())
   , mSensors(1, sensor)
 {
-  hqc::int_s stationIds = Helpers::findNeighborStationIds(sensor.stationId);
+  hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(sensor.stationId);
   stationIds.insert(sensor.stationId);
 
   ObsPgmRequest* mObsPgmRequest = new ObsPgmRequest(stationIds);
   mObsPgmRequest->sync();
   
-  Helpers::addNeighbors(mSensors, sensor, mTimeSpan, mObsPgmRequest, 20);
+  KvMetaDataBuffer::instance()->addNeighbors(mSensors, sensor, mTimeSpan, mObsPgmRequest, 20);
   mItems.reserve(N_COLUMNS);
   mTimeOffsets.reserve(N_COLUMNS);
 

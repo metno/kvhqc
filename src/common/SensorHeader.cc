@@ -31,7 +31,7 @@ QVariant SensorHeader::sensorHeader(DataItem_p item, Qt::Orientation orientation
     }
     if (mShowParam != NEVER) {
       Helpers::appendText(header, qApp->translate("SensorHeader", "Parameter %1")
-          .arg(Helpers::paramName(mSensor.paramId)), "\n");
+          .arg(KvMetaDataBuffer::instance()->paramName(mSensor.paramId)), "\n");
       if (item)
         Helpers::appendText(header, item->description(false), " ");
     }
@@ -58,7 +58,7 @@ QString SensorHeader::displayHeader(Qt::Orientation orientation, const QString& 
     header = QString::number(mSensor.stationId);
   if (mShowParam == ALWAYS) {
     const QString sep = separator(orientation);
-    Helpers::appendText(header, Helpers::paramName(mSensor.paramId), sep);
+    Helpers::appendText(header, KvMetaDataBuffer::instance()->paramName(mSensor.paramId), sep);
     Helpers::appendText(header, QString("T%1").arg(mSensor.typeId), sep);
     if (mSensor.sensor != 0 or mSensor.level != 0)
       Helpers::appendText(header, QString("L%1 S%2").arg(mSensor.level).arg(mSensor.sensor), sep);

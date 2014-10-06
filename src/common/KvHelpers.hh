@@ -79,19 +79,10 @@ private:
 bool isNorwegianStationId(int stationid);
 std::string isNorwegianStationIdSQL(const std::string& stationid_column);
 
-int nearestStationId(float lon, float lat, float maxDistanceKm = 10);
-
-hqc::kvStation_v findNeighborStations(int stationId, float maxDistanceKm = 100);
-hqc::int_s findNeighborStationIds(int stationId, float maxDistanceKm = 100);
-
 void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
     const hqc::kvStation_v& neighborStations, const ObsPgmRequest* obsPgms, int maxNeighbors);
-void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& time,
-    const ObsPgmRequest* obsPgms, int maxNeighbors);
 Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
     const ObsPgmRequest* obsPgms, const hqc::kvStation_v& neighborStations);
-Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string& viewType,
-    const ObsPgmRequest* obsPgms);
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, hqc::int_s& paramTo);
@@ -110,12 +101,7 @@ inline bool same_sensor(int sensor1, int sensor2)
 
 void updateCfailed(kvalobs::kvData& data, const std::string& add);
 
-QString paramName(int paramId);
 QString stationName(const kvalobs::kvStation& s);
-
-QString paramInfo(int paramId);
-QString typeInfo(int typeId);
-QString stationInfo(int stationId);
 
 QString sensorTimeToString(const SensorTime& st);
 SensorTime sensorTimeFromString(const QString& s);
