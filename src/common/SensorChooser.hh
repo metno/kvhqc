@@ -23,7 +23,7 @@ public:
   ~SensorChooser();
 
   void setSensor(const Sensor& sensor);
-  void setTimeSpan(const TimeSpan& time);
+  void setSensorTime(const SensorTime& st);
 
   bool isValid();
   Sensor getSensor();
@@ -62,7 +62,7 @@ private:
   QComboBox* mLevel;
   QSpinBox* mSensorNr;
 
-  TimeSpan mTime;
+  SensorTime mPreferred;
 };
 
 #endif // SensorChooser_hh

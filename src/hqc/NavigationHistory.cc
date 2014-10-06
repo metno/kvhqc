@@ -248,6 +248,7 @@ void NavigationHistory::onJump()
   QPoint pos = ui->buttonJump->mapToGlobal(ui->buttonJump->rect().topRight());
   mJump->move(pos);
 
+  mJump->navigateTo(mNavigate.current());
   mJump->exec();
 }
 

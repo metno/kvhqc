@@ -32,7 +32,7 @@ JumpToObservation::~JumpToObservation()
 
 void JumpToObservation::navigateTo(const SensorTime& st)
 {
-  mSensorChooser->setSensor(st.sensor);
+  mSensorChooser->setSensorTime(st);
   ui->editObsTime->setDateTime(timeutil::to_QDateTime(st.time));
 }
 

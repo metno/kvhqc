@@ -47,10 +47,18 @@ SensorChooser::~SensorChooser()
   // uninstall station completer?
 }
 
+void SensorChooser::setSensorTime(const SensorTime& st)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(st));
+  mPreferred = st;
+  setSensor(st.sensor);
+}
+
 void SensorChooser::setSensor(const Sensor& sensor)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor));
 
+  mPreferred.sensor = sensor;
   if (sensor.valid()) {
     mStation->setText(QString::number(sensor.stationId));
     setParamId(sensor.paramId);
@@ -59,11 +67,6 @@ void SensorChooser::setSensor(const Sensor& sensor)
     setSensorNr(sensor.sensor);
     onStationEdited("");
   }
-}
-
-void SensorChooser::setTimeSpan(const TimeSpan& time)
-{
-  METLIBS_LOG_SCOPE("not implemented");
 }
 
 bool SensorChooser::isValid()
@@ -211,7 +214,9 @@ void SensorChooser::onStationEdited(const QString&)
   METLIBS_LOG_DEBUG(LOGVAL(goodStation));
   mParam->setEnabled(goodStation);
 
-  const int paramId = getParamId();
+  int paramId = mPreferred.sensor.paramId;
+  if (not mPreferred.valid())
+    paramId = getParamId();
   paramModel()->setValues(hqc::int_v(stationParams.begin(), stationParams.end()));
   setParamId(paramId);
 
@@ -240,7 +245,9 @@ void SensorChooser::onParameterSelected(int)
   METLIBS_LOG_DEBUG(LOGVAL(goodParam));
   mType->setEnabled(goodParam);
 
-  const int typeId = getTypeId();
+  int typeId = mPreferred.sensor.typeId;
+  if (not mPreferred.valid())
+    typeId = getTypeId();
   typeModel()->setValues(hqc::int_v(stationTypes.begin(), stationTypes.end()));
   setTypeId(typeId);
 
