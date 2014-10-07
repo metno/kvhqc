@@ -23,14 +23,12 @@ class ExtremesView : public QWidget
 public:
   ExtremesView(QWidget* parent=0);
   ~ExtremesView();
-
-  void setDataAccess(EditAccessPtr eda)
-    { mEDA = eda; }
-
-  boost::signal1<void, SensorTime> signalNavigateTo;
-
+  
 protected:
   virtual void changeEvent(QEvent *event);
+  
+Q_SIGNALS:
+  void signalNavigateTo(const SensorTime&);
 
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
@@ -39,11 +37,10 @@ private Q_SLOTS:
 private:
   int getSelectedRow() const;
   int getParamId() const;
-  void setExtremes(const std::vector<SensorTime>& extremes);
 
 private:
   std::auto_ptr<Ui::DialogExtremeValues> ui;
-  boost::shared_ptr<EditAccess> mEDA;
+  EditAccess_p mEDA;
   std::auto_ptr<ExtremesTableModel> mExtremesModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;

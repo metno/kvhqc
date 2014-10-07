@@ -2,10 +2,20 @@
 #ifndef COMMON_DATAQUERYTASK_HH
 #define COMMON_DATAQUERYTASK_HH 1
 
+#include "KvalobsData.hh"
 #include "QueryTask.hh"
 #include "ObsRequest.hh"
 
 #include <QtCore/QObject>
+
+class KvalobsDataRow {
+public:
+  QString columns(QString data_alias);
+  int columnCount();
+  KvalobsData_p extract(const ResultRow& row, int col=0);
+};
+
+// ========================================================================
 
 class DataQueryTask : public QObject, public QueryTask
 { Q_OBJECT;

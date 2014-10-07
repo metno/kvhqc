@@ -1,6 +1,6 @@
 
 SET(extremes_SOURCES
-  FindMissingValues.cc
+  ExtremesFilter.cc
   ExtremesTableModel.cc
   ExtremesView.cc
 )
@@ -12,6 +12,8 @@ QT4_WRAP_CPP(extremes_MOC
 QT4_WRAP_UI(extremes_UIH
   extremevalues.ui
 )
+
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 ADD_LIBRARY(extremes STATIC
   ${extremes_SOURCES}

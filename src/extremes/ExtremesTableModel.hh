@@ -12,8 +12,10 @@
 class ExtremesTableModel : public QAbstractTableModel
 {
 public:
-  ExtremesTableModel(EditAccessPtr eda, const std::vector<SensorTime>& extremes);
+  ExtremesTableModel(EditAccess_p eda);
   ~ExtremesTableModel();
+
+  void search(int paramid);
 
   enum EDIT_COLUMNS {
     COL_STATION_ID = 0,
@@ -33,15 +35,15 @@ public:
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-  EditDataPtr getObs(int row) const
+  ObsData_p getObs(int row) const
     { return mExtremes.at(row); }
 
 private:
-  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  //void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
 
 private:
-  EditAccessPtr mDA;
-  std::vector<EditDataPtr> mExtremes;
+  EditAccess_p mDA;
+  ObsData_pv mExtremes;
 };
 
 #endif

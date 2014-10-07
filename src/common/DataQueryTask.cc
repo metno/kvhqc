@@ -1,7 +1,6 @@
 
 #include "DataQueryTask.hh"
 
-#include "KvalobsData.hh"
 #include "KvHelpers.hh"
 #include "ObsDataSet.hh"
 #include "sqlutil.hh"
@@ -19,34 +18,20 @@ const size_t QUERY_DATA_CHUNKSIZE = 32;
 
 } // namespace anonymous
 
-DataQueryTask::DataQueryTask(ObsRequest_p request, size_t priority)
-  : QueryTask(priority)
-  , mRequest(request)
+QString KvalobsDataRow::columns(QString d)
 {
+  return d + "stationid," + d + "paramid," + d + "typeid," + d + "level," + d + "sensor,"
+      + d + "obstime," + d + "original," + d + "tbtime," + d + "corrected,"
+      + d + "controlinfo," + d + "useinfo," + d + "cfailed";
 }
 
-QString DataQueryTask::querySql(QString dbversion) const
+int KvalobsDataRow::columnCount()
 {
-  const Sensor_s& sensors = mRequest->sensors();
-  const TimeSpan& time = mRequest->timeSpan();
-  ObsFilter_p filter = mRequest->filter();
-
-  std::ostringstream sql;
-  sql << "SELECT d.stationid, d.paramid, d.typeid, d.level, d.sensor,"
-      " d.obstime, d.original, d.tbtime, d.corrected, d.controlinfo, d.useinfo, d.cfailed"
-      " FROM data d WHERE ";
-  sensors2sql(sql, sensors, "d.");
-  sql << " AND d.obstime BETWEEN " << time2sql(time.t0()) << " AND " << time2sql(time.t1());
-  if (filter and filter->hasSQL())
-    sql << " AND (" << filter->acceptingSQL("d.") << ")";
-  //sql << " ORDER BY d.stationid, d.paramid, d.typeid, d.level, d.sensor, d.obstime";
-  return QString::fromStdString(sql.str());
+  return 12;
 }
 
-void DataQueryTask::notifyRow(const ResultRow& row)
+KvalobsData_p KvalobsDataRow::extract(const ResultRow& row, int col)
 {
-  int col = 0;
-  
   const int stationid = row.getInt(col++);
   const int paramid   = row.getInt(col++);
   const int type_id   = row.getInt(col++);
@@ -63,7 +48,44 @@ void DataQueryTask::notifyRow(const ResultRow& row)
   
   const kvalobs::kvData kvdata(stationid, obstime, original, paramid,
       tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
-  KvalobsData_p kd = boost::make_shared<KvalobsData>(kvdata, false);
+  return boost::make_shared<KvalobsData>(kvdata, false);
+}
+
+// ========================================================================
+
+DataQueryTask::DataQueryTask(ObsRequest_p request, size_t priority)
+  : QueryTask(priority)
+  , mRequest(request)
+{
+}
+
+QString DataQueryTask::querySql(QString) const
+{
+  const Sensor_s& sensors = mRequest->sensors();
+  const TimeSpan& time = mRequest->timeSpan();
+  ObsFilter_p filter = mRequest->filter();
+
+  KvalobsDataRow kdr;
+  QString sql = "SELECT " + kdr.columns("d.") + " FROM data d";
+  if (filter) {
+    QString extraTablesSql = filter->acceptingSqlExtraTables("d.", time);
+    if (not extraTablesSql.isNull())
+      sql += ", " + extraTablesSql;
+  }
+  sql += " WHERE " + sensors2sql(sensors, "d.")
+      + " AND d.obstime " + timespan2sql(time);
+  if (filter) {
+    QString acceptingSql = filter->acceptingSql("d.", time);
+    if (not acceptingSql.isNull())
+      sql += " AND " + acceptingSql;
+  }
+  return sql;
+}
+
+void DataQueryTask::notifyRow(const ResultRow& row)
+{
+  KvalobsDataRow kdr;
+  KvalobsData_p kd = kdr.extract(row);
   ObsFilter_p filter = mRequest->filter();
   if ((not filter) or filter->accept(kd, true)) {
     mData.push_back(kd);

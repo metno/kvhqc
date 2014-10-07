@@ -17,6 +17,7 @@ INSTALL(FILES
   images/dl_save_as.svg
   images/earlier.svg
   images/error.svg
+  images/extremes.svg
   images/editor.svg
   images/filter.svg
   images/forget.svg

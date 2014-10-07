@@ -132,22 +132,22 @@ bool checkError2013(const ObsData_p obs, bool errorsForSalen)
 
 // ************************************************************************
 
-std::string ErrorFilter::acceptingSQL(const std::string& d) const
+QString ErrorFilter::acceptingSql(const QString& d, const TimeSpan&) const
 {
-  std::ostringstream sql;
-  sql << "(substr(" << d << "controlinfo,16,1) = '0'"; // fhqc == 0
+  QString sql;
+  sql += "(substr(" + d + "controlinfo,16,1) = '0'"; // fhqc == 0
   if (not mErrorsForSalen) {
-    sql << " AND substr(" << d << "controlinfo, 8,1) = '0'" // ftime == 0
-        << " AND NOT (substr(" << d << "controlinfo,13,1) IN ('7','8') AND paramid = 110)" // fd != 7,8 for RR_24
-        << " AND (substr(" << d << "useinfo, 3,1) IN ('2','3')" // useinfo(2) == 2,3
-        << "     OR substr(" << d << "controlinfo,2,1) IN ('2','3')" // fr == 2,3
-        << "     OR substr(" << d << "controlinfo,7,1) = '3')"; // fmis == 3
+    sql += " AND substr(" + d + "controlinfo, 8,1) = '0'" // ftime == 0
+        +  " AND NOT (substr(" + d + "controlinfo,13,1) IN ('7','8') AND paramid = 110)" // fd != 7,8 for RR_24
+        +  " AND (substr(" + d + "useinfo, 3,1) IN ('2','3')" // useinfo(2) == 2,3
+        +  "     OR substr(" + d + "controlinfo,2,1) IN ('2','3')" // fr == 2,3
+        +  "     OR substr(" + d + "controlinfo,7,1) = '3')"; // fmis == 3
   } else {
-    sql << " AND (substr(" << d << "useinfo, 4,1) = '2'" // fs == 2
-        << "     OR substr(" << d << "controlinfo,2,1) IN ('4','5','6'))"; // fr == 4,5,6
+    sql += " AND (substr(" + d + "useinfo, 4,1) = '2'" // fs == 2
+        +  "     OR substr(" + d + "controlinfo,2,1) IN ('4','5','6'))"; // fr == 4,5,6
   }
-  sql << ")";
-  return sql.str();
+  sql += ")";
+  return sql;
 }
 
 bool ErrorFilter::accept(ObsData_p obs, bool afterSQL) const

@@ -31,7 +31,7 @@
 #define HQC_SEARCHWINDOW_H
 
 #define ENABLE_ERRORLIST 1
-//#define ENABLE_EXTREMES 1
+#define ENABLE_EXTREMES 1
 //#define ENABLE_MISSINGOBS 1
 //#define ENABLE_DIANA 1
 #define ENABLE_SIMPLECORRECTIONS 1
@@ -65,6 +65,9 @@ class TimeSeriesView;
 
 #ifdef ENABLE_ERRORLIST
 class ErrorList;
+#endif
+#ifdef ENABLE_EXTREMES
+class ExtremesView;
 #endif
 
 namespace Ui {

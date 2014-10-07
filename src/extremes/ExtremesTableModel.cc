@@ -1,7 +1,7 @@
 
 #include "ExtremesTableModel.hh"
+#include "ExtremesFilter.hh"
 
-#include "common/FindExtremeValues.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
@@ -43,24 +43,13 @@ const char* tooltips[ExtremesTableModel::NCOLUMNS] = {
 
 }
 
-ExtremesTableModel::ExtremesTableModel(EditAccessPtr eda, const std::vector<SensorTime>& extremes)
+ExtremesTableModel::ExtremesTableModel(EditAccess_p eda)
   : mDA(eda)
 {
-  METLIBS_LOG_SCOPE();
-  mDA->obsDataChanged.connect(boost::bind(&ExtremesTableModel::onDataChanged, this, _1, _2));
-  BOOST_FOREACH(const SensorTime& st, extremes) {
-    EditDataPtr obs = mDA->findE(st);
-    if (obs) {
-      mExtremes.push_back(obs);
-    } else {
-      HQC_LOG_ERROR("could not retrieve extreme value at " << st);
-    }
-  }
 }
 
 ExtremesTableModel::~ExtremesTableModel()
 {
-  mDA->obsDataChanged.disconnect(boost::bind(&ExtremesTableModel::onDataChanged, this, _1, _2));
 }
 
 int ExtremesTableModel::rowCount(const QModelIndex&) const
@@ -81,7 +70,7 @@ Qt::ItemFlags ExtremesTableModel::flags(const QModelIndex& /*index*/) const
 QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
 {
   try {
-    const EditDataPtr& obs = mExtremes.at(index.row());
+    const ObsData_p& obs = mExtremes.at(index.row());
     if (not obs)
       return QVariant();
 
@@ -89,7 +78,7 @@ QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
       if (column <= COL_OBSTIME)
-        return Helpers::stationInfo(st.sensor.stationId) + " "
+        return KvMetaDataBuffer::instance()->stationInfo(st.sensor.stationId) + " "
             + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
       if (column == COL_OBS_FLAGS)
         return Helpers::getFlagExplanation(obs->controlinfo());
@@ -151,6 +140,11 @@ QVariant ExtremesTableModel::headerData(int section, Qt::Orientation orientation
   return QVariant();
 }
 
+void ExtremesTableModel::search(int paramid)
+{
+}
+
+#if 0
 void ExtremesTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
 {
   METLIBS_LOG_SCOPE();
@@ -176,3 +170,4 @@ void ExtremesTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr
     }
   }
 }
+#endif

@@ -2,7 +2,7 @@
 #include "ExtremesView.hh"
 
 #include "ExtremesTableModel.hh"
-#include "common/FindExtremeValues.hh"
+#include "common/KvHelpers.hh"
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpanControl.hh"
 
@@ -53,6 +53,10 @@ ExtremesView::ExtremesView(QWidget* parent)
   params.push_back(kvalobs::PARAMID_FX);
   ui->comboParam->setModel(new ParamIdModel(params));
   ui->comboParam->setCurrentIndex(0);
+
+  mExtremesModel.reset(new ExtremesTableModel(mEDA));
+  connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
 
 ExtremesView::~ExtremesView()
@@ -66,17 +70,6 @@ void ExtremesView::changeEvent(QEvent *event)
   QWidget::changeEvent(event);
 }
 
-void ExtremesView::setExtremes(const std::vector<SensorTime>& extremes)
-{
-  METLIBS_LOG_SCOPE();
-  mLastSelectedRow = -1;
-  mExtremesModel.reset(new ExtremesTableModel(mEDA, extremes));
-  ui->tableExtremes->setModel(mExtremesModel.get());
-  ui->tableExtremes->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-}
-
 void ExtremesView::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
   METLIBS_LOG_SCOPE();
@@ -86,7 +79,7 @@ void ExtremesView::onSelectionChanged(const QItemSelection&, const QItemSelectio
     return;
   mLastSelectedRow = row;
 
-  EditDataPtr obs = mExtremesModel->getObs(row);
+  ObsData_p obs = mExtremesModel->getObs(row);
   Q_EMIT signalNavigateTo(obs->sensorTime());
 }
 
@@ -96,10 +89,8 @@ void ExtremesView::onUpdateClicked()
   if (paramId <= 0)
     return;
 
-  {
-    const std::vector<SensorTime> extremes = Extremes::find(paramId, mTimeControl->timeRange());
-    setExtremes(extremes);
-  }
+  mLastSelectedRow = -1;
+  mExtremesModel->search(paramId);
 }
 
 int ExtremesView::getSelectedRow() const

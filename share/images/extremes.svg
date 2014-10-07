@@ -1,0 +1,7 @@
+<svg height="24" width="24">
+  <!--rect x="1" y="1" width="22" height="22" fill="white" stroke="none"/-->
+  <polyline points="2,22 4,20 6,22 8,12 10,20 12,22 14,6 16,18 18,20 20,18 22,22"
+            style="fill:none;stroke:black;stroke-width:2" />
+  <circle cx="8"  cy="12" r="3" stroke="none" fill="red" />
+  <circle cx="14" cy="6"  r="3" stroke="none" fill="red" />
+</svg>

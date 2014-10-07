@@ -3,6 +3,7 @@
 #define ACCESS_OBSFILTER_HH 1
 
 #include "ObsData.hh"
+#include "TimeSpan.hh"
 
 #include <string>
 
@@ -10,8 +11,10 @@ class ObsFilter : HQC_SHARED_NOCOPY(ObsFilter) {
 public:
   virtual ~ObsFilter();
 
-  virtual bool hasSQL() const;
-  virtual std::string acceptingSQL(const std::string& data_alias) const;
+  virtual QString acceptingSql(const std::string& data_alias, const TimeSpan& time) const;
+  virtual QString acceptingSqlExtraTables(const std::string& data_alias, const TimeSpan& time) const;
+
+  virtual bool needsSQL() const;
 
   /* \param afterSQL true if accept is called after running the SQL
    * contraints from acceptingSQL(...); if false, acceptingSQL may

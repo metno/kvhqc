@@ -12,7 +12,8 @@ public:
   
   virtual bool hasSQL() const
     { return true; }
-    virtual std::string acceptingSQL(const std::string& data_alias) const;
+
+  virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
 
   /* \param afterSQL true if accept is called after running the SQL
    * contraints from acceptingSQL(...); if false, acceptingSQL may

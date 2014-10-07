@@ -158,15 +158,17 @@ void SearchWindow::setupSearchTabs()
 #endif // ENABLE_ERRORLIST
 
 #ifdef ENABLE_EXTREMES
-  mExtremesView = new ExtremesView(this);
-  mExtremesView->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
-  addTab(mExtremesView);
+  mExtremesView = new ExtremesView(mTabsSearch);
+  addTab(mExtremesView, tr("Ctrl+E", "Extremes tab shortcut"));
+  connect(mExtremesView, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
 #endif // ENABLE_EXTREMES
 
 #ifdef ENABLE_MISSINGOBS
   mMissingView = new MissingView(mTabsSearch);
-  mMissingView->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
-  addTab(mTabsSearch, mMissingView);
+  addTab(mExtremesView, tr("Ctrl+M", "Missing Data tab shortcut"));
+  connect(mMissingView, SIGNAL(signalNavigateTo(const SensorTime&)),
+      this, SLOT(navigateTo(const SensorTime&)));
 #endif // ENABLE_MISSINGOBS
 
   mNavigationHistory = new NavigationHistory(mTabsSearch);

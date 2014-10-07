@@ -4,6 +4,7 @@
 
 #include "util/timeutil.hh"
 #include "common/Sensor.hh"
+#include "common/TimeSpan.hh"
 
 #include <iosfwd>
 #include <set>
@@ -19,9 +20,13 @@ std::ostream& operator<<(std::ostream& sql, const Time2Sql& t);
 inline Time2Sql time2sql(const timeutil::ptime& t)
   { return Time2Sql(t); }
 
+QString timespan2sql(const TimeSpan& t);
+
 void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alias, bool model_data=false);
+QString sensor2sql(const Sensor& s, const QString& data_alias, bool model_data=false);
 
 void sensors2sql(std::ostream& sql, const Sensor_s& s, const std::string& data_alias, bool model_data=false);
+QString sensors2sql(const Sensor_s& s, const QString& data_alias, bool model_data=false);
 
 void sensortime2sql(std::ostream& sql, const SensorTime& st, const std::string& table_alias, bool model_data=false);
 

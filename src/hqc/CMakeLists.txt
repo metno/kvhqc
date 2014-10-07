@@ -83,6 +83,7 @@ SET(HQC_COMMON_LIBS
 #  weather
   watchrr
   errorlist
+  extremes
   rejectedobs
   textdata
   common

@@ -5,16 +5,20 @@ ObsFilter::~ObsFilter()
 {
 }
 
-bool ObsFilter::hasSQL() const
+QString ObsFilter::acceptingSql(const std::string&, const TimeSpan&) const
 {
-  return false;
+  return QString();
 }
 
-// -- how to sanitize this? avoid TRUNCATE and friends
-std::string ObsFilter::acceptingSQL(const std::string& data_alias) const
+QString ObsFilter::acceptingSqlExtraTables(const std::string&, const TimeSpan&) const
 {
-  return "";
+  return QString();
 }
+
+bool ObsFilter::needsSQL() const
+{
+  return false;
+ }
 
 bool ObsFilter::accept(ObsData_p obs, bool afterSQL) const
 {
