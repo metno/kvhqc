@@ -20,7 +20,6 @@
 #include "ui_timeseriesview.h"
 #include "ui_ts_remove.h"
 
-#define M_TIME
 #define MILOGGER_CATEGORY "kvhqc.TimeSeriesView"
 #include "common/ObsLogging.hh"
 
@@ -41,6 +40,7 @@ public:
 };
 
 const size_t MAX_LINES = 8;
+const int NMARKERS = 5;
 } // namespace anonymous
 
 // ########################################################################
@@ -100,22 +100,6 @@ void TimeSeriesView::storeChanges()
 void TimeSeriesView::updateSensors()
 {
   METLIBS_LOG_SCOPE(LOGVAL(mSensors.size()));
-  std::vector<POptions::Colour> colours;
-  POptions::Colour::definedColours(colours);
-
-  std::vector<POptions::Linetype> linetypes;
-  linetypes.push_back(POptions::Linetype("full"));
-  linetypes.push_back(POptions::Linetype("dashed"));
-  linetypes.push_back(POptions::Linetype("dotted"));
-  linetypes.push_back(POptions::Linetype("dashdotted"));
-  linetypes.push_back(POptions::Linetype("dashdashdotted"));
-
-  std::vector<POptions::Marker> markers;
-  markers.push_back(POptions::M_CIRCLE);
-  markers.push_back(POptions::M_RECTANGLE);
-  markers.push_back(POptions::M_TRIANGLE);
-  markers.push_back(POptions::M_DIAMOND);
-  markers.push_back(POptions::M_STAR);
 
   std::vector<POptions::yAxis> axes;
   axes.push_back(POptions::axis_left_left);
@@ -140,13 +124,14 @@ void TimeSeriesView::updateSensors()
     METLIBS_LOG_DEBUG(LOGVAL(s) << LOGVAL(po.label));
 
     IdxHelper poi(idx);
-    const int ci = poi.next(colours.size()), mi = poi.next(markers.size()), li = poi.next(linetypes.size());
+    const int ci = poi.next(sDefinedColours.size()), li = poi.next(sDefinedLinetypes.size());
+    const int mi = (ci % NMARKERS);
     METLIBS_LOG_DEBUG(LOGVAL(ci) << LOGVAL(mi)<< LOGVAL(li));
 
-    po.linecolour = colours[ci];
-    po.marker     = markers[mi];
+    po.linecolour = sDefinedColours[ci];
+    po.marker     = (POptions::Marker)(POptions::M_RECTANGLE + mi);
     po.fillcolour = po.linecolour; // sets marker colour
-    po.linetype   = linetypes[li];
+    po.linetype   = sDefinedLinetypes[li];
 
     po.linewidth = (s.stationId == mSensors.front().stationId) ? 3 : 1; // if we come here, mSensors is not empty
     po.axis = axes[0];
@@ -612,52 +597,62 @@ void TimeSeriesView::updatePlot()
 // static
 void TimeSeriesView::initalizePlotOptions()
 {
-  std::vector<POptions::Colour> colours;
-  POptions::Colour::definedColours(colours);
-  if (not colours.empty())
-    return;
+  if (sDefinedColours.empty()) {
+    POptions::Colour::define("black",0,0,0);
+    POptions::Colour::define("white",255,255,255);
+    POptions::Colour::define("red",255,0,0);
+    POptions::Colour::define("green",0,255,0);
+    POptions::Colour::define("blue",0,0,255);
+    POptions::Colour::define("cyan",0,255,255);
+    POptions::Colour::define("magenta",255,0,255);
+    POptions::Colour::define("yellow",255,255,0);
+    POptions::Colour::define("grey25",64,64,64);
+    POptions::Colour::define("grey40",102,102,102);
+    POptions::Colour::define("grey45",115,115,115);
+    POptions::Colour::define("grey50",128,128,128);
+    POptions::Colour::define("grey55",140,140,140);
+    POptions::Colour::define("grey60",153,153,153);
+    POptions::Colour::define("grey65",166,166,166);
+    POptions::Colour::define("grey70",179,179,179);
+    POptions::Colour::define("grey75",192,192,192);
+    POptions::Colour::define("grey80",204,204,204);
+    POptions::Colour::define("grey85",217,217,217);
+    POptions::Colour::define("grey90",230,230,230);
+    POptions::Colour::define("grey95",243,243,243);
+    POptions::Colour::define("mist_red",240,220,220);
+    POptions::Colour::define("mist_green",220,240,220);
+    POptions::Colour::define("mist_blue",220,240,240);
+    POptions::Colour::define("dark_green",0,128,128);
+    POptions::Colour::define("brown",179,36,0);
+    POptions::Colour::define("orange",255,90,0);
+    POptions::Colour::define("purple",90,0,90);
+    POptions::Colour::define("light_blue",36,36,255);
+    POptions::Colour::define("dark_yellow",179,179,0);
+    POptions::Colour::define("dark_red",128,0,0);
+    POptions::Colour::define("dark_blue",0,0,128);
+    POptions::Colour::define("dark_cyan",0,128,128);
+    POptions::Colour::define("dark_magenta",128,0,128);
+    POptions::Colour::define("midnight_blue",26,26,110);
+    POptions::Colour::define("dnmi_green",44,120,36);
+    POptions::Colour::define("dnmi_blue",0,54,125);
 
-  POptions::Colour::define("black",0,0,0);
-  POptions::Colour::define("white",255,255,255);
-  POptions::Colour::define("red",255,0,0);
-  POptions::Colour::define("green",0,255,0);
-  POptions::Colour::define("blue",0,0,255);
-  POptions::Colour::define("cyan",0,255,255);
-  POptions::Colour::define("magenta",255,0,255);
-  POptions::Colour::define("yellow",255,255,0);
-  POptions::Colour::define("grey25",64,64,64);
-  POptions::Colour::define("grey40",102,102,102);
-  POptions::Colour::define("grey45",115,115,115);
-  POptions::Colour::define("grey50",128,128,128);
-  POptions::Colour::define("grey55",140,140,140);
-  POptions::Colour::define("grey60",153,153,153);
-  POptions::Colour::define("grey65",166,166,166);
-  POptions::Colour::define("grey70",179,179,179);
-  POptions::Colour::define("grey75",192,192,192);
-  POptions::Colour::define("grey80",204,204,204);
-  POptions::Colour::define("grey85",217,217,217);
-  POptions::Colour::define("grey90",230,230,230);
-  POptions::Colour::define("grey95",243,243,243);
-  POptions::Colour::define("mist_red",240,220,220);
-  POptions::Colour::define("mist_green",220,240,220);
-  POptions::Colour::define("mist_blue",220,240,240);
-  POptions::Colour::define("dark_green",0,128,128);
-  POptions::Colour::define("brown",179,36,0);
-  POptions::Colour::define("orange",255,90,0);
-  POptions::Colour::define("purple",90,0,90);
-  POptions::Colour::define("light_blue",36,36,255);
-  POptions::Colour::define("dark_yellow",179,179,0);
-  POptions::Colour::define("dark_red",128,0,0);
-  POptions::Colour::define("dark_blue",0,0,128);
-  POptions::Colour::define("dark_cyan",0,128,128);
-  POptions::Colour::define("dark_magenta",128,0,128);
-  POptions::Colour::define("midnight_blue",26,26,110);
-  POptions::Colour::define("dnmi_green",44,120,36);
-  POptions::Colour::define("dnmi_blue",0,54,125);
+    POptions::Colour::definedColours(sDefinedColours);
+  }
 
-  POptions::Linetype::define("full",0xFFFF,1);
-  POptions::Linetype::define("dashed",0x00FF,1);
-  POptions::Linetype::define("dashdotted",0x0C0F,1);
-  POptions::Linetype::define("dashdashdotted",0x1C47,1);
-  POptions::Linetype::define("dotted",0xAAAA,2);
+  if (sDefinedLinetypes.empty()) {
+    POptions::Linetype::define("full",0xFFFF,1);
+    POptions::Linetype::define("dashed",0x00FF,1);
+    POptions::Linetype::define("dashdotted",0x0C0F,1);
+    POptions::Linetype::define("dashdashdotted",0x1C47,1);
+    POptions::Linetype::define("dotted",0xAAAA,2);
+
+    sDefinedLinetypes.push_back(POptions::Linetype("full"));
+    sDefinedLinetypes.push_back(POptions::Linetype("dashed"));
+    sDefinedLinetypes.push_back(POptions::Linetype("dotted"));
+    sDefinedLinetypes.push_back(POptions::Linetype("dashdotted"));
+    sDefinedLinetypes.push_back(POptions::Linetype("dashdashdotted"));
+  }
 }
+
+std::vector<POptions::Colour>   TimeSeriesView::sDefinedColours;
+std::vector<POptions::Linetype> TimeSeriesView::sDefinedLinetypes;

@@ -77,6 +77,9 @@ private:
 
   bool mVisible;
   SensorTime mPendingSensorTime;
+
+  static std::vector<POptions::Colour> sDefinedColours;
+  static std::vector<POptions::Linetype> sDefinedLinetypes;
 };
 
 #endif // TimeSeriesView_hh
