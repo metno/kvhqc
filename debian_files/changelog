@@ -1,3 +1,10 @@
+kvhqc (3.4.11-1) unstable; urgency=low
+
+  * TimeSeriesView: change symbol more often
+  * TimeSeriesView: bugfix updating MiDateTimeEdit
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 07 Oct 2014 09:49:58 +0200
+
 kvhqc (3.4.10-1) unstable; urgency=low
 
   * reinserter: if fhqc==0, force it to fhqc==3
