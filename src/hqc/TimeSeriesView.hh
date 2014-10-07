@@ -46,6 +46,7 @@ private:
   void doNavigateTo(const SensorTime& st);
   void updateSensors();
   void updatePlot();
+  void updateTimeEditors();
 
   std::string changes();
   void replay(const std::string& changes);
@@ -72,6 +73,7 @@ private:
   Sensors_t mSensors, mOriginalSensors;
   std::vector<POptions::PlotOptions> mPlotOptions;
   TimeRangeControl* mTimeControl;
+  bool mChangingTimes;
 
   bool mVisible;
   SensorTime mPendingSensorTime;

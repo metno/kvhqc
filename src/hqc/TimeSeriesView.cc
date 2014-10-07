@@ -49,6 +49,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
     : QWidget(parent)
     , ui(new Ui::TimeSeriesView)
     , mTimeControl(new TimeRangeControl(this))
+    , mChangingTimes(false)
     , mVisible(false)
 {
   METLIBS_LOG_SCOPE();
@@ -264,8 +265,7 @@ void TimeSeriesView::doNavigateTo(const SensorTime& st)
   ui->plot->clearTimemarks();
   ui->plot->setTimemark(timeutil::make_miTime(st.time), "here");
 
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+  updateTimeEditors();
 
   mColumnAdd->setEnabled(true);
   mColumnRemove->setEnabled(true);
@@ -400,8 +400,7 @@ void TimeSeriesView::replay(const std::string& changesText)
     METLIBS_LOG_DEBUG(LOGVAL(newTimeLimits));
   }
   mTimeLimits = newTimeLimits;
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+  updateTimeEditors();
 
   bool changed = (mSensors.size() != mOriginalSensors.size())
       or mTimeLimits != mOriginalTimeLimits;
@@ -466,8 +465,7 @@ void TimeSeriesView::onActionResetColumns()
   mTimeLimits = mOriginalTimeLimits;
   mSensors = mOriginalSensors;
   mColumnReset->setEnabled(false);
-  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
-  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+  updateTimeEditors();
   updateSensors();
 }
 
@@ -477,10 +475,18 @@ void TimeSeriesView::onRadioPlot()
   updatePlot();
 }
 
+void TimeSeriesView::updateTimeEditors()
+{
+  mChangingTimes = true;
+  ui->timeFrom->setDateTime(timeutil::to_QDateTime(mTimeLimits.t0()));
+  ui->timeTo  ->setDateTime(timeutil::to_QDateTime(mTimeLimits.t1()));
+  mChangingTimes = false;
+}
+
 void TimeSeriesView::setTimeRange(const TimeRange& t)
 {
   METLIBS_LOG_SCOPE();
-  if (t == mTimeLimits)
+  if (mChangingTimes or t == mTimeLimits)
     return;
 
   mTimeLimits = t;
