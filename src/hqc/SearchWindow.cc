@@ -90,6 +90,7 @@ const char SETTING_TAB_STATION[] = "station";
 const char SETTING_TAB_SINGLE[] = "single";
 const char SETTING_TAB_SEARCH[] = "tab_search";
 const char SETTING_TAB_ERRORS[] = "errorlist";
+const char SETTING_TAB_EXTREMES[] = "extremes";
 const char SETTING_TAB_RECENT[] = "recent";
 
 QString settingsSearchGroup(int id)
@@ -278,6 +279,10 @@ void SearchWindow::writeSettings()
   QString tabSearch = SETTING_TAB_ERRORS;
   if (ws == mNavigationHistory)
     tabSearch = SETTING_TAB_RECENT;
+#ifdef ENABLE_EXTREMES
+  if (ws == mExtremesView)
+    tabSearch = SETTING_TAB_EXTREMES;
+#endif // ENABLE_EXTREMES
 
   QWidget* wd = mTabsData->currentWidget();
   QString tabData = SETTING_TAB_RELATED;
@@ -320,6 +325,10 @@ void SearchWindow::readSettings()
 
   if (tabSearch == SETTING_TAB_RECENT)
     mTabsSearch->setCurrentWidget(mNavigationHistory);
+#ifdef ENABLE_EXTREMES
+  else if (tabSearch == SETTING_TAB_EXTREMES)
+    mTabsSearch->setCurrentWidget(mExtremesView);
+#endif // ENABLE_EXTREMES
   else
     mTabsSearch->setCurrentWidget(mErrorsView);
 
