@@ -2,8 +2,8 @@
 #ifndef ACCESS_SQLITEACCESS_HH
 #define ACCESS_SQLITEACCESS_HH 1
 
-#include "KvTypedefs.hh"
-#include "QueryTaskAccess.hh"
+#include "common/KvTypedefs.hh"
+#include "common/QueryTaskAccess.hh"
 
 class SqliteQueryRunner;
 

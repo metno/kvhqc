@@ -22,4 +22,4 @@ ADD_LIBRARY(extremes STATIC
   ${extremes_UIH}
 )
 
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)

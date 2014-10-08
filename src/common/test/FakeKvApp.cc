@@ -12,6 +12,14 @@
 #define MILOGGER_CATEGORY "kvhqc.test.FakeKvApp"
 #include "util/HqcLogging.hh"
 
+static float toFloat(const std::string& txt)
+{
+  if (txt == "NULL")
+    return -99999;
+  else
+    return boost::lexical_cast<float>(txt);
+}
+
 FakeKvApp::FakeKvApp(bool useThread)
 {
   kvservice::KvApp::kvApp = this;
@@ -87,16 +95,16 @@ void FakeKvApp::addStation(const std::string& line)
         
     unsigned int c = 0;
     const int station = boost::lexical_cast<int>(columns[c++]);
-    const float lon   = boost::lexical_cast<float>(columns[c++]);
-    const float lat   = boost::lexical_cast<float>(columns[c++]);
-    const int height  = boost::lexical_cast<float>(columns[c++]);
+    const float lon   = toFloat(columns[c++]);
+    const float lat   = toFloat(columns[c++]);
+    const int height  = toFloat(columns[c++]);
     const std::string name = columns[c++];
     const int env = boost::lexical_cast<int>(columns[c++]);
     const timeutil::ptime from = timeutil::from_iso_extended_string(columns[c++]);
         
     obsAccess()->insertStation(kvalobs::kvStation(station, lat, lon, height, 0.0f, name, 0, 0, "?", "?", "?", env, true, from));
   } catch (std::exception& e) {
-    HQC_LOG_WARN("error parsing station line '" << line << "'");
+    HQC_LOG_WARN("error parsing station line '" << line << "': " << e.what());
   }
 }
 
