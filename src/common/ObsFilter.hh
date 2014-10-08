@@ -14,8 +14,8 @@ class ObsFilter : HQC_SHARED_NOCOPY(ObsFilter) {
 public:
   virtual ~ObsFilter();
 
-  virtual QString acceptingSql(const std::string& data_alias, const TimeSpan& time) const;
-  virtual QString acceptingSqlExtraTables(const std::string& data_alias, const TimeSpan& time) const;
+  virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
+  virtual QString acceptingSqlExtraTables(const QString& data_alias, const TimeSpan& time) const;
 
   virtual bool needsSQL() const;
 

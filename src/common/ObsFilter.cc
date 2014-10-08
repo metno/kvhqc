@@ -5,12 +5,12 @@ ObsFilter::~ObsFilter()
 {
 }
 
-QString ObsFilter::acceptingSql(const std::string&, const TimeSpan&) const
+QString ObsFilter::acceptingSql(const QString&, const TimeSpan&) const
 {
   return QString();
 }
 
-QString ObsFilter::acceptingSqlExtraTables(const std::string&, const TimeSpan&) const
+QString ObsFilter::acceptingSqlExtraTables(const QString&, const TimeSpan&) const
 {
   return QString();
 }
