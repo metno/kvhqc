@@ -7,6 +7,9 @@
 
 #include <boost/make_shared.hpp>
 
+#define MILOGGER_CATEGORY "kvhqc.DataQueryTask"
+#include "util/HqcLogging.hh"
+
 namespace /*anonymous*/ {
 
 Time my_qsql_time(const std::string& s)
@@ -61,6 +64,7 @@ DataQueryTask::DataQueryTask(ObsRequest_p request, size_t priority)
 
 QString DataQueryTask::querySql(QString) const
 {
+  METLIBS_LOG_SCOPE();
   const Sensor_s& sensors = mRequest->sensors();
   const TimeSpan& time = mRequest->timeSpan();
   ObsFilter_p filter = mRequest->filter();
@@ -79,6 +83,7 @@ QString DataQueryTask::querySql(QString) const
     if (not acceptingSql.isNull())
       sql += " AND " + acceptingSql;
   }
+  METLIBS_LOG_DEBUG(LOGVAL(sql));
   return sql;
 }
 

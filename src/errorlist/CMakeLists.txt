@@ -26,4 +26,4 @@ ADD_LIBRARY(errorlist STATIC
   ${errorlist_UIH}
 )
 
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)

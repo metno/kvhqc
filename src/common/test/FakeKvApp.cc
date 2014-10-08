@@ -14,7 +14,7 @@
 
 static float toFloat(const std::string& txt)
 {
-  if (txt == "NULL")
+  if (txt == "null")
     return -99999;
   else
     return boost::lexical_cast<float>(txt);
