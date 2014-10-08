@@ -4,6 +4,7 @@
 #define EXTREMESTABLE_H
 
 #include "common/EditAccess.hh"
+#include "common/TimeBuffer.hh"
 
 #include <QtCore/QAbstractTableModel>
 
@@ -11,11 +12,13 @@
 
 class ExtremesTableModel : public QAbstractTableModel
 {
+  Q_OBJECT;
+
 public:
   ExtremesTableModel(EditAccess_p eda);
   ~ExtremesTableModel();
 
-  void search(int paramid);
+  void search(int paramid, const TimeSpan& time);
 
   enum EDIT_COLUMNS {
     COL_STATION_ID = 0,
@@ -38,11 +41,12 @@ public:
   ObsData_p getObs(int row) const
     { return mExtremes.at(row); }
 
-private:
-  //void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+private Q_SLOTS:
+  void onBufferCompleted(bool failed);
 
 private:
   EditAccess_p mDA;
+  TimeBuffer_p mBuffer;
   ObsData_pv mExtremes;
 };
 

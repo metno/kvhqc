@@ -6,6 +6,7 @@ SET(extremes_SOURCES
 )
 
 QT4_WRAP_CPP(extremes_MOC
+  ExtremesTableModel.hh
   ExtremesView.hh
 )
 

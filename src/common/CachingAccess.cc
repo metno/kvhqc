@@ -215,7 +215,7 @@ namespace /*anonymous*/ {
 bool filtersCompatible(ObsFilter_p fa, ObsFilter_p fb)
 {
   if (fa and fb)
-    return fa->subsetOf(*fb);
+    return fa->subsetOf(fb) and fb->subsetOf(fa);
   return not (fa or fb);
 }
 

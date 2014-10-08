@@ -27,7 +27,7 @@ bool ObsFilter::accept(ObsData_p obs, bool afterSQL) const
   return true;
 }
 
-bool ObsFilter::subsetOf(const ObsFilter& other) const
+bool ObsFilter::subsetOf(ObsFilter_p other) const
 {
   return true;
 }

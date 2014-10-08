@@ -7,6 +7,9 @@
 
 #include <string>
 
+class ObsFilter;
+HQC_TYPEDEF_P(ObsFilter);
+
 class ObsFilter : HQC_SHARED_NOCOPY(ObsFilter) {
 public:
   virtual ~ObsFilter();
@@ -21,9 +24,7 @@ public:
    * have run or not */
   virtual bool accept(ObsData_p obs, bool afterSQL) const;
 
-  virtual bool subsetOf(const ObsFilter& other) const;
+  virtual bool subsetOf(ObsFilter_p other) const;
 };
-
-HQC_TYPEDEF_P(ObsFilter);
 
 #endif // ACCESS_OBSFILTER_HH

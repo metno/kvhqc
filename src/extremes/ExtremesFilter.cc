@@ -64,8 +64,6 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString& d, const TimeSpan
   QString paramIds, function, ordering;
   prepareParams(paramIds, function, ordering);
 
-  const int n_extremes = 20;
-  
   QString sql = "SELECT dd.stationid AS s, " + function + "(dd.corrected) AS c FROM data AS dd "
       "   WHERE " + QString::fromStdString(Helpers::isNorwegianStationIdSQL("dd.stationid"));
   if (not excludedIds.isEmpty())
@@ -82,18 +80,34 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString& d, const TimeSpan
   else if (mParamId == kvalobs::PARAMID_SA)
     sql += "   AND dd.corrected != -3 AND dd.corrected != -1 AND dd.corrected != 0";
 
-  sql += QString(" GROUP BY s ORDER BY c %1 LIMIT %2) AS ex").arg(ordering).arg(n_extremes);
+  sql += QString(" GROUP BY s ORDER BY c %1 LIMIT %2) AS ex").arg(ordering).arg(mExtremesCount);
+  METLIBS_LOG_DEBUG(LOGVAL(sql));
   return sql;
 }
 
 QString ExtremesFilter::acceptingSql(const QString& d, const TimeSpan&) const
 {
+  METLIBS_LOG_SCOPE();
+
   QString paramIds, function, ordering;
   prepareParams(paramIds, function, ordering);
 
-  return " WHERE stationid = ex.s"
+  QString sql = " WHERE stationid = ex.s"
       " AND corrected = ex.c"
       " AND paramid IN (" + paramIds + ")"
       " AND " + exists_in_obspgm(d) +
       " ORDER BY corrected " + ordering + ", stationid, obstime";
+  METLIBS_LOG_DEBUG(LOGVAL(sql));
+  return sql;
+}
+
+bool ExtremesFilter::subsetOf(ObsFilter_p other) const
+{
+  ExtremesFilter_p oe = boost::dynamic_pointer_cast<ExtremesFilter>(other);
+  if (not oe)
+    return false;
+  if (oe->mParamId != this->mParamId
+      or oe->mExtremesCount != this->mExtremesCount)
+    return false;
+  return true;
 }

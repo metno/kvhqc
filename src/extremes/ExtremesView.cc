@@ -2,6 +2,8 @@
 #include "ExtremesView.hh"
 
 #include "ExtremesTableModel.hh"
+
+#include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpanControl.hh"
@@ -54,7 +56,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   ui->comboParam->setModel(new ParamIdModel(params));
   ui->comboParam->setCurrentIndex(0);
 
-  mExtremesModel.reset(new ExtremesTableModel(mEDA));
+  mExtremesModel.reset(new ExtremesTableModel(hqcApp->editAccess()));
   connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
@@ -85,12 +87,14 @@ void ExtremesView::onSelectionChanged(const QItemSelection&, const QItemSelectio
 
 void ExtremesView::onUpdateClicked()
 {
+  METLIBS_LOG_SCOPE();
+
   const int paramId = getParamId();
   if (paramId <= 0)
     return;
 
   mLastSelectedRow = -1;
-  mExtremesModel->search(paramId);
+  mExtremesModel->search(paramId, mTimeControl->timeRange());
 }
 
 int ExtremesView::getSelectedRow() const

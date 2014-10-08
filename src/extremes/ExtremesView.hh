@@ -40,7 +40,6 @@ private:
 
 private:
   std::auto_ptr<Ui::DialogExtremeValues> ui;
-  EditAccess_p mEDA;
   std::auto_ptr<ExtremesTableModel> mExtremesModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;

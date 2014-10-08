@@ -4,15 +4,10 @@
 
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/ModelData.hh"
 
 #include <kvalobs/kvDataOperations.h>
-
-#include <QtCore/QCoreApplication>
-#include <QtGui/QFont>
-
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
+#include <boost/make_shared.hpp>
+#include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.ExtremesTableModel"
 #include "common/ObsLogging.hh"
@@ -39,6 +34,15 @@ const char* tooltips[ExtremesTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("Extremes", "Original value"),
   QT_TRANSLATE_NOOP("Extremes", "Corrected value"),
   QT_TRANSLATE_NOOP("Extremes", "Flags"),
+};
+
+struct ObsData_by_Corrected {
+  bool operator()(ObsData_p a, ObsData_p b) const
+    { return a->corrected() < b->corrected(); }
+  bool operator()(ObsData_p a, float b) const
+    { return a->corrected() < b; }
+  bool operator()(const float& a, ObsData_p b) const
+    { return a < b->corrected(); }
 };
 
 }
@@ -140,34 +144,28 @@ QVariant ExtremesTableModel::headerData(int section, Qt::Orientation orientation
   return QVariant();
 }
 
-void ExtremesTableModel::search(int paramid)
+void ExtremesTableModel::search(int paramid, const TimeSpan& time)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(paramid) << LOGVAL(time));
+
+  ExtremesFilter_p ef(new ExtremesFilter(paramid, 20));
+  mBuffer = boost::make_shared<TimeBuffer>(Sensor_s(), time, ef);
+  connect(mBuffer.get(), SIGNAL(bufferCompleted(bool)),
+      this, SLOT(onBufferCompleted(bool)));
+  mBuffer->postRequest(mDA);
 }
 
-#if 0
-void ExtremesTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
+void ExtremesTableModel::onBufferCompleted(bool failed)
 {
-  METLIBS_LOG_SCOPE();
-  METLIBS_LOG_DEBUG(LOGVAL(data->sensorTime()) << LOGVAL(what));
-  if (what == ObsAccess::CREATED)
-    return; // ignore for now
+  METLIBS_LOG_SCOPE(LOGVAL(failed));
 
-  for (size_t row=0; row<mExtremes.size(); ++row) {
-    EditDataPtr& obs = mExtremes.at(row);
-    if (not obs)
-      return;
-    if (eq_SensorTime()(data->sensorTime(), obs->sensorTime())) {
-      if (what == ObsAccess::MODIFIED) {
-        const QModelIndex index0 = createIndex(row, COL_OBS_ORIG);
-        const QModelIndex index1 = createIndex(row, COL_OBS_FLAGS);
-        Q_EMIT dataChanged(index0, index1);
-      } else if (what == ObsAccess::DESTROYED) {
-        beginRemoveRows(QModelIndex(), row, row);
-        mExtremes.erase(mExtremes.begin() + row);
-        row -= 1;
-        endRemoveRows();
-      }
-    }
-  }
+  beginResetModel();
+
+  mExtremes.clear();
+  const ObsData_ps_ST& data = mBuffer->data();
+  mExtremes.insert(mExtremes.begin(), data.begin(), data.end());
+  std::sort(mExtremes.begin(), mExtremes.end(), ObsData_by_Corrected());
+  mBuffer = TimeBuffer_p();
+
+  endResetModel();
 }
-#endif

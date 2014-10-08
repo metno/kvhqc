@@ -7,8 +7,8 @@
 class ExtremesFilter : public ObsFilter
 {
 public:
-  ExtremesFilter(int paramid)
-    : mParamId(paramid) { }
+  ExtremesFilter(int paramid, int nExtremes)
+    : mParamId(paramid), mExtremesCount(nExtremes) { }
 
   virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
   virtual QString acceptingSqlExtraTables(const QString& data_alias, const TimeSpan& time) const;
@@ -19,14 +19,14 @@ public:
   virtual bool accept(ObsData_p obs, bool afterSQL) const
     { return false; }
 
-  bool subsetOf(const ObsFilter& other) const
-    { return false; }
+  bool subsetOf(ObsFilter_p other) const;
 
 private:
   void prepareParams(QString& paramIds, QString& function, QString& ordering) const;
 
 private:
   int mParamId;
+  int mExtremesCount;
 };
 
 HQC_TYPEDEF_P(ExtremesFilter);
