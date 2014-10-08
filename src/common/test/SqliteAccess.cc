@@ -67,8 +67,8 @@ std::string sql4insert(const kvalobs::kvData& d)
       << "'" << d.sensor() << "',"
       << d.level() << ", "
       << d.corrected() << ", "
-      << "'" << d.controlinfo() << "', "
-      << "'" << d.useinfo() << "', "
+      << "'" << d.controlinfo().flagstring() << "', "
+      << "'" << d.useinfo().flagstring() << "', "
       << "'" << d.cfailed() << "')";
   return sql.str();
 }
@@ -497,8 +497,7 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
 
     const kvalobs::kvControlInfo ci(controlinfo);
     kvalobs::kvUseInfo ui;
-    ui.setUseFlags(kvalobs::kvControlInfo(controlinfo));
-    const std::string useinfo = ui.flagstring();
+    ui.setUseFlags(ci);
 
     insertData(kvalobs::kvData(stationId, from_iso(obstime), original,
             paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed));
