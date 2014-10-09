@@ -8,7 +8,7 @@
 #define LOAD_DECL_ONLY
 #include "load_3200_20141008.cc"
 
-#define MILOGGER_CATEGORY "kvhqc.test.ErrorFilter"
+#define MILOGGER_CATEGORY "kvhqc.test.ErrorListTest"
 #include "common/ObsLogging.hh"
 
 namespace /* anonymous */ {

@@ -7,8 +7,7 @@
 class ExtremesFilter : public ObsFilter
 {
 public:
-  ExtremesFilter(int paramid, int nExtremes)
-    : mParamId(paramid), mExtremesCount(nExtremes) { }
+  ExtremesFilter(int paramid, int nExtremes);
 
   virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
   virtual QString acceptingSqlExtraTables(const QString& data_alias, const TimeSpan& time) const;
@@ -16,17 +15,22 @@ public:
   virtual bool needsSQL() const
     { return true; }
 
-  virtual bool accept(ObsData_p obs, bool afterSQL) const
-    { return false; }
+  virtual bool accept(ObsData_p obs, bool afterSQL) const;
 
-  bool subsetOf(ObsFilter_p other) const;
+  virtual bool subsetOf(ObsFilter_p other) const;
+
+  bool isMaximumSearch() const
+    { return mFindMaximum; }
 
 private:
-  void prepareParams(QString& paramIds, QString& function, QString& ordering) const;
+  QString findExcludedIds() const;
 
 private:
   int mParamId;
   int mExtremesCount;
+
+  QString mParamIds;
+  bool mFindMaximum;
 };
 
 HQC_TYPEDEF_P(ExtremesFilter);

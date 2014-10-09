@@ -246,7 +246,8 @@ void SqliteQueryRunner::run(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
-  sqlite3_stmt *stmt = prepare_statement(qtask->querySql(DBVERSION).toStdString(), qtask);
+  const std::string sql = qtask->querySql(DBVERSION).toStdString();
+  sqlite3_stmt *stmt = prepare_statement(sql, qtask);
   if (not stmt)
     return;
 
@@ -287,6 +288,7 @@ sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, Query
     QString message = QString("Error preparing SQL statement '%1'; message from sqlite3 is: %2")
         .arg(QString::fromStdString(sql))
         .arg(QString(sqlite3_errmsg(db)));
+    HQC_LOG_ERROR(message);
     qtask->notifyError(message);
   }
   return stmt;
@@ -303,6 +305,7 @@ void SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, Que
     qtask->notifyStatus(QueryTask::FAILED);
     QString message = QString("Statement stepping not finished with DONE; error=")
         +  sqlite3_errmsg(db);
+    HQC_LOG_ERROR(message);
     qtask->notifyError(message);
   }
 }

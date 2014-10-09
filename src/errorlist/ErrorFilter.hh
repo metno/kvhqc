@@ -10,9 +10,6 @@ public:
   ErrorFilter(bool errorsForSalen)
     : mErrorsForSalen(errorsForSalen) { }
   
-  virtual bool hasSQL() const
-    { return true; }
-
   virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
 
   /* \param afterSQL true if accept is called after running the SQL

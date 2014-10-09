@@ -236,3 +236,24 @@ TEST(CachingAccessTest, Update)
     EXPECT_EQ(3, counter2->size());
   }
 }
+
+namespace {
+class BadSql : public ObsFilter {
+public:
+  virtual QString acceptingSql(const QString&, const TimeSpan&) const
+    { return "AND the fish have NULL names"; }
+};
+}
+
+TEST(CachingAccessTest, MalformedSqlInQuery)
+{
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
+  CachingAccess_p ca(new CachingAccess(sqla));
+
+  const Sensor sensor(18210, 211, 0, 0, 514);
+  const TimeSpan time1(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 03:00:00"));
+  CountingBuffer_p counter1(new CountingBuffer(sensor, time1));
+
+  ASSERT_NO_THROW(counter1->postRequest(ca));
+}

@@ -36,15 +36,6 @@ const char* tooltips[ExtremesTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("Extremes", "Flags"),
 };
 
-struct ObsData_by_Corrected {
-  bool operator()(ObsData_p a, ObsData_p b) const
-    { return a->corrected() < b->corrected(); }
-  bool operator()(ObsData_p a, float b) const
-    { return a->corrected() < b; }
-  bool operator()(const float& a, ObsData_p b) const
-    { return a < b->corrected(); }
-};
-
 }
 
 ExtremesTableModel::ExtremesTableModel(EditAccess_p eda)
@@ -161,10 +152,13 @@ void ExtremesTableModel::onBufferCompleted(bool failed)
 
   beginResetModel();
 
-  mExtremes.clear();
   const ObsData_ps_ST& data = mBuffer->data();
-  mExtremes.insert(mExtremes.begin(), data.begin(), data.end());
-  std::sort(mExtremes.begin(), mExtremes.end(), ObsData_by_Corrected());
+  mExtremes = ObsData_pv(data.begin(), data.end());
+
+  METLIBS_LOG_DEBUG(LOGVAL(mExtremes.size()));
+
+  ExtremesFilter_p ef = boost::static_pointer_cast<ExtremesFilter>(mBuffer->request()->filter());
+  std::sort(mExtremes.begin(), mExtremes.end(), ObsData_by_Corrected(not ef->isMaximumSearch()));
   mBuffer = TimeBuffer_p();
 
   endResetModel();

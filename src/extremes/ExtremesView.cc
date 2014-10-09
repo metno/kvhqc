@@ -57,6 +57,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   ui->comboParam->setCurrentIndex(0);
 
   mExtremesModel.reset(new ExtremesTableModel(hqcApp->editAccess()));
+  ui->tableExtremes->setModel(mExtremesModel.get());
   connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 }
