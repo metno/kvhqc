@@ -60,6 +60,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   ui->tableExtremes->setModel(mExtremesModel.get());
   connect(ui->tableExtremes->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  connect(mExtremesModel.get(), SIGNAL(modelReset()), this, SLOT(onModelReset()));
 }
 
 ExtremesView::~ExtremesView()
@@ -116,4 +117,9 @@ int ExtremesView::getParamId() const
       return -1;
   ParamIdModel* pim = static_cast<ParamIdModel*>(ui->comboParam->model());
   return pim->values().at(idx);
+}
+
+void ExtremesView::onModelReset()
+{
+  ui->tableExtremes->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }

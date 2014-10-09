@@ -57,8 +57,10 @@ void KvalobsAccess::dropRequest(ObsRequest_p request)
 void KvalobsAccess::checkSubscribe(const Sensor_s& sensors)
 {
   if (AbstractUpdateListener* ul = updateListener()) {
-    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS)
-      ul->addStation(itS->stationId);
+    for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS) {
+      if (itS->valid())
+        ul->addStation(itS->stationId);
+    }
   }
 }
 

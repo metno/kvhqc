@@ -56,19 +56,21 @@ void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alia
 
 void sensors2sql(std::ostream& sql, const Sensor_s& s, const std::string& data_alias, bool model_data)
 {
-  if (s.empty()) {
-    sql << "(0=0)";
-  } else {
+  sql << '(';
+  bool haveSensor = false;
+  for (Sensor_s::const_iterator it=s.begin(); it!=s.end(); ++it) {
+    if (not it->valid())
+      continue;
+    if (haveSensor)
+      sql << " OR ";
+    haveSensor = true;
     sql << '(';
-    for (Sensor_s::const_iterator it=s.begin(); it!=s.end(); ++it) {
-      if (it != s.begin())
-        sql << " OR ";
-      sql << '(';
-      sensor2sql(sql, *it, data_alias, model_data);
-      sql << ')';
-    }
+    sensor2sql(sql, *it, data_alias, model_data);
     sql << ')';
   }
+  if (not haveSensor)
+    sql << "0=0";
+  sql << ')';
 }
 
 QString sensor2sql(const Sensor& s, const QString& data_alias, bool model_data)

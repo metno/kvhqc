@@ -33,6 +33,7 @@ Q_SIGNALS:
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onUpdateClicked();
+  void onModelReset();
 
 private:
   int getSelectedRow() const;

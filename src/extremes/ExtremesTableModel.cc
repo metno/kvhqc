@@ -140,7 +140,9 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
   METLIBS_LOG_SCOPE(LOGVAL(paramid) << LOGVAL(time));
 
   ExtremesFilter_p ef(new ExtremesFilter(paramid, 20));
-  mBuffer = boost::make_shared<TimeBuffer>(Sensor_s(), time, ef);
+  Sensor_s invalid;
+  invalid.insert(Sensor());
+  mBuffer = boost::make_shared<TimeBuffer>(invalid, time, ef);
   connect(mBuffer.get(), SIGNAL(bufferCompleted(bool)),
       this, SLOT(onBufferCompleted(bool)));
   mBuffer->postRequest(mDA);

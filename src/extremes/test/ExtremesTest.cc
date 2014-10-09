@@ -1,6 +1,7 @@
 
 #include "extremes/ExtremesFilter.hh"
 
+#include "common/CachingAccess.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
@@ -73,4 +74,27 @@ TEST(ExtremesTest, Filter)
   // (s:18420, p:215, l:0, s:0, t:514)@2014-10-01 11:00:00 c= ci=0111100000000010
   // for (ObsData_pv::const_iterator it = d.begin(); it != d.end(); ++it)
   //   EXPECT_FALSE(*it) << (*it)->sensorTime() << " c=" << (*it)->corrected() << " ci=" << (*it)->controlinfo().flagstring();
+}
+
+TEST(ExtremesTest, FilterCached)
+{
+  FakeKvApp fa(false); // no threading
+  KvServiceHelper kvsh;
+  KvMetaDataBuffer kvmdbuf;
+  kvmdbuf.setHandler(fa.obsAccess()->handler());
+
+  load_17000_20141002(fa);
+  KvMetaDataBuffer::instance()->reload();
+
+  CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
+
+  ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
+
+  Sensor_s invalid;
+  invalid.insert(Sensor());
+
+  TimeBuffer_p b = boost::make_shared<TimeBuffer>(invalid, t_17000_20141002(), ef);
+  b->syncRequest(cache);
+
+  ASSERT_EQ(7, b->size()); // two have TA=TAX
 }
