@@ -84,6 +84,7 @@ SET(HQC_COMMON_LIBS
   watchrr
   errorlist
   extremes
+  missingobs
   rejectedobs
   textdata
   common

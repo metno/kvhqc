@@ -32,7 +32,7 @@
 
 #define ENABLE_ERRORLIST 1
 #define ENABLE_EXTREMES 1
-//#define ENABLE_MISSINGOBS 1
+#define ENABLE_MISSINGOBS 1
 //#define ENABLE_DIANA 1
 #define ENABLE_SIMPLECORRECTIONS 1
 
@@ -68,6 +68,9 @@ class ErrorList;
 #endif
 #ifdef ENABLE_EXTREMES
 class ExtremesView;
+#endif
+#ifdef ENABLE_MISSINGOBS
+class MissingView;
 #endif
 
 namespace Ui {

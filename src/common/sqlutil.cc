@@ -1,17 +1,26 @@
 
 #include "sqlutil.hh"
 
-void set2sql(std::ostream& sql, const std::set<int>& s)
+void set2sql(std::ostream& sql, const std::string& column, const std::set<int>& s)
 {
   if (s.size() == 1) {
-    sql << " = " << *s.begin();
-  } else {
+    sql << column << " = " << *s.begin();
+  } else if (s.size() > 1) {
     std::set<int>::const_iterator it = s.begin(), end = s.end();
-    sql << " IN (" << *it++;
+    sql << column << " IN (" << *it++;
     for (; it != end; ++it)
       sql << ',' << *it;
     sql << ')';
+  } else {
+    sql << "(0=0)";
   }
+}
+
+QString set2sql(const QString& column, const std::set<int>& s)
+{
+  std::ostringstream sqls;
+  set2sql(sqls, column.toStdString(), s);
+  return QString::fromStdString(sqls.str());
 }
 
 std::ostream& operator<<(std::ostream& sql, const Time2Sql& t)
@@ -23,7 +32,7 @@ std::ostream& operator<<(std::ostream& sql, const Time2Sql& t)
   return sql;
 }
 
-static QString timeQString(const timeutil::ptime& t)
+QString timeQString(const timeutil::ptime& t)
 {
   return QString::fromStdString(timeutil::to_iso_extended_string(t));
 }

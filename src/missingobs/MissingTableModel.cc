@@ -1,18 +1,14 @@
 
 #include "MissingTableModel.hh"
 
-#include "common/FindExtremeValues.hh"
+#include "MissingObsQuery.hh"
+
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
-#include "common/ModelData.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
 #include <QtCore/QCoreApplication>
-#include <QtGui/QFont>
-
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.MissingTableModel"
 #include "common/ObsLogging.hh"
@@ -35,17 +31,14 @@ const char* tooltips[MissingTableModel::NCOLUMNS] = {
 
 }
 
-MissingTableModel::MissingTableModel(EditAccessPtr eda, const std::vector<SensorTime>& missing)
-  : mDA(eda)
-  , mMissing(missing)
+MissingTableModel::MissingTableModel(QueryTaskHandler_p handler)
+  : mKvalobsHandler(handler)
+  , mTask(0)
 {
-  METLIBS_LOG_SCOPE();
-  mDA->obsDataChanged.connect(boost::bind(&MissingTableModel::onDataChanged, this, _1, _2));
 }
 
 MissingTableModel::~MissingTableModel()
 {
-  mDA->obsDataChanged.disconnect(boost::bind(&MissingTableModel::onDataChanged, this, _1, _2));
 }
 
 int MissingTableModel::rowCount(const QModelIndex&) const
@@ -70,10 +63,10 @@ QVariant MissingTableModel::data(const QModelIndex& index, int role) const
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
       if (column <= COL_OBSTIME)
-        return Helpers::stationInfo(st.sensor.stationId) + " "
+        return KvMetaDataBuffer::instance()->stationInfo(st.sensor.stationId) + " "
             + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
       else if (column == COL_OBS_TYPEID)
-        return Helpers::typeInfo(st.sensor.typeId);
+        return KvMetaDataBuffer::instance()->typeInfo(st.sensor.typeId);
     } else if (role == Qt::DisplayRole) {
       switch (column) {
       case COL_STATION_ID:
@@ -105,8 +98,30 @@ QVariant MissingTableModel::headerData(int section, Qt::Orientation orientation,
   return QVariant();
 }
 
-void MissingTableModel::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr data)
+void MissingTableModel::search(const TimeSpan& time, const hqc::int_s& typeIds)
 {
   METLIBS_LOG_SCOPE();
-  // TODO remove data from missing list
+
+  MissingObsQuery* t = new MissingObsQuery(time, typeIds, QueryTask::PRIORITY_AUTOMATIC);
+  METLIBS_LOG_DEBUG(t->querySql("d=postgresql"));
+
+  dropTask();
+  mTask = new QueryTaskHelper(t);
+  connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone(SignalTask*)));
+  mTask->post(mKvalobsHandler.get());
+}
+
+void MissingTableModel::onQueryDone(SignalTask* task)
+{
+  METLIBS_LOG_SCOPE();
+  beginResetModel();
+  mMissing = static_cast<MissingObsQuery*>(task)->missing();
+  endResetModel();
+  dropTask();
+}
+
+void MissingTableModel::dropTask()
+{
+  delete mTask;
+  mTask = 0;
 }

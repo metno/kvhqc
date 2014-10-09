@@ -14,7 +14,7 @@
 namespace /*anonymous*/ {
 
 const QString QDBNAME = "kvalobs_bg";
-const QString DBVERSION = "kvalobs:1";
+const QString DBVERSION = "d=postgresql:t=kvalobs:v=1";
 
 class QtSqlRow : public ResultRow
 {

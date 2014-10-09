@@ -3,16 +3,18 @@
 #ifndef MISSINGTABLE_H
 #define MISSINGTABLE_H
 
-#include "common/EditAccess.hh"
+#include "common/KvTypedefs.hh"
+#include "common/QueryTaskHandler.hh"
+#include "common/QueryTaskHelper.hh"
+#include "common/Sensor.hh"
+#include "common/TimeSpan.hh"
 
 #include <QtCore/QAbstractTableModel>
 
-#include <vector>
-
 class MissingTableModel : public QAbstractTableModel
-{
+{ Q_OBJECT;
 public:
-  MissingTableModel(EditAccessPtr eda, const std::vector<SensorTime>& missing);
+  MissingTableModel(QueryTaskHandler_p handler);
   ~MissingTableModel();
 
   enum EDIT_COLUMNS {
@@ -32,12 +34,18 @@ public:
   const SensorTime& getSensorTime(int row) const
     { return mMissing.at(row); }
 
-private:
-  void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
+  void search(const TimeSpan& time, const hqc::int_s& typeIds);
+
+private Q_SLOTS:
+  void onQueryDone(SignalTask* task);
 
 private:
-  EditAccessPtr mDA;
-  std::vector<SensorTime> mMissing;
+  void dropTask();
+
+private:
+  QueryTaskHandler_p mKvalobsHandler;
+  QueryTaskHelper *mTask;
+  SensorTime_v mMissing;
 };
 
 #endif

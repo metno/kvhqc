@@ -219,7 +219,7 @@ private:
   sqlite3_stmt *mStmt;
 };
 
-const QString DBVERSION = "test_sqlite:1";
+const QString DBVERSION = "d=sqlite:t=kvalobs:v=1";
 
 } // namespace anonymous
 

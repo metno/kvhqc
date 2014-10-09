@@ -62,7 +62,7 @@
 #endif // ENABLE_EXTREMES
 
 #ifdef ENABLE_MISSINGOBS
-#include "missing/MissingView.hh"
+#include "missingobs/MissingView.hh"
 #endif // ENABLE_MISSINGOBS
 
 #include "StationDataList.hh"
@@ -91,6 +91,7 @@ const char SETTING_TAB_SINGLE[] = "single";
 const char SETTING_TAB_SEARCH[] = "tab_search";
 const char SETTING_TAB_ERRORS[] = "errorlist";
 const char SETTING_TAB_EXTREMES[] = "extremes";
+const char SETTING_TAB_MISSING[] = "missingobs";
 const char SETTING_TAB_RECENT[] = "recent";
 
 QString settingsSearchGroup(int id)
@@ -167,7 +168,7 @@ void SearchWindow::setupSearchTabs()
 
 #ifdef ENABLE_MISSINGOBS
   mMissingView = new MissingView(mTabsSearch);
-  addTab(mExtremesView, tr("Ctrl+M", "Missing Data tab shortcut"));
+  addTab(mMissingView, tr("Ctrl+M", "Missing Data tab shortcut"));
   connect(mMissingView, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
 #endif // ENABLE_MISSINGOBS
@@ -283,6 +284,10 @@ void SearchWindow::writeSettings()
   if (ws == mExtremesView)
     tabSearch = SETTING_TAB_EXTREMES;
 #endif // ENABLE_EXTREMES
+#ifdef ENABLE_MISSINGOBS
+  if (ws == mMissingView)
+    tabSearch = SETTING_TAB_MISSING;
+#endif // ENABLE_MISSINGOBS
 
   QWidget* wd = mTabsData->currentWidget();
   QString tabData = SETTING_TAB_RELATED;
@@ -329,6 +334,10 @@ void SearchWindow::readSettings()
   else if (tabSearch == SETTING_TAB_EXTREMES)
     mTabsSearch->setCurrentWidget(mExtremesView);
 #endif // ENABLE_EXTREMES
+#ifdef ENABLE_MISSINGOBS
+  else if (tabSearch == SETTING_TAB_MISSING)
+    mTabsSearch->setCurrentWidget(mMissingView);
+#endif // ENABLE_MISSINGOBS
   else
     mTabsSearch->setCurrentWidget(mErrorsView);
 

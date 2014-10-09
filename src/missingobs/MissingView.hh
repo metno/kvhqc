@@ -24,10 +24,8 @@ public:
   MissingView(QWidget* parent=0);
   ~MissingView();
 
-  void setDataAccess(EditAccessPtr eda)
-    { mEDA = eda; }
-
-  boost::signal1<void, SensorTime> signalNavigateTo;
+Q_SIGNALS:
+  void signalNavigateTo(const SensorTime&);
 
 protected:
   virtual void changeEvent(QEvent *event);
@@ -35,15 +33,14 @@ protected:
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onUpdateClicked();
+  void onModelReset();
 
 private:
   int getSelectedRow() const;
   int getTypeId() const;
-  void setMissing(const std::vector<SensorTime>& Missing);
 
 private:
   std::auto_ptr<Ui::DialogMissingObservations> ui;
-  boost::shared_ptr<EditAccess> mEDA;
   std::auto_ptr<MissingTableModel> mMissingModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;

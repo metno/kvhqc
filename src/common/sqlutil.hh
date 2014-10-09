@@ -9,7 +9,8 @@
 #include <iosfwd>
 #include <set>
 
-void set2sql(std::ostream& sql, const std::set<int>& s);
+void set2sql(std::ostream& sql, const std::string& column, const std::set<int>& s);
+QString set2sql(const QString& column, const std::set<int>& s);
 
 struct Time2Sql {
   Time2Sql(const timeutil::ptime& v) : value(v) { }
@@ -20,6 +21,7 @@ std::ostream& operator<<(std::ostream& sql, const Time2Sql& t);
 inline Time2Sql time2sql(const timeutil::ptime& t)
   { return Time2Sql(t); }
 
+QString timeQString(const Time& t);
 QString timespan2sql(const TimeSpan& t);
 
 void sensor2sql(std::ostream& sql, const Sensor& s, const std::string& data_alias, bool model_data=false);

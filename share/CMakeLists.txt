@@ -16,9 +16,9 @@ INSTALL(FILES
   images/dl_columns_reset.svg
   images/dl_save_as.svg
   images/earlier.svg
+  images/editor.svg
   images/error.svg
   images/extremes.svg
-  images/editor.svg
   images/filter.svg
   images/forget.svg
   images/history.svg
@@ -28,18 +28,15 @@ INSTALL(FILES
   images/jump_to_obs.svg
   images/kv_error.svg
   images/kv_ok.svg
-  images/search_red.svg
-  images/filter.svg
-  images/busy_animation.svg
-  images/history.svg
-  images/jump_to_obs.svg
   images/later.svg
+  images/missing.svg
   images/redo.svg
   images/reject.svg
   images/rejectedobs.svg
+  images/search_red.svg
   images/singleobservation.svg
-  images/timeseries.svg
   images/textdata.svg
+  images/timeseries.svg
   images/undo.svg
   images/watchrr.svg
   images/weatherstation.svg

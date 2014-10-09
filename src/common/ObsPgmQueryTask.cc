@@ -34,8 +34,7 @@ ObsPgmQueryTask::~ObsPgmQueryTask()
 
 QString ObsPgmQueryTask::querySql(QString dbversion) const
 {
-  std::ostringstream sql;
-  sql << "SELECT o.stationid, o.paramid, o.level, o.nr_sensor, o.typeid, o.collector, "
+  return QString("SELECT o.stationid, o.paramid, o.level, o.nr_sensor, o.typeid, o.collector, "
       " o.kl00, o.kl01, o.kl02, o.kl03, o.kl04, o.kl05,"
       " o.kl06, o.kl07, o.kl08, o.kl09, o.kl10, o.kl11,"
       " o.kl12, o.kl13, o.kl14, o.kl15, o.kl16, o.kl17,"
@@ -43,9 +42,7 @@ QString ObsPgmQueryTask::querySql(QString dbversion) const
       " o.mon, o.tue, o.wed, o.thu, o.fri, o.sat, o.sun,"
       " o.fromtime, o.totime"
       " FROM obs_pgm o"
-      " WHERE o.stationid ";
-  set2sql(sql, mStationIds);
-  return QString::fromStdString(sql.str());
+      " WHERE ") + set2sql("o.stationid", mStationIds);
 }
 
 void ObsPgmQueryTask::notifyRow(const ResultRow& row)

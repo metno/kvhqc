@@ -2,7 +2,8 @@
 #include "MissingView.hh"
 
 #include "MissingTableModel.hh"
-#include "common/FindMissingValues.hh"
+
+#include "common/HqcApplication.hh"
 #include "common/StationInfoBuffer.hh"
 #include "common/TypeIdModel.hh"
 #include "common/TimeSpanControl.hh"
@@ -28,6 +29,13 @@ MissingView::MissingView(QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
+
+  mMissingModel.reset(new MissingTableModel(hqcApp->kvalobsHandler()));
+  ui->tableMissing->setModel(mMissingModel.get());
+  connect(ui->tableMissing->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
+      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  connect(mMissingModel.get(), SIGNAL(modelReset()), this, SLOT(onModelReset()));
+
   ui->tableMissing->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableMissing->verticalHeader()->setDefaultSectionSize(20);
   ui->tableMissing->verticalHeader()->hide();
@@ -78,18 +86,6 @@ void MissingView::changeEvent(QEvent *event)
   QWidget::changeEvent(event);
 }
 
-void MissingView::setMissing(const std::vector<SensorTime>& missing)
-{
-  METLIBS_LOG_SCOPE();
-  mLastSelectedRow = -1;
-  mMissingModel.reset(new MissingTableModel(mEDA, missing));
-  ui->tableMissing->setModel(mMissingModel.get());
-  ui->tableMissing->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  ui->tableMissing->horizontalHeader()->resizeSection(MissingTableModel::COL_STATION_ID, 60);
-  connect(ui->tableMissing->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-}
-
 void MissingView::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
   METLIBS_LOG_SCOPE();
@@ -104,19 +100,20 @@ void MissingView::onSelectionChanged(const QItemSelection&, const QItemSelection
 
 void MissingView::onUpdateClicked()
 {
+  mLastSelectedRow = -1;
+
   const int typeId = getTypeId();
   if (typeId == TYPEID_ERROR)
     return;
 
-  {
-    std::vector<int> typeIds;
-    if (typeId == TYPEID_MANUAL)
-      typeIds = StationInfoBuffer::instance()->getManualTypes();
-    else if (typeId != TYPEID_ANY)
-      typeIds.push_back(typeId);
-    const std::vector<SensorTime> missing = Missing::find(typeIds, mTimeControl->timeRange());
-    setMissing(missing);
+  hqc::int_s typeIds;
+  if (typeId == TYPEID_MANUAL) {
+    const hqc::int_v& m = StationInfoBuffer::instance()->getManualTypes();
+    typeIds = hqc::int_s(m.begin(), m.end());
+  } else if (typeId != TYPEID_ANY) {
+    typeIds.insert(typeId);
   }
+  mMissingModel->search(mTimeControl->timeRange(), typeIds);
 }
 
 int MissingView::getSelectedRow() const
@@ -137,4 +134,10 @@ int MissingView::getTypeId() const
       return TYPEID_ERROR;
   OverrideTypeIdModel* tim = static_cast<OverrideTypeIdModel*>(ui->comboType->model());
   return tim->values().at(idx);
+}
+
+void MissingView::onModelReset()
+{
+  ui->tableMissing->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
+  ui->tableMissing->horizontalHeader()->resizeSection(MissingTableModel::COL_STATION_ID, 60);
 }
