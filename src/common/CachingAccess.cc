@@ -51,8 +51,8 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     bb->use();
 
     SignalRequest* sr = boost::static_pointer_cast<SignalRequest>(bb->request()).get();
-    connect(sr, SIGNAL(requestCompleted(bool)),
-        this,   SLOT(onBackendCompleted(bool)));
+    connect(sr, SIGNAL(requestCompleted(const QString&)),
+        this,   SLOT(onBackendCompleted(const QString&)));
     connect(sr, SIGNAL(requestNewData(const ObsData_pv&)),
         this,   SLOT(onBackendNewData(const ObsData_pv&)));
     connect(sr, SIGNAL(requestUpdateData(const ObsData_pv&)),
@@ -106,15 +106,17 @@ ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn, bool applyFilter)
 void CacheTag::checkComplete()
 {
   METLIBS_LOG_SCOPE(LOGVAL(mCountIncomplete) << LOGVAL(mCountFailed));
-  if (mCountIncomplete == 0)
-    mRequest->completed(mCountFailed != 0);
+  if (mCountIncomplete == 0) {
+    ObsRequest_p reference = mRequest; // prevent deletion of request in complete handler
+    reference->completed(mCountFailed ? QString("some tasks had errors") : QString());
+  }
 }
 
-void CacheTag::onBackendCompleted(bool failed)
+void CacheTag::onBackendCompleted(const QString& withError)
 {
   METLIBS_LOG_SCOPE(LOGVAL(mCountIncomplete) << LOGVAL(mCountFailed));
   mCountIncomplete -= 1;
-  if (failed)
+  if (not withError.isNull())
     mCountFailed += 1;
   checkComplete();
 }

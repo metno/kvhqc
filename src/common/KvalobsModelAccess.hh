@@ -3,6 +3,11 @@
 #define KvalobsModelAccess_hh 1
 
 #include "ModelAccess.hh"
+#include "ModelData.hh"
+
+class ModelRequest;
+HQC_TYPEDEF_P(ModelRequest);
+HQC_TYPEDEF_PV(ModelRequest);
 
 class KvalobsModelAccess : public QObject, public ModelAccess
 { Q_OBJECT;

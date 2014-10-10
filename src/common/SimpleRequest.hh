@@ -10,7 +10,7 @@ class SimpleRequest : public BaseRequest
 public:
   SimpleRequest(SimpleBuffer* buffer, const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter = ObsFilter_p());
   
-  virtual void completed(bool failed);
+  virtual void completed(const QString& withError);
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
   virtual void dropData(const SensorTime_v& dropped);

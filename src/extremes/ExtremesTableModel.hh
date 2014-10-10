@@ -42,7 +42,7 @@ public:
     { return mExtremes.at(row); }
 
 private Q_SLOTS:
-  void onBufferCompleted(bool failed);
+  void onBufferCompleted(const QString&);
 
 private:
   EditAccess_p mDA;

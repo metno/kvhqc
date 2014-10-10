@@ -2,7 +2,10 @@
 #ifndef ModelAccess_hh
 #define ModelAccess_hh 1
 
-#include "ModelRequest.hh"
+#include "util/boostutil.hh"
+
+class ModelRequest;
+HQC_TYPEDEF_P(ModelRequest);
 
 class ModelAccess : private boost::noncopyable {
 public:

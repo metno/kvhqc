@@ -16,9 +16,6 @@ public:
   DeadRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
     : BaseRequest(sensors, timeSpan, filter) { }
       
-  virtual void completed(bool)
-    { METLIBS_LOG_SCOPE(); }
-
   virtual void newData(const ObsData_pv&)
     { METLIBS_LOG_SCOPE(); }
 
@@ -43,13 +40,6 @@ SignalRequest::SignalRequest(ObsRequest_p wrapped)
   : WrapRequest(wrapped)
 {
   METLIBS_LOG_SCOPE();
-}
-
-void SignalRequest::completed(bool failed)
-{
-  METLIBS_LOG_SCOPE();
-  wrapped()->completed(failed);
-  Q_EMIT requestCompleted(failed);
 }
 
 void SignalRequest::newData(const ObsData_pv& data)

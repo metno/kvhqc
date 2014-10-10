@@ -105,11 +105,6 @@ EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
   return boost::static_pointer_cast<EditRequest>(WrapRequest::untag(wrapped));
 }
 
-void EditRequest::completed(bool failed)
-{
-  wrapped()->completed(failed);
-}
-
 void EditRequest::newData(const ObsData_pv& data)
 {
   mAccess->handleBackendNew(wrapped(), data);

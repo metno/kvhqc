@@ -4,6 +4,7 @@
 #include "DeleteTaskWhenDone.hh"
 #include "HqcApplication.hh"
 #include "ModelQueryTask.hh"
+#include "ModelRequest.hh"
 #include "QueryTaskHandler.hh"
 #include "QueryTaskHelper.hh"
 
@@ -61,7 +62,7 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
     request->setTag(helper);
     helper->post(hqcApp->kvalobsHandler());
   } else {
-    request->notifyStatus(QString());
+    request->notifyDone(QString());
   }
 }
 

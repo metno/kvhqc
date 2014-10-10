@@ -17,8 +17,8 @@ public:
   void reset()
     { countComplete = countNew = countUpdate = countDrop =0; }
 
-  virtual void completed(bool failed)
-    { TimeBuffer::completed(failed); countComplete += 1; }
+  virtual void completed(const QString& withError)
+    { TimeBuffer::completed(withError); countComplete += 1; }
 
   virtual void onNewData(const ObsData_pv& data)
     { TimeBuffer::onNewData(data); countNew += 1; }

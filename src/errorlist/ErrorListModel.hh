@@ -55,7 +55,7 @@ Q_SIGNALS:
   void fetchingData(bool busy);
 
 private Q_SLOTS:
-  void onFetchComplete(bool);
+  void onFetchComplete(const QString&);
   void onFetchDataEnd(const ObsData_pv& data);
   void onUpdateDataEnd(const ObsData_pv& data);
   void onDropDataEnd(const SensorTime_v& dropped);

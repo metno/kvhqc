@@ -30,13 +30,13 @@ public:
     { return mRequest; }
 
 public Q_SLOTS:
-  virtual void completed(bool failed);
+  virtual void completed(const QString& withError);
   void newData(const ObsData_pv& data);
   void updateData(const ObsData_pv& data);
   void dropData(const SensorTime_v& dropped);
 
 Q_SIGNALS:
-  void bufferCompleted(bool failed);
+  void bufferCompleted(const QString& withError);
   void newDataBegin();
   void newDataEnd(const ObsData_pv& data);
   void updateDataBegin();

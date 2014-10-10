@@ -5,10 +5,16 @@
 
 #include <QtCore/QMetaType>
 
+#define MILOGGER_CATEGORY "kvhqc.ObsRequest"
+#include "common/ObsLogging.hh"
+
+LOG_CONSTRUCT_COUNTER;
+
 static bool initMetaType = false;
 
 ObsRequest::ObsRequest()
 {
+  LOG_CONSTRUCT();
   if (not initMetaType) {
     qRegisterMetaType<ObsRequest_p>("ObsRequest_p");
 
@@ -19,4 +25,11 @@ ObsRequest::ObsRequest()
 
 ObsRequest::~ObsRequest()
 {
+  LOG_DESTRUCT();
 }
+
+void ObsRequest::completed(const QString& withError)
+{
+  Q_EMIT requestCompleted(withError);
+}
+

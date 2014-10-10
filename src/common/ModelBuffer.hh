@@ -2,9 +2,13 @@
 #ifndef MODELBUFFER_HH
 #define MODELBUFFER_HH 1
 
-#include "ModelAccess.hh"
 #include "ModelData.hh"
-#include "ModelRequest.hh"
+#include "util/boostutil.hh"
+
+class ModelAccess;
+HQC_TYPEDEF_P(ModelAccess);
+class ModelRequest;
+HQC_TYPEDEF_P(ModelRequest);
 
 class ModelBuffer : public QObject
 { Q_OBJECT;
@@ -22,7 +26,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   void onRequestData(const ModelData_pv&);
-  void onRequestCompleted(bool error);
+  void onRequestCompleted(const QString& withError);
 
 private:
   void postRequest();

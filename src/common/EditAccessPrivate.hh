@@ -88,7 +88,6 @@ public:
 
   static EditRequest_p untag(ObsRequest_p wrapped);
   
-  virtual void completed(bool failed);
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
   virtual void dropData(const SensorTime_v& dropped);

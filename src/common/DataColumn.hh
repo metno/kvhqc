@@ -47,7 +47,7 @@ public:
     { return SensorTime(sensor(), time + mTimeOffset); }
 
 private Q_SLOTS:
-  void onBufferCompleted(bool failed);
+  void onBufferCompleted(const QString&);
   void onNewDataEnd(const ObsData_pv& data);
   void onUpdateDataEnd(const ObsData_pv& data);
   void onDropDataEnd(const SensorTime_v& dropped);

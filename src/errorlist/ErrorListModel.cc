@@ -157,7 +157,7 @@ void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, boo
         limits, filter);
 
     TimeBuffer* b = mObsBuffer.get();
-    connect(b, SIGNAL(bufferCompleted(bool)), this, SLOT(onFetchComplete(bool)));
+    connect(b, SIGNAL(bufferCompleted(const QString&)), this, SLOT(onFetchComplete(const QString&)));
     connect(b, SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(onFetchDataEnd(const ObsData_pv&)));
     connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
     connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
@@ -473,9 +473,9 @@ ObsData_p ErrorListModel::findObs(const QModelIndex& index) const
     return ObsData_p();
 }
 
-void ErrorListModel::onFetchComplete(bool failed)
+void ErrorListModel::onFetchComplete(const QString&)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(failed));
+  METLIBS_LOG_SCOPE();
   Q_EMIT fetchingData(false);
 }
 

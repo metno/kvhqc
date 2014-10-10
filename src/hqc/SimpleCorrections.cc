@@ -82,7 +82,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
     mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
     connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
     connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));
-    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(update()));
+    connect(mObsBuffer.get(), SIGNAL(bufferCompleted(const QString&)), this, SLOT(update()));
     mObsBuffer->postRequest(mDA);
   } else {
     update();

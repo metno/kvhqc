@@ -4,7 +4,7 @@
 
 #include "WrapRequest.hh"
 
-class SignalRequest : public QObject, public WrapRequest
+class SignalRequest : public WrapRequest
 { Q_OBJECT;
 
 public:
@@ -12,13 +12,11 @@ public:
   SignalRequest(ObsRequest_p wrapped);
   
 public:
-  virtual void completed(bool failed);
   virtual void newData(const ObsData_pv& data);
   virtual void updateData(const ObsData_pv& data);
   virtual void dropData(const SensorTime_v& dropped);
 
 Q_SIGNALS:
-  void requestCompleted(bool failed);
   void requestNewData(const ObsData_pv& data);
   void requestUpdateData(const ObsData_pv& data);
   void requestDropData(const SensorTime_v& dropped);

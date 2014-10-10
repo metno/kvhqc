@@ -102,7 +102,7 @@ void QueryTaskAccess::onDone(ObsRequest_p request, const QString& withError)
   METLIBS_LOG_SCOPE();
   if (isKnownRequest(request)) {
     METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
-    request->completed(not withError.isNull());
+    request->completed(withError);
   } else {
     METLIBS_LOG_DEBUG("request has been dropped, do nothing");
   }

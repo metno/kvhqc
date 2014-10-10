@@ -11,19 +11,15 @@
 
 ObsRequest_p syncRequest(ObsRequest_p request, ObsAccess_p access)
 {
-  SignalRequest_p r = boost::dynamic_pointer_cast<SignalRequest>(request);
-  if (not r)
-    r = boost::make_shared<SignalRequest>(request);
-
   Synchronizer sync;
-  QObject::connect(r.get(), SIGNAL(requestCompleted(bool)), &sync, SLOT(taskDone()));
+  QObject::connect(request.get(), SIGNAL(requestCompleted(const QString&)), &sync, SLOT(taskDone()));
 
-  access->postRequest(r);
+  access->postRequest(request);
   sync.waitForSignal();
   
-  QObject::disconnect(r.get(), SIGNAL(requestCompleted(bool)), &sync, SLOT(taskDone()));
+  QObject::disconnect(request.get(), SIGNAL(requestCompleted(const QString&)), &sync, SLOT(taskDone()));
 
-  return r;
+  return request;
 }
 
 //########################################################################
@@ -31,12 +27,12 @@ ObsRequest_p syncRequest(ObsRequest_p request, ObsAccess_p access)
 ModelRequest_p syncRequest(ModelRequest_p request, ModelAccess_p access)
 {
   Synchronizer sync;
-  QObject::connect(request.get(), SIGNAL(completed(bool)), &sync, SLOT(taskDone()));
+  QObject::connect(request.get(), SIGNAL(requestCompleted(const QString&)), &sync, SLOT(taskDone()));
 
   access->postRequest(request);
   sync.waitForSignal();
   
-  QObject::disconnect(request.get(), SIGNAL(completed(bool)), &sync, SLOT(taskDone()));
+  QObject::disconnect(request.get(), SIGNAL(requestCompleted(const QString&)), &sync, SLOT(taskDone()));
 
   return request;
 }

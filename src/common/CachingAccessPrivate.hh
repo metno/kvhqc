@@ -61,7 +61,7 @@ public:
   void checkComplete();
   
 private Q_SLOTS:
-  void onBackendCompleted(bool);
+  void onBackendCompleted(const QString&);
   void onBackendNewData(const ObsData_pv&);
   void onBackendUpdateData(const ObsData_pv&);
   void onBackendDropData(const SensorTime_v& dropped);

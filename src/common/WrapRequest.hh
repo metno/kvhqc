@@ -16,6 +16,8 @@ public:
 
   static WrapRequest_p untag(ObsRequest_p wrapped);
   
+  virtual void completed(const QString& withError);
+
   virtual const Sensor_s& sensors() const
     { return mWrapped->sensors(); }
 

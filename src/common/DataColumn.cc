@@ -19,7 +19,7 @@ DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t,
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor) << LOGVAL(t));
   TimeBuffer* b = mBuffer.get();
-  connect(b, SIGNAL(bufferCompleted(bool)),            this, SLOT(onBufferCompleted(bool)));
+  connect(b, SIGNAL(bufferCompleted(const QString&)),  this, SLOT(onBufferCompleted(const QString&)));
   connect(b, SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(onNewDataEnd(const ObsData_pv&)));
   connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
   connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
@@ -67,7 +67,7 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
   return sh.sensorHeader(mItem, orientation, role);
 }
       
-void DataColumn::onBufferCompleted(bool failed)
+void DataColumn::onBufferCompleted(const QString&)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor()));
   Q_EMIT columnTimesChanged(shared_from_this());

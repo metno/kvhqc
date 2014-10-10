@@ -19,11 +19,11 @@ public:
 
 public Q_SLOTS:
   void notifyData(const ModelData_pv&);
-  void notifyStatus(const QString& withError);
+  void notifyDone(const QString& withError);
 
 Q_SIGNALS:
   void data(const ModelData_pv&);
-  void completed(bool);
+  void requestCompleted(const QString& withError);
   
 private:
   SensorTime_v mSensorTimes;

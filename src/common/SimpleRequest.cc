@@ -10,10 +10,11 @@ SimpleRequest::SimpleRequest(SimpleBuffer* buffer, const Sensor_s& sensors, cons
 {
 }
 
-void SimpleRequest::completed(bool failed)
+void SimpleRequest::completed(const QString& withError)
 {
-  METLIBS_LOG_SCOPE();
-  mBuffer->completed(failed);
+  METLIBS_LOG_SCOPE(LOGVAL(this));
+  mBuffer->completed(withError);
+  BaseRequest::completed(withError);
 }
 
 void SimpleRequest::newData(const ObsData_pv& data)

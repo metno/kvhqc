@@ -1,6 +1,8 @@
 
 #include "ModelBuffer.hh"
 
+#include "ModelAccess.hh"
+#include "ModelRequest.hh"
 #include "SyncRequest.hh"
 
 #include <boost/make_shared.hpp>
@@ -77,9 +79,9 @@ void ModelBuffer::onRequestData(const ModelData_pv& mdata)
   Q_EMIT received(mdata);
 }
 
-void ModelBuffer::onRequestCompleted(bool failed)
+void ModelBuffer::onRequestCompleted(const QString& withError)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(failed));
+  METLIBS_LOG_SCOPE(LOGVAL(withError));
   dropRequest();
 }
 
@@ -106,16 +108,16 @@ void ModelBuffer::postRequest()
   METLIBS_LOG_SCOPE();
   mRequest = makeRequest(mPending);
   mPending.clear();
-  connect(mRequest.get(), SIGNAL(completed(bool)),
-      this, SLOT(onRequestCompleted(bool)));
+  connect(mRequest.get(), SIGNAL(requestCompleted(const QString&)),
+      this, SLOT(onRequestCompleted(const QString&)));
   mMA->postRequest(mRequest);
 }
 
 void ModelBuffer::dropRequest()
 {
   METLIBS_LOG_SCOPE();
-  disconnect(mRequest.get(), SIGNAL(completed(bool)),
-      this, SLOT(onRequestCompleted(bool)));
+  disconnect(mRequest.get(), SIGNAL(requestCompleted(const QString&)),
+      this, SLOT(onRequestCompleted(const QString&)));
   dropRequest(mRequest);
   mRequest = ModelRequest_p();
   if (not mPending.empty())

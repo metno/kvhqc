@@ -151,6 +151,7 @@ QT4_WRAP_CPP(common_MOC
   ObsDelegate.hh
   ObsPgmQueryTask.hh
   ObsPgmRequest.hh
+  ObsRequest.hh
   ObsTableModel.hh
   QtKvService.hh
   QueryTask.hh

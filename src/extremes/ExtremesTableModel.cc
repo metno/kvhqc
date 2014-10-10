@@ -143,14 +143,14 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
   Sensor_s invalid;
   invalid.insert(Sensor());
   mBuffer = boost::make_shared<TimeBuffer>(invalid, time, ef);
-  connect(mBuffer.get(), SIGNAL(bufferCompleted(bool)),
-      this, SLOT(onBufferCompleted(bool)));
+  connect(mBuffer.get(), SIGNAL(bufferCompleted(const QString&)),
+      this, SLOT(onBufferCompleted(const QString&)));
   mBuffer->postRequest(mDA);
 }
 
-void ExtremesTableModel::onBufferCompleted(bool failed)
+void ExtremesTableModel::onBufferCompleted(const QString& withError)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(failed));
+  METLIBS_LOG_SCOPE(LOGVAL(withError));
 
   beginResetModel();
 
@@ -161,6 +161,8 @@ void ExtremesTableModel::onBufferCompleted(bool failed)
 
   ExtremesFilter_p ef = boost::static_pointer_cast<ExtremesFilter>(mBuffer->request()->filter());
   std::sort(mExtremes.begin(), mExtremes.end(), ObsData_by_Corrected(not ef->isMaximumSearch()));
+
+  METLIBS_LOG_DEBUG("dereferencing TimeBuffer");
   mBuffer = TimeBuffer_p();
 
   endResetModel();

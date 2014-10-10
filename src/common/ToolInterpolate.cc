@@ -153,7 +153,7 @@ void ToolInterpolate::fetchData()
   }
 
   mObsBuffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(mFirst.sensor), TimeSpan(mFirst.time, mLast.time));
-  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(bool)), this, SLOT(enableButtons()));
+  connect(mObsBuffer.get(), SIGNAL(bufferCompleted(const QString&)),  this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(enableButtons()));
   mObsBuffer->postRequest(mDA);

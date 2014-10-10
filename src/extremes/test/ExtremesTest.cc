@@ -1,11 +1,15 @@
 
 #include "extremes/ExtremesFilter.hh"
+#include "extremes/ExtremesTableModel.hh"
 
 #include "common/CachingAccess.hh"
+#include "common/EditAccess.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
 #include "common/TimeBuffer.hh"
+
+#include "util/Synchronizer.hh"
 
 #define LOAD_DECL_ONLY
 #include "load_17000_20141002.cc"
@@ -97,4 +101,30 @@ TEST(ExtremesTest, FilterCached)
   b->syncRequest(cache);
 
   ASSERT_EQ(7, b->size()); // two have TA=TAX
+}
+
+TEST(ExtremesTest, TableModel)
+{
+  FakeKvApp fa(true); // with threading
+  KvServiceHelper kvsh;
+  KvMetaDataBuffer kvmdbuf;
+  kvmdbuf.setHandler(fa.obsAccess()->handler());
+
+  load_17000_20141002(fa);
+  KvMetaDataBuffer::instance()->reload();
+
+#if 1
+  CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
+  EditAccess_p edit(new EditAccess(cache));
+#else
+  EditAccess_p edit(new EditAccess(fa.obsAccess()));
+#endif
+
+  Synchronizer sync;
+  ExtremesTableModel tm(edit);
+  QObject::connect(&tm, SIGNAL(modelReset()), &sync, SLOT(taskDone()));
+  tm.search(kvalobs::PARAMID_TAX, t_17000_20141002());
+  sync.waitForSignal();
+
+  EXPECT_EQ(34, tm.rowCount(QModelIndex()));
 }
