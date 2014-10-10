@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
+    <width>651</width>
     <height>227</height>
    </rect>
   </property>
@@ -45,7 +45,10 @@
      <item>
       <widget class="QLabel" name="labelType">
        <property name="text">
-        <string>Type:</string>
+        <string>&amp;Type:</string>
+       </property>
+       <property name="buddy">
+        <cstring>comboType</cstring>
        </property>
       </widget>
      </item>
@@ -76,7 +79,7 @@
      <item>
       <widget class="QPushButton" name="buttonApply">
        <property name="text">
-        <string>Search</string>
+        <string>&amp;Search</string>
        </property>
       </widget>
      </item>
