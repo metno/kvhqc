@@ -30,6 +30,9 @@ MissingView::MissingView(QWidget* parent)
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
 
+  mBusy = new BusyLabel(this);
+  ui->topRow->addWidget(mBusy);
+
   mMissingModel.reset(new MissingTableModel(hqcApp->kvalobsHandler()));
   ui->tableMissing->setModel(mMissingModel.get());
   connect(ui->tableMissing->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
@@ -113,6 +116,7 @@ void MissingView::onUpdateClicked()
   } else if (typeId != TYPEID_ANY) {
     typeIds.insert(typeId);
   }
+  mBusy->setBusy(true);
   mMissingModel->search(mTimeControl->timeRange(), typeIds);
 }
 
@@ -138,6 +142,7 @@ int MissingView::getTypeId() const
 
 void MissingView::onModelReset()
 {
+  mBusy->setBusy(false);
   ui->tableMissing->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableMissing->horizontalHeader()->resizeSection(MissingTableModel::COL_STATION_ID, 60);
 }

@@ -25,6 +25,10 @@ ExtremesView::ExtremesView(QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
+
+  mBusy = new BusyLabel(this);
+  ui->topRow->addWidget(mBusy);
+
   ui->tableExtremes->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
   ui->tableExtremes->verticalHeader()->setDefaultSectionSize(20);
   ui->tableExtremes->verticalHeader()->hide();
@@ -96,6 +100,7 @@ void ExtremesView::onUpdateClicked()
     return;
 
   mLastSelectedRow = -1;
+  mBusy->setBusy(true);
   mExtremesModel->search(paramId, mTimeControl->timeRange());
 }
 
@@ -121,5 +126,6 @@ int ExtremesView::getParamId() const
 
 void ExtremesView::onModelReset()
 {
+  mBusy->setBusy(false);
   ui->tableExtremes->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }

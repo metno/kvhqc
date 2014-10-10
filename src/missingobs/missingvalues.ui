@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>513</width>
+    <width>627</width>
     <height>227</height>
    </rect>
   </property>
@@ -14,7 +14,8 @@
    <string>Missing Observations</string>
   </property>
   <property name="windowIcon">
-   <iconset>icons:missing.svg</iconset>
+   <iconset>
+    <normaloff>icons:missing.svg</normaloff>icons:missing.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -24,10 +25,23 @@
     <number>2</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="topRow">
      <property name="spacing">
       <number>2</number>
      </property>
+     <item>
+      <widget class="QLabel" name="labelExplain">
+       <property name="font">
+        <font>
+         <weight>75</weight>
+         <bold>true</bold>
+        </font>
+       </property>
+       <property name="text">
+        <string>Find missing values for RR_24</string>
+       </property>
+      </widget>
+     </item>
      <item>
       <widget class="QLabel" name="labelType">
        <property name="text">
@@ -62,7 +76,7 @@
      <item>
       <widget class="QPushButton" name="buttonApply">
        <property name="text">
-        <string>Apply</string>
+        <string>Search</string>
        </property>
       </widget>
      </item>
@@ -78,13 +92,6 @@
         </size>
        </property>
       </spacer>
-     </item>
-     <item>
-      <widget class="QLabel" name="labelExplain">
-       <property name="text">
-        <string>Find missing values for RR_24</string>
-       </property>
-      </widget>
      </item>
     </layout>
    </item>

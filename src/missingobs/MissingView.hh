@@ -4,6 +4,7 @@
 
 #include "common/EditAccess.hh"
 #include "common/Sensor.hh"
+#include "util/BusyLabel.hh"
 
 #include <QtGui/QWidget>
 
@@ -41,6 +42,7 @@ private:
 
 private:
   std::auto_ptr<Ui::DialogMissingObservations> ui;
+  BusyLabel* mBusy;
   std::auto_ptr<MissingTableModel> mMissingModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;

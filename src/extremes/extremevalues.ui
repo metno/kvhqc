@@ -14,7 +14,8 @@
    <string>Extreme Values</string>
   </property>
   <property name="windowIcon">
-   <iconset>icons:extremes.svg</iconset>
+   <iconset>
+    <normaloff>icons:extremes.svg</normaloff>icons:extremes.svg</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
@@ -24,7 +25,7 @@
     <number>2</number>
    </property>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout">
+    <layout class="QHBoxLayout" name="topRow">
      <property name="spacing">
       <number>2</number>
      </property>
@@ -55,7 +56,7 @@
      <item>
       <widget class="QPushButton" name="buttonApply">
        <property name="text">
-        <string>Apply</string>
+        <string>Search</string>
        </property>
       </widget>
      </item>
