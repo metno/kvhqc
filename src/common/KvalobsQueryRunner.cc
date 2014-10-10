@@ -58,23 +58,21 @@ void KvalobsQueryRunner::finalize()
 
 // ------------------------------------------------------------------------
 
-void KvalobsQueryRunner::run(QueryTask* qtask)
+QString KvalobsQueryRunner::run(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
   QSqlQuery query(mKvalobsDB);
   QtSqlRow row(query);
 
-  qtask->notifyStatus(QueryTask::STARTED);
-
   const QString sql = qtask->querySql(DBVERSION);
+  QString status;
   if (query.exec(sql)) {
     while (query.next())
       qtask->notifyRow(row);
-    qtask->notifyStatus(QueryTask::COMPLETE);
   } else {
     HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
-    qtask->notifyStatus(QueryTask::FAILED);
-    qtask->notifyError(query.lastError().text());
+    status = query.lastError().text();
   }
+  return status;
 }

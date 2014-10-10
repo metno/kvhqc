@@ -1,6 +1,7 @@
 
 #include "WatchRRTableModel.hh"
 
+#if 0
 #include "common/ObsAccess.hh"
 #include "common/TimeHeader.hh"
 
@@ -359,11 +360,10 @@ void ObsTableModel::onColumnTimesChanged(ObsColumn_p column)
   endResetModel();
 }
 
-void ObsTableModel::onColumnBusyStatus(int status)
+void ObsTableModel::onColumnBusyStatus(bool busy)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  const bool columnBusy = (status < QueryTask::COMPLETE);
-  if (columnBusy == mHaveBusyColumns)
+  METLIBS_LOG_SCOPE(LOGVAL(busy));
+  if (busy == mHaveBusyColumns)
     return;
 
   countBusyColumns(false);
@@ -375,8 +375,7 @@ void ObsTableModel::countBusyColumns(bool send)
   bool haveBusy = false;
   for (ObsColumn_pv::iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
     if (ObsColumn_p c = *it) {
-      const int bs = c->busyStatus();
-      if (bs < QueryTask::COMPLETE) {
+      if (c->isBusy()) {
         haveBusy = true;
         break;
       }
@@ -388,3 +387,4 @@ void ObsTableModel::countBusyColumns(bool send)
     Q_EMIT busyStatus(mHaveBusyColumns);
   }
 }
+#endif

@@ -44,15 +44,13 @@ public:
     { return Time_s(); }
   virtual int type() const = 0;
 
-  virtual int busyStatus() const
-    { return QueryTask::COMPLETE; }
+  virtual bool isBusy() const
+    { return false; }
 
 Q_SIGNALS:
   void columnChanged(const timeutil::ptime& time, ObsColumn_p column);
   void columnTimesChanged(ObsColumn_p column);
-
-  //! \see QueryTask::notifyStatus
-  void columnBusyStatus(int status);
+  void columnBusyStatus(bool busy);
   
 protected:
   boost::posix_time::time_duration mTimeOffset;

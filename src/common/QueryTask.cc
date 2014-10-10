@@ -10,10 +10,7 @@ QueryTask::~QueryTask()
 {
 }
 
-void QueryTask::notifyError(QString)
+void QueryTask::notifyDone(const QString& withError)
 {
-}
-
-void QueryTask::notifyDone()
-{
+  Q_EMIT taskDone(withError);
 }

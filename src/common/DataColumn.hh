@@ -39,8 +39,8 @@ public:
   virtual int type() const
     { return mItem->type(); }
 
-  virtual int busyStatus() const
-    { return mRequestStatus; }
+  virtual bool isBusy() const
+    { return mRequestBusy; }
 
   ObsData_p getObs(const Time& time) const;
   SensorTime getSensorTime(const Time& time) const
@@ -58,7 +58,7 @@ protected:
   DataItem_p mItem;
   bool mHeaderShowStation;
   boost::posix_time::time_duration mTimeOffset;
-  int mRequestStatus;
+  bool mRequestBusy;
 };
 
 HQC_TYPEDEF_P(DataColumn);

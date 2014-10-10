@@ -13,7 +13,7 @@ class KvalobsQueryRunner : public QueryTaskRunner
 public:
   void initialize();
   void finalize();
-  void run(QueryTask* task);
+  QString run(QueryTask* task);
 
 private:
   QSqlDatabase mKvalobsDB;

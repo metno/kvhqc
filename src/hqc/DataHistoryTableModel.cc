@@ -124,12 +124,12 @@ void DataHistoryTableModel::showHistory(const SensorTime& st)
     mCode2Text = ColumnFactory::codesForParam(st.sensor.paramId);
     DataHistoryQueryTask* t = new DataHistoryQueryTask(st, QueryTask::PRIORITY_AUTOMATIC);
     mTask = new QueryTaskHelper(t);
-    connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone(SignalTask*)));
+    connect(mTask, SIGNAL(done(QueryTask*)), this, SLOT(onQueryDone(QueryTask*)));
     mTask->post(mKvalobsHandler.get());
   }
 }
 
-void DataHistoryTableModel::onQueryDone(SignalTask* task)
+void DataHistoryTableModel::onQueryDone(QueryTask* task)
 {
   METLIBS_LOG_SCOPE();
   beginResetModel();

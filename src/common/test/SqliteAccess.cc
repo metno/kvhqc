@@ -242,20 +242,21 @@ SqliteQueryRunner::~SqliteQueryRunner()
 
 // ------------------------------------------------------------------------
 
-void SqliteQueryRunner::run(QueryTask* qtask)
+QString SqliteQueryRunner::run(QueryTask* qtask)
 {
   METLIBS_LOG_SCOPE();
 
   const std::string sql = qtask->querySql(DBVERSION).toStdString();
-  sqlite3_stmt *stmt = prepare_statement(sql, qtask);
+  QString message;
+  sqlite3_stmt *stmt = prepare_statement(sql, message);
   if (not stmt)
-    return;
+    return message;
 
   SqliteRow row(stmt);
   int step;
   while ((step = sqlite3_step(stmt)) == SQLITE_ROW)
     qtask->notifyRow(row);
-  finalize_statement(stmt, step, qtask);
+  return finalize_statement(stmt, step, qtask);
 }
 
 // ------------------------------------------------------------------------
@@ -275,7 +276,7 @@ int SqliteQueryRunner::exec(const std::string& sql)
 
 // ------------------------------------------------------------------------
 
-sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, QueryTask* qtask)
+sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, QString& message)
 {
   int status;
   sqlite3_stmt *stmt;
@@ -285,29 +286,26 @@ sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, Query
   status = sqlite3_prepare(db, sql.c_str(), sql.length(), &stmt, 0);
 #endif
   if (status != SQLITE_OK) {
-    QString message = QString("Error preparing SQL statement '%1'; message from sqlite3 is: %2")
+    message = QString("Error preparing SQL statement '%1'; message from sqlite3 is: %2")
         .arg(QString::fromStdString(sql))
         .arg(QString(sqlite3_errmsg(db)));
     HQC_LOG_ERROR(message);
-    qtask->notifyError(message);
-  }
+  };
   return stmt;
 }
 
 // ------------------------------------------------------------------------
 
-void SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
+QString SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
 {
+  QString status;
   sqlite3_finalize(stmt);
-  if (lastStep == SQLITE_DONE) {
-    qtask->notifyStatus(QueryTask::COMPLETE);
-  } else {
-    qtask->notifyStatus(QueryTask::FAILED);
-    QString message = QString("Statement stepping not finished with DONE; error=")
+  if (lastStep != SQLITE_DONE) {
+    status = QString("Statement stepping not finished with DONE; error=")
         +  sqlite3_errmsg(db);
-    HQC_LOG_ERROR(message);
-    qtask->notifyError(message);
+    HQC_LOG_ERROR(status);
   }
+  return status;
 }
 
 // ========================================================================

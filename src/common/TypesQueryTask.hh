@@ -2,10 +2,10 @@
 #ifndef COMMON_TYPESQUERYTASK_HH
 #define COMMON_TYPESQUERYTASK_HH 1
 
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 #include "KvTypedefs.hh"
 
-class TypesQueryTask : public SignalTask
+class TypesQueryTask : public QueryTask
 {
 public:
 

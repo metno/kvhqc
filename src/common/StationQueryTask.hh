@@ -2,10 +2,10 @@
 #ifndef COMMON_STATIONQUERYTASK_HH
 #define COMMON_STATIONQUERYTASK_HH 1
 
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 #include "KvTypedefs.hh"
 
-class StationQueryTask : public SignalTask
+class StationQueryTask : public QueryTask
 {
 public:
   StationQueryTask(size_t priority);

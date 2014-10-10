@@ -19,7 +19,7 @@ public:
 
 public Q_SLOTS:
   void notifyData(const ModelData_pv&);
-  void notifyStatus(int status);
+  void notifyStatus(const QString& withError);
 
 Q_SIGNALS:
   void data(const ModelData_pv&);

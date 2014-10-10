@@ -6,7 +6,7 @@
 #include <QObject>
 #include <boost/shared_ptr.hpp>
 
-class SignalTask;
+class QueryTask;
 class QueryTaskHandler;
 
 class QueryTaskHelper : public QObject
@@ -15,7 +15,7 @@ class QueryTaskHelper : public QObject
 public:
   /*! Task helper for the given task. Takes ownership of the task
    *  object. Task object may not have a parent. */
-  QueryTaskHelper(SignalTask* task);
+  QueryTaskHelper(QueryTask* task);
 
   /*! Destruct helper and task. If the task has been posted and is not
    *  done yet, wait for done signal and then delete the task object
@@ -44,7 +44,7 @@ public:
   bool drop();
 
   /*! Access the task object. */
-  SignalTask* task() const
+  QueryTask* task() const
     { return mDeleter->task(); }
 
 private Q_SLOTS:
@@ -54,7 +54,7 @@ Q_SIGNALS:
   /*! Emitted when the task is done, but only when drop has not been
    *  called before.
    */
-  void done(SignalTask* task);
+  void done(QueryTask* task);
 
 private:
   QueryTaskHandler* mHandler;

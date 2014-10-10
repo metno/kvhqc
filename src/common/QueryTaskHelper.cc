@@ -3,7 +3,7 @@
 
 #include "DeleteTaskWhenDone.hh"
 #include "QueryTaskHandler.hh"
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 #include "SyncTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.QueryTaskHelper"
@@ -11,14 +11,14 @@
 
 LOG_CONSTRUCT_COUNTER;
 
-QueryTaskHelper::QueryTaskHelper(SignalTask* t)
+QueryTaskHelper::QueryTaskHelper(QueryTask* t)
   : mHandler(0)
   , mDeleter(new DeleteTaskWhenDone(t))
 {
   METLIBS_LOG_SCOPE();
   LOG_CONSTRUCT();
 
-  connect(task(), SIGNAL(done()), this, SLOT(onQueryDone()));
+  connect(task(), SIGNAL(taskDone(const QString&)), this, SLOT(onQueryDone()));
 }
 
 QueryTaskHelper::~QueryTaskHelper()

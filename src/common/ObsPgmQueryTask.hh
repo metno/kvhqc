@@ -2,13 +2,13 @@
 #ifndef COMMON_OBSPGMQUERYTASK_HH
 #define COMMON_OBSPGMQUERYTASK_HH 1
 
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 #include <kvalobs/kvObsPgm.h>
 #include <QtCore/QObject>
 #include <vector>
 #include <set>
 
-class ObsPgmQueryTask : public SignalTask
+class ObsPgmQueryTask : public QueryTask
 { Q_OBJECT;
 public:
   typedef std::vector<kvalobs::kvObsPgm> kvObsPgm_v;

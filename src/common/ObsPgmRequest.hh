@@ -10,7 +10,7 @@
 #include <map>
 
 class QueryTaskHelper;
-class SignalTask;
+class QueryTask;
 
 class ObsPgmRequest : public QObject
 { Q_OBJECT;
@@ -33,7 +33,7 @@ Q_SIGNALS:
   void complete();
 
 private Q_SLOTS:
-  void onTaskDone(SignalTask*);
+  void onTaskDone(QueryTask*);
 
 private:
   void init(const hqc::int_s& stationIds);

@@ -13,12 +13,12 @@ public:
   void initialize() { }
   void finalize() { }
 
-  void run(QueryTask* qtask);
+  QString run(QueryTask* qtask);
   int exec(const std::string& sql);
 
 private:
-  sqlite3_stmt* prepare_statement(const std::string& sql, QueryTask* qtask);
-  void finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask);
+  sqlite3_stmt* prepare_statement(const std::string& sql, QString& message);
+  QString finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask);
 
 private:
   sqlite3 *db;

@@ -6,7 +6,6 @@
 #include "ModelQueryTask.hh"
 #include "QueryTaskHandler.hh"
 #include "QueryTaskHelper.hh"
-#include "WrapperTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
 #include "common/ObsLogging.hh"
@@ -48,36 +47,28 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
   }
 
   METLIBS_LOG_DEBUG(LOGVAL(cached.size()) << LOGVAL(toQuery.size()));
-  if (not cached.empty()) {
-    // FIXME STARTED might come again when there are data to fetch
-    // from the database
-    request->notifyStatus(QueryTask::STARTED);
-
+  if (not cached.empty())
     request->notifyData(cached);
-  }
 
   if (not toQuery.empty()) {
     ModelQueryTask* task = new ModelQueryTask(toQuery, QueryTask::PRIORITY_AUTOMATIC);
     connect(task, SIGNAL(data(const ModelData_pv&)),
         request.get(), SLOT(notifyData(const ModelData_pv&)));
-    connect(task, SIGNAL(queryStatus(int)),
-        request.get(), SLOT(notifyStatus(int)));
     connect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
 
-    QueryTaskHelper* helper = new QueryTaskHelper(new WrapperTask(task));
+    QueryTaskHelper* helper = new QueryTaskHelper(task);
     request->setTag(helper);
     helper->post(hqcApp->kvalobsHandler());
   } else {
-    request->notifyStatus(QueryTask::COMPLETE);
+    request->notifyStatus(QString());
   }
 }
 
 namespace {
 const ModelQueryTask* unwrapTask(QueryTaskHelper* helper)
 {
-  const WrapperTask* wt = static_cast<const WrapperTask*>(helper->task());
-  return static_cast<const ModelQueryTask*>(wt->wrapped());
+  return static_cast<const ModelQueryTask*>(helper->task());
 }
 }
 
@@ -96,8 +87,6 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
     const ModelQueryTask* task = unwrapTask(helper);
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         request.get(), SIGNAL(notifyData(const ModelData_pv&)));
-    disconnect(task, SIGNAL(queryStatus(int)),
-        request.get(), SLOT(notifyStatus(int)));
     disconnect(task, SIGNAL(data(const ModelData_pv&)),
         this, SLOT(modelData(const ModelData_pv&)));
     delete helper;

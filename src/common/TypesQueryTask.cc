@@ -11,7 +11,7 @@ bool initMetaType = false;
 } // namespace anonymous
 
 TypesQueryTask::TypesQueryTask(size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
 {
   METLIBS_LOG_SCOPE();
   if (not initMetaType) {

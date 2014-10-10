@@ -1,21 +1,21 @@
 
 #include "DeleteTaskWhenDone.hh"
 
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.DeleteTaskWhenDone"
 #include "util/HqcLogging.hh"
 
 LOG_CONSTRUCT_COUNTER;
 
-DeleteTaskWhenDone::DeleteTaskWhenDone(SignalTask* t)
+DeleteTaskWhenDone::DeleteTaskWhenDone(QueryTask* t)
   : mTask(t)
   , mDone(false) // FIXME this is actually an assumption
   , mDelete(false)
 {
   METLIBS_LOG_SCOPE("task=" << mTask);
   LOG_CONSTRUCT();
-  connect(mTask, SIGNAL(done()), this, SLOT(onQueryDone()));
+  connect(mTask, SIGNAL(taskDone(const QString&)), this, SLOT(onTaskDone(const QString&)));
 }
 
 DeleteTaskWhenDone::~DeleteTaskWhenDone()
@@ -34,7 +34,7 @@ void DeleteTaskWhenDone::doDelete()
   delete this;//Later();
 }
 
-void DeleteTaskWhenDone::onQueryDone()
+void DeleteTaskWhenDone::onTaskDone(const QString&)
 {
   METLIBS_LOG_SCOPE();
   mDone = true;

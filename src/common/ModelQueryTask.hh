@@ -5,9 +5,7 @@
 #include "ModelData.hh"
 #include "QueryTask.hh"
 
-#include <QtCore/QObject>
-
-class ModelQueryTask : public QObject, public QueryTask
+class ModelQueryTask : public QueryTask
 { Q_OBJECT;
 public:
   ModelQueryTask(const SensorTime_v& sensorTimes, size_t priority);
@@ -15,11 +13,10 @@ public:
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
+  void notifyDone(const QString& withError);
 
 Q_SIGNALS:
   void data(const ModelData_pv&);
-  void queryStatus(int);
 
 private:
   void sendData();

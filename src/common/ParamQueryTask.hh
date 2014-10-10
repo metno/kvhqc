@@ -2,10 +2,10 @@
 #ifndef COMMON_PARAMQUERYTASK_HH
 #define COMMON_PARAMQUERYTASK_HH 1
 
-#include "SignalTask.hh"
+#include "QueryTask.hh"
 #include "KvTypedefs.hh"
 
-class ParamQueryTask : public SignalTask
+class ParamQueryTask : public QueryTask
 {
 public:
   ParamQueryTask(size_t priority);

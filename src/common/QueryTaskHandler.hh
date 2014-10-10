@@ -3,6 +3,7 @@
 #define COMMON_QUERYTASKHANDLER_HH 1
 
 #include "util/boostutil.hh"
+#include <QString>
 
 class QueryTask;
 
@@ -26,7 +27,7 @@ public:
    *
    * Called from the task handler thread.
    */
-  virtual void run(QueryTask* task) = 0;
+  virtual QString run(QueryTask* task) = 0;
 };
 
 HQC_TYPEDEF_P(QueryTaskRunner);

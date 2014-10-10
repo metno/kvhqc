@@ -4,17 +4,17 @@
 
 #include "TxtDat.hh"
 
-#include "common/SignalTask.hh"
+#include "common/QueryTask.hh"
 #include "common/TimeSpan.hh"
 
-class TextDataQueryTask : public SignalTask
+class TextDataQueryTask : public QueryTask
 {
 public:
   TextDataQueryTask(const int stationId, const TimeSpan& time, size_t priority);
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
+  void notifyDone(const QString& withError);
 
   const TxtDat_v& textData() const
     { return mTextData; }

@@ -33,7 +33,7 @@ QueryTaskThread::~QueryTaskThread()
 
   while (not mQueue.empty()) {
     QueryTask* task = mQueue.top();
-    task->notifyDone();
+    task->notifyDone(QString());
     mQueue.pop();
   }
 }
@@ -77,8 +77,8 @@ void QueryTaskThread::run()
     }
 
     if (task) {
-      mRunner->run(task);
-      task->notifyDone();
+      const QString status = mRunner->run(task);
+      task->notifyDone(status);
     }
   }
   mRunner->finalize();
@@ -118,8 +118,8 @@ void QueryTaskHandler::postTask(QueryTask_x task)
   if (mThread) {
     mThread->enqueueTask(task);
   } else {
-    mRunner->run(task);
-    task->notifyDone();
+    const QString status = mRunner->run(task);
+    task->notifyDone(status);
   }
 }
 

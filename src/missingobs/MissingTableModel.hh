@@ -37,7 +37,7 @@ public:
   void search(const TimeSpan& time, const hqc::int_s& typeIds);
 
 private Q_SLOTS:
-  void onQueryDone(SignalTask* task);
+  void onQueryDone(QueryTask* task);
 
 private:
   void dropTask();

@@ -97,7 +97,6 @@ SET(common_SOURCES
   SensorHeader.cc
   SignalRequest.cc
   SignalRequest.hh
-  SignalTask.cc
   SimpleBuffer.cc
   SimpleBuffer.hh
   SimpleRequest.cc
@@ -124,7 +123,6 @@ SET(common_SOURCES
   ToolInterpolate.cc
   TypeIdModel.cc
   TypesQueryTask.cc
-  WrapperTask.cc
   WrapRequest.cc
 )
 
@@ -155,11 +153,11 @@ QT4_WRAP_CPP(common_MOC
   ObsPgmRequest.hh
   ObsTableModel.hh
   QtKvService.hh
+  QueryTask.hh
   QueryTaskAccess.hh
   QueryTaskHelper.hh
   SensorChooser.hh
   SignalRequest.hh
-  SignalTask.hh
   SimpleBuffer.hh
   TimeSpanControl.hh
   ToolInterpolate.hh

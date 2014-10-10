@@ -3,17 +3,17 @@
 #define COMMON_REJECTEDQUERYTASK_HH 1
 
 #include "common/KvTypedefs.hh"
-#include "common/SignalTask.hh"
+#include "common/QueryTask.hh"
 #include "common/TimeSpan.hh"
 
-class RejectedQueryTask : public SignalTask
+class RejectedQueryTask : public QueryTask
 {
 public:
   RejectedQueryTask(const TimeSpan& time, size_t priority);
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
+  void notifyDone(const QString& withError);
 
   const hqc::kvRejectdecode_v& rejected() const
     { return mRejected; }

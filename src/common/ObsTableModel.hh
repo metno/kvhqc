@@ -78,7 +78,7 @@ protected:
 private Q_SLOTS:
   virtual void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
   virtual void onColumnTimesChanged(ObsColumn_p column);
-  virtual void onColumnBusyStatus(int);
+  virtual void onColumnBusyStatus(bool);
 
 private:
   int timeIndex(const QModelIndex& index) const

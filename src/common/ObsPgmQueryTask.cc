@@ -15,7 +15,7 @@ bool initMetaType = false;
 LOG_CONSTRUCT_COUNTER;
 
 ObsPgmQueryTask::ObsPgmQueryTask(const int_s& stationIds, size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
   , mStationIds(stationIds)
 {
   METLIBS_LOG_SCOPE();

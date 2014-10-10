@@ -19,7 +19,7 @@ bool initMetaType = false;
 } // namespace anonymous
 
 MissingObsQuery::MissingObsQuery(const TimeSpan& time, const hqc::int_s& typeids, size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
   , mTime(time)
   , mTypeIds(typeids)
 {
@@ -95,10 +95,10 @@ void MissingObsQuery::notifyRow(const ResultRow& row)
   mMissing.push_back(SensorTime(Sensor(stationId, kvalobs::PARAMID_RR_24, /*level*/0, /*sensor*/0, typeId), time));
 }
 
-void MissingObsQuery::notifyStatus(int status)
+void MissingObsQuery::notifyDone(const QString& withError)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  if (status > COMPLETE)
+  METLIBS_LOG_SCOPE(LOGVAL(withError));
+  if (not withError.isNull())
     mMissing.clear();
-  SignalTask::notifyStatus(status);
+  QueryTask::notifyDone(withError);
 }

@@ -15,7 +15,7 @@ Time my_qsql_time(const std::string& s)
 } // namespace anonymous
 
 RejectedQueryTask::RejectedQueryTask(const TimeSpan& time, size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
   , mTime(time)
 {
 }
@@ -41,9 +41,9 @@ void RejectedQueryTask::notifyRow(const ResultRow& row)
   mRejected.push_back(kvalobs::kvRejectdecode(msg, tbtime, dec, com, fixed));
 }
 
-void RejectedQueryTask::notifyStatus(int status)
+void RejectedQueryTask::notifyDone(const QString& withError)
 {
-  if (status > COMPLETE)
+  if (not withError.isNull())
     mRejected.clear();
-  SignalTask::notifyStatus(status);
+  QueryTask::notifyDone(withError);
 }

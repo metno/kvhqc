@@ -45,7 +45,7 @@ void ObsPgmRequest::init(const hqc::int_s& stationIds)
   } else {
     ObsPgmQueryTask* ot = new ObsPgmQueryTask(request, QueryTask::PRIORITY_AUTOMATIC);
     mTaskHelper = new QueryTaskHelper(ot);
-    connect(mTaskHelper, SIGNAL(done(SignalTask*)), this, SLOT(onTaskDone(SignalTask*)));
+    connect(mTaskHelper, SIGNAL(done(QueryTask*)), this, SLOT(onTaskDone(QueryTask*)));
   }
 }
 
@@ -92,7 +92,7 @@ void ObsPgmRequest::put(const hqc::kvObsPgm_v& op)
     mObsPgms[it->stationID()].push_back(*it);
 }
 
-void ObsPgmRequest::onTaskDone(SignalTask* task)
+void ObsPgmRequest::onTaskDone(QueryTask* task)
 {
   METLIBS_LOG_SCOPE();
   put(static_cast<ObsPgmQueryTask*>(task)->obsPgms());

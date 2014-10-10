@@ -3,11 +3,11 @@
 #define MISSINGOBSQUERY_HH 1
 
 #include "common/KvTypedefs.hh"
-#include "common/SignalTask.hh"
+#include "common/QueryTask.hh"
 #include "common/Sensor.hh"
 #include "common/TimeSpan.hh"
 
-class MissingObsQuery : public SignalTask
+class MissingObsQuery : public QueryTask
 {
 public:
   MissingObsQuery(const TimeSpan& time, const hqc::int_s& typeids, size_t priority);
@@ -15,7 +15,7 @@ public:
   QString querySql(QString dbversion) const;
 
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int status);
+  void notifyDone(const QString& withError);
 
   const TimeSpan& time() const
     { return mTime; }

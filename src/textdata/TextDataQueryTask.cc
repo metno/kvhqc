@@ -15,7 +15,7 @@ Time my_qsql_time(const std::string& s)
 } // namespace anonymous
 
 TextDataQueryTask::TextDataQueryTask(const int stationId, const TimeSpan& time, size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
   , mStationId(stationId)
   , mTime(time)
 {
@@ -46,9 +46,9 @@ void TextDataQueryTask::notifyRow(const ResultRow& row)
   mTextData.push_back(txtd);
 }
 
-void TextDataQueryTask::notifyStatus(int status)
+void TextDataQueryTask::notifyDone(const QString& withError)
 {
-  if (status > COMPLETE)
+  if (not withError.isNull())
     mTextData.clear();
-  SignalTask::notifyStatus(status);
+  QueryTask::notifyDone(withError);
 }

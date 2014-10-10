@@ -146,7 +146,7 @@ TextData::TextData(const int stationId, const TimeSpan& time, QWidget* parent)
   readSettings();
 
   mTask = new QueryTaskHelper(new TextDataQueryTask(stationId, time, QueryTask::PRIORITY_AUTOMATIC));
-  connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone()));
+  connect(mTask, SIGNAL(done(QueryTask*)), this, SLOT(onQueryDone()));
   mTask->post(hqcApp->kvalobsHandler());
   mBusy->setBusy(true);
 }

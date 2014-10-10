@@ -17,19 +17,18 @@ public:
 
 // ========================================================================
 
-class DataQueryTask : public QObject, public QueryTask
+class DataQueryTask : public QueryTask
 { Q_OBJECT;
 public:
   DataQueryTask(ObsRequest_p request, size_t priority);
   
   QString querySql(QString dbversion) const;
   void notifyRow(const ResultRow& row);
-  void notifyStatus(int);
-  void notifyError(QString message);
+  void notifyDone(const QString& withError);
 
 Q_SIGNALS:
   void newData(ObsRequest_p, const ObsData_pv&);
-  void queryStatus(ObsRequest_p, int);
+  void queryDone(ObsRequest_p, const QString&);
 
 private:
   void sendData();

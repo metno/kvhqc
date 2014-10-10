@@ -107,17 +107,10 @@ void DataQueryTask::sendData()
   mData.clear();
 }
 
-void DataQueryTask::notifyStatus(int status)
+void DataQueryTask::notifyDone(const QString& withError)
 {
-  if (status >= COMPLETE) {
-    if (not mData.empty())
-      sendData();
-    //Q_EMIT newData(mRequest, mData); // empty data
-  }
-  Q_EMIT queryStatus(mRequest, status);
-}
-
-void DataQueryTask::notifyError(QString)
-{
-  Q_EMIT queryStatus(mRequest, QueryTask::FAILED);
+  if (not mData.empty())
+    sendData();
+  Q_EMIT queryDone(mRequest, withError);
+  QueryTask::notifyDone(withError);
 }

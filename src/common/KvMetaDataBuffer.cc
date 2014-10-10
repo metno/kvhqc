@@ -222,7 +222,7 @@ void KvMetaDataBuffer::fetchStations()
 
   StationQueryTask* q = new StationQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskStations = new QueryTaskHelper(q);
-  connect(mTaskStations, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneStations()));
+  connect(mTaskStations, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneStations()));
   mTaskStations->post(handler().get());
 }
 
@@ -233,7 +233,7 @@ void KvMetaDataBuffer::fetchParams()
 
   ParamQueryTask* q = new ParamQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskParams = new QueryTaskHelper(q);
-  connect(mTaskParams, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneParams()));
+  connect(mTaskParams, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneParams()));
   mTaskParams->post(handler().get());
 }
 
@@ -244,7 +244,7 @@ void KvMetaDataBuffer::fetchTypes()
 
   TypesQueryTask* q = new TypesQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskTypes = new QueryTaskHelper(q);
-  connect(mTaskTypes, SIGNAL(done(SignalTask*)), this, SLOT(taskDoneTypes()));
+  connect(mTaskTypes, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneTypes()));
   mTaskTypes->post(handler().get());
 }
 

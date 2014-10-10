@@ -4,27 +4,27 @@
 
 #include <QObject>
 
-class SignalTask;
+class QueryTask;
 
 class DeleteTaskWhenDone : public QObject
 { Q_OBJECT;
 public:
-  DeleteTaskWhenDone(SignalTask* t);
+  DeleteTaskWhenDone(QueryTask* t);
   ~DeleteTaskWhenDone();
 
-  SignalTask* task() const
+  QueryTask* task() const
     { return mTask; }
 
   void enableDelete();
 
 private Q_SLOTS:
-  void onQueryDone();
+  void onTaskDone(const QString& withError);
 
 private:
   void doDelete();
 
 private:
-  SignalTask* mTask;
+  QueryTask* mTask;
   bool mDone, mDelete;
 };
 

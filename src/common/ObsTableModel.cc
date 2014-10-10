@@ -56,8 +56,8 @@ void ObsTableModel::insertColumn(int before, ObsColumn_p c)
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     connect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
         this, SLOT(onColumnTimesChanged(ObsColumn_p)));
-    connect(c.get(), SIGNAL(columnBusyStatus(int)),
-        this, SLOT(onColumnBusyStatus(int)));
+    connect(c.get(), SIGNAL(columnBusyStatus(bool)),
+        this, SLOT(onColumnBusyStatus(bool)));
     c->attach(this);
   }
   columnInsertEnd();
@@ -113,8 +113,8 @@ void ObsTableModel::detachColumn(ObsColumn_p c)
         this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
     disconnect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
         this, SLOT(onColumnTimesChanged(ObsColumn_p)));
-    disconnect(c.get(), SIGNAL(columnBusyStatus(int)),
-        this, SLOT(onColumnBusyStatus(int)));
+    disconnect(c.get(), SIGNAL(columnBusyStatus(bool)),
+        this, SLOT(onColumnBusyStatus(bool)));
   }
 }
 
@@ -359,11 +359,10 @@ void ObsTableModel::onColumnTimesChanged(ObsColumn_p column)
   endResetModel();
 }
 
-void ObsTableModel::onColumnBusyStatus(int status)
+void ObsTableModel::onColumnBusyStatus(bool busy)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(status));
-  const bool columnBusy = (status < QueryTask::COMPLETE);
-  if (columnBusy == mHaveBusyColumns)
+  METLIBS_LOG_SCOPE(LOGVAL(busy));
+  if (busy == mHaveBusyColumns)
     return;
 
   countBusyColumns(false);
@@ -375,8 +374,7 @@ void ObsTableModel::countBusyColumns(bool send)
   bool haveBusy = false;
   for (ObsColumn_pv::iterator it = mColumns.begin(); it != mColumns.end(); ++it) {
     if (ObsColumn_p c = *it) {
-      const int bs = c->busyStatus();
-      if (bs < QueryTask::COMPLETE) {
+      if (c->isBusy()) {
         haveBusy = true;
         break;
       }

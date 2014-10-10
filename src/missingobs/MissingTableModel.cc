@@ -107,11 +107,11 @@ void MissingTableModel::search(const TimeSpan& time, const hqc::int_s& typeIds)
 
   dropTask();
   mTask = new QueryTaskHelper(t);
-  connect(mTask, SIGNAL(done(SignalTask*)), this, SLOT(onQueryDone(SignalTask*)));
+  connect(mTask, SIGNAL(done(QueryTask*)), this, SLOT(onQueryDone(QueryTask*)));
   mTask->post(mKvalobsHandler.get());
 }
 
-void MissingTableModel::onQueryDone(SignalTask* task)
+void MissingTableModel::onQueryDone(QueryTask* task)
 {
   METLIBS_LOG_SCOPE();
   beginResetModel();

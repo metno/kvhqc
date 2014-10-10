@@ -6,7 +6,6 @@
 #include "DistributeUpdates.hh"
 #include "ObsAccept.hh"
 #include "QueryTaskHelper.hh"
-#include "WrapperTask.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.QueryTaskAccess"
 #include "common/ObsLogging.hh"
@@ -31,10 +30,10 @@ QueryTaskHelper* QueryTaskAccess::taskForRequest(ObsRequest_p request)
   DataQueryTask* task = new DataQueryTask(request, QueryTask::PRIORITY_INTERACTIVE);
   connect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  connect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
-      this, SLOT(onStatus(ObsRequest_p, int)));
+  connect(task, SIGNAL(queryDone(ObsRequest_p, const QString&)),
+      this, SLOT(onDone(ObsRequest_p, const QString&)));
 
-  QueryTaskHelper* helper = new QueryTaskHelper(new WrapperTask(task));
+  QueryTaskHelper* helper = new QueryTaskHelper(task);
   request->setTag(helper);
   return helper;
 }
@@ -53,8 +52,7 @@ void QueryTaskAccess::postRequest(ObsRequest_p request)
 namespace {
 const DataQueryTask* unwrapTask(QueryTaskHelper* helper)
 {
-  const WrapperTask* wt = static_cast<const WrapperTask*>(helper->task());
-  return static_cast<const DataQueryTask*>(wt->wrapped());
+  return static_cast<const DataQueryTask*>(helper->task());
 }
 }
 
@@ -75,8 +73,8 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
   const DataQueryTask* task = unwrapTask(helper);
   disconnect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
       this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  disconnect(task, SIGNAL(queryStatus(ObsRequest_p, int)),
-      this, SLOT(onStatus(ObsRequest_p, int)));
+  disconnect(task, SIGNAL(queryDone(ObsRequest_p, const QString&)),
+      this, SLOT(onDone(ObsRequest_p, const QString&)));
   delete helper;
   request->setTag(0);
 
@@ -99,15 +97,12 @@ void QueryTaskAccess::onNewData(ObsRequest_p request, const ObsData_pv& data)
 
 // ------------------------------------------------------------------------
 
-void QueryTaskAccess::onStatus(ObsRequest_p request, int status)
+void QueryTaskAccess::onDone(ObsRequest_p request, const QString& withError)
 {
   METLIBS_LOG_SCOPE();
-  if (status < QueryTask::COMPLETE)
-    return;
-
   if (isKnownRequest(request)) {
     METLIBS_LOG_DEBUG(LOGVAL(request->sensors()) << LOGVAL(request->timeSpan()));
-    request->completed(status == QueryTask::FAILED);
+    request->completed(not withError.isNull());
   } else {
     METLIBS_LOG_DEBUG("request has been dropped, do nothing");
   }

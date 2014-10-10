@@ -18,7 +18,7 @@ bool initMetaType = false;
 } // namespace anonymous
 
 DataHistoryQueryTask::DataHistoryQueryTask(const SensorTime& st, size_t priority)
-  : SignalTask(priority)
+  : QueryTask(priority)
   , mSensorTime(st)
 {
   if (not initMetaType) {
@@ -53,9 +53,9 @@ void DataHistoryQueryTask::notifyRow(const ResultRow& row)
   mHistory.push_back(v);
 }
 
-void DataHistoryQueryTask::notifyStatus(int status)
+void DataHistoryQueryTask::notifyDone(const QString& withError)
 {
-  if (status > COMPLETE)
+  if (not withError.isNull())
     mHistory.clear();
-  SignalTask::notifyStatus(status);
+  QueryTask::notifyDone(withError);
 }

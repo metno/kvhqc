@@ -26,7 +26,7 @@ public:
   void showHistory(const SensorTime& st);
 
 private Q_SLOTS:
-  void onQueryDone(SignalTask* task);
+  void onQueryDone(QueryTask* task);
 
 private:
   void dropTask();
