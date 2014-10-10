@@ -1,3 +1,12 @@
+kvhqc (4.0.0~a8-1) unstable; urgency=low
+
+  * bugfix jump to observation
+  * added missingobs and extreme values search
+  * added some tests
+  * started simplifying request/task class structure
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 10 Oct 2014 16:52:19 +0200
+
 kvhqc (4.0.0~a7-2) unstable; urgency=low
 
   * watchrr starts, but is not very useful yet
