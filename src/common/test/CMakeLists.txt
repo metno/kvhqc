@@ -82,6 +82,9 @@ ADD_EXECUTABLE(common_gui_test
   qtestMain.cc
   ${test_common_gui_MOC}
 )
-ADD_TEST(NAME common_gui_test
-  COMMAND common_gui_test
-)
+
+## do not include this test in "make check" to prevent problems when
+## building packages without access to an X server
+# ADD_TEST(NAME common_gui_test
+#   COMMAND common_gui_test
+# )
