@@ -1,3 +1,9 @@
+kvhqc (4.0.0~a9-1) unstable; urgency=low
+
+  * bugfix in error list / ModelBuffer
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 15 Oct 2014 08:57:20 +0200
+
 kvhqc (4.0.0~a8-1) unstable; urgency=low
 
   * bugfix jump to observation
