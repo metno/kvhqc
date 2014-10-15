@@ -140,6 +140,7 @@ ErrorListModel::~ErrorListModel()
 {
   METLIBS_LOG_SCOPE();
   delete mRootItem;
+  mRootItem = 0; // seems unnecessary, but shared_ptr + signals can cause callbacks from destructor ... somehow
 }
 
 void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, bool errorsForSalen)

@@ -23,8 +23,10 @@ ModelBuffer::~ModelBuffer()
 {
   METLIBS_LOG_SCOPE();
   LOG_DESTRUCT();
-  if (mRequest)
+  if (mRequest) {
+    mPending.clear(); // avoid posting a new request
     dropRequest();
+  }
 }
 
 ModelData_p ModelBuffer::get(const SensorTime& st)
