@@ -473,36 +473,42 @@ void SqliteAccess::insertDataFromFile(const std::string& filename)
 
   const timeutil::ptime tbtime = timeutil::now();
 
-  while (std::getline(f, line)) {
-    if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
-      continue;
+  while (std::getline(f, line))
+    insertDataFromText(line, tbtime);
+}
 
-    std::vector<std::string> columns;
-    boost::split(columns, line, boost::is_any_of("\t"));
-    if (columns.size() != 7 and columns.size() != 8) {
-      //HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
-      continue;
-    }
+// ------------------------------------------------------------------------
 
-    unsigned int c = 0;
-    const int stationId = boost::lexical_cast<int>(columns[c++]);
-    const int paramId   = boost::lexical_cast<int>(columns[c++]);
-    const int typeId    = boost::lexical_cast<int>(columns[c++]);
-    const std::string obstime = columns[c++];
-    const float original  = boost::lexical_cast<float>(columns[c++]);
-    const float corrected = boost::lexical_cast<float>(columns[c++]);
-    const std::string controlinfo = columns[c++];
-    std::string cfailed;
-    if (c<columns.size())
-      cfailed = columns[c++];
-
-    const kvalobs::kvControlInfo ci(controlinfo);
-    kvalobs::kvUseInfo ui;
-    ui.setUseFlags(ci);
-
-    insertData(kvalobs::kvData(stationId, from_iso(obstime), original,
-            paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed));
+void SqliteAccess::insertDataFromText(const std::string& line, const timeutil::ptime& tbtime)
+{
+  if (line.empty() or line.at(0) == '#' or line.at(0) == ' ')
+    return;
+  
+  std::vector<std::string> columns;
+  boost::split(columns, line, boost::is_any_of("\t"));
+  if (columns.size() != 7 and columns.size() != 8) {
+    //HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
+    return;
   }
+  
+  unsigned int c = 0;
+  const int stationId = boost::lexical_cast<int>(columns[c++]);
+  const int paramId   = boost::lexical_cast<int>(columns[c++]);
+  const int typeId    = boost::lexical_cast<int>(columns[c++]);
+  const std::string obstime = columns[c++];
+  const float original  = boost::lexical_cast<float>(columns[c++]);
+  const float corrected = boost::lexical_cast<float>(columns[c++]);
+  const std::string controlinfo = columns[c++];
+  std::string cfailed;
+  if (c<columns.size())
+    cfailed = columns[c++];
+  
+  const kvalobs::kvControlInfo ci(controlinfo);
+  kvalobs::kvUseInfo ui;
+  ui.setUseFlags(ci);
+  
+  insertData(kvalobs::kvData(stationId, from_iso(obstime), original,
+          paramId, tbtime, typeId, 0/*sensor*/, 0/*level*/, corrected, ci, ui, cfailed));
 }
 
 // ------------------------------------------------------------------------

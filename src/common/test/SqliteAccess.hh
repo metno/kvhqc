@@ -29,6 +29,7 @@ public:
   // ==================== debugging interface ====================
 
   void insertDataFromFile(const std::string& filename);
+  void insertDataFromText(const std::string& line, const timeutil::ptime& tbtime = timeutil::now());
   void insertData(const kvalobs::kvData& kvd);
   void dropData(const SensorTime_v& toDrop);
 

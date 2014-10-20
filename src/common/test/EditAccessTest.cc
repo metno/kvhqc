@@ -8,6 +8,8 @@
 #include "Functors.hh"
 #include "util/make_set.hh"
 
+#include <boost/make_shared.hpp>
+
 #include <gtest/gtest.h>
 
 namespace /*anonymous*/ {
@@ -696,3 +698,61 @@ TEST(EditAccessTest, History)
   EXPECT_EQ(1, ea->countU());
 }
 
+TEST(EditAccessTest, InsertData)
+{
+  const Sensor s0(45420, 110, 0, 0, 302);
+  const timeutil::ptime t0 = s2t("2012-10-13 06:00:00");
+  const SensorTime st0(s0, t0);
+  const TimeSpan time0(s2t("2012-10-12 06:00:00"), s2t("2012-10-14 06:00:00"));
+
+  SqliteAccess_p sqla(new SqliteAccess);
+  sqla->insertDataFromText("45420	110	302	2012-10-12 06:00:00	-32767.0	2.0	0000001000007000	");
+  //sqla->insertDataFromText("45420	110	302	2012-10-13 06:00:00	-32767.0	2.0	0000001000007000	");
+  sqla->insertDataFromText("45420	110	302	2012-10-14 06:00:00	-32767.0	2.0	0000001000007000	");
+
+  const float newC = 4.0;
+
+  EditAccess_p ea = boost::make_shared<EditAccess>(sqla);
+
+  CountingBuffer_p counter(new CountingBuffer(s0, time0));
+  counter->syncRequest(ea);
+  EXPECT_EQ(2, counter->size());
+  EXPECT_EQ(1, counter->countComplete);
+  counter->zero();
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(0, ea->highestVersion());
+
+  ASSERT_FALSE(counter->get(st0));
+
+  { ea->newVersion();
+    ObsUpdate_pv updates;
+    
+    ObsUpdate_p up = ea->createUpdate(st0);
+    ASSERT_TRUE(up);
+    
+    up->setCorrected(newC);
+    updates.push_back(up);
+    ASSERT_TRUE(ea->storeUpdates(updates));
+  }
+    
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(1, counter->countNew);
+  ASSERT_TRUE(counter->get(st0));
+  EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
+  EXPECT_EQ(1, ea->countU());
+
+  ea->undoVersion();
+
+  EXPECT_EQ(0, ea->currentVersion());
+  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1, counter->countDrop);
+  ASSERT_FALSE(counter->get(st0));
+  EXPECT_EQ(0, ea->countU());
+
+  ea->redoVersion();
+  EXPECT_EQ(3, counter->size());
+  EXPECT_EQ(2, counter->countNew);
+  ASSERT_TRUE(counter->get(st0));
+  EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
+  EXPECT_EQ(1, ea->countU());
+}

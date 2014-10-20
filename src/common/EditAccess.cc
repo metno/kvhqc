@@ -21,7 +21,8 @@ namespace /*anonymous*/ {
 } // namespace anonymous
 
 EditVersions::EditVersions(ObsData_p backendData, size_t editVersion, ObsData_p editData)
-  : mCurrent(1)
+  : mSensorTime(editData->sensorTime())
+  , mCurrent(1)
 {
   METLIBS_LOG_SCOPE();
   mVersions.push_back(Version(0, backendData));
@@ -98,6 +99,7 @@ EditRequest::EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
   : WrapRequest(wrapped)
   , mAccess(a)
 {
+  mAccess->handleBackendEdited(wrapped);
 }
 
 EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
@@ -139,6 +141,31 @@ EditVersions_ps::iterator EditAccessPrivate::findEditVersions(const SensorTime& 
     return mEdited.end();
 }
 
+void EditAccessPrivate::handleBackendEdited(ObsRequest_p wr)
+{
+  METLIBS_LOG_SCOPE();
+
+  const Sensor_s& rsensors = wr->sensors();
+  const TimeSpan& rtime    = wr->timeSpan();
+  ObsFilter_p     rfilter  = wr->filter();
+
+  ObsData_pv editedData;
+  for (EditVersions_ps::const_iterator it = mEdited.begin(); it != mEdited.end(); ++it) {
+    EditVersions_p ev = *it;
+    if (not rtime.contains(ev->sensorTime().time))
+      continue;
+    if (not rsensors.count(ev->sensorTime().sensor))
+      continue;
+
+    ObsData_p d = ev->currentData();
+    if (not rfilter or rfilter->accept(d, false))
+      editedData.push_back(d);
+  }
+
+  if (not editedData.empty())
+    wr->newData(editedData);
+}
+
 void EditAccessPrivate::handleBackendNew(ObsRequest_p wr, const ObsData_pv& backendData)
 {
   METLIBS_LOG_SCOPE();
@@ -146,18 +173,10 @@ void EditAccessPrivate::handleBackendNew(ObsRequest_p wr, const ObsData_pv& back
   ObsData_pv wrappedData;
   for (ObsData_pv::const_iterator itB = backendData.begin(); itB != backendData.end(); ++itB) {
     // TODO backendData is sorted, mEdited too => avoid some searching
-    EditVersions_ps::iterator itE = findEditVersions((*itB)->sensorTime());
-    if (itE != mEdited.end()) {
-      EditVersions_p ev = *itE;
-      if (not ev->hasBackendData())
-        // FIXME there may be multiple equivalent KvalobsData objects for the same SensorTime
-        ev->updateBackend(*itB);
-      wrappedData.push_back(ev->currentData());
-    } else {
+    if (findEditVersions((*itB)->sensorTime()) == mEdited.end())
       wrappedData.push_back(*itB);
-    }
   }
-  
+
   if (not wrappedData.empty())
     wr->newData(wrappedData);
 }
@@ -315,11 +334,12 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
 
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
     KvalobsUpdate_p eu = boost::static_pointer_cast<KvalobsUpdate>(*it);
+    METLIBS_LOG_DEBUG(LOGVAL(eu->sensorTime()));
 
     EditVersions_ps::iterator itE = p->findEditVersions(eu->sensorTime());
     if (itE != p->mEdited.end()) {
       // TODO check for correct parent
-      assert((*itE)->currentData() == eu->obs());
+      //assert((*itE)->currentData() == eu->obs());
       KvalobsData_p d = createDataForUpdate(eu, tbtime);
       EditVersions_p ev = *itE;
       if (ev->currentVersion() == 0)

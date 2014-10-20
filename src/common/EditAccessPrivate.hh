@@ -16,7 +16,7 @@ public:
   EditVersions(ObsData_p backendData, size_t editVersion, ObsData_p editData);
 
   virtual const SensorTime& sensorTime() const
-    { return currentData()->sensorTime(); }
+    { return mSensorTime; }
   virtual float original() const
     { return currentData()->original(); }
   virtual float corrected() const
@@ -57,6 +57,7 @@ private:
   };
   HQC_TYPEDEF_V(Version);
 
+  SensorTime mSensorTime;
   Version_v mVersions;
   size_t mCurrent;
 };
@@ -113,6 +114,7 @@ public:
   EditAccessPrivate(ObsAccess_p backend);
 
   EditVersions_ps::iterator findEditVersions(const SensorTime& st);
+  void handleBackendEdited(ObsRequest_p wr);
   void handleBackendNew(ObsRequest_p wr, const ObsData_pv& backendData);
   void handleBackendUpdate(ObsRequest_p wr, const ObsData_pv& backendData);
   void handleBackendDrop(ObsRequest_p wr, const SensorTime_v& backendDropped);
