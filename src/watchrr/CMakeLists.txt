@@ -51,3 +51,5 @@ ADD_LIBRARY(watchrr
 
 INSTALL(FILES ${watchrr_QM}
   DESTINATION "share/${PROJECT_NAME}/${PVERSION}/lang")
+
+ADD_SUBDIRECTORY(test)

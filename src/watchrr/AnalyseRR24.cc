@@ -81,6 +81,8 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
   METLIBS_LOG_DEBUG(LOGVAL(mTS) << LOGVAL(mTE));
   time = TimeSpan(mTS, mTE);
 
+  ObsUpdate_pv updates;
+
   // add tasks for RR24 observations if the have errors
   int last_acc = NO, last_endpoint = NO, have_endpoint = NO;
   for (timeutil::ptime t = mTE; t >= mTS; t -= step) {
@@ -88,7 +90,7 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
     if (not obs) {
       TaskUpdate_p up = createU(da, SensorTime(sensor, t));
       up->addTask(tasks::TASK_MISSING_OBS);
-      da->storeUpdates(ObsUpdate_pv(1, up));
+      updates.push_back(up);
       last_acc = last_endpoint = have_endpoint = false;
       continue;
     }
@@ -127,9 +129,10 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
     if (task != 0) {
       TaskUpdate_p up = createU(da, SensorTime(sensor, t));
       up->addTask(task);
-      da->storeUpdates(ObsUpdate_pv(1, up));
+      updates.push_back(up);
     }
   }
+  da->storeUpdates(updates);
   return true;
 }
 
@@ -141,6 +144,8 @@ void markPreviousAccumulation(TaskAccess_p da, const Sensor& sensor, const TimeS
   METLIBS_LOG_DEBUG(LOGVAL(time));
   using namespace Helpers;
 
+  ObsUpdate_pv updates;
+
   const boost::gregorian::date_duration step = boost::gregorian::days(before ? -1 : 1);
   for(timeutil::ptime t = before ? time.t1() : time.t0(); time.contains(t); t += step) {
     ObsData_p obs = da->findE(SensorTime(sensor, t));
@@ -148,21 +153,24 @@ void markPreviousAccumulation(TaskAccess_p da, const Sensor& sensor, const TimeS
       continue;
     if (is_accumulation(obs) == NO)
       break;
+    TaskUpdate_p up;
     if (not before) {
       METLIBS_LOG_DEBUG(LOGVAL(t));
-      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
-      up->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
-      da->storeUpdates(ObsUpdate_pv(1, up));
+      up = createU(da, SensorTime(sensor, t));
     }
     if (is_endpoint(obs) != NO)
       break;
     if (before) {
       METLIBS_LOG_DEBUG(LOGVAL(t));
-      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      up = createU(da, SensorTime(sensor, t));
+    }
+    if (up) {
       up->addTask(tasks::TASK_PREVIOUSLY_ACCUMULATION);
-      da->storeUpdates(ObsUpdate_pv(1, up));
+      updates.push_back(up);
     }
   }
+
+  da->storeUpdates(updates);
 }
 
 // ========================================================================
@@ -399,12 +407,12 @@ bool canRedistributeInQC2(TaskAccess_p da, const Sensor& sensor, const TimeSpan&
 void singles(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& t0, const TimeSpan& editableTime,
     const std::vector<float>& newCorrected, const std::vector<int>& acceptReject)
 {
+  METLIBS_LOG_SCOPE();
   using namespace Helpers;
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
   const FlagChange fc_clear_fd("fd=1");
 
   da->newVersion();
-  ObsUpdate_pv updates;
 
   bool previousWasSingle = false, previousWasAcc = false;
   unsigned int editRow = 0;
@@ -412,39 +420,38 @@ void singles(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& t0, c
   for (; editRow < newCorrected.size(); t += step, editRow += 1) {
     METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(previousWasSingle) << LOGVAL(previousWasAcc));
     const SensorTime st(sensor, t);
-    ObsData_p obs = da->findE(st);
-    TaskUpdate_p u = createU(da, st);
     const int ar = acceptReject.at(editRow);
 
     if (ar == AR_ACCEPT or ar == AR_REJECT) {
+      ObsData_p obs = da->findE(st);
+      const bool accumulation = (obs and is_accumulation(obs));
       if (not previousWasSingle) {
-        if (obs and is_accumulation(obs))
+        if (accumulation)
           markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), true);
         if (previousWasAcc)
           markPreviousAccumulation(da, sensor, TimeSpan(tMarkStart, t-step), false);
       }
-      previousWasAcc = (obs and is_accumulation(obs) and not is_endpoint(obs));
+      previousWasAcc = (accumulation and not is_endpoint(obs));
       previousWasSingle = true;
 
+      TaskUpdate_p u = createU(da, st);
       if (ar == AR_ACCEPT)
         Helpers::auto_correct(u, obs, newCorrected.at(editRow));
       else
         Helpers::reject(u, obs);
       Helpers::changeControlinfo(u, fc_clear_fd);
       u->clearTasks(ALL_RR24_TASKS);
+      da->storeUpdates(ObsUpdate_pv(1, u));
     } else if (previousWasSingle) {
       tMarkStart = t;
       METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
       previousWasSingle = false;
     }
-    updates.push_back(u);
   }
   if (previousWasSingle) {
     tMarkStart = t;
     METLIBS_LOG_DEBUG(LOGVAL(tMarkStart));
   }
-
-  da->storeUpdates(updates);
 
   // mark all accumulation rows around period with task
   if (previousWasAcc)

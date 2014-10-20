@@ -32,9 +32,11 @@ ObsUpdate_p TaskAccess::createUpdate(const SensorTime& sensorTime)
 
 KvalobsData_p TaskAccess::createDataForUpdate(KvalobsUpdate_p update, const timeutil::ptime& tbtime)
 {
+  METLIBS_LOG_SCOPE();
   int tasks = 0;
   if (TaskUpdate_p tu = boost::dynamic_pointer_cast<TaskUpdate>(update))
     tasks = tu->tasks();
+  METLIBS_LOG_DEBUG(LOGVAL(update->sensorTime()) << LOGVAL(tasks));
   KvalobsData_p kd = EditAccess::createDataForUpdate(update, tbtime);
   return boost::make_shared<TaskData>(kd, tasks);
 }
