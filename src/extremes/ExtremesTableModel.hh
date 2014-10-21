@@ -15,6 +15,21 @@ class ExtremesTableModel : public QAbstractTableModel
   Q_OBJECT;
 
 public:
+  class CorrectedOrdering : public SortedBuffer::Ordering {
+  public:
+    CorrectedOrdering(bool a) : ascending(a) { }
+
+    bool compare(ObsData_p a, ObsData_p b) const;
+    bool compare(const SensorTime& a, const SensorTime& b) const;
+    
+  private:
+    int compareCorrected(float a, float b) const;
+    
+  private:
+    bool ascending;
+  };
+
+public:
   ExtremesTableModel(EditAccess_p eda);
   ~ExtremesTableModel();
 
@@ -38,16 +53,15 @@ public:
   virtual QVariant data(const QModelIndex& index, int role) const;
   virtual QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 
-  ObsData_p getObs(int row) const
-    { return mExtremes.at(row); }
+  ObsData_p getObs(int row) const;
 
 private Q_SLOTS:
-  void onBufferCompleted(const QString&);
+  void onBufferChangeBegin();
+  void onBufferChangeEnd();
 
 private:
   EditAccess_p mDA;
-  TimeBuffer_p mBuffer;
-  ObsData_pv mExtremes;
+  SortedBuffer_p mBuffer;
 };
 
 #endif

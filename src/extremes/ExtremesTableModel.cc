@@ -12,7 +12,7 @@
 #define MILOGGER_CATEGORY "kvhqc.ExtremesTableModel"
 #include "common/ObsLogging.hh"
 
-namespace {
+namespace /* anonymous  */ {
 
 const char* headers[ExtremesTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("Extremes", "Stnr"),
@@ -36,7 +36,39 @@ const char* tooltips[ExtremesTableModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("Extremes", "Flags"),
 };
 
+const int N_EXTREMES = 20;
+
+} // anonymous namespace
+
+// ========================================================================
+
+bool ExtremesTableModel::CorrectedOrdering::compare(ObsData_p a, ObsData_p b) const
+{
+  const int c = compareCorrected(a->corrected(), b->corrected());
+  if (c < 0)
+    return true;
+  else if (c > 0)
+    return false;
+  else
+    return compare(a->sensorTime(), b->sensorTime());
+};
+
+bool ExtremesTableModel::CorrectedOrdering::compare(const SensorTime& a, const SensorTime& b) const
+{
+  return lt_SensorTime()(a, b);
 }
+
+int ExtremesTableModel::CorrectedOrdering::compareCorrected(float a, float b) const
+{
+  if (a == b)
+    return 0;
+  else if ((ascending and a<b) or (not ascending and a>b))
+    return -1;
+  else
+    return +1;
+}
+
+// ========================================================================
 
 ExtremesTableModel::ExtremesTableModel(EditAccess_p eda)
   : mDA(eda)
@@ -49,7 +81,9 @@ ExtremesTableModel::~ExtremesTableModel()
 
 int ExtremesTableModel::rowCount(const QModelIndex&) const
 {
-  return mExtremes.size();
+  if (not mBuffer)
+    return 0;
+  return mBuffer->data().size();
 }
 
 int ExtremesTableModel::columnCount(const QModelIndex&) const
@@ -65,7 +99,9 @@ Qt::ItemFlags ExtremesTableModel::flags(const QModelIndex& /*index*/) const
 QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
 {
   try {
-    const ObsData_p& obs = mExtremes.at(index.row());
+    if (not mBuffer)
+      return QVariant();
+    const ObsData_p& obs = mBuffer->data().at(index.row());
     if (not obs)
       return QVariant();
 
@@ -139,31 +175,37 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE(LOGVAL(paramid) << LOGVAL(time));
 
-  ExtremesFilter_p ef(new ExtremesFilter(paramid, 20));
+  ExtremesFilter_p ef(new ExtremesFilter(paramid, N_EXTREMES));
   Sensor_s invalid;
   invalid.insert(Sensor());
-  mBuffer = boost::make_shared<TimeBuffer>(invalid, time, ef);
-  connect(mBuffer.get(), SIGNAL(bufferCompleted(const QString&)),
-      this, SLOT(onBufferCompleted(const QString&)));
+
+  const bool ascending = not ef->isMaximumSearch();
+  SortedBuffer::Ordering_p ordering = boost::make_shared<CorrectedOrdering>(ascending);
+  mBuffer = boost::make_shared<SortedBuffer>(ordering, invalid, time, ef);
+
+  connect(mBuffer.get(), SIGNAL(newDataBegin()),    this, SLOT(onBufferChangeBegin()));
+  connect(mBuffer.get(), SIGNAL(updateDataBegin()), this, SLOT(onBufferChangeBegin()));
+  connect(mBuffer.get(), SIGNAL(dropDataBegin()),   this, SLOT(onBufferChangeBegin()));
+  connect(mBuffer.get(), SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(onBufferChangeEnd()));
+  connect(mBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onBufferChangeEnd()));
+  connect(mBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onBufferChangeEnd()));
+
   mBuffer->postRequest(mDA);
 }
 
-void ExtremesTableModel::onBufferCompleted(const QString& withError)
+void ExtremesTableModel::onBufferChangeBegin()
 {
-  METLIBS_LOG_SCOPE(LOGVAL(withError));
-
   beginResetModel();
+}
 
-  const ObsData_ps_ST& data = mBuffer->data();
-  mExtremes = ObsData_pv(data.begin(), data.end());
-
-  METLIBS_LOG_DEBUG(LOGVAL(mExtremes.size()));
-
-  ExtremesFilter_p ef = boost::static_pointer_cast<ExtremesFilter>(mBuffer->request()->filter());
-  std::sort(mExtremes.begin(), mExtremes.end(), ObsData_by_Corrected(not ef->isMaximumSearch()));
-
-  METLIBS_LOG_DEBUG("dereferencing TimeBuffer");
-  mBuffer = TimeBuffer_p();
-
+void ExtremesTableModel::onBufferChangeEnd()
+{
   endResetModel();
+}
+
+ObsData_p ExtremesTableModel::getObs(int row) const
+{
+  if (not mBuffer)
+    return ObsData_p();
+  return mBuffer->data().at(row);
 }

@@ -103,6 +103,7 @@ SET(common_SOURCES
   SimpleRequest.hh
   SingleObsBuffer.cc
   SingleObsBuffer.hh
+  SortedBuffer.cc
   sqlutil.cc
   sqlutil.hh
   StationIdCompletion.cc

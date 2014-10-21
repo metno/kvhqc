@@ -37,9 +37,6 @@ public:
   ObsFilter_p filter() const
     { return request()->filter(); }
 
-  const ObsData_ps_ST& data() const
-    { return TimeBuffer::data(); }
-
 private:
   size_t mUseCount;
   Time mUnusedSince;
