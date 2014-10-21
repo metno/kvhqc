@@ -1,7 +1,7 @@
 
-#include "SensorChooserTest.hh"
+#include "SimpleCorrectionsTest.hh"
 
-#include "FakeKvApp.hh"
+#include "common/test/FakeKvApp.hh"
 
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
@@ -34,13 +34,14 @@ int main(int argc, char **argv)
 #endif
   
   QApplication qapp(argc, argv);
+  QDir::setSearchPaths("icons", QStringList(TOP_SOURCE_DIR "/share/images"));
 
   FakeKvApp fa(false); // no threading
   KvServiceHelper kvsh;
   KvMetaDataBuffer kvmdbuf;
   kvmdbuf.setHandler(fa.obsAccess()->handler());
 
-  EXEC_QTEST(TestSensorChooser);
+  EXEC_QTEST(TestSimpleCorrections);
 
   return 0;
 }

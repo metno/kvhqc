@@ -19,7 +19,7 @@ QT_END_NAMESPACE
 class SimpleCorrections : public QWidget
 { Q_OBJECT;
 public:
-  SimpleCorrections(QWidget* parent=0);
+  SimpleCorrections(EditAccess_p eda, ModelAccess_p mda, QWidget* parent=0);
   ~SimpleCorrections();
   
 public Q_SLOTS:
@@ -49,6 +49,7 @@ private Q_SLOTS:
 private:
   std::auto_ptr<Ui_SingleObservation> ui;
   EditAccess_p mDA;
+  ModelAccess_p mMA;
   ModelBuffer_p mModelBuffer;
   SingleObsBuffer_p mObsBuffer;
 

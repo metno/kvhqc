@@ -211,7 +211,7 @@ void SearchWindow::setupDataTabs()
   addTab(mStationData, tr("Ctrl+2", "Station data tab shortcut"));
 
 #ifdef ENABLE_SIMPLECORRECTIONS
-  mCorrections = new SimpleCorrections(mTabsData);
+  mCorrections = new SimpleCorrections(hqcApp->editAccess(), hqcApp->modelAccess(), mTabsData);
   connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
       mCorrections, SLOT(navigateTo(const SensorTime&)));
   addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));

@@ -14,7 +14,7 @@
 class DataHistoryTableModel : public QAbstractTableModel
 { Q_OBJECT;
 public:
-  DataHistoryTableModel(QObject* parent=0);
+  DataHistoryTableModel(QueryTaskHandler_p handler, QObject* parent=0);
   ~DataHistoryTableModel();
   
   int rowCount(const QModelIndex&) const;
@@ -34,7 +34,7 @@ private:
     { return mHistory; }
 
 private:
-  QueryTaskHandler_p mKvalobsHandler;
+  QueryTaskHandler_p mHandler;
   QueryTaskHelper *mTask;
   kvDataHistoryValues_v mHistory;
   Code2TextCPtr mCode2Text;

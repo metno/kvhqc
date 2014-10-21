@@ -2,7 +2,7 @@
 #ifndef COUNTINGBUFFER_HH
 #define COUNTINGBUFFER_HH 1
 
-#include "TimeBuffer.hh"
+#include "common/TimeBuffer.hh"
 #include "util/make_set.hh"
 
 class CountingBuffer : public TimeBuffer

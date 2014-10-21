@@ -4,6 +4,7 @@
 
 #include "ModelAccess.hh"
 #include "ModelData.hh"
+#include "QueryTaskHandler.hh"
 
 class ModelRequest;
 HQC_TYPEDEF_P(ModelRequest);
@@ -12,7 +13,7 @@ HQC_TYPEDEF_PV(ModelRequest);
 class KvalobsModelAccess : public QObject, public ModelAccess
 { Q_OBJECT;
 public:
-  KvalobsModelAccess();
+  KvalobsModelAccess(QueryTaskHandler_p handler);
   ~KvalobsModelAccess();
 
   void postRequest(ModelRequest_p request);
@@ -24,6 +25,7 @@ private Q_SLOTS:
   void modelData(const ModelData_pv&);
 
 private:
+  QueryTaskHandler_p mHandler;
   ModelRequest_pv mRequests;
 
   typedef std::map<SensorTime, ModelData_p, lt_ModelSensorTime> ModelDataCache_t;

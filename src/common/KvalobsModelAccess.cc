@@ -2,7 +2,6 @@
 #include "KvalobsModelAccess.hh"
 
 #include "DeleteTaskWhenDone.hh"
-#include "HqcApplication.hh"
 #include "ModelQueryTask.hh"
 #include "ModelRequest.hh"
 #include "QueryTaskHandler.hh"
@@ -11,7 +10,8 @@
 #define MILOGGER_CATEGORY "kvhqc.KvalobsModelAccess"
 #include "common/ObsLogging.hh"
 
-KvalobsModelAccess::KvalobsModelAccess()
+KvalobsModelAccess::KvalobsModelAccess(QueryTaskHandler_p handler)
+  : mHandler(handler)
 {
 }
 
@@ -60,7 +60,7 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
 
     QueryTaskHelper* helper = new QueryTaskHelper(task);
     request->setTag(helper);
-    helper->post(hqcApp->kvalobsHandler());
+    helper->post(mHandler);
   } else {
     request->notifyDone(QString());
   }

@@ -1,6 +1,6 @@
-#include "FakeKvApp.hh"
-#include "TestHelpers.hh"
-#include "KvalobsAccess.hh"
+#include "common/test/FakeKvApp.hh"
+#include "common/test/TestHelpers.hh"
+#include "common/KvalobsAccess.hh"
 inline TimeSpan t_18700_20141001()
     { return TimeSpan(s2t("2014-10-01 06:00:00"), s2t("2014-10-01 06:00:00")); }
 #ifdef LOAD_DECL_ONLY

@@ -36,9 +36,9 @@ const char* tooltips[NCOLUMNS] = {
 
 } // anonymous namespace
 
-DataHistoryTableModel::DataHistoryTableModel(QObject* parent)
+DataHistoryTableModel::DataHistoryTableModel(QueryTaskHandler_p handler, QObject* parent)
   : QAbstractTableModel(parent)
-  , mKvalobsHandler(hqcApp->kvalobsHandler())
+  , mHandler(handler)
   , mTask(0)
 {
 }
@@ -125,7 +125,7 @@ void DataHistoryTableModel::showHistory(const SensorTime& st)
     DataHistoryQueryTask* t = new DataHistoryQueryTask(st, QueryTask::PRIORITY_AUTOMATIC);
     mTask = new QueryTaskHelper(t);
     connect(mTask, SIGNAL(done(QueryTask*)), this, SLOT(onQueryDone(QueryTask*)));
-    mTask->post(mKvalobsHandler.get());
+    mTask->post(mHandler);
   }
 }
 

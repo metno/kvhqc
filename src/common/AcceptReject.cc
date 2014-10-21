@@ -23,6 +23,8 @@ int possibilities(ObsData_p obs)
   // fmis=1 => disable reject, all others enabled
   
   METLIBS_LOG_SCOPE();
+  if (not obs)
+    return CAN_CORRECT;
   
   const Sensor& s = obs->sensorTime().sensor;
   if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs))

@@ -55,9 +55,11 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
 #endif
     } else if (mColumnType == ObsColumn::ORIGINAL) {
       const int ui_2 = Helpers::extract_ui2(obs);
-      const QColor bg = hqcApp->userConfig()->dataOrigUI2Background(ui_2);
-      if (bg.isValid())
-        return QBrush(bg);
+      if (hqcApp) {
+        const QColor bg = hqcApp->userConfig()->dataOrigUI2Background(ui_2);
+        if (bg.isValid())
+          return QBrush(bg);
+      }
     }
   } else if (role == Qt::ForegroundRole) {
     // FIXME this is a hack, but the idea of having all non-numbers in dark gray is also mysterious

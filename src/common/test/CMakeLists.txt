@@ -42,16 +42,6 @@ ADD_LIBRARY(test_common
   ${test_common_MOC}
 )
 
-LINK_LIBRARIES(
-  test_common
-  common
-  util
-  ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBS_LIBRARIES}
-  ${SQLITE3_LIBRARY}
-  ${GTEST_LIBRARY}
-)
-
 ADD_EXECUTABLE(common_test
 #  DataListModelTest.cc
   EditAccessTest.cc
@@ -70,9 +60,21 @@ ADD_EXECUTABLE(common_test
 
   gtestMain.cc
 )
+TARGET_LINK_LIBRARIES(common_test
+  test_common
+  common
+  util
+  ${PC_KVCPP_LIBRARIES}
+  ${PC_METLIBS_LIBRARIES}
+  ${SQLITE3_LIBRARY}
+  ${GTEST_LIBRARY}
+)
+
 ADD_TEST(NAME common_test
   COMMAND common_test --gtest_color=yes
 )
+
+########################################################################
 
 QT4_WRAP_CPP(test_common_gui_MOC
   SensorChooserTest.hh
@@ -81,6 +83,15 @@ ADD_EXECUTABLE(common_gui_test
   SensorChooserTest.cc
   qtestMain.cc
   ${test_common_gui_MOC}
+)
+TARGET_LINK_LIBRARIES(common_gui_test
+  test_common
+  common
+  util
+  ${PC_KVCPP_LIBRARIES}
+  ${PC_METLIBS_LIBRARIES}
+  ${SQLITE3_LIBRARY}
+  ${QT_LIBRARIES}
 )
 
 ## do not include this test in "make check" to prevent problems when

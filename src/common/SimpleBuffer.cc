@@ -66,6 +66,7 @@ void SimpleBuffer::completed(const QString& withError)
 
 void SimpleBuffer::newData(const ObsData_pv& data)
 {
+  METLIBS_LOG_SCOPE();
   Q_EMIT newDataBegin();
   onNewData(data);
   Q_EMIT newDataEnd(data);

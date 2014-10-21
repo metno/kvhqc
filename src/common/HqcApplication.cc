@@ -88,7 +88,7 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   mKvalobsHandler = boost::make_shared<QueryTaskHandler>(kvalobsRunner, true);
   kda = boost::make_shared<KvalobsAccess>(mKvalobsHandler);
   cda = boost::make_shared<CachingAccess>(kda);
-  kma = boost::make_shared<KvalobsModelAccess>();
+  kma = boost::make_shared<KvalobsModelAccess>(mKvalobsHandler);
   eda = boost::make_shared<EditAccess>(cda);
   
   QObject::connect(KvServiceHelper::instance(), SIGNAL(kvalobsAvailable(bool)),
