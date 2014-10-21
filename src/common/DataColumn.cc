@@ -77,23 +77,28 @@ void DataColumn::onBufferCompleted(const QString&)
 
 void DataColumn::onNewDataEnd(const ObsData_pv& data)
 {
+  METLIBS_LOG_SCOPE();
+  if (not mRequestBusy)
+    onUpdateDataEnd(data);
 }
 
 void DataColumn::onUpdateDataEnd(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  BOOST_FOREACH(ObsData_p obs, data) {
-    Q_EMIT columnChanged(obs->sensorTime().time, shared_from_this());
-  }
+  for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it)
+    Q_EMIT columnChanged((*it)->sensorTime().time, shared_from_this());
+}
+
+void DataColumn::onDropDataEnd(const SensorTime_v& dropped)
+{
+  METLIBS_LOG_SCOPE();
+  for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it)
+    Q_EMIT columnChanged(it->time, shared_from_this());
 }
 
 Time_s DataColumn::times() const
 {
   return mBuffer->times();
-}
-
-void DataColumn::onDropDataEnd(const SensorTime_v& dropped)
-{
 }
 
 ObsData_p DataColumn::getObs(const Time& time) const
