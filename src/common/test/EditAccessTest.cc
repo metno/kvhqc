@@ -2,7 +2,6 @@
 #include "CachingAccess.hh"
 #include "CountingBuffer.hh"
 #include "EditAccess.hh"
-#include "SingleObsBuffer.hh"
 #include "SqliteAccess.hh"
 
 #include "Functors.hh"

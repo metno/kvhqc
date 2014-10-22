@@ -60,8 +60,12 @@ private Q_SLOTS:
   void onBufferChangeEnd();
 
 private:
+  void updateCountShown();
+
+private:
   EditAccess_p mDA;
   SortedBuffer_p mBuffer;
+  int mCountShown;
 };
 
 #endif

@@ -73,16 +73,16 @@ void SortedBuffer::onNewData(const ObsData_pv& data)
 void SortedBuffer::onUpdateData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  bool changed = false;
   for (ObsData_pv::const_iterator itD = data.begin(); itD != data.end(); ++itD) {
-    const ObsData_pv::iterator it = findUnsorted((*itD)->sensorTime());
-    if (it != mData.end()) {
-      *it = *itD;
-      changed = true;
-    }
+    ObsData_p du = *itD;
+    METLIBS_LOG_DEBUG(LOGVAL(du->sensorTime()) << LOGVAL(du->corrected()));
+    const ObsData_pv::iterator it = findUnsorted(du->sensorTime());
+    if (it != mData.end())
+      *it = du;
+    else
+      mData.push_back(*itD);
   }
-  if (changed)
-    sort();
+  sort();
 }
 
 void SortedBuffer::onDropData(const SensorTime_v& dropped)

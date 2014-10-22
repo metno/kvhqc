@@ -72,6 +72,7 @@ int ExtremesTableModel::CorrectedOrdering::compareCorrected(float a, float b) co
 
 ExtremesTableModel::ExtremesTableModel(EditAccess_p eda)
   : mDA(eda)
+  , mCountShown(0)
 {
 }
 
@@ -83,7 +84,7 @@ int ExtremesTableModel::rowCount(const QModelIndex&) const
 {
   if (not mBuffer)
     return 0;
-  return mBuffer->data().size();
+  return std::min(mCountShown, (int)mBuffer->data().size());
 }
 
 int ExtremesTableModel::columnCount(const QModelIndex&) const
@@ -175,7 +176,7 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
 {
   METLIBS_LOG_SCOPE(LOGVAL(paramid) << LOGVAL(time));
 
-  ExtremesFilter_p ef(new ExtremesFilter(paramid, N_EXTREMES));
+  ExtremesFilter_p ef(new ExtremesFilter(paramid, 2*N_EXTREMES));
   Sensor_s invalid;
   invalid.insert(Sensor());
 
@@ -200,7 +201,28 @@ void ExtremesTableModel::onBufferChangeBegin()
 
 void ExtremesTableModel::onBufferChangeEnd()
 {
+  updateCountShown();
   endResetModel();
+}
+
+void ExtremesTableModel::updateCountShown()
+{
+  METLIBS_LOG_SCOPE();
+  int different = 0, buffered = (int)mBuffer->data().size();
+#if 0
+  mCountShown = 0;
+  while (mCountShown < buffered and different < N_EXTREMES) {
+    const float value = mBuffer->data().at(mCountShown)->corrected();
+    different += 1;
+    mCountShown += 1;
+    while (mCountShown < buffered
+        and value == mBuffer->data().at(mCountShown)->corrected())
+      mCountShown += 1;
+  }
+  METLIBS_LOG_DEBUG(LOGVAL(mCountShown) << LOGVAL(different));
+#else
+  mCountShown = buffered;
+#endif
 }
 
 ObsData_p ExtremesTableModel::getObs(int row) const

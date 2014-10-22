@@ -7,6 +7,7 @@
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
+#include "common/SingleObsBuffer.hh"
 #include "common/TimeBuffer.hh"
 
 #include "util/Synchronizer.hh"
@@ -128,8 +129,7 @@ TEST(ExtremesTest, TableModel)
   EXPECT_EQ(34, tm.rowCount(QModelIndex()));
 }
 
-
-TEST(ExtremesTest, TableModelUpdate)
+TEST(ExtremesTest, TableModelUpdateTAX)
 {
   FakeKvApp fa(true); // with threading
   KvServiceHelper kvsh;
@@ -139,12 +139,8 @@ TEST(ExtremesTest, TableModelUpdate)
   load_17000_20141002(fa);
   KvMetaDataBuffer::instance()->reload();
 
-#if 1
   CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
   EditAccess_p edit(new EditAccess(cache));
-#else
-  EditAccess_p edit(new EditAccess(fa.obsAccess()));
-#endif
 
   Synchronizer sync;
   ExtremesTableModel tm(edit);
@@ -196,3 +192,186 @@ TEST(ExtremesTest, TableModelUpdate)
     EXPECT_FLOAT_EQ(16.8, obs0->corrected());
   }
 }
+
+#if 0
+// these tests are more like a wish-list right now
+TEST(ExtremesTest, TableModelUpdateTAN)
+{
+  FakeKvApp fa(true); // with threading
+  KvServiceHelper kvsh;
+  KvMetaDataBuffer kvmdbuf;
+  kvmdbuf.setHandler(fa.obsAccess()->handler());
+
+  load_17000_20141002(fa);
+  KvMetaDataBuffer::instance()->reload();
+
+  EditAccess_p edit(new EditAccess(fa.obsAccess()));
+
+  Synchronizer sync;
+  ExtremesTableModel tm(edit);
+  QObject::connect(&tm, SIGNAL(modelReset()), &sync, SLOT(taskDone()));
+  tm.search(kvalobs::PARAMID_TAN, t_17000_20141002());
+  sync.waitForSignal();
+
+  const int NROWS = 23;
+  ASSERT_EQ(NROWS, tm.rowCount(QModelIndex()));
+
+  const SensorTime st0(Sensor(17380, 213, 0, 0, 502), s2t("2014-10-01 06:00:00"));
+  const SensorTime st1(Sensor(18500, 214, 0, 0, 342), s2t("2014-10-01 06:00:00"));
+  const SensorTime st2(Sensor(17280, 211, 0, 0, 330), s2t("2014-10-01 06:00:00"));
+  const float newC = 0.0;
+
+  { ObsData_p obs0 = tm.getObs(0);
+    ASSERT_TRUE(obs0);
+    EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime()));
+    EXPECT_FLOAT_EQ(1.2, obs0->corrected());
+  }
+
+  // check that st2 does not appear in model
+  for (int i=0; i<tm.rowCount(QModelIndex()); ++i)
+    EXPECT_FALSE(eq_SensorTime()(st2, tm.getObs(i)->sensorTime())) << "found at row " << i;
+  
+  // fetch st2 into singleobsbuffer
+  SingleObsBuffer_p buf2(new SingleObsBuffer(st2));
+  buf2->syncRequest(edit);
+  ObsData_p obs2 = buf2->get();
+  ASSERT_TRUE(obs2);
+
+  // update st2 to corr=newC
+  { edit->newVersion();
+    ObsUpdate_pv updates;
+    
+    ObsUpdate_p up = edit->createUpdate(obs2);
+    ASSERT_TRUE(up);
+    
+    up->setCorrected(newC);
+    updates.push_back(up);
+    EXPECT_TRUE(edit->storeUpdates(updates));
+  }
+
+  // check that st2 comes first in extremes value model
+  ASSERT_LE(1, tm.rowCount(QModelIndex()));
+  EXPECT_TRUE(eq_SensorTime()(st2, tm.getObs(0)->sensorTime()));
+
+  // undo change of corrected value
+  edit->undoVersion();
+
+  // check that st2 does not appear in model any more
+  for (int i=0; i<tm.rowCount(QModelIndex()); ++i)
+    EXPECT_FALSE(eq_SensorTime()(st2, tm.getObs(i)->sensorTime())) << "found at row " << i;
+}
+
+TEST(ExtremesTest, TableModelAfterEditLow)
+{
+  FakeKvApp fa(true); // with threading
+  KvServiceHelper kvsh;
+  KvMetaDataBuffer kvmdbuf;
+  kvmdbuf.setHandler(fa.obsAccess()->handler());
+
+  load_17000_20141002(fa);
+  KvMetaDataBuffer::instance()->reload();
+
+  EditAccess_p edit(new EditAccess(fa.obsAccess()));
+
+  const SensorTime st0(Sensor(17380, 213, 0, 0, 502), s2t("2014-10-01 06:00:00"));
+  const SensorTime st1(Sensor(18500, 214, 0, 0, 342), s2t("2014-10-01 06:00:00"));
+  const SensorTime st2(Sensor(17280, 211, 0, 0, 330), s2t("2014-10-01 06:00:00"));
+  const float newC = -25.0; // lower than TAN
+
+  // fetch st2 into singleobsbuffer
+  SingleObsBuffer_p buf2(new SingleObsBuffer(st2));
+  buf2->syncRequest(edit);
+  ObsData_p obs2 = buf2->get();
+  ASSERT_TRUE(obs2);
+
+  // update st2 to corr=newC
+  { edit->newVersion();
+    ObsUpdate_pv updates;
+    
+    ObsUpdate_p up = edit->createUpdate(obs2);
+    ASSERT_TRUE(up);
+    
+    up->setCorrected(newC);
+    updates.push_back(up);
+    EXPECT_TRUE(edit->storeUpdates(updates));
+  }
+
+  Synchronizer sync;
+  ExtremesTableModel tm(edit);
+  QObject::connect(&tm, SIGNAL(modelReset()), &sync, SLOT(taskDone()));
+  tm.search(kvalobs::PARAMID_TAN, t_17000_20141002());
+  sync.waitForSignal();
+
+  const int NROWS = 23;
+  ASSERT_EQ(NROWS, tm.rowCount(QModelIndex()));
+
+  { ObsData_p obs0 = tm.getObs(0);
+    ASSERT_TRUE(obs0);
+    EXPECT_TRUE(eq_SensorTime()(st2, obs0->sensorTime())) << "expected st2, got " << obs0->sensorTime();
+    EXPECT_FLOAT_EQ(newC, obs0->corrected());
+  }
+
+  // undo change of corrected value
+  edit->undoVersion();
+
+  // check that st2 does not appear in model any more
+  for (int i=0; i<tm.rowCount(QModelIndex()); ++i)
+    EXPECT_FALSE(eq_SensorTime()(st2, tm.getObs(i)->sensorTime())) << "found at row " << i;
+}
+
+TEST(ExtremesTest, TableModelAfterEditHigh)
+{
+  FakeKvApp fa(true); // with threading
+  KvServiceHelper kvsh;
+  KvMetaDataBuffer kvmdbuf;
+  kvmdbuf.setHandler(fa.obsAccess()->handler());
+
+  load_17000_20141002(fa);
+  KvMetaDataBuffer::instance()->reload();
+
+  EditAccess_p edit(new EditAccess(fa.obsAccess()));
+
+  const SensorTime st0(Sensor(17380, 213, 0, 0, 502), s2t("2014-10-01 06:00:00"));
+  const SensorTime st1(Sensor(18500, 214, 0, 0, 342), s2t("2014-10-01 06:00:00"));
+  const SensorTime st2(Sensor(17280, 211, 0, 0, 330), s2t("2014-10-01 06:00:00"));
+  const float newC = 25.0; // higher than TAX, see above
+
+  // fetch st2 into singleobsbuffer
+  SingleObsBuffer_p buf2(new SingleObsBuffer(st2));
+  buf2->syncRequest(edit);
+  ObsData_p obs2 = buf2->get();
+  ASSERT_TRUE(obs2);
+
+  // update st2 to corr=newC
+  { edit->newVersion();
+    ObsUpdate_pv updates;
+    
+    ObsUpdate_p up = edit->createUpdate(obs2);
+    ASSERT_TRUE(up);
+    
+    up->setCorrected(newC);
+    updates.push_back(up);
+    EXPECT_TRUE(edit->storeUpdates(updates));
+  }
+
+  Synchronizer sync;
+  ExtremesTableModel tm(edit);
+  QObject::connect(&tm, SIGNAL(modelReset()), &sync, SLOT(taskDone()));
+  tm.search(kvalobs::PARAMID_TAN, t_17000_20141002());
+  sync.waitForSignal();
+
+  const int NROWS = 23;
+  ASSERT_EQ(NROWS, tm.rowCount(QModelIndex()));
+
+  { ObsData_p obs0 = tm.getObs(0);
+    ASSERT_TRUE(obs0);
+    EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime())) << "expected st0, got " << obs0->sensorTime();
+    EXPECT_FLOAT_EQ(1.2, obs0->corrected());
+  }
+
+  // check that st2 does not appear in model
+  for (int i=0; i<tm.rowCount(QModelIndex()); ++i)
+    //EXPECT_FALSE(eq_SensorTime()(st2, tm.getObs(i)->sensorTime())) << "found at row " << i;
+    EXPECT_FALSE(1) << " st=" << tm.getObs(i)->sensorTime() << " c=" << tm.getObs(i)->corrected();
+}
+#endif
