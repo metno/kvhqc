@@ -2,6 +2,7 @@
 #ifndef EXTREMESFILTER_HH
 #define EXTREMESFILTER_HH 1
 
+#include "common/KvTypedefs.hh"
 #include "common/ObsFilter.hh"
 
 class ExtremesFilter : public ObsFilter
@@ -29,7 +30,7 @@ private:
   int mParamId;
   int mExtremesCount;
 
-  QString mParamIds;
+  hqc::int_s mParamIds;
   bool mFindMaximum;
 };
 

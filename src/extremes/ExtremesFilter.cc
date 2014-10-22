@@ -28,21 +28,24 @@ ExtremesFilter::ExtremesFilter(int paramid, int nExtremes)
   , mFindMaximum(true)
 
 {
+  mParamIds.insert(mParamId);
   if (mParamId == kvalobs::PARAMID_TAN) {
     // TA, TAN, TAN_12
-    mParamIds = "211,213,214";
+    mParamIds.insert(kvalobs::PARAMID_TA);
+    mParamIds.insert(kvalobs::PARAMID_TAN_12);
     mFindMaximum = false;
   } else if (mParamId == kvalobs::PARAMID_TAX) {
     // TA, TAX, TAX_12
-    mParamIds = "211,215,216";
+    mParamIds.insert(kvalobs::PARAMID_TA);
+    mParamIds.insert(kvalobs::PARAMID_TAX_12);
   } else if (mParamId == kvalobs::PARAMID_FG) {
     // FG, FG_010, FG_1, FG_6, FG_12, FG_X
-    mParamIds = "83,84,90,91,92,94";
+    const int np=5, p[np] = { 84,90,91,92,94 };
+    mParamIds.insert(p, p+np);
   } else if (mParamId == kvalobs::PARAMID_FX) {
     // FX, FX_1, FX_6, FX_12, FX_X, FX_3
-    mParamIds = "86,87,88,89,93,95";
-  } else {
-    mParamIds = QString::number(mParamId);
+    const int np=5, p[np] = { 87,88,89,93,95 };
+    mParamIds.insert(p, p+np);
   }
 }
 
@@ -82,7 +85,7 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString& d, const TimeSpan
   if (not excludedIds.isEmpty())
     sql += " AND dd.stationid NOT IN (" + excludedIds + ")";
 
-  sql += "   AND dd.paramid IN (" + mParamIds + ")"
+  sql += "   AND " + set2sql("dd.paramid", mParamIds) +
       "   AND " + exists_in_obspgm("dd.") +
       "   AND (substr(dd.useinfo,3,1) IN ('0','1','2')"
       "        OR (substr(dd.useinfo,3,1) = '3' AND dd.original = dd.corrected))"
@@ -105,7 +108,7 @@ QString ExtremesFilter::acceptingSql(const QString& d, const TimeSpan&) const
 {
   QString sql = d + "stationid = ex.s"
       " AND " + d + "corrected = ex.c"
-      " AND " + d + "paramid IN (" + mParamIds + ")"
+      " AND " + set2sql(d + "paramid", mParamIds) +
       " AND " + exists_in_obspgm(d) +
       " ORDER BY " + d + "corrected " + (mFindMaximum ? "DESC" : "ASC") + ", " + d + "stationid, " + d + "obstime";
   return sql;
@@ -124,5 +127,7 @@ bool ExtremesFilter::subsetOf(ObsFilter_p other) const
 
 bool ExtremesFilter::accept(ObsData_p obs, bool afterSQL) const
 {
-  return true;
+  if (afterSQL or mParamIds.count(obs->sensorTime().sensor.paramId))
+    return true;
+  return false;
 }
