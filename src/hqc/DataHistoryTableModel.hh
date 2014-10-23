@@ -6,10 +6,11 @@
 #include "common/Code2Text.hh"
 #include "common/kvDataHistoryValues.hh"
 #include "common/QueryTaskHandler.hh"
-#include "common/QueryTaskHelper.hh"
 #include "common/Sensor.hh"
 
 #include <QtCore/QAbstractTableModel>
+
+class DataHistoryQueryTask;
 
 class DataHistoryTableModel : public QAbstractTableModel
 { Q_OBJECT;
@@ -26,7 +27,7 @@ public:
   void showHistory(const SensorTime& st);
 
 private Q_SLOTS:
-  void onQueryDone(QueryTask* task);
+  void onTaskDone(const QString&);
 
 private:
   void dropTask();
@@ -35,7 +36,7 @@ private:
 
 private:
   QueryTaskHandler_p mHandler;
-  QueryTaskHelper *mTask;
+  DataHistoryQueryTask *mTask;
   kvDataHistoryValues_v mHistory;
   Code2TextCPtr mCode2Text;
 };

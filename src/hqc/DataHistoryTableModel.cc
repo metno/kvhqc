@@ -122,24 +122,32 @@ void DataHistoryTableModel::showHistory(const SensorTime& st)
     endResetModel();
   } else {
     mCode2Text = ColumnFactory::codesForParam(st.sensor.paramId);
-    DataHistoryQueryTask* t = new DataHistoryQueryTask(st, QueryTask::PRIORITY_AUTOMATIC);
-    mTask = new QueryTaskHelper(t);
-    connect(mTask, SIGNAL(done(QueryTask*)), this, SLOT(onQueryDone(QueryTask*)));
-    mTask->post(mHandler);
+    mTask = new DataHistoryQueryTask(st, QueryTask::PRIORITY_AUTOMATIC);
+    connect(mTask, SIGNAL(taskDone(const QString&)), this, SLOT(onTaskDone(const QString&)));
+    mHandler->postTask(mTask);
   }
 }
 
-void DataHistoryTableModel::onQueryDone(QueryTask* task)
+void DataHistoryTableModel::onTaskDone(const QString&)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_SCOPE(LOGVAL(mTask));
   beginResetModel();
-  mHistory = static_cast<DataHistoryQueryTask*>(task)->history();
+  if (mTask)
+    mHistory = mTask->history();
+  else
+    mHistory.clear();
+  METLIBS_LOG_DEBUG(LOGVAL(mHistory.size()));
   endResetModel();
   dropTask();
 }
 
 void DataHistoryTableModel::dropTask()
 {
-  delete mTask;
-  mTask = 0;
+  METLIBS_LOG_SCOPE();
+  if (mTask) {
+    mHandler->dropTask(mTask);
+    mTask->deleteWhenDone();
+    disconnect(mTask, SIGNAL(taskDone(const QString&)), this, SLOT(onTaskDone(const QString&)));
+    mTask = 0;
+  }
 }
