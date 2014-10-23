@@ -3,6 +3,8 @@
 #define QUERYTASK_HH 1
 
 #include "util/boostutil.hh"
+
+#include <QMutex>
 #include <QString>
 #include <QVariant>
 
@@ -18,12 +20,19 @@ public:
 
 // ========================================================================
 
-/*! Observation data request. */
-class QueryTask : public QObject
+/*! SQL query to be processed via QueryTaskHandler.
+ *
+ * It is actually less basic than could be possible: only querySql,
+ * notifyRow, and notifyDone are used by QueryTaskHandler. The rest is
+ * convenience and could be moved to subclasses.
+ *
+ * Plans: add sequence number to querySql, notifyRow, notifyDone?
+ */
+class BasicSQLTask : public QObject
 { Q_OBJECT;
 public:
-  QueryTask(size_t priority);
-  virtual ~QueryTask();
+  BasicSQLTask();
+  virtual ~BasicSQLTask();
   
   virtual QString querySql(QString dbversion) const = 0;
 
@@ -40,11 +49,33 @@ public:
    */
   virtual void notifyDone(const QString& withError);
 
+  void deleteWhenDone();
+
   /*! \return the "amount of work remaining".
    */
   virtual int remaining()
     { return 1; }
 
+Q_SIGNALS:
+  void taskDone(const QString& withError);
+  void taskRemaining(int before, int now);
+
+private:
+  QMutex mMutex;
+  bool mDone, mDeleteWhenDone;
+};
+
+HQC_TYPEDEF_X(BasicSQLTask);
+
+// ========================================================================
+
+/*! Observation data request. */
+class QueryTask : public BasicSQLTask
+{
+public:
+  QueryTask(size_t priority)
+    : mPriority(priority) { }
+  
   enum {
     PRIORITY_AUTOMATIC = 20,
     PRIORITY_SEARCH = 50,
@@ -54,10 +85,6 @@ public:
 
   size_t priority() const
     { return mPriority; }
-
-Q_SIGNALS:
-  void taskDone(const QString& withError);
-  void taskRemaining(int before, int now);
 
 private:
   size_t mPriority;

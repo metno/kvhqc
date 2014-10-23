@@ -28,10 +28,10 @@ void DeleteTaskWhenDone::doDelete()
 {
   METLIBS_LOG_SCOPE();
   if (mTask) {
-    delete mTask;//->deleteLater();
+    mTask->deleteLater();
     mTask = 0;
   }
-  delete this;//Later();
+  deleteLater();
 }
 
 void DeleteTaskWhenDone::onTaskDone(const QString&)
