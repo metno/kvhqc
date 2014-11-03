@@ -34,7 +34,9 @@ public:
   bool isCodeParam(int paramId);
   bool isDirectionInDegreesParam(int paramId);
   bool isModelParam(int paramId);
-  bool checkPhysicalLimits(int paramid, float value);
+
+  enum ParamLimit { Ok, OutsideHighLow, OutsideMinMax };
+  ParamLimit checkPhysicalLimits(const SensorTime& st, float value);
 
   bool isKnownType(int id);
   const kvalobs::kvTypes& findType(int id);
@@ -78,8 +80,6 @@ private:
   std::list<kvalobs::kvTypes> mTypes;
 
   std::set<int> mCodeParams;
-  typedef std::map<int, std::pair<float, float> > ParamLimits_t;
-  ParamLimits_t mParamLimits;
 
   typedef std::map<int, ObsPgmList> ObsPgms_t;
   ObsPgms_t mObsPgms;

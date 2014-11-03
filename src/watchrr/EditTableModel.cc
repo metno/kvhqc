@@ -102,7 +102,7 @@ bool EditTableModel::setData(const QModelIndex& index, const QVariant& value, in
   if( column == RR_24_new ) {
     try {
       const float rrNew = mRR24Codes->fromText(value.toString());
-      if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(kvalobs::PARAMID_RR_24, rrNew))
+      if (KvMetaDataBuffer::instance()->checkPhysicalLimits(SensorTime(mSensor, timeAtRow(index.row())), rrNew) == KvMetaDataBuffer::OutsideMinMax)
         return false;
 
       const float rrOld = mNewValues.at(row);

@@ -8,6 +8,8 @@
 #include "util/gui/BusyIndicator.hh"
 
 #include <puTools/miStringBuilder.h>
+#include <kvcpp/KvApp.h>
+#include <kvalobs/kvStationParam.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QVariant>
@@ -130,25 +132,79 @@ bool KvMetaDataBuffer::isModelParam(int paramid)
   return std::binary_search(modelParam, boost::end(modelParam), paramid);
 }
 
-bool KvMetaDataBuffer::checkPhysicalLimits(int paramid, float value)
+KvMetaDataBuffer::ParamLimit KvMetaDataBuffer::checkPhysicalLimits(const SensorTime& st, float value)
 {
-  if (value == -32767 or value == -32766)
-    return true;
+  if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
+    return Ok;
+          
+  float param_max = 0, param_high = 0, param_low = 0, param_min = 0;
+  bool have_max = 0, have_high = 0, have_low = 0, have_min = 0;
 
-  if (hqcApp) {
-    QSqlQuery query(hqcApp->systemDB());
-    query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
-    query.bindValue(0, paramid);
-    query.exec();
-    if (query.next()) {
-      const float low = query.value(0).toFloat(), high = query.value(1).toFloat();
-      METLIBS_LOG_DEBUG(LOGVAL(paramid) << LOGVAL(low) << LOGVAL(value) << LOGVAL(high));
-      return (low <= value and high >= value);
+  QString metadata;
+  if (kvservice::KvApp::kvApp) {
+    const int day  = st.time.date().day_of_year();
+    const int hour = st.time.time_of_day().hours();
+    std::list<kvalobs::kvStationParam> stParam;
+    if (kvservice::KvApp::kvApp->getKvStationParam(stParam, st.sensor.stationId, st.sensor.paramId, day)) {
+      timeutil::ptime recent;
+      for (std::list<kvalobs::kvStationParam>::const_iterator it = stParam.begin(); it != stParam.end(); ++it) {
+        if ((it->hour() == hour or it->hour() == -1)
+            and it->sensor() == st.sensor.sensor
+            and it->level() == st.sensor.level
+            and st.time >= it->fromtime()
+            and (recent.is_not_a_date_time() or it->fromtime() > recent))
+        {
+          metadata = QString::fromStdString(it->metadata());
+          recent = it->fromtime();
+        }
+      }
+    }
+  }
+  if (not metadata.isNull()) {
+    const QStringList lines = metadata.split(QChar('\n'));
+    if (lines.length() == 2) {
+      const QStringList keys = lines.at(0).split(QChar(';'));
+      const QStringList values = lines.at(1).split(QChar(';'));
+      if (keys.length() == values.length()) {
+        for (int i=0; i<keys.length(); ++i) {
+          if (keys.at(i) == "max") {
+            param_max = values.at(i).toFloat();
+            have_max = true;
+          } else if (keys.at(i) == "min") {
+            param_min = values.at(i).toFloat();
+            have_min = true;
+          } else if (keys.at(i) == "high") {
+            param_high = values.at(i).toFloat();
+            have_high = true;
+          } else if (keys.at(i) == "low") {
+            param_low = values.at(i).toFloat();
+            have_low = true;
+          }
+        }
+      }
     }
   }
 
-  METLIBS_LOG_DEBUG("no limits for paramid " << paramid);
-  return true;
+  if (not (have_max and have_min) and hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
+    query.bindValue(0, st.sensor.paramId);
+    query.exec();
+    if (query.next()) {
+      param_min = query.value(0).toFloat();
+      param_max = query.value(1).toFloat();
+      have_max = have_min = true;
+      have_high = have_low = false;
+    }
+  }
+
+  if ((have_max and value > param_max) or (have_min and value < param_min))
+    return OutsideMinMax;
+
+  if ((have_high and value > param_high) or (have_low and value < param_low))
+    return OutsideHighLow;
+
+  return Ok;
 }
 
 bool KvMetaDataBuffer::isKnownType(int id)
