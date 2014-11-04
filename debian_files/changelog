@@ -1,3 +1,9 @@
+kvhqc (3.4.12-1) unstable; urgency=low
+
+  * fetch param limits from station_param table, ignoring all with hour != -1
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 04 Nov 2014 10:01:07 +0100
+
 kvhqc (3.4.11-1) unstable; urgency=low
 
   * TimeSeriesView: change symbol more often
