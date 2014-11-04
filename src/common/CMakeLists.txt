@@ -5,6 +5,7 @@ SET(common_SOURCES
   AnalyseErrors.cc
   AnalyseFCC.cc
   AnalyseRR24.cc
+  CachedParamLimits.cc
   Code2Text.cc
   ColumnFactory.cc
   DataCodeItem.cc

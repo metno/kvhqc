@@ -2,6 +2,7 @@
 #ifndef KVMETADATABUFFER_HH
 #define KVMETADATABUFFER_HH 1
 
+#include "CachedParamLimits.hh"
 #include "Sensor.hh"
 
 #include <kvalobs/kvObsPgm.h>
@@ -35,8 +36,7 @@ public:
   bool isDirectionInDegreesParam(int paramId);
   bool isModelParam(int paramId);
 
-  enum ParamLimit { Ok, OutsideHighLow, OutsideMinMax };
-  ParamLimit checkPhysicalLimits(const SensorTime& st, float value);
+  CachedParamLimits::ParamLimit checkPhysicalLimits(const SensorTime& st, float value);
 
   bool isKnownType(int id);
   const kvalobs::kvTypes& findType(int id);
@@ -80,18 +80,6 @@ private:
   std::list<kvalobs::kvTypes> mTypes;
 
   std::set<int> mCodeParams;
-
-  struct CachedParamLimits {
-    Sensor sensor;
-    timeutil::ptime fromtime, totime;
-    float param_max, param_high, param_low, param_min;
-    bool have_max, have_high, have_low, have_min;
-
-    CachedParamLimits()
-      { reset(); }
-    void reset(const Sensor& s = Sensor())
-      { sensor = s; have_max = have_high = have_low = have_min = false; fromtime = totime = timeutil::ptime(); }
-  };
   CachedParamLimits mCachedParamLimits;
 
   typedef std::map<int, ObsPgmList> ObsPgms_t;

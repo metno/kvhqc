@@ -8,8 +8,6 @@
 #include "util/gui/BusyIndicator.hh"
 
 #include <puTools/miStringBuilder.h>
-#include <kvcpp/KvApp.h>
-#include <kvalobs/kvStationParam.h>
 
 #include <QtCore/QCoreApplication>
 #include <QtCore/QVariant>
@@ -131,93 +129,9 @@ bool KvMetaDataBuffer::isModelParam(int paramid)
   return std::binary_search(modelParam, boost::end(modelParam), paramid);
 }
 
-KvMetaDataBuffer::ParamLimit KvMetaDataBuffer::checkPhysicalLimits(const SensorTime& st, float value)
+CachedParamLimits::ParamLimit KvMetaDataBuffer::checkPhysicalLimits(const SensorTime& st, float value)
 {
-  if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
-    return Ok;
-
-  if (not mCachedParamLimits.sensor.valid() or not eq_Sensor()(st.sensor, mCachedParamLimits.sensor)
-      or mCachedParamLimits.fromtime.is_not_a_date_time()
-      or st.time < mCachedParamLimits.fromtime
-      or (not mCachedParamLimits.totime.is_not_a_date_time() and st.time >= mCachedParamLimits.totime))
-  {
-    mCachedParamLimits.reset(st.sensor);
-
-    QString metadata;
-    if (kvservice::KvApp::kvApp) {
-      const int day  = st.time.date().day_of_year();
-      std::list<kvalobs::kvStationParam> stParam;
-      if (kvservice::KvApp::kvApp->getKvStationParam(stParam, st.sensor.stationId, st.sensor.paramId, day)) {
-        for (std::list<kvalobs::kvStationParam>::const_iterator it = stParam.begin(); it != stParam.end(); ++it) {
-          if (it->hour() != -1) {
-            HQC_LOG_ERROR("station_param.hour != -1 for " << st.sensor << ", ignored");
-            continue;
-          }
-          if (it->sensor() == st.sensor.sensor and it->level() == st.sensor.level) {
-            if (it->fromtime() <= st.time
-                and (mCachedParamLimits.fromtime.is_not_a_date_time()
-                    or mCachedParamLimits.fromtime < it->fromtime()))
-            {
-              metadata = QString::fromStdString(it->metadata());
-              mCachedParamLimits.fromtime = it->fromtime();
-            }
-            if (it->fromtime() > st.time
-                and (mCachedParamLimits.totime.is_not_a_date_time() or mCachedParamLimits.totime > it->fromtime()))
-            {
-              mCachedParamLimits.totime = it->fromtime();
-            }
-          }
-        }
-      }
-    }
-    if (not metadata.isNull()) {
-      const QStringList lines = metadata.split(QChar('\n'));
-      if (lines.length() == 2) {
-        const QStringList keys = lines.at(0).split(QChar(';'));
-        const QStringList values = lines.at(1).split(QChar(';'));
-        if (keys.length() == values.length()) {
-          for (int i=0; i<keys.length(); ++i) {
-            if (keys.at(i) == "max") {
-              mCachedParamLimits.param_max = values.at(i).toFloat();
-              mCachedParamLimits.have_max = true;
-            } else if (keys.at(i) == "min") {
-              mCachedParamLimits.param_min = values.at(i).toFloat();
-              mCachedParamLimits.have_min = true;
-            } else if (keys.at(i) == "high") {
-              mCachedParamLimits.param_high = values.at(i).toFloat();
-              mCachedParamLimits.have_high = true;
-            } else if (keys.at(i) == "low") {
-              mCachedParamLimits.param_low = values.at(i).toFloat();
-              mCachedParamLimits.have_low = true;
-            }
-          }
-        }
-      }
-    }
-  }
-
-  if (not (mCachedParamLimits.have_max and mCachedParamLimits.have_min) and hqcApp) {
-    QSqlQuery query(hqcApp->systemDB());
-    query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
-    query.bindValue(0, st.sensor.paramId);
-    query.exec();
-    if (query.next()) {
-      mCachedParamLimits.param_min = query.value(0).toFloat();
-      mCachedParamLimits.param_max = query.value(1).toFloat();
-      mCachedParamLimits.have_max  = mCachedParamLimits.have_min = true;
-      mCachedParamLimits.have_high = mCachedParamLimits.have_low = false;
-    }
-  }
-
-  if ((mCachedParamLimits.have_max and value > mCachedParamLimits.param_max)
-      or (mCachedParamLimits.have_min and value < mCachedParamLimits.param_min))
-    return OutsideMinMax;
-
-  if ((mCachedParamLimits.have_high and value > mCachedParamLimits.param_high)
-      or (mCachedParamLimits.have_low and value < mCachedParamLimits.param_low))
-    return OutsideHighLow;
-
-  return Ok;
+  return mCachedParamLimits.check(st, value);
 }
 
 bool KvMetaDataBuffer::isKnownType(int id)

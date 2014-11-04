@@ -550,7 +550,7 @@ void TimeSeriesView::updatePlot()
         if (value <= kvalobs::REJECTED)
           continue;
         value = Helpers::numericalValue(sensor, value);
-        if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, value) == KvMetaDataBuffer::OutsideMinMax)
+        if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, value) == CachedParamLimits::OutsideMinMax)
           continue;
       }
 

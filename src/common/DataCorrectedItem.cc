@@ -41,7 +41,7 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
     const bool reject = (newC == kvalobs::REJECTED);
     if (reject and not obs)
       return false;
-    if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, newC) == KvMetaDataBuffer::OutsideMinMax)
+    if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, newC) == CachedParamLimits::OutsideMinMax)
       return false;
     
     da->newVersion();
