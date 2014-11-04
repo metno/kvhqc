@@ -109,6 +109,7 @@ SET(common_SOURCES
   StationIdCompletion.cc
   StationIdModel.cc
   StationInfoBuffer.cc
+  StationParamSQLTask.cc
   StationQueryTask.cc
   StInfoSysBuffer.cc
   SyncRequest.cc

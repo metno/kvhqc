@@ -57,8 +57,7 @@ public:
   bool isComplete() const
     { return (mHaveStations and mHaveParams and mHaveTypes); }
 
-  void setHandler(QueryTaskHandler_p handler)
-      { mHandler = handler; }
+  void setHandler(QueryTaskHandler_p handler);
 
   QueryTaskHandler_p handler();
 

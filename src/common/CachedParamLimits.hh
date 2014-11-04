@@ -1,7 +1,9 @@
 #ifndef CACHEDPARAMLIMITS_HH
 #define CACHEDPARAMLIMITS_HH 1
 
+#include "QueryTaskHandler.hh"
 #include "Sensor.hh"
+
 #include <QString>
 
 class CachedParamLimits {
@@ -13,6 +15,9 @@ public:
 
   ParamLimit check(const SensorTime& st, float value);
 
+  void setHandler(QueryTaskHandler_p handler)
+      { mHandler = handler; }
+
 private:
   void reset();
   QString fetchMetaData(const SensorTime& st);
@@ -20,6 +25,8 @@ private:
   void fetchLimitsFromSystemDB(const SensorTime& st);
 
 private:
+  boost::shared_ptr<QueryTaskHandler> mHandler;
+
   Sensor sensor;
   timeutil::ptime fromtime, totime;
   float param_max, param_high, param_low, param_min;

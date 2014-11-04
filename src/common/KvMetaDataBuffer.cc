@@ -205,14 +205,17 @@ void KvMetaDataBuffer::sendComplete()
     Q_EMIT complete();
 }
 
+void KvMetaDataBuffer::setHandler(QueryTaskHandler_p handler)
+{
+  mHandler = handler;
+  mCachedParamLimits.setHandler(mHandler);
+}
+
 QueryTaskHandler_p KvMetaDataBuffer::handler()
 {
-  if (mHandler)
-    return mHandler;
-  else if (hqcApp)
-    return hqcApp->kvalobsHandler();
-  else
-    return QueryTaskHandler_p();
+  if (not mHandler and hqcApp)
+    setHandler(hqcApp->kvalobsHandler());
+  return mHandler;
 }
 
 void KvMetaDataBuffer::fetchStations()

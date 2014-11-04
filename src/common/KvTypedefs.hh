@@ -30,6 +30,8 @@ typedef std::vector<kvalobs::kvModelData> kvModelData_v;
 typedef std::set<int> int_s;
 typedef std::vector<int> int_v;
 
+typedef std::vector<std::string> string_v;
+
 }
 
 #endif // KVTYPES_HH

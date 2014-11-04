@@ -1,8 +1,11 @@
 
 #include "CachedParamLimits.hh"
 
-#include "common/HqcApplication.hh"
-#include "common/KvHelpers.hh"
+#include "HqcApplication.hh"
+#include "HqcSystemDB.hh"
+#include "KvHelpers.hh"
+#include "StationParamSQLTask.hh"
+#include "SyncTask.hh"
 
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvStationParam.h>
@@ -10,8 +13,13 @@
 #include <QtCore/QVariant>
 #include <QtSql/QSqlQuery>
 
+#ifdef DEBUG_ME_ON
 #define MILOGGER_CATEGORY "kvhqc.CachedParamLimits"
 #include "common/ObsLogging.hh"
+#define DEBUG_ME(x) x
+#else
+#define DEBUG_ME(x) do { } while(false)
+#endif
 
 CachedParamLimits::CachedParamLimits()
 {
@@ -25,11 +33,11 @@ CachedParamLimits::~CachedParamLimits()
 void CachedParamLimits::reset()
 {
   have_max = have_high = have_low = have_min = false;
-  fromtime = totime = timeutil::ptime();
 }
 
 CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, float value)
 {
+  DEBUG_ME(METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(value)));
   if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
     return Ok;
 
@@ -37,7 +45,7 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
       or fromtime.is_not_a_date_time() or st.time < fromtime
       or (not totime.is_not_a_date_time() and st.time >= totime))
   {
-    reset();
+    DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(fromtime) << LOGVAL(totime)));
     sensor = st.sensor;
 
     const QString metadata = fetchMetaData(st);
@@ -46,14 +54,15 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
 
     if (not (have_max and have_min))
       fetchLimitsFromSystemDB(st);
+
+    DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(fromtime) << LOGVAL(totime)
+            << LOGVAL(have_min) << LOGVAL(have_max) << LOGVAL(param_min) << LOGVAL(param_max)));
   }
 
-  if ((have_max and value > param_max)
-      or (have_min and value < param_min))
+  if ((have_max and value > param_max) or (have_min and value < param_min))
     return OutsideMinMax;
   
-  if ((have_high and value > param_high)
-      or (have_low and value < param_low))
+  if ((have_high and value > param_high) or (have_low and value < param_low))
     return OutsideHighLow;
 
   return Ok;
@@ -61,36 +70,34 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
 
 QString CachedParamLimits::fetchMetaData(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(st));
-  if (not kvservice::KvApp::kvApp)
-    return QString();
+  DEBUG_ME(METLIBS_LOG_SCOPE(LOGVAL(st)));
 
   QString metadata;
-  const int day  = st.time.date().day_of_year();
-  std::list<kvalobs::kvStationParam> stParam;
-  if (kvservice::KvApp::kvApp->getKvStationParam(stParam, st.sensor.stationId, st.sensor.paramId, day)) {
-    for (std::list<kvalobs::kvStationParam>::const_iterator it = stParam.begin(); it != stParam.end(); ++it) {
-      if (it->hour() != -1) {
-        HQC_LOG_ERROR("station_param.hour != -1 for " << st.sensor << ", ignored");
-        continue;
-      }
-      if (it->sensor() == st.sensor.sensor and it->level() == st.sensor.level) {
-        if (it->fromtime() <= st.time
-            and (fromtime.is_not_a_date_time()
-                or fromtime < it->fromtime()))
-        {
-          metadata = QString::fromStdString(it->metadata());
-          fromtime = it->fromtime();
-        }
-        if (it->fromtime() > st.time
-            and (totime.is_not_a_date_time() or totime > it->fromtime()))
-        {
-          totime = it->fromtime();
-        }
-      }
+  StationParamSQLTask task(st, QueryTask::PRIORITY_SYNC);
+
+  // FIXME this is not working correctly: while syncTask is waiting
+  // for the query to finish, new calls to ::check are made from the
+  // event loop of the GUI thread, which override
+  // metadata/fromtime/totime (in a thread-safe way)
+  syncTask(&task, mHandler);
+
+  fromtime = totime = timeutil::ptime();
+
+  for (size_t i=0; i<task.metadata().size(); ++i) {
+    const std::string& md = task.metadata().at(i);
+    if (md.find("high") == std::string::npos)
+      continue;
+    const timeutil::ptime& ft = task.fromtimes().at(i);
+    if (ft <= st.time and (fromtime.is_not_a_date_time() or fromtime < ft)) {
+      metadata = QString::fromStdString(task.metadata().at(i));
+      fromtime = ft;
+    }
+    if (ft > st.time and (totime.is_not_a_date_time() or totime > ft)) {
+      totime = ft;
     }
   }
-  METLIBS_LOG_DEBUG(LOGVAL(metadata));
+
+  DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(metadata)));
   return metadata;
 }
 
@@ -126,7 +133,9 @@ void CachedParamLimits::parseMetadata(const QString& metadata)
 
 void CachedParamLimits::fetchLimitsFromSystemDB(const SensorTime& st)
 {
-  if (HqcSystemDB::paramLimits(paramid, param_min, param_max)) {
+  fromtime = totime = timeutil::ptime();
+  if (HqcSystemDB::paramLimits(st.sensor.paramId, param_min, param_max)) {
+    fromtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
     have_max  = have_min = true;
     have_high = have_low = false;
   }
