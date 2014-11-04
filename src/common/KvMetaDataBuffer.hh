@@ -81,6 +81,19 @@ private:
 
   std::set<int> mCodeParams;
 
+  struct CachedParamLimits {
+    Sensor sensor;
+    timeutil::ptime fromtime, totime;
+    float param_max, param_high, param_low, param_min;
+    bool have_max, have_high, have_low, have_min;
+
+    CachedParamLimits()
+      { reset(); }
+    void reset(const Sensor& s = Sensor())
+      { sensor = s; have_max = have_high = have_low = have_min = false; fromtime = totime = timeutil::ptime(); }
+  };
+  CachedParamLimits mCachedParamLimits;
+
   typedef std::map<int, ObsPgmList> ObsPgms_t;
   ObsPgms_t mObsPgms;
 

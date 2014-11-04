@@ -21,8 +21,7 @@
 #include <boost/range/adaptor/map.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvMetaDataBuffer"
-#define M_TIME
-#include "util/HqcLogging.hh"
+#include "common/ObsLogging.hh"
 
 KvMetaDataBuffer* KvMetaDataBuffer::sInstance = 0;
 
@@ -136,72 +135,86 @@ KvMetaDataBuffer::ParamLimit KvMetaDataBuffer::checkPhysicalLimits(const SensorT
 {
   if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
     return Ok;
-          
-  float param_max = 0, param_high = 0, param_low = 0, param_min = 0;
-  bool have_max = 0, have_high = 0, have_low = 0, have_min = 0;
 
-  QString metadata;
-  if (kvservice::KvApp::kvApp) {
-    const int day  = st.time.date().day_of_year();
-    const int hour = st.time.time_of_day().hours();
-    std::list<kvalobs::kvStationParam> stParam;
-    if (kvservice::KvApp::kvApp->getKvStationParam(stParam, st.sensor.stationId, st.sensor.paramId, day)) {
-      timeutil::ptime recent;
-      for (std::list<kvalobs::kvStationParam>::const_iterator it = stParam.begin(); it != stParam.end(); ++it) {
-        if ((it->hour() == hour or it->hour() == -1)
-            and it->sensor() == st.sensor.sensor
-            and it->level() == st.sensor.level
-            and st.time >= it->fromtime()
-            and (recent.is_not_a_date_time() or it->fromtime() > recent))
-        {
-          metadata = QString::fromStdString(it->metadata());
-          recent = it->fromtime();
+  if (not mCachedParamLimits.sensor.valid() or not eq_Sensor()(st.sensor, mCachedParamLimits.sensor)
+      or mCachedParamLimits.fromtime.is_not_a_date_time()
+      or st.time < mCachedParamLimits.fromtime
+      or (not mCachedParamLimits.totime.is_not_a_date_time() and st.time >= mCachedParamLimits.totime))
+  {
+    mCachedParamLimits.reset(st.sensor);
+
+    QString metadata;
+    if (kvservice::KvApp::kvApp) {
+      const int day  = st.time.date().day_of_year();
+      std::list<kvalobs::kvStationParam> stParam;
+      if (kvservice::KvApp::kvApp->getKvStationParam(stParam, st.sensor.stationId, st.sensor.paramId, day)) {
+        for (std::list<kvalobs::kvStationParam>::const_iterator it = stParam.begin(); it != stParam.end(); ++it) {
+          if (it->hour() != -1) {
+            HQC_LOG_ERROR("station_param.hour != -1 for " << st.sensor << ", ignored");
+            continue;
+          }
+          if (it->sensor() == st.sensor.sensor and it->level() == st.sensor.level) {
+            if (it->fromtime() <= st.time
+                and (mCachedParamLimits.fromtime.is_not_a_date_time()
+                    or mCachedParamLimits.fromtime < it->fromtime()))
+            {
+              metadata = QString::fromStdString(it->metadata());
+              mCachedParamLimits.fromtime = it->fromtime();
+            }
+            if (it->fromtime() > st.time
+                and (mCachedParamLimits.totime.is_not_a_date_time() or mCachedParamLimits.totime > it->fromtime()))
+            {
+              mCachedParamLimits.totime = it->fromtime();
+            }
+          }
         }
       }
     }
-  }
-  if (not metadata.isNull()) {
-    const QStringList lines = metadata.split(QChar('\n'));
-    if (lines.length() == 2) {
-      const QStringList keys = lines.at(0).split(QChar(';'));
-      const QStringList values = lines.at(1).split(QChar(';'));
-      if (keys.length() == values.length()) {
-        for (int i=0; i<keys.length(); ++i) {
-          if (keys.at(i) == "max") {
-            param_max = values.at(i).toFloat();
-            have_max = true;
-          } else if (keys.at(i) == "min") {
-            param_min = values.at(i).toFloat();
-            have_min = true;
-          } else if (keys.at(i) == "high") {
-            param_high = values.at(i).toFloat();
-            have_high = true;
-          } else if (keys.at(i) == "low") {
-            param_low = values.at(i).toFloat();
-            have_low = true;
+    if (not metadata.isNull()) {
+      const QStringList lines = metadata.split(QChar('\n'));
+      if (lines.length() == 2) {
+        const QStringList keys = lines.at(0).split(QChar(';'));
+        const QStringList values = lines.at(1).split(QChar(';'));
+        if (keys.length() == values.length()) {
+          for (int i=0; i<keys.length(); ++i) {
+            if (keys.at(i) == "max") {
+              mCachedParamLimits.param_max = values.at(i).toFloat();
+              mCachedParamLimits.have_max = true;
+            } else if (keys.at(i) == "min") {
+              mCachedParamLimits.param_min = values.at(i).toFloat();
+              mCachedParamLimits.have_min = true;
+            } else if (keys.at(i) == "high") {
+              mCachedParamLimits.param_high = values.at(i).toFloat();
+              mCachedParamLimits.have_high = true;
+            } else if (keys.at(i) == "low") {
+              mCachedParamLimits.param_low = values.at(i).toFloat();
+              mCachedParamLimits.have_low = true;
+            }
           }
         }
       }
     }
   }
 
-  if (not (have_max and have_min) and hqcApp) {
+  if (not (mCachedParamLimits.have_max and mCachedParamLimits.have_min) and hqcApp) {
     QSqlQuery query(hqcApp->systemDB());
     query.exec("SELECT low, high FROM slimits WHERE paramid = ?");
     query.bindValue(0, st.sensor.paramId);
     query.exec();
     if (query.next()) {
-      param_min = query.value(0).toFloat();
-      param_max = query.value(1).toFloat();
-      have_max = have_min = true;
-      have_high = have_low = false;
+      mCachedParamLimits.param_min = query.value(0).toFloat();
+      mCachedParamLimits.param_max = query.value(1).toFloat();
+      mCachedParamLimits.have_max  = mCachedParamLimits.have_min = true;
+      mCachedParamLimits.have_high = mCachedParamLimits.have_low = false;
     }
   }
 
-  if ((have_max and value > param_max) or (have_min and value < param_min))
+  if ((mCachedParamLimits.have_max and value > mCachedParamLimits.param_max)
+      or (mCachedParamLimits.have_min and value < mCachedParamLimits.param_min))
     return OutsideMinMax;
 
-  if ((have_high and value > param_high) or (have_low and value < param_low))
+  if ((mCachedParamLimits.have_high and value > mCachedParamLimits.param_high)
+      or (mCachedParamLimits.have_low and value < mCachedParamLimits.param_low))
     return OutsideHighLow;
 
   return Ok;
