@@ -40,11 +40,11 @@ QueryTaskHelper* QueryTaskAccess::taskForRequest(ObsRequest_p request)
 
 // ------------------------------------------------------------------------
 
-void QueryTaskAccess::postRequest(ObsRequest_p request)
+void QueryTaskAccess::postRequest(ObsRequest_p request, bool synchronized)
 {
   METLIBS_LOG_SCOPE();
   mRequests.push_back(request);
-  taskForRequest(request)->post(mHandler);
+  taskForRequest(request)->post(mHandler, synchronized);
 }
 
 // ------------------------------------------------------------------------

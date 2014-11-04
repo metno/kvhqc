@@ -239,7 +239,7 @@ public:
 
   void requestBuffers(const Sensor_s& intersection, const TimeSpan& time, bool close);
 
-  void post();
+  void post(bool synchronized);
 
   BackendBuffer_pv& shared()
     { return mToShare; }
@@ -298,10 +298,10 @@ void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& ti
   }
 }
 
-void SensorTodo::post()
+void SensorTodo::post(bool synchronized)
 {
   BOOST_FOREACH(BackendBuffer_p bb, mToPost) {
-    bb->postRequest(mCAP->backend);
+    bb->postRequest(mCAP->backend, synchronized);
   }
 }
 
@@ -309,7 +309,7 @@ void SensorTodo::post()
 
 // ========================================================================
 
-void CachingAccess::postRequest(ObsRequest_p request)
+void CachingAccess::postRequest(ObsRequest_p request, bool synchronized)
 {
   METLIBS_LOG_SCOPE();
   const Sensor_s& rsensors = request->sensors();
@@ -360,7 +360,7 @@ void CachingAccess::postRequest(ObsRequest_p request)
 
   request->setTag(new CacheTag(request, todo.shared()));
 
-  todo.post();
+  todo.post(synchronized);
 }
 
 void CachingAccess::dropRequest(ObsRequest_p request)

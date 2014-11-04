@@ -13,7 +13,7 @@ public:
   QueryTaskAccess(QueryTaskHandler_p handler);
   ~QueryTaskAccess();
 
-  virtual void postRequest(ObsRequest_p request);
+  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
   virtual void dropRequest(ObsRequest_p request);
 
 protected:

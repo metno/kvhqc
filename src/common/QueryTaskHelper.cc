@@ -28,24 +28,17 @@ QueryTaskHelper::~QueryTaskHelper()
   drop();
 }
 
-void QueryTaskHelper::post(QueryTaskHandler_x handler)
+void QueryTaskHelper::post(QueryTaskHandler_x handler, bool synchronized)
 {
   METLIBS_LOG_SCOPE("this=" << this);
   assert(handler);
   assert(not mHandler);
 
   mHandler = handler;
-  mHandler->postTask(task());
-}
-
-void QueryTaskHelper::sync(QueryTaskHandler_x handler)
-{
-  METLIBS_LOG_SCOPE("this=" << this);
-  assert(handler);
-  assert(not mHandler);
-
-  mHandler = handler;
-  syncTask(task(), mHandler);
+  if (not synchronized)
+    mHandler->postTask(task());
+  else
+    syncTask(task(), mHandler);
 }
 
 bool QueryTaskHelper::drop()

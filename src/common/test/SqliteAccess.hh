@@ -17,7 +17,7 @@ public:
   virtual ObsUpdate_p createUpdate(ObsData_p data);
   virtual bool storeUpdates(const ObsUpdate_pv& updates);
 
-  virtual void postRequest(ObsRequest_p request);
+  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
   virtual void dropRequest(ObsRequest_p request);
 
   size_t countPost() const

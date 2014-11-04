@@ -20,7 +20,7 @@ public:
   EditAccess(ObsAccess_p backend);
   ~EditAccess();
 
-  virtual void postRequest(ObsRequest_p request);
+  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
   virtual void dropRequest(ObsRequest_p request);
 
   virtual ObsUpdate_p createUpdate(ObsData_p data);

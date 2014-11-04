@@ -402,6 +402,19 @@ SqliteAccess::SqliteAccess(bool useThread)
       "static        BOOLEAN DEFAULT FALSE, "
       "fromtime      TIMESTAMP NOT NULL);");
 
+  sqlite->exec("CREATE TABLE station_param ("
+     "stationid     INTEGER   NOT NULL, "
+     "paramid       INTEGER   NOT NULL, "
+     "level         INTEGER   DEFAULT 0, "
+     "sensor        CHARACTER DEFAULT '0', "
+     "fromday       INTEGER   NOT NULL, "
+     "today         INTEGER   NOT NULL, "
+     "hour          INTEGER   DEFAULT (-1), "
+     "qcx           TEXT      NOT NULL, "
+     "metadata      TEXT, "
+     "desc_metadata TEXT, "
+     "fromtime      TIMESTAMP NOT NULL);");
+
   sqlite->exec("CREATE TABLE types ("
       "typeid   INTEGER NOT NULL, "
       "format   TEXT, "
@@ -421,10 +434,10 @@ SqliteAccess::~SqliteAccess()
 
 // ------------------------------------------------------------------------
 
-void SqliteAccess::postRequest(ObsRequest_p request)
+void SqliteAccess::postRequest(ObsRequest_p request, bool synchronized)
 {
   mCountPost += 1;
-  QueryTaskAccess::postRequest(request);
+  QueryTaskAccess::postRequest(request, synchronized);
 }
 
 // ------------------------------------------------------------------------

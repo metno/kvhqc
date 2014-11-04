@@ -70,7 +70,7 @@ void ObsPgmRequest::sync()
 {
   METLIBS_LOG_SCOPE();
   if (mTaskHelper) {
-    mTaskHelper->sync(KvMetaDataBuffer::instance()->handler());
+    mTaskHelper->post(KvMetaDataBuffer::instance()->handler(), true);
   } else {
     Q_EMIT complete();
   }

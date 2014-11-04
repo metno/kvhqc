@@ -75,10 +75,6 @@ QString CachedParamLimits::fetchMetaData(const SensorTime& st)
   QString metadata;
   StationParamSQLTask task(st, QueryTask::PRIORITY_SYNC);
 
-  // FIXME this is not working correctly: while syncTask is waiting
-  // for the query to finish, new calls to ::check are made from the
-  // event loop of the GUI thread, which override
-  // metadata/fromtime/totime (in a thread-safe way)
   syncTask(&task, mHandler);
 
   fromtime = totime = timeutil::ptime();

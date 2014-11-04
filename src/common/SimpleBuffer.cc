@@ -39,18 +39,11 @@ SimpleBuffer::~SimpleBuffer()
   LOG_DESTRUCT();
 }
 
-void SimpleBuffer::postRequest(ObsAccess_p access)
+void SimpleBuffer::postRequest(ObsAccess_p access, bool synchronized)
 {
   METLIBS_LOG_SCOPE();
   mAccess = access;
-  mAccess->postRequest(mRequest);
-}
-
-void SimpleBuffer::syncRequest(ObsAccess_p access)
-{
-  METLIBS_LOG_SCOPE();
-  mAccess = access;
-  mRequest = ::syncRequest(mRequest, mAccess);
+  mAccess->postRequest(mRequest, synchronized);
 }
 
 void SimpleBuffer::completed(const QString& withError)
