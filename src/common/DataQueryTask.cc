@@ -92,25 +92,19 @@ void DataQueryTask::notifyRow(const ResultRow& row)
   KvalobsDataRow kdr;
   KvalobsData_p kd = kdr.extract(row);
   ObsFilter_p filter = mRequest->filter();
-  if ((not filter) or filter->accept(kd, true)) {
+  if ((not filter) or filter->accept(kd, true))
     mData.push_back(kd);
-    if (mData.size() >= QUERY_DATA_CHUNKSIZE)
-      sendData();
-  }
 }
 
 void DataQueryTask::sendData()
 {
   std::sort(mData.begin(), mData.end(), ObsData_by_SensorTime());
-
   Q_EMIT newData(mRequest, mData);
-  mData.clear();
 }
 
 void DataQueryTask::notifyDone(const QString& withError)
 {
-  if (not mData.empty())
-    sendData();
+  sendData();
   Q_EMIT queryDone(mRequest, withError);
   QueryTask::notifyDone(withError);
 }
