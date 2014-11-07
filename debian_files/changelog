@@ -1,3 +1,14 @@
+kvhqc (4.0.0~a12-1) unstable; urgency=low
+
+  * buffer all in DataQueryTask
+  * modified syncTask, adapted postRequest interface
+  * adapted CachedParamLimits for background threads
+  * added BasicSQLTask with deleteWhenDone
+  * ExtremesFilter update (wip)
+  * added SortedBuffer, use it in ExtremesTableModel
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 07 Nov 2014 09:06:29 +0100
+
 kvhqc (4.0.0~a11-1) unstable; urgency=low
 
   * various bugfixes
