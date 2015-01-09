@@ -69,13 +69,10 @@ void accept_original(EditAccess_p ea, ObsData_p obs)
   update->setCorrected(obs->original());
 
   Helpers::set_fhqc(update, 1);
-  if (fmis == 0 or fmis == 2) {
+  if (fmis == 2 or fmis == 4) {
     Helpers::set_flag(update, kvalobs::flag::fmis, 0);
-    Helpers::set_flag(update, kvalobs::flag::fd,   1);
   } else if (fmis == 1) {
     Helpers::set_flag(update, kvalobs::flag::fmis, 3);
-  } else if (fmis == 4) {
-    Helpers::set_flag(update, kvalobs::flag::fmis, 0);
   }
 
   ea->storeUpdates(ObsUpdate_pv(1, update));
@@ -98,13 +95,11 @@ void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok)
   const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
   ObsUpdate_p update = ea->createUpdate(obs);
 
-  if (Helpers::float_eq()(obs->original(), update->corrected())
-      and (not Helpers::is_accumulation(update)) and fmis < 2)
-  {
-    Helpers::set_flag(update, kvalobs::flag::fd, 1);
+  if (Helpers::float_eq()(obs->original(), update->corrected()) and fmis == 0) {
     Helpers::set_fhqc(update, 1);
   } else if (fmis == 0) {
     Helpers::set_fhqc(update, 7);
+    Helpers::set_flag(update, kvalobs::flag::fmis, 4);
   } else if (fmis == 1 or fmis == 4) {
     Helpers::set_fhqc(update, 5);
   } else {
@@ -112,7 +107,7 @@ void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok)
     return;
   }
   if (qc2ok)
-    Helpers::set_fhqc(update, 4); // changes fmis=0->4
+    Helpers::set_fhqc(update, 4);
 
   ea->storeUpdates(ObsUpdate_pv(1, update));
 }

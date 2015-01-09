@@ -98,10 +98,6 @@ void set_flag(ObsUpdate_p update, int flag, int value)
 void set_fhqc(ObsUpdate_p update, int fhqc)
 {
   set_flag(update, kvalobs::flag::fhqc, fhqc);
-
-  const int fmis = update->controlinfo().flag(kvalobs::flag::fmis);
-  if (fmis == 0)
-    set_flag(update, kvalobs::flag::fmis, 4);
 }
 
 void auto_correct(ObsUpdate_p update, ObsData_p obs, float newC)
