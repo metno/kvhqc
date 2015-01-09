@@ -1,3 +1,9 @@
+kvhqc (4.0.0~a13-1) unstable; urgency=low
+
+  * bugfixes in accept_corrected and accept_original
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 09 Jan 2015 16:56:33 +0100
+
 kvhqc (4.0.0~a12-1) unstable; urgency=low
 
   * buffer all in DataQueryTask
