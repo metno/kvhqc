@@ -68,13 +68,10 @@ void accept_original(EditAccessPtr eda, const SensorTime& sensorTime)
   editor->setCorrected(obs->original());
 
   Helpers::set_fhqc(editor, 1);
-  if (fmis == 0 or fmis == 2) {
+  if (fmis == 2 or fmis == 4) {
     Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
-    Helpers::set_flag(editor, kvalobs::flag::fd,   1);
   } else if (fmis == 1) {
     Helpers::set_flag(editor, kvalobs::flag::fmis, 3);
-  } else if (fmis == 4) {
-    Helpers::set_flag(editor, kvalobs::flag::fmis, 0);
   }
 
   editor->commit();
@@ -103,13 +100,11 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
   const int fmis = obs->controlinfo().flag(kvalobs::flag::fmis);
   EditDataEditorPtr editor = eda->editor(obs);
 
-  if (Helpers::float_eq()(obs->original(), editor->corrected())
-      and (not Helpers::is_accumulation(editor)) and fmis < 2)
-  {
-    Helpers::set_flag(editor, kvalobs::flag::fd, 1);
+  if (Helpers::float_eq()(obs->original(), editor->corrected()) and fmis == 0) {
     Helpers::set_fhqc(editor, 1);
   } else if (fmis == 0) {
     Helpers::set_fhqc(editor, 7);
+    Helpers::set_flag(editor, kvalobs::flag::fmis, 4);
   } else if (fmis == 1 or fmis == 4) {
     Helpers::set_fhqc(editor, 5);
   } else {
@@ -117,7 +112,7 @@ void accept_corrected(EditAccessPtr eda, const SensorTime& sensorTime, bool qc2o
     return;
   }
   if (qc2ok)
-    Helpers::set_fhqc(editor, 4); // changes fmis=0->4
+    Helpers::set_fhqc(editor, 4);
 
   editor->commit();
 }
