@@ -124,6 +124,7 @@ TARGET_LINK_LIBRARIES(hqc_offline
   hqc_common
   test_common
   ${HQC_COMMON_LIBS}
+  -lldap
 )
 
 INSTALL(FILES ${hqc_QM}
