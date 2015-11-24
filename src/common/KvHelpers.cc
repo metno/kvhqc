@@ -252,7 +252,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
     
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
-      if (not Helpers::isNorwegianStationId(sid) or sid == sensor.stationId)
+      if (sid == sensor.stationId)
         continue;
       if (ordering.distance(s) > 100 /*km*/)
         continue;
