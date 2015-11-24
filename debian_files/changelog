@@ -1,3 +1,11 @@
+kvhqc (3.4.14-1) unstable; urgency=low
+
+  * allow foreign stations as neighbors
+  * skip stationds without municipid
+  * add stations with unknown county to OTHER/ANDRE
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 24 Nov 2015 09:00:09 +0100
+
 kvhqc (3.4.13-1) unstable; urgency=low
 
   * bugfixes in accept_corrected and accept_original
