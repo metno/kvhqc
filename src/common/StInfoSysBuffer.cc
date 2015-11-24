@@ -115,6 +115,8 @@ bool StInfoSysBuffer::readFromStInfoSys()
             HQC_LOG_WARN("no county name for municipid " << municipid);
             continue;
           }
+        } else {
+          county_name = "OTHER";
         }
       }
       if (countryid == norway_countryid and municipid >= norway_remap_municip and county_name.size() < 3)
