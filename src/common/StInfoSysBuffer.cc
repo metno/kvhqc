@@ -153,7 +153,11 @@ bool StInfoSysBuffer::readFromStInfoSys()
     const int stationid = st.stationID();
 
     const station2municip_m::const_iterator itM = station2municip.find(stationid);
-    const int municipid = (itM != station2municip.end()) ? itM->second : 0;
+    if (itM == station2municip.end())
+      continue;
+    const int municipid = itM->second;
+    if (municipid == 0)
+      continue;
 
     const municip2info_m::const_iterator itI = municip2info.find(municipid);
     if (itI == municip2info.end()) {
