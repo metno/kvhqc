@@ -3,7 +3,7 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 7.0.50), quilt,
- metno-devscripts (>= 0.5.7),
+ metno-devscripts (>= 0.5.7), cmake,
  libqt4-dev, libgfortran3, libgtest-dev, liblog4cpp5-dev, python (>= 2.7.3-0),
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev,
  libboost-regex-dev, libsqlite3-dev,
