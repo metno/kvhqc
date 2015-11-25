@@ -104,10 +104,12 @@ bool checkErrorHQC2013(const EditDataPtr obs)
     return false;
 
   const int ui_2 = Helpers::extract_ui2(obs);
-  if (ui_2 == 2 or ui_2 == 3)
+  if (ui_2 == 2)
     return true;
 
   const int fr = ci.flag(kvalobs::flag::fr);
+  if (ui_2 == 3)
+    return (fr != 0xA);
   if (fr == 2 or fr == 3)
     return true;
 
