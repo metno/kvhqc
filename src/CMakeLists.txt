@@ -27,7 +27,7 @@ PKG_CHECK_MODULES(PC_METLIBS REQUIRED
   tsData>=5.0.0
   pets2>=5.0.0
   puMet>=5.0.0
-  qUtilities>=5.0.0
+  qUtilities>=5.1.2
   puTools>=5.0.0
   miLogger>=5.0.0
   coserver>=1.0.1

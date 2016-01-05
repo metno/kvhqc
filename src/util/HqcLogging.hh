@@ -9,9 +9,7 @@ QT_BEGIN_NAMESPACE;
 class QString;
 QT_END_NAMESPACE;
 
-std::ostream& operator<<(std::ostream& out, const QString& qs);
-
-#include <miLogger/miLogging.h>
+#include <qUtilities/miLoggingQt.h>
 
 extern bool HqcLoggingWarnOrError;
 
