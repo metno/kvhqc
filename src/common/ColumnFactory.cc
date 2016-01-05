@@ -55,7 +55,7 @@ Code2TextCPtr codesForParam(int pid)
       return c2t_it->second;
 
     Code2TextPtr c2t = boost::make_shared<Code2Text>();
-    sCode2Text.insert(std::make_pair<int, Code2TextCPtr>(pid, c2t));
+    sCode2Text.insert(std::make_pair<>(pid, c2t));
 
     bool haveDecimals = false;
     int decimals = 1;

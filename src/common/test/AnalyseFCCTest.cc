@@ -20,7 +20,7 @@ TEST(AnalyseFCCTest, Basic)
     const timeutil::ptime tBad1 = s2t("2012-11-30 06:00:00"), tBad2 = s2t("2012-12-01 06:00:00");
     for (timeutil::ptime t = time.t0(); t < time.t1(); t += boost::gregorian::days(1)) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs) << "t=" << t;
+        ASSERT_TRUE(obs != 0) << "t=" << t;
         ASSERT_EQ((t==tBad1 or t==tBad2), obs->hasTasks())  << "t=" << t;
     }
 }

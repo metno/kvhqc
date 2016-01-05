@@ -15,11 +15,11 @@ TEST(KvalobsAccessTest, Basic)
     load_54420_20121130(fa);
 
     ObsDataPtr obs = fa.kda->find(SensorTime(sensor, s2t("2012-11-06 06:00:00")));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     ASSERT_FLOAT_EQ(0.6, obs->corrected());
 
     obs = fa.kda->find(SensorTime(sensor, s2t("2012-11-22 06:00:00")));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     ASSERT_FLOAT_EQ(15.5, obs->original());
 }
 

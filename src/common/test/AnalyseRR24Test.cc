@@ -65,7 +65,7 @@ TEST_F(AnalyseRR24Test, TaskPeriods)
             tasks = TimeRange(s2t(times[iTasks][0]), s2t(times[iTasks][1]));
         }
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_EQ(tasks.contains(t), obs->hasTasks()) << "t=" << t;;
     }
 }
@@ -74,7 +74,7 @@ TEST_F(AnalyseRR24Test, Gap)
 {
     const timeutil::ptime td0 = s2t("2012-10-16 06:00:00");
     ObsDataPtr obs = fa.kda->find(SensorTime(sensor, td0));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     ASSERT_TRUE(fa.eraseData(obs->sensorTime()));
 
     TimeRange editableTime(time);
@@ -83,7 +83,7 @@ TEST_F(AnalyseRR24Test, Gap)
     RR24::analyse(eda, sensor, editableTime);
 
     EditDataPtr ebs = eda->findE(SensorTime(sensor, td0));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     ASSERT_TRUE(ebs->hasTasks());
 }
 
@@ -113,7 +113,7 @@ TEST_F(AnalyseRR24Test, Redistribute)
             eda2->sendChangesToParent();
         }
         EditDataPtr obs = eda->findE(SensorTime(sensor, s2t("2012-10-30 06:00:00")));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         eda->editor(obs)->clearTask(tasks::TASK_HQC_AUTOMATIC);
         eda->sendChangesToParent();
     }
@@ -122,7 +122,7 @@ TEST_F(AnalyseRR24Test, Redistribute)
         const TimeRange timeAcc(s2t(times[i][0]), s2t(times[i][1]));
         for(timeutil::ptime t=timeAcc.t0(); t<=timeAcc.t1(); t += boost::gregorian::days(1)) {
             ObsDataPtr obs = fa.kda->find(SensorTime(sensor, t));
-            ASSERT_TRUE(obs);
+            ASSERT_TRUE(obs != 0);
             ASSERT_NEAR(value, obs->corrected(), 0.01) << "t=" << t;
         }
     }
@@ -145,12 +145,12 @@ TEST_F(AnalyseRR24Test, RedistributePartialEnd)
     const TimeRange timePA(s2t("2012-10-19 06:00:00"), s2t("2012-10-21 06:00:00"));
     for (timeutil::ptime t=timePA.t0(); t<=timePA.t1(); t+=boost::gregorian::days(1)) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_TRUE(obs->hasTask(tasks::TASK_PREVIOUSLY_ACCUMULATION)) << "t=" << t;
     }
     for (timeutil::ptime t=timeR.t0(); t<=timeR.t1(); t+=boost::gregorian::days(1)) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_FALSE(obs->hasTasks()) << "t=" << t;
         ASSERT_EQ(value, obs->corrected()) << "t=" << t;
     }
@@ -177,12 +177,12 @@ TEST_F(AnalyseRR24Test, RedistributePartialMid)
     for(int i=0; times[i]; ++i) {
         const timeutil::ptime t = s2t(times[i]);
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_TRUE(obs->hasTask(tasks::TASK_PREVIOUSLY_ACCUMULATION)) << "t=" << t;
     }
     for (timeutil::ptime t=timeR.t0(); t<=timeR.t1(); t+=boost::gregorian::days(1)) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_FALSE(obs->hasTasks()) << "t=" << t;
         ASSERT_EQ(value, obs->corrected()) << "t=" << t;
     }
@@ -208,7 +208,7 @@ TEST(AnalyseRR24Test_2, FD3_Dectect)
     for(int i=0; times[i]; ++i) {
         const timeutil::ptime t = s2t(times[i]);
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_TRUE(obs->hasTask(tasks::TASK_MAYBE_ACCUMULATED)) << "t=" << t;
     }
 }
@@ -241,7 +241,7 @@ TEST(AnalyseRR24Test_2, OnlyEndpointRow)
 
     for (timeutil::ptime t = timeR.t0(); t < timeR.t1(); t += days(1)) {
         ObsDataPtr obs = fa.kda->find(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
     }
 }
 
@@ -271,7 +271,7 @@ TEST(AnalyseRR24Test_2, MinimalRedistribute)
 
     for (timeutil::ptime t = timeR.t0(); t < timeR.t1(); t += days(1)) {
         ObsDataPtr obs = fa.kda->find(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_NEAR(1, obs->corrected(), 0.01) << "t=" << t;
     }
 }
@@ -378,7 +378,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles)
     int i=0;
     for(timeutil::ptime t = time.t0(); t <= time.t1(); t += step, i += 1) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         ASSERT_EQ(newA[i] == RR24::AR_NONE, obs->hasTask(tasks::TASK_PREVIOUSLY_ACCUMULATION)) << " t=" << t;
     }
 }
@@ -439,7 +439,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles2)
     timeutil::ptime t = time.t0();
     for(int i=0; i < NN; t += step, i += 1) {
         EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-        ASSERT_TRUE(obs);
+        ASSERT_TRUE(obs != 0);
         bool shouldHavePreviousTask = (markedP.find(i) != markedP.end());
         ASSERT_EQ(shouldHavePreviousTask, obs->hasTask(tasks::TASK_PREVIOUSLY_ACCUMULATION)) << " t=" << t;
     }
@@ -469,7 +469,7 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
     RR24::singles(eda, sensor, t0S, time, nc, na);
 
     EditDataPtr obs = eda->findE(SensorTime(sensor, t0S));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     ASSERT_EQ(4, obs->controlinfo().flag((kvalobs::flag::fmis)));
 }
 
@@ -493,13 +493,13 @@ TEST(AnalyseRR24Test_2, RedistEndDryAsBefore)
     RR24::redistribute(eda, sensor, time.t0(), time, nc);
 
     EditDataPtr obs = eda->findE(SensorTime(sensor, time.t0()));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     EXPECT_EQ(1, obs->controlinfo().flag((kvalobs::flag::fmis)));
     EXPECT_EQ(9, obs->controlinfo().flag((kvalobs::flag::fd)));
     EXPECT_EQ(6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
 
     obs = eda->findE(SensorTime(sensor, time.t1()));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     // next fmis is important: as both old and new corrected are -1, is has to be 0
     EXPECT_EQ( 0, obs->controlinfo().flag((kvalobs::flag::fmis)));
     EXPECT_EQ(10, obs->controlinfo().flag((kvalobs::flag::fd)));
@@ -526,13 +526,13 @@ TEST(AnalyseRR24Test_2, RedistEndDryNew)
     RR24::redistribute(eda, sensor, time.t0(), time, nc);
 
     EditDataPtr obs = eda->findE(SensorTime(sensor, time.t0()));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     EXPECT_EQ(1, obs->controlinfo().flag((kvalobs::flag::fmis)));
     EXPECT_EQ(9, obs->controlinfo().flag((kvalobs::flag::fd)));
     EXPECT_EQ(6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
 
     obs = eda->findE(SensorTime(sensor, time.t1()));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE(obs != 0);
     EXPECT_EQ( 4, obs->controlinfo().flag((kvalobs::flag::fmis)));
     EXPECT_EQ(10, obs->controlinfo().flag((kvalobs::flag::fd)));
     EXPECT_EQ( 6, obs->controlinfo().flag((kvalobs::flag::fhqc)));
@@ -604,7 +604,7 @@ TEST(AnalyseRR24Test_2, Accept)
         RR24::accept(eda, sensor, time);
         for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
             EditDataPtr obs = eda->findE(SensorTime(sensor, t));
-            ASSERT_TRUE(obs) << " t=" << t;
+            ASSERT_TRUE(obs != 0) << " t=" << t;
             EXPECT_EQ(1, obs->controlinfo().flag(kvalobs::flag::fhqc)) << " t=" << t;
         }
     }

@@ -31,15 +31,15 @@ TEST(EditAccessTest, SendToParent)
 
     eda->newVersion();
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
+    ASSERT_TRUE(ebs1 != 0);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
 
     EditDataPtr ebs2 = eda->findE(SensorTime(s, s2t("2012-11-10 06:00:00")));
-    ASSERT_TRUE(ebs2);
+    ASSERT_TRUE(ebs2 != 0);
     eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
 
     EditDataPtr ebs3 = eda->findE(SensorTime(s, s2t("2012-11-11 06:00:00")));
-    ASSERT_TRUE(ebs3);
+    ASSERT_TRUE(ebs3 != 0);
     eda->editor(ebs3)->setCorrected(3).changeControlinfo(fc_ok).commit();
 
     EXPECT_EQ(0, cdcF.count);
@@ -80,11 +80,11 @@ TEST(EditAccessTest, Reset)
     eda->newVersion();
 
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
+    ASSERT_TRUE(ebs1 != 0);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
 
     EditDataPtr ebs2 = eda->findE(SensorTime(s, s2t("2012-11-10 06:00:00")));
-    ASSERT_TRUE(ebs2);
+    ASSERT_TRUE(ebs2 != 0);
     eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
 
     EXPECT_EQ(0, cdcF.count);
@@ -120,11 +120,11 @@ TEST(EditAccessTest, ResetCreate)
     eda->newVersion();
 
     EditDataPtr ebs1 = eda->findE(SensorTime(s, s2t("2012-11-09 06:00:00")));
-    ASSERT_TRUE(ebs1);
+    ASSERT_TRUE(ebs1 != 0);
     eda->editor(ebs1)->setCorrected(4).changeControlinfo(fc_ok).commit();
 
     EditDataPtr ebs2 = eda->createE(SensorTime(s, s2t("2012-11-09 18:00:00")));
-    ASSERT_TRUE(ebs2);
+    ASSERT_TRUE(ebs2 != 0);
     eda->editor(ebs2)->setCorrected(5).changeControlinfo(fc_ok).commit();
 
     EXPECT_EQ(0, cdcF.count);
@@ -230,9 +230,9 @@ TEST(EditAccessTest, UndoRedoNewVersions)
     EditDataPtr obs1 = eda->findE(SensorTime(sensor, s2t("2012-12-03 06:00:00")));
     EditDataPtr obs2 = eda->findE(SensorTime(sensor, s2t("2012-12-04 06:00:00")));
     EditDataPtr obs3 = eda->findE(SensorTime(sensor, s2t("2012-12-05 06:00:00")));
-    ASSERT_TRUE(obs1);
-    ASSERT_TRUE(obs2);
-    ASSERT_TRUE(obs3);
+    ASSERT_TRUE(obs1 != 0);
+    ASSERT_TRUE(obs2 != 0);
+    ASSERT_TRUE(obs3 != 0);
 
     eda->newVersion();
     eda->editor(obs1)->setCorrected(2);
@@ -302,13 +302,13 @@ TEST(EditAccessTest, ChangeInParent)
 
     parent->newVersion();
     EditDataPtr ebsP = parent->findE(st);
-    ASSERT_TRUE(ebsP);
+    ASSERT_TRUE(ebsP != 0);
     EXPECT_EQ(OCORR, ebsP->corrected());
 
     EditDataPtr ebsC = child ->findE(st);
-    ASSERT_TRUE(ebsC);
+    ASSERT_TRUE(ebsC != 0);
     EXPECT_EQ(OCORR, ebsC->corrected());
-  
+
     parent->editor(ebsP)->setCorrected(NCORR).changeControlinfo(fc_ok).commit();
 
     EXPECT_EQ(1, cdcP.count);

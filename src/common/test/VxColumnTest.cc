@@ -40,8 +40,8 @@ TEST(VxColumnTest, Basic)
 
   obs1 = eda->findE(st1);
   obs2 = eda->findE(st2);
-  ASSERT_TRUE(obs1);
-  ASSERT_TRUE(obs2);
+  ASSERT_TRUE(obs1 != 0);
+  ASSERT_TRUE(obs2 != 0);
   EXPECT_EQ(1, obs1->corrected());
   EXPECT_EQ(2, obs2->corrected());
 
