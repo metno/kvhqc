@@ -15,7 +15,7 @@ class HqcUserConfig;
 class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
-  HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection* conf);
+  HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection> conf);
   ~HqcApplication();
 
   virtual bool notify(QObject* receiver, QEvent* e);
@@ -62,7 +62,7 @@ private:
 
 private:
   QList<QTranslator*> mTranslators;
-  miutil::conf::ConfSection *mConfig;
+  std::shared_ptr<miutil::conf::ConfSection> mConfig;
   bool mKvalobsAvailable;
   std::auto_ptr<HqcUserConfig> mUserConfig;
 };

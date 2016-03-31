@@ -13,6 +13,6 @@ public:
   virtual QString description(bool mini) const;
 };
 
-typedef boost::shared_ptr<DataCorrectedItem> DataCorrectedItemPtr;
+typedef std::shared_ptr<DataCorrectedItem> DataCorrectedItemPtr;
 
 #endif // DATACORRECTEDITEM_HH

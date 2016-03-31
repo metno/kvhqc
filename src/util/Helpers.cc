@@ -140,7 +140,7 @@ bool connect2postgres(const QString& qname, const QString& host, const QString& 
   }
 }
 
-bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, const std::string& prefix)
+bool connect2postgres(const QString& qname, std::shared_ptr<miutil::conf::ConfSection> conf, const std::string& prefix)
 {
   METLIBS_LOG_SCOPE();
   if (not conf)

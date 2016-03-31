@@ -28,7 +28,7 @@
 #include <QtGui/QMessageBox>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define MILOGGER_CATEGORY "kvhqc.WatchRRDialog"
 #include "util/HqcLogging.hh"
@@ -44,7 +44,7 @@ WatchRRDialog::WatchRRDialog(EditAccessPtr da, ModelAccessPtr ma, const Sensor& 
   , ui(new Ui::DialogMain)
   , mDianaHelper(0)
   , mParentDA(da)
-  , mDA(boost::make_shared<EditAccess>(mParentDA))
+  , mDA(std::make_shared<EditAccess>(mParentDA))
   , mSensor(sensor)
   , mTime(time)
   , mStationCard(new StationCardModel(mDA, ma, mSensor, mTime))
@@ -268,7 +268,7 @@ void WatchRRDialog::accept()
 void WatchRRDialog::onEdit()
 {
   const Selection sel = findSelection();
-  EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
+  EditAccessPtr eda = std::make_shared<EditAccess>(mDA);
   EditDialog edit(this, eda, mSensor, sel.selTime, mEditableTime);
   if (edit.exec()) {
     mDA->newVersion();
@@ -282,7 +282,7 @@ void WatchRRDialog::onEdit()
 void WatchRRDialog::onRedistribute()
 {
   const Selection sel = findSelection();
-  EditAccessPtr eda = boost::make_shared<EditAccess>(mDA);
+  EditAccessPtr eda = std::make_shared<EditAccess>(mDA);
   RedistDialog redist(this, eda, mSensor, sel.selTime, mEditableTime);
   if (redist.exec()) {
     mDA->newVersion();

@@ -6,12 +6,12 @@
 #include "ObsAccess.hh"
 #include "util/timeutil.hh"
 #include <QtCore/QAbstractTableModel>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class ObsColumn;
-typedef boost::shared_ptr<ObsColumn> ObsColumnPtr;
+typedef std::shared_ptr<ObsColumn> ObsColumnPtr;
 
-class ObsColumn : public boost::enable_shared_from_this<ObsColumn> {
+class ObsColumn : public std::enable_shared_from_this<ObsColumn> {
 public:
     enum ValueType { Numerical=1, TextCode=2, Text=4 };
     enum { ValueTypeRole = Qt::UserRole, TextCodesRole, TextCodeExplanationsRole };

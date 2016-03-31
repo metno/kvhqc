@@ -8,7 +8,6 @@
 #include <kvalobs/kvDataOperations.h>
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.RedistTableModel"
 #include "util/HqcLogging.hh"

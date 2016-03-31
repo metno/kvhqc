@@ -5,7 +5,7 @@
 #include "common/ModelColumn.hh"
 #include "util/Helpers.hh"
 
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define MILOGGER_CATEGORY "kvhqc.StationCardModel"
 #include "util/HqcLogging.hh"
@@ -56,7 +56,7 @@ StationCardModel::StationCardModel(EditAccessPtr da, ModelAccessPtr ma, const Se
     if (columnTimeOffsets[i] != 0)
       oc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
     if (i == getRR24Column()) {
-      mRR24EditTime = boost::make_shared<EditTimeColumn>(oc);
+      mRR24EditTime = std::make_shared<EditTimeColumn>(oc);
       addColumn(mRR24EditTime);
     } else {
       addColumn(oc);

@@ -4,7 +4,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/range/adaptor/map.hpp>
 
 #include <stdexcept>
@@ -68,7 +68,7 @@ ObsAccess::DataSet EditAccess::allData(const std::vector<Sensor>& sensors, const
   METLIBS_LOG_DEBUG(LOGVAL(data.size()) << LOGVAL(dataBackend.size()) << LOGVAL(onlyBackend.size()));
 
   BOOST_FOREACH(const ObsDataPtr& obs, onlyBackend) {
-    EditDataPtr ebs = boost::make_shared<EditData>(obs);
+    EditDataPtr ebs = std::make_shared<EditData>(obs);
     mData[ebs->sensorTime()] = ebs;
     data.insert(ebs);
   }
@@ -87,7 +87,7 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
   if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
     assert(mData.find(st) == mData.end());
     ObsDataPtr obs = mBackend->find(st);
-    EditDataPtr ebs = obs ? boost::make_shared<EditData>(obs) : EditDataPtr();
+    EditDataPtr ebs = obs ? std::make_shared<EditData>(obs) : EditDataPtr();
     assert(mData.find(st) == mData.end());
     mData.insert(it, std::make_pair(st, ebs));
     return ebs;
@@ -106,7 +106,7 @@ ObsDataPtr EditAccess::create(const SensorTime& st)
   if (it != mData.end() and it->second)
     return it->second;
 
-  EditDataPtr ebs = boost::make_shared<EditData>(mBackend->create(st));
+  EditDataPtr ebs = std::make_shared<EditData>(mBackend->create(st));
   ebs->mCreated = true;
   mData[st] = ebs;
   sendObsDataChanged(CREATED, ebs, 1, 0);

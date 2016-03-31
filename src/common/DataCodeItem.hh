@@ -15,6 +15,6 @@ protected:
   Code2TextCPtr mCodes;
 };
 
-typedef boost::shared_ptr<DataCodeItem> DataCodeItemPtr;
+typedef std::shared_ptr<DataCodeItem> DataCodeItemPtr;
 
 #endif // DATACODEITEM_HH

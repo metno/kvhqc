@@ -7,7 +7,7 @@
 #include "TimeRange.hh"
 
 #include <gtest/gtest.h>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <string>
 
 class FakeModelAccess : public KvModelAccess {
@@ -24,6 +24,6 @@ public:
     bool erase(ModelDataPtr mdl);
 };
 
-typedef boost::shared_ptr<FakeModelAccess> FakeModelAccessPtr;
+typedef std::shared_ptr<FakeModelAccess> FakeModelAccessPtr;
 
 #endif // FakeModelAccess_hh

@@ -41,6 +41,6 @@ private:
 
     friend class EditAccess;
 };
-typedef boost::shared_ptr<EditDataEditor> EditDataEditorPtr;
+typedef std::shared_ptr<EditDataEditor> EditDataEditorPtr;
 
 #endif // EditDataEditor_hh

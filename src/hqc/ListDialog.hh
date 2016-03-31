@@ -101,8 +101,8 @@ private:
   std::auto_ptr<QStandardItemModel> mStationModel;
 
   std::map<QString, std::vector<int> > mParameterGroups;
-  std::auto_ptr<ParamIdModel> mParamAvailableModel;
-  std::auto_ptr<ParamIdModel> mParamSelectedModel;
+  std::unique_ptr<ParamIdModel> mParamAvailableModel;
+  std::unique_ptr<ParamIdModel> mParamSelectedModel;
 
   TimeRangeControl* mTimeControl;
 

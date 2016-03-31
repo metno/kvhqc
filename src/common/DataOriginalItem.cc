@@ -8,8 +8,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QBrush>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.DataOriginalItem"
 #include "util/HqcLogging.hh"
 

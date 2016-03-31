@@ -4,7 +4,7 @@
 
 #include <QtCore/QMap>
 #include <QtCore/QStringList>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class Code2Text {
 public:
@@ -33,7 +33,7 @@ private:
   QMap<int,Code> mCodes;
 
 };
-typedef boost::shared_ptr<Code2Text> Code2TextPtr;
-typedef boost::shared_ptr<const Code2Text> Code2TextCPtr;
+typedef std::shared_ptr<Code2Text> Code2TextPtr;
+typedef std::shared_ptr<const Code2Text> Code2TextCPtr;
 
 #endif // Code2Text_hh

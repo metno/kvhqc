@@ -19,7 +19,7 @@ TEST(EditAccessTest, SendToParent)
     const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
     load_31850_20121130(fa);
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     const FlagChange fc_ok("fhqc=1");
     const Sensor s(31850, 18, 0, 0, 302);
@@ -67,7 +67,7 @@ TEST(EditAccessTest, Reset)
     const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
     load_31850_20121130(fa);
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     const FlagChange fc_ok("fhqc=1");
     const Sensor s(31850, 18, 0, 0, 302);
@@ -105,7 +105,7 @@ TEST(EditAccessTest, ResetCreate)
     const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
     load_31850_20121130(fa);
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     const FlagChange fc_ok("fhqc=1");
     const Sensor s(31850, 18, 0, 0, 302);
@@ -147,7 +147,7 @@ TEST(EditAccessTest, OnlyTasks)
     const TimeRange time(t_44160_20121207());
     FakeKvApp fa;
     load_44160_20121207(fa);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     CountDataChanged cdcF, cdcE;
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
@@ -171,7 +171,7 @@ TEST(EditAccessTest, PopChange)
     const TimeRange time(s2t("2012-10-01 06:00:00"), s2t("2012-11-20 06:00:00"));
     FakeKvApp fa;
     load_54420_20121130(fa);
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     CountDataChanged cdcF, cdcE, cdcE2;
     fa.kda->obsDataChanged.connect(boost::ref(cdcF));
@@ -188,7 +188,7 @@ TEST(EditAccessTest, PopChange)
     const TimeRange timeAcc(s2t("2012-10-05 06:00:00"), s2t("2012-10-11 06:00:00"));
     const std::vector<float> newCorrected(timeAcc.days()+1, 123.4);
 
-    EditAccessPtr eda2 = boost::make_shared<EditAccess>(eda);
+    EditAccessPtr eda2 = std::make_shared<EditAccess>(eda);
     eda2->obsDataChanged.connect(boost::ref(cdcE2));
     RR24::redistribute(eda2, sensor, timeAcc.t0(), editableTime, newCorrected);
 
@@ -225,7 +225,7 @@ TEST(EditAccessTest, UndoRedoNewVersions)
     fa.insertData("2012-12-06 06:00:00", 8.0, 8.0, "0110000000001000", "");
 
     const TimeRange timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
 
     EditDataPtr obs1 = eda->findE(SensorTime(sensor, s2t("2012-12-03 06:00:00")));
     EditDataPtr obs2 = eda->findE(SensorTime(sensor, s2t("2012-12-04 06:00:00")));
@@ -290,8 +290,8 @@ TEST(EditAccessTest, ChangeInParent)
 
     fa.insertData(s.stationId, s.paramId, s.typeId, "2012-11-09 06:00:00", 2, OCORR);
 
-    EditAccessPtr parent = boost::make_shared<EditAccess>(fa.kda);
-    EditAccessPtr child  = boost::make_shared<EditAccess>(parent);
+    EditAccessPtr parent = std::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr child  = std::make_shared<EditAccess>(parent);
 
     const FlagChange fc_ok("fhqc=1");
 

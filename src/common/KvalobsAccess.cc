@@ -232,10 +232,10 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
   BOOST_FOREACH(const ObsUpdate& ou, updates) {
     const SensorTime st(ou.obs->sensorTime());
-    KvalobsDataPtr obs = boost::static_pointer_cast<KvalobsData>(find(st));
+    KvalobsDataPtr obs = std::static_pointer_cast<KvalobsData>(find(st));
     bool created = false;
     if (not obs) {
-      obs = boost::static_pointer_cast<KvalobsData>(create(st));
+      obs = std::static_pointer_cast<KvalobsData>(create(st));
       created = true;
     }
     const bool inserted = obs->isCreated();

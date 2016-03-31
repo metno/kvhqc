@@ -208,7 +208,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
   return true;
 }
 
-StInfoSysBuffer::StInfoSysBuffer(miutil::conf::ConfSection *conf)
+StInfoSysBuffer::StInfoSysBuffer(std::shared_ptr<miutil::conf::ConfSection> conf)
 {
   Helpers::connect2postgres(QSQLNAME_REMOTE, conf, "stinfosys");
 }

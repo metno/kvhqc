@@ -7,7 +7,7 @@
 #include "ModelColumn.hh"
 class Sensor;
 class EditAccess;
-typedef boost::shared_ptr<EditAccess> EditAccessPtr;
+typedef std::shared_ptr<EditAccess> EditAccessPtr;
 
 namespace ColumnFactory {
 

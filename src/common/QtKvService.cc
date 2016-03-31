@@ -13,8 +13,8 @@
 
 namespace /* anonymous */ {
 
-inline kvservice::corba::CorbaKvApp* app() {
-  return static_cast<kvservice::corba::CorbaKvApp*>(kvservice::KvApp::kvApp);
+inline kvservice::KvApp* app() {
+  return static_cast<kvservice::KvApp*>(kvservice::KvApp::kvApp);
 }
 
 QtKvService* qkvs = 0;
@@ -111,7 +111,7 @@ void QtKvService::unsubscribe(const SubscriberID& subscriberId)
       app()->unsubscribe(subscriberId);
     else
       HQC_LOG_WARN("no app, cannot unsubscribe '" << subscriberId << "'");
-      
+
     const Subscriber& s = it->second;
     disconnect(this, s.emitted, s.receiver, s.member);
     mSubscriptions.erase(it);
@@ -126,7 +126,7 @@ void QtKvService::run()
     const std::auto_ptr<dnmi::thread::CommandBase> com(mSignalQueue.get(/*timeout=*/ 2 /*sec*/));
     if (not com.get())
       continue;
-    
+
     if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com.get())) {
       Q_EMIT kvData(dataEvent->data());
     } else if (DataNotifyEvent *dataNotifyEvent = dynamic_cast<DataNotifyEvent*>(com.get())) {

@@ -50,9 +50,9 @@ private:
   EditAccessPtr mParentDA, mDA;
   Sensor mSensor;
   TimeRange mTime;
-  std::auto_ptr<WeatherTableModel> mModelCorrected;
-  std::auto_ptr<WeatherTableModel> mModelOriginal;
-  std::auto_ptr<WeatherTableModel> mModelFlags;
+  std::unique_ptr<WeatherTableModel> mModelCorrected;
+  std::unique_ptr<WeatherTableModel> mModelOriginal;
+  std::unique_ptr<WeatherTableModel> mModelFlags;
 };
 
 #endif // WEATHERDIALOG_HH

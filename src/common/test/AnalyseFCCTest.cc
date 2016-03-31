@@ -14,7 +14,7 @@ TEST(AnalyseFCCTest, Basic)
     const TimeRange time(t_44160_20121207());
     load_44160_20121207(fa);
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     FCC::analyse(eda, sensor, time);
 
@@ -41,7 +41,7 @@ TEST(AnalyseFCCTest, SameObs)
     const TimeRange time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
     load_31850_20121130(fa);
 
-    EditAccessPtr eda = boost::make_shared<EditAccess>(fa.kda);
+    EditAccessPtr eda = std::make_shared<EditAccess>(fa.kda);
     eda->newVersion();
     FCC::analyse(eda, sensor, time);
 

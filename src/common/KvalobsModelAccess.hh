@@ -27,6 +27,6 @@ private:
   Fetched_t mFetched;
 };
 
-typedef boost::shared_ptr<KvalobsModelAccess> KvalobsModelAccessPtr;
+typedef std::shared_ptr<KvalobsModelAccess> KvalobsModelAccessPtr;
 
 #endif // KvalobsModelAccess_hh

@@ -10,7 +10,7 @@
 namespace /* anonymous */ {
 int tasksFrom(ObsDataPtr obs)
 {
-  if (EditDataPtr bebs = boost::dynamic_pointer_cast<EditData>(obs))
+  if (EditDataPtr bebs = std::dynamic_pointer_cast<EditData>(obs))
     return bebs->allTasks();
   else
     return 0;

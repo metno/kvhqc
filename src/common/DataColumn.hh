@@ -53,6 +53,6 @@ protected:
   mutable ObsCache_t mObsCache;
 };
 
-typedef boost::shared_ptr<DataColumn> DataColumnPtr;
+typedef std::shared_ptr<DataColumn> DataColumnPtr;
 
 #endif // DATACOLUMN_HH

@@ -64,6 +64,6 @@ private:
   int mLastFetchedStationId;
   int mLastFetchedObsHour;
 };
-typedef boost::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
+typedef std::shared_ptr<KvalobsAccess> KvalobsAccessPtr;
 
 #endif // COMMON_KVALOBSACCESS_HH

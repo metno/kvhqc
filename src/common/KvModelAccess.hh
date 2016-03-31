@@ -19,6 +19,6 @@ protected:
   typedef std::map<SensorTime, KvalobsModelDataPtr, lt_ModelSensorTime> Data_t;
   Data_t mData;
 };
-typedef boost::shared_ptr<KvModelAccess> KvModelAccessPtr;
+typedef std::shared_ptr<KvModelAccess> KvModelAccessPtr;
 
 #endif // KvModelAccess_hh

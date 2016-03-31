@@ -151,7 +151,7 @@ Errors_t fillMemoryStore2(EditAccessPtr eda, const Sensors_t& sensors, const Tim
     Errors_t memStore2;
     const ObsAccess::DataSet allData = eda->allData(sensors, limits);
     BOOST_FOREACH(const ObsDataPtr& obs, allData) {
-      EditDataPtr ebs = boost::static_pointer_cast<EditData>(obs);
+      EditDataPtr ebs = std::static_pointer_cast<EditData>(obs);
       ErrorInfo ei(ebs);
       recheck(ei, errorsForSalen);
       if (ei.badInList != 0)

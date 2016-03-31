@@ -3,6 +3,8 @@
 #define UTIL_HELPERS_HH 1
 
 #include <QtCore/QString>
+
+#include <memory>
 #include <string>
 
 class QWidget;
@@ -82,7 +84,7 @@ bool connect2postgres(const QString& qname, const QString& host, const QString& 
  * \param prefix for connection parameters (\c prefix + ".host", \c prefix + ".dbname", etc)
  * \return true if the database is open
  */
-bool connect2postgres(const QString& qname, miutil::conf::ConfSection *conf, const std::string& prefix);
+bool connect2postgres(const QString& qname, std::shared_ptr<miutil::conf::ConfSection> conf, const std::string& prefix);
 
 } // namespace Helpers
 

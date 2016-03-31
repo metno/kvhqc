@@ -134,7 +134,7 @@ bool ToolInterpolate::checkEnabled()
     return false;
 
   ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-  DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
+  DataColumnPtr dc = std::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
   if (not dc or dc->type() != ObsColumn::NEW_CORRECTED)
     return false;
 

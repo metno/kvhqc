@@ -2,7 +2,7 @@
 #ifndef QtCorbaKvApp_hh
 #define QtKvService_hh
 
-#include <kvcpp/corba/CorbaKvApp.h>
+#include <kvcpp/KvApp.h>
 #include <kvcpp/kvDataSubscribeInfoHelper.h>
 #include <QtCore/QThread>
 
@@ -12,7 +12,7 @@ public:
   QtKvService();
   virtual ~QtKvService();
 
-  typedef kvservice::corba::CorbaKvApp::SubscriberID SubscriberID;
+  typedef kvservice::KvApp::SubscriberID SubscriberID;
 
   SubscriberID subscribeDataNotify(const kvservice::KvDataSubscribeInfoHelper &info,
       const QObject *receiver=0, const char *member=0);
@@ -24,7 +24,7 @@ public:
 
   void unsubscribe(const SubscriberID& subscriberId);
   void stop();
-    
+
 Q_SIGNALS:
   void kvDataNotify(kvservice::KvWhatListPtr what);
   void kvData(kvservice::KvObsDataListPtr data);

@@ -7,7 +7,7 @@
 #include "common/TimeRange.hh"
 
 #include <gtest/gtest.h>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <string>
 
 inline timeutil::ptime s2t(const std::string& t)

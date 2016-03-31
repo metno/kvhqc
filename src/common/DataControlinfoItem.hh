@@ -20,6 +20,6 @@ protected:
     bool mShowNew;
 };
 
-typedef boost::shared_ptr<DataControlinfoItem> DataControlinfoItemPtr;
+typedef std::shared_ptr<DataControlinfoItem> DataControlinfoItemPtr;
 
 #endif // DATACONTROLINFOITEM_HH

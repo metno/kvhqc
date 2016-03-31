@@ -13,7 +13,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #include "ui_weatherdialog.h"
 
@@ -30,7 +30,7 @@ WeatherDialog::WeatherDialog(EditAccessPtr da, const Sensor& sensor, const TimeR
   : QDialog(parent)
   , ui(new Ui::WeatherDialog)
   , mParentDA(da)
-  , mDA(boost::make_shared<EditAccess>(mParentDA))
+  , mDA(std::make_shared<EditAccess>(mParentDA))
   , mSensor(sensor)
   , mTime(time)
   , mModelCorrected(new WeatherTableModel(mDA, mSensor, mTime, ObsColumn::NEW_CORRECTED))

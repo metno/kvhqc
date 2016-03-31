@@ -6,7 +6,7 @@
 #include "KvHelpers.hh"
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -18,7 +18,7 @@
 FakeKvApp::FakeKvApp()
 {
   kvservice::KvApp::kvApp = this;
-  kda = boost::make_shared<KvalobsAccess>();
+  kda = std::make_shared<KvalobsAccess>();
   kda->setReinserter(new FakeReinserter);
 
   mKvParams.push_back(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));

@@ -22,17 +22,17 @@ public:
 
   /*! Same as find, only difference is return type. */
   EditDataPtr findE(const SensorTime& st)
-    { return boost::static_pointer_cast<EditData>(find(st)); }
+    { return std::static_pointer_cast<EditData>(find(st)); }
 
   virtual ObsDataPtr create(const SensorTime& st);
 
   /*! Same as create, only difference is return type. */
   EditDataPtr createE(const SensorTime& st)
-    { return boost::static_pointer_cast<EditData>(create(st)); }
+    { return std::static_pointer_cast<EditData>(create(st)); }
 
   /*! Calls find, and if 0-pointer is returned, calls create. */
   EditDataPtr findOrCreateE(const SensorTime& st)
-    { ObsDataPtr obs = find(st); if (not obs) obs = create(st); return boost::static_pointer_cast<EditData>(obs); }
+    { ObsDataPtr obs = find(st); if (not obs) obs = create(st); return std::static_pointer_cast<EditData>(obs); }
 
   virtual bool update(const std::vector<ObsUpdate>& updates);
 
@@ -88,6 +88,6 @@ private:
   VersionTimestamps_t mVersionTimestamps;
   int mCurrentVersion, mUpdated, mTasks;
 };
-typedef boost::shared_ptr<EditAccess> EditAccessPtr;
+typedef std::shared_ptr<EditAccess> EditAccessPtr;
 
 #endif // EditAccess_hh

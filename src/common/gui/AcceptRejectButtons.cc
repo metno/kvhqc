@@ -139,12 +139,12 @@ void AcceptRejectButtons::enableButtons()
     Helpers::findMinMaxRowCol(selected, minRow, maxRow, minCol, maxCol);
     if (minCol == maxCol and (maxRow - minRow + 1 == selected.size())) {
       ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-      if (DataColumnPtr dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {
+      if (DataColumnPtr dc = std::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol))) {
         if (dc->type() == ObsColumn::ORIGINAL)
           mSelectedColumnType = ORIGINAL;
         else if (dc->type() == ObsColumn::NEW_CORRECTED)
           mSelectedColumnType = CORRECTED;
-      } else if (ModelColumnPtr mc = boost::dynamic_pointer_cast<ModelColumn>(tableModel->getColumn(minCol))) {
+      } else if (ModelColumnPtr mc = std::dynamic_pointer_cast<ModelColumn>(tableModel->getColumn(minCol))) {
         if (mMA)
           mSelectedColumnType = MODEL;
       }

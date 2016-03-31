@@ -12,6 +12,6 @@ public:
   virtual QString description(bool mini) const;
 };
 
-typedef boost::shared_ptr<DataOriginalItem> DataOriginalItemPtr;
+typedef std::shared_ptr<DataOriginalItem> DataOriginalItemPtr;
 
 #endif // DATAORIGINALITEM_HH

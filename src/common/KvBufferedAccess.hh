@@ -8,7 +8,7 @@ namespace kvalobs {
 class kvData;
 }
 class KvalobsData;
-typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
+typedef std::shared_ptr<KvalobsData> KvalobsDataPtr;
 
 /*! Buffered ObsAccess for KvalobsData.
  * Has no methods to actually fetch and store data from a kvalobs database.
@@ -37,6 +37,6 @@ private:
   typedef std::map<SensorTime, KvalobsDataPtr, lt_SensorTime> Data_t;
   Data_t mData;
 };
-typedef boost::shared_ptr<KvBufferedAccess> KvBufferedAccessPtr;
+typedef std::shared_ptr<KvBufferedAccess> KvBufferedAccessPtr;
 
 #endif // COMMON_KVBUFFEREDACCESS_HH

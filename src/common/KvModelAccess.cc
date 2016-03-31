@@ -4,7 +4,7 @@
 #include "KvHelpers.hh"
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define MILOGGER_CATEGORY "kvhqc.KvModelAccess"
 #include "common/ObsLogging.hh"
@@ -61,7 +61,7 @@ KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
   KvalobsModelDataPtr mdl;
   Data_t::iterator it = mData.find(st);
   if (it == mData.end()) {
-    mdl = boost::make_shared<KvalobsModelData>(data);
+    mdl = std::make_shared<KvalobsModelData>(data);
     mData.insert(std::make_pair(st, mdl));
     modelDataChanged(mdl);
     METLIBS_LOG_DEBUG("new model data");

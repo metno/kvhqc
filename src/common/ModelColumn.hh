@@ -50,6 +50,6 @@ protected:
     mutable ModelCache_t mModelCache;
 };
 
-typedef boost::shared_ptr<ModelColumn> ModelColumnPtr;
+typedef std::shared_ptr<ModelColumn> ModelColumnPtr;
 
 #endif // MODELCOLUMN_HH

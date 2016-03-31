@@ -7,7 +7,7 @@
 #include <kvalobs/kvDataOperations.h>
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define MILOGGER_CATEGORY "kvhqc.KvBufferedAccess"
 #include "common/ObsLogging.hh"
@@ -72,7 +72,7 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
   kvalobs::kvData d = kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
       s.paramId, s.typeId, s.sensor, s.level);
   d.corrected(kvalobs::NEW_ROW);
-  KvalobsDataPtr obs = boost::make_shared<KvalobsData>(d, true);
+  KvalobsDataPtr obs = std::make_shared<KvalobsData>(d, true);
   mData[st] = obs;
   obsDataChanged(CREATED, obs);
   return obs;
@@ -94,7 +94,7 @@ void KvBufferedAccess::receive(const kvalobs::kvData& data, bool update)
   const std::pair<Data_t::iterator, bool> ins = mData.insert(std::make_pair(st, KvalobsDataPtr()));
   if (ins.second) {
     // actually inserted -> replace null with data
-    KvalobsDataPtr obs = boost::make_shared<KvalobsData>(data, false);
+    KvalobsDataPtr obs = std::make_shared<KvalobsData>(data, false);
     ins.first->second = obs;
     if (update)
       obsDataChanged(CREATED, obs);

@@ -24,6 +24,6 @@ public:
 private:
     kvalobs::kvModelData mKvData;
 };
-typedef boost::shared_ptr<KvalobsModelData> KvalobsModelDataPtr;
+typedef std::shared_ptr<KvalobsModelData> KvalobsModelDataPtr;
 
 #endif // KvalobsModelData_hh

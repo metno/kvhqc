@@ -43,6 +43,6 @@ private:
   kvalobs::kvData mKvData;
   bool mCreated;
 };
-typedef boost::shared_ptr<KvalobsData> KvalobsDataPtr;
+typedef std::shared_ptr<KvalobsData> KvalobsDataPtr;
 
 #endif // KvalobsData_hh

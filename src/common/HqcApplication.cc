@@ -46,7 +46,7 @@ const char SETTING_HQC_LANGUAGE[] = "language";
 
 HqcApplication* hqcApp = 0;
 
-HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
+HqcApplication::HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection> conf)
   : QApplication(argc, argv)
   , mConfig(conf)
 {

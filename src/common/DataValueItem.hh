@@ -19,6 +19,6 @@ protected:
   ObsColumn::Type mColumnType;
 };
 
-typedef boost::shared_ptr<DataValueItem> DataValueItemPtr;
+typedef std::shared_ptr<DataValueItem> DataValueItemPtr;
 
 #endif // DATAVALUEITEM_HH

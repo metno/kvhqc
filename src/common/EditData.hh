@@ -7,7 +7,7 @@
 #include "util/VersionedValue.hh"
 
 class EditData;
-typedef boost::shared_ptr<EditData> EditDataPtr;
+typedef std::shared_ptr<EditData> EditDataPtr;
 
 class EditData : public ObsData {
 public:

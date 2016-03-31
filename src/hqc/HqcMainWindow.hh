@@ -172,9 +172,9 @@ private:
   QTimer* mVersionCheckTimer;
   HintWidget* mHints;
 
-  boost::shared_ptr<KvalobsAccess> kda;
-  boost::shared_ptr<KvalobsModelAccess> kma;
-  boost::shared_ptr<EditAccess> eda;
+  std::shared_ptr<KvalobsAccess> kda;
+  std::shared_ptr<KvalobsModelAccess> kma;
+  std::shared_ptr<EditAccess> eda;
 
   std::auto_ptr<EditVersionModel> mEditVersions;
 

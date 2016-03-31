@@ -43,7 +43,7 @@ private:
 
 private:
   std::auto_ptr<Ui::DialogMissingObservations> ui;
-  boost::shared_ptr<EditAccess> mEDA;
+  std::shared_ptr<EditAccess> mEDA;
   std::auto_ptr<MissingTableModel> mMissingModel;
   int mLastSelectedRow;
   TimeRangeControl* mTimeControl;

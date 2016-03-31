@@ -81,6 +81,6 @@ public:
   boost::signal2<void, ObsDataChange, ObsDataPtr> obsDataChanged;
 };
 
-typedef boost::shared_ptr<ObsAccess> ObsAccessPtr;
+typedef std::shared_ptr<ObsAccess> ObsAccessPtr;
 
 #endif // COMMON_OBSACCESS_HH

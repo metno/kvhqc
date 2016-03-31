@@ -7,7 +7,7 @@
 #include <kvalobs/kvDataOperations.h>
 
 #include <boost/bind.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "common/ObsLogging.hh"
@@ -16,7 +16,7 @@ ModelColumn::ModelColumn(ModelAccessPtr ma, const Sensor& sensor, const TimeRang
   : mMA(ma)
   , mSensor(sensor)
   , mHeaderShowStation(true)
-  , mCodes(boost::make_shared<Code2Text>())
+  , mCodes(std::make_shared<Code2Text>())
 {
   mMA->modelDataChanged.connect(boost::bind(&ModelColumn::onModelDataChanged, this, _1));
 }

@@ -8,7 +8,6 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
 #include "util/HqcLogging.hh"

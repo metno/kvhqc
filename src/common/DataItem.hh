@@ -17,6 +17,6 @@ public:
   virtual int type() const = 0;
 };
 
-typedef boost::shared_ptr<DataItem> DataItemPtr;
+typedef std::shared_ptr<DataItem> DataItemPtr;
 
 #endif // DATAITEM_HH

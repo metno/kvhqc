@@ -8,7 +8,7 @@
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 /*! Observation data. */
 class ObsData : public boost::enable_shared_from_this<ObsData>, private boost::noncopyable {
@@ -33,6 +33,6 @@ public:
   /*! KVALOBS tbtime. */
   virtual timeutil::ptime tbtime() const = 0;
 };
-typedef boost::shared_ptr<ObsData> ObsDataPtr;
+typedef std::shared_ptr<ObsData> ObsDataPtr;
 
 #endif // COMMON_OBSDATA_HH

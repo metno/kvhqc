@@ -43,7 +43,7 @@ private:
 
 private:
   std::auto_ptr<Ui::DialogExtremeValues> ui;
-  boost::shared_ptr<EditAccess> mEDA;
+  std::shared_ptr<EditAccess> mEDA;
   std::auto_ptr<ExtremesTableModel> mExtremesModel;
   int mLastSelectedRow;
   TimeRangeControl* mTimeControl;

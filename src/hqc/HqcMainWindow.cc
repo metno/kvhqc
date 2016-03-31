@@ -101,7 +101,7 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
+#include <memory>
 
 #include "ui_mainwindow.h"
 
@@ -126,9 +126,9 @@ HqcMainWindow::HqcMainWindow()
   , ui(new Ui::HqcMainWindow)
   , mVersionCheckTimer(new QTimer(this))
   , mHints(new HintWidget(this))
-  , kda(boost::make_shared<QtKvalobsAccess>())
-  , kma(boost::make_shared<KvalobsModelAccess>())
-  , eda(boost::make_shared<EditAccess>(kda))
+  , kda(std::make_shared<QtKvalobsAccess>())
+  , kma(std::make_shared<KvalobsModelAccess>())
+  , eda(std::make_shared<EditAccess>(kda))
   , mEditVersions(new EditVersionModel(eda))
   , mProgressDialog(new EtaProgressDialog(this))
   , mAutoDataList(new AutoDataList(this))

@@ -7,8 +7,6 @@
 #include <QtGui/QApplication>
 #include <QtGui/QFont>
 
-#include <boost/make_shared.hpp>
-
 DataControlinfoItem::DataControlinfoItem(bool showNew)
   : mShowNew(showNew)
 {
