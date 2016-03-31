@@ -3,18 +3,20 @@ INCLUDE_DIRECTORIES(
   "${GTEST_DIR}/include"
 )
 
-LINK_LIBRARIES(
-  util
-  ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBS_LIBRARIES}
-  ${GTEST_LIBRARY}
-  ${GTEST_MAIN_LIBRARY}
-)
-
 ADD_EXECUTABLE(util_test
   ChangeReplayTest.cc
   HelpersTest.cc
   VersionedValueTest.cc
+)
+
+TARGET_LINK_LIBRARIES(util_test
+  util
+  kvalobs_miconfparser boost_system
+  ${PC_KVCPP_LIBRARIES}
+  ${PC_METLIBS_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${GTEST_LIBRARY}
+  ${GTEST_MAIN_LIBRARY}
 )
 
 ADD_TEST(NAME util_test

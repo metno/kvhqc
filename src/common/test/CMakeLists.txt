@@ -30,18 +30,6 @@ ADD_LIBRARY(test_common
   load_44160_20121207.cc
   load_84070_20120930.cc)
 
-LINK_LIBRARIES(
-  test_common
-  common
-  common_gui
-  util
-  util_gui
-  ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBS_LIBRARIES}
-  ${SQLITE3_LIBRARY}
-  ${GTEST_LIBRARY}
-)
-
 ADD_EXECUTABLE(common_test
   AnalyseFCCTest.cc
   AnalyseRR24Test.cc
@@ -54,6 +42,21 @@ ADD_EXECUTABLE(common_test
   VxColumnTest.cc
   ObsTableModelTest.cc
   gtestMain.cc
+)
+
+TARGET_LINK_LIBRARIES(
+  common_test
+  test_common
+  common
+  common_gui
+  util
+  util_gui
+  boost_system boost_signals
+  ${PC_KVCPP_LIBRARIES}
+  ${PC_METLIBS_LIBRARIES}
+  ${Boost_LIBRARIES}
+  ${SQLITE3_LIBRARY}
+  ${GTEST_LIBRARY}
 )
 
 ADD_TEST(NAME common_test

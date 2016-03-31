@@ -20,7 +20,7 @@ LINK_LIBRARIES(${QT_LIBRARIES})
 ### see http://www.itk.org/Wiki/CMake:How_To_Find_Libraries
 
 # kvalobs
-PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=2.7.2 libkvalobs_decodeutility)
+PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=2.7.7)
 
 # metlibs
 PKG_CHECK_MODULES(PC_METLIBS REQUIRED
@@ -33,21 +33,18 @@ PKG_CHECK_MODULES(PC_METLIBS REQUIRED
   coserver>=1.0.1
 )
 
-# log4cpp
-PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
-
 #########################################################################
 # boost
 
-FIND_PACKAGE(Boost COMPONENTS date_time signals thread REQUIRED)
-LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_SIGNALS_LIBRARY} ${Boost_THREAD_LIBRARY})
+FIND_PACKAGE(Boost COMPONENTS date_time signals thread system REQUIRED)
+LINK_DIRECTORIES(${Boost_LIBRARY_DIRS})
 
 #########################################################################
 # includes/defines for all pkg-config libs
 
 INCLUDE_DIRECTORIES(${PC_KVCPP_INCLUDE_DIRS} ${PC_METLIBS_INCLUDE_DIRS})
-ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBS_CFLAGS_OTHER} ${PC_LOG4CPP_CFLAGS_OTHER})
-LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBS_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
+ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBS_CFLAGS_OTHER})
+LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBS_LIBRARY_DIRS})
 
 #########################################################################
 #########################################################################

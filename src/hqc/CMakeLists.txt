@@ -100,9 +100,10 @@ SET(HQC_COMMON_LIBS
   util_gui
   common_gui
   util
+  boost_system
   ${PC_KVCPP_LIBRARIES}
   ${PC_METLIBS_LIBRARIES} 
-  ${PC_LOG4CPP_LIBRARIES}
+  ${Boost_LIBRARIES}
 )
 
 TARGET_LINK_LIBRARIES(hqc
