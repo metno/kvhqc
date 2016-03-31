@@ -223,7 +223,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
     const EditDataPtr& obs = findObs(index);
     if (not obs)
       return QVariant();
-    
+
     const SensorTime st = obs->sensorTime();
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {

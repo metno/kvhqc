@@ -61,21 +61,21 @@ HqcApplication::HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil:
 
   // must init after configuring QCoreApplication as it reads QSettings
   mUserConfig.reset(new HqcUserConfig);
-  
+
   QString language = savedLanguage();
   if (not language.isEmpty())
     QLocale::setDefault(QLocale(language));
   installTranslations();
-  
+
   QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
-  
+
   connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
-  
+
   QTimer* availabilityTimer = new QTimer(this);
   connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
-  
+
   KvServiceHelper::instance()->kvalobsAvailable.connect(boost::bind(&HqcApplication::changedKvalobsAvailability, this, _1));
 }
 
@@ -235,7 +235,7 @@ void HqcApplication::installTranslations(const QLocale& locale, const QString& f
 {
   QTranslator* translator = new QTranslator(this);
   mTranslators.push_back(translator);
-  
+
   BOOST_FOREACH(const QString& p, paths) {
     if (translator->load(locale, file, "_", p)) {
       METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p

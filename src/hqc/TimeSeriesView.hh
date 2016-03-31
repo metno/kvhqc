@@ -23,7 +23,7 @@ class TimeSeriesView : public QWidget, public DataView
 public:
   TimeSeriesView(QWidget* parent=0);
   ~TimeSeriesView();
-                        
+
 public Q_SLOTS:
   void navigateTo(const SensorTime&);
 

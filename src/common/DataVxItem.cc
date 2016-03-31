@@ -44,10 +44,10 @@ const VxData vxdata_312[] = {
     { 13, "TR", QT_TRANSLATE_NOOP("DataVxItem", "fog rime") },
     { 14, "IS", QT_TRANSLATE_NOOP("DataVxItem", "Isslag") },
     { 15, "IK", QT_TRANSLATE_NOOP("DataVxItem", "ice grains") },
-    { 16, "IN", QT_TRANSLATE_NOOP("DataVxItem", "ice needles") },		
+    { 16, "IN", QT_TRANSLATE_NOOP("DataVxItem", "ice needles") },
     { 18, "TA", QT_TRANSLATE_NOOP("DataVxItem", "fog") },
     { 19, "TD", QT_TRANSLATE_NOOP("DataVxItem", "fog mist") },
-    { 21, "OO", QT_TRANSLATE_NOOP("DataVxItem", "oil smoke") },		
+    { 21, "OO", QT_TRANSLATE_NOOP("DataVxItem", "oil smoke") },
     { 22, "RL", QT_TRANSLATE_NOOP("DataVxItem", "clear air") },
     { 23, "HA", QT_TRANSLATE_NOOP("DataVxItem", "halo") },
     { 24, "KR", QT_TRANSLATE_NOOP("DataVxItem", "Krans") },
@@ -256,7 +256,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
 
   EditDataPtr obs2 = getObs2(obs1);
   const Codes_t oldCodes = getCodes(obs1, obs2);
-  
+
   const QString v = value.toString();
   METLIBS_LOG_DEBUG(LOGVAL(v));
   if (v == "") {
@@ -272,7 +272,7 @@ bool DataVxItem::setData(EditDataPtr obs1, EditAccessPtr, const SensorTime& st, 
     }
     return changed;
   }
-  
+
   if (v.length() != 3 and v.length() != 2)
     return false;
   const QString mc = v.left(2), level = v.mid(2);

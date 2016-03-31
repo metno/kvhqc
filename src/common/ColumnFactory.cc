@@ -108,7 +108,7 @@ Code2TextCPtr codesForParam(int pid)
             if (queryCodeLong.next()) {
               const QString long_text = queryCodeLong.value(0).toString();
               const QString language = queryCodeLong.value(1).toString();
-            
+
               QStringList shortCodes;
               queryCodeShort.bindValue(0, code_id);
               queryCodeShort.bindValue(1, language);
@@ -147,7 +147,7 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
       const bool showNew = displayType == ObsColumn::NEW_CONTROLINFO;
       return std::make_shared<DataControlinfoItem>(showNew);
     }
-    
+
     Code2TextCPtr codes = codesForParam(pid);
     if (displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::NEW_CORRECTED) {
       const bool showNew = displayType == ObsColumn::NEW_CORRECTED;

@@ -15,7 +15,7 @@ public:
 
   virtual void addStation(int stationId) = 0;
   virtual void removeStation(int stationId) = 0;
-  
+
 Q_SIGNALS:
   void update(const kvalobs::kvData& kvdata);
 };

@@ -26,7 +26,7 @@ public:
   void sendTimes(const std::vector<timeutil::ptime>& times);
   void sendTime(const timeutil::ptime& time);
   void sendImage(const std::string& name, const QImage& image);
-    
+
 Q_SIGNALS:
   void connection(bool);
   void receivedTime(const timeutil::ptime& time);

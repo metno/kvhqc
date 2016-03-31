@@ -41,7 +41,7 @@ bool KvMetaDataBuffer::isKnownStation(int id)
 {
   if (not mHaveStations)
     fetchStations();
-  
+
   stations_cit it = std::lower_bound(mStations.begin(), mStations.end(), id, Helpers::kvStation_lt_id());
   return (it != mStations.end() and it->stationID() == id);
 }
@@ -50,7 +50,7 @@ const kvalobs::kvStation& KvMetaDataBuffer::findStation(int id)
 {
   if (not mHaveStations)
     fetchStations();
-  
+
   stations_cit it = std::lower_bound(mStations.begin(), mStations.end(), id, Helpers::kvStation_lt_id());
   if (it != mStations.end() and it->stationID() == id)
     return *it;
@@ -99,7 +99,7 @@ std::string KvMetaDataBuffer::findParamName(int id)
   params_cit it = std::lower_bound(mParams.begin(), mParams.end(), id, Helpers::kvParam_lt_id());
   if (it != mParams.end() and it->paramID() == id)
     return it->name();
-  
+
   return (boost::format("{%1$d}") % id).str();
 }
 
@@ -185,7 +185,7 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
 
   if (not stationsToFetch.empty()) {
     METLIBS_LOG_DEBUG(LOGVAL(stationids.size()) << LOGVAL(stationsToFetch.size()));
-    
+
     // obs_pgm is too large for a single CORBA reply, split in chunks of 100 stations
     const size_t total = stationsToFetch.size(), chunk = 100;
     size_t start = 0;
@@ -200,7 +200,7 @@ void KvMetaDataBuffer::findObsPgm(const std::set<long>& stationids)
       try {
         ObsPgmList mixed;
         KvServiceHelper::instance()->getKvObsPgm(mixed, chunkIds);
-          
+
         ObsPgmList::const_iterator i0 = mixed.begin(), i1 = i0;
         while (i0 != mixed.end()) {
           const long s0 = i0->stationID();

@@ -33,7 +33,7 @@ public:
 public Q_SLOTS:
   virtual void accept();
   virtual void reject();
-  
+
 protected:
   virtual void changeEvent(QEvent *event);
 

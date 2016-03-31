@@ -90,7 +90,7 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
         mChecks = Helpers::fromUtf8(cfailed).split(",");
         QSqlQuery query(hqcApp->systemDB());
         query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
-        
+
         BOOST_FOREACH(QString& c, mChecks) {
           if (c.startsWith("QC2N_")) {
             QString n = c.mid(5);
@@ -100,7 +100,7 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
             mExplanations.push_back(n);
             continue;
           }
-            
+
           query.bindValue(0, c);
           query.exec();
           if (query.next())

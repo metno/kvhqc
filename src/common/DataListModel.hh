@@ -27,7 +27,7 @@ public:
 Q_SIGNALS:
   void changedCenter(int center);
   void changedFilterByTimestep(bool enabled, bool ftbs);
-  
+
 protected:
   virtual int rowAtTime(const timeutil::ptime& time) const;
   virtual int rowOrColumnCount(bool timeDirection) const;

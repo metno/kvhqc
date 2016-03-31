@@ -22,9 +22,9 @@
 
 namespace /* anonymous */ {
 const char* flagnames[16] = {
-  "fagg", "fr", "fcc", "fs", "fnum", 
-  "fpos", "fmis", "ftime", "fw", "fstat", 
-  "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc" 
+  "fagg", "fr", "fcc", "fs", "fnum",
+  "fpos", "fmis", "ftime", "fw", "fstat",
+  "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc"
 };
 } // namespace anonymous
 
@@ -215,7 +215,7 @@ int nearestStationId(float lon, float lat, float maxDistanceKm)
   float nearestDistance = 0;
 
   const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
-  
+
   try {
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
@@ -244,13 +244,13 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
     METLIBS_LOG_INFO("no KvApp -- no neighbors, probably running a test program");
     return;
   }
-  
+
   const std::list<kvalobs::kvStation>& stationsList = KvMetaDataBuffer::instance()->allStations();
-  
+
   std::vector<kvalobs::kvStation> stations;
   try {
     Helpers::stations_by_distance ordering(KvMetaDataBuffer::instance()->findStation(sensor.stationId));
-    
+
     BOOST_FOREACH(const kvalobs::kvStation& s, stationsList) {
       const int sid = s.stationID();
       if (sid == sensor.stationId)
@@ -265,7 +265,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
     METLIBS_LOG_WARN("exception while searching neighbor stations: " << e.what());
     return;
   }
-  
+
   int count = 0;
   BOOST_FOREACH(const kvalobs::kvStation& s, stations) {
     const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationID());
@@ -273,7 +273,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
       if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
         continue;
       // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
-      
+
       const bool eql = op.paramID() == sensor.paramId;
       const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
       if (eql or agg) {

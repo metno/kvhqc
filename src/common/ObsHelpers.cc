@@ -71,7 +71,7 @@ void reject(EditDataEditorPtr editor) // same as kvDataOperations.cc
   if (is_missing(editor))
     return;
 #endif
-    
+
     const FlagChange fc_reject("fmis=[04]->fmis=2;fmis=1->fmis=3;fhqc=A");
     editor->changeControlinfo(fc_reject);
     if (is_orig_missing(editor))

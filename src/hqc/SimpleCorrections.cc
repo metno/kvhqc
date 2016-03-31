@@ -86,7 +86,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE();
   METLIBS_LOG_DEBUG(LOGVAL(st));
-    
+
   mChecksModel->navigateTo(st);
   ui->tableChecks->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
@@ -113,7 +113,7 @@ static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
 {
   if (not (w and w->parentWidget()))
     return;
-  
+
   QPalette palette = w->parentWidget()->palette();
   QFont font = w->parentWidget()->font();
   QString toolTip;
@@ -123,7 +123,7 @@ static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
     const QVariant vFont = item->data(obs, st, Qt::FontRole);
     if (vFont.isValid())
       font = vFont.value<QFont>();
-    
+
     const QVariant vFG = item->data(obs, st, Qt::ForegroundRole);
     if (vFG.isValid())
       palette.setColor(w->foregroundRole(), vFG.value<QBrush>());
@@ -134,7 +134,7 @@ static void setFBF(QWidget* w, DataItemPtr item, EditDataPtr obs)
 
     toolTip = item->data(obs, st, Qt::ToolTipRole).toString();
   }
-  
+
   w->setFont(font);
   w->setPalette(palette);
   w->setToolTip(toolTip);
@@ -215,12 +215,12 @@ void SimpleCorrections::update()
       // FIXME this is almost identical to ObsDelegate code
       ttl->setStringList(mItemCorrected->data(obs, mSensorTime, ObsColumn::TextCodesRole).toStringList());
       ttl->setToolTipList(mItemCorrected->data(obs, mSensorTime, ObsColumn::TextCodeExplanationsRole).toStringList());
-        
+
       c->setEnabled((mItemCorrected->flags(obs) & Qt::ItemIsEditable));
-        
+
       const QVariant valueType = mItemCorrected->data(obs, mSensorTime, ObsColumn::ValueTypeRole);
       c->setEditable(valueType.toInt() != ObsColumn::TextCode);
-        
+
       const Qt::ItemDataRole role = Qt::DisplayRole;
       QVariant currentText = mItemCorrected->data(obs, mSensorTime, role).toString();
       const int idx = c->findData(currentText, role);
@@ -302,7 +302,7 @@ void SimpleCorrections::onNewCorrected()
   METLIBS_LOG_SCOPE();
   if (not (mDA and mItemCorrected and mSensorTime.valid()))
     return;
-  
+
   EditDataPtr obs = mDA->findE(mSensorTime);
   if (obs) {
     if (not (mItemCorrected->flags(obs) & Qt::ItemIsEditable))

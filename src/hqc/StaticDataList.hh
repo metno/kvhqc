@@ -10,7 +10,7 @@ class StaticDataList : public DataList
 public:
   StaticDataList(QWidget* parent=0);
   ~StaticDataList();
-  
+
   virtual void setSensorsAndTimes(const Sensors_t& sensors, const TimeRange& limits);
 };
 

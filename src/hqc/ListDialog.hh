@@ -55,12 +55,12 @@ class ListDialog : public QDialog
 public:
   ListDialog(HqcMainWindow* parent);
   ~ListDialog();
-    
+
   TimeRange getTimeRange() const;
-    
+
   std::vector<int> getSelectedStations();
   std::vector<int> getSelectedParameters();
-    
+
   void saveSettings(QSettings& settings);
   void restoreSettings(QSettings& settings);
 

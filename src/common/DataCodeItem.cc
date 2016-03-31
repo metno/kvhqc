@@ -24,10 +24,10 @@ QVariant DataCodeItem::data(EditDataPtr obs, const SensorTime& st, int role) con
     } else if (role ==  ObsColumn::TextCodeExplanationsRole) {
       return mCodes->allExplanations();
     }
-    
+
     if (not obs)
       return QVariant();
-    
+
     const float v = getValue(obs);
     const bool c = mCodes->isCode(v);
     if (role == Qt::ForegroundRole) {

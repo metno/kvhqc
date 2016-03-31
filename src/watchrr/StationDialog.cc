@@ -44,7 +44,7 @@ void StationDialog::init()
   METLIBS_LOG_SCOPE();
   ui.reset(new Ui::DialogStation);
   ui->setupUi(this);
-  
+
   ui->labelStationInfo->setText("");
 
   QDateTime today(QDate::currentDate(), QTime(6, 0));
@@ -111,7 +111,7 @@ bool StationDialog::checkStation()
     }
     ui->labelStationInfo->setText(name);
     return true;
-  } 
+  }
   mSensor.stationId = 0;
   return false;
 }
@@ -159,7 +159,7 @@ void StationDialog::updateTypeList()
     }
   }
   const std::vector<int> newTypeIds(typeIdSet.begin(), typeIdSet.end());
-  
+
   if (newTypeIds != mTypesModel->values()) {
     mTypesModel->setValues(newTypeIds);
     if (not typeIdSet.empty()) {

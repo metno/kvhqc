@@ -103,10 +103,10 @@ bool connect2postgres(const QString& qname, std::shared_ptr<miutil::conf::ConfSe
   const ValElementList valUser     = conf->getValue(prefix + ".user");
   const ValElementList valPassword = conf->getValue(prefix + ".password");
   const ValElementList valPort     = conf->getValue(prefix + ".port");
-    
+
   if (valHost.size() != 1 or valDbname.size() != 1 or valUser.size() != 1 or valPassword.size() != 1 or valPort.size() != 1)
     return false;
-    
+
   try {
     return connect2postgres(qname, Helpers::fromUtf8(valHost.front().valAsString()),
         Helpers::fromUtf8(valDbname  .front().valAsString()),

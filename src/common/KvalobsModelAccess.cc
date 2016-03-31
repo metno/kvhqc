@@ -55,7 +55,7 @@ ModelAccess::ModelDataSet KvalobsModelAccess::findMany(const std::vector<SensorT
       empty = false;
     }
   }
-  
+
   if (not empty) {
     try {
       std::list<kvalobs::kvModelData> model;
@@ -84,7 +84,7 @@ bool KvalobsModelAccess::isFetched(int stationId, const timeutil::ptime& t) cons
   Fetched_t::const_iterator f = mFetched.find(stationId);
   if (f == mFetched.end())
     return false;
-  
+
   return boost::icl::contains(f->second, t);
 }
 

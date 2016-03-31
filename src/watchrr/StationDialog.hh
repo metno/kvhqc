@@ -24,7 +24,7 @@ public:
   StationDialog(const Sensor& sensor, const TimeRange& time, QDialog* parent=0);
   StationDialog(QDialog* parent=0);
   virtual ~StationDialog();
-                            
+
   Sensor selectedSensor() const
     { return mSensor; }
 

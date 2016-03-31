@@ -93,7 +93,7 @@ class StationFilterProxyModel : public QSortFilterProxyModel
 public:
   StationFilterProxyModel(QObject* parent=0)
     : QSortFilterProxyModel(parent) { }
-  
+
 protected:
   bool filterAcceptsRow(int row, const QModelIndex &parent) const;
 };
@@ -134,10 +134,10 @@ ListDialog::ListDialog(HqcMainWindow* parent)
 
   connect(ui->buttonSave,    SIGNAL(clicked()), this, SLOT(onSaveSettings()));
   connect(ui->buttonRestore, SIGNAL(clicked()), this, SLOT(onRestoreSettings()));
-    
+
   mTimeControl->setMinimumGap(6);
   mTimeControl->install(ui->fromTime, ui->toTime);
-    
+
   enableButtons();
 }
 
@@ -166,7 +166,7 @@ void ListDialog::setupStationTab()
 {
   METLIBS_LOG_SCOPE();
   const listStat_l& listStat = StationInfoBuffer::instance()->getStationDetails();
-    
+
   mStationModel.reset(new QStandardItemModel(this));
   QStandardItem *root = mStationModel->invisibleRootItem();
 
@@ -176,15 +176,15 @@ void ListDialog::setupStationTab()
 
   typedef std::map<QString, QStandardItem*> county2item_t;
   county2item_t county2item;
-  
+
   QSqlQuery queryRegions(hqcApp->systemDB());
   queryRegions.prepare("SELECT sr.id, srl.label FROM station_regions AS sr, station_region_labels AS srl"
       " WHERE sr.id = srl.region_id AND srl.language = 'nb' ORDER BY sr.sortkey");
-    
+
   QSqlQuery queryCounties(hqcApp->systemDB());
   queryCounties.prepare("SELECT sc.db_name, scl.label FROM station_county_labels AS scl, station_counties AS sc"
       " WHERE sc.id = scl.county_id AND scl.language = 'nb' AND sc.region_id = ? ORDER BY sc.sortkey");
-    
+
   queryRegions.exec();
   while (queryRegions.next()) {
     const int regionId = queryRegions.value(0).toInt();
@@ -210,7 +210,7 @@ void ListDialog::setupStationTab()
       county2item.insert(std::make_pair(countyDB, c_item));
     }
   }
-  
+
   BOOST_FOREACH(const listStat_t& s, listStat) {
     const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
 
@@ -250,7 +250,7 @@ void ListDialog::setupStationTab()
 
   connect(mStationModel.get(), SIGNAL(itemChanged(QStandardItem*)),
       this, SLOT(onItemChanged(QStandardItem*)));
-  
+
   if (not ui->checkRememberTimes->isChecked())
     onSetRecentTimes();
 }
@@ -287,10 +287,10 @@ void ListDialog::setupParameterTab()
   QSqlQuery queryGroups(hqcApp->systemDB());
   queryGroups.prepare("SELECT pg.id, pgl.label FROM param_groups AS pg, param_group_labels AS pgl"
       " WHERE pg.id = pgl.group_id AND pgl.language = 'nb' ORDER BY pg.sortkey");
-    
+
   QSqlQuery queryParams(hqcApp->systemDB());
   queryParams.prepare("SELECT paramid FROM param_order WHERE group_id = ? ORDER BY sortkey");
-    
+
   queryGroups.exec();
   while (queryGroups.next()) {
     const int groupId = queryGroups.value(0).toInt();
@@ -299,7 +299,7 @@ void ListDialog::setupParameterTab()
 
     labels << groupLabel;
     std::vector<int>& parameters = mParameterGroups[groupLabel];
-            
+
     queryParams.bindValue(0, groupId);
     queryParams.exec();
     while (queryParams.next())
@@ -584,7 +584,7 @@ QStringList ListDialog::getSelectedCounties()
       }
     }
   }
-  
+
   return t;
 }
 
@@ -626,7 +626,7 @@ std::vector<int> ListDialog::getSelectedStations()
       }
     }
   }
-  
+
   return stations;
 }
 

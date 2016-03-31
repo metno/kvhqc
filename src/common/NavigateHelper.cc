@@ -18,7 +18,7 @@ bool NavigateHelper::go(const SensorTime& st)
 
   mLastNavigated = st;
   mChanged = true;
-  
+
   return not locked();
 }
 
@@ -29,6 +29,6 @@ bool NavigateHelper::invalidate()
 
   mLastNavigated = SensorTime();
   mChanged = true;
-  
+
   return not locked();
 }

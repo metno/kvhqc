@@ -52,7 +52,7 @@ void updateUseAddCFailed(kvalobs::kvData &d)
       d.controlinfo(cinfo);
       HQC_LOG_ERROR("inserting data with fhqc==0, forced to fhqc==3: " << d);
     }
-    
+
     kvUseInfo ui = d.useinfo();
     ui.setUseFlags(cinfo);
     ui.addToErrorCount();

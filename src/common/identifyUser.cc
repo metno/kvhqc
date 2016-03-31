@@ -60,7 +60,7 @@ kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, k
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())
     return 0; // Not authenticated
-  
+
   // Get list of operators from database, and find our operator:
   opList operators;
   KvServiceHelper::instance()->getKvOperator(operators);

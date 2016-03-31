@@ -42,7 +42,7 @@ void EditData::reset()
 bool EditData::updateFromBackend()
 {
   METLIBS_LOG_SCOPE();
-  
+
   const float bOriginal = mData->original();
   const bool changedO = (not Helpers::float_eq()(mOriginal, bOriginal));
   mOriginal = bOriginal;

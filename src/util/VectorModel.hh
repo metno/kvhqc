@@ -71,7 +71,7 @@ public:
     { return mValues.size(); }
 
   QVariant data(const QModelIndex& index, int role) const;
-  
+
   const vector_t& values() const
     { return mValues; }
 

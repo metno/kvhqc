@@ -30,7 +30,7 @@ ModelAccess::ModelDataSet KvModelAccess::findMany(const std::vector<SensorTime>&
     if (it != mData.end())
       data.insert(it->second);
   }
-  
+
   return data;
 }
 
@@ -48,14 +48,14 @@ ModelAccess::ModelDataSet KvModelAccess::allData(const std::vector<Sensor>& sens
         data.insert(it->second);
     }
   }
-  
+
   return data;
 }
 
 KvalobsModelDataPtr KvModelAccess::receive(const kvalobs::kvModelData& data)
 {
   METLIBS_LOG_SCOPE();
-  const SensorTime st(Helpers::sensorTimeFromKvModelData(data)); 
+  const SensorTime st(Helpers::sensorTimeFromKvModelData(data));
   METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(data));
 
   KvalobsModelDataPtr mdl;

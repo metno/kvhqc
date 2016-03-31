@@ -14,7 +14,7 @@
 class ObsAccess : public boost::enable_shared_from_this<ObsAccess>, private boost::noncopyable {
 public:
   virtual ~ObsAccess();
-  
+
   typedef std::set<timeutil::ptime> TimeSet;
 
   /*! Make a list of observation times for which observations exist for the given sensors and time limits.
@@ -38,7 +38,7 @@ public:
    */
   void addAllTimes(TimeSet& times, const Sensor& sensor, const TimeRange& limits)
     { return addAllTimes(times, std::vector<Sensor>(1, sensor), limits); }
-  
+
   struct lt_ObsDataPtr  : public std::binary_function<ObsDataPtr, ObsDataPtr, bool> {
     bool operator()(const ObsDataPtr& a, const ObsDataPtr& b) const
       { return lt_SensorTime()(a->sensorTime(), b->sensorTime()); }

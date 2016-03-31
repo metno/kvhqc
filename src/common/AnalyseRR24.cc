@@ -273,7 +273,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeRang
     for (Sensor_v::const_iterator itN = neighbors.begin(); itN != neighbors.end(); ++itN)
       distances.push_back(center.distance(KvMetaDataBuffer::instance()->findStation(itN->stationId)));
   }
-          
+
   float weightedNeighborsAccumulated = 0;
   std::vector<float> weightedNeighbors;
 
@@ -322,7 +322,7 @@ bool redistributeProposal(EditAccessPtr da, const Sensor& sensor, const TimeRang
   const float scale = (weightedNeighborsAccumulated > 0.0f)
       ? accumulated / weightedNeighborsAccumulated : 0.0f;
   METLIBS_LOG_DEBUG(LOGVAL(scale));
-  
+
   for (size_t iT = 0; iT < weightedNeighbors.size(); ++iT) {
     values[iT] = (weightedNeighbors[iT] > 0.05)
         ? Helpers::roundDecimals(scale * weightedNeighbors[iT], 1) : -1.0f;

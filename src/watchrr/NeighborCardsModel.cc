@@ -58,10 +58,10 @@ NeighborCardsModel::NeighborCardsModel(EditAccessPtr da/*, ModelAccessPtr ma*/, 
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
     mItems.push_back(ColumnFactory::itemForSensor(da, s, columnTypes[i]));
-    
+
     mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
   }
-  
+
   mDA->obsDataChanged.connect(boost::bind(&NeighborCardsModel::onDataChanged, this, _1, _2));
 }
 

@@ -19,7 +19,7 @@ public:
 
   virtual void addStation(int stationId);
   virtual void removeStation(int stationId);
-  
+
 private Q_SLOTS:
   void onKvData(kvservice::KvObsDataListPtr data);
   void doReSubscribe();

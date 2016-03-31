@@ -18,7 +18,7 @@ private:
   Codes_t getCodes(EditDataPtr obs1, EditDataPtr obs2) const;
   EditDataPtr getObs2(EditDataPtr obs1) const;
   Sensor getSensor2(const Sensor& sensor1) const;
-  
+
 private:
   EditAccessPtr mDA;
 };

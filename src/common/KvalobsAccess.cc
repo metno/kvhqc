@@ -239,7 +239,7 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
       created = true;
     }
     const bool inserted = obs->isCreated();
-        
+
     kvalobs::kvData& d = obs->data();
     if (inserted and (ou.corrected == kvalobs::NEW_ROW or d.corrected() != kvalobs::NEW_ROW)) {
       HQC_LOG_WARN("attempt to insert unmodified new row: " << obs->sensorTime());

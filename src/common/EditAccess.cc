@@ -82,7 +82,7 @@ ObsDataPtr EditAccess::find(const SensorTime& st)
     HQC_LOG_ERROR("invalid sensorTime: " << st);
     return ObsDataPtr();
   }
-  
+
   Data_t::iterator it = mData.lower_bound(st);
   if (it == mData.end() or not eq_SensorTime()(st, it->first)) {
     assert(mData.find(st) == mData.end());

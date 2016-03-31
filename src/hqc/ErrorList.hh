@@ -55,7 +55,7 @@ public:
 
 private:
   EditDataPtr getSelectedObs() const;
-                                    
+
 private Q_SLOTS:
   void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onBeginDataChange();

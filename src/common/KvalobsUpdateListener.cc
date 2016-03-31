@@ -83,7 +83,7 @@ void KvalobsUpdateListener::doReSubscribe()
     qtKvService()->unsubscribe(mKvServiceSubscriberID);
     mKvServiceSubscriberID = "";
   }
-  
+
   if (not mSubscribedStations.empty()) {
     kvservice::KvDataSubscribeInfoHelper dataSubscription;
     BOOST_FOREACH(const station_count_t::value_type& sc, mSubscribedStations)

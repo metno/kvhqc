@@ -59,7 +59,7 @@ MissingView::MissingView(QWidget* parent)
   } else {
     HQC_LOG_WARN("empty manual types list");
   }
-  
+
   OTypeIdExtract typeExtract;
   typeExtract.override(TYPEID_ANY,    tr("any"));
   typeExtract.override(TYPEID_MANUAL, tr("manual"));

@@ -11,7 +11,7 @@ public:
   virtual Qt::ItemFlags flags(EditDataPtr obs) const;
   virtual QVariant data(EditDataPtr obs, const SensorTime& st, int role) const;
   virtual int type() const;
-  
+
 protected:
   virtual float getValue(EditDataPtr obs) const;
 

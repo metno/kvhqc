@@ -200,7 +200,7 @@ void TimeSeriesView::changeEvent(QEvent *event)
     mColumnAdd->setText(tr("Add..."));
     mColumnRemove->setText(tr("Remove..."));
     mColumnReset->setText(tr("Reset"));
-    
+
     updateSensors(); // language-specific legend
   }
   QWidget::changeEvent(event);
@@ -373,7 +373,7 @@ void TimeSeriesView::replay(const std::string& changesText)
       METLIBS_LOG_DEBUG("sensor " << sensor.stationId << ';' << sensor.paramId << ';' << sensor.typeId);
     }
   }
-  
+
   ChangeReplay<Sensor, lt_Sensor> cr;
   mSensors = cr.replay(mOriginalSensors, actual, removed);
 
@@ -395,7 +395,7 @@ void TimeSeriesView::replay(const std::string& changesText)
   if (not changed)
     changed = not std::equal(mSensors.begin(), mSensors.end(), mOriginalSensors.begin(), eq_Sensor());
   mColumnReset->setEnabled(changed);
-  
+
   updateSensors();
 }
 
@@ -415,7 +415,7 @@ void TimeSeriesView::onActionAddColumn()
   const Sensor s = ta.selectedSensor();
   mSensors.push_back(s);
   METLIBS_LOG_DEBUG(s);
-  
+
   mColumnReset->setEnabled(true);
   updateSensors();
 }
@@ -443,7 +443,7 @@ void TimeSeriesView::onActionRemoveColumns()
     METLIBS_LOG_DEBUG(LOGVAL(*it));
     mSensors.erase(it);
   }
-  
+
   mColumnReset->setEnabled(true);
   updateSensors();
 }
@@ -564,7 +564,7 @@ void TimeSeriesView::updatePlot()
         const float mv = mdl->value();
         value = (whatToPlot == 1) ? mv : (value - mv);
       }
-      
+
       const miutil::miTime mtime = timeutil::make_miTime(time);
       tseries.add(TimeSeriesData::Data(mtime, value));
     }
@@ -575,10 +575,10 @@ void TimeSeriesView::updatePlot()
         break;
     }
   }
-  
+
   if (tslist.empty())
     return; // FIXME otherwise segfault
-   
+
   // finally: one complete plot-structure
   TimeSeriesData::TSPlot tsplot;
   POptions::PlotOptions poptions;

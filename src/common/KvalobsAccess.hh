@@ -23,10 +23,10 @@ public:
   virtual DataSet allData(const std::vector<Sensor>& sensors, const TimeRange& limits);
   using KvBufferedAccess::allTimes;
   using KvBufferedAccess::allData;
-  
+
   virtual ObsDataPtr find(const SensorTime& st);
   virtual bool update(const std::vector<ObsUpdate>& updates);
-  
+
   void nextData(kvservice::KvObsDataList &dl, bool update);
 
   typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
@@ -39,7 +39,7 @@ public:
    *  stations to fetch data for, where fetching has finished. The
    *  second parameter is the number of stations finished so far. */
   boost::signal2<void, int, int> signalFetchingData;
-  
+
 protected:
   virtual bool drop(const SensorTime& st);
   virtual void findRange(const std::vector<Sensor>& sensors, const TimeRange& limits);
@@ -48,15 +48,15 @@ private:
   bool isFetched(int stationid, const timeutil::ptime& t) const;
   void addFetched(int stationid, const TimeRange& t);
   void removeFetched(int stationid, const timeutil::ptime& t);
-  
+
   void findRange(const Sensor& sensor, const TimeRange& limits)
     { findRange(std::vector<Sensor>(1, sensor), limits); }
-  
+
 private:
   typedef boost::icl::interval_set<timeutil::ptime> FetchedTimes_t;
   typedef std::map<int, FetchedTimes_t> Fetched_t;
   Fetched_t mFetched;
-  
+
   std::auto_ptr<Reinserter_t> mDataReinserter;
 
   int mCountHoursToFetch;

@@ -17,7 +17,7 @@ public:
 
   /*! Observation sensor and time. */
   virtual SensorTime sensorTime() const = 0;
-  
+
   /*! Original observed value, as sent by the station. */
   virtual float original() const = 0;
 

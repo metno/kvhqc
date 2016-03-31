@@ -109,7 +109,7 @@ bool EditTableModel::setData(const QModelIndex& index, const QVariant& value, in
 
       mNewValues.at(row) = rrNew;
       mAcceptReject.at(row) = RR24::AR_ACCEPT;
-            
+
       // both value and accept/reject have changed
       Q_ASSERT(RR_24_new + 1 == AcceptReject);
       QModelIndex index2 = createIndex(row, AcceptReject);

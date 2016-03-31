@@ -148,7 +148,7 @@ void DataList::updateModel(DataListModel* newModel)
       this, SLOT(onModelFilterByTimeStepChanged(bool, bool)));
   connect(ui->table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  
+
   ui->buttonsAcceptReject->updateModel(mDA, mMA, ui->table);
   ui->toolInterpolate->updateModel(mDA, ui->table);
 }
@@ -201,7 +201,7 @@ void DataList::onButtonSaveAs()
       tr("CSV Table (*.csv)"));
   if (fileName.isEmpty())
     return;
-  
+
   QFile file(fileName);
   file.open(QIODevice::WriteOnly | QIODevice::Text);
 
@@ -253,6 +253,6 @@ void DataList::onButtonSaveAs()
       out << "\n";
     }
   }
- 
-  file.close(); 
+
+  file.close();
 }

@@ -179,7 +179,7 @@ HqcMainWindow::HqcMainWindow()
   lstdlg = new ListDialog(this);
   txtdlg = new TextDataDialog(this);
   rejdlg = new RejectedObsDialog(this);
-    
+
   // --- START -----------------------------------------------------
   rejdlg->hide();
   lstdlg->hide();
@@ -230,7 +230,7 @@ HqcMainWindow::HqcMainWindow()
   helpsource.name = "Kvhqc News";
   helpsource.defaultlink = "";
   info.src.push_back(helpsource);
-    
+
   mHelpDialog = new HelpDialog(this, info);
   mHelpDialog->hide();
 
@@ -280,7 +280,7 @@ void HqcMainWindow::startup(const QString& captionSuffix)
 {
   METLIBS_LOG_SCOPE();
   setCaption("HQC " + captionSuffix);
-    
+
   DisableGUI disableGUI(this);
   listExist = false;
 
@@ -408,7 +408,7 @@ void HqcMainWindow::rejectedOK()
           continue;
         if (reject.comment() == "No decoder for SMS code <12>!")
           continue;
-          
+
         METLIBS_LOG_INFO(reject.tbtime() << ' ' << reject.message() << ' ' << reject.comment() << reject.decoder());
         rejList.push_back(reject);
       }
@@ -471,7 +471,7 @@ void HqcMainWindow::showWeather()
   while (timeTo > now)
     timeTo -= boost::gregorian::days(1);
   TimeRange time(timeFrom, timeTo);
-  
+
   WeatherStationDialog sd(sensor, time);
   if (not sd.exec())
     return;
@@ -524,7 +524,7 @@ void HqcMainWindow::screenshot()
 {
   QPixmap hqcPixmap = QPixmap();
   hqcPixmap = QPixmap::grabWidget(this);
-    
+
   QPrinter printer;
   printer.setPaperSize(QPrinter::A4);
   printer.setOrientation(QPrinter::Landscape);

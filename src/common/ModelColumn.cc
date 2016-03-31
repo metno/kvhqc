@@ -68,7 +68,7 @@ bool ModelColumn::onModelDataChanged(ModelDataPtr mdl)
   ModelCache_t::iterator it = mModelCache.find(timeo);
   if (it == mModelCache.end())
     return false;
-    
+
   mModelCache.erase(it);
   columnChanged(timeo, shared_from_this());
   return true;

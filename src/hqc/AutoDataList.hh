@@ -15,12 +15,12 @@ class AutoDataList : public DataList
 public:
   AutoDataList(QWidget* parent=0);
   ~AutoDataList();
-  
+
   virtual void navigateTo(const SensorTime&);
-  
+
 public:
   enum ColumnType { CORRECTED, ORIGINAL, FLAGS, MODEL };
-  
+
 private:
   struct Column {
     Sensor sensor;

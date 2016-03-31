@@ -16,19 +16,19 @@ int possibilities(EditDataPtr obs)
   // fmis=3 => disable
   // fmis=2 => disable accept for corrected, all others enabled
   // fmis=1 => disable reject, all others enabled
-  
+
   METLIBS_LOG_SCOPE();
-  
+
   const Sensor& s = obs->sensorTime().sensor;
   if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs))
     // for accumulations, always use WatchRR
     return 0;
-  
+
   const kvalobs::kvControlInfo ci = obs->controlinfo();
   const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3)
     return CAN_CORRECT;
-  
+
   int possible = ALL;
   if (ci.flag(kvalobs::flag::fhqc) == 0xA)
     possible &= ~CAN_REJECT;

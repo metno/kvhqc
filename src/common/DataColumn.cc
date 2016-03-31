@@ -65,7 +65,7 @@ bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
   const SensorTime st(obs->sensorTime());
   if (not mItem->matchSensor(mSensor, st.sensor))
     return false;
-  
+
   METLIBS_LOG_DEBUG(LOGVAL(what) << LOGOBS(obs));
   const timeutil::ptime timeo = st.time - mTimeOffset;
   ObsCache_t::iterator it = mObsCache.find(timeo);
@@ -73,7 +73,7 @@ bool DataColumn::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr obs)
     METLIBS_LOG_DEBUG("not in cache");
     return false;
   }
-  
+
   mObsCache.erase(it);
   columnChanged(timeo, shared_from_this());
   return true;

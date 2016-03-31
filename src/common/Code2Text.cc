@@ -40,7 +40,7 @@ QString Code2Text::asText(float value, bool editing) const
   QMap<int,Code>::const_iterator it = mCodes.find(value);
   if (it == mCodes.end() or it.value().shortText.isEmpty())
     return QString::number(value, 'f', mDecimals);
-  
+
   return it.value().shortText.front();
 }
 
@@ -88,7 +88,7 @@ QStringList Code2Text::allCodes() const
 QStringList Code2Text::allExplanations() const
 {
   QStringList all;
-  
+
   QMap<int, Code>::const_iterator it = mCodes.constBegin();
   ++it; ++it; // do not allow setting "mis" or new
   for (; it != mCodes.constEnd(); ++it)

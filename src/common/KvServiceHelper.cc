@@ -108,11 +108,11 @@ bool KvServiceHelper::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& reje
 {
   METLIBS_LOG_SCOPE();
   rejectList.clear();
-  
+
   CKvalObs::CService::RejectDecodeInfo rdInfo;
   rdInfo.fromTime = timeutil::to_iso_extended_string(timeLimits.t0()).c_str();
   rdInfo.toTime   = timeutil::to_iso_extended_string(timeLimits.t1()).c_str();
-  
+
   try {
     kvservice::RejectDecodeIterator rdIt;
     const bool ok = kvservice::KvApp::kvApp->getKvRejectDecode(rdInfo, rdIt);
@@ -123,15 +123,15 @@ bool KvServiceHelper::getKvRejectDecode(std::list<kvalobs::kvRejectdecode>& reje
         rejectList.push_back(reject);
     }
     return ok;
-  } catch (std::exception& e) {                                       
-    HQC_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits << ": " << e.what()); 
+  } catch (std::exception& e) {
+    HQC_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits << ": " << e.what());
     updateKvalobsAvailability(false);
     throw e;
   } catch (...) {
     HQC_LOG_ERROR("kvalobs exception in 'getKvRejectDecode' for time " << timeLimits);
     updateKvalobsAvailability(false);
     throw;
-  }                                                                     
+  }
 }
 
 bool KvServiceHelper::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const std::list<long>& stationList)
@@ -164,7 +164,7 @@ bool KvServiceHelper::getKvObsPgm(std::list<kvalobs::kvObsPgm>& obsPgm, const st
     updateKvalobsAvailability(false);                                   \
     throw;                                                              \
   }                                                                     \
-  
+
 bool KvServiceHelper::getKvParams(std::list<kvalobs::kvParam>& paramList)
 {
   TRY_KVALOBS(getKvParams, (paramList));

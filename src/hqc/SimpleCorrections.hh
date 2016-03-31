@@ -18,14 +18,14 @@ class SimpleCorrections : public QWidget, public DataView
 public:
   SimpleCorrections(QWidget* parent=0);
   ~SimpleCorrections();
-  
+
   virtual void setDataAccess(EditAccessPtr eda, ModelAccessPtr mda);
   virtual void navigateTo(const SensorTime&);
-  
+
 protected:
   virtual void onDataChanged(ObsAccess::ObsDataChange, ObsDataPtr);
   virtual void changeEvent(QEvent *event);
-  
+
 private:
   void enableEditing();
   void update();

@@ -54,7 +54,7 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
   if ((have_max and value > param_max)
       or (have_min and value < param_min))
     return OutsideMinMax;
-  
+
   if ((have_high and value > param_high)
       or (have_low and value < param_low))
     return OutsideHighLow;

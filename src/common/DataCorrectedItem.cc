@@ -44,11 +44,11 @@ bool DataCorrectedItem::setData(EditDataPtr obs, EditAccessPtr da, const SensorT
       return false;
     if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, newC) == CachedParamLimits::OutsideMinMax)
       return false;
-    
+
     da->newVersion();
     if (not obs)
       obs = da->createE(st);
-    
+
     if (reject)
       Helpers::reject(da->editor(obs));
     else

@@ -117,7 +117,7 @@ bool StationInfoBuffer::writeToStationFile()
 bool StationInfoBuffer::readFromStationFile()
 {
   METLIBS_LOG_SCOPE();
-  
+
   QSqlDatabase db = hqcApp->configDB();
   if (db.tables().contains(STATIONINFO_CACHE)) {
     QSqlQuery query(STATIONINFO_CACHE_SELECT_ALL, db);
@@ -125,27 +125,27 @@ bool StationInfoBuffer::readFromStationFile()
       try {
         const int stationId = query.value(0).toInt();
         const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stationId);
-        
+
         listStat_t ls;
         ls.stationid   = stationId;
 
         ls.name        = Helpers::fromUtf8(st.name());
         ls.altitude    = st.height();
         ls.wmonr       = st.wmonr();
-          
+
         ls.municipid   = query.value(1).toInt();
         ls.fylke       = query.value(2).toString();
         ls.kommune     = query.value(3).toString();
         ls.coast       = query.value(4).toBool();
         ls.pri         = query.value(5).toInt();
-  
+
         listStat.push_back(ls);
       } catch (std::exception& e) {
         HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
       }
     }
   }
-  
+
   if (db.tables().contains(MANUAL_TYPES_CACHE)) {
     mManualTypes.clear();
     QSqlQuery query(MANUAL_TYPES_CACHE_SELECT_ALL, db);

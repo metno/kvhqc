@@ -303,7 +303,7 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumnPtr co
   const int row = rowAtTime(time);
   if (row < 0)
     return;
-  
+
   const QModelIndex index = createIndex(row, (it - mColumns.begin()));
   dataChanged(index, index);
 }

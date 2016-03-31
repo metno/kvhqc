@@ -56,10 +56,10 @@ void DianaHelper::processConnect()
         METLIBS_LOG_DEBUG(LOGVAL(pStd.toStdString()));
         const QImage iStd(pStd);
         const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
-        
+
         sendImage(IMG_STD_HQC, iStd);
         sendImage(IMG_ICON_HQC, iIcon);
-        
+
         miMessage m;
         m.command = qmstrings::showpositionname;
         m.description = "normal:selected:icon";
@@ -105,20 +105,20 @@ void DianaHelper::sendImage(const std::string& name, const QImage& image)
     QByteArray *a = new QByteArray();
     QDataStream s(a, QIODevice::WriteOnly);
     s << image;
-    
+
     miMessage m;
     m.command = qmstrings::addimage;
     m.description = "name:image";
-    
+
     std::ostringstream ost;
     ost << name << ":";
-    
+
     const int n = a->count();
     for (int i = 0; i < n; i++) {
         ost << std::setw(7) << int(a->data()[i]);
     }
     m.data.push_back(ost.str());
-    
+
     mDianaButton->sendMessage(m);
     std::cerr << "sent image '" << name << '\'' << std::endl;
 }

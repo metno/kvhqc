@@ -66,7 +66,7 @@ void ViewChanges::store(const Sensor& s, const std::string& vtype, const std::st
     HQC_LOG_ERROR("error while updating: " << update.lastError().text());
   const int nup = update.numRowsAffected();
   update.finish();
-  
+
   if (nup == 0) {
     QSqlQuery insert(db);
     insert.prepare(CHANGES_TABLE_INSERT);
@@ -110,7 +110,7 @@ TimeRange ViewChanges::defaultTimeLimits(const SensorTime& st)
   int hours = 24;
   if (st.sensor.paramId == kvalobs::PARAMID_RR_24)
     hours = 7*24;
-  
+
   const boost::posix_time::time_duration dt = boost::posix_time::hours(hours);
   const timeutil::ptime& t = st.time;
   return TimeRange(t - dt, t + dt);

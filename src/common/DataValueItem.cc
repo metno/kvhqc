@@ -40,7 +40,7 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
 {
   if (not obs)
     return QVariant();
-  
+
   const bool isNC = mColumnType == ObsColumn::NEW_CORRECTED;
   if (role == Qt::BackgroundRole) {
     if (isNC) {

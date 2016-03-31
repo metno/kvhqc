@@ -58,7 +58,7 @@ typename ChangeReplay<Column,Comp>::ColumnVector ChangeReplay<Column,Comp>::repl
     ColumnSet add;
     std::set_difference(originals.begin(), originals.end(), no_add.begin(), no_add.end(),
                         std::insert_iterator<ColumnSet>(add, add.end()), Comp());
-    
+
     ColumnVector replayed(actual);
     BOOST_FOREACH(const Column& c, original) {
         if (add.find(c) != add.end())

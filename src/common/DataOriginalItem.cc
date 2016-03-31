@@ -21,7 +21,7 @@ QVariant DataOriginalItem::data(EditDataPtr obs, const SensorTime& st, int role)
 {
   if (not obs)
     return QVariant();
-  
+
   if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
     QString tip;
     const int ui_2 = Helpers::extract_ui2(obs);

@@ -88,7 +88,7 @@ protected:
   virtual void resizeEvent(QResizeEvent* event);
   virtual void closeEvent(QCloseEvent* event);
   virtual void changeEvent(QEvent *event);
- 
+
 Q_SIGNALS:
   void newStationList(std::vector<QString>&);
   void newParameterList(const std::vector<int>&);

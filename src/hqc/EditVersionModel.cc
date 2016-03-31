@@ -105,7 +105,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
 {
   const qint64 internalId = index.internalId();
   const int column = index.column();
-  
+
   if (role == Qt::DisplayRole) {
     if (internalId >= 0) {
       const int version = internalId+1;
@@ -123,7 +123,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
       case COL_FLAGS:
         return Helpers::getFlagText(obs->controlinfo(version));
       }
-    } else if (column == 0) {      
+    } else if (column == 0) {
       const int version = index.row()+1;
       const timeutil::ptime& t = mDA->versionTimestamp(version);
       return tr("Changed %1").arg(timeutil::to_iso_extended_qstring(t));

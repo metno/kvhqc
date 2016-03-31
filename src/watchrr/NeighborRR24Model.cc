@@ -26,6 +26,6 @@ QVariant NeighborRR24Model::columnHeader(int section, Qt::Orientation orientatio
 {
   if (role == Qt::ToolTipRole)
     return ObsTableModel::columnHeader(section, orientation, role);
-  
+
   return NeighborHeader::headerData(mNeighbors[0].stationId, mNeighbors[section].stationId, orientation, role);
 }

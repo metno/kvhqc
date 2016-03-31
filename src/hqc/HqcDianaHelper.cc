@@ -253,13 +253,13 @@ void HqcDianaHelper::onDataChanged(ObsAccess::ObsDataChange what, ObsDataPtr dat
 void HqcDianaHelper::navigateTo(const SensorTime& st)
 {
   METLIBS_LOG_TIME();
-  
+
   if (eq_SensorTime()(mDianaSensorTime, st))
     return;
-  
+
   mDianaSensorTime = st;
   METLIBS_LOG_DEBUG(LOGVAL(mDianaSensorTime));
-  
+
   sendTime();
   sendObservations();
   sendStation();
@@ -441,7 +441,7 @@ void HqcDianaHelper::handleDianaStationAndTime(int stationId, const std::string&
     } else {
       METLIBS_LOG_DEBUG("time '" << time << "' not found in confirmation list, assuming it is from a click in diana");
       mTimesAwaitingConfirmation.clear();
-      
+
       METLIBS_LOG_DEBUG("re-sending observations" << LOGVAL(mDianaSensorTime));
       sendObservations();
       sendSignal = true;
@@ -525,9 +525,9 @@ std::string HqcDianaHelper::synopStart(int stationId)
   std::ostringstream synop;
   try {
     const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
-        
+
     synop << "S" << stationId << ',';
-        
+
     const std::string stationType = hqcType(stationId, station.environmentid());
     if (stationType == "AA" or stationType == "VM" or stationType == "none")
       synop << "none";
@@ -536,14 +536,14 @@ std::string HqcDianaHelper::synopStart(int stationId)
     else
       synop << stationType.at(1);
     synop << ',';
-        
+
     std::string isAuto = "x";
     if (stationType.at(0) == 'A')
       isAuto = "a";
     else if (stationType.at(0) == 'N' || stationType.at(0) == 'P')
       isAuto = "n";
     synop << isAuto << ',';
-        
+
     synop << (boost::format("%1$.4f,%2$.4f") % station.lon() % station.lat()).str();
   } catch (std::exception&) {
     // ignore unknown station
@@ -554,7 +554,7 @@ std::string HqcDianaHelper::synopStart(int stationId)
 std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, bool& hasData)
 {
   double corr = -32767;
-    
+
   ObsDataPtr obs = mDA->find(st);
   if (obs) {
     corr = obs->corrected();
@@ -605,7 +605,7 @@ std::string HqcDianaHelper::synopValue(const SensorTime& st, const SendPar& sp, 
     colorstr = ";255:175:0";
   else if (maxFlag >= 6)
     colorstr = ";255:0:0";
-    
+
   hasData = true;
   std::ostringstream synop;
   synop << ',' << corr << ';' << flagstr << colorstr;
@@ -619,7 +619,7 @@ void HqcDianaHelper::sendObservations()
   const timeutil::ptime& t = mDianaSensorTime.time;
   if (not mEnabled or not mDianaConnected or mSensors.empty() or t.is_not_a_date_time())
     return;
-    
+
   HQC_LOG_ERROR("FIXME need to reimplement sendObservations");
 
   typedef std::map<int, Sensor> SensorByParam_t;
@@ -651,7 +651,7 @@ void HqcDianaHelper::sendObservations()
     BOOST_FOREACH(const SendPars_t::value_type& p_sp, mSendPars) {
       const int paramId = p_sp.first;
       const SendPar& sp = p_sp.second;
-        
+
       SensorByParam_t::const_iterator it = sbp.find(paramId);
       if (it != sbp.end()) {
         const Sensor& sensor = it->second;
@@ -873,7 +873,7 @@ void HqcDianaHelper::updateDianaParameters()
   //else if (mDianaConfigDialog->podiType->isChecked())
   //  mSendPars.insert(std::make_pair(173/*PO*/, SendPar(item, SendPar::DIFF)));
   //else if (mDianaConfigDialog->pomeType->isChecked())
-  //  mSendPars.insert(std::make_pair(174/*POM*/, SendPar(item))); 
+  //  mSendPars.insert(std::make_pair(174/*POM*/, SendPar(item)));
   //else if (mDianaConfigDialog->pomiType->isChecked())
   //  mSendPars.insert(std::make_pair(175/*PON*/, SendPar(item)));
   //else if (mDianaConfigDialog->pomaType->isChecked())

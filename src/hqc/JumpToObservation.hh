@@ -20,13 +20,13 @@ class JumpToObservation : public QDialog
 public:
   JumpToObservation(ObsAccessPtr da, QWidget* parent=0);
   ~JumpToObservation();
-  
+
   void navigateTo(const SensorTime&);
 
   SensorTime selectedSensorTime() const;
-  
+
   boost::signal1<void, SensorTime> signalNavigateTo;
-                                                   
+
 protected:
   virtual void changeEvent(QEvent *event);
 

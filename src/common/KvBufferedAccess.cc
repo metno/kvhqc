@@ -32,7 +32,7 @@ ObsAccess::TimeSet KvBufferedAccess::allTimes(const std::vector<Sensor>& sensors
 ObsAccess::DataSet KvBufferedAccess::allData(const std::vector<Sensor>& sensors, const TimeRange& limits)
 {
   DataSet data;
-  
+
   BOOST_FOREACH(const Sensor& sensor, sensors) {
     for (Data_t::const_iterator it = mData.lower_bound(SensorTime(sensor, limits.t0())); it != mData.end(); ++it) {
       const SensorTime& dst = it->first;
@@ -55,7 +55,7 @@ ObsDataPtr KvBufferedAccess::find(const SensorTime& st)
   Data_t::iterator it = mData.find(st);
   if (it != mData.end())
     return it->second;
-  
+
   return KvalobsDataPtr();
 }
 
@@ -63,11 +63,11 @@ ObsDataPtr KvBufferedAccess::create(const SensorTime& st)
 {
   if (not st.valid())
     HQC_LOG_ERROR("invalid sensorTime: " << st);
-  
+
   Data_t::iterator it = mData.find(st);
   if (it != mData.end() and it->second)
     return it->second;
-  
+
   const Sensor& s = st.sensor;
   kvalobs::kvData d = kvalobs::getMissingKvData(s.stationId, timeutil::to_miTime(st.time),
       s.paramId, s.typeId, s.sensor, s.level);

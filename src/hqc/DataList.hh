@@ -28,9 +28,9 @@ class DataList : public QWidget, public DataView
 public:
   DataList(QWidget* parent=0);
   ~DataList() = 0;
-  
+
   virtual void navigateTo(const SensorTime&);
-  
+
 private Q_SLOTS:
   void onButtonSaveAs();
   void onCheckFilter(bool filterByTimestep);

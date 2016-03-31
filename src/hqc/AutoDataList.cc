@@ -156,7 +156,7 @@ void AutoDataList::generateColumns()
 {
   METLIBS_LOG_SCOPE();
   mColumns = Columns_t();
-  
+
   const std::vector<Sensor> sensors = Helpers::relatedSensors(currentSensorTime().sensor, mTimeLimits, VIEW_TYPE);
   BOOST_FOREACH(const Sensor& s, sensors) {
     Column c;
@@ -349,10 +349,10 @@ void AutoDataList::replay(const std::string& changesText)
       METLIBS_LOG_DEBUG("column " << col.sensor);
     }
   }
-  
+
   ChangeReplay<Column, lt_Column> cr;
   mColumns = cr.replay(mOriginalColumns, actual, removed);
-  
+
   TimeRange newTimeLimits(mOriginalTimeLimits);
   const QDomElement doc_timeshift = doc_changes.firstChildElement(E_TAG_TSHIFT);
   if (not doc_timeshift.isNull()) {
@@ -389,11 +389,11 @@ void AutoDataList::onHorizontalHeaderContextMenu(const QPoint& pos)
   QMenu menu;
   QAction* actionAdd = menu.addAction(mColumnAdd->icon(), mColumnAdd->text());
   QAction* actionDel = menu.addAction(mColumnRemove->icon(), mColumnRemove->text());
-  
+
   QAction* chosen = menu.exec(mapToGlobal(pos));
   if (chosen == 0)
     return;
-  
+
   const int column = ui->table->horizontalHeader()->logicalIndexAt(pos);
   if (chosen == actionAdd) {
     addColumnBefore(column);
