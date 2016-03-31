@@ -32,6 +32,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "common/gui/Authenticator.hh"
 #include "HqcDataReinserter.hh"
 #include "KvServiceHelper.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvOperator.h>
 
@@ -65,7 +66,7 @@ kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, k
   KvServiceHelper::instance()->getKvOperator(operators);
 
   BOOST_FOREACH(const kvalobs::kvOperator& op, operators) {
-    const QString uname = QString::fromStdString(op.username());
+    const QString uname = Helpers::fromUtf8(op.username());
     if (user == uname) {
       userName = uname;
       return new HqcDataReinserter(app, op.userID());

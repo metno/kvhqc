@@ -54,6 +54,16 @@ std::string to_iso_extended_string(const pdate& pd)
   return (boost::format("%1$04d-%2$02d-%3$02d") % y % m % d).str();
 }
 
+QString to_iso_extended_qstring(const ptime& pt)
+{
+  return QString::fromStdString(timeutil::to_iso_extended_string(pt));
+}
+
+QString to_iso_extended_qstring(const pdate& pd)
+{
+  return QString::fromStdString(timeutil::to_iso_extended_string(pd));
+}
+
 b_pt::ptime from_iso_extended_string(const std::string& st)
 {
   if( st.size() > 10 && st[10] == 'T' ) {

@@ -5,6 +5,7 @@
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -90,7 +91,7 @@ QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
       if (column <= COL_OBSTIME)
         return Helpers::stationInfo(st.sensor.stationId) + " "
-            + QString::fromStdString(timeutil::to_iso_extended_string(st.time));
+            + timeutil::to_iso_extended_qstring(st.time);
       if (column == COL_OBS_FLAGS)
         return Helpers::getFlagExplanation(obs->controlinfo());
     } else if (role == Qt::DisplayRole) {
@@ -98,11 +99,11 @@ QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
       case COL_STATION_ID:
         return st.sensor.stationId;
       case COL_STATION_NAME:
-        return QString::fromStdString(KvMetaDataBuffer::instance()->findStation(st.sensor.stationId).name());
+        return Helpers::fromUtf8(KvMetaDataBuffer::instance()->findStation(st.sensor.stationId).name());
       case COL_OBSTIME:
-        return QString::fromStdString(timeutil::to_iso_extended_string(st.time));
+        return timeutil::to_iso_extended_qstring(st.time);
       case COL_OBS_PARAM:
-        return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(st.sensor.paramId).name());
+        return Helpers::fromUtf8(KvMetaDataBuffer::instance()->findParam(st.sensor.paramId).name());
       case COL_OBS_TYPEID:
         return st.sensor.typeId;
       case COL_OBS_ORIG:

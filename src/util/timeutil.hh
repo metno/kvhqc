@@ -34,6 +34,7 @@
 // this is required for making a time-series plot
 #include <puTools/miTime.h>
 
+#include <QtCore/QString>
 #include <QtCore/QDateTime>
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iosfwd>
@@ -46,6 +47,9 @@ typedef boost::gregorian::date pdate;
 
 std::string to_iso_extended_string(const ptime& pt);
 std::string to_iso_extended_string(const pdate& pd);
+
+QString to_iso_extended_qstring(const ptime& pt);
+QString to_iso_extended_qstring(const pdate& pd);
 
 boost::posix_time::ptime from_iso_extended_string(const std::string& st);
 

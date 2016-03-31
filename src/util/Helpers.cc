@@ -1,6 +1,8 @@
 
 #include "Helpers.hh"
 
+#include "util/stringutil.hh"
+
 #include <miconfparser/confsection.h>
 
 #include <QtCore/QVariant>
@@ -16,37 +18,6 @@
 #include "HqcLogging.hh"
 
 namespace Helpers {
-
-char int2char(int i)
-{
-  if( i<10 )
-    return ('0' + i);
-  else
-    return ('A' + (i-10));
-}
-
-// ------------------------------------------------------------------------
-
-QString& appendText(QString& text, const QString& append, const QString& separator)
-{
-  if (append.isEmpty())
-    return text;
-  if (not text.isEmpty())
-    text += separator;
-  text += append;
-  return text;
-}
-
-// ------------------------------------------------------------------------
-
-QString appendedText(const QString& text, const QString& append, const QString& separator)
-{
-  QString t(text);
-  appendText(t, append, separator);
-  return t;
-}
-
-// ------------------------------------------------------------------------
 
 double distance(double lon1, double lat1, double lon2, double lat2)
 {
@@ -77,26 +48,6 @@ float round(float f, float factor)
 float roundDecimals(float f, int decimals)
 {
   return round(f, std::pow(10, decimals));
-}
-
-// ------------------------------------------------------------------------
-
-float parseFloat(const QString& text, int nDecimals)
-{
-  bool numOk = false;
-  const float num = text.toFloat(&numOk);
-  if (not numOk)
-    throw std::runtime_error("cannot parse number");
-  const float factor = std::pow(10, nDecimals),
-      numf = num * factor,
-      roundedf = Helpers::round(numf, 1);
-  if (std::fabs(numf - roundedf) >= 1e-8) {
-    std::ostringstream w;
-    w << "text '" << text.toStdString() << "' converted to value " << num
-      << " has unsupported precision (rounded value is " << roundedf/factor << ")";
-    throw std::runtime_error(w.str());
-  }
-  return num;
 }
 
 // ------------------------------------------------------------------------
@@ -157,10 +108,10 @@ bool connect2postgres(const QString& qname, std::shared_ptr<miutil::conf::ConfSe
     return false;
     
   try {
-    return connect2postgres(qname, QString::fromStdString(valHost    .front().valAsString()),
-        QString::fromStdString(valDbname  .front().valAsString()),
-        QString::fromStdString(valUser    .front().valAsString()),
-        QString::fromStdString(valPassword.front().valAsString()),
+    return connect2postgres(qname, Helpers::fromUtf8(valHost.front().valAsString()),
+        Helpers::fromUtf8(valDbname  .front().valAsString()),
+        Helpers::fromUtf8(valUser    .front().valAsString()),
+        Helpers::fromUtf8(valPassword.front().valAsString()),
         valPort.front().valAsInt());
   } catch (miutil::conf::InvalidTypeEx& e) {
     return false;

@@ -7,6 +7,7 @@
 #include "common/StationIdCompletion.hh"
 #include "common/TypeIdModel.hh"
 #include "common/gui/TimeRangeControl.hh"
+#include "util/stringutil.hh"
 
 #include "ui_watchrr_station.h"
 
@@ -104,7 +105,7 @@ bool StationDialog::checkStation()
     QString name = "?";
     try {
       const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stationId);
-      name = QString::fromStdString(station.name());
+      name = Helpers::fromUtf8(station.name());
     } catch (std::exception& e) {
       METLIBS_LOG_INFO("Station lookup problem, probably bad station number: " << e.what());
     }

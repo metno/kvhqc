@@ -5,6 +5,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
 #include "common/gui/TimeHeader.hh"
+#include "util/stringutil.hh"
 
 #include <kvcpp/WhichDataHelper.h>
 
@@ -57,10 +58,10 @@ QVariant TextDataTableModel::data(const QModelIndex& index, int role) const
     switch (column) {
     case 0: return QString::number(td.stationId);
     case 1: return TimeHeader::headerData(td.obstime, Qt::Vertical, Qt::ToolTipRole);
-    case 2: return QString::fromStdString(td.original);
+    case 2: return Helpers::fromUtf8(td.original);
     case 3: return QString::number(td.paramId);
-    case 4: return QString::fromStdString(KvMetaDataBuffer::instance()->findParam(td.paramId).name());
-    case 5: return QString::fromStdString(timeutil::to_iso_extended_string(td.tbtime));
+    case 4: return Helpers::fromUtf8(KvMetaDataBuffer::instance()->findParam(td.paramId).name());
+    case 5: return timeutil::to_iso_extended_qstring(td.tbtime);
     case 6: return QString::number(td.typeId);
     }
   } else if (role == Qt::FontRole and (column == 1 or column == 2)) {

@@ -9,11 +9,11 @@
 #include <vector>
 
 struct listStat_t {
-  std::string name;    // listStatName
+  QString name;        // listStatName
   int stationid;       // listStatNum
   float altitude;      // listStatHoh
-  std::string fylke;   // listStatFylke
-  std::string kommune; // listStatKommune
+  QString fylke;       // listStatFylke
+  QString kommune;     // listStatKommune
   int municipid;
   int wmonr;           // listStatWeb
   int pri;             // listStatPri

@@ -61,6 +61,7 @@
 #include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
+#include "util/stringutil.hh"
 #include "util/timeutil.hh"
 #include "util/gui/BusyIndicator.hh"
 #include "util/gui/EtaProgressDialog.hh"
@@ -369,7 +370,7 @@ void HqcMainWindow::ListOK()
   BOOST_FOREACH(int stnr, selectedStations) {
     try {
       const kvalobs::kvStation& station = KvMetaDataBuffer::instance()->findStation(stnr);
-      const QString statId = QString::number(stnr) + " " + QString::fromStdString(station.name());
+      const QString statId = QString::number(stnr) + " " + Helpers::fromUtf8(station.name());
       stationList.push_back(statId);
     } catch (std::exception& e) {
       HQC_LOG_WARN("Error in lookup for station " << stnr << ", exception is: " << e.what());
@@ -734,7 +735,7 @@ void HqcMainWindow::navigateTo(const SensorTime& st)
   // this disables the GUI and is therefore often much slower than updating the views
   BusyStatus busy(this, tr("Preparing data for station %1 at %2, please wait...")
       .arg(st.sensor.stationId)
-      .arg(QString::fromStdString(timeutil::to_iso_extended_string(st.time))));
+      .arg(timeutil::to_iso_extended_qstring(st.time)));
 #endif
   mLastNavigated = st;
 

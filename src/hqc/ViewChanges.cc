@@ -4,6 +4,7 @@
 #include "common/KvHelpers.hh"
 #include "common/Sensor.hh"
 #include "common/HqcApplication.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlDatabase>
@@ -45,7 +46,7 @@ void ViewChanges::store(const Sensor& s, const std::string& vtype, const std::st
   if (not hqcApp)
     return;
 
-  const QString qtype = QString::fromStdString(vtype), qid = QString::fromStdString(vid), qchanges = QString::fromStdString(vchanges);
+  const QString qtype = Helpers::fromUtf8(vtype), qid = Helpers::fromUtf8(vid), qchanges = Helpers::fromUtf8(vchanges);
 
   QSqlDatabase db = hqcApp->configDB();
   if (not db.tables().contains(CHANGES_TABLE))

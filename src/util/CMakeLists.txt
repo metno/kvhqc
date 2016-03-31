@@ -5,6 +5,7 @@ SET(util_SOURCES
   HqcLogging.cc
   hqc_paths.cc
   Milog4cpp.cc
+  stringutil.cc
   timeutil.cc
   ValueChange.hh
   VersionedValue.hh

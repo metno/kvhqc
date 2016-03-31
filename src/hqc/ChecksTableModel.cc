@@ -2,6 +2,7 @@
 #include "ChecksTableModel.hh"
 
 #include "common/HqcApplication.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlQuery>
@@ -86,7 +87,7 @@ void ChecksTableModel::navigateTo(const SensorTime& st)
     if (ObsDataPtr obs = mDA->find(mSensorTime)) {
       const std::string& cfailed = obs->cfailed();
       if (not cfailed.empty()) {
-        mChecks = QString::fromStdString(cfailed).split(",");
+        mChecks = Helpers::fromUtf8(cfailed).split(",");
         QSqlQuery query(hqcApp->systemDB());
         query.prepare("SELECT description FROM check_explain WHERE qcx = ? AND language = 'nb'");
         

@@ -3,6 +3,7 @@
 
 #include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
+#include "util/stringutil.hh"
 
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvStationParam.h>
@@ -81,7 +82,7 @@ QString CachedParamLimits::fetchMetaData(const SensorTime& st)
             and (fromtime.is_not_a_date_time()
                 or fromtime < it->fromtime()))
         {
-          metadata = QString::fromStdString(it->metadata());
+          metadata = Helpers::fromUtf8(it->metadata());
           fromtime = it->fromtime();
         }
         if (it->fromtime() > st.time

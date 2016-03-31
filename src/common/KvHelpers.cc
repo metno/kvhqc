@@ -5,6 +5,7 @@
 #include "TimeRange.hh"
 #include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStation.h>
@@ -341,7 +342,7 @@ Sensor_v relatedSensors(const Sensor& s, const TimeRange& time, const std::strin
         " ORDER BY pr1.sortkey");
 
     query.bindValue(":pid", s.paramId);
-    query.bindValue(":vt",  "%" + QString::fromStdString(viewType) + "%");
+    query.bindValue(":vt",  "%" + Helpers::fromUtf8(viewType) + "%");
     query.exec();
     while (query.next())
       stationPar.push_back(query.value(0).toInt());
@@ -411,7 +412,7 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add)
 
 QString paramName(int paramId)
 {
-  return QString::fromStdString(KvMetaDataBuffer::instance()->findParamName(paramId));
+  return Helpers::fromUtf8(KvMetaDataBuffer::instance()->findParamName(paramId));
 }
 
 QString stationName(const kvalobs::kvStation& s)
@@ -424,7 +425,7 @@ QString paramInfo(int paramId)
   QString info = QString::number(paramId) + ": ";
   try {
     const kvalobs::kvParam& p = KvMetaDataBuffer::instance()->findParam(paramId);
-    info += QString::fromStdString(p.description());
+    info += Helpers::fromUtf8(p.description());
   } catch (std::exception& e) {
     info += "?";
   }
@@ -436,7 +437,7 @@ QString typeInfo(int typeId)
   QString info = QString::number(typeId) + ": ";
   try {
     const kvalobs::kvTypes& t = KvMetaDataBuffer::instance()->findType(typeId);
-    info += QString::fromStdString(t.format());
+    info += Helpers::fromUtf8(t.format());
   } catch (std::exception& e) {
     info += "?";
   }
@@ -450,7 +451,7 @@ QString stationInfo(int stationId)
   try {
     const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationId);
     return QString(qApp->translate("Helpers", "%1 %2 %3masl."))
-        .arg(stationId).arg(QString::fromStdString(s.name())).arg(s.height());
+        .arg(stationId).arg(Helpers::fromUtf8(s.name())).arg(s.height());
   } catch (std::exception& e) {
     return QString::number(stationId);
   }

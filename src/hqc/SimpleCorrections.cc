@@ -5,6 +5,7 @@
 #include "common/AcceptReject.hh"
 #include "common/ColumnFactory.hh"
 #include "common/ModelData.hh"
+#include "util/stringutil.hh"
 #include "util/gui/ToolTipStringListModel.hh"
 
 #include "ui_simplecorrections.h"
@@ -169,7 +170,7 @@ void SimpleCorrections::update()
     ui->textType->setText(QString::number(s.typeId));
     ui->textType->setToolTip(Helpers::typeInfo(s.typeId));
 
-    ui->textObstime->setText(QString::fromStdString(timeutil::to_iso_extended_string(mSensorTime.time)));
+    ui->textObstime->setText(timeutil::to_iso_extended_qstring(mSensorTime.time));
 
     if (mDA)
       obs = mDA->findE(mSensorTime);
@@ -192,7 +193,7 @@ void SimpleCorrections::update()
     ui->textObstime->setText("");
   }
 
-  ui->textObstime->setToolTip(obs ? tr("tbtime: %1").arg(QString::fromStdString(timeutil::to_iso_extended_string(obs->tbtime()))) : "");
+  ui->textObstime->setToolTip(obs ? tr("tbtime: %1").arg(timeutil::to_iso_extended_qstring(obs->tbtime())) : "");
 
   ui->textFlags->setText((obs and mItemFlags) ? mItemFlags->data(obs, mSensorTime, Qt::DisplayRole).toString() : "");
   setFBF(ui->textFlags, mItemFlags, obs);

@@ -1,5 +1,7 @@
 
 #include "Helpers.hh"
+#include "util/stringutil.hh"
+
 #include <stdexcept>
 #include <gtest/gtest.h>
 

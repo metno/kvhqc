@@ -6,6 +6,7 @@
 #include "common/TimeRange.hh"
 #include "util/hqc_paths.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvStationParam.h>
 #include <kvcpp/KvApp.h>
@@ -110,7 +111,7 @@ QSqlDatabase HqcApplication::configDB()
       // not reached
     }
 
-    const QString dbPath = QString::fromStdString(home) + "/.config/hqc_config.db";
+    const QString dbPath = Helpers::fromUtf8(home) + "/.config/hqc_config.db";
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", DB_CONFIG);
     db.setDatabaseName(dbPath);
     if (not db.open()) {
@@ -136,7 +137,7 @@ QString HqcApplication::kvalobsDBName()
 
   try {
     if (valHost.size() == 1)
-      return QString::fromStdString(valHost.front().valAsString());
+      return Helpers::fromUtf8(valHost.front().valAsString());
   } catch (miutil::conf::InvalidTypeEx& e) {
     // pass
   }
@@ -163,7 +164,7 @@ std::vector<SensorTime> HqcApplication::kvalobsQuerySensorTime(const std::string
 
   QSqlQuery query(hqcApp->kvalobsDB());
   std::vector<SensorTime> results;
-  if (query.exec(QString::fromStdString(sql))) {
+  if (query.exec(Helpers::fromUtf8(sql))) {
     while (query.next()) {
       const Sensor s(query.value(0).toInt(), query.value(1).toInt(), query.value(2).toInt(),
           query.value(3).toInt(), query.value(4).toInt());
@@ -255,7 +256,7 @@ bool HqcApplication::notify(QObject* receiver, QEvent* e)
     return QApplication::notify(receiver, e);
   } catch (std::exception& e) {
     HQC_LOG_ERROR("exception in Qt event handling: " << e.what());
-    onException(QString::fromStdString(e.what()));
+    onException(Helpers::fromUtf8(e.what()));
   } catch (...) {
     HQC_LOG_ERROR("unknown exception in Qt event handling");
     onException("");

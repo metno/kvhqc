@@ -2,6 +2,7 @@
 #include "StationIdModel.hh"
 
 #include "KvMetaDataBuffer.hh"
+#include "util/stringutil.hh"
 
 #include <boost/foreach.hpp>
 #include <boost/lexical_cast.hpp>
@@ -48,7 +49,7 @@ QVariant StationIdModel::data(const QModelIndex& index, int role) const
       return QString::number(stationId);
     try {
       const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(stationId);
-      return QString::fromStdString(s.name());
+      return Helpers::fromUtf8(s.name());
     } catch (std::exception& e) {
       return "?";
     }

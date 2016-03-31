@@ -4,6 +4,7 @@
 #include "KvHelpers.hh"
 #include "StationInfoBuffer.hh"
 #include "common/HqcApplication.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlError>
@@ -83,7 +84,7 @@ std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& t
   std::vector<SensorTime> results;
 
   QSqlQuery query(hqcApp->kvalobsDB());
-  if (query.exec(QString::fromStdString(sql.str()))) {
+  if (query.exec(Helpers::fromUtf8(sql.str()))) {
     while (query.next()) {
       const int stationId = query.value(0).toInt(), typeId = query.value(1).toInt();
       const timeutil::ptime t = timeutil::from_iso_extended_string(query.value(2).toString().toStdString());

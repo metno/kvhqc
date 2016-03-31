@@ -6,6 +6,7 @@
 #include "common/ColumnFactory.hh"
 #include "common/DataListModel.hh"
 #include "util/ChangeReplay.hh"
+#include "util/stringutil.hh"
 #include "util/gui/BusyIndicator.hh"
 
 #include <QtGui/QHeaderView>
@@ -323,7 +324,7 @@ void AutoDataList::replay(const std::string& changesText)
     return;
 
   QDomDocument doc;
-  doc.setContent(QString::fromStdString(changesText));
+  doc.setContent(Helpers::fromUtf8(changesText));
 
   const QDomElement doc_changes = doc.documentElement();
 

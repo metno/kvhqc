@@ -3,6 +3,7 @@
 
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
+#include "util/stringutil.hh"
 
 #include <puTools/miStringFunctions.h>
 #include <coserver/ClientButton.h>
@@ -357,7 +358,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
     }
   } else if (letter.command == qmstrings::station and mEnabled) {
     if (letter.commondesc == "name,time") {
-      QStringList name_time = QString::fromStdString(letter.common).split(',');
+      QStringList name_time = Helpers::fromUtf8(letter.common).split(',');
       bool ok = false;
       const int stationid = name_time[0].mid(1).toInt(&ok);
       if (not ok) {

@@ -1,6 +1,8 @@
 
 #include "TimeHeader.hh"
 
+#include "util/stringutil.hh"
+
 #include <QtCore/QCoreApplication>
 
 namespace /* anonymous */ {
@@ -31,7 +33,7 @@ QVariant TimeHeader::headerData(const timeutil::ptime& time, Qt::Orientation ori
         } else if (role == Qt::ToolTipRole) {
             return QString("%1, %2")
                 .arg(weekday)
-                .arg(QString::fromStdString(timeutil::to_iso_extended_string(time)));
+                .arg(timeutil::to_iso_extended_qstring(time));
         }
     }
     return QVariant();

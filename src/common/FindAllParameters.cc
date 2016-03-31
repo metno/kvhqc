@@ -3,6 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "common/HqcApplication.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlError>
@@ -30,7 +31,7 @@ std::vector<int> findAllParameters(bool historic)
 
   QSqlQuery query(hqcApp->kvalobsDB());
   std::vector<int> params;
-  if (query.exec(QString::fromStdString(sql.str()))) {
+  if (query.exec(Helpers::fromUtf8(sql.str()))) {
     while (query.next()) {
       const int paramId = query.value(0).toInt();
       params.push_back(paramId);

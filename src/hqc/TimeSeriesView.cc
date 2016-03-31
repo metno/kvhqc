@@ -2,6 +2,7 @@
 #include "TimeSeriesView.hh"
 
 #include "util/ChangeReplay.hh"
+#include "util/stringutil.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ModelData.hh"
 #include "common/gui/TimeRangeControl.hh"
@@ -347,7 +348,7 @@ void TimeSeriesView::replay(const std::string& changesText)
   METLIBS_LOG_DEBUG("replaying " << changesText);
 
   QDomDocument doc;
-  doc.setContent(QString::fromStdString(changesText));
+  doc.setContent(Helpers::fromUtf8(changesText));
 
   const QDomElement doc_changes = doc.documentElement();
 

@@ -3,6 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "common/HqcApplication.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtSql/QSqlDatabase>
@@ -78,11 +79,10 @@ bool StationInfoBuffer::writeToStationFile()
   QSqlQuery insert(db);
   insert.prepare(STATIONINFO_CACHE_INSERT);
   BOOST_FOREACH(const listStat_t& ls, listStat) {
-    const QString qcounty = QString::fromStdString(ls.fylke), qmunicip = QString::fromStdString(ls.kommune);
     insert.bindValue(":sid",      ls.stationid);
     insert.bindValue(":mun_id",   ls.municipid);
-    insert.bindValue(":county",   qcounty);
-    insert.bindValue(":mun_name", qmunicip);
+    insert.bindValue(":county",   ls.fylke);
+    insert.bindValue(":mun_name", ls.kommune);
     insert.bindValue(":prio",     ls.pri);
     insert.bindValue(":coast",    ls.coast);
     if (not insert.exec())
@@ -128,14 +128,14 @@ bool StationInfoBuffer::readFromStationFile()
         
         listStat_t ls;
         ls.stationid   = stationId;
-  
-        ls.name        = st.name();
+
+        ls.name        = Helpers::fromUtf8(st.name());
         ls.altitude    = st.height();
         ls.wmonr       = st.wmonr();
           
         ls.municipid   = query.value(1).toInt();
-        ls.fylke       = query.value(2).toString().toStdString();
-        ls.kommune     = query.value(3).toString().toStdString();
+        ls.fylke       = query.value(2).toString();
+        ls.kommune     = query.value(3).toString();
         ls.coast       = query.value(4).toBool();
         ls.pri         = query.value(5).toInt();
   

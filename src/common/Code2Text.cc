@@ -3,6 +3,7 @@
 
 #include "KvHelpers.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QCoreApplication>
 

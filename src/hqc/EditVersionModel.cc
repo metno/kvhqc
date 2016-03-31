@@ -2,6 +2,7 @@
 #include "EditVersionModel.hh"
 
 #include "common/KvHelpers.hh"
+#include "util/stringutil.hh"
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -112,7 +113,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
       const SensorTime& st = obs->sensorTime();
       switch (column) {
       case COL_TIME:
-        return QString::fromStdString(timeutil::to_iso_extended_string(st.time));
+        return timeutil::to_iso_extended_qstring(st.time);
       case COL_SENSOR:
         return QString("%1/%2 %3").arg(st.sensor.stationId)
             .arg(st.sensor.typeId)
@@ -125,7 +126,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
     } else if (column == 0) {      
       const int version = index.row()+1;
       const timeutil::ptime& t = mDA->versionTimestamp(version);
-      return tr("Changed %1").arg(QString::fromStdString(timeutil::to_iso_extended_string(t)));
+      return tr("Changed %1").arg(timeutil::to_iso_extended_qstring(t));
     }
   } else if (role == Qt::ForegroundRole) {
     const int version = 1 + ((internalId >= 0) ? internalId : index.row());

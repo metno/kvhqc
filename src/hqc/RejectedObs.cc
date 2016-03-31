@@ -1,6 +1,7 @@
 
 #include "RejectedObs.hh"
 
+#include "util/stringutil.hh"
 #include "util/timeutil.hh"
 
 #include <kvalobs/kvRejectdecode.h>
@@ -45,14 +46,14 @@ QVariant RejectDecodeTableModel::data(const QModelIndex& index, int role) const
   if (role == Qt::DisplayRole) {
     const kvalobs::kvRejectdecode& rd = mRecjectList[index.row()];
     switch (column) {
-    case 0: return QString::fromStdString(timeutil::to_iso_extended_string(rd.tbtime()));
+    case 0: return timeutil::to_iso_extended_qstring(rd.tbtime());
     case 1: {
-      QString msg = QString::fromStdString(rd.message());
+      QString msg = Helpers::fromUtf8(rd.message());
       if (mDataRegexp.exactMatch(msg))
         msg = mDataRegexp.cap(1);
       return msg;
     }
-    case 2: return QString::fromStdString(rd.comment());
+    case 2: return Helpers::fromUtf8(rd.comment());
     }
   } else if (role == Qt::FontRole and (column == 1 or column == 2)) {
     return QFont("Monospace");

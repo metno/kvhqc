@@ -4,6 +4,7 @@
 #include "DataColumn.hh"
 #include "KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <QtGui/QBrush>
 
@@ -129,7 +130,7 @@ int DataListModel::rowOrColumnCount(bool timeDirection) const
 QVariant DataListModel::headerData(int section, Qt::Orientation orientation, int role) const
 {
   if (isTimeOrientation(orientation) and role == Qt::DisplayRole)
-    return QString::fromStdString(timeutil::to_iso_extended_string(timeAtRow(section)));
+    return timeutil::to_iso_extended_qstring(timeAtRow(section));
 
   return ObsTableModel::headerData(section, orientation, role);
 }

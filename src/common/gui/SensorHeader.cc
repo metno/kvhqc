@@ -4,6 +4,7 @@
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QCoreApplication>
 
