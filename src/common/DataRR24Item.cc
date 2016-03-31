@@ -19,7 +19,7 @@ Qt::ItemFlags DataRR24Item::flags(EditDataPtr obs) const
   Qt::ItemFlags f = DataCorrectedItem::flags(obs);
   if (obs) {
     const int typeId = obs->sensorTime().sensor.typeId;
-    if (typeId <= 0 or typeId == 302 or typeId == 402)
+    if (typeId <= 0 or typeId == 302 or typeId == 305 or typeId == 402)
       f &= ~Qt::ItemIsEditable;
   }
   return f;
