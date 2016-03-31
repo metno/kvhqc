@@ -30,7 +30,7 @@
 #ifndef HQC_HQCMAINWINDOW_H
 #define HQC_HQCMAINWINDOW_H
 
-#include "common/HqcDataReinserter.hh"
+#include "common/AbstractReinserter.hh"
 #include "common/ObsAccess.hh"
 #include "util/timeutil.hh"
 
@@ -81,7 +81,7 @@ public:
 
   void startup(const QString& captionSuffix);
 
-  void setReinserter(HqcReinserter* r);
+  void setReinserter(AbstractReinserterPtr r);
 
 protected:
   virtual void moveEvent(QMoveEvent* event);

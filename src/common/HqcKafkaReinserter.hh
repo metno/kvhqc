@@ -28,31 +28,35 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#ifndef HQC_COMMON_IDENTIFYUSER_HH
-#define HQC_COMMON_IDENTIFYUSER_HH
+#ifndef COMMON_HQCKAFKAREINSERTER_HH
+#define COMMON_HQCKAFKAREINSERTER_HH
 
 #include "common/AbstractReinserter.hh"
 
-namespace miutil {
-namespace conf {
-class ConfSection;
-} // namespace conf
-} // namespace miutil
+#include <string>
 
-namespace kvservice {
-class KvApp;
-} // namespace kvservice
+namespace kvalobs {
+namespace service {
+class KafkaProducerThread;
+} // namespace service
+} // namespace kvalobs
 
-class QWidget;
+class HqcKafkaReinserter : public AbstractReinserter
+{
+public:
+  HqcKafkaReinserter(const std::string& brokers, const std::string& domain, int operatorID);
+  ~HqcKafkaReinserter();
 
-namespace Authentication {
+  void shutdown();
 
-AbstractReinserterPtr identifyUser(kvservice::KvApp *app, QWidget* widgetparent,
-    const char *ldap_server);
+  bool insert(std::list<kvalobs::kvData> &dl) const;
 
-AbstractReinserterPtr identifyUser(std::shared_ptr<miutil::conf::ConfSection> conf, QWidget* widgetparent,
-    const char *ldap_server);
+private:
+  void updateUseAddCFailed(kvalobs::kvData &d) const;
 
-} // namespace Authentication
+private:
+  std::unique_ptr<kvalobs::service::KafkaProducerThread> mProducerThread;
+  int mOperatorId;
+};
 
-#endif // HQC_COMMON_IDENTIFYUSER_HH
+#endif // COMMON_HQCKAFKAREINSERTER_HH

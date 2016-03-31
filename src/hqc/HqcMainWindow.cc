@@ -74,6 +74,8 @@
 #include "weather/WeatherStationDialog.hh"
 
 #include <kvalobs/kvData.h>
+#include <kvalobs/kvRejectdecode.h>
+#include <kvcpp/KvApp.h>
 
 #ifndef slots
 #define slots
@@ -271,7 +273,7 @@ void HqcMainWindow::changeEvent(QEvent *event)
   QMainWindow::changeEvent(event);
 }
 
-void HqcMainWindow::setReinserter(HqcReinserter* r)
+void HqcMainWindow::setReinserter(AbstractReinserterPtr r)
 {
   kda->setReinserter(r);
 }
@@ -680,8 +682,12 @@ void HqcMainWindow::onRedoChanges()
 void HqcMainWindow::onSaveChanges()
 {
   if (not kda->hasReinserter()) {
-    QString userName = "?";
-    HqcReinserter* r = Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName);
+    const char ldap_server[] = "ldap-oslo.met.no";
+#if 1
+    AbstractReinserterPtr r = Authentication::identifyUser(kvservice::KvApp::kvApp, 0, ldap_server);
+#else
+    AbstractReinserterPtr r = Authentication::identifyUser(hqcApp->config(), 0, ldap_server);
+#endif
     kda->setReinserter(r);
   }
   if (not eda->sendChangesToParent()) {
@@ -714,6 +720,10 @@ void HqcMainWindow::closeEvent(QCloseEvent* event)
   METLIBS_LOG_SCOPE();
 
   if (Helpers::askDiscardChanges(eda->countU(), this)) {
+    if (kda->hasReinserter()) {
+      kda->getReinserter()->shutdown();
+      kda->setReinserter(AbstractReinserterPtr());
+    }
     writeSettings();
     event->accept();
   } else {

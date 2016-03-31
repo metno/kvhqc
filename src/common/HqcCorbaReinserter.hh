@@ -2,7 +2,7 @@
 
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2013 met.no
+Copyright (C) 2016 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -27,31 +27,28 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef __HqcDataReinserter_h__
-#define __HqcDataReinserter_h__
+
+#ifndef COMMON_HQCCORBAREINSERTER_HH
+#define COMMON_HQCCORBAREINSERTER_HH
+
+#include "common/AbstractReinserter.hh"
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
 
-class HqcDataReinserter
-  : public kvalobs::DataReinserter<kvservice::KvApp>
+class HqcCorbaReinserter : public AbstractReinserter
 {
+private:
+  typedef kvalobs::DataReinserter<kvservice::KvApp> KvAppReinserter;
+
 public:
-    typedef CKvalObs::CDataSource::Result_var Result;
+  HqcCorbaReinserter(kvservice::KvApp *app, int operatorID);
+  ~HqcCorbaReinserter();
 
-    HqcDataReinserter( kvservice::KvApp *app, int operatorID );
-    virtual ~HqcDataReinserter( );
-
-    virtual const Result insert(kvalobs::kvData &d) const;
-
-    virtual const Result insert(std::list<kvalobs::kvData> &dl) const;
-
-    virtual const Result insert(const kvalobs::serialize::KvalobsData& data) const;
+  bool insert(std::list<kvalobs::kvData> &dl) const override;
 
 private:
-    CKvalObs::CDataSource::Result_var fail(const std::string& why) const;
+  std::unique_ptr<KvAppReinserter> mReinserter;
 };
 
-typedef kvalobs::DataReinserter<kvservice::KvApp> HqcReinserter;
-
-#endif // __HqcDataReinserter_h__
+#endif // COMMON_HQCCORBAREINSERTER_HH

@@ -19,7 +19,7 @@ FakeKvApp::FakeKvApp()
 {
   kvservice::KvApp::kvApp = this;
   kda = std::make_shared<KvalobsAccess>();
-  kda->setReinserter(new FakeReinserter);
+  kda->setReinserter(AbstractReinserterPtr(new FakeReinserter));
 
   mKvParams.push_back(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));
   mKvParams.push_back(kvalobs::kvParam(34, "V4", "Været siden forrige hovedobservasjon, første tegn", "nasjonal kode to siffer", 0, "None"));

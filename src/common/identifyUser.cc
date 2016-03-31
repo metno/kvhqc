@@ -1,7 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2007-2013 met.no
+Copyright (C) 2016 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -29,51 +29,79 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "identifyUser.h"
 
+#include "HqcCorbaReinserter.hh"
+#include "HqcKafkaReinserter.hh"
+
+#include "common/KvServiceHelper.hh"
 #include "common/gui/Authenticator.hh"
-#include "HqcDataReinserter.hh"
-#include "KvServiceHelper.hh"
 #include "util/stringutil.hh"
 
 #include <kvalobs/kvOperator.h>
 
-#include <boost/foreach.hpp>
-
 #include <list>
-#include <cstring>
 
 namespace Authentication {
 
 namespace {
 typedef std::list<kvalobs::kvOperator> opList;
-typedef opList::const_iterator opIter;
 };
 
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-    const char *ldap_server, QString& userName)
-{
-  return identifyUser(widgetparent, app, ldap_server, userName, DEFAULT_LDAP_PORT);
-}
-
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-    const char *ldap_server, QString& userName, int ldap_port)
+int identifyUser(QWidget* widgetparent, const char *ldap_server, int ldap_port)
 {
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())
-    return 0; // Not authenticated
+    return -1; // Not authenticated
 
   // Get list of operators from database, and find our operator:
   opList operators;
   KvServiceHelper::instance()->getKvOperator(operators);
 
-  BOOST_FOREACH(const kvalobs::kvOperator& op, operators) {
-    const QString uname = Helpers::fromUtf8(op.username());
-    if (user == uname) {
-      userName = uname;
-      return new HqcDataReinserter(app, op.userID());
-    }
+  for (opList::const_iterator it = operators.begin(); it != operators.end(); ++it) {
+    const QString op_username = Helpers::fromUtf8(it->username());
+    if (user == op_username)
+      return it->userID();
   }
 
-  return 0;
+  return -1;
+}
+
+AbstractReinserterPtr identifyUser(kvservice::KvApp *app, QWidget* widgetparent,
+    const char *ldap_server, int ldap_port)
+{
+  const int id = identifyUser(widgetparent, ldap_server, ldap_port);
+  if (id < 0)
+    return AbstractReinserterPtr();
+
+  return AbstractReinserterPtr(new HqcCorbaReinserter(app, id));
+}
+
+AbstractReinserterPtr identifyUser(kvservice::KvApp *app, QWidget* widgetparent,
+    const char *ldap_server)
+{
+  return identifyUser(app, widgetparent, ldap_server, DEFAULT_LDAP_PORT);
+}
+
+AbstractReinserterPtr identifyUser(std::shared_ptr<miutil::conf::ConfSection> conf, QWidget* widgetparent,
+    const char *ldap_server)
+{
+  const int ldap_port = DEFAULT_LDAP_PORT;
+  const int id = identifyUser(widgetparent, ldap_server, ldap_port);
+  if (id < 0)
+    return AbstractReinserterPtr();
+
+  const miutil::conf::ValElementList valBrokers = conf->getValue("kafka.brokers");
+  const miutil::conf::ValElementList valDomain  = conf->getValue("kafka.domain");
+
+  try {
+    if (valBrokers.size() == 1 && valDomain.size() == 1) {
+      const std::string brokers = valBrokers.front().valAsString();
+      const std::string domain  = valDomain .front().valAsString();
+      return AbstractReinserterPtr(new HqcKafkaReinserter(brokers, domain, id));
+    }
+  } catch (miutil::conf::InvalidTypeEx& e) {
+  }
+
+  return AbstractReinserterPtr();
 }
 
 } // namespace Authentication

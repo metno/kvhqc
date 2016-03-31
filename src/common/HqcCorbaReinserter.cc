@@ -27,7 +27,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include "HqcDataReinserter.hh"
+#include "HqcCorbaReinserter.hh"
 
 #include <kvalobs/kvDataOperations.h>
 
@@ -38,7 +38,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 using namespace kvservice;
 using namespace kvalobs;
 
-#define MILOGGER_CATEGORY "kvhqc.HqcDataReinserter"
+#define MILOGGER_CATEGORY "kvhqc.HqcCorbaReinserter"
 #include "util/HqcLogging.hh"
 
 namespace internal_
@@ -61,44 +61,29 @@ void updateUseAddCFailed(kvalobs::kvData &d)
 
 } // namespace internal_
 
-HqcDataReinserter::HqcDataReinserter( KvApp *app, int operatorID )
-  : DataReinserter<KvApp>( app, operatorID )
+HqcCorbaReinserter::HqcCorbaReinserter(KvApp *app, int operatorID)
+  : mReinserter(new KvAppReinserter(app, operatorID))
 {
 }
 
-HqcDataReinserter::~HqcDataReinserter( )
+HqcCorbaReinserter::~HqcCorbaReinserter()
 {
 }
 
-const HqcDataReinserter::Result HqcDataReinserter::insert(kvalobs::kvData &d) const
+bool HqcCorbaReinserter::insert(std::list<kvalobs::kvData> &dl) const
 {
+  METLIBS_LOG_SCOPE();
+  BOOST_FOREACH(const kvalobs::kvData &d, dl) {
     if (d.typeID() <= -32767)
-        return fail("invalid typeid <= -32767");
-    ::internal_::updateUseAddCFailed(d);
-    return DataReinserter<KvApp>::insert(d);
-}
+      return false;
+  }
+  std::for_each(dl.begin(), dl.end(), ::internal_::updateUseAddCFailed);
 
-
-const HqcDataReinserter::Result HqcDataReinserter::insert(std::list<kvalobs::kvData> &dl) const
-{
-    BOOST_FOREACH(const kvalobs::kvData &d, dl) {
-        if (d.typeID() <= -32767)
-            return fail("invalid typeid <= -32767");
-    }
-    std::for_each(dl.begin(), dl.end(), ::internal_::updateUseAddCFailed);
-    return DataReinserter<KvApp>::insert(dl);
-}
-
-const HqcDataReinserter::Result HqcDataReinserter::insert(const kvalobs::serialize::KvalobsData& data) const
-{
-    HQC_LOG_WARN("inserting kvalobs::serialize::KvalobsData will not update useinfo or check typeid!");
-    return DataReinserter<KvApp>::insert(data);
-}
-
-CKvalObs::CDataSource::Result_var HqcDataReinserter::fail(const std::string& why) const
-{
-    CKvalObs::CDataSource::Result_var ret(new CKvalObs::CDataSource::Result);
-    ret->res = CKvalObs::CDataSource::ERROR;
-    ret->message = why.c_str();
-    return ret;
+  const CKvalObs::CDataSource::Result_var res = mReinserter->insert(dl);
+  if (res->res == CKvalObs::CDataSource::OK) {
+    return true;
+  } else {
+    METLIBS_LOG_WARN("could not store data, message='" << res->message << "'");
+    return false;
+  }
 }

@@ -18,6 +18,9 @@ public:
   HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection> conf);
   ~HqcApplication();
 
+  std::shared_ptr<miutil::conf::ConfSection> config() const
+    { return mConfig; }
+
   virtual bool notify(QObject* receiver, QEvent* e);
 
   QSqlDatabase systemDB();
@@ -64,7 +67,7 @@ private:
   QList<QTranslator*> mTranslators;
   std::shared_ptr<miutil::conf::ConfSection> mConfig;
   bool mKvalobsAvailable;
-  std::auto_ptr<HqcUserConfig> mUserConfig;
+  std::unique_ptr<HqcUserConfig> mUserConfig;
 };
 
 extern HqcApplication* hqcApp;

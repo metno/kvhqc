@@ -3,10 +3,10 @@
 #define COMMON_KVALOBSACCESS_HH 1
 
 #include "KvBufferedAccess.hh"
+
+#include "common/AbstractReinserter.hh"
 #include "TimeRange.hh"
 
-#include <decodeutility/DataReinserter.h>
-#include <kvcpp/KvApp.h>
 #include <kvcpp/kvservicetypes.h>
 
 #include <boost/icl/interval_set.hpp>
@@ -29,11 +29,12 @@ public:
 
   void nextData(kvservice::KvObsDataList &dl, bool update);
 
-  typedef kvalobs::DataReinserter<kvservice::KvApp> Reinserter_t;
-  void setReinserter(Reinserter_t* reinserter)
-    { mDataReinserter.reset(reinserter); }
+  void setReinserter(AbstractReinserterPtr reinserter)
+    { mReinserter = reinserter; }
+  AbstractReinserterPtr getReinserter() const
+    { return mReinserter; }
   bool hasReinserter() const
-    { return (mDataReinserter.get() != 0); }
+    { return (mReinserter.get() != 0); }
 
   /*! Emitted when fetching data. The first parameter is number of
    *  stations to fetch data for, where fetching has finished. The
@@ -57,7 +58,7 @@ private:
   typedef std::map<int, FetchedTimes_t> Fetched_t;
   Fetched_t mFetched;
 
-  std::auto_ptr<Reinserter_t> mDataReinserter;
+  AbstractReinserterPtr mReinserter;
 
   int mCountHoursToFetch;
   int mCountFetchedHours;

@@ -1,5 +1,6 @@
 
 SET(common_SOURCES
+  AbstractReinserter.cc
   AbstractUpdateListener.cc
   AcceptReject.cc
   AnalyseErrors.cc
@@ -33,7 +34,8 @@ SET(common_SOURCES
   FlagUpdate.cc
   Functors.cc
   HqcApplication.cc
-  HqcDataReinserter.cc
+  HqcCorbaReinserter.cc
+  HqcKafkaReinserter.cc
   HqcUserConfig.cc
   identifyUser.cc
   KvalobsAccess.cc

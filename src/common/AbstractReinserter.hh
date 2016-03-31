@@ -27,32 +27,21 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
+#ifndef COMMON_ABSTRACTREINSERTER_HH
+#define COMMON_ABSTRACTREINSERTER_HH
 
-#ifndef HQC_COMMON_IDENTIFYUSER_HH
-#define HQC_COMMON_IDENTIFYUSER_HH
+#include <kvalobs/kvData.h>
 
-#include "common/AbstractReinserter.hh"
+#include <list>
+#include <memory>
 
-namespace miutil {
-namespace conf {
-class ConfSection;
-} // namespace conf
-} // namespace miutil
+class AbstractReinserter {
+public:
+  virtual ~AbstractReinserter( );
+  virtual bool insert(std::list<kvalobs::kvData> &dl) const = 0;
+  virtual void shutdown();
+};
 
-namespace kvservice {
-class KvApp;
-} // namespace kvservice
+typedef std::shared_ptr<AbstractReinserter> AbstractReinserterPtr;
 
-class QWidget;
-
-namespace Authentication {
-
-AbstractReinserterPtr identifyUser(kvservice::KvApp *app, QWidget* widgetparent,
-    const char *ldap_server);
-
-AbstractReinserterPtr identifyUser(std::shared_ptr<miutil::conf::ConfSection> conf, QWidget* widgetparent,
-    const char *ldap_server);
-
-} // namespace Authentication
-
-#endif // HQC_COMMON_IDENTIFYUSER_HH
+#endif // COMMON_ABSTRACTREINSERTER_HH

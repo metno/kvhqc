@@ -35,8 +35,7 @@ private:
 // ========================================================================
 
 KvalobsAccess::KvalobsAccess()
-  : mDataReinserter(0)
-  , mLastFetchedStationId(-1)
+  : mLastFetchedStationId(-1)
   , mLastFetchedObsHour(-1)
 {
 }
@@ -273,8 +272,8 @@ bool KvalobsAccess::update(const std::vector<ObsUpdate>& updates)
   }
   METLIBS_LOG_DEBUG(store.size() << " to store");
 
-  CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(store);
-  if (res->res == CKvalObs::CDataSource::OK) {
+  const bool res = mReinserter->insert(store);
+  if (res) {
     BOOST_FOREACH(KvalobsDataPtr obs, modifiedObs)
         obsDataChanged(MODIFIED, obs);
     BOOST_FOREACH(KvalobsDataPtr obs, createdObs)

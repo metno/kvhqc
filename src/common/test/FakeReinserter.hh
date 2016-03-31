@@ -2,9 +2,9 @@
 #ifndef FakeReinserter_hh
 #define FakeReinserter_hh 1
 
-#include "common/HqcDataReinserter.hh"
+#include "common/AbstractReinserter.hh"
 
-class FakeReinserter : public HqcReinserter
+class FakeReinserter : public AbstractReinserter
 {
 public:
   FakeReinserter();
@@ -12,12 +12,7 @@ public:
 
   void setInsertSuccess(bool successful);
 
-  virtual const CKvalObs::CDataSource::Result_var insert(kvalobs::kvData &d) const;
-  virtual const CKvalObs::CDataSource::Result_var insert(std::list<kvalobs::kvData> &dl) const;
-  virtual const CKvalObs::CDataSource::Result_var insert(const kvalobs::serialize::KvalobsData & data) const;
-
-private:
-  const CKvalObs::CDataSource::Result_var makeInsertResult() const;
+  bool insert(std::list<kvalobs::kvData> &dl) const;
 
 private:
   bool mInsertSuccess;
