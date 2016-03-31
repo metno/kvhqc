@@ -4,7 +4,8 @@
 METNO_CONFIG = @METNO_CONFIG@
 METNO_SUFFIX = @METNO_SUFFIX@
 
-DH_COMMAND = dh --with quilt --with python2 --parallel
+%:
+	dh $@ --parallel
 
 override_dh_strip:
 	dh_strip --dbg-package=kvhqc-@METNO_VERSION@-dbg

@@ -1,4 +1,4 @@
-kvhqc (3.4.16-2) unstable; urgency=low
+kvhqc (3.4.16-3) unstable; urgency=low
 
   * bugfix debian/rules
 
