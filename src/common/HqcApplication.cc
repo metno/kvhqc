@@ -49,7 +49,9 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   , mConfig(conf)
 {
   hqcApp = this;
-  
+
+  setlocale(LC_NUMERIC, "C");
+
   QCoreApplication::setOrganizationName("Meteorologisk Institutt");
   QCoreApplication::setOrganizationDomain("met.no");
   QCoreApplication::setApplicationName("Hqc");
