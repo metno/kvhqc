@@ -3,12 +3,12 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 9), quilt, cmake,
- libqt4-dev, libgfortran3, libgtest-dev, liblog4cpp5-dev, python (>= 2.7.3-0),
- libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev,
- libboost-regex-dev, libsqlite3-dev,
- libkvcpp-dev (>= 2.7.1-2),
+ libqt4-dev, libgfortran3, libgtest-dev, python (>= 2.7.3-0),
+ libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-system-dev,
+ libsqlite3-dev,
+ libkvcpp-dev (>= 2.7.2), libkvcpp-dev (<< 2.7.8),
  metlibs-putools-dev (>= 5.0.0), metlibs-milogger-dev (>= 5.0.0),
- metlibs-qutilities-dev (>= 5.0.0), metlibs-coserver-dev (>= 1.0.1),
+ metlibs-qutilities-dev (>= 5.1.2), metlibs-coserver-dev (>= 1.0.1),
  metlibs-tsdata-dev (>= 5.0.1), metlibs-pets2-dev (>= 5.0.0),
  metlibs-pumet-dev (>= 5.0.0)
 Standards-Version: 3.8.4
