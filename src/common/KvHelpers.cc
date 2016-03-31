@@ -277,7 +277,7 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
       const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
       if (eql or agg) {
         const int typeId = eql ? op.typeID() : -op.typeID();
-        const Sensor n(s.stationID(), sensor.paramId, op.level(), 0, typeId);
+        const Sensor n(s.stationID(), sensor.paramId, op.level(), 0, typeId); // TODO also add sensor_nr > 1?
         const bool duplicate = (std::find_if(neighbors.begin(), neighbors.end(), std::bind1st(eq_Sensor(), n)) != neighbors.end());
         METLIBS_LOG_DEBUG(LOGVAL(n) << LOGVAL(duplicate));
         neighbors.push_back(n);
@@ -290,12 +290,47 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& sensor, const Ti
   }
 }
 
-typedef std::vector<Sensor> Sensors_t;
-Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType)
+typedef std::vector<int> int_v;
+typedef std::vector<Sensor> Sensor_v;
+typedef std::set<Sensor, lt_Sensor> Sensor_s;
+
+void addSensorsFromObsPgm(Sensor_v& sensors, Sensor_s& selected, const TimeRange& time, int stationId, const int_v& paramIds)
+{
+  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+  BOOST_FOREACH(int paramId, paramIds) {
+    Sensor sensor(stationId, paramId, 0, 0, 0);
+    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+      const TimeRange op_time(op.fromtime(), op.totime());
+      if (time.intersection(op_time).undef())
+        continue;
+
+      const int p = op.paramID(), t = op.typeID();
+      if (p == paramId)
+        sensor.typeId = t;
+      else if (aggregatedParameter(op.paramID(), paramId))
+        sensor.typeId = -t;
+      else
+        continue;
+#ifdef OBSPGM_IGNORE_NON0_LEVEL
+      if (op.level() != 0)
+        continue;
+#endif
+      sensor.level = op.level();
+      sensor.sensor = 0;  // TODO also add sensor_nr > 1?
+      if (selected.find(sensor) == selected.end()) {
+        sensors.push_back(sensor);
+        selected.insert(sensor);
+        METLIBS_LOG_DEBUG("accept" << LOGVAL(sensor));
+      }
+    }
+  }
+}
+
+Sensor_v relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType)
 {
   METLIBS_LOG_TIME();
 
-  std::vector<int> stationPar, neighborPar;
+  int_v stationPar, neighborPar;
   int nNeighbors = 8;
 
   if (hqcApp) {
@@ -318,42 +353,23 @@ Sensors_t relatedSensors(const Sensor& s, const TimeRange& time, const std::stri
   }
 #endif
 
-  if (stationPar.empty())
-    stationPar.push_back(s.paramId);
+  if (std::find(stationPar.begin(), stationPar.end(), s.paramId) == stationPar.end())
+    stationPar.insert(stationPar.begin(), s.paramId);
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
   const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
-  Sensors_t sensors;
-  BOOST_FOREACH(int par, stationPar) {
-    Sensor s2(s);
-    s2.paramId = par;
-    bool accept = (par == s.paramId);
-    if (not accept) {
-      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
-        if (time.intersection(TimeRange(op.fromtime(), op.totime())).undef())
-          continue;
-        
-        const bool eql = op.paramID() == par;
-        const bool agg = aggregatedParameter(op.paramID(), par);
-        if (eql or agg) {
-          accept = true;
-          s2.typeId = eql ? op.typeID() : -op.typeID();
-          break;
-        }
-      }
-    }
-    if (accept)
-      sensors.push_back(s2);
-  }
-    
+  Sensor_v sensors;
+  Sensor_s selected;
+  addSensorsFromObsPgm(sensors, selected, time, s.stationId, stationPar);
+
   BOOST_FOREACH(int par, neighborPar) {
     Sensor sn(s);
     sn.paramId = par;
     addNeighbors(sensors, sn, time, nNeighbors);
   }
-#if 0
-  METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
+#if 1
+  METLIBS_LOG_DEBUG("found " << sensors.size() << " related sensors for " << LOGVAL(s));
   BOOST_FOREACH(const Sensor& ds, sensors) {
     METLIBS_LOG_DEBUG(LOGVAL(ds));
   }

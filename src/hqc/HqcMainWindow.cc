@@ -342,29 +342,9 @@ void HqcMainWindow::ListOK()
   DataView::Sensors_t sensors;
   {
     BusyStatus busySensors(this, tr("Building station list..."));
+    std::set<Sensor, lt_Sensor> sensorsShown;
     BOOST_FOREACH(int stationId, selectedStations) {
-      BOOST_FOREACH(int paramId, mSelectedParameters) {
-        const KvMetaDataBuffer::ObsPgmList& opl = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-        Sensor sensor(stationId, paramId, 0, 0, 0);
-        std::set<int> typeIdsShown;
-        BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
-          const TimeRange op_time(op.fromtime(), op.totime());
-          if (timeLimits.intersection(op_time).undef())
-            continue;
-          const int p = op.paramID(), t = op.typeID();
-          if (p == paramId) {
-            sensor.typeId = t;
-          } else if (Helpers::aggregatedParameter(p, paramId)) {
-            sensor.typeId = -t;
-          } else {
-            continue;
-          }
-          if (typeIdsShown.find(sensor.typeId) == typeIdsShown.end()) {
-            sensors.push_back(sensor);
-            typeIdsShown.insert(sensor.typeId);
-          }
-        }
-      }
+      Helpers::addSensorsFromObsPgm(sensors, sensorsShown, timeLimits, stationId, mSelectedParameters);
     }
   }
 

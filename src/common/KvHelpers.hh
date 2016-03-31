@@ -73,6 +73,8 @@ void addNeighbors(std::vector<Sensor>& neighbors, const Sensor& center, const Ti
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, std::set<int>& paramTo);
+void addSensorsFromObsPgm(std::vector<Sensor>& sensors, std::set<Sensor, lt_Sensor>& selected,
+    const TimeRange& time, int stationId, const std::vector<int>& paramIds);
 std::vector<Sensor> relatedSensors(const Sensor& s, const TimeRange& time, const std::string& viewType);
 
 float numericalValue(int paramId, float codeValue);

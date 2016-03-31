@@ -94,6 +94,9 @@ std::vector<SensorTime> find(int paramid, const TimeRange& tLimits)
   sql << " GROUP BY s ORDER BY c " << ordering << " LIMIT " << n_extremes << ") AS ex"
       " WHERE stationid = ex.s AND corrected = ex.c AND paramid IN (" << paramids.str() << ") AND " << c_obstime.str() <<
       "   AND " << exists_in_obspgm("d") <<
+#ifdef EXTREMES_EXCLUDE_NON0_LEVEL_SENSOR
+      " AND d.level = 0 AND d.sensor = 0"
+#endif
       " ORDER BY corrected " << ordering << ", stationid, obstime";
   METLIBS_LOG_DEBUG(LOGVAL(sql.str()));
 
