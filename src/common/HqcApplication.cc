@@ -37,6 +37,8 @@ const char DB_SYSTEM[] = "hqc_system_db";
 const char DB_CONFIG[] = "hqc_config_db";
 const char DB_KVALOBS[] = "kvalobs_db";
 
+const char CK_KVALOBSDB[] = "kvalobsdb";
+
 const int AVAILABILITY_TIMEROUT = 120*1000; // milliseconds = 2 minutes
 
 const char SETTING_HQC_LANGUAGE[] = "language";
@@ -121,11 +123,24 @@ QSqlDatabase HqcApplication::configDB()
 QSqlDatabase HqcApplication::kvalobsDB()
 {
   if (not QSqlDatabase::contains(DB_KVALOBS)) {
-    if (not Helpers::connect2postgres(DB_KVALOBS, mConfig, "kvalobsdb")) {
+    if (not Helpers::connect2postgres(DB_KVALOBS, mConfig, CK_KVALOBSDB)) {
       fatalError(tr("Cannot access kvalobs SQL database, please check the HQC configuration"));
     }
   }
   return QSqlDatabase::database(DB_KVALOBS);
+}
+
+QString HqcApplication::kvalobsDBName()
+{
+  const miutil::conf::ValElementList valHost = mConfig->getValue(std::string(CK_KVALOBSDB) + ".host");
+
+  try {
+    if (valHost.size() == 1)
+      return QString::fromStdString(valHost.front().valAsString());
+  } catch (miutil::conf::InvalidTypeEx& e) {
+    // pass
+  }
+  return QString("?");
 }
 
 std::string HqcApplication::kvalobsColumnsSensorTime(const std::string& data_alias)

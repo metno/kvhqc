@@ -26,6 +26,8 @@ public:
     { return mUserConfig.get(); }
 
   QSqlDatabase kvalobsDB();
+  QString kvalobsDBName();
+
   std::string kvalobsColumnsSensorTime(const std::string& data_alias="");
   std::vector<SensorTime> kvalobsQuerySensorTime(const std::string& constraint);
 

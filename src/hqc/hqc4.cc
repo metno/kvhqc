@@ -109,7 +109,7 @@ int main( int argc, char* argv[] )
   hqc.processEvents();
 
   std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
-  mw->startup(QString::fromStdString(kvapp.kvpathInCorbaNameserver()));
+  mw->startup(hqc.kvalobsDBName());
 
   splash.finish(mw.get());
 
