@@ -138,7 +138,6 @@ DataItemPtr itemForSensor(EditAccessPtr da, const Sensor& sensor, ObsColumn::Typ
 {
     const int pid = sensor.paramId;
 
-    DataItemPtr item;
     if ((pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
         and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::OLD_CORRECTED or displayType == ObsColumn::ORIGINAL))
     {

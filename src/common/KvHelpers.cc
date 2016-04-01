@@ -358,7 +358,6 @@ Sensor_v relatedSensors(const Sensor& s, const TimeRange& time, const std::strin
   if (neighborPar.empty())
     neighborPar.push_back(s.paramId);
 
-  const std::list<kvalobs::kvObsPgm>& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(s.stationId);
   Sensor_v sensors;
   Sensor_s selected;
   addSensorsFromObsPgm(sensors, selected, time, s.stationId, stationPar);
