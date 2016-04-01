@@ -1,4 +1,4 @@
-kvhqc (3.4.16-4) unstable; urgency=low
+kvhqc (3.4.17-1) unstable; urgency=low
 
   * bugfixes / workarounds debian_files/rules and debian_files/control
   * avoid #include gtest in hqc_offline
