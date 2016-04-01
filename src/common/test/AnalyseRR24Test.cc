@@ -7,6 +7,7 @@
 #define LOAD_DECL_ONLY
 #include "load_54420_20121130.cc"
 #include "load_32780_20121207.cc"
+#include "TestHelpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
 #include <boost/range.hpp>

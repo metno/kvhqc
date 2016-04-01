@@ -121,10 +121,6 @@ ADD_EXECUTABLE(hqc_offline
 SET_TARGET_PROPERTIES(hqc_offline PROPERTIES
   OUTPUT_NAME "hqc-${PVERSION}-offline")
 
-TARGET_INCLUDE_DIRECTORIES(hqc_offline
-  PRIVATE "${GTEST_DIR}/include"
-)
-
 TARGET_LINK_LIBRARIES(hqc_offline
   hqc_common
   test_common

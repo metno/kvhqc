@@ -1,8 +1,7 @@
 #include "common/test/FakeKvApp.hh"
-#include "common/test/TestHelpers.hh"
 #include "common/KvalobsAccess.hh"
 inline TimeRange t_18210_20130410()
-    { return TimeRange(s2t("2013-04-01 00:00:00"), s2t("2013-04-10 10:00:00")); }
+    { return TimeRange(timeutil::from_iso_extended_string("2013-04-01 00:00:00"), timeutil::from_iso_extended_string("2013-04-10 10:00:00")); }
 #ifdef LOAD_DECL_ONLY
 void load_18210_20130410(FakeKvApp& fa, bool subscribe=true);
 #else // LOAD_DECL_ONLY

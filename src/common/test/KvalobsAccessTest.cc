@@ -6,6 +6,7 @@
 #include "load_18210_20130410.cc"
 #include "load_31850_20121130.cc"
 #include "load_54420_20121130.cc"
+#include "TestHelpers.hh"
 
 TEST(KvalobsAccessTest, Basic)
 {

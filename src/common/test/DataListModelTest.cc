@@ -10,6 +10,7 @@
 
 #define LOAD_DECL_ONLY
 #include "load_18210_20130410.cc"
+#include "TestHelpers.hh"
 
 namespace /* anonymous */ {
 

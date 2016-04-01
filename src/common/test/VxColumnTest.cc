@@ -7,6 +7,7 @@
 
 #define LOAD_DECL_ONLY
 #include "load_31850_20121130.cc"
+#include "TestHelpers.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.test.VxColumnTest"
 #include "util/HqcLogging.hh"

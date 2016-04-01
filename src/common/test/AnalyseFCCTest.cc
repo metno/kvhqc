@@ -5,6 +5,7 @@
 #define LOAD_DECL_ONLY
 #include "load_31850_20121130.cc"
 #include "load_44160_20121207.cc"
+#include "TestHelpers.hh"
 
 TEST(AnalyseFCCTest, Basic)
 {
