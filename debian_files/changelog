@@ -1,8 +1,8 @@
-kvhqc (3.4.16-3) unstable; urgency=low
+kvhqc (3.4.16-4) unstable; urgency=low
 
-  * bugfix debian/rules
+  * bugfix debian_files/rules and debian_files/control
 
- -- Alexander Bürger <alexander.buerger@met.no>  Thu, 31 Mar 2016 08:00:08 +0200
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 01 Apr 2016 08:00:08 +0200
 
 kvhqc (3.4.16-1) unstable; urgency=low
 
