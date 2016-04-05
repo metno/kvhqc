@@ -1,3 +1,9 @@
+kvhqc (3.4.17-2) unstable; urgency=low
+
+  * bugfixes / workarounds debian_files/control
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 04 Apr 2016 08:00:08 +0200
+
 kvhqc (3.4.17-1) unstable; urgency=low
 
   * bugfixes / workarounds debian_files/rules and debian_files/control

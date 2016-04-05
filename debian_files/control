@@ -33,6 +33,12 @@ Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: metno-qt4-translations (>= 0.2.0),
  metlibs-translations
+Conflicts:
+@metno_config_if .*trusty.*
+ libkvcpp4 (>= 2.7.8~rc1), libkvalobs4 (>= 2.7.8~rc1)
+@metno_config_elsif .*precise.*
+ libkvcpp4 (>= 2.8.0), libkvalobs4 (>= 2.8.0)
+@metno_config_endif
 Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs
