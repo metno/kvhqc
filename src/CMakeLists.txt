@@ -24,13 +24,13 @@ PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=2.7.7)
 
 # metlibs
 PKG_CHECK_MODULES(PC_METLIBS REQUIRED
-  tsData>=5.0.0
-  pets2>=5.0.0
-  puMet>=5.0.0
+  tsData>=5.2.0
+  pets2>=5.1.0
+  puMet>=5.1.0
   qUtilities>=5.1.2
   puTools>=5.0.0
   miLogger>=5.0.0
-  coserver>=1.0.1
+  coserver>=2.0.4
 )
 
 #########################################################################

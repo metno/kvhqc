@@ -20,8 +20,8 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libomniorb4-dev, libxml++2.6-dev, libcurl4-gnutls-dev | libcurl-dev, libperl-dev,
  metlibs-putools-dev (>= 5.1.0), metlibs-milogger-dev (>= 5.0.0),
  metlibs-qutilities-dev (>= 5.1.2), metlibs-coserver-dev (>= 2.0.4),
- metlibs-tsdata-dev (>= 5.0.1), libhdf4-dev, metlibs-pets2-dev (>= 5.0.0),
- metlibs-pumet-dev (>= 5.0.0)
+ metlibs-tsdata-dev (>= 5.2.0), metlibs-pets2-dev (>= 5.1.0),
+ metlibs-pumet-dev (>= 5.1.0)
 Standards-Version: 3.8.4
 Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
 Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk

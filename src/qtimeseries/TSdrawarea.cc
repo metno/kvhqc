@@ -31,14 +31,16 @@
 
 #include "TSdrawarea.h"
 
-#include "puMet/miSymbol.h"
-#include "puMet/symbolMaker.h"
+#include <puMet/miSymbol.h>
+#include <puMet/symbolMaker.h>
 
-#include "pets2/ptSymbolElement.h"
-#include "pets2/ptTimemarkerElement.h"
-#include "pets2/ptFontManager.h"
+#include <pets2/ptSymbolElement.h>
+#include <pets2/ptTimemarkerElement.h>
+#include <pets2/ptFontManager.h>
 
-#include "glText/glTextQtTexture.h"
+#include <puTools/miStringFunctions.h>
+
+#include <glText/glTextQtTexture.h>
 
 #define MILOGGER_CATEGORY "qTimeseries.TSdrawarea"
 #include "miLogger/miLogging.h"
@@ -615,7 +617,7 @@ bool TSdrawarea::prepareDiagram()
     pe = pe->next;
   }
   if (sev.size()) {
-    std::vector<miutil::miString> symbimages;
+    std::vector<std::string> symbimages;
     std::string stmp;
     for (int i = minsymb; i <= maxsymb; i++) {
       tmpSymbol = wsymbols.getSymbol(i);
