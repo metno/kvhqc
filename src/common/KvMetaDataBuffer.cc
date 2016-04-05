@@ -54,7 +54,7 @@ const kvalobs::kvStation& KvMetaDataBuffer::findStation(int id)
   stations_cit it = std::lower_bound(mStations.begin(), mStations.end(), id, Helpers::kvStation_lt_id());
   if (it != mStations.end() and it->stationID() == id)
     return *it;
-  throw std::runtime_error(miutil::StringBuilder() << "station " << id << "' not found");
+  throw std::runtime_error(miutil::StringBuilder() << "station " << id << " not found");
 }
 
 const std::list<kvalobs::kvStation>& KvMetaDataBuffer::allStations()
