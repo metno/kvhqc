@@ -92,7 +92,7 @@ TimeSeriesView::~TimeSeriesView()
 {
   storeChanges();
 }
-                        
+
 void TimeSeriesView::storeChanges()
 {
   if (mSensorTime.valid())

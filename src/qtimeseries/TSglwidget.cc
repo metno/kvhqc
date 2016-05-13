@@ -1,6 +1,6 @@
 /*
   libqTimeseries - Qt classes for time series plots
-  
+
   Copyright (C) 2006-2013 met.no
 
   Contact information:
@@ -9,7 +9,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -19,7 +19,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,7 +44,7 @@ void TSglwidget::paintGL()
 {
   glClear(GL_COLOR_BUFFER_BIT);
   //glLoadIdentity();
-  drawArea.plot(); 
+  drawArea.plot();
 }
 
 
@@ -72,7 +72,7 @@ void TSglwidget::resizeGL( int w, int h )
 }
 
 void TSglwidget::prepare(const TimeSeriesData::TSPlot& tsp)
-{ 
+{
   makeCurrent(); // set current OpenGL context
   drawArea.prepare(tsp);
   updateGL();
@@ -80,8 +80,7 @@ void TSglwidget::prepare(const TimeSeriesData::TSPlot& tsp)
 
 
 void TSglwidget::refresh()
-{ 
-  //makeCurrent(); // set current OpenGL context
+{
   updateGL();
 }
 
@@ -104,6 +103,3 @@ void TSglwidget::clearTimemarks(const std::string& nam)
   drawArea.clearTimemarks(nam);
   refresh();
 }
-
-
-
