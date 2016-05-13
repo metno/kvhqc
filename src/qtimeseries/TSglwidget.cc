@@ -31,57 +31,45 @@
 
 #include "TSglwidget.h"
 
-const float gl_width =  1500.0;
-const float gl_height = 1000.0;
+#include <QPaintEvent>
+#include <QResizeEvent>
+
+#define MILOGGER_CATEGORY "qtimeseries.TSglwidget"
+#include <miLogger/miLogging.h>
 
 TSglwidget::TSglwidget(QWidget* parent, const char* name)
-  : QGLWidget(parent)
+  : QWidget(parent)
+  , canvas(this)
 {
   setObjectName(name);
 }
 
-void TSglwidget::paintGL()
+void TSglwidget::paintEvent(QPaintEvent*)
 {
-  glClear(GL_COLOR_BUFFER_BIT);
-  //glLoadIdentity();
-  drawArea.plot();
+  METLIBS_LOG_SCOPE(LOGVAL(width()) << LOGVAL(height()));
+
+  pets2::ptQPainter painter(&canvas);
+  drawArea.plot(painter);
 }
 
 
-
-//  Set up the OpenGL rendering state
-void TSglwidget::initializeGL()
+void TSglwidget::resizeEvent(QResizeEvent*)
 {
-  glOrtho(0,gl_width,0,gl_height,-1,1);
-  glShadeModel( GL_FLAT );
-  glClearColor(1.0,1.0,1.0,1.0);
-}
-
-
-//  Set up the OpenGL view port, matrix mode, etc.
-void TSglwidget::resizeGL( int w, int h )
-{
-  glViewport( 0, 0, (GLint)w, (GLint)h );
-  plotw= w;
-  ploth= h;
-
-  float pw = gl_width/float(plotw);
-  float ph = gl_height/float(ploth);
-
-  drawArea.setViewport(w,h,pw,ph);
+  METLIBS_LOG_SCOPE();
+  canvas.update();
+  drawArea.setViewport(&canvas);
 }
 
 void TSglwidget::prepare(const TimeSeriesData::TSPlot& tsp)
 {
-  makeCurrent(); // set current OpenGL context
   drawArea.prepare(tsp);
-  updateGL();
+  update();
 }
 
 
 void TSglwidget::refresh()
 {
-  updateGL();
+  update();
 }
 
 #if 0

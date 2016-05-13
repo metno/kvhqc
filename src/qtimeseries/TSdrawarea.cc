@@ -36,11 +36,8 @@
 
 #include <pets2/ptSymbolElement.h>
 #include <pets2/ptTimemarkerElement.h>
-#include <pets2/ptFontManager.h>
 
 #include <puTools/miStringFunctions.h>
-
-#include <glText/glTextQtTexture.h>
 
 #define MILOGGER_CATEGORY "qTimeseries.TSdrawarea"
 #include "miLogger/miLogging.h"
@@ -51,12 +48,12 @@ static symbolMaker wsymbols;
 static const POptions::Colour GRIDCOLOUR(0xD0, 0xD0, 0xD0);
 
 using namespace TimeSeriesData;
+using namespace pets2;
 
 TSdrawarea::TSdrawarea()
-    : diagram(0)
+    : canvas(0)
+    , diagram(0)
     , petsdata(0)
-    , width(1), height(1)
-    , pixwidth(1), pixheight(1)
     , Initialised(false)
 {
 }
@@ -69,40 +66,21 @@ TSdrawarea::~TSdrawarea()
 
 void TSdrawarea::prepare(const TimeSeriesData::TSPlot& tsp)
 {
-  if (!Initialised) {
-    glText* gltext = new glTextQtTexture();
-    gltext->testDefineFonts();
-    FM.addFontCollection(gltext, XFONTSET);
-    FM.setFontColl(XFONTSET);
-    // FIXME gltext memory leak
-
-    Initialised = true;
-  }
-
   tsplot = tsp;
 
   if (!prepareData()) {
-    METLIBS_LOG_WARN("TSdrawarea::prepare PREPARE DATA failed");
+    METLIBS_LOG_WARN("PREPARE DATA failed");
     return;
   }
   if (!prepareDiagram())
-    METLIBS_LOG_WARN("TSdrawarea::prepare PREPARE DIAGRAM failed");
+    METLIBS_LOG_WARN("PREPARE DIAGRAM failed");
 }
 
-void TSdrawarea::setViewport(int w, int h, float pw, float ph)
+void TSdrawarea::setViewport(pets2::ptCanvas* c)
 {
-  width = w;
-  height = h;
-
-  glwidth = w * pw;
-  glheight = h * ph;
-
-  pixwidth = pw;
-  pixheight = ph;
-
+  canvas = c;
   if (diagram)
-    diagram->setViewport(width, height, glwidth, glheight);
-
+    diagram->setViewport(canvas);
 }
 
 ptColor TSdrawarea::pets_colour(const POptions::Colour& col)
@@ -581,11 +559,6 @@ bool TSdrawarea::prepareData()
     }
   }
 
-  //   diaStyle.print();
-  //   cerr << "===================== PETSDATA ==================" << endl;
-  //   cerr << *petsdata << endl;
-  //   cerr << "===================== PETSDATA END ==============" << endl;
-
   return true;
 }
 
@@ -599,13 +572,10 @@ bool TSdrawarea::prepareDiagram()
   if (!diagram->attachData(petsdata))
     return (false);
 
-  ptColor bgColor;
-  if (!diagram->makeDefaultPlotElements(&bgColor))
+  if (!diagram->makeDefaultPlotElements())
     return false;
 
-  diagram->setViewport(width, height, glwidth, glheight);
-
-  glClearColor(bgColor.colTable[0], bgColor.colTable[1], bgColor.colTable[2], 1.0);
+  diagram->setViewport(canvas);
 
   // set correct weathersymbols
   miSymbol tmpSymbol;
@@ -662,16 +632,11 @@ void TSdrawarea::useTimemarks()
   }
 }
 
-void TSdrawarea::plot()
+void TSdrawarea::plot(pets2::ptPainter& painter)
 {
   if (!diagram)
     return;
 
-  //   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glClear(GL_COLOR_BUFFER_BIT);
-
   useTimemarks();
-  diagram->plot();
-
-  glFlush();
+  diagram->plot(painter);
 }

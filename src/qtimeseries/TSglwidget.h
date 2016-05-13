@@ -29,12 +29,14 @@
 #define QTIMESERIES_TSGLWIDGET_H
 
 #include "TSdrawarea.h"
-#include <QGLWidget>
+#include <pets2/ptQPainter.h>
+
+#include <QWidget>
 
 /* Created by met.no/FoU/PU
    at Thu Feb 13 16:19:41 2003 */
 
-class TSglwidget : public QGLWidget
+class TSglwidget : public QWidget
 {
   Q_OBJECT
 
@@ -42,11 +44,11 @@ private:
   int plotw;
   int ploth;
   TSdrawarea drawArea;
+  pets2::ptQCanvas canvas;
 
 protected:
-  void resizeGL( int w, int h );
-  void initializeGL();
-  void paintGL();
+  void resizeEvent(QResizeEvent*);
+  void paintEvent(QPaintEvent*);
 
 public:
   TSglwidget(QWidget* parent, const char* name="TSglWidget");
