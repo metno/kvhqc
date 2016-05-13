@@ -40,9 +40,11 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
     reset();
     sensor = st.sensor;
 
+#if 0 // FIXME
     const QString metadata = fetchMetaData(st);
     if (not metadata.isNull())
       parseMetadata(metadata);
+#endif
 
     if (not (have_max and have_min))
       fetchLimitsFromSystemDB(st);
