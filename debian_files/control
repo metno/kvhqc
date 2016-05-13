@@ -15,7 +15,7 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libkvcpp-dev (= 2.7.7-1),
 @metno_config_elsif .*precise.*
  libkvcpp-dev (= 2.7.8-1),
- libfimex-dev (>= 0.61.1), libpqxx-dev | libpqxx3-dev, libpng12-dev,
+ libfimex-dev (>= 0.61.1), libpqxx-dev | libpqxx3-dev, libpng-dev | libpng12-dev,
 @metno_config_endif
  libomniorb4-dev, libxml++2.6-dev, libcurl4-gnutls-dev | libcurl-dev, libperl-dev,
  metlibs-putools-dev (>= 5.1.0), metlibs-milogger-dev (>= 5.0.0),

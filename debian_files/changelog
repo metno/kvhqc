@@ -1,3 +1,10 @@
+kvhqc (3.4.19-1) unstable; urgency=low
+
+  * temporarily disable checking station_param
+  * using newest pets2 version with Qt
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 13 May 2016 13:54:46 +0200
+
 kvhqc (3.4.18-1) unstable; urgency=low
 
   * require and use newest tsData and pets2 versions
