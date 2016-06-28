@@ -1,3 +1,9 @@
+kvhqc (3.4.20-1) unstable; urgency=low
+
+  * colored background for aggregated data
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 28 Jun 2016 14:03:24 +0200
+
 kvhqc (3.4.19-1) unstable; urgency=low
 
   * temporarily disable checking station_param
