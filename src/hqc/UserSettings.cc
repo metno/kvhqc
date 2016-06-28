@@ -16,7 +16,7 @@ UserSettings::UserSettings(QWidget* parent)
   , ui(new Ui::UserSettings)
 {
   ui->setupUi(this);
-  initDataOrigUI2Colors();
+  initDataColors();
   initLanguage();
 }
 
@@ -26,12 +26,12 @@ UserSettings::~UserSettings()
 
 void UserSettings::accept()
 {
-  acceptDataOrigUI2Colors();
+  acceptDataColors();
   acceptLanguage();
   QDialog::accept();
 }
 
-void UserSettings::acceptDataOrigUI2Colors()
+void UserSettings::acceptDataColors()
 {
   HqcUserConfig* uc = hqcApp->userConfig();
 
@@ -39,9 +39,11 @@ void UserSettings::acceptDataOrigUI2Colors()
   uc->setDataOrigUI2Background(2, mColorUI2_2);
   uc->setDataOrigUI2Background(3, mColorUI2_3);
   uc->setDataOrigUI2Background(9, mColorUI2_9);
+
+  uc->setDataAggregatedBackground(mColorAggregated);
 }
 
-void UserSettings::initDataOrigUI2Colors()
+void UserSettings::initDataColors()
 {
   HqcUserConfig* uc = hqcApp->userConfig();
 
@@ -54,6 +56,9 @@ void UserSettings::initDataOrigUI2Colors()
   ui->labelUI2_2->setPalette(QPalette(mColorUI2_2));
   ui->labelUI2_3->setPalette(QPalette(mColorUI2_3));
   ui->labelUI2_9->setPalette(QPalette(mColorUI2_9));
+
+  mColorAggregated = uc->dataAggregatedBackground();
+  ui->labelAggregated->setPalette(QPalette(mColorAggregated));
 }
 
 void UserSettings::onOriginalColorUI2(QLabel* label, QColor& colorUI2)
@@ -83,6 +88,15 @@ void UserSettings::onOriginalColorUI2_3()
 void UserSettings::onOriginalColorUI2_9()
 {
   onOriginalColorUI2(ui->labelUI2_9, mColorUI2_9);
+}
+
+void UserSettings::onAggregatedColor()
+{
+  const QColor color = QColorDialog::getColor(mColorAggregated, this);
+  if (color.isValid()) {
+    mColorAggregated = color;
+    ui->labelAggregated->setPalette(QPalette(mColorAggregated));
+  }
 }
 
 void UserSettings::initLanguage()

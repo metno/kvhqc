@@ -55,6 +55,11 @@ QVariant DataValueItem::data(EditDataPtr obs, const SensorTime& st, int role) co
       if (bg.isValid())
         return QBrush(bg);
     }
+    if (st.sensor.typeId < 0) {
+      const QColor bg = hqcApp->userConfig()->dataAggregatedBackground();
+      if (bg.isValid())
+        return QBrush(bg);
+    }
   } else if (role == Qt::ForegroundRole) {
     // FIXME this is a hack, but the idea of having all non-numbers in dark gray is also mysterious
     const QVariant d = data(obs, st, Qt::DisplayRole);

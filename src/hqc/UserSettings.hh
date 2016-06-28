@@ -24,11 +24,12 @@ private Q_SLOTS:
   void onOriginalColorUI2_2();
   void onOriginalColorUI2_3();
   void onOriginalColorUI2_9();
+  void onAggregatedColor();
 
 private:
-  void initDataOrigUI2Colors();
+  void initDataColors();
+  void acceptDataColors();
   void onOriginalColorUI2(QLabel* label, QColor& colorUI2);
-  void acceptDataOrigUI2Colors();
 
   void initLanguage();
   void acceptLanguage();
@@ -36,6 +37,7 @@ private:
 private:
   std::auto_ptr<Ui::UserSettings> ui;
   QColor mColorUI2_1, mColorUI2_2, mColorUI2_3, mColorUI2_9;
+  QColor  mColorAggregated;
 };
 
 #endif // HQC_USERSETTINGS_HH

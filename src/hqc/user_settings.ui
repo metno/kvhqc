@@ -156,6 +156,60 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="groupColors">
+         <property name="title">
+          <string>Other Colors</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayoutColors">
+          <property name="margin">
+           <number>2</number>
+          </property>
+          <property name="spacing">
+           <number>4</number>
+          </property>
+          <item row="0" column="1">
+           <widget class="QToolButton" name="buttonAggregated">
+            <property name="text">
+             <string notr="true">…</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelAggregated">
+            <property name="toolTip">
+             <string>Aggregated values</string>
+            </property>
+            <property name="autoFillBackground">
+             <bool>true</bool>
+            </property>
+            <property name="frameShape">
+             <enum>QFrame::Panel</enum>
+            </property>
+            <property name="frameShadow">
+             <enum>QFrame::Sunken</enum>
+            </property>
+            <property name="text">
+             <string>Aggregated</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <spacer name="horizontalSpacer">
+            <property name="orientation">
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" stdset="0">
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <widget class="QGroupBox" name="groupLanguage">
          <property name="title">
           <string>Language</string>
@@ -1065,12 +1119,29 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>buttonAggregated</sender>
+   <signal>clicked()</signal>
+   <receiver>UserSettings</receiver>
+   <slot>onAggregatedColor()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>413</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>441</x>
+     <y>94</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onOriginalColorUI2_1()</slot>
   <slot>onOriginalColorUI2_2()</slot>
   <slot>onOriginalColorUI2_3()</slot>
   <slot>onOriginalColorUI2_9()</slot>
+  <slot>onAggregatedColor()</slot>
  </slots>
  <buttongroups>
   <buttongroup name="group_FgFg"/>
