@@ -2,7 +2,6 @@
 #########################################################################
 # Qt
 
-SET(QT_USE_QTOPENGL TRUE)
 SET(QT_USE_QTSQL TRUE)
 SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QT3SUPPORT TRUE)

@@ -3,7 +3,7 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 9), quilt, cmake,
- libqt4-dev, libqt4-opengl-dev,
+ libqt4-dev,
 @metno_config_if .*precise.*
 @metno_config_else
  libqt4-dev-bin,
