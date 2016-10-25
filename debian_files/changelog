@@ -1,3 +1,9 @@
+kvhqc (3.4.21-1) unstable; urgency=low
+
+  * updates for xenial
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 25 Oct 2016 08:00:08 +0200
+
 kvhqc (3.4.20-1) unstable; urgency=low
 
   * colored background for aggregated data
