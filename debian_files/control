@@ -10,8 +10,10 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
 @metno_config_endif
  libgfortran3, google-mock, python (>= 2.7.3-0),
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-regex-dev, libboost-system-dev,
- libsqlite3-dev,
-@metno_config_if .*trusty.*
+ libsqlite3-dev, libldap2-dev,
+@metno_config_if .*xenial.*
+ libkvcpp-dev (>= 2.7.9), libkvcpp-dev (<< 2.8),
+@metno_config_elsif .*trusty.*
  libkvcpp-dev (= 2.7.7-1),
 @metno_config_elsif .*precise.*
  libkvcpp-dev (= 2.7.8-1),
