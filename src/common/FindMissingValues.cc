@@ -92,7 +92,7 @@ std::vector<SensorTime> find(const std::vector<int>& typeIds, const TimeRange& t
       results.push_back(SensorTime(s, t));
     }
   } else {
-    HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
+    HQC_LOG_ERROR("query '" << sql.str() << "' failed: " << query.lastError().text());
   }
 
   return results;
