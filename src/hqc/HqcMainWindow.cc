@@ -652,9 +652,9 @@ void HqcMainWindow::about()
           "\n\n"
           "The program is developed by "
           "Knut Johansen, "
-          "Alexander Bürger, "
+          "Alexander BÃ¼rger, "
           "Lisbeth Bergholt, "
-          "Vegard Bønes, "
+          "Vegard BÃ¸nes, "
           "Audun Christoffersen at MET Norway.\n\n"
           "You are using HQC version %1.").arg(PVERSION_FULL));
 }
