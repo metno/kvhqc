@@ -53,7 +53,11 @@ HqcApplication::HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil:
 {
   hqcApp = this;
 
+  // setlocale must be called after initializing QApplication,
+  // see http://doc.qt.io/qt-4.8/qcoreapplication.html#locale-settings
   setlocale(LC_NUMERIC, "C");
+  setenv("LC_NUMERIC", "C", 1);
+  setenv("LC_ALL", "C", 1);
 
   QCoreApplication::setOrganizationName("Meteorologisk Institutt");
   QCoreApplication::setOrganizationDomain("met.no");

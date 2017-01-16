@@ -50,6 +50,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 int main( int argc, char* argv[] )
 {
+  // this seems to be necessary to prevent kde image plugins / libkdecore
+  // from resetting LC_NUMERIC from the environment; image plugins might,
+  // e.g., be loaded when the clipboard is accessed
+  setenv("LC_NUMERIC", "C", 1);
+  setenv("LC_ALL", "C", 1);
+
   std::string myconf = (hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf").toStdString();
   std::string log4cpp_properties = (hqc::getPath(hqc::DATADIR) + "/log4cpp.properties").toStdString();
   for (int i = 1; i<argc; ++i) {
