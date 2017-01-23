@@ -124,6 +124,7 @@ enum {
     PARAMID_RR_6  = 108,
     PARAMID_RR_12 = 109,
     PARAMID_RR_24 = 110,
+    PARAMID_EE  = 129,
     PARAMID_SA  = 112,
     PARAMID_TA  = 211,
     PARAMID_TAN = 213,
