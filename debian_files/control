@@ -12,9 +12,9 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-regex-dev, libboost-system-dev,
  libsqlite3-dev, libldap2-dev,
 @metno_config_if .*xenial.*
- libkvcpp-dev (>= 2.7.9), libkvcpp-dev (<< 2.8),
- libkvcpp4 (>= 2.7.9), libkvcpp4 (<< 2.8),
- libkvalobs4 (>= 2.7.9), libkvalobs4 (<< 2.8),
+ libkvcpp-dev (= 2.7.9-2),
+ libkvcpp4 (= 2.7.9-2),
+ libkvalobs4 (= 2.7.9-2),
 @metno_config_elsif .*trusty.*
  libkvcpp-dev (= 2.7.7-1),
 @metno_config_elsif .*precise.*

@@ -1,4 +1,4 @@
-kvhqc (3.4.22-2) unstable; urgency=low
+kvhqc (3.4.22-3) unstable; urgency=low
 
   * try to fix build-depends for xenial
 
