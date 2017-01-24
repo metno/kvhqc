@@ -386,7 +386,7 @@ void HqcDianaHelper::processLetter(const miMessage& letter)
     }
     METLIBS_LOG_INFO("Unable to handle positions message: '"
         << "====================\n" << letter.content() << "====================");
-  } else {
+  } else if (letter.command != qmstrings::registeredclient && letter.command != qmstrings::unregisteredclient) {
     METLIBS_LOG_INFO("Diana sent a command that HQC does not understand:\n"
         << "====================\n" << letter.content() << "====================");
   }
