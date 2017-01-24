@@ -3,32 +3,23 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 9), quilt, cmake,
- libqt4-dev,
-@metno_config_if .*precise.*
-@metno_config_else
- libqt4-dev-bin,
-@metno_config_endif
+ libqt4-dev, libqt4-dev-bin | qt4-qmake,
  libgfortran3, google-mock, python (>= 2.7.3-0),
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-regex-dev, libboost-system-dev,
  libsqlite3-dev, libldap2-dev,
 @metno_config_if .*xenial.*
- libkvcpp-dev (= 2.7.9-2),
- libkvcpp4 (= 2.7.9-2),
- libkvalobs4 (= 2.7.9-2),
-@metno_config_elsif .*trusty.*
- libkvcpp-dev (= 2.7.7-1),
-@metno_config_elsif .*precise.*
- libkvcpp-dev (= 2.7.8-1),
- libfimex-dev (>= 0.61.1), libpqxx-dev | libpqxx3-dev, libpng-dev | libpng12-dev,
+ libkvcpp-dev (>= 4.0.1-1),
+ libkvalobs-dev (>= 4.0.1-1),
+ librdkafka-dev,
+@metno_config_else
+ does-not-work-except-on-xenial,
 @metno_config_endif
- libomniorb4-dev, libxml++2.6-dev, libcurl4-gnutls-dev | libcurl-dev, libperl-dev,
  metlibs-putools-dev (>= 5.1.0), metlibs-milogger-dev (>= 5.0.0),
  metlibs-qutilities-dev (>= 5.1.2), metlibs-coserver-dev (>= 2.0.4),
  metlibs-tsdata-dev (>= 5.2.0), metlibs-pets2-dev (>= 5.1.0),
  metlibs-pumet-dev (>= 5.1.0)
 Standards-Version: 3.8.4
-Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
-Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
+Vcs-Git: https://github.com/metno/kvhqc
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
@@ -37,12 +28,6 @@ Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: metno-qt4-translations (>= 0.2.0),
  metlibs-translations
-Conflicts:
-@metno_config_if .*trusty.*
- libkvcpp4 (>= 2.7.8~rc1), libkvalobs4 (>= 2.7.8~rc1)
-@metno_config_elsif .*precise.*
- libkvcpp4 (>= 2.8.0), libkvalobs4 (>= 2.8.0)
-@metno_config_endif
 Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs
