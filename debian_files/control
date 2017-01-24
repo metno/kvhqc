@@ -13,6 +13,8 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libsqlite3-dev, libldap2-dev,
 @metno_config_if .*xenial.*
  libkvcpp-dev (>= 2.7.9), libkvcpp-dev (<< 2.8),
+ libkvcpp4 (>= 2.7.9), libkvcpp4 (<< 2.8),
+ libkvalobs4 (>= 2.7.9), libkvalobs4 (<< 2.8),
 @metno_config_elsif .*trusty.*
  libkvcpp-dev (= 2.7.7-1),
 @metno_config_elsif .*precise.*
