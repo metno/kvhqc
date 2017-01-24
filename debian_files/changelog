@@ -1,3 +1,9 @@
+kvhqc (3.4.22-1) unstable; urgency=low
+
+  * add EE column in WatchRR
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 24 Jan 2017 10:13:06 +0100
+
 kvhqc (3.4.21-1) unstable; urgency=low
 
   * updates for xenial
