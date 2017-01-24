@@ -37,7 +37,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "util/hqc_paths.hh"
 #include "util/Milog4cpp.hh"
 
-#include <kvcpp/corba/CorbaKvApp.h>
+#include <kvcpp/KvApp.h>
+#include <miconfparser/confparser.h>
+#include <miconfparser/confsection.h>
 
 #include <QtGui/QSplashScreen>
 
@@ -45,8 +47,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #define MILOGGER_CATEGORY "kvhqc.main"
 #include "util/HqcLogging.hh"
-
-using kvservice::corba::CorbaKvApp;
 
 int main( int argc, char* argv[] )
 {
@@ -87,13 +87,13 @@ int main( int argc, char* argv[] )
   }
 #endif
 
-  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
-  if (not confSec) {
+  std::shared_ptr<miutil::conf::ConfSection> confSec(miutil::conf::ConfParser::parse(myconf));
+  if (!confSec) {
     HQC_LOG_ERROR("cannot open configuration file '" << myconf << "'");
     return 1;
   }
-    
-  CorbaKvApp kvapp(argc, argv, confSec);
+
+  std::unique_ptr<kvservice::KvApp> kvApp(kvservice::KvApp::create("kvhqc", argc, argv, confSec));
   KvServiceHelper kvsh;
   QtKvService qkvs;
   KvalobsUpdateListener kul;
