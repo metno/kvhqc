@@ -28,15 +28,20 @@ QVariant DataCodeItem::data(EditDataPtr obs, const SensorTime& st, int role) con
     if (not obs)
       return QVariant();
     
+    const float v = getValue(obs);
+    const bool c = mCodes->isCode(v);
     if (role == Qt::ForegroundRole) {
-      if (mCodes->isCode(getValue(obs)))
+      if (c)
         return Qt::darkGray;
+    } else if (role == Qt::ToolTipRole) {
+      if (c)
+        return mCodes->asTip(v);
     } else if (role == Qt::DisplayRole) {
-      return mCodes->asText(getValue(obs), false);
+      return mCodes->asText(v, false);
     } else if (role == Qt::EditRole) {
       return "";
     } else if (role == Qt::TextAlignmentRole) {
-      return Qt::AlignVCenter+(mCodes->isCode(getValue(obs)) ? Qt::AlignLeft : Qt::AlignRight);
+      return Qt::AlignVCenter+(c ? Qt::AlignLeft : Qt::AlignRight);
     }
   }
   return DataValueItem::data(obs, st, role);
