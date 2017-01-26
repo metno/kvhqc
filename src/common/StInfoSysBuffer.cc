@@ -22,7 +22,7 @@
 namespace /*anonymous*/ {
 
 const char QSQLNAME_REMOTE[] = "stinfosys";
-const int norway_countryid = 6010;    // FIXME do not hardcode this
+const int norway_countryid = 578; // ISO 3166 -- FIXME do not hardcode this
 const int norway_remap_municip = 100; // FIXME do not hardcode this
 
 struct municip_info {
