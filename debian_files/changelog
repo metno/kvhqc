@@ -1,3 +1,9 @@
+kvhqc (3.4.23-1) unstable; urgency=low
+
+  * update Norway's country id to ISO 3166
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 26 Jan 2017 10:07:41 +0100
+
 kvhqc (3.4.22-3) unstable; urgency=low
 
   * try to fix build-depends for xenial
