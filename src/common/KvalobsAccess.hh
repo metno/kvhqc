@@ -12,7 +12,7 @@ public:
   KvalobsAccess(QueryTaskHandler_p handler);
   ~KvalobsAccess();
 
-  virtual void postRequest(ObsRequest_p request);
+  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
   virtual void dropRequest(ObsRequest_p request);
 
   virtual ObsUpdate_p createUpdate(ObsData_p data);
