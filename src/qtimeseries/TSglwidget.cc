@@ -1,6 +1,6 @@
 /*
   libqTimeseries - Qt classes for time series plots
-  
+
   Copyright (C) 2006-2013 met.no
 
   Contact information:
@@ -9,7 +9,7 @@
   0313 OSLO
   NORWAY
   email: diana@met.no
-  
+
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
   License as published by the Free Software Foundation; either
@@ -19,7 +19,7 @@
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
   Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public
   License along with this library; if not, write to the Free Software
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -31,58 +31,45 @@
 
 #include "TSglwidget.h"
 
-const float gl_width =  1500.0;
-const float gl_height = 1000.0;
+#include <QPaintEvent>
+#include <QResizeEvent>
+
+#define MILOGGER_CATEGORY "qtimeseries.TSglwidget"
+#include <miLogger/miLogging.h>
 
 TSglwidget::TSglwidget(QWidget* parent, const char* name)
-  : QGLWidget(parent)
+  : QWidget(parent)
+  , canvas(this)
 {
   setObjectName(name);
 }
 
-void TSglwidget::paintGL()
+void TSglwidget::paintEvent(QPaintEvent*)
 {
-  glClear(GL_COLOR_BUFFER_BIT);
-  //glLoadIdentity();
-  drawArea.plot(); 
+  METLIBS_LOG_SCOPE(LOGVAL(width()) << LOGVAL(height()));
+
+  pets2::ptQPainter painter(&canvas);
+  drawArea.plot(painter);
 }
 
 
-
-//  Set up the OpenGL rendering state
-void TSglwidget::initializeGL()
+void TSglwidget::resizeEvent(QResizeEvent*)
 {
-  glOrtho(0,gl_width,0,gl_height,-1,1);
-  glShadeModel( GL_FLAT );
-  glClearColor(1.0,1.0,1.0,1.0);
-}
-
-
-//  Set up the OpenGL view port, matrix mode, etc.
-void TSglwidget::resizeGL( int w, int h )
-{
-  glViewport( 0, 0, (GLint)w, (GLint)h );
-  plotw= w;
-  ploth= h;
-
-  float pw = gl_width/float(plotw);
-  float ph = gl_height/float(ploth);
-
-  drawArea.setViewport(w,h,pw,ph);
+  METLIBS_LOG_SCOPE();
+  canvas.update();
+  drawArea.setViewport(&canvas);
 }
 
 void TSglwidget::prepare(const TimeSeriesData::TSPlot& tsp)
-{ 
-  makeCurrent(); // set current OpenGL context
+{
   drawArea.prepare(tsp);
-  updateGL();
+  update();
 }
 
 
 void TSglwidget::refresh()
-{ 
-  //makeCurrent(); // set current OpenGL context
-  updateGL();
+{
+  update();
 }
 
 #if 0
@@ -104,6 +91,3 @@ void TSglwidget::clearTimemarks(const std::string& nam)
   drawArea.clearTimemarks(nam);
   refresh();
 }
-
-
-

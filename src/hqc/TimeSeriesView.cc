@@ -13,6 +13,8 @@
 
 #include "util/ChangeReplay.hh"
 
+#include <puTools/miStringFunctions.h>
+
 #include <QtGui/QMenu>
 #include <QtGui/QResizeEvent>
 #include <QtGui/QStringListModel>

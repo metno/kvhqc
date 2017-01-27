@@ -44,18 +44,11 @@
 
 class TSdrawarea {
 private:
-
-  ptDiagram     * diagram;
+  pets2::ptCanvas* canvas;
+  pets2::ptDiagram * diagram;
   ptDiagramData * petsdata;
-  ptStyle         diaStyle;
+  pets2::ptStyle diaStyle;
   TimeSeriesData::TSPlot tsplot;
-
-  int   width;
-  int   height;
-  float glwidth;
-  float glheight;
-  float pixwidth;
-  float pixheight;
 
   typedef std::map<std::string, TimeSeriesData::ts_time_t> timemarks_t;
   timemarks_t timemarks;
@@ -65,11 +58,10 @@ private:
   void useTimemarks();
   bool prepareData();
   bool prepareDiagram();
-  void fillElement(Primitive& p, Layout& l,
-		   const POptions::PlotOptions& opt);
-  ptColor pets_colour(const POptions::Colour& col);
-  ptLineStyle pets_linestyle(const POptions::Linetype& lt);
-  ptFillStyle pets_fillstyle(const POptions::Filltype& ft);
+  void fillElement(pets2::Primitive& p, pets2::Layout& l, const POptions::PlotOptions& opt);
+  pets2::ptColor pets_colour(const POptions::Colour& col);
+  pets2::ptLineStyle pets_linestyle(const POptions::Linetype& lt);
+  pets2::ptFillStyle pets_fillstyle(const POptions::Filltype& ft);
 
 public:
   TSdrawarea();
@@ -77,9 +69,9 @@ public:
 
   void prepare(const TimeSeriesData::TSPlot& tsp);
 
-  void setViewport(int w, int h,float,float);
+  void setViewport(pets2::ptCanvas* canvas);
 
-  void plot();
+  void plot(pets2::ptPainter& painter);
 
   void setTimemark(const TimeSeriesData::ts_time_t& nt, const std::string& name="");
   void clearTimemarks(const std::string& name="");
