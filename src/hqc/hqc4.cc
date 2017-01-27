@@ -32,12 +32,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "common/KvalobsUpdateListener.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
+#include "common/QtKvService.hh"
 #include "common/StInfoSysBuffer.hh"
 #include "common/HqcApplication.hh"
 #include "util/hqc_paths.hh"
 #include "util/Milog4cpp.hh"
 
-#include <kvcpp/corba/CorbaKvApp.h>
+#include <kvcpp/KvApp.h>
+#include <miconfparser/confparser.h>
+#include <miconfparser/confsection.h>
 
 #include <QtGui/QSplashScreen>
 
@@ -46,10 +49,14 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define MILOGGER_CATEGORY "kvhqc.main"
 #include "util/HqcLogging.hh"
 
-using kvservice::corba::CorbaKvApp;
-
 int main( int argc, char* argv[] )
 {
+  // this seems to be necessary to prevent kde image plugins / libkdecore
+  // from resetting LC_NUMERIC from the environment; image plugins might,
+  // e.g., be loaded when the clipboard is accessed
+  setenv("LC_NUMERIC", "C", 1);
+  setenv("LC_ALL", "C", 1);
+
   std::string myconf = (hqc::getPath(hqc::CONFDIR) + "/kvalobs.conf").toStdString();
   std::string log4cpp_properties = (hqc::getPath(hqc::DATADIR) + "/log4cpp.properties").toStdString();
   for (int i = 1; i<argc; ++i) {
@@ -87,21 +94,22 @@ int main( int argc, char* argv[] )
   }
 #endif
 
-  miutil::conf::ConfSection *confSec = CorbaKvApp::readConf(myconf);
-  if (not confSec) {
+  std::shared_ptr<miutil::conf::ConfSection> confSec(miutil::conf::ConfParser::parse(myconf));
+  if (!confSec) {
     HQC_LOG_ERROR("cannot open configuration file '" << myconf << "'");
     return 1;
   }
-    
-  CorbaKvApp kvapp(argc, argv, confSec);
-  KvServiceHelper kvsh;
+
+  std::shared_ptr<kvservice::KvApp> kvApp(kvservice::KvApp::create("kvhqc", argc, argv, confSec));
+  KvServiceHelper kvsh(kvApp);
+  QtKvService qkvs(kvApp);
   KvalobsUpdateListener kul;
   KvMetaDataBuffer kvmdbuf;
   StInfoSysBuffer stinfobuf(confSec);
 
   HqcApplication hqc(argc, argv, confSec);
 
-  hqc.setReinserter(std::make_shared<KvalobsReinserter>());
+  hqc.setReinserter(std::make_shared<KvalobsReinserter>(kvApp));
 
   QPixmap pixmap("icons:hqc_splash.svg");
   QSplashScreen splash(pixmap);
@@ -109,7 +117,7 @@ int main( int argc, char* argv[] )
   hqc.processEvents();
 
   std::unique_ptr<HqcAppWindow> aw(new HqcAppWindow());
-  aw->startup();
+  aw->startup(hqc.kvalobsDBName());
 
   splash.finish(aw.get());
 
@@ -119,5 +127,6 @@ int main( int argc, char* argv[] )
   aw.reset(0);
   hqc.processEvents();
 
+  qkvs.stop();
   return r;
 }

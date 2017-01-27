@@ -5,6 +5,8 @@
 
 #include "StationInfoBuffer.hh"
 
+#include <memory>
+
 namespace miutil {
 namespace conf {
 class ConfSection;
@@ -13,7 +15,7 @@ class ConfSection;
 
 class StInfoSysBuffer : public StationInfoBuffer {
 public:
-    StInfoSysBuffer(miutil::conf::ConfSection* conf);
+    StInfoSysBuffer(std::shared_ptr<miutil::conf::ConfSection> conf);
     ~StInfoSysBuffer();
 
     virtual bool isConnected();

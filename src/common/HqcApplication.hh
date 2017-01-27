@@ -23,7 +23,7 @@ class QueryTaskHandler;
 class HqcApplication : public QApplication
 {   Q_OBJECT;
 public:
-  HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection* conf);
+  HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection>);
   ~HqcApplication();
 
   virtual bool notify(QObject* receiver, QEvent* e);
@@ -44,13 +44,12 @@ public:
 
   QSqlDatabase kvalobsDB();
   QSqlDatabase kvalobsDB(const QString& qname);
+  QString kvalobsDBName();
 
   void exitNoKvalobs();
 
   /** Query last known availability of kvServiced. Does not re-check. */
   bool isKvalobsAvailable() const;
-
-  QString instanceName() const;
 
   int exec();
 
@@ -78,7 +77,7 @@ private:
 
 private:
   QList<QTranslator*> mTranslators;
-  miutil::conf::ConfSection *mConfig;
+  std::shared_ptr<miutil::conf::ConfSection> mConfig;
   bool mKvalobsAvailable;
   std::unique_ptr<HqcUserConfig> mUserConfig;
 

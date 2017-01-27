@@ -98,8 +98,8 @@ HqcAppWindow::HqcAppWindow()
   , mHelpDialog(0)
 {
   METLIBS_LOG_SCOPE();
-  setWindowTitle(tr("HQC %1").arg(hqcApp->instanceName()));
   ui->setupUi(this);
+  setWindowTitle(tr("HQC"));
   EditVersionsView* evv = new EditVersionsView(hqcApp->editAccess(), ui->groupChanges);
   ui->gridChanges->addWidget(evv, 1, 0, 1, 4);
   ui->gridChanges->setRowStretch(1, 1);
@@ -151,9 +151,10 @@ void HqcAppWindow::retranslateUi()
   kvalobsAvailable(hqcApp->isKvalobsAvailable());
 }
 
-void HqcAppWindow::startup()
+void HqcAppWindow::startup(const QString& captionSuffix)
 {
   METLIBS_LOG_SCOPE();
+  setWindowTitle(tr("HQC %1").arg(hqcApp->kvalobsDBName()));
     
   readSettings();
   show();
@@ -284,9 +285,9 @@ void HqcAppWindow::onAboutHqc()
           "\n\n"
           "The program is developed by "
           "Knut Johansen, "
-          "Alexander Bürger, "
+          "Alexander BÃ¼rger, "
           "Lisbeth Bergholt, "
-          "Vegard Bønes, "
+          "Vegard BÃ¸nes, "
           "Audun Christoffersen at MET Norway.\n\n"
           "You are using HQC version %1.").arg(PVERSION_FULL));
 }

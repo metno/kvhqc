@@ -108,7 +108,7 @@ SearchWindow::SearchWindow(QWidget* parent)
 {
   METLIBS_LOG_TIME();
   setAttribute(Qt::WA_DeleteOnClose, true);
-  setWindowTitle(tr("HQC Search %1").arg(hqcApp->instanceName()));
+  setWindowTitle(tr("HQC Search %1").arg(hqcApp->kvalobsDBName()));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
   resize(975, 700);
 

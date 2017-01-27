@@ -3,15 +3,15 @@
 
 #include <kvalobs/kvOperator.h>
 #include <kvalobs/kvStationParam.h>
-#include <kvcpp/KvApp.h>
 
 #define MILOGGER_CATEGORY "kvhqc.KvServiceHelper"
 #include "util/HqcLogging.hh"
 
 KvServiceHelper* KvServiceHelper::sInstance = 0;
 
-KvServiceHelper::KvServiceHelper()
-    : mKvalobsAvailable(true)
+KvServiceHelper::KvServiceHelper(std::shared_ptr<kvservice::KvApp> app)
+  : mApp(app)
+  , mKvalobsAvailable((bool)mApp)
 {
   sInstance = this;
 }
@@ -23,8 +23,10 @@ KvServiceHelper::~KvServiceHelper()
 
 bool KvServiceHelper::checkKvalobsAvailability()
 {
+  if (!mApp)
+    return false;
   std::list<kvalobs::kvStationParam> stParam;
-  return updateKvalobsAvailability(kvservice::KvApp::kvApp->getKvStationParam(stParam, 345345, 345345, 0));
+  return updateKvalobsAvailability(mApp->getKvStationParam(stParam, 345345, 345345, 0));
 }
 
 bool KvServiceHelper::updateKvalobsAvailability(bool available)
@@ -38,14 +40,14 @@ bool KvServiceHelper::updateKvalobsAvailability(bool available)
 
 int KvServiceHelper::identifyOperator(const QString& username)
 {
-  if (not kvservice::KvApp::kvApp) {
+  if (!mApp) {
     updateKvalobsAvailability(false);
     return -1;
   }
 
   typedef std::list<kvalobs::kvOperator> kvOperator_l;
   kvOperator_l operators;
-  if (not kvservice::KvApp::kvApp->getKvOperator(operators)) {
+  if (!mApp->getKvOperator(operators)) {
     updateKvalobsAvailability(false);
     return -1;
   }

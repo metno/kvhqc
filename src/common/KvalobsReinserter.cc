@@ -1,13 +1,49 @@
 
 #include "KvalobsReinserter.hh"
 #include "common/identifyUser.h"
+
+#include <kvalobs/kvDataOperations.h>
+
 #include <QtCore/QString>
+
+#define MILOGGER_CATEGORY "kvhqc.KvalobsReinserter"
+#include "util/HqcLogging.hh"
+
+namespace internal_
+{
+
+void updateUseAddCFailed(kvalobs::kvData &d)
+{
+    kvalobs::kvControlInfo cinfo = d.controlinfo();
+    if (cinfo.flag(kvalobs::flag::fhqc) == 0) {
+      cinfo.set(kvalobs::flag::fhqc, 3);
+      d.controlinfo(cinfo);
+      HQC_LOG_ERROR("inserting data with fhqc==0, forced to fhqc==3: " << d);
+    }
+
+    kvalobs::kvUseInfo ui = d.useinfo();
+    ui.setUseFlags(cinfo);
+    ui.addToErrorCount();
+    d.useinfo(ui);
+}
+
+} // namespace internal_
+
+KvalobsReinserter::KvalobsReinserter(std::shared_ptr<kvservice::KvApp> app)
+  : mApp(app)
+{
+}
 
 bool KvalobsReinserter::authenticate()
 {
   QString userName = "?";
-  mDataReinserter.reset(Authentication::identifyUser(0, kvservice::KvApp::kvApp, "ldap-oslo.met.no", userName));
-  return mDataReinserter.get() != 0;
+  const int userid = Authentication::identifyUser(0, "ldap-oslo.met.no", userName);
+  if (userid >= 0) {
+    mDataReinserter.reset(new Reinserter_t(mApp.get(), userid));
+  } else {
+    mDataReinserter.reset(0);
+  }
+  return (bool)mDataReinserter;
 }
 
 bool KvalobsReinserter::storeChanges(const kvData_l& toUpdate, const kvData_l& toInsert)
@@ -21,6 +57,11 @@ bool KvalobsReinserter::storeChanges(const kvData_l& toUpdate, const kvData_l& t
   kvData_l merged(toUpdate.begin(), toUpdate.end());
   merged.insert(merged.end(), toInsert.begin(), toInsert.end());
 
-  const HqcDataReinserter::Result res = mDataReinserter->insert(merged);
-  return (res->res == CKvalObs::CDataSource::OK);
+  const CKvalObs::CDataSource::Result_var res = mDataReinserter->insert(merged);
+  if (res->res == CKvalObs::CDataSource::OK) {
+    return true;
+  } else {
+    HQC_LOG_WARN("could not store data, message='" << res->message << "'");
+    return false;
+  }
 }

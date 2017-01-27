@@ -45,19 +45,17 @@ const char DB_SYSTEM[] = "hqc_system_db";
 const char DB_CONFIG[] = "hqc_config_db";
 const char DB_KVALOBS[] = "kvalobs_db";
 
+const char CK_KVALOBSDB[] = "kvalobsdb";
+
 const int AVAILABILITY_TIMEROUT = 120*1000; // milliseconds = 2 minutes
 
 const char SETTING_HQC_LANGUAGE[] = "language";
-
-inline kvservice::corba::CorbaKvApp* app() {
-  return static_cast<kvservice::corba::CorbaKvApp*>(kvservice::KvApp::kvApp);
-}
 
 } // anonymous namespace
 
 HqcApplication* hqcApp = 0;
 
-HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSection *conf)
+HqcApplication::HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection> conf)
   : QApplication(argc, argv)
   , mConfig(conf)
 {
@@ -101,11 +99,6 @@ HqcApplication::~HqcApplication()
   QSqlDatabase::removeDatabase(DB_CONFIG);
 
   hqcApp = 0;
-}
-
-QString HqcApplication::instanceName() const
-{
-  return QString::fromStdString(app()->kvpathInCorbaNameserver());
 }
 
 QSqlDatabase HqcApplication::systemDB()
@@ -153,6 +146,19 @@ QSqlDatabase HqcApplication::kvalobsDB(const QString& qname)
     }
   }
   return QSqlDatabase::database(qname);
+}
+
+QString HqcApplication::kvalobsDBName()
+{
+  const miutil::conf::ValElementList valHost = mConfig->getValue(std::string(CK_KVALOBSDB) + ".host");
+
+  try {
+    if (valHost.size() == 1)
+      return Helpers::fromUtf8(valHost.front().valAsString());
+  } catch (miutil::conf::InvalidTypeEx& e) {
+    // pass
+  }
+  return QString("?");
 }
 
 void HqcApplication::setReinserter(AbstractReinserter_p reinserter)

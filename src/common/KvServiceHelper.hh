@@ -2,6 +2,7 @@
 #ifndef KvServiceHelper_hh
 #define KvServiceHelper_hh 1
 
+#include <kvcpp/KvApp.h>
 #include <QObject>
 
 class KvServiceHelper : public QObject
@@ -9,7 +10,7 @@ class KvServiceHelper : public QObject
   Q_OBJECT;
 
 public:
-  KvServiceHelper();
+  KvServiceHelper(std::shared_ptr<kvservice::KvApp> app);
   ~KvServiceHelper();
 
   /** Query last known availability of kvServiced. Does not re-check. */
@@ -31,6 +32,7 @@ private:
   bool updateKvalobsAvailability(bool available);
 
 private:
+  std::shared_ptr<kvservice::KvApp> mApp;
   bool mKvalobsAvailable;
 
   static KvServiceHelper* sInstance;

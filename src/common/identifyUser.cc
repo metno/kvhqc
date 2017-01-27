@@ -30,22 +30,16 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include "identifyUser.h"
 
 #include "common/Authenticator.hh"
-#include "HqcDataReinserter.hh"
 #include "KvServiceHelper.hh"
-
-#include <list>
-#include <cstring>
 
 namespace Authentication {
 
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-    const char *ldap_server, QString& userName)
+int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName)
 {
-  return identifyUser(widgetparent, app, ldap_server, userName, DEFAULT_LDAP_PORT);
+  return identifyUser(widgetparent, ldap_server, userName, DEFAULT_LDAP_PORT);
 }
 
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-    const char *ldap_server, QString& userName, int ldap_port)
+int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName, int ldap_port)
 {
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())
@@ -54,10 +48,10 @@ kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, k
   const int userid = KvServiceHelper::instance()->identifyOperator(user);
   if (userid >= 0) {
     userName = user;
-    return new HqcDataReinserter(app, userid);
+  } else {
+    userName.clear();
   }
-
-  return 0;
+  return userid;
 }
 
 } // namespace Authentication

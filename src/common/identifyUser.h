@@ -29,20 +29,15 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#ifndef __identifyUser_h__
-#define __identifyUser_h__
-
-#include <decodeutility/DataReinserter.h>
-#include <kvcpp/KvApp.h>
+#ifndef common_identifyUser_h
+#define common_identifyUser_h
 
 class QString;
 class QWidget;
 
 namespace Authentication {
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-                                                        const char *ldap_server, QString& userName);
-kvalobs::DataReinserter<kvservice::KvApp> *identifyUser(QWidget* widgetparent, kvservice::KvApp *app,
-                                                        const char *ldap_server, QString& userName, int port );
+int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName);
+int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName, int port);
 } // namespace Authentication
 
-#endif // __identifyUser_h__
+#endif // common_identifyUser_h

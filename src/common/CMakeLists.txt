@@ -37,7 +37,6 @@ SET(common_SOURCES
   FlagUpdate.cc
   Functors.cc
   HqcApplication.cc
-  HqcDataReinserter.cc
   HqcSystemDB.cc
   HqcUserConfig.cc
   identifyUser.cc
@@ -50,7 +49,6 @@ SET(common_SOURCES
   KvalobsModelAccess.cc
   KvalobsQueryRunner.cc
   KvalobsReinserter.cc
-  KvalobsReinserter.hh
   KvalobsUpdate.cc
   KvalobsUpdateListener.cc
   KvHelpers.cc

@@ -52,7 +52,7 @@ public:
   HqcAppWindow();
   ~HqcAppWindow();
 
-  void startup();
+  void startup(const QString& captionSuffix);
   void finish();
 
 protected:
