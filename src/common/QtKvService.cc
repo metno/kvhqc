@@ -6,8 +6,6 @@
 #include <QtCore/QCoreApplication>
 #include <QtCore/QMetaType>
 
-#include <boost/foreach.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.QtKvService"
 #include "util/HqcLogging.hh"
 
@@ -46,13 +44,13 @@ QtKvService::~QtKvService()
     HQC_LOG_WARN("kvService CORBA connector destructor: "
         << mSubscriptions.size() << " subscribers remaining");
 
-  BOOST_FOREACH(Subscriptions_t::value_type& sub, mSubscriptions) {
+  for(Subscriptions_t::const_iterator it = mSubscriptions.begin(); it != mSubscriptions.end(); ++it) {
     if (mApp)
-      mApp->unsubscribe(sub.first);
+      mApp->unsubscribe(it->first);
     else
-      HQC_LOG_WARN("no app, cannot unsubscribe '" << sub.first << "'");
+      HQC_LOG_WARN("no app, cannot unsubscribe '" << it->first << "'");
 #if 0 // Qt should disconnect (or already have disconnected) these
-    const Subscriber& s = sub.second;
+    const Subscriber& s = it->second;
     disconnect(this, s.emitted, s.receiver, s.member);
 #endif
   }

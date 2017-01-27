@@ -16,15 +16,15 @@ public:
 
   static WrapRequest_p untag(ObsRequest_p wrapped);
   
-  virtual void completed(const QString& withError);
+  void completed(const QString& withError) Q_DECL_OVERRIDE;
 
-  virtual const Sensor_s& sensors() const
+  const Sensor_s& sensors() const Q_DECL_OVERRIDE
     { return mWrapped->sensors(); }
 
-  virtual const TimeSpan& timeSpan() const
+  const TimeSpan& timeSpan() const Q_DECL_OVERRIDE
     { return mWrapped->timeSpan(); }
 
-  virtual ObsFilter_p filter() const
+  ObsFilter_p filter() const Q_DECL_OVERRIDE
     { return mWrapped->filter(); }
 
   ObsRequest_p wrapped() const

@@ -13,8 +13,8 @@ public:
   QueryTaskAccess(QueryTaskHandler_p handler);
   ~QueryTaskAccess();
 
-  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
-  virtual void dropRequest(ObsRequest_p request);
+  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
+  void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
 protected:
   const ObsRequest_pv& requests() const

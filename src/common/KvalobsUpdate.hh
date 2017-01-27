@@ -11,25 +11,25 @@ public:
 
   KvalobsUpdate(ObsData_p obs);
 
-  virtual const SensorTime& sensorTime() const
+  const SensorTime& sensorTime() const Q_DECL_OVERRIDE
     { return mSensorTime; }
   
-  virtual float corrected() const
+  float corrected() const Q_DECL_OVERRIDE
     { return mCorrected; }
 
-  virtual void setCorrected(float c)
+  void setCorrected(float c) Q_DECL_OVERRIDE
     { mCorrected = c; }
   
-  virtual const kvalobs::kvControlInfo& controlinfo() const
+  const kvalobs::kvControlInfo& controlinfo() const Q_DECL_OVERRIDE
     { return mControlinfo; }
 
-  virtual void setControlinfo(const kvalobs::kvControlInfo& ci)
+  void setControlinfo(const kvalobs::kvControlInfo& ci) Q_DECL_OVERRIDE
     { mControlinfo = ci; }
   
-  virtual const std::string& cfailed() const
+  const std::string& cfailed() const Q_DECL_OVERRIDE
     { return mCfailed; }
   
-  virtual void setCfailed(const std::string& cf)
+  void setCfailed(const std::string& cf) Q_DECL_OVERRIDE
     { mCfailed = cf; }
 
   ObsData_p obs()

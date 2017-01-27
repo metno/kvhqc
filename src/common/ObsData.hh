@@ -8,6 +8,10 @@
 
 #include "util/boostutil.hh"
 
+#ifndef Q_DECL_OVERRIDE
+#define Q_DECL_OVERRIDE override
+#endif
+
 /*! Observation data. */
 class ObsData : HQC_SHARED_NOCOPY(ObsData) {
 public:

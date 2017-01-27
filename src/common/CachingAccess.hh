@@ -13,13 +13,13 @@ public:
   CachingAccess(ObsAccess_p backend);
   ~CachingAccess();
 
-  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
+  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
 
-  virtual void dropRequest(ObsRequest_p request);
+  void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
-  virtual ObsUpdate_p createUpdate(ObsData_p data);
-  virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
-  virtual bool storeUpdates(const ObsUpdate_pv& updates);
+  ObsUpdate_p createUpdate(ObsData_p data) Q_DECL_OVERRIDE;
+  ObsUpdate_p createUpdate(const SensorTime& sensorTime) Q_DECL_OVERRIDE;
+  bool storeUpdates(const ObsUpdate_pv& updates) Q_DECL_OVERRIDE;
 
   void cleanCache(const Time& maxAge);
 

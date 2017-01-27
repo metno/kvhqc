@@ -10,22 +10,22 @@ public:
   KvalobsData(const kvalobs::kvData& d, bool created);
   virtual ~KvalobsData();
 
-  virtual const SensorTime& sensorTime() const
+  const SensorTime& sensorTime() const Q_DECL_OVERRIDE
     { return mSensorTime; }
 
-  virtual float original() const
+  float original() const Q_DECL_OVERRIDE
     { return mKvData.original(); }
 
-  virtual float corrected() const
+  float corrected() const Q_DECL_OVERRIDE
     { return mKvData.corrected(); }
 
-  virtual const kvalobs::kvControlInfo& controlinfo() const
+  const kvalobs::kvControlInfo& controlinfo() const Q_DECL_OVERRIDE
     { return mKvData.controlinfo(); }
 
-  virtual const std::string& cfailed() const
+  const std::string& cfailed() const Q_DECL_OVERRIDE
     { return mKvData.cfailed(); }
 
-  virtual const timeutil::ptime& tbtime() const
+  const timeutil::ptime& tbtime() const Q_DECL_OVERRIDE
     { return mKvData.tbtime(); }
 
   const kvalobs::kvData& data() const
@@ -40,7 +40,7 @@ public:
   void setCreated(bool c)
     { mCreated = c; }
 
-  virtual bool isModified() const
+  bool isModified() const Q_DECL_OVERRIDE
     { return mModified; }
 
   void setModified(bool m)

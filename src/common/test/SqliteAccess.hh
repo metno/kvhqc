@@ -8,17 +8,17 @@
 class SqliteQueryRunner;
 
 class SqliteAccess : public QueryTaskAccess
-{ Q_OBJECT;
+{ Q_OBJECT
 public:
   SqliteAccess(bool useThread = false);
   ~SqliteAccess();
 
-  virtual ObsUpdate_p createUpdate(const SensorTime& sensorTime);
-  virtual ObsUpdate_p createUpdate(ObsData_p data);
-  virtual bool storeUpdates(const ObsUpdate_pv& updates);
+  ObsUpdate_p createUpdate(const SensorTime& sensorTime) Q_DECL_OVERRIDE;
+  ObsUpdate_p createUpdate(ObsData_p data) Q_DECL_OVERRIDE;
+  bool storeUpdates(const ObsUpdate_pv& updates) Q_DECL_OVERRIDE;
 
-  virtual void postRequest(ObsRequest_p request, bool synchronized=false);
-  virtual void dropRequest(ObsRequest_p request);
+  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
+  void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
   size_t countPost() const
     { return mCountPost; }

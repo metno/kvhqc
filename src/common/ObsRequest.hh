@@ -8,6 +8,10 @@
 #include "util/TaggedObject.hh"
 #include <QObject>
 
+#ifndef Q_DECL_OVERRIDE
+#define Q_DECL_OVERRIDE override
+#endif
+
 // ========================================================================
 
 /*! Observation data request. */
