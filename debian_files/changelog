@@ -1,3 +1,9 @@
+kvhqc-4.1 (4.1.0~a1-1) unstable; urgency=low
+
+  * adapt for kvalobs v4
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 01 Feb 2017 09:35:28 +0100
+
 kvhqc (4.0.0~a14-1) unstable; urgency=low
 
   * update CMakeLists.txt and Build-Depends
