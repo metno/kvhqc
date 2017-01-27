@@ -20,7 +20,7 @@ LINK_LIBRARIES(${QT_LIBRARIES})
 ### see http://www.itk.org/Wiki/CMake:How_To_Find_Libraries
 
 # kvalobs
-PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=2.7.8 libkvalobs_decodeutility)
+PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=4.0.1)
 
 # metlibs
 PKG_CHECK_MODULES(PC_METLIBS REQUIRED
@@ -39,8 +39,8 @@ PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
 #########################################################################
 # boost
 
-FIND_PACKAGE(Boost COMPONENTS date_time thread system REQUIRED)
-LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_THREAD_LIBRARY} ${Boost_SYSTEM_LIBRARY})
+FIND_PACKAGE(Boost COMPONENTS date_time thread REQUIRED)
+LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_THREAD_LIBRARY})
 
 #########################################################################
 # includes/defines for all pkg-config libs

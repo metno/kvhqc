@@ -8,15 +8,12 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libboost-dev, libboost-date-time-dev, libboost-thread-dev,
  libsqlite3-dev, libldap2-dev,
 @metno_config_if .*xenial.*
- libkvcpp-dev (= 2.7.9-2),
- libboost-system-dev,
-@metno_config_elsif .*precise.*
- libkvcpp-dev (= 2.7.8-1),
- libboost-system-dev,
- libfimex-dev (>= 0.61.1), libpqxx-dev | libpqxx3-dev, libpng-dev | libpng12-dev,
- libomniorb4-dev, libxml++2.6-dev, libcurl4-gnutls-dev | libcurl-dev, libperl-dev,
+ libkvcpp-dev (>= 4.0.1-1),
+ libkvalobs-dev (>= 4.0.1-1),
+ librdkafka-dev,
+@metno_config_else
+ does-not-work-except-on-xenial,
 @metno_config_endif
- libboost-system-dev,
  metlibs-tsdata-dev (>= 5.2.0),
  metlibs-pets2-dev (>= 5.1.0),
  metlibs-pumet-dev (>= 5.1.0),
