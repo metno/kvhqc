@@ -4,8 +4,6 @@
 
 #include "common/ObsAccess.hh"
 
-#include <boost/signals.hpp>
-
 #include <QtGui/QDialog>
 
 class Sensor;

@@ -2,27 +2,35 @@ Source: kvhqc
 Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
-Build-Depends: debhelper (>= 7.0.50), quilt,
- metno-devscripts (>= 0.5.7),
- libqt4-dev, libgfortran3, libgtest-dev, liblog4cpp5-dev, python (>= 2.7.3-0),
- libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev,
- libkvcpp-dev (>= 2.7.1-2),
- metlibs-putools-dev (>= 5.0.0), metlibs-milogger-dev (>= 5.0.0),
- metlibs-qutilities-dev (>= 5.0.0), metlibs-coserver-dev (>= 1.0.1),
- metlibs-tsdata-dev (>= 5.0.1), metlibs-pets2-dev (>= 5.0.0),
- metlibs-pumet-dev (>= 5.0.0)
+Build-Depends: debhelper (>= 9), quilt, cmake,
+ libqt4-dev, libqt4-dev-bin | qt4-qmake,
+ libgfortran3, libgtest-dev | google-mock, python (>= 2.7.3),
+ libboost-dev, libboost-date-time-dev, libboost-thread-dev,
+ libsqlite3-dev, libldap2-dev,
+@metno_config_if .*xenial.*
+ libkvcpp-dev (= 2.7.9-2),
+ libboost-system-dev,
+@metno_config_elsif .*precise.*
+ libkvcpp-dev (= 2.7.8-1),
+ libboost-system-dev,
+ libfimex-dev (>= 0.61.1), libpqxx-dev | libpqxx3-dev, libpng-dev | libpng12-dev,
+ libomniorb4-dev, libxml++2.6-dev, libcurl4-gnutls-dev | libcurl-dev, libperl-dev,
+@metno_config_endif
+ libboost-system-dev,
+ metlibs-tsdata-dev (>= 5.2.0),
+ metlibs-pets2-dev (>= 5.1.0),
+ metlibs-pumet-dev (>= 5.1.0),
+ metlibs-qutilities-dev (>= 5.1.2),
+ metlibs-putools-dev (>= 5.0.0),
+ metlibs-milogger-dev (>= 5.0.0),
+ metlibs-coserver-dev (>= 2.0.4)
 Standards-Version: 3.8.4
-Vcs-Svn: https://svn.met.no/kvoss/kvhqc/trunk
-Vcs-Browser: https://svn.met.no/viewvc/kvoss/kvhqc/trunk
+Vcs-Git: https://github.com/metno/kvhqc
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
 Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
  kvhqcconfig-@METNO_VERSION@,
-@metno_config_if ^lucid$
-@metno_config_else
- libkvcpp4 (>= 2.7.1-2),
-@metno_config_endif
  ${shlibs:Depends}, ${misc:Depends}
 Recommends: metno-qt4-translations (>= 0.2.0),
  metlibs-translations
