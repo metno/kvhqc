@@ -54,7 +54,7 @@ TEST(MissingObsTest, SqlStatement)
         " ORDER BY o.stationid, o.typeid, times.ts";
     EXPECT_EQ(collapse_std(expected), collapse_std(actual));
   }
-  { 
+  {
     QString actual = q.querySql("d=postgresql");
     QString expected = "SELECT o.stationid, o.typeid, times.ts FROM obs_pgm AS o,"
         " (VALUES (timestamp '2014-10-01 06:00:00', 6), (timestamp '2014-10-01 07:00:00', 7),"
@@ -80,19 +80,19 @@ TEST(MissingObsTest, SqlStatement)
 
 TEST(MissingObsTest, Query)
 {
-  FakeKvApp fa(false); // no threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(false)); // no threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
-  load_12600_20141008(fa);
+  load_12600_20141008(*fa);
   KvMetaDataBuffer::instance()->reload();
 
   hqc::int_s typeids;
   typeids.insert(302);
   std::unique_ptr<MissingObsQuery> q(new MissingObsQuery(t_12600_20141008(), typeids, QueryTask::PRIORITY_AUTOMATIC));
 
-  fa.obsAccess()->handler()->postTask(q.get());
+  fa->obsAccess()->handler()->postTask(q.get());
 
   ASSERT_EQ(2, q->missing().size());
 }

@@ -16,7 +16,7 @@ TEST(KvMetaDataBufferTest, Station)
   KvMetaDataBuffer kvmdbuf;
   kvmdbuf.setHandler(fa.obsAccess()->handler());
 
-  load_18700_20141001(*FakeKvApp::app());
+  load_18700_20141001(fa);
   KvMetaDataBuffer::instance()->reload();
 
   ASSERT_FALSE(kvmdbuf.isKnownStation(18210));
@@ -36,7 +36,7 @@ TEST(KvMetaDataBufferTest, Param)
   KvMetaDataBuffer kvmdbuf;
   kvmdbuf.setHandler(fa.obsAccess()->handler());
 
-  load_18700_20141001(*FakeKvApp::app());
+  load_18700_20141001(fa);
   KvMetaDataBuffer::instance()->reload();
 
   ASSERT_FALSE(kvmdbuf.isKnownParam(83));
@@ -63,7 +63,7 @@ TEST(KvMetaDataBufferTest, Type)
   KvMetaDataBuffer kvmdbuf;
   kvmdbuf.setHandler(fa.obsAccess()->handler());
 
-  load_18700_20141001(*FakeKvApp::app());
+  load_18700_20141001(fa);
   KvMetaDataBuffer::instance()->reload();
 
   ASSERT_FALSE(kvmdbuf.isKnownType(402));

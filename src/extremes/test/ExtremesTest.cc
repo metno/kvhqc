@@ -24,18 +24,18 @@ static inline float cv(ObsData_p obs) { return obs->corrected(); }
 
 TEST(ExtremesTest, Filter)
 {
-  FakeKvApp fa(false); // no threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(false)); // no threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
-  load_17000_20141002(fa);
+  load_17000_20141002(*fa);
   KvMetaDataBuffer::instance()->reload();
 
   ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
   SortedBuffer::Ordering_p ordering = std::make_shared<ExtremesTableModel::CorrectedOrdering>(not ef->isMaximumSearch());
   SortedBuffer_p b = std::make_shared<SortedBuffer>(ordering, Sensor_s(), t_17000_20141002(), ef);
-  b->syncRequest(FakeKvApp::app()->obsAccess());
+  b->syncRequest(fa->obsAccess());
 
   // grep '\<21[15]\>' src/extremes/test/data_17000_20141002.txt | sort -rn -k 7 | head -n 20
   // omit 216 in grep as it is aggregated / not in obs_pgm
@@ -82,15 +82,15 @@ TEST(ExtremesTest, Filter)
 
 TEST(ExtremesTest, FilterCached)
 {
-  FakeKvApp fa(false); // no threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(false)); // no threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
-  load_17000_20141002(fa);
+  load_17000_20141002(*fa);
   KvMetaDataBuffer::instance()->reload();
 
-  CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
+  CachingAccess_p cache(new CachingAccess(fa->obsAccess()));
 
   ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
 
@@ -105,16 +105,16 @@ TEST(ExtremesTest, FilterCached)
 
 TEST(ExtremesTest, TableModel)
 {
-  FakeKvApp fa(true); // with threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(true)); // with threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
-  load_17000_20141002(fa);
+  load_17000_20141002(*fa);
   KvMetaDataBuffer::instance()->reload();
 
 #if 1
-  CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
+  CachingAccess_p cache(new CachingAccess(fa->obsAccess()));
   EditAccess_p edit(new EditAccess(cache));
 #else
   EditAccess_p edit(new EditAccess(fa.obsAccess()));
@@ -131,15 +131,15 @@ TEST(ExtremesTest, TableModel)
 
 TEST(ExtremesTest, TableModelUpdateTAX)
 {
-  FakeKvApp fa(true); // with threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(true)); // with threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
-  load_17000_20141002(fa);
+  load_17000_20141002(*fa);
   KvMetaDataBuffer::instance()->reload();
 
-  CachingAccess_p cache(new CachingAccess(fa.obsAccess()));
+  CachingAccess_p cache(new CachingAccess(fa->obsAccess()));
   EditAccess_p edit(new EditAccess(cache));
 
   Synchronizer sync;

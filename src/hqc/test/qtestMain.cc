@@ -32,14 +32,14 @@ int main(int argc, char **argv)
 #ifdef DEBUG_MESSAGES
   log4cpp::Category::getRoot().setPriority(log4cpp::Priority::DEBUG);
 #endif
-  
+
   QApplication qapp(argc, argv);
   QDir::setSearchPaths("icons", QStringList(TOP_SOURCE_DIR "/share/images"));
 
-  FakeKvApp fa(false); // no threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa(std::make_shared<FakeKvApp>(false)); // no threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
   EXEC_QTEST(TestSimpleCorrections);
 

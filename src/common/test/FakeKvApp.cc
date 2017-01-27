@@ -21,8 +21,6 @@ static float toFloat(const std::string& txt)
 
 FakeKvApp::FakeKvApp(bool useThread)
 {
-  kvservice::KvApp::kvApp = this;
-
   mObsAccess = std::make_shared<SqliteAccess>(useThread);
 
   mObsAccess->insertParam(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));
@@ -51,7 +49,6 @@ FakeKvApp::FakeKvApp(bool useThread)
 
 FakeKvApp::~FakeKvApp()
 {
-  kvservice::KvApp::kvApp = 0;
 }
 
 void FakeKvApp::insertData(int stationId, int paramId, int typeId, const std::string& obstime, float orig, float corr,
@@ -254,5 +251,5 @@ void FakeKvApp::unsubscribeAll()
 
 FakeKvApp* FakeKvApp::app()
 {
-  return static_cast<FakeKvApp*>(kvservice::KvApp::kvApp);
+  return 0;
 }

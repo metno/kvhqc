@@ -35,10 +35,10 @@ int main(int argc, char **argv)
   
   QApplication qapp(argc, argv);
 
-  FakeKvApp fa(false); // no threading
-  KvServiceHelper kvsh;
+  std::shared_ptr<FakeKvApp> fa = std::make_shared<FakeKvApp>(false); // no threading
+  KvServiceHelper kvsh(fa);
   KvMetaDataBuffer kvmdbuf;
-  kvmdbuf.setHandler(fa.obsAccess()->handler());
+  kvmdbuf.setHandler(fa->obsAccess()->handler());
 
   EXEC_QTEST(TestSensorChooser);
 

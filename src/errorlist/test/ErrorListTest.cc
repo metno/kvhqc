@@ -14,13 +14,14 @@
 namespace /* anonymous */ {
 
 struct TestSetup {
-  FakeKvApp fa;
+  std::shared_ptr<FakeKvApp> fa;
   KvServiceHelper kvsh;
   KvMetaDataBuffer kvmdbuf;
 
   TestSetup(bool useThread = false)
-    : fa(useThread)
-    { kvmdbuf.setHandler(fa.obsAccess()->handler()); }
+    : fa(std::make_shared<FakeKvApp>(useThread))
+    , kvsh(fa)
+    { kvmdbuf.setHandler(fa->obsAccess()->handler()); }
 };
 
 } // anonymous
@@ -28,7 +29,7 @@ struct TestSetup {
 TEST(ErrorListTest, Filter1)
 {
   TestSetup ts;
-  load_3200_20141008(ts.fa);
+  load_3200_20141008(*ts.fa);
   ts.kvmdbuf.reload();
 
   const Sensor sensor1(Sensor(2650, 61, 0, 0, 330));
@@ -37,7 +38,7 @@ TEST(ErrorListTest, Filter1)
 
   ErrorFilter_p ef(new ErrorFilter(false));
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
-  b->syncRequest(FakeKvApp::app()->obsAccess());
+  b->syncRequest(ts.fa->obsAccess());
 
   EXPECT_EQ(3, b->size());
 
@@ -53,7 +54,7 @@ TEST(ErrorListTest, Filter1)
 TEST(ErrorListTest, Filter1Salen)
 {
   TestSetup ts;
-  load_3200_20141008(ts.fa);
+  load_3200_20141008(*ts.fa);
   ts.kvmdbuf.reload();
 
   const Sensor sensor1(Sensor(2650, 61, 0, 0, 330));
@@ -62,7 +63,7 @@ TEST(ErrorListTest, Filter1Salen)
 
   ErrorFilter_p ef(new ErrorFilter(true));
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
-  b->syncRequest(FakeKvApp::app()->obsAccess());
+  b->syncRequest(ts.fa->obsAccess());
 
   EXPECT_EQ(0, b->size());
 }
@@ -70,7 +71,7 @@ TEST(ErrorListTest, Filter1Salen)
 TEST(ErrorListTest, FilterMany)
 {
   TestSetup ts;
-  load_3200_20141008(ts.fa);
+  load_3200_20141008(*ts.fa);
   ts.kvmdbuf.reload();
 
   Sensor_s sensors;
@@ -109,7 +110,7 @@ TEST(ErrorListTest, FilterMany)
 
   ErrorFilter_p ef(new ErrorFilter(false));
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
-  b->syncRequest(FakeKvApp::app()->obsAccess());
+  b->syncRequest(ts.fa->obsAccess());
 
   EXPECT_EQ(211, b->size());
 }

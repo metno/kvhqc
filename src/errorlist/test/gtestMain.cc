@@ -21,7 +21,7 @@ int main(int argc, char **argv)
   log4cpp::Category::getRoot().setPriority(log4cpp::Priority::DEBUG);
 #endif
 
-  KvServiceHelper kvsh;
+  KvServiceHelper kvsh(std::shared_ptr<kvservice::KvApp>());
   QCoreApplication app(argc, argv);
 
   return RUN_ALL_TESTS();
