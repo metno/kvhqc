@@ -74,7 +74,7 @@ bool RedistTableModel::setData(const QModelIndex& index, const QVariant& value, 
   
   try {
     const float rrNew = mRR24Codes->fromText(value.toString());
-    if (not KvMetaDataBuffer::instance()->checkPhysicalLimits(SensorTime(mSensor, timeAtRow(index.row())), rrNew) == CachedParamLimits::OutsideMinMax)
+    if (KvMetaDataBuffer::instance()->checkPhysicalLimits(SensorTime(mSensor, timeAtRow(index.row())), rrNew) == CachedParamLimits::OutsideMinMax)
       return false;
     
     const int row = index.row();
