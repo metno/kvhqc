@@ -197,24 +197,23 @@ void ErrorSearchDialog::setupStationTab()
   }
   
   BOOST_FOREACH(const listStat_t& s, listStat) {
-    const QString cu = QString::fromStdString(s.fylke);
     const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
 
     QStandardItem *s_item = new QStandardItem(QString::number(s.stationid));
 
     QList<QStandardItem*> s_items;
     s_items << s_item
-            << new QStandardItem(QString::fromStdString(s.name))
+            << new QStandardItem(s.name)
             << new QStandardItem(QString::number(s.altitude, 'f', 0))
-            << new QStandardItem(cu)
-            << new QStandardItem(QString::fromStdString(s.kommune))
+            << new QStandardItem(s.fylke)
+            << new QStandardItem(s.kommune)
             << new QStandardItem(prty);
     Q_FOREACH(QStandardItem* i, s_items) {
       i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
     s_item->setCheckable(true);
 
-    county2item_t::iterator c_it = county2item.find(cu);
+    county2item_t::iterator c_it = county2item.find(s.fylke);
     if (c_it != county2item.end()) {
       c_it->second->appendRow(s_items);
     } else {

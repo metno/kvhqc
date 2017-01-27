@@ -11,6 +11,7 @@
 #include "TimeSpan.hh"
 #include "util/hqc_paths.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvStationParam.h>
 
@@ -129,7 +130,7 @@ QSqlDatabase HqcApplication::configDB()
       // not reached
     }
 
-    const QString dbPath = QString::fromStdString(home) + "/.config/hqc_config.db";
+    const QString dbPath = Helpers::fromUtf8(home) + "/.config/hqc_config.db";
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", DB_CONFIG);
     db.setDatabaseName(dbPath);
     if (not db.open()) {
@@ -237,7 +238,7 @@ bool HqcApplication::notify(QObject* receiver, QEvent* e)
     return QApplication::notify(receiver, e);
   } catch (std::exception& e) {
     HQC_LOG_ERROR("exception in Qt event handling: " << e.what());
-    onException(QString::fromStdString(e.what()));
+    onException(Helpers::fromUtf8(e.what()));
   } catch (...) {
     HQC_LOG_ERROR("unknown exception in Qt event handling");
     onException("");

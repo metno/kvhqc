@@ -2,7 +2,7 @@
 #include "DataOriginalItem.hh"
 
 #include "ObsHelpers.hh"
-#include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QVariant>
 #include <QtGui/QApplication>

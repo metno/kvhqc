@@ -5,7 +5,7 @@
 #include "KvMetaDataBuffer.hh"
 #include "ObsColumn.hh"
 #include "Tasks.hh"
-#include "util/Helpers.hh"
+#include "util/stringutil.hh"
 #include "common/KvHelpers.hh"
 
 #include <QtCore/QVariant>

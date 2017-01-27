@@ -7,6 +7,7 @@
 #include "TimeSpan.hh"
 #include "common/HqcSystemDB.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStation.h>

@@ -6,7 +6,7 @@
 #include "KvHelpers.hh"
 #include "ObsColumn.hh"
 #include "Tasks.hh"
-#include "util/Helpers.hh"
+#include "util/stringutil.hh"
 
 #include <QtCore/QStringList>
 #include <QtCore/QVariant>

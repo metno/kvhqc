@@ -4,16 +4,17 @@
 #define StationInfoBuffer_hh
 
 #include "util/timeutil.hh"
+#include <QString>
 #include <list>
 #include <string>
 #include <vector>
 
 struct listStat_t {
-  std::string name;    // listStatName
+  QString name;    // listStatName
   int stationid;       // listStatNum
   float altitude;      // listStatHoh
-  std::string fylke;   // listStatFylke
-  std::string kommune; // listStatKommune
+  QString fylke;   // listStatFylke
+  QString kommune; // listStatKommune
   int municipid;
   int wmonr;           // listStatWeb
   int pri;             // listStatPri
@@ -26,7 +27,7 @@ public:
   typedef std::vector<int> manual_types_t;
 
   StationInfoBuffer();
-  ~StationInfoBuffer();
+  virtual ~StationInfoBuffer();
 
   virtual bool isConnected();
 

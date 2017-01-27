@@ -3,6 +3,7 @@
 
 #include "KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
+#include "util/stringutil.hh"
 #include "common/HqcSystemDB.hh"
 
 #include <QtSql/QSqlDatabase>
@@ -131,13 +132,13 @@ bool StInfoSysBuffer::readFromStInfoSys()
     const int pri = (it != station2prio.end()) ? it->second : 0;
     
     listStat_t ls;
-    ls.name        = st.name();
+    ls.name        = Helpers::fromUtf8(st.name());
     ls.stationid   = stationid;
     ls.altitude    = st.height();
     ls.wmonr       = st.wmonr();
 
-    ls.fylke       = mi.county_name.toStdString();
-    ls.kommune     = mi.municip_name.toStdString();
+    ls.fylke       = mi.county_name;
+    ls.kommune     = mi.municip_name;
     ls.municipid   = municipid; // useed in extreme value list to exclude ships
     ls.pri         = pri;
     ls.coast       = (station2coast.find(stationid) != station2coast.end());

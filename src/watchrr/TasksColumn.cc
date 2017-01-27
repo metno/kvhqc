@@ -2,7 +2,7 @@
 #include "TasksColumn.hh"
 #include "TaskData.hh"
 #include "common/Tasks.hh"
-#include "util/Helpers.hh"
+#include "util/stringutil.hh"
 #include <QtGui/QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.TasksColumn"
