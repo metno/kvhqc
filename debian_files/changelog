@@ -1,3 +1,11 @@
+kvhqc (4.0.0~a14-1) unstable; urgency=low
+
+  * update CMakeLists.txt and Build-Depends
+  * bugfixes
+  * update Norway's country id to ISO 3166
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 01 Feb 2017 09:35:28 +0100
+
 kvhqc (4.0.0~a13-1) unstable; urgency=low
 
   * bugfixes in accept_corrected and accept_original
