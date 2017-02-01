@@ -41,9 +41,9 @@ private:
   int getParamId() const;
 
 private:
-  std::auto_ptr<Ui::DialogExtremeValues> ui;
+  std::unique_ptr<Ui::DialogExtremeValues> ui;
   BusyLabel* mBusy;
-  std::auto_ptr<ExtremesTableModel> mExtremesModel;
+  std::unique_ptr<ExtremesTableModel> mExtremesModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;
 };

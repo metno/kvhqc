@@ -38,7 +38,7 @@ private:
   void selectCurrent();
 
 protected:
-  std::auto_ptr<Ui_DataList> ui;
+  std::unique_ptr<Ui_DataList> ui;
   BusyLabel* mBusy;
   EditAccess_p mDA;
   ModelAccess_p mMA;

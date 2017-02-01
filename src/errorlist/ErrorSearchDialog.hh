@@ -97,12 +97,12 @@ private:
   void doRestoreSettings(QSettings& settings);
 
 private:
-  std::auto_ptr<Ui_ErrorSearchDialog> ui;
-  std::auto_ptr<QStandardItemModel> mStationModel;
+  std::unique_ptr<Ui_ErrorSearchDialog> ui;
+  std::unique_ptr<QStandardItemModel> mStationModel;
 
   std::map<QString, hqc::int_v > mParameterGroups;
-  std::auto_ptr<ParamIdModel> mParamAvailableModel;
-  std::auto_ptr<ParamIdModel> mParamSelectedModel;
+  std::unique_ptr<ParamIdModel> mParamAvailableModel;
+  std::unique_ptr<ParamIdModel> mParamSelectedModel;
 
   TimeSpanControl* mTimeControl;
 

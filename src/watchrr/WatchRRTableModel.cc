@@ -7,8 +7,6 @@
 
 #include <QtGui/QApplication>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.WatchRRTableModel"
 #include "common/ObsLogging.hh"
 

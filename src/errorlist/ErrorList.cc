@@ -139,7 +139,7 @@ void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
   mNavigate.invalidate();
   NavigateHelper::Blocker block(mNavigate);
 
-  mItemModel = std::auto_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA));
+  mItemModel = std::unique_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA));
   connect(mItemModel.get(), SIGNAL(beginDataChange()),
       this, SLOT(onBeginDataChange()));
   connect(mItemModel.get(), SIGNAL(endDataChange()),

@@ -20,7 +20,7 @@ NeighborRR24Model::NeighborRR24Model(TaskAccess_p da, const Sensor& sensor, cons
   hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(sensor.stationId);
   stationIds.insert(sensor.stationId);
 
-  std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
+  std::unique_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
   op->sync();
   
   KvMetaDataBuffer::instance()->addNeighbors(mNeighbors, sensor, time, op.get(), 20);

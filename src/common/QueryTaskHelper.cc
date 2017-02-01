@@ -6,6 +6,8 @@
 #include "QueryTask.hh"
 #include "SyncTask.hh"
 
+#include <cassert>
+
 #define MILOGGER_CATEGORY "kvhqc.QueryTaskHelper"
 #include "util/HqcLogging.hh"
 

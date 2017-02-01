@@ -15,8 +15,6 @@
 #include <QtGui/QTableView>
 #include <QtGui/QToolButton>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ToolInterpolate"
 #include "common/ObsLogging.hh"
 
@@ -139,7 +137,7 @@ void ToolInterpolate::fetchData()
     return;
 
   ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
-  DataColumn_p dc = boost::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
+  DataColumn_p dc = std::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(minCol));
   if (not dc or dc->type() != ObsColumn::NEW_CORRECTED)
     return;
 
@@ -152,7 +150,7 @@ void ToolInterpolate::fetchData()
     mSelectedTimes.push_back(t);
   }
 
-  mObsBuffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(mFirst.sensor), TimeSpan(mFirst.time, mLast.time));
+  mObsBuffer = std::make_shared<TimeBuffer>(make_set<Sensor_s>(mFirst.sensor), TimeSpan(mFirst.time, mLast.time));
   connect(mObsBuffer.get(), SIGNAL(bufferCompleted(const QString&)),  this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(enableButtons()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(enableButtons()));

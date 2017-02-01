@@ -7,8 +7,6 @@
 #include "common/KvHelpers.hh"
 #include "util/Helpers.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.StationCardModel"
 #include "common/ObsLogging.hh"
 
@@ -59,10 +57,10 @@ StationCardModel::StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sens
       dc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
 
     if (i == getRR24Column()) {
-      mRR24EditTime = boost::make_shared<EditTimeColumn>(dc);
+      mRR24EditTime = std::make_shared<EditTimeColumn>(dc);
       addColumn(mRR24EditTime);
     } else {
-      addColumn(boost::make_shared<TasksColumn>(dc));
+      addColumn(std::make_shared<TasksColumn>(dc));
     }
   }
 

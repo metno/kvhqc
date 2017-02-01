@@ -11,7 +11,7 @@
 #include <QStringList>
 #include <QSqlDatabase>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class CachingAccess;
 class EditAccess;
@@ -33,11 +33,11 @@ public:
   HqcUserConfig* userConfig()
     { return mUserConfig.get(); }
 
-  boost::shared_ptr<QueryTaskHandler> kvalobsHandler() const
+  std::shared_ptr<QueryTaskHandler> kvalobsHandler() const
     { return mKvalobsHandler; }
-  boost::shared_ptr<EditAccess> editAccess() const
+  std::shared_ptr<EditAccess> editAccess() const
     { return eda; }
-  boost::shared_ptr<ModelAccess> modelAccess() const
+  std::shared_ptr<ModelAccess> modelAccess() const
     { return kma; }
 
   void setReinserter(AbstractReinserter_p reinserter);
@@ -80,14 +80,14 @@ private:
   QList<QTranslator*> mTranslators;
   miutil::conf::ConfSection *mConfig;
   bool mKvalobsAvailable;
-  std::auto_ptr<HqcUserConfig> mUserConfig;
+  std::unique_ptr<HqcUserConfig> mUserConfig;
 
-  boost::shared_ptr<QueryTaskHandler> mKvalobsHandler;
-  boost::shared_ptr<KvalobsAccess> kda;
-  boost::shared_ptr<CachingAccess> cda;
-  boost::shared_ptr<EditAccess> eda;
+  std::shared_ptr<QueryTaskHandler> mKvalobsHandler;
+  std::shared_ptr<KvalobsAccess> kda;
+  std::shared_ptr<CachingAccess> cda;
+  std::shared_ptr<EditAccess> eda;
 
-  boost::shared_ptr<ModelAccess> kma;
+  std::shared_ptr<ModelAccess> kma;
 };
 
 extern HqcApplication* hqcApp;

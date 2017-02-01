@@ -16,7 +16,7 @@ public:
   virtual bool storeChanges(const kvData_l& toUpdate, const kvData_l& toInsert);
 
 private:
-  std::auto_ptr<Reinserter_t> mDataReinserter;
+  std::unique_ptr<Reinserter_t> mDataReinserter;
 };
 
 #endif // COMMON_KVALOBSREINSERTER_HH

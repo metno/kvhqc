@@ -3,9 +3,9 @@
 #define ACCESS_TAGGEDOBJECT_HH 1
 
 #include <boost/noncopyable.hpp>
-#include <boost/enable_shared_from_this.hpp>
+#include <memory>
 
-class TaggedObject : public boost::enable_shared_from_this<TaggedObject>, boost::noncopyable
+class TaggedObject : public std::enable_shared_from_this<TaggedObject>, boost::noncopyable
 {
 public:
   TaggedObject() : mTag(0) { }

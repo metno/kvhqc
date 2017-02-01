@@ -92,7 +92,7 @@ private:
   void showHelpDialog(int doc, const std::string& anchor = std::string());
 
 private:
-  std::auto_ptr<Ui_AppWindow> ui;
+  std::unique_ptr<Ui_AppWindow> ui;
   QTimer* mVersionCheckTimer;
   HelpDialog* mHelpDialog;
   EditVersionModel* mEditVersions;

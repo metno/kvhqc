@@ -116,7 +116,7 @@ private:
 
 #ifdef ENABLE_DIANA
   ClientButton* pluginB;
-  std::auto_ptr<HqcDianaHelper> mDianaHelper;
+  std::unique_ptr<HqcDianaHelper> mDianaHelper;
 #endif
 
   QSplitter* mSplitterDataPlot;

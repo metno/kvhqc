@@ -20,6 +20,7 @@ class NavigationHistory : public QWidget
 
 public:
   NavigationHistory(QWidget* parent=0);
+  ~NavigationHistory();
 
   void saveSettings(QSettings& settings);
   void restoreSettings(QSettings& settings);
@@ -42,7 +43,7 @@ private:
   NavigationHistoryModel* model() const;
   
 private:
-  std::auto_ptr<Ui_NavigationHistory> ui;
+  std::unique_ptr<Ui_NavigationHistory> ui;
   JumpToObservation* mJump;
   NavigateHelper mNavigate;
 };

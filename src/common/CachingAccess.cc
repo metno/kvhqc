@@ -6,7 +6,6 @@
 #include "set_differences.hh"
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #include <list>
 
@@ -16,7 +15,7 @@
 // ========================================================================
 
 BackendBuffer::BackendBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : TimeBuffer(boost::make_shared<SignalRequest>(sensors, timeSpan, filter))
+  : TimeBuffer(std::make_shared<SignalRequest>(sensors, timeSpan, filter))
   , mUseCount(0)
   , mUnusedSince(timeutil::now())
 {
@@ -50,7 +49,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
   
     bb->use();
 
-    SignalRequest* sr = boost::static_pointer_cast<SignalRequest>(bb->request()).get();
+    SignalRequest* sr = std::static_pointer_cast<SignalRequest>(bb->request()).get();
     connect(sr, SIGNAL(requestCompleted(const QString&)),
         this,   SLOT(onBackendCompleted(const QString&)));
     connect(sr, SIGNAL(requestNewData(const ObsData_pv&)),
@@ -172,7 +171,7 @@ CachingAccessPrivate::~CachingAccessPrivate()
 BackendBuffer_p CachingAccessPrivate::create(const Sensor_s& sensors, const TimeSpan& time, ObsFilter_p filter)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensors) << LOGVAL(time));
-  BackendBuffer_p bb = boost::make_shared<BackendBuffer>(sensors, time, filter);
+  BackendBuffer_p bb = std::make_shared<BackendBuffer>(sensors, time, filter);
   BackendBuffer_pl::iterator it = std::upper_bound(mBuffers.begin(), mBuffers.end(), time.t0(), BackendBuffer_by_t0());
   mBuffers.insert(it, bb);
   return bb;

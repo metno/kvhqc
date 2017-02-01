@@ -34,7 +34,6 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcApplication"
 #define M_TIME
@@ -84,12 +83,12 @@ HqcApplication::HqcApplication(int & argc, char ** argv, miutil::conf::ConfSecti
   connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
 
-  KvalobsQueryRunner_p kvalobsRunner = boost::make_shared<KvalobsQueryRunner>();
-  mKvalobsHandler = boost::make_shared<QueryTaskHandler>(kvalobsRunner, true);
-  kda = boost::make_shared<KvalobsAccess>(mKvalobsHandler);
-  cda = boost::make_shared<CachingAccess>(kda);
-  kma = boost::make_shared<KvalobsModelAccess>(mKvalobsHandler);
-  eda = boost::make_shared<EditAccess>(cda);
+  KvalobsQueryRunner_p kvalobsRunner = std::make_shared<KvalobsQueryRunner>();
+  mKvalobsHandler = std::make_shared<QueryTaskHandler>(kvalobsRunner, true);
+  kda = std::make_shared<KvalobsAccess>(mKvalobsHandler);
+  cda = std::make_shared<CachingAccess>(kda);
+  kma = std::make_shared<KvalobsModelAccess>(mKvalobsHandler);
+  eda = std::make_shared<EditAccess>(cda);
   
   QObject::connect(KvServiceHelper::instance(), SIGNAL(kvalobsAvailable(bool)),
       this, SLOT(changedKvalobsAvailability(bool)));

@@ -79,7 +79,7 @@ void RedistDialog::onButtonAuto()
   hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(rtm->sensor().stationId);
   stationIds.insert(rtm->sensor().stationId);
 
-  std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
+  std::unique_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationIds));
   op->sync();
   
   std::vector<float> values = rtm->newCorrected();

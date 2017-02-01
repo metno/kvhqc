@@ -23,7 +23,7 @@ namespace { // anonymous
 TaskUpdate_p createU(TaskAccess_p da, const SensorTime& st)
 {
   ObsData_p obs = da->findE(st);
-  return boost::static_pointer_cast<TaskUpdate>(obs ? da->createUpdate(obs) : da->createUpdate(st));
+  return std::static_pointer_cast<TaskUpdate>(obs ? da->createUpdate(obs) : da->createUpdate(st));
 }
 
 void addRR24Task(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& time, int task)
@@ -210,7 +210,7 @@ void redistribute(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& 
     } else
       Helpers::changeControlinfo(u, fc_miss);
 
-    TaskUpdate_p tu = boost::static_pointer_cast<TaskUpdate>(u);
+    TaskUpdate_p tu = std::static_pointer_cast<TaskUpdate>(u);
     tu->clearTasks(ALL_RR24_TASKS);
   }
   da->storeUpdates(obsu);
@@ -509,7 +509,7 @@ bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
       continue;
     if (not acceptable.matches(obs->controlinfo()))
       return false;
-    if (TaskData_p tobs = boost::dynamic_pointer_cast<TaskData>(obs)) {
+    if (TaskData_p tobs = std::dynamic_pointer_cast<TaskData>(obs)) {
       if ((tobs->allTasks() & ALL_RR24_TASKS) != 0)
         return false;
     }

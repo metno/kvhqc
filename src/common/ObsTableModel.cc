@@ -6,8 +6,6 @@
 
 #include <QtGui/QApplication>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ObsTableModel"
 #include "ObsLogging.hh"
 

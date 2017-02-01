@@ -6,7 +6,6 @@
 #include "common/KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
-#include <boost/make_shared.hpp>
 #include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.ExtremesTableModel"
@@ -181,8 +180,8 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
   invalid.insert(Sensor());
 
   const bool ascending = not ef->isMaximumSearch();
-  SortedBuffer::Ordering_p ordering = boost::make_shared<CorrectedOrdering>(ascending);
-  mBuffer = boost::make_shared<SortedBuffer>(ordering, invalid, time, ef);
+  SortedBuffer::Ordering_p ordering = std::make_shared<CorrectedOrdering>(ascending);
+  mBuffer = std::make_shared<SortedBuffer>(ordering, invalid, time, ef);
 
   connect(mBuffer.get(), SIGNAL(newDataBegin()),    this, SLOT(onBufferChangeBegin()));
   connect(mBuffer.get(), SIGNAL(updateDataBegin()), this, SLOT(onBufferChangeBegin()));

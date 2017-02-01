@@ -5,8 +5,6 @@
 #include "ModelRequest.hh"
 #include "SyncRequest.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ModelBuffer"
 #include "ObsLogging.hh"
 
@@ -90,7 +88,7 @@ void ModelBuffer::onRequestCompleted(const QString& withError)
 ModelRequest_p ModelBuffer::makeRequest(const SensorTime_v& sts)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sts.size()));
-  ModelRequest_p request = boost::make_shared<ModelRequest>(sts);
+  ModelRequest_p request = std::make_shared<ModelRequest>(sts);
   connect(request.get(), SIGNAL(data(const ModelData_pv&)),
       this, SLOT(onRequestData(const ModelData_pv&)));
   return request;

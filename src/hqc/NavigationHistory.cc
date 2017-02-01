@@ -208,6 +208,10 @@ NavigationHistory::NavigationHistory(QWidget* parent)
   connect(ui->buttonClear, SIGNAL(clicked()), this, SLOT(onClear()));
 }
 
+NavigationHistory::~NavigationHistory()
+{
+}
+
 void NavigationHistory::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)

@@ -196,7 +196,7 @@ void SensorChooser::onStationEdited(const QString&)
     goodStation &= KvMetaDataBuffer::instance()->isKnownStation(stationId);
 
   if (goodStation) {
-    std::auto_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationId));
+    std::unique_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationId));
     op->sync();
     const hqc::kvObsPgm_v& opgm = op->get(stationId);
     METLIBS_LOG_DEBUG(LOGVAL(opgm.size()));

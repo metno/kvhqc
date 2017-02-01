@@ -5,14 +5,13 @@
 #include "util/make_set.hh"
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.DataColumn"
 #include "common/ObsLogging.hh"
 
 DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t, DataItem_p item)
   : mDA(da)
-  , mBuffer(boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
+  , mBuffer(std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
   , mItem(item)
   , mHeaderShowStation(true)
   , mRequestBusy(false)

@@ -2,16 +2,15 @@
 #ifndef BOOSTUTIL_HH
 #define BOOSTUTIL_HH 1
 
-#include <boost/enable_shared_from_this.hpp>
 #include <boost/noncopyable.hpp>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #define HQC_SHARED_NOCOPY(klazz) \
-  public boost::enable_shared_from_this<klazz>, \
+  public std::enable_shared_from_this<klazz>, \
                private boost::noncopyable
 
 #define HQC_TYPEDEF_P(klazz) \
-  typedef boost::shared_ptr<klazz> klazz ## _p
+  typedef std::shared_ptr<klazz> klazz ## _p
 
 #define HQC_TYPEDEF_V(klazz) \
   typedef std::vector<klazz> klazz ## _v

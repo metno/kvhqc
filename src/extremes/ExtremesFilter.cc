@@ -116,7 +116,7 @@ QString ExtremesFilter::acceptingSql(const QString& d, const TimeSpan&) const
 
 bool ExtremesFilter::subsetOf(ObsFilter_p other) const
 {
-  ExtremesFilter_p oe = boost::dynamic_pointer_cast<ExtremesFilter>(other);
+  ExtremesFilter_p oe = std::dynamic_pointer_cast<ExtremesFilter>(other);
   if (not oe)
     return false;
   if (oe->mParamId != this->mParamId

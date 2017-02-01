@@ -123,7 +123,7 @@ private:
   typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
   kvObsPgm_m mObsPgms;
 
-  boost::shared_ptr<QueryTaskHandler> mHandler;
+  std::shared_ptr<QueryTaskHandler> mHandler;
 
   static KvMetaDataBuffer* sInstance;
 };

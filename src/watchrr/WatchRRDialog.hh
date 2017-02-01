@@ -76,16 +76,16 @@ private:
   void enableSave();
 
 private:
-  std::auto_ptr<Ui::DialogMain> ui;
-  std::auto_ptr<DianaHelper> mDianaHelper;
+  std::unique_ptr<Ui::DialogMain> ui;
+  std::unique_ptr<DianaHelper> mDianaHelper;
   EditAccess_p mParentDA;
   TaskAccess_p mDA;
   Sensor mSensor;
   TimeSpan mTime;
   TimeSpan mEditableTime;
-  std::auto_ptr<StationCardModel> mStationCard;
-  std::auto_ptr<NeighborRR24Model> mNeighborRR24;
-  std::auto_ptr<NeighborCardsModel> mNeighborCards;
+  std::unique_ptr<StationCardModel> mStationCard;
+  std::unique_ptr<NeighborRR24Model> mNeighborRR24;
+  std::unique_ptr<NeighborCardsModel> mNeighborCards;
 };
 
 #endif // WATCHRRDIALOG_HH

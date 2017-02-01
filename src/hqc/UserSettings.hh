@@ -34,7 +34,7 @@ private:
   void acceptLanguage();
 
 private:
-  std::auto_ptr<Ui::UserSettings> ui;
+  std::unique_ptr<Ui::UserSettings> ui;
   QColor mColorUI2_1, mColorUI2_2, mColorUI2_3, mColorUI2_9;
 };
 

@@ -6,7 +6,6 @@
 #include "Sensor.hh"
 
 #include <gtest/gtest.h>
-#include <boost/make_shared.hpp>
 #include <string>
 
 class FakeModelAccess : public ModelAccess {

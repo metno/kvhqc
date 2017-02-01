@@ -47,7 +47,7 @@ private Q_SLOTS:
   void onHistoryTableUpdated();
 
 private:
-  std::auto_ptr<Ui_SingleObservation> ui;
+  std::unique_ptr<Ui_SingleObservation> ui;
   EditAccess_p mDA;
   ModelAccess_p mMA;
   ModelBuffer_p mModelBuffer;

@@ -36,8 +36,8 @@ private:
   void resetTimeOffset();
 
 private:
-  std::auto_ptr<Ui::DataListAddColumn> ui;
-  std::auto_ptr<SensorChooser> mSensorChooser;
+  std::unique_ptr<Ui::DataListAddColumn> ui;
+  std::unique_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // DataListAddColumn_hh

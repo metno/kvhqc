@@ -10,8 +10,6 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.EditTableModel"
 #include "util/HqcLogging.hh"
 

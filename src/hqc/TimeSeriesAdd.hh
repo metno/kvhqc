@@ -25,8 +25,8 @@ private Q_SLOTS:
   void slotValidSensor(bool);
 
 private:
-  std::auto_ptr<Ui::TimeSeriesAdd> ui;
-  std::auto_ptr<SensorChooser> mSensorChooser;
+  std::unique_ptr<Ui::TimeSeriesAdd> ui;
+  std::unique_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // TimeSeriesAdd_hh

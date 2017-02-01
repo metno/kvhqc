@@ -85,7 +85,7 @@ int main( int argc, char* argv[] )
 
   HqcApplication hqc(argc, argv, 0);
     
-  std::auto_ptr<HqcMainWindow> mw(new HqcMainWindow());
+  std::unique_ptr<HqcMainWindow> mw(new HqcMainWindow());
   FakeReinserter* fri = new FakeReinserter;
   fri->setInsertSuccess(false);
   mw->setReinserter(fri);

@@ -55,7 +55,7 @@ private:
   //void addEditTimes(TimeSet& times, const std::vector<Sensor>& sensors, const TimeSpan& limits);
 
 private:
-  std::auto_ptr<EditAccessPrivate> p;
+  std::unique_ptr<EditAccessPrivate> p;
 };
 
 HQC_TYPEDEF_P(EditAccess);

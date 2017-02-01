@@ -44,7 +44,7 @@ private:
   ModelData_p get(const timeutil::ptime& time) const;
 
 private:
-  std::auto_ptr<ModelBuffer> mBuffer;
+  std::unique_ptr<ModelBuffer> mBuffer;
 
   Sensor mSensor;
   bool mHeaderShowStation;

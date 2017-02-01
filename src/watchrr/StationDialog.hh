@@ -52,9 +52,9 @@ protected:
 
 protected:
   Sensor mSensor;
-  std::auto_ptr<Ui::DialogStation> ui;
+  std::unique_ptr<Ui::DialogStation> ui;
   TimeSpanControl* mTimeControl;
-  std::auto_ptr<TypeIdModel> mTypesModel;
+  std::unique_ptr<TypeIdModel> mTypesModel;
   ObsPgmRequest* mObsPgmRequest;
 };
 

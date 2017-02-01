@@ -41,9 +41,9 @@ private:
   int getTypeId() const;
 
 private:
-  std::auto_ptr<Ui::DialogMissingObservations> ui;
+  std::unique_ptr<Ui::DialogMissingObservations> ui;
   BusyLabel* mBusy;
-  std::auto_ptr<MissingTableModel> mMissingModel;
+  std::unique_ptr<MissingTableModel> mMissingModel;
   int mLastSelectedRow;
   TimeSpanControl* mTimeControl;
 };

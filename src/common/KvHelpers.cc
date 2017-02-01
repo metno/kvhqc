@@ -17,7 +17,6 @@
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvHelpers"
 #include "common/ObsLogging.hh"
@@ -174,7 +173,7 @@ static KvalobsData_p makeData(const SensorTime& st, const timeutil::ptime& tbtim
   ui.setUseFlags(ci);
   const kvalobs::kvData kvdata(s.stationId, st.time, original, s.paramId,
       tbtime, s.typeId, s.sensor, s.level, co, ci, ui, cf);
-  return boost::make_shared<KvalobsData>(kvdata, created);
+  return std::make_shared<KvalobsData>(kvdata, created);
 }
 
 KvalobsData_p createdData(const SensorTime& st, const timeutil::ptime& tbtime,

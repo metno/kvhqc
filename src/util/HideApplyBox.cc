@@ -15,6 +15,10 @@ HideApplyBox::HideApplyBox(QWidget* parent)
   connect(ui->applyHideButton, SIGNAL(clicked()), this, SLOT(hideApply()));
 }
 
+HideApplyBox::~HideApplyBox()
+{
+}
+
 void HideApplyBox::changeEvent(QEvent *event)
 {
   if (event->type() == QEvent::LanguageChange)

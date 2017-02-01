@@ -5,8 +5,6 @@
 #include "ObsDataSet.hh"
 #include "sqlutil.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.DataQueryTask"
 #include "util/HqcLogging.hh"
 
@@ -51,7 +49,7 @@ KvalobsData_p KvalobsDataRow::extract(const ResultRow& row, int col)
   
   const kvalobs::kvData kvdata(stationid, obstime, original, paramid,
       tbtime, type_id, sensornr, level, corrected, controlinfo, useinfo, cfailed);
-  return boost::make_shared<KvalobsData>(kvdata, false);
+  return std::make_shared<KvalobsData>(kvdata, false);
 }
 
 // ========================================================================

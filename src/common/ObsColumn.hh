@@ -7,7 +7,7 @@
 #include "util/timeutil.hh"
 #include <QtCore/QAbstractTableModel>
 #include <QtCore/QObject>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class ObsColumn;
 HQC_TYPEDEF_P(ObsColumn);
@@ -15,7 +15,7 @@ HQC_TYPEDEF_PV(ObsColumn);
 
 class ObsTableModel;
 
-class ObsColumn : public QObject, public boost::enable_shared_from_this<ObsColumn>
+class ObsColumn : public QObject, public std::enable_shared_from_this<ObsColumn>
 { Q_OBJECT;
 public:
   enum ValueType { Numerical=1, TextCode=2, Text=4 };

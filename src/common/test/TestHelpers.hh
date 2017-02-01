@@ -8,7 +8,6 @@
 #include "common/TimeSpan.hh"
 
 #include <gtest/gtest.h>
-#include <boost/make_shared.hpp>
 #include <string>
 
 inline timeutil::ptime s2t(const std::string& t)

@@ -20,7 +20,7 @@ TasksColumn::~TasksColumn()
 QVariant TasksColumn::data(const timeutil::ptime& time, int role) const
 {
   if (role == Qt::BackgroundRole) {
-    if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(mDC->getObs(time))) {
+    if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(mDC->getObs(time))) {
       if (td->hasRequiredTasks())
         return QBrush(Qt::red);
       else if (td->hasTasks())
@@ -28,7 +28,7 @@ QVariant TasksColumn::data(const timeutil::ptime& time, int role) const
     }
   } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
     QString tip;
-    if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(mDC->getObs(time)))
+    if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(mDC->getObs(time)))
       tip = tasks::asText(td->allTasks());
     return Helpers::appendedText(tip, WrapperColumn::data(time, role).toString());
   }

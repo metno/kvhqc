@@ -90,7 +90,7 @@ TEST(MissingObsTest, Query)
 
   hqc::int_s typeids;
   typeids.insert(302);
-  std::auto_ptr<MissingObsQuery> q(new MissingObsQuery(t_12600_20141008(), typeids, QueryTask::PRIORITY_AUTOMATIC));
+  std::unique_ptr<MissingObsQuery> q(new MissingObsQuery(t_12600_20141008(), typeids, QueryTask::PRIORITY_AUTOMATIC));
 
   fa.obsAccess()->handler()->postTask(q.get());
 

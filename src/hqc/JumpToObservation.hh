@@ -35,9 +35,9 @@ private Q_SLOTS:
   void slotValidSensor(bool);
 
 private:
-  std::auto_ptr<Ui::JumpToObservation> ui;
+  std::unique_ptr<Ui::JumpToObservation> ui;
   ObsAccess_p mDA;
-  std::auto_ptr<SensorChooser> mSensorChooser;
+  std::unique_ptr<SensorChooser> mSensorChooser;
 };
 
 #endif // JumpToObservation_hh

@@ -3,8 +3,6 @@
 
 #include "common/sqlutil.hh"
 
-#include <boost/make_shared.hpp>
-
 namespace /*anonymous*/ {
 
 Time my_qsql_time(const std::string& s)

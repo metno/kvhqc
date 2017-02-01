@@ -30,21 +30,21 @@ public:
 namespace /* anonymous */ {
 int allTasks(ObsData_p obs)
 {
-  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
     return td->allTasks();
   else
     return 0;
 }
 bool hasTasks(ObsData_p obs)
 {
-  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
     return td->hasTasks();
   else
     return false;
 }
 bool hasTask(ObsData_p obs, int task)
 {
-  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
     return td->hasTask(task);
   else
     return false;
@@ -76,7 +76,7 @@ TEST_F(AnalyseRR24Test, TaskPeriods)
 {
   TimeSpan editableTime(time);
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   RR24::analyse(eda, sensor, editableTime);
 
@@ -123,7 +123,7 @@ TEST_F(AnalyseRR24Test, Gap)
   const TimeSpan time(s2t("2012-10-11 06:00:00"), s2t("2012-10-16 06:00:00"));
   TimeSpan editableTime(time);
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   RR24::analyse(eda, s0, editableTime);
 
@@ -147,20 +147,20 @@ TEST_F(AnalyseRR24Test, Redistribute)
   const float value = 123.4;
   {
     TimeSpan editableTime(time);
-    TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+    TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
     eda->newVersion();
     RR24::analyse(eda, sensor, editableTime);
 
     for(int i=0; times[i][0]; ++i) {
       const TimeSpan timeAcc(s2t(times[i][0]), s2t(times[i][1]));
       const std::vector<float> newCorrected(timeAcc.days()+1, value);
-      TaskAccess_p eda2 = boost::make_shared<TaskAccess>(eda);
+      TaskAccess_p eda2 = std::make_shared<TaskAccess>(eda);
       RR24::redistribute(eda2, sensor, timeAcc.t0(), editableTime, newCorrected);
       eda2->storeToBackend();
     }
     ObsData_p obs = eda->findE(SensorTime(sensor, s2t("2012-10-30 06:00:00")));
     ASSERT_TRUE((bool)obs);
-    TaskUpdate_p tupdate = boost::static_pointer_cast<TaskUpdate>(eda->createUpdate(obs));
+    TaskUpdate_p tupdate = std::static_pointer_cast<TaskUpdate>(eda->createUpdate(obs));
     tupdate->clearTask(tasks::TASK_HQC_AUTOMATIC);
     eda->storeUpdates(ObsUpdate_pv(1, tupdate));
     eda->storeToBackend();
@@ -169,7 +169,7 @@ TEST_F(AnalyseRR24Test, Redistribute)
   for(int i=0; times[i][0]; ++i) {
     const TimeSpan timeAcc(s2t(times[i][0]), s2t(times[i][1]));
 
-    TimeBuffer_p b = boost::make_shared<TimeBuffer>(make_set(sensor), timeAcc);
+    TimeBuffer_p b = std::make_shared<TimeBuffer>(make_set(sensor), timeAcc);
     b->syncRequest(fa.obsAccess());
 
     for(timeutil::ptime t=timeAcc.t0(); t<=timeAcc.t1(); t += boost::gregorian::days(1)) {
@@ -184,11 +184,11 @@ TEST_F(AnalyseRR24Test, RedistributePartialEnd)
 {
   const TimeSpan timeR(s2t("2012-10-22 06:00:00"), s2t("2012-10-25 06:00:00"));
   const float value = 4;
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   const std::vector<float> newCorrected(timeR.days()+1, value);
   {
-    TaskAccess_p edaR = boost::make_shared<TaskAccess>(eda);
+    TaskAccess_p edaR = std::make_shared<TaskAccess>(eda);
     edaR->newVersion();
     RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
     edaR->storeToBackend();
@@ -213,11 +213,11 @@ TEST_F(AnalyseRR24Test, RedistributePartialMid)
 {
   const TimeSpan timeR(s2t("2012-10-21 06:00:00"), s2t("2012-10-24 06:00:00"));
   const float value = 3;
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   const std::vector<float> newCorrected(timeR.days()+1, value);
   {
-    TaskAccess_p edaR = boost::make_shared<TaskAccess>(eda);
+    TaskAccess_p edaR = std::make_shared<TaskAccess>(eda);
     edaR->newVersion();
     RR24::redistribute(edaR, sensor, timeR.t0(), time, newCorrected);
     edaR->storeToBackend();
@@ -250,7 +250,7 @@ TEST(AnalyseRR24Test_2, FD3_Dectect)
   load_32780_20121207(fa);
 
   TimeSpan editableTime(time);
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   RR24::analyse(eda, sensor, editableTime);
 
@@ -286,12 +286,12 @@ TEST(AnalyseRR24Test_2, OnlyEndpointRow)
 
   const TimeSpan timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
   const std::vector<float> newCorrected(timeR.days()+1, 4.0f);
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
   eda->storeToBackend();
 
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(make_set(sensor), timeR);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(make_set(sensor), timeR);
   b->syncRequest(fa.obsAccess());
 
   for(timeutil::ptime t=timeR.t0(); t<=timeR.t1(); t += boost::gregorian::days(1)) {
@@ -319,12 +319,12 @@ TEST(AnalyseRR24Test_2, MinimalRedistribute)
 
   const TimeSpan timeR(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
   const std::vector<float> newCorrected(timeR.days()+1, 1.0f);
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   RR24::redistribute(eda, sensor, timeR.t0(), timeR, newCorrected);
   eda->storeToBackend();
 
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(make_set(sensor), timeR);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(make_set(sensor), timeR);
   b->syncRequest(fa.obsAccess());
 
   for(timeutil::ptime t=timeR.t0(); t<=timeR.t1(); t += boost::gregorian::days(1)) {
@@ -351,14 +351,14 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
   fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
   fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   const float newCorrectedR[3] = { 5, 2, 1.9 };
   const timeutil::ptime t0R(s2t("2012-11-24 06:00:00"));
   {
     const std::vector<float> newCorrected(newCorrectedR, boost::end(newCorrectedR));
-    TaskAccess_p edaR = boost::make_shared<TaskAccess>(eda);
+    TaskAccess_p edaR = std::make_shared<TaskAccess>(eda);
     edaR->newVersion();
     RR24::redistribute(edaR, sensor, t0R, time, newCorrected);
     eda->newVersion();
@@ -378,7 +378,7 @@ TEST(AnalyseRR24Test_2, RedistAndSingles)
     const timeutil::ptime t0S(s2t("2012-11-22 06:00:00"));
     const std::vector<float> newCorrected(newCorrectedS, boost::end(newCorrectedS));
     const std::vector<int> newAccept(3, RR24::AR_ACCEPT);
-    TaskAccess_p edaS = boost::make_shared<TaskAccess>(eda);
+    TaskAccess_p edaS = std::make_shared<TaskAccess>(eda);
     edaS->newVersion();
     RR24::singles(edaS, sensor, t0S, time, newCorrected, newAccept);
     eda->newVersion();
@@ -420,7 +420,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles)
   fa.insertData("2012-11-26 06:00:00",       8.9,       2.9, "0110004000002006", "QC1-7-110,hqc");
   fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   const float newC[6] = { 3.5, 1.4, 5.5, -1, -1, 2.9 };
@@ -432,7 +432,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles)
     RR24::singles(eda, sensor, time.t0(), time, nc, na);
   }
 
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(make_set(sensor), time);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(make_set(sensor), time);
   b->syncRequest(eda);
   int i=0;
   for(timeutil::ptime t=time.t0(); t<=time.t1(); t += boost::gregorian::days(1)) {
@@ -474,7 +474,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles2)
   fa.insertData("2012-10-16 06:00:00",  -32767.0,       1.0, "0000001000007000"); // A->_
   fa.insertData("2012-10-17 06:00:00",       1.0,       1.0, "0110004000008000"); // _->P
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   const int NN = 16, A = RR24::AR_ACCEPT, N = RR24::AR_NONE, R = RR24::AR_REJECT;
@@ -496,7 +496,7 @@ TEST(AnalyseRR24Test_2, AccumulationAndSingles2)
     markedP.insert(10);
   }
 
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(make_set(sensor), time);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(make_set(sensor), time);
   b->syncRequest(eda);
 
   timeutil::ptime t = time.t0();
@@ -526,7 +526,7 @@ TEST(AnalyseRR24Test_2, SameCorrectedAsOrig)
   fa.insertData("2012-09-24 06:00:00",      13.0,      11.1, "0110004000007006", "QC...");
   fa.insertData("2012-09-25 06:00:00",       0.2,       0.2, "0110000000001000", "");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   const timeutil::ptime t0S(s2t("2012-09-24 06:00:00"));
@@ -550,7 +550,7 @@ TEST(AnalyseRR24Test_2, RedistEndDryAsBefore)
   fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
   fa.insertData("2012-09-23 06:00:00",      -1.0,      -1.0, "0000004000004000", "QC...");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   std::vector<float> nc(2);
@@ -583,7 +583,7 @@ TEST(AnalyseRR24Test_2, RedistEndDryNew)
   fa.insertData("2012-09-22 06:00:00",    -32767,    -32767, "0000003000002000", "QC...");
   fa.insertData("2012-09-23 06:00:00",       0.0,       0.0, "0000004000004000", "QC...");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   std::vector<float> nc(2);
@@ -618,7 +618,7 @@ TEST(AnalyseRR24Test_2, QC2_1)
   fa.insertData("2012-11-27 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
   const TimeSpan time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   ASSERT_FALSE(RR24::canRedistributeInQC2(eda, sensor, time));
@@ -646,7 +646,7 @@ TEST(AnalyseRR24Test_2, Accept)
   fa.insertData("2012-12-03 06:00:00",       2.8,       2.8, "0110000000001000", "");
 
   const TimeSpan time_all(s2t("2012-11-23 06:00:00"), s2t("2012-12-03 06:00:00"));
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
 
   TimeSpan editableTime(time_all);
@@ -693,7 +693,7 @@ TEST(AnalyseRR24Test_2, CalculateSum)
   fa.insertData("2012-12-05 06:00:00",       -1.0,     -1.0, "0000004000004000", "");
   fa.insertData("2012-12-06 06:00:00",       2.0,       2.0, "0110000000001000", "");
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
 
   const TimeSpan timeS1(s2t("2012-12-02 06:00:00"), s2t("2012-12-05 06:00:00"));
   ASSERT_EQ(0, RR24::calculateSum(eda, sensor, timeS1));

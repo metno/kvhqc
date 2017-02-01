@@ -41,8 +41,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include <QtGui/QSplashScreen>
 
-#include <boost/make_shared.hpp>
-
 #include <iostream>
 
 #define MILOGGER_CATEGORY "kvhqc.main"
@@ -103,14 +101,14 @@ int main( int argc, char* argv[] )
 
   HqcApplication hqc(argc, argv, confSec);
 
-  hqc.setReinserter(boost::make_shared<KvalobsReinserter>());
+  hqc.setReinserter(std::make_shared<KvalobsReinserter>());
 
   QPixmap pixmap("icons:hqc_splash.svg");
   QSplashScreen splash(pixmap);
   splash.show();
   hqc.processEvents();
 
-  std::auto_ptr<HqcAppWindow> aw(new HqcAppWindow());
+  std::unique_ptr<HqcAppWindow> aw(new HqcAppWindow());
   aw->startup();
 
   splash.finish(aw.get());

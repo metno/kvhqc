@@ -84,7 +84,7 @@ private:
   void updateModel(const Sensor_v& sensors, const TimeSpan& time);
 
 private:
-  std::auto_ptr<Ui_ErrorList> ui;
+  std::unique_ptr<Ui_ErrorList> ui;
   ErrorSearchDialog* mDialog;
 
   ObsAccess_p mDA;
@@ -92,7 +92,7 @@ private:
   NavigateHelper mNavigate;
   bool mErrorsForSalen;
 
-  std::auto_ptr<ErrorListModel> mItemModel;
+  std::unique_ptr<ErrorListModel> mItemModel;
   ObsPgmRequest* mObsPgmRequest;
 };
 

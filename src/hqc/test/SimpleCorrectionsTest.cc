@@ -7,8 +7,6 @@
 #include "common/KvalobsModelAccess.hh"
 #include "common/test/CountingBuffer.hh"
 
-#include <boost/make_shared.hpp>
-
 #define LOAD_DECL_ONLY
 #include "common/test/load_18210_20130410.cc"
 
@@ -21,8 +19,8 @@ struct TestSetup {
 };
 
 TestSetup::TestSetup()
-  : eda(boost::make_shared<EditAccess>(FakeKvApp::app()->obsAccess()))
-  , mda(boost::make_shared<KvalobsModelAccess>(FakeKvApp::app()->obsAccess()->handler()))
+  : eda(std::make_shared<EditAccess>(FakeKvApp::app()->obsAccess()))
+  , mda(std::make_shared<KvalobsModelAccess>(FakeKvApp::app()->obsAccess()->handler()))
 {
 }
 
@@ -35,7 +33,7 @@ void TestSimpleCorrections::testGui()
   load_18210_20130410(*FakeKvApp::app());
   KvMetaDataBuffer::instance()->reload();
 
-  std::auto_ptr<SimpleCorrections> sc(new SimpleCorrections(ts.eda, ts.mda, 0));
+  std::unique_ptr<SimpleCorrections> sc(new SimpleCorrections(ts.eda, ts.mda, 0));
 
   QLineEdit* ui_station = sc->findChild<QLineEdit*>("textStation");
   QVERIFY(ui_station);

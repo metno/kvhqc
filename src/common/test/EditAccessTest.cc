@@ -7,8 +7,6 @@
 #include "Functors.hh"
 #include "util/make_set.hh"
 
-#include <boost/make_shared.hpp>
-
 #include <gtest/gtest.h>
 
 namespace /*anonymous*/ {
@@ -711,7 +709,7 @@ TEST(EditAccessTest, InsertData)
 
   const float newC = 4.0;
 
-  EditAccess_p ea = boost::make_shared<EditAccess>(sqla);
+  EditAccess_p ea = std::make_shared<EditAccess>(sqla);
 
   CountingBuffer_p counter(new CountingBuffer(s0, time0));
   counter->syncRequest(ea);

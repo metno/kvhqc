@@ -16,7 +16,7 @@ public:
   void setRR24TimeSpan(const TimeSpan& tr);
 
 private:
-  boost::shared_ptr<EditTimeColumn> mRR24EditTime;
+  std::shared_ptr<EditTimeColumn> mRR24EditTime;
 };
 
 #endif /* WATCHRR_STATIONCARDMODEL_HH */

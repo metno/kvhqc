@@ -32,8 +32,8 @@ private:
   TaskAccess_p mDA;
   TimeSpan mEditableTime;
   Sensor mSensor;
-  std::auto_ptr<EditTableModel> etm;
-  std::auto_ptr<Ui::DialogEdit> ui;
+  std::unique_ptr<EditTableModel> etm;
+  std::unique_ptr<Ui::DialogEdit> ui;
 };
 
 #endif // EDITDIALOG_HH

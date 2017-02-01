@@ -47,7 +47,7 @@ public:
   using QueryTaskAccess::handler;
 
 private:
-  boost::shared_ptr<SqliteQueryRunner> runner();
+  std::shared_ptr<SqliteQueryRunner> runner();
 
 private:
   size_t mCountPost, mCountDrop;

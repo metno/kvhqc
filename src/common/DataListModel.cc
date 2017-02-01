@@ -98,7 +98,7 @@ QModelIndexList DataListModel::findIndexes(const SensorTime& st)
   if (row >= 0) {
     const int nColumns = columnCount(QModelIndex());
     for (int col=0; col<nColumns; ++col) {
-      DataColumn_p dc = boost::dynamic_pointer_cast<DataColumn>(getColumn(col));
+      DataColumn_p dc = std::dynamic_pointer_cast<DataColumn>(getColumn(col));
       if (not dc)
         continue;
       if (dc->matchSensor(st.sensor))

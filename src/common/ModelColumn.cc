@@ -4,8 +4,6 @@
 #include "ModelAccess.hh"
 #include "SensorHeader.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "common/ObsLogging.hh"
 
@@ -13,7 +11,7 @@ ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan&
   : mBuffer(new ModelBuffer(ma))
   , mSensor(sensor)
   , mHeaderShowStation(true)
-  , mCodes(boost::make_shared<Code2Text>())
+  , mCodes(std::make_shared<Code2Text>())
 {
 }
 

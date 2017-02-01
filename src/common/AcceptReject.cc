@@ -8,8 +8,6 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.AcceptReject"
 #include "common/ObsLogging.hh"
 
@@ -80,7 +78,7 @@ void accept_original(EditAccess_p ea, ObsData_p obs)
 
 void accept_model(EditAccess_p ea, ModelAccess_p mda, ObsData_p obs, bool qc2ok)
 {
-  ModelBuffer_p buffer = boost::make_shared<ModelBuffer>(mda);
+  ModelBuffer_p buffer = std::make_shared<ModelBuffer>(mda);
   ModelData_p md = buffer->getSync(obs->sensorTime());
   if (obs and md) {
     ObsUpdate_p update = ea->createUpdate(obs);

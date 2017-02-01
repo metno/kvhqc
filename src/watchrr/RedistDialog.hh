@@ -40,8 +40,8 @@ private:
   TaskAccess_p mDA;
   TimeSpan mEditableTime;
   Sensor mSensor;
-  std::auto_ptr<RedistTableModel> rtm;
-  std::auto_ptr<Ui::DialogRedist> ui;
+  std::unique_ptr<RedistTableModel> rtm;
+  std::unique_ptr<Ui::DialogRedist> ui;
 };
 
 #endif // REDISTDIALOG_HH

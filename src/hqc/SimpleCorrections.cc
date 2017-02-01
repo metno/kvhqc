@@ -12,8 +12,6 @@
 
 #include "util/ToolTipStringListModel.hh"
 
-#include <boost/make_shared.hpp>
-
 #include "ui_singleobservation.h"
 
 #define MILOGGER_CATEGORY "kvhqc.SimpleCorrections"
@@ -24,7 +22,7 @@ SimpleCorrections::SimpleCorrections(EditAccess_p eda, ModelAccess_p mda, QWidge
   , ui(new Ui_SingleObservation)
   , mDA(eda)
   , mMA(mda)
-  , mModelBuffer(boost::make_shared<ModelBuffer>(mMA))
+  , mModelBuffer(std::make_shared<ModelBuffer>(mMA))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -80,7 +78,7 @@ void SimpleCorrections::navigateTo(const SensorTime& st)
   mModelBuffer->clear();
   if (mDA) {
     METLIBS_LOG_DEBUG("requesting " << mSensorTime);
-    mObsBuffer = boost::make_shared<SingleObsBuffer>(mSensorTime);
+    mObsBuffer = std::make_shared<SingleObsBuffer>(mSensorTime);
     connect(mObsBuffer.get(), SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
     connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onDataChanged()));
     connect(mObsBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDataChanged()));

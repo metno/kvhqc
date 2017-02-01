@@ -5,7 +5,6 @@
 //#include "KvalobsAccess.hh"
 //#include "KvHelpers.hh"
 
-#include <boost/make_shared.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/lexical_cast.hpp>
 
@@ -24,7 +23,7 @@ FakeKvApp::FakeKvApp(bool useThread)
 {
   kvservice::KvApp::kvApp = this;
 
-  mObsAccess = boost::make_shared<SqliteAccess>(useThread);
+  mObsAccess = std::make_shared<SqliteAccess>(useThread);
 
   mObsAccess->insertParam(kvalobs::kvParam(18, "SD", "Snødekke", "nasjonal kode ett siffer", 0, "Verdien -1 angir at snødekke ikke er meldt"));
   mObsAccess->insertParam(kvalobs::kvParam(34, "V4", "Været siden forrige hovedobservasjon, første tegn", "nasjonal kode to siffer", 0, "None"));

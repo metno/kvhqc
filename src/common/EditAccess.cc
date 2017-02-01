@@ -8,7 +8,6 @@
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 #include <boost/range/adaptor/map.hpp>
 
 #include <stdexcept>
@@ -88,7 +87,7 @@ ObsData_p EditVersions::currentData() const
   ObsData_p c = mVersions.at(mCurrent).data;
   if (not c) {
     HQC_LOG_WARN("null current version, returning fake data");
-    c = boost::make_shared<KvalobsData>(Helpers::getMissingKvData(sensorTime()), true);
+    c = std::make_shared<KvalobsData>(Helpers::getMissingKvData(sensorTime()), true);
   }
   return c;
 }
@@ -104,7 +103,7 @@ EditRequest::EditRequest(EditAccessPrivate_P a, ObsRequest_p wrapped)
 
 EditRequest_p EditRequest::untag(ObsRequest_p wrapped)
 {
-  return boost::static_pointer_cast<EditRequest>(WrapRequest::untag(wrapped));
+  return std::static_pointer_cast<EditRequest>(WrapRequest::untag(wrapped));
 }
 
 void EditRequest::newData(const ObsData_pv& data)
@@ -299,7 +298,7 @@ EditAccess::~EditAccess()
 
 void EditAccess::postRequest(ObsRequest_p request, bool synchronized)
 {
-  EditRequest_p r = boost::make_shared<EditRequest>(p.get(), request);
+  EditRequest_p r = std::make_shared<EditRequest>(p.get(), request);
   p->mRequests.insert(r);
   p->mBackend->postRequest(r, synchronized);
 }
@@ -316,12 +315,12 @@ void EditAccess::dropRequest(ObsRequest_p request)
 
 ObsUpdate_p EditAccess::createUpdate(ObsData_p data)
 {
-  return boost::make_shared<KvalobsUpdate>(data);
+  return std::make_shared<KvalobsUpdate>(data);
 }
 
 ObsUpdate_p EditAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return boost::make_shared<KvalobsUpdate>(sensorTime);
+  return std::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
@@ -333,7 +332,7 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
   const timeutil::ptime& tbtime = versionTimestamp(currentVersion());
 
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
-    KvalobsUpdate_p eu = boost::static_pointer_cast<KvalobsUpdate>(*it);
+    KvalobsUpdate_p eu = std::static_pointer_cast<KvalobsUpdate>(*it);
     METLIBS_LOG_DEBUG(LOGVAL(eu->sensorTime()));
 
     EditVersions_ps::iterator itE = p->findEditVersions(eu->sensorTime());
@@ -349,7 +348,7 @@ bool EditAccess::storeUpdates(const ObsUpdate_pv& updates)
     } else {
       KvalobsData_p d = createDataForUpdate(eu, tbtime);
       d->setModified(true);
-      EditVersions_p ev = boost::make_shared<EditVersions>(eu->obs(), p->mCurrentVersion, d);
+      EditVersions_p ev = std::make_shared<EditVersions>(eu->obs(), p->mCurrentVersion, d);
       p->mEdited.insert(ev);
       if (eu->obs())
         du.updateData(ev->currentData());

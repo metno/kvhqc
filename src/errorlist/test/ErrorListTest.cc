@@ -36,7 +36,7 @@ TEST(ErrorListTest, Filter1)
   sensors.insert(sensor1);
 
   ErrorFilter_p ef(new ErrorFilter(false));
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(FakeKvApp::app()->obsAccess());
 
   EXPECT_EQ(3, b->size());
@@ -61,7 +61,7 @@ TEST(ErrorListTest, Filter1Salen)
   sensors.insert(sensor1);
 
   ErrorFilter_p ef(new ErrorFilter(true));
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(FakeKvApp::app()->obsAccess());
 
   EXPECT_EQ(0, b->size());
@@ -108,7 +108,7 @@ TEST(ErrorListTest, FilterMany)
   sensors.insert(Sensor(18020, 215, 0, 0, 514));
 
   ErrorFilter_p ef(new ErrorFilter(false));
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(FakeKvApp::app()->obsAccess());
 
   EXPECT_EQ(211, b->size());

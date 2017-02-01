@@ -14,7 +14,6 @@
 #include <puTools/miStringBuilder.h>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/make_shared.hpp>
 
 #include <sqlite3.h>
 
@@ -311,7 +310,7 @@ QString SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, 
 // ========================================================================
 
 SqliteAccess::SqliteAccess(bool useThread)
-  : QueryTaskAccess(boost::make_shared<QueryTaskHandler>(boost::make_shared<SqliteQueryRunner>(), useThread))
+  : QueryTaskAccess(std::make_shared<QueryTaskHandler>(std::make_shared<SqliteQueryRunner>(), useThread))
   , mCountPost(0)
   , mCountDrop(0)
 {
@@ -452,14 +451,14 @@ void SqliteAccess::dropRequest(ObsRequest_p request)
 
 ObsUpdate_p SqliteAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return boost::make_shared<KvalobsUpdate>(sensorTime);
+  return std::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 // ------------------------------------------------------------------------
 
 ObsUpdate_p SqliteAccess::createUpdate(ObsData_p obs)
 {
-  return boost::make_shared<KvalobsUpdate>(boost::static_pointer_cast<KvalobsData>(obs));
+  return std::make_shared<KvalobsUpdate>(std::static_pointer_cast<KvalobsData>(obs));
 }
 
 // ------------------------------------------------------------------------
@@ -472,7 +471,7 @@ bool SqliteAccess::storeUpdates(const ObsUpdate_pv& updates)
 
   ObsData_pv updated, inserted;
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
-    KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
+    KvalobsUpdate_p ou = std::static_pointer_cast<KvalobsUpdate>(*it);
 
     KvalobsData_p d;
     if (ou->obs()) {
@@ -639,7 +638,7 @@ void SqliteAccess::insertTypes(const kvalobs::kvTypes& kvt)
 
 SqliteQueryRunner_p SqliteAccess::runner()
 {
-  return boost::static_pointer_cast<SqliteQueryRunner>(handler()->runner());
+  return std::static_pointer_cast<SqliteQueryRunner>(handler()->runner());
 }
 
 // ------------------------------------------------------------------------

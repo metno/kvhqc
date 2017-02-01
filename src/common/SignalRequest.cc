@@ -3,8 +3,6 @@
 
 #include "BaseRequest.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.SignalRequest"
 #include "common/ObsLogging.hh"
 
@@ -31,7 +29,7 @@ public:
 // ========================================================================
 
 SignalRequest::SignalRequest(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : WrapRequest(boost::make_shared<DeadRequest>(sensors, timeSpan, filter))
+  : WrapRequest(std::make_shared<DeadRequest>(sensors, timeSpan, filter))
 {
   METLIBS_LOG_SCOPE();
 }

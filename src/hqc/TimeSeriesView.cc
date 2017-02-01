@@ -21,7 +21,6 @@
 #include <QtXml/QDomElement>
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #include <algorithm>
 
@@ -98,7 +97,7 @@ TimeSeriesView::TimeSeriesView(QWidget* parent)
 
   mDA = hqcApp->editAccess();
 
-  mModelBuffer = boost::make_shared<ModelBuffer>(hqcApp->modelAccess());
+  mModelBuffer = std::make_shared<ModelBuffer>(hqcApp->modelAccess());
   connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
       this, SLOT(updatePlot()));
 }
@@ -492,7 +491,7 @@ void TimeSeriesView::updateTime()
   if (not mDA)
     return;
 
-  mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(mSensors.begin(), mSensors.end()), mTimeLimits);
+  mObsBuffer = std::make_shared<TimeBuffer>(Sensor_s(mSensors.begin(), mSensors.end()), mTimeLimits);
   connect(mObsBuffer.get(), SIGNAL(bufferCompleted(const QString&)), this, SLOT(updatePlot()));
   connect(mObsBuffer.get(), SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(updatePlot()));
   connect(mObsBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(updatePlot()));

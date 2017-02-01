@@ -33,8 +33,8 @@ TEST(ExtremesTest, Filter)
   KvMetaDataBuffer::instance()->reload();
 
   ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
-  SortedBuffer::Ordering_p ordering = boost::make_shared<ExtremesTableModel::CorrectedOrdering>(not ef->isMaximumSearch());
-  SortedBuffer_p b = boost::make_shared<SortedBuffer>(ordering, Sensor_s(), t_17000_20141002(), ef);
+  SortedBuffer::Ordering_p ordering = std::make_shared<ExtremesTableModel::CorrectedOrdering>(not ef->isMaximumSearch());
+  SortedBuffer_p b = std::make_shared<SortedBuffer>(ordering, Sensor_s(), t_17000_20141002(), ef);
   b->syncRequest(FakeKvApp::app()->obsAccess());
 
   // grep '\<21[15]\>' src/extremes/test/data_17000_20141002.txt | sort -rn -k 7 | head -n 20
@@ -97,7 +97,7 @@ TEST(ExtremesTest, FilterCached)
   Sensor_s invalid;
   invalid.insert(Sensor());
 
-  TimeBuffer_p b = boost::make_shared<TimeBuffer>(invalid, t_17000_20141002(), ef);
+  TimeBuffer_p b = std::make_shared<TimeBuffer>(invalid, t_17000_20141002(), ef);
   b->syncRequest(cache);
 
   ASSERT_EQ(7, b->size()); // two have TA=TAX

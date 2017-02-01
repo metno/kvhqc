@@ -10,8 +10,6 @@
 #include "common/HqcSystemDB.hh"
 #include "common/KvHelpers.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ColumnFactory"
 #include "util/HqcLogging.hh"
 
@@ -35,7 +33,7 @@ Code2TextCPtr codesForParam(int pid)
     if (c2t_it != sCode2Text.end())
       return c2t_it->second;
 
-    Code2TextPtr c2t = boost::make_shared<Code2Text>();
+    Code2TextPtr c2t = std::make_shared<Code2Text>();
     sCode2Text.insert(std::make_pair(pid, c2t));
 
     bool haveDecimals = false;
@@ -72,20 +70,20 @@ DataItem_p itemForSensor(EditAccess_p da, const Sensor& sensor, ObsColumn::Type 
     if ((pid == kvalobs::PARAMID_V4 or pid == kvalobs::PARAMID_V5 or pid == kvalobs::PARAMID_V6)
         and (displayType == ObsColumn::NEW_CORRECTED or displayType == ObsColumn::ORIGINAL))
     {
-      return boost::make_shared<DataVxItem>(displayType, da);
+      return std::make_shared<DataVxItem>(displayType, da);
     }
     if (displayType == ObsColumn::NEW_CONTROLINFO) {
-      return boost::make_shared<DataControlinfoItem>();
+      return std::make_shared<DataControlinfoItem>();
     }
     
     Code2TextCPtr codes = codesForParam(pid);
     if (displayType == ObsColumn::NEW_CORRECTED) {
       if (pid == kvalobs::PARAMID_RR_24)
-        return boost::make_shared<DataRR24Item>(codes);
+        return std::make_shared<DataRR24Item>(codes);
       else
-        return boost::make_shared<DataCorrectedItem>(codes);
+        return std::make_shared<DataCorrectedItem>(codes);
     } else if (displayType == ObsColumn::ORIGINAL) {
-      return boost::make_shared<DataOriginalItem>(codes);
+      return std::make_shared<DataOriginalItem>(codes);
     }
     return DataItem_p();
 }
@@ -94,13 +92,13 @@ DataColumn_p columnForSensor(EditAccess_p da, const Sensor& sensor, const TimeSp
 {
   DataItem_p item = itemForSensor(da, sensor, displayType);
   if (item)
-    return boost::make_shared<DataColumn>(da, sensor, time, item);
+    return std::make_shared<DataColumn>(da, sensor, time, item);
   return DataColumn_p();
 }
 
 ModelColumn_p columnForSensor(ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time)
 {
-  ModelColumn_p mc = boost::make_shared<ModelColumn>(ma, sensor, time);
+  ModelColumn_p mc = std::make_shared<ModelColumn>(ma, sensor, time);
   mc->setCodes(codesForParam(sensor.paramId));
   return mc;
 }

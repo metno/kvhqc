@@ -4,8 +4,6 @@
 #include "ModelData.hh"
 #include "sqlutil.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ModelQueryTask"
 #include "common/ObsLogging.hh"
 
@@ -63,7 +61,7 @@ void ModelQueryTask::notifyRow(const ResultRow& row)
 
   METLIBS_LOG_DEBUG(LOGVAL(st) << LOGVAL(value));
 
-  mData.push_back(boost::make_shared<ModelData>(st, value));
+  mData.push_back(std::make_shared<ModelData>(st, value));
   if (mData.size() >= QUERY_DATA_CHUNKSIZE)
     sendData();
 }

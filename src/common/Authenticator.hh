@@ -61,7 +61,7 @@ protected Q_SLOTS:
   virtual void doAuthenticate();
 
 private:
-  std::auto_ptr<Ui::AuthenticationDialog> ui;
+  std::unique_ptr<Ui::AuthenticationDialog> ui;
 
   QString server;
   int port;

@@ -7,8 +7,6 @@
 #include "Functors.hh"
 #include "KvHelpers.hh"
 
-#include <boost/make_shared.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.KvalobsAccess"
 #include "common/ObsLogging.hh"
 
@@ -82,7 +80,7 @@ void KvalobsAccess::onUpdated(const hqc::kvData_v& data)
   ObsData_pv updated;
   updated.reserve(data.size());
   for (hqc::kvData_v::const_iterator it=data.begin(); it!=data.end(); ++it)
-    updated.push_back(boost::make_shared<KvalobsData>(*it, false));
+    updated.push_back(std::make_shared<KvalobsData>(*it, false));
   distributeUpdates(updated, ObsData_pv(), SensorTime_v());
 }
 
@@ -90,14 +88,14 @@ void KvalobsAccess::onUpdated(const hqc::kvData_v& data)
 
 ObsUpdate_p KvalobsAccess::createUpdate(ObsData_p obs)
 {
-  return boost::make_shared<KvalobsUpdate>(boost::static_pointer_cast<KvalobsData>(obs));
+  return std::make_shared<KvalobsUpdate>(std::static_pointer_cast<KvalobsData>(obs));
 }
 
 // ------------------------------------------------------------------------
 
 ObsUpdate_p KvalobsAccess::createUpdate(const SensorTime& sensorTime)
 {
-  return boost::make_shared<KvalobsUpdate>(sensorTime);
+  return std::make_shared<KvalobsUpdate>(sensorTime);
 }
 
 // ------------------------------------------------------------------------
@@ -118,7 +116,7 @@ bool KvalobsAccess::storeUpdates(const ObsUpdate_pv& updates)
   ObsData_pv modifiedObs, createdObs;
   const timeutil::ptime tbtime = boost::posix_time::microsec_clock::universal_time();
   for (ObsUpdate_pv::const_iterator it = updates.begin(); it != updates.end(); ++it) {
-    KvalobsUpdate_p ou = boost::static_pointer_cast<KvalobsUpdate>(*it);
+    KvalobsUpdate_p ou = std::static_pointer_cast<KvalobsUpdate>(*it);
 
     if (ou->obs()) {
       KvalobsData_p d = Helpers::modifiedData(ou->obs(), ou->corrected(), ou->controlinfo(), ou->cfailed());

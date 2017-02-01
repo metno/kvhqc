@@ -13,7 +13,7 @@ public:
 
 protected:
   TaskAccess_p ta() const
-    { return boost::static_pointer_cast<TaskAccess>(mDA); }
+    { return std::static_pointer_cast<TaskAccess>(mDA); }
 };
 
 #endif /* WATCHRRTABLEMODEL_HH */

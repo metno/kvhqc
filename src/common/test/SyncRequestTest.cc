@@ -7,8 +7,6 @@
 
 #include "util/make_set.hh"
 
-#include <boost/make_shared.hpp>
-
 #include <gtest/gtest.h>
 
 inline timeutil::ptime s2t(const std::string& t)
@@ -22,7 +20,7 @@ TEST(SyncRequestTest, NoThread)
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
   const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
 
-  { TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(sensors, time);
+  { TimeBuffer_p buffer = std::make_shared<TimeBuffer>(sensors, time);
     buffer->syncRequest(sqla);
     EXPECT_EQ(2*24 + 1, buffer->size());
   }
@@ -36,7 +34,7 @@ TEST(SyncRequestTest, Thread)
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
   const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
 
-  { IndexBuffer_p buffer = boost::make_shared<IndexBuffer>(3600, sensors, time);
+  { IndexBuffer_p buffer = std::make_shared<IndexBuffer>(3600, sensors, time);
     buffer->syncRequest(sqla);
     EXPECT_EQ(2*24 + 1, buffer->size());
   }
@@ -52,14 +50,14 @@ TEST(SyncRequestTest, Cached)
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
 
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
-    TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(sensors, time);
+    TimeBuffer_p buffer = std::make_shared<TimeBuffer>(sensors, time);
     buffer->syncRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
     EXPECT_EQ(2*24 + 1, buffer->size());
   }
 
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-02 00:00:00"));
-    TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(sensors, time);
+    TimeBuffer_p buffer = std::make_shared<TimeBuffer>(sensors, time);
     buffer->syncRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
     EXPECT_EQ(1*24 + 1, buffer->size());
@@ -77,21 +75,21 @@ TEST(SyncRequestTest, CachedMulti)
   const Sensor_s sensors = (SetMaker<Sensor_s>() << sensor1 << sensor2).set();
 
   { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 06:00:00"));
-    TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor1), time);
+    TimeBuffer_p buffer = std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor1), time);
     buffer->syncRequest(ca);
     EXPECT_EQ(1, sqla->countPost());
     EXPECT_EQ(7, buffer->size());
   }
 
   { const TimeSpan time(s2t("2014-03-01 03:00:00"), s2t("2014-03-01 09:00:00"));
-    TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor2), time);
+    TimeBuffer_p buffer = std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor2), time);
     buffer->syncRequest(ca);
     EXPECT_EQ(2, sqla->countPost());
     EXPECT_EQ(7, buffer->size());
   }
 
   { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
-    TimeBuffer_p buffer = boost::make_shared<TimeBuffer>(sensors, time);
+    TimeBuffer_p buffer = std::make_shared<TimeBuffer>(sensors, time);
     buffer->syncRequest(ca);
     EXPECT_EQ(4, sqla->countPost());
     EXPECT_EQ(20, buffer->size());

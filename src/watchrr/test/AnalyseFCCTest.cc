@@ -14,7 +14,7 @@ TEST(AnalyseFCCTest, Basic)
   const TimeSpan time(t_44160_20121207());
   load_44160_20121207(fa);
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   FCC::analyse(eda, sensor, time);
 
@@ -24,7 +24,7 @@ TEST(AnalyseFCCTest, Basic)
     ASSERT_TRUE((bool)obs) << "t=" << t;
 
     bool hasTasks = false;
-    if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+    if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
       hasTasks = td->hasTasks();
     ASSERT_EQ((t==tBad1 or t==tBad2), hasTasks)  << "t=" << t;
   }
@@ -45,7 +45,7 @@ TEST(AnalyseFCCTest, SameObs)
   const TimeSpan time(s2t("2012-11-15 06:00:00"), s2t("2012-11-30 06:00:00"));
   load_31850_20121130(fa);
 
-  TaskAccess_p eda = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p eda = std::make_shared<TaskAccess>(fa.obsAccess());
   eda->newVersion();
   FCC::analyse(eda, sensor, time);
 
@@ -59,7 +59,7 @@ TEST(AnalyseFCCTest, SameObs)
       ObsData_p obs = eda->findE(SensorTime(ps, t + dt));
       if (obs) {
         bool hasTasks = false;
-        if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+        if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
           hasTasks = td->hasTasks();
         ASSERT_EQ(t==tBad, hasTasks)  << "t=" << t << " / p=" << ps.paramId;
       }

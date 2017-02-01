@@ -15,7 +15,7 @@ public:
       { return compare(a->sensorTime(), b->sensorTime()); }
     virtual bool compare(const SensorTime& a, const SensorTime& b) const = 0;
   };
-  typedef boost::shared_ptr<Ordering> Ordering_p;
+  typedef std::shared_ptr<Ordering> Ordering_p;
 
   struct OrderingHelper {
     OrderingHelper(Ordering_p o)

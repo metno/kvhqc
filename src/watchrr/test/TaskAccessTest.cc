@@ -9,14 +9,14 @@
 namespace /* anonymous */ {
 bool hasTasks(ObsData_p obs)
 {
-  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
     return td->hasTasks();
   else
     return false;
 }
 bool hasTask(ObsData_p obs, int task)
 {
-  if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
     return td->hasTask(task);
   else
     return false;
@@ -38,14 +38,14 @@ TEST(TaskAccessTest, Gap)
   // fa.insertData("2012-10-13 06:00:00",  -32767.0,       2.0, "0000001000007000", "QC1-7-110,QC2N_xx,QC2-redist,QC1-7-110");
   fa.insertData("2012-10-14 06:00:00",  -32767.0,       2.0, "0000001000007000", "QC1-7-110,QC2N_xx,QC2-redist,QC1-7-110");
 
-  TaskAccess_p tacc = boost::make_shared<TaskAccess>(fa.obsAccess());
+  TaskAccess_p tacc = std::make_shared<TaskAccess>(fa.obsAccess());
 
   ASSERT_FALSE(tacc->findE(st0));
 
   { tacc->newVersion();
     ObsUpdate_pv updates;
     
-    TaskUpdate_p up = boost::dynamic_pointer_cast<TaskUpdate>(tacc->createUpdate(st0));
+    TaskUpdate_p up = std::dynamic_pointer_cast<TaskUpdate>(tacc->createUpdate(st0));
     ASSERT_TRUE((bool)up);
     
     up->addTask(4);

@@ -64,7 +64,7 @@ private:
   static void initalizePlotOptions();
 
 private:
-  std::auto_ptr<Ui::TimeSeriesView> ui;
+  std::unique_ptr<Ui::TimeSeriesView> ui;
 
   QMenu* mColumnMenu;
   QAction* mColumnAdd;

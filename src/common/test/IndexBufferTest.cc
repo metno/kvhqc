@@ -4,8 +4,6 @@
 
 #include "util/make_set.hh"
 
-#include <boost/make_shared.hpp>
-
 #include <gtest/gtest.h>
 
 inline timeutil::ptime s2t(const std::string& t)
@@ -19,7 +17,7 @@ TEST(IndexBufferTest, Basic)
   const Sensor_s sensors = make_set<Sensor_s>(Sensor(18210, 211, 0, 0, 514));
   const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 06:00:00"));
 
-  { IndexBuffer_p buffer = boost::make_shared<IndexBuffer>(3600, sensors, time);
+  { IndexBuffer_p buffer = std::make_shared<IndexBuffer>(3600, sensors, time);
     buffer->syncRequest(sqla);
     EXPECT_EQ(7, buffer->size());
   }

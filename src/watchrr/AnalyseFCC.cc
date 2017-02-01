@@ -69,7 +69,7 @@ void analyse(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
       METLIBS_LOG_DEBUG(LOGVAL(t));
       for(int i=0; i<N_COLUMNS; ++i) {
         if (obs[i]) {
-          TaskUpdate_p up = boost::static_pointer_cast<TaskUpdate>(da->createUpdate(obs[i]));
+          TaskUpdate_p up = std::static_pointer_cast<TaskUpdate>(da->createUpdate(obs[i]));
           up->addTask(tasks::TASK_FCC_ERROR);
           updates.push_back(up);
         }
@@ -91,7 +91,7 @@ void acceptRow(TaskAccess_p da, const Sensor& sensor, const timeutil::ptime& tim
   ObsUpdate_pv updates;
   for(int i=0; i<N_COLUMNS; ++i) {
     if (ObsData_p obs = da->findE(SensorTime(sensors[i], timeWithOffset(time, i)))) {
-      TaskUpdate_p up = boost::static_pointer_cast<TaskUpdate>(da->createUpdate(obs));
+      TaskUpdate_p up = std::static_pointer_cast<TaskUpdate>(da->createUpdate(obs));
       Helpers::changeControlinfo(up, accept_fcc);
       up->clearTask(tasks::TASK_FCC_ERROR);
       updates.push_back(up);

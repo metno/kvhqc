@@ -15,6 +15,7 @@ class HideApplyBox : public QWidget
 
 public:
   HideApplyBox(QWidget* parent);
+  ~HideApplyBox();
 
   void setCanApply(bool enabled);
 
@@ -29,7 +30,7 @@ private Q_SLOTS:
   void hideApply();
 
 private:
-  std::auto_ptr<Ui::HideApplyBox> ui;
+  std::unique_ptr<Ui::HideApplyBox> ui;
 };
 
 #endif // UTIL_GUI_HIDEAPPLYBOX_HH

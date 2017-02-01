@@ -7,8 +7,6 @@
 #include "SignalRequest.hh"
 #include "util/Synchronizer.hh"
 
-#include <boost/make_shared.hpp>
-
 #if 0
 ObsRequest_p syncRequest(ObsRequest_p request, ObsAccess_p access)
 {

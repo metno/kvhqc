@@ -4,7 +4,7 @@
 
 #include "DeleteTaskWhenDone.hh"
 #include <QObject>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 class QueryTask;
 class QueryTaskHandler;
@@ -27,7 +27,7 @@ public:
    */
   void post(QueryTaskHandler* handler, bool synchronized=false);
 
-  void post(boost::shared_ptr<QueryTaskHandler> handler, bool synchronized=false)
+  void post(std::shared_ptr<QueryTaskHandler> handler, bool synchronized=false)
     { post(handler.get(), synchronized); }
 
   /*! Drop the task from the handler's queue. Even if the task is

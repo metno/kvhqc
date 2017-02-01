@@ -6,7 +6,7 @@
 namespace {
 int extractTasks(ObsData_p obs)
 {
-  if (TaskData_p tobs = boost::dynamic_pointer_cast<TaskData>(obs))
+  if (TaskData_p tobs = std::dynamic_pointer_cast<TaskData>(obs))
     return tobs->allTasks();
   else
     return 0;

@@ -14,7 +14,6 @@
 #include <QtGui/QFont>
 
 #include <boost/foreach.hpp>
-#include <boost/make_shared.hpp>
 
 #include <algorithm>
 
@@ -127,7 +126,7 @@ int ErrorListModel::ErrorTreeItem::row() const
 
 ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
   : mDA(eda)
-  , mModelBuffer(boost::make_shared<ModelBuffer>(mda))
+  , mModelBuffer(std::make_shared<ModelBuffer>(mda))
   , mRootItem(0)
   , mHighlightedStation(-1)
   , mHideResolved(true)
@@ -153,8 +152,8 @@ void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, boo
   endResetModel();
 
   if (mDA and limits.closed()) {
-    ErrorFilter_p filter = boost::make_shared<ErrorFilter>(errorsForSalen);
-    mObsBuffer = boost::make_shared<TimeBuffer>(Sensor_s(sensors.begin(), sensors.end()),
+    ErrorFilter_p filter = std::make_shared<ErrorFilter>(errorsForSalen);
+    mObsBuffer = std::make_shared<TimeBuffer>(Sensor_s(sensors.begin(), sensors.end()),
         limits, filter);
 
     TimeBuffer* b = mObsBuffer.get();
@@ -349,7 +348,7 @@ void ErrorListModel::highlightStation(int stationID)
 
 bool ErrorListModel::isError(ObsData_p obs) const
 {
-  ErrorFilter_p filter = boost::static_pointer_cast<ErrorFilter>(mObsBuffer->request()->filter());
+  ErrorFilter_p filter = std::static_pointer_cast<ErrorFilter>(mObsBuffer->request()->filter());
   return filter->accept(obs, false);
 }
 

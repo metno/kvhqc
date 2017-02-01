@@ -2,7 +2,6 @@
 #include "SortedBuffer.hh"
 
 #include "TimeBuffer.hh"
-#include <boost/make_shared.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.SortedBuffer"
 #include "common/ObsLogging.hh"

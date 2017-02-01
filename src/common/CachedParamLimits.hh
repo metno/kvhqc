@@ -25,7 +25,7 @@ private:
   void fetchLimitsFromSystemDB(const SensorTime& st);
 
 private:
-  boost::shared_ptr<QueryTaskHandler> mHandler;
+  std::shared_ptr<QueryTaskHandler> mHandler;
 
   Sensor sensor;
   timeutil::ptime fromtime, totime;
