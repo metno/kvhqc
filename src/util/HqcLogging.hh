@@ -2,16 +2,7 @@
 #ifndef HQC_LOGGING_HH
 #define HQC_LOGGING_HH 1
 
-#include <Qt/qglobal.h>
-#include <iosfwd>
-
-QT_BEGIN_NAMESPACE;
-class QString;
-QT_END_NAMESPACE;
-
-std::ostream& operator<<(std::ostream& out, const QString& qs);
-
-#include <miLogger/miLogging.h>
+#include <qUtilities/miLoggingQt.h>
 
 extern bool HqcLoggingWarnOrError;
 
@@ -36,7 +27,7 @@ extern bool HqcLoggingWarnOrError;
   do { count_contruct += 1;                                             \
     METLIBS_LOG_DEBUG("this=" << this << " count=" << count_contruct);  \
   } while(0)
-  
+
 #define LOG_DESTRUCT() \
   do { count_contruct -= 1;                                             \
     METLIBS_LOG_DEBUG("this=" << this << " count=" << count_contruct);  \
