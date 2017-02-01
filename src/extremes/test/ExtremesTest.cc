@@ -155,13 +155,13 @@ TEST(ExtremesTest, TableModelUpdateTAX)
   const float newC = 20.0;
 
   { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE(obs0);
+    ASSERT_TRUE((bool)obs0);
     EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime()));
     EXPECT_FLOAT_EQ(16.8, obs0->corrected());
   }
 
   { ObsData_p obs1 = tm.getObs(1);
-    ASSERT_TRUE(obs1);
+    ASSERT_TRUE((bool)obs1);
     EXPECT_TRUE(eq_SensorTime()(st1, obs1->sensorTime()));
     EXPECT_FLOAT_EQ(15.7, obs1->corrected());
 
@@ -169,7 +169,7 @@ TEST(ExtremesTest, TableModelUpdateTAX)
     ObsUpdate_pv updates;
     
     ObsUpdate_p up = edit->createUpdate(obs1);
-    ASSERT_TRUE(up);
+    ASSERT_TRUE((bool)up);
     
     up->setCorrected(newC);
     updates.push_back(up);
@@ -179,7 +179,7 @@ TEST(ExtremesTest, TableModelUpdateTAX)
   }
 
   { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE(obs0);
+    ASSERT_TRUE((bool)obs0);
     EXPECT_TRUE(eq_SensorTime()(st1, obs0->sensorTime())) << obs0->sensorTime();
     EXPECT_FLOAT_EQ(newC, obs0->corrected());
   }
@@ -187,7 +187,7 @@ TEST(ExtremesTest, TableModelUpdateTAX)
   edit->undoVersion();
 
   { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE(obs0);
+    ASSERT_TRUE((bool)obs0);
     EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime()));
     EXPECT_FLOAT_EQ(16.8, obs0->corrected());
   }

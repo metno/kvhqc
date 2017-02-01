@@ -143,18 +143,18 @@ TEST(CachingAccessTest, SingleObsAfterRange)
   { const SensorTime st(sensor, s2t("2013-04-01 00:00:00"));
     SingleObsBuffer_p obs1(new SingleObsBuffer(st));
     obs1->postRequest(ca);
-    EXPECT_TRUE(obs1->get());
+    EXPECT_TRUE((bool)obs1->get());
   }
 
   { const SensorTime st(sensor, s2t("2013-04-01 01:00:00"));
     SingleObsBuffer_p obs1(new SingleObsBuffer(st));
     obs1->postRequest(ca);
-    EXPECT_TRUE(obs1->get());
+    EXPECT_TRUE((bool)obs1->get());
   }
   { const SensorTime st(sensor, s2t("2013-04-01 03:00:00"));
     SingleObsBuffer_p obs1(new SingleObsBuffer(st));
     obs1->postRequest(ca);
-    EXPECT_TRUE(obs1->get());
+    EXPECT_TRUE((bool)obs1->get());
   }
 }
 
@@ -170,7 +170,7 @@ TEST(CachingAccessTest, SingleObs)
   { const SensorTime st(sensor, s2t("2013-04-01 00:00:00"));
     SingleObsBuffer_p obs1(new SingleObsBuffer(st));
     obs1->postRequest(ca);
-    EXPECT_TRUE(obs1->get());
+    EXPECT_TRUE((bool)obs1->get());
   }
 }
 
@@ -200,21 +200,21 @@ TEST(CachingAccessTest, Update)
     ObsUpdate_pv updated;
     
     ObsData_p obs = counter1->get(SensorTime(sensor, time1.t0()));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE((bool)obs);
     ObsUpdate_p ou = ca->createUpdate(obs);
-    ASSERT_TRUE(ou);
+    ASSERT_TRUE((bool)ou);
     ou->setCorrected(-12.3);
     updated.push_back(ou);
     
     obs = counter1->get(SensorTime(sensor, s2t("2013-04-01 01:00:00")));
-    ASSERT_TRUE(obs);
+    ASSERT_TRUE((bool)obs);
     ou = ca->createUpdate(obs);
-    ASSERT_TRUE(ou);
+    ASSERT_TRUE((bool)ou);
     ou->setCorrected(-21.0);
     updated.push_back(ou);
     
     ou = ca->createUpdate(SensorTime(sensor, s2t("2013-04-01 00:30:00")));
-    ASSERT_TRUE(ou);
+    ASSERT_TRUE((bool)ou);
     ou->setCorrected(-1.0);
     updated.push_back(ou);
     

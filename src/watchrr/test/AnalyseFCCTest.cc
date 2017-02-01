@@ -21,7 +21,7 @@ TEST(AnalyseFCCTest, Basic)
   const timeutil::ptime tBad1 = s2t("2012-11-30 06:00:00"), tBad2 = s2t("2012-12-01 06:00:00");
   for (timeutil::ptime t = time.t0(); t < time.t1(); t += boost::gregorian::days(1)) {
     ObsData_p obs = eda->findE(SensorTime(sensor, t));
-    ASSERT_TRUE(obs) << "t=" << t;
+    ASSERT_TRUE((bool)obs) << "t=" << t;
 
     bool hasTasks = false;
     if (TaskData_p td = boost::dynamic_pointer_cast<TaskData>(obs))

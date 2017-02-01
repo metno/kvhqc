@@ -23,7 +23,7 @@ public:
     { mDataReinserter = reinserter; }
 
   bool hasReinserter() const
-    { return mDataReinserter; }
+    { return (bool)mDataReinserter; }
 
 private Q_SLOTS:
   virtual void onUpdated(const hqc::kvData_v&);

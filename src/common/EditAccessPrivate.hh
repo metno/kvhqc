@@ -34,12 +34,12 @@ public:
 
   ObsData_p versionData(size_t version) const;
   bool hasVersion(size_t version) const
-    { return versionData(version); }
+    { return (bool)versionData(version); }
 
   void updateBackend(ObsData_p backendData);
 
   bool hasBackendData() const
-    { return backendData(); }
+    { return (bool)backendData(); }
 
   size_t currentVersion() const
     { return mVersions[mCurrent].version; }

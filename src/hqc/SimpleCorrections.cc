@@ -243,7 +243,7 @@ void SimpleCorrections::enableEditing()
   bool enableAcceptModel = (p & AcceptReject::CAN_ACCEPT_CORRECTED) != 0;
   if (enableAcceptModel) {
     ModelData_p mdl = mModelBuffer->get(mSensorTime);
-    enableAcceptModel = mdl;
+    enableAcceptModel = (bool)mdl;
   }
   ui->buttonAcceptModel->setEnabled(enableAcceptModel);
 

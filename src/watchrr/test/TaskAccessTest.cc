@@ -46,7 +46,7 @@ TEST(TaskAccessTest, Gap)
     ObsUpdate_pv updates;
     
     TaskUpdate_p up = boost::dynamic_pointer_cast<TaskUpdate>(tacc->createUpdate(st0));
-    ASSERT_TRUE(up);
+    ASSERT_TRUE((bool)up);
     
     up->addTask(4);
     updates.push_back(up);
@@ -54,6 +54,6 @@ TEST(TaskAccessTest, Gap)
   }
     
   ObsData_p obs = tacc->findE(st0);
-  ASSERT_TRUE(obs);
+  ASSERT_TRUE((bool)obs);
   ASSERT_TRUE(hasTask(obs, 4));
 }

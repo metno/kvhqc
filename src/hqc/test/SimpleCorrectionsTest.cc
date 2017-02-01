@@ -84,14 +84,14 @@ void TestSimpleCorrections::testGui()
       ObsUpdate_pv updates;
     
       ObsUpdate_p up = ts.eda->createUpdate(st1);
-      QVERIFY(up);
+      QVERIFY((bool)up);
     
       up->setCorrected(newC);
       updates.push_back(up);
       QVERIFY(ts.eda->storeUpdates(updates));
     }
     
-    QVERIFY(counter->get(st1));
+    QVERIFY((bool)counter->get(st1));
     QCOMPARE(ui_corrected->currentText(), newCtext);
 
     ts.eda->undoVersion();
@@ -100,7 +100,7 @@ void TestSimpleCorrections::testGui()
     QVERIFY(ui_corrected->currentText().isEmpty());
 
     ts.eda->redoVersion();
-    QVERIFY(counter->get(st1));
+    QVERIFY((bool)counter->get(st1));
     QCOMPARE(ui_corrected->currentText(), newCtext);
   }
 
@@ -129,7 +129,7 @@ void TestSimpleCorrections::testGui()
     ui_corrected->setEditText(newCtext);
     QTest::keyClick(ui_corrected, Qt::Key_Return);
     
-    QVERIFY(counter->get(st2));
+    QVERIFY((bool)counter->get(st2));
     QCOMPARE(ui_corrected->currentText(), newCtext);
 
     ts.eda->undoVersion();
@@ -138,7 +138,7 @@ void TestSimpleCorrections::testGui()
     QVERIFY(ui_corrected->currentText().isEmpty());
 
     ts.eda->redoVersion();
-    QVERIFY(counter->get(st2));
+    QVERIFY((bool)counter->get(st2));
     QCOMPARE(ui_corrected->currentText(), newCtext);
   }
 }

@@ -727,7 +727,7 @@ TEST(EditAccessTest, InsertData)
     ObsUpdate_pv updates;
     
     ObsUpdate_p up = ea->createUpdate(st0);
-    ASSERT_TRUE(up);
+    ASSERT_TRUE((bool)up);
     
     up->setCorrected(newC);
     updates.push_back(up);
@@ -736,7 +736,7 @@ TEST(EditAccessTest, InsertData)
     
   EXPECT_EQ(3, counter->size());
   EXPECT_EQ(1, counter->countNew);
-  ASSERT_TRUE(counter->get(st0));
+  ASSERT_TRUE((bool)counter->get(st0));
   EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
   EXPECT_EQ(1, ea->countU());
 
@@ -751,7 +751,7 @@ TEST(EditAccessTest, InsertData)
   ea->redoVersion();
   EXPECT_EQ(3, counter->size());
   EXPECT_EQ(2, counter->countNew);
-  ASSERT_TRUE(counter->get(st0));
+  ASSERT_TRUE((bool)counter->get(st0));
   EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
   EXPECT_EQ(1, ea->countU());
 }
