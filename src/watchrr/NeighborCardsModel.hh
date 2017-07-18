@@ -6,7 +6,7 @@
 #include "common/DataItem.hh"
 #include <vector>
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class NeighborCardsModel : public QAbstractTableModel
 {   Q_OBJECT;

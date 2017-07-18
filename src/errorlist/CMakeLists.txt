@@ -7,13 +7,13 @@ SET(errorlist_SOURCES
   ErrorSearchDialog.cc
 )
 
-QT4_WRAP_CPP(errorlist_MOC
+QT5_WRAP_CPP(errorlist_MOC
   ErrorList.hh
   ErrorListModel.hh
   ErrorSearchDialog.hh
 )
 
-QT4_WRAP_UI(errorlist_UIH
+QT5_WRAP_UI(errorlist_UIH
   errorlist.ui
   error_search_dialog.ui
 )

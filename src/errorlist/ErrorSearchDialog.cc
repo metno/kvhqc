@@ -35,13 +35,13 @@
 #include "common/TimeSpanControl.hh"
 #include "util/timeutil.hh"
 
-#include <QtCore/QSettings>
-#include <QtGui/QInputDialog>
-#include <QtGui/QMessageBox>
-#include <QtGui/QSortFilterProxyModel>
-#include <QtGui/QStandardItem>
-#include <QtGui/QStandardItemModel>
-#include <QtSql/QSqlQuery>
+#include <QSettings>
+#include <QInputDialog>
+#include <QMessageBox>
+#include <QSortFilterProxyModel>
+#include <QStandardItem>
+#include <QStandardItemModel>
+#include <QSqlQuery>
 
 #include <boost/foreach.hpp>
 
@@ -228,7 +228,7 @@ void ErrorSearchDialog::setupStationTab()
 
   ui->treeStations->expandAll();
   ui->treeStations->header()->resizeSections(QHeaderView::ResizeToContents);
-  ui->treeStations->header()->setResizeMode(QHeaderView::Interactive);
+  ui->treeStations->header()->setSectionResizeMode(QHeaderView::Interactive);
   ui->treeStations->collapseAll();
 
   ui->treeStations->setSelectionMode(QAbstractItemView::NoSelection);

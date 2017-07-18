@@ -8,7 +8,7 @@
 #include "common/TypeIdModel.hh"
 #include "common/TimeSpanControl.hh"
 
-#include <QtGui/QHeaderView>
+#include <QHeaderView>
 
 #include <boost/foreach.hpp>
 
@@ -39,7 +39,7 @@ MissingView::MissingView(QWidget* parent)
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   connect(mMissingModel.get(), SIGNAL(modelReset()), this, SLOT(onModelReset()));
 
-  ui->tableMissing->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableMissing->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tableMissing->verticalHeader()->setDefaultSectionSize(20);
   ui->tableMissing->verticalHeader()->hide();
   ui->tableMissing->setSelectionBehavior(QTableView::SelectRows);

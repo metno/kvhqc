@@ -71,10 +71,10 @@
 #include "SimpleCorrections.hh"
 #endif // ENABLE_SIMPLECORRECTIONS
 
-#include <QtCore/QSettings>
-#include <QtCore/QSignalMapper>
-#include <QtGui/QShortcut>
-#include <QtGui/QSplitter>
+#include <QSettings>
+#include <QSignalMapper>
+#include <QShortcut>
+#include <QSplitter>
 
 #define MILOGGER_CATEGORY "kvhqc.SearchWindow"
 #include "common/ObsLogging.hh"

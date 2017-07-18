@@ -6,7 +6,7 @@
 #include "common/TimeSpan.hh"
 #include "common/TypeIdModel.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include <memory>
 

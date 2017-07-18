@@ -1,7 +1,9 @@
 // based on http://doc.qt.digia.com/main-snapshot/itemviews-frozencolumn.html
 
 #include "FrozenColumnTableView.hh"
-#include <QtGui>
+
+#include <QHeaderView>
+#include <QScrollBar>
 
 FrozenColumnTableView::FrozenColumnTableView(QWidget* parent)
     : QTableView(parent)
@@ -61,7 +63,7 @@ void FrozenColumnTableView::init()
 {
     frozenTableView->setFocusPolicy(Qt::NoFocus);
     frozenTableView->verticalHeader()->hide();
-    frozenTableView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+    frozenTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
     viewport()->stackUnder(frozenTableView);
 

@@ -2,7 +2,7 @@
 #ifndef MiDateTimeEdit_hh
 #define MiDateTimeEdit_hh 1
 
-#include <QtGui/QDateTimeEdit>
+#include <QDateTimeEdit>
 
 /**
  * @brief A QDateTimeEdit with different arrow up/down behavior.

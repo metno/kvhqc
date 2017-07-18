@@ -3,7 +3,7 @@
 #define EditVersionModel_hh 1
 
 #include "common/EditAccess.hh"
-#include <QtCore/QAbstractItemModel>
+#include <QAbstractItemModel>
 #include <vector>
 
 class EditVersionModel : public QAbstractItemModel

@@ -1,5 +1,4 @@
-#include <QtGui>
-#include <QtTest/QtTest>
+#include <QtTest/QtTestGui>
 
 class TestSensorChooser : public QObject
 {

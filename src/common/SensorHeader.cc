@@ -5,7 +5,7 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "util/stringutil.hh"
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 SensorHeader::SensorHeader(const Sensor& sensor, When showStation, When showParam, int timeOffset)
   : mSensor(sensor)

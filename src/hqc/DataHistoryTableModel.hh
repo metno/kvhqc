@@ -8,7 +8,7 @@
 #include "common/QueryTaskHandler.hh"
 #include "common/Sensor.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class DataHistoryQueryTask;
 

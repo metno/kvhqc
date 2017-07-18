@@ -3,7 +3,7 @@
 #define COMMON_ABSCTRACTUPDATELISTENER_HH 1
 
 #include "KvTypedefs.hh"
-#include <QtCore/QObject>
+#include <QObject>
 #include <vector>
 
 class AbstractUpdateListener : public QObject

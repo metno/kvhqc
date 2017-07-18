@@ -5,7 +5,7 @@
 #include "common/DataItem.hh"
 #include "common/Sensor.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class SensorHeader
 {

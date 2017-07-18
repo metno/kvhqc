@@ -5,7 +5,7 @@
 #include "KvMetaDataBuffer.hh"
 #include "util/Helpers.hh"
 
-#include <QtGui/QBrush>
+#include <QBrush>
 
 #include <boost/foreach.hpp>
 

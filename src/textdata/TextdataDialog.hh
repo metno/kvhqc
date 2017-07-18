@@ -4,8 +4,8 @@
 #define HQC_TEXTDATADIALOG_H
 
 #include "common/TimeSpan.hh"
-#include <QtGui/qdialog.h>
-#include <QtCore/qdatetime.h>
+#include <qdialog.h>
+#include <qdatetime.h>
 
 class Q3VBoxLayout;
 class Q3HBoxLayout;

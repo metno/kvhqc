@@ -10,11 +10,11 @@
 
 #include "util/ChangeReplay.hh"
 
-#include <QtGui/QHeaderView>
-#include <QtGui/QMenu>
-#include <QtGui/QPushButton>
+#include <QHeaderView>
+#include <QMenu>
+#include <QPushButton>
 
-#include <QtXml/QDomElement>
+#include <QDomElement>
 
 #include "ui_datalist.h"
 

@@ -7,7 +7,7 @@ SET(textdata_SOURCES
   TxtDat.hh
 )
 
-QT4_WRAP_CPP(textdata_MOC
+QT5_WRAP_CPP(textdata_MOC
   TextdataDialog.hh
   TextdataTable.hh
 )

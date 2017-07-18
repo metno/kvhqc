@@ -2,7 +2,7 @@
 #ifndef UTIL_GUI_HIDEAPPLYBOX_HH
 #define UTIL_GUI_HIDEAPPLYBOX_HH 1
 
-#include <QtGui/QWidget>
+#include <QWidget>
 #include <memory>
 
 namespace Ui {

@@ -9,11 +9,11 @@
 #include "util/make_set.hh"
 #include "util/UiHelpers.hh"
 
-#include <QtCore/QEvent>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QItemSelection>
-#include <QtGui/QTableView>
-#include <QtGui/QToolButton>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QItemSelection>
+#include <QTableView>
+#include <QToolButton>
 
 #define MILOGGER_CATEGORY "kvhqc.ToolInterpolate"
 #include "common/ObsLogging.hh"

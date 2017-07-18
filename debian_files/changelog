@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a2-1) unstable; urgency=low
+
+  * adapt for Qt5
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 18 Jul 2017 12:57:52 +0200
+
 kvhqc-4.1 (4.1.0~a1-1) unstable; urgency=low
 
   * adapt for kvalobs v4

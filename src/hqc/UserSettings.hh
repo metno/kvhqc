@@ -2,8 +2,8 @@
 #ifndef HQC_USERSETTINGS_HH
 #define HQC_USERSETTINGS_HH 1
 
-#include <QtGui/QDialog>
-#include <QtGui/QLabel>
+#include <QDialog>
+#include <QLabel>
 #include <memory>
 
 namespace Ui {

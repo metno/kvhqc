@@ -8,10 +8,10 @@
 #include "Tasks.hh"
 #include "util/stringutil.hh"
 
-#include <QtCore/QStringList>
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QFont>
+#include <QStringList>
+#include <QVariant>
+#include <QApplication>
+#include <QFont>
 
 #define MILOGGER_CATEGORY "kvhqc.DataVxItem"
 #include "common/ObsLogging.hh"

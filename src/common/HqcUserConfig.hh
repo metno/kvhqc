@@ -2,8 +2,8 @@
 #ifndef COMMON_HQCUSERCONFIG_HH
 #define COMMON_HQCUSERCONFIG_HH 1
 
-#include <QtCore/QMap>
-#include <QtGui/QBrush>
+#include <QMap>
+#include <QBrush>
 
 class HqcUserConfig {
 public:

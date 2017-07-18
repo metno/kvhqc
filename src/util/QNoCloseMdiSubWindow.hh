@@ -2,8 +2,8 @@
 #ifndef QNoCloseMdiSubWindow_hh
 #define QNoCloseMdiSubWindow_hh 1
 
-#include <QtGui/QCloseEvent>
-#include <QtGui/QMdiSubWindow>
+#include <QCloseEvent>
+#include <QMdiSubWindow>
 
 class QNoCloseMdiSubWindow : public QMdiSubWindow {
 public:

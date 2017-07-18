@@ -6,6 +6,8 @@
 #include "ModelData.hh"
 #include "QueryTaskHandler.hh"
 
+#include <QObject>
+
 class ModelRequest;
 HQC_TYPEDEF_P(ModelRequest);
 HQC_TYPEDEF_PV(ModelRequest);

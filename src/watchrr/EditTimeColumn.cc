@@ -1,7 +1,7 @@
 
 #include "EditTimeColumn.hh"
 
-#include <QtGui/QBrush>
+#include <QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.EditTimeColumn"
 #include "util/HqcLogging.hh"

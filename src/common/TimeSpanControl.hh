@@ -3,7 +3,7 @@
 #define TimeSpanControl_hh 1
 
 #include "common/TimeSpan.hh"
-#include <QtCore/QObject>
+#include <QObject>
 
 class MiDateTimeEdit;
 

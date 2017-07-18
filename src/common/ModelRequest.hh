@@ -4,7 +4,7 @@
 
 #include "ModelData.hh"
 #include "util/TaggedObject.hh"
-#include <QtCore/QObject>
+#include <QObject>
 
 class ModelRequest : public QObject, public TaggedObject
 { Q_OBJECT;

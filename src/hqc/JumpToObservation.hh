@@ -4,7 +4,7 @@
 
 #include "common/ObsAccess.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 class Sensor;
 class SensorChooser;

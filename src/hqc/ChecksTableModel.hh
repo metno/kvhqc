@@ -5,8 +5,8 @@
 
 #include "common/ObsData.hh"
 
-#include <QtCore/QAbstractTableModel>
-#include <QtCore/QStringList>
+#include <QAbstractTableModel>
+#include <QStringList>
 
 #include <vector>
 

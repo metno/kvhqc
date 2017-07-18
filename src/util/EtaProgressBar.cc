@@ -1,7 +1,7 @@
 
 #include "EtaProgressBar.hh"
 
-#include <QtCore/QDateTime>
+#include <QDateTime>
 
 #define MILOGGER_CATEGORY "kvhqc.EtaProgressBar"
 #include "util/HqcLogging.hh"

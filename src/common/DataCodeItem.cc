@@ -4,6 +4,8 @@
 #define MILOGGER_CATEGORY "kvhqc.DataCodeItem"
 #include "util/HqcLogging.hh"
 
+#include <QColor>
+
 DataCodeItem::DataCodeItem(ObsColumn::Type columnType, Code2TextCPtr codes)
   : DataValueItem(columnType)
   , mCodes(codes)
@@ -30,7 +32,7 @@ QVariant DataCodeItem::data(ObsData_p obs, const SensorTime& st, int role) const
     
     if (role == Qt::ForegroundRole) {
       if (mCodes->isCode(getValue(obs)))
-        return Qt::darkGray;
+        return QColor(Qt::darkGray);
     } else if (role == Qt::DisplayRole) {
       return mCodes->asText(getValue(obs), false);
     } else if (role == Qt::EditRole) {

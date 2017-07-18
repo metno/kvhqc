@@ -64,16 +64,16 @@
 
 #include <qUtilities/qtHelpDialog.h>
 
-#include <QtCore/QFile>
-#include <QtCore/QSettings>
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtCore/QTimer>
-#include <QtCore/QUrl>
-#include <QtGui/QCloseEvent>
-#include <QtGui/QDesktopServices>
-#include <QtGui/QLabel>
-#include <QtGui/QMessageBox>
+#include <QFile>
+#include <QSettings>
+#include <QFile>
+#include <QTextStream>
+#include <QTimer>
+#include <QUrl>
+#include <QCloseEvent>
+#include <QDesktopServices>
+#include <QLabel>
+#include <QMessageBox>
 
 #include "ui_appwindow.h"
 

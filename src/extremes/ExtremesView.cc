@@ -8,7 +8,7 @@
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpanControl.hh"
 
-#include <QtGui/QHeaderView>
+#include <QHeaderView>
 
 #include <boost/foreach.hpp>
 
@@ -29,7 +29,7 @@ ExtremesView::ExtremesView(QWidget* parent)
   mBusy = new BusyLabel(this);
   ui->topRow->addWidget(mBusy);
 
-  ui->tableExtremes->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableExtremes->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tableExtremes->verticalHeader()->setDefaultSectionSize(20);
   ui->tableExtremes->verticalHeader()->hide();
   ui->tableExtremes->setSelectionBehavior(QTableView::SelectRows);

@@ -4,7 +4,7 @@
 
 #include "AutoDataList.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <set>
 
 class Sensor;

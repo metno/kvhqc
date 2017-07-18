@@ -3,7 +3,7 @@
 
 #include "util/stringutil.hh"
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 namespace /*anonymous*/ {
 void append(QString& text, const QString& taskText)

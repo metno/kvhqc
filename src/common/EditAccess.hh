@@ -5,7 +5,7 @@
 #include "KvalobsData.hh"
 #include "KvalobsUpdate.hh"
 #include "ObsAccess.hh"
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <memory>
 class EditAccessPrivate;

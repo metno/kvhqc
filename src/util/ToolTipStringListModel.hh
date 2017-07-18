@@ -2,7 +2,7 @@
 #ifndef ToolTipStringListModel_hh
 #define ToolTipStringListModel_hh 1
 
-#include <QtGui/QStringListModel>
+#include <QStringListModel>
 
 class ToolTipStringListModel : public QStringListModel {
 public:

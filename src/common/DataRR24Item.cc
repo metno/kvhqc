@@ -3,8 +3,8 @@
 
 #include "ObsHelpers.hh"
 
-#include <QtCore/QVariant>
-#include <QtGui/QBrush>
+#include <QVariant>
+#include <QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.DataRR24Item"
 #include "util/HqcLogging.hh"

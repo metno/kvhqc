@@ -5,7 +5,7 @@
 #include "Sensor.hh"
 #include "KvTypedefs.hh"
 
-#include <QtCore/QObject> 
+#include <QObject> 
 
 #include <map>
 

@@ -1,5 +1,5 @@
 #include <QtGui>
-#include <QtTest/QtTest>
+#include <QtTest>
 
 class TestSimpleCorrections : public QObject
 {

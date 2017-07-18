@@ -33,8 +33,8 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #define _qtqtutil_h
 
 #include <vector>
-#include <QtGui/QPixmap>
-#include <QtGui/QLabel>
+#include <QPixmap>
+#include <QLabel>
 
 class QPushButton;
 class QComboBox;

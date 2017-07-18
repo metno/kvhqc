@@ -23,12 +23,12 @@ SET(hqc_SOURCES
   UserSettings.cc
 )
 
-QT4_ADD_TRANSLATION(hqc_QM
+QT5_ADD_TRANSLATION(hqc_QM
   hqc_nb.ts
   hqc_de.ts
 )
 
-QT4_WRAP_CPP(hqc_MOC
+QT5_WRAP_CPP(hqc_MOC
   AbstractDataView.hh
   AutoDataList.hh
   DataHistoryTableModel.hh
@@ -50,7 +50,7 @@ QT4_WRAP_CPP(hqc_MOC
   UserSettings.hh
 )
 
-QT4_WRAP_UI(hqc_UIH
+QT5_WRAP_UI(hqc_UIH
   appwindow.ui
   datalist.ui
   dl_addcolumn.ui
@@ -98,7 +98,7 @@ SET(HQC_COMMON_LIBS
 TARGET_LINK_LIBRARIES(hqc
   hqc_common
   ${HQC_COMMON_LIBS}
-  -lldap
+  ldap
 )
 
 INSTALL(TARGETS hqc DESTINATION bin)

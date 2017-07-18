@@ -3,8 +3,8 @@
 
 #include "common/HqcApplication.hh"
 
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QCoreApplication>
 #include <QLocale>
 #include <QVariant>

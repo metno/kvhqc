@@ -2,7 +2,7 @@
 #ifndef UTIL_GUI_ETAPROGRESSBAR_HH
 #define UTIL_GUI_ETAPROGRESSBAR_HH 1
 
-#include <QtGui/QProgressBar>
+#include <QProgressBar>
 
 class EtaProgressBar : public QProgressBar {
   Q_OBJECT;

@@ -4,7 +4,7 @@
 
 #include "util/timeutil.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class TimeHeader
 {

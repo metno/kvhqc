@@ -2,7 +2,7 @@
 #ifndef UTIL_HELPERS_HH
 #define UTIL_HELPERS_HH 1
 
-#include <QtCore/QString>
+#include <QString>
 
 #include <memory>
 #include <string>

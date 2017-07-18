@@ -4,7 +4,7 @@
 
 #include "common/Sensor.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 class SensorChooser;
 namespace Ui {

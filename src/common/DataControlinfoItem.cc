@@ -3,9 +3,9 @@
 
 #include "KvHelpers.hh"
 
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QFont>
+#include <QVariant>
+#include <QApplication>
+#include <QFont>
 
 DataControlinfoItem::DataControlinfoItem()
 {

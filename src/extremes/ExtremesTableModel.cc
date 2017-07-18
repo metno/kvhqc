@@ -6,6 +6,8 @@
 #include "common/KvMetaDataBuffer.hh"
 
 #include <kvalobs/kvDataOperations.h>
+
+#include <QColor>
 #include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.ExtremesTableModel"
@@ -145,9 +147,9 @@ QVariant ExtremesTableModel::data(const QModelIndex& index, int role) const
       const kvalobs::kvControlInfo ci(obs->controlinfo());
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (ci.qc2dDone())
-          return Qt::darkMagenta;
+          return QColor(Qt::darkMagenta);
         else if (ci.flag(kvalobs::flag::fnum) >= 6)
-          return Qt::red;
+          return QColor(Qt::red);
       }
     } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR)) {
       return Qt::AlignRight+Qt::AlignVCenter;

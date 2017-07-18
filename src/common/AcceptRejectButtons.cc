@@ -8,12 +8,12 @@
 #include "common/SingleObsBuffer.hh"
 #include "util/UiHelpers.hh"
 
-#include <QtCore/QEvent>
-#include <QtGui/QCheckBox>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QItemSelection>
-#include <QtGui/QTableView>
-#include <QtGui/QToolButton>
+#include <QEvent>
+#include <QCheckBox>
+#include <QHBoxLayout>
+#include <QItemSelection>
+#include <QTableView>
+#include <QToolButton>
 
 #include <boost/foreach.hpp>
 

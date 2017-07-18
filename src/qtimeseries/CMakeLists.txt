@@ -11,7 +11,7 @@ SET(qtimeseries_SOURCES
   TSglwidget.cc
 )
 
-QT4_WRAP_CPP(qtimeseries_MOC
+QT5_WRAP_CPP(qtimeseries_MOC
   TSglwidget.h
 )
 

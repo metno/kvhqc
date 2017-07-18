@@ -2,8 +2,8 @@
 #include "DataItem.hh"
 #include "ObsColumn.hh"
 
-#include <QtCore/QStringList>
-#include <QtCore/QVariant>
+#include <QStringList>
+#include <QVariant>
 
 DataItem::~DataItem()
 {

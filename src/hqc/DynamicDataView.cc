@@ -5,7 +5,7 @@
 #include "util/ChangeReplay.hh"
 #include "util/Helpers.hh"
 
-#include <QtXml/QDomElement>
+#include <QDomElement>
 
 #define MILOGGER_CATEGORY "kvhqc.DynamicDataView"
 #include "common/ObsLogging.hh"

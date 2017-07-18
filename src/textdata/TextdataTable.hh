@@ -6,8 +6,8 @@
 #include "TxtDat.hh"
 #include "common/TimeSpan.hh"
 
-#include <QtGui/QDialog>
-#include <QtCore/QAbstractTableModel>
+#include <QDialog>
+#include <QAbstractTableModel>
 
 class BusyLabel;
 class QTableView;

@@ -6,11 +6,11 @@
 #include "util/ChangeReplay.hh"
 #include "util/Helpers.hh"
 
-#include <QtCore/QSignalMapper>
-#include <QtGui/QMenu>
-#include <QtGui/QPushButton>
-#include <QtGui/QToolButton>
-#include <QtXml/QDomElement>
+#include <QSignalMapper>
+#include <QMenu>
+#include <QPushButton>
+#include <QToolButton>
+#include <QDomElement>
 
 #include "ui_datalist.h"
 

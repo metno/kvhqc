@@ -8,7 +8,7 @@
 #include <QApplication>
 #include <QAbstractTableModel>
 #include <QHeaderView>
-#include <QtCore/QSettings>
+#include <QSettings>
 
 #include "ui_navigationhistory.h"
 
@@ -190,7 +190,7 @@ NavigationHistory::NavigationHistory(QWidget* parent)
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
 
   QHeaderView* hh = ui->tableHistory->horizontalHeader();
-  hh->setResizeMode(QHeaderView::Interactive);
+  hh->setSectionResizeMode(QHeaderView::Interactive);
   hh->resizeSections(QHeaderView::ResizeToContents);
   hh->resizeSection(NavigationHistoryModel::COL_STATIONID, 100);
   hh->resizeSection(NavigationHistoryModel::COL_LEVEL,      30);

@@ -1,7 +1,7 @@
 
 #include "WrapperColumn.hh"
 
-#include <QtGui/QBrush>
+#include <QBrush>
 #include <boost/bind.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.WrapperColumn"

@@ -8,9 +8,9 @@
 #include "util/stringutil.hh"
 #include "common/KvHelpers.hh"
 
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QBrush>
+#include <QVariant>
+#include <QApplication>
+#include <QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.DataCorrectedItem"
 #include "common/ObsLogging.hh"

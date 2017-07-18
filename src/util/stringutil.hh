@@ -30,7 +30,7 @@
 #ifndef UTIL_STRINGUTIL_HH
 #define UTIL_STRINGUTIL_HH
 
-#include <QtCore/QString>
+#include <QString>
 #include <string>
 
 namespace Helpers {

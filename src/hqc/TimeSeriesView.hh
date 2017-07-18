@@ -11,7 +11,7 @@
 
 #include "qtimeseries/PlotOptions.h"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include <memory>
 #include <vector>

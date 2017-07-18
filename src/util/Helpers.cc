@@ -3,12 +3,12 @@
 
 #include <miconfparser/confsection.h>
 
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QMessageBox>
-#include <QtGui/QPushButton>
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlError>
+#include <QVariant>
+#include <QApplication>
+#include <QMessageBox>
+#include <QPushButton>
+#include <QSqlDatabase>
+#include <QSqlError>
 
 #include <cmath>
 

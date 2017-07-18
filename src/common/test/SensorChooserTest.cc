@@ -4,6 +4,10 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/SensorChooser.hh"
 
+#include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
+
 #define LOAD_DECL_ONLY
 #include "load_18700_20141001.cc"
 

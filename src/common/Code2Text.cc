@@ -4,7 +4,7 @@
 #include "KvHelpers.hh"
 #include "util/stringutil.hh"
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #include <boost/foreach.hpp>
 

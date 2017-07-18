@@ -6,7 +6,7 @@
 #include "common/SensorChooser.hh"
 #include "common/HqcApplication.hh"
 
-#include <QtGui/qmessagebox.h>
+#include <qmessagebox.h>
 
 #include "ui_jumptoobservation.h"
 

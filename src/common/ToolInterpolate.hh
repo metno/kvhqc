@@ -7,7 +7,7 @@
 #include "common/ModelAccess.hh"
 #include "common/Sensor.hh"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include <vector>
 

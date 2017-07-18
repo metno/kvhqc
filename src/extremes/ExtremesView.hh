@@ -6,7 +6,7 @@
 #include "common/Sensor.hh"
 #include "util/BusyLabel.hh"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include <vector>
 

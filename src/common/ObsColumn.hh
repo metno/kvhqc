@@ -5,8 +5,8 @@
 #include "ObsAccess.hh"
 #include "QueryTask.hh"
 #include "util/timeutil.hh"
-#include <QtCore/QAbstractTableModel>
-#include <QtCore/QObject>
+#include <QAbstractTableModel>
+#include <QObject>
 #include <memory>
 
 class ObsColumn;

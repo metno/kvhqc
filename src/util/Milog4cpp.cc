@@ -4,6 +4,19 @@
 #define MILOGGER_CATEGORY "Milog4cpp"
 #include <miLogger/miLogging.h>
 
+namespace {
+
+const std::string s_MILOGGER_CATEGORY = MILOGGER_CATEGORY;
+
+struct StringLoggerTag {
+  std::string tag;
+  ::milogger::LoggerTag logger;
+  StringLoggerTag(const std::string& t)
+    : tag(t), logger(tag.c_str()) { }
+};
+
+} // namespace
+
 Milog4cppLayout::Milog4cppLayout()
 {
 }
@@ -14,12 +27,12 @@ Milog4cppLayout::~Milog4cppLayout()
 
 std::string Milog4cppLayout::formatMessage(const std::string &msg, milog::LogLevel ll, const std::string &context)
 {
-  milogger::detail::PriorityLevel ml;
+  milogger::Severity ml;
   switch (ll) {
-  case milog::FATAL: ml = milogger::detail::FATAL;  break;
-  case milog::ERROR: ml = milogger::detail::ERROR;  break;
-  case milog::WARN:  ml = milogger::detail::WARN;  break;
-  case milog::INFO:  ml = milogger::detail::INFO;  break;
+  case milog::FATAL: ml = milogger::FATAL;  break;
+  case milog::ERROR: ml = milogger::ERROR;  break;
+  case milog::WARN:  ml = milogger::WARN;  break;
+  case milog::INFO:  ml = milogger::INFO;  break;
   case milog::DEBUG:
   case milog::DEBUG1:
   case milog::DEBUG2:
@@ -27,16 +40,20 @@ std::string Milog4cppLayout::formatMessage(const std::string &msg, milog::LogLev
   case milog::DEBUG4:
   case milog::DEBUG5:
   case milog::DEBUG6:
-    ml = milogger::detail::DEBUG; break;
+    ml = milogger::DEBUG; break;
   default:
-    ml = milogger::detail::VERBOSE; break;
+    ml = milogger::VERBOSE; break;
   }
 
-  ::milogger::detail::Category milogger((not context.empty()) ? context : MILOGGER_CATEGORY);
-  if (milogger.isLoggingEnabled(ml)) {
-    std::ostringstream logmessagestream;
-    logmessagestream << msg;
-    milogger.log(ml, logmessagestream.str());
+  const std::string& cat = (not context.empty()) ? context : s_MILOGGER_CATEGORY;
+  loggers_t::iterator it = loggers.find(cat);
+  if (it == loggers.end())
+    it = loggers.insert(std::make_pair(cat, std::make_shared<StringLoggerTag>(cat))).first;
+
+  ::milogger::LoggerTag& tag = it->second->logger;
+  if (milogger::RecordPtr record = tag.createRecord(ml)) {
+    record->stream() << msg;
+    tag.submitRecord(record);
   }
 
   return "";

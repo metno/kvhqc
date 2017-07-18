@@ -2,16 +2,10 @@
 #########################################################################
 # Qt
 
-SET(QT_USE_QTOPENGL TRUE)
-SET(QT_USE_QTSQL TRUE)
-SET(QT_USE_QTNETWORK TRUE)
-SET(QT_USE_QTTEST TRUE)
-SET(QT_USE_QTXML TRUE)
-FIND_PACKAGE(Qt4 REQUIRED)
+FIND_PACKAGE(Qt5 COMPONENTS Widgets LinguistTools Sql Network Test Xml REQUIRED)
 
-INCLUDE(${QT_USE_FILE})
 ADD_DEFINITIONS(${QT_DEFINITIONS} -DQT_NO_KEYWORDS)
-LINK_LIBRARIES(${QT_LIBRARIES})
+LINK_LIBRARIES(Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Xml)
 
 #########################################################################
 #########################################################################
@@ -24,17 +18,17 @@ PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=4.0.1)
 
 # metlibs
 PKG_CHECK_MODULES(PC_METLIBS REQUIRED
-  tsData>=5.2.0
-  pets2>=5.1.0
-  puMet>=5.1.0
-  qUtilities>=5.1.2
-  puTools>=5.0.0
-  miLogger>=5.0.0
-  coserver>=2.0.4
+  metlibs-tsdata-core>=6.0.1
+  metlibs-pets2-qt5>=7.0.1
+  metlibs-pumet>=6.0.0
+  metlibs-qutilities-qt5>=8.0.0
+  metlibs-putools>=7.0.0
+  metlibs-milogger>=6.0.0
+  metlibs-coserver-qt5>=3.0.1
 )
 
 # log4cpp
-PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
+#PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
 
 #########################################################################
 # boost

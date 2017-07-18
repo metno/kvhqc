@@ -3,34 +3,37 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 9), quilt, cmake,
- libqt4-dev, libqt4-dev-bin | qt4-qmake,
- libgfortran3, libgtest-dev | google-mock, python (>= 2.7.3),
- libboost-dev, libboost-date-time-dev, libboost-thread-dev,
- libsqlite3-dev, libldap2-dev,
-@metno_config_if .*xenial.*
+ qtbase5-dev, qtbase5-dev-tools, qttools5-dev-tools,
+ libgtest-dev | google-mock,
+ python (>= 2.7.3),
+ libboost-dev,
+ libboost-date-time-dev,
+ libboost-thread-dev,
+ libsqlite3-dev,
+ libldap2-dev,
  libkvcpp-dev (>= 4.0.1-1),
  libkvalobs-dev (>= 4.0.1-1),
  librdkafka-dev,
-@metno_config_else
- does-not-work-except-on-xenial,
-@metno_config_endif
- metlibs-tsdata-dev (>= 5.2.0),
- metlibs-pets2-dev (>= 5.1.0),
- metlibs-pumet-dev (>= 5.1.0),
- metlibs-qutilities-dev (>= 5.1.2),
- metlibs-putools-dev (>= 5.0.0),
- metlibs-milogger-dev (>= 5.0.0),
- metlibs-coserver-dev (>= 2.0.4)
-Standards-Version: 3.8.4
+ metlibs-tsdata-core-dev (>= 6.0.1),
+ metlibs-pets2-qt5-dev (>= 7.0.1),
+ metlibs-pumet-dev (>= 6.0.0),
+ metlibs-qutilities-qt5-dev (>= 8.0.0),
+ metlibs-putools-dev (>= 7.0.0),
+ metlibs-milogger-dev (>= 6.0.0),
+ metlibs-coserver-qt5-dev (>= 3.0.1)
+Standards-Version: 3.9.2
 Vcs-Git: https://github.com/metno/kvhqc
 
 Package: kvhqc-@METNO_VERSION@
 Architecture: any
-Depends: coserver4, libqt4-sql-psql, libqt4-sql-sqlite,
+Depends: libqt5sql5-psql,
+ libqt5sql5-sqlite,
+ libqt5svg5,
  kvhqcconfig-@METNO_VERSION@,
- ${shlibs:Depends}, ${misc:Depends}
-Recommends: metno-qt4-translations (>= 0.2.0),
- metlibs-translations
+ ${shlibs:Depends},
+ ${misc:Depends}
+Recommends: coserver4,
+ metlibs-qutilities-qt5-translations
 Provides: kvhqc
 Description: manual quality control for kvalobs
  kvhqc is a the manual quality assurance interface for kvalobs

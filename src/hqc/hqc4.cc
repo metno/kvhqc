@@ -42,7 +42,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <miconfparser/confparser.h>
 #include <miconfparser/confsection.h>
 
-#include <QtGui/QSplashScreen>
+#include <QSplashScreen>
 
 #include <iostream>
 

@@ -35,7 +35,7 @@
 #include "common/NavigateHelper.hh"
 #include "util/BusyLabel.hh"
 
-#include <QtGui/QWidget>
+#include <QWidget>
 
 #include <memory>
 

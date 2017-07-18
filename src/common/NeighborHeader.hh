@@ -2,7 +2,7 @@
 #ifndef COMMON_GUI_NEIGHBORHEADER_HH
 #define COMMON_GUI_NEIGHBORHEADER_HH 1
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class NeighborHeader {
 public:

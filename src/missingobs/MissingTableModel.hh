@@ -9,7 +9,7 @@
 #include "common/Sensor.hh"
 #include "common/TimeSpan.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class MissingTableModel : public QAbstractTableModel
 { Q_OBJECT;

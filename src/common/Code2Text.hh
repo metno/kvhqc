@@ -2,8 +2,8 @@
 #ifndef Code2Text_hh
 #define Code2Text_hh 1
 
-#include <QtCore/QMap>
-#include <QtCore/QStringList>
+#include <QMap>
+#include <QStringList>
 #include <memory>
 
 class Code2Text {

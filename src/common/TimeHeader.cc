@@ -1,7 +1,7 @@
 
 #include "TimeHeader.hh"
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 namespace /* anonymous */ {
 const char* weekdays[7] = {

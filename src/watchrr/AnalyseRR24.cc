@@ -13,7 +13,7 @@
 #include "util/Helpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.AnalyseRR24"
 #include "common/ObsLogging.hh"

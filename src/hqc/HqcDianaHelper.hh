@@ -4,8 +4,8 @@
 
 #include "common/DataView.hh"
 
-#include <QtCore/QMap>
-#include <QtCore/QObject>
+#include <QMap>
+#include <QObject>
 
 #include <deque>
 #include <map>

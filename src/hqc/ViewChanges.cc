@@ -5,10 +5,10 @@
 #include "common/Sensor.hh"
 #include "common/HqcApplication.hh"
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QVariant>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
 
 #include <boost/foreach.hpp>
 

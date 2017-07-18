@@ -3,7 +3,7 @@
 #include "TaskData.hh"
 #include "common/Tasks.hh"
 #include "util/stringutil.hh"
-#include <QtGui/QBrush>
+#include <QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.TasksColumn"
 #include "util/HqcLogging.hh"

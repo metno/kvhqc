@@ -9,9 +9,9 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <QtCore/QCoreApplication>
-#include <QtGui/QColor>
-#include <QtGui/QFont>
+#include <QCoreApplication>
+#include <QColor>
+#include <QFont>
 
 #include <boost/foreach.hpp>
 
@@ -298,13 +298,13 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (column == COL_OBS_CORR) {
           if (ci.qc2dDone())
-            return Qt::darkMagenta;
+            return QColor(Qt::darkMagenta);
           else if (ci.flag(kvalobs::flag::fnum) >= 6)
-            return Qt::red;
+            return QColor(Qt::red);
         }
 #ifndef ENABLE_HIDE
       } else { // hqc touched
-        return Qt::darkGreen;
+        return QColor(Qt::darkGreen);
 #endif
       }
     } else if (role == Qt::TextAlignmentRole and (column==COL_OBS_ORIG or column==COL_OBS_CORR or column==COL_OBS_MODEL)) {

@@ -8,8 +8,8 @@
 #include "util/BusyIndicator.hh"
 #include "util/UiHelpers.hh"
 
-#include <QtGui/QMessageBox>
-#include <QtCore/qsettings.h>
+#include <QMessageBox>
+#include <qsettings.h>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>

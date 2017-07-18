@@ -7,9 +7,9 @@
 #include "QueryTask.hh"
 #include "util/priority_list.hh"
 
-#include <QtCore/QMutex>
-#include <QtCore/QThread>
-#include <QtCore/QWaitCondition>
+#include <QMutex>
+#include <QThread>
+#include <QWaitCondition>
 
 // ========================================================================
 

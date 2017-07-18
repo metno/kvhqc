@@ -5,7 +5,7 @@ SET(rejectedobs_SOURCES
   RejectedQueryTask.cc
 )
 
-QT4_WRAP_CPP(rejectedobs_MOC
+QT5_WRAP_CPP(rejectedobs_MOC
   RejectedObs.hh
   RejectedObsDialog.hh
 )

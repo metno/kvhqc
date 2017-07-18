@@ -8,7 +8,7 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.MissingTableModel"
 #include "common/ObsLogging.hh"

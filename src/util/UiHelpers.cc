@@ -1,7 +1,7 @@
 
 #include "UiHelpers.hh"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 namespace Helpers {
 

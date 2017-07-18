@@ -15,10 +15,10 @@
 
 #include <puTools/miStringFunctions.h>
 
-#include <QtGui/QMenu>
-#include <QtGui/QResizeEvent>
-#include <QtGui/QStringListModel>
-#include <QtXml/QDomElement>
+#include <QMenu>
+#include <QResizeEvent>
+#include <QStringListModel>
+#include <QDomElement>
 
 #include <boost/foreach.hpp>
 

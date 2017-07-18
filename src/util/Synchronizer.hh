@@ -2,8 +2,8 @@
 #ifndef SYNCHRONIZER_HH
 #define SYNCHRONIZER_HH 1
 
-#include <QtCore/QObject>
-#include <QtCore/QSemaphore>
+#include <QObject>
+#include <QSemaphore>
 
 class Synchronizer : public QObject
 { Q_OBJECT;

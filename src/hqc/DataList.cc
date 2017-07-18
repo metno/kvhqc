@@ -6,13 +6,13 @@
 #include "common/HqcApplication.hh"
 #include "util/Helpers.hh"
 
-#include <QtCore/QFile>
-#include <QtCore/QTextStream>
-#include <QtGui/QFileDialog>
-#include <QtGui/QFont>
-#include <QtGui/QHeaderView>
-
-#include <boost/foreach.hpp>
+#include <QCheckBox>
+#include <QFile>
+#include <QFileDialog>
+#include <QFont>
+#include <QHeaderView>
+#include <QTextStream>
+#include <QPushButton>
 
 #include <set>
 
@@ -50,8 +50,8 @@ DataList::DataList(QWidget* parent)
   ui->layoutButtons->addWidget(mBusy);
 
   QFont mono("Monospace");
-  ui->table->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-  ui->table->horizontalHeader()->setMovable(true);
+  ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
+  ui->table->horizontalHeader()->setSectionsMovable(true);
   ui->table->verticalHeader()->setFont(mono);
   ui->table->verticalHeader()->setDefaultSectionSize(20);
 
@@ -143,7 +143,7 @@ void DataList::selectCurrent()
   const QModelIndex& currentIdx = ui->table->currentIndex();
   QItemSelection selection;
   bool scroll = (not idxs.empty());
-  BOOST_FOREACH(const QModelIndex& idx, idxs) {
+  for (const QModelIndex& idx : idxs) {
     METLIBS_LOG_DEBUG("  -- r=" << idx.row() << " c=" << idx.column());
     selection.select(idx, idx);
     if (idx == currentIdx)

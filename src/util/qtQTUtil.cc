@@ -28,15 +28,15 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <QtGui/qcombobox.h>
-#include <Qt3Support/q3listbox.h>
-#include <QtGui/qlayout.h>
-#include <QtGui/qlabel.h>
-#include <QtGui/qpushbutton.h>
-#include <QtGui/qlcdnumber.h>
-#include <QtGui/qcheckbox.h>
-#include <QtGui/qslider.h>
-#include <QtGui/qpixmap.h>
+#include <qcombobox.h>
+#include <q3listbox.h>
+#include <qlayout.h>
+#include <qlabel.h>
+#include <qpushbutton.h>
+#include <qlcdnumber.h>
+#include <qcheckbox.h>
+#include <qslider.h>
+#include <qpixmap.h>
 
 #include <qtQTUtil.h>
 

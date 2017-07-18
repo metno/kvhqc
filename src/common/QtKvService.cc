@@ -3,8 +3,8 @@
 
 #include <kvcpp/kvevents.h>
 
-#include <QtCore/QCoreApplication>
-#include <QtCore/QMetaType>
+#include <QCoreApplication>
+#include <QMetaType>
 
 #define MILOGGER_CATEGORY "kvhqc.QtKvService"
 #include "util/HqcLogging.hh"

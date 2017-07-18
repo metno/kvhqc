@@ -34,7 +34,7 @@
 #include "common/ParamIdModel.hh"
 #include "common/TimeSpan.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include <map>
 #include <memory>

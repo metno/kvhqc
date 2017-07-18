@@ -5,7 +5,7 @@
 
 #include "common/TimeSpan.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 class QLabel;
 class QDateTimeEdit;

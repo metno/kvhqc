@@ -26,7 +26,7 @@ RedistDialog::RedistDialog(QDialog* parent, TaskAccess_p da, const Sensor& senso
       this, SLOT(onDataChanged(const QModelIndex&, const QModelIndex&)));
 
   ui->table->setModel(rtm.get());
-  ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
   updateSumInfo();

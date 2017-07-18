@@ -6,7 +6,7 @@
 #include "common/EditAccess.hh"
 #include "TimeSpan.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class ObsTableModel : public QAbstractTableModel
 {   Q_OBJECT;

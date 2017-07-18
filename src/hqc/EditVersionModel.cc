@@ -5,8 +5,7 @@
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
+#include <QColor>
 
 #define MILOGGER_CATEGORY "kvhqc.EditVersionModel"
 #include "common/ObsLogging.hh"
@@ -164,7 +163,7 @@ QVariant EditVersionModel::data(const QModelIndex& index, int role) const
   } else if (role == Qt::ForegroundRole) {
     const size_t version = 1 + ((internalId >= 0) ? internalId : index.row());
     if (version > mDA->currentVersion())
-      return Qt::lightGray;
+      return QColor(Qt::lightGray);
   }
   return QVariant();
 }

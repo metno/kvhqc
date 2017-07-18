@@ -2,7 +2,7 @@
 #ifndef UTIL_GUI_UIHELPERS_HH
 #define UTIL_GUI_UIHELPERS_HH 1
 
-#include <QtCore/QModelIndex>
+#include <QModelIndex>
 
 namespace Helpers {
 

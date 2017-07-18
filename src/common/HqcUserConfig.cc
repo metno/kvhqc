@@ -1,7 +1,7 @@
 
 #include "HqcUserConfig.hh"
 
-#include <QtCore/QSettings>
+#include <QSettings>
 
 #define MILOGGER_CATEGORY "kvhqc.HqcUserConfig"
 #include "util/HqcLogging.hh"

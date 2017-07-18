@@ -6,7 +6,7 @@
 #include "common/EditAccess.hh"
 #include "common/TimeBuffer.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 #include <vector>
 

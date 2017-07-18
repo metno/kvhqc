@@ -11,12 +11,12 @@
 
 #include "util/BusyLabel.hh"
 
-#include <QtCore/QEvent>
-#include <QtCore/QSettings>
-#include <QtGui/QHeaderView>
-#include <QtGui/QMessageBox>
-#include <QtGui/QTableView>
-#include <QtGui/QVBoxLayout>
+#include <QEvent>
+#include <QSettings>
+#include <QHeaderView>
+#include <QMessageBox>
+#include <QTableView>
+#include <QVBoxLayout>
 
 #define MILOGGER_CATEGORY "kvhqc.TextData"
 #include "util/HqcLogging.hh"
@@ -195,7 +195,7 @@ void TextData::onQueryDone()
   const TextDataQueryTask* t = static_cast<const TextDataQueryTask*>(mTask->task());
   mTableModel = new TextDataTableModel(t->textData(), this);
   mTableView->setModel(mTableModel);
-  mTableView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  mTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   mTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
   mBusy->setBusy(false);

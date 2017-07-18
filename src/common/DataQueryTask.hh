@@ -6,7 +6,7 @@
 #include "QueryTask.hh"
 #include "ObsRequest.hh"
 
-#include <QtCore/QObject>
+#include <QObject>
 
 class KvalobsDataRow {
 public:

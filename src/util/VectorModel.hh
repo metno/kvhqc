@@ -2,7 +2,7 @@
 #ifndef util_VectorModel_hh
 #define util_VectorModel_hh 1
 
-#include <QtCore/QAbstractListModel>
+#include <QAbstractListModel>
 #include <vector>
 
 namespace VectorModelDetail {

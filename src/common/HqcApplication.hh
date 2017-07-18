@@ -21,7 +21,7 @@ class ModelAccess;
 class QueryTaskHandler;
 
 class HqcApplication : public QApplication
-{   Q_OBJECT;
+{   Q_OBJECT
 public:
   HqcApplication(int & argc, char ** argv, std::shared_ptr<miutil::conf::ConfSection>);
   ~HqcApplication();

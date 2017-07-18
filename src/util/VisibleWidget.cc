@@ -1,7 +1,7 @@
 
 #include "VisibleWidget.hh"
 
-#include <QtGui/QResizeEvent>
+#include <QResizeEvent>
 
 VisibleWidget::VisibleWidget(QWidget* parent)
   : QWidget(parent)

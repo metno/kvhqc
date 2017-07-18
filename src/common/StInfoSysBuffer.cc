@@ -6,11 +6,11 @@
 #include "util/stringutil.hh"
 #include "common/HqcSystemDB.hh"
 
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
-#include <QtCore/QStringList>
-#include <QtCore/QVariant>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QStringList>
+#include <QVariant>
 
 #include <boost/foreach.hpp>
 

@@ -4,7 +4,7 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <QtCore/QString>
+#include <QString>
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsReinserter"
 #include "util/HqcLogging.hh"

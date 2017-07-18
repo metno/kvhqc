@@ -7,8 +7,8 @@
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlQuery>
+#include <QVariant>
+#include <QSqlQuery>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>

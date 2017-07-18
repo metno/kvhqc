@@ -7,7 +7,7 @@
 #include "common/TimeSpan.hh"
 #include "common/TypeIdModel.hh"
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <set>
 

@@ -125,7 +125,7 @@ void Authenticator::doAuthenticate()
   if (un.isEmpty() or pw.isEmpty())
     return;
 
-  bool result = Authentication::authenticate(un.toAscii(), pw.toAscii(), server.toAscii(), port);
+  bool result = Authentication::authenticate(un.toUtf8(), pw.toUtf8(), server.toUtf8(), port);
 
   if ( result ) {
     return accept();

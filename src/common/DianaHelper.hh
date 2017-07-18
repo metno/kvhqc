@@ -4,7 +4,7 @@
 
 #include "TimeSpan.hh"
 
-#include <QtCore/QObject>
+#include <QObject>
 
 #include <string>
 #include <vector>

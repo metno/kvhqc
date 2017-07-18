@@ -1,6 +1,6 @@
 
 #include "common/KvServiceHelper.hh"
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #include <gtest/gtest.h>
 

@@ -20,18 +20,18 @@
 
 #include <puTools/miString.h>
 
-#include <QtCore/QDir>
-#include <QtCore/QLibraryInfo>
-#include <QtCore/QLocale>
-#include <QtCore/QSettings>
-#include <QtCore/QThread>
-#include <QtCore/QTimer>
-#include <QtCore/QTranslator>
-#include <QtCore/QVariant>
-#include <QtGui/QIcon>
-#include <QtGui/QMessageBox>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QDir>
+#include <QLibraryInfo>
+#include <QLocale>
+#include <QSettings>
+#include <QThread>
+#include <QTimer>
+#include <QTranslator>
+#include <QVariant>
+#include <QIcon>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QSqlQuery>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>

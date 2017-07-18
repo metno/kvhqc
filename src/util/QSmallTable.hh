@@ -2,7 +2,7 @@
 #ifndef QSmallTable_HH
 #define QSmallTable_HH
 
-#include <QtGui/QTableView>
+#include <QTableView>
 
 class QSmallTable : public QTableView {
 public:

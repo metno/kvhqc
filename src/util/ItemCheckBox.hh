@@ -2,7 +2,7 @@
 #ifndef ITEMCHECKBOX_HH
 #define ITEMCHECKBOX_HH 1
 
-#include <QtGui/QCheckBox>
+#include <QCheckBox>
 
 class ItemCheckBox : public QCheckBox
 { Q_OBJECT

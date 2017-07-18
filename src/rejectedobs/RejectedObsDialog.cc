@@ -4,11 +4,11 @@
 #include "util/timeutil.hh"
 #include "util/MiDateTimeEdit.hh"
 
-#include <QtCore/QEvent>
-#include <QtGui/QHBoxLayout>
-#include <QtGui/QVBoxLayout>
-#include <QtGui/QLabel>
-#include <QtGui/QPushButton>
+#include <QEvent>
+#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QPushButton>
 
 RejectedObsDialog::RejectedObsDialog(QWidget* parent)
   : QDialog(parent)

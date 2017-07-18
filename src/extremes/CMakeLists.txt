@@ -5,12 +5,12 @@ SET(extremes_SOURCES
   ExtremesView.cc
 )
 
-QT4_WRAP_CPP(extremes_MOC
+QT5_WRAP_CPP(extremes_MOC
   ExtremesTableModel.hh
   ExtremesView.hh
 )
 
-QT4_WRAP_UI(extremes_UIH
+QT5_WRAP_UI(extremes_UIH
   extremevalues.ui
 )
 

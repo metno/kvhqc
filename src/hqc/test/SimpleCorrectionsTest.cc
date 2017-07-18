@@ -7,6 +7,9 @@
 #include "common/KvalobsModelAccess.hh"
 #include "common/test/CountingBuffer.hh"
 
+#include <QComboBox>
+#include <QLineEdit>
+
 #define LOAD_DECL_ONLY
 #include "common/test/load_18210_20130410.cc"
 

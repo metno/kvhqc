@@ -5,6 +5,8 @@
 #include "ModelData.hh"
 #include "util/boostutil.hh"
 
+#include <QObject>
+
 class ModelAccess;
 HQC_TYPEDEF_P(ModelAccess);
 class ModelRequest;

@@ -2,7 +2,7 @@
 #ifndef Tasks_hh
 #define Tasks_hh 1
 
-#include <QtCore/QString>
+#include <QString>
 
 namespace tasks {
 

@@ -5,7 +5,7 @@
 #include "common/ObsAccess.hh"
 #include "common/TimeHeader.hh"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.WatchRRTableModel"
 #include "common/ObsLogging.hh"

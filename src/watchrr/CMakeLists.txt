@@ -20,12 +20,12 @@ SET(watchrr_SOURCES
   WrapperColumn.cc
 )
 
-QT4_ADD_TRANSLATION(watchrr_QM
+QT5_ADD_TRANSLATION(watchrr_QM
   watchrr_de.ts
   watchrr_nb.ts
 )
 
-QT4_WRAP_CPP(watchrr_MOC
+QT5_WRAP_CPP(watchrr_MOC
   EditDialog.hh
   WatchRRDialog.hh
   NeighborCardsModel.hh
@@ -33,7 +33,7 @@ QT4_WRAP_CPP(watchrr_MOC
   StationDialog.hh
 )
 
-QT4_WRAP_UI(watchrr_UIH
+QT5_WRAP_UI(watchrr_UIH
   watchrr_edit.ui
   watchrr_main.ui
   watchrr_redist.ui

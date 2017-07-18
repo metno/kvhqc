@@ -5,8 +5,9 @@ INCLUDE_DIRECTORIES(
 FIND_LIBRARY(SQLITE3_LIBRARY sqlite3)
 
 ADD_DEFINITIONS(-DTEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}")
+LINK_LIBRARIES(Qt5::Test)
 
-QT4_WRAP_CPP(test_common_MOC
+QT5_WRAP_CPP(test_common_MOC
   SqliteAccess.hh
 )
 
@@ -74,7 +75,7 @@ ADD_TEST(NAME common_test
 
 ########################################################################
 
-QT4_WRAP_CPP(test_common_gui_MOC
+QT5_WRAP_CPP(test_common_gui_MOC
   SensorChooserTest.hh
 )
 ADD_EXECUTABLE(common_gui_test

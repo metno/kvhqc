@@ -2,7 +2,7 @@
 #ifndef StationIdModel_hh
 #define StationIdModel_hh 1
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 #include <vector>
 
 class StationIdModel : public QAbstractTableModel {

@@ -8,7 +8,7 @@
 #include "KvTypedefs.hh"
 #include "QueryTaskHandler.hh"
 
-#include <QtCore/QObject> 
+#include <QObject> 
 
 #include <map>
 

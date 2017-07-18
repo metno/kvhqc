@@ -5,7 +5,7 @@
 #include "common/EditAccess.hh"
 #include "common/TimeSpan.hh"
 
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include <memory>
 

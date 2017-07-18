@@ -2,7 +2,7 @@
 #ifndef OBSDELEGATE_HH
 #define OBSDELEGATE_HH
 
-#include <QtGui/QStyledItemDelegate>
+#include <QStyledItemDelegate>
 
 class ObsDelegate : public QStyledItemDelegate
 {   Q_OBJECT

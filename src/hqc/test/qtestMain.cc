@@ -7,7 +7,7 @@
 #include "common/KvServiceHelper.hh"
 #include <QApplication>
 
-#include <QtTest/qtest.h>
+#include <qtest.h>
 
 #define MILOGGER_CATEGORY "kvhqc.common.qtestMain"
 #include "util/HqcLogging.hh"

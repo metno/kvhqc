@@ -8,9 +8,9 @@
 #include "common/StationIdCompletion.hh"
 #include "common/TypeIdModel.hh"
 
-#include <QtGui/QComboBox>
-#include <QtGui/QLineEdit>
-#include <QtGui/QSpinBox>
+#include <QComboBox>
+#include <QLineEdit>
+#include <QSpinBox>
 
 #include <boost/foreach.hpp>
 

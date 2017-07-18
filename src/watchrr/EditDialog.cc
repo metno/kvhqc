@@ -20,7 +20,7 @@ EditDialog::EditDialog(QDialog* parent, TaskAccess_p da, const Sensor& sensor, c
 {
   ui->setupUi(this);
   ui->table->setModel(etm.get());
-  ui->table->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->table->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->labelStationInfo->setText(tr("Station %1 [%2]").arg(sensor.stationId).arg(sensor.typeId));
 }

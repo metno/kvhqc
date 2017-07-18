@@ -28,7 +28,7 @@ SET(util_SOURCES
   VisibleWidget.cc
 )
 
-QT4_WRAP_CPP(util_MOC
+QT5_WRAP_CPP(util_MOC
   ActionButton.hh
   AnimatedLabel.hh
   BusyLabel.hh
@@ -43,7 +43,7 @@ QT4_WRAP_CPP(util_MOC
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-QT4_WRAP_UI(util_UIH
+QT5_WRAP_UI(util_UIH
   hideapplybox.ui
 )
 

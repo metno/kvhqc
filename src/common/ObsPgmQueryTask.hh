@@ -4,7 +4,7 @@
 
 #include "QueryTask.hh"
 #include <kvalobs/kvObsPgm.h>
-#include <QtCore/QObject>
+#include <QObject>
 #include <vector>
 #include <set>
 

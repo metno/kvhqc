@@ -5,17 +5,17 @@ SET(weather_SOURCES
   WeatherTableModel.cc
 )
 
-QT4_ADD_TRANSLATION(weather_QM
+QT5_ADD_TRANSLATION(weather_QM
   weather_nb.ts
   weather_de.ts
 )
 
-QT4_WRAP_CPP(weather_MOC
+QT5_WRAP_CPP(weather_MOC
   WeatherDialog.hh
   WeatherStationDialog.hh
 )
 
-QT4_WRAP_UI(weather_UIH
+QT5_WRAP_UI(weather_UIH
   weatherdialog.ui
 )
 

@@ -2,7 +2,7 @@
 #ifndef CurrentTableView_hh
 #define CurrentTableView_hh 1
 
-#include <QtGui/QTableView>
+#include <QTableView>
 
 class DataListTable : public QTableView
 { Q_OBJECT

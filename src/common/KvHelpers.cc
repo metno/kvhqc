@@ -12,9 +12,9 @@
 #include <kvalobs/kvDataOperations.h>
 #include <kvalobs/kvStation.h>
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QVariant>
+#include <QSqlError>
+#include <QSqlQuery>
 
 #include <boost/algorithm/string.hpp>
 #include <boost/foreach.hpp>

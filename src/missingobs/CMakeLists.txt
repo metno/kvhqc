@@ -5,12 +5,12 @@ SET(missingobs_SOURCES
   MissingView.cc
 )
 
-QT4_WRAP_CPP(missingobs_MOC
+QT5_WRAP_CPP(missingobs_MOC
   MissingTableModel.hh
   MissingView.hh
 )
 
-QT4_WRAP_UI(missingobs_UIH
+QT5_WRAP_UI(missingobs_UIH
   missingvalues.ui
 )
 

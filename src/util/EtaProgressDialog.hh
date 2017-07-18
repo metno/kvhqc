@@ -2,7 +2,7 @@
 #ifndef UTIL_GUI_ETAPROGRESSDIALOG_HH
 #define UTIL_GUI_ETAPROGRESSDIALOG_HH 1
 
-#include <QtGui/QProgressDialog>
+#include <QProgressDialog>
 
 class EtaProgressBar;
 

@@ -7,7 +7,7 @@
 #include "common/TimeBuffer.hh"
 #include "common/ModelBuffer.hh"
 
-#include <QtCore/QAbstractTableModel>
+#include <QAbstractTableModel>
 
 class ErrorListModel : public QAbstractItemModel
 { Q_OBJECT;

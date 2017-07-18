@@ -5,7 +5,7 @@
 
 #include <kvalobs/kvData.h>
 
-#include <QtCore/QTimer>
+#include <QTimer>
 
 #include <boost/foreach.hpp>
 

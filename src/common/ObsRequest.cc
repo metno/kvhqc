@@ -3,7 +3,7 @@
 
 #include "ObsData.hh"
 
-#include <QtCore/QMetaType>
+#include <QMetaType>
 
 #define MILOGGER_CATEGORY "kvhqc.ObsRequest"
 #include "common/ObsLogging.hh"

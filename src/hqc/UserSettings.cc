@@ -4,7 +4,7 @@
 #include "common/HqcApplication.hh"
 #include "common/HqcUserConfig.hh"
 
-#include <QtGui/QColorDialog>
+#include <QColorDialog>
 
 #include "ui_user_settings.h"
 

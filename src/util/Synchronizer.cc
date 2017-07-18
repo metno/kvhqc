@@ -1,7 +1,7 @@
 
 #include "Synchronizer.hh"
 
-#include <QtCore/QCoreApplication>
+#include <QCoreApplication>
 
 #define MILOGGER_CATEGORY "kvhqc.Synchronizer"
 #include "HqcLogging.hh"

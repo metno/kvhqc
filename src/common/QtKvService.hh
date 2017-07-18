@@ -4,7 +4,7 @@
 
 #include <kvcpp/KvApp.h>
 #include <kvcpp/kvDataSubscribeInfoHelper.h>
-#include <QtCore/QThread>
+#include <QThread>
 
 class QtKvService : public QThread
 { Q_OBJECT;

@@ -43,7 +43,7 @@ EditVersionsView::EditVersionsView(EditAccess_p eda, QWidget* parent)
   EditVersionModel* mdl = new EditVersionModel(hqcApp->editAccess(), this);
   setModel(mdl);
 
-  header()->setResizeMode(QHeaderView::Interactive);
+  header()->setSectionResizeMode(QHeaderView::Interactive);
   header()->resizeSection(EditVersionModel::COL_TIME, 200);
   header()->resizeSection(EditVersionModel::COL_STATION, 50);
   header()->resizeSection(EditVersionModel::COL_SENSORNR, 30);

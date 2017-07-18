@@ -12,6 +12,9 @@
 
 #include "util/ToolTipStringListModel.hh"
 
+#include <QEvent>
+#include <QHeaderView>
+
 #include "ui_singleobservation.h"
 
 #define MILOGGER_CATEGORY "kvhqc.SimpleCorrections"
@@ -28,7 +31,7 @@ SimpleCorrections::SimpleCorrections(EditAccess_p eda, ModelAccess_p mda, QWidge
   ui->setupUi(this);
   ToolTipStringListModel* ttl = new ToolTipStringListModel(ui->comboCorrected);
   ui->comboCorrected->setModel(ttl);
-  ui->tableChecks->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableChecks->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
 
   mChecksModel = new ChecksTableModel(this);
   ui->tableChecks->setModel(mChecksModel);

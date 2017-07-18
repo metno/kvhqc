@@ -126,7 +126,7 @@ SET(common_SOURCES
   WrapRequest.cc
 )
 
-QT4_WRAP_CPP(common_MOC
+QT5_WRAP_CPP(common_MOC
   AbstractUpdateListener.hh
   AcceptRejectButtons.hh
   Authenticator.hh
@@ -165,7 +165,7 @@ QT4_WRAP_CPP(common_MOC
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-QT4_WRAP_UI(common_UIH
+QT5_WRAP_UI(common_UIH
   authenticationdialog.ui
 )
 

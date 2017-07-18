@@ -4,9 +4,9 @@
 #include "HqcApplication.hh"
 #include "QueryTask.hh"
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlError>
-#include <QtSql/QSqlQuery>
+#include <QVariant>
+#include <QSqlError>
+#include <QSqlQuery>
 
 #define MILOGGER_CATEGORY "kvhqc.KvalobsQueryRunner"
 #include "common/ObsLogging.hh"

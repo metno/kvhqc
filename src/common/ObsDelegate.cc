@@ -4,7 +4,7 @@
 #include "common/ObsColumn.hh"
 #include "util/ToolTipStringListModel.hh"
 
-#include <QtGui/QComboBox>
+#include <QComboBox>
 
 // based on http://qt-project.org/wiki/Combo_Boxes_in_Item_Views
 

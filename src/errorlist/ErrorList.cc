@@ -38,8 +38,8 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ObsPgmRequest.hh"
 
-#include <QtCore/QSettings>
-#include <QtGui/QHeaderView>
+#include <QSettings>
+#include <QHeaderView>
 
 #include <boost/foreach.hpp>
 
@@ -157,7 +157,7 @@ void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
 void ErrorList::resizeHeaders()
 {
   QHeaderView* header = ui->tree->header();
-  header->setResizeMode(QHeaderView::Interactive);
+  header->setSectionResizeMode(QHeaderView::Interactive);
   header->resizeSections(QHeaderView::ResizeToContents);
   header->resizeSection(ErrorListModel::COL_STATION_ID,   100);
   header->resizeSection(ErrorListModel::COL_STATION_NAME, 160);

@@ -9,11 +9,11 @@
 
 #include "util/BusyLabel.hh"
 
-#include <QtCore/QEvent>
-#include <QtCore/QSettings>
-#include <QtGui/QHeaderView>
-#include <QtGui/QTableView>
-#include <QtGui/QVBoxLayout>
+#include <QEvent>
+#include <QSettings>
+#include <QHeaderView>
+#include <QTableView>
+#include <QVBoxLayout>
 
 #define MILOGGER_CATEGORY "kvhqc.RejectedObs"
 #include "util/HqcLogging.hh"
@@ -159,7 +159,7 @@ void Rejects::onQueryDone()
   const RejectedQueryTask* t = static_cast<const RejectedQueryTask*>(mTask->task());
   mTableModel = new RejectDecodeTableModel(t->rejected());
   mTableView->setModel(mTableModel);
-  mTableView->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  mTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   mTableView->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
   mBusy->setBusy(false);

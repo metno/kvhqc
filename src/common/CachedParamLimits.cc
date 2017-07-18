@@ -10,8 +10,8 @@
 #include <kvcpp/KvApp.h>
 #include <kvalobs/kvStationParam.h>
 
-#include <QtCore/QVariant>
-#include <QtSql/QSqlQuery>
+#include <QVariant>
+#include <QSqlQuery>
 
 #ifdef DEBUG_ME_ON
 #define MILOGGER_CATEGORY "kvhqc.CachedParamLimits"

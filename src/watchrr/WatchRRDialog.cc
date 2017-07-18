@@ -24,8 +24,8 @@
 #define slots Q_SLOTS
 #endif
 #include <coserver/ClientButton.h>
-#include <QtCore/qsettings.h>
-#include <QtGui/QMessageBox>
+#include <qsettings.h>
+#include <QMessageBox>
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
 
@@ -69,7 +69,7 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
 
   ui->buttonSave->setEnabled(false);
   ui->tableStationCard->setModel(mStationCard.get());
-  ui->tableStationCard->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableStationCard->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableStationCard->setItemDelegate(new ObsDelegate(this));
   ui->tableStationCard->verticalHeader()->setFont(mono);
@@ -77,11 +77,11 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);
 
-  ui->tableNeighborRR24->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableNeighborRR24->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tableNeighborRR24->verticalHeader()->setFont(mono);
 
   ui->tableNeighborCards->setModel(mNeighborCards.get());
-  ui->tableNeighborCards->horizontalHeader()->setResizeMode(QHeaderView::Interactive);
+  ui->tableNeighborCards->horizontalHeader()->setSectionResizeMode(QHeaderView::Interactive);
   ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 
   const boost::gregorian::date d0 = time.t0().date(), d1 = time.t1().date();

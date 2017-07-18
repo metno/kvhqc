@@ -67,15 +67,15 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
       bool ok = false;
       d.toFloat(&ok);
       if (!ok)
-        return Qt::darkGray;
+        return QColor(Qt::darkGray);
     }
     if (mColumnType != ObsColumn::ORIGINAL) {
       const kvalobs::kvControlInfo& ci = obs->controlinfo();
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (ci.qc2dDone())
-          return Qt::darkMagenta;
+          return QColor(Qt::darkMagenta);
         else if (ci.flag(kvalobs::flag::fnum) >= 6)
-          return Qt::red;
+          return QColor(Qt::red);
       }
     }
   } else if (role == Qt::FontRole) {

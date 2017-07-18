@@ -31,8 +31,8 @@
 #ifndef COMMON_AUTHENTICATOR_HH
 #define COMMON_AUTHENTICATOR_HH
 
-#include <QtCore/QString>
-#include <QtGui/QDialog>
+#include <QString>
+#include <QDialog>
 
 #include <memory>
 

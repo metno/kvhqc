@@ -3,11 +3,11 @@
 
 #include "StationIdModel.hh"
 
-#include <QtGui/QCompleter>
-#include <QtGui/QHeaderView>
-#include <QtGui/QLineEdit>
-#include <QtGui/QTableView>
-#include <QtGui/QValidator>
+#include <QCompleter>
+#include <QHeaderView>
+#include <QLineEdit>
+#include <QTableView>
+#include <QValidator>
 
 namespace Helpers {
 
@@ -19,7 +19,7 @@ void installStationIdCompleter(QObject* parent, QLineEdit* editStation, StationI
   completionPopup->horizontalHeader()->setVisible(false);
   completionPopup->verticalHeader()->setVisible(false);
   completionPopup->verticalHeader()->setDefaultSectionSize(20);
-  completionPopup->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+  completionPopup->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
   completer->setPopup(completionPopup);
 
   completer->setModel(cmodel);

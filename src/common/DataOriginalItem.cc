@@ -4,9 +4,9 @@
 #include "ObsHelpers.hh"
 #include "util/stringutil.hh"
 
-#include <QtCore/QVariant>
-#include <QtGui/QApplication>
-#include <QtGui/QBrush>
+#include <QVariant>
+#include <QApplication>
+#include <QBrush>
 
 #define MILOGGER_CATEGORY "kvhqc.DataOriginalItem"
 #include "util/HqcLogging.hh"
