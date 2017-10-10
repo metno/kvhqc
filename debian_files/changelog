@@ -1,3 +1,10 @@
+kvhqc (3.5.0~rc1-2) unstable; urgency=low
+
+  * restrict metlibs dependencies to non-shared versions
+  * rebuild with updated kvalobs libraries
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 10 Oct 2017 08:00:08 +0200
+
 kvhqc (3.5.0~rc1-1) unstable; urgency=low
 
   * adapt for kvalobs v4

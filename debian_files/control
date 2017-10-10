@@ -7,17 +7,23 @@ Build-Depends: debhelper (>= 9), quilt, cmake,
  libgfortran3, google-mock, python (>= 2.7.3-0),
  libboost-dev, libboost-date-time-dev, libboost-signals-dev, libboost-thread-dev, libboost-regex-dev, libboost-system-dev,
  libsqlite3-dev, libldap2-dev,
+ libcurl-dev,
 @metno_config_if .*xenial.*
- libkvcpp-dev (>= 4.0.1-1),
- libkvalobs-dev (>= 4.0.1-1),
+ libkvcpp-dev (>= 4.0.3-1),
+ libkvalobs-dev (>= 4.0.3-1),
  librdkafka-dev,
 @metno_config_else
  does-not-work-except-on-xenial,
 @metno_config_endif
- metlibs-putools-dev (>= 5.1.0), metlibs-milogger-dev (>= 5.0.0),
- metlibs-qutilities-dev (>= 5.1.2), metlibs-coserver-dev (>= 2.0.4),
- metlibs-tsdata-dev (>= 5.2.0), metlibs-pets2-dev (>= 5.1.0),
- metlibs-pumet-dev (>= 5.1.0)
+ metlibs-qutilities-dev (>= 5.1.4),
+ metlibs-coserver-dev (>= 2.1.0),
+ metlibs-pets2-dev (>= 6.0.0), metlibs-pets2-dev (<< 6.0.5),
+ metlibs-pumet-dev (>= 5.1.0), metlibs-pumet-dev (<< 6.0.0),
+ metlibs-tsdata-dev (>= 5.4.1), metlibs-tsdata-dev (<< 5.5.0),
+ metlibs-milogger-dev (>= 5.0.3), metlibs-milogger-dev (<< 6.0.0),
+ metlibs-putools-dev (>= 5.1.5), metlibs-putools-dev (<< 6.0.0),
+ metlibs-puctools-dev (>= 5.0.1), metlibs-puctools-dev 	 (<< 6.0.0),
+ metlibs-pudatatypes-dev (>= 5.0.2), metlibs-pudatatypes-dev (<< 6.0.0)
 Standards-Version: 3.8.4
 Vcs-Git: https://github.com/metno/kvhqc
 
