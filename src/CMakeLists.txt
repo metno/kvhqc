@@ -18,11 +18,11 @@ PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=4.0.1)
 
 # metlibs
 PKG_CHECK_MODULES(PC_METLIBS REQUIRED
-  metlibs-tsdata-core>=6.0.1
-  metlibs-pets2-qt5>=7.0.1
-  metlibs-pumet>=6.0.0
+  metlibs-tsdata-core>=7.0.0
+  metlibs-pets2-qt5>=8.0.0
+  metlibs-pumet>=7.0.0
   metlibs-qutilities-qt5>=8.0.0
-  metlibs-putools>=7.0.0
+  metlibs-putools>=8.0.0
   metlibs-milogger>=6.0.0
   metlibs-coserver-qt5>=3.0.1
 )
