@@ -11,7 +11,7 @@
 #include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ErrorFilter"
-#include "util/HqcLogging.hh"
+#include "common/ObsLogging.hh"
 
 namespace /* anonymous */ {
 
@@ -29,6 +29,22 @@ const int paramid_hour_6_18[] = {
 const int paramid_hour_6[] = {
   kvalobs::PARAMID_RR_24,
   kvalobs::PARAMID_SA
+};
+
+const int paramid_preciptationtype[] = {
+    31, // V1
+    32, // V2
+    33, // V3
+    34, // V4
+    35, // V4S
+    36, // V5
+    37, // V5S
+    38, // V6
+    39, // V6S
+    40, // V7
+    41, // WW
+    42, // W1
+    43  // W2
 };
 
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
@@ -105,6 +121,13 @@ bool checkErrorHQC2013(const ObsData_p obs)
   if ((fd == 7 or fd == 8) and sensor.paramId == kvalobs::PARAMID_RR_24)
     return false;
 
+  const int fmis = ci.flag(kvalobs::flag::fmis);
+  if (fmis != 0) {
+    const bool is_precipitationtype = std::binary_search(paramid_preciptationtype, boost::end(paramid_preciptationtype), sensor.paramId);
+    if (is_precipitationtype /* && TODO RR > -1 */)
+      return false;
+  }
+
   const int ui_2 = Helpers::extract_ui2(obs);
   if (ui_2 == 2 or ui_2 == 3)
     return true;
@@ -113,7 +136,6 @@ bool checkErrorHQC2013(const ObsData_p obs)
   if (fr == 2 or fr == 3)
     return true;
 
-  const int fmis = ci.flag(kvalobs::flag::fmis);
   if (fmis == 3)
     return true;
 
@@ -131,6 +153,15 @@ bool checkError2013(const ObsData_p obs, bool errorsForSalen)
 } // namespace anonymous
 
 // ************************************************************************
+
+ErrorFilter::ErrorFilter(bool errorsForSalen)
+    : mErrorsForSalen(errorsForSalen)
+{
+}
+
+ErrorFilter::~ErrorFilter()
+{
+}
 
 QString ErrorFilter::acceptingSql(const QString& d, const TimeSpan&) const
 {
