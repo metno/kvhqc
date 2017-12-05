@@ -46,7 +46,7 @@ private:
 
   ObsData_pv mSelectedObs;
 
-  enum SelectedColumnType { OTHER, ORIGINAL, CORRECTED, MODEL };
+  enum SelectedColumnType { NONE, OTHER, ORIGINAL, CORRECTED, MODEL };
   SelectedColumnType mSelectedColumnType;
 };
 
