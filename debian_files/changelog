@@ -1,3 +1,11 @@
+kvhqc (4.1.0~a3-1) unstable; urgency=low
+
+  * accept / reject in multiple columns
+  * some stations might have NULL county
+  * ignore precipation type for error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 05 Dec 2017 11:17:39 +0100
+
 kvhqc (4.1.0~a2-2) unstable; urgency=low
 
   * rebuild with updated kvalobs libraries
