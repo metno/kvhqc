@@ -18,14 +18,15 @@
 namespace /*anonymous*/ {
 
 const char STATIONINFO_CACHE[] = "stationinfo_cache";
+const char STATIONINFO_CACHE_DROP[] = "DROP TABLE stationinfo_cache;";
 const char STATIONINFO_CACHE_CREATE[] = "CREATE TABLE stationinfo_cache ("
-    "stationid    INTEGER PRIMARY KEY,"
-    "municip_id   INTEGER NOT NULL,"
-    "county       TEXT    NOT NULL,"
-    "municip_name TEXT    NOT NULL,"
-    "is_coastal   BOOLEAN NOT NULL,"
-    "priority     INTEGER DEFAULT 0"
-    ");";
+                                        "stationid    INTEGER PRIMARY KEY,"
+                                        "municip_id   INTEGER NOT NULL,"
+                                        "county       TEXT,"
+                                        "municip_name TEXT    NOT NULL,"
+                                        "is_coastal   BOOLEAN NOT NULL,"
+                                        "priority     INTEGER DEFAULT 0"
+                                        ");";
 
 const char STATIONINFO_CACHE_DELETE[] = "DELETE FROM stationinfo_cache;";
 const char STATIONINFO_CACHE_INSERT[] = "INSERT INTO stationinfo_cache VALUES"
@@ -34,6 +35,7 @@ const char STATIONINFO_CACHE_INSERT[] = "INSERT INTO stationinfo_cache VALUES"
 const char STATIONINFO_CACHE_SELECT_ALL[] = "SELECT stationid, municip_id, county, municip_name, is_coastal, priority FROM stationinfo_cache;";
 
 const char MANUAL_TYPES_CACHE[] = "manual_types_cache";
+const char MANUAL_TYPES_CACHE_DROP[] = "DROP TABLE manual_types_cache";
 const char MANUAL_TYPES_CACHE_CREATE[] = "CREATE TABLE manual_types_cache ("
     "  typeid    INTEGER"
     ");";
@@ -67,14 +69,23 @@ bool StationInfoBuffer::writeToStationFile()
   METLIBS_LOG_SCOPE();
 
   QSqlDatabase db = hqcApp->configDB();
+#ifndef HAVE_MIGRATIONS
+  db.exec(STATIONINFO_CACHE_DROP);
+  db.exec(STATIONINFO_CACHE_CREATE);
+#else // HAVE_MIGRATIONS
   if (not db.tables().contains(STATIONINFO_CACHE))
     db.exec(STATIONINFO_CACHE_CREATE);
+  else if (outdated)
+    migrate table;
+#endif
 
   db.transaction();
+#ifdef HAVE_MIGRATIONS
   QSqlQuery deleteall(db);
   deleteall.prepare(STATIONINFO_CACHE_DELETE);
   if (not deleteall.exec())
     HQC_LOG_ERROR("error while deleting stationinfo: " << deleteall.lastError().text());
+#endif
 
   QSqlQuery insert(db);
   insert.prepare(STATIONINFO_CACHE_INSERT);
@@ -91,14 +102,23 @@ bool StationInfoBuffer::writeToStationFile()
   }
   db.commit();
 
+#ifndef HAVE_MIGRATIONS
+  db.exec(MANUAL_TYPES_CACHE_DROP);
+  db.exec(MANUAL_TYPES_CACHE_CREATE);
+#else // HAVE_MIGRATIONS
   if (not db.tables().contains(MANUAL_TYPES_CACHE))
     db.exec(MANUAL_TYPES_CACHE_CREATE);
+  else if (outdated)
+    migrate table;
+#endif
 
   db.transaction();
+#ifdef HAVE_MIGRATIONS
   QSqlQuery deleteall_mc(db);
   deleteall_mc.prepare(MANUAL_TYPES_CACHE_DELETE);
   if (not deleteall_mc.exec())
     HQC_LOG_ERROR("error while deleting manual type: " << deleteall_mc.lastError().text());
+#endif
 
   QSqlQuery insert_mc(db);
   insert_mc.prepare(MANUAL_TYPES_CACHE_INSERT);

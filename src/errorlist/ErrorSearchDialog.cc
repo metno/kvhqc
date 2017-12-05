@@ -217,7 +217,7 @@ void ErrorSearchDialog::setupStationTab()
     if (c_it != county2item.end()) {
       c_it->second->appendRow(s_items);
     } else {
-      HQC_LOG_WARN("no county '" << s.fylke << "' for station " << s.stationid);
+      METLIBS_LOG_DEBUG("no county '" << s.fylke << "' for station " << s.stationid);
     }
   }
 
