@@ -5,3 +5,4 @@
 /*.log.20*
 /callgrind.out.*
 /core
+/.clang-format
