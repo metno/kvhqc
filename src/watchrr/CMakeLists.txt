@@ -20,7 +20,17 @@ SET(watchrr_SOURCES
   WrapperColumn.cc
 )
 
-QT5_ADD_TRANSLATION(watchrr_QM
+SET(watchrr_UIS
+  watchrr_edit.ui
+  watchrr_main.ui
+  watchrr_redist.ui
+  watchrr_station.ui
+)
+
+QT5_CREATE_TRANSLATION(watchrr_QM
+  ${watchrr_SOURCES}
+  ${watchrr_UIS}
+
   watchrr_de.ts
   watchrr_nb.ts
 )
@@ -33,12 +43,7 @@ QT5_WRAP_CPP(watchrr_MOC
   StationDialog.hh
 )
 
-QT5_WRAP_UI(watchrr_UIH
-  watchrr_edit.ui
-  watchrr_main.ui
-  watchrr_redist.ui
-  watchrr_station.ui
-)
+QT5_WRAP_UI(watchrr_UIH ${watchrr_UIS})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 

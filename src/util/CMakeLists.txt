@@ -44,14 +44,26 @@ QT5_WRAP_CPP(util_MOC
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-QT5_WRAP_UI(util_UIH
+
+SET(util_UIS
   hideapplybox.ui
 )
+QT5_WRAP_UI(util_UIH ${util_UIS})
+
+QT5_CREATE_TRANSLATION(util_QM
+  ${util_SOURCES}
+  ${util_UIS}
+
+  util_nb.ts
+  util_de.ts
+)
+INSTALL(FILES ${util_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_LIBRARY(util STATIC
   ${util_SOURCES}
   ${util_MOC}
   ${util_UIH}
+  ${util_QM}
 )
 
 ADD_SUBDIRECTORY(test)

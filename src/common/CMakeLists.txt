@@ -165,14 +165,24 @@ QT5_WRAP_CPP(common_MOC
 )
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-QT5_WRAP_UI(common_UIH
+SET(common_UIS
   authenticationdialog.ui
 )
+QT5_WRAP_UI(common_UIH ${common_UIS})
+QT5_CREATE_TRANSLATION(common_QM
+  ${common_SOURCES}
+  ${common_UIS}
+
+  common_nb.ts
+  common_de.ts
+)
+INSTALL(FILES ${common_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_LIBRARY(common STATIC
   ${common_SOURCES}
   ${common_MOC}
   ${common_UIH}
+  ${common_QM}
 )
 
 ADD_SUBDIRECTORY(test)

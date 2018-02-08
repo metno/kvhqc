@@ -1,39 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="nb_NO">
-<context>
-    <name>AcceptRejectButtons</name>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="61"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Accept the original or corrected value (depending on the selected column).&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Aksepter original eller korrigert verdi (avhengig fra valgte kolonne).&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis  &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="64"/>
-        <source>Accept</source>
-        <translation>Godkjenn</translation>
-    </message>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="65"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Reject the value.&lt;/p&gt;&lt;p&gt;QC2 is allowed to override if &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; is checked.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Forkast verdien.&lt;/p&gt;&lt;p&gt;QC2 får lov å overskrive hvis &lt;span style=&quot; font-style:italic;&quot;&gt;QC2&lt;/span&gt; er krysset av.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="68"/>
-        <source>Reject</source>
-        <translation>Forkast</translation>
-    </message>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="69"/>
-        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Decides wheter QC2 is allowed to override for &lt;span style=&quot; font-style:italic;&quot;&gt;Accept&lt;/span&gt; and &lt;span style=&quot;font-style:italic;&quot;&gt;Reject&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Bestemmer hvis QC2 får lov å overskrive &lt;span style=&quot; font-style:italic;&quot;&gt;Aksept&lt;/span&gt; og &lt;span style=&quot;font-style:italic;&quot;&gt;Forkast&lt;/span&gt;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
-    </message>
-    <message>
-        <location filename="../common/AcceptRejectButtons.cc" line="72"/>
-        <source>QC2</source>
-        <translation>QC2</translation>
-    </message>
-</context>
+<TS version="2.1" language="nb_NO">
 <context>
     <name>AppWindow</name>
     <message>
@@ -62,191 +29,140 @@
         <translation>&amp;WatchRR</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="69"/>
+        <location filename="appwindow.ui" line="72"/>
         <source>&amp;Rejected</source>
         <translation>&amp;Rejected</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="92"/>
+        <location filename="appwindow.ui" line="98"/>
         <source>Changes</source>
         <translation>Endringer</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="104"/>
+        <location filename="appwindow.ui" line="110"/>
         <source>Undo</source>
         <translation>Angre</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="110"/>
-        <location filename="appwindow.ui" line="254"/>
+        <location filename="appwindow.ui" line="116"/>
+        <location filename="appwindow.ui" line="260"/>
         <source>Ctrl+Z</source>
         <translation>Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="117"/>
+        <location filename="appwindow.ui" line="123"/>
         <source>Redo</source>
         <translation>Gjenta</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="123"/>
-        <location filename="appwindow.ui" line="265"/>
+        <location filename="appwindow.ui" line="129"/>
+        <location filename="appwindow.ui" line="271"/>
         <source>Ctrl+Shift+Z</source>
         <translation>Ctrl+Shift+Z</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="143"/>
+    <message>
+        <location filename="appwindow.ui" line="149"/>
         <source>Save…</source>
         <translation>Lagre…</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="163"/>
+        <location filename="appwindow.ui" line="169"/>
         <source>&amp;File</source>
         <translation>&amp;Fil</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="172"/>
+        <location filename="appwindow.ui" line="178"/>
         <source>&amp;Help</source>
         <translation>&amp;Hjelp</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="184"/>
+        <location filename="appwindow.ui" line="190"/>
         <source>&amp;Edit</source>
         <translation>&amp;Endring</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="198"/>
+        <location filename="appwindow.ui" line="204"/>
         <source>&amp;Quit</source>
         <translation>&amp;Avslutt</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="203"/>
+    <message>
+        <location filename="appwindow.ui" line="209"/>
         <source>&amp;User manual…</source>
         <translation>Br&amp;ukerveiledning…</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="208"/>
+    <message>
+        <location filename="appwindow.ui" line="214"/>
         <source>&amp;Flags…</source>
         <translation>&amp;Flagg…</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="213"/>
+    <message>
+        <location filename="appwindow.ui" line="219"/>
         <source>&amp;News…</source>
         <translation>&amp;Nyheter…</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="218"/>
+    <message>
+        <location filename="appwindow.ui" line="224"/>
         <source>&amp;Parameters…</source>
         <translation>&amp;Parametere…</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="223"/>
+        <location filename="appwindow.ui" line="229"/>
         <source>&amp;About HQC</source>
         <translation>&amp;Om HQC</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="228"/>
+        <location filename="appwindow.ui" line="234"/>
         <source>About &amp;Qt</source>
         <translation>Om &amp;Qt</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="233"/>
+    <message>
+        <location filename="appwindow.ui" line="239"/>
         <source>Open Kro…</source>
         <translation>Åpne kro…</translation>
     </message>
-    <message utf8="true">
-        <location filename="appwindow.ui" line="238"/>
+    <message>
+        <location filename="appwindow.ui" line="244"/>
         <source>&amp;Settings…</source>
         <translation>&amp;Innstillinger…</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="243"/>
+        <location filename="appwindow.ui" line="249"/>
         <source>&amp;Save</source>
         <translation>&amp;Lagre</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="251"/>
+        <location filename="appwindow.ui" line="257"/>
         <source>&amp;Undo</source>
         <translation>&amp;Angre</translation>
     </message>
     <message>
-        <location filename="appwindow.ui" line="262"/>
+        <location filename="appwindow.ui" line="268"/>
         <source>&amp;Redo</source>
         <translation>&amp;Gjenta</translation>
     </message>
 </context>
 <context>
-    <name>Authentication::Authenticator</name>
-    <message>
-        <location filename="../common/Authenticator.cc" line="134"/>
-        <source>Wrong username or password</source>
-        <translation>Feil brukernavn eller passord</translation>
-    </message>
-    <message>
-        <location filename="../common/Authenticator.cc" line="135"/>
-        <source>Wrong username or password. Please try again.</source>
-        <translation>Feil brukernavn eller passord. Vennligst prøv igjen.</translation>
-    </message>
-</context>
-<context>
-    <name>AuthenticationDialog</name>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="14"/>
-        <source>Log in</source>
-        <translation>Logg inn</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="23"/>
-        <source>Please enter username and password:</source>
-        <translation>Vennligst skriv inn brukernavn og passord:</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="37"/>
-        <source>Username:</source>
-        <translation>Brukernavn:</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="47"/>
-        <source>Password:</source>
-        <translation>Passord:</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="103"/>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="119"/>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Avbryt</translation>
-    </message>
-    <message>
-        <location filename="../common/authenticationdialog.ui" line="122"/>
-        <source>Alt+A</source>
-        <translation>Alt+A</translation>
-    </message>
-</context>
-<context>
     <name>AutoDataList</name>
     <message>
-        <location filename="AutoDataList.cc" line="65"/>
+        <location filename="AutoDataList.cc" line="66"/>
         <location filename="AutoDataList.cc" line="92"/>
         <source>Add column...</source>
         <translation>Ny kolonne…</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="66"/>
+        <location filename="AutoDataList.cc" line="67"/>
         <location filename="AutoDataList.cc" line="93"/>
         <source>Remove column</source>
         <translation>Fjern kolonne</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="67"/>
+        <location filename="AutoDataList.cc" line="68"/>
         <location filename="AutoDataList.cc" line="94"/>
         <source>Reset columns</source>
         <translation>Tilbakestill kolonnevalg</translation>
     </message>
     <message>
-        <location filename="AutoDataList.cc" line="72"/>
+        <location filename="AutoDataList.cc" line="73"/>
         <location filename="AutoDataList.cc" line="95"/>
         <source>Columns</source>
         <translation>Kolonner</translation>
@@ -255,128 +171,49 @@
 <context>
     <name>ChecksTableModel</name>
     <message>
-        <location filename="ChecksTableModel.cc" line="20"/>
+        <location filename="ChecksTableModel.cc" line="14"/>
         <source>Check</source>
         <translation>Check</translation>
     </message>
     <message>
-        <location filename="ChecksTableModel.cc" line="21"/>
+        <location filename="ChecksTableModel.cc" line="15"/>
         <source>Description</source>
         <translation>Beskrivelse</translation>
     </message>
     <message>
-        <location filename="ChecksTableModel.cc" line="103"/>
         <source>neighbors: </source>
-        <translation>Naboer: </translation>
-    </message>
-</context>
-<context>
-    <name>Code2Text</name>
-    <message>
-        <location filename="../common/Code2Text.cc" line="14"/>
-        <location filename="../common/DataVxItem.cc" line="199"/>
-        <source>new</source>
-        <translation>ny</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="15"/>
-        <source>row not in database</source>
-        <translation>ikke i databasen</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="16"/>
-        <location filename="../common/DataVxItem.cc" line="201"/>
-        <source>mis</source>
-        <translation>mis</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="17"/>
-        <source>value is missing</source>
-        <translation>verdien mangler</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="18"/>
-        <location filename="../common/DataVxItem.cc" line="203"/>
-        <source>rej</source>
-        <translation>rej</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="18"/>
-        <source>r</source>
-        <translation>r</translation>
-    </message>
-    <message>
-        <location filename="../common/Code2Text.cc" line="19"/>
-        <source>value is rejected</source>
-        <translation>forkastet</translation>
-    </message>
-</context>
-<context>
-    <name>DataColumn</name>
-    <message>
-        <location filename="../common/DataControlinfoItem.cc" line="39"/>
-        <source>flags</source>
-        <translation>flagg</translation>
-    </message>
-    <message>
-        <location filename="../common/DataControlinfoItem.cc" line="41"/>
-        <source>controlflags</source>
-        <translation>kontrollflagg</translation>
-    </message>
-    <message>
-        <location filename="../common/DataCorrectedItem.cc" line="73"/>
-        <location filename="../common/DataVxItem.cc" line="348"/>
-        <source>corr</source>
-        <translation>korr</translation>
-    </message>
-    <message>
-        <location filename="../common/DataCorrectedItem.cc" line="75"/>
-        <location filename="../common/DataVxItem.cc" line="351"/>
-        <source>corrected</source>
-        <translation>korrigert</translation>
-    </message>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="45"/>
-        <location filename="../common/DataVxItem.cc" line="347"/>
-        <source>orig</source>
-        <translation>orig</translation>
-    </message>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="47"/>
-        <location filename="../common/DataVxItem.cc" line="350"/>
-        <source>original</source>
-        <translation>original</translation>
+        <translation type="vanished">Naboer: </translation>
     </message>
 </context>
 <context>
     <name>DataHistoryTableModel</name>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="22"/>
+        <location filename="DataHistoryTableModel.cc" line="24"/>
         <source>Mod.time</source>
         <translation>Endr.tid</translation>
     </message>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="23"/>
+        <location filename="DataHistoryTableModel.cc" line="25"/>
         <source>Corr</source>
         <translation>Korr</translation>
     </message>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="24"/>
+        <location filename="DataHistoryTableModel.cc" line="26"/>
         <source>Flags</source>
         <translation>Flagg</translation>
     </message>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="25"/>
+        <location filename="DataHistoryTableModel.cc" line="27"/>
         <source>Checks</source>
         <translation>Checks</translation>
     </message>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="29"/>
+        <location filename="DataHistoryTableModel.cc" line="31"/>
         <source>Modificationtime</source>
         <translation>Endringstid</translation>
     </message>
     <message>
-        <location filename="DataHistoryTableModel.cc" line="30"/>
+        <location filename="DataHistoryTableModel.cc" line="32"/>
         <source>Corrected value</source>
         <translation>Korrigert verdi</translation>
     </message>
@@ -406,7 +243,7 @@ Ellers vis alle tider i tidsrom.</translation>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Lagre valgte (eller alle) data som tabell i CSV-format.</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="datalist.ui" line="87"/>
         <source>Save…</source>
         <translation>Lagre…</translation>
@@ -525,965 +362,131 @@ Ellers vis alle tider i tidsrom.</translation>
     </message>
 </context>
 <context>
-    <name>DataListModel</name>
-    <message>
-        <location filename="../common/DataListModel.cc" line="162"/>
-        <source>Distance: %1km</source>
-        <translation>Avstand: %1km</translation>
-    </message>
-</context>
-<context>
-    <name>DataOriginalItem</name>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="30"/>
-        <source>surely wrong</source>
-        <translation>sikkert feilaktig</translation>
-    </message>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="32"/>
-        <source>very suspicious (probably wrong)</source>
-        <translation>svært mistenkelig (antagelig feilaktig)</translation>
-    </message>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="34"/>
-        <source>suspicious (probably ok)</source>
-        <translation>noe mistenkelig (antagelig korrekt)</translation>
-    </message>
-    <message>
-        <location filename="../common/DataOriginalItem.cc" line="36"/>
-        <source>no quality info available</source>
-        <translation>kvalitetsinformasjon ikke gitt</translation>
-    </message>
-</context>
-<context>
-    <name>DataVxItem</name>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="28"/>
-        <location filename="../common/DataVxItem.cc" line="64"/>
-        <location filename="../common/DataVxItem.cc" line="81"/>
-        <source>no data</source>
-        <translation>ingen data</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="29"/>
-        <location filename="../common/DataVxItem.cc" line="65"/>
-        <location filename="../common/DataVxItem.cc" line="84"/>
-        <source>rain</source>
-        <translation>regn</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="30"/>
-        <location filename="../common/DataVxItem.cc" line="66"/>
-        <location filename="../common/DataVxItem.cc" line="88"/>
-        <source>rain shower</source>
-        <translation>regnbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="31"/>
-        <location filename="../common/DataVxItem.cc" line="67"/>
-        <location filename="../common/DataVxItem.cc" line="92"/>
-        <source>snow</source>
-        <translation>snø</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="32"/>
-        <location filename="../common/DataVxItem.cc" line="68"/>
-        <location filename="../common/DataVxItem.cc" line="96"/>
-        <source>snow shower</source>
-        <translation>snøbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="33"/>
-        <location filename="../common/DataVxItem.cc" line="69"/>
-        <location filename="../common/DataVxItem.cc" line="100"/>
-        <source>sleet</source>
-        <translation>sludd</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="34"/>
-        <location filename="../common/DataVxItem.cc" line="70"/>
-        <location filename="../common/DataVxItem.cc" line="104"/>
-        <source>sleet shower</source>
-        <translation>sluddbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="35"/>
-        <location filename="../common/DataVxItem.cc" line="71"/>
-        <location filename="../common/DataVxItem.cc" line="107"/>
-        <source>drizzle</source>
-        <translation>yr</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="36"/>
-        <location filename="../common/DataVxItem.cc" line="72"/>
-        <location filename="../common/DataVxItem.cc" line="108"/>
-        <source>hail</source>
-        <translation>hagl</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="37"/>
-        <location filename="../common/DataVxItem.cc" line="73"/>
-        <location filename="../common/DataVxItem.cc" line="109"/>
-        <source>dew</source>
-        <translation>dugg</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="38"/>
-        <location filename="../common/DataVxItem.cc" line="74"/>
-        <location filename="../common/DataVxItem.cc" line="110"/>
-        <source>rime</source>
-        <translation>rim</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="39"/>
-        <location filename="../common/DataVxItem.cc" line="75"/>
-        <location filename="../common/DataVxItem.cc" line="111"/>
-        <source>thunder</source>
-        <translation>torden</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="40"/>
-        <location filename="../common/DataVxItem.cc" line="76"/>
-        <location filename="../common/DataVxItem.cc" line="112"/>
-        <source>snowflakes</source>
-        <translation>snøfokk</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="41"/>
-        <source>Kornsnoe</source>
-        <translation>kornsnø</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="42"/>
-        <source>Sproehagl</source>
-        <translation>sprøhagl</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="43"/>
-        <source>ice hail</source>
-        <translation>ishagl</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="44"/>
-        <source>fog rime</source>
-        <translation>tåkerim</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="45"/>
-        <source>Isslag</source>
-        <translation>isslag</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="46"/>
-        <source>ice grains</source>
-        <translation>iskorn</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="47"/>
-        <source>ice needles</source>
-        <translation>isnåler</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="48"/>
-        <source>fog</source>
-        <translation>tåke</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="49"/>
-        <source>fog mist</source>
-        <translation>tåkedis</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="50"/>
-        <source>oil smoke</source>
-        <translation>ølrøyk</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="51"/>
-        <source>clear air</source>
-        <translation>ren luft</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="52"/>
-        <source>halo</source>
-        <translation>halo</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="53"/>
-        <source>Krans</source>
-        <translation>krans</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="54"/>
-        <source>sun</source>
-        <translation>sol</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="55"/>
-        <source>northern light</source>
-        <translation>nordlys</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="56"/>
-        <source>rainbow</source>
-        <translation>regnbue</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="57"/>
-        <source>sheet lightning</source>
-        <translation>kornmo</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="58"/>
-        <source>rain, snow, sleet</source>
-        <translation>regn, snø, sludd</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="59"/>
-        <source>dew, rime, fog</source>
-        <translation>dugg, rim, tåke</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="83"/>
-        <source>rain weak</source>
-        <translation>svakt regn</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="85"/>
-        <source>rain strong</source>
-        <translation>kraftig regn</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="87"/>
-        <source>rain shower weak</source>
-        <translation>svakt regnbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="89"/>
-        <source>rain shower strong</source>
-        <translation>kraftig regnbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="91"/>
-        <source>snow weak</source>
-        <translation>svakt snø</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="93"/>
-        <source>snow strong</source>
-        <translation>kraftig snø</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="95"/>
-        <source>snow shower weak</source>
-        <translation>svakt snøbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="97"/>
-        <source>snow shower strong</source>
-        <translation>kraftig snøbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="99"/>
-        <source>sleet weak</source>
-        <translation>svakt sludd</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="101"/>
-        <source>sleet strong</source>
-        <translation>kraftig sludd</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="103"/>
-        <source>sleet shower weak</source>
-        <translation>svakt sluddbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="105"/>
-        <source>sleet shower strong</source>
-        <translation>kraftig sluddbyge</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="165"/>
-        <location filename="../common/DataVxItem.cc" line="232"/>
-        <source>weak</source>
-        <translation>svakt</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="167"/>
-        <location filename="../common/DataVxItem.cc" line="234"/>
-        <source>strong</source>
-        <translation>kraftig</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="224"/>
-        <source>unknown code %1</source>
-        <translation>ukjent kode %1</translation>
-    </message>
-    <message>
-        <location filename="../common/DataVxItem.cc" line="226"/>
-        <source>unknown code %1 (strength %2)</source>
-        <translation>ukjent kode %1 (styrke %2)</translation>
-    </message>
-</context>
-<context>
-    <name>DialogExtremeValues</name>
-    <message>
-        <location filename="../extremes/extremevalues.ui" line="14"/>
-        <source>Extreme Values</source>
-        <translation>Ekstremverdier</translation>
-    </message>
-    <message>
-        <location filename="../extremes/extremevalues.ui" line="41"/>
-        <source> to:</source>
-        <translation> til:</translation>
-    </message>
-    <message>
-        <location filename="../extremes/extremevalues.ui" line="55"/>
-        <source>Apply</source>
-        <translation>Utfør</translation>
-    </message>
-</context>
-<context>
-    <name>DialogMissingObservations</name>
-    <message>
-        <location filename="../missingobs/missingvalues.ui" line="14"/>
-        <source>Missing Observations</source>
-        <translation>Manglende Observasjoner</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/missingvalues.ui" line="31"/>
-        <source>Type:</source>
-        <translation>Type:</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/missingvalues.ui" line="48"/>
-        <source> to:</source>
-        <translation> til:</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/missingvalues.ui" line="62"/>
-        <source>Apply</source>
-        <translation>Utfør</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/missingvalues.ui" line="82"/>
-        <source>Find missing values for RR_24</source>
-        <translation>Manglende observasjoner for RR_24</translation>
-    </message>
-</context>
-<context>
     <name>EditVersionModel</name>
     <message>
-        <location filename="EditVersionModel.cc" line="17"/>
+        <location filename="EditVersionModel.cc" line="16"/>
         <source>Time</source>
         <translation>Tid</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="18"/>
+        <location filename="EditVersionModel.cc" line="17"/>
         <source>Stnr</source>
         <translation>Stnr</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="19"/>
+        <location filename="EditVersionModel.cc" line="18"/>
         <source>Snr</source>
         <translation>Snr</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="20"/>
+        <location filename="EditVersionModel.cc" line="19"/>
         <source>Lvl</source>
         <translation>Lvl</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="21"/>
-        <location filename="EditVersionModel.cc" line="32"/>
+        <location filename="EditVersionModel.cc" line="20"/>
+        <location filename="EditVersionModel.cc" line="31"/>
         <source>Type</source>
         <translation>Type</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="22"/>
+        <location filename="EditVersionModel.cc" line="21"/>
         <source>Par</source>
         <translation>Par</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="23"/>
+        <location filename="EditVersionModel.cc" line="22"/>
         <source>Corr.</source>
         <translation>Korr.</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="24"/>
+        <location filename="EditVersionModel.cc" line="23"/>
         <source>Flags</source>
         <translation>Flagg</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="28"/>
+        <location filename="EditVersionModel.cc" line="27"/>
         <source>Change time / Observation time</source>
         <translation>Tid Endring/Obs</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="29"/>
+        <location filename="EditVersionModel.cc" line="28"/>
         <source>Station number</source>
         <translation>Stasjonsnummer</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="30"/>
+        <location filename="EditVersionModel.cc" line="29"/>
         <source>Sensor number</source>
         <translation>Sensor-nummer</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="31"/>
+        <location filename="EditVersionModel.cc" line="30"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="33"/>
+        <location filename="EditVersionModel.cc" line="32"/>
         <source>Parameter</source>
         <translation>Parametere</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="34"/>
+        <location filename="EditVersionModel.cc" line="33"/>
         <source>New Corrected Value</source>
         <translation>Ny korrigert verdi</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="35"/>
+        <location filename="EditVersionModel.cc" line="34"/>
         <source>New Flags</source>
         <translation>Nye flagg</translation>
     </message>
     <message>
-        <location filename="EditVersionModel.cc" line="162"/>
+        <location filename="EditVersionModel.cc" line="161"/>
         <source>Changed %1</source>
         <translation>Endring %1</translation>
     </message>
 </context>
 <context>
-    <name>ErrorList</name>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="38"/>
-        <location filename="../errorlist/ErrorListModel.cc" line="51"/>
-        <source>Flags</source>
-        <oldsource>Flag</oldsource>
-        <translation>Flagg</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/errorlist.ui" line="14"/>
-        <source>Error List</source>
-        <translation>Feillista</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/errorlist.ui" line="35"/>
-        <source>Open search dialog</source>
-        <translation>Åpne søkedialogen</translation>
-    </message>
-    <message utf8="true">
-        <location filename="../errorlist/errorlist.ui" line="38"/>
-        <source>&amp;Search…</source>
-        <translation>&amp;Søk…</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/errorlist.ui" line="61"/>
-        <source>For&amp;get Resolved</source>
-        <translation>&amp;Glem rettede</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/errorlist.ui" line="84"/>
-        <source>Expand a&amp;ll</source>
-        <translation>Åpne a&amp;lle</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="29"/>
-        <source>Stnr</source>
-        <translation>Stnr</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="30"/>
-        <source>Name</source>
-        <translation>Navn</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="31"/>
-        <source>WMO</source>
-        <translation>WMO</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="32"/>
-        <source>Obstime</source>
-        <translation>Obstid</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="33"/>
-        <source>Para</source>
-        <translation>Para</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="34"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="35"/>
-        <source>Orig.d</source>
-        <translation>Orig.d</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="36"/>
-        <source>Corr.d</source>
-        <translation>Korr.d</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="37"/>
-        <source>mod.v</source>
-        <translation>Mod.v</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="42"/>
-        <source>Station number</source>
-        <translation>Stasjonsnummer</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="43"/>
-        <source>Station name</source>
-        <translation>Stasjonsnavn</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="44"/>
-        <source>WMO station number</source>
-        <translation>WMO stasjons-nummer</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="45"/>
-        <source>Observation time</source>
-        <translation>Observasjonstid</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="46"/>
-        <source>Parameter name</source>
-        <translation>Parameternavn</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="47"/>
-        <source>Type ID</source>
-        <translation>Type ID</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="48"/>
-        <source>Original value</source>
-        <translation>Original verdi</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="49"/>
-        <source>Corrected value</source>
-        <translation>Korrigert verdi</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorListModel.cc" line="50"/>
-        <source>Model value</source>
-        <translation>Modellverdi</translation>
-    </message>
-</context>
-<context>
-    <name>ErrorSearchDialog</name>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="14"/>
-        <source>Error Search</source>
-        <translation>Feillista</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="33"/>
-        <location filename="../errorlist/error_search_dialog.ui" line="54"/>
-        <source>Stations</source>
-        <translation>Stasjoner</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="72"/>
-        <source>Time range</source>
-        <translation>Tidsrom</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="84"/>
-        <source>&amp;From</source>
-        <translation>&amp;Fra</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="97"/>
-        <location filename="../errorlist/error_search_dialog.ui" line="117"/>
-        <source>yyyy-MM-dd hh:mm</source>
-        <translation>yyyy-MM-dd hh:mm</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="104"/>
-        <source>&amp;To</source>
-        <translation>&amp;Til</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="124"/>
-        <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation>Velger omtrent de siste 2 dager.</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="127"/>
-        <source>Recent</source>
-        <translation>Nylig</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="134"/>
-        <source>Remember the chosen time span.</source>
-        <translation>Husk valgt tidsrom.</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="137"/>
-        <source>Remember</source>
-        <translation>Husk</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="164"/>
-        <source>Weather element</source>
-        <translation>Værelement</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="185"/>
-        <source>Available</source>
-        <translation>Tilgjengelig</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="227"/>
-        <source>Sho&amp;w only:</source>
-        <translation>Vis b&amp;are:</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="284"/>
-        <source>add to chosen values</source>
-        <translation>legg til som valgte parametere</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="305"/>
-        <source>remove from chosen values</source>
-        <translation>fjern fra valgte parametere</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="326"/>
-        <source>A&amp;ll</source>
-        <translation>A&amp;lle</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="344"/>
-        <source>&amp;None</source>
-        <translation>&amp;Ingen</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="372"/>
-        <source>Chosen</source>
-        <translation>Valgt</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="418"/>
-        <source>Save</source>
-        <translation>Lagre</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="425"/>
-        <source>Load</source>
-        <translation>&amp;Lagre…</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="445"/>
-        <source>&amp;Cancel</source>
-        <translation>&amp;Avbryt</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/error_search_dialog.ui" line="452"/>
-        <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
-        <source>Station/Region</source>
-        <translation>Stasjon/Region</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
-        <source>Name</source>
-        <translation>Navn</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="148"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="168"/>
-        <source>HOH</source>
-        <translation>hoh</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
-        <source>County</source>
-        <translation>Fylke</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
-        <source>Commune</source>
-        <translation>Kommune</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="149"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="169"/>
-        <source>Pri</source>
-        <translation>Pri</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="153"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="298"/>
-        <source>All in obs pgm</source>
-        <translation>Alle i obs pgm</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="154"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="307"/>
-        <source>All defined</source>
-        <translation>Alle definerte</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="381"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="391"/>
-        <source>Save data selection</source>
-        <translation>Lagre datavalg</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="382"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="429"/>
-        <source>Name:</source>
-        <translation>Navn:</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="392"/>
-        <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation>Datavalg med navn &apos;%1&apos; finnes.</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="393"/>
-        <source>Do you want to overwrite it?</source>
-        <translation>Ønsker du å lagre og overskrive den?</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="421"/>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="428"/>
-        <source>Load data selection</source>
-        <translation>Tilbakekalle datavalg</translation>
-    </message>
-    <message>
-        <location filename="../errorlist/ErrorSearchDialog.cc" line="422"/>
-        <source>No saved data selections found.</source>
-        <translation>Det finnes ingen lagrete valg.</translation>
-    </message>
-</context>
-<context>
-    <name>EtaProgressBar</name>
-    <message>
-        <location filename="../util/EtaProgressBar.cc" line="28"/>
-        <source>ETA %1:%2</source>
-        <translation>ca. %1:%2 igjen</translation>
-    </message>
-</context>
-<context>
-    <name>Extremes</name>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="23"/>
-        <source>Stnr</source>
-        <translation>Stnr</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="24"/>
-        <source>Name</source>
-        <translation>Navn</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="25"/>
-        <source>Time</source>
-        <translation>Tid</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="26"/>
-        <source>Para</source>
-        <translation>Para</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="27"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="28"/>
-        <source>Orig.d</source>
-        <translation>Orig.d</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="29"/>
-        <source>Corr.d</source>
-        <translation>Korr.d</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="30"/>
-        <location filename="../extremes/ExtremesTableModel.cc" line="41"/>
-        <source>Flags</source>
-        <translation>Flagg</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="34"/>
-        <source>Station number</source>
-        <translation>Stasjonsnummer</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="35"/>
-        <source>Station name</source>
-        <translation>Stasjonsnavn</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="36"/>
-        <source>Obstime</source>
-        <translation>Obstid</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="37"/>
-        <source>Parameter name</source>
-        <translation>Parameternavn</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="38"/>
-        <source>Type ID</source>
-        <translation>Type ID</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="39"/>
-        <source>Original value</source>
-        <translation>original verdi</translation>
-    </message>
-    <message>
-        <location filename="../extremes/ExtremesTableModel.cc" line="40"/>
-        <source>Corrected value</source>
-        <translation>korrigert verdi</translation>
-    </message>
-</context>
-<context>
-    <name>Helpers</name>
-    <message>
-        <location filename="../common/KvHelpers.cc" line="141"/>
-        <source>Unknown or invalid flag value</source>
-        <translation>Ukjent eller ugylig flagg-verdi</translation>
-    </message>
-    <message>
-        <location filename="../common/KvHelpers.cc" line="460"/>
-        <source> generated by kvalobs</source>
-        <translation> generert av kvalobs</translation>
-    </message>
-    <message>
-        <location filename="../common/KvHelpers.cc" line="468"/>
-        <source>%1 %2 %3masl.</source>
-        <translation>%1 %2 %3moh.</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="112"/>
-        <source>There are %1 unsaved data updates.</source>
-        <translation>Det er %1 ulagrede endringer.</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="113"/>
-        <source>Are you sure that you want to lose them?</source>
-        <translation>Er du sikker at du vil miste dem?</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="114"/>
-        <source>Discard changes</source>
-        <translation>Miste endringer</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="115"/>
-        <source>Continue</source>
-        <translation>Fortsett</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="177"/>
-        <source>none</source>
-        <translation>uten</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="181"/>
-        <source>%1 d</source>
-        <translation>%1 d</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="183"/>
-        <source>%1 h</source>
-        <translation>%1 t</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="185"/>
-        <source>%1 min</source>
-        <translation>%1 min</translation>
-    </message>
-    <message>
-        <location filename="../util/Helpers.cc" line="186"/>
-        <source>%1 s</source>
-        <translation>%1 s</translation>
-    </message>
-</context>
-<context>
-    <name>HideApplyBox</name>
-    <message>
-        <location filename="../util/hideapplybox.ui" line="30"/>
-        <source>Hide</source>
-        <translation>Skjul</translation>
-    </message>
-    <message>
-        <location filename="../util/hideapplybox.ui" line="42"/>
-        <source>Apply</source>
-        <translation>Utfør</translation>
-    </message>
-    <message>
-        <location filename="../util/hideapplybox.ui" line="54"/>
-        <source>&amp;Apply+Hide</source>
-        <translation>&amp;Utfør+Skjul</translation>
-    </message>
-</context>
-<context>
     <name>HqcAppWindow</name>
     <message>
-        <location filename="HqcAppWindow.cc" line="97"/>
+        <location filename="HqcAppWindow.cc" line="157"/>
         <source>HQC %1</source>
         <translation>HQC %1</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="160"/>
+        <location filename="HqcAppWindow.cc" line="163"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Velkommen til kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="208"/>
         <source>No RejectDecode</source>
-        <translation>Ingen RejectDecode</translation>
+        <translation type="vanished">Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="208"/>
         <source>Could not read rejectdecode.</source>
-        <translation>Kunne ikke lese rejectdecode.</translation>
+        <translation type="vanished">Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="259"/>
+        <location filename="HqcAppWindow.cc" line="102"/>
+        <source>HQC</source>
+        <translation type="unfinished">HQC</translation>
+    </message>
+    <message>
+        <location filename="HqcAppWindow.cc" line="244"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="260"/>
+        <location filename="HqcAppWindow.cc" line="245"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="296"/>
+        <location filename="HqcAppWindow.cc" line="281"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="297"/>
+        <location filename="HqcAppWindow.cc" line="282"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -1494,523 +497,387 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="333"/>
+        <location filename="HqcAppWindow.cc" line="318"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="334"/>
+        <location filename="HqcAppWindow.cc" line="319"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="335"/>
+        <location filename="HqcAppWindow.cc" line="320"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="344"/>
+        <location filename="HqcAppWindow.cc" line="329"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="347"/>
+        <location filename="HqcAppWindow.cc" line="332"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="408"/>
+        <location filename="HqcAppWindow.cc" line="393"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="409"/>
+        <location filename="HqcAppWindow.cc" line="394"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
-    </message>
-</context>
-<context>
-    <name>HqcApplication</name>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="119"/>
-        <source>Cannot access hqc system database, please check the HQC installation</source>
-        <translation>Kan ikke lese HQC systemdatabasen; vennligst sjekk HQC-installasjonen</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="130"/>
-        <source>No $HOME enviroment, please check your computer&apos;s setup</source>
-        <translation>Variablen $HOME er tom; vennligst sjekk instillingene på datamaskinen</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="138"/>
-        <source>Cannot access/create hqc config database, please check the HQC installation</source>
-        <translation>Kan ikke lese HQC konfigurasjonsdatabasen; vennligst sjekk HQC-installasjonen</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="153"/>
-        <source>Cannot access kvalobs SQL database, please check the HQC configuration</source>
-        <translation>Kan ikke lese kvalobs SQL databasen; vennligst sjekk HQC-konfigurasjonen</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="256"/>
-        <location filename="../common/HqcApplication.cc" line="281"/>
-        <source>HQC</source>
-        <translation>HQC</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="258"/>
-        <source>A severe error has occurred. You should restart the application, and report the error.</source>
-        <translation>Alvorlig feil oppsto. Prøv å starte HQC på nytt, og gi beskjed om feilen.</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="302"/>
-        <source>The kvalobs database is not accessible.</source>
-        <translation>Kvalobsdatabasen er dessverre ikke tilgjengelig.</translation>
-    </message>
-    <message>
-        <location filename="../common/HqcApplication.cc" line="303"/>
-        <source>HQC terminates because it cannot be used without the kvalobs database.</source>
-        <translation>HQC avsluttes fordi den kan ikke brukes uten kvalobs-databasen.</translation>
     </message>
 </context>
 <context>
     <name>HqcMainWindow</name>
     <message>
-        <location filename="mainwindow.ui" line="14"/>
-        <location filename="HqcMainWindow.cc" line="147"/>
-        <location filename="HqcMainWindow.cc" line="273"/>
-        <location filename="HqcMainWindow.cc" line="328"/>
         <source>HQC</source>
-        <translation>HQC</translation>
+        <translation type="vanished">HQC</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="53"/>
         <source>&amp;File</source>
-        <translation>&amp;Fil</translation>
+        <translation type="vanished">&amp;Fil</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="87"/>
         <source>&amp;Help</source>
-        <translation>&amp;Hjelp</translation>
+        <translation type="vanished">&amp;Hjelp</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="99"/>
         <source>&amp;Edit</source>
         <oldsource>Edit</oldsource>
-        <translation>&amp;Endring</translation>
+        <translation type="vanished">&amp;Endring</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="299"/>
         <source>Undo</source>
-        <translation>Angre</translation>
+        <translation type="vanished">Angre</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="313"/>
         <source>Redo</source>
-        <translation>Gjenta</translation>
+        <translation type="vanished">Gjenta</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="118"/>
         <source>Save</source>
-        <translation>Lagre</translation>
+        <translation type="vanished">Lagre</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="121"/>
         <source>Ctrl+S</source>
-        <translation>Ctrl+S</translation>
+        <translation type="vanished">Ctrl+S</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="135"/>
         <source>Ctrl+P</source>
-        <translation>Ctrl+P</translation>
+        <translation type="vanished">Ctrl+P</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="140"/>
         <source>Data &amp;list and Error list</source>
-        <translation>Data&amp;liste og Feilliste</translation>
+        <translation type="vanished">Data&amp;liste og Feilliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="143"/>
         <source>Produce datalist and error list</source>
-        <translation>Bygg dataliste og feilliste</translation>
+        <translation type="vanished">Bygg dataliste og feilliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="146"/>
         <source>Ctrl+L</source>
-        <translation>Ctrl+L</translation>
+        <translation type="vanished">Ctrl+L</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="151"/>
         <source>&amp;Error list</source>
-        <translation>&amp;Feilliste</translation>
+        <translation type="vanished">&amp;Feilliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="154"/>
         <source>Ctrl+F</source>
-        <translation>Ctrl+F</translation>
+        <translation type="vanished">Ctrl+F</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="159"/>
         <source>&amp;Data list</source>
-        <translation>&amp;Dataliste</translation>
+        <translation type="vanished">&amp;Dataliste</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="164"/>
         <source>&amp;Error list salen</source>
-        <translation>&amp;Feilliste salen</translation>
+        <translation type="vanished">&amp;Feilliste salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="167"/>
         <source>Alt+S</source>
-        <translation>Alt+S</translation>
+        <translation type="vanished">Alt+S</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="172"/>
         <source>&amp;Precipitation</source>
-        <translation>&amp;Nedbør</translation>
+        <translation type="vanished">&amp;Nedbør</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="180"/>
         <source>&amp;Weather</source>
-        <translation>&amp;Vær</translation>
+        <translation type="vanished">&amp;Vær</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="212"/>
+    <message>
         <source>&amp;Open Kro…</source>
-        <translation>&amp;Åpne kro…</translation>
+        <translation type="vanished">&amp;Åpne kro…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="215"/>
         <source>Open kro in browser</source>
-        <translation>Åpne kro i nettleser</translation>
+        <translation type="vanished">Åpne kro i nettleser</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="220"/>
+    <message>
         <source>&amp;User manual…</source>
-        <translation>Br&amp;ukerveiledning…</translation>
+        <translation type="vanished">Br&amp;ukerveiledning…</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="223"/>
+    <message>
         <source>User manual…</source>
-        <translation>Brukerveiledning…</translation>
+        <translation type="vanished">Brukerveiledning…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="226"/>
         <source>Show user manual in browser</source>
-        <translation>Åpen brukerveiledning i nettleser</translation>
+        <translation type="vanished">Åpen brukerveiledning i nettleser</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="234"/>
+    <message>
         <source>&amp;Flags…</source>
-        <translation>&amp;Flagg…</translation>
+        <translation type="vanished">&amp;Flagg…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="237"/>
         <source>Show flag explanations in browser</source>
-        <translation>Åpne flagg-forklaring i nettleser</translation>
+        <translation type="vanished">Åpne flagg-forklaring i nettleser</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="245"/>
+    <message>
         <source>&amp;Parameters…</source>
-        <translation>&amp;Parametere…</translation>
+        <translation type="vanished">&amp;Parametere…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="248"/>
         <source>Show parameter explanation in browser</source>
-        <translation>Åpne parameter-forklaring i nettleser</translation>
-    </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="277"/>
-        <source>&amp;News…</source>
-        <translation>&amp;Nyheter…</translation>
+        <translation type="vanished">Åpne parameter-forklaring i nettleser</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="282"/>
-        <location filename="mainwindow.ui" line="285"/>
+        <source>&amp;News…</source>
+        <translation type="vanished">&amp;Nyheter…</translation>
+    </message>
+    <message>
         <source>Error+data list Salen</source>
         <oldsource>Produce errorlist and datalist for Salen</oldsource>
-        <translation>Data- og feilliste salen</translation>
+        <translation type="vanished">Data- og feilliste salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="288"/>
         <source>Build error list and data list for Salen</source>
-        <translation>Vis data- og feilliste for salen</translation>
+        <translation type="vanished">Vis data- og feilliste for salen</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="291"/>
         <source>Ctrl+Shift+L</source>
-        <translation>Ctrl+Shift+L</translation>
+        <translation type="vanished">Ctrl+Shift+L</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="302"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Undo the last change. &lt;span style=&quot; font-weight:600;&quot;&gt;WARNING:&lt;/span&gt; This may be many changes at once if you edited in WatchRR or WatchWeather or accepted / rejected a time series.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Angre siste endring. &lt;span style=&quot; font-weight:600;&quot;&gt;ADVARSEL:&lt;/span&gt; Det kan være mange endringer hvis du har brukt WatchRR eller WatchWeather, eller hvis du har godkjent/forkastet en tidsserie.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation type="vanished">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Angre siste endring. &lt;span style=&quot; font-weight:600;&quot;&gt;ADVARSEL:&lt;/span&gt; Det kan være mange endringer hvis du har brukt WatchRR eller WatchWeather, eller hvis du har godkjent/forkastet en tidsserie.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="305"/>
         <source>Ctrl+Z</source>
-        <translation>Ctrl+Z</translation>
+        <translation type="vanished">Ctrl+Z</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="316"/>
         <source>Redo a change.</source>
-        <translation>Gjenta endring.</translation>
+        <translation type="vanished">Gjenta endring.</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="319"/>
         <source>Ctrl+Shift+Z</source>
-        <translation>Ctrl+Shift+Z</translation>
+        <translation type="vanished">Ctrl+Shift+Z</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="324"/>
+    <message>
         <source>Jump to Observation…</source>
-        <translation>Hopp til Observasjon…</translation>
+        <translation type="vanished">Hopp til Observasjon…</translation>
     </message>
-    <message utf8="true">
-        <location filename="mainwindow.ui" line="329"/>
+    <message>
         <source>Settings…</source>
-        <translation>Innstillinger…</translation>
+        <translation type="vanished">Innstillinger…</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="332"/>
         <source>Change user settings</source>
-        <translation>Tilpasse instillinger</translation>
+        <translation type="vanished">Tilpasse instillinger</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="64"/>
         <source>&amp;View</source>
-        <translation>&amp;Visning</translation>
+        <translation type="vanished">&amp;Visning</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="175"/>
         <source>Ctrl+R</source>
-        <translation>Ctrl+R</translation>
+        <translation type="vanished">Ctrl+R</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="129"/>
-        <location filename="mainwindow.ui" line="132"/>
         <source>Print</source>
-        <translation>Utskrift</translation>
+        <translation type="vanished">Utskrift</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="69"/>
         <source>&amp;Data</source>
         <oldsource>Data</oldsource>
-        <translation>&amp;Data</translation>
+        <translation type="vanished">&amp;Data</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="183"/>
         <source>Ctrl+V</source>
-        <translation>Ctrl+V</translation>
+        <translation type="vanished">Ctrl+V</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="188"/>
         <source>Te&amp;xt data</source>
-        <translation>Te&amp;xtData</translation>
+        <translation type="vanished">Te&amp;xtData</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="191"/>
         <source>Alt+X</source>
-        <translation>Alt+X</translation>
+        <translation type="vanished">Alt+X</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="196"/>
         <source>Re&amp;jected</source>
-        <translation>Re&amp;jectDecode</translation>
+        <translation type="vanished">Re&amp;jectDecode</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="199"/>
         <source>Ctrl+J</source>
-        <translation>Ctrl+J</translation>
+        <translation type="vanished">Ctrl+J</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="207"/>
         <source>&amp;Diana presentation</source>
-        <translation>&amp;Dianavisning</translation>
+        <translation type="vanished">&amp;Dianavisning</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="229"/>
         <source>F1</source>
-        <translation>F1</translation>
+        <translation type="vanished">F1</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="240"/>
         <source>F2</source>
-        <translation>F2</translation>
+        <translation type="vanished">F2</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="251"/>
         <source>F3</source>
-        <translation>F3</translation>
+        <translation type="vanished">F3</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="256"/>
         <source>&amp;About Hqc</source>
-        <translation>&amp;Om Hqc</translation>
+        <translation type="vanished">&amp;Om Hqc</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="264"/>
         <source>About &amp;Qt</source>
-        <translation>Om &amp;Qt</translation>
+        <translation type="vanished">Om &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.ui" line="272"/>
         <source>&amp;Screenshot</source>
-        <translation>&amp;Skjermbilde</translation>
+        <translation type="vanished">&amp;Skjermbilde</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="361"/>
         <source>Welcome to kvhqc %1!</source>
-        <translation>Velkommen til kvhqc %1!</translation>
+        <translation type="vanished">Velkommen til kvhqc %1!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="370"/>
         <source>&lt;h1&gt;Diana-Connection&lt;/h1&gt;No contact with diana! You should connect to the command server via the button in the lower right in the hqc window, and connect diana to the command server using the button in diana&apos;s window.</source>
-        <translation>&lt;h1&gt;Dianaforbindelse&lt;/h1&gt;Har ikke kontakt med diana! Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, og kople diana til tjeneren via knappen i diana sin vindu.</translation>
+        <translation type="vanished">&lt;h1&gt;Dianaforbindelse&lt;/h1&gt;Har ikke kontakt med diana! Du skulle kople til kommando-tjeneren via knappen underst til høyre i hqc-vinduet, og kople diana til tjeneren via knappen i diana sin vindu.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="381"/>
         <source>No stations selected! At least one statione must be chosen.</source>
-        <translation>Ingen stasjoner er valgt! Minst en stasjon må velges.</translation>
+        <translation type="vanished">Ingen stasjoner er valgt! Minst en stasjon må velges.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="391"/>
         <source>Weather Element</source>
-        <translation>Værelement</translation>
+        <translation type="vanished">Værelement</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="380"/>
         <source>Station Selection</source>
-        <translation>Stasjonsvalg</translation>
+        <translation type="vanished">Stasjonsvalg</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="392"/>
         <source>No weather element selected! At least one has to be chosen.</source>
-        <translation>Ingen værelement er valgt! Minst en må velges.</translation>
+        <translation type="vanished">Ingen værelement er valgt! Minst en må velges.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="443"/>
         <source>Building data list...</source>
-        <translation>Bygger dataliste...</translation>
+        <translation type="vanished">Bygger dataliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="435"/>
         <source>Building error list...</source>
-        <translation>Bygger feilliste...</translation>
+        <translation type="vanished">Bygger feilliste...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="254"/>
-        <location filename="HqcMainWindow.cc" line="324"/>
         <source>Auto List/Series</source>
-        <translation>Auto Liste/Serie</translation>
+        <translation type="vanished">Auto Liste/Serie</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="274"/>
-        <location filename="HqcMainWindow.cc" line="329"/>
         <source>Fetching data, please wait ...</source>
-        <translation>Henter data, vennligst vent ...</translation>
+        <translation type="vanished">Henter data, vennligst vent ...</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="406"/>
         <source>Building station list...</source>
-        <translation>Bygger stasjonsliste…</translation>
+        <translation type="vanished">Bygger stasjonsliste…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="326"/>
-        <location filename="HqcMainWindow.cc" line="449"/>
         <source>Selected Data</source>
-        <translation>Valgte data</translation>
+        <translation type="vanished">Valgte data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="509"/>
         <source>No RejectDecode</source>
-        <translation>Ingen RejectDecode</translation>
+        <translation type="vanished">Ingen RejectDecode</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="509"/>
         <source>Could not read rejectdecode.</source>
-        <translation>Kunne ikke lese rejectdecode.</translation>
+        <translation type="vanished">Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="744"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="vanished">OK</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="709"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
 
 You are using HQC version %1.</source>
-        <translation>HQC er et programm for manuell kontroll av værobservasjoner.
+        <translation type="vanished">HQC er et programm for manuell kontroll av værobservasjoner.
 
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="742"/>
         <source>HQC - Saving data</source>
-        <translation>HQC - Lagre Data</translation>
+        <translation type="vanished">HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="743"/>
         <source>Sorry, your changes could not be saved!</source>
-        <translation>Dessverre kunne endringene ikke bli lagret!</translation>
+        <translation type="vanished">Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="747"/>
         <source>&lt;h1&gt;Data Saved&lt;/h1&gt;Your changes have been saved.</source>
-        <translation>&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
+        <translation type="vanished">&lt;h1&gt;Data lagret&lt;/h1&gt;Endringene ble lagret.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="756"/>
         <source>Kvalobs seems to be available</source>
-        <translation>Kvalobs-databasen tilgjengelig</translation>
+        <translation type="vanished">Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="759"/>
         <source>Kvalobs seems not to be available</source>
-        <translation>Kvalobs-databasen ikke tilgjengelig</translation>
+        <translation type="vanished">Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="760"/>
         <source>&lt;h1&gt;Kvalobs unavailable&lt;/h1&gt;Database not accessible right now! You may wait and try again, but you must expect any changes to be lost.</source>
-        <translation>&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
+        <translation type="vanished">&lt;h1&gt;Kvalobs utilgjengelig&lt;/h1&gt;Databasen ikke tilgjengenlig nå! Du kan vente og prøve igjen, men du må renge med å miste alle endringer.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="625"/>
         <source>Print screenshot</source>
-        <translation>Skriv ut skjermbilde</translation>
+        <translation type="vanished">Skriv ut skjermbilde</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="649"/>
         <source>HQC - Update</source>
-        <translation>HQC - Oppdatering</translation>
+        <translation type="vanished">HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="650"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
-        <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
+        <translation type="vanished">Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="708"/>
         <source>About Hqc</source>
-        <translation>Om Hqc</translation>
+        <translation type="vanished">Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="790"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
-        <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
+        <translation type="vanished">Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="867"/>
         <source>HQC - Version Change</source>
-        <translation>HQC - Versjonsendring</translation>
+        <translation type="vanished">HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcMainWindow.cc" line="868"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
-        <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
+        <translation type="vanished">Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
 </context>
 <context>
@@ -2067,69 +934,13 @@ Du bruker HQC versjon %1.</translation>
     </message>
 </context>
 <context>
-    <name>Missing</name>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="23"/>
-        <source>Stnr</source>
-        <translation>Stnr</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="24"/>
-        <source>Name</source>
-        <translation>Navn</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="25"/>
-        <source>Time</source>
-        <translation>Tid</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="26"/>
-        <source>Type</source>
-        <translation>Type</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="30"/>
-        <source>Station number</source>
-        <translation>Stasjonsnummer</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="31"/>
-        <source>Station name</source>
-        <translation>Stasjonsnavn</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="32"/>
-        <source>Obstime</source>
-        <translation>Obstid</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingTableModel.cc" line="33"/>
-        <source>Type ID</source>
-        <translation>Type ID</translation>
-    </message>
-</context>
-<context>
-    <name>MissingView</name>
-    <message>
-        <location filename="../missingobs/MissingView.cc" line="64"/>
-        <source>any</source>
-        <translation>alle</translation>
-    </message>
-    <message>
-        <location filename="../missingobs/MissingView.cc" line="65"/>
-        <source>manual</source>
-        <translation>manuelle</translation>
-    </message>
-</context>
-<context>
     <name>NavigationHistory</name>
     <message>
         <location filename="navigationhistory.ui" line="14"/>
         <source>Recent</source>
         <translation>Historie</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="navigationhistory.ui" line="29"/>
         <source>Jum&amp;p…</source>
         <oldsource>&amp;Jump…</oldsource>
@@ -2208,160 +1019,69 @@ Du bruker HQC versjon %1.</translation>
     </message>
 </context>
 <context>
-    <name>RejectDecodeTable</name>
-    <message>
-        <location filename="../rejectedobs/RejectedObs.cc" line="16"/>
-        <source>Tbtime</source>
-        <translation>Tbtime</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObs.cc" line="17"/>
-        <source>Observation</source>
-        <translation>Observasjon</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObs.cc" line="18"/>
-        <source>Comment</source>
-        <translation>Kommentar</translation>
-    </message>
-</context>
-<context>
-    <name>RejectedObsDialog</name>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="66"/>
-        <source>RejectDecode</source>
-        <translation>RejectDecode</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="67"/>
-        <source>Select time range for reject list</source>
-        <translation>Velg tidsrom for rejectdecode liste</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="68"/>
-        <source>From</source>
-        <translation>Fra</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="69"/>
-        <source>To</source>
-        <translation>Til</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="70"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../rejectedobs/RejectedObsDialog.cc" line="71"/>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-</context>
-<context>
-    <name>Rejects</name>
-    <message>
-        <location filename="../rejectedobs/RejectedObs.cc" line="92"/>
-        <source>RejectDecode</source>
-        <translation>RejectDecode</translation>
-    </message>
-</context>
-<context>
     <name>SearchWindow</name>
     <message>
-        <location filename="SearchWindow.cc" line="110"/>
+        <location filename="SearchWindow.cc" line="111"/>
         <source>HQC Search %1</source>
         <translation>HQC Søk %1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="152"/>
+        <location filename="SearchWindow.cc" line="155"/>
         <source>Ctrl+F</source>
         <comment>Error search tab shortcut</comment>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="170"/>
+        <location filename="SearchWindow.cc" line="164"/>
+        <source>Ctrl+E</source>
+        <comment>Extremes tab shortcut</comment>
+        <translation type="unfinished">Ctrl+E</translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="171"/>
+        <source>Ctrl+M</source>
+        <comment>Missing Data tab shortcut</comment>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="SearchWindow.cc" line="177"/>
         <source>Ctrl+R</source>
         <comment>Recent tab shortcut</comment>
         <translation>Ctrl+R</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="179"/>
+        <location filename="SearchWindow.cc" line="189"/>
         <source>List/Series</source>
         <oldsource>Auto List/Series</oldsource>
         <translation>Liste/Serie</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="181"/>
+        <location filename="SearchWindow.cc" line="191"/>
         <source>Ctrl+1</source>
         <comment>List/Series tab shortcut</comment>
         <translation>Ctrl+1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="195"/>
+        <location filename="SearchWindow.cc" line="211"/>
         <source>Ctrl+2</source>
         <comment>Station data tab shortcut</comment>
         <translation>Ctrl+2</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="199"/>
+        <location filename="SearchWindow.cc" line="217"/>
         <source>Ctrl+3</source>
         <comment>Single Observation tab shortcut</comment>
         <translation>Ctrl+3</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="245"/>
         <source>Preparing data for station %1 at %2, please wait...</source>
-        <translation>Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
-    </message>
-</context>
-<context>
-    <name>SensorHeader</name>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="28"/>
-        <source>Sensor %1 Type %2</source>
-        <translation>Sensor %1 Type %2</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="51"/>
-        <source>model</source>
-        <translation>modell</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="33"/>
-        <source>Parameter %1</source>
-        <translation>Parameter %1</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="78"/>
-        <source>+%1h</source>
-        <translation>+%1t</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="79"/>
-        <source>time offset +%1 hour(s)</source>
-        <translation>tidsskift +%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="82"/>
-        <source>-%1h</source>
-        <translation>-%1t</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="83"/>
-        <source>time offset -%1 hour(s)</source>
-        <translation>tidsskift -%1 time(r)</translation>
-    </message>
-    <message>
-        <location filename="../common/SensorHeader.cc" line="97"/>
-        <source>Station %1 [%2, %3masl] Level %4</source>
-        <translation>Stasjon %1 [%2, %3moh] Level %4</translation>
+        <translation type="vanished">Forbereder data for stasjon %1 om %2, vennligst vent…</translation>
     </message>
 </context>
 <context>
     <name>SimpleCorrections</name>
     <message>
-        <location filename="SimpleCorrections.cc" line="179"/>
+        <location filename="SimpleCorrections.cc" line="181"/>
         <source>tbtime: %1</source>
         <translation>tbtime: %1</translation>
     </message>
@@ -2379,37 +1099,37 @@ Du bruker HQC versjon %1.</translation>
         <translation>Stasjon:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="387"/>
+        <location filename="singleobservation.ui" line="397"/>
         <source>L:</source>
         <translation>L:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="424"/>
+        <location filename="singleobservation.ui" line="434"/>
         <source>Level</source>
         <translation>Level</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="440"/>
+        <location filename="singleobservation.ui" line="450"/>
         <source>S:</source>
         <translation>S:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="477"/>
+        <location filename="singleobservation.ui" line="487"/>
         <source>Sensor Number</source>
         <translation>Sensor nummer</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="493"/>
+        <location filename="singleobservation.ui" line="503"/>
         <source>Type:</source>
         <translation>Type:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="543"/>
+        <location filename="singleobservation.ui" line="553"/>
         <source>Param:</source>
         <translation>Param:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="593"/>
+        <location filename="singleobservation.ui" line="603"/>
         <source>Obstime:</source>
         <translation>Obstid:</translation>
     </message>
@@ -2425,8 +1145,8 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="singleobservation.ui" line="83"/>
-        <location filename="singleobservation.ui" line="237"/>
-        <location filename="singleobservation.ui" line="330"/>
+        <location filename="singleobservation.ui" line="247"/>
+        <location filename="singleobservation.ui" line="340"/>
         <source>Acc</source>
         <translation>Aks</translation>
     </message>
@@ -2446,77 +1166,77 @@ Du bruker HQC versjon %1.</translation>
         <translation>Historie</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="193"/>
+        <location filename="singleobservation.ui" line="203"/>
         <source>Model:</source>
         <translation>Modell:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="234"/>
+        <location filename="singleobservation.ui" line="244"/>
         <source>Accept the model value</source>
         <translation>Aksepter modell-verdi</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="243"/>
+        <location filename="singleobservation.ui" line="253"/>
         <source>Ctrl+H</source>
         <translation>Ctrl+H</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="250"/>
+        <location filename="singleobservation.ui" line="260"/>
         <source>Flags:</source>
         <translation>Flagg:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="285"/>
+        <location filename="singleobservation.ui" line="295"/>
         <source>&amp;Corr:</source>
         <translation>&amp;Korr:</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="311"/>
+        <location filename="singleobservation.ui" line="321"/>
         <source>Start an editor for this observation</source>
         <translation>Åpne editor for observasjonen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="314"/>
+        <location filename="singleobservation.ui" line="324"/>
         <source>Edit</source>
         <translation>Edit</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="320"/>
+        <location filename="singleobservation.ui" line="330"/>
         <source>Ctrl+E</source>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="327"/>
+        <location filename="singleobservation.ui" line="337"/>
         <source>Accept the corrected value</source>
         <translation>Aksepter korrigert verdi</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="336"/>
+        <location filename="singleobservation.ui" line="346"/>
         <source>Ctrl+J</source>
         <translation>Ctrl+J</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="343"/>
+        <location filename="singleobservation.ui" line="353"/>
         <source>Allow QC2 to override</source>
         <translation>QC kan overskrive</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="346"/>
+        <location filename="singleobservation.ui" line="356"/>
         <source>QC&amp;2</source>
         <translation>QC&amp;2</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="353"/>
+        <location filename="singleobservation.ui" line="363"/>
         <source>Reject the observation</source>
         <translation>Forkast observasjonen</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="356"/>
+        <location filename="singleobservation.ui" line="366"/>
         <source>Rej</source>
         <translation>Rej</translation>
     </message>
     <message>
-        <location filename="singleobservation.ui" line="362"/>
+        <location filename="singleobservation.ui" line="372"/>
         <source>Ctrl+K</source>
         <translation>Ctrl+K</translation>
     </message>
@@ -2524,196 +1244,9 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>StationDataList</name>
     <message>
-        <location filename="StationDataList.cc" line="27"/>
+        <location filename="StationDataList.cc" line="30"/>
         <source>Station Data</source>
         <translation>Stasjonsdata</translation>
-    </message>
-</context>
-<context>
-    <name>Tasks</name>
-    <message>
-        <location filename="../common/Tasks.cc" line="24"/>
-        <source>missing observation</source>
-        <translation>manglende observasjon</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="26"/>
-        <source>HQC flags set before redistribution</source>
-        <translation>HQC flagg sett før tilfordeling</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="28"/>
-        <source>HQC flags set for automatic redistribution</source>
-        <translation>HQC flagg sett for en automatisk tilfordeling</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="30"/>
-        <source>endpoint without any days of accumulation</source>
-        <translation>oppsamling uten mangelrader</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="32"/>
-        <source>no endpoint for accumulation found</source>
-        <translation>oppsamling uten oppsamlet verdi</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="34"/>
-        <source>redistribution partially not done or done by QC2 or HQC</source>
-        <translation>tilfordeling gjort delvis ikke eller av QC2 eller av HQC</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="36"/>
-        <source>unusual observation, might be an accumulated value</source>
-        <translation>unvanglig observasjon, kan være oppsamlet verdi</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="38"/>
-        <source>previously part of an accumulation</source>
-        <translation>tidligere del av en oppsamling</translation>
-    </message>
-    <message>
-        <location filename="../common/Tasks.cc" line="40"/>
-        <source>consistency error</source>
-        <translation>konsistens-feil</translation>
-    </message>
-</context>
-<context>
-    <name>TextData</name>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="84"/>
-        <location filename="../textdata/TextdataTable.cc" line="102"/>
-        <source>TextData</source>
-        <translation>TextData</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="126"/>
-        <source>No Textdata</source>
-        <translation>Ingen Textdata</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="126"/>
-        <source>Could not read text data.</source>
-        <translation>Kunne ikke lese textdata.</translation>
-    </message>
-</context>
-<context>
-    <name>TextDataDialog</name>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="90"/>
-        <location filename="../textdata/TextdataDialog.cc" line="132"/>
-        <source>TextData</source>
-        <translation>Tekstdata</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="91"/>
-        <source>Station</source>
-        <translation>Stasjon</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="92"/>
-        <source>Time range</source>
-        <translation>Tidsrom</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="93"/>
-        <source>From</source>
-        <translation>Fra</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="94"/>
-        <source>To</source>
-        <translation>Til</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="95"/>
-        <source>OK</source>
-        <translation>OK</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="96"/>
-        <source>Cancel</source>
-        <translation>Avbryt</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataDialog.cc" line="133"/>
-        <source>Illegal station number. Choose a different station number.</source>
-        <translation>Ugyldig stasjonsnummer. Vennligst velg et annet stasjonsnummer.</translation>
-    </message>
-</context>
-<context>
-    <name>TextDataTable</name>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="23"/>
-        <source>Stationid</source>
-        <translation>Stationid</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="24"/>
-        <source>Obstime</source>
-        <translation>Obstid</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="25"/>
-        <source>Original</source>
-        <translation>Original</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="26"/>
-        <source>Paramid</source>
-        <translation>Paramid</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="27"/>
-        <source>ParamName</source>
-        <translation>Param-Navn</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="28"/>
-        <source>Tbtime</source>
-        <translation>Tbtime</translation>
-    </message>
-    <message>
-        <location filename="../textdata/TextdataTable.cc" line="29"/>
-        <source>Typeid</source>
-        <translation>Typeid</translation>
-    </message>
-</context>
-<context>
-    <name>TimeHeader</name>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="9"/>
-        <source>Mon</source>
-        <translation>Man</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="10"/>
-        <source>Tue</source>
-        <translation>Tir</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="11"/>
-        <source>Wed</source>
-        <translation>Ons</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="12"/>
-        <source>Thu</source>
-        <translation>Tor</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="13"/>
-        <source>Fri</source>
-        <translation>Fre</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="14"/>
-        <source>Sat</source>
-        <translation>Lør</translation>
-    </message>
-    <message>
-        <location filename="../common/TimeHeader.cc" line="8"/>
-        <source>Sun</source>
-        <translation>Søn</translation>
     </message>
 </context>
 <context>
@@ -2792,40 +1325,40 @@ Du bruker HQC versjon %1.</translation>
         <translation>Linjer</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="61"/>
-        <location filename="TimeSeriesView.cc" line="192"/>
+        <location filename="TimeSeriesView.cc" line="65"/>
+        <location filename="TimeSeriesView.cc" line="179"/>
         <source>Corrected</source>
         <translation>Korrigert</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="62"/>
-        <location filename="TimeSeriesView.cc" line="193"/>
+        <location filename="TimeSeriesView.cc" line="66"/>
+        <location filename="TimeSeriesView.cc" line="180"/>
         <source>Model</source>
         <translation>Modell</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="63"/>
-        <location filename="TimeSeriesView.cc" line="194"/>
+        <location filename="TimeSeriesView.cc" line="67"/>
+        <location filename="TimeSeriesView.cc" line="181"/>
         <source>Difference</source>
         <translation>Differanse</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="70"/>
-        <location filename="TimeSeriesView.cc" line="196"/>
+        <location filename="TimeSeriesView.cc" line="74"/>
+        <location filename="TimeSeriesView.cc" line="183"/>
         <source>Add...</source>
         <oldsource>Add line...</oldsource>
         <translation>Ny…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="71"/>
-        <location filename="TimeSeriesView.cc" line="197"/>
+        <location filename="TimeSeriesView.cc" line="75"/>
+        <location filename="TimeSeriesView.cc" line="184"/>
         <source>Remove...</source>
         <oldsource>Remove lines...</oldsource>
         <translation>Fjern…</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="72"/>
-        <location filename="TimeSeriesView.cc" line="198"/>
+        <location filename="TimeSeriesView.cc" line="76"/>
+        <location filename="TimeSeriesView.cc" line="185"/>
         <source>Reset</source>
         <oldsource>Reset lines</oldsource>
         <translation>Tilbakestill</translation>
@@ -2837,7 +1370,7 @@ Du bruker HQC versjon %1.</translation>
         <translation>yyyy-MM-dd hh:mm</translation>
     </message>
     <message>
-        <location filename="TimeSeriesView.cc" line="147"/>
+        <location filename="TimeSeriesView.cc" line="133"/>
         <source>Station:</source>
         <translation>Stasjon:</translation>
     </message>
@@ -2845,99 +1378,80 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>TimeseriesDialog</name>
     <message>
-        <location filename="TimeseriesDialog.cc" line="51"/>
         <source>Time series HQC</source>
-        <translation>Tidsserie HQC</translation>
+        <translation type="vanished">Tidsserie HQC</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="55"/>
         <source>Data types</source>
-        <translation>Datatyper</translation>
+        <translation type="vanished">Datatyper</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="56"/>
         <source>Observationer</source>
-        <translation>Observasjoner</translation>
+        <translation type="vanished">Observasjoner</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="57"/>
         <source>Model data</source>
-        <translation>Modelldata   </translation>
+        <translation type="vanished">Modelldata   </translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="63"/>
         <source>Parameter</source>
-        <translation>Parametere</translation>
+        <translation type="vanished">Parametere</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="74"/>
         <source>Station</source>
-        <translation>Stasjon</translation>
+        <translation type="vanished">Stasjon</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="85"/>
         <source>Chosen time series</source>
-        <translation>Valgte Tidsserier</translation>
+        <translation type="vanished">Valgte Tidsserier</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="96"/>
         <source>Delete</source>
-        <translation>Slett</translation>
+        <translation type="vanished">Slett</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="97"/>
         <source>Delete all</source>
-        <translation>Slett alt</translation>
+        <translation type="vanished">Slett alt</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="98"/>
         <source>New curve</source>
-        <translation>Ny kurve</translation>
+        <translation type="vanished">Ny kurve</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="119"/>
         <source>Line</source>
-        <translation>Linje</translation>
+        <translation type="vanished">Linje</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="143"/>
         <source>Marker</source>
-        <translation>Markør</translation>
+        <translation type="vanished">Markør</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="149"/>
         <source>Circle</source>
-        <translation>Circle</translation>
+        <translation type="vanished">Circle</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="150"/>
         <source>Rectangle</source>
-        <translation>Rectangle</translation>
+        <translation type="vanished">Rectangle</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="151"/>
         <source>Triangle</source>
-        <translation>Triangle</translation>
+        <translation type="vanished">Triangle</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="152"/>
         <source>Diamond</source>
-        <translation>Diamond</translation>
+        <translation type="vanished">Diamond</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="153"/>
         <source>Star</source>
-        <translation>Stjerne</translation>
+        <translation type="vanished">Stjerne</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="202"/>
         <source>From:</source>
-        <translation>Fra:</translation>
+        <translation type="vanished">Fra:</translation>
     </message>
     <message>
-        <location filename="TimeseriesDialog.cc" line="204"/>
         <source>To:</source>
-        <translation>Til:</translation>
+        <translation type="vanished">Til:</translation>
     </message>
 </context>
 <context>
@@ -2975,19 +1489,6 @@ Du bruker HQC versjon %1.</translation>
         <location filename="TimespanDataList.cc" line="88"/>
         <source>Change start end end times</source>
         <translation>Endre start- og slutt-tid</translation>
-    </message>
-</context>
-<context>
-    <name>ToolInterpolate</name>
-    <message>
-        <location filename="../common/ToolInterpolate.cc" line="50"/>
-        <source>Perform linear interpolation</source>
-        <translation>Utfør lineær interpolasjon</translation>
-    </message>
-    <message>
-        <location filename="../common/ToolInterpolate.cc" line="51"/>
-        <source>Interpolate</source>
-        <translation>Interpolere</translation>
     </message>
 </context>
 <context>

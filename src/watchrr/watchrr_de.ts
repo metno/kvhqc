@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0" language="de_DE">
+<TS version="2.1" language="de_DE">
 <context>
     <name>DialogEdit</name>
     <message>
@@ -41,12 +41,12 @@
         <source>Precipitation Card</source>
         <translation>Niederschlagskarte</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="watchrr_main.ui" line="60"/>
         <source>&amp;Single values…</source>
         <translation>&amp;Einzelwerte…</translation>
     </message>
-    <message utf8="true">
+    <message>
         <location filename="watchrr_main.ui" line="73"/>
         <source>&amp;Redistribute…</source>
         <translation>&amp;Verteilen…</translation>
@@ -170,17 +170,17 @@
 <context>
     <name>RedistDialog</name>
     <message>
-        <location filename="RedistDialog.cc" line="48"/>
+        <location filename="RedistDialog.cc" line="51"/>
         <source>Station %1 [%2]</source>
         <translation>Station %1 [%2]</translation>
     </message>
     <message>
-        <location filename="RedistDialog.cc" line="51"/>
+        <location filename="RedistDialog.cc" line="54"/>
         <source>Sum: %1mm</source>
         <translation>Summe: %1mm</translation>
     </message>
     <message>
-        <location filename="RedistDialog.cc" line="55"/>
+        <location filename="RedistDialog.cc" line="58"/>
         <source>Difference %1mm to original sum %2mm!</source>
         <translation>Differenz %1mm zur Original-Summe %2mm!</translation>
     </message>
@@ -188,22 +188,22 @@
 <context>
     <name>StationDialog</name>
     <message>
-        <location filename="StationDialog.cc" line="99"/>
+        <location filename="StationDialog.cc" line="104"/>
         <source>Cannot read station number</source>
         <translation>Kann Stationsnummer nicht lesen</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="101"/>
+        <location filename="StationDialog.cc" line="106"/>
         <source>Invalid station number</source>
         <translation>Ungültige Stationsnummer</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="146"/>
+        <location filename="StationDialog.cc" line="170"/>
         <source>Unknown station (not in obs_pgm)</source>
         <translation>Unbekannte Station (nicht in obs_pgm)</translation>
     </message>
     <message>
-        <location filename="StationDialog.cc" line="157"/>
+        <location filename="StationDialog.cc" line="182"/>
         <source>Could not find typeid</source>
         <translation>Keine typeid gefunden</translation>
     </message>
@@ -211,37 +211,37 @@
 <context>
     <name>WatchRRDialog</name>
     <message>
-        <location filename="WatchRRDialog.cc" line="127"/>
+        <location filename="WatchRRDialog.cc" line="116"/>
         <source>Station %1 [%2]</source>
         <translation>Station %1 [%2]</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="132"/>
+        <location filename="WatchRRDialog.cc" line="121"/>
         <source>[not daily]</source>
         <translation>[nicht täglich]</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="183"/>
+        <location filename="WatchRRDialog.cc" line="169"/>
         <source>Sum: %1mm</source>
         <translation>Summe: %1mm</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="261"/>
+        <location filename="WatchRRDialog.cc" line="247"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Ihre Änderungen konnten nicht gespeichert werden und sind leider verloren!</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="262"/>
+        <location filename="WatchRRDialog.cc" line="248"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="355"/>
+        <location filename="WatchRRDialog.cc" line="342"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-Daten, die Sie bearbeiten, wurden geändert. Sie müssen von vorne beginnen. Sorry!</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="356"/>
+        <location filename="WatchRRDialog.cc" line="343"/>
         <source>Quit and Discard changes</source>
         <translation>Beenden und Änderungen verlieren</translation>
     </message>

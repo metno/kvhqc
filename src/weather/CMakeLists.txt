@@ -5,7 +5,14 @@ SET(weather_SOURCES
   WeatherTableModel.cc
 )
 
-QT5_ADD_TRANSLATION(weather_QM
+SET(weather_UIS
+  weatherdialog.ui
+)
+
+QT5_CREATE_TRANSLATION(weather_QM
+  ${weather_SOURCES}
+  ${weather_UIS}
+
   weather_nb.ts
   weather_de.ts
 )
@@ -15,9 +22,7 @@ QT5_WRAP_CPP(weather_MOC
   WeatherStationDialog.hh
 )
 
-QT5_WRAP_UI(weather_UIH
-  weatherdialog.ui
-)
+QT5_WRAP_UI(weather_UIH ${weather_UIS})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 

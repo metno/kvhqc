@@ -214,9 +214,9 @@ void HqcApplication::installTranslations()
   // translators are searched in reverse order of installation
   installTranslations(locale, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   installTranslations(locale, "qUtilities", "/usr/share/metlibs/translations");
-  installTranslations(locale, "watchrr", langDir);
-  installTranslations(locale, "weather", langDir);
-  installTranslations(locale, "hqc",     langDir);
+  const char* hqc_translations[] = { "common", "errorlist", "extremes", "hqc", "missingobs", "rejectedobs", "textdata", "util", " watchrr", "weather", 0 };
+  for (const char** t = hqc_translations; *t; ++t)
+    installTranslations(locale, *t, langDir);
 }
 
 void HqcApplication::installTranslations(const QLocale& locale, const QString& file, const QStringList& paths)

@@ -23,7 +23,23 @@ SET(hqc_SOURCES
   UserSettings.cc
 )
 
-QT5_ADD_TRANSLATION(hqc_QM
+SET(hqc_UIS
+  appwindow.ui
+  datalist.ui
+  dl_addcolumn.ui
+  jumptoobservation.ui
+  navigationhistory.ui
+  singleobservation.ui
+  timeseriesview.ui
+  ts_add.ui
+  ts_remove.ui
+  user_settings.ui
+)
+
+QT5_CREATE_TRANSLATION(hqc_QM
+  ${hqc_SOURCES}
+  ${hqc_UIS}
+
   hqc_nb.ts
   hqc_de.ts
 )
@@ -50,18 +66,7 @@ QT5_WRAP_CPP(hqc_MOC
   UserSettings.hh
 )
 
-QT5_WRAP_UI(hqc_UIH
-  appwindow.ui
-  datalist.ui
-  dl_addcolumn.ui
-  jumptoobservation.ui
-  navigationhistory.ui
-  singleobservation.ui
-  timeseriesview.ui
-  ts_add.ui
-  ts_remove.ui
-  user_settings.ui
-)
+QT5_WRAP_UI(hqc_UIH ${hqc_UIS})
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
@@ -114,7 +119,6 @@ INSTALL(TARGETS hqc DESTINATION ${CMAKE_INSTALL_FULL_BINDIR})
 ##   ${HQC_COMMON_LIBS}
 ## )
 
-INSTALL(FILES ${hqc_QM}
-  DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
+INSTALL(FILES ${hqc_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_SUBDIRECTORY(test)
