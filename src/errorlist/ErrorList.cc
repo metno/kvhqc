@@ -38,6 +38,8 @@
 #include "common/KvMetaDataBuffer.hh"
 #include "common/ObsPgmRequest.hh"
 
+#include "util/hqcObsPgm.h"
+
 #include <QSettings>
 #include <QHeaderView>
 
@@ -94,15 +96,18 @@ void ErrorList::onObsPgmsComplete()
   const TimeSpan timeLimits = mDialog->getTimeSpan();
   const hqc::int_v selectedStations = mDialog->getSelectedStations();
   const hqc::int_v selectedParameters = mDialog->getSelectedParameters();
+  const bool ignoreUnofficial = mDialog->getIgnoreUnofficial();
 
   Sensor_v sensors;
 
   BOOST_FOREACH(int stationId, selectedStations) {
     BOOST_FOREACH(int paramId, selectedParameters) {
-      const hqc::kvObsPgm_v& opl = mObsPgmRequest->get(stationId);
+      const hqc::hqcObsPgm_v& opl = mObsPgmRequest->get(stationId);
       Sensor sensor(stationId, paramId, 0, 0, 0);
       hqc::int_s typeIdsShown;
-      BOOST_FOREACH(const kvalobs::kvObsPgm& op, opl) {
+      BOOST_FOREACH(const hqc::hqcObsPgm& op, opl) {
+        if (ignoreUnofficial && !op.priority_message())
+          continue;
         const TimeSpan op_time(op.fromtime(), op.totime());
         if (timeLimits.intersection(op_time).undef())
           continue;

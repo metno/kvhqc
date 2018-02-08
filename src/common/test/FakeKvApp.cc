@@ -111,27 +111,33 @@ void FakeKvApp::addObsPgm(const std::string& line)
     
   std::vector<std::string> columns;
   boost::split(columns, line, boost::is_any_of("\t;"));
-  if (columns.size() != 39) {
+  int ipm; // offset due to priority_message
+  if (columns.size() == 39) {
+    ipm = 0;
+  } else if (columns.size() == 40) {
+    ipm = 1;
+  } else {
     HQC_LOG_WARN("bad line '" << line << "' cols=" << columns.size());
     return;
   }
-
-  int numbers[37];
-  for (int c=0; c<37; c++)
+  int numbers[38];
+  for (int c = 0; c < 37 + ipm; c++)
     numbers[c] = boost::lexical_cast<int>(columns[c]);
   timeutil::ptime from, to;
-  if (columns[37].size() == 19)
-    from = timeutil::from_iso_extended_string(columns[37]);
-  if (columns[38].size() == 19)
-    from = timeutil::from_iso_extended_string(columns[38]);
+  if (columns[37 + ipm].size() == 19)
+    from = timeutil::from_iso_extended_string(columns[37 + ipm]);
+  if (columns[38 + ipm].size() == 19)
+    from = timeutil::from_iso_extended_string(columns[38 + ipm]);
 
-  const kvalobs::kvObsPgm op(numbers[ 0], numbers[ 1], numbers[ 2], numbers[ 3], numbers[ 4], numbers[ 5],
-      numbers[ 6], numbers[ 7], numbers[ 8], numbers[ 9], numbers[10], numbers[11],
-      numbers[12], numbers[13], numbers[14], numbers[15], numbers[16], numbers[17],
-      numbers[18], numbers[19], numbers[20], numbers[21], numbers[22], numbers[23],
-      numbers[24], numbers[25], numbers[26], numbers[27], numbers[28], numbers[29],
-      numbers[30], numbers[31], numbers[32], numbers[33], numbers[34], numbers[35], numbers[36],
-      from, to);
+  const bool priority_message = (ipm == 1) ? (numbers[5] != 0) : true;
+
+  const hqc::hqcObsPgm op(numbers[0], numbers[1], numbers[2], numbers[3], numbers[4],
+                          priority_message,
+                          numbers[5 + ipm], numbers[6 + ipm], numbers[7 + ipm], numbers[8 + ipm], numbers[9 + ipm], numbers[10 + ipm], numbers[11],
+                          numbers[12 + ipm], numbers[13 + ipm], numbers[14 + ipm], numbers[15 + ipm], numbers[16 + ipm], numbers[17], numbers[18 + ipm],
+                          numbers[19 + ipm], numbers[20 + ipm], numbers[21 + ipm], numbers[22 + ipm], numbers[23], numbers[24 + ipm], numbers[25 + ipm],
+                          numbers[26 + ipm], numbers[27 + ipm], numbers[28 + ipm], numbers[29], numbers[30 + ipm], numbers[31 + ipm], numbers[32 + ipm],
+                          numbers[33 + ipm], numbers[34 + ipm], numbers[35], numbers[36 + ipm], from, to);
   obsAccess()->insertObsPgm(op);
 }
 

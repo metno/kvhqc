@@ -604,6 +604,11 @@ hqc::int_v ErrorSearchDialog::getSelectedParameters()
   return mParamSelectedModel->values();
 }
 
+bool ErrorSearchDialog::getIgnoreUnofficial()
+{
+  return ui->checkIgnoreUnofficial->isChecked();
+}
+
 void ErrorSearchDialog::onItemChanged(QStandardItem* item)
 {
   if (mIsInToggle)

@@ -164,7 +164,7 @@ void StationDialog::updateTypeList()
   METLIBS_LOG_SCOPE();
   std::set<int> typeIdSet;
   if (mSensor.stationId > 0 and mObsPgmRequest) {
-    const hqc::kvObsPgm_v& obs_pgm = mObsPgmRequest->get(mSensor.stationId);
+    const hqc::hqcObsPgm_v& obs_pgm = mObsPgmRequest->get(mSensor.stationId);
     METLIBS_LOG_DEBUG(LOGVAL(obs_pgm.size()));
     if (obs_pgm.empty()) {
       ui->labelStationInfo->setText(tr("Unknown station (not in obs_pgm)"));

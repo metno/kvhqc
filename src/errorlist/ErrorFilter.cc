@@ -52,7 +52,7 @@ bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
   const timeutil::pdate otime_date = otime.date();
   
   // this is from HqcMainWindow::checkTypeId combined with from ErrorList::typeFilter
-  const hqc::kvObsPgm_v& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
+  const hqc::hqcObsPgm_v& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
   BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
     const timeutil::pdate tfrom = timeutil::from_miTime(op.fromtime()).date(),
         tto = timeutil::from_miTime(op.totime()).date();

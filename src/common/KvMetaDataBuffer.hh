@@ -7,6 +7,7 @@
 #include "TimeSpan.hh"
 #include "KvTypedefs.hh"
 #include "QueryTaskHandler.hh"
+#include "util/hqcObsPgm.h"
 
 #include <QObject> 
 
@@ -48,10 +49,10 @@ public:
     { return findType(sensor.typeId); }
   const hqc::kvTypes_v& allTypes();
 
-  const hqc::kvObsPgm_v& findObsPgm(int stationId);
-  const hqc::kvObsPgm_v& findObsPgm(const Sensor& sensor)
+  const hqc::hqcObsPgm_v& findObsPgm(int stationId);
+  const hqc::hqcObsPgm_v& findObsPgm(const Sensor& sensor)
     { return findObsPgm(sensor.stationId); }
-  void putObsPgm(const hqc::kvObsPgm_v& op);
+  void putObsPgm(const hqc::hqcObsPgm_v& op);
 
 
   bool isComplete() const
@@ -120,7 +121,7 @@ private:
   CachedParamLimits mCachedParamLimits;
   hqc::int_s mDirectionParams;
 
-  typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
+  typedef std::map<int, hqc::hqcObsPgm_v> kvObsPgm_m;
   kvObsPgm_m mObsPgms;
 
   std::shared_ptr<QueryTaskHandler> mHandler;

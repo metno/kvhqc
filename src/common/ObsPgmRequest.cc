@@ -32,7 +32,7 @@ void ObsPgmRequest::init(const hqc::int_s& stationIds)
   METLIBS_LOG_SCOPE(LOGVAL(stationIds.size()));
   hqc::int_s request;
   for (hqc::int_s::const_iterator itS = stationIds.begin(); itS != stationIds.end(); ++itS) {
-    const hqc::kvObsPgm_v& op = KvMetaDataBuffer::instance()->findObsPgm(*itS);
+    const hqc::hqcObsPgm_v& op = KvMetaDataBuffer::instance()->findObsPgm(*itS);
     if (op.empty()) {
       request.insert(*itS);
     } else {
@@ -76,19 +76,19 @@ void ObsPgmRequest::sync()
   }
 }
 
-const hqc::kvObsPgm_v& ObsPgmRequest::get(int stationId) const
+const hqc::hqcObsPgm_v& ObsPgmRequest::get(int stationId) const
 {
-  const kvObsPgm_m::const_iterator it = mObsPgms.find(stationId);
+  const hqcObsPgm_m::const_iterator it = mObsPgms.find(stationId);
   if (it != mObsPgms.end())
     return it->second;
   else
     return sEmpty;
 }
 
-void ObsPgmRequest::put(const hqc::kvObsPgm_v& op)
+void ObsPgmRequest::put(const hqc::hqcObsPgm_v& op)
 {
   KvMetaDataBuffer::instance()->putObsPgm(op);
-  for (hqc::kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
+  for (hqc::hqcObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
     mObsPgms[it->stationID()].push_back(*it);
 }
 
@@ -100,4 +100,4 @@ void ObsPgmRequest::onTaskDone(QueryTask* task)
 }
 
 // static
-const hqc::kvObsPgm_v ObsPgmRequest::sEmpty;
+const hqc::hqcObsPgm_v ObsPgmRequest::sEmpty;

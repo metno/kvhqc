@@ -12,6 +12,7 @@ class ResultRow
 {
 public:
   virtual ~ResultRow() { }
+  virtual bool getBool(int index) const = 0;
   virtual int getInt(int index) const = 0;
   virtual float getFloat(int index) const = 0;
   virtual std::string getStdString(int index) const = 0;

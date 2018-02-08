@@ -149,9 +149,9 @@ const hqc::kvTypes_v& KvMetaDataBuffer::allTypes()
   return empty;
 }
 
-const hqc::kvObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
+const hqc::hqcObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
 {
-  static hqc::kvObsPgm_v empty;
+  static hqc::hqcObsPgm_v empty;
 
   const kvObsPgm_m::iterator it = mObsPgms.find(stationid);
   if (it != mObsPgms.end())
@@ -160,9 +160,9 @@ const hqc::kvObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
   return empty;
 }
 
-void KvMetaDataBuffer::putObsPgm(const hqc::kvObsPgm_v& op)
+void KvMetaDataBuffer::putObsPgm(const hqc::hqcObsPgm_v& op)
 {
-  for (hqc::kvObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
+  for (hqc::hqcObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
     mObsPgms[it->stationID()].push_back(*it);
 }
 

@@ -4,6 +4,7 @@
 
 #include "Sensor.hh"
 #include "KvTypedefs.hh"
+#include "util/hqcObsPgm.h"
 
 #include <QObject> 
 
@@ -15,7 +16,7 @@ class QueryTask;
 class ObsPgmRequest : public QObject
 { Q_OBJECT;
 public:
-  typedef std::map<int, hqc::kvObsPgm_v> kvObsPgm_m;
+  typedef std::map<int, hqc::hqcObsPgm_v> hqcObsPgm_m;
 
   ObsPgmRequest(const hqc::int_s& stationIds);
   ObsPgmRequest(int stationId);
@@ -24,10 +25,10 @@ public:
   void post();
   void sync();
 
-  const hqc::kvObsPgm_v& operator[](int stationId) const
+  const hqc::hqcObsPgm_v& operator[](int stationId) const
     { return get(stationId); }
 
-  const hqc::kvObsPgm_v& get(int stationId) const;
+  const hqc::hqcObsPgm_v& get(int stationId) const;
 
 Q_SIGNALS:
   void complete();
@@ -37,11 +38,11 @@ private Q_SLOTS:
 
 private:
   void init(const hqc::int_s& stationIds);
-  void put(const hqc::kvObsPgm_v& op);
+  void put(const hqc::hqcObsPgm_v& op);
 
 private:
-  kvObsPgm_m mObsPgms;
-  static const hqc::kvObsPgm_v sEmpty;
+  hqcObsPgm_m mObsPgms;
+  static const hqc::hqcObsPgm_v sEmpty;
 
   QueryTaskHelper *mTaskHelper;
 };

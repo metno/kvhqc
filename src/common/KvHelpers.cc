@@ -225,8 +225,8 @@ void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& tim
 
   int count = 0;
   BOOST_FOREACH(const kvalobs::kvStation& s, neighborStations) {
-    const hqc::kvObsPgm_v& obs_pgm = obsPgms->get(s.stationID());
-    BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+    const hqc::hqcObsPgm_v& obs_pgm = obsPgms->get(s.stationID());
+    BOOST_FOREACH (const hqc::hqcObsPgm& op, obs_pgm) {
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
       // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
@@ -260,14 +260,14 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
   const int nNeighbors = 8;
   hqc::int_v neighborPar(1, s.paramId);
 
-  const hqc::kvObsPgm_v& obs_pgm = obsPgms->get(s.stationId);
+  const hqc::hqcObsPgm_v& obs_pgm = obsPgms->get(s.stationId);
   Sensor_v sensors;
   BOOST_FOREACH(int par, stationPar) {
     Sensor s2(s);
     s2.paramId = par;
     bool accept = (par == s.paramId);
     if (not accept) {
-      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+      BOOST_FOREACH (const hqc::hqcObsPgm& op, obs_pgm) {
         if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
           continue;
         

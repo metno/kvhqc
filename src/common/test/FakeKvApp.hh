@@ -5,6 +5,7 @@
 #include "SqliteAccess.hh"
 
 #include "common/Sensor.hh"
+#include "util/hqcObsPgm.h"
 
 #include <decodeutility/DataReinserter.h>
 #include <kvcpp/KvApp.h>
@@ -47,7 +48,9 @@ public:
   
   void addObsPgm(const std::string& line);
   void addObsPgm(const kvalobs::kvObsPgm& kvo)
-    { obsAccess()->insertObsPgm(kvo); }
+    { addObsPgm(hqc::hqcObsPgm(kvo, true)); }
+  void addObsPgm(const hqc::hqcObsPgm& ho)
+    { obsAccess()->insertObsPgm(ho); }
 
   void addParam(const kvalobs::kvParam& kvp)
     { obsAccess()->insertParam(kvp); }

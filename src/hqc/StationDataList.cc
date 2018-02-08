@@ -116,10 +116,10 @@ void StationDataList::updateModel()
   model()->removeAllColumns();
   model()->setTimeSpan(time);
 
-  const hqc::kvObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
+  const hqc::hqcObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
   for(size_t i=0; i<NWeatherParameters; ++i) {
     const int paramId = WeatherParameters[i];
-    for(hqc::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+    for (hqc::hqcObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
       const kvalobs::kvObsPgm& op = *it;
       if (paramId != op.paramID())
         continue;
@@ -133,7 +133,7 @@ void StationDataList::updateModel()
     }
   }
 
-  for(hqc::kvObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
+  for (hqc::hqcObsPgm_v::const_iterator it = opl.begin(); it != opl.end(); ++it) {
     const kvalobs::kvObsPgm& op = *it;
     if (s.typeId != op.typeID())
       continue;

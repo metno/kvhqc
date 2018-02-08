@@ -4,6 +4,7 @@
 
 #include "common/KvTypedefs.hh"
 #include "common/QueryTaskAccess.hh"
+#include "util/hqcObsPgm.h"
 
 class SqliteQueryRunner;
 
@@ -36,7 +37,7 @@ public:
   void insertModelFromFile(const std::string& filename);
   void insertModel(const kvalobs::kvModelData& kvm);
 
-  void insertObsPgm(const kvalobs::kvObsPgm& kvo);
+  void insertObsPgm(const hqc::hqcObsPgm& kvo);
   void insertParam(const kvalobs::kvParam& kvp);
   void insertStation(const kvalobs::kvStation& kvs);
   void insertTypes(const kvalobs::kvTypes& kvt);

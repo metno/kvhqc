@@ -21,17 +21,15 @@ class QtSqlRow : public ResultRow
 public:
   QtSqlRow(QSqlQuery& query) : mQuery(query) { }
 
-  int getInt(int index) const
-    { return mQuery.value(index).toInt(); }
+  bool getBool(int index) const override { return mQuery.value(index).toBool(); }
 
-  float getFloat(int index) const
-    { return mQuery.value(index).toFloat(); }
-  
-  QString getQString(int index) const
-    { return mQuery.value(index).toString(); }
+  int getInt(int index) const override { return mQuery.value(index).toInt(); }
 
-  std::string getStdString(int index) const
-    { return getQString(index).toStdString(); }
+  float getFloat(int index) const override { return mQuery.value(index).toFloat(); }
+
+  QString getQString(int index) const override { return mQuery.value(index).toString(); }
+
+  std::string getStdString(int index) const override { return getQString(index).toStdString(); }
 
 private:
   QSqlQuery& mQuery;

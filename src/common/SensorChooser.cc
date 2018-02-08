@@ -198,7 +198,7 @@ void SensorChooser::onStationEdited(const QString&)
   if (goodStation) {
     std::unique_ptr<ObsPgmRequest> op(new ObsPgmRequest(stationId));
     op->sync();
-    const hqc::kvObsPgm_v& opgm = op->get(stationId);
+    const hqc::hqcObsPgm_v& opgm = op->get(stationId);
     METLIBS_LOG_DEBUG(LOGVAL(opgm.size()));
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
@@ -232,7 +232,7 @@ void SensorChooser::onParameterSelected(int)
   bool goodParam = paramId >= 0;
   hqc::int_s stationTypes;
   if (goodParam) {
-    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID();
       if (p == paramId)
@@ -265,7 +265,7 @@ void SensorChooser::onTypeSelected(int)
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   hqc::int_s levels;
   if (good) {
-    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID(), t = op.typeID();
       if ((paramId == p and typeId == t)
@@ -298,7 +298,7 @@ void SensorChooser::onLevelSelected(int)
   bool good = (stationId >= 60 and paramId >= 0 and typeId != 0);
   int maxSensor = 0;
   if (good) {
-    const hqc::kvObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
+    const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
     BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
       const int p = op.paramID(), t = op.typeID();
       if (level == op.level()

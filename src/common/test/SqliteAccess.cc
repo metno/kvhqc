@@ -121,7 +121,7 @@ std::ostream& operator<<(std::ostream& out, const quoted_bool_t& qb)
 { out << '\'' << (qb.value ? '1' : '0') << '\''; return out; }
 quoted_bool_t quoted(bool v) { return quoted_bool_t(v); }
 
-std::string sql4insert(const kvalobs::kvObsPgm& op)
+std::string sql4insert(const hqc::hqcObsPgm& op)
 {
   std::ostringstream sql;
   sql << "INSERT INTO obs_pgm VALUES "
@@ -134,7 +134,7 @@ std::string sql4insert(const kvalobs::kvObsPgm& op)
       << op.level() << ", "
       << op.nr_sensor() << ", "
       << op.typeID() << ", "
-      << /*op.priority_message() <<*/ "'1', "
+      << op.priority_message() << ","
       << quoted(op.collector()) << ","
       << quoted(op.kl00()) << ","
       << quoted(op.kl01()) << ","
@@ -202,17 +202,15 @@ class SqliteRow : public ResultRow
 public:
   SqliteRow(sqlite3_stmt *stmt) : mStmt(stmt) { }
 
-  int getInt(int index) const
-    { return sqlite3_column_int(mStmt, index); }
+  bool getBool(int index) const override { return sqlite3_column_int(mStmt, index) != 0; }
 
-  float getFloat(int index) const
-    { return sqlite3_column_double(mStmt, index); }
+  int getInt(int index) const override { return sqlite3_column_int(mStmt, index); }
 
-  std::string getStdString(int index) const
-    { return my_sqlite3_string(mStmt, index); }
+  float getFloat(int index) const override { return sqlite3_column_double(mStmt, index); }
 
-  QString getQString(int index) const
-    { return QString::fromStdString(getStdString(index)); }
+  std::string getStdString(int index) const override { return my_sqlite3_string(mStmt, index); }
+
+  QString getQString(int index) const override { return QString::fromStdString(getStdString(index)); }
 
 private:
   sqlite3_stmt *mStmt;
@@ -610,7 +608,7 @@ void SqliteAccess::insertStation(const kvalobs::kvStation& kvs)
 
 // ------------------------------------------------------------------------
 
-void SqliteAccess::insertObsPgm(const kvalobs::kvObsPgm& kvo)
+void SqliteAccess::insertObsPgm(const hqc::hqcObsPgm& kvo)
 {
   const std::string sql = sql4insert(kvo);
   runner()->exec(sql);

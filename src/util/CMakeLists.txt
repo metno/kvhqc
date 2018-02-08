@@ -4,6 +4,7 @@ SET(util_SOURCES
   Helpers.cc
   HqcLogging.cc
   hqc_paths.cc
+  hqcObsPgm.cc
   Milog4cpp.cc
   stringutil.cc
   timeutil.cc
