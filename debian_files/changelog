@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a5-1) unstable; urgency=low
+
+  * kro url from config file
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 08 Feb 2018 15:14:09 +0100
+
 kvhqc (4.1.0~a4-1) unstable; urgency=low
 
   * ignore unofficial parameters for error list
