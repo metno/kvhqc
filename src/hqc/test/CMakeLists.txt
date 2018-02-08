@@ -19,9 +19,8 @@ TARGET_LINK_LIBRARIES(hqc_gui_test
   hqc_common
   common
   util
-  ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBS_LIBRARIES}
-  ${SQLITE3_LIBRARY}
+  ${PC_LIBRARIES}
+  ${OTHER_LIBS}
   ${QT_LIBRARIES}
 )
 

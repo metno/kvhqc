@@ -2,7 +2,7 @@
 CONFIGURE_FILE(hqc_current_version.in hqc_current_version)
 INSTALL(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/hqc_current_version
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}")
+  DESTINATION "${HQC_INSTALL_SHAREDIR}")
 
 INSTALL(FILES
   images/diana_icon_hqc.png
@@ -41,9 +41,9 @@ INSTALL(FILES
   images/watchrr.svg
   images/weatherstation.svg
 
-  DESTINATION "share/${PROJECT_NAME}/${PVERSION}/images")
+  DESTINATION "${HQC_INSTALL_SHAREDIR}/images")
 
 INSTALL(FILES
   doc/news.html
   doc/intro.html
-  DESTINATION "share/doc/${PROJECT_NAME}-${PVERSION}/html")
+  DESTINATION "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${PROJECT_NAME}-${PVERSION}/html")

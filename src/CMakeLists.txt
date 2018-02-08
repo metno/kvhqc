@@ -10,14 +10,9 @@ LINK_LIBRARIES(Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Xml)
 #########################################################################
 #########################################################################
 
-### FIXME this is not working properly, maybe because CMake is caching something
-### see http://www.itk.org/Wiki/CMake:How_To_Find_Libraries
+SET(PKGS
+  libkvcpp>=4.0.1 # kvalobs
 
-# kvalobs
-PKG_CHECK_MODULES(PC_KVCPP REQUIRED libkvcpp>=4.0.1)
-
-# metlibs
-PKG_CHECK_MODULES(PC_METLIBS REQUIRED
   metlibs-tsdata-core>=7.0.0
   metlibs-pets2-qt5>=8.0.0
   metlibs-pumet>=7.0.0
@@ -27,39 +22,28 @@ PKG_CHECK_MODULES(PC_METLIBS REQUIRED
   metlibs-coserver-qt5>=3.0.1
 )
 
-# log4cpp
-#PKG_CHECK_MODULES(PC_LOG4CPP REQUIRED log4cpp)
+METNO_FIND_PACKAGE("ldap" "" "ldap" "ldap.h")
+LIST(APPEND PKGS ${ldap_PC})
+
+METNO_FIND_PACKAGE("sqlite3" "" "sqlite3" "sqlite3.h")
+LIST(APPEND PKGS ${sqlite3_PC})
+
+SET(OTHER_LIBS ${ldap_LIB} ${sqlite3_LIB})
+SET(OTHER_INC_DIRS ${ldap_INC_DIR} ${sqlite3_INC_DIR})
+PKG_CHECK_MODULES(PC REQUIRED ${PKGS})
 
 #########################################################################
 # boost
 
 FIND_PACKAGE(Boost COMPONENTS date_time thread REQUIRED)
-LINK_LIBRARIES(${Boost_DATE_TIME_LIBRARY} ${Boost_THREAD_LIBRARY})
+LINK_LIBRARIES(${Boost_LIBRARIES})
 
 #########################################################################
 # includes/defines for all pkg-config libs
 
-INCLUDE_DIRECTORIES(${PC_KVCPP_INCLUDE_DIRS} ${PC_METLIBS_INCLUDE_DIRS})
-ADD_DEFINITIONS(-W -Wall ${PC_KVCPP_CFLAGS_OTHER} ${PC_METLIBS_CFLAGS_OTHER} ${PC_LOG4CPP_CFLAGS_OTHER})
-LINK_DIRECTORIES(${PC_KVCPP_LIBRARY_DIRS} ${PC_METLIBS_LIBRARY_DIRS} ${PC_LOG4CPP_LIBRARY_DIRS})
-
-#########################################################################
-#########################################################################
-# google-test
-
-FIND_PACKAGE(GTest QUIET)
-IF(NOT GTEST_FOUND)
-  MESSAGE("apparently no compiled GTest library, trying to build it")
-  FIND_FILE(GTEST_DIR src/gtest-all.cc /usr/src/gtest /usr/local/src/gtest)
-  IF(NOT GTEST_DIR)
-    MESSAGE(FATAL_ERROR "could not find gtest-all.cc")
-  ENDIF()
-  GET_FILENAME_COMPONENT(GTEST_DIR ${GTEST_DIR} PATH)
-  GET_FILENAME_COMPONENT(GTEST_DIR ${GTEST_DIR} PATH)
-  ADD_SUBDIRECTORY(${GTEST_DIR} ${CMAKE_CURRENT_BINARY_DIR}/gtest EXCLUDE_FROM_ALL)
-  SET(GTEST_LIBRARY gtest)
-  SET(GTEST_MAIN_LIBRARY gtest_main)
-ENDIF()
+INCLUDE_DIRECTORIES(${PC_INCLUDE_DIRS} ${OTHER_INC_DIRS})
+ADD_DEFINITIONS(-W -Wall ${PC_CFLAGS_OTHER} ${PC_CFLAGS_OTHER})
+LINK_DIRECTORIES(${PC_LIBRARY_DIRS})
 
 # ########################################################################
 

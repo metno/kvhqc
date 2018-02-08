@@ -7,9 +7,8 @@ LINK_LIBRARIES(
   watchrr
   common
   util
-  ${PC_KVCPP_LIBRARIES}
-  ${PC_METLIBS_LIBRARIES}
-  ${SQLITE3_LIBRARY}
+  ${PC_LIBRARIES}
+  ${OTHER_LIBS}
   ${GTEST_LIBRARY}
 )
 
