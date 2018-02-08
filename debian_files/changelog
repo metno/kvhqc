@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a4-1) unstable; urgency=low
+
+  * ignore unofficial parameters for error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 08 Feb 2018 09:39:09 +0100
+
 kvhqc (4.1.0~a3-1) unstable; urgency=low
 
   * accept / reject in multiple columns
