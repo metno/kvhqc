@@ -33,6 +33,8 @@ public:
   HqcUserConfig* userConfig()
     { return mUserConfig.get(); }
 
+  QUrl getKroUrl() const;
+
   std::shared_ptr<QueryTaskHandler> kvalobsHandler() const
     { return mKvalobsHandler; }
   std::shared_ptr<EditAccess> editAccess() const

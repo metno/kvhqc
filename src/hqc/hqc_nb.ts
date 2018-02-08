@@ -471,22 +471,22 @@ Ellers vis alle tider i tidsrom.</translation>
         <translation type="unfinished">HQC</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="244"/>
+        <location filename="HqcAppWindow.cc" line="245"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="245"/>
+        <location filename="HqcAppWindow.cc" line="246"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="281"/>
+        <location filename="HqcAppWindow.cc" line="282"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="282"/>
+        <location filename="HqcAppWindow.cc" line="283"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -497,37 +497,37 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="318"/>
+        <location filename="HqcAppWindow.cc" line="319"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="319"/>
+        <location filename="HqcAppWindow.cc" line="320"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="320"/>
+        <location filename="HqcAppWindow.cc" line="321"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="329"/>
+        <location filename="HqcAppWindow.cc" line="330"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="332"/>
+        <location filename="HqcAppWindow.cc" line="333"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="393"/>
+        <location filename="HqcAppWindow.cc" line="394"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="394"/>
+        <location filename="HqcAppWindow.cc" line="395"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>

@@ -21,17 +21,18 @@
 #include <puTools/miString.h>
 
 #include <QDir>
+#include <QIcon>
 #include <QLibraryInfo>
 #include <QLocale>
+#include <QMessageBox>
 #include <QSettings>
+#include <QSqlError>
+#include <QSqlQuery>
 #include <QThread>
 #include <QTimer>
 #include <QTranslator>
+#include <QUrl>
 #include <QVariant>
-#include <QIcon>
-#include <QMessageBox>
-#include <QSqlError>
-#include <QSqlQuery>
 
 #include <boost/bind.hpp>
 #include <boost/foreach.hpp>
@@ -131,6 +132,16 @@ QSqlDatabase HqcApplication::configDB()
     }
   }
   return QSqlDatabase::database(DB_CONFIG);
+}
+
+QUrl HqcApplication::getKroUrl() const
+{
+  using namespace miutil::conf;
+  const ValElementList valKroUrl = mConfig->getValue("kro.url");
+  if (valKroUrl.size() == 1)
+    return QUrl(QString::fromStdString(valKroUrl.front().valAsString()));
+  else
+    return QUrl("http://kro/cgi-bin/start.pl");
 }
 
 QSqlDatabase HqcApplication::kvalobsDB()

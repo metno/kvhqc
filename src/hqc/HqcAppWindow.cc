@@ -227,7 +227,7 @@ void HqcAppWindow::onNewWatchRR()
 
 void HqcAppWindow::onStartKro()
 {
-  QDesktopServices::openUrl(QUrl("http://kro/cgi-bin/start.pl"));
+  QDesktopServices::openUrl(hqcApp->getKroUrl());
 }
 
 void HqcAppWindow::onVersionCheckTimeout()
