@@ -514,6 +514,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionSettings</sender>
+   <signal>triggered()</signal>
+   <receiver>AppWindow</receiver>
+   <slot>onUserSettings()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>274</x>
+     <y>199</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onNewSearch()</slot>
@@ -530,5 +546,6 @@
   <slot>onAboutHqc()</slot>
   <slot>onAboutQt()</slot>
   <slot>onStartKro()</slot>
+  <slot>onUserSettings()</slot>
  </slots>
 </ui>
