@@ -90,8 +90,6 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
 
   connect(ui->tableStationCard->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
-  connect(mStationCard.get(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(onDataChanged(const QModelIndex&,const QModelIndex&)));
   connect(mNeighborCards.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
       this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
   connect(mDianaHelper.get(), SIGNAL(receivedTime(const timeutil::ptime&)),
