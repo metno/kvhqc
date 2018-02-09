@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a6-1) unstable; urgency=low
+
+  * bugfixes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 09 Feb 2018 12:21:20 +0100
+
 kvhqc (4.1.0~a5-1) unstable; urgency=low
 
   * kro url from config file
