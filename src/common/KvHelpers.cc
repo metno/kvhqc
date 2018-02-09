@@ -321,7 +321,7 @@ void updateCfailed(kvalobs::kvData& data, const std::string& add)
 
 QString stationName(const kvalobs::kvStation& s)
 {
-  return QString::fromLatin1(s.name().c_str());
+  return QString::fromStdString(s.name());
 }
 
 QString sensorTimeToString(const SensorTime& st)
