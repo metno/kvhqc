@@ -9,7 +9,7 @@
 
 /* package prefix */
 #define PREFIX "@CMAKE_INSTALL_PREFIX@"
-#define SYSCONFDIR "@SYSCONFDIR@"
+#define SYSCONFDIR "@CMAKE_INSTALL_FULL_SYSCONFDIR@"
 
 /* program version "major.minor-suffix" (suffix only if specified) */
 #define PVERSION "@PVERSION@"
