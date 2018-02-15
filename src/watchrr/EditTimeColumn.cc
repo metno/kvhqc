@@ -18,11 +18,13 @@ EditTimeColumn::~EditTimeColumn()
 Qt::ItemFlags EditTimeColumn::flags(const timeutil::ptime& time) const
 {
   METLIBS_LOG_SCOPE();
-  Qt::ItemFlags f = TasksColumn::flags(time);
-  const int removeFlags = Qt::ItemIsSelectable|Qt::ItemIsEditable;
-  if ((f & removeFlags) and not mEditableTime.contains(time))
-    f &= ~removeFlags;
-  return f;
+  Qt::ItemFlags flags = TasksColumn::flags(time);
+  const Qt::ItemFlags editFlags = Qt::ItemIsSelectable | Qt::ItemIsEditable;
+  if (mEditableTime.contains(time))
+    flags |= editFlags;
+  else
+    flags &= ~editFlags;
+  return flags;
 }
 
 QVariant EditTimeColumn::data(const timeutil::ptime& time, int role) const
