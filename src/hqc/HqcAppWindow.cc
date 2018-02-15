@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2013 met.no
+  Copyright (C) 2013-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -64,16 +64,15 @@
 
 #include <qUtilities/qtHelpDialog.h>
 
+#include <QCloseEvent>
+#include <QDesktopServices>
 #include <QFile>
+#include <QLabel>
+#include <QMessageBox>
 #include <QSettings>
-#include <QFile>
 #include <QTextStream>
 #include <QTimer>
 #include <QUrl>
-#include <QCloseEvent>
-#include <QDesktopServices>
-#include <QLabel>
-#include <QMessageBox>
 
 #include "ui_appwindow.h"
 
@@ -155,7 +154,7 @@ void HqcAppWindow::startup(const QString& captionSuffix)
 {
   METLIBS_LOG_SCOPE();
   setWindowTitle(tr("HQC %1").arg(hqcApp->kvalobsDBName()));
-    
+
   readSettings();
   show();
   checkVersionSettings();
@@ -278,18 +277,19 @@ void HqcAppWindow::onHelpParam()
 
 void HqcAppWindow::onAboutHqc()
 {
-  QMessageBox::about( this, tr("About Hqc"),
-      tr("Hqc is a program for manual quality control of observations. "
-          "The program consists of editable tables with observations including "
-          "a time series diagram, and it can be connected to Diana."
-          "\n\n"
-          "The program is developed by "
-          "Knut Johansen, "
-          "Alexander Bürger, "
-          "Lisbeth Bergholt, "
-          "Vegard Bønes, "
-          "Audun Christoffersen at MET Norway.\n\n"
-          "You are using HQC version %1.").arg(PVERSION_FULL));
+  QMessageBox::about(this, tr("About Hqc"),
+                     tr("Hqc is a program for manual quality control of observations. "
+                        "The program consists of editable tables with observations including "
+                        "a time series diagram, and it can be connected to Diana."
+                        "\n\n"
+                        "The program is developed by "
+                        "Knut Johansen, "
+                        "Alexander Bürger, "
+                        "Lisbeth Bergholt, "
+                        "Vegard Bønes, "
+                        "Audun Christoffersen at MET Norway.\n\n"
+                        "You are using HQC version %1.")
+                         .arg(PVERSION_FULL));
 }
 
 void HqcAppWindow::onAboutQt()

@@ -1,7 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2007-2013 met.no
+Copyright (C) 2007-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -34,12 +34,12 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 namespace Authentication {
 
-int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName)
+int identifyUser(QWidget* widgetparent, const char* ldap_server, QString& userName)
 {
   return identifyUser(widgetparent, ldap_server, userName, DEFAULT_LDAP_PORT);
 }
 
-int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName, int ldap_port)
+int identifyUser(QWidget* widgetparent, const char* ldap_server, QString& userName, int ldap_port)
 {
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())

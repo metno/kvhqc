@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2013-2014 met.no
+  Copyright (C) 2013-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -35,13 +35,13 @@
 #include "common/TimeSpanControl.hh"
 #include "util/timeutil.hh"
 
-#include <QSettings>
 #include <QInputDialog>
 #include <QMessageBox>
+#include <QSettings>
 #include <QSortFilterProxyModel>
+#include <QSqlQuery>
 #include <QStandardItem>
 #include <QStandardItemModel>
-#include <QSqlQuery>
 
 #include <boost/foreach.hpp>
 

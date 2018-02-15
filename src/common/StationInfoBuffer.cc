@@ -1,3 +1,32 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "StationInfoBuffer.hh"
 
@@ -5,10 +34,10 @@
 #include "common/HqcApplication.hh"
 #include "util/stringutil.hh"
 
-#include <QVariant>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QSqlQuery>
+#include <QVariant>
 
 #include <boost/foreach.hpp>
 
@@ -92,7 +121,7 @@ bool StationInfoBuffer::writeToStationFile()
   BOOST_FOREACH(const listStat_t& ls, listStat) {
     insert.bindValue(":sid",      ls.stationid);
     insert.bindValue(":mun_id",   ls.municipid);
-    insert.bindValue(":county",   ls.fylke);
+    insert.bindValue(":county", ls.fylke);
     insert.bindValue(":mun_name", ls.kommune);
     insert.bindValue(":prio",     ls.pri);
     insert.bindValue(":coast",    ls.coast);
@@ -148,14 +177,14 @@ bool StationInfoBuffer::readFromStationFile()
         
         listStat_t ls;
         ls.stationid   = stationId;
-  
-        ls.name        = Helpers::fromUtf8(st.name());
+
+        ls.name = Helpers::fromUtf8(st.name());
         ls.altitude    = st.height();
         ls.wmonr       = st.wmonr();
           
         ls.municipid   = query.value(1).toInt();
-        ls.fylke       = query.value(2).toString();
-        ls.kommune     = query.value(3).toString();
+        ls.fylke = query.value(2).toString();
+        ls.kommune = query.value(3).toString();
         ls.coast       = query.value(4).toBool();
         ls.pri         = query.value(5).toInt();
   

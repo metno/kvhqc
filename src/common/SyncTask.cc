@@ -14,17 +14,14 @@ public:
   ~SyncedTask();
 
   void run(QueryTaskHandler* handler);
-  
-  QString querySql(QString dbversion) const
-    { return mTask->querySql(dbversion); }
 
-  void notifyRow(const ResultRow& row)
-    { mTask->notifyRow(row); }
+  QString querySql(QString dbversion) const override { return mTask->querySql(dbversion); }
 
-  void notifyDone(const QString& withError);
+  void notifyRow(const ResultRow& row) override { mTask->notifyRow(row); }
 
-  int remaining()
-    { return mTask->remaining(); }
+  void notifyDone(const QString& withError) override;
+
+  int remaining() override { return mTask->remaining(); }
 
 private:
   QSemaphore mSemaphore;

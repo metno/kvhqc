@@ -12,9 +12,9 @@ public:
   ObsData_p get() const
     { return mObs; }
   
-  virtual void onNewData(const ObsData_pv& data);
-  virtual void onUpdateData(const ObsData_pv& data);
-  virtual void onDropData(const SensorTime_v& dropped);
+  virtual void onNewData(const ObsData_pv& data) override;
+  virtual void onUpdateData(const ObsData_pv& data) override;
+  virtual void onDropData(const SensorTime_v& dropped) override;
 
 private:
   bool match(const SensorTime& st) const;

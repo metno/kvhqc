@@ -1,7 +1,7 @@
 /*
   libqTimeseries - Qt classes for time series plots
 
-  Copyright (C) 2006-2014 met.no
+  Copyright (C) 2006-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -45,7 +45,7 @@
 class TSdrawarea {
 private:
   pets2::ptCanvas* canvas;
-  pets2::ptDiagram * diagram;
+  pets2::ptDiagram* diagram;
   ptDiagramData * petsdata;
   pets2::ptStyle diaStyle;
   TimeSeriesData::TSPlot tsplot;

@@ -1,7 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-Copyright (C) 2013 met.no
+Copyright (C) 2013-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,15 +28,15 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 */
 
 #include "HqcAppWindow.hh"
-#include "common/KvalobsReinserter.hh"
-#include "common/KvalobsUpdateListener.hh"
+#include "common/HqcApplication.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
+#include "common/KvalobsReinserter.hh"
+#include "common/KvalobsUpdateListener.hh"
 #include "common/QtKvService.hh"
 #include "common/StInfoSysBuffer.hh"
-#include "common/HqcApplication.hh"
-#include "util/hqc_paths.hh"
 #include "util/Milog4cpp.hh"
+#include "util/hqc_paths.hh"
 
 #include <kvcpp/KvApp.h>
 #include <miconfparser/confparser.h>

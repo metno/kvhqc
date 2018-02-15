@@ -11,8 +11,8 @@
 LOG_CONSTRUCT_COUNTER;
 
 SimpleBuffer::SimpleBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : mRequest(new SimpleRequest(this, sensors, timeSpan, filter))
-  , mComplete(INCOMPLETE) // FIXME
+    : mRequest(std::make_shared<SimpleRequest>(this, sensors, timeSpan, filter))
+    , mComplete(INCOMPLETE) // FIXME
 {
   METLIBS_LOG_SCOPE();
   LOG_CONSTRUCT();
@@ -25,10 +25,10 @@ SimpleBuffer::SimpleBuffer(SignalRequest_p request)
   METLIBS_LOG_SCOPE();
   LOG_CONSTRUCT();
   SignalRequest* r = request.get();
-  connect(r, SIGNAL(requestCompleted(const QString&)),     this, SLOT(completed(const QString&)));
-  connect(r, SIGNAL(requestNewData(const ObsData_pv&)),    this, SLOT(newData(const ObsData_pv&)));
-  connect(r, SIGNAL(requestUpdateData(const ObsData_pv&)), this, SLOT(updateData(const ObsData_pv&)));
-  connect(r, SIGNAL(requestDropData(const SensorTime_v&)), this, SLOT(dropData(const SensorTime_v&)));
+  connect(r, &SignalRequest::requestCompleted, this, &SimpleBuffer::completed);
+  connect(r, &SignalRequest::requestNewData, this, &SimpleBuffer::newData);
+  connect(r, &SignalRequest::requestUpdateData, this, &SimpleBuffer::updateData);
+  connect(r, &SignalRequest::requestDropData, this, &SimpleBuffer::dropData);
 }
 
 SimpleBuffer::~SimpleBuffer()

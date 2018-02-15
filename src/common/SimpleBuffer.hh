@@ -10,7 +10,8 @@ class SimpleRequest;
 HQC_TYPEDEF_P(SimpleRequest);
 
 class SimpleBuffer : public QObject
-{ Q_OBJECT;
+{
+  Q_OBJECT
 
 public:
   SimpleBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter);

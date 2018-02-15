@@ -24,10 +24,9 @@ StationParamSQLTask::StationParamSQLTask(const SensorTime& st, size_t priority)
   }
 }
 
-QString StationParamSQLTask::querySql(QString dbversion) const
+QString StationParamSQLTask::querySql(QString /*dbversion*/) const
 {
   const int day = mSensorTime.time.date().day_of_year();
-  const int hour = mSensorTime.time.time_of_day().hours();
 
   const Sensor& s = mSensorTime.sensor;
 

@@ -1,10 +1,39 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "StInfoSysBuffer.hh"
 
 #include "KvMetaDataBuffer.hh"
+#include "common/HqcSystemDB.hh"
 #include "util/Helpers.hh"
 #include "util/stringutil.hh"
-#include "common/HqcSystemDB.hh"
 
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -23,7 +52,7 @@
 namespace /*anonymous*/ {
 
 const char QSQLNAME_REMOTE[] = "stinfosys";
-const int norway_countryid = 578;    // FIXME do not hardcode this
+const int norway_countryid = 578;     // FIXME do not hardcode this
 const int norway_remap_municip = 100; // FIXME do not hardcode this
 
 struct municip_info {
@@ -132,13 +161,13 @@ bool StInfoSysBuffer::readFromStInfoSys()
     const int pri = (it != station2prio.end()) ? it->second : 0;
     
     listStat_t ls;
-    ls.name        = Helpers::fromUtf8(st.name());
+    ls.name = Helpers::fromUtf8(st.name());
     ls.stationid   = stationid;
     ls.altitude    = st.height();
     ls.wmonr       = st.wmonr();
 
-    ls.fylke       = mi.county_name;
-    ls.kommune     = mi.municip_name;
+    ls.fylke = mi.county_name;
+    ls.kommune = mi.municip_name;
     ls.municipid   = municipid; // useed in extreme value list to exclude ships
     ls.pri         = pri;
     ls.coast       = (station2coast.find(stationid) != station2coast.end());

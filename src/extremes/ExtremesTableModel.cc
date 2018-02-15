@@ -185,12 +185,13 @@ void ExtremesTableModel::search(int paramid, const TimeSpan& time)
   SortedBuffer::Ordering_p ordering = std::make_shared<CorrectedOrdering>(ascending);
   mBuffer = std::make_shared<SortedBuffer>(ordering, invalid, time, ef);
 
-  connect(mBuffer.get(), SIGNAL(newDataBegin()),    this, SLOT(onBufferChangeBegin()));
-  connect(mBuffer.get(), SIGNAL(updateDataBegin()), this, SLOT(onBufferChangeBegin()));
-  connect(mBuffer.get(), SIGNAL(dropDataBegin()),   this, SLOT(onBufferChangeBegin()));
-  connect(mBuffer.get(), SIGNAL(newDataEnd(const ObsData_pv&)),    this, SLOT(onBufferChangeEnd()));
-  connect(mBuffer.get(), SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onBufferChangeEnd()));
-  connect(mBuffer.get(), SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onBufferChangeEnd()));
+  SortedBuffer* b = mBuffer.get();
+  connect(b, &SortedBuffer::newDataBegin, this, &ExtremesTableModel::onBufferChangeBegin);
+  connect(b, &SortedBuffer::updateDataBegin, this, &ExtremesTableModel::onBufferChangeBegin);
+  connect(b, &SortedBuffer::dropDataBegin, this, &ExtremesTableModel::onBufferChangeBegin);
+  connect(b, &SortedBuffer::newDataEnd, this, &ExtremesTableModel::onBufferChangeEnd);
+  connect(b, &SortedBuffer::updateDataEnd, this, &ExtremesTableModel::onBufferChangeEnd);
+  connect(b, &SortedBuffer::dropDataEnd, this, &ExtremesTableModel::onBufferChangeEnd);
 
   mBuffer->postRequest(mDA);
 }

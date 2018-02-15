@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2014 met.no
+  Copyright (C) 2014-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -72,8 +72,8 @@
 #endif // ENABLE_SIMPLECORRECTIONS
 
 #include <QSettings>
-#include <QSignalMapper>
 #include <QShortcut>
+#include <QSignalMapper>
 #include <QSplitter>
 
 #define MILOGGER_CATEGORY "kvhqc.SearchWindow"

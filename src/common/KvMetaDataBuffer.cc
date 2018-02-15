@@ -162,8 +162,8 @@ const hqc::hqcObsPgm_v& KvMetaDataBuffer::findObsPgm(int stationid)
 
 void KvMetaDataBuffer::putObsPgm(const hqc::hqcObsPgm_v& op)
 {
-  for (hqc::hqcObsPgm_v::const_iterator it = op.begin(); it != op.end(); ++it)
-    mObsPgms[it->stationID()].push_back(*it);
+  for (const hqc::hqcObsPgm& o : op)
+    mObsPgms[o.stationID()].push_back(o);
 }
 
 void KvMetaDataBuffer::taskDoneStations()

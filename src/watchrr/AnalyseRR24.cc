@@ -1,3 +1,32 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "AnalyseRR24.hh"
 #include "TaskData.hh"
@@ -12,8 +41,8 @@
 
 #include "util/Helpers.hh"
 
-#include <kvalobs/kvDataOperations.h>
 #include <QCoreApplication>
+#include <kvalobs/kvDataOperations.h>
 
 #define MILOGGER_CATEGORY "kvhqc.AnalyseRR24"
 #include "common/ObsLogging.hh"
@@ -61,9 +90,9 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
     ObsData_p obs = da->findE(SensorTime(sensor, mTS));
     if (not obs)
       continue;
-    if (not is_accumulation(obs))
+    if (is_accumulation(obs) == NO)
       break;
-    if (is_endpoint(obs)) {
+    if (is_endpoint(obs) != NO) {
       mTS += step;
       break;
     }
@@ -75,10 +104,9 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
     ObsData_p obs = da->findE(SensorTime(sensor, mTE));
     if (not obs)
       continue;
-    if (not is_accumulation(obs) or is_endpoint(obs))
+    if ((is_accumulation(obs) == NO) or (is_endpoint(obs) != NO))
       break;
   }
-  METLIBS_LOG_DEBUG(LOGVAL(mTS) << LOGVAL(mTE));
   time = TimeSpan(mTS, mTE);
 
   ObsUpdate_pv updates;
@@ -86,9 +114,10 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
   // add tasks for RR24 observations if the have errors
   int last_acc = NO, last_endpoint = NO, have_endpoint = NO;
   for (timeutil::ptime t = mTE; t >= mTS; t -= step) {
-    ObsData_p obs = da->findE(SensorTime(sensor, t));
+    const SensorTime st(sensor, t);
+    ObsData_p obs = da->findE(st);
     if (not obs) {
-      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      TaskUpdate_p up = createU(da, st);
       up->addTask(tasks::TASK_MISSING_OBS);
       updates.push_back(up);
       last_acc = last_endpoint = have_endpoint = false;
@@ -127,7 +156,7 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
     }
     last_acc = acc;
     if (task != 0) {
-      TaskUpdate_p up = createU(da, SensorTime(sensor, t));
+      TaskUpdate_p up = createU(da, st);
       up->addTask(task);
       updates.push_back(up);
     }

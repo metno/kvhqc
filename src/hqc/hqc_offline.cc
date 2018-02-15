@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2013 met.no
+  Copyright (C) 2013-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -84,7 +84,7 @@ int main( int argc, char* argv[] )
   // <<<<<
 
   HqcApplication hqc(argc, argv, 0);
-    
+
   std::unique_ptr<HqcMainWindow> mw(new HqcMainWindow());
   FakeReinserter* fri = new FakeReinserter;
   fri->setInsertSuccess(false);

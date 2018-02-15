@@ -1,7 +1,7 @@
 /*
   libqTimeseries - Qt classes for time series plots
 
-  Copyright (C) 2006-2013 met.no
+  Copyright (C) 2006-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -38,8 +38,8 @@
 #include <miLogger/miLogging.h>
 
 TSglwidget::TSglwidget(QWidget* parent, const char* name)
-  : QWidget(parent)
-  , canvas(this)
+    : QWidget(parent)
+    , canvas(this)
 {
   setObjectName(name);
 }
@@ -51,7 +51,6 @@ void TSglwidget::paintEvent(QPaintEvent*)
   pets2::ptQPainter painter(&canvas);
   drawArea.plot(painter);
 }
-
 
 void TSglwidget::resizeEvent(QResizeEvent*)
 {

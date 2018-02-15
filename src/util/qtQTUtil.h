@@ -4,7 +4,7 @@ HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
 
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -32,9 +32,9 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #ifndef _qtqtutil_h
 #define _qtqtutil_h
 
-#include <vector>
-#include <QPixmap>
 #include <QLabel>
+#include <QPixmap>
+#include <vector>
 
 class QPushButton;
 class QComboBox;

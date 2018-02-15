@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2013 met.no
+  Copyright (C) 2013-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -40,8 +40,8 @@
 
 #include "util/hqcObsPgm.h"
 
-#include <QSettings>
 #include <QHeaderView>
+#include <QSettings>
 
 #include <boost/foreach.hpp>
 

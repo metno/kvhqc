@@ -42,8 +42,8 @@ IndexBuffer::IndexBuffer(int stepSeconds, const Sensor_s& sensors, const TimeSpa
 {
   METLIBS_LOG_SCOPE();
   const ObsData_pv empty(mSize, ObsData_p());
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS)
-    mData.insert(std::make_pair(*itS, empty));
+  for (const Sensor& s : sensors)
+    mData.insert(std::make_pair(s, empty));
 }
 
 IndexBuffer::IndexBuffer(int stepSeconds, SignalRequest_p request)
@@ -54,21 +54,21 @@ IndexBuffer::IndexBuffer(int stepSeconds, SignalRequest_p request)
   METLIBS_LOG_SCOPE();
   const ObsData_pv empty(mSize, ObsData_p());
   const Sensor_s& sensors = request->sensors();
-  for (Sensor_s::const_iterator itS = sensors.begin(); itS != sensors.end(); ++itS)
-    mData.insert(std::make_pair(*itS, empty));
+  for (const Sensor& s : sensors)
+    mData.insert(std::make_pair(s, empty));
 }
 
 void IndexBuffer::onNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it) {
-    const SensorTime& st = (*it)->sensorTime();
+  for (const ObsData_p& od : data) {
+    const SensorTime& st = od->sensorTime();
     const int idx = findIndex(st);
     if (idx < 0)
       continue;
     const data_m::iterator itD = mData.find(st.sensor);
     if (itD != mData.end())
-      itD->second[idx] = *it;
+      itD->second[idx] = od;
   }
 }
 
@@ -81,11 +81,11 @@ void IndexBuffer::onUpdateData(const ObsData_pv& data)
 void IndexBuffer::onDropData(const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
-  for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it) {
-    const int idx = findIndex(*it);
+  for (const SensorTime& st : dropped) {
+    const int idx = findIndex(st);
     if (idx < 0)
       continue;
-    const data_m::iterator itD = mData.find(it->sensor);
+    const data_m::iterator itD = mData.find(st.sensor);
     if (itD != mData.end())
       itD->second[idx] = ObsData_p();
   }

@@ -16,8 +16,7 @@ KvalobsAccess::KvalobsAccess(QueryTaskHandler_p handler)
   : QueryTaskAccess(handler)
 {
   if (AbstractUpdateListener* ul = updateListener())
-    connect(ul, SIGNAL(updated(const hqc::kvData_v&)),
-        this, SLOT(onUpdated(const hqc::kvData_v&)));
+    connect(ul, &AbstractUpdateListener::updated, this, &KvalobsAccess::onUpdated);
   else
     HQC_LOG_WARN("no UpdateListener");
 }
@@ -27,8 +26,7 @@ KvalobsAccess::KvalobsAccess(QueryTaskHandler_p handler)
 KvalobsAccess::~KvalobsAccess()
 {
   if (AbstractUpdateListener* ul = updateListener())
-    disconnect(ul, SIGNAL(updated(const hqc::kvData_v&)),
-        this, SLOT(onUpdated(const hqc::kvData_v&)));
+    disconnect(ul, &AbstractUpdateListener::updated, this, &KvalobsAccess::onUpdated);
   // TODO unsubscribe all
 }
 

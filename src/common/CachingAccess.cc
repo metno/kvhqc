@@ -1,3 +1,32 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "CachingAccess.hh"
 
@@ -15,9 +44,9 @@
 // ========================================================================
 
 BackendBuffer::BackendBuffer(const Sensor_s& sensors, const TimeSpan& timeSpan, ObsFilter_p filter)
-  : TimeBuffer(std::make_shared<SignalRequest>(sensors, timeSpan, filter))
-  , mUseCount(0)
-  , mUnusedSince(timeutil::now())
+    : TimeBuffer(std::make_shared<SignalRequest>(sensors, timeSpan, filter))
+    , mUseCount(0)
+    , mUnusedSince(timeutil::now())
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensors) << LOGVAL(timeSpan));
 }
@@ -50,15 +79,11 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     bb->use();
 
     SignalRequest* sr = std::static_pointer_cast<SignalRequest>(bb->request()).get();
-    connect(sr, SIGNAL(requestCompleted(const QString&)),
-        this,   SLOT(onBackendCompleted(const QString&)));
-    connect(sr, SIGNAL(requestNewData(const ObsData_pv&)),
-        this,   SLOT(onBackendNewData(const ObsData_pv&)));
-    connect(sr, SIGNAL(requestUpdateData(const ObsData_pv&)),
-        this,   SLOT(onBackendUpdateData(const ObsData_pv&)));
-    connect(sr, SIGNAL(requestDropData(const SensorTime_v&)),
-        this,   SLOT(onBackendDropData(const SensorTime_v&)));
-    
+    connect(sr, &SignalRequest::requestCompleted, this, &CacheTag::onBackendCompleted);
+    connect(sr, &SignalRequest::requestNewData, this, &CacheTag::onBackendNewData);
+    connect(sr, &SignalRequest::requestUpdateData, this, &CacheTag::onBackendUpdateData);
+    connect(sr, &SignalRequest::requestDropData, this, &CacheTag::onBackendDropData);
+
     const ObsData_pv bb_data = filterData(bb->data(), true);
     if (!bb_data.empty())
       mRequest->newData(bb_data);

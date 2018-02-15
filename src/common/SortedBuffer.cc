@@ -51,17 +51,20 @@ void SortedBuffer::onNewData(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
   bool inserted = false;
-  for (ObsData_pv::const_iterator itD = data.begin(); itD != data.end(); ++itD) {
-    if (not *itD) {
+  for (ObsData_p o : data) {
+    if (!o) {
       HQC_LOG_ERROR("null data in newData");
       continue;
     }
-    const ObsData_pv::iterator it = findUnsorted((*itD)->sensorTime());
+    const ObsData_pv::iterator it = findUnsorted(o->sensorTime());
     if (it != mData.end()) {
-      HQC_LOG_WARN("replacing data in newData" << (*itD)->sensorTime());
-      *it = *itD; // FIXME the need for this is actually a bug in some ObsAccess implementation
+      ObsData_p& e = *it;
+      if (o->original() != e->original() || o->corrected() != e->corrected() || o->controlinfo() != e->controlinfo() || o->cfailed() != e->cfailed()) {
+        HQC_LOG_WARN("replacing data in newData" << o->sensorTime());
+      }
+      e = o; // FIXME the need for this is actually a bug in some ObsAccess implementation
     } else {
-      mData.push_back(*itD);
+      mData.push_back(o);
       inserted = true;
     }
   }

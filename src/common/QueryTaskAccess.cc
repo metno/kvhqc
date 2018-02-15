@@ -28,10 +28,8 @@ QueryTaskAccess::~QueryTaskAccess()
 QueryTaskHelper* QueryTaskAccess::taskForRequest(ObsRequest_p request)
 {
   DataQueryTask* task = new DataQueryTask(request, QueryTask::PRIORITY_INTERACTIVE);
-  connect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-      this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  connect(task, SIGNAL(queryDone(ObsRequest_p, const QString&)),
-      this, SLOT(onDone(ObsRequest_p, const QString&)));
+  connect(task, &DataQueryTask::newData, this, &QueryTaskAccess::onNewData);
+  connect(task, &DataQueryTask::queryDone, this, &QueryTaskAccess::onDone);
 
   QueryTaskHelper* helper = new QueryTaskHelper(task);
   request->setTag(helper);
@@ -71,10 +69,8 @@ void QueryTaskAccess::dropRequest(ObsRequest_p request)
 
   QueryTaskHelper* helper = static_cast<QueryTaskHelper*>(request->tag());
   const DataQueryTask* task = unwrapTask(helper);
-  disconnect(task, SIGNAL(newData(ObsRequest_p, const ObsData_pv&)),
-      this, SLOT(onNewData(ObsRequest_p, const ObsData_pv&)));
-  disconnect(task, SIGNAL(queryDone(ObsRequest_p, const QString&)),
-      this, SLOT(onDone(ObsRequest_p, const QString&)));
+  disconnect(task, &DataQueryTask::newData, this, &QueryTaskAccess::onNewData);
+  disconnect(task, &DataQueryTask::queryDone, this, &QueryTaskAccess::onDone);
   delete helper;
   request->setTag(0);
 

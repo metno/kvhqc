@@ -1,3 +1,32 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "FakeKvApp.hh"
 #include "FakeReinserter.hh"
@@ -131,13 +160,12 @@ void FakeKvApp::addObsPgm(const std::string& line)
 
   const bool priority_message = (ipm == 1) ? (numbers[5] != 0) : true;
 
-  const hqc::hqcObsPgm op(numbers[0], numbers[1], numbers[2], numbers[3], numbers[4],
-                          priority_message,
-                          numbers[5 + ipm], numbers[6 + ipm], numbers[7 + ipm], numbers[8 + ipm], numbers[9 + ipm], numbers[10 + ipm], numbers[11],
-                          numbers[12 + ipm], numbers[13 + ipm], numbers[14 + ipm], numbers[15 + ipm], numbers[16 + ipm], numbers[17], numbers[18 + ipm],
-                          numbers[19 + ipm], numbers[20 + ipm], numbers[21 + ipm], numbers[22 + ipm], numbers[23], numbers[24 + ipm], numbers[25 + ipm],
-                          numbers[26 + ipm], numbers[27 + ipm], numbers[28 + ipm], numbers[29], numbers[30 + ipm], numbers[31 + ipm], numbers[32 + ipm],
-                          numbers[33 + ipm], numbers[34 + ipm], numbers[35], numbers[36 + ipm], from, to);
+  const hqc::hqcObsPgm op(numbers[0], numbers[1], numbers[2], numbers[3], numbers[4], priority_message, numbers[5 + ipm], numbers[6 + ipm], numbers[7 + ipm],
+                          numbers[8 + ipm], numbers[9 + ipm], numbers[10 + ipm], numbers[11], numbers[12 + ipm], numbers[13 + ipm], numbers[14 + ipm],
+                          numbers[15 + ipm], numbers[16 + ipm], numbers[17], numbers[18 + ipm], numbers[19 + ipm], numbers[20 + ipm], numbers[21 + ipm],
+                          numbers[22 + ipm], numbers[23], numbers[24 + ipm], numbers[25 + ipm], numbers[26 + ipm], numbers[27 + ipm], numbers[28 + ipm],
+                          numbers[29], numbers[30 + ipm], numbers[31 + ipm], numbers[32 + ipm], numbers[33 + ipm], numbers[34 + ipm], numbers[35],
+                          numbers[36 + ipm], from, to);
   obsAccess()->insertObsPgm(op);
 }
 

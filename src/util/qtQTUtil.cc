@@ -3,7 +3,7 @@ HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
 
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -28,15 +28,15 @@ You should have received a copy of the GNU General Public License along
 with HQC; if not, write to the Free Software Foundation Inc.,
 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
-#include <qcombobox.h>
 #include <q3listbox.h>
-#include <qlayout.h>
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlcdnumber.h>
 #include <qcheckbox.h>
-#include <qslider.h>
+#include <qcombobox.h>
+#include <qlabel.h>
+#include <qlayout.h>
+#include <qlcdnumber.h>
 #include <qpixmap.h>
+#include <qpushbutton.h>
+#include <qslider.h>
 
 #include <qtQTUtil.h>
 

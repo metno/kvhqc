@@ -4,7 +4,7 @@ HQC - Free Software for Manual Quality Control of Meteorological Observations
 
 $Id$
 
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -36,8 +36,8 @@ class QString;
 class QWidget;
 
 namespace Authentication {
-int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName);
-int identifyUser(QWidget* widgetparent, const char *ldap_server, QString& userName, int port);
+int identifyUser(QWidget* widgetparent, const char* ldap_server, QString& userName);
+int identifyUser(QWidget* widgetparent, const char* ldap_server, QString& userName, int port);
 } // namespace Authentication
 
 #endif // common_identifyUser_h
