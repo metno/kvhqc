@@ -1,6 +1,8 @@
 
 SET(util_SOURCES
   ChangeReplay.hh
+  lru_cache.hh
+
   Helpers.cc
   HqcLogging.cc
   hqc_paths.cc

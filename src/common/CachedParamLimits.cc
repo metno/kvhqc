@@ -22,17 +22,18 @@
 #endif
 
 CachedParamLimits::CachedParamLimits()
+    : sensor_limits(64)
 {
-  reset();
 }
 
 CachedParamLimits::~CachedParamLimits()
 {
 }
 
-void CachedParamLimits::reset()
+void CachedParamLimits::Limits::reset()
 {
   have_max = have_high = have_low = have_min = false;
+  fromtime = totime = timeutil::ptime();
 }
 
 CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, float value)
@@ -41,34 +42,40 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
   if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
     return Ok;
 
-  if (not (sensor.valid() and eq_Sensor()(st.sensor, sensor))
-      or fromtime.is_not_a_date_time() or st.time < fromtime
-      or (not totime.is_not_a_date_time() and st.time >= totime))
-  {
-    DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(sensor) << LOGVAL(fromtime) << LOGVAL(totime)));
-    sensor = st.sensor;
+  const Sensor& sensor = st.sensor;
 
-    const QString metadata = fetchMetaData(st);
-    if (not metadata.isNull())
-      parseMetadata(metadata);
+  bool fetch = !sensor_limits.has(sensor);
+  if (!fetch) {
+    const Limits& limits = sensor_limits.get(sensor);
+    if (limits.fromtime.is_not_a_date_time() || st.time < limits.fromtime || (!limits.totime.is_not_a_date_time() && st.time >= limits.totime)) {
+      fetch = true;
+    }
+  }
+  if (fetch) {
+    Limits limits;
 
-    if (not (have_max and have_min))
-      fetchLimitsFromSystemDB(st);
+    const QString metadata = fetchMetaData(st, limits.fromtime, limits.totime);
+    if (not metadata.isNull()) {
+      parseMetadata(metadata, limits);
+    }
 
-    DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(fromtime) << LOGVAL(totime)
-            << LOGVAL(have_min) << LOGVAL(have_max) << LOGVAL(param_min) << LOGVAL(param_max)));
+    if (!(limits.have_max && limits.have_min))
+      fetchLimitsFromSystemDB(st, limits);
+
+    sensor_limits.put(sensor, limits);
   }
 
-  if ((have_max and value > param_max) or (have_min and value < param_min))
+  const Limits& limits = sensor_limits.get(sensor);
+  if ((limits.have_max && value > limits.param_max) || (limits.have_min && value < limits.param_min))
     return OutsideMinMax;
-  
-  if ((have_high and value > param_high) or (have_low and value < param_low))
+
+  if ((limits.have_high && value > limits.param_high) || (limits.have_low && value < limits.param_low))
     return OutsideHighLow;
 
   return Ok;
 }
 
-QString CachedParamLimits::fetchMetaData(const SensorTime& st)
+QString CachedParamLimits::fetchMetaData(const SensorTime& st, timeutil::ptime& fromtime, timeutil::ptime& totime)
 {
   DEBUG_ME(METLIBS_LOG_SCOPE(LOGVAL(st)));
 
@@ -97,9 +104,9 @@ QString CachedParamLimits::fetchMetaData(const SensorTime& st)
   return metadata;
 }
 
-void CachedParamLimits::parseMetadata(const QString& metadata)
+void CachedParamLimits::parseMetadata(const QString& metadata, Limits& limits)
 {
-  have_max = have_min = have_high = have_low = false;
+  limits.reset();
 
   const QStringList lines = metadata.split(QChar('\n'));
   if (lines.length() != 2)
@@ -112,27 +119,25 @@ void CachedParamLimits::parseMetadata(const QString& metadata)
 
   for (int i=0; i<keys.length(); ++i) {
     if (keys.at(i) == "max") {
-      param_max = values.at(i).toFloat();
-      have_max = true;
+      limits.param_max = values.at(i).toFloat();
+      limits.have_max = true;
     } else if (keys.at(i) == "min") {
-      param_min = values.at(i).toFloat();
-      have_min = true;
+      limits.param_min = values.at(i).toFloat();
+      limits.have_min = true;
     } else if (keys.at(i) == "high") {
-      param_high = values.at(i).toFloat();
-      have_high = true;
+      limits.param_high = values.at(i).toFloat();
+      limits.have_high = true;
     } else if (keys.at(i) == "low") {
-      param_low = values.at(i).toFloat();
-      have_low = true;
+      limits.param_low = values.at(i).toFloat();
+      limits.have_low = true;
     }
   }
 }
 
-void CachedParamLimits::fetchLimitsFromSystemDB(const SensorTime& st)
+void CachedParamLimits::fetchLimitsFromSystemDB(const SensorTime& st, Limits& limits)
 {
-  fromtime = totime = timeutil::ptime();
-  if (HqcSystemDB::paramLimits(st.sensor.paramId, param_min, param_max)) {
-    fromtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
-    have_max  = have_min = true;
-    have_high = have_low = false;
+  if (HqcSystemDB::paramLimits(st.sensor.paramId, limits.param_min, limits.param_max)) {
+    limits.fromtime = timeutil::from_iso_extended_string("1800-01-01 00:00:00");
+    limits.have_max = limits.have_min = true;
   }
 }

@@ -92,6 +92,7 @@ SET(common_SOURCES
   QueryTaskHelper.hh
   Sensor.cc
   SensorChooser.cc
+  SensorHash.hh
   SensorHeader.cc
   SignalRequest.cc
   SignalRequest.hh

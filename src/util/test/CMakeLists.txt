@@ -12,6 +12,7 @@ LINK_LIBRARIES(
 ADD_EXECUTABLE(util_test
   ChangeReplayTest.cc
   HelpersTest.cc
+  lru_cache_test.cc
   priority_list_test.cc
   VersionedValueTest.cc
 )
