@@ -29,6 +29,7 @@ EditTableModel::EditTableModel(TaskAccess_p da, const Sensor& sensor, const Time
   , mTime(time)
   , mRR24Codes(ColumnFactory::codesForParam(kvalobs::PARAMID_RR_24))
 {
+  setTimeSpan(mTime);
   const int nDays = mTime.days() + 1;
   for(int d=0; d<nDays; ++d) {
     const timeutil::ptime t = timeAtRow(d);
