@@ -6,27 +6,27 @@
     <message>
         <location filename="watchrr_edit.ui" line="17"/>
         <source>WatchRR - Single Values</source>
-        <translation>WatchRR - Einzelwerte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="38"/>
         <source>&amp;Accept all</source>
-        <translation>Alle &amp;akzeptieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="48"/>
         <source>&amp;Reject all</source>
-        <translation>Alle &amp;verwerfen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="74"/>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_edit.ui" line="84"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -34,62 +34,62 @@
     <message>
         <location filename="watchrr_main.ui" line="14"/>
         <source>WatchRR</source>
-        <translation>WatchRR</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="40"/>
         <source>Precipitation Card</source>
-        <translation>Niederschlagskarte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="60"/>
         <source>&amp;Single values…</source>
-        <translation>&amp;Einzelwerte…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="73"/>
         <source>&amp;Redistribute…</source>
-        <translation>&amp;Verteilen…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="86"/>
         <source>Redistribute &amp;in QC2</source>
-        <translation>Verteilen &amp;in QC2</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="99"/>
         <source>&amp;Accept</source>
-        <translation>&amp;Akzeptieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="142"/>
         <source>Neighbor Precipitation</source>
-        <translation>Niederschlag Nachbarn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="165"/>
         <source>Neighbor Data</source>
-        <translation>Daten Nachbarn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="239"/>
         <source>U&amp;ndo</source>
-        <translation>&amp;Rückgängig</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="281"/>
-        <source>&amp;Done</source>
-        <translation>&amp;Fertig</translation>
-    </message>
-    <message>
-        <location filename="watchrr_main.ui" line="291"/>
-        <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_main.ui" line="252"/>
         <source>Redo</source>
-        <translation>Wiederherstellen</translation>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="281"/>
+        <source>&amp;Done</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="watchrr_main.ui" line="291"/>
+        <source>Cancel</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -97,27 +97,27 @@
     <message>
         <location filename="watchrr_redist.ui" line="17"/>
         <source>WatchRR - Redistribution</source>
-        <translation>WatchRR - Verteilung</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_redist.ui" line="78"/>
         <source>Calculate redistributed values based on corrected values for this station and original values for neighbor stations</source>
-        <translation>Berechne verteilte Werte anhand der korrigierten Werte für diese Station und der Original-Werte für Nachbar-Stationen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_redist.ui" line="81"/>
         <source>&amp;Auto</source>
-        <translation>&amp;Auto</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_redist.ui" line="101"/>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_redist.ui" line="111"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -125,37 +125,37 @@
     <message>
         <location filename="watchrr_station.ui" line="18"/>
         <source>WatchRR -- Station</source>
-        <translation>WatchRR -- Station</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="30"/>
         <source>Station:</source>
-        <translation>Station:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="40"/>
         <source>From:</source>
-        <translation>Von:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="60"/>
         <source>To:</source>
-        <translation>Bis:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="80"/>
         <source>Type:</source>
-        <translation>Type:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="108"/>
         <source>Cancel</source>
-        <translation>Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="watchrr_station.ui" line="118"/>
         <source>OK</source>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -164,7 +164,7 @@
         <location filename="EditDialog.cc" line="25"/>
         <location filename="EditDialog.cc" line="36"/>
         <source>Station %1 [%2]</source>
-        <translation>Station %1 [%2]</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -172,17 +172,17 @@
     <message>
         <location filename="RedistDialog.cc" line="51"/>
         <source>Station %1 [%2]</source>
-        <translation>Station %1 [%2]</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="RedistDialog.cc" line="54"/>
         <source>Sum: %1mm</source>
-        <translation>Summe: %1mm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="RedistDialog.cc" line="58"/>
         <source>Difference %1mm to original sum %2mm!</source>
-        <translation>Differenz %1mm zur Original-Summe %2mm!</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -190,60 +190,60 @@
     <message>
         <location filename="StationDialog.cc" line="104"/>
         <source>Cannot read station number</source>
-        <translation>Kann Stationsnummer nicht lesen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="106"/>
         <source>Invalid station number</source>
-        <translation>Ungültige Stationsnummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="170"/>
         <source>Unknown station (not in obs_pgm)</source>
-        <translation>Unbekannte Station (nicht in obs_pgm)</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="StationDialog.cc" line="182"/>
         <source>Could not find typeid</source>
-        <translation>Keine typeid gefunden</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>WatchRRDialog</name>
     <message>
-        <location filename="WatchRRDialog.cc" line="116"/>
+        <location filename="WatchRRDialog.cc" line="144"/>
         <source>Station %1 [%2]</source>
-        <translation>Station %1 [%2]</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="121"/>
+        <location filename="WatchRRDialog.cc" line="149"/>
         <source>[not daily]</source>
-        <translation>[nicht täglich]</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="169"/>
+        <location filename="WatchRRDialog.cc" line="197"/>
         <source>Sum: %1mm</source>
-        <translation>Summe: %1mm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="247"/>
+        <location filename="WatchRRDialog.cc" line="275"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
-        <translation>Ihre Änderungen konnten nicht gespeichert werden und sind leider verloren!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="248"/>
+        <location filename="WatchRRDialog.cc" line="276"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="342"/>
+        <location filename="WatchRRDialog.cc" line="370"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
-        <translation>Kvalobs-Daten, die Sie bearbeiten, wurden geändert. Sie müssen von vorne beginnen. Sorry!</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="343"/>
+        <location filename="WatchRRDialog.cc" line="371"/>
         <source>Quit and Discard changes</source>
-        <translation>Beenden und Änderungen verlieren</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

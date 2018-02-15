@@ -4,60 +4,60 @@
 <context>
     <name>RejectDecodeTable</name>
     <message>
-        <location filename="RejectedObs.cc" line="30"/>
+        <location filename="RejectedObs.cc" line="59"/>
         <source>Tbtime</source>
-        <translation>Tbtime</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObs.cc" line="31"/>
+        <location filename="RejectedObs.cc" line="60"/>
         <source>Observation</source>
-        <translation>Observasjon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObs.cc" line="32"/>
+        <location filename="RejectedObs.cc" line="61"/>
         <source>Comment</source>
-        <translation>Kommentar</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>RejectedObsDialog</name>
     <message>
-        <location filename="RejectedObsDialog.cc" line="66"/>
+        <location filename="RejectedObsDialog.cc" line="95"/>
         <source>RejectDecode</source>
-        <translation>RejectDecode</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="67"/>
+        <location filename="RejectedObsDialog.cc" line="96"/>
         <source>Select time range for reject list</source>
-        <translation>Velg tidsrom for rejectdecode liste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="68"/>
+        <location filename="RejectedObsDialog.cc" line="97"/>
         <source>From</source>
-        <translation>Fra</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="69"/>
+        <location filename="RejectedObsDialog.cc" line="98"/>
         <source>To</source>
-        <translation>Til</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="70"/>
+        <location filename="RejectedObsDialog.cc" line="99"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="RejectedObsDialog.cc" line="71"/>
+        <location filename="RejectedObsDialog.cc" line="100"/>
         <source>Cancel</source>
-        <translation>Avbryt</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>Rejects</name>
     <message>
-        <location filename="RejectedObs.cc" line="126"/>
+        <location filename="RejectedObs.cc" line="155"/>
         <source>RejectDecode</source>
-        <translation>RejectDecode</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

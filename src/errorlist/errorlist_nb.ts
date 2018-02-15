@@ -4,126 +4,125 @@
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="ErrorListModel.cc" line="38"/>
-        <location filename="ErrorListModel.cc" line="51"/>
-        <source>Flags</source>
-        <oldsource>Flag</oldsource>
-        <translation>Flagg</translation>
-    </message>
-    <message>
         <location filename="errorlist.ui" line="14"/>
         <source>Error List</source>
-        <translation>Feillista</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="35"/>
         <source>Open search dialog</source>
-        <translation>Åpne søkedialogen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="38"/>
         <source>&amp;Search…</source>
-        <translation>&amp;Søk…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="61"/>
         <source>For&amp;get Resolved</source>
-        <translation>&amp;Glem rettede</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="84"/>
         <source>Expand a&amp;ll</source>
-        <translation>Åpne a&amp;lle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="29"/>
+        <location filename="ErrorListModel.cc" line="58"/>
         <source>Stnr</source>
-        <translation>Stnr</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="30"/>
+        <location filename="ErrorListModel.cc" line="59"/>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="31"/>
+        <location filename="ErrorListModel.cc" line="60"/>
         <source>WMO</source>
-        <translation>WMO</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="32"/>
+        <location filename="ErrorListModel.cc" line="61"/>
         <source>Obstime</source>
-        <translation>Obstid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="33"/>
+        <location filename="ErrorListModel.cc" line="62"/>
         <source>Para</source>
-        <translation>Para</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="34"/>
+        <location filename="ErrorListModel.cc" line="63"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="35"/>
+        <location filename="ErrorListModel.cc" line="64"/>
         <source>Orig.d</source>
-        <translation>Orig.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="36"/>
+        <location filename="ErrorListModel.cc" line="65"/>
         <source>Corr.d</source>
-        <translation>Korr.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="37"/>
+        <location filename="ErrorListModel.cc" line="66"/>
         <source>mod.v</source>
-        <translation>Mod.v</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="42"/>
+        <location filename="ErrorListModel.cc" line="67"/>
+        <location filename="ErrorListModel.cc" line="80"/>
+        <source>Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ErrorListModel.cc" line="71"/>
         <source>Station number</source>
-        <translation>Stasjonsnummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="43"/>
+        <location filename="ErrorListModel.cc" line="72"/>
         <source>Station name</source>
-        <translation>Stasjonsnavn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="44"/>
+        <location filename="ErrorListModel.cc" line="73"/>
         <source>WMO station number</source>
-        <translation>WMO stasjons-nummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="45"/>
+        <location filename="ErrorListModel.cc" line="74"/>
         <source>Observation time</source>
-        <translation>Observasjonstid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="46"/>
+        <location filename="ErrorListModel.cc" line="75"/>
         <source>Parameter name</source>
-        <translation>Parameternavn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="47"/>
+        <location filename="ErrorListModel.cc" line="76"/>
         <source>Type ID</source>
-        <translation>Type ID</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="48"/>
+        <location filename="ErrorListModel.cc" line="77"/>
         <source>Original value</source>
-        <translation>Original verdi</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="49"/>
+        <location filename="ErrorListModel.cc" line="78"/>
         <source>Corrected value</source>
-        <translation>Korrigert verdi</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="50"/>
+        <location filename="ErrorListModel.cc" line="79"/>
         <source>Model value</source>
-        <translation>Modellverdi</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -131,215 +130,215 @@
     <message>
         <location filename="error_search_dialog.ui" line="14"/>
         <source>Error Search</source>
-        <translation>Feillista</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="42"/>
         <location filename="error_search_dialog.ui" line="72"/>
         <source>Stations</source>
-        <translation>Stasjoner</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="122"/>
         <source>Filter by station id and name</source>
-        <translation>Filtrer etter stasjonsnummer eller -navn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="145"/>
         <source>Time range</source>
-        <translation>Tidsrom</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="166"/>
         <source>&amp;From</source>
-        <translation>&amp;Fra</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="179"/>
         <location filename="error_search_dialog.ui" line="199"/>
         <source>yyyy-MM-dd hh:mm</source>
-        <translation>yyyy-MM-dd hh:mm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="186"/>
         <source>&amp;To</source>
-        <translation>&amp;Til</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="206"/>
         <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation>Velger omtrent de siste 2 dager.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="209"/>
         <source>Recent</source>
-        <translation>Nylig</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="216"/>
         <source>Remember the chosen time span.</source>
-        <translation>Husk valgt tidsrom.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="219"/>
         <source>Remember</source>
-        <translation>Husk</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="243"/>
         <source>Weather element</source>
-        <translation>Værelement</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="273"/>
         <source>Available</source>
-        <translation>Tilgjengelig</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="324"/>
         <source>Sho&amp;w only:</source>
-        <translation>Vis b&amp;are:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="381"/>
         <source>add to chosen values</source>
-        <translation>legg til som valgte parametere</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="402"/>
         <source>remove from chosen values</source>
-        <translation>fjern fra valgte parametere</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="423"/>
         <source>A&amp;ll</source>
-        <translation>A&amp;lle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="441"/>
         <source>&amp;None</source>
-        <translation>&amp;Ingen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="469"/>
         <source>Chosen</source>
-        <translation>Valgt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="516"/>
         <source>Options</source>
-        <translation>Valg</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="537"/>
         <source>If checked, errors in unofficial parameters will be excluded from the error list.</source>
-        <translation>Hvis krysset av blir uoffisielle parametere utelatt fra feillista.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="540"/>
         <source>Ignore unofficial parameters</source>
-        <translation>Ignorér uoffisielle parametere</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="572"/>
         <source>Save</source>
-        <translation>Lagre</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="579"/>
         <source>Load</source>
-        <translation>Lese</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="599"/>
         <source>&amp;Cancel</source>
-        <translation>&amp;Avbryt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="606"/>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>Station/Region</source>
-        <translation>Stasjon/Region</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>HOH</source>
-        <translation>hoh</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>County</source>
-        <translation>Fylke</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Commune</source>
-        <translation>Kommune</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Pri</source>
-        <translation>Pri</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="158"/>
         <location filename="ErrorSearchDialog.cc" line="279"/>
         <source>All in obs pgm</source>
-        <translation>Alle i obs pgm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="159"/>
         <location filename="ErrorSearchDialog.cc" line="288"/>
         <source>All defined</source>
-        <translation>Alle definerte</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="362"/>
         <location filename="ErrorSearchDialog.cc" line="372"/>
         <source>Save data selection</source>
-        <translation>Lagre datavalg</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="363"/>
         <location filename="ErrorSearchDialog.cc" line="410"/>
         <source>Name:</source>
-        <translation>Navn:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="373"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation>Datavalg med navn &apos;%1&apos; finnes.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="374"/>
         <source>Do you want to overwrite it?</source>
-        <translation>Ønsker du å lagre og overskrive den?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="402"/>
         <location filename="ErrorSearchDialog.cc" line="409"/>
         <source>Load data selection</source>
-        <translation>Tilbakekalle datavalg</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="403"/>
         <source>No saved data selections found.</source>
-        <translation>Det finnes ingen lagrete valg.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

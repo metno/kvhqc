@@ -6,7 +6,7 @@
     <message>
         <location filename="extremevalues.ui" line="14"/>
         <source>Extreme Values</source>
-        <translation>Ekstremverdier</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="extremevalues.ui" line="35"/>
@@ -16,16 +16,12 @@
     <message>
         <location filename="extremevalues.ui" line="55"/>
         <source> to:</source>
-        <translation> til:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="extremevalues.ui" line="69"/>
         <source>&amp;Search</source>
-        <translation>&amp;Søk</translation>
-    </message>
-    <message>
-        <source>Apply</source>
-        <translation type="vanished">Utfør</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -33,78 +29,78 @@
     <message>
         <location filename="ExtremesTableModel.cc" line="19"/>
         <source>Stnr</source>
-        <translation>Stnr</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="20"/>
         <source>Name</source>
-        <translation>Navn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="21"/>
         <source>Time</source>
-        <translation>Tid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="22"/>
         <source>Para</source>
-        <translation>Para</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="23"/>
         <source>Type</source>
-        <translation>Type</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="24"/>
         <source>Orig.d</source>
-        <translation>Orig.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="25"/>
         <source>Corr.d</source>
-        <translation>Korr.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="26"/>
         <location filename="ExtremesTableModel.cc" line="37"/>
         <source>Flags</source>
-        <translation>Flagg</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="30"/>
         <source>Station number</source>
-        <translation>Stasjonsnummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="31"/>
         <source>Station name</source>
-        <translation>Stasjonsnavn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="32"/>
         <source>Obstime</source>
-        <translation>Obstid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="33"/>
         <source>Parameter name</source>
-        <translation>Parameternavn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="34"/>
         <source>Type ID</source>
-        <translation>Type ID</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="35"/>
         <source>Original value</source>
-        <translation>original verdi</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ExtremesTableModel.cc" line="36"/>
         <source>Corrected value</source>
-        <translation>korrigert verdi</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

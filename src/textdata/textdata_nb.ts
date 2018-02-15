@@ -4,17 +4,9 @@
 <context>
     <name>TextData</name>
     <message>
-        <location filename="TextdataTable.cc" line="162"/>
+        <location filename="TextdataTable.cc" line="191"/>
         <source>TextData</source>
-        <translation>TextData</translation>
-    </message>
-    <message>
-        <source>No Textdata</source>
-        <translation type="vanished">Ingen Textdata</translation>
-    </message>
-    <message>
-        <source>Could not read text data.</source>
-        <translation type="vanished">Kunne ikke lese textdata.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -23,79 +15,75 @@
         <location filename="TextdataDialog.cc" line="90"/>
         <location filename="TextdataDialog.cc" line="131"/>
         <source>TextData</source>
-        <translation>Tekstdata</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="91"/>
         <source>Station</source>
-        <translation>Stasjon</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="92"/>
         <source>Time range</source>
-        <translation>Tidsrom</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="93"/>
         <source>From</source>
-        <translation>Fra</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="94"/>
         <source>To</source>
-        <translation>Til</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="95"/>
         <source>OK</source>
-        <translation>OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="96"/>
         <source>Cancel</source>
-        <translation>Avbryt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="132"/>
         <source>Illegal station number. Choose a different station number.</source>
-        <translation>Ugyldig stasjonsnummer. Vennligst velg et annet stasjonsnummer.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>TextDataTable</name>
     <message>
-        <location filename="TextdataTable.cc" line="37"/>
+        <location filename="TextdataTable.cc" line="66"/>
         <source>Stationid</source>
-        <translation>Stationid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="38"/>
+        <location filename="TextdataTable.cc" line="67"/>
         <source>Obstime</source>
-        <translation>Obstid</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="39"/>
+        <location filename="TextdataTable.cc" line="68"/>
         <source>Original</source>
-        <translation>Original</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Paramid</source>
-        <translation type="vanished">Paramid</translation>
-    </message>
-    <message>
-        <location filename="TextdataTable.cc" line="40"/>
+        <location filename="TextdataTable.cc" line="69"/>
         <source>ParamName</source>
-        <translation>Param-Navn</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="41"/>
+        <location filename="TextdataTable.cc" line="70"/>
         <source>Tbtime</source>
-        <translation>Tbtime</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="TextdataTable.cc" line="42"/>
+        <location filename="TextdataTable.cc" line="71"/>
         <source>Typeid</source>
-        <translation>Typeid</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>

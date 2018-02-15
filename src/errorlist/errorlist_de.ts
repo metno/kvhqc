@@ -1,129 +1,128 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="de">
+<TS version="2.1" language="de_DE">
 <context>
     <name>ErrorList</name>
     <message>
-        <location filename="ErrorListModel.cc" line="38"/>
-        <location filename="ErrorListModel.cc" line="51"/>
-        <source>Flags</source>
-        <oldsource>Flag</oldsource>
-        <translation>Flags</translation>
-    </message>
-    <message>
         <location filename="errorlist.ui" line="14"/>
         <source>Error List</source>
-        <translation>Fehlerliste</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="35"/>
         <source>Open search dialog</source>
-        <translation>Suchdialog öffnen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="38"/>
         <source>&amp;Search…</source>
-        <translation>&amp;Suche…</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="61"/>
         <source>For&amp;get Resolved</source>
-        <translation>Korrigierte ver&amp;gessen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="errorlist.ui" line="84"/>
         <source>Expand a&amp;ll</source>
-        <translation>A&amp;lle ausklappen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="29"/>
+        <location filename="ErrorListModel.cc" line="58"/>
         <source>Stnr</source>
-        <translation>Stnr</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="30"/>
+        <location filename="ErrorListModel.cc" line="59"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="31"/>
+        <location filename="ErrorListModel.cc" line="60"/>
         <source>WMO</source>
-        <translation>WMO</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="32"/>
+        <location filename="ErrorListModel.cc" line="61"/>
         <source>Obstime</source>
-        <translation>Obszeit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="33"/>
+        <location filename="ErrorListModel.cc" line="62"/>
         <source>Para</source>
-        <translation>Para</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="34"/>
+        <location filename="ErrorListModel.cc" line="63"/>
         <source>Type</source>
-        <translation>Typ</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="35"/>
+        <location filename="ErrorListModel.cc" line="64"/>
         <source>Orig.d</source>
-        <translation>Orig.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="36"/>
+        <location filename="ErrorListModel.cc" line="65"/>
         <source>Corr.d</source>
-        <translation>Korr.d</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="37"/>
+        <location filename="ErrorListModel.cc" line="66"/>
         <source>mod.v</source>
-        <translation>Mod.v</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="42"/>
+        <location filename="ErrorListModel.cc" line="67"/>
+        <location filename="ErrorListModel.cc" line="80"/>
+        <source>Flags</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="ErrorListModel.cc" line="71"/>
         <source>Station number</source>
-        <translation>Stations-Nummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="43"/>
+        <location filename="ErrorListModel.cc" line="72"/>
         <source>Station name</source>
-        <translation>Stations-Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="44"/>
+        <location filename="ErrorListModel.cc" line="73"/>
         <source>WMO station number</source>
-        <translation>WMO Stationsnummer</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="45"/>
+        <location filename="ErrorListModel.cc" line="74"/>
         <source>Observation time</source>
-        <translation>Observationszeit</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="46"/>
+        <location filename="ErrorListModel.cc" line="75"/>
         <source>Parameter name</source>
-        <translation>Parameter-Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="47"/>
+        <location filename="ErrorListModel.cc" line="76"/>
         <source>Type ID</source>
-        <translation>Typ ID</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="48"/>
+        <location filename="ErrorListModel.cc" line="77"/>
         <source>Original value</source>
-        <translation>Original-Wert</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="49"/>
+        <location filename="ErrorListModel.cc" line="78"/>
         <source>Corrected value</source>
-        <translation>Korrigierter Wert</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="ErrorListModel.cc" line="50"/>
+        <location filename="ErrorListModel.cc" line="79"/>
         <source>Model value</source>
-        <translation>Modell-Wert</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -131,216 +130,215 @@
     <message>
         <location filename="error_search_dialog.ui" line="14"/>
         <source>Error Search</source>
-        <translation>Fehlersuche</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="42"/>
         <location filename="error_search_dialog.ui" line="72"/>
         <source>Stations</source>
-        <translation>Stationen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="122"/>
         <source>Filter by station id and name</source>
-        <translation>Filtern nach Stationsnummer oder -name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="145"/>
         <source>Time range</source>
-        <translation>Zeitraum</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="166"/>
         <source>&amp;From</source>
-        <translation>&amp;Von</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="179"/>
         <location filename="error_search_dialog.ui" line="199"/>
         <source>yyyy-MM-dd hh:mm</source>
-        <translation>yyyy-MM-dd hh:mm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="186"/>
         <source>&amp;To</source>
-        <translation>&amp;Bis</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="206"/>
         <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation>Wählt ungefähr die letzten 2 Tage aus.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="209"/>
         <source>Recent</source>
-        <translation>Kürzlich</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="216"/>
         <source>Remember the chosen time span.</source>
-        <translation>Ausgewählten Zeitraum merken.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="219"/>
         <source>Remember</source>
-        <translation>Merken</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="243"/>
         <source>Weather element</source>
-        <translation>Wetter-Element</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="273"/>
         <source>Available</source>
-        <translatorcomment>Verfügbar</translatorcomment>
-        <translation></translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="324"/>
         <source>Sho&amp;w only:</source>
-        <translation>Zeige n&amp;ur:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="381"/>
         <source>add to chosen values</source>
-        <translation>zu den ausgewählten Parametern hinzufügen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="402"/>
         <source>remove from chosen values</source>
-        <translation>Parameter abwählen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="423"/>
         <source>A&amp;ll</source>
-        <translation>A&amp;lle</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="441"/>
         <source>&amp;None</source>
-        <translation>&amp;Keine</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="469"/>
         <source>Chosen</source>
-        <translation>Ausgewählt</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="516"/>
         <source>Options</source>
-        <translation>Optionen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="537"/>
         <source>If checked, errors in unofficial parameters will be excluded from the error list.</source>
-        <translation>Wenn angekreuzt werden inoffizielle Parameter non der Fehlerliste ausgenommen.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="540"/>
         <source>Ignore unofficial parameters</source>
-        <translation>Inoffizielle Parameter ignorieren</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="572"/>
         <source>Save</source>
-        <translation>Speichern</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="579"/>
         <source>Load</source>
-        <translation>Lesen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="599"/>
         <source>&amp;Cancel</source>
-        <translation>&amp;Abbrechen</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="606"/>
         <source>&amp;OK</source>
-        <translation>&amp;OK</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>Station/Region</source>
-        <translation>Station/Region</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>Name</source>
-        <translation>Name</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>HOH</source>
-        <translation>HüM</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>County</source>
-        <translation>Provinz</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Commune</source>
-        <translation>Gemeinde</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Pri</source>
-        <translation>Pri</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="158"/>
         <location filename="ErrorSearchDialog.cc" line="279"/>
         <source>All in obs pgm</source>
-        <translation>Alle in obs pgm</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="159"/>
         <location filename="ErrorSearchDialog.cc" line="288"/>
         <source>All defined</source>
-        <translation>Alle definierten</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="362"/>
         <location filename="ErrorSearchDialog.cc" line="372"/>
         <source>Save data selection</source>
-        <translation>Datenauswahl speichern</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="363"/>
         <location filename="ErrorSearchDialog.cc" line="410"/>
         <source>Name:</source>
-        <translation>Name:</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="373"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation>Datenauswahl mit dem Namen &apos;%1&apos; existiert.</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="374"/>
         <source>Do you want to overwrite it?</source>
-        <translation>Möchten Sie speichern und überschreiben?</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="402"/>
         <location filename="ErrorSearchDialog.cc" line="409"/>
         <source>Load data selection</source>
-        <translation>Datenauswahl laden</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="403"/>
         <source>No saved data selections found.</source>
-        <translation>Keine gespeicherten Einstellungen vorhanden.</translation>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
