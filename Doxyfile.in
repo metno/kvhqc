@@ -5,7 +5,7 @@ PROJECT_NAME           = KvHQC
 PROJECT_NUMBER         = 
 PROJECT_BRIEF          = "GUI for manual quality control in kvalobs"
 PROJECT_LOGO           = share/images/hqc_logo.svg
-OUTPUT_DIRECTORY       = build/dox
+OUTPUT_DIRECTORY       = "@CMAKE_BINARY_DIR@/share/doc/"
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
 
