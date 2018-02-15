@@ -44,9 +44,9 @@ QString timespan2sql(const TimeSpan& t)
   if (not0 and not1)
     return "(0==0)";
   else if (not0)
-    return QString("< \'%s\'").arg(timeQString(t.t1()));
+    return QString("< \'%1\'").arg(timeQString(t.t1()));
   else if (not1)
-    return QString("> \'%s\'").arg(timeQString(t.t0()));
+    return QString("> \'%1\'").arg(timeQString(t.t0()));
   else
     return QString("BETWEEN '%1' AND '%2'")
         .arg(timeQString(t.t0()))
