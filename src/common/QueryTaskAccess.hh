@@ -13,7 +13,7 @@ public:
   QueryTaskAccess(QueryTaskHandler_p handler);
   ~QueryTaskAccess();
 
-  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
+  void postRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
   void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
 protected:

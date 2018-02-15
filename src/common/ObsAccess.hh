@@ -12,7 +12,7 @@ class ObsAccess : HQC_SHARED_NOCOPY(ObsAccess) {
 public:
   virtual ~ObsAccess();
 
-  virtual void postRequest(ObsRequest_p request, bool synchronized=false) = 0;
+  virtual void postRequest(ObsRequest_p request) = 0;
 
   /** Must be called before destroying the request, ie not from the ObsRequest destructor.
    */

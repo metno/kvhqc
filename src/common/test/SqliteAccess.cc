@@ -431,10 +431,10 @@ SqliteAccess::~SqliteAccess()
 
 // ------------------------------------------------------------------------
 
-void SqliteAccess::postRequest(ObsRequest_p request, bool synchronized)
+void SqliteAccess::postRequest(ObsRequest_p request)
 {
   mCountPost += 1;
-  QueryTaskAccess::postRequest(request, synchronized);
+  QueryTaskAccess::postRequest(request);
 }
 
 // ------------------------------------------------------------------------

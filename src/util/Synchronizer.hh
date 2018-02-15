@@ -9,7 +9,8 @@ class Synchronizer : public QObject
 { Q_OBJECT;
 public:
   bool waitForSignal();
-  
+  static bool acquireWithSignalProcessing(QSemaphore& semaphore);
+
 public Q_SLOTS:
   void taskDone();
 

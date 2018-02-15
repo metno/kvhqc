@@ -296,11 +296,11 @@ EditAccess::~EditAccess()
     HQC_LOG_ERROR("destroying EditAccess with requests");
 }
 
-void EditAccess::postRequest(ObsRequest_p request, bool synchronized)
+void EditAccess::postRequest(ObsRequest_p request)
 {
   EditRequest_p r = std::make_shared<EditRequest>(p.get(), request);
   p->mRequests.insert(r);
-  p->mBackend->postRequest(r, synchronized);
+  p->mBackend->postRequest(r);
 }
 
 void EditAccess::dropRequest(ObsRequest_p request)

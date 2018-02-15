@@ -17,9 +17,8 @@ public:
   SimpleBuffer(SignalRequest_p mRequest);
   virtual ~SimpleBuffer() = 0;
 
-  void postRequest(ObsAccess_p access, bool synchronized=false);
-  void syncRequest(ObsAccess_p access)
-    { postRequest(access, true); }
+  void postRequest(ObsAccess_p access);
+  void syncRequest(ObsAccess_p access);
 
   enum CompleteStatus { INCOMPLETE, FAILED, COMPLETE };
   

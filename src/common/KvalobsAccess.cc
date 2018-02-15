@@ -34,11 +34,11 @@ KvalobsAccess::~KvalobsAccess()
 
 // ------------------------------------------------------------------------
 
-void KvalobsAccess::postRequest(ObsRequest_p request, bool synchronized)
+void KvalobsAccess::postRequest(ObsRequest_p request)
 {
   METLIBS_LOG_SCOPE();
   checkSubscribe(request->sensors());
-  QueryTaskAccess::postRequest(request, synchronized);
+  QueryTaskAccess::postRequest(request);
 }
 
 // ------------------------------------------------------------------------

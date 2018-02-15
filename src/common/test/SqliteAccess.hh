@@ -18,7 +18,7 @@ public:
   ObsUpdate_p createUpdate(ObsData_p data) Q_DECL_OVERRIDE;
   bool storeUpdates(const ObsUpdate_pv& updates) Q_DECL_OVERRIDE;
 
-  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
+  void postRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
   void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
   size_t countPost() const

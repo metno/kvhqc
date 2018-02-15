@@ -20,7 +20,7 @@ public:
   EditAccess(ObsAccess_p backend);
   ~EditAccess();
 
-  void postRequest(ObsRequest_p request, bool synchronized=false) Q_DECL_OVERRIDE;
+  void postRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
   void dropRequest(ObsRequest_p request) Q_DECL_OVERRIDE;
 
   ObsUpdate_p createUpdate(ObsData_p data) Q_DECL_OVERRIDE;

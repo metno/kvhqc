@@ -6,7 +6,8 @@
 #define MILOGGER_CATEGORY "kvhqc.Synchronizer"
 #include "HqcLogging.hh"
 
-bool Synchronizer::waitForSignal()
+// static
+bool Synchronizer::acquireWithSignalProcessing(QSemaphore& semaphore)
 {
   bool error = false;
   
@@ -27,6 +28,11 @@ bool Synchronizer::waitForSignal()
   }
   
   return error;
+}
+
+bool Synchronizer::waitForSignal()
+{
+  return acquireWithSignalProcessing(semaphore);
 }
 
 // ------------------------------------------------------------------------
