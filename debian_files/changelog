@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a7-1) unstable; urgency=low
+
+  * bugfixes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 15 Feb 2018 11:11:15 +0100
+
 kvhqc (4.1.0~a6-1) unstable; urgency=low
 
   * bugfixes
