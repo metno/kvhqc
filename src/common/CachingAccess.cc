@@ -59,13 +59,15 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     connect(sr, SIGNAL(requestDropData(const SensorTime_v&)),
         this,   SLOT(onBackendDropData(const SensorTime_v&)));
     
+    const ObsData_pv bb_data = filterData(bb->data(), true);
+    if (!bb_data.empty())
+      mRequest->newData(bb_data);
+
     METLIBS_LOG_DEBUG(LOGVAL(bb->status()));
-    if (bb->status() == SimpleBuffer::COMPLETE) {
-      mRequest->newData(filterData(bb->data(), true));
-    } else {
+    if (bb->status() == SimpleBuffer::INCOMPLETE) {
       mCountIncomplete += 1;
-      if (bb->status() == SimpleBuffer::FAILED)
-        mCountFailed += 1;
+    } else if (bb->status() == SimpleBuffer::FAILED) {
+      mCountFailed += 1;
     }
   }
   checkComplete();
