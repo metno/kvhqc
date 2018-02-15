@@ -73,6 +73,7 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
   ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   ui->tableStationCard->setItemDelegate(new ObsDelegate(this));
   ui->tableStationCard->verticalHeader()->setFont(mono);
+  ui->tableStationCard->verticalHeader()->setFixedWidth(QFontMetrics(mono).width("DAY 31/12"));
   ui->labelInfoRR->setText("");
   ui->buttonUndo->setEnabled(false);
   ui->buttonRedo->setEnabled(false);
