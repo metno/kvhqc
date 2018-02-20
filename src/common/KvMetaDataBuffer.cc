@@ -2,12 +2,13 @@
 #include "KvMetaDataBuffer.hh"
 
 #include "Functors.hh"
-#include "HqcSystemDB.hh"
 #include "HqcApplication.hh"
+#include "HqcSystemDB.hh"
 #include "KvHelpers.hh"
 #include "ParamQueryTask.hh"
 #include "QueryTaskHelper.hh"
 #include "StationQueryTask.hh"
+#include "SyncTask.hh"
 #include "TypesQueryTask.hh"
 
 #include "util/Helpers.hh"
@@ -226,7 +227,7 @@ void KvMetaDataBuffer::fetchStations()
   StationQueryTask* q = new StationQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskStations = new QueryTaskHelper(q);
   connect(mTaskStations, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneStations()));
-  mTaskStations->post(handler().get());
+  mTaskStations->post(handler(), true);
 }
 
 void KvMetaDataBuffer::fetchParams()
@@ -237,7 +238,7 @@ void KvMetaDataBuffer::fetchParams()
   ParamQueryTask* q = new ParamQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskParams = new QueryTaskHelper(q);
   connect(mTaskParams, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneParams()));
-  mTaskParams->post(handler().get());
+  mTaskParams->post(handler(), true);
 }
 
 void KvMetaDataBuffer::fetchTypes()
@@ -248,7 +249,7 @@ void KvMetaDataBuffer::fetchTypes()
   TypesQueryTask* q = new TypesQueryTask(QueryTask::PRIORITY_AUTOMATIC);
   mTaskTypes = new QueryTaskHelper(q);
   connect(mTaskTypes, SIGNAL(done(QueryTask*)), this, SLOT(taskDoneTypes()));
-  mTaskTypes->post(handler().get());
+  mTaskTypes->post(handler(), true);
 }
 
 void KvMetaDataBuffer::dropStations()
