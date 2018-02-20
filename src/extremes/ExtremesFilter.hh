@@ -10,15 +10,15 @@ class ExtremesFilter : public ObsFilter
 public:
   ExtremesFilter(int paramid, int nExtremes);
 
-  virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const;
-  virtual QString acceptingSqlExtraTables(const QString& data_alias, const TimeSpan& time) const;
+  QString acceptingSql(const QString& data_alias, const TimeSpan& time) const override;
+  QString acceptingSqlExtraTables(const QString& data_alias, const TimeSpan& time) const override;
 
-  virtual bool needsSQL() const
+  bool needsSQL() const override
     { return true; }
 
-  virtual bool accept(ObsData_p obs, bool afterSQL) const;
+  bool accept(ObsData_p obs, bool afterSQL) const override;
 
-  virtual bool subsetOf(ObsFilter_p other) const;
+  bool subsetOf(ObsFilter_p other) const override;
 
   bool isMaximumSearch() const
     { return mFindMaximum; }

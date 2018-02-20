@@ -10,12 +10,12 @@ public:
   ErrorFilter(bool errorsForSalen);
   ~ErrorFilter();
 
-  virtual QString acceptingSql(const QString& data_alias, const TimeSpan& time) const override;
+  QString acceptingSql(const QString& data_alias, const TimeSpan& time) const override;
 
   /* \param afterSQL true if accept is called after running the SQL
    * contraints from acceptingSQL(...); if false, acceptingSQL may
    * have run or not */
-  virtual bool accept(ObsData_p obs, bool afterSQL) const override;
+  bool accept(ObsData_p obs, bool afterSQL) const override;
 
   bool subsetOf(ObsFilter_p other) const override;
 

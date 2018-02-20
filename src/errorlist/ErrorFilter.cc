@@ -181,7 +181,7 @@ QString ErrorFilter::acceptingSql(const QString& d, const TimeSpan&) const
   return sql;
 }
 
-bool ErrorFilter::accept(ObsData_p obs, bool afterSQL) const
+bool ErrorFilter::accept(ObsData_p obs, bool /*afterSQL*/) const
 {
   return checkError2013(obs, mErrorsForSalen);
 }

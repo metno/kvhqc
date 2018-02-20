@@ -233,9 +233,8 @@ void ErrorSearchDialog::setupStationTab()
 
   ui->treeStations->setSelectionMode(QAbstractItemView::NoSelection);
 
-  connect(mStationModel.get(), SIGNAL(itemChanged(QStandardItem*)),
-      this, SLOT(onItemChanged(QStandardItem*)));
-  
+  connect(mStationModel.get(), &QStandardItemModel::itemChanged, this, &ErrorSearchDialog::onItemChanged);
+
   if (not ui->checkRememberTimes->isChecked())
     onSetRecentTimes();
 }
@@ -257,13 +256,13 @@ void ErrorSearchDialog::setupParameterTab()
   mParamAvailableModel.reset(new ParamIdModel);
   ui->listParamAvailable->setModel(mParamAvailableModel.get());
 
-  connect(ui->listParamChosen,    SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(delParameter2Click(const QModelIndex&)));
-  connect(ui->listParamAvailable, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(addParameter2Click(const QModelIndex&)));
+  connect(ui->listParamChosen, &QListView::doubleClicked, this, &ErrorSearchDialog::delParameter2Click);
+  connect(ui->listParamAvailable, &QListView::doubleClicked, this, &ErrorSearchDialog::addParameter2Click);
 
-  connect(ui->buttonParamSelect, SIGNAL(clicked()), this, SLOT(selectParameters()));
-  connect(ui->buttonParamDeselect, SIGNAL(clicked()), this, SLOT(deselectParameters()));
-  connect(ui->buttonParamSelectAll, SIGNAL(clicked()), this, SLOT(selectAllParameters()));
-  connect(ui->buttonParamDeselectAll, SIGNAL(clicked()), this, SLOT(deselectAllParameters()));
+  connect(ui->buttonParamSelect, &QPushButton::clicked, this, &ErrorSearchDialog::selectParameters);
+  connect(ui->buttonParamDeselect, &QPushButton::clicked, this, &ErrorSearchDialog::deselectParameters);
+  connect(ui->buttonParamSelectAll, &QPushButton::clicked, this, &ErrorSearchDialog::selectAllParameters);
+  connect(ui->buttonParamDeselectAll, &QPushButton::clicked, this, &ErrorSearchDialog::deselectAllParameters);
   connect(ui->comboParamGroup, SIGNAL(currentIndexChanged(const QString&)), this, SLOT(showParamGroup(const QString&)));
 
   QStringList labels;
@@ -289,8 +288,8 @@ void ErrorSearchDialog::setupParameterTab()
     labels << labelAll;
     hqc::int_v& parameters = mParameterGroups[labelAll];
 
-    BOOST_FOREACH(const kvalobs::kvParam& p, allParams)
-        parameters.push_back(p.paramID());
+    for (const kvalobs::kvParam& p : allParams)
+      parameters.push_back(p.paramID());
   } catch (std::exception& ex) {
     HQC_LOG_WARN("failed to generate list of all parameters from kvalobs.param table");
   }

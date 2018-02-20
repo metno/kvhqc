@@ -160,8 +160,7 @@ ErrorListModel::ErrorListModel(ObsAccess_p eda, ModelAccess_p mda)
     , mHighlightedStation(-1)
     , mHideResolved(true)
 {
-  connect(mModelBuffer.get(), SIGNAL(received(const ModelData_pv&)),
-      this, SLOT(onModelData(const ModelData_pv&)));
+  connect(mModelBuffer.get(), &ModelBuffer::received, this, &ErrorListModel::onModelData);
 }
 
 ErrorListModel::~ErrorListModel()
@@ -185,10 +184,10 @@ void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, boo
     mObsBuffer = std::make_shared<TimeBuffer>(Sensor_s(sensors.begin(), sensors.end()), limits, filter);
 
     TimeBuffer* b = mObsBuffer.get();
-    connect(b, SIGNAL(bufferCompleted(const QString&)), this, SLOT(onFetchComplete(const QString&)));
-    connect(b, SIGNAL(newDataEnd(const ObsData_pv&)), this, SLOT(onFetchDataEnd(const ObsData_pv&)));
-    connect(b, SIGNAL(updateDataEnd(const ObsData_pv&)), this, SLOT(onUpdateDataEnd(const ObsData_pv&)));
-    connect(b, SIGNAL(dropDataEnd(const SensorTime_v&)), this, SLOT(onDropDataEnd(const SensorTime_v&)));
+    connect(b, &TimeBuffer::bufferCompleted, this, &ErrorListModel::onFetchComplete);
+    connect(b, &TimeBuffer::newDataEnd, this, &ErrorListModel::onFetchDataEnd);
+    connect(b, &TimeBuffer::updateDataEnd, this, &ErrorListModel::onUpdateDataEnd);
+    connect(b, &TimeBuffer::dropDataEnd, this, &ErrorListModel::onDropDataEnd);
 
     Q_EMIT fetchingData(true);
     mObsBuffer->postRequest(mDA);

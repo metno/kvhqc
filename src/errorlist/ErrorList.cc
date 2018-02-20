@@ -87,7 +87,7 @@ void ErrorList::onButtonSearch()
 
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
-  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
+  connect(mObsPgmRequest, &ObsPgmRequest::complete, this, &ErrorList::onObsPgmsComplete);
   mObsPgmRequest->post();
 }
  
@@ -146,17 +146,14 @@ void ErrorList::updateModel(const Sensor_v& sensors, const TimeSpan& time)
   NavigateHelper::Blocker block(mNavigate);
 
   mItemModel = std::unique_ptr<ErrorListModel>(new ErrorListModel(mDA, mMA));
-  connect(mItemModel.get(), SIGNAL(beginDataChange()),
-      this, SLOT(onBeginDataChange()));
-  connect(mItemModel.get(), SIGNAL(endDataChange()),
-      this, SLOT(onEndDataChange()));
-  connect(mItemModel.get(), SIGNAL(fetchingData(bool)), ui->busyLabel, SLOT(setBusy(bool)));
+  connect(mItemModel.get(), &ErrorListModel::beginDataChange, this, &ErrorList::onBeginDataChange);
+  connect(mItemModel.get(), &ErrorListModel::endDataChange, this, &ErrorList::onEndDataChange);
+  connect(mItemModel.get(), &ErrorListModel::fetchingData, ui->busyLabel, &BusyLabel::setBusy);
 
   ui->tree->setModel(mItemModel.get());
   mItemModel->search(sensors, time, mErrorsForSalen);
 
-  connect(ui->tree->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
+  connect(ui->tree->selectionModel(), &QItemSelectionModel::selectionChanged, this, &ErrorList::onSelectionChanged);
   resizeHeaders();
 }
 
