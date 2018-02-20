@@ -17,6 +17,8 @@ public:
    * have run or not */
   virtual bool accept(ObsData_p obs, bool afterSQL) const override;
 
+  bool subsetOf(ObsFilter_p other) const override;
+
 private:
   bool mErrorsForSalen;
 };

@@ -185,3 +185,13 @@ bool ErrorFilter::accept(ObsData_p obs, bool afterSQL) const
 {
   return checkError2013(obs, mErrorsForSalen);
 }
+
+bool ErrorFilter::subsetOf(ObsFilter_p other) const
+{
+  ErrorFilter_p oe = std::dynamic_pointer_cast<ErrorFilter>(other);
+  if (not oe)
+    return false;
+  if (oe->mErrorsForSalen != this->mErrorsForSalen)
+    return false;
+  return true;
+}

@@ -97,6 +97,7 @@ void ErrorList::onObsPgmsComplete()
   const hqc::int_v selectedStations = mDialog->getSelectedStations();
   const hqc::int_v selectedParameters = mDialog->getSelectedParameters();
   const bool ignoreUnofficial = mDialog->getIgnoreUnofficial();
+  mErrorsForSalen = mDialog->getErrorsForSalen();
 
   Sensor_v sensors;
 

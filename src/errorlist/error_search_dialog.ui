@@ -545,6 +545,13 @@
         </widget>
        </item>
        <item>
+        <widget class="QCheckBox" name="checkErrorsForSalen">
+         <property name="text">
+          <string>Filter errors for Salen</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>

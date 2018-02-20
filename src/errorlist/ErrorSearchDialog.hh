@@ -61,6 +61,7 @@ public:
   hqc::int_v getSelectedStations();
   hqc::int_v getSelectedParameters();
   bool getIgnoreUnofficial();
+  bool getErrorsForSalen();
     
   void saveSettings(QSettings& settings);
   void restoreSettings(QSettings& settings);

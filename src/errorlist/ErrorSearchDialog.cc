@@ -329,6 +329,7 @@ void ErrorSearchDialog::doSaveSettings(QSettings& settings)
   settings.setValue("time_remember", ui->checkRememberTimes->isChecked());
   settings.setValue("time_from", ui->fromTime->dateTime());
   settings.setValue("time_to",   ui->toTime  ->dateTime());
+  settings.setValue("errors_for_salen", ui->checkErrorsForSalen->isChecked());
 }
 
 void ErrorSearchDialog::doRestoreSettings(QSettings& settings)
@@ -352,6 +353,7 @@ void ErrorSearchDialog::doRestoreSettings(QSettings& settings)
     ui->fromTime->setDateTime(settings.value("time_from").toDateTime());
     ui->toTime  ->setDateTime(settings.value("time_to"  ).toDateTime());
   }
+  ui->checkErrorsForSalen->setChecked(settings.value("errors_for_salen", false).toBool());
 }
 
 void ErrorSearchDialog::onSaveSettings()
@@ -607,6 +609,11 @@ hqc::int_v ErrorSearchDialog::getSelectedParameters()
 bool ErrorSearchDialog::getIgnoreUnofficial()
 {
   return ui->checkIgnoreUnofficial->isChecked();
+}
+
+bool ErrorSearchDialog::getErrorsForSalen()
+{
+  return ui->checkErrorsForSalen->isChecked();
 }
 
 void ErrorSearchDialog::onItemChanged(QStandardItem* item)
