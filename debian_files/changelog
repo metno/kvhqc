@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a9-1) unstable; urgency=low
+
+  * sync fetch in KvMetaDataBuffer
+  * option to filter error list for Salen
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 20 Feb 2018 08:00:08 +0100
+
 kvhqc (4.1.0~a8-1) unstable; urgency=low
 
   * WatchRR: bugfixes
