@@ -154,12 +154,6 @@
         <translation>&amp;Fra</translation>
     </message>
     <message>
-        <location filename="error_search_dialog.ui" line="179"/>
-        <location filename="error_search_dialog.ui" line="199"/>
-        <source>yyyy-MM-dd hh:mm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="error_search_dialog.ui" line="186"/>
         <source>&amp;To</source>
         <translation>&amp;Til</translation>
@@ -167,17 +161,17 @@
     <message>
         <location filename="error_search_dialog.ui" line="206"/>
         <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation type="unfinished"></translation>
+        <translation>Velger omtrent de siste 2 dager.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="209"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Nylig</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="216"/>
         <source>Remember the chosen time span.</source>
-        <translation type="unfinished"></translation>
+        <translation>Husk valgt tidsrom.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="219"/>
@@ -202,12 +196,12 @@
     <message>
         <location filename="error_search_dialog.ui" line="381"/>
         <source>add to chosen values</source>
-        <translation type="unfinished"></translation>
+        <translation>legg til som valgte parametere</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="402"/>
         <source>remove from chosen values</source>
-        <translation type="unfinished"></translation>
+        <translation>fjern fra valgte parametere</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="423"/>
@@ -232,12 +226,12 @@
     <message>
         <location filename="error_search_dialog.ui" line="537"/>
         <source>If checked, errors in unofficial parameters will be excluded from the error list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Hvis krysset av blir uoffisielle parametere utelatt fra feillista.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="540"/>
         <source>Ignore unofficial parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Ignorér uoffisielle parametere</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="550"/>
@@ -280,43 +274,43 @@
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>HOH</source>
-        <translation type="unfinished"></translation>
+        <translation>hoh</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>County</source>
-        <translation type="unfinished"></translation>
+        <translation>Fylke</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Commune</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommune</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Pri</source>
-        <translation type="unfinished"></translation>
+        <translation>Pri</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="158"/>
         <location filename="ErrorSearchDialog.cc" line="278"/>
         <source>All in obs pgm</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle i obs pgm</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="159"/>
         <location filename="ErrorSearchDialog.cc" line="287"/>
         <source>All defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle definierte</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="363"/>
         <location filename="ErrorSearchDialog.cc" line="373"/>
         <source>Save data selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Lagre datavalg</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="364"/>
@@ -327,23 +321,23 @@
     <message>
         <location filename="ErrorSearchDialog.cc" line="374"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datavalg med navn &apos;%1&apos; finnes.</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="375"/>
         <source>Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Ønsker du å lagre og overskrive den?</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="403"/>
         <location filename="ErrorSearchDialog.cc" line="410"/>
         <source>Load data selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Tilbakekalle datavalg</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="404"/>
         <source>No saved data selections found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Fant ingen lagrete valg.</translation>
     </message>
 </context>
 </TS>

@@ -225,7 +225,7 @@ QStringList HqcApplication::availableLanguages() const
 {
   QStringList available("en");
 
-  QDir langDir(::hqc::getPath(::hqc::DATADIR) + "/lang");
+  QDir langDir(::hqc::getPath(::hqc::LANGDIR));
   QStringList fileNames = langDir.entryList(QStringList("hqc_*.qm"));
   Q_FOREACH(QString locale, fileNames) {
     //                                    locale = "hqc_de.qm"
@@ -250,7 +250,7 @@ void HqcApplication::installTranslations()
   if (not sl.isEmpty())
     locale = QLocale(sl);
 
-  const QString langDir = ::hqc::getPath(::hqc::DATADIR) + "/lang";
+  const QString langDir = ::hqc::getPath(::hqc::LANGDIR);
   // translators are searched in reverse order of installation
   installTranslations(locale, "qt", QLibraryInfo::location(QLibraryInfo::TranslationsPath));
   installTranslations(locale, "qUtilities", "/usr/share/metlibs/translations");

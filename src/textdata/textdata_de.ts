@@ -6,7 +6,15 @@
     <message>
         <location filename="TextdataTable.cc" line="191"/>
         <source>TextData</source>
-        <translation type="unfinished"></translation>
+        <translation>Text-Daten</translation>
+    </message>
+    <message>
+        <source>No Textdata</source>
+        <translation type="vanished">Keine Textdaten</translation>
+    </message>
+    <message>
+        <source>Could not read text data.</source>
+        <translation type="vanished">Kann Textdaten nicht lesen.</translation>
     </message>
 </context>
 <context>
@@ -15,42 +23,42 @@
         <location filename="TextdataDialog.cc" line="90"/>
         <location filename="TextdataDialog.cc" line="131"/>
         <source>TextData</source>
-        <translation type="unfinished"></translation>
+        <translation>Text-Daten</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="91"/>
         <source>Station</source>
-        <translation type="unfinished"></translation>
+        <translation>Station</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="92"/>
         <source>Time range</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeitraum</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="93"/>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Von</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="94"/>
         <source>To</source>
-        <translation type="unfinished"></translation>
+        <translation>Bis</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="95"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="96"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="TextdataDialog.cc" line="132"/>
         <source>Illegal station number. Choose a different station number.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ungültige Stationsnummer. Wählen Sie bitte eine andere Stationsnummer.</translation>
     </message>
 </context>
 <context>
@@ -58,32 +66,36 @@
     <message>
         <location filename="TextdataTable.cc" line="66"/>
         <source>Stationid</source>
-        <translation type="unfinished"></translation>
+        <translation>Stationid</translation>
     </message>
     <message>
         <location filename="TextdataTable.cc" line="67"/>
         <source>Obstime</source>
-        <translation type="unfinished"></translation>
+        <translation>Obszeit</translation>
     </message>
     <message>
         <location filename="TextdataTable.cc" line="68"/>
         <source>Original</source>
-        <translation type="unfinished"></translation>
+        <translation>Original</translation>
+    </message>
+    <message>
+        <source>Paramid</source>
+        <translation type="vanished">Paramid</translation>
     </message>
     <message>
         <location filename="TextdataTable.cc" line="69"/>
         <source>ParamName</source>
-        <translation type="unfinished"></translation>
+        <translation>Param-Name</translation>
     </message>
     <message>
         <location filename="TextdataTable.cc" line="70"/>
         <source>Tbtime</source>
-        <translation type="unfinished"></translation>
+        <translation>Tbtime</translation>
     </message>
     <message>
         <location filename="TextdataTable.cc" line="71"/>
         <source>Typeid</source>
-        <translation type="unfinished"></translation>
+        <translation>Typeid</translation>
     </message>
 </context>
 </TS>

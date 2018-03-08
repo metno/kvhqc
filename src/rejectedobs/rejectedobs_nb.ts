@@ -6,17 +6,17 @@
     <message>
         <location filename="RejectedObs.cc" line="59"/>
         <source>Tbtime</source>
-        <translation type="unfinished"></translation>
+        <translation>Tbtime</translation>
     </message>
     <message>
         <location filename="RejectedObs.cc" line="60"/>
         <source>Observation</source>
-        <translation type="unfinished"></translation>
+        <translation>Observasjon</translation>
     </message>
     <message>
         <location filename="RejectedObs.cc" line="61"/>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>Kommentar</translation>
     </message>
 </context>
 <context>
@@ -24,32 +24,32 @@
     <message>
         <location filename="RejectedObsDialog.cc" line="95"/>
         <source>RejectDecode</source>
-        <translation type="unfinished"></translation>
+        <translation>RejectDecode</translation>
     </message>
     <message>
         <location filename="RejectedObsDialog.cc" line="96"/>
         <source>Select time range for reject list</source>
-        <translation type="unfinished"></translation>
+        <translation>Velg tidsrom for rejectdecode liste</translation>
     </message>
     <message>
         <location filename="RejectedObsDialog.cc" line="97"/>
         <source>From</source>
-        <translation type="unfinished"></translation>
+        <translation>Fra</translation>
     </message>
     <message>
         <location filename="RejectedObsDialog.cc" line="98"/>
         <source>To</source>
-        <translation type="unfinished"></translation>
+        <translation>Til</translation>
     </message>
     <message>
         <location filename="RejectedObsDialog.cc" line="99"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="RejectedObsDialog.cc" line="100"/>
         <source>Cancel</source>
-        <translation type="unfinished"></translation>
+        <translation>Avbryt</translation>
     </message>
 </context>
 <context>
@@ -57,7 +57,7 @@
     <message>
         <location filename="RejectedObs.cc" line="155"/>
         <source>RejectDecode</source>
-        <translation type="unfinished"></translation>
+        <translation>RejectDecode</translation>
     </message>
 </context>
 </TS>

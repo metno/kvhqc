@@ -11,6 +11,7 @@ enum PathId {
     DATADIR,
     IMAGEDIR,
     DOCDIR,
+    LANGDIR,
     PATHID__END
 };
 

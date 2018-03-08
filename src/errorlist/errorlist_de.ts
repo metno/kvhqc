@@ -77,7 +77,7 @@
         <location filename="ErrorListModel.cc" line="67"/>
         <location filename="ErrorListModel.cc" line="80"/>
         <source>Flags</source>
-        <translation type="unfinished">Flags</translation>
+        <translation>Flags</translation>
     </message>
     <message>
         <location filename="ErrorListModel.cc" line="71"/>
@@ -154,12 +154,6 @@
         <translation>&amp;Von</translation>
     </message>
     <message>
-        <location filename="error_search_dialog.ui" line="179"/>
-        <location filename="error_search_dialog.ui" line="199"/>
-        <source>yyyy-MM-dd hh:mm</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="error_search_dialog.ui" line="186"/>
         <source>&amp;To</source>
         <translation>&amp;Bis</translation>
@@ -167,22 +161,22 @@
     <message>
         <location filename="error_search_dialog.ui" line="206"/>
         <source>Sets the time range to cover approximately the last 2 days.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wählt ungefähr die letzten 2 Tage aus.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="209"/>
         <source>Recent</source>
-        <translation type="unfinished"></translation>
+        <translation>Kürzlich</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="216"/>
         <source>Remember the chosen time span.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ausgewählten Zeitraum merken.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="219"/>
         <source>Remember</source>
-        <translation type="unfinished"></translation>
+        <translation>Merken</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="243"/>
@@ -202,12 +196,12 @@
     <message>
         <location filename="error_search_dialog.ui" line="381"/>
         <source>add to chosen values</source>
-        <translation type="unfinished"></translation>
+        <translation>zu den ausgewählten Parametern hinzufügen</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="402"/>
         <source>remove from chosen values</source>
-        <translation type="unfinished"></translation>
+        <translation>Parameter abwählen</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="423"/>
@@ -232,12 +226,12 @@
     <message>
         <location filename="error_search_dialog.ui" line="537"/>
         <source>If checked, errors in unofficial parameters will be excluded from the error list.</source>
-        <translation type="unfinished"></translation>
+        <translation>Wenn angekreuzt werden inoffizielle Parameter non der Fehlerliste ausgenommen.</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="540"/>
         <source>Ignore unofficial parameters</source>
-        <translation type="unfinished"></translation>
+        <translation>Inoffizielle Parameter ignorieren</translation>
     </message>
     <message>
         <location filename="error_search_dialog.ui" line="550"/>
@@ -280,43 +274,43 @@
         <location filename="ErrorSearchDialog.cc" line="153"/>
         <location filename="ErrorSearchDialog.cc" line="173"/>
         <source>HOH</source>
-        <translation type="unfinished"></translation>
+        <translation>HüM</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>County</source>
-        <translation type="unfinished"></translation>
+        <translation>Provinz</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Commune</source>
-        <translation type="unfinished"></translation>
+        <translation>Gemeinde</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="154"/>
         <location filename="ErrorSearchDialog.cc" line="174"/>
         <source>Pri</source>
-        <translation type="unfinished"></translation>
+        <translation>Pri</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="158"/>
         <location filename="ErrorSearchDialog.cc" line="278"/>
         <source>All in obs pgm</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle in obs pgm</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="159"/>
         <location filename="ErrorSearchDialog.cc" line="287"/>
         <source>All defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Alle definierten</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="363"/>
         <location filename="ErrorSearchDialog.cc" line="373"/>
         <source>Save data selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenauswahl speichern</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="364"/>
@@ -327,23 +321,23 @@
     <message>
         <location filename="ErrorSearchDialog.cc" line="374"/>
         <source>Data selection with name &apos;%1&apos; exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenauswahl mit dem Namen &apos;%1&apos; existiert.</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="375"/>
         <source>Do you want to overwrite it?</source>
-        <translation type="unfinished"></translation>
+        <translation>Möchten Sie speichern und überschreiben?</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="403"/>
         <location filename="ErrorSearchDialog.cc" line="410"/>
         <source>Load data selection</source>
-        <translation type="unfinished"></translation>
+        <translation>Datenauswahl laden</translation>
     </message>
     <message>
         <location filename="ErrorSearchDialog.cc" line="404"/>
         <source>No saved data selections found.</source>
-        <translation type="unfinished"></translation>
+        <translation>Keine gespeicherten Einstellungen gefunden.</translation>
     </message>
 </context>
 </TS>

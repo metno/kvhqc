@@ -7,20 +7,27 @@
 namespace {
 
 const char* hqc_pathnames[hqc::PATHID__END] = {
-    "HQC_CONFDIR",
-    "HQC_DATADIR",
-    "HQC_IMAGEDIR",
-    "HQC_DOCDIR"
+  "HQC_CONFDIR",
+  "HQC_DATADIR",
+  "HQC_IMAGEDIR",
+  "HQC_DOCDIR",
+  "HQC_LANGDIR",
 };
 
-#define DATADIR PREFIX "/share/kvhqc/" PVERSION
-#define DOCDIR  PREFIX "/share/doc/kvhqc-" PVERSION
-
 const char* hqc_defaultpaths[hqc::PATHID__END] = {
-    SYSCONFDIR "/kvhqc/" PVERSION,
-    DATADIR,
-    DATADIR "/images",
-    DOCDIR
+  SYSCONFDIR "/kvhqc/" PVERSION,
+  PREFIX "/share/kvhqc/" PVERSION,
+  0,
+  PREFIX "/share/doc/kvhqc-" PVERSION,
+  0
+};
+
+const char* hqc_defaultdatapaths[hqc::PATHID__END] = {
+  0,
+  0,
+  "/images",
+  0,
+  "/lang"
 };
 
 } // anonymous namespace
@@ -30,9 +37,12 @@ namespace hqc {
 QString getPath(PathId id)
 {
     const char* env = getenv(hqc_pathnames[id]);
-    if( env )
-        return env;
-    return hqc_defaultpaths[id];
+    if (env)
+      return env;
+    const char* d = hqc_defaultpaths[id];
+    if (d)
+      return d;
+    return getPath(DATADIR) + hqc_defaultdatapaths[id];
 }
 
 } // namespace hqc

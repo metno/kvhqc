@@ -16,6 +16,7 @@ QT5_CREATE_TRANSLATION(weather_QM
   weather_nb.ts
   weather_de.ts
 )
+INSTALL(FILES ${weather_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 QT5_WRAP_CPP(weather_MOC
   WeatherDialog.hh
@@ -32,6 +33,3 @@ ADD_LIBRARY(weather STATIC
   ${weather_UIH}
   ${weather_QM}
 )
-
-INSTALL(FILES ${weather_QM}
-  DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")

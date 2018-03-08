@@ -34,6 +34,7 @@ QT5_CREATE_TRANSLATION(watchrr_QM
   watchrr_de.ts
   watchrr_nb.ts
 )
+INSTALL(FILES ${watchrr_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 QT5_WRAP_CPP(watchrr_MOC
   EditDialog.hh
@@ -53,8 +54,5 @@ ADD_LIBRARY(watchrr
   ${watchrr_UIH}
   ${watchrr_QM}
 )
-
-INSTALL(FILES ${watchrr_QM}
-  DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_SUBDIRECTORY(test)

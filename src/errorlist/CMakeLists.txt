@@ -25,6 +25,7 @@ QT5_CREATE_TRANSLATION(errorlist_QM
   errorlist_nb.ts
   errorlist_de.ts
 )
+INSTALL(FILES ${errorlist_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
