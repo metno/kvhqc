@@ -1,3 +1,31 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2014-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "ErrorFilter.hh"
 
@@ -71,6 +99,8 @@ bool checkErrorSalen2013(const ObsData_p obs)
 
   const SensorTime& st = obs->sensorTime();
   const Sensor& sensor = st.sensor;
+  if (sensor.typeId == 506)
+    return false;
   if (not Helpers::isNorwegianStationId(sensor.stationId))
     return false;
 
@@ -84,9 +114,16 @@ bool checkErrorSalen2013(const ObsData_p obs)
   if (not IsTypeInObsPgm(sensor.stationId, sensor.paramId, sensor.typeId, st.time))
     return false;
 
-  const int fs = ci.flag(kvalobs::flag::fs);
   const int fr = ci.flag(kvalobs::flag::fr);
-  if (fr == 4 || fr == 5 || fr == 6 || fs == 2)
+  if (fr == 4 || fr == 5 || fr == 6)
+    return true;
+
+  const int fs = ci.flag(kvalobs::flag::fs);
+  if (fs == 8)
+    return true;
+
+  const int fcombi = ci.flag(kvalobs::flag::fcombi);
+  if (fcombi == 9 || fcombi == 0xA || fcombi == 0xB)
     return true;
 
   return false;
