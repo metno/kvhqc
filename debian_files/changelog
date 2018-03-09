@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a11-1) unstable; urgency=low
+
+  * update error filter for salen
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 09 Mar 2018 10:36:38 +0100
+
 kvhqc (4.1.0~a10-1) unstable; urgency=low
 
   * bugfixes translations
