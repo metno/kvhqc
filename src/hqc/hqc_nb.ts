@@ -221,30 +221,30 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="datalist.ui" line="50"/>
+        <location filename="datalist.ui" line="66"/>
         <source>Time step for times to be shown in the data list.</source>
         <translation>Tidsskritt for tider i datalisten.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="57"/>
+        <location filename="datalist.ui" line="55"/>
         <source>If checked, filter obstimes from the database with the time step.
 If unchecked, show all times in the range even if not in the database.</source>
         <translation>Hvis krysset av, filtrer observasjonstider fra databasen med tidsskritt.
 Ellers vis alle tider i tidsrom.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="61"/>
-        <source>Filter</source>
-        <translation>Filter</translation>
+        <location filename="datalist.ui" line="59"/>
+        <source>Filter times:</source>
+        <translation>Filtrér tid:</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="84"/>
+        <location filename="datalist.ui" line="88"/>
         <source>Save selected (or all) data to a spreadsheet file in CSV format.</source>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Lagre valgte (eller alle) data som tabell i CSV-format.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="87"/>
+        <location filename="datalist.ui" line="91"/>
         <source>Save…</source>
         <translation>Lagre…</translation>
     </message>
@@ -1244,9 +1244,41 @@ Du bruker HQC versjon %1.</translation>
 <context>
     <name>StationDataList</name>
     <message>
-        <location filename="StationDataList.cc" line="30"/>
+        <location filename="StationDataList.cc" line="60"/>
         <source>Station Data</source>
         <translation>Stasjonsdata</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="63"/>
+        <source>Aggregated</source>
+        <translation>Aggregerte</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="64"/>
+        <source>Show aggregated parameters</source>
+        <translation>Vis aggregerte parametere</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="66"/>
+        <source>All Types</source>
+        <translation>Alle typer</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="67"/>
+        <source>Show all typeids</source>
+        <translation>Vis alle typeid</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="69"/>
+        <source>All Parameters</source>
+        <translation>Alle parametere</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="70"/>
+        <source>On: show all parameters
+Off: hide some parameters that are normally not checked manually</source>
+        <translation>På: vis alle parametere
+Av: skjul parametere som vanligvis ikke kontrolleres manuelt</translation>
     </message>
 </context>
 <context>

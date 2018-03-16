@@ -93,7 +93,7 @@ DataList::DataList(QWidget* parent)
   DataListModel* mdl = new DataListModel(mDA, this);
   ui->table->setModel(mdl);
 
-  ui->comboTimeStep->addItem(tr("none"), QVariant(0));
+  ui->comboTimeFilter->addItem(tr("none"), QVariant(0));
   { const int NMINUTES = 5, MINUTES[NMINUTES] = { 1, 5, 10, 15, 30 };
     for (int i=0; i<NMINUTES; ++i)
       addTimeStepItem(MINUTES[i]*MINUTE);
@@ -103,9 +103,9 @@ DataList::DataList(QWidget* parent)
     for (int i=0; i<NHOURS; ++i)
       addTimeStepItem(HOURS[i]*HOUR);
   }
-  ui->checkFilterTimes->setEnabled(false);
+  ui->checkTimeFilter->setEnabled(false);
 
-  onUITimeStepChanged(ui->comboTimeStep->currentIndex());
+  onUITimeStepChanged(ui->comboTimeFilter->currentIndex());
 
   connect(mdl, SIGNAL(changedTimeStep(int)),
       this, SLOT(onModelTimeStepChanged(int)));
@@ -134,15 +134,15 @@ DataListModel* DataList::model() const
 
 void DataList::addTimeStepItem(int step)
 {
-  ui->comboTimeStep->addItem(Helpers::timeStepAsText(step), QVariant(step));
+  ui->comboTimeFilter->addItem(Helpers::timeStepAsText(step), QVariant(step));
 }
 
 void DataList::retranslateUi()
 {
   ui->retranslateUi(this);
-  for (int i=0; i<ui->comboTimeStep->count(); ++i) {
-    const int step = ui->comboTimeStep->itemData(i).toInt();
-    ui->comboTimeStep->setItemText(i, Helpers::timeStepAsText(step));
+  for (int i = 0; i < ui->comboTimeFilter->count(); ++i) {
+    const int step = ui->comboTimeFilter->itemData(i).toInt();
+    ui->comboTimeFilter->setItemText(i, Helpers::timeStepAsText(step));
   }
   VisibleWidget::retranslateUi();
 }
@@ -220,30 +220,30 @@ void DataList::onUITimeStepChanged(int index)
 {
   int step = 0;
   if (index >= 0)
-    step = ui->comboTimeStep->itemData(index).toInt();
+    step = ui->comboTimeFilter->itemData(index).toInt();
   model()->setTimeStep(step);
 }
 
 void DataList::onModelTimeStepChanged(int step)
 {
-  for (int i=0; i<ui->comboTimeStep->count(); ++i) {
-    const int combostep = ui->comboTimeStep->itemData(i).toInt();
+  for (int i = 0; i < ui->comboTimeFilter->count(); ++i) {
+    const int combostep = ui->comboTimeFilter->itemData(i).toInt();
     if (step == combostep) {
-      ui->comboTimeStep->setCurrentIndex(i);
+      ui->comboTimeFilter->setCurrentIndex(i);
       return;
     }
   }
   METLIBS_LOG_WARN("datalist model time step '" << step << "' not in combo list");
   if (step > 0) {
     addTimeStepItem(step);
-    ui->comboTimeStep->setCurrentIndex(ui->comboTimeStep->count() - 1);
+    ui->comboTimeFilter->setCurrentIndex(ui->comboTimeFilter->count() - 1);
   }
 }
 
 void DataList::onModelFilterByTimeStepChanged(bool enabled, bool ftbs)
 {
-  ui->checkFilterTimes->setEnabled(enabled);
-  ui->checkFilterTimes->setChecked(ftbs);
+  ui->checkTimeFilter->setEnabled(enabled);
+  ui->checkTimeFilter->setChecked(ftbs);
 }
 
 void DataList::onButtonSaveAs()

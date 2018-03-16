@@ -221,30 +221,30 @@
 <context>
     <name>DataList</name>
     <message>
-        <location filename="datalist.ui" line="50"/>
+        <location filename="datalist.ui" line="66"/>
         <source>Time step for times to be shown in the data list.</source>
         <translation>Schrittweite für Zeitstempel in der Datanliste.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="57"/>
+        <location filename="datalist.ui" line="55"/>
         <source>If checked, filter obstimes from the database with the time step.
 If unchecked, show all times in the range even if not in the database.</source>
         <translation>Wenn ausgewählt: filtere Zeitpunkte aus der Datenbank mit dem Zeitschritt.
 Sonst: zeige alle Zeiten im Zeitraum.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="61"/>
-        <source>Filter</source>
-        <translation>Filter</translation>
+        <location filename="datalist.ui" line="59"/>
+        <source>Filter times:</source>
+        <translation>Zeiten filtern:</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="84"/>
+        <location filename="datalist.ui" line="88"/>
         <source>Save selected (or all) data to a spreadsheet file in CSV format.</source>
         <oldsource>Save selected or all data to a spreadsheet file in CSV format.</oldsource>
         <translation>Ausgewählte (oder alle) Werte als Tabelle im CSV-Format speichern.</translation>
     </message>
     <message>
-        <location filename="datalist.ui" line="87"/>
+        <location filename="datalist.ui" line="91"/>
         <source>Save…</source>
         <translation>Speichern…</translation>
     </message>
@@ -1244,9 +1244,41 @@ Sie benutzen HQC Version %1.</translation>
 <context>
     <name>StationDataList</name>
     <message>
-        <location filename="StationDataList.cc" line="30"/>
+        <location filename="StationDataList.cc" line="60"/>
         <source>Station Data</source>
         <translation>Stationsdaten</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="63"/>
+        <source>Aggregated</source>
+        <translation>Aggregierte</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="64"/>
+        <source>Show aggregated parameters</source>
+        <translation>Zeige aggregierte Parameter</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="66"/>
+        <source>All Types</source>
+        <translation>Alle Typen</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="67"/>
+        <source>Show all typeids</source>
+        <translation>Zeige alle typeids</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="69"/>
+        <source>All Parameters</source>
+        <translation>Alle Parameter</translation>
+    </message>
+    <message>
+        <location filename="StationDataList.cc" line="70"/>
+        <source>On: show all parameters
+Off: hide some parameters that are normally not checked manually</source>
+        <translation>An: zeige alle Parameter
+Aus: verstecke Parameter, die normalerweise nicht manuell kontrolliert werden</translation>
     </message>
 </context>
 <context>

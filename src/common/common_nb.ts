@@ -88,7 +88,7 @@
 <context>
     <name>ChecksTableModel</name>
     <message>
-        <location filename="HqcSystemDB.cc" line="52"/>
+        <location filename="HqcSystemDB.cc" line="51"/>
         <source>neighbors: </source>
         <translation>naboer: </translation>
     </message>

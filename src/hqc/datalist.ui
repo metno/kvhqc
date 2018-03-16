@@ -45,25 +45,29 @@
       </spacer>
      </item>
      <item>
-      <widget class="QComboBox" name="comboTimeStep">
-       <property name="toolTip">
-        <string>Time step for times to be shown in the data list.</string>
+      <layout class="QHBoxLayout" name="layoutFilters">
+       <property name="spacing">
+        <number>2</number>
        </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QCheckBox" name="checkFilterTimes">
-       <property name="toolTip">
-        <string>If checked, filter obstimes from the database with the time step.
+       <item>
+        <widget class="QCheckBox" name="checkTimeFilter">
+         <property name="toolTip">
+          <string>If checked, filter obstimes from the database with the time step.
 If unchecked, show all times in the range even if not in the database.</string>
-       </property>
-       <property name="text">
-        <string>Filter</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
+         </property>
+         <property name="text">
+          <string>Filter times:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QComboBox" name="comboTimeFilter">
+         <property name="toolTip">
+          <string>Time step for times to be shown in the data list.</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
@@ -133,7 +137,7 @@ If unchecked, show all times in the range even if not in the database.</string>
    </hints>
   </connection>
   <connection>
-   <sender>comboTimeStep</sender>
+   <sender>comboTimeFilter</sender>
    <signal>currentIndexChanged(int)</signal>
    <receiver>DataList</receiver>
    <slot>onUITimeStepChanged(int)</slot>
@@ -149,7 +153,7 @@ If unchecked, show all times in the range even if not in the database.</string>
    </hints>
   </connection>
   <connection>
-   <sender>checkFilterTimes</sender>
+   <sender>checkTimeFilter</sender>
    <signal>toggled(bool)</signal>
    <receiver>DataList</receiver>
    <slot>onCheckFilter(bool)</slot>

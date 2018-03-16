@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2018 met.no
+  Copyright (C) 2014-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -26,7 +26,6 @@
   along with HQC; if not, write to the Free Software Foundation, Inc.,
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
-
 
 #include "HqcSystemDB.hh"
 
@@ -260,11 +259,34 @@ hqc::int_v HqcSystemDB::relatedParameters(int paramid, const QString& viewType)
 
     query.bindValue(":pid", paramid);
     query.bindValue(":vt",  "%" + viewType + "%");
-    query.exec();
-    while (query.next())
-      related.push_back(query.value(0).toInt());
+    if (query.exec()) {
+      query.exec();
+      while (query.next())
+        related.push_back(query.value(0).toInt());
+    } else {
+      HQC_LOG_WARN("error getting related parameters for paramid=" << paramid << " viewtype=" << viewType << ": " << query.lastError().text());
+    }
   }
   return related;
+}
+
+hqc::int_s HqcSystemDB::ignoredParameters(const QString& viewType)
+{
+  hqc::int_s ignored;
+  if (hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.prepare("SELECT paramid FROM param_ignored"
+                  " WHERE (view_type IS NULL OR view_type = :vt)");
+
+    query.bindValue(":vt", viewType);
+    if (query.exec()) {
+      while (query.next())
+        ignored.insert(query.value(0).toInt());
+    } else {
+      HQC_LOG_WARN("error getting ignored parameters for viewtype=" << viewType << ": " << query.lastError().text());
+    }
+  }
+  return ignored;
 }
 
 void HqcSystemDB::aggregatedParameters(int paramFrom, hqc::int_s& paramTo)
