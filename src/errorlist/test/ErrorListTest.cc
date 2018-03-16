@@ -143,5 +143,5 @@ TEST(ErrorListTest, FilterMany)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(ts.fa->obsAccess());
 
-  EXPECT_EQ(211, b->size());
+  EXPECT_EQ(206, b->size());
 }
