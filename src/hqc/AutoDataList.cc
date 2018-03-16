@@ -227,8 +227,6 @@ void AutoDataList::updateModel()
 ObsColumn_p AutoDataList::makeColumn(const Column& c)
 {
   METLIBS_LOG_TIME();
-  boost::posix_time::time_duration toff = boost::posix_time::hours(c.timeOffset);
-
   if (c.type == MODEL) {
     ModelColumn_p mc = ColumnFactory::columnForSensor(mMA, c.sensor, timeSpan());
     if (mc and c.timeOffset != 0)
