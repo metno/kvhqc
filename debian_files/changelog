@@ -1,3 +1,12 @@
+kvhqc (4.1.0~a12-1) unstable; urgency=low
+
+  * extreme search for up to 4 days
+  * extend time range config menu
+  * configurable station data list
+  * ignore typeid 506 for error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 19 Mar 2018 15:13:26 +0100
+
 kvhqc (4.1.0~a11-1) unstable; urgency=low
 
   * update error filter for salen
