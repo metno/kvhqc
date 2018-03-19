@@ -1,9 +1,7 @@
 /*
 HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-$Id$
-
-Copyright (C) 2007 met.no
+Copyright (C) 2007-2018 met.no
 
 Contact information:
 Norwegian Meteorological Institute
@@ -39,7 +37,6 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 #include <iostream>
 #include <sstream>
 
-#include <qvalidator.h>
 #include <qregexp.h>
 #include <qlineedit.h>
 #include <qmessagebox.h>
@@ -102,14 +99,6 @@ Authenticator::Authenticator(const char *server, int port,
     ui->username->setText(env_user);
   ui->password->setFocus();
 #endif
-
-  QRegExpValidator *validUN = new QRegExpValidator(this);
-  validUN->setRegExp(QRegExp("[-\\w]+"));
-  ui->username->setValidator(validUN);
-
-  QRegExpValidator *validPW = new QRegExpValidator(this);
-  validPW->setRegExp(QRegExp("\\S+"));
-  ui->password->setValidator(validPW);
 }
 
 Authenticator::~Authenticator()

@@ -37,12 +37,12 @@
 <context>
     <name>Authentication::Authenticator</name>
     <message>
-        <location filename="Authenticator.cc" line="134"/>
+        <location filename="Authenticator.cc" line="123"/>
         <source>Wrong username or password</source>
         <translation>Feil brukernavn eller passord</translation>
     </message>
     <message>
-        <location filename="Authenticator.cc" line="135"/>
+        <location filename="Authenticator.cc" line="124"/>
         <source>Wrong username or password. Please try again.</source>
         <translation>Feil brukernavn eller passord. Vennligst prøv igjen.</translation>
     </message>
