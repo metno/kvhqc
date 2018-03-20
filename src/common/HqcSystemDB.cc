@@ -238,13 +238,15 @@ QString HqcSystemDB::explainFlagValue(int fn, int fv)
 
   QSqlQuery query(hqcApp->systemDB());
   query.prepare("SELECT description FROM flag_explain WHERE flag = :fn AND flagvalue = :fv AND language = 'nb'");
-  query.bindValue("fn", fn);
-  query.bindValue("fv", fv);
-  query.exec();
-  if (query.next())
-    return query.value(0).toString();
-  else
-    return QString();
+  query.bindValue(":fn", fn);
+  query.bindValue(":fv", fv);
+  if (query.exec()) {
+    if (query.next())
+      return query.value(0).toString();
+  } else {
+    HQC_LOG_WARN("error getting flag explanation for flag=" << fn << " value=" << fv << ": " << query.lastError().text());
+  }
+  return QString();
 }
 
 hqc::int_v HqcSystemDB::relatedParameters(int paramid, const QString& viewType)
