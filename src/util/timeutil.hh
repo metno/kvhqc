@@ -1,7 +1,7 @@
 /* -*- c++ -*-
   Kvalobs - Free Quality Control Software for Meteorological Observations
 
-  Copyright (C) 2012 met.no
+  Copyright (C) 2012-2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -43,6 +43,7 @@ namespace timeutil {
 
 typedef boost::posix_time::ptime ptime;
 typedef boost::gregorian::date pdate;
+typedef std::vector<ptime> ptime_v;
 
 std::string to_iso_extended_string(const ptime& pt);
 std::string to_iso_extended_string(const pdate& pd);

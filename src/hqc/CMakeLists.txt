@@ -10,7 +10,6 @@ SET(hqc_SOURCES
   EditVersionModel.cc
   EditVersionsView.cc
   HqcAppWindow.cc
-#  HqcDianaHelper.cc
   JumpToObservation.cc
   NavigationHistory.cc
   SearchWindow.cc
@@ -54,7 +53,6 @@ QT5_WRAP_CPP(hqc_MOC
   EditVersionModel.hh
   EditVersionsView.hh
   HqcAppWindow.hh
-#  HqcDianaHelper.hh
   JumpToObservation.hh
   NavigationHistory.hh
   SearchWindow.hh

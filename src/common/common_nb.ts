@@ -536,6 +536,19 @@
     </message>
 </context>
 <context>
+    <name>HqcDianaClient</name>
+    <message>
+        <location filename="HqcDianaClient.cc" line="76"/>
+        <source>Communication with diana is enabled</source>
+        <translation>Kommunikasjon med Diana er på</translation>
+    </message>
+    <message>
+        <location filename="HqcDianaClient.cc" line="78"/>
+        <source>Communication with diana is disabled</source>
+        <translation>Kommunikasjon med Diana er av</translation>
+    </message>
+</context>
+<context>
     <name>SensorHeader</name>
     <message>
         <location filename="SensorHeader.cc" line="28"/>

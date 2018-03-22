@@ -1,7 +1,7 @@
 /* -*- c++ -*-
    Kvalobs - Free Quality Control Software for Meteorological Observations
 
-   Copyright (C) 2011-2012 met.no
+   Copyright (C) 2011-2018 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -89,6 +89,8 @@ public:
     { TimeSpan t(*this); t.shift(s); return t; }
 
   void shift(const boost::posix_time::time_duration& s);
+
+  timeutil::ptime_v expand(int interval_s);
 
   bool operator==(const TimeSpan& other) const
     { return mT0 == other.mT0 and mT1 == other.mT1; }

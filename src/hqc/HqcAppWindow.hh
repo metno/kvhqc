@@ -41,6 +41,8 @@ class QTimer;
 QT_END_NAMESPACE
 
 class ActionButton;
+class ClientSelection;
+class DianaHelper;
 class EditVersionModel;
 
 class Ui_AppWindow;
@@ -54,6 +56,8 @@ public:
 
   void startup(const QString& captionSuffix);
   void finish();
+
+  DianaHelper* dianaHelper() { return mDianaHelper; }
 
 protected:
   virtual void closeEvent(QCloseEvent* event);
@@ -101,6 +105,9 @@ private:
   ActionButton *mActionButtonSave;
   ActionButton *mActionButtonUndo;
   ActionButton *mActionButtonRedo;
+
+  ClientSelection* mCoserverClient;
+  DianaHelper* mDianaHelper;
 };
 
 #endif // HQC_HQCAPPWINDOW_H

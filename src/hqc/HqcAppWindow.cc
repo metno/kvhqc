@@ -36,6 +36,7 @@
 #include "UserSettings.hh"
 #include "SearchWindow.hh"
 
+#include "common/DianaHelper.hh"
 #include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
@@ -62,6 +63,7 @@
 #include "rejectedobs/RejectedObsDialog.hh"
 #endif // ENABLE_REJECTEDOBS
 
+#include <coserver/ClientSelection.h>
 #include <qUtilities/qtHelpDialog.h>
 
 #include <QCloseEvent>
@@ -70,6 +72,7 @@
 #include <QLabel>
 #include <QMessageBox>
 #include <QSettings>
+#include <QStatusBar>
 #include <QTextStream>
 #include <QTimer>
 #include <QUrl>
@@ -92,9 +95,11 @@ enum { HELP_NEWS, HELP_INTRO };
 } // anonymous namespace
 
 HqcAppWindow::HqcAppWindow()
-  : ui(new Ui_AppWindow)
-  , mVersionCheckTimer(new QTimer(this))
-  , mHelpDialog(0)
+    : ui(new Ui_AppWindow)
+    , mVersionCheckTimer(new QTimer(this))
+    , mHelpDialog(0)
+    , mCoserverClient(new ClientSelection("Hqc", this))
+    , mDianaHelper(new DianaHelper(mCoserverClient))
 {
   METLIBS_LOG_SCOPE();
   ui->setupUi(this);
@@ -102,6 +107,11 @@ HqcAppWindow::HqcAppWindow()
   EditVersionsView* evv = new EditVersionsView(hqcApp->editAccess(), ui->groupChanges);
   ui->gridChanges->addWidget(evv, 1, 0, 1, 4);
   ui->gridChanges->setRowStretch(1, 1);
+
+  QToolButton* buttonCoserver = new QToolButton(this);
+  buttonCoserver->setDefaultAction(mCoserverClient->getToolButtonAction());
+  ui->statusbar->addPermanentWidget(buttonCoserver);
+  mDianaHelper->tryConnect();
 
   mActionButtonSave = new ActionButton(ui->buttonSave, ui->actionSave, this);
   mActionButtonUndo = new ActionButton(ui->buttonUndo, ui->actionUndo, this);
@@ -135,6 +145,7 @@ HqcAppWindow::HqcAppWindow()
 
 HqcAppWindow::~HqcAppWindow()
 {
+  METLIBS_LOG_SCOPE();
 }
 
 void HqcAppWindow::changeEvent(QEvent *event)
@@ -339,7 +350,6 @@ void HqcAppWindow::closeEvent(QCloseEvent* event)
 
   EditAccess_p eda = hqcApp->editAccess();
   if (Helpers::askDiscardChanges(eda->countU(), this)) {
-    writeSettings();
     event->accept();
   } else {
     event->ignore();

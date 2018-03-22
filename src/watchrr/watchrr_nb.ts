@@ -215,37 +215,37 @@
 <context>
     <name>WatchRRDialog</name>
     <message>
-        <location filename="WatchRRDialog.cc" line="144"/>
+        <location filename="WatchRRDialog.cc" line="169"/>
         <source>Station %1 [%2]</source>
         <translation>Stasjon %1 [%2]</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="149"/>
+        <location filename="WatchRRDialog.cc" line="174"/>
         <source>[not daily]</source>
         <translation>[ikke daglig]</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="197"/>
+        <location filename="WatchRRDialog.cc" line="222"/>
         <source>Sum: %1mm</source>
         <translation>Sum: %1mm</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="275"/>
+        <location filename="WatchRRDialog.cc" line="300"/>
         <source>Sorry, your changes could not be saved and are lost!</source>
         <translation>Beklager, dine endringer kunne ikke lagres, de er tapt!</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="276"/>
+        <location filename="WatchRRDialog.cc" line="301"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="370"/>
+        <location filename="WatchRRDialog.cc" line="395"/>
         <source>Kvalobs data you are editing have been changed. You will have to start over again. Sorry!</source>
         <translation>Kvalobs-data du editerer er endret. Du må starte på nytt. Beklager!</translation>
     </message>
     <message>
-        <location filename="WatchRRDialog.cc" line="371"/>
+        <location filename="WatchRRDialog.cc" line="396"/>
         <source>Quit and Discard changes</source>
         <translation>Avslutt og forkast endringer</translation>
     </message>

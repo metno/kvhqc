@@ -25,6 +25,7 @@ SET(common_SOURCES
   DataValueItem.cc
   DataVxItem.cc
   DeleteTaskWhenDone.cc
+  DianaClient.cc
   DianaHelper.cc
   DistributeUpdates.cc
   DistributeUpdates.hh
@@ -37,6 +38,7 @@ SET(common_SOURCES
   FlagUpdate.cc
   Functors.cc
   HqcApplication.cc
+  HqcDianaClient.cc
   HqcSystemDB.cc
   HqcUserConfig.cc
   identifyUser.cc
@@ -137,9 +139,11 @@ QT5_WRAP_CPP(common_MOC
   DataListModel.hh
   DataQueryTask.hh
   DeleteTaskWhenDone.hh
+  DianaClient.hh
   DianaHelper.hh
   EditAccess.hh
   HqcApplication.hh
+  HqcDianaClient.hh
   KvalobsAccess.hh
   KvalobsModelAccess.hh
   KvalobsUpdateListener.hh

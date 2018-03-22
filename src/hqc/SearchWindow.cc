@@ -32,17 +32,19 @@
 #include "config.h"
 
 #include "AutoDataList.hh"
+#include "HqcAppWindow.hh"
 #include "NavigationHistory.hh"
 #include "TimeSeriesView.hh"
+#include "ViewChanges.hh"
 
 #include "common/CachingAccess.hh"
-#include "common/KvalobsAccess.hh"
-
-#include "common/KvalobsModelAccess.hh"
+#include "common/DianaHelper.hh"
+#include "common/HqcApplication.hh"
 #include "common/KvHelpers.hh"
 #include "common/KvMetaDataBuffer.hh"
 #include "common/KvServiceHelper.hh"
-#include "common/HqcApplication.hh"
+#include "common/KvalobsAccess.hh"
+#include "common/KvalobsModelAccess.hh"
 
 #include "util/Helpers.hh"
 #include "util/hqc_paths.hh"
@@ -51,11 +53,6 @@
 #ifdef ENABLE_ERRORLIST
 #include "errorlist/ErrorList.hh"
 #endif // ENABLE_ERRORLIST
-
-#ifdef ENABLE_DIANA
-#include "HqcDianaHelper.hh"
-#include <coserver/ClientButton.h>
-#endif // ENABLE_DIANA
 
 #ifdef ENABLE_EXTREMES
 #include "extremes/ExtremesView.hh"
@@ -75,6 +72,8 @@
 #include <QShortcut>
 #include <QSignalMapper>
 #include <QSplitter>
+#include <QStatusBar>
+#include <QToolButton>
 
 #define MILOGGER_CATEGORY "kvhqc.SearchWindow"
 #include "common/ObsLogging.hh"
@@ -98,13 +97,14 @@ QString settingsSearchGroup(int id)
 {
   return QString(SETTINGS_SEARCH_GROUP).arg(id);
 }
+
 } // anonymous namespace
 
-SearchWindow::SearchWindow(QWidget* parent)
-  : QMainWindow(parent)
-  , mActivateSearchTab(new QSignalMapper(this))
-  , mActivateDataTab(new QSignalMapper(this))
-  , mId(findId())
+SearchWindow::SearchWindow(HqcAppWindow* parent)
+    : QMainWindow(parent)
+    , mActivateSearchTab(new QSignalMapper(this))
+    , mActivateDataTab(new QSignalMapper(this))
+    , mId(findId())
 {
   METLIBS_LOG_TIME();
   setAttribute(Qt::WA_DeleteOnClose, true);
@@ -130,11 +130,17 @@ SearchWindow::SearchWindow(QWidget* parent)
       this, SLOT(onActivateDataTab(int)));
 
 #ifdef ENABLE_DIANA
-  pluginB = new ClientButton("hqc", "/usr/bin/coserver4", statusBar());
-  statusBar()->addPermanentWidget(pluginB, 0);
-  mDianaHelper.reset(new HqcDianaHelper(pluginB));
-  mDianaHelper->setDataAccess(eda, kma);
-  mDianaHelper->signalNavigateTo.connect(boost::bind(&SearchWindow::navigateTo, this, _1));
+  {
+    DianaHelper* dh = static_cast<HqcAppWindow*>(parent)->dianaHelper();
+    mDianaClient = new HqcDianaClient(dh, this);
+
+    connect(mDianaClient, SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(navigateTo(const SensorTime&)));
+    connect(this, SIGNAL(signalNavigateTo(const SensorTime&)), mDianaClient, SLOT(navigateTo(const SensorTime&)));
+
+    QToolButton* toggleDianaActive = new QToolButton(this);
+    toggleDianaActive->setDefaultAction(mDianaClient->getToolButtonAction());
+    statusBar()->addPermanentWidget(toggleDianaActive);
+  }
 #endif
 
   readSettings();

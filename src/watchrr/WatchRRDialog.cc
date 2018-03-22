@@ -27,10 +27,8 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "WatchRRDialog.hh"
 
-#include "common/DianaHelper.hh"
 #include "EditDialog.hh"
 #include "StationCardModel.hh"
 #include "NeighborCardsModel.hh"
@@ -38,9 +36,14 @@
 #include "RedistDialog.hh"
 #include "AnalyseFCC.hh"
 #include "AnalyseRR24.hh"
-#include "common/KvMetaDataBuffer.hh"
+
+#include "../hqc/HqcAppWindow.hh"
+
+#include "common/HqcDianaClient.hh"
 #include "common/KvHelpers.hh"
+#include "common/KvMetaDataBuffer.hh"
 #include "common/ObsDelegate.hh"
+
 #include "util/Helpers.hh"
 #include "util/UiHelpers.hh"
 
@@ -48,15 +51,11 @@
 #include "ui_watchrr_redist.h"
 
 #include <kvalobs/kvDataOperations.h>
-#ifdef METLIBS_BEFORE_4_9_5
-#define signals Q_SIGNALS
-#define slots Q_SLOTS
-#endif
-#include <QMessageBox>
 #include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-#include <coserver/ClientButton.h>
-#include <qsettings.h>
+
+#include <QMessageBox>
+#include <QSettings>
+#include <QToolButton>
 
 #define MILOGGER_CATEGORY "kvhqc.WatchRRDialog"
 #include "util/HqcLogging.hh"
@@ -67,7 +66,32 @@ namespace {
 const char SETTING_WATCHRR_GEOMETRY[] = "geometry_watchrr";
 } // anonymous namespace
 
-WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time, QWidget* parent)
+class WatchRRDianaClient : public HqcDianaClient
+{
+public:
+  WatchRRDianaClient(const TimeSpan& time, DianaHelper* dh, QObject* parent = 0);
+
+protected:
+  bool doNavigateTo(const SensorTime& st) override;
+};
+
+WatchRRDianaClient::WatchRRDianaClient(const TimeSpan& time, DianaHelper* dh, QObject* parent)
+    : HqcDianaClient(dh, parent)
+{
+  ts_ = time;
+  times_ = ts_.expand(24 * 3600);
+}
+
+bool WatchRRDianaClient::doNavigateTo(const SensorTime& st)
+{
+  st_ = st;
+  return false;
+
+  //  const std::vector<int> stations = mNeighborCards->neighborStations();
+  //  mDianaHelper->sendStations(stations);
+}
+
+WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time, HqcAppWindow* parent)
     : QDialog(parent)
     , ui(new Ui::DialogMain)
     , mParentDA(da)
@@ -86,9 +110,15 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
 
   setStationInfoText();
 
-  ClientButton* cb = new ClientButton("WatchRR2", "/usr/bin/coserver4", ui->tabNeighborCards);
-  ui->neighborDataButtonLayout->insertWidget(1, cb);
-  mDianaHelper.reset(new DianaHelper(cb));
+  {
+    DianaHelper* dh = static_cast<HqcAppWindow*>(parent)->dianaHelper();
+    mDianaClient.reset(new WatchRRDianaClient(mTime, dh, this));
+    connect(mDianaClient.get(), SIGNAL(signalNavigateTo(const SensorTime&)), this, SLOT(onNeighborDataTimeChanged(const SensorTime&)));
+
+    QToolButton* toggleDianaActive = new QToolButton(this);
+    toggleDianaActive->setDefaultAction(mDianaClient->getToolButtonAction());
+    ui->neighborDataButtonLayout->insertWidget(1, toggleDianaActive);
+  }
 
   show();
 
@@ -122,18 +152,13 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
       this, SLOT(onSelectionChanged(const QItemSelection&, const QItemSelection&)));
   connect(mNeighborCards.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
       this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
-  connect(mDianaHelper.get(), SIGNAL(receivedTime(const timeutil::ptime&)),
-      this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
-  connect(mDianaHelper.get(), SIGNAL(connection(bool)),
-      this, SLOT(dianaConnection(bool)));
 
-  mDianaHelper->tryConnect();
   mNeighborCards->setTime(time.t1()-boost::posix_time::hours(24));
 }
 
 WatchRRDialog::~WatchRRDialog()
 {
-  mDianaHelper.reset(0);
+  mDianaClient.reset(0);
 
   QSettings settings;
   settings.setValue(SETTING_WATCHRR_GEOMETRY, saveGeometry());
@@ -380,16 +405,22 @@ void WatchRRDialog::onNeighborDataDateChanged(const QDate& date)
 {
   QDateTime qdt(date, QTime(mTime.t0().time_of_day().hours(), 0, 0));
   const timeutil::ptime& time = timeutil::from_QDateTime(qdt);
+
   mNeighborCards->setTime(time);
-  mDianaHelper->sendTime(time);
+  mDianaClient->navigateTo(SensorTime(mSensor, time));
   ui->tableNeighborCards->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
 }
 
 void WatchRRDialog::onNeighborDataTimeChanged(const timeutil::ptime& time)
 {
-  ui->dateNeighborCards->setDateTime(timeutil::to_QDateTime(time));
-  mDianaHelper->sendTime(time);
-  mNeighborCards->setTime(time);
+  onNeighborDataTimeChanged(SensorTime(mSensor, time));
+}
+
+void WatchRRDialog::onNeighborDataTimeChanged(const SensorTime& st)
+{
+  ui->dateNeighborCards->setDateTime(timeutil::to_QDateTime(st.time));
+  mDianaClient->navigateTo(st);
+  mNeighborCards->setTime(st.time);
 }
 
 void WatchRRDialog::onCurrentTabChanged(int tab)
@@ -399,19 +430,4 @@ void WatchRRDialog::onCurrentTabChanged(int tab)
     ui->tableNeighborRR24->setModel(mNeighborRR24.get());
     ui->tableNeighborRR24->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
   }
-}
-
-void WatchRRDialog::dianaConnection(bool c)
-{
-  if (not c)
-    return;
-
-  std::vector<timeutil::ptime> times;
-  for(timeutil::ptime t = mTime.t0(); t <= mTime.t1(); t += boost::posix_time::hours(24))
-    times.push_back(t);
-  mDianaHelper->sendTimes(times);
-  mDianaHelper->sendTime(mNeighborCards->getTime());
-
-  const std::vector<int> stations = mNeighborCards->neighborStations();
-  mDianaHelper->sendStations(stations);
 }

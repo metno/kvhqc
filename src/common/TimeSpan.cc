@@ -1,7 +1,7 @@
 /* -*- c++ -*-
    Kvalobs - Free Quality Control Software for Meteorological Observations
 
-   Copyright (C) 2011-2012 met.no
+   Copyright (C) 2011-2018 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -117,6 +117,17 @@ void TimeSpan::shift(const boost::posix_time::time_duration& s)
 {
   mT0 += s;
   mT1 += s;
+}
+
+timeutil::ptime_v TimeSpan::expand(int interval_s)
+{
+  timeutil::ptime_v times;
+  if (closed()) {
+    const boost::posix_time::time_duration delta = boost::posix_time::seconds(interval_s);
+    for (timeutil::ptime t = mT0; t < mT1; t += delta)
+      times.push_back(t);
+  }
+  return times;
 }
 
 // ========================================================================

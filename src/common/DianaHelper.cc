@@ -1,192 +1,213 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2013-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "DianaHelper.hh"
 
-#include "KvMetaDataBuffer.hh"
-#include "util/hqc_paths.hh"
+#include "DianaClient.hh"
 
-#ifdef METLIBS_BEFORE_4_9_5
-#define signals Q_SIGNALS
-#define slots Q_SLOTS
-#endif
-#include <coserver/ClientButton.h>
-#include <coserver/miMessage.h>
+#include <coserver/ClientSelection.h>
 #include <coserver/QLetterCommands.h>
-
-#include <boost/foreach.hpp>
-
-#include <iomanip>
-#include <sstream>
+#include <coserver/miMessage.h>
 
 #define MILOGGER_CATEGORY "kvhqc.DianaHelper"
 #include "util/HqcLogging.hh"
 
 namespace {
-const char ANNOTATION[] = "HQC";
-const char IMG_STD_HQC[]  = "diana_img_hqc";
-const char IMG_ICON_HQC[] = "diana_icon_hqc";
+timeutil::ptime qtime(const QString& text)
+{
+  return timeutil::from_iso_extended_string(text.toStdString());
 }
 
-DianaHelper::DianaHelper(ClientButton* cb)
-    : mDianaButton(cb)
-    , mConnected(mDianaButton->clientTypeExist("Diana"))
+QString qtime(const timeutil::ptime& time)
 {
-#ifdef METLIBS_BEFORE_4_9_5
-    connect(mDianaButton, SIGNAL(receivedMessage(miMessage&)), SLOT(processLetter(const miMessage&)));
-#else
-    connect(mDianaButton, SIGNAL(receivedMessage(const miMessage&)), SLOT(processLetter(const miMessage&)));
-#endif
-    connect(mDianaButton, SIGNAL(addressListChanged()), SLOT(processConnect()));
-    connect(mDianaButton, SIGNAL(connectionClosed()), SLOT(cleanConnection()));
+  return QString::fromStdString(timeutil::to_iso_extended_string(time));
+}
+} // namespace
+
+DianaHelper::DianaHelper(ClientSelection* cb)
+    : QObject(cb->parent())
+    , mDianaButton(cb)
+    , mActiveClient(0)
+{
+  connect(mDianaButton, SIGNAL(receivedMessage(int, const miQMessage&)), this, SLOT(processLetter(int, const miQMessage&)));
+  connect(mDianaButton, SIGNAL(disconnected()), this, SLOT(handleDisconnect()));
+  connect(mDianaButton, SIGNAL(renamed(const QString&)), this, SLOT(onRenamed(const QString&)));
+}
+
+DianaHelper::~DianaHelper()
+{
+  METLIBS_LOG_SCOPE(LOGVAL((mActiveClient != 0)));
+  if (mActiveClient)
+    mActiveClient->setActive(false);
 }
 
 void DianaHelper::tryConnect()
 {
-    mDianaButton->connectToServer();
+  mDianaButton->connect();
 }
 
-void DianaHelper::processConnect()
+void DianaHelper::handleConnect()
 {
-    const bool c = mDianaButton->clientTypeExist("Diana");
-    if (c == mConnected)
-        return;
+}
 
-    mConnected = c;
-    if (mConnected) {
-        const QString pStd = ::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_STD_HQC  + ".png";
-        METLIBS_LOG_DEBUG(LOGVAL(pStd.toStdString()));
-        const QImage iStd(pStd);
-        const QImage iIcon(::hqc::getPath(::hqc::IMAGEDIR) + "/" + IMG_ICON_HQC + ".png");
-        
-        sendImage(IMG_STD_HQC, iStd);
-        sendImage(IMG_ICON_HQC, iIcon);
-        
-        miMessage m;
-        m.command = qmstrings::showpositionname;
-        m.description = "normal:selected:icon";
-        m.data.push_back("true:true:true");
-        mDianaButton->sendMessage(m);
+void DianaHelper::handleDisconnect()
+{
+  mConnected.clear();
+}
+
+void DianaHelper::onRenamed(const QString& name)
+{
+  // should delete or rename time list in diana, but diana cannot do that
+}
+
+void DianaHelper::setClientActive(DianaClient* client, bool active)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(client));
+  if (active && mActiveClient != client)
+    replaceActiveClient(client);
+  else if (!active && mActiveClient == client)
+    replaceActiveClient(0);
+}
+
+void DianaHelper::replaceActiveClient(DianaClient* client)
+{
+  if (mActiveClient) {
+    mActiveClient->setActive(false);
+    disconnect(mActiveClient, &DianaClient::clientTimeSelected, this, &DianaHelper::onClientTimeSelected);
+    disconnect(mActiveClient, &DianaClient::clientTimesChanged, this, &DianaHelper::onClientTimesChanged);
+  }
+  mActiveClient = client;
+  if (mActiveClient) {
+    mActiveClient->setActive(true);
+    connect(mActiveClient, &DianaClient::clientTimeSelected, this, &DianaHelper::onClientTimeSelected);
+    connect(mActiveClient, &DianaClient::clientTimesChanged, this, &DianaHelper::onClientTimesChanged);
+  }
+
+  sendActiveTimes(qmstrings::all);
+}
+
+void DianaHelper::sendActiveTimes(int clientId)
+{
+  METLIBS_LOG_SCOPE(LOGVAL(clientId));
+  if (mActiveClient) {
+    const std::vector<timeutil::ptime> times = mActiveClient->getClientTimes();
+    METLIBS_LOG_SCOPE(LOGVAL(times.size()));
+    if (!times.empty()) {
+      sendTimes(clientId, times);
+      const timeutil::ptime time = mActiveClient->getClientTime();
+      if (!time.is_not_a_date_time())
+        sendTime(clientId, time);
     }
-    Q_EMIT connection(mConnected);
+  }
 }
 
-void DianaHelper::cleanConnection()
+void DianaHelper::processLetter(int fromId, const miQMessage& m)
 {
-    mConnected = false;
-    Q_EMIT connection(mConnected);
-}
-
-void DianaHelper::processLetter(const miMessage& m)
-{
-    METLIBS_LOG_SCOPE();
-    METLIBS_LOG_DEBUG(m.content());
-
-    if (m.command == qmstrings::timechanged) {
-        const timeutil::ptime newTime = timeutil::from_iso_extended_string(m.common);
-        if (newTime != mDianaTime) {
-            mDianaTime = newTime;
-            Q_EMIT receivedTime(mDianaTime);
-        }
+  METLIBS_LOG_SCOPE(LOGVAL(m));
+  const bool cmd_newclient = (m.command() == qmstrings::newclient);
+  const bool cmd_removeclient = (m.command() == qmstrings::removeclient);
+  if (cmd_newclient || cmd_removeclient) {
+    const int idx_id = m.findCommonDesc("id");
+    const int idx_type = m.findCommonDesc("type");
+    METLIBS_LOG_DEBUG(LOGVAL(idx_id) << LOGVAL(idx_type));
+    if (idx_id >= 0 && idx_type >= 0 && m.getCommonValue(idx_type) == "Diana") {
+      const int clientId = m.getCommonValue(idx_id).toInt();
+      METLIBS_LOG_DEBUG(LOGVAL(clientId));
+      if (cmd_newclient) {
+        mConnected.insert(clientId);
+        sendActiveTimes(clientId);
+      } else if (cmd_removeclient) {
+        mConnected.erase(clientId);
+      }
     }
+  }
+
+  if (m.command() == qmstrings::timechanged && mConnected.count(fromId)) {
+    const int idx_time = m.findCommonDesc("time");
+    if (idx_time >= 0) {
+      const timeutil::ptime newTime = qtime(m.getCommonValue(idx_time));
+      if (newTime != mDianaTime) {
+        mDianaTime = newTime;
+        if (mActiveClient)
+          mActiveClient->remoteTimeSelected(mDianaTime);
+      }
+    }
+  }
 }
 
-// send one image to diana (with name); copied from tseries/qtsMain.cc
-void DianaHelper::sendImage(const std::string& name, const QImage& image)
+void DianaHelper::onClientTimeSelected(const timeutil::ptime& time)
 {
-    METLIBS_LOG_SCOPE();
-    if (image.isNull()) {
-        std::cerr << "image '" << name << "' is null" << std::endl;
-        return;
-    }
-    if (not mConnected) {
-        std::cerr << "diana not connected, cannot send image" << std::endl;
-        return;
-    }
-
-    QByteArray *a = new QByteArray();
-    QDataStream s(a, QIODevice::WriteOnly);
-    s << image;
-    
-    miMessage m;
-    m.command = qmstrings::addimage;
-    m.description = "name:image";
-    
-    std::ostringstream ost;
-    ost << name << ":";
-    
-    const int n = a->count();
-    for (int i = 0; i < n; i++) {
-        ost << std::setw(7) << int(a->data()[i]);
-    }
-    m.data.push_back(ost.str());
-    
-    mDianaButton->sendMessage(m);
-    std::cerr << "sent image '" << name << '\'' << std::endl;
+  sendTime(qmstrings::all, time);
 }
 
-void DianaHelper::sendTimes(const std::vector<timeutil::ptime>& times)
+void DianaHelper::onClientTimesChanged(const std::vector<timeutil::ptime>& times)
 {
-    METLIBS_LOG_SCOPE();
-    if (not mConnected or times.empty())
-        return;
-
-    miMessage m;
-    m.command= qmstrings::settime;
-    m.commondesc = "datatype";
-    m.common = "obs";
-    m.description= "time";
-    BOOST_FOREACH(const timeutil::ptime& t, times)
-        m.data.push_back(timeutil::to_iso_extended_string(t));
-    mDianaButton->sendMessage(m);
+  sendTimes(qmstrings::all, times);
 }
 
-void DianaHelper::sendTime(const timeutil::ptime& time)
+void DianaHelper::sendTimes(int clientId, const std::vector<timeutil::ptime>& times)
 {
-    METLIBS_LOG_SCOPE();
-    if (not mConnected or time == mDianaTime)
-        return;
+  METLIBS_LOG_SCOPE(LOGVAL(clientId));
+  if (!isClient(clientId) || !mActiveClient)
+    return;
 
-    mDianaTime = time;
-    miMessage m2;
-    m2.command = qmstrings::settime;
-    m2.commondesc = "time";
-    m2.common = timeutil::to_iso_extended_string(mDianaTime);
-    mDianaButton->sendMessage(m2);
+  miQMessage m(qmstrings::settime);
+  m.addCommon("datatype", mDianaButton->getClientName());
+  m.addDataDesc("time");
+  for (const timeutil::ptime& t : times)
+    m.addDataValues(QStringList(qtime(t)));
+  mDianaButton->sendMessage(m);
 }
 
-void DianaHelper::sendStations(const std::vector<int>& stations)
+void DianaHelper::sendTime(int clientId, const timeutil::ptime& time)
 {
-    METLIBS_LOG_SCOPE();
-    if (not mConnected)
-        return;
+  METLIBS_LOG_SCOPE();
+  if (!isClient(clientId) || !mActiveClient)
+    return;
+  if (mDianaTime == time)
+    return;
 
-    const std::string annotation = ANNOTATION;
-    if (stations.empty()) {
-        miMessage m;
-        m.command = qmstrings::hidepositions;
-        m.description = ANNOTATION;
-        mDianaButton->sendMessage(m);
-    } else {
-        miMessage m2;
-        m2.command     = qmstrings::positions;
-        m2.commondesc  = "dataset:image:icon:annotation:normal:selected";
-        m2.common      =  annotation + ":" + std::string(IMG_STD_HQC) + ":" + std::string(IMG_ICON_HQC) + ":" + annotation + ":true:true";
-        m2.description = "name:id:lat:lon";
+  mDianaTime = time;
+  miQMessage m(qmstrings::settime);
+  m.addCommon("time", QString::fromStdString(timeutil::to_iso_extended_string(mDianaTime)));
+  mDianaButton->sendMessage(m);
+}
 
-        BOOST_FOREACH(int sid, stations) {
-            try {
-                const kvalobs::kvStation& s = KvMetaDataBuffer::instance()->findStation(sid);
-                std::ostringstream o;
-                o << s.name() << ':' << sid << ':' << s.lat() << ':' << s.lon();
-                m2.data.push_back(o.str());
-            } catch (std::exception&) {
-            }
-        }
-        METLIBS_LOG_DEBUG(m2.content());
-        mDianaButton->sendMessage(m2);
+void DianaHelper::sendMessage(int clientId, const miQMessage& m)
+{
+  if (clientId == qmstrings::all)
+    mDianaButton->sendMessage(m, mConnected);
+  else
+    mDianaButton->sendMessage(m, clientId);
+}
 
-        miMessage m1;
-        m1.command = qmstrings::showpositions;
-        m1.description = ANNOTATION;
-        mDianaButton->sendMessage(m1);
-    }
+bool DianaHelper::isClient(int clientId) const
+{
+  return (clientId == qmstrings::all || mConnected.count(clientId));
 }

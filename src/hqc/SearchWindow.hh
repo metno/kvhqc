@@ -1,7 +1,7 @@
 /* -*- c++ -*-
    HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-   Copyright (C) 2014 met.no
+   Copyright (C) 2014-2018 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -33,12 +33,16 @@
 #define ENABLE_ERRORLIST 1
 #define ENABLE_EXTREMES 1
 #define ENABLE_MISSINGOBS 1
-//#define ENABLE_DIANA 1
+#define ENABLE_DIANA 1
 #define ENABLE_SIMPLECORRECTIONS 1
 
 #include "common/AbstractReinserter.hh"
 #include "common/NavigateHelper.hh"
 #include "common/ObsAccess.hh"
+#ifdef ENABLE_DIANA
+#include "common/HqcDianaClient.hh"
+#endif // ENABLE_DIANA
+
 #include "util/timeutil.hh"
 
 #include <QString>
@@ -57,8 +61,9 @@ class QSplitter;
 QT_END_NAMESPACE
 
 class AutoDataList;
+class HqcAppWindow;
 class NavigationHistory;
-class SensorTime;
+struct SensorTime;
 class SimpleCorrections;
 class StationDataList;
 class TimeSeriesView;
@@ -81,7 +86,7 @@ class SearchWindow : public QMainWindow
 { Q_OBJECT;
 
 public:
-  SearchWindow(QWidget* parent=0);
+  SearchWindow(HqcAppWindow* parent=0);
   ~SearchWindow();
 
   void writeSettings();
@@ -115,8 +120,7 @@ private:
   NavigateHelper mNavigate;
 
 #ifdef ENABLE_DIANA
-  ClientButton* pluginB;
-  std::unique_ptr<HqcDianaHelper> mDianaHelper;
+  HqcDianaClient* mDianaClient;
 #endif
 
   QSplitter* mSplitterDataPlot;

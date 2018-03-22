@@ -318,7 +318,7 @@
     <message>
         <location filename="DataVxItem.cc" line="74"/>
         <source>Isslag</source>
-        <translation type="unfinished">Eisschlag</translation>
+        <translation>Eisschlag</translation>
     </message>
     <message>
         <location filename="DataVxItem.cc" line="75"/>
@@ -533,6 +533,19 @@
         <location filename="HqcApplication.cc" line="348"/>
         <source>HQC terminates because it cannot be used without the kvalobs database.</source>
         <translation>HQC wird beendet, da es ohne kvalobs-Datenbank nicht benutzt werden kann.</translation>
+    </message>
+</context>
+<context>
+    <name>HqcDianaClient</name>
+    <message>
+        <location filename="HqcDianaClient.cc" line="76"/>
+        <source>Communication with diana is enabled</source>
+        <translation>Kommunikation mit Diana ist an</translation>
+    </message>
+    <message>
+        <location filename="HqcDianaClient.cc" line="78"/>
+        <source>Communication with diana is disabled</source>
+        <translation>Kommunikation mit Diana ist aus</translation>
     </message>
 </context>
 <context>

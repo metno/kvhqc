@@ -448,12 +448,12 @@ Ellers vis alle tider i tidsrom.</translation>
 <context>
     <name>HqcAppWindow</name>
     <message>
-        <location filename="HqcAppWindow.cc" line="156"/>
+        <location filename="HqcAppWindow.cc" line="167"/>
         <source>HQC %1</source>
         <translation>HQC %1</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="162"/>
+        <location filename="HqcAppWindow.cc" line="173"/>
         <source>Welcome to kvhqc %1!</source>
         <translation>Velkommen til kvhqc %1!</translation>
     </message>
@@ -466,27 +466,27 @@ Ellers vis alle tider i tidsrom.</translation>
         <translation type="vanished">Kunne ikke lese rejectdecode.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="101"/>
+        <location filename="HqcAppWindow.cc" line="106"/>
         <source>HQC</source>
         <translation>HQC</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="243"/>
+        <location filename="HqcAppWindow.cc" line="254"/>
         <source>HQC - Update</source>
         <translation>HQC - Oppdatering</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="244"/>
+        <location filename="HqcAppWindow.cc" line="255"/>
         <source>The hqc-application has been updated on your computer. You should save any changes and start the hqc-application again to use the new version.</source>
         <translation>Hqc-applikasjonen ble oppdatert på din datamaskin. Du skulle lagre eventuelle endringer og starte hqc-applikasjonen på nytt for å bruke den nye versjonen.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="280"/>
+        <location filename="HqcAppWindow.cc" line="291"/>
         <source>About Hqc</source>
         <translation>Om Hqc</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="281"/>
+        <location filename="HqcAppWindow.cc" line="292"/>
         <source>Hqc is a program for manual quality control of observations. The program consists of editable tables with observations including a time series diagram, and it can be connected to Diana.
 
 The program is developed by Knut Johansen, Alexander Bürger, Lisbeth Bergholt, Vegard Bønes, Audun Christoffersen at MET Norway.
@@ -497,37 +497,37 @@ You are using HQC version %1.</source>
 Du bruker HQC versjon %1.</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="318"/>
+        <location filename="HqcAppWindow.cc" line="329"/>
         <source>HQC - Saving data</source>
         <translation>HQC - Lagre Data</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="319"/>
+        <location filename="HqcAppWindow.cc" line="330"/>
         <source>Sorry, your changes could not be saved!</source>
         <translation>Dessverre kunne endringene ikke bli lagret!</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="320"/>
+        <location filename="HqcAppWindow.cc" line="331"/>
         <source>OK</source>
         <translation>OK</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="329"/>
+        <location filename="HqcAppWindow.cc" line="340"/>
         <source>Kvalobs seems to be available</source>
         <translation>Kvalobs-databasen tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="332"/>
+        <location filename="HqcAppWindow.cc" line="343"/>
         <source>Kvalobs seems not to be available</source>
         <translation>Kvalobs-databasen ikke tilgjengelig</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="393"/>
+        <location filename="HqcAppWindow.cc" line="403"/>
         <source>HQC - Version Change</source>
         <translation>HQC - Versjonsendring</translation>
     </message>
     <message>
-        <location filename="HqcAppWindow.cc" line="394"/>
+        <location filename="HqcAppWindow.cc" line="404"/>
         <source>You are using a different version of HQC than before (now: %1, before: %2). You have to check that all settings (chosen parameters, times, etc) are still correct.</source>
         <translation>Du bruker en annen versjon av HQC enn sist (nå: %1, før: %2). Du må sjekke at innstillingene (valgte parametere, tispunkter, osv) er fortsatt korrekte.</translation>
     </message>
@@ -1026,49 +1026,49 @@ Du bruker HQC versjon %1.</translation>
         <translation>HQC Søk %1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="155"/>
+        <location filename="SearchWindow.cc" line="161"/>
         <source>Ctrl+F</source>
         <comment>Error search tab shortcut</comment>
         <translation>Ctrl+F</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="164"/>
+        <location filename="SearchWindow.cc" line="170"/>
         <source>Ctrl+E</source>
         <comment>Extremes tab shortcut</comment>
         <translation>Ctrl+E</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="171"/>
+        <location filename="SearchWindow.cc" line="177"/>
         <source>Ctrl+M</source>
         <comment>Missing Data tab shortcut</comment>
         <translation>Ctrl+M</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="177"/>
+        <location filename="SearchWindow.cc" line="183"/>
         <source>Ctrl+R</source>
         <comment>Recent tab shortcut</comment>
         <translation>Ctrl+R</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="189"/>
+        <location filename="SearchWindow.cc" line="195"/>
         <source>List/Series</source>
         <oldsource>Auto List/Series</oldsource>
         <translation>Liste/Serie</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="191"/>
+        <location filename="SearchWindow.cc" line="197"/>
         <source>Ctrl+1</source>
         <comment>List/Series tab shortcut</comment>
         <translation>Ctrl+1</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="211"/>
+        <location filename="SearchWindow.cc" line="217"/>
         <source>Ctrl+2</source>
         <comment>Station data tab shortcut</comment>
         <translation>Ctrl+2</translation>
     </message>
     <message>
-        <location filename="SearchWindow.cc" line="217"/>
+        <location filename="SearchWindow.cc" line="223"/>
         <source>Ctrl+3</source>
         <comment>Single Observation tab shortcut</comment>
         <translation>Ctrl+3</translation>
