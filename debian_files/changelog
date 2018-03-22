@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a14-1) unstable; urgency=low
+
+  * basic diana connection
+  * bugfix flag explanation lookup
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 22 Mar 2018 08:00:08 +0100
+
 kvhqc (4.1.0~a13-1) unstable; urgency=low
 
   * do not restrict username and password
