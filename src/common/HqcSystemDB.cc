@@ -278,7 +278,7 @@ hqc::int_s HqcSystemDB::ignoredParameters(const QString& viewType)
   if (hqcApp) {
     QSqlQuery query(hqcApp->systemDB());
     query.prepare("SELECT paramid FROM param_ignored"
-                  " WHERE (view_type IS NULL OR view_type = :vt)");
+                  " WHERE (view_type IS NULL) OR (view_type = :vt)");
 
     query.bindValue(":vt", viewType);
     if (query.exec()) {
