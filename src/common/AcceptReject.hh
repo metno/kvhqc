@@ -16,7 +16,7 @@ enum {
   ALL = 0xF
 };
 
-int possibilities(ObsData_p obs);
+int possibilities(ObsData_p obs, bool forWatchRR = false);
 
 void accept_model(EditAccess_p ea, ModelAccess_p mda, ObsData_p obs, bool qc2ok);
 void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok);

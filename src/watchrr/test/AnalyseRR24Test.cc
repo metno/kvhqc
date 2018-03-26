@@ -654,20 +654,20 @@ TEST(AnalyseRR24Test_2, Accept)
 
   {
     const TimeSpan time(s2t("2012-11-24 06:00:00"), s2t("2012-11-26 06:00:00"));
-    EXPECT_FALSE(RR24::canAccept(eda, sensor, time));
+    EXPECT_FALSE(RR24::canAccept(eda, sensor, time, true));
   }
 
   {
     // some tasks in this time range
     const TimeSpan time(s2t("2012-11-27 06:00:00"), s2t("2012-11-29 06:00:00"));
-    EXPECT_FALSE(RR24::canAccept(eda, sensor, time));
+    EXPECT_FALSE(RR24::canAccept(eda, sensor, time, true));
   }
 
   {
     const TimeSpan time(s2t("2012-11-30 06:00:00"), s2t("2012-12-02 06:00:00"));
-    ASSERT_TRUE(RR24::canAccept(eda, sensor, time));
+    ASSERT_TRUE(RR24::canAccept(eda, sensor, time, true));
 
-    RR24::accept(eda, sensor, time);
+    RR24::accept(eda, sensor, time, true);
     for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
       ObsData_p obs = eda->findE(SensorTime(sensor, t));
       ASSERT_TRUE((bool)obs) << " t=" << t;

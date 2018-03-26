@@ -56,7 +56,7 @@ StationCardModel::StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sens
     if (columnTimeOffsets[i] != 0)
       dc->setTimeOffset(boost::posix_time::hours(columnTimeOffsets[i]));
 
-    if (i == getRR24Column()) {
+    if (i == getRR24CorrectedColumn()) {
       mRR24EditTime = std::make_shared<EditTimeColumn>(dc);
       addColumn(mRR24EditTime);
     } else {
@@ -71,10 +71,16 @@ StationCardModel::StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sens
   }
 }
 
-int StationCardModel::getRR24Column() const
+int StationCardModel::getRR24CorrectedColumn() const
 {
   // must match columns as listed above
   return 9;
+}
+
+int StationCardModel::getRR24OriginalColumn() const
+{
+  // must match columns as listed above
+  return getRR24CorrectedColumn() + 3;
 }
 
 void StationCardModel::setRR24TimeSpan(const TimeSpan& tr)

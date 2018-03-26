@@ -12,7 +12,8 @@ class StationCardModel : public WatchRRTableModel
 public:
   StationCardModel(TaskAccess_p da, ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time);
 
-  int getRR24Column() const;
+  int getRR24CorrectedColumn() const;
+  int getRR24OriginalColumn() const;
   void setRR24TimeSpan(const TimeSpan& tr);
 
 private:

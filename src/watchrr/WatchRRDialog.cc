@@ -211,9 +211,10 @@ void WatchRRDialog::onSelectionChanged(const QItemSelection&, const QItemSelecti
 
   const int nDays = sel.selTime.days() + 1;
 
-  if (isRR24Selection(sel)) {
+  const RR24SelectionType rr24 = isRR24Selection(sel);
+  if (rr24 == RR24_CORRECTED || rr24 == RR24_ORIGINAL) {
     ui->buttonEdit->setEnabled(true);
-    ui->buttonAcceptRow->setEnabled(RR24::canAccept(mDA, mSensor, sel.selTime));
+    ui->buttonAcceptRow->setEnabled(RR24::canAccept(mDA, mSensor, sel.selTime, rr24 == RR24_CORRECTED));
     if (nDays <= 1) {
       ui->labelInfoRR->setText("");
       ui->buttonRedist->setEnabled(false);
@@ -232,9 +233,16 @@ void WatchRRDialog::onSelectionChanged(const QItemSelection&, const QItemSelecti
   }
 }
 
-bool WatchRRDialog::isRR24Selection(const Selection& sel) const
+WatchRRDialog::RR24SelectionType WatchRRDialog::isRR24Selection(const Selection& sel) const
 {
-  return (sel.minCol == mStationCard->getRR24Column() and sel.minCol == sel.maxCol);
+  if (sel.minCol != sel.maxCol)
+    return NO_RR24;
+  else if (sel.minCol == mStationCard->getRR24CorrectedColumn())
+    return RR24_CORRECTED;
+  else if (sel.minCol == mStationCard->getRR24OriginalColumn())
+    return RR24_CORRECTED;
+  else
+    return NO_RR24;
 }
 
 bool WatchRRDialog::isCompleteSingleRowSelection(const Selection& sel) const
@@ -270,8 +278,9 @@ WatchRRDialog::Selection WatchRRDialog::findSelection()
 void WatchRRDialog::onAcceptRow()
 {
   const Selection sel = findSelection();
-  if (isRR24Selection(sel)) {
-    RR24::accept(mDA, mSensor, sel.selTime);
+  const RR24SelectionType rr24 = isRR24Selection(sel);
+  if (rr24 == RR24_CORRECTED || rr24 == RR24_ORIGINAL) {
+    RR24::accept(mDA, mSensor, sel.selTime, rr24 == RR24_CORRECTED);
   } else if (isCompleteSingleRowSelection(sel)) {
     FCC::acceptRow(mDA, mSensor, sel.selTime.t0());
   } else {

@@ -13,7 +13,7 @@
 
 namespace AcceptReject {
 
-int possibilities(ObsData_p obs)
+int possibilities(ObsData_p obs, bool forWatchRR)
 {
   // accumulated => disable
   // fmis=3 => disable
@@ -23,9 +23,8 @@ int possibilities(ObsData_p obs)
   METLIBS_LOG_SCOPE();
   if (not obs)
     return CAN_CORRECT;
-  
-  const Sensor& s = obs->sensorTime().sensor;
-  if (s.paramId == kvalobs::PARAMID_RR_24 or Helpers::is_accumulation(obs))
+
+  if (!forWatchRR && obs->sensorTime().sensor.paramId == kvalobs::PARAMID_RR_24 && Helpers::is_accumulation(obs))
     // for accumulations, always use WatchRR
     return 0;
   
@@ -37,8 +36,6 @@ int possibilities(ObsData_p obs)
   int possible = ALL;
   if (ci.flag(kvalobs::flag::fhqc) == 0xA)
     possible &= ~CAN_REJECT;
-  if (fmis == 3)
-    possible &= ~CAN_ACCEPT_ORIGINAL;
 
   if (fmis == 2)
     possible &= ~CAN_ACCEPT_CORRECTED;

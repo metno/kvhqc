@@ -96,7 +96,8 @@ private:
   void setStationInfoText();
   Selection findSelection();
   void clearSelection();
-  bool isRR24Selection(const Selection& sel) const;
+  enum RR24SelectionType { NO_RR24 = 0, RR24_CORRECTED, RR24_ORIGINAL };
+  RR24SelectionType isRR24Selection(const Selection& sel) const;
   bool isCompleteSingleRowSelection(const Selection& sel) const;
 
   void initializeRR24Data();

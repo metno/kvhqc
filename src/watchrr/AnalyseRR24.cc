@@ -32,12 +32,13 @@
 #include "TaskData.hh"
 #include "TaskUpdate.hh"
 
+#include "common/AcceptReject.hh"
 #include "common/FlagChange.hh"
 #include "common/Functors.hh"
 #include "common/KvHelpers.hh"
+#include "common/KvMetaDataBuffer.hh"
 #include "common/ObsHelpers.hh"
 #include "common/Tasks.hh"
-#include "common/KvMetaDataBuffer.hh"
 
 #include "util/Helpers.hh"
 
@@ -526,11 +527,12 @@ float calculateOriginalSum(TaskAccess_p da, const Sensor& sensor, const TimeSpan
 
 // ========================================================================
 
-bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
+bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool corrected)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
+  int possible = corrected ? AcceptReject::CAN_ACCEPT_CORRECTED : AcceptReject::CAN_ACCEPT_ORIGINAL;
   const FlagPattern acceptable("fhqc=[01234]", FlagPattern::CONTROLINFO);
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
     ObsData_p obs = da->findE(SensorTime(sensor, t));
@@ -542,33 +544,30 @@ bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
       if ((tobs->allTasks() & ALL_RR24_TASKS) != 0)
         return false;
     }
+    possible &= AcceptReject::possibilities(obs, true);
   }
-  return true;
+  return possible != 0;
 }
 
 // ========================================================================
 
-void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time)
+void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool corrected)
 {
   METLIBS_LOG_SCOPE();
   const boost::gregorian::date_duration step = boost::gregorian::days(1);
 
-  const FlagChange fc_accept("fhqc=[0234]->fhqc=1");
-
   da->newVersion();
-  ObsUpdate_pv updates;
 
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
     const SensorTime st(sensor, t);
     ObsData_p obs = da->findE(st);
     if (not obs)
       continue;
-    ObsUpdate_p u = createU(da, st);
-    Helpers::changeControlinfo(u, fc_accept);
-    updates.push_back(u);
+    if (corrected)
+      AcceptReject::accept_corrected(da, obs, false);
+    else
+      AcceptReject::accept_original(da, obs);
   }
-
-  da->storeUpdates(updates);
 }
 
 } // namespace RR24

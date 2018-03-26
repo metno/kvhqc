@@ -33,8 +33,8 @@ float calculateSum(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
 */
 float calculateOriginalSum(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
 
-bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
-void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time);
+bool canAccept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool corrected);
+void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool corrected);
 } // namespace RR24
 
 #endif // AnalyseRR24_hh
