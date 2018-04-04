@@ -36,8 +36,8 @@ class DataValueItem : public DataItem {
 public:
   DataValueItem(ObsColumn::Type columnType);
 
-  Qt::ItemFlags flags(ObsData_p obs) const override;
-  QVariant data(ObsData_p obs, const SensorTime& st, int role) const override;
+  Qt::ItemFlags flags(const ObsData_pv& obs) const override;
+  QVariant data(const ObsData_pv& obs, const SensorTime& st, int role) const override;
   ObsColumn::Type type() const override;
 
 protected:

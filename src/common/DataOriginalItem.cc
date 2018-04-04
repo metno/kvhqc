@@ -45,14 +45,14 @@ DataOriginalItem::DataOriginalItem(Code2TextCPtr codes)
 {
 }
 
-QVariant DataOriginalItem::data(ObsData_p obs, const SensorTime& st, int role) const
+QVariant DataOriginalItem::data(const ObsData_pv& obs, const SensorTime& st, int role) const
 {
-  if (not obs)
+  if (obs.size() != 1)
     return QVariant();
   
   if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
     QString tip;
-    const int ui_2 = Helpers::extract_ui2(obs);
+    const int ui_2 = Helpers::extract_ui2(obs.front());
     if (ui_2 == 3)
       tip = qApp->translate("DataOriginalItem", "surely wrong");
     else if (ui_2 == 2)

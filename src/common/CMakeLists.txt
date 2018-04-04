@@ -1,11 +1,13 @@
 
 SET(common_SOURCES
   AbstractUpdateListener.cc
-  AcceptRejectButtons.cc
   AcceptReject.cc
+  AcceptRejectButtons.cc
   Authenticator.cc
   BaseRequest.cc
   BaseRequest.hh
+  BufferHelpers.cc
+  BufferHelpers.hh
   CachedParamLimits.cc
   CachingAccess.cc
   CachingAccess.hh
@@ -41,9 +43,12 @@ SET(common_SOURCES
   HqcDianaClient.cc
   HqcSystemDB.cc
   HqcUserConfig.cc
-  identifyUser.cc
   IndexBuffer.cc
   IndexBuffer.hh
+  KvHelpers.cc
+  KvMetaDataBuffer.cc
+  KvServiceHelper.cc
+  KvTypedefs.hh
   KvalobsAccess.cc
   KvalobsAccess.hh
   KvalobsData.cc
@@ -53,10 +58,6 @@ SET(common_SOURCES
   KvalobsReinserter.cc
   KvalobsUpdate.cc
   KvalobsUpdateListener.cc
-  KvHelpers.cc
-  KvMetaDataBuffer.cc
-  KvServiceHelper.cc
-  KvTypedefs.hh
   ModelAccess.cc
   ModelBuffer.cc
   ModelColumn.cc
@@ -76,17 +77,17 @@ SET(common_SOURCES
   ObsFilter.hh
   ObsHelpers.cc
   ObsLogging.cc
-  ObsRequest.cc
-  ObsRequest.hh
   ObsPgmQueryTask.cc
   ObsPgmRequest.cc
+  ObsRequest.cc
+  ObsRequest.hh
   ObsTableModel.cc
   ParamIdModel.cc
   ParamQueryTask.cc
   QtKvService.cc
+  QueryTask.cc
   QueryTaskAccess.cc
   QueryTaskAccess.hh
-  QueryTask.cc
   QueryTaskHandler.cc
   QueryTaskHandler.hh
   QueryTaskHandlerPrivate.hh
@@ -105,14 +106,12 @@ SET(common_SOURCES
   SingleObsBuffer.cc
   SingleObsBuffer.hh
   SortedBuffer.cc
-  sqlutil.cc
-  sqlutil.hh
+  StInfoSysBuffer.cc
   StationIdCompletion.cc
   StationIdModel.cc
   StationInfoBuffer.cc
   StationParamSQLTask.cc
   StationQueryTask.cc
-  StInfoSysBuffer.cc
   SyncRequest.cc
   SyncRequest.hh
   SyncTask.cc
@@ -127,6 +126,9 @@ SET(common_SOURCES
   TypeIdModel.cc
   TypesQueryTask.cc
   WrapRequest.cc
+  identifyUser.cc
+  sqlutil.cc
+  sqlutil.hh
 )
 
 QT5_WRAP_CPP(common_MOC

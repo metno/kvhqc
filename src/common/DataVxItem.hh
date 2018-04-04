@@ -36,16 +36,15 @@ class DataVxItem : public DataValueItem {
 public:
   DataVxItem(ObsColumn::Type columnType, EditAccess_p da);
 
-  QVariant data(ObsData_p obs, const SensorTime& st, int role) const override;
-  bool setData(ObsData_p obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role) override;
+  Sensor_s sensors(const Sensor& base) const override;
+
+  QVariant data(const ObsData_pv& obs, const SensorTime& st, int role) const override;
+  bool setData(const ObsData_pv& obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role) override;
   QString description(bool mini) const override;
-  bool matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const override;
 
 private:
   typedef std::pair<int,int> Codes_t;
   Codes_t getCodes(ObsData_p obs1, ObsData_p obs2) const;
-  ObsData_p getObs2(ObsData_p obs1) const;
-  Sensor getSensor2(const Sensor& sensor1) const;
 
 private:
   EditAccess_p mDA;

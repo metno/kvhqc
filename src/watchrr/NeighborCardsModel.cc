@@ -1,15 +1,42 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "NeighborCardsModel.hh"
 
 #include "common/ColumnFactory.hh"
 #include "common/KvHelpers.hh"
+#include "common/BufferHelpers.hh"
 #include "common/NeighborHeader.hh"
 #include "common/ObsPgmRequest.hh"
 #include "common/SensorHeader.hh"
 #include "util/Helpers.hh"
-
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
+#include "util/make_set.hh"
 
 #define MILOGGER_CATEGORY "kvhqc.NeighborCardsModel"
 #include "common/ObsLogging.hh"
@@ -53,6 +80,7 @@ NeighborCardsModel::NeighborCardsModel(TaskAccess_p da/*, ModelAccessPtr ma*/, c
   , mTime(mTimeSpan.t0())
   , mSensors(1, sensor)
 {
+  METLIBS_LOG_SCOPE(LOGVAL(sensor));
   hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(sensor.stationId);
   stationIds.insert(sensor.stationId);
 
@@ -62,15 +90,26 @@ NeighborCardsModel::NeighborCardsModel(TaskAccess_p da/*, ModelAccessPtr ma*/, c
   KvMetaDataBuffer::instance()->addNeighbors(mSensors, sensor, mTimeSpan, mObsPgmRequest, 20);
   mItems.reserve(N_COLUMNS);
   mTimeOffsets.reserve(N_COLUMNS);
+  METLIBS_LOG_DEBUG(LOGVAL(mSensors.size()));
 
+  Sensor_s sensors;
   for(int i=0; i<N_COLUMNS; ++i) {
     const Sensor s(sensor.stationId, columnPars[i], sensor.level, sensor.sensor, sensor.typeId);
-    mItems.push_back(ColumnFactory::itemForSensor(da, s, columnTypes[i]));
-    
+    DataItem_p item = ColumnFactory::itemForSensor(da, s, columnTypes[i]);
+    mItems.push_back(item);
+    for(const Sensor& base : mSensors) {
+      const Sensor bs(base.stationId, columnPars[i], base.level, base.sensor, base.typeId);
+      METLIBS_LOG_DEBUG(LOGVAL(bs) << LOGVAL(sensors.size()));
+      insert_all(sensors, item->sensors(bs));
+    }
+
     mTimeOffsets.push_back(boost::posix_time::hours(columnTimeOffsets[i]));
   }
-
   delete mObsPgmRequest;
+
+  METLIBS_LOG_DEBUG(LOGVAL(sensors.size()));
+  mBuffer = std::make_shared<TimeBuffer>(sensors, mTimeSpan);
+  mBuffer->syncRequest(mDA);
 }
 
 NeighborCardsModel::~NeighborCardsModel()
@@ -94,9 +133,7 @@ Qt::ItemFlags NeighborCardsModel::flags(const QModelIndex& index) const
 
 QVariant NeighborCardsModel::data(const QModelIndex& index, int role) const
 {
-  const SensorTime st(getSensorTime(index));
-  const ObsData_p obs = mDA->findE(st);
-  return getItem(index)->data(obs, st, role);
+  return getItem(index)->data(getObs(index), getSensorTime(index), role);
 }
 
 void NeighborCardsModel::setTime(const timeutil::ptime& time)
@@ -126,9 +163,9 @@ QVariant NeighborCardsModel::headerData(int section, Qt::Orientation orientation
   return QVariant();
 }
 
-ObsData_p NeighborCardsModel::getObs(const QModelIndex& index) const
+ObsData_pv NeighborCardsModel::getObs(const QModelIndex& index) const
 {
-  return mDA->findE(getSensorTime(index));
+  return Helpers::getObs(mBuffer, getItem(index), getSensorTime(index));
 }
 
 SensorTime NeighborCardsModel::getSensorTime(const QModelIndex& index) const
@@ -142,7 +179,7 @@ std::vector<int> NeighborCardsModel::neighborStations() const
 {
   std::vector<int> n;
   n.reserve(mSensors.size());
-  BOOST_FOREACH(const Sensor& s, mSensors)
-      n.push_back(s.stationId);
+  for (const Sensor& s : mSensors)
+    n.push_back(s.stationId);
   return n;
 }

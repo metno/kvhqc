@@ -168,7 +168,17 @@ DataVxItem::DataVxItem(ObsColumn::Type columnType, EditAccess_p da)
 {
 }
 
-QVariant DataVxItem::data(ObsData_p obs1, const SensorTime& st, int role) const
+Sensor_s DataVxItem::sensors(const Sensor& vx) const
+{
+  Sensor_s sensors;
+  sensors.insert(vx);
+  Sensor vxs = vx;
+  vxs.paramId += 1;
+  sensors.insert(vxs);
+  return sensors;
+}
+
+QVariant DataVxItem::data(const ObsData_pv& obs, const SensorTime& st, int role) const
 {
   const VxData* vxdata = vxData4SensorTime(st);
   if (not vxdata)
@@ -202,9 +212,10 @@ QVariant DataVxItem::data(ObsData_p obs1, const SensorTime& st, int role) const
     return codes;
   }
 
-  if (not obs1)
+  if (obs.empty())
     return QVariant();
-  ObsData_p obs2 = getObs2(obs1);
+  ObsData_p obs1 = obs.front();
+  ObsData_p obs2 = (obs.size() == 2) ? obs.back() : ObsData_p();
 
   if (role == Qt::FontRole) {
     QFont f;
@@ -272,12 +283,12 @@ QVariant DataVxItem::data(ObsData_p obs1, const SensorTime& st, int role) const
 #endif
     return tooltip;
   }
-  return DataValueItem::data(obs1, st, role);
+  return DataValueItem::data(obs, st, role);
 }
 
-bool DataVxItem::setData(ObsData_p obs1, EditAccess_p, const SensorTime& st, const QVariant& value, int role)
+bool DataVxItem::setData(const ObsData_pv& obs, EditAccess_p, const SensorTime& st, const QVariant& value, int role)
 {
-  if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
+  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED || obs.empty())
     return false;
 
   METLIBS_LOG_SCOPE();
@@ -287,7 +298,8 @@ bool DataVxItem::setData(ObsData_p obs1, EditAccess_p, const SensorTime& st, con
     return false;
   }
 
-  ObsData_p obs2 = getObs2(obs1);
+  ObsData_p obs1 = obs.front();
+  ObsData_p obs2 = (obs.size() == 2) ? obs.back() : ObsData_p();
   const Codes_t oldCodes = getCodes(obs1, obs2);
   
   const QString v = value.toString();
@@ -363,12 +375,6 @@ bool DataVxItem::setData(ObsData_p obs1, EditAccess_p, const SensorTime& st, con
 }
 
 
-bool DataVxItem::matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const
-{
-  return (eq_Sensor()(sensorColumn, sensorObs)
-      or eq_Sensor()(getSensor2(sensorColumn), sensorObs));
-}
-
 QString DataVxItem::description(bool mini) const
 {
   const bool orig = (mColumnType == ObsColumn::ORIGINAL);
@@ -396,24 +402,4 @@ DataVxItem::Codes_t DataVxItem::getCodes(ObsData_p obs1, ObsData_p obs2) const
       v2 = static_cast<int>(obs2->original());
   }
   return std::make_pair(v1, v2);
-}
-
-ObsData_p DataVxItem::getObs2(ObsData_p obs1) const
-{
-#if 0
-  if (not obs1)
-    return ObsData_p();
-  SensorTime st2(obs1->sensorTime());
-  st2.sensor.paramId += 1;
-  return mDA->findE(st2);
-#else
-  return ObsData_p();
-#endif
-}
-
-Sensor DataVxItem::getSensor2(const Sensor& sensor1) const
-{
-  Sensor sensor2(sensor1);
-  sensor2.paramId += 1;
-  return sensor2;
 }

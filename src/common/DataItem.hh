@@ -37,9 +37,14 @@ class DataItem {
 public:
   virtual ~DataItem();
 
-  virtual Qt::ItemFlags flags(ObsData_p obs) const;
-  virtual QVariant data(ObsData_p obs, const SensorTime& st, int role) const;
-  virtual bool setData(ObsData_p obs, EditAccess_p ea, const SensorTime& st, const QVariant& value, int role);
+  //! Build a list of sensors that are needed for the item, usually just the base sensor.
+  /*! For more complex item like V4, V5, V6, this will include V4+V4s etc.
+   */
+  virtual Sensor_s sensors(const Sensor& base) const;
+
+  virtual Qt::ItemFlags flags(const ObsData_pv& obs) const;
+  virtual QVariant data(const ObsData_pv& obs, const SensorTime& st, int role) const;
+  virtual bool setData(const ObsData_pv& obs, EditAccess_p ea, const SensorTime& st, const QVariant& value, int role);
   virtual QString description(bool mini) const = 0;
   virtual bool matchSensor(const Sensor& sensorColumn, const Sensor& sensorObs) const;
   virtual ObsColumn::Type type() const = 0;

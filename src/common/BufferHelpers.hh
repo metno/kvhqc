@@ -27,20 +27,18 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+#ifndef HQC_COMMON_BUFFERHELPERS_HH
+#define HQC_COMMON_BUFFERHELPERS_HH 1
 
-#ifndef DATAORIGINALITEM_HH
-#define DATAORIGINALITEM_HH 1
+#include "SortedBuffer.hh"
+#include "DataItem.hh"
 
-#include "DataCodeItem.hh"
+namespace Helpers {
 
-class DataOriginalItem : public DataCodeItem {
-public:
-  DataOriginalItem(Code2TextCPtr codes);
-  
-  virtual QVariant data(const ObsData_pv& obs, const SensorTime& st, int role) const;
-  virtual QString description(bool mini) const;
-};
+ObsData_pv getObs(SortedBuffer_p buffer, const Sensor_s& sensors, const Time& time);
 
-HQC_TYPEDEF_P(DataOriginalItem);
+ObsData_pv getObs(SortedBuffer_p buffer, DataItem_p item, const SensorTime& st);
 
-#endif // DATAORIGINALITEM_HH
+} // namespace Helpers
+
+#endif // HQC_COMMON_BUFFERHELPERS_HH

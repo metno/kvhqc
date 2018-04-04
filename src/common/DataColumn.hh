@@ -65,7 +65,7 @@ public:
   bool isBusy() const override
     { return mRequestBusy; }
 
-  ObsData_p getObs(const Time& time) const;
+  ObsData_pv getObs(const Time& time) const;
 
 private:
   const boost::posix_time::time_duration& timeOffset() const

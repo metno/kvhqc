@@ -48,18 +48,23 @@ TasksColumn::~TasksColumn()
 
 QVariant TasksColumn::data(const timeutil::ptime& time, int role) const
 {
-  if (role == Qt::BackgroundRole) {
-    if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(mDC->getObs(time))) {
-      if (td->hasRequiredTasks())
-        return QBrush(Qt::red);
-      else if (td->hasTasks())
-        return QBrush(QColor(0xFF, 0x60, 0)); // red orange
+  const bool isBackground = (role == Qt::BackgroundRole);
+  const bool isTip = (role == Qt::ToolTipRole || role == Qt::StatusTipRole);
+  if (isBackground || isTip) {
+    ObsData_pv obs = mDC->getObs(time);
+    if (obs.size() == 1) {
+      if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs.front())) {
+        if (isBackground) {
+          if (td->hasRequiredTasks())
+            return QBrush(Qt::red);
+          else if (td->hasTasks())
+            return QBrush(QColor(0xFF, 0x60, 0)); // red orange
+        } else if (isTip) {
+          QString tip = tasks::asText(td->allTasks());
+          return Helpers::appendedText(tip, WrapperColumn::data(time, role).toString());
+        }
+      }
     }
-  } else if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {
-    QString tip;
-    if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(mDC->getObs(time)))
-      tip = tasks::asText(td->allTasks());
-    return Helpers::appendedText(tip, WrapperColumn::data(time, role).toString());
   }
   return WrapperColumn::data(time, role);
 }

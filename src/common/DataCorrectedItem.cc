@@ -49,44 +49,45 @@ DataCorrectedItem::DataCorrectedItem(Code2TextCPtr codes)
 {
 }
 
-QVariant DataCorrectedItem::data(ObsData_p obs, const SensorTime& st, int role) const
+QVariant DataCorrectedItem::data(const ObsData_pv& obs, const SensorTime& st, int role) const
 {
-  if (obs and (role == Qt::ToolTipRole or role == Qt::StatusTipRole)) {
-    QString tip;
 #if 0
+  if (obs.size() == 1 && (role == Qt::ToolTipRole || role == Qt::StatusTipRole)) {
+    QString tip;
     if (mColumnType == ObsColumn::NEW_CORRECTED)
       tip = tasks::asText(obs->allTasks());
-#endif
     return Helpers::appendedText(tip, DataCodeItem::data(obs, st, role).toString());
   }
+#endif
   return DataCodeItem::data(obs, st, role);
 }
 
-bool DataCorrectedItem::setData(ObsData_p obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role)
+bool DataCorrectedItem::setData(const ObsData_pv& obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role)
 {
-  if (role != Qt::EditRole or mColumnType != ObsColumn::NEW_CORRECTED)
+  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED || obs.size() != 1)
     return false;
+  ObsData_p o = obs.front();
 
   const QString svalue = value.toString();
   try {
     const float newC = mCodes->fromText(svalue);
     const bool reject = (newC == kvalobs::REJECTED);
-    if (reject and not obs)
+    if (reject and !o)
       return false;
     if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, newC) == CachedParamLimits::OutsideMinMax)
       return false;
     
     da->newVersion();
     ObsUpdate_p update;
-    if (not obs)
+    if (!o)
       update = da->createUpdate(st);
     else
-      update = da->createUpdate(obs);
-    
+      update = da->createUpdate(o);
+
     if (reject)
-      Helpers::reject(update, obs);
+      Helpers::reject(update, o);
     else
-      Helpers::auto_correct(update, obs, newC);
+      Helpers::auto_correct(update, o, newC);
     da->storeUpdates(ObsUpdate_pv(1, update));
     return true;
   } catch (std::exception& e) {

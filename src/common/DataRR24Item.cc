@@ -43,24 +43,24 @@ DataRR24Item::DataRR24Item(Code2TextCPtr codes)
 {
 }
 
-Qt::ItemFlags DataRR24Item::flags(ObsData_p obs) const
+Qt::ItemFlags DataRR24Item::flags(const ObsData_pv& obs) const
 {
   Qt::ItemFlags f = DataCorrectedItem::flags(obs);
-  if (obs) {
-    const int typeId = obs->sensorTime().sensor.typeId;
+  if (obs.size() == 1) {
+    ObsData_p o = obs.front();
+    const int typeId = o->sensorTime().sensor.typeId;
     if (typeId == 302 or typeId == 305 or typeId == 402)
       f &= ~Qt::ItemIsEditable;
   }
   return f;
 }
 
-QVariant DataRR24Item::data(ObsData_p obs, const SensorTime& st, int role) const
+QVariant DataRR24Item::data(const ObsData_pv& obs, const SensorTime& st, int role) const
 {
   const QVariant d = DataCorrectedItem::data(obs, st, role);
-  if (role == Qt::BackgroundRole and mColumnType == ObsColumn::NEW_CORRECTED
-      and not d.isValid() and obs and Helpers::is_accumulation(obs))
-  {
-    return QBrush(Helpers::is_endpoint(obs) ? QColor(0xC0, 0xFF, 0xC0) : QColor(0xE0, 0xFF, 0xE0));
+  if (role == Qt::BackgroundRole and mColumnType == ObsColumn::NEW_CORRECTED and not d.isValid() and obs.size() == 1 and
+      Helpers::is_accumulation(obs.front())) {
+    return QBrush(Helpers::is_endpoint(obs.front()) ? QColor(0xC0, 0xFF, 0xC0) : QColor(0xE0, 0xFF, 0xE0));
   }
   return d;
 }

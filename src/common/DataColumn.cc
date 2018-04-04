@@ -30,6 +30,7 @@
 
 #include "DataColumn.hh"
 
+#include "BufferHelpers.hh"
 #include "SensorHeader.hh"
 #include "util/make_set.hh"
 
@@ -51,7 +52,7 @@ DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t,
 
 void DataColumn::makeBuffer()
 {
-  mBuffer = std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor()), mTimeSpan.shifted(timeOffset())); // add time offset, column -> buffer
+  mBuffer = std::make_shared<TimeBuffer>(mItem->sensors(sensor()), mTimeSpan.shifted(timeOffset())); // add time offset, column -> buffer
   TimeBuffer* b = mBuffer.get();
   connect(b, &TimeBuffer::bufferCompleted, this, &DataColumn::onBufferCompleted);
   connect(b, &TimeBuffer::newDataEnd, this, &DataColumn::onNewDataEnd);
@@ -155,9 +156,9 @@ Time_s DataColumn::times() const
   return offsetTimes;
 }
 
-ObsData_p DataColumn::getObs(const Time& time) const
+ObsData_pv DataColumn::getObs(const Time& time) const
 {
-  return mBuffer->get(sensorTimeC2B(time));
+  return Helpers::getObs(mBuffer, mItem->sensors(sensor()), timeC2B(time));
 }
 
 bool DataColumn::matchSensor(const Sensor& sensorObs) const

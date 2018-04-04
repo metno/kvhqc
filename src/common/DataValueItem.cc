@@ -58,7 +58,7 @@ ObsColumn::Type DataValueItem::type() const
   return mColumnType;
 }
 
-Qt::ItemFlags DataValueItem::flags(ObsData_p obs) const
+Qt::ItemFlags DataValueItem::flags(const ObsData_pv& obs) const
 {
     Qt::ItemFlags f = DataItem::flags(obs);
     if (mColumnType == ObsColumn::NEW_CORRECTED)
@@ -66,11 +66,12 @@ Qt::ItemFlags DataValueItem::flags(ObsData_p obs) const
     return f;
 }
 
-QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) const
+QVariant DataValueItem::data(const ObsData_pv& obs, const SensorTime& st, int role) const
 {
-  if (not obs)
+  if (obs.empty())
     return QVariant();
-  
+  ObsData_p o = obs.front();
+
   const bool isNC = mColumnType == ObsColumn::NEW_CORRECTED;
   if (role == Qt::BackgroundRole) {
     if (isNC) {
@@ -81,7 +82,7 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
         return QBrush(QColor(0xFF, 0x60, 0)); // red orange
 #endif
     } else if (mColumnType == ObsColumn::ORIGINAL) {
-      const int ui_2 = Helpers::extract_ui2(obs);
+      const int ui_2 = Helpers::extract_ui2(o);
       if (hqcApp) {
         const QColor bg = hqcApp->userConfig()->dataOrigUI2Background(ui_2);
         if (bg.isValid())
@@ -98,7 +99,7 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
         return QColor(Qt::darkGray);
     }
     if (mColumnType != ObsColumn::ORIGINAL) {
-      const kvalobs::kvControlInfo& ci = obs->controlinfo();
+      const kvalobs::kvControlInfo& ci = o->controlinfo();
       if (ci.flag(kvalobs::flag::fhqc) == 0) { // not hqc touched
         if (ci.qc2dDone())
           return QColor(Qt::darkMagenta);
@@ -108,7 +109,7 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
     }
   } else if (role == Qt::FontRole) {
     QFont f;
-    if (obs->isModified())
+    if (o->isModified())
       f.setBold(true);
     return f;
   }
@@ -117,9 +118,9 @@ QVariant DataValueItem::data(ObsData_p obs, const SensorTime& st, int role) cons
 
 float DataValueItem::getValue(ObsData_p obs) const
 {
-  if (not obs)
+  if (!obs)
     return kvalobs::MISSING;
-  if (mColumnType == ObsColumn::ORIGINAL)
+  else if (type() == ObsColumn::ORIGINAL)
     return obs->original();
   else
     return obs->corrected();

@@ -36,10 +36,9 @@ class DataControlinfoItem : public DataItem {
 public:
   DataControlinfoItem();
 
-  QVariant data(ObsData_p obs, const SensorTime& st, int role) const override;
+  QVariant data(const ObsData_pv& obs, const SensorTime& st, int role) const override;
   QString description(bool mini) const override;
-  ObsColumn::Type type() const override
-    { return ObsColumn::NEW_CONTROLINFO; }
+  ObsColumn::Type type() const override;
 
 protected:
   const kvalobs::kvControlInfo& getControlinfo(ObsData_p obs) const;
