@@ -1,3 +1,14 @@
+kvhqc (4.1.0~a15-1) unstable; urgency=low
+
+  * errorlist: busy already when fetching obs_pgm
+  * errorlist: slightly wider typeid column
+  * errorlist: disable forget button
+  * move translation update to separate cmake target
+  * WatchRR: accept original
+  * sql query clarification
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 04 Apr 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a14-1) unstable; urgency=low
 
   * basic diana connection
