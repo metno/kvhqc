@@ -36,7 +36,7 @@
 #define MILOGGER_CATEGORY "kvhqc.ModelColumn"
 #include "common/ObsLogging.hh"
 
-ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan& time)
+ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan&)
     : mBuffer(new ModelBuffer(ma))
     , mSensor(sensor)
     , mHeaderShowStation(true)

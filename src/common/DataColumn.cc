@@ -30,10 +30,8 @@
 
 #include "DataColumn.hh"
 
-#include "common/SensorHeader.hh"
+#include "SensorHeader.hh"
 #include "util/make_set.hh"
-
-#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.DataColumn"
 #include "common/ObsLogging.hh"
