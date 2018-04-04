@@ -193,6 +193,8 @@ void ErrorListModel::search(const Sensor_v& sensors, const TimeSpan& limits, boo
     mObsBuffer->postRequest(mDA);
 
     // TODO prefetch model data
+  } else {
+    Q_EMIT fetchingData(false);
   }
 }
 

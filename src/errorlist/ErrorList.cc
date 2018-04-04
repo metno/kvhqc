@@ -85,6 +85,7 @@ void ErrorList::onButtonSearch()
   const hqc::int_v selectedStations = mDialog->getSelectedStations();
   const hqc::int_s stationIds(selectedStations.begin(), selectedStations.end());
 
+  ui->busyLabel->setBusy(true);
   delete mObsPgmRequest;
   mObsPgmRequest = new ObsPgmRequest(stationIds);
   connect(mObsPgmRequest, &ObsPgmRequest::complete, this, &ErrorList::onObsPgmsComplete);
