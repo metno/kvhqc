@@ -17,7 +17,8 @@ public:
   void setHeaderShowStation(bool show)
     { mHeaderShowStation = show; }
 
-  virtual void attach(ObsTableModel* table);
+  void attach(ObsTableModel* table) override;
+  void detach(ObsTableModel* table) override;
 
   virtual Qt::ItemFlags flags(const timeutil::ptime& time) const;
   virtual QVariant data(const timeutil::ptime& time, int role) const;
@@ -28,8 +29,6 @@ public:
     { return mItem; }
   virtual bool matchSensor(const Sensor& sensorObs) const;
 
-  virtual const boost::posix_time::time_duration& timeOffset() const
-    { return mTimeOffset; }
   void setTimeOffset(const boost::posix_time::time_duration& timeOffset);
 
   void setTimeSpan(const TimeSpan& tr);
@@ -43,8 +42,27 @@ public:
     { return mRequestBusy; }
 
   ObsData_p getObs(const Time& time) const;
-  SensorTime getSensorTime(const Time& time) const
-    { return SensorTime(sensor(), time + mTimeOffset); }
+
+private:
+  const boost::posix_time::time_duration& timeOffset() const
+    { return mTimeOffset; }
+
+  bool hasTimeOffset() const { return timeOffset().total_seconds() != 0; }
+
+  SensorTime sensorTimeC2B(const Time& time) const
+    { return SensorTime(sensor(), timeC2B(time)); }
+
+  //! Convert buffer time to column time.
+  /*! Subtracts timeOffset */
+  Time timeB2C(const Time& time) const
+    { return time - timeOffset(); }
+
+  //! Convert column time to buffer time.
+  /*! Adds timeOffset */
+  Time timeC2B(const Time& time) const
+    { return time + timeOffset(); }
+
+  void makeBuffer();
 
 private Q_SLOTS:
   void onBufferCompleted(const QString&);
@@ -54,8 +72,11 @@ private Q_SLOTS:
 
 protected:
   EditAccess_p mDA;
+  Sensor mSensor;
+  TimeSpan mTimeSpan;
   TimeBuffer_p mBuffer;
   DataItem_p mItem;
+  bool mAttached;
   bool mHeaderShowStation;
   boost::posix_time::time_duration mTimeOffset;
   bool mRequestBusy;

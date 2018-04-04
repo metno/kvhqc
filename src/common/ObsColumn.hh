@@ -38,7 +38,6 @@ public:
   virtual bool setData(const timeutil::ptime& time, const QVariant& value, int role);
   virtual QVariant headerData(Qt::Orientation orientation, int role) const = 0;
   
-  virtual const boost::posix_time::time_duration& timeOffset() const = 0;
   virtual const Sensor& sensor() const;
   virtual Time_s times() const
     { return Time_s(); }

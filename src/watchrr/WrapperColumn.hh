@@ -32,9 +32,6 @@ public:
   virtual int type() const
     { return mDC->type(); }
 
-  virtual const boost::posix_time::time_duration& timeOffset() const
-    { return mDC->timeOffset(); }
-
 protected:
   DataColumn_p mDC;
 };

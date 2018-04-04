@@ -40,12 +40,20 @@
 
 DataColumn::DataColumn(EditAccess_p da, const Sensor& sensor, const TimeSpan& t, DataItem_p item)
     : mDA(da)
-    , mBuffer(std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor), t))
+    , mSensor(sensor)
+    , mTimeSpan(t)
     , mItem(item)
+    , mAttached(false)
     , mHeaderShowStation(true)
     , mRequestBusy(false)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor) << LOGVAL(t));
+  makeBuffer();
+}
+
+void DataColumn::makeBuffer()
+{
+  mBuffer = std::make_shared<TimeBuffer>(make_set<Sensor_s>(sensor()), mTimeSpan.shifted(timeOffset())); // add time offset, column -> buffer
   TimeBuffer* b = mBuffer.get();
   connect(b, &TimeBuffer::bufferCompleted, this, &DataColumn::onBufferCompleted);
   connect(b, &TimeBuffer::newDataEnd, this, &DataColumn::onNewDataEnd);
@@ -57,12 +65,26 @@ DataColumn::~DataColumn()
 {
 }
 
-void DataColumn::attach(ObsTableModel*)
+void DataColumn::attach(ObsTableModel* otm)
 {
   METLIBS_LOG_SCOPE();
+  ObsColumn::attach(otm);
+  mAttached = true;
+
   mRequestBusy = true;
   Q_EMIT columnBusyStatus(mRequestBusy);
   mBuffer->postRequest(mDA);
+}
+
+void DataColumn::detach(ObsTableModel* otm)
+{
+  METLIBS_LOG_SCOPE();
+  mRequestBusy = false;
+  Q_EMIT columnBusyStatus(mRequestBusy);
+  mBuffer = TimeBuffer_p();
+  mAttached = false;
+
+  ObsColumn::detach(otm);
 }
 
 Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
@@ -72,7 +94,7 @@ Qt::ItemFlags DataColumn::flags(const timeutil::ptime& time) const
       
 QVariant DataColumn::data(const timeutil::ptime& time, int role) const
 {
-  const SensorTime st = getSensorTime(time);
+  const SensorTime st = sensorTimeC2B(time);
   return mItem->data(getObs(time), st, role);
 }
 
@@ -81,7 +103,7 @@ bool DataColumn::setData(const timeutil::ptime& time, const QVariant& value, int
   METLIBS_LOG_SCOPE();
   try {
     METLIBS_LOG_DEBUG(LOGVAL(value.toString()));
-    return mItem->setData(getObs(time), mDA, getSensorTime(time), value, role);
+    return mItem->setData(getObs(time), mDA, sensorTimeC2B(time), value, role);
   } catch (std::exception& e) {
     HQC_LOG_WARN(e.what());
     return false;
@@ -113,25 +135,31 @@ void DataColumn::onNewDataEnd(const ObsData_pv& data)
 void DataColumn::onUpdateDataEnd(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
-  for (ObsData_pv::const_iterator it = data.begin(); it != data.end(); ++it)
-    Q_EMIT columnChanged((*it)->sensorTime().time, shared_from_this());
+  for (ObsData_p obs : data)
+    Q_EMIT columnChanged(timeB2C(obs->sensorTime().time), shared_from_this());
 }
 
 void DataColumn::onDropDataEnd(const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
-  for (SensorTime_v::const_iterator it = dropped.begin(); it != dropped.end(); ++it)
-    Q_EMIT columnChanged(it->time, shared_from_this());
+  for (const SensorTime& st : dropped)
+    Q_EMIT columnChanged(timeB2C(st.time), shared_from_this());
 }
 
 Time_s DataColumn::times() const
 {
-  return mBuffer->times();
+  if (!hasTimeOffset())
+    return mBuffer->times();
+
+  Time_s offsetTimes;
+  for (const Time& t : mBuffer->times())
+    offsetTimes.insert(timeB2C(t));
+  return offsetTimes;
 }
 
 ObsData_p DataColumn::getObs(const Time& time) const
 {
-  return mBuffer->get(getSensorTime(time));
+  return mBuffer->get(sensorTimeC2B(time));
 }
 
 bool DataColumn::matchSensor(const Sensor& sensorObs) const
@@ -141,10 +169,13 @@ bool DataColumn::matchSensor(const Sensor& sensorObs) const
 
 const Sensor& DataColumn::sensor() const
 {
-  return *mBuffer->request()->sensors().begin();
+  return mSensor;
 }
 
 void DataColumn::setTimeOffset(const boost::posix_time::time_duration& timeOffset)
 {
-  // FIXME implemet setTimeOffset
+  if (timeOffset != mTimeOffset) {
+    mTimeOffset = timeOffset;
+    makeBuffer();
+  }
 }
