@@ -167,7 +167,7 @@ void ErrorList::resizeHeaders()
   header->resizeSection(ErrorListModel::COL_STATION_WMO,   45);
   header->resizeSection(ErrorListModel::COL_OBS_TIME,     150);
   header->resizeSection(ErrorListModel::COL_OBS_PARAM,     60);
-  header->resizeSection(ErrorListModel::COL_OBS_TYPEID,    40);
+  header->resizeSection(ErrorListModel::COL_OBS_TYPEID,    50);
   header->resizeSection(ErrorListModel::COL_OBS_ORIG,      60);
   header->resizeSection(ErrorListModel::COL_OBS_CORR,      60);
   header->resizeSection(ErrorListModel::COL_OBS_MODEL,     60);
