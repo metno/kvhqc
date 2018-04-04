@@ -174,13 +174,20 @@ SET(common_UIS
   authenticationdialog.ui
 )
 QT5_WRAP_UI(common_UIH ${common_UIS})
-QT5_CREATE_TRANSLATION(common_QM
+
+METNO_QT5_CREATE_TRANSLATION(common_QM
+  UPDATE_SOURCES
   ${common_SOURCES}
   ${common_UIS}
 
+  TSFILES
   common_nb.ts
   common_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${common_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_LIBRARY(common STATIC
@@ -189,5 +196,6 @@ ADD_LIBRARY(common STATIC
   ${common_UIH}
   ${common_QM}
 )
+
 
 ADD_SUBDIRECTORY(test)

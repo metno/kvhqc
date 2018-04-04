@@ -32,6 +32,7 @@ SET(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 INCLUDE(MetnoCMakeSetup)
 INCLUDE(MetnoFindPackage)
 INCLUDE(MetnoGTest)
+INCLUDE(MetnoQtTranslation)
 INCLUDE(MetnoVersions)
 
 METNO_CMAKE_SETUP()

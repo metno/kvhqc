@@ -52,13 +52,19 @@ SET(util_UIS
 )
 QT5_WRAP_UI(util_UIH ${util_UIS})
 
-QT5_CREATE_TRANSLATION(util_QM
+METNO_QT5_CREATE_TRANSLATION(util_QM
+  UPDATE_SOURCES
   ${util_SOURCES}
   ${util_UIS}
 
+  TSFILES
   util_nb.ts
   util_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${util_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_LIBRARY(util STATIC

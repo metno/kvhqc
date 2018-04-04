@@ -12,13 +12,19 @@ QT5_WRAP_CPP(textdata_MOC
   TextdataTable.hh
 )
 
-QT5_CREATE_TRANSLATION(textdata_QM
+METNO_QT5_CREATE_TRANSLATION(textdata_QM
+  UPDATE_SOURCES
   ${textdata_SOURCES}
   ${textdata_UIS}
 
+  TSFILES
   textdata_nb.ts
   textdata_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${textdata_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 ADD_LIBRARY(textdata

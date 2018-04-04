@@ -27,13 +27,19 @@ SET(watchrr_UIS
   watchrr_station.ui
 )
 
-QT5_CREATE_TRANSLATION(watchrr_QM
+METNO_QT5_CREATE_TRANSLATION(watchrr_QM
+  UPDATE_SOURCES
   ${watchrr_SOURCES}
   ${watchrr_UIS}
 
+  TSFILES
   watchrr_de.ts
   watchrr_nb.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${watchrr_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 QT5_WRAP_CPP(watchrr_MOC

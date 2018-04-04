@@ -9,13 +9,19 @@ SET(weather_UIS
   weatherdialog.ui
 )
 
-QT5_CREATE_TRANSLATION(weather_QM
+METNO_QT5_CREATE_TRANSLATION(weather_QM
+  UPDATE_SOURCES
   ${weather_SOURCES}
   ${weather_UIS}
 
+  TSFILES
   weather_nb.ts
   weather_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${weather_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 QT5_WRAP_CPP(weather_MOC

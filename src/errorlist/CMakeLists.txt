@@ -18,13 +18,20 @@ SET(errorlist_UIS
   error_search_dialog.ui
 )
 QT5_WRAP_UI(errorlist_UIH ${errorlist_UIS})
-QT5_CREATE_TRANSLATION(errorlist_QM
+
+METNO_QT5_CREATE_TRANSLATION(errorlist_QM
+  UPDATE_SOURCES
   ${errorlist_SOURCES}
   ${errorlist_UIS}
 
+  TSFILES
   errorlist_nb.ts
   errorlist_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${errorlist_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

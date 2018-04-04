@@ -15,13 +15,19 @@ SET(missingobs_UIS
 )
 QT5_WRAP_UI(missingobs_UIH ${missingobs_UIS})
 
-QT5_CREATE_TRANSLATION(missingobs_QM
+METNO_QT5_CREATE_TRANSLATION(missingobs_QM
+  UPDATE_SOURCES
   ${missingobs_SOURCES}
   ${missingobs_UIS}
 
+  TSFILES
   missingobs_nb.ts
   missingobs_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
+
 INSTALL(FILES ${missingobs_QM} DESTINATION "${HQC_INSTALL_SHAREDIR}/lang")
 
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})

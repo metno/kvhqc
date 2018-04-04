@@ -35,12 +35,17 @@ SET(hqc_UIS
   user_settings.ui
 )
 
-QT5_CREATE_TRANSLATION(hqc_QM
+METNO_QT5_CREATE_TRANSLATION(hqc_QM
+  UPDATE_SOURCES
   ${hqc_SOURCES}
   ${hqc_UIS}
 
+  TSFILES
   hqc_nb.ts
   hqc_de.ts
+
+  UPDATE_TARGET
+  lupdate
 )
 
 QT5_WRAP_CPP(hqc_MOC
