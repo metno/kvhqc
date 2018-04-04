@@ -1,3 +1,31 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2014-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #ifndef LIB_KVHELPERS_HH
 #define LIB_KVHELPERS_HH 1
@@ -132,6 +160,7 @@ enum {
     PARAMID_RR_12 = 109,
     PARAMID_RR_24 = 110,
     PARAMID_SA  = 112,
+    PARAMID_EE  = 129,
     PARAMID_TA  = 211,
     PARAMID_TAN = 213,
     PARAMID_TAN_12 = 214,

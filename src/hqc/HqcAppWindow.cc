@@ -209,7 +209,7 @@ void HqcAppWindow::onNewWatchRR()
 #ifdef ENABLE_WATCHRR
   const timeutil::ptime now = timeutil::now();
 
-  Sensor sensor(83880, kvalobs::PARAMID_RR_24, 0, 0, 302);
+  Sensor sensor(3780, kvalobs::PARAMID_RR_24, 0, 0, 305);
   timeutil::ptime tMiddle = now - boost::gregorian::days(7);
 #if 0
   if (mLastNavigated.valid()) {
