@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a17-1) unstable; urgency=low
+
+  * modify which stations are accepted from stinfosys
+  * remove boost/foreach and boost/bind
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 05 Apr 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a16-1) unstable; urgency=low
 
   * rework DataItem to make DataVxItem work
