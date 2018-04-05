@@ -51,7 +51,6 @@
 #include "ui_watchrr_redist.h"
 
 #include <kvalobs/kvDataOperations.h>
-#include <boost/bind.hpp>
 
 #include <QMessageBox>
 #include <QSettings>

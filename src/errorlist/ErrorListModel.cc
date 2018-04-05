@@ -42,8 +42,6 @@
 #include <QCoreApplication>
 #include <QFont>
 
-#include <boost/foreach.hpp>
-
 #include <algorithm>
 
 #define MILOGGER_CATEGORY "kvhqc.ErrorListModel"
@@ -80,7 +78,7 @@ const char* tooltips[ErrorListModel::NCOLUMNS] = {
   QT_TRANSLATE_NOOP("ErrorList", "Flags"),
 };
 
-} // anonymous namespace 
+} // anonymous namespace
 
 class ErrorListModel::ErrorTreeItem
 {
@@ -264,7 +262,7 @@ QVariant ErrorListModel::data(const QModelIndex& index, int role) const
     const ObsData_p& obs = findObs(index);
     if (not obs)
       return QVariant();
-    
+
     const SensorTime& st = obs->sensorTime();
     const int column = index.column();
     if (role == Qt::ToolTipRole or role == Qt::StatusTipRole) {

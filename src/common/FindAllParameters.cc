@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "FindAllParameters.hh"
 
 #include "KvMetaDataBuffer.hh"
@@ -36,8 +35,6 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVariant>
-
-#include <boost/foreach.hpp>
 
 #include <sstream>
 
@@ -68,8 +65,8 @@ std::vector<int> findAllParameters(bool historic)
     HQC_LOG_ERROR("failed to fetch parameter list from kvalobs SQL db -- using kvParam; error was: " << query.lastError().text());
 
     const std::vector<kvalobs::kvParam> allParam = KvMetaDataBuffer::instance()->allParams();
-    BOOST_FOREACH(const kvalobs::kvParam& p, allParam)
-        params.push_back(p.paramID());
+    for (const kvalobs::kvParam& p : allParam)
+      params.push_back(p.paramID());
   }
   return params;
 }

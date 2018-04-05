@@ -1,8 +1,34 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2013-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #ifndef UTIL_CHANGEREPLAY_HH
 #define UTIL_CHANGEREPLAY_HH 1
-
-#include <boost/foreach.hpp>
 
 #include <algorithm>
 #include <set>
@@ -42,7 +68,7 @@ typename ChangeReplay<Column,Comp>::ColumnVector ChangeReplay<Column,Comp>::remo
 }
 
 /*! Replay changes. Result is: 'actual' union ('original' - ('actual' union 'removed')).
- * 
+ *
  * @param original suggested column set (need not be the same as passed to 'removals' earlier)
  * @param actual   previous actual column set after user edits
  * @param removed  columns removed from the previous original column set (output from 'removals')
@@ -58,9 +84,9 @@ typename ChangeReplay<Column,Comp>::ColumnVector ChangeReplay<Column,Comp>::repl
     ColumnSet add;
     std::set_difference(originals.begin(), originals.end(), no_add.begin(), no_add.end(),
                         std::insert_iterator<ColumnSet>(add, add.end()), Comp());
-    
+
     ColumnVector replayed(actual);
-    BOOST_FOREACH(const Column& c, original) {
+    for (const Column& c : original) {
         if (add.find(c) != add.end())
             replayed.push_back(c);
     }

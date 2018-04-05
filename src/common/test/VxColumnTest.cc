@@ -3,8 +3,6 @@
 #include "KvHelpers.hh"
 #include "KvalobsAccess.hh"
 
-#include <boost/bind.hpp>
-
 #define LOAD_DECL_ONLY
 #include "load_31850_20121130.cc"
 

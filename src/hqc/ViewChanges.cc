@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "ViewChanges.hh"
 
 #include "common/KvHelpers.hh"
@@ -38,8 +37,6 @@
 #include <QSqlError>
 #include <QSqlQuery>
 #include <QVariant>
-
-#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.ViewChanges"
 #include "common/ObsLogging.hh"

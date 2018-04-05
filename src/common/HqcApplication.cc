@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "HqcApplication.hh"
 
 #include "CachingAccess.hh"
@@ -63,9 +62,6 @@
 #include <QUrl>
 #include <QVariant>
 
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.HqcApplication"
 #define M_TIME
 #include "util/HqcLogging.hh"
@@ -90,24 +86,24 @@ HqcApplication::HqcApplication(int& argc, char** argv, std::shared_ptr<miutil::c
     , mConfig(conf)
 {
   hqcApp = this;
-  
+
   QCoreApplication::setOrganizationName("Meteorologisk Institutt");
   QCoreApplication::setOrganizationDomain("met.no");
   QCoreApplication::setApplicationName("Hqc");
 
   // must init after configuring QCoreApplication as it reads QSettings
   mUserConfig.reset(new HqcUserConfig);
-  
+
   QString language = savedLanguage();
   if (not language.isEmpty())
     QLocale::setDefault(QLocale(language));
   installTranslations();
-  
+
   QDir::setSearchPaths("icons", QStringList(hqc::getPath(hqc::IMAGEDIR)));
   setWindowIcon(QIcon("icons:hqc_logo.svg"));
-  
+
   connect(this, SIGNAL(lastWindowClosed()), this, SLOT(quit()));
-  
+
   QTimer* availabilityTimer = new QTimer(this);
   connect(availabilityTimer, SIGNAL(timeout()), this, SLOT(checkKvalobsAvailability()));
   availabilityTimer->start(AVAILABILITY_TIMEROUT);
@@ -227,7 +223,7 @@ QStringList HqcApplication::availableLanguages() const
 
   QDir langDir(::hqc::getPath(::hqc::LANGDIR));
   QStringList fileNames = langDir.entryList(QStringList("hqc_*.qm"));
-  Q_FOREACH(QString locale, fileNames) {
+  for (QString locale : fileNames) {
     //                                    locale = "hqc_de.qm"
     locale.truncate(locale.lastIndexOf('.'));   // "hqc_de"
     locale.remove(0, locale.indexOf('_') + 1);  // "de"
@@ -239,7 +235,7 @@ QStringList HqcApplication::availableLanguages() const
 
 void HqcApplication::installTranslations()
 {
-  BOOST_FOREACH(QTranslator* t, mTranslators) {
+  for (QTranslator* t : mTranslators) {
     removeTranslator(t);
     delete t;
   }
@@ -263,8 +259,8 @@ void HqcApplication::installTranslations(const QLocale& locale, const QString& f
 {
   QTranslator* translator = new QTranslator(this);
   mTranslators.push_back(translator);
-  
-  BOOST_FOREACH(const QString& p, paths) {
+
+  for (const QString& p : paths) {
     if (translator->load(locale, file, "_", p)) {
       METLIBS_LOG_INFO("loaded '" << file << "' translations from " << p
           << " for ui languages=" << QLocale::system().uiLanguages().join(","));
@@ -294,8 +290,7 @@ bool HqcApplication::notify(QObject* receiver, QEvent* e)
 
 void HqcApplication::onException(const QString& message)
 {
-  const bool isGuiThread = 
-      QThread::currentThread() == QCoreApplication::instance()->thread();
+  const bool isGuiThread = QThread::currentThread() == QCoreApplication::instance()->thread();
   if (isGuiThread) {
     QMessageBox w;
     w.setWindowTitle(tr("HQC"));

@@ -43,8 +43,6 @@
 #include <QStandardItem>
 #include <QStandardItemModel>
 
-#include <boost/foreach.hpp>
-
 #include <algorithm>
 
 #include "ui_error_search_dialog.h"
@@ -195,8 +193,8 @@ void ErrorSearchDialog::setupStationTab()
       county2item.insert(std::make_pair(*itCD, c_item));
     }
   }
-  
-  BOOST_FOREACH(const listStat_t& s, listStat) {
+
+  for (const listStat_t& s : listStat) {
     const QString prty = (s.pri > 0) ? QString("PRI%1").arg(s.pri) : QString();
 
     QStandardItem *s_item = new QStandardItem(QString::number(s.stationid));
@@ -208,7 +206,7 @@ void ErrorSearchDialog::setupStationTab()
             << new QStandardItem(s.fylke)
             << new QStandardItem(s.kommune)
             << new QStandardItem(prty);
-    Q_FOREACH(QStandardItem* i, s_items) {
+    for (QStandardItem* i : s_items) {
       i->setFlags(Qt::ItemIsSelectable | Qt::ItemIsEnabled);
     }
     s_item->setCheckable(true);
@@ -317,8 +315,8 @@ void ErrorSearchDialog::doSaveSettings(QSettings& settings)
   {
     QStringList parameters;
     const hqc::int_v params = getSelectedParameters();
-    BOOST_FOREACH(int pid, params)
-        parameters << QString::number(pid);
+    for (int pid : params)
+      parameters << QString::number(pid);
     settings.setValue("selected_parameters", parameters);
   }
 
@@ -336,8 +334,8 @@ void ErrorSearchDialog::doRestoreSettings(QSettings& settings)
   {
     const QStringList parameters = settings.value("selected_parameters").toStringList();
     hqc::int_v params;
-    BOOST_FOREACH(const QString& p, parameters)
-        params.push_back(p.toInt());
+    for (const QString& p : parameters)
+      params.push_back(p.toInt());
 
     mParamSelectedModel->setValues(params);
     showParamGroup(ui->comboParamGroup->currentText());
@@ -365,7 +363,7 @@ void ErrorSearchDialog::onSaveSettings()
   if (ok && !label.isEmpty()) {
     QSettings settings;
     const QStringList groups = settings.childGroups();
-    BOOST_FOREACH(const QString g, groups) {
+    for (const QString g : groups) {
       const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
       if (lud == label) {
         QMessageBox msgBox(this);
@@ -393,7 +391,7 @@ void ErrorSearchDialog::onRestoreSettings()
   QSettings settings;
   const QStringList groups = settings.childGroups();
   QStringList stored;
-  BOOST_FOREACH(const QString g, groups) {
+  for (const QString g : groups) {
     const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
     if (not lud.isEmpty())
       stored << lud;
@@ -410,7 +408,7 @@ void ErrorSearchDialog::onRestoreSettings()
   QString recall = QInputDialog::getItem(this, tr("Load data selection"),
       tr("Name:"), stored, 0, false, &ok);
   if (ok && !recall.isEmpty()) {
-    BOOST_FOREACH(const QString g, groups) {
+    for (const QString g : groups) {
       const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
       if (not lud.isEmpty() and lud == recall) {
         settings.beginGroup(g);
@@ -437,7 +435,7 @@ void ErrorSearchDialog::showParamGroup(const QString& paramGroup)
 
   const hqc::int_v& group = mParameterGroups[paramGroup];
   hqc::int_v avail;
-  BOOST_FOREACH(int pid, group) {
+  for (int pid : group) {
     if (sel_set.find(pid) == sel_set.end())
       avail.push_back(pid);
   }

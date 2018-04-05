@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "WeatherDialog.hh"
 
 #include "WeatherTableModel.hh"
@@ -39,9 +38,6 @@
 
 #include <QMessageBox>
 #include <qsettings.h>
-
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
 
 #include "ui_weatherdialog.h"
 

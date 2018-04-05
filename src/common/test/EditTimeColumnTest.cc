@@ -7,7 +7,6 @@
 #include "FakeKvApp.hh"
 #include "TestHelpers.hh"
 
-#include <boost/bind.hpp>
 #include <boost/noncopyable.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.test.EditTimeColumnTest"

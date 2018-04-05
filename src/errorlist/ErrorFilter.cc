@@ -36,8 +36,6 @@
 
 #include <kvalobs/kvDataOperations.h>
 
-#include <boost/foreach.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.ErrorFilter"
 #include "common/ObsLogging.hh"
 
@@ -86,10 +84,10 @@ const int ignored_typeid[] = {
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 {
   const timeutil::pdate otime_date = otime.date();
-  
+
   // this is from HqcMainWindow::checkTypeId combined with from ErrorList::typeFilter
   const hqc::hqcObsPgm_v& obs_pgm = KvMetaDataBuffer::instance()->findObsPgm(stnr);
-  BOOST_FOREACH(const kvalobs::kvObsPgm& op, obs_pgm) {
+  for (const kvalobs::kvObsPgm& op : obs_pgm) {
     const timeutil::pdate tfrom = timeutil::from_miTime(op.fromtime()).date(),
         tto = timeutil::from_miTime(op.totime()).date();
     if (abs(typeId) == op.typeID() and par == op.paramID() && otime_date >= tfrom && otime_date <= tto )

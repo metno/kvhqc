@@ -1,3 +1,31 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2012-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "StationDialog.hh"
 
@@ -13,8 +41,6 @@
 #include "ui_watchrr_station.h"
 
 #include <kvalobs/kvObsPgm.h>
-
-#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.StationDialog"
 #include "util/HqcLogging.hh"
@@ -47,7 +73,7 @@ void StationDialog::init()
   METLIBS_LOG_SCOPE();
   ui.reset(new Ui::DialogStation);
   ui->setupUi(this);
-  
+
   ui->labelStationInfo->setText("");
 
   QDateTime today(QDate::currentDate(), QTime(6, 0));
@@ -171,7 +197,7 @@ void StationDialog::updateTypeList()
     } else {
       updateStationInfoText();
       const TimeSpan st = selectedTime();
-      BOOST_FOREACH (const kvalobs::kvObsPgm& op, obs_pgm) {
+      for (const kvalobs::kvObsPgm& op : obs_pgm) {
         if (st.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
           continue;
         const int t = acceptThisObsPgm(op);

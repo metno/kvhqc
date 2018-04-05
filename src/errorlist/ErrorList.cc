@@ -43,8 +43,6 @@
 #include <QHeaderView>
 #include <QSettings>
 
-#include <boost/foreach.hpp>
-
 #include "ui_errorlist.h"
 
 #define MILOGGER_CATEGORY "kvhqc.ErrorList"
@@ -91,7 +89,7 @@ void ErrorList::onButtonSearch()
   connect(mObsPgmRequest, &ObsPgmRequest::complete, this, &ErrorList::onObsPgmsComplete);
   mObsPgmRequest->post();
 }
- 
+
 void ErrorList::onObsPgmsComplete()
 {
   const TimeSpan timeLimits = mDialog->getTimeSpan();
@@ -102,12 +100,12 @@ void ErrorList::onObsPgmsComplete()
 
   Sensor_v sensors;
 
-  BOOST_FOREACH(int stationId, selectedStations) {
-    BOOST_FOREACH(int paramId, selectedParameters) {
+  for (int stationId : selectedStations) {
+    for (int paramId : selectedParameters) {
       const hqc::hqcObsPgm_v& opl = mObsPgmRequest->get(stationId);
       Sensor sensor(stationId, paramId, 0, 0, 0);
       hqc::int_s typeIdsShown;
-      BOOST_FOREACH(const hqc::hqcObsPgm& op, opl) {
+      for (const hqc::hqcObsPgm& op : opl) {
         if (ignoreUnofficial && !op.priority_message())
           continue;
         const TimeSpan op_time(op.fromtime(), op.totime());

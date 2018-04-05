@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "KvHelpers.hh"
 
 #include "HqcApplication.hh"
@@ -46,17 +45,12 @@
 #include <QVariant>
 
 #include <boost/algorithm/string.hpp>
-#include <boost/foreach.hpp>
 
 #define MILOGGER_CATEGORY "kvhqc.KvHelpers"
 #include "common/ObsLogging.hh"
 
 namespace /* anonymous */ {
-const char* flagnames[16] = {
-  "fagg", "fr", "fcc", "fs", "fnum", 
-  "fpos", "fmis", "ftime", "fw", "fstat", 
-  "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc" 
-};
+const char* flagnames[16] = {"fagg", "fr", "fcc", "fs", "fnum", "fpos", "fmis", "ftime", "fw", "fstat", "fcp", "fclim", "fd", "fpre", "fcombi", "fhqc"};
 } // namespace anonymous
 
 // ########################################################################
@@ -253,13 +247,13 @@ void addNeighbors(Sensor_v& neighbors, const Sensor& sensor, const TimeSpan& tim
   METLIBS_LOG_SCOPE();
 
   int count = 0;
-  BOOST_FOREACH(const kvalobs::kvStation& s, neighborStations) {
+  for (const kvalobs::kvStation& s : neighborStations) {
     const hqc::hqcObsPgm_v& obs_pgm = obsPgms->get(s.stationID());
-    BOOST_FOREACH (const hqc::hqcObsPgm& op, obs_pgm) {
+    for (const hqc::hqcObsPgm& op : obs_pgm) {
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
       // FIXME this is not correct if there is more than one klXX or collector or typeid or ...
-      
+
       const bool eql = op.paramID() == sensor.paramId;
       const bool agg = aggregatedParameter(op.paramID(), sensor.paramId);
       if (eql or agg) {
@@ -291,15 +285,15 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
 
   const hqc::hqcObsPgm_v& obs_pgm = obsPgms->get(s.stationId);
   Sensor_v sensors;
-  BOOST_FOREACH(int par, stationPar) {
+  for (int par : stationPar) {
     Sensor s2(s);
     s2.paramId = par;
     bool accept = (par == s.paramId);
     if (not accept) {
-      BOOST_FOREACH (const hqc::hqcObsPgm& op, obs_pgm) {
+      for (const hqc::hqcObsPgm& op : obs_pgm) {
         if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
           continue;
-        
+
         const bool eql = op.paramID() == par;
         const bool agg = aggregatedParameter(op.paramID(), par);
         if (eql or agg) {
@@ -312,15 +306,15 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
     if (accept)
       sensors.push_back(s2);
   }
-    
-  BOOST_FOREACH(int par, neighborPar) {
+
+  for (int par : neighborPar) {
     Sensor sn(s);
     sn.paramId = par;
     addNeighbors(sensors, sn, time, neighborStations, obsPgms, nNeighbors);
   }
 #if 0
   METLIBS_LOG_DEBUG("found " << sensors.size() << " default sensors for " << LOGVAL(st) << LOGVAL(viewType));
-  BOOST_FOREACH(const Sensor& ds, sensors) {
+  for (const Sensor& ds : sensors) {
     METLIBS_LOG_DEBUG(LOGVAL(ds));
   }
 #endif

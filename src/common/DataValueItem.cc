@@ -38,7 +38,6 @@
 #include "KvHelpers.hh"
 
 #include <kvalobs/kvDataOperations.h>
-#include <boost/bind.hpp>
 
 #include <QApplication>
 #include <QBrush>

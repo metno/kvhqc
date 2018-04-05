@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "StInfoSysBuffer.hh"
 
 #include "KvMetaDataBuffer.hh"
@@ -40,8 +39,6 @@
 #include <QSqlQuery>
 #include <QStringList>
 #include <QVariant>
-
-#include <boost/foreach.hpp>
 
 #include <map>
 #include <set>
@@ -115,7 +112,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
       }
       if (countryid == norway_countryid and municipid >= norway_remap_municip and county_name.size() < 3)
         HQC_LOG_WARN("empty county for municipid " << municipid);
-      
+
       municip2info.insert(std::make_pair(municipid, municip_info(municip_name, county_name)));
     }
   }
@@ -155,10 +152,10 @@ bool StInfoSysBuffer::readFromStInfoSys()
       continue;
     }
     const municip_info& mi = itI->second;
-    
+
     const HqcSystemDB::station2prio_t::const_iterator it = station2prio.find(stationid);
     const int pri = (it != station2prio.end()) ? it->second : 0;
-    
+
     listStat_t ls;
     ls.name = Helpers::fromUtf8(st.name());
     ls.stationid   = stationid;
@@ -170,7 +167,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
     ls.municipid   = municipid; // useed in extreme value list to exclude ships
     ls.pri         = pri;
     ls.coast       = (station2coast.find(stationid) != station2coast.end());
-    
+
     if (kv_stationids.find(stationid) != kv_stationids.end()) {
       METLIBS_LOG_INFO("kvalobs has duplicate stationid " << stationid << ", ignored");
     } else {

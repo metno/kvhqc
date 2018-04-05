@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "TimeSeriesView.hh"
 
 #include "TimeSeriesAdd.hh"
@@ -49,7 +48,7 @@
 #include <QResizeEvent>
 #include <QStringListModel>
 
-#include <boost/foreach.hpp>
+#include <boost/range/adaptor/reversed.hpp>
 
 #include <algorithm>
 
@@ -156,7 +155,7 @@ void TimeSeriesView::updateSensors()
 
   mPlotOptions = std::vector<POptions::PlotOptions>(mSensors.size());
   int idx = -1;
-  BOOST_FOREACH(const Sensor& s, mSensors) {
+  for (const Sensor& s : mSensors) {
     POptions::PlotOptions& po = mPlotOptions[++idx];
 
     po.name = (tr("Station:") + QString::number(s.stationId)).toStdString();
@@ -332,7 +331,7 @@ std::string TimeSeriesView::changes()
   const Sensor_v removed = cr.removals(mOriginalSensors, mSensors);
   if (not removed.empty()) {
     QDomElement doc_removed = doc.createElement(E_TAG_REMOVED);
-    BOOST_FOREACH(const Sensor& r, removed) {
+    for (const Sensor& r : removed) {
       QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
       toText(r, doc_column);
       doc_removed.appendChild(doc_column);
@@ -341,7 +340,7 @@ std::string TimeSeriesView::changes()
   }
 
   QDomElement doc_columns = doc.createElement(E_TAG_COLUMNS);
-  BOOST_FOREACH(const Sensor& s, mSensors) {
+  for (const Sensor& s : mSensors) {
     QDomElement doc_column = doc.createElement(E_TAG_COLUMN);
     toText(s, doc_column);
     doc_columns.appendChild(doc_column);
@@ -434,7 +433,7 @@ void TimeSeriesView::onActionRemoveColumns()
 {
   METLIBS_LOG_SCOPE();
   QStringList lines;
-  BOOST_FOREACH(const Sensor& s, mSensors)
+  for (const Sensor& s : mSensors)
     lines << QString("%1 P%2 T%3 L%4 S%5").arg(s.stationId).arg(s.paramId)
       .arg(s.typeId).arg(s.level).arg(s.sensor);
 
@@ -448,7 +447,7 @@ void TimeSeriesView::onActionRemoveColumns()
 
   const QModelIndexList selected = tr_ui.tableLines->selectionModel()->selectedRows();
   METLIBS_LOG_DEBUG(LOGVAL(selected.size()));
-  BOOST_REVERSE_FOREACH(const QModelIndex& s, selected) {
+  for (const QModelIndex& s : boost::adaptors::reverse(selected)) {
     Sensor_v::iterator it = mSensors.begin() + s.row();
     METLIBS_LOG_DEBUG(LOGVAL(*it));
     mSensors.erase(it);
@@ -543,7 +542,7 @@ void TimeSeriesView::updatePlot()
   TimeSeriesData::tsList tslist;
 
   int idx = -1;
-  BOOST_FOREACH(const Sensor& sensor, mSensors) {
+  for (const Sensor& sensor : mSensors) {
     idx += 1;
     if (idx >= (int)mPlotOptions.size()) {
       HQC_LOG_ERROR("only " << mPlotOptions.size() << " plotoptions for " << mSensors.size()
@@ -561,7 +560,7 @@ void TimeSeriesView::updatePlot()
     tseries.paramid(sensor.paramId);
     tseries.plotoptions(mPlotOptions[idx]);
 
-    BOOST_FOREACH(const timeutil::ptime& time, times) {
+    for (const timeutil::ptime& time : times) {
       const SensorTime st(sensor, time);
       ObsData_p obs;
       ModelData_p mdl;

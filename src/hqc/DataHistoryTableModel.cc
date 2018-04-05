@@ -39,9 +39,6 @@
 #include <QSqlQuery>
 #include <QVariant>
 
-#include <boost/bind.hpp>
-#include <boost/foreach.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.DataHistoryTableModel"
 #include "common/ObsLogging.hh"
 

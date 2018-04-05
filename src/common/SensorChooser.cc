@@ -1,3 +1,31 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2013-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
 
 #include "SensorChooser.hh"
 
@@ -11,8 +39,6 @@
 #include <QComboBox>
 #include <QLineEdit>
 #include <QSpinBox>
-
-#include <boost/foreach.hpp>
 
 #include <vector>
 
@@ -174,8 +200,8 @@ void SensorChooser::setLevels(const hqc::int_s& levels)
   mLevel->clear();
   if (levels.find(0) == levels.end())
     mLevel->addItem("0");
-  BOOST_FOREACH(int l, levels)
-      mLevel->addItem(QString::number(l));
+  for (int l : levels)
+    mLevel->addItem(QString::number(l));
   mLevel->setCurrentIndex(0);
 }
 
@@ -200,7 +226,7 @@ void SensorChooser::onStationEdited(const QString&)
     op->sync();
     const hqc::hqcObsPgm_v& opgm = op->get(stationId);
     METLIBS_LOG_DEBUG(LOGVAL(opgm.size()));
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+    for (const kvalobs::kvObsPgm& op : opgm) {
       const int p = op.paramID();
       if (p == kvalobs::PARAMID_V4S or p == kvalobs::PARAMID_V5S or p == kvalobs::PARAMID_V6S)
         continue;
@@ -233,7 +259,7 @@ void SensorChooser::onParameterSelected(int)
   hqc::int_s stationTypes;
   if (goodParam) {
     const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+    for (const kvalobs::kvObsPgm& op : opgm) {
       const int p = op.paramID();
       if (p == paramId)
         stationTypes.insert(op.typeID());
@@ -266,7 +292,7 @@ void SensorChooser::onTypeSelected(int)
   hqc::int_s levels;
   if (good) {
     const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+    for (const kvalobs::kvObsPgm& op : opgm) {
       const int p = op.paramID(), t = op.typeID();
       if ((paramId == p and typeId == t)
           or (Helpers::aggregatedParameter(p, paramId) and typeId == -t))
@@ -299,7 +325,7 @@ void SensorChooser::onLevelSelected(int)
   int maxSensor = 0;
   if (good) {
     const hqc::hqcObsPgm_v& opgm = KvMetaDataBuffer::instance()->findObsPgm(stationId);
-    BOOST_FOREACH(const kvalobs::kvObsPgm& op, opgm) {
+    for (const kvalobs::kvObsPgm& op : opgm) {
       const int p = op.paramID(), t = op.typeID();
       if (level == op.level()
           and ((paramId == p and typeId == t) or (Helpers::aggregatedParameter(p, paramId) and typeId == -t)))

@@ -38,8 +38,6 @@
 
 #include <QHeaderView>
 
-#include <boost/foreach.hpp>
-
 #include "ui_extremevalues.h"
 
 #define MILOGGER_CATEGORY "kvhqc.ExtremesView"

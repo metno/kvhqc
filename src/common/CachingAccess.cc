@@ -27,14 +27,11 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "CachingAccess.hh"
 
 #include "CachingAccessPrivate.hh"
 
 #include "set_differences.hh"
-
-#include <boost/foreach.hpp>
 
 #include <list>
 
@@ -73,9 +70,9 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
   , mCountFailed(0)
 {
   METLIBS_LOG_SCOPE();
-  BOOST_FOREACH(BackendBuffer_p bb, mBackendBuffers) {
+  for (BackendBuffer_p bb : mBackendBuffers) {
     // TODO assert that the sensor matches sensor()
-  
+
     bb->use();
 
     SignalRequest* sr = std::static_pointer_cast<SignalRequest>(bb->request()).get();
@@ -101,7 +98,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
 CacheTag::~CacheTag()
 {
   METLIBS_LOG_SCOPE(LOGVAL(mRequest->timeSpan()));
-  BOOST_FOREACH(BackendBuffer_p bb, mBackendBuffers) {
+  for (BackendBuffer_p bb : mBackendBuffers) {
     bb->drop();
   }
 }
@@ -165,7 +162,7 @@ void CacheTag::onBackendUpdateData(const ObsData_pv& data)
 void CacheTag::onBackendDropData(const SensorTime_v& droppedIn)
 {
   METLIBS_LOG_SCOPE();
-  
+
   SensorTime_v droppedOut;
   const TimeSpan& rtime = mRequest->timeSpan();
   for(SensorTime_v::const_iterator itI = droppedIn.begin(); itI != droppedIn.end(); ++itI) {
@@ -260,7 +257,7 @@ public:
   Sensor_todo todo;
 
   typedef std::map<Time, Sensor_s> Time_Sensors_m;
-  
+
   SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsFilter_p filter, const Time& t0);
 
   void requestBuffers(const Sensor_s& intersection, const TimeSpan& time, bool close);
@@ -287,7 +284,7 @@ SensorTodo::SensorTodo(CachingAccessPrivate_p cap, const Sensor_s& sensors, ObsF
   , mFilter(filter)
 {
   const t0_closed tcinit(t0);
-  BOOST_FOREACH(const Sensor& s, sensors) {
+  for (const Sensor& s : sensors) {
     todo.insert(std::make_pair(s, tcinit));
   }
 }
@@ -296,7 +293,7 @@ SensorTodo::Time_Sensors_m SensorTodo::calculateRequestSpans(const Sensor_s& sen
 {
   METLIBS_LOG_SCOPE();
   Time_Sensors_m tsm;
-  BOOST_FOREACH(const Sensor& s, sensors) {
+  for (const Sensor& s : sensors) {
     Sensor_todo::iterator it = todo.find(s);
     if (it == todo.end()) {
       METLIBS_LOG_ERROR("sensor not in sensorTodo");
@@ -316,7 +313,7 @@ void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& ti
 {
   METLIBS_LOG_SCOPE(LOGVAL(intersection) << LOGVAL(time));
   const Time_Sensors_m tsm = calculateRequestSpans(intersection, time, close);
-  BOOST_FOREACH(const Time_Sensors_m::value_type& ts, tsm) {
+  for (const Time_Sensors_m::value_type& ts : tsm) {
     const TimeSpan trequest(ts.first, time.t0());
     BackendBuffer_p bb = mCAP->create(ts.second, trequest, mFilter);
     mToShare.push_back(bb);
@@ -326,7 +323,7 @@ void SensorTodo::requestBuffers(const Sensor_s& intersection, const TimeSpan& ti
 
 void SensorTodo::post()
 {
-  BOOST_FOREACH(BackendBuffer_p bb, mToPost) {
+  for (BackendBuffer_p bb : mToPost) {
     bb->postRequest(mCAP->backend);
   }
 }
@@ -349,7 +346,7 @@ void CachingAccess::postRequest(ObsRequest_p request)
   // may not post request before creating CacheTag, otherwise counting
   // of incomplete buffers cannot work
 
-  BOOST_FOREACH(BackendBuffer_p bb, p->mBuffers) {
+  for (BackendBuffer_p bb : p->mBuffers) {
     // continue if filters do not match
     if (not filtersCompatible(rfilter, bb->filter())) {
       METLIBS_LOG_DEBUG("incompatible filters");

@@ -39,8 +39,6 @@
 #include <QSqlQuery>
 #include <QVariant>
 
-#include <boost/foreach.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.StationInfoBuffer"
 #include "util/HqcLogging.hh"
 
@@ -118,7 +116,7 @@ bool StationInfoBuffer::writeToStationFile()
 
   QSqlQuery insert(db);
   insert.prepare(STATIONINFO_CACHE_INSERT);
-  BOOST_FOREACH(const listStat_t& ls, listStat) {
+  for (const listStat_t& ls : listStat) {
     insert.bindValue(":sid",      ls.stationid);
     insert.bindValue(":mun_id",   ls.municipid);
     insert.bindValue(":county", ls.fylke);
@@ -151,7 +149,7 @@ bool StationInfoBuffer::writeToStationFile()
 
   QSqlQuery insert_mc(db);
   insert_mc.prepare(MANUAL_TYPES_CACHE_INSERT);
-  BOOST_FOREACH(int t, mManualTypes) {
+  for (int t : mManualTypes) {
     insert_mc.bindValue(":typeid", t);
     if (not insert_mc.exec())
       HQC_LOG_ERROR("error while inserting manual type " << t << ": " << insert_mc.lastError().text());
@@ -166,7 +164,7 @@ bool StationInfoBuffer::writeToStationFile()
 bool StationInfoBuffer::readFromStationFile()
 {
   METLIBS_LOG_SCOPE();
-  
+
   QSqlDatabase db = hqcApp->configDB();
   if (db.tables().contains(STATIONINFO_CACHE)) {
     QSqlQuery query(STATIONINFO_CACHE_SELECT_ALL, db);
@@ -174,27 +172,27 @@ bool StationInfoBuffer::readFromStationFile()
       try {
         const int stationId = query.value(0).toInt();
         const kvalobs::kvStation& st = KvMetaDataBuffer::instance()->findStation(stationId);
-        
+
         listStat_t ls;
         ls.stationid   = stationId;
 
         ls.name = Helpers::fromUtf8(st.name());
         ls.altitude    = st.height();
         ls.wmonr       = st.wmonr();
-          
+
         ls.municipid   = query.value(1).toInt();
         ls.fylke = query.value(2).toString();
         ls.kommune = query.value(3).toString();
         ls.coast       = query.value(4).toBool();
         ls.pri         = query.value(5).toInt();
-  
+
         listStat.push_back(ls);
       } catch (std::exception& e) {
         HQC_LOG_WARN("exception while reading stationinfo_cache: " << e.what());
       }
     }
   }
-  
+
   if (db.tables().contains(MANUAL_TYPES_CACHE)) {
     mManualTypes.clear();
     QSqlQuery query(MANUAL_TYPES_CACHE_SELECT_ALL, db);
