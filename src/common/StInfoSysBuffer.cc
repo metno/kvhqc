@@ -51,6 +51,7 @@ namespace /*anonymous*/ {
 const char QSQLNAME_REMOTE[] = "stinfosys";
 const int norway_countryid = 578;     // FIXME do not hardcode this
 const int norway_remap_municip = 100; // FIXME do not hardcode this
+const QString OTHER = "OTHER";
 
 struct municip_info {
   QString municip_name; // norwegian or foreign municipality name
@@ -92,7 +93,7 @@ bool StInfoSysBuffer::readFromStInfoSys()
       METLIBS_LOG_DEBUG(LOGVAL(municipid) << LOGVAL(countryid) << LOGVAL(municip_code) << LOGVAL(municip_name));
 
       if (municipid == 0) {
-        county_name = municip_name = "OTHER";
+        county_name = municip_name = OTHER;
       } else {
         QString cn = HqcSystemDB::remappedCounty(countryid, municip_code);
         if (not cn.isNull()) {
@@ -105,13 +106,18 @@ bool StInfoSysBuffer::readFromStInfoSys()
             county_name = itC->second.municip_name;
             METLIBS_LOG_DEBUG("norwegian special remapped " << LOGVAL(county_name));
           } else {
-            HQC_LOG_WARN("no county name for municipid " << municipid);
-            continue;
+            county_name = OTHER;
+            HQC_LOG_WARN("no county name for municipid " << municipid << ", using '" << county_name << "'");
           }
         }
       }
-      if (countryid == norway_countryid and municipid >= norway_remap_municip and county_name.size() < 3)
-        HQC_LOG_WARN("empty county for municipid " << municipid);
+      if (county_name.isEmpty()) {
+        if (countryid == norway_countryid and municipid >= norway_remap_municip)
+          HQC_LOG_WARN("empty county for municipid " << municipid);
+        county_name = OTHER;
+      }
+      if (municip_name.isEmpty())
+        municip_name = OTHER;
 
       municip2info.insert(std::make_pair(municipid, municip_info(municip_name, county_name)));
     }
@@ -144,7 +150,11 @@ bool StInfoSysBuffer::readFromStInfoSys()
     const int stationid = st.stationID();
 
     const station2municip_m::const_iterator itM = station2municip.find(stationid);
-    const int municipid = (itM != station2municip.end()) ? itM->second : 0;
+    if (itM == station2municip.end()) {
+      METLIBS_LOG_DEBUG("no municipid for station " << stationid << "; station ignored");
+      continue;
+    }
+    const int municipid = itM->second;
 
     const municip2info_m::const_iterator itI = municip2info.find(municipid);
     if (itI == municip2info.end()) {
