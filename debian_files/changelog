@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a18-1) unstable; urgency=low
+
+  * WatchRR: enable "done" button after changes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 06 Apr 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a17-1) unstable; urgency=low
 
   * modify which stations are accepted from stinfosys
