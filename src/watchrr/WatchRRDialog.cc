@@ -152,6 +152,9 @@ WatchRRDialog::WatchRRDialog(EditAccess_p da, ModelAccess_p ma, const Sensor& se
   connect(mNeighborCards.get(), SIGNAL(timeChanged(const timeutil::ptime&)),
       this, SLOT(onNeighborDataTimeChanged(const timeutil::ptime&)));
 
+  connect(mDA.get(), &EditAccess::currentVersionChanged, this, &WatchRRDialog::enableSave);
+  enableSave();
+
   mNeighborCards->setTime(time.t1()-boost::posix_time::hours(24));
 }
 
@@ -287,7 +290,6 @@ void WatchRRDialog::onAcceptRow()
     return;
   }
   ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  enableSave();
   clearSelection();
 }
 
@@ -321,7 +323,6 @@ void WatchRRDialog::onEdit()
     mDA->newVersion();
     eda->storeToBackend();
     ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    enableSave();
     clearSelection();
   }
 }
@@ -335,7 +336,6 @@ void WatchRRDialog::onRedistribute()
     mDA->newVersion();
     eda->storeToBackend();
     ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-    enableSave();
     clearSelection();
   }
 }
@@ -345,7 +345,6 @@ void WatchRRDialog::onRedistributeQC2()
   const Selection sel = findSelection();
   RR24::redistributeInQC2(mDA, mSensor, sel.selTime, mEditableTime);
   ui->tableStationCard->horizontalHeader()->resizeSections(QHeaderView::ResizeToContents);
-  enableSave();
   clearSelection();
 }
 
@@ -353,7 +352,6 @@ void WatchRRDialog::onUndo()
 {
   if (mDA->canUndo() and (mDA->currentVersion() > 1)) {
     mDA->undoVersion();
-    enableSave();
     clearSelection();
   }
 }
@@ -362,7 +360,6 @@ void WatchRRDialog::onRedo()
 {
   if (mDA->canRedo()) {
     mDA->redoVersion();
-    enableSave();
     clearSelection();
   }
 }

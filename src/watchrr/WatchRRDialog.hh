@@ -79,6 +79,8 @@ private Q_SLOTS:
   void onNeighborDataTimeChanged(const SensorTime& st);
   void onCurrentTabChanged(int tab);
 
+  void enableSave();
+
 private:
   struct Selection {
     TimeSpan selTime;
@@ -102,7 +104,6 @@ private:
 
   void initializeRR24Data();
   void addRR24Task(const timeutil::ptime& time, QString task);
-  void enableSave();
 
 private:
   std::unique_ptr<Ui::DialogMain> ui;
