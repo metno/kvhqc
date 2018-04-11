@@ -98,7 +98,7 @@ void StationCardModel::addStationColumn(const Sensor& sensor, int paramId, ObsCo
     if (columnType == ObsColumn::NEW_CORRECTED)
       mRR24CorrectedColumn = countColumns() - 1;
     else if (columnType == ObsColumn::ORIGINAL)
-      mRR24CorrectedColumn = countColumns() - 1;
+      mRR24OriginalColumn = countColumns() - 1;
   }
 }
 
