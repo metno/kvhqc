@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a19-1) unstable; urgency=low
+
+  * WatchRR bugfix RR_24 column numbers
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 11 Apr 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a18-1) unstable; urgency=low
 
   * WatchRR: enable "done" button after changes
