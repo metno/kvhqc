@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a20-1) unstable; urgency=low
+
+  * ignore typeid=510 in for extremes / errors
+  * bugfix ExtremesFilter from cache
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Fri, 15 Jun 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a19-1) unstable; urgency=low
 
   * WatchRR bugfix RR_24 column numbers
