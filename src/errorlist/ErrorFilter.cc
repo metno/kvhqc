@@ -77,9 +77,7 @@ const int paramid_preciptationtype[] = {
 };
 
 // used with binary_search, must be sorted
-const int ignored_typeid[] = {
-    506
-};
+const int ignored_typeid[] = {506, 510};
 
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 {
