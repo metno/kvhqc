@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a21-1) unstable; urgency=low
+
+  * bugfix request sensors from cache
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 09 Jul 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a20-1) unstable; urgency=low
 
   * ignore typeid=510 in for extremes / errors
