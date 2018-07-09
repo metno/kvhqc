@@ -109,14 +109,18 @@ ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn, bool applyFilter)
   ObsData_pv dataOut;
 
   const TimeSpan& rtime = mRequest->timeSpan();
+  const Sensor_s& rsensors = mRequest->sensors();
 
-  for(ObsData_pv::const_iterator itI = dataIn.begin(); itI != dataIn.end(); ++itI) {
-    ObsData_p obsI = (*itI);
+  const bool validSensors = (rsensors.size() != 1 || rsensors.begin()->valid());
+
+  for (ObsData_p obsI : dataIn) {
     const Time& timeI = obsI->sensorTime().time;
     if (timeI < rtime.t0())
       continue;
     if (timeI > rtime.t1())
       break;
+    if (validSensors && rsensors.find(obsI->sensorTime().sensor) == rsensors.end())
+      continue;
 
     if ((not applyFilter) or acceptFilter(obsI))
       // FIXME mData is a vector, insert one-by-one is not efficent
