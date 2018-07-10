@@ -47,10 +47,10 @@
 
 static const int MIN_DAYS = 7, MAX_DAYS = 120;
 
-StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog* parent)
-  : QDialog(parent)
-  , mSensor(sensor)
-  , mObsPgmRequest(0)
+StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QWidget* parent)
+    : QDialog(parent)
+    , mSensor(sensor)
+    , mObsPgmRequest(0)
 {
   init();
 
@@ -60,10 +60,10 @@ StationDialog::StationDialog(const Sensor& sensor, const TimeSpan& time, QDialog
   ui->editStation->selectAll();
 }
 
-StationDialog::StationDialog(QDialog* parent)
-  : QDialog(parent)
-  , mSensor(0, kvalobs::PARAMID_RR_24, 0, 0, -1)
-  , mObsPgmRequest(0)
+StationDialog::StationDialog(QWidget* parent)
+    : QDialog(parent)
+    , mSensor(0, kvalobs::PARAMID_RR_24, 0, 0, -1)
+    , mObsPgmRequest(0)
 {
   init();
 }

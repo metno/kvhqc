@@ -1,7 +1,7 @@
 /* -*- c++ -*-
    HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-   Copyright (C) 2014 met.no
+   Copyright (C) 2014-2018 met.no
 
    Contact information:
    Norwegian Meteorological Institute
@@ -29,6 +29,8 @@
 
 #ifndef HQC_HQCAPPWINDOW_H
 #define HQC_HQCAPPWINDOW_H
+
+#include "common/Sensor.hh"
 
 #include <QMainWindow>
 
@@ -88,6 +90,8 @@ private Q_SLOTS:
 
   void onEditVersionChanged(size_t current, size_t highest);
 
+  void navigateTo(const SensorTime&);
+
 private:
   void writeSettings();
   void readSettings();
@@ -108,6 +112,8 @@ private:
 
   ClientSelection* mCoserverClient;
   DianaHelper* mDianaHelper;
+
+  SensorTime mLastNavigatedWatchRR;
 };
 
 #endif // HQC_HQCAPPWINDOW_H

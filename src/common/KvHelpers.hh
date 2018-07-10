@@ -104,6 +104,8 @@ private:
   int stationid;
 };
 
+bool isTypeIdForWatchRR(const Sensor& sensor);
+
 const std::set<int>& ignoredTypeIds();
 bool isIgnoredTypeId(const Sensor& sensor);
 

@@ -141,6 +141,8 @@ HqcAppWindow::HqcAppWindow()
       this, SLOT(onEditVersionChanged(size_t, size_t)));
   // initialize save/undo/redo buttons
   onEditVersionChanged(0, 0);
+
+  mLastNavigatedWatchRR = SensorTime(Sensor(3780, kvalobs::PARAMID_RR_24, 0, 0, 305), timeutil::now() - boost::gregorian::days(7));
 }
 
 HqcAppWindow::~HqcAppWindow()
@@ -185,6 +187,7 @@ void HqcAppWindow::finish()
 void HqcAppWindow::onNewSearch()
 {
   SearchWindow* sw = new SearchWindow(this);
+  connect(sw, &SearchWindow::signalNavigateTo, this, &HqcAppWindow::navigateTo);
   sw->show();
 }
 
@@ -209,26 +212,16 @@ void HqcAppWindow::onNewWatchRR()
 #ifdef ENABLE_WATCHRR
   const timeutil::ptime now = timeutil::now();
 
-  Sensor sensor(3780, kvalobs::PARAMID_RR_24, 0, 0, 305);
-  timeutil::ptime tMiddle = now - boost::gregorian::days(7);
-#if 0
-  if (mLastNavigated.valid()) {
-    sensor = mLastNavigated.sensor;
-    sensor.paramId = kvalobs::PARAMID_RR_24;
-    tMiddle = timeutil::from_miTime(mLastNavigated.time);
-  }
-#endif
-
-  timeutil::ptime timeTo = timeutil::ptime(tMiddle.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
+  timeutil::ptime timeTo = timeutil::ptime(mLastNavigatedWatchRR.time.date(), boost::posix_time::hours(6)) + boost::gregorian::days(7);
   timeutil::ptime timeFrom = timeTo - boost::gregorian::days(21);
   while (timeTo > now)
     timeTo -= boost::gregorian::days(1);
   TimeSpan time(timeFrom, timeTo);
 
-  StationDialog sd(sensor, time);
+  StationDialog sd(mLastNavigatedWatchRR.sensor, time, this);
   if (not sd.exec())
     return;
-  sensor = sd.selectedSensor();
+  const Sensor& sensor = sd.selectedSensor();
   time = sd.selectedTime();
 
   new WatchRRDialog(hqcApp->editAccess(), hqcApp->modelAccess(), sensor, time, this);
@@ -364,6 +357,12 @@ void HqcAppWindow::onEditVersionChanged(size_t current, size_t highest)
   ui->actionSave->setEnabled(eda->canUndo());
   ui->actionUndo->setEnabled(eda->canUndo());
   ui->actionRedo->setEnabled(eda->canRedo());
+}
+
+void HqcAppWindow::navigateTo(const SensorTime& st)
+{
+  if (st.valid() && Helpers::isTypeIdForWatchRR(st.sensor))
+    mLastNavigatedWatchRR = st;
 }
 
 void HqcAppWindow::writeSettings()

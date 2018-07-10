@@ -225,6 +225,12 @@ float numericalValue(int paramId, float codeValue)
   return codeValue;
 }
 
+bool isTypeIdForWatchRR(const Sensor& sensor)
+{
+  const int typeId = sensor.typeId;
+  return (typeId == 302 or typeId == 305 or typeId == 402);
+}
+
 const std::set<int>& ignoredTypeIds()
 {
   static const std::set<int> ignored_typeids = {506, 510};

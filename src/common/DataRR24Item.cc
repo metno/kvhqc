@@ -30,6 +30,7 @@
 
 #include "DataRR24Item.hh"
 
+#include "KvHelpers.hh"
 #include "ObsHelpers.hh"
 
 #include <QBrush>
@@ -48,8 +49,7 @@ Qt::ItemFlags DataRR24Item::flags(const ObsData_pv& obs) const
   Qt::ItemFlags f = DataCorrectedItem::flags(obs);
   if (obs.size() == 1) {
     ObsData_p o = obs.front();
-    const int typeId = o->sensorTime().sensor.typeId;
-    if (typeId == 302 or typeId == 305 or typeId == 402)
+    if (Helpers::isTypeIdForWatchRR(o->sensorTime().sensor))
       f &= ~Qt::ItemIsEditable;
   }
   return f;
