@@ -76,9 +76,6 @@ const int paramid_preciptationtype[] = {
     43  // W2
 };
 
-// used with binary_search, must be sorted
-const int ignored_typeid[] = {506, 510};
-
 bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
 {
   const timeutil::pdate otime_date = otime.date();
@@ -94,11 +91,6 @@ bool IsTypeInObsPgm(int stnr, int par, int typeId, const timeutil::ptime& otime)
   return false;
 }
 
-bool IsIgnoredTypeId(const Sensor& sensor)
-{
-  return std::binary_search(ignored_typeid, boost::end(ignored_typeid), sensor.typeId);
-}
-
 bool checkErrorSalen2013(const ObsData_p obs)
 {
   const kvalobs::kvControlInfo ci = obs->controlinfo();
@@ -108,7 +100,7 @@ bool checkErrorSalen2013(const ObsData_p obs)
 
   const SensorTime& st = obs->sensorTime();
   const Sensor& sensor = st.sensor;
-  if (IsIgnoredTypeId(sensor))
+  if (Helpers::isIgnoredTypeId(sensor))
     return false;
   if (not Helpers::isNorwegianStationId(sensor.stationId))
     return false;
@@ -147,7 +139,7 @@ bool checkErrorHQC2013(const ObsData_p obs)
 
   const SensorTime& st = obs->sensorTime();
   const Sensor& sensor = st.sensor;
-  if (IsIgnoredTypeId(sensor))
+  if (Helpers::isIgnoredTypeId(sensor))
     return false;
   if (not Helpers::isNorwegianStationId(sensor.stationId))
     return false;

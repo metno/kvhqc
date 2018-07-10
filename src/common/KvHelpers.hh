@@ -104,6 +104,9 @@ private:
   int stationid;
 };
 
+const std::set<int>& ignoredTypeIds();
+bool isIgnoredTypeId(const Sensor& sensor);
+
 bool isNorwegianStationId(int stationid);
 std::string isNorwegianStationIdSQL(const std::string& stationid_column);
 

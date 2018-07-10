@@ -40,7 +40,6 @@
 // ************************************************************************
 
 namespace /*anonymous*/ {
-const int ignored_typeid[] = {506, 510};
 
 QString exists_in_obspgm(const QString& data_alias, const QString& obs_pgm_alias = "o")
 {
@@ -103,7 +102,7 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString&, const TimeSpan& 
 
   if (!mExcludedIds.empty())
     sql += " AND NOT (" + set2sql("dd.stationid", mExcludedIds) + ")";
-  for (int ti : ignored_typeid)
+  for (int ti : Helpers::ignoredTypeIds())
     " AND dd.typeid != " + QString::number(ti);
   sql += " AND " + set2sql("dd.paramid", mParamIds);
   sql += " AND " + exists_in_obspgm("dd.");
@@ -154,10 +153,8 @@ bool ExtremesFilter::accept(ObsData_p obs, bool afterSQL) const
   if (!Helpers::isNorwegianStationId(obsStationId) || mExcludedIds.count(obsStationId))
     return false;
 
-  const int obsTypeId = obs->sensorTime().sensor.typeId;
-  for (int ti : ignored_typeid)
-    if (obsTypeId == ti)
-      return false;
+  if (Helpers::isIgnoredTypeId(obs->sensorTime().sensor))
+    return false;
 
   const int obsParamId = obs->sensorTime().sensor.paramId;
   if (!mParamIds.count(obsParamId))

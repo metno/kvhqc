@@ -225,6 +225,17 @@ float numericalValue(int paramId, float codeValue)
   return codeValue;
 }
 
+const std::set<int>& ignoredTypeIds()
+{
+  static const std::set<int> ignored_typeids = {506, 510};
+  return ignored_typeids;
+}
+
+bool isIgnoredTypeId(const Sensor& sensor)
+{
+  return ignoredTypeIds().find(sensor.typeId) != ignoredTypeIds().end();
+}
+
 static const int STATIONID_NORWAY_MIN = 60, STATIONID_NORWAY_MAX = 99999;
 
 bool isNorwegianStationId(int stationid)
