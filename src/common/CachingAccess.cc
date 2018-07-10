@@ -110,15 +110,11 @@ ObsData_pv CacheTag::filterData(const ObsData_pv& dataIn, bool applyFilter)
 
   const TimeSpan& rtime = mRequest->timeSpan();
   const Sensor_s& rsensors = mRequest->sensors();
-
   const bool validSensors = (rsensors.size() != 1 || rsensors.begin()->valid());
 
   for (ObsData_p obsI : dataIn) {
-    const Time& timeI = obsI->sensorTime().time;
-    if (timeI < rtime.t0())
+    if (!rtime.contains(obsI->sensorTime().time))
       continue;
-    if (timeI > rtime.t1())
-      break;
     if (validSensors && rsensors.find(obsI->sensorTime().sensor) == rsensors.end())
       continue;
 
@@ -351,17 +347,21 @@ void CachingAccess::postRequest(ObsRequest_p request)
   // of incomplete buffers cannot work
 
   for (BackendBuffer_p bb : p->mBuffers) {
-    // continue if filters do not match
-    if (not filtersCompatible(rfilter, bb->filter())) {
-      METLIBS_LOG_DEBUG("incompatible filters");
+    const TimeSpan& bbt = bb->timeSpan();
+    if (bbt.t0() > rtime.t1()) {
+      // bb starts after end of request; as backend buffers are sorted by time (see CachingAccessPrivate::create), we're done
+      break;
+    }
+    if (bbt.t1() < rtime.t0()) {
+      // bb ends before start of request; no intersection possible
       continue;
     }
 
-    const TimeSpan& bbt = bb->timeSpan();
-    METLIBS_LOG_DEBUG(LOGVAL(bbt));
-
-    if (bbt.t0() > rtime.t1())
-      break;
+    if (not filtersCompatible(rfilter, bb->filter())) {
+      // filters are not compatible
+      METLIBS_LOG_DEBUG("incompatible filters");
+      continue;
+    }
 
     Sensor_s intersection;
     typedef std::insert_iterator<Sensor_s> Sensor_si;
@@ -369,20 +369,18 @@ void CachingAccess::postRequest(ObsRequest_p request)
         bb->sensors().begin(), bb->sensors().end(),
         Sensor_si(intersection,  intersection.begin()), lt_Sensor());
 
-    // for those in intersection, we make new requests for before the
+    // for the sensors in intersection, we make new requests for before the
     // buffer, and then put the buffer into the backendbuffer list
     if (not intersection.empty()) {
       todo.requestBuffers(intersection, bbt, false);
 
       // add the buffer for those we already had fetched
       todo.shared().push_back(bb);
-
-      if (bbt.t1() >= rtime.t1())
-        break;
     }
   }
 
   const Time& rt1 = request->timeSpan().t1();
+  METLIBS_LOG_DEBUG(LOGVAL(rt1));
   todo.requestBuffers(rsensors, TimeSpan(rt1, rt1), true);
 
   request->setTag(new CacheTag(request, todo.shared()));

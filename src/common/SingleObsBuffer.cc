@@ -6,14 +6,6 @@
 #define MILOGGER_CATEGORY "kvhqc.SingleObsBuffer"
 #include "common/ObsLogging.hh"
 
-// ========================================================================
-
-namespace /*anonymous*/ {
-
-} // namespace anonymous
-
-// ========================================================================
-
 SingleObsBuffer::SingleObsBuffer(const SensorTime& st)
   : SimpleBuffer(make_set<Sensor_s>(st.sensor), TimeSpan(st.time, st.time), ObsFilter_p())
 {

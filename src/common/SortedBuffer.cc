@@ -88,7 +88,9 @@ void SortedBuffer::onNewData(const ObsData_pv& data)
     if (it != mData.end()) {
       ObsData_p& e = *it;
       if (o->original() != e->original() || o->corrected() != e->corrected() || o->controlinfo() != e->controlinfo() || o->cfailed() != e->cfailed()) {
-        HQC_LOG_WARN("replacing data in newData" << o->sensorTime());
+        HQC_LOG_WARN("replacing data in newData" << o->sensorTime() << "; new/existing original=" << o->original() << '/' << e->original()
+                                                 << " corrected=" << o->corrected() << '/' << e->corrected() << " controlinfo=" << o->controlinfo().flagstring()
+                                                 << '/' << e->controlinfo().flagstring() << " cfailed=" << o->cfailed() << '/' << e->cfailed());
       }
       e = o; // FIXME the need for this is actually a bug in some ObsAccess implementation
     } else {

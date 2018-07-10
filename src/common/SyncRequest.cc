@@ -85,7 +85,5 @@ ModelRequest_p syncRequest(ModelRequest_p request, ModelAccess_p access)
   access->postRequest(request);
   sync.waitForSignal();
   
-  QObject::disconnect(request.get(), SIGNAL(requestCompleted(const QString&)), &sync, SLOT(taskDone()));
-
   return request;
 }

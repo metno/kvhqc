@@ -103,7 +103,7 @@ public:
   void clean(const Time& dropBefore);
 
   ObsAccess_p backend;
-  BackendBuffer_pl mBuffers;
+  BackendBuffer_pl mBuffers; // must be a list as we insert (in create) while iterating (in postRequest)
 };
 
 #endif // ACCESS_CACHINGACCESSPRIVATE_HH

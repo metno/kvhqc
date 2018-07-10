@@ -112,7 +112,7 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
 
   ObsUpdate_pv updates;
 
-  // add tasks for RR24 observations if the have errors
+  // add tasks for RR24 observations if they have errors
   int last_acc = NO, last_endpoint = NO, have_endpoint = NO;
   for (timeutil::ptime t = mTE; t >= mTS; t -= step) {
     const SensorTime st(sensor, t);
@@ -127,7 +127,8 @@ bool analyse(TaskAccess_p da, const Sensor& sensor, TimeSpan& time)
 
     int task = 0;
     int acc = is_accumulation(obs), end = is_endpoint(obs);
-    METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(obs->controlinfo().flagstring()) << LOGVAL(acc) << LOGVAL(end));
+    METLIBS_LOG_DEBUG(LOGVAL(t) << LOGVAL(obs->original()) << LOGVAL(obs->corrected()) << LOGVAL(obs->controlinfo().flagstring()) << LOGVAL(acc)
+                                << LOGVAL(end));
     if (acc != NO) {
       const int f_fhqc = obs->controlinfo().flag(kvalobs::flag::fhqc);
       if (acc == BEFORE_REDIST and f_fhqc != 0 and f_fhqc != 4)
