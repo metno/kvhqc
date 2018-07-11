@@ -195,7 +195,7 @@ void HqcAppWindow::onNewTextdata()
 {
   METLIBS_LOG_SCOPE();
 #ifdef ENABLE_TEXTDATA
-  TextData::showTextData(this);
+  TextData::showTextData(mLastNavigated, this);
 #endif
 }
 
@@ -361,6 +361,7 @@ void HqcAppWindow::onEditVersionChanged(size_t current, size_t highest)
 
 void HqcAppWindow::navigateTo(const SensorTime& st)
 {
+  mLastNavigated = st;
   if (st.valid() && Helpers::isTypeIdForWatchRR(st.sensor))
     mLastNavigatedWatchRR = st;
 }

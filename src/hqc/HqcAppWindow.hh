@@ -113,6 +113,7 @@ private:
   ClientSelection* mCoserverClient;
   DianaHelper* mDianaHelper;
 
+  SensorTime mLastNavigated;
   SensorTime mLastNavigatedWatchRR;
 };
 

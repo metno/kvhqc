@@ -4,24 +4,21 @@
 #define HQC_TEXTDATADIALOG_H
 
 #include "common/TimeSpan.hh"
-#include <qdialog.h>
-#include <qdatetime.h>
+#include "common/Sensor.hh"
 
-class Q3VBoxLayout;
-class Q3HBoxLayout;
-class Q3GridLayout;
-class QSpacerItem;
+#include <QDialog>
+#include <QDateTime>
+
 class QLabel;
 class QDateTimeEdit;
 class QLineEdit;
-class QCheckBox;
 class QPushButton;
 
 class TextDataDialog : public QDialog
 { Q_OBJECT;
 
 public:
-  TextDataDialog(QWidget* parent = 0);
+  TextDataDialog(const SensorTime& st, QWidget* parent = 0);
 
   int getStationId() const
     { return stnr; }

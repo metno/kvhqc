@@ -15,11 +15,10 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 
-TextDataDialog::TextDataDialog(QWidget* parent)
-  : QDialog(parent)
+TextDataDialog::TextDataDialog(const SensorTime& st, QWidget* parent)
+    : QDialog(parent)
 {
   setWindowIcon(QIcon("icons:textdata.svg"));
-  stnr = 0;
 
   textLabel0 = new QLabel(this);
   textLabel1 = new QLabel(this);
@@ -29,7 +28,15 @@ TextDataDialog::TextDataDialog(QWidget* parent)
 
   Helpers::installStationIdCompleter(this, stationEdit);
 
-  QDateTime ldtto = timeutil::nowWithMinutes0Seconds0();
+  QDateTime ldtto;
+  if (st.valid()) {
+    stnr = st.sensor.stationId;
+    stationEdit->setText(QString::number(stnr));
+    ldtto = timeutil::to_QDateTime(st.time);
+  } else {
+    stnr = 0;
+    ldtto = timeutil::nowWithMinutes0Seconds0();
+  }
   dtto = ldtto;
   dtfrom = dtto.addDays(-2);
   fromEdit = new MiDateTimeEdit(dtfrom,this);

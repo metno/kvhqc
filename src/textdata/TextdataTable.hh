@@ -12,6 +12,7 @@
 class BusyLabel;
 class QTableView;
 class QueryTaskHelper;
+class SensorTime;
 
 class TextDataTableModel : public QAbstractTableModel
 { Q_OBJECT;
@@ -36,7 +37,7 @@ public:
   TextData(const int stationId, const TimeSpan& time, QWidget* parent=0);
   ~TextData();
 
-  static void showTextData(QWidget* parent);
+  static void showTextData(const SensorTime& st, QWidget* parent);
 
 protected:
   virtual void changeEvent(QEvent *event);

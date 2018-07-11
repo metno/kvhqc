@@ -233,10 +233,10 @@ void TextData::onQueryDone()
   mTask = 0;
 }
 
-void TextData::showTextData(QWidget* parent)
+void TextData::showTextData(const SensorTime& st, QWidget* parent)
 {
   METLIBS_LOG_SCOPE();
-  TextDataDialog dlg(parent);
+  TextDataDialog dlg(st, parent);
   if (dlg.exec() == QDialog::Accepted) {
     TextData* td = new TextData(dlg.getStationId(), dlg.getTimeSpan(), parent);
     td->open();
