@@ -288,17 +288,17 @@ QVariant DataVxItem::data(const ObsData_pv& obs, const SensorTime& st, int role)
 
 bool DataVxItem::setData(const ObsData_pv& obs, EditAccess_p, const SensorTime& st, const QVariant& value, int role)
 {
-  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED || obs.empty())
+  METLIBS_LOG_SCOPE(LOGVAL(role) << LOGVAL(mColumnType) << LOGVAL(obs.size()) << LOGVAL(st));
+  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED)
     return false;
 
-  METLIBS_LOG_SCOPE();
   const VxData* vxdata = vxData4SensorTime(st);
   if (not vxdata) {
     HQC_LOG_WARN("no Vx codes known for " << st);
     return false;
   }
 
-  ObsData_p obs1 = obs.front();
+  ObsData_p obs1 = (obs.size() >= 1) ? obs.front() : ObsData_p();
   ObsData_p obs2 = (obs.size() == 2) ? obs.back() : ObsData_p();
   const Codes_t oldCodes = getCodes(obs1, obs2);
   
