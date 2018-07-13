@@ -362,8 +362,10 @@ void HqcAppWindow::onEditVersionChanged(size_t current, size_t highest)
 void HqcAppWindow::navigateTo(const SensorTime& st)
 {
   mLastNavigated = st;
-  if (st.valid() && Helpers::isTypeIdForWatchRR(st.sensor))
-    mLastNavigatedWatchRR = st;
+  if (st.valid() && st.sensor.paramId == kvalobs::PARAMID_RR_24 && Helpers::isTypeIdForWatchRR(st.sensor)) {
+    mLastNavigatedWatchRR.sensor.stationId = st.sensor.stationId;
+    mLastNavigatedWatchRR.sensor.typeId = st.sensor.typeId;
+  }
 }
 
 void HqcAppWindow::writeSettings()
