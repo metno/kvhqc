@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a26-1) unstable; urgency=low
+
+  * fewer requests from AcceptRejectButtons::enableButtons
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 18 Jul 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a25-1) unstable; urgency=low
 
   * speedup accept/reject for long series
