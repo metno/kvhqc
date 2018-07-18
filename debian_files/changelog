@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a25-1) unstable; urgency=low
+
+  * speedup accept/reject for long series
+  * bugfix station_param cache
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 18 Jul 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a24-1) unstable; urgency=low
 
   * bugfix only use RR_24 for WatchRR
