@@ -168,6 +168,10 @@ void AcceptRejectButtons::enableButtons()
   if (mTableView && mTableView->selectionModel()) {
     int possible = AcceptReject::ALL;
     ObsTableModel* tableModel = static_cast<ObsTableModel*>(mTableView->model());
+    typedef std::set<SensorTime, lt_SensorTime> SensorTime_s;
+    SensorTime_s sensortimes;
+    Sensor_s sensors;
+    TimeSpan timespan;
     for (const QModelIndex& sel : mTableView->selectionModel()->selectedIndexes()) {
       SelectedColumnType ct = OTHER;
       if (DataColumn_p dc = std::dynamic_pointer_cast<DataColumn>(tableModel->getColumn(sel.column()))) {
@@ -183,16 +187,27 @@ void AcceptRejectButtons::enableButtons()
         mSelectedColumnType = ct;
       else if (mSelectedColumnType != ct)
         mSelectedColumnType = OTHER;
-      if (mSelectedColumnType == OTHER)
+      if (mSelectedColumnType == OTHER) {
+        sensortimes.clear();
+        possible = 0;
         break;
-
+      }
       const SensorTime st = tableModel->findSensorTime(sel);
-      SingleObsBuffer_p sobs(new SingleObsBuffer(st));
-      sobs->syncRequest(mDA);
-      ObsData_p obs = sobs->get();
-      if (obs) {
-        possible &= AcceptReject::possibilities(obs);
-        mSelectedObs.push_back(obs);
+      sensortimes.insert(st);
+      sensors.insert(st.sensor);
+      if (timespan.t0().is_not_a_date_time() || timespan.t0() > st.time)
+        timespan.t0() = st.time;
+      if (timespan.t1().is_not_a_date_time() || timespan.t1() < st.time)
+        timespan.t1() = st.time;
+    }
+    if (timespan.closed() && !sensortimes.empty()) {
+      TimeBuffer_p buffer = std::make_shared<TimeBuffer>(sensors, timespan);
+      buffer->syncRequest(mDA);
+      for (const SensorTime& st : sensortimes) {
+        if (ObsData_p obs = buffer->get(st)) {
+          possible &= AcceptReject::possibilities(obs);
+          mSelectedObs.push_back(obs);
+        }
       }
       // TODO disable if missing but in obs_pgm
     }
