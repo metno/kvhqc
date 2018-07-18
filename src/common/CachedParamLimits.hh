@@ -15,8 +15,7 @@ private:
     float param_max, param_high, param_low, param_min;
     bool have_max, have_high, have_low, have_min;
 
-    Limits() { reset(); }
-    void reset();
+    Limits();
   };
   typedef lru_cache<Sensor, Limits, hash_Sensor, eq_Sensor> sensor_limits_t;
 

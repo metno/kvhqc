@@ -4,7 +4,11 @@
 #include "QueryTask.hh"
 #include "util/Synchronizer.hh"
 
+#define USE_SYNCHRONIZER 1
+
 namespace {
+
+#ifndef USE_SYNCHRONIZER
 class SyncedTask : public QueryTask
 {
 public:
@@ -45,12 +49,13 @@ void SyncedTask::notifyDone(const QString& withError)
   mWithError = withError;
   mSemaphore.release();
 }
+#endif // !USE_SYNCHRONIZER
 
 } // anonymous namespace
 
 QueryTask* syncTask(QueryTask* task, QueryTaskHandler* handler)
 {
-#if 0
+#ifdef USE_SYNCHRONIZER
   Synchronizer sync;
   QObject::connect(task, SIGNAL(taskDone(const QString&)), &sync, SLOT(taskDone()));
 

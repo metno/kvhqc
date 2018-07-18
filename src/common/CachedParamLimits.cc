@@ -42,9 +42,11 @@
 #include <QSqlQuery>
 #include <QVariant>
 
-#ifdef DEBUG_ME_ON
 #define MILOGGER_CATEGORY "kvhqc.CachedParamLimits"
 #include "common/ObsLogging.hh"
+
+//#define DEBUG_ME_ON 1
+#ifdef DEBUG_ME_ON
 #define DEBUG_ME(x) x
 #else
 #define DEBUG_ME(x) do { } while(false)
@@ -59,7 +61,7 @@ CachedParamLimits::~CachedParamLimits()
 {
 }
 
-void CachedParamLimits::Limits::reset()
+CachedParamLimits::Limits::Limits()
 {
   have_max = have_high = have_low = have_min = false;
   fromtime = totime = timeutil::ptime();
@@ -70,6 +72,10 @@ CachedParamLimits::ParamLimit CachedParamLimits::check(const SensorTime& st, flo
   DEBUG_ME(METLIBS_LOG_SCOPE(LOGVAL(st) << LOGVAL(value)));
   if (value == kvalobs::MISSING or value == kvalobs::REJECTED)
     return Ok;
+  if (!st.valid()) {
+    METLIBS_LOG_ERROR("param limits check for invalid sensortime " << st);
+    return OutsideMinMax;
+  }
 
   const Sensor& sensor = st.sensor;
 
@@ -117,11 +123,11 @@ QString CachedParamLimits::fetchMetaData(const SensorTime& st, timeutil::ptime& 
 
   for (size_t i=0; i<task.metadata().size(); ++i) {
     const std::string& md = task.metadata().at(i);
-    if (md.find("high") == std::string::npos)
-      continue;
     const timeutil::ptime& ft = task.fromtimes().at(i);
+    if (md.find("max") == std::string::npos || md.find("high") == std::string::npos)
+      continue;
     if (ft <= st.time and (fromtime.is_not_a_date_time() or fromtime < ft)) {
-      metadata = QString::fromStdString(task.metadata().at(i));
+      metadata = QString::fromStdString(md);
       fromtime = ft;
     }
     if (ft > st.time and (totime.is_not_a_date_time() or totime > ft)) {
@@ -129,13 +135,11 @@ QString CachedParamLimits::fetchMetaData(const SensorTime& st, timeutil::ptime& 
     }
   }
 
-  DEBUG_ME(METLIBS_LOG_DEBUG(LOGVAL(metadata)));
   return metadata;
 }
 
 void CachedParamLimits::parseMetadata(const QString& metadata, Limits& limits)
 {
-  limits.reset();
 
   const QStringList lines = metadata.split(QChar('\n'));
   if (lines.length() != 2)
