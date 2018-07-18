@@ -16,8 +16,10 @@ SET(watchrr_SOURCES
   TaskUpdate.cc
   TasksColumn.cc
   WatchRRDialog.cc
-  WatchRRTableModel.cc
   WrapperColumn.cc
+
+  WatchRRTableModel.hh
+  RedistTableModel.hh
 )
 
 SET(watchrr_UIS

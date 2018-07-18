@@ -559,15 +559,17 @@ void accept(TaskAccess_p da, const Sensor& sensor, const TimeSpan& time, bool co
 
   da->newVersion();
 
+  ObsData_pv obsv;
   for (timeutil::ptime t = time.t0(); t <= time.t1(); t += step) {
     const SensorTime st(sensor, t);
-    ObsData_p obs = da->findE(st);
-    if (not obs)
-      continue;
+    if (ObsData_p obs = da->findE(st))
+      obsv.push_back(obs);
+  }
+  if (!obsv.empty()) {
     if (corrected)
-      AcceptReject::accept_corrected(da, obs, false);
+      AcceptReject::accept_corrected(da, obsv, false);
     else
-      AcceptReject::accept_original(da, obs);
+      AcceptReject::accept_original(da, obsv);
   }
 }
 

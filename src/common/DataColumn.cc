@@ -115,7 +115,7 @@ QVariant DataColumn::headerData(Qt::Orientation orientation, int role) const
       SensorHeader::ALWAYS, mTimeOffset.hours());
   return sh.sensorHeader(mItem, orientation, role);
 }
-      
+
 void DataColumn::onBufferCompleted(const QString&)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sensor()));
@@ -134,15 +134,19 @@ void DataColumn::onNewDataEnd(const ObsData_pv& data)
 void DataColumn::onUpdateDataEnd(const ObsData_pv& data)
 {
   METLIBS_LOG_SCOPE();
+  Time_s times;
   for (ObsData_p obs : data)
-    Q_EMIT columnChanged(timeB2C(obs->sensorTime().time), shared_from_this());
+    times.insert(timeB2C(obs->sensorTime().time));
+  Q_EMIT columnChanged(times, shared_from_this());
 }
 
 void DataColumn::onDropDataEnd(const SensorTime_v& dropped)
 {
   METLIBS_LOG_SCOPE();
+  Time_s times;
   for (const SensorTime& st : dropped)
-    Q_EMIT columnChanged(timeB2C(st.time), shared_from_this());
+    times.insert(timeB2C(st.time));
+  Q_EMIT columnChanged(times, shared_from_this());
 }
 
 Time_s DataColumn::times() const

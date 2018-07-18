@@ -104,19 +104,18 @@ void AcceptRejectButtons::onAccept()
 {
   METLIBS_LOG_SCOPE();
   if (!mSelectedObs.empty()) {
+    disableDataChanged();
     const bool qc2ok = mCheckQC2->isChecked();
     mDA->newVersion();
-    for (ObsData_p& obs : mSelectedObs) {
-      if (mSelectedColumnType == ORIGINAL and not qc2ok) {
-        AcceptReject::accept_original(mDA, obs);
-      } else if (mSelectedColumnType == CORRECTED) {
-        AcceptReject::accept_corrected(mDA, obs, qc2ok);
-      } else if (mSelectedColumnType == MODEL and mMA) {
-        AcceptReject::accept_model(mDA, mMA, obs, qc2ok);
-      }
+    if (mSelectedColumnType == ORIGINAL and not qc2ok) {
+      AcceptReject::accept_original(mDA, mSelectedObs);
+    } else if (mSelectedColumnType == CORRECTED) {
+      AcceptReject::accept_corrected(mDA, mSelectedObs, qc2ok);
+    } else if (mSelectedColumnType == MODEL and mMA) {
+      AcceptReject::accept_model(mDA, mMA, mSelectedObs, qc2ok);
     }
+    enableDataChanged();
   }
-  enableButtons();
 }
 
 void AcceptRejectButtons::onReject()
@@ -124,31 +123,39 @@ void AcceptRejectButtons::onReject()
   METLIBS_LOG_SCOPE();
   if (not mSelectedObs.empty() and (mSelectedColumnType == ORIGINAL or mSelectedColumnType == CORRECTED)) {
     const bool qc2ok = mCheckQC2->isChecked();
+    disableDataChanged();
     mDA->newVersion();
-    for (ObsData_p& obs : mSelectedObs) {
-      AcceptReject::reject(mDA, obs, qc2ok);
-    }
+    AcceptReject::reject(mDA, mSelectedObs, qc2ok);
+    enableDataChanged();
+  }
+}
+
+void AcceptRejectButtons::disableDataChanged()
+{
+  if (mTableView) {
+    QObject::disconnect(mTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(enableButtons()));
+    QObject::disconnect(mTableView->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(enableButtons()));
+  }
+}
+
+void AcceptRejectButtons::enableDataChanged()
+{
+  if (mTableView) {
+    QObject::connect(mTableView->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this, SLOT(enableButtons()));
+    QObject::connect(mTableView->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)), this, SLOT(enableButtons()));
   }
   enableButtons();
 }
 
 void AcceptRejectButtons::updateModel(EditAccess_p da, ModelAccess_p ma, QTableView* table)
 {
-  QObject::disconnect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(enableButtons()));
-  QObject::disconnect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(enableButtons()));
+  disableDataChanged();
 
   mDA = da;
   mMA = ma;
   mTableView = table;
 
-  QObject::connect(table->selectionModel(), SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)),
-      this, SLOT(enableButtons()));
-  QObject::connect(table->model(), SIGNAL(dataChanged(const QModelIndex&, const QModelIndex&)),
-      this, SLOT(enableButtons()));
-
-  enableButtons();
+  enableDataChanged();
 }
 
 void AcceptRejectButtons::enableButtons()

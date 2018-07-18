@@ -74,7 +74,7 @@ public:
     { return false; }
 
 Q_SIGNALS:
-  void columnChanged(const timeutil::ptime& time, ObsColumn_p column);
+  void columnChanged(const Time_s& time, ObsColumn_p column);
   void columnTimesChanged(ObsColumn_p column);
   void columnBusyStatus(bool busy);
   

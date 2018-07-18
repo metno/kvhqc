@@ -50,12 +50,9 @@ void ObsTableModel::insertColumn(int before, ObsColumn_p c)
   columnInsertBegin(before, before);
   mColumns.insert(mColumns.begin() + before, c);
   if (c) {
-    connect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
-        this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
-    connect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
-        this, SLOT(onColumnTimesChanged(ObsColumn_p)));
-    connect(c.get(), SIGNAL(columnBusyStatus(bool)),
-        this, SLOT(onColumnBusyStatus(bool)));
+    connect(c.get(), &ObsColumn::columnChanged, this, &ObsTableModel::onColumnChanged);
+    connect(c.get(), &ObsColumn::columnTimesChanged, this, &ObsTableModel::onColumnTimesChanged);
+    connect(c.get(), &ObsColumn::columnBusyStatus, this, &ObsTableModel::onColumnBusyStatus);
     c->attach(this);
   }
   columnInsertEnd();
@@ -107,12 +104,9 @@ void ObsTableModel::detachColumn(ObsColumn_p c)
 {
   if (c) {
     c->detach(this);
-    disconnect(c.get(), SIGNAL(columnChanged(const timeutil::ptime&, ObsColumn_p)),
-        this, SLOT(onColumnChanged(const timeutil::ptime&, ObsColumn_p)));
-    disconnect(c.get(), SIGNAL(columnTimesChanged(ObsColumn_p)),
-        this, SLOT(onColumnTimesChanged(ObsColumn_p)));
-    disconnect(c.get(), SIGNAL(columnBusyStatus(bool)),
-        this, SLOT(onColumnBusyStatus(bool)));
+    disconnect(c.get(), &ObsColumn::columnChanged, this, &ObsTableModel::onColumnChanged);
+    disconnect(c.get(), &ObsColumn::columnTimesChanged, this, &ObsTableModel::onColumnTimesChanged);
+    disconnect(c.get(), &ObsColumn::columnBusyStatus, this, &ObsTableModel::onColumnBusyStatus);
   }
 }
 
@@ -331,7 +325,7 @@ int ObsTableModel::rowAtTime(const timeutil::ptime& time) const
     return r;
 }
 
-void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p column)
+void ObsTableModel::onColumnChanged(const Time_s& times, ObsColumn_p column)
 {
   METLIBS_LOG_SCOPE();
 
@@ -339,12 +333,27 @@ void ObsTableModel::onColumnChanged(const timeutil::ptime& time, ObsColumn_p col
   if (it == mColumns.end())
     return;
 
-  const int row = rowAtTime(time);
-  if (row < 0)
-    return;
-  
-  const QModelIndex index = createIndex(row, (it - mColumns.begin()));
-  dataChanged(index, index);
+  // changed times might not be in any row, therefore we scan all times
+  int row0 = -1, row1 = -1;
+  for (const Time& time : times) {
+    const int row = rowAtTime(time);
+    if (row >= 0) {
+      if (row0 == -1)
+        row0 = row;
+      else if (row0 > row)
+        row0 = row;
+      if (row1 == -1)
+        row1 = row;
+      else if (row1 < row)
+        row1 = row;
+    }
+  }
+  if (row0 != -1 && row1 != -1) {
+    const int col = it - mColumns.begin();
+    const QModelIndex index0 = createIndex(row0, col);
+    const QModelIndex index1 = createIndex(row1, col);
+    Q_EMIT dataChanged(index0, index1);
+  }
 }
 
 void ObsTableModel::onColumnTimesChanged(ObsColumn_p column)

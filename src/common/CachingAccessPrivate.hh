@@ -37,6 +37,9 @@ public:
   ObsFilter_p filter() const
     { return request()->filter(); }
 
+  typedef std::pair<ObsData_pv::const_iterator, ObsData_pv::const_iterator> obsrange_t;
+  obsrange_t findRange(const Sensor& s, const TimeSpan& time) const;
+
 private:
   size_t mUseCount;
   Time mUnusedSince;
@@ -70,6 +73,7 @@ private:
   ObsFilter_p filter() const
     { return mRequest->filter(); }
 
+  ObsData_pv filterData(BackendBuffer_p bb, bool applyFilter);
   ObsData_pv filterData(const ObsData_pv& dataIn, bool applyFilter);
 
 public:

@@ -18,10 +18,10 @@ enum {
 
 int possibilities(ObsData_p obs, bool forWatchRR = false);
 
-void accept_model(EditAccess_p ea, ModelAccess_p mda, ObsData_p obs, bool qc2ok);
-void accept_corrected(EditAccess_p ea, ObsData_p obs, bool qc2ok);
-void accept_original(EditAccess_p ea, ObsData_p obs);
-void reject(EditAccess_p ea, ObsData_p obs, bool qc2ok);
+void accept_model(EditAccess_p ea, ModelAccess_p mda, ObsData_pv obsv, bool qc2ok);
+void accept_corrected(EditAccess_p ea, ObsData_pv obsv, bool qc2ok);
+void accept_original(EditAccess_p ea, ObsData_pv obsv);
+void reject(EditAccess_p ea, ObsData_pv obsv, bool qc2ok);
 
 } // namespace AcceptReject
 

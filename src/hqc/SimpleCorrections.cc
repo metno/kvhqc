@@ -294,28 +294,28 @@ void SimpleCorrections::onAcceptOriginal()
 {
   mDA->newVersion();
   if (ObsData_p obs = mObsBuffer->get(mSensorTime))
-    AcceptReject::accept_original(mDA, obs);
+    AcceptReject::accept_original(mDA, ObsData_pv(1, obs));
 }
 
 void SimpleCorrections::onAcceptCorrected()
 {
   mDA->newVersion();
   if (ObsData_p obs = mObsBuffer->get(mSensorTime))
-    AcceptReject::accept_corrected(mDA, obs, ui->checkQC2->isChecked());
+    AcceptReject::accept_corrected(mDA, ObsData_pv(1, obs), ui->checkQC2->isChecked());
 }
 
 void SimpleCorrections::onAcceptModel()
 {
   mDA->newVersion();
   if (ObsData_p obs = mObsBuffer->get(mSensorTime))
-    AcceptReject::accept_model(mDA, mMA, obs, ui->checkQC2->isChecked());
+    AcceptReject::accept_model(mDA, mMA, ObsData_pv(1, obs), ui->checkQC2->isChecked());
 }
 
 void SimpleCorrections::onReject()
 {
   mDA->newVersion();
   if (ObsData_p obs = mObsBuffer->get(mSensorTime))
-    AcceptReject::reject(mDA, obs, ui->checkQC2->isChecked());
+    AcceptReject::reject(mDA, ObsData_pv(1, obs), ui->checkQC2->isChecked());
 }
 
 void SimpleCorrections::onNewCorrected()

@@ -76,7 +76,7 @@ protected:
   void countBusyColumns(bool send);
 
 private Q_SLOTS:
-  virtual void onColumnChanged(const timeutil::ptime& time, ObsColumn_p column);
+  virtual void onColumnChanged(const Time_s& time, ObsColumn_p column);
   virtual void onColumnTimesChanged(ObsColumn_p column);
   virtual void onColumnBusyStatus(bool);
 

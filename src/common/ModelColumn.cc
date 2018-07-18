@@ -94,10 +94,10 @@ void ModelColumn::setCodes(Code2TextCPtr codes)
 
 void ModelColumn::bufferReceived(const ModelData_pv& mdata)
 {
-  for (ModelData_pv::const_iterator it = mdata.begin(); it != mdata.end(); ++it) {
-    const SensorTime& st = (*it)->sensorTime();
-    Q_EMIT columnChanged(st.time - mTimeOffset, shared_from_this());
-  }
+  Time_s times;
+  for (ModelData_p mdl : mdata)
+    times.insert(mdl->sensorTime().time - mTimeOffset);
+  Q_EMIT columnChanged(times, shared_from_this());
 }
 
 ModelData_p ModelColumn::get(const timeutil::ptime& time) const

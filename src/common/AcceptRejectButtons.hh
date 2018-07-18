@@ -34,6 +34,8 @@ private Q_SLOTS:
 
 private:
   void retranslateUi();
+  void disableDataChanged();
+  void enableDataChanged();
 
 private:
   EditAccess_p mDA;

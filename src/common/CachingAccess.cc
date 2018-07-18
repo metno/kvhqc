@@ -61,6 +61,23 @@ void BackendBuffer::drop()
     mUnusedSince = timeutil::now();
 }
 
+BackendBuffer::obsrange_t BackendBuffer::findRange(const Sensor& sensor, const TimeSpan& time) const
+{
+  const ObsData_pv::const_iterator d_begin = data().begin(), d_end = data().end();
+  const SensorTime st0(sensor, time.t0());
+  ObsData_pv::const_iterator r_begin = std::lower_bound(d_begin, d_end, st0, OrderingHelper(ordering()));
+  ObsData_pv::const_iterator r_end;
+  if (r_begin != d_end && eq_Sensor()((*r_begin)->sensorTime().sensor, sensor)) {
+    const SensorTime st1(sensor, time.t1());
+    r_end = std::lower_bound(r_begin, d_end, st1, OrderingHelper(ordering()));
+    if (r_end != d_end)
+      ++r_end;
+  } else {
+    r_begin = r_end = d_end;
+  }
+  return std::make_pair(r_begin, r_end);
+}
+
 // ========================================================================
 
 CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
@@ -81,7 +98,7 @@ CacheTag::CacheTag(ObsRequest_p request, BackendBuffer_pv backendBuffers)
     connect(sr, &SignalRequest::requestUpdateData, this, &CacheTag::onBackendUpdateData);
     connect(sr, &SignalRequest::requestDropData, this, &CacheTag::onBackendDropData);
 
-    const ObsData_pv bb_data = filterData(bb->data(), true);
+    const ObsData_pv bb_data = filterData(bb, true);
     if (!bb_data.empty())
       mRequest->newData(bb_data);
 
@@ -100,6 +117,32 @@ CacheTag::~CacheTag()
   METLIBS_LOG_SCOPE(LOGVAL(mRequest->timeSpan()));
   for (BackendBuffer_p bb : mBackendBuffers) {
     bb->drop();
+  }
+}
+
+ObsData_pv CacheTag::filterData(BackendBuffer_p bb, bool applyFilter)
+{
+  METLIBS_LOG_SCOPE();
+  const Sensor_s& rsensors = mRequest->sensors();
+  const bool validSensors = (rsensors.size() != 1 || rsensors.begin()->valid());
+  const bool nofilter = !filter();
+  METLIBS_LOG_DEBUG(LOGVAL(rsensors.size()) << LOGVAL(validSensors) << LOGVAL(applyFilter) << LOGVAL(nofilter));
+  if ((!applyFilter || !filter()) && validSensors) {
+    ObsData_pv dataOut;
+    const TimeSpan& rtime = mRequest->timeSpan();
+    for (const Sensor& rs : rsensors) {
+      METLIBS_LOG_DEBUG(LOGVAL(rs));
+      BackendBuffer::obsrange_t range = bb->findRange(rs, rtime);
+      if (range.first != bb->data().end()) {
+        METLIBS_LOG_DEBUG(LOGVAL((*range.first)->sensorTime()));
+        if (range.second != bb->data().end())
+          METLIBS_LOG_DEBUG(LOGVAL((*range.second)->sensorTime()));
+        dataOut.insert(dataOut.end(), range.first, range.second);
+      }
+    }
+    return dataOut;
+  } else {
+    return filterData(bb->data(), applyFilter);
   }
 }
 
