@@ -1,3 +1,32 @@
+/*
+  HQC - Free Software for Manual Quality Control of Meteorological Observations
+
+  Copyright (C) 2013-2018 met.no
+
+  Contact information:
+  Norwegian Meteorological Institute
+  Box 43 Blindern
+  0313 OSLO
+  NORWAY
+  email: kvalobs-dev@met.no
+
+  This file is part of HQC
+
+  HQC is free software; you can redistribute it and/or modify it under
+  the terms of the GNU General Public License as published by the Free
+  Software Foundation; either version 2 of the License, or (at your
+  option) any later version.
+
+  HQC is distributed in the hope that it will be useful, but WITHOUT ANY
+  WARRANTY; without even the implied warranty of MERCHANTABILITY or
+  FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License
+  for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with HQC; if not, write to the Free Software Foundation, Inc.,
+  51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
+*/
+
 
 #include "KvalobsModelAccess.hh"
 
@@ -34,24 +63,24 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
   ModelData_pv cached;
   METLIBS_LOG_DEBUG(LOGVAL(requested.size()));
 
-  for (SensorTime_v::const_iterator it = requested.begin(); it != requested.end(); ++it) {
-    METLIBS_LOG_DEBUG(LOGVAL(*it));
-    ModelDataCache_t::iterator itC = mCache.find(*it);
+  for (const SensorTime& st : requested) {
+    METLIBS_LOG_DEBUG(LOGVAL(st));
+    ModelDataCache_t::iterator itC = mCache.find(st);
     if (itC != mCache.end()) {
       if (itC->second)
         cached.push_back(itC->second);
     } else {
-      toQuery.push_back(*it);
+      toQuery.push_back(st);
       // insert null pointer into cache to prevent repeated lookup for missing model values
-      mCache.insert(std::make_pair(*it, ModelData_p()));
+      mCache.insert(std::make_pair(st, ModelData_p()));
     }
   }
 
   METLIBS_LOG_DEBUG(LOGVAL(cached.size()) << LOGVAL(toQuery.size()));
-  if (not cached.empty())
+  if (!cached.empty())
     request->notifyData(cached);
 
-  if (not toQuery.empty()) {
+  if (!toQuery.empty()) {
     ModelQueryTask* task = new ModelQueryTask(toQuery, QueryTask::PRIORITY_AUTOMATIC);
     connect(task, &ModelQueryTask::data, request.get(), &ModelRequest::notifyData);
     connect(task, &ModelQueryTask::taskDone, request.get(), &ModelRequest::notifyDone);
@@ -98,6 +127,6 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
 void KvalobsModelAccess::modelData(const ModelData_pv& mdata)
 {
   METLIBS_LOG_SCOPE();
-  for (ModelData_pv::const_iterator it = mdata.begin(); it != mdata.end(); ++it)
-    mCache[(*it)->sensorTime()] = *it; // overwrite existing cache entry
+  for (ModelData_p m : mdata)
+    mCache[m->sensorTime()] = m; // overwrite existing cache entry
 }
