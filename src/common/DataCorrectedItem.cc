@@ -27,7 +27,6 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-
 #include "DataCorrectedItem.hh"
 
 #include "KvMetaDataBuffer.hh"
@@ -64,9 +63,13 @@ QVariant DataCorrectedItem::data(const ObsData_pv& obs, const SensorTime& st, in
 
 bool DataCorrectedItem::setData(const ObsData_pv& obs, EditAccess_p da, const SensorTime& st, const QVariant& value, int role)
 {
-  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED || obs.size() != 1)
+  if (role != Qt::EditRole || mColumnType != ObsColumn::NEW_CORRECTED)
     return false;
-  ObsData_p o = obs.front();
+  ObsData_p o;
+  if (obs.size() == 1)
+    o = obs.front();
+  else if (obs.size() > 1)
+    return false;
 
   const QString svalue = value.toString();
   try {
@@ -76,7 +79,7 @@ bool DataCorrectedItem::setData(const ObsData_pv& obs, EditAccess_p da, const Se
       return false;
     if (KvMetaDataBuffer::instance()->checkPhysicalLimits(st, newC) == CachedParamLimits::OutsideMinMax)
       return false;
-    
+
     da->newVersion();
     ObsUpdate_p update;
     if (!o)
@@ -88,13 +91,12 @@ bool DataCorrectedItem::setData(const ObsData_pv& obs, EditAccess_p da, const Se
       Helpers::reject(update, o);
     else
       Helpers::auto_correct(update, o, newC);
-    da->storeUpdates(ObsUpdate_pv(1, update));
-    return true;
+    if (da->storeUpdates(ObsUpdate_pv(1, update)))
+      return true;
   } catch (std::exception& e) {
-    METLIBS_LOG_INFO("exception while editing data for sensor/time " << st
-        << " svalue='" << svalue << "': " << e.what());
-    return false;
+    METLIBS_LOG_INFO("exception while editing data for sensor/time " << st << " svalue='" << svalue << "': " << e.what());
   }
+  return false;
 }
 
 QString DataCorrectedItem::description(bool mini) const
