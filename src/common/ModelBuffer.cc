@@ -63,12 +63,12 @@ ModelData_p ModelBuffer::cached(const SensorTime& st)
 {
   METLIBS_LOG_SCOPE(st);
   ModelData_ps::const_iterator it = std::lower_bound(mCache.begin(), mCache.end(), st, lt_ModelData_p());
-  if (it != mCache.end() and eq_ModelSensorTime()((*it)->sensorTime(), st))
+  if (it != mCache.end() and eq_ModelSensorTime()((*it)->sensorTime(), st)) {
+    METLIBS_LOG_DEBUG("found" << LOGVAL((*it)->sensorTime()));
     return *it;
+  }
 
   METLIBS_LOG_DEBUG(LOGVAL(st) << " not in cache");
-  if (it != mCache.end())
-    METLIBS_LOG_DEBUG("found" << LOGVAL((*it)->sensorTime()));
   return ModelData_p();
 }
 
@@ -89,18 +89,9 @@ ModelRequest_p ModelBuffer::makeRequest(const SensorTime_v& sts)
 {
   METLIBS_LOG_SCOPE(LOGVAL(sts.size()));
   ModelRequest_p request = std::make_shared<ModelRequest>(sts);
-  connect(request.get(), SIGNAL(data(const ModelData_pv&)),
-      this, SLOT(onRequestData(const ModelData_pv&)));
+  connect(request.get(), &ModelRequest::data, this, &ModelBuffer::onRequestData);
+  connect(request.get(), &ModelRequest::requestCompleted, this, &ModelBuffer::onRequestCompleted);
   return request;
-}
-
-void ModelBuffer::dropRequest(ModelRequest_p request)
-{
-  METLIBS_LOG_SCOPE();
-  disconnect(request.get(), SIGNAL(data(const ModelData_pv&)),
-      this, SLOT(onRequestData(const ModelData_pv&)));
-  METLIBS_LOG_DEBUG("dropping from ModelAccess");
-  mMA->dropRequest(request);
 }
 
 void ModelBuffer::postRequest()
@@ -108,17 +99,15 @@ void ModelBuffer::postRequest()
   METLIBS_LOG_SCOPE();
   mRequest = makeRequest(mPending);
   mPending.clear();
-  connect(mRequest.get(), SIGNAL(requestCompleted(const QString&)),
-      this, SLOT(onRequestCompleted(const QString&)));
   mMA->postRequest(mRequest);
 }
 
 void ModelBuffer::dropRequest()
 {
   METLIBS_LOG_SCOPE();
-  disconnect(mRequest.get(), SIGNAL(requestCompleted(const QString&)),
-      this, SLOT(onRequestCompleted(const QString&)));
-  dropRequest(mRequest);
+  disconnect(mRequest.get(), &ModelRequest::data, this, &ModelBuffer::onRequestData);
+  disconnect(mRequest.get(), &ModelRequest::requestCompleted, this, &ModelBuffer::onRequestCompleted);
+  mMA->dropRequest(mRequest);
   mRequest = ModelRequest_p();
   if (not mPending.empty())
     postRequest();

@@ -53,10 +53,9 @@ void KvalobsModelAccess::postRequest(ModelRequest_p request)
 
   if (not toQuery.empty()) {
     ModelQueryTask* task = new ModelQueryTask(toQuery, QueryTask::PRIORITY_AUTOMATIC);
-    connect(task, SIGNAL(data(const ModelData_pv&)),
-        request.get(), SLOT(notifyData(const ModelData_pv&)));
-    connect(task, SIGNAL(data(const ModelData_pv&)),
-        this, SLOT(modelData(const ModelData_pv&)));
+    connect(task, &ModelQueryTask::data, request.get(), &ModelRequest::notifyData);
+    connect(task, &ModelQueryTask::taskDone, request.get(), &ModelRequest::notifyDone);
+    connect(task, &ModelQueryTask::data, this, &KvalobsModelAccess::modelData);
 
     QueryTaskHelper* helper = new QueryTaskHelper(task);
     request->setTag(helper);
@@ -86,10 +85,9 @@ void KvalobsModelAccess::dropRequest(ModelRequest_p request)
     // request has no tag if it was fulfilled from the cache
 
     const ModelQueryTask* task = unwrapTask(helper);
-    disconnect(task, SIGNAL(data(const ModelData_pv&)),
-        request.get(), SIGNAL(notifyData(const ModelData_pv&)));
-    disconnect(task, SIGNAL(data(const ModelData_pv&)),
-        this, SLOT(modelData(const ModelData_pv&)));
+    disconnect(task, &ModelQueryTask::data, request.get(), &ModelRequest::notifyData);
+    disconnect(task, &ModelQueryTask::taskDone, request.get(), &ModelRequest::notifyDone);
+    disconnect(task, &ModelQueryTask::data, this, &KvalobsModelAccess::modelData);
     delete helper;
     request->setTag(0);
   }

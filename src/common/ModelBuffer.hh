@@ -35,7 +35,6 @@ private:
   void dropRequest();
 
   ModelRequest_p makeRequest(const SensorTime_v& sts);
-  void dropRequest(ModelRequest_p request);
 
   ModelData_p cached(const SensorTime& st);
 
