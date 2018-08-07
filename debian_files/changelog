@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a27-1) unstable; urgency=low
+
+  * bugfixes
+  * hide typeid in model column
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 07 Aug 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a26-1) unstable; urgency=low
 
   * fewer requests from AcceptRejectButtons::enableButtons
