@@ -551,9 +551,14 @@
 <context>
     <name>SensorHeader</name>
     <message>
-        <location filename="SensorHeader.cc" line="28"/>
-        <source>Sensor %1 Type %2</source>
-        <translation>Sensor %1 Type %2</translation>
+        <location filename="SensorHeader.cc" line="29"/>
+        <source>Sensor %1 Level %2</source>
+        <translation>Sensor %1 Level %2</translation>
+    </message>
+    <message>
+        <location filename="SensorHeader.cc" line="31"/>
+        <source>Type %1</source>
+        <translation>Type %1</translation>
     </message>
     <message>
         <location filename="SensorHeader.cc" line="51"/>

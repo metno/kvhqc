@@ -42,6 +42,7 @@ ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan&
     , mHeaderShowStation(true)
     , mCodes(std::make_shared<Code2Text>())
 {
+  mSensor.typeId = 0;
 }
 
 ModelColumn::~ModelColumn()
