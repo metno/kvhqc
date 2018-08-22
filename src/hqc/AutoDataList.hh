@@ -2,7 +2,7 @@
 #ifndef AutoDataList_hh
 #define AutoDataList_hh 1
 
-#include "TimespanDataList.hh"
+#include "ObsPgmDataList.hh"
 #include "common/KvTypedefs.hh"
 
 class ObsPgmRequest;
@@ -10,7 +10,7 @@ class QPushButton;
 
 // ------------------------------------------------------------------------
 
-class AutoDataList : public TimespanDataList
+class AutoDataList : public ObsPgmDataList
 { Q_OBJECT
 public:
   AutoDataList(QWidget* parent=0);
@@ -33,15 +33,15 @@ private:
   typedef std::vector<Column> Column_v;
 
 protected:
-  void updateModel();
-  void doSensorSwitch();
+  void updateModel() override;
+  hqc::int_s stationIdsForObsPgmRequest() override;
 
-  std::string viewType() const;
+  std::string viewType() const override;
   void switchSensorPrepare();
-  void loadChangesXML(const QDomElement& doc_changes);
-  void storeChangesXML(QDomElement& doc_changes);
+  void loadChangesXML(const QDomElement& doc_changes) override;
+  void storeChangesXML(QDomElement& doc_changes) override;
 
-  void retranslateUi();
+  void retranslateUi() override;
 
 private Q_SLOTS:
   void onHorizontalHeaderContextMenu(const QPoint& pos);
@@ -49,9 +49,9 @@ private Q_SLOTS:
   void onActionAddColumn();
   void onActionRemoveColumn();
   void onActionResetColumns();
-  void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+  void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected) override;
 
-  void onObsPgmsComplete();
+  void onObsPgmsComplete() override;
 
 private:
   void addColumnBefore(int column);
@@ -67,7 +67,6 @@ private:
   QPushButton* mButtonColumns;
 
   Column_v mColumns, mOriginalColumns;
-  ObsPgmRequest* mObsPgmRequest;
 };
 
 #endif // AutoDataList_hh

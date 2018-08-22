@@ -54,8 +54,7 @@ typedef std::set<int> int_s;
 }
 
 StationDataList::StationDataList(QWidget* parent)
-  : TimespanDataList(parent)
-  , mObsPgmRequest(0)
+    : ObsPgmDataList(parent)
 {
   setWindowTitle(tr("Station Data"));
   setWindowIcon(QIcon("icons:weatherstation.svg"));
@@ -81,7 +80,6 @@ StationDataList::StationDataList(QWidget* parent)
 
 StationDataList::~StationDataList()
 {
-  delete mObsPgmRequest;
 }
 
 SensorTime StationDataList::sensorSwitch() const
@@ -126,28 +124,6 @@ void StationDataList::addSensorColumns(Sensor_s& alreadyShown, const Sensor& add
     if (alreadyShown.insert(agg).second)
       addSensorColumn(agg, ObsColumn::NEW_CORRECTED);
   }
-}
-
-void StationDataList::doSensorSwitch()
-{
-  METLIBS_LOG_TIME();
-  setDefaultTimeSpan();
-
-  hqc::int_s stationIds;
-  stationIds.insert(storeSensorTime().sensor.stationId);
-  delete mObsPgmRequest;
-  mObsPgmRequest = new ObsPgmRequest(stationIds);
-  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
-  mObsPgmRequest->post();
-}
-
-void StationDataList::onObsPgmsComplete()
-{
-  METLIBS_LOG_TIME();
-
-  // FIXME this relies on the implementation in TimespanDataList
-  loadChanges();
-  updateModel();
 }
 
 void StationDataList::updateModel()

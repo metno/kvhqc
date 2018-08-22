@@ -4,22 +4,23 @@ SET(hqc_SOURCES
   AutoDataList.cc
   ChecksTableModel.cc
   DataHistoryTableModel.cc
+  DataList.cc
   DataListAddColumn.cc
   DynamicDataView.cc
-  DataList.cc
   EditVersionModel.cc
   EditVersionsView.cc
   HqcAppWindow.cc
   JumpToObservation.cc
   NavigationHistory.cc
+  ObsPgmDataList.cc
   SearchWindow.cc
   SimpleCorrections.cc
   StationDataList.cc
   TimeSeriesAdd.cc
   TimeSeriesView.cc
   TimespanDataList.cc
-  ViewChanges.cc
   UserSettings.cc
+  ViewChanges.cc
 )
 
 SET(hqc_UIS
@@ -52,17 +53,17 @@ QT5_WRAP_CPP(hqc_MOC
   AbstractDataView.hh
   AutoDataList.hh
   DataHistoryTableModel.hh
-  DataListAddColumn.hh
   DataList.hh
+  DataListAddColumn.hh
   DynamicDataView.hh
   EditVersionModel.hh
   EditVersionsView.hh
   HqcAppWindow.hh
   JumpToObservation.hh
   NavigationHistory.hh
+  ObsPgmDataList.hh
   SearchWindow.hh
   SimpleCorrections.hh
-  StationDataList.hh
   TimeSeriesAdd.hh
   TimeSeriesView.hh
   TimespanDataList.hh

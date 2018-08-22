@@ -85,10 +85,8 @@ struct AutoDataList::lt_Column : public std::binary_function<Column, Column, boo
     }
 };
 
-
 AutoDataList::AutoDataList(QWidget* parent)
-  : TimespanDataList(parent)
-  , mObsPgmRequest(0)
+    : ObsPgmDataList(parent)
 {
   mColumnMenu = new QMenu(this);
   mColumnAdd = mColumnMenu->addAction(QIcon("icons:dl_columns_add.svg"), tr("Add column..."), this, SLOT(onActionAddColumn()));
@@ -112,7 +110,6 @@ AutoDataList::AutoDataList(QWidget* parent)
 
 AutoDataList::~AutoDataList()
 {
-  delete mObsPgmRequest;
 }
 
 void AutoDataList::retranslateUi()
@@ -125,17 +122,11 @@ void AutoDataList::retranslateUi()
   TimespanDataList::retranslateUi();
 }
 
-void AutoDataList::doSensorSwitch()
+hqc::int_s AutoDataList::stationIdsForObsPgmRequest()
 {
-  METLIBS_LOG_TIME();
-  setDefaultTimeSpan();
-
   hqc::int_s stationIds = KvMetaDataBuffer::instance()->findNeighborStationIds(storeSensorTime().sensor.stationId);
   stationIds.insert(storeSensorTime().sensor.stationId);
-  delete mObsPgmRequest;
-  mObsPgmRequest = new ObsPgmRequest(stationIds);
-  connect(mObsPgmRequest, SIGNAL(complete()), this, SLOT(onObsPgmsComplete()));
-  mObsPgmRequest->post();
+  return stationIds;
 }
 
 void AutoDataList::onObsPgmsComplete()
@@ -164,9 +155,7 @@ void AutoDataList::onObsPgmsComplete()
   }
   mOriginalColumns = mColumns;
 
-  // FIXME this relies on the implementation in TimespanDataList
-  loadChanges();
-  updateModel();
+  ObsPgmDataList::onObsPgmsComplete();
 }
 
 void AutoDataList::loadChangesXML(const QDomElement& doc_changes)
@@ -409,12 +398,14 @@ void AutoDataList::onActionResetColumns()
   storeChanges();
 }
 
-void AutoDataList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
+void AutoDataList::onSelectionChanged(const QItemSelection& s, const QItemSelection& d)
 {
   bool enabled = false;
   if (const QItemSelectionModel* sm = ui->table->selectionModel())
     enabled = not sm->selectedColumns().isEmpty();
   mColumnRemove->setEnabled(enabled);
+
+  DataList::onSelectionChanged(s, d);
 }
 
 void AutoDataList::onHorizontalHeaderSectionMoved(int logicalIndex, int oVis, int nVis)

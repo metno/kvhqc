@@ -48,6 +48,8 @@ public:
 protected:
   SensorTime sensorSwitch() const override;
   void doSensorSwitch() override;
+  virtual void doSensorSwitchBegin();
+  virtual void doSensorSwitchEnd();
   void setDefaultTimeSpan();
   void loadChangesXML(const QDomElement& doc_changes) override;
   void storeChangesXML(QDomElement& doc_changes) override;

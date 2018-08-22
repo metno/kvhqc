@@ -149,8 +149,12 @@ void DataList::retranslateUi()
 
 void DataList::doNavigateTo()
 {
-  METLIBS_LOG_SCOPE(LOGMYTYPE());
   DynamicDataView::doNavigateTo();
+  reselectCurrent();
+}
+
+void DataList::reselectCurrent()
+{
   mCurrentSelected = false;
   selectCurrent();
 }
@@ -208,7 +212,7 @@ void DataList::onBusyStatus(bool busy)
   METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(busy));
   mBusy->setBusy(busy);
   if (not busy)
-    selectCurrent();
+    reselectCurrent();
 }
 
 void DataList::onCheckFilter(bool filterByTimestep)

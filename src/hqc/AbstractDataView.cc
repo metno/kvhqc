@@ -31,7 +31,7 @@ void AbstractDataView::navigateTo(const SensorTime& st)
 
 void AbstractDataView::sendNavigateTo(const SensorTime& st)
 {
-  METLIBS_LOG_SCOPE(LOGVAL(st));
+  METLIBS_LOG_SCOPE(LOGMYTYPE() << LOGVAL(st) << LOGVAL(currentSensorTime()));
   NavigateHelper::Blocker block(mNavigate);
   Q_EMIT signalNavigateTo(st);
 }

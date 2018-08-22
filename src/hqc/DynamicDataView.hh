@@ -16,7 +16,7 @@ protected:
   /*! Uses sensorSwitch() to determine if the store sensor has
    *  changed. If yes, updates storeSensorTime() and calls doSensorSwitch().
    */
-  void doNavigateTo();
+  void doNavigateTo() override;
 
   /*! Store changes, calling storeChangesXML() to build XML description.
    */

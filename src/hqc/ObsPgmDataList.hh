@@ -1,7 +1,7 @@
 /*
   HQC - Free Software for Manual Quality Control of Meteorological Observations
 
-  Copyright (C) 2014-2018 met.no
+  Copyright (C) 2018 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -27,34 +27,33 @@
   51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
+#ifndef ObsPgmDataList_hh
+#define ObsPgmDataList_hh 1
 
-#ifndef StationDataList_hh
-#define StationDataList_hh 1
+#include "TimespanDataList.hh"
 
-#include "ObsPgmDataList.hh"
+#include "common/KvTypedefs.hh"
 
 class ObsPgmRequest;
 class QCheckBox;
 
-class StationDataList : public ObsPgmDataList
+class ObsPgmDataList : public TimespanDataList
 {
+  Q_OBJECT
+
 public:
-  StationDataList(QWidget* parent=0);
-  ~StationDataList();
+  ObsPgmDataList(QWidget* parent=0);
+  ~ObsPgmDataList();
 
 protected:
-  std::string viewType() const override;
-  SensorTime sensorSwitch() const override;
-  void updateModel() override;
+  void doSensorSwitch() override;
+  virtual hqc::int_s stationIdsForObsPgmRequest();
 
-private:
-  void addSensorColumn(const Sensor& s, ObsColumn::Type type);
-  void addSensorColumns(Sensor_s& alreadyShown, const Sensor& add);
+protected Q_SLOTS:
+  virtual void onObsPgmsComplete();
 
-private:
-  QCheckBox* mCheckAggregated;
-  QCheckBox* mCheckAllTypeIds;
-  QCheckBox* mCheckAllParamIds;
+protected:
+  ObsPgmRequest* mObsPgmRequest;
 };
 
-#endif // StationDataList_hh
+#endif // ObsPgmDataList_hh

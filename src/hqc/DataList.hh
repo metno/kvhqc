@@ -20,16 +20,19 @@ public:
 private Q_SLOTS:
   void onButtonSaveAs();
   void onCheckFilter(bool filterByTimestep);
-  virtual void onCurrentChanged(const QModelIndex& current);
-  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
   void onUITimeStepChanged(int index);
   void onModelTimeStepChanged(int step);
   void onModelFilterByTimeStepChanged(bool enabled, bool ftbs);
   void onBusyStatus(bool);
 
+protected Q_SLOTS:
+  virtual void onCurrentChanged(const QModelIndex& current);
+  virtual void onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected);
+
 protected:
-  void doNavigateTo();
-  void retranslateUi();
+  void doNavigateTo() override;
+  void retranslateUi() override;
+  void reselectCurrent();
   DataListModel* model() const;
 
 private:

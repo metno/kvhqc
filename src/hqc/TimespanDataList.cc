@@ -140,9 +140,20 @@ SensorTime TimespanDataList::sensorSwitch() const
 
 void TimespanDataList::doSensorSwitch()
 {
+  doSensorSwitchBegin();
+  doSensorSwitchEnd();
+}
+
+void TimespanDataList::doSensorSwitchBegin()
+{
   setDefaultTimeSpan();
+}
+
+void TimespanDataList::doSensorSwitchEnd()
+{
   loadChanges();
   updateModel();
+  reselectCurrent();
 }
 
 void TimespanDataList::setDefaultTimeSpan()
