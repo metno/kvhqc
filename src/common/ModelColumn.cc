@@ -39,10 +39,11 @@
 ModelColumn::ModelColumn(ModelAccess_p ma, const Sensor& sensor, const TimeSpan&)
     : mBuffer(new ModelBuffer(ma))
     , mSensor(sensor)
+    , mModelSensor(sensor)
     , mHeaderShowStation(true)
     , mCodes(std::make_shared<Code2Text>())
 {
-  mSensor.typeId = 0;
+  mModelSensor.typeId = 0;
 }
 
 ModelColumn::~ModelColumn()
@@ -78,7 +79,7 @@ bool ModelColumn::setData(const timeutil::ptime& /*time*/, const QVariant& /*val
 
 QVariant ModelColumn::headerData(Qt::Orientation orientation, int role) const
 {
-  SensorHeader sh(mSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
+  SensorHeader sh(mModelSensor, mHeaderShowStation ? SensorHeader::ALWAYS : SensorHeader::TOOLTIP,
       SensorHeader::ALWAYS, mTimeOffset.hours());
   return sh.modelHeader(orientation, role);
 }
@@ -103,5 +104,5 @@ void ModelColumn::bufferReceived(const ModelData_pv& mdata)
 
 ModelData_p ModelColumn::get(const timeutil::ptime& time) const
 {
-  return mBuffer->get(SensorTime(mSensor, time + mTimeOffset));
+  return mBuffer->get(SensorTime(mModelSensor, time + mTimeOffset));
 }

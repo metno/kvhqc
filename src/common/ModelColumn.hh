@@ -47,6 +47,7 @@ private:
   std::unique_ptr<ModelBuffer> mBuffer;
 
   Sensor mSensor;
+  Sensor mModelSensor;
   bool mHeaderShowStation;
   boost::posix_time::time_duration mTimeOffset;
 
