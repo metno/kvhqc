@@ -49,9 +49,7 @@ protected:
   SensorTime sensorSwitch() const override;
   void doSensorSwitch() override;
   void setDefaultTimeSpan();
-  void switchSensorPrepare();
   void loadChangesXML(const QDomElement& doc_changes) override;
-  void switchSensorDone();
   void storeChangesXML(QDomElement& doc_changes) override;
 
   void retranslateUi() override;
