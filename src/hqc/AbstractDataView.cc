@@ -7,8 +7,7 @@
 AbstractDataView::AbstractDataView(QWidget* parent)
   : VisibleWidget(parent)
 {
-  connect(this, SIGNAL(visibilityUpdate(bool)),
-      this, SLOT(onVisibilityUpdate(bool)));
+  connect(this, &AbstractDataView::visibilityUpdate, this, &AbstractDataView::onVisibilityUpdate);
   mNavigate.updateVisible(visibility());
 }
 

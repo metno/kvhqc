@@ -197,29 +197,23 @@ void SearchWindow::setupDataTabs()
   addTab(mSplitterDataPlot, tr("Ctrl+1", "List/Series tab shortcut"));
   
   mAutoDataList = new AutoDataList(mSplitterDataPlot);
-  connect(mAutoDataList, SIGNAL(signalNavigateTo(const SensorTime&)),
-      this, SLOT(navigateTo(const SensorTime&)));
-  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
-      mAutoDataList, SLOT(navigateTo(const SensorTime&)));
+  connect(mAutoDataList, &AutoDataList::signalNavigateTo, this, &SearchWindow::navigateTo);
+  connect(this, &SearchWindow::signalNavigateTo, mAutoDataList, &AutoDataList::navigateTo);
 
   mTimeSeriesView = new TimeSeriesView(mSplitterDataPlot);
-  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
-      mTimeSeriesView, SLOT(navigateTo(const SensorTime&)));
+  connect(this, &SearchWindow::signalNavigateTo, mTimeSeriesView, &TimeSeriesView::navigateTo);
 
   mSplitterDataPlot->addWidget(mAutoDataList);
   mSplitterDataPlot->addWidget(mTimeSeriesView);
 
   mStationData = new StationDataList(mTabsData);
-  connect(mStationData, SIGNAL(signalNavigateTo(const SensorTime&)),
-      this, SLOT(navigateTo(const SensorTime&)));
-  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
-      mStationData, SLOT(navigateTo(const SensorTime&)));
+  connect(mStationData, &StationDataList::signalNavigateTo, this, &SearchWindow::navigateTo);
+  connect(this, &SearchWindow::signalNavigateTo, mStationData, &StationDataList::navigateTo);
   addTab(mStationData, tr("Ctrl+2", "Station data tab shortcut"));
 
 #ifdef ENABLE_SIMPLECORRECTIONS
   mCorrections = new SimpleCorrections(hqcApp->editAccess(), hqcApp->modelAccess(), mTabsData);
-  connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),
-      mCorrections, SLOT(navigateTo(const SensorTime&)));
+  connect(this, &SearchWindow::signalNavigateTo, mCorrections, &SimpleCorrections::navigateTo);
   addTab(mCorrections, tr("Ctrl+3", "Single Observation tab shortcut"));
 #endif
 }
