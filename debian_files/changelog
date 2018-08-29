@@ -1,3 +1,11 @@
+kvhqc (4.1.0~a28-1) unstable; urgency=low
+
+  * parameter groups for StationDataList
+  * workaround model column and accept/reject buttons
+  * improved navigation
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 29 Aug 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a27-1) unstable; urgency=low
 
   * bugfixes
