@@ -76,9 +76,16 @@ public:
 
   static Region_ql regions();
 
+  struct ParamGroupEntry {
+    int paramId;
+    bool auxiliary;
+  };
+
+  typedef std::vector<ParamGroupEntry> ParamGroupEntry_v;
+
   struct ParamGroup {
     QString label;
-    hqc::int_v paramIds;
+    ParamGroupEntry_v paramIds;
   };
   typedef QList<ParamGroup> ParamGroup_ql;
 

@@ -35,6 +35,9 @@
 #include "common/KvHelpers.hh"
 #include "common/ObsPgmRequest.hh"
 
+#include <QCheckBox>
+#include <QComboBox>
+
 #include "ui_datalist.h"
 
 #define MILOGGER_CATEGORY "kvhqc.StationDataList"
@@ -42,15 +45,6 @@
 
 namespace {
 const std::string VIEW_TYPE = "StationDataList";
-
-const int WeatherParameters[] = {
-  211,214,216,213,215,262,178,173,177,1,61,81,86,87,83,90,15,14,55,104,108,
-  109,110,112,18,7,273,41,31,32,33,42,43,34,36,38,40,
-  23,24,22,403,404,131,134,151,154,250,221,9,12
-};
-const size_t NWeatherParameters = sizeof(WeatherParameters)/sizeof(WeatherParameters[0]);
-const int* WeatherParametersE = WeatherParameters + NWeatherParameters;
-typedef std::set<int> int_s;
 }
 
 StationDataList::StationDataList(QWidget* parent)
@@ -65,17 +59,19 @@ StationDataList::StationDataList(QWidget* parent)
   mCheckAllTypeIds = new QCheckBox(tr("All Types"), this);
   mCheckAllTypeIds->setToolTip(tr("Show all typeids"));
   mCheckAllTypeIds->setChecked(false);
-  mCheckAllParamIds = new QCheckBox(tr("All Parameters"), this);
-  mCheckAllParamIds->setToolTip(tr("On: show all parameters\nOff: hide some parameters that are normally not checked manually"));
-  mCheckAllParamIds->setChecked(false);
+  mComboParamGroups = new QComboBox(this);
+  mComboParamGroups->setToolTip(tr("On: show all parameters\nOff: hide some parameters that are normally not checked manually"));
+  mComboParamGroups->addItem(tr("All Parameters"));
+  for (const auto& pg : HqcSystemDB::paramGroups())
+    mComboParamGroups->addItem(pg.label);
 
   connect(mCheckAggregated, &QCheckBox::toggled, this, &StationDataList::updateModel);
   connect(mCheckAllTypeIds, &QCheckBox::toggled, this, &StationDataList::updateModel);
-  connect(mCheckAllParamIds, &QCheckBox::toggled, this, &StationDataList::updateModel);
+  connect(mComboParamGroups, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged), this, &StationDataList::onComboParamGroupsChanged);
 
   ui->layoutFilters->addWidget(mCheckAggregated);
   ui->layoutFilters->addWidget(mCheckAllTypeIds);
-  ui->layoutFilters->addWidget(mCheckAllParamIds);
+  ui->layoutFilters->addWidget(mComboParamGroups);
 }
 
 StationDataList::~StationDataList()
@@ -115,12 +111,12 @@ void StationDataList::addSensorColumns(Sensor_s& alreadyShown, const Sensor& add
   if (!mCheckAggregated->isChecked())
     return;
   
-  int_s aggregatedTo;
+  hqc::int_s aggregatedTo;
   Helpers::aggregatedParameters(add.paramId, aggregatedTo);
   Sensor agg(add);
   agg.typeId = -add.typeId;
-  for (int_s::const_iterator it = aggregatedTo.begin(); it != aggregatedTo.end(); ++it) {
-    agg.paramId = *it;
+  for (int a : aggregatedTo) {
+    agg.paramId = a;
     if (alreadyShown.insert(agg).second)
       addSensorColumn(agg, ObsColumn::NEW_CORRECTED);
   }
@@ -139,41 +135,44 @@ void StationDataList::updateModel()
 
   model()->removeAllColumns();
   model()->setTimeSpan(time);
+  if (!mObsPgmRequest)
+    return;
 
   const bool includeAllTypeIds = mCheckAllTypeIds->isChecked();
-  hqc::int_s ignoredParamIds;
-  if (!mCheckAllParamIds->isChecked())
-    ignoredParamIds = HqcSystemDB::ignoredParameters(QString::fromStdString(VIEW_TYPE));
-
   const hqc::hqcObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
-  for(size_t i=0; i<NWeatherParameters; ++i) {
-    const int paramId = WeatherParameters[i];
-    if (ignoredParamIds.count(paramId) != 0)
-      continue;
+  hqc::int_v paramIds;
+  const int DUMMY_PARAMID_ALL = 0;
+  if (mComboParamGroups->currentIndex() != 0) {
+    const QString group = mComboParamGroups->currentText();
+    for (const auto& pg : HqcSystemDB::paramGroups()) {
+      if (pg.label == group) {
+        paramIds.reserve(pg.paramIds.size());
+        for (const auto& p : pg.paramIds) {
+            paramIds.push_back(p.paramId);
+        }
+      }
+    }
+  } else {
+    paramIds.push_back(DUMMY_PARAMID_ALL);
+  }
+  for (int paramId : paramIds) {
     for (const hqc::hqcObsPgm& op : opl) {
-      if (paramId != op.paramID())
+      if (paramId != DUMMY_PARAMID_ALL && paramId != op.paramID())
         continue;
       if (!includeAllTypeIds && s.typeId != op.typeID())
         continue;
       if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
         continue;
 
-      addSensorColumns(columnSensors, Sensor(s.stationId, paramId, s.level, s.sensor, op.typeID()));
+      addSensorColumns(columnSensors, Sensor(s.stationId, op.paramID(), s.level, s.sensor, op.typeID()));
     }
   }
+}
 
-  for (const hqc::hqcObsPgm& op : opl) {
-    if (ignoredParamIds.count(op.paramID()) != 0)
-      continue;
-    if (!includeAllTypeIds && s.typeId != op.typeID())
-      continue;
-    if (time.intersection(TimeSpan(op.fromtime(), op.totime())).undef())
-      continue;
-    if (std::find(WeatherParameters, WeatherParametersE, op.paramID()) != WeatherParametersE)
-      continue;
-
-    addSensorColumns(columnSensors, Sensor(s.stationId, op.paramID(), s.level, s.sensor, op.typeID()));
-  }
+void StationDataList::onComboParamGroupsChanged(int)
+{
+  updateModel();
+  reselectCurrent();
 }
 
 std::string StationDataList::viewType() const

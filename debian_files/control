@@ -29,7 +29,7 @@ Architecture: any
 Depends: libqt5sql5-psql,
  libqt5sql5-sqlite,
  libqt5svg5,
- kvhqcconfig-@METNO_VERSION@,
+ kvhqcconfig-@METNO_VERSION@ (>= 4.1.0~rc12),
  ${shlibs:Depends},
  ${misc:Depends}
 Recommends: coserver4,

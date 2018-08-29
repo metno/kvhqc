@@ -35,6 +35,7 @@
 
 class ObsPgmRequest;
 class QCheckBox;
+class QComboBox;
 
 class StationDataList : public ObsPgmDataList
 {
@@ -51,10 +52,13 @@ private:
   void addSensorColumn(const Sensor& s, ObsColumn::Type type);
   void addSensorColumns(Sensor_s& alreadyShown, const Sensor& add);
 
+private Q_SLOTS:
+  void onComboParamGroupsChanged(int index);
+
 private:
   QCheckBox* mCheckAggregated;
   QCheckBox* mCheckAllTypeIds;
-  QCheckBox* mCheckAllParamIds;
+  QComboBox* mComboParamGroups;
 };
 
 #endif // StationDataList_hh

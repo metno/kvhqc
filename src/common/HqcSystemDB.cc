@@ -346,7 +346,7 @@ HqcSystemDB::ParamGroup_ql HqcSystemDB::paramGroups()
       " WHERE pg.id = pgl.group_id AND pgl.language = 'nb' ORDER BY pg.sortkey");
     
   QSqlQuery queryParams(hqcApp->systemDB());
-  queryParams.prepare("SELECT paramid FROM param_order WHERE group_id = ? ORDER BY sortkey");
+  queryParams.prepare("SELECT paramid, auxiliary FROM param_order WHERE group_id = ? ORDER BY sortkey");
     
   queryGroups.exec();
   while (queryGroups.next()) {
@@ -357,8 +357,12 @@ HqcSystemDB::ParamGroup_ql HqcSystemDB::paramGroups()
 
     queryParams.bindValue(0, groupId);
     queryParams.exec();
-    while (queryParams.next())
-      pg.paramIds.push_back(queryParams.value(0).toInt());
+    while (queryParams.next()) {
+      ParamGroupEntry p;
+      p.paramId = queryParams.value(0).toInt();
+      p.auxiliary = queryParams.value(1).toBool();
+      pg.paramIds.push_back(p);
+    }
 
     pgl << pg;
   }

@@ -269,7 +269,12 @@ void ErrorSearchDialog::setupParameterTab()
   const HqcSystemDB::ParamGroup_ql pgl = HqcSystemDB::paramGroups();
   for (HqcSystemDB::ParamGroup_ql::const_iterator itG = pgl.begin(); itG != pgl.end(); ++itG) {
     labels << itG->label;
-    mParameterGroups[itG->label] = itG->paramIds;
+    hqc::int_v& pg = mParameterGroups[itG->label];
+    pg.reserve(itG->paramIds.size());
+    for (const auto& p : itG->paramIds) {
+      if (!p.auxiliary)
+        pg.push_back(p.paramId);
+    }
   }
 
   try {
