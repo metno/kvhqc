@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a29-1) unstable; urgency=low
+
+  * aggregated parameters in extreme value search
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 27 Sep 2018 08:00:08 +0200
+
 kvhqc (4.1.0~a28-2) unstable; urgency=low
 
   * packaging bugfix
