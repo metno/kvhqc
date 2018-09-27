@@ -237,9 +237,14 @@ const std::set<int>& ignoredTypeIds()
   return ignored_typeids;
 }
 
+bool isIgnoredTypeId(int typeId)
+{
+  return ignoredTypeIds().find(std::abs(typeId)) != ignoredTypeIds().end();
+}
+
 bool isIgnoredTypeId(const Sensor& sensor)
 {
-  return ignoredTypeIds().find(sensor.typeId) != ignoredTypeIds().end();
+  return isIgnoredTypeId(sensor.typeId);
 }
 
 static const int STATIONID_NORWAY_MIN = 60, STATIONID_NORWAY_MAX = 99999;
@@ -345,7 +350,12 @@ bool aggregatedParameter(int paramFrom, int paramTo)
   return pTo.find(paramTo) != pTo.end();
 }
 
-void aggregatedParameters(int paramFrom, std::set<int>& paramTo)
+void aggregatedParameters(int paramFrom, hqc::int_s& paramTo)
+{
+  HqcSystemDB::aggregatedParameters(paramFrom, paramTo);
+}
+
+void aggregatedParameters(hqc::int_s& paramFrom, int paramTo)
 {
   HqcSystemDB::aggregatedParameters(paramFrom, paramTo);
 }

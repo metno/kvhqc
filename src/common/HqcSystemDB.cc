@@ -302,7 +302,24 @@ void HqcSystemDB::aggregatedParameters(int paramFrom, hqc::int_s& paramTo)
       while (query.next())
         paramTo.insert(query.value(0).toInt());
     } else {
-      HQC_LOG_WARN("error getting aggregated parameters for " << paramFrom
+      HQC_LOG_WARN("error getting parameters aggregating from " << paramFrom
+          << ": " << query.lastError().text());
+    }
+  }
+}
+
+void HqcSystemDB::aggregatedParameters(hqc::int_s& paramFrom, int paramTo)
+{
+  METLIBS_LOG_SCOPE();
+  if (hqcApp) {
+    QSqlQuery query(hqcApp->systemDB());
+    query.prepare("SELECT paramid_from FROM param_aggregated WHERE paramid_to = ?");
+    query.bindValue(0, paramTo);
+    if (query.exec()) {
+      while (query.next())
+        paramFrom.insert(query.value(0).toInt());
+    } else {
+      HQC_LOG_WARN("error getting parameters aggregating to " << paramTo
           << ": " << query.lastError().text());
     }
   }

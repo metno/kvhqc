@@ -107,6 +107,7 @@ private:
 bool isTypeIdForWatchRR(const Sensor& sensor);
 
 const std::set<int>& ignoredTypeIds();
+bool isIgnoredTypeId(int typeId);
 bool isIgnoredTypeId(const Sensor& sensor);
 
 bool isNorwegianStationId(int stationid);
@@ -119,6 +120,7 @@ Sensor_v relatedSensors(const Sensor& s, const TimeSpan& time, const std::string
 
 bool aggregatedParameter(int paramFrom, int paramTo);
 void aggregatedParameters(int paramFrom, hqc::int_s& paramTo);
+void aggregatedParameters(hqc::int_s& paramFrom, int paramTo);
 
 float numericalValue(int paramId, float codeValue);
 inline float numericalValue(const Sensor& sensor, float codeValue)
@@ -158,6 +160,7 @@ enum {
     PARAMID_FF_02 = 82,
     PARAMID_FG = 83,
     PARAMID_FX = 86,
+    PARAMID_RA = 104,
     PARAMID_RR_01 = 105,
     PARAMID_RR_1  = 106,
     PARAMID_RR_3  = 107,

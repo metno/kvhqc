@@ -47,9 +47,18 @@
 #define MILOGGER_CATEGORY "kvhqc.test.ExtremesTest"
 #include "common/ObsLogging.hh"
 
-static inline const Sensor& s(ObsData_p obs) { return obs->sensorTime().sensor; }
-static inline const std::string t(ObsData_p obs) { return timeutil::to_iso_extended_string(obs->sensorTime().time); }
-static inline float cv(ObsData_p obs) { return obs->corrected(); }
+namespace {
+const int N_REQUEST = 5;
+const int N_FILTER_RESULT = 12; // some repetition
+const int N_TABLE_RESULT = 52; // table asks for more
+
+std::string message(ObsData_p obs)
+{
+  std::ostringstream msg;
+  msg << obs->sensorTime() << " c=" << obs->corrected() << " ci=" << obs->controlinfo().flagstring();
+  return msg.str();
+}
+}
 
 TEST(ExtremesTest, Filter)
 {
@@ -61,52 +70,20 @@ TEST(ExtremesTest, Filter)
   load_17000_20141002(*fa);
   KvMetaDataBuffer::instance()->reload();
 
-  ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
+  ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, N_REQUEST));
   SortedBuffer::Ordering_p ordering = std::make_shared<ExtremesTableModel::CorrectedOrdering>(not ef->isMaximumSearch());
   SortedBuffer_p b = std::make_shared<SortedBuffer>(ordering, Sensor_s(), t_17000_20141002(), ef);
   b->syncRequest(fa->obsAccess());
 
-  // grep '\<21[15]\>' src/extremes/test/data_17000_20141002.txt | sort -rn -k 7 | head -n 20
-  // omit 216 in grep as it is aggregated / not in obs_pgm
+  // grep '\<21[156]\>' src/extremes/test/data_17000_20141002.txt | sort -rn -k 7 | head -n 30
 
-  ASSERT_EQ(7, b->size()); // two have TA=TAX
-
-  const ObsData_pv& d = b->data();
-  const eq_Sensor eq;
-
-  EXPECT_TRUE(eq(Sensor(17380, 215, 0, 0, 502), s(d[0])));
-  EXPECT_TRUE(eq(Sensor(17050, 215, 0, 0, 502), s(d[1])));
-  EXPECT_TRUE(eq(Sensor(17050, 215, 0, 0, 502), s(d[2])));
-  EXPECT_TRUE(eq(Sensor(17150, 215, 0, 0, 342), s(d[3])));
-  EXPECT_TRUE(eq(Sensor(17000, 211, 0, 0, 330), s(d[4])));
-  EXPECT_TRUE(eq(Sensor(17000, 215, 0, 0, 330), s(d[5])));
-  EXPECT_TRUE(eq(Sensor(18420, 215, 0, 0, 514), s(d[6])));
-
-  EXPECT_EQ("2014-10-01 12:00:00", t(d[0]));
-  EXPECT_EQ("2014-10-01 11:00:00", t(d[1]));
-  EXPECT_EQ("2014-10-01 12:00:00", t(d[2]));
-  EXPECT_EQ("2014-10-01 12:00:00", t(d[3]));
-  EXPECT_EQ("2014-10-02 05:00:00", t(d[4]));
-  EXPECT_EQ("2014-10-02 05:00:00", t(d[5]));
-  EXPECT_EQ("2014-10-01 11:00:00", t(d[6]));
-
-  EXPECT_FLOAT_EQ(16.8, cv(d[0]));
-  EXPECT_FLOAT_EQ(15.7, cv(d[1]));
-  EXPECT_FLOAT_EQ(15.7, cv(d[2]));
-  EXPECT_FLOAT_EQ(15.4, cv(d[3]));
-  EXPECT_FLOAT_EQ(14.7, cv(d[4]));
-  EXPECT_FLOAT_EQ(14.7, cv(d[5]));
-  EXPECT_FLOAT_EQ(14.6, cv(d[6]));
-
-  // (s:17380, p:215, l:0, s:0, t:502)@2014-10-01 12:00:00 c= ci=0111100000000010
-  // (s:17050, p:215, l:0, s:0, t:502)@2014-10-01 11:00:00 c= ci=0111100000000010
-  // (s:17050, p:215, l:0, s:0, t:502)@2014-10-01 12:00:00 c= ci=0111100000000010
-  // (s:17150, p:215, l:0, s:0, t:342)@2014-10-01 12:00:00 c= ci=0111100000000010
-  // (s:17000, p:211, l:0, s:0, t:330)@2014-10-02 05:00:00 c= ci=0111100000100010
-  // (s:17000, p:215, l:0, s:0, t:330)@2014-10-02 05:00:00 c= ci=0111100000000010
-  // (s:18420, p:215, l:0, s:0, t:514)@2014-10-01 11:00:00 c= ci=0111100000000010
-  // for (ObsData_pv::const_iterator it = d.begin(); it != d.end(); ++it)
-  //   EXPECT_FALSE(*it) << (*it)->sensorTime() << " c=" << (*it)->corrected() << " ci=" << (*it)->controlinfo().flagstring();
+  EXPECT_EQ(N_FILTER_RESULT, b->size()); // two have TA=TAX
+  std::set<float> corrected;
+  for (auto obs : b->data()) {
+    EXPECT_LE(14.6, obs->corrected()) << message(obs);
+    corrected.insert(obs->corrected());
+  }
+  EXPECT_EQ(N_REQUEST, corrected.size());
 }
 
 TEST(ExtremesTest, FilterCached)
@@ -121,7 +98,7 @@ TEST(ExtremesTest, FilterCached)
 
   CachingAccess_p cache(new CachingAccess(fa->obsAccess()));
 
-  ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, 5));
+  ExtremesFilter_p ef(new ExtremesFilter(kvalobs::PARAMID_TAX, N_REQUEST));
 
   Sensor_s invalid;
   invalid.insert(Sensor());
@@ -129,7 +106,7 @@ TEST(ExtremesTest, FilterCached)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(invalid, t_17000_20141002(), ef);
   b->syncRequest(cache);
 
-  ASSERT_EQ(7, b->size()); // two have TA=TAX
+  ASSERT_EQ(N_FILTER_RESULT, b->size());
 }
 
 TEST(ExtremesTest, TableModel)
@@ -155,7 +132,7 @@ TEST(ExtremesTest, TableModel)
   tm.search(kvalobs::PARAMID_TAX, t_17000_20141002());
   sync.waitForSignal();
 
-  EXPECT_EQ(34, tm.rowCount(QModelIndex()));
+  EXPECT_EQ(N_TABLE_RESULT, tm.rowCount(QModelIndex()));
 }
 
 TEST(ExtremesTest, TableModelUpdateTAX)
@@ -177,27 +154,32 @@ TEST(ExtremesTest, TableModelUpdateTAX)
   tm.search(kvalobs::PARAMID_TAX, t_17000_20141002());
   sync.waitForSignal();
 
-  ASSERT_EQ(34, tm.rowCount(QModelIndex()));
+  ASSERT_EQ(N_TABLE_RESULT, tm.rowCount(QModelIndex()));
 
   const SensorTime st0(Sensor(17380, 215, 0, 0, 502), s2t("2014-10-01 12:00:00"));
   const SensorTime st1(Sensor(17050, 215, 0, 0, 502), s2t("2014-10-01 11:00:00"));
   const float newC = 20.0;
 
-  { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE((bool)obs0);
-    EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime()));
-    EXPECT_FLOAT_EQ(16.8, obs0->corrected());
+#if 0
+  for (int i=0; i<tm.rowCount(QModelIndex()); ++i)
+    EXPECT_FALSE(true) << message(tm.getObs(i));
+#endif
+
+  { ObsData_p obs = tm.getObs(0);
+    ASSERT_TRUE((bool)obs);
+    EXPECT_TRUE(eq_SensorTime()(st0, obs->sensorTime())) << obs;
+    EXPECT_FLOAT_EQ(16.8, obs->corrected()) << message(obs);
   }
 
-  { ObsData_p obs1 = tm.getObs(1);
-    ASSERT_TRUE((bool)obs1);
-    EXPECT_TRUE(eq_SensorTime()(st1, obs1->sensorTime()));
-    EXPECT_FLOAT_EQ(15.7, obs1->corrected());
+  { ObsData_p obs = tm.getObs(2);
+    ASSERT_TRUE((bool)obs);
+    EXPECT_TRUE(eq_SensorTime()(st1, obs->sensorTime())) << message(obs);
+    EXPECT_FLOAT_EQ(15.7, obs->corrected()) << message(obs);
 
     edit->newVersion();
     ObsUpdate_pv updates;
     
-    ObsUpdate_p up = edit->createUpdate(obs1);
+    ObsUpdate_p up = edit->createUpdate(obs);
     ASSERT_TRUE((bool)up);
 
     up->setCorrected(newC);
@@ -207,18 +189,18 @@ TEST(ExtremesTest, TableModelUpdateTAX)
     // TODO check modelReset signal
   }
 
-  { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE((bool)obs0);
-    EXPECT_TRUE(eq_SensorTime()(st1, obs0->sensorTime())) << obs0->sensorTime();
-    EXPECT_FLOAT_EQ(newC, obs0->corrected());
+  { ObsData_p obs = tm.getObs(0);
+    ASSERT_TRUE((bool)obs);
+    EXPECT_TRUE(eq_SensorTime()(st1, obs->sensorTime())) << message(obs);
+    EXPECT_FLOAT_EQ(newC, obs->corrected()) << message(obs);
   }
 
   edit->undoVersion();
 
-  { ObsData_p obs0 = tm.getObs(0);
-    ASSERT_TRUE((bool)obs0);
-    EXPECT_TRUE(eq_SensorTime()(st0, obs0->sensorTime()));
-    EXPECT_FLOAT_EQ(16.8, obs0->corrected());
+  { ObsData_p obs = tm.getObs(0);
+    ASSERT_TRUE((bool)obs);
+    EXPECT_TRUE(eq_SensorTime()(st0, obs->sensorTime())) << message(obs);
+    EXPECT_FLOAT_EQ(16.8, obs->corrected()) << message(obs);
   }
 }
 

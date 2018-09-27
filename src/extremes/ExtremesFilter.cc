@@ -41,12 +41,12 @@
 
 namespace /*anonymous*/ {
 
-QString exists_in_obspgm(const QString& data_alias, const QString& obs_pgm_alias = "o")
+QString exists_in_obspgm(const QString& data_alias, const QString& obs_pgm_alias, const hqc::int_s& paramIds)
 {
   const QString &d = data_alias, &o = obs_pgm_alias;
   return "EXISTS (SELECT * FROM obs_pgm AS " + o + " WHERE " + o + ".stationid = " + d + "stationid"
-      " AND " + o + ".paramid = " + d + "paramid"
-      " AND " + o + ".typeid  = " + d + "typeid"
+      " AND " + set2sql(o + ".paramid", paramIds) +
+      " AND " + o + ".typeid  = ABS(" + d + "typeid)"
       " AND " + o + ".fromtime <= " + d + "obstime"
       " AND (" + o + ".totime IS NULL OR " + o + ".totime >= " + d + "obstime))";
 }
@@ -77,6 +77,10 @@ ExtremesFilter::ExtremesFilter(int paramid, int nExtremes)
     const int np=5, p[np] = { 87,88,89,93,95 };
     mParamIds.insert(p, p+np);
   }
+  mParamIdsAggregated = mParamIds;
+  for (int p : mParamIds)
+    Helpers::aggregatedParameters(mParamIdsAggregated, p);
+  mParamIdsAggregated.erase(kvalobs::PARAMID_RA); // FIXME
 
   mExcludedIds.clear();
   if (StationInfoBuffer::instance()) {
@@ -102,10 +106,12 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString&, const TimeSpan& 
 
   if (!mExcludedIds.empty())
     sql += " AND NOT (" + set2sql("dd.stationid", mExcludedIds) + ")";
-  for (int ti : Helpers::ignoredTypeIds())
-    " AND dd.typeid != " + QString::number(ti);
+  const hqc::int_s& ign_typeids = Helpers::ignoredTypeIds();
+  if (!ign_typeids.empty()) {
+    sql += " AND NOT (" + set2sql("ABS(dd.typeid)", ign_typeids) + ")";
+  }
   sql += " AND " + set2sql("dd.paramid", mParamIds);
-  sql += " AND " + exists_in_obspgm("dd.");
+  sql += " AND " + exists_in_obspgm("dd.", "o", mParamIdsAggregated);
   sql += " AND (substr(dd.useinfo,3,1) IN ('0','1','2')"
          "        OR (substr(dd.useinfo,3,1) = '3' AND dd.original = dd.corrected))";
   sql += " AND dd.obstime " + timespan2sql(time);
@@ -125,11 +131,13 @@ QString ExtremesFilter::acceptingSqlExtraTables(const QString&, const TimeSpan& 
 
 QString ExtremesFilter::acceptingSql(const QString& d, const TimeSpan&) const
 {
+  METLIBS_LOG_SCOPE();
   QString sql = d + "stationid = ex.s";
   sql += " AND " + d + "corrected = ex.c";
   sql += " AND " + set2sql(d + "paramid", mParamIds);
-  sql += " AND " + exists_in_obspgm(d);
+  sql += " AND " + exists_in_obspgm(d, "o", mParamIdsAggregated);
   sql += " ORDER BY " + d + "corrected " + (mFindMaximum ? "DESC" : "ASC") + ", " + d + "stationid, " + d + "obstime";
+  METLIBS_LOG_DEBUG(LOGVAL(sql));
   return sql;
 }
 
@@ -153,7 +161,7 @@ bool ExtremesFilter::accept(ObsData_p obs, bool afterSQL) const
   if (!Helpers::isNorwegianStationId(obsStationId) || mExcludedIds.count(obsStationId))
     return false;
 
-  if (Helpers::isIgnoredTypeId(obs->sensorTime().sensor))
+  if (Helpers::isIgnoredTypeId(obs->sensorTime().sensor.typeId))
     return false;
 
   const int obsParamId = obs->sensorTime().sensor.paramId;

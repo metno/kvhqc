@@ -66,6 +66,7 @@ public:
   static hqc::int_s ignoredParameters(const QString& viewType);
 
   static void aggregatedParameters(int paramFrom, hqc::int_s& paramTo);
+  static void aggregatedParameters(hqc::int_s& paramFrom, int paramTo);
 
   struct Region {
     QString regionLabel;

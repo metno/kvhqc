@@ -59,9 +59,10 @@ private:
   int mExtremesCount;
 
   hqc::int_s mParamIds;
+  hqc::int_s mParamIdsAggregated;
   bool mFindMaximum;
 
-  std::set<int> mExcludedIds;
+  hqc::int_s mExcludedIds;
 };
 
 HQC_TYPEDEF_P(ExtremesFilter);
