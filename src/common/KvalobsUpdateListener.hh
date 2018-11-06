@@ -7,7 +7,6 @@
 
 #include <kvcpp/kvservicetypes.h>
 
-class QtKvService;
 class QTimer;
 
 /*! Access to kvalobs data, with update listener.
@@ -35,8 +34,6 @@ private:
 
   typedef counting_set<int> station_count_t;
   station_count_t mSubscribedStations;
-
-  QtKvService* qtkvs;
 };
 
 #endif // COMMON_KVALOBSUPDATELISTENER_HH

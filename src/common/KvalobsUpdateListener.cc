@@ -40,7 +40,6 @@
 
 KvalobsUpdateListener::KvalobsUpdateListener()
   : mResubscribeTimer(new QTimer(this))
-  , qtkvs(qtKvService())
 {
   METLIBS_LOG_SCOPE();
   mResubscribeTimer->setSingleShot(true);
