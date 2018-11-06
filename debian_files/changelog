@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a30-1) unstable; urgency=low
+
+  * add debug statements
+  * drop unused variable
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 06 Nov 2018 08:00:08 +0100
+
 kvhqc (4.1.0~a29-1) unstable; urgency=low
 
   * aggregated parameters in extreme value search
