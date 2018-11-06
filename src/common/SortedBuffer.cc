@@ -77,7 +77,7 @@ ObsData_p SortedBuffer::get(const SensorTime& st) const
 
 void SortedBuffer::onNewData(const ObsData_pv& data)
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME(LOGVAL(data.size()));
   bool inserted = false;
   for (ObsData_p o : data) {
     if (!o) {
@@ -129,7 +129,7 @@ void SortedBuffer::onDropData(const SensorTime_v& dropped)
 
 void SortedBuffer::sort()
 {
-  METLIBS_LOG_SCOPE();
+  METLIBS_LOG_TIME(LOGVAL(mData.size()));
   std::sort(mData.begin(), mData.end(), OrderingHelper(mOrdering));
 }
 
