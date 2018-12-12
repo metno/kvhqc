@@ -109,6 +109,10 @@ private:
   ActionButton *mActionButtonSave;
   ActionButton *mActionButtonUndo;
   ActionButton *mActionButtonRedo;
+  ActionButton *mActionButtonSearchTool;
+  ActionButton *mActionButtonTextData;
+  ActionButton *mActionButtonWatchRR;
+  ActionButton *mActionButtonRejected;
 
   ClientSelection* mCoserverClient;
   DianaHelper* mDianaHelper;

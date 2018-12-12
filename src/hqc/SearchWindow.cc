@@ -180,7 +180,7 @@ void SearchWindow::setupSearchTabs()
 #endif // ENABLE_MISSINGOBS
 
   mNavigationHistory = new NavigationHistory(mTabsSearch);
-  addTab(mNavigationHistory, tr("Ctrl+R", "Recent tab shortcut"));
+  addTab(mNavigationHistory, tr("Ctrl+Shift+R", "Recent tab shortcut"));
   connect(mNavigationHistory, SIGNAL(signalNavigateTo(const SensorTime&)),
       this, SLOT(navigateTo(const SensorTime&)));
   connect(this, SIGNAL(signalNavigateTo(const SensorTime&)),

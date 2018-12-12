@@ -10,8 +10,8 @@
     </message>
     <message>
         <location filename="appwindow.ui" line="30"/>
-        <source>New window</source>
-        <translation>Ny vindu</translation>
+        <source>Tools</source>
+        <translation>Verktøy</translation>
     </message>
     <message>
         <location filename="appwindow.ui" line="42"/>
@@ -697,10 +697,6 @@ Du bruker HQC versjon %1.</translation>
         <translation type="vanished">&amp;Visning</translation>
     </message>
     <message>
-        <source>Ctrl+R</source>
-        <translation type="vanished">Ctrl+R</translation>
-    </message>
-    <message>
         <source>Print</source>
         <translation type="vanished">Utskrift</translation>
     </message>
@@ -1045,9 +1041,9 @@ Du bruker HQC versjon %1.</translation>
     </message>
     <message>
         <location filename="SearchWindow.cc" line="183"/>
-        <source>Ctrl+R</source>
+        <source>Ctrl+Shift+R</source>
         <comment>Recent tab shortcut</comment>
-        <translation>Ctrl+R</translation>
+        <translation>Ctrl+Shift+R</translation>
     </message>
     <message>
         <location filename="SearchWindow.cc" line="195"/>

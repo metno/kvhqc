@@ -117,6 +117,13 @@ HqcAppWindow::HqcAppWindow()
   mActionButtonUndo = new ActionButton(ui->buttonUndo, ui->actionUndo, this);
   mActionButtonRedo = new ActionButton(ui->buttonRedo, ui->actionRedo, this);
 
+  mActionButtonSearchTool = new ActionButton(ui->buttonSearchTool, ui->actionSearchTool, this);
+  mActionButtonTextData = new ActionButton(ui->buttonTextData, ui->actionTextData, this);
+  mActionButtonWatchRR = new ActionButton(ui->buttonWatchRR, ui->actionWatchRR, this);
+  mActionButtonRejected = new ActionButton(ui->buttonRejected, ui->actionRejected, this);
+
+  ui->actionWatchRR->setShortcutContext(Qt::ApplicationShortcut);
+
   connect(mVersionCheckTimer, SIGNAL(timeout()), this, SLOT(onVersionCheckTimeout()));
   mVersionCheckTimer->setSingleShot(true);
 

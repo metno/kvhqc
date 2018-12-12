@@ -27,7 +27,7 @@
     <item>
      <widget class="QGroupBox" name="groupNewWindow">
       <property name="title">
-       <string>New window</string>
+       <string>Tools</string>
       </property>
       <layout class="QGridLayout" name="gridLayout">
        <property name="margin">
@@ -194,8 +194,18 @@
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
    </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Tools</string>
+    </property>
+    <addaction name="actionSearchTool"/>
+    <addaction name="actionTextData"/>
+    <addaction name="actionWatchRR"/>
+    <addaction name="actionRejected"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
+   <addaction name="menuTools"/>
    <addaction name="menuHelp"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
@@ -271,72 +281,76 @@
     <string>Ctrl+Shift+Z</string>
    </property>
   </action>
+  <action name="actionSearchTool">
+   <property name="icon">
+    <iconset>icons:search_red.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Search Tool</string>
+   </property>
+   <property name="toolTip">
+    <string>Start search tool</string>
+   </property>
+  </action>
+  <action name="actionTextData">
+   <property name="icon">
+    <iconset>icons:textdata.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Text Data</string>
+   </property>
+   <property name="toolTip">
+    <string>Start text data tool</string>
+   </property>
+  </action>
+  <action name="actionWatchRR">
+   <property name="icon">
+    <iconset>icons:watchrr.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;WatchRR</string>
+   </property>
+   <property name="toolTip">
+    <string>Start WatchRR</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionRejected">
+   <property name="icon">
+    <iconset>icons:rejectedobs.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Rejected</string>
+   </property>
+  </action>
  </widget>
  <resources/>
  <connections>
   <connection>
-   <sender>buttonSearchTool</sender>
-   <signal>clicked()</signal>
+   <sender>actionSearchTool</sender>
+   <signal>triggered()</signal>
    <receiver>AppWindow</receiver>
    <slot>onNewSearch()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>18</x>
-     <y>51</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>23</x>
-     <y>97</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
-   <sender>buttonWatchRR</sender>
-   <signal>clicked()</signal>
+   <sender>actionWatchRR</sender>
+   <signal>triggered()</signal>
    <receiver>AppWindow</receiver>
    <slot>onNewWatchRR()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>14</x>
-     <y>86</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>7</x>
-     <y>98</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
-   <sender>buttonRejected</sender>
-   <signal>clicked()</signal>
+   <sender>actionRejected</sender>
+   <signal>triggered()</signal>
    <receiver>AppWindow</receiver>
    <slot>onNewRejectedObs()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>246</x>
-     <y>84</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>246</x>
-     <y>98</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
-   <sender>buttonTextData</sender>
-   <signal>clicked()</signal>
+   <sender>actionTextData</sender>
+   <signal>triggered()</signal>
    <receiver>AppWindow</receiver>
    <slot>onNewTextdata()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>190</x>
-     <y>61</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>193</x>
-     <y>98</y>
-    </hint>
-   </hints>
   </connection>
   <connection>
    <sender>actionQuit</sender>
