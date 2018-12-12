@@ -3,7 +3,10 @@ Section: science
 Priority: extra
 Maintainer: Alexander Bürger <alexander.buerger@met.no>
 Build-Depends: debhelper (>= 9), quilt, cmake,
- qtbase5-dev, qtbase5-dev-tools, qttools5-dev-tools,
+ qtbase5-dev,
+ qtbase5-dev-tools,
+ qttools5-dev-tools,
+ qttools5-dev,
  libgtest-dev | google-mock,
  python (>= 2.7.3),
  libboost-dev,
