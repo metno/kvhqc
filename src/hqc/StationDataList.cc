@@ -61,9 +61,9 @@ StationDataList::StationDataList(QWidget* parent)
   mCheckAllTypeIds->setChecked(false);
   mComboParamGroups = new QComboBox(this);
   mComboParamGroups->setToolTip(tr("On: show all parameters\nOff: hide some parameters that are normally not checked manually"));
-  mComboParamGroups->addItem(tr("All Parameters"));
   for (const auto& pg : HqcSystemDB::paramGroups())
     mComboParamGroups->addItem(pg.label);
+  mComboParamGroups->addItem(tr("All Parameters"));
 
   connect(mCheckAggregated, &QCheckBox::toggled, this, &StationDataList::updateModel);
   connect(mCheckAllTypeIds, &QCheckBox::toggled, this, &StationDataList::updateModel);
@@ -142,7 +142,7 @@ void StationDataList::updateModel()
   const hqc::hqcObsPgm_v& opl = mObsPgmRequest->get(s.stationId);
   hqc::int_v paramIds;
   const int DUMMY_PARAMID_ALL = 0;
-  if (mComboParamGroups->currentIndex() != 0) {
+  if (mComboParamGroups->currentIndex() != mComboParamGroups->count()-1) {
     const QString group = mComboParamGroups->currentText();
     for (const auto& pg : HqcSystemDB::paramGroups()) {
       if (pg.label == group) {
