@@ -88,7 +88,7 @@ TimespanDataList::TimespanDataList(QWidget* parent)
   connect(mMapperStart, SIGNAL(mapped(QObject*)), this, SLOT(onChangeStart(QObject*)));
   connect(mMapperEnd,   SIGNAL(mapped(QObject*)), this, SLOT(onChangeEnd(QObject*)));
 
-  const int steps[] = {1 * DAY, 7 * DAY, 15 * DAY, 0};
+  const int steps[] = {3 * DAY, 7 * DAY, 15 * DAY, 0};
   for (int i=0; steps[i] > 0; ++i) {
     mTimeActions.append(makeTimeAction(mMenuStart, -steps[i], mMapperStart));
     mTimeActions.append(makeTimeAction(mMenuEnd,    steps[i], mMapperEnd));
