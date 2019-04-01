@@ -6,6 +6,10 @@
 
 LOG_CONSTRUCT_COUNTER;
 
+ResultRow::~ResultRow()
+{
+}
+
 BasicSQLTask::BasicSQLTask()
   : mDone(false)
   , mDeleteWhenDone(false)

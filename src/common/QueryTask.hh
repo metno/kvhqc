@@ -3,6 +3,7 @@
 #define QUERYTASK_HH 1
 
 #include "util/boostutil.hh"
+#include "util/timeutil.hh"
 
 #include <QMutex>
 #include <QString>
@@ -11,12 +12,13 @@
 class ResultRow
 {
 public:
-  virtual ~ResultRow() { }
+  virtual ~ResultRow();
   virtual bool getBool(int index) const = 0;
   virtual int getInt(int index) const = 0;
   virtual float getFloat(int index) const = 0;
   virtual std::string getStdString(int index) const = 0;
   virtual QString getQString(int index) const = 0;
+  virtual timeutil::ptime getTime(int index) const = 0;
 };
 
 // ========================================================================

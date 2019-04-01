@@ -10,11 +10,6 @@
 
 namespace /*anonymous*/ {
 
-Time my_qsql_time(const std::string& s)
-{
-  return timeutil::from_iso_extended_string(s);
-}
-
 const size_t QUERY_DATA_CHUNKSIZE = 32;
 
 } // namespace anonymous
@@ -38,10 +33,11 @@ KvalobsData_p KvalobsDataRow::extract(const ResultRow& row, int col)
   const int type_id   = row.getInt(col++);
   const int level     = row.getInt(col++);
   const int sensornr  = row.getInt(col++);
-      
-  const Time  obstime   = my_qsql_time(row.getStdString(col++));
+
+  const Time  obstime   = row.getTime(col++);
   const float original  = row.getFloat(col++);
-  const Time  tbtime    = my_qsql_time(row.getStdString(col++));
+  const Time  tbtime    = row.getTime(col++);
+
   const float corrected = row.getFloat(col++);;
   const kvalobs::kvControlInfo controlinfo(row.getStdString(col++));
   const kvalobs::kvUseInfo     useinfo    (row.getStdString(col++));

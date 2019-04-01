@@ -60,6 +60,8 @@ public:
 
   std::string getStdString(int index) const override { return getQString(index).toStdString(); }
 
+  timeutil::ptime getTime(int index) const override { return timeutil::from_QDateTime(mQuery.value(index).toDateTime()); }
+
 private:
   QSqlQuery& mQuery;
 };

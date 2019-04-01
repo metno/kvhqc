@@ -212,6 +212,8 @@ public:
 
   QString getQString(int index) const override { return QString::fromStdString(getStdString(index)); }
 
+  timeutil::ptime getTime(int index) const override { return timeutil::from_iso_extended_string(getStdString(index)); }
+
 private:
   sqlite3_stmt *mStmt;
 };
