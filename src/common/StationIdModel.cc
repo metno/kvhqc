@@ -31,20 +31,15 @@
 
 #include "KvMetaDataBuffer.hh"
 
-#include <boost/lexical_cast.hpp>
-
 #define MILOGGER_CATEGORY "kvhqc.StationIdModel"
 #include "util/HqcLogging.hh"
 
 namespace /* anonymous */ {
 struct int_by_text : public std::binary_function<int, int, bool> {
-  bool operator() (int a, int b) const;
+  typedef std::pair<float, int> key_t;
+  key_t key(int i) const { if (i<=0) return std::make_pair(0, 0.0f); int l = (int)std::log10(i); float f = i / std::pow(10, l); return std::make_pair(f, l); }
+  bool operator() (int a, int b) const { return key(a) < key(b); }
 };
-bool int_by_text::operator() (int a, int b) const
-{
-  const std::string ta = boost::lexical_cast<std::string>(a), tb = boost::lexical_cast<std::string>(b);
-  return ta < tb;
-}
 } // namespace anonymous
 
 StationIdModel::StationIdModel(QObject* parent)
