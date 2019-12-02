@@ -38,6 +38,7 @@
 #include <boost/date_time/posix_time/posix_time_types.hpp>
 #include <iosfwd>
 #include <string>
+#include <vector>
 
 namespace timeutil {
 

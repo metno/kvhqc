@@ -32,6 +32,7 @@
 
 #include "Helpers.hh"
 
+#include <cmath>
 #include <sstream>
 
 namespace Helpers {

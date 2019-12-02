@@ -180,8 +180,8 @@ void TimespanDataList::storeChangesXML(QDomElement& doc_changes)
   if (mOriginalTimeLimits.t0() != mTimeLimits.t0() or mOriginalTimeLimits.t1() != mTimeLimits.t1()) {
     QDomDocument doc = doc_changes.ownerDocument();
     QDomElement doc_timeshift = doc.createElement(E_TAG_TSHIFT);
-    doc_timeshift.setAttribute(T_ATTR_START, (mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours());
-    doc_timeshift.setAttribute(T_ATTR_END,   (mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours());
+    doc_timeshift.setAttribute(T_ATTR_START, static_cast<int>((mTimeLimits.t0() - mOriginalTimeLimits.t0()).hours()));
+    doc_timeshift.setAttribute(T_ATTR_END,   static_cast<int>((mTimeLimits.t1() - mOriginalTimeLimits.t1()).hours()));
     doc_changes.appendChild(doc_timeshift);
   }
 }
