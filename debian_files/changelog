@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a35-1) unstable; urgency=low
+
+  * fix compilation for bionic
+  * bugfix interpolation tool
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 02 Dec 2019 08:00:08 +0100
+
 kvhqc (4.1.0~a34-1) unstable; urgency=low
 
   * avoid lexical_cast for stationid sorting
