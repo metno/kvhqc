@@ -94,7 +94,7 @@ void ToolInterpolate::onInterpolate()
     const SensorTime st(mFirst.sensor, *it);
     ObsData_p obs = mObsBuffer->get(st);
     ObsUpdate_p update = obs ? mDA->createUpdate(obs) : mDA->createUpdate(st);
-    Helpers::correct(update, c);
+    Helpers::auto_correct(update, obs, c);
     updates.push_back(update);
   }
   mDA->storeUpdates(updates);
