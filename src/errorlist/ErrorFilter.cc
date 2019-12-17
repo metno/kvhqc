@@ -154,7 +154,7 @@ bool checkErrorHQC2013(const ObsData_p obs)
   }
 
   const int ftime = ci.flag(kvalobs::flag::ftime);
-  if (ftime > 0)
+  if (ftime > 1)
     return false;
 
   const int fd = ci.flag(kvalobs::flag::fd);
@@ -208,7 +208,7 @@ QString ErrorFilter::acceptingSql(const QString& d, const TimeSpan&) const
   QString sql;
   sql += "(substr(" + d + "controlinfo,16,1) = '0'"; // fhqc == 0
   if (not mErrorsForSalen) {
-    sql += " AND substr(" + d + "controlinfo, 8,1) = '0'" // ftime == 0
+    sql += " AND substr(" + d + "controlinfo, 8,1) IN ('0', '1')" // ftime == 0,1
         +  " AND NOT (substr(" + d + "controlinfo,13,1) IN ('7','8') AND paramid = 110)" // fd != 7,8 for RR_24
         +  " AND (substr(" + d + "useinfo, 3,1) IN ('2','3')" // useinfo(2) == 2,3
         +  "     OR substr(" + d + "controlinfo,2,1) IN ('2','3')" // fr == 2,3
