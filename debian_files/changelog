@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a36-1) unstable; urgency=low
+
+  * exclude ftime=1 from error list
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 21 Jan 2020 08:00:08 +0100
+
 kvhqc (4.1.0~a35-1) unstable; urgency=low
 
   * fix compilation for bionic
