@@ -43,7 +43,7 @@ int identifyUser(QWidget* widgetparent, const char* ldap_server, QString& userNa
 {
   const QString user = Authenticator::authenticate(widgetparent, ldap_server, ldap_port);
   if (user.isEmpty())
-    return 0; // Not authenticated
+    return -1; // Not authenticated
 
   const int userid = KvServiceHelper::instance()->identifyOperator(user);
   if (userid >= 0) {

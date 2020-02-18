@@ -43,7 +43,7 @@ with HQC; if not, write to the Free Software Foundation Inc.,
 
 #include "ui_authenticationdialog.h"
 
-#define MILOGGER_CATEGORY "kvhqc.AcceptRejectButtons"
+#define MILOGGER_CATEGORY "kvhqc.Authenticator"
 #include "util/HqcLogging.hh"
 
 namespace Authentication
@@ -117,7 +117,7 @@ void Authenticator::doAuthenticate()
   bool result = Authentication::authenticate(un.toUtf8(), pw.toUtf8(), server.toUtf8(), port);
 
   if ( result ) {
-    return accept();
+    accept();
   } else {
     QMessageBox::information(this,
         tr("Wrong username or password"),
