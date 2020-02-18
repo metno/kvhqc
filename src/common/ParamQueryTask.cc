@@ -20,7 +20,7 @@ ParamQueryTask::ParamQueryTask(size_t priority)
   }
 }
 
-QString ParamQueryTask::querySql(QString dbversion) const
+QString ParamQueryTask::querySql(QString) const
 {
   return "SELECT p.paramid, p.name, p.description, p.unit, p.level_scale, p.comment"
       " FROM param p ORDER BY p.paramid";

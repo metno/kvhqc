@@ -39,7 +39,7 @@ ModelQueryTask::~ModelQueryTask()
   LOG_DESTRUCT();
 }
 
-QString ModelQueryTask::querySql(QString dbversion) const
+QString ModelQueryTask::querySql(QString) const
 {
   std::ostringstream sql;
   sql << "SELECT m.stationid, m.paramid, m.level, m.obstime, m.original"

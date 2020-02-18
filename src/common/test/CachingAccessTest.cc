@@ -29,33 +29,33 @@ TEST(CachingAccessTest, SingleSensor)
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_LE(1, counter->countNew);
-    EXPECT_EQ(2*24 + 1, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_LE(1u, counter->countNew);
+    EXPECT_EQ(size_t(2*24 + 1), counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-02 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_EQ(1, counter->countNew);
-    EXPECT_EQ(1*24 + 1, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_EQ(1u, counter->countNew);
+    EXPECT_EQ(size_t(1*24 + 1), counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   { const TimeSpan time(s2t("2013-04-02 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_EQ(1*24 + 1, counter->size());
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_EQ(size_t(1*24 + 1), counter->size());
   }
 
   { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(2, sqla->countPost());
-    EXPECT_EQ(2*24 + 1, counter->size());
+    EXPECT_EQ(2u, sqla->countPost());
+    EXPECT_EQ(size_t(2*24 + 1), counter->size());
   }
 
   ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
@@ -63,14 +63,14 @@ TEST(CachingAccessTest, SingleSensor)
   { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-02 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(3, sqla->countPost());
-    EXPECT_EQ(1*24 + 1, counter->size());
+    EXPECT_EQ(3u, sqla->countPost());
+    EXPECT_EQ(size_t(1*24 + 1), counter->size());
   }
   { const TimeSpan time(s2t("2013-04-01 06:00:00"), s2t("2013-04-03 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(4, sqla->countPost());
-    EXPECT_EQ(2*24 + 1, counter->size());
+    EXPECT_EQ(4u, sqla->countPost());
+    EXPECT_EQ(size_t(2*24 + 1), counter->size());
   }
 }
 
@@ -88,27 +88,27 @@ TEST(CachingAccessTest, MultipleSensor)
   { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 06:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor1, time));
     counter->postRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_EQ(1, counter->countNew);
-    EXPECT_EQ(7, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_EQ(1u, counter->countNew);
+    EXPECT_EQ(7u, counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   { const TimeSpan time(s2t("2014-03-01 03:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor2, time));
     counter->postRequest(ca);
-    EXPECT_EQ(2, sqla->countPost());
-    EXPECT_EQ(1, counter->countNew);
-    EXPECT_EQ(7, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(2u, sqla->countPost());
+    EXPECT_EQ(1u, counter->countNew);
+    EXPECT_EQ(7u, counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensors, time));
     counter->postRequest(ca);
-    EXPECT_EQ(4, sqla->countPost());
-    EXPECT_EQ(20, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(4u, sqla->countPost());
+    EXPECT_EQ(20u, counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
@@ -116,9 +116,9 @@ TEST(CachingAccessTest, MultipleSensor)
   { const TimeSpan time(s2t("2014-03-01 00:00:00"), s2t("2014-03-01 09:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensors, time));
     counter->postRequest(ca);
-    EXPECT_EQ(5, sqla->countPost());
-    EXPECT_EQ(20, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(5u, sqla->countPost());
+    EXPECT_EQ(20u, counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 }
 
@@ -134,10 +134,10 @@ TEST(CachingAccessTest, SingleObsAfterRange)
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->postRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_LE(1, counter->countNew);
-    EXPECT_EQ(2*24 + 1, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_LE(1u, counter->countNew);
+    EXPECT_EQ(size_t(2*24 + 1), counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 
   { const SensorTime st(sensor, s2t("2013-04-01 00:00:00"));
@@ -192,10 +192,10 @@ TEST(CachingAccessTest, Update)
     counter2->postRequest(ca);
     counter3->postRequest(ca);
     
-    EXPECT_EQ(1, counter1->countNew);
-    EXPECT_EQ(1, counter2->countNew);
-    EXPECT_EQ(2, counter2->size());
-    EXPECT_EQ(1, counter3->countNew);
+    EXPECT_EQ(1u, counter1->countNew);
+    EXPECT_EQ(1u, counter2->countNew);
+    EXPECT_EQ(2u, counter2->size());
+    EXPECT_EQ(1u, counter3->countNew);
     
     ObsUpdate_pv updated;
     
@@ -219,13 +219,13 @@ TEST(CachingAccessTest, Update)
     updated.push_back(ou);
     
     EXPECT_TRUE(ca->storeUpdates(updated));
-    EXPECT_EQ(2, counter1->countNew);
-    EXPECT_EQ(2, counter2->countNew);
-    EXPECT_EQ(1, counter3->countNew);
+    EXPECT_EQ(2u, counter1->countNew);
+    EXPECT_EQ(2u, counter2->countNew);
+    EXPECT_EQ(1u, counter3->countNew);
     
-    EXPECT_EQ(1, counter1->countUpdate);
-    EXPECT_EQ(1, counter2->countUpdate);
-    EXPECT_EQ(0, counter3->countUpdate);
+    EXPECT_EQ(1u, counter1->countUpdate);
+    EXPECT_EQ(1u, counter2->countUpdate);
+    EXPECT_EQ(0u, counter3->countUpdate);
   }
 
   ca->cleanCache(timeutil::now() + boost::posix_time::hours(1));
@@ -233,7 +233,7 @@ TEST(CachingAccessTest, Update)
   { const TimeSpan time2(s2t("2013-04-01 00:00:00"), s2t("2013-04-01 01:00:00"));
     CountingBuffer_p counter2(new CountingBuffer(sensor, time2));
     counter2->postRequest(ca);
-    EXPECT_EQ(3, counter2->size());
+    EXPECT_EQ(3u, counter2->size());
   }
 }
 
@@ -270,9 +270,9 @@ TEST(CachingAccessTest, ThreadingRequest)
   { const TimeSpan time(s2t("2013-04-01 00:00:00"), s2t("2013-04-03 00:00:00"));
     CountingBuffer_p counter(new CountingBuffer(sensor, time));
     counter->syncRequest(ca);
-    EXPECT_EQ(1, sqla->countPost());
-    EXPECT_LE(1, counter->countNew);
-    EXPECT_EQ(2*24 + 1, counter->size());
-    EXPECT_EQ(1, counter->countComplete);
+    EXPECT_EQ(1u, sqla->countPost());
+    EXPECT_LE(1u, counter->countNew);
+    EXPECT_EQ(size_t(2*24 + 1), counter->size());
+    EXPECT_EQ(1u, counter->countComplete);
   }
 }

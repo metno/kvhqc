@@ -18,7 +18,7 @@ RejectedQueryTask::RejectedQueryTask(const TimeSpan& time, size_t priority)
 {
 }
 
-QString RejectedQueryTask::querySql(QString dbversion) const
+QString RejectedQueryTask::querySql(QString) const
 {
   std::ostringstream sql;
   sql << "SELECT r.message, r.tbtime, r.decoder, r.comment, r.fixed"

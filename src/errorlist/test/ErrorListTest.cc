@@ -71,7 +71,7 @@ TEST(ErrorListTest, Filter1)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(ts.fa->obsAccess());
 
-  EXPECT_EQ(3, b->size());
+  EXPECT_EQ(3u, b->size());
 
   const ObsData_pv d(b->data().begin(), b->data().end());
   EXPECT_TRUE(eq_Sensor()(sensor1, d[0]->sensorTime().sensor));
@@ -96,7 +96,7 @@ TEST(ErrorListTest, Filter1Salen)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(ts.fa->obsAccess());
 
-  EXPECT_EQ(0, b->size());
+  EXPECT_EQ(0u, b->size());
 }
 
 TEST(ErrorListTest, FilterMany)
@@ -143,5 +143,5 @@ TEST(ErrorListTest, FilterMany)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(sensors, t_3200_20141008(), ef);
   b->syncRequest(ts.fa->obsAccess());
 
-  EXPECT_EQ(206, b->size());
+  EXPECT_EQ(206u, b->size());
 }

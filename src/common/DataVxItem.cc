@@ -144,7 +144,7 @@ const VxData vxdata_302_after2006[] = {
 
 const timeutil::ptime LIMIT_302(boost::gregorian::date(2006, 1, 9), boost::posix_time::time_duration(0, 0, 0));
 
-const VxData* vxData4SensorTime(const SensorTime& st)
+const VxData* vxData4SensorTime(const SensorTime&)
 {
 #if 1
   return vxdata_312;

@@ -147,7 +147,6 @@ void TestSimpleCorrections::testGui()
     QVERIFY2(ui_corrected->isEditable(), "SensorTime for TA should enable editing combo box");
     QVERIFY(ui_corrected->currentText().isEmpty());
 
-    const float newC = -3.0;
     const QString newCtext("-3.0");
 
     CountingBuffer_p counter(new CountingBuffer(st2.sensor, TimeSpan(st2.time, st2.time)));

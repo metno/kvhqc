@@ -77,13 +77,13 @@ TEST(ExtremesTest, Filter)
 
   // grep '\<21[156]\>' src/extremes/test/data_17000_20141002.txt | sort -rn -k 7 | head -n 30
 
-  EXPECT_EQ(N_FILTER_RESULT, b->size()); // two have TA=TAX
+  EXPECT_EQ(size_t(N_FILTER_RESULT), b->size()); // two have TA=TAX
   std::set<float> corrected;
   for (auto obs : b->data()) {
     EXPECT_LE(14.6, obs->corrected()) << message(obs);
     corrected.insert(obs->corrected());
   }
-  EXPECT_EQ(N_REQUEST, corrected.size());
+  EXPECT_EQ(size_t(N_REQUEST), corrected.size());
 }
 
 TEST(ExtremesTest, FilterCached)
@@ -106,7 +106,7 @@ TEST(ExtremesTest, FilterCached)
   TimeBuffer_p b = std::make_shared<TimeBuffer>(invalid, t_17000_20141002(), ef);
   b->syncRequest(cache);
 
-  ASSERT_EQ(N_FILTER_RESULT, b->size());
+  ASSERT_EQ(size_t(N_FILTER_RESULT), b->size());
 }
 
 TEST(ExtremesTest, TableModel)

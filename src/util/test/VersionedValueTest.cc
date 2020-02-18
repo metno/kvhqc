@@ -6,8 +6,8 @@
 #include <gtest/gtest.h>
 
 #define CHECK_STATE(vvsize, vvcurrent, vvversion, vvvalue)              \
-    EXPECT_EQ(vvsize, v.mVersions.size());                              \
-    ASSERT_EQ(vvcurrent, v.mCurrent);                                   \
+    EXPECT_EQ((size_t)vvsize, v.mVersions.size());                      \
+    ASSERT_EQ((size_t)vvcurrent, v.mCurrent);                           \
     EXPECT_EQ(vvversion, v.mVersions[vvcurrent].version);               \
     EXPECT_EQ(vvvalue, v.mVersions[vvcurrent].value);
 

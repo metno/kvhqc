@@ -32,25 +32,12 @@ std::string my_sqlite3_string(sqlite3_stmt *stmt, int col)
     return c;
 }
 
-Time my_sqlite3_time(sqlite3_stmt *stmt, int col)
-{
-  return timeutil::from_iso_extended_string((const char*)(sqlite3_column_text(stmt, col)));
-}
-
 timeutil::ptime from_iso(const std::string& iso)
 {
   if (iso.size() >= 19)
     return timeutil::from_iso_extended_string(iso);
   else
     return timeutil::ptime();
-}
-
-std::string to_iso(const timeutil::ptime& t)
-{
-  if (t.is_not_a_date_time())
-    return "NULL";
-  else
-    return timeutil::to_iso_extended_string(t);
 }
 
 std::string sql4insert(const kvalobs::kvData& d)
@@ -295,7 +282,7 @@ sqlite3_stmt* SqliteQueryRunner::prepare_statement(const std::string& sql, QStri
 
 // ------------------------------------------------------------------------
 
-QString SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask* qtask)
+QString SqliteQueryRunner::finalize_statement(sqlite3_stmt* stmt, int lastStep, QueryTask*)
 {
   QString status;
   sqlite3_finalize(stmt);

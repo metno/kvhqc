@@ -20,7 +20,7 @@ StationQueryTask::StationQueryTask(size_t priority)
   }
 }
 
-QString StationQueryTask::querySql(QString dbversion) const
+QString StationQueryTask::querySql(QString) const
 {
   return "SELECT s.stationid, s.lat, s.lon, s.height, s.maxspeed, s.name, s.wmonr,"
       " s.nationalnr, s.icaoid, s.call_sign, s.stationstr, s.environmentid, s.static,"

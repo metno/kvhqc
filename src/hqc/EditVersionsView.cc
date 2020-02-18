@@ -64,7 +64,7 @@ EditVersionsView::~EditVersionsView()
 {
 }
 
-void EditVersionsView::onEditVersionChanged(size_t current, size_t highest)
+void EditVersionsView::onEditVersionChanged(size_t, size_t)
 {
   expandToDepth(2);
 }

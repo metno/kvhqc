@@ -32,7 +32,7 @@ ObsPgmQueryTask::~ObsPgmQueryTask()
   LOG_DESTRUCT();
 }
 
-QString ObsPgmQueryTask::querySql(QString dbversion) const
+QString ObsPgmQueryTask::querySql(QString) const
 {
   return QString("SELECT o.stationid, o.paramid, o.level, o.nr_sensor, o.typeid,"
                  " o.priority_message, o.collector, "

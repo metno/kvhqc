@@ -170,7 +170,7 @@ void HqcAppWindow::retranslateUi()
   kvalobsAvailable(hqcApp->isKvalobsAvailable());
 }
 
-void HqcAppWindow::startup(const QString& captionSuffix)
+void HqcAppWindow::startup(const QString&)
 {
   METLIBS_LOG_SCOPE();
   setWindowTitle(tr("HQC %1").arg(hqcApp->kvalobsDBName()));
@@ -356,7 +356,7 @@ void HqcAppWindow::closeEvent(QCloseEvent* event)
   }
 }
 
-void HqcAppWindow::onEditVersionChanged(size_t current, size_t highest)
+void HqcAppWindow::onEditVersionChanged(size_t, size_t)
 {
   METLIBS_LOG_SCOPE();
   EditAccess_p eda = hqcApp->editAccess();

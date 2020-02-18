@@ -6,26 +6,6 @@
 typedef std::set<int> int_s;
 typedef std::insert_iterator<int_s> int_si;
 
-namespace /*anonymous*/ {
-void dump(const std::string& label, const int_s& result)
-{
-  std::cout << "result" << label << ": ";
-  std::copy(result.begin(), result.end(), std::ostream_iterator<int>(std::cout, " "));
-  std::cout << std::endl;
-}
-void dump(const int_s& result1, const int_s& result2)
-{
-  dump("1", result1);
-  dump("2", result2);
-}
-void dump(const int_s& result1, const int_s& result2, const int_s& result3)
-{
-  dump("1", result1);
-  dump("2", result2);
-  dump("3", result3);
-}
-} // namespace anonymous
-
 // ========================================================================
 
 #define SET_DIFFERENCES                                                 \
@@ -60,7 +40,7 @@ TEST(SetDifferencesTest, Superset1)
   const int values1[] = { 1, 3, 5, 7 }, values2[] = { 1, 3, 7 };
   SET_DIFFERENCES;
 
-  EXPECT_EQ(1, result1.size());
+  EXPECT_EQ(1u, result1.size());
   EXPECT_TRUE(result1.count(5));
   EXPECT_TRUE(result2.empty());
 }
@@ -71,7 +51,7 @@ TEST(SetDifferencesTest, Superset2)
   SET_DIFFERENCES;
 
   EXPECT_TRUE(result1.empty());
-  EXPECT_EQ(1, result2.size());
+  EXPECT_EQ(1u, result2.size());
   EXPECT_TRUE(result2.count(3));
 }
 
@@ -80,10 +60,10 @@ TEST(SetDifferencesTest, Mixed)
   const int values1[] = { 1, 5, 7 }, values2[] = { 1, 3, 5 };
   SET_DIFFERENCES;
 
-  EXPECT_EQ(1, result1.size());
+  EXPECT_EQ(1u, result1.size());
   EXPECT_TRUE(result1.count(7));
 
-  EXPECT_EQ(1, result2.size());
+  EXPECT_EQ(1u, result2.size());
   EXPECT_TRUE(result2.count(3));
 }
 
@@ -92,13 +72,13 @@ TEST(SetDifferencesTest, Mixed3)
   const int values1[] = { 1, 5, 7 }, values2[] = { 1, 3, 5 };
   SET_DIFFERENCES3;
 
-  EXPECT_EQ(1, result1.size());
+  EXPECT_EQ(1u, result1.size());
   EXPECT_TRUE(result1.count(7));
 
-  EXPECT_EQ(1, result2.size());
+  EXPECT_EQ(1u, result2.size());
   EXPECT_TRUE(result2.count(3));
 
-  EXPECT_EQ(2, result3.size());
+  EXPECT_EQ(2u, result3.size());
   EXPECT_TRUE(result3.count(1));
   EXPECT_TRUE(result3.count(5));
 }

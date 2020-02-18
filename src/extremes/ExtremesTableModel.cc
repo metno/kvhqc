@@ -210,8 +210,9 @@ void ExtremesTableModel::onBufferChangeEnd()
 void ExtremesTableModel::updateCountShown()
 {
   METLIBS_LOG_SCOPE();
-  int different = 0, buffered = (int)mBuffer->data().size();
+  const int buffered = (int)mBuffer->data().size();
 #if 0
+  int different = 0;
   mCountShown = 0;
   while (mCountShown < buffered and different < N_EXTREMES) {
     const float value = mBuffer->data().at(mCountShown)->corrected();

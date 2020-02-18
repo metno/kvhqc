@@ -145,7 +145,7 @@ QString shortenedTime(const timeutil::ptime& t)
   return shortenedTime(t, now());
 }
 
-QString shortenedTime(const timeutil::ptime& t, const timeutil::ptime& ref)
+QString shortenedTime(const timeutil::ptime& t, const timeutil::ptime&)
 {
   QString when;
   const int maxDiff = 20;

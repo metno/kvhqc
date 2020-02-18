@@ -20,14 +20,14 @@ bool ObsFilter::needsSQL() const
   return false;
  }
 
-bool ObsFilter::accept(ObsData_p obs, bool afterSQL) const
+bool ObsFilter::accept(ObsData_p obs, bool) const
 {
   if (not obs)
     return false;
   return true;
 }
 
-bool ObsFilter::subsetOf(ObsFilter_p other) const
+bool ObsFilter::subsetOf(ObsFilter_p) const
 {
   return true;
 }

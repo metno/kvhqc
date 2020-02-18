@@ -49,6 +49,6 @@ TEST(IndexBufferTest, Basic)
   {
     IndexBuffer_p buffer = std::make_shared<IndexBuffer>(3600, sensors, time);
     buffer->syncRequest(sqla);
-    EXPECT_EQ(7, buffer->size());
+    EXPECT_EQ(7u, buffer->size());
   }
 }

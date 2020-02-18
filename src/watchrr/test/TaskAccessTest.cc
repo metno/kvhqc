@@ -36,13 +36,6 @@
 #include "common/test/TestHelpers.hh"
 
 namespace /* anonymous */ {
-bool hasTasks(ObsData_p obs)
-{
-  if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))
-    return td->hasTasks();
-  else
-    return false;
-}
 bool hasTask(ObsData_p obs, int task)
 {
   if (TaskData_p td = std::dynamic_pointer_cast<TaskData>(obs))

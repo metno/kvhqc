@@ -48,9 +48,11 @@ QVariant ChecksTableModel::data(const QModelIndex& index, int role) const
   case COL_CHECK:
     if (role == Qt::DisplayRole)
       return mChecks.at(row);
+    break;
   case COL_EXPLAIN:
     if (role == Qt::DisplayRole or role == Qt::ToolTipRole or role == Qt::StatusTipRole)
       return mExplanations.at(row);
+    break;
   }
   return QVariant();
 }

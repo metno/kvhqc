@@ -81,7 +81,7 @@ void DianaHelper::handleDisconnect()
   mConnected.clear();
 }
 
-void DianaHelper::onRenamed(const QString& name)
+void DianaHelper::onRenamed(const QString&)
 {
   // should delete or rename time list in diana, but diana cannot do that
 }

@@ -165,7 +165,6 @@
   <zorder>spinSensorNr</zorder>
   <zorder>labelLevel</zorder>
   <zorder>comboLevel</zorder>
-  <zorder>horizontalSpacer_2</zorder>
  </widget>
  <customwidgets>
   <customwidget>

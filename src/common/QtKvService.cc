@@ -142,8 +142,8 @@ void QtKvService::run()
   METLIBS_LOG_SCOPE();
   using namespace kvservice;
   while (not mStop and mApp and not mApp->shutdown()) {
-    const std::auto_ptr<dnmi::thread::CommandBase> com(mSignalQueue.get(/*timeout=*/ 2 /*sec*/));
-    if (not com.get())
+    std::unique_ptr<dnmi::thread::CommandBase> com(mSignalQueue.get(/*timeout=*/ 2 /*sec*/));
+    if (!com)
       continue;
 
     if (DataEvent *dataEvent = dynamic_cast<DataEvent*>(com.get())) {

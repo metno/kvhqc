@@ -173,7 +173,7 @@ void ErrorList::resizeHeaders()
   header->resizeSection(ErrorListModel::COL_OBS_FLAGS,    120);
 }
 
-void ErrorList::onSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
+void ErrorList::onSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
   METLIBS_LOG_SCOPE();
   showSameStation();

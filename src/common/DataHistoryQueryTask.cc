@@ -26,7 +26,7 @@ DataHistoryQueryTask::DataHistoryQueryTask(const SensorTime& st, size_t priority
   }
 }
 
-QString DataHistoryQueryTask::querySql(QString dbversion) const
+QString DataHistoryQueryTask::querySql(QString) const
 {
   std::ostringstream sql;
   sql << "SELECT dh.modificationtime, dh.corrected, dh.controlinfo, dh.useinfo, dh.cfailed"

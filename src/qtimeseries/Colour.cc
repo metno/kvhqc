@@ -48,8 +48,10 @@ Colour::Colour(const values& va)
 Colour::Colour(uint32 h)
 {
   uchar_t a= 255;
-  if (h>0xFFFFFF)
-    a= (h & 0xFF); h = (h >> 8);
+  if (h>0xFFFFFF) {
+    a= (h & 0xFF);
+    h = (h >> 8);
+  }
 
   uchar_t b= (h & 0xFF); h = (h >> 8);
   uchar_t g= (h & 0xFF); h = (h >> 8);

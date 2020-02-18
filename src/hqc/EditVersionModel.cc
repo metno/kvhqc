@@ -119,7 +119,7 @@ int EditVersionModel::rowCount(const QModelIndex& parent) const
 
 bool EditVersionModel::hasChildren(const QModelIndex& index) const
 {
-  return (not index.isValid()) or (index.internalId() < 0);
+  return (not index.isValid()) or ((qint64)index.internalId() < 0);
 }
 
 QVariant EditVersionModel::data(const QModelIndex& index, int role) const

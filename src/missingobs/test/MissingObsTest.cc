@@ -16,10 +16,6 @@
 #define MILOGGER_CATEGORY "kvhqc.test.MissingObsTest"
 #include "common/ObsLogging.hh"
 
-static inline const Sensor& s(ObsData_p obs) { return obs->sensorTime().sensor; }
-static inline const std::string t(ObsData_p obs) { return timeutil::to_iso_extended_string(obs->sensorTime().time); }
-static inline float cv(ObsData_p obs) { return obs->corrected(); }
-
 static const QRegExp re_collapse_ws("[\\s\\n]+");
 static inline std::string collapse_std(QString a)
 { return QString(a).replace(re_collapse_ws, " ").toStdString(); }
@@ -94,5 +90,5 @@ TEST(MissingObsTest, Query)
 
   fa->obsAccess()->handler()->postTask(q.get());
 
-  ASSERT_EQ(2, q->missing().size());
+  ASSERT_EQ(2u, q->missing().size());
 }

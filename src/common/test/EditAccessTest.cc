@@ -114,17 +114,17 @@ TEST(EditAccessTest, UndoRedoStore)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
 
   ea->newVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
 
   { Updater updater(ea, counter);
     ObsUpdate_p up = updater.createUpdate(st1);
@@ -136,40 +136,40 @@ TEST(EditAccessTest, UndoRedoStore)
     updater.send();
   }
 
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countUpdate);
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(2, counter->countUpdate);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(2u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 
   ea->redoVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(3, counter->countUpdate);
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(3u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   EXPECT_TRUE(ea->storeToBackend());
 
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
-  EXPECT_EQ(4, counter->countUpdate);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
+  EXPECT_EQ(4u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 }
 
 TEST(EditAccessTest, UndoRedoTwice)
@@ -191,10 +191,10 @@ TEST(EditAccessTest, UndoRedoTwice)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
@@ -203,51 +203,51 @@ TEST(EditAccessTest, UndoRedoTwice)
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st2, CHNG_C2);
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(3, counter->countUpdate);
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(3u, counter->countUpdate);
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(4, counter->countUpdate);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(4u, counter->countUpdate);
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 
   ea->redoVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(5, counter->countUpdate);
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(5u, counter->countUpdate);
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->redoVersion();
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(6, counter->countUpdate);
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(6u, counter->countUpdate);
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 }
 
 TEST(EditAccessTest, UndoRedoNew1)
@@ -269,8 +269,8 @@ TEST(EditAccessTest, UndoRedoNew1)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
 
@@ -278,49 +278,49 @@ TEST(EditAccessTest, UndoRedoNew1)
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1a);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st2, CHNG_C2);
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1b);
-  EXPECT_EQ(3, ea->currentVersion());
-  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_EQ(3u, ea->currentVersion());
+  EXPECT_EQ(3u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1b, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(3u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(3, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(3u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1a, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1c);
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
   EXPECT_FLOAT_EQ(CHNG_C1c, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 }
 
 TEST(EditAccessTest, UndoRedoNew2)
@@ -345,26 +345,26 @@ TEST(EditAccessTest, UndoRedoNew2)
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1a);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st2, CHNG_C2);
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(2u, ea->countU());
 
   ea->undoVersion();
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
   ea->undoVersion();
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1b);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(1u, ea->countU());
 }
 
 TEST(EditAccessTest, Reset)
@@ -385,17 +385,17 @@ TEST(EditAccessTest, Reset)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
 
   ea->newVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
 
   { Updater updater(ea, counter);
     ObsUpdate_p up = updater.createUpdate(st1);
@@ -407,16 +407,16 @@ TEST(EditAccessTest, Reset)
     updater.send();
   }
 
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countUpdate);
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter, st2));
 
   ea->reset();
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
-  EXPECT_EQ(2, counter->countUpdate);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
+  EXPECT_EQ(2u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
@@ -439,17 +439,17 @@ TEST(EditAccessTest, CreateReset)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(1, counter->countNew);
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(1u, counter->countNew);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
 
   EXPECT_FLOAT_EQ(NO_OBS,  corrected(counter, st1));
 
   ea->newVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
 
   { Updater updater(ea, counter);
     ObsUpdate_p up = updater.createUpdate(st1);
@@ -457,18 +457,18 @@ TEST(EditAccessTest, CreateReset)
     updater.send();
   }
 
-  EXPECT_EQ(4, counter->size());
-  EXPECT_EQ(0, counter->countUpdate);
-  EXPECT_EQ(2, counter->countNew);
+  EXPECT_EQ(4u, counter->size());
+  EXPECT_EQ(0u, counter->countUpdate);
+  EXPECT_EQ(2u, counter->countNew);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
 
   ea->reset();
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
-  EXPECT_EQ(0, counter->countUpdate);
-  EXPECT_EQ(2, counter->countNew);
-  EXPECT_EQ(1, counter->countDrop);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
+  EXPECT_EQ(0u, counter->countUpdate);
+  EXPECT_EQ(2u, counter->countNew);
+  EXPECT_EQ(1u, counter->countDrop);
 
   EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
 }
@@ -492,9 +492,9 @@ TEST(EditAccessTest, UpdateInParent)
   // get data from EditAccess
   CountingBuffer_p counterE(new CountingBuffer(sensor1, time));
   counterE->postRequest(ea);
-  EXPECT_EQ(3, counterE->size());
-  EXPECT_EQ(1, counterE->countComplete);
-  EXPECT_EQ(1, counterE->countNew);
+  EXPECT_EQ(3u, counterE->size());
+  EXPECT_EQ(1u, counterE->countComplete);
+  EXPECT_EQ(1u, counterE->countNew);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counterE, st1));
   EXPECT_FLOAT_EQ(NO_OBS,  corrected(counterE, st2));
@@ -502,16 +502,16 @@ TEST(EditAccessTest, UpdateInParent)
   // get same data from CachingAccess
   CountingBuffer_p counterC(new CountingBuffer(sensor1, time));
   counterC->postRequest(ca);
-  EXPECT_EQ(3, counterC->size());
-  EXPECT_EQ(1, counterC->countComplete);
+  EXPECT_EQ(3u, counterC->size());
+  EXPECT_EQ(1u, counterC->countComplete);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counterC, st1));
   EXPECT_FLOAT_EQ(NO_OBS,  corrected(counterC, st2));
 
   // change data in CachingAccess
   ea->newVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
 
   { Updater updater(ca, counterC);
     ObsUpdate_p up1 = updater.createUpdate(st1);
@@ -521,9 +521,9 @@ TEST(EditAccessTest, UpdateInParent)
     updater.send();
   }
 
-  EXPECT_EQ(4, counterE->size());
-  EXPECT_EQ(1, counterE->countUpdate);
-  EXPECT_EQ(2, counterE->countNew);
+  EXPECT_EQ(4u, counterE->size());
+  EXPECT_EQ(1u, counterE->countUpdate);
+  EXPECT_EQ(2u, counterE->countNew);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counterE, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counterE, st2));
@@ -547,17 +547,17 @@ TEST(EditAccessTest, DropInParent)
   // get data from EditAccess
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(1, counter->countNew);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(1u, counter->countNew);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
 
   // drop data in SqliteAccess
   sqla->dropData(SensorTime_v(1, st1));
 
-  EXPECT_EQ(2, counter->size());
-  EXPECT_EQ(1, counter->countDrop);
+  EXPECT_EQ(2u, counter->size());
+  EXPECT_EQ(1u, counter->countDrop);
 
   EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
 }
@@ -581,15 +581,15 @@ TEST(EditAccessTest, DropInParentAfterChange)
   // get data from EditAccess
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
-  EXPECT_EQ(1, counter->countNew);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
+  EXPECT_EQ(1u, counter->countNew);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
 
   ea->newVersion();
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
 
   { Updater updater(ea, counter);
     ObsUpdate_p up = updater.createUpdate(st1);
@@ -597,23 +597,23 @@ TEST(EditAccessTest, DropInParentAfterChange)
     updater.send();
   }
 
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countUpdate);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countUpdate);
 
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
 
   // drop data in SqliteAccess
   sqla->dropData(SensorTime_v(1, st1));
 
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countUpdate);
-  EXPECT_EQ(0, counter->countDrop);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countUpdate);
+  EXPECT_EQ(0u, counter->countDrop);
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter, st1));
 
   ea->reset();
 
-  EXPECT_EQ(2, counter->size());
-  EXPECT_EQ(1, counter->countDrop);
+  EXPECT_EQ(2u, counter->size());
+  EXPECT_EQ(1u, counter->countDrop);
 
   EXPECT_FLOAT_EQ(NO_OBS, corrected(counter, st1));
 }
@@ -637,8 +637,8 @@ TEST(EditAccessTest, RequestAfterEdit)
 
   CountingBuffer_p counter(new CountingBuffer(sensor1, time));
   counter->postRequest(ea);
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
 
   EXPECT_FLOAT_EQ(ORIG_C1, corrected(counter, st1));
   EXPECT_FLOAT_EQ(ORIG_C2, corrected(counter, st2));
@@ -655,13 +655,13 @@ TEST(EditAccessTest, RequestAfterEdit)
     updater.send();
   }
 
-  EXPECT_EQ(7, counter->size());
-  EXPECT_EQ(1, counter->countUpdate);
+  EXPECT_EQ(7u, counter->size());
+  EXPECT_EQ(1u, counter->countUpdate);
 
   CountingBuffer_p counter2(new CountingBuffer(sensor1, time));
   counter2->postRequest(ea);
-  EXPECT_EQ(7, counter2->size());
-  EXPECT_EQ(1, counter2->countComplete);
+  EXPECT_EQ(7u, counter2->size());
+  EXPECT_EQ(1u, counter2->countComplete);
   EXPECT_FLOAT_EQ(CHNG_C1, corrected(counter2, st1));
   EXPECT_FLOAT_EQ(CHNG_C2, corrected(counter2, st2));
 }
@@ -688,40 +688,40 @@ TEST(EditAccessTest, History)
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1a);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(1u, ea->countU());
 
   { const ObsData_pv changes1 = ea->versionChanges(1);
-    ASSERT_EQ(1, changes1.size());
+    ASSERT_EQ(1u, changes1.size());
     EXPECT_TRUE(eq_SensorTime()(st1, changes1[0]->sensorTime()));
   }
 
   ea->newVersion();
   updater.setCorrected(st2, CHNG_C2);
-  EXPECT_EQ(2, ea->currentVersion());
-  EXPECT_EQ(2, ea->highestVersion());
-  EXPECT_EQ(2, ea->countU());
+  EXPECT_EQ(2u, ea->currentVersion());
+  EXPECT_EQ(2u, ea->highestVersion());
+  EXPECT_EQ(2u, ea->countU());
 
   { const ObsData_pv changes1 = ea->versionChanges(1);
-    ASSERT_EQ(1, changes1.size());
+    ASSERT_EQ(1u, changes1.size());
     EXPECT_TRUE(eq_SensorTime()(st1, changes1[0]->sensorTime()));
 
     const ObsData_pv changes2 = ea->versionChanges(2);
-    ASSERT_EQ(1, changes2.size());
+    ASSERT_EQ(1u, changes2.size());
     EXPECT_TRUE(eq_SensorTime()(st2, changes2[0]->sensorTime()));
   }
 
   ea->undoVersion();
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
   ea->undoVersion();
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 
   ea->newVersion();
   updater.setCorrected(st1, CHNG_C1b);
-  EXPECT_EQ(1, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(1u, ea->countU());
 }
 
 TEST(EditAccessTest, InsertData)
@@ -742,11 +742,11 @@ TEST(EditAccessTest, InsertData)
 
   CountingBuffer_p counter(new CountingBuffer(s0, time0));
   counter->syncRequest(ea);
-  EXPECT_EQ(2, counter->size());
-  EXPECT_EQ(1, counter->countComplete);
+  EXPECT_EQ(2u, counter->size());
+  EXPECT_EQ(1u, counter->countComplete);
   counter->zero();
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(0, ea->highestVersion());
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(0u, ea->highestVersion());
 
   ASSERT_FALSE(counter->get(st0));
 
@@ -761,24 +761,24 @@ TEST(EditAccessTest, InsertData)
     ASSERT_TRUE(ea->storeUpdates(updates));
   }
     
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(1, counter->countNew);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(1u, counter->countNew);
   ASSERT_TRUE((bool)counter->get(st0));
   EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 
   ea->undoVersion();
 
-  EXPECT_EQ(0, ea->currentVersion());
-  EXPECT_EQ(1, ea->highestVersion());
-  EXPECT_EQ(1, counter->countDrop);
+  EXPECT_EQ(0u, ea->currentVersion());
+  EXPECT_EQ(1u, ea->highestVersion());
+  EXPECT_EQ(1u, counter->countDrop);
   ASSERT_FALSE(counter->get(st0));
-  EXPECT_EQ(0, ea->countU());
+  EXPECT_EQ(0u, ea->countU());
 
   ea->redoVersion();
-  EXPECT_EQ(3, counter->size());
-  EXPECT_EQ(2, counter->countNew);
+  EXPECT_EQ(3u, counter->size());
+  EXPECT_EQ(2u, counter->countNew);
   ASSERT_TRUE((bool)counter->get(st0));
   EXPECT_FLOAT_EQ(newC, corrected(counter, st0));
-  EXPECT_EQ(1, ea->countU());
+  EXPECT_EQ(1u, ea->countU());
 }

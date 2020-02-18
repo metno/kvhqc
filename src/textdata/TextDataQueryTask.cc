@@ -19,7 +19,7 @@ TextDataQueryTask::TextDataQueryTask(const int stationId, const TimeSpan& time, 
 {
 }
 
-QString TextDataQueryTask::querySql(QString dbversion) const
+QString TextDataQueryTask::querySql(QString) const
 {
   std::ostringstream sql;
   sql << "SELECT td.obstime, td.original, td.paramid, td.tbtime, td.typeid"

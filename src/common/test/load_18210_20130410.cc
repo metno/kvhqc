@@ -6,7 +6,7 @@ inline TimeSpan t_18210_20130410()
 #ifdef LOAD_DECL_ONLY
 void load_18210_20130410(FakeKvApp& fa, bool subscribe=true);
 #else // LOAD_DECL_ONLY
-void load_18210_20130410(FakeKvApp& fa, bool subscribe=true)
+void load_18210_20130410(FakeKvApp& fa, bool /*subscribe*/)
 {
     fa.insertDataFromFile(std::string(TEST_SOURCE_DIR)+"/data_18210_20130410.txt");
 

@@ -359,7 +359,7 @@ QVariant ErrorListModel::headerData(int section, Qt::Orientation orientation, in
   return QVariant();
 }
 
-void ErrorListModel::highlightStation(int stationID)
+void ErrorListModel::highlightStation(int /*stationID*/)
 {
 #ifdef ENABLE_HIGHLIGHT
   if (mHighlightedStation == stationID)

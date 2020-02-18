@@ -20,7 +20,7 @@ TypesQueryTask::TypesQueryTask(size_t priority)
   }
 }
 
-QString TypesQueryTask::querySql(QString dbversion) const
+QString TypesQueryTask::querySql(QString) const
 {
   return "SELECT t.typeid, t.format, t.earlyobs, t.lateobs, t.read,"
       " t.obspgm, t.comment  FROM types t ORDER BY t.typeid";

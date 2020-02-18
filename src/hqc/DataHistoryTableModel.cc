@@ -114,6 +114,7 @@ QVariant DataHistoryTableModel::data(const QModelIndex& index, int role) const
     case COL_CORR: {
       if (mCode2Text)
         return mCode2Text->asTip(v.corrected);
+      break;
     }
     case COL_FLAGS:
       return Helpers::getFlagExplanation(v.controlinfo);
