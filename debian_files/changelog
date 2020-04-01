@@ -1,3 +1,10 @@
+kvhqc (4.1.0~a38-1) unstable; urgency=low
+
+  * bugfix time series plot
+  * bugfix typo in watchrr translations filename
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 01 Apr 2020 08:00:08 +0200
+
 kvhqc (4.1.0~a37-1) unstable; urgency=low
 
   * bugfix authentication
