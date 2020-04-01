@@ -86,7 +86,7 @@ public:
   // check sanity of datalist
   bool dataOK() const
     {
-      if (datalist_.empty() or datalist_[0].empty())
+      if (datalist_.empty() || datalist_[0].size() < 2)
 	return false;
       CIDataList p1 = datalist_.begin();
       CIDataList p2 = p1; p2++;
