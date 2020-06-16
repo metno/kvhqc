@@ -1,3 +1,9 @@
+kvhqc (4.1.0~a41-1) unstable; urgency=low
+
+  * bugfixes
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Tue, 16 Jun 2020 08:00:08 +0200
+
 kvhqc (4.1.0~a40-1) unstable; urgency=low
 
   * bugfix time series plot
