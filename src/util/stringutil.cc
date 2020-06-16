@@ -86,7 +86,7 @@ float parseFloat(const QString& text, int nDecimals)
 {
   bool numOk = false;
   const float num = text.toFloat(&numOk);
-  if (not numOk)
+  if (!numOk)
     throw std::runtime_error("cannot parse number");
   const float factor = std::pow(10, nDecimals), numf = num * factor, roundedf = Helpers::round(numf, 1);
   if (std::fabs(numf - roundedf) >= 1e-8) {

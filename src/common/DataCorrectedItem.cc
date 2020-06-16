@@ -72,6 +72,8 @@ bool DataCorrectedItem::setData(const ObsData_pv& obs, EditAccess_p da, const Se
     return false;
 
   const QString svalue = value.toString();
+  if (svalue.isEmpty())
+    return false;
   try {
     const float newC = mCodes->fromText(svalue);
     const bool reject = (newC == kvalobs::REJECTED);
