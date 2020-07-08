@@ -38,6 +38,10 @@ ADD_LIBRARY(test_common
 
   ${test_common_MOC}
 )
+TARGET_LINK_LIBRARIES(test_common
+  PUBLIC
+  ${GTEST_LIBRARY}
+)
 
 ADD_EXECUTABLE(common_test
 #  DataListModelTest.cc
@@ -63,7 +67,6 @@ TARGET_LINK_LIBRARIES(common_test
   util
   ${PC_LIBRARIES}
   ${OTHER_LIBS}
-  ${GTEST_LIBRARY}
 )
 
 ADD_TEST(NAME common_test
