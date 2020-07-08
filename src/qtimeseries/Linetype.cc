@@ -55,6 +55,12 @@ Linetype::Linetype(const std::string& _name)
 }
 
 
+Linetype::Linetype(const Linetype& rhs)
+{
+  memberCopy(rhs);
+}
+
+
 Linetype::~Linetype()
 {
 }

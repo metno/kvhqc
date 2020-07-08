@@ -41,6 +41,7 @@ class Linetype {
 public:
   Linetype();
   Linetype(const std::string& _name);
+  Linetype(const Linetype &rhs);
   ~Linetype();
   Linetype& operator=(const Linetype &rhs);
   bool operator==(const Linetype &rhs) const;
