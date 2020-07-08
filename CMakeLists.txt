@@ -25,6 +25,7 @@
 # along with HQC; if not, write to the Free Software Foundation, Inc.,
 # 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 
+CMAKE_POLICY(SET CMP0048 OLD)
 PROJECT(kvhqc)
 CMAKE_MINIMUM_REQUIRED(VERSION 3.0)
 
