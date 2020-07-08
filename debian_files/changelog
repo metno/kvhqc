@@ -1,3 +1,13 @@
+kvhqc (4.1.42-1) unstable; urgency=low
+
+  * enable time series plot again
+  * add qtimeseries Linetype copy ctor
+  * simplify TimeSeriesData::TimeSeries::dataOK
+  * solve build problem on Ubuntu 20.04
+  * avoid warning from cmake >= 3.16
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Wed, 08 Jul 2020 08:00:08 +0200
+
 kvhqc (4.1.0~a41-1) unstable; urgency=low
 
   * bugfixes
