@@ -4,11 +4,12 @@ INCLUDE_DIRECTORIES(
 )
 
 SET(qtimeseries_SOURCES
-  TSdrawarea.cc
+  Colour.cc
   Linetype.cc
   PlotOptions.cc
-  Colour.cc
+  TSdrawarea.cc
   TSglwidget.cc
+  TimeSeries.cc
 )
 
 QT5_WRAP_CPP(qtimeseries_MOC

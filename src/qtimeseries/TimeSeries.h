@@ -1,7 +1,7 @@
 /*
   libqTimeseries - Qt classes for time series plots
   
-  Copyright (C) 2006-2014 met.no
+  Copyright (C) 2006-2020 met.no
 
   Contact information:
   Norwegian Meteorological Institute
@@ -84,23 +84,10 @@ public:
   void clear(){datalist_.clear();}
 
   // check sanity of datalist
-  bool dataOK() const
-    {
-      if (datalist_.size() < 2 || datalist_[0].size() < 1)
-	return false;
-      CIDataList p1 = datalist_.begin();
-      CIDataList p2 = p1; p2++;
-      for (; p2!= datalist_.end(); p2++,p1++)
-	if (p1->size() != p2->size())
-	  return false;
-      
-      return true;
-    }
+  bool dataOK() const;
 
   // return unique list of times in this series
-  std::set<ts_time_t> times() const
-    { std::set<ts_time_t> st; for (CIDataList p = datalist_.begin(); p!= datalist_.end(); p++) st.insert(p->time()); return st; }
-
+  std::set<ts_time_t> times() const;
 };
 
 /*
