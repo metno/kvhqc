@@ -532,7 +532,7 @@ void TimeSeriesView::updatePlot()
 {
   METLIBS_LOG_SCOPE();
   mBusy->setBusy(false);
-  if (!mObsBuffer || mPlotOptions.empty() || !mSensorTime.valid())
+  if (!mObsBuffer || mPlotOptions.empty())
     return;
 
   const int whatToPlot = ui->comboWhatToPlot->currentIndex();
