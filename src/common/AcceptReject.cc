@@ -84,8 +84,10 @@ static bool do_accept_corrected(ObsData_p obs, ObsUpdate_p update, bool qc2ok)
   } else if (fmis == 0) {
     Helpers::set_fhqc(update, 7);
     Helpers::set_flag(update, kvalobs::flag::fmis, 4);
-  } else if (fmis == 1 or fmis == 4) {
+  } else if (fmis == 1) {
     Helpers::set_fhqc(update, 5);
+  } else if (fmis == 4) {
+    Helpers::set_fhqc(update, 7);
   } else {
     HQC_LOG_ERROR("bad accept_corrected for " << obs->sensorTime());
     return false;
