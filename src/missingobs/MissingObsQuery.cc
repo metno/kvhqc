@@ -4,7 +4,7 @@
 #include "common/KvHelpers.hh"
 #include "common/sqlutil.hh"
 
-#define MILOGGER_CATEGORY "kvhqc.MissingTableModel"
+#define MILOGGER_CATEGORY "kvhqc.MissingObsQuery"
 #include "common/ObsLogging.hh"
 
 namespace /*anonymous*/ {
@@ -82,6 +82,7 @@ QString MissingObsQuery::querySql(QString dbversion) const
       "                    AND NOT (substr(d.controlinfo, 7,1) IN ('1','2','3')" // fmis == 1, 2, 3 (original or corrected missing)
       "                         AND substr(d.controlinfo,13,1) IN ('0','1')))"   // fd <= 1 (no accumulation)
       " ORDER BY o.stationid, o.typeid, times.ts";
+  METLIBS_LOG_DEBUG(sql);
   return sql;
 }
 
