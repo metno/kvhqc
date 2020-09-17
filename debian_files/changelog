@@ -1,3 +1,9 @@
+kvhqc (4.1.43-1) unstable; urgency=low
+
+  * set fhqc=7 on accept for fmis=4
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Thu, 17 Sep 2020 08:00:08 +0200
+
 kvhqc (4.1.42-1) unstable; urgency=low
 
   * enable time series plot again
