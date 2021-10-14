@@ -95,13 +95,22 @@ QString KvalobsQueryRunner::run(QueryTask* qtask)
   QtSqlRow row(query);
 
   const QString sql = qtask->querySql(DBVERSION);
-  QString status;
-  if (query.exec(sql)) {
-    while (query.next())
-      qtask->notifyRow(row);
-  } else {
-    HQC_LOG_ERROR("query '" << sql << "' failed: " << query.lastError().text());
-    status = query.lastError().text();
+  int count = 0;
+  while (true) {
+    if (query.exec(sql)) {
+      while (query.next())
+        qtask->notifyRow(row);
+      return QString();
+    }
+
+    const auto& e = query.lastError();
+    QString status = e.text();
+    count += 1;
+    if (count < 3 /*&& e.number() == 40001*/) {
+      HQC_LOG_WARN("query '" << sql << "' failed [" << e.number() << "]: " << status << " -- retrying (" << count << ")");
+    } else {
+      HQC_LOG_ERROR("query '" << sql << "' failed [" << e.number() << "]: " << status);
+      return status;
+    }
   }
-  return status;
 }
