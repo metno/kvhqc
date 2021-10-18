@@ -11,7 +11,7 @@ LINK_LIBRARIES(Qt5::Widgets Qt5::Sql Qt5::Network Qt5::Xml)
 #########################################################################
 
 SET(PKGS
-  libkvcpp>=4.0.1 # kvalobs
+  libkvcpp>=7.0.0 # kvalobs
 
   metlibs-tsdata-core>=7.0.0
   metlibs-pets2-qt5>=8.0.0

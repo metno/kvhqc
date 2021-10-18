@@ -270,6 +270,11 @@ kvservice::KvApp::SubscriberID FakeKvApp::subscribeData(const kvservice::KvDataS
   return "heiho-data";
 }
 
+kvservice::KvApp::SubscriberID FakeKvApp::subscribeDataWithGroupId(const kvservice::KvDataSubscribeInfoHelper&, dnmi::thread::CommandQue&, const std::string&)
+{
+  return "heiho-data";
+}
+
 kvservice::KvApp::SubscriberID FakeKvApp::subscribeKvHint(dnmi::thread::CommandQue&)
 {
   return "heiho-hint";

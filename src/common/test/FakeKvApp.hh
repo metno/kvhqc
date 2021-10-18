@@ -90,6 +90,7 @@ public:
   
   virtual kvservice::KvApp::SubscriberID subscribeDataNotify(const kvservice::KvDataSubscribeInfoHelper &info, dnmi::thread::CommandQue &que);
   virtual kvservice::KvApp::SubscriberID subscribeData(const kvservice::KvDataSubscribeInfoHelper &info, dnmi::thread::CommandQue &que);
+  virtual kvservice::KvApp::SubscriberID subscribeDataWithGroupId(const kvservice::KvDataSubscribeInfoHelper &info, dnmi::thread::CommandQue &queue, const std::string &groupId);
   virtual kvservice::KvApp::SubscriberID subscribeKvHint(dnmi::thread::CommandQue &que);  
   virtual void unsubscribe(const kvservice::KvApp::SubscriberID &subscriberid);
   virtual void unsubscribeAll();
