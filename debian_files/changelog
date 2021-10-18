@@ -1,3 +1,9 @@
+kvhqc (4.1.45-1) unstable; urgency=low
+
+  * implement KvApp:subscribeDataWithGroupId from libkvalobs10
+
+ -- Alexander Bürger <alexander.buerger@met.no>  Mon, 18 Oct 2021 08:00:08 +0200
+
 kvhqc (4.1.44-2) unstable; urgency=low
 
   * rebuild with new kvalobs libraries
