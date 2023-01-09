@@ -2,6 +2,7 @@
 #ifndef UTIL_LRU_CACHE_HH
 #define UTIL_LRU_CACHE_HH 1
 
+#include <cstdlib>
 #include <list>
 #include <unordered_map>
 #include <cassert>
