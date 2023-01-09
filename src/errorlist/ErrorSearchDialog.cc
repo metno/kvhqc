@@ -368,7 +368,7 @@ void ErrorSearchDialog::onSaveSettings()
   if (ok && !label.isEmpty()) {
     QSettings settings;
     const QStringList groups = settings.childGroups();
-    for (const QString g : groups) {
+    for (const QString& g : groups) {
       const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
       if (lud == label) {
         QMessageBox msgBox(this);
@@ -396,7 +396,7 @@ void ErrorSearchDialog::onRestoreSettings()
   QSettings settings;
   const QStringList groups = settings.childGroups();
   QStringList stored;
-  for (const QString g : groups) {
+  for (const QString& g : groups) {
     const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
     if (not lud.isEmpty())
       stored << lud;
@@ -413,7 +413,7 @@ void ErrorSearchDialog::onRestoreSettings()
   QString recall = QInputDialog::getItem(this, tr("Load data selection"),
       tr("Name:"), stored, 0, false, &ok);
   if (ok && !recall.isEmpty()) {
-    for (const QString g : groups) {
+    for (const QString& g : groups) {
       const QString lud = settings.value(g + "/" + "label_user_data", "").toString();
       if (not lud.isEmpty() and lud == recall) {
         settings.beginGroup(g);

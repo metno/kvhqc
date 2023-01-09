@@ -253,7 +253,7 @@ Qt::ItemFlags ErrorListModel::flags(const QModelIndex& index) const
   if (index.isValid())
     return Qt::ItemIsSelectable | Qt::ItemIsEnabled;
   else
-    return 0;
+    return Qt::ItemFlags();
 }
 
 QVariant ErrorListModel::data(const QModelIndex& index, int role) const

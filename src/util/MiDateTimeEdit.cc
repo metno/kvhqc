@@ -46,7 +46,7 @@ QAbstractSpinBox::StepEnabled MiDateTimeEdit::stepEnabled() const
         not_min = ( dt != minimumDateTime() );
     }
     
-    QAbstractSpinBox::StepEnabled ret = 0;
+    QAbstractSpinBox::StepEnabled ret;
     if (not_min)
         ret |= QAbstractSpinBox::StepDownEnabled;
     if (not_max)

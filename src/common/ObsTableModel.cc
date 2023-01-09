@@ -258,7 +258,7 @@ Qt::ItemFlags ObsTableModel::flags(const QModelIndex& index) const
 {
   if (ObsColumn_p oc = getColumn(columnIndex(index)))
     return oc->flags(timeAtRow(timeIndex(index)));
-  return 0;
+  return Qt::ItemFlags();
 }
 
 QVariant ObsTableModel::data(const QModelIndex& index, int role) const
